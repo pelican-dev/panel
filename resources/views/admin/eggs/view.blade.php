@@ -43,6 +43,9 @@
                         <div class="col-xs-4">
                             {!! csrf_field() !!}
                             <button type="submit" name="_method" value="PUT" class="btn btn-sm btn-danger pull-right">Update Egg</button>
+                            @if($egg->update_url)
+                                <button id="onlineUpdaterButton" type="button" title="{{ $egg->update_url }}" class="btn btn-sm btn-success pull-right" style="margin-right:10px;"><i class="fa fa-cloud-download"></i> Download from update URL</button>
+                            @endif
                         </div>
                     </div>
                 </div>
@@ -200,6 +203,42 @@
 
             $(this).val(prepend + '    ' + append);
         }
+    });
+    $('#onlineUpdaterButton').on('click', function (event) {
+        event.preventDefault();
+
+        const updateUrl = '{{ $egg->update_url }}';
+        const fileInput = $('input[name=import_file]');
+
+        $.ajax({
+            method: 'GET',
+            timeout: 5000,
+            url: updateUrl,
+            dataType: 'json',
+            jsonp: false
+        }).done(function (data) {
+            const exportedAt = Date.parse(data.exported_at);
+            if (!isNaN(exportedAt) && data.meta && String(data.meta.version).startsWith('PTDL_')) {
+                const fileName = (new Date(exportedAt)).toISOString().slice(0, 19).replace(/[T:]/g, '-');
+                const blob = new Blob([JSON.stringify(data)], { type: 'application/json' });
+                const file = new File([blob], 'egg-exported-at-' + fileName + '.json', { type: 'application/json' });
+                const dataTransfer = new DataTransfer();
+                dataTransfer.items.add(file);
+                fileInput[0].files = dataTransfer.files;
+            } else {
+                swal({
+                    title: 'Error',
+                    text: 'The file downloaded from the update URL is not a valid egg.',
+                    type: 'error'
+                });
+            }
+        }).fail(function () {
+            swal({
+                title: 'Error',
+                text: 'Egg download from the update URL failed.',
+                type: 'error'
+            });
+        });
     });
     </script>
 @endsection
