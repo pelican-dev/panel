@@ -43,8 +43,7 @@ class AppSettingsCommand extends Command
                             {--redis-host= : Redis host to use for connections.}
                             {--redis-pass= : Password used to connect to redis.}
                             {--redis-port= : Port to connect to redis over.}
-                            {--settings-ui= : Enable or disable the settings UI.}
-                            {--telemetry= : Enable or disable anonymous telemetry.}';
+                            {--settings-ui= : Enable or disable the settings UI.}';
 
     protected array $variables = [];
 
@@ -118,12 +117,6 @@ class AppSettingsCommand extends Command
         } else {
             $this->variables['APP_ENVIRONMENT_ONLY'] = $this->confirm('Enable UI based settings editor?', true) ? 'false' : 'true';
         }
-
-        $this->output->comment('Please reference our website for more detailed information regarding telemetry data and collection.');
-        $this->variables['PANEL_TELEMETRY_ENABLED'] = $this->option('telemetry') ?? $this->confirm(
-            'Enable sending anonymous telemetry data?',
-            config('panel.telemetry.enabled', true)
-        ) ? 'true' : 'false';
 
         // Make sure session cookies are set as "secure" when using HTTPS
         if (str_starts_with($this->variables['APP_URL'], 'https://')) {
