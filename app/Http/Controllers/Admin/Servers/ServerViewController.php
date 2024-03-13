@@ -1,22 +1,22 @@
 <?php
 
-namespace Pterodactyl\Http\Controllers\Admin\Servers;
+namespace App\Http\Controllers\Admin\Servers;
 
 use Illuminate\View\View;
 use Illuminate\Http\Request;
-use Pterodactyl\Models\Nest;
-use Pterodactyl\Models\Server;
-use Pterodactyl\Exceptions\DisplayException;
-use Pterodactyl\Http\Controllers\Controller;
-use Pterodactyl\Services\Servers\EnvironmentService;
+use App\Models\Nest;
+use App\Models\Server;
+use App\Exceptions\DisplayException;
+use App\Http\Controllers\Controller;
+use App\Services\Servers\EnvironmentService;
 use Illuminate\Contracts\View\Factory as ViewFactory;
-use Pterodactyl\Repositories\Eloquent\NestRepository;
-use Pterodactyl\Repositories\Eloquent\NodeRepository;
-use Pterodactyl\Repositories\Eloquent\MountRepository;
-use Pterodactyl\Repositories\Eloquent\ServerRepository;
-use Pterodactyl\Traits\Controllers\JavascriptInjection;
-use Pterodactyl\Repositories\Eloquent\LocationRepository;
-use Pterodactyl\Repositories\Eloquent\DatabaseHostRepository;
+use App\Repositories\Eloquent\NestRepository;
+use App\Repositories\Eloquent\NodeRepository;
+use App\Repositories\Eloquent\MountRepository;
+use App\Repositories\Eloquent\ServerRepository;
+use App\Traits\Controllers\JavascriptInjection;
+use App\Repositories\Eloquent\LocationRepository;
+use App\Repositories\Eloquent\DatabaseHostRepository;
 
 class ServerViewController extends Controller
 {
@@ -70,7 +70,7 @@ class ServerViewController extends Controller
     /**
      * Returns the server startup management page.
      *
-     * @throws \Pterodactyl\Exceptions\Repository\RecordNotFoundException
+     * @throws \App\Exceptions\Repository\RecordNotFoundException
      */
     public function startup(Request $request, Server $server): View
     {
@@ -118,7 +118,7 @@ class ServerViewController extends Controller
      * Returns the base server management page, or an exception if the server
      * is in a state that cannot be recovered from.
      *
-     * @throws \Pterodactyl\Exceptions\DisplayException
+     * @throws \App\Exceptions\DisplayException
      */
     public function manage(Request $request, Server $server): View
     {

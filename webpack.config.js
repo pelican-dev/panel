@@ -147,7 +147,7 @@ module.exports = {
         contentBase: path.join(__dirname, '/public'),
         publicPath: process.env.WEBPACK_PUBLIC_PATH || '/assets/',
         allowedHosts: [
-            '.pterodactyl.test',
+            '.panel.test',
         ],
         headers: {
             'Access-Control-Allow-Origin': '*',

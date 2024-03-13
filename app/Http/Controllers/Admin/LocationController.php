@@ -1,19 +1,19 @@
 <?php
 
-namespace Pterodactyl\Http\Controllers\Admin;
+namespace App\Http\Controllers\Admin;
 
 use Illuminate\View\View;
-use Pterodactyl\Models\Location;
+use App\Models\Location;
 use Illuminate\Http\RedirectResponse;
 use Prologue\Alerts\AlertsMessageBag;
 use Illuminate\View\Factory as ViewFactory;
-use Pterodactyl\Exceptions\DisplayException;
-use Pterodactyl\Http\Controllers\Controller;
-use Pterodactyl\Http\Requests\Admin\LocationFormRequest;
-use Pterodactyl\Services\Locations\LocationUpdateService;
-use Pterodactyl\Services\Locations\LocationCreationService;
-use Pterodactyl\Services\Locations\LocationDeletionService;
-use Pterodactyl\Contracts\Repository\LocationRepositoryInterface;
+use App\Exceptions\DisplayException;
+use App\Http\Controllers\Controller;
+use App\Http\Requests\Admin\LocationFormRequest;
+use App\Services\Locations\LocationUpdateService;
+use App\Services\Locations\LocationCreationService;
+use App\Services\Locations\LocationDeletionService;
+use App\Contracts\Repository\LocationRepositoryInterface;
 
 class LocationController extends Controller
 {
@@ -43,7 +43,7 @@ class LocationController extends Controller
     /**
      * Return the location view page.
      *
-     * @throws \Pterodactyl\Exceptions\Repository\RecordNotFoundException
+     * @throws \App\Exceptions\Repository\RecordNotFoundException
      */
     public function view(int $id): View
     {
@@ -86,7 +86,7 @@ class LocationController extends Controller
      * Delete a location from the system.
      *
      * @throws \Exception
-     * @throws \Pterodactyl\Exceptions\DisplayException
+     * @throws \App\Exceptions\DisplayException
      */
     public function delete(Location $location): RedirectResponse
     {

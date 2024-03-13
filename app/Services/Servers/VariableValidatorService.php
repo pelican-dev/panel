@@ -1,12 +1,12 @@
 <?php
 
-namespace Pterodactyl\Services\Servers;
+namespace App\Services\Servers;
 
-use Pterodactyl\Models\User;
+use App\Models\User;
 use Illuminate\Support\Collection;
-use Pterodactyl\Models\EggVariable;
+use App\Models\EggVariable;
 use Illuminate\Validation\ValidationException;
-use Pterodactyl\Traits\Services\HasUserLevels;
+use App\Traits\Services\HasUserLevels;
 use Illuminate\Contracts\Validation\Factory as ValidationFactory;
 
 class VariableValidatorService
@@ -34,7 +34,7 @@ class VariableValidatorService
             $query = $query->where('user_editable', true)->where('user_viewable', true);
         }
 
-        /** @var \Pterodactyl\Models\EggVariable[] $variables */
+        /** @var \App\Models\EggVariable[] $variables */
         $variables = $query->get();
 
         $data = $rules = $customAttributes = [];

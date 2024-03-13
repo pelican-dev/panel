@@ -1,14 +1,14 @@
 <?php
 
-namespace Pterodactyl\Tests\Integration\Http\Controllers\Admin;
+namespace App\Tests\Integration\Http\Controllers\Admin;
 
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
-use Pterodactyl\Models\User;
-use Pterodactyl\Models\Subuser;
+use App\Models\User;
+use App\Models\Subuser;
 use Illuminate\Pagination\LengthAwarePaginator;
-use Pterodactyl\Http\Controllers\Admin\UserController;
-use Pterodactyl\Tests\Integration\IntegrationTestCase;
+use App\Http\Controllers\Admin\UserController;
+use App\Tests\Integration\IntegrationTestCase;
 
 class UserControllerTest extends IntegrationTestCase
 {
@@ -16,8 +16,6 @@ class UserControllerTest extends IntegrationTestCase
      * Test that the index route controller for the user listing returns the expected user
      * data with the number of servers they are assigned to, and the number of servers they
      * are a subuser of.
-     *
-     * @see https://github.com/pterodactyl/panel/issues/2469
      */
     public function testIndexReturnsExpectedData()
     {
@@ -37,7 +35,7 @@ class UserControllerTest extends IntegrationTestCase
         Subuser::query()->forceCreate(['server_id' => $servers[0]->id, 'user_id' => $users[1]->id]);
         Subuser::query()->forceCreate(['server_id' => $servers[1]->id, 'user_id' => $users[1]->id]);
 
-        /** @var \Pterodactyl\Http\Controllers\Admin\UserController $controller */
+        /** @var \App\Http\Controllers\Admin\UserController $controller */
         $controller = $this->app->make(UserController::class);
 
         $request = Request::create('/admin/users?filter[username]=' . $unique);
@@ -47,7 +45,7 @@ class UserControllerTest extends IntegrationTestCase
         $this->assertArrayHasKey('users', $data);
         $this->assertInstanceOf(LengthAwarePaginator::class, $data['users']);
 
-        /** @var \Pterodactyl\Models\User[] $response */
+        /** @var \App\Models\User[] $response */
         $response = $data['users']->items();
         $this->assertCount(2, $response);
         $this->assertInstanceOf(User::class, $response[0]);

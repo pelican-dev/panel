@@ -1,9 +1,9 @@
 <?php
 
-namespace Pterodactyl\Console\Commands\Location;
+namespace App\Console\Commands\Location;
 
 use Illuminate\Console\Command;
-use Pterodactyl\Services\Locations\LocationCreationService;
+use App\Services\Locations\LocationCreationService;
 
 class MakeLocationCommand extends Command
 {
@@ -24,7 +24,7 @@ class MakeLocationCommand extends Command
     /**
      * Handle the command execution process.
      *
-     * @throws \Pterodactyl\Exceptions\Model\DataValidationException
+     * @throws \App\Exceptions\Model\DataValidationException
      */
     public function handle()
     {

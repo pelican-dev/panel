@@ -1,12 +1,12 @@
 <?php
 
-namespace Pterodactyl\Tests\Integration\Api\Client;
+namespace App\Tests\Integration\Api\Client;
 
-use Pterodactyl\Models\User;
-use Pterodactyl\Models\Server;
-use Pterodactyl\Models\Subuser;
-use Pterodactyl\Models\Allocation;
-use Pterodactyl\Models\Permission;
+use App\Models\User;
+use App\Models\Server;
+use App\Models\Subuser;
+use App\Models\Allocation;
+use App\Models\Permission;
 
 class ClientControllerTest extends ClientApiIntegrationTestCase
 {
@@ -18,10 +18,10 @@ class ClientControllerTest extends ClientApiIntegrationTestCase
      */
     public function testOnlyLoggedInUsersServersAreReturned()
     {
-        /** @var \Pterodactyl\Models\User[] $users */
+        /** @var \App\Models\User[] $users */
         $users = User::factory()->times(3)->create();
 
-        /** @var \Pterodactyl\Models\Server[] $servers */
+        /** @var \App\Models\Server[] $servers */
         $servers = [
             $this->createServerModel(['user_id' => $users[0]->id]),
             $this->createServerModel(['user_id' => $users[1]->id]),
@@ -45,11 +45,11 @@ class ClientControllerTest extends ClientApiIntegrationTestCase
      */
     public function testServersAreFilteredUsingNameAndUuidInformation()
     {
-        /** @var \Pterodactyl\Models\User[] $users */
+        /** @var \App\Models\User[] $users */
         $users = User::factory()->times(2)->create();
         $users[0]->update(['root_admin' => true]);
 
-        /** @var \Pterodactyl\Models\Server[] $servers */
+        /** @var \App\Models\Server[] $servers */
         $servers = [
             $this->createServerModel(['user_id' => $users[0]->id, 'name' => 'Julia']),
             $this->createServerModel(['user_id' => $users[1]->id, 'uuidShort' => '12121212', 'name' => 'Janice']),
@@ -101,8 +101,8 @@ class ClientControllerTest extends ClientApiIntegrationTestCase
      */
     public function testServersAreFilteredUsingAllocationInformation()
     {
-        /** @var \Pterodactyl\Models\User $user */
-        /** @var \Pterodactyl\Models\Server $server */
+        /** @var \App\Models\User $user */
+        /** @var \App\Models\Server $server */
         [$user, $server] = $this->generateTestAccount();
         $server2 = $this->createServerModel(['user_id' => $user->id, 'node_id' => $server->node_id]);
 
@@ -143,7 +143,7 @@ class ClientControllerTest extends ClientApiIntegrationTestCase
      */
     public function testServersUserIsASubuserOfAreReturned()
     {
-        /** @var \Pterodactyl\Models\User[] $users */
+        /** @var \App\Models\User[] $users */
         $users = User::factory()->times(3)->create();
         $servers = [
             $this->createServerModel(['user_id' => $users[0]->id]),
@@ -174,7 +174,7 @@ class ClientControllerTest extends ClientApiIntegrationTestCase
      */
     public function testFilterOnlyOwnerServers()
     {
-        /** @var \Pterodactyl\Models\User[] $users */
+        /** @var \App\Models\User[] $users */
         $users = User::factory()->times(3)->create();
         $servers = [
             $this->createServerModel(['user_id' => $users[0]->id]),
@@ -203,7 +203,7 @@ class ClientControllerTest extends ClientApiIntegrationTestCase
      */
     public function testPermissionsAreReturned()
     {
-        /** @var \Pterodactyl\Models\User $user */
+        /** @var \App\Models\User $user */
         $user = User::factory()->create();
 
         $this->actingAs($user)
@@ -223,7 +223,7 @@ class ClientControllerTest extends ClientApiIntegrationTestCase
      */
     public function testOnlyAdminLevelServersAreReturned()
     {
-        /** @var \Pterodactyl\Models\User[] $users */
+        /** @var \App\Models\User[] $users */
         $users = User::factory()->times(4)->create();
         $users[0]->update(['root_admin' => true]);
 
@@ -258,7 +258,7 @@ class ClientControllerTest extends ClientApiIntegrationTestCase
      */
     public function testAllServersAreReturnedToAdmin()
     {
-        /** @var \Pterodactyl\Models\User[] $users */
+        /** @var \App\Models\User[] $users */
         $users = User::factory()->times(4)->create();
         $users[0]->update(['root_admin' => true]);
 
@@ -290,7 +290,7 @@ class ClientControllerTest extends ClientApiIntegrationTestCase
      */
     public function testNoServersAreReturnedIfAdminFilterIsPassedByRegularUser(string $type)
     {
-        /** @var \Pterodactyl\Models\User[] $users */
+        /** @var \App\Models\User[] $users */
         $users = User::factory()->times(3)->create();
 
         $this->createServerModel(['user_id' => $users[0]->id]);
@@ -309,7 +309,7 @@ class ClientControllerTest extends ClientApiIntegrationTestCase
      */
     public function testOnlyPrimaryAllocationIsReturnedToSubuser()
     {
-        /** @var \Pterodactyl\Models\Server $server */
+        /** @var \App\Models\Server $server */
         [$user, $server] = $this->generateTestAccount([Permission::ACTION_WEBSOCKET_CONNECT]);
         $server->allocation->notes = 'Test notes';
         $server->allocation->save();

@@ -1,11 +1,11 @@
 <?php
 
-namespace Pterodactyl\Http\Middleware\Api\Client\Server;
+namespace App\Http\Middleware\Api\Client\Server;
 
 use Illuminate\Http\Request;
-use Pterodactyl\Models\Server;
+use App\Models\Server;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
-use Pterodactyl\Exceptions\Http\Server\ServerStateConflictException;
+use App\Exceptions\Http\Server\ServerStateConflictException;
 
 class AuthenticateServerAccess
 {
@@ -28,7 +28,7 @@ class AuthenticateServerAccess
      */
     public function handle(Request $request, \Closure $next): mixed
     {
-        /** @var \Pterodactyl\Models\User $user */
+        /** @var \App\Models\User $user */
         $user = $request->user();
         $server = $request->route()->parameter('server');
 

@@ -1,6 +1,6 @@
 <?php
 
-namespace Pterodactyl\Models;
+namespace App\Models;
 
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -40,11 +40,11 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property string|null $inherit_config_stop
  * @property string $inherit_file_denylist
  * @property array|null $inherit_features
- * @property \Pterodactyl\Models\Nest $nest
- * @property \Illuminate\Database\Eloquent\Collection|\Pterodactyl\Models\Server[] $servers
- * @property \Illuminate\Database\Eloquent\Collection|\Pterodactyl\Models\EggVariable[] $variables
- * @property \Pterodactyl\Models\Egg|null $scriptFrom
- * @property \Pterodactyl\Models\Egg|null $configFrom
+ * @property \App\Models\Nest $nest
+ * @property \Illuminate\Database\Eloquent\Collection|\App\Models\Server[] $servers
+ * @property \Illuminate\Database\Eloquent\Collection|\App\Models\EggVariable[] $variables
+ * @property \App\Models\Egg|null $scriptFrom
+ * @property \App\Models\Egg|null $configFrom
  */
 class Egg extends Model
 {

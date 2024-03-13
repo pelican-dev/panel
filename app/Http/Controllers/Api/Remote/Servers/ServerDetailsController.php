@@ -1,17 +1,17 @@
 <?php
 
-namespace Pterodactyl\Http\Controllers\Api\Remote\Servers;
+namespace App\Http\Controllers\Api\Remote\Servers;
 
 use Illuminate\Http\Request;
-use Pterodactyl\Models\Server;
+use App\Models\Server;
 use Illuminate\Http\JsonResponse;
-use Pterodactyl\Facades\Activity;
+use App\Facades\Activity;
 use Illuminate\Database\ConnectionInterface;
-use Pterodactyl\Http\Controllers\Controller;
-use Pterodactyl\Services\Eggs\EggConfigurationService;
-use Pterodactyl\Repositories\Eloquent\ServerRepository;
-use Pterodactyl\Http\Resources\Wings\ServerConfigurationCollection;
-use Pterodactyl\Services\Servers\ServerConfigurationStructureService;
+use App\Http\Controllers\Controller;
+use App\Services\Eggs\EggConfigurationService;
+use App\Repositories\Eloquent\ServerRepository;
+use App\Http\Resources\Daemon\ServerConfigurationCollection;
+use App\Services\Servers\ServerConfigurationStructureService;
 
 class ServerDetailsController extends Controller
 {
@@ -27,10 +27,10 @@ class ServerDetailsController extends Controller
     }
 
     /**
-     * Returns details about the server that allows Wings to self-recover and ensure
+     * Returns details about the server that allows daemon to self-recover and ensure
      * that the state of the server matches the Panel at all times.
      *
-     * @throws \Pterodactyl\Exceptions\Repository\RecordNotFoundException
+     * @throws \App\Exceptions\Repository\RecordNotFoundException
      */
     public function __invoke(Request $request, string $uuid): JsonResponse
     {
@@ -47,7 +47,7 @@ class ServerDetailsController extends Controller
      */
     public function list(Request $request): ServerConfigurationCollection
     {
-        /** @var \Pterodactyl\Models\Node $node */
+        /** @var \App\Models\Node $node */
         $node = $request->attributes->get('node');
 
         // Avoid run-away N+1 SQL queries by preloading the relationships that are used
@@ -55,7 +55,7 @@ class ServerDetailsController extends Controller
         $servers = Server::query()->with('allocations', 'egg', 'mounts', 'variables', 'location')
             ->where('node_id', $node->id)
             // If you don't cast this to a string you'll end up with a stringified per_page returned in
-            // the metadata, and then Wings will panic crash as a result.
+            // the metadata, and then daemon will panic crash as a result.
             ->paginate((int) $request->input('per_page', 50));
 
         return new ServerConfigurationCollection($servers);
@@ -63,9 +63,9 @@ class ServerDetailsController extends Controller
 
     /**
      * Resets the state of all servers on the node to be normal. This is triggered
-     * when Wings restarts and is useful for ensuring that any servers on the node
+     * when daemon restarts and is useful for ensuring that any servers on the node
      * do not get incorrectly stuck in installing/restoring from backup states since
-     * a Wings reboot would completely stop those processes.
+     * a daemon reboot would completely stop those processes.
      *
      * @throws \Throwable
      */
@@ -90,9 +90,9 @@ class ServerDetailsController extends Controller
             ->get();
 
         $this->connection->transaction(function () use ($node, $servers) {
-            /** @var \Pterodactyl\Models\Server $server */
+            /** @var \App\Models\Server $server */
             foreach ($servers as $server) {
-                /** @var \Pterodactyl\Models\ActivityLog|null $activity */
+                /** @var \App\Models\ActivityLog|null $activity */
                 $activity = $server->activity->first();
                 if (!is_null($activity)) {
                     if ($subject = $activity->subjects->where('subject_type', 'backup')->first()) {

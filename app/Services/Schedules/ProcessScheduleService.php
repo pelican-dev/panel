@@ -1,15 +1,15 @@
 <?php
 
-namespace Pterodactyl\Services\Schedules;
+namespace App\Services\Schedules;
 
 use Exception;
-use Pterodactyl\Models\Schedule;
+use App\Models\Schedule;
 use Illuminate\Contracts\Bus\Dispatcher;
-use Pterodactyl\Jobs\Schedule\RunTaskJob;
+use App\Jobs\Schedule\RunTaskJob;
 use Illuminate\Database\ConnectionInterface;
-use Pterodactyl\Exceptions\DisplayException;
-use Pterodactyl\Repositories\Wings\DaemonServerRepository;
-use Pterodactyl\Exceptions\Http\Connection\DaemonConnectionException;
+use App\Exceptions\DisplayException;
+use App\Repositories\Daemon\DaemonServerRepository;
+use App\Exceptions\Http\Connection\DaemonConnectionException;
 
 class ProcessScheduleService
 {
@@ -27,7 +27,7 @@ class ProcessScheduleService
      */
     public function handle(Schedule $schedule, bool $now = false): void
     {
-        /** @var \Pterodactyl\Models\Task $task */
+        /** @var \App\Models\Task $task */
         $task = $schedule->tasks()->orderBy('sequence_id')->first();
 
         if (is_null($task)) {
@@ -59,7 +59,7 @@ class ProcessScheduleService
             } catch (\Exception $exception) {
                 if (!$exception instanceof DaemonConnectionException) {
                     // If we encountered some exception during this process that wasn't just an
-                    // issue connecting to Wings run the failed sequence for a job. Otherwise we
+                    // issue connecting to daemon run the failed sequence for a job. Otherwise we
                     // can just quietly mark the task as completed without actually running anything.
                     $job->failed($exception);
                 }
@@ -74,8 +74,6 @@ class ProcessScheduleService
         } else {
             // When using dispatchNow the RunTaskJob::failed() function is not called automatically
             // so we need to manually trigger it and then continue with the exception throw.
-            //
-            // @see https://github.com/pterodactyl/panel/issues/2550
             try {
                 $this->dispatcher->dispatchNow($job);
             } catch (\Exception $exception) {

@@ -1,12 +1,12 @@
 <?php
 
-namespace Pterodactyl\Tests\Integration\Api\Client;
+namespace App\Tests\Integration\Api\Client;
 
-use Pterodactyl\Models\User;
+use App\Models\User;
 use Illuminate\Http\Response;
-use Pterodactyl\Models\ApiKey;
+use App\Models\ApiKey;
 use Illuminate\Support\Facades\Event;
-use Pterodactyl\Events\ActivityLogged;
+use App\Events\ActivityLogged;
 
 class ApiKeyControllerTest extends ClientApiIntegrationTestCase
 {
@@ -25,9 +25,9 @@ class ApiKeyControllerTest extends ClientApiIntegrationTestCase
      */
     public function testApiKeysAreReturned()
     {
-        /** @var \Pterodactyl\Models\User $user */
+        /** @var \App\Models\User $user */
         $user = User::factory()->create();
-        /** @var \Pterodactyl\Models\ApiKey $key */
+        /** @var \App\Models\ApiKey $key */
         $key = ApiKey::factory()->for($user)->create([
             'key_type' => ApiKey::TYPE_ACCOUNT,
         ]);
@@ -49,7 +49,7 @@ class ApiKeyControllerTest extends ClientApiIntegrationTestCase
      */
     public function testApiKeyCanBeCreatedForAccount(array $data)
     {
-        /** @var \Pterodactyl\Models\User $user */
+        /** @var \App\Models\User $user */
         $user = User::factory()->create();
 
         // Small subtest to ensure we're always comparing the  number of keys to the
@@ -67,7 +67,7 @@ class ApiKeyControllerTest extends ClientApiIntegrationTestCase
             ->assertOk()
             ->assertJsonPath('object', ApiKey::RESOURCE_NAME);
 
-        /** @var \Pterodactyl\Models\ApiKey $key */
+        /** @var \App\Models\ApiKey $key */
         $key = ApiKey::query()->where('identifier', $response->json('attributes.identifier'))->firstOrFail();
 
         $this->assertJsonTransformedWith($response->json('attributes'), $key);
@@ -98,13 +98,10 @@ class ApiKeyControllerTest extends ClientApiIntegrationTestCase
     /**
      * Test that no more than 25 API keys can exist at any one time for an account. This prevents
      * a DoS attack vector against the panel.
-     *
-     * @see https://github.com/pterodactyl/panel/security/advisories/GHSA-pjmh-7xfm-r4x9
-     * @see https://github.com/pterodactyl/panel/issues/4394
      */
     public function testApiKeyLimitIsApplied()
     {
-        /** @var \Pterodactyl\Models\User $user */
+        /** @var \App\Models\User $user */
         $user = User::factory()->create();
         ApiKey::factory()->times(25)->for($user)->create([
             'key_type' => ApiKey::TYPE_ACCOUNT,
@@ -121,8 +118,6 @@ class ApiKeyControllerTest extends ClientApiIntegrationTestCase
 
     /**
      * Test that a bad request results in a validation error being returned by the API.
-     *
-     * @see https://github.com/pterodactyl/panel/issues/2457
      */
     public function testValidationErrorIsReturnedForBadRequests()
     {
@@ -160,9 +155,9 @@ class ApiKeyControllerTest extends ClientApiIntegrationTestCase
      */
     public function testApiKeyCanBeDeleted()
     {
-        /** @var \Pterodactyl\Models\User $user */
+        /** @var \App\Models\User $user */
         $user = User::factory()->create();
-        /** @var \Pterodactyl\Models\ApiKey $key */
+        /** @var \App\Models\ApiKey $key */
         $key = ApiKey::factory()->for($user)->create([
             'key_type' => ApiKey::TYPE_ACCOUNT,
         ]);
@@ -179,9 +174,9 @@ class ApiKeyControllerTest extends ClientApiIntegrationTestCase
      */
     public function testNonExistentApiKeyDeletionReturns404Error()
     {
-        /** @var \Pterodactyl\Models\User $user */
+        /** @var \App\Models\User $user */
         $user = User::factory()->create();
-        /** @var \Pterodactyl\Models\ApiKey $key */
+        /** @var \App\Models\ApiKey $key */
         $key = ApiKey::factory()->create([
             'user_id' => $user->id,
             'key_type' => ApiKey::TYPE_ACCOUNT,
@@ -200,11 +195,11 @@ class ApiKeyControllerTest extends ClientApiIntegrationTestCase
      */
     public function testApiKeyBelongingToAnotherUserCannotBeDeleted()
     {
-        /** @var \Pterodactyl\Models\User $user */
+        /** @var \App\Models\User $user */
         $user = User::factory()->create();
-        /** @var \Pterodactyl\Models\User $user2 */
+        /** @var \App\Models\User $user2 */
         $user2 = User::factory()->create();
-        /** @var \Pterodactyl\Models\ApiKey $key */
+        /** @var \App\Models\ApiKey $key */
         $key = ApiKey::factory()->for($user2)->create([
             'key_type' => ApiKey::TYPE_ACCOUNT,
         ]);
@@ -223,9 +218,9 @@ class ApiKeyControllerTest extends ClientApiIntegrationTestCase
      */
     public function testApplicationApiKeyCannotBeDeleted()
     {
-        /** @var \Pterodactyl\Models\User $user */
+        /** @var \App\Models\User $user */
         $user = User::factory()->create();
-        /** @var \Pterodactyl\Models\ApiKey $key */
+        /** @var \App\Models\ApiKey $key */
         $key = ApiKey::factory()->for($user)->create([
             'key_type' => ApiKey::TYPE_APPLICATION,
         ]);

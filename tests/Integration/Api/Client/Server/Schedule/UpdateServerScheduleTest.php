@@ -1,11 +1,11 @@
 <?php
 
-namespace Pterodactyl\Tests\Integration\Api\Client\Server\Schedule;
+namespace App\Tests\Integration\Api\Client\Server\Schedule;
 
-use Pterodactyl\Models\Schedule;
-use Pterodactyl\Helpers\Utilities;
-use Pterodactyl\Models\Permission;
-use Pterodactyl\Tests\Integration\Api\Client\ClientApiIntegrationTestCase;
+use App\Models\Schedule;
+use App\Helpers\Utilities;
+use App\Models\Permission;
+use App\Tests\Integration\Api\Client\ClientApiIntegrationTestCase;
 
 class UpdateServerScheduleTest extends ClientApiIntegrationTestCase
 {
@@ -31,7 +31,7 @@ class UpdateServerScheduleTest extends ClientApiIntegrationTestCase
     {
         [$user, $server] = $this->generateTestAccount($permissions);
 
-        /** @var \Pterodactyl\Models\Schedule $schedule */
+        /** @var \App\Models\Schedule $schedule */
         $schedule = Schedule::factory()->create(['server_id' => $server->id]);
         $expected = Utilities::getScheduleNextRunDate('5', '*', '*', '*', '*');
 
@@ -82,14 +82,12 @@ class UpdateServerScheduleTest extends ClientApiIntegrationTestCase
     /**
      * Test that the "is_processing" field gets reset to false when the schedule is enabled
      * or disabled so that an invalid state can be more easily fixed.
-     *
-     * @see https://github.com/pterodactyl/panel/issues/2425
      */
     public function testScheduleIsProcessingIsSetToFalseWhenActiveStateChanges()
     {
         [$user, $server] = $this->generateTestAccount();
 
-        /** @var \Pterodactyl\Models\Schedule $schedule */
+        /** @var \App\Models\Schedule $schedule */
         $schedule = Schedule::factory()->create([
             'server_id' => $server->id,
             'is_active' => true,

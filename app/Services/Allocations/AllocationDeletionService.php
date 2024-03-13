@@ -1,10 +1,10 @@
 <?php
 
-namespace Pterodactyl\Services\Allocations;
+namespace App\Services\Allocations;
 
-use Pterodactyl\Models\Allocation;
-use Pterodactyl\Contracts\Repository\AllocationRepositoryInterface;
-use Pterodactyl\Exceptions\Service\Allocation\ServerUsingAllocationException;
+use App\Models\Allocation;
+use App\Contracts\Repository\AllocationRepositoryInterface;
+use App\Exceptions\Service\Allocation\ServerUsingAllocationException;
 
 class AllocationDeletionService
 {
@@ -19,7 +19,7 @@ class AllocationDeletionService
      * Delete an allocation from the database only if it does not have a server
      * that is actively attached to it.
      *
-     * @throws \Pterodactyl\Exceptions\Service\Allocation\ServerUsingAllocationException
+     * @throws \App\Exceptions\Service\Allocation\ServerUsingAllocationException
      */
     public function handle(Allocation $allocation): int
     {

@@ -1,9 +1,9 @@
 <?php
 
-namespace Pterodactyl\Exceptions\Service\Server;
+namespace App\Exceptions\Service\Server;
 
-use Pterodactyl\Exceptions\PterodactylException;
+use App\Exceptions\PanelException;
 
-class RequiredVariableMissingException extends PterodactylException
+class RequiredVariableMissingException extends PanelException
 {
 }

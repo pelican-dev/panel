@@ -1,17 +1,17 @@
 <?php
 
-namespace Pterodactyl\Services\Helpers;
+namespace App\Services\Helpers;
 
 use Exception;
 use GuzzleHttp\Client;
 use Carbon\CarbonImmutable;
 use Illuminate\Support\Arr;
 use Illuminate\Contracts\Cache\Repository as CacheRepository;
-use Pterodactyl\Exceptions\Service\Helper\CdnVersionFetchingException;
+use App\Exceptions\Service\Helper\CdnVersionFetchingException;
 
 class SoftwareVersionService
 {
-    public const VERSION_CACHE_KEY = 'pterodactyl:versioning_data';
+    public const VERSION_CACHE_KEY = 'panel:versioning_data';
 
     private static array $result;
 
@@ -38,7 +38,7 @@ class SoftwareVersionService
      */
     public function getDaemon(): string
     {
-        return Arr::get(self::$result, 'wings') ?? 'error';
+        return Arr::get(self::$result, 'daemon') ?? 'error';
     }
 
     /**
@@ -46,15 +46,7 @@ class SoftwareVersionService
      */
     public function getDiscord(): string
     {
-        return Arr::get(self::$result, 'discord') ?? 'https://pterodactyl.io/discord';
-    }
-
-    /**
-     * Get the URL for donations.
-     */
-    public function getDonations(): string
-    {
-        return Arr::get(self::$result, 'donations') ?? 'https://github.com/sponsors/matthewpi';
+        return Arr::get(self::$result, 'discord') ?? 'https://example.com/discord';
     }
 
     /**
@@ -86,9 +78,9 @@ class SoftwareVersionService
      */
     protected function cacheVersionData(): array
     {
-        return $this->cache->remember(self::VERSION_CACHE_KEY, CarbonImmutable::now()->addMinutes(config('pterodactyl.cdn.cache_time', 60)), function () {
+        return $this->cache->remember(self::VERSION_CACHE_KEY, CarbonImmutable::now()->addMinutes(config('panel.cdn.cache_time', 60)), function () {
             try {
-                $response = $this->client->request('GET', config('pterodactyl.cdn.url'));
+                $response = $this->client->request('GET', config('panel.cdn.url'));
 
                 if ($response->getStatusCode() === 200) {
                     return json_decode($response->getBody(), true);
@@ -99,5 +91,10 @@ class SoftwareVersionService
                 return [];
             }
         });
+    }
+
+    public function getDonations(): string
+    {
+        return 'https://github.com';
     }
 }

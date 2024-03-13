@@ -1,10 +1,10 @@
 <?php
 
-namespace Pterodactyl\Services\Databases\Hosts;
+namespace App\Services\Databases\Hosts;
 
-use Pterodactyl\Exceptions\Service\HasActiveServersException;
-use Pterodactyl\Contracts\Repository\DatabaseRepositoryInterface;
-use Pterodactyl\Contracts\Repository\DatabaseHostRepositoryInterface;
+use App\Exceptions\Service\HasActiveServersException;
+use App\Contracts\Repository\DatabaseRepositoryInterface;
+use App\Contracts\Repository\DatabaseHostRepositoryInterface;
 
 class HostDeletionService
 {
@@ -21,7 +21,7 @@ class HostDeletionService
      * Delete a specified host from the Panel if no databases are
      * attached to it.
      *
-     * @throws \Pterodactyl\Exceptions\Service\HasActiveServersException
+     * @throws \App\Exceptions\Service\HasActiveServersException
      */
     public function handle(int $host): int
     {

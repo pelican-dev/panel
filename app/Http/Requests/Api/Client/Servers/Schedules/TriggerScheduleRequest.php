@@ -1,9 +1,9 @@
 <?php
 
-namespace Pterodactyl\Http\Requests\Api\Client\Servers\Schedules;
+namespace App\Http\Requests\Api\Client\Servers\Schedules;
 
-use Pterodactyl\Models\Permission;
-use Pterodactyl\Http\Requests\Api\Client\ClientApiRequest;
+use App\Models\Permission;
+use App\Http\Requests\Api\Client\ClientApiRequest;
 
 class TriggerScheduleRequest extends ClientApiRequest
 {

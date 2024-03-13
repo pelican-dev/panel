@@ -1,9 +1,9 @@
 <?php
 
-namespace Pterodactyl\Console\Commands\Node;
+namespace App\Console\Commands\Node;
 
 use Illuminate\Console\Command;
-use Pterodactyl\Services\Nodes\NodeCreationService;
+use App\Services\Nodes\NodeCreationService;
 
 class MakeNodeCommand extends Command
 {
@@ -21,8 +21,8 @@ class MakeNodeCommand extends Command
                             {--maxDisk= : Set the max disk amount.}
                             {--overallocateDisk= : Enter the amount of disk to overallocate (% or -1 to overallocate the maximum).}
                             {--uploadSize= : Enter the maximum upload filesize.}
-                            {--daemonListeningPort= : Enter the wings listening port.}
-                            {--daemonSFTPPort= : Enter the wings SFTP listening port.}
+                            {--daemonListeningPort= : Enter the daemon listening port.}
+                            {--daemonSFTPPort= : Enter the daemon SFTP listening port.}
                             {--daemonBase= : Enter the base folder.}';
 
     protected $description = 'Creates a new node on the system via the CLI.';
@@ -38,7 +38,7 @@ class MakeNodeCommand extends Command
     /**
      * Handle the command execution process.
      *
-     * @throws \Pterodactyl\Exceptions\Model\DataValidationException
+     * @throws \App\Exceptions\Model\DataValidationException
      */
     public function handle()
     {
@@ -59,9 +59,9 @@ class MakeNodeCommand extends Command
         $data['disk'] = $this->option('maxDisk') ?? $this->ask('Enter the maximum amount of disk space');
         $data['disk_overallocate'] = $this->option('overallocateDisk') ?? $this->ask('Enter the amount of memory to over allocate by, -1 will disable checking and 0 will prevent creating new server');
         $data['upload_size'] = $this->option('uploadSize') ?? $this->ask('Enter the maximum filesize upload', '100');
-        $data['daemonListen'] = $this->option('daemonListeningPort') ?? $this->ask('Enter the wings listening port', '8080');
-        $data['daemonSFTP'] = $this->option('daemonSFTPPort') ?? $this->ask('Enter the wings SFTP listening port', '2022');
-        $data['daemonBase'] = $this->option('daemonBase') ?? $this->ask('Enter the base folder', '/var/lib/pterodactyl/volumes');
+        $data['daemonListen'] = $this->option('daemonListeningPort') ?? $this->ask('Enter the daemon listening port', '8080');
+        $data['daemonSFTP'] = $this->option('daemonSFTPPort') ?? $this->ask('Enter the daemon SFTP listening port', '2022');
+        $data['daemonBase'] = $this->option('daemonBase') ?? $this->ask('Enter the base folder', '/var/lib/panel/volumes');
 
         $node = $this->creationService->handle($data);
         $this->line('Successfully created a new node on the location ' . $data['location_id'] . ' with the name ' . $data['name'] . ' and has an id of ' . $node->id . '.');

@@ -1,42 +1,42 @@
 <?php
 
-namespace Pterodactyl\Providers;
+namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
-use Pterodactyl\Repositories\Eloquent\EggRepository;
-use Pterodactyl\Repositories\Eloquent\NestRepository;
-use Pterodactyl\Repositories\Eloquent\NodeRepository;
-use Pterodactyl\Repositories\Eloquent\TaskRepository;
-use Pterodactyl\Repositories\Eloquent\UserRepository;
-use Pterodactyl\Repositories\Eloquent\ApiKeyRepository;
-use Pterodactyl\Repositories\Eloquent\ServerRepository;
-use Pterodactyl\Repositories\Eloquent\SessionRepository;
-use Pterodactyl\Repositories\Eloquent\SubuserRepository;
-use Pterodactyl\Repositories\Eloquent\DatabaseRepository;
-use Pterodactyl\Repositories\Eloquent\LocationRepository;
-use Pterodactyl\Repositories\Eloquent\ScheduleRepository;
-use Pterodactyl\Repositories\Eloquent\SettingsRepository;
-use Pterodactyl\Repositories\Eloquent\AllocationRepository;
-use Pterodactyl\Contracts\Repository\EggRepositoryInterface;
-use Pterodactyl\Repositories\Eloquent\EggVariableRepository;
-use Pterodactyl\Contracts\Repository\NestRepositoryInterface;
-use Pterodactyl\Contracts\Repository\NodeRepositoryInterface;
-use Pterodactyl\Contracts\Repository\TaskRepositoryInterface;
-use Pterodactyl\Contracts\Repository\UserRepositoryInterface;
-use Pterodactyl\Repositories\Eloquent\DatabaseHostRepository;
-use Pterodactyl\Contracts\Repository\ApiKeyRepositoryInterface;
-use Pterodactyl\Contracts\Repository\ServerRepositoryInterface;
-use Pterodactyl\Repositories\Eloquent\ServerVariableRepository;
-use Pterodactyl\Contracts\Repository\SessionRepositoryInterface;
-use Pterodactyl\Contracts\Repository\SubuserRepositoryInterface;
-use Pterodactyl\Contracts\Repository\DatabaseRepositoryInterface;
-use Pterodactyl\Contracts\Repository\LocationRepositoryInterface;
-use Pterodactyl\Contracts\Repository\ScheduleRepositoryInterface;
-use Pterodactyl\Contracts\Repository\SettingsRepositoryInterface;
-use Pterodactyl\Contracts\Repository\AllocationRepositoryInterface;
-use Pterodactyl\Contracts\Repository\EggVariableRepositoryInterface;
-use Pterodactyl\Contracts\Repository\DatabaseHostRepositoryInterface;
-use Pterodactyl\Contracts\Repository\ServerVariableRepositoryInterface;
+use App\Repositories\Eloquent\EggRepository;
+use App\Repositories\Eloquent\NestRepository;
+use App\Repositories\Eloquent\NodeRepository;
+use App\Repositories\Eloquent\TaskRepository;
+use App\Repositories\Eloquent\UserRepository;
+use App\Repositories\Eloquent\ApiKeyRepository;
+use App\Repositories\Eloquent\ServerRepository;
+use App\Repositories\Eloquent\SessionRepository;
+use App\Repositories\Eloquent\SubuserRepository;
+use App\Repositories\Eloquent\DatabaseRepository;
+use App\Repositories\Eloquent\LocationRepository;
+use App\Repositories\Eloquent\ScheduleRepository;
+use App\Repositories\Eloquent\SettingsRepository;
+use App\Repositories\Eloquent\AllocationRepository;
+use App\Contracts\Repository\EggRepositoryInterface;
+use App\Repositories\Eloquent\EggVariableRepository;
+use App\Contracts\Repository\NestRepositoryInterface;
+use App\Contracts\Repository\NodeRepositoryInterface;
+use App\Contracts\Repository\TaskRepositoryInterface;
+use App\Contracts\Repository\UserRepositoryInterface;
+use App\Repositories\Eloquent\DatabaseHostRepository;
+use App\Contracts\Repository\ApiKeyRepositoryInterface;
+use App\Contracts\Repository\ServerRepositoryInterface;
+use App\Repositories\Eloquent\ServerVariableRepository;
+use App\Contracts\Repository\SessionRepositoryInterface;
+use App\Contracts\Repository\SubuserRepositoryInterface;
+use App\Contracts\Repository\DatabaseRepositoryInterface;
+use App\Contracts\Repository\LocationRepositoryInterface;
+use App\Contracts\Repository\ScheduleRepositoryInterface;
+use App\Contracts\Repository\SettingsRepositoryInterface;
+use App\Contracts\Repository\AllocationRepositoryInterface;
+use App\Contracts\Repository\EggVariableRepositoryInterface;
+use App\Contracts\Repository\DatabaseHostRepositoryInterface;
+use App\Contracts\Repository\ServerVariableRepositoryInterface;
 
 class RepositoryServiceProvider extends ServiceProvider
 {

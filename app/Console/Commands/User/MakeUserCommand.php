@@ -1,9 +1,9 @@
 <?php
 
-namespace Pterodactyl\Console\Commands\User;
+namespace App\Console\Commands\User;
 
 use Illuminate\Console\Command;
-use Pterodactyl\Services\Users\UserCreationService;
+use App\Services\Users\UserCreationService;
 
 class MakeUserCommand extends Command
 {
@@ -23,7 +23,7 @@ class MakeUserCommand extends Command
      * Handle command request to create a new user.
      *
      * @throws \Exception
-     * @throws \Pterodactyl\Exceptions\Model\DataValidationException
+     * @throws \App\Exceptions\Model\DataValidationException
      */
     public function handle()
     {

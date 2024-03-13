@@ -1,6 +1,6 @@
 <?php
 
-namespace Pterodactyl\Extensions\Backups;
+namespace App\Extensions\Backups;
 
 use Closure;
 use Aws\S3\S3Client;
@@ -9,7 +9,7 @@ use Illuminate\Support\Str;
 use Webmozart\Assert\Assert;
 use Illuminate\Foundation\Application;
 use League\Flysystem\FilesystemAdapter;
-use Pterodactyl\Extensions\Filesystem\S3Filesystem;
+use App\Extensions\Filesystem\S3Filesystem;
 use League\Flysystem\InMemory\InMemoryFilesystemAdapter;
 use Illuminate\Contracts\Config\Repository as ConfigRepository;
 
@@ -99,9 +99,9 @@ class BackupManager
     }
 
     /**
-     * Creates a new Wings adapter.
+     * Creates a new daemon adapter.
      */
-    public function createWingsAdapter(array $config): FilesystemAdapter
+    public function createDaemonAdapter(array $config): FilesystemAdapter
     {
         return new InMemoryFilesystemAdapter();
     }

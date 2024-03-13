@@ -1,16 +1,16 @@
 <?php
 
-namespace Pterodactyl\Http\Controllers\Api\Client\Servers;
+namespace App\Http\Controllers\Api\Client\Servers;
 
-use Pterodactyl\Models\Server;
-use Pterodactyl\Facades\Activity;
-use Pterodactyl\Services\Servers\StartupCommandService;
-use Pterodactyl\Repositories\Eloquent\ServerVariableRepository;
-use Pterodactyl\Transformers\Api\Client\EggVariableTransformer;
-use Pterodactyl\Http\Controllers\Api\Client\ClientApiController;
+use App\Models\Server;
+use App\Facades\Activity;
+use App\Services\Servers\StartupCommandService;
+use App\Repositories\Eloquent\ServerVariableRepository;
+use App\Transformers\Api\Client\EggVariableTransformer;
+use App\Http\Controllers\Api\Client\ClientApiController;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
-use Pterodactyl\Http\Requests\Api\Client\Servers\Startup\GetStartupRequest;
-use Pterodactyl\Http\Requests\Api\Client\Servers\Startup\UpdateStartupVariableRequest;
+use App\Http\Requests\Api\Client\Servers\Startup\GetStartupRequest;
+use App\Http\Requests\Api\Client\Servers\Startup\UpdateStartupVariableRequest;
 
 class StartupController extends ClientApiController
 {
@@ -47,12 +47,12 @@ class StartupController extends ClientApiController
      * Updates a single variable for a server.
      *
      * @throws \Illuminate\Validation\ValidationException
-     * @throws \Pterodactyl\Exceptions\Model\DataValidationException
-     * @throws \Pterodactyl\Exceptions\Repository\RecordNotFoundException
+     * @throws \App\Exceptions\Model\DataValidationException
+     * @throws \App\Exceptions\Repository\RecordNotFoundException
      */
     public function update(UpdateStartupVariableRequest $request, Server $server): array
     {
-        /** @var \Pterodactyl\Models\EggVariable $variable */
+        /** @var \App\Models\EggVariable $variable */
         $variable = $server->variables()->where('env_variable', $request->input('key'))->first();
         $original = $variable->server_value;
 

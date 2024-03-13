@@ -1,8 +1,8 @@
 <?php
 
-namespace Pterodactyl\Http\Requests\Admin\Nest;
+namespace App\Http\Requests\Admin\Nest;
 
-use Pterodactyl\Http\Requests\Admin\AdminFormRequest;
+use App\Http\Requests\Admin\AdminFormRequest;
 
 class StoreNestFormRequest extends AdminFormRequest
 {

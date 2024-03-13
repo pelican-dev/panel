@@ -4,7 +4,7 @@ namespace Database\Factories;
 
 use Ramsey\Uuid\Uuid;
 use Carbon\CarbonImmutable;
-use Pterodactyl\Models\Backup;
+use App\Models\Backup;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class BackupFactory extends Factory
@@ -24,7 +24,7 @@ class BackupFactory extends Factory
         return [
             'uuid' => Uuid::uuid4()->toString(),
             'name' => $this->faker->sentence,
-            'disk' => Backup::ADAPTER_WINGS,
+            'disk' => Backup::ADAPTER_DAEMON,
             'is_successful' => true,
             'created_at' => CarbonImmutable::now(),
             'completed_at' => CarbonImmutable::now(),

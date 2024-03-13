@@ -55,7 +55,7 @@
                     <label class="control-label">Author</label>
                     <div>
                         <input type="text" readonly class="form-control" value="{{ $nest->author }}" />
-                        <p class="text-muted small">The author of this service option. Please direct questions and issues to them unless this is an official option authored by <code>support@pterodactyl.io</code>.</p>
+                        <p class="text-muted small">The author of this service option. Please direct questions and issues to them unless this is an official option authored by <code>panel@example.com</code>.</p>
                     </div>
                 </div>
                 <div class="form-group">

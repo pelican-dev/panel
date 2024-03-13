@@ -1,9 +1,9 @@
 <?php
 
-namespace Pterodactyl\Http\ViewComposers;
+namespace App\Http\ViewComposers;
 
 use Illuminate\View\View;
-use Pterodactyl\Services\Helpers\AssetHashService;
+use App\Services\Helpers\AssetHashService;
 
 class AssetComposer
 {
@@ -21,7 +21,7 @@ class AssetComposer
     {
         $view->with('asset', $this->assetHashService);
         $view->with('siteConfiguration', [
-            'name' => config('app.name') ?? 'Pterodactyl',
+            'name' => config('app.name', 'Panel'),
             'locale' => config('app.locale') ?? 'en',
             'recaptcha' => [
                 'enabled' => config('recaptcha.enabled', false),

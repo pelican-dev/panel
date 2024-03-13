@@ -1,12 +1,12 @@
 <?php
 
-namespace Pterodactyl\Repositories\Eloquent;
+namespace App\Repositories\Eloquent;
 
-use Pterodactyl\Models\Location;
+use App\Models\Location;
 use Illuminate\Support\Collection;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
-use Pterodactyl\Exceptions\Repository\RecordNotFoundException;
-use Pterodactyl\Contracts\Repository\LocationRepositoryInterface;
+use App\Exceptions\Repository\RecordNotFoundException;
+use App\Contracts\Repository\LocationRepositoryInterface;
 
 class LocationRepository extends EloquentRepository implements LocationRepositoryInterface
 {
@@ -37,7 +37,7 @@ class LocationRepository extends EloquentRepository implements LocationRepositor
     /**
      * Return all the nodes and their respective count of servers for a location.
      *
-     * @throws \Pterodactyl\Exceptions\Repository\RecordNotFoundException
+     * @throws \App\Exceptions\Repository\RecordNotFoundException
      */
     public function getWithNodes(int $id): Location
     {
@@ -51,7 +51,7 @@ class LocationRepository extends EloquentRepository implements LocationRepositor
     /**
      * Return a location and the count of nodes in that location.
      *
-     * @throws \Pterodactyl\Exceptions\Repository\RecordNotFoundException
+     * @throws \App\Exceptions\Repository\RecordNotFoundException
      */
     public function getWithNodeCount(int $id): Location
     {

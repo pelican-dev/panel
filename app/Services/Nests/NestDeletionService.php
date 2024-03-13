@@ -1,10 +1,10 @@
 <?php
 
-namespace Pterodactyl\Services\Nests;
+namespace App\Services\Nests;
 
-use Pterodactyl\Contracts\Repository\NestRepositoryInterface;
-use Pterodactyl\Exceptions\Service\HasActiveServersException;
-use Pterodactyl\Contracts\Repository\ServerRepositoryInterface;
+use App\Contracts\Repository\NestRepositoryInterface;
+use App\Exceptions\Service\HasActiveServersException;
+use App\Contracts\Repository\ServerRepositoryInterface;
 
 class NestDeletionService
 {
@@ -20,7 +20,7 @@ class NestDeletionService
     /**
      * Delete a nest from the system only if there are no servers attached to it.
      *
-     * @throws \Pterodactyl\Exceptions\Service\HasActiveServersException
+     * @throws \App\Exceptions\Service\HasActiveServersException
      */
     public function handle(int $nest): int
     {

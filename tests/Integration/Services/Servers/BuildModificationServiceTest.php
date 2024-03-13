@@ -1,18 +1,18 @@
 <?php
 
-namespace Pterodactyl\Tests\Integration\Services\Servers;
+namespace App\Tests\Integration\Services\Servers;
 
 use Mockery\MockInterface;
 use GuzzleHttp\Psr7\Request;
 use GuzzleHttp\Psr7\Response;
-use Pterodactyl\Models\Server;
-use Pterodactyl\Models\Allocation;
+use App\Models\Server;
+use App\Models\Allocation;
 use GuzzleHttp\Exception\RequestException;
-use Pterodactyl\Exceptions\DisplayException;
-use Pterodactyl\Tests\Integration\IntegrationTestCase;
-use Pterodactyl\Repositories\Wings\DaemonServerRepository;
-use Pterodactyl\Services\Servers\BuildModificationService;
-use Pterodactyl\Exceptions\Http\Connection\DaemonConnectionException;
+use App\Exceptions\DisplayException;
+use App\Tests\Integration\IntegrationTestCase;
+use App\Repositories\Daemon\DaemonServerRepository;
+use App\Services\Servers\BuildModificationService;
+use App\Exceptions\Http\Connection\DaemonConnectionException;
 
 class BuildModificationServiceTest extends IntegrationTestCase
 {
@@ -37,7 +37,7 @@ class BuildModificationServiceTest extends IntegrationTestCase
         $server = $this->createServerModel();
         $server2 = $this->createServerModel();
 
-        /** @var \Pterodactyl\Models\Allocation[] $allocations */
+        /** @var \App\Models\Allocation[] $allocations */
         $allocations = Allocation::factory()->times(4)->create(['node_id' => $server->node_id, 'notes' => 'Random notes']);
 
         $initialAllocationId = $server->allocation_id;
@@ -84,7 +84,7 @@ class BuildModificationServiceTest extends IntegrationTestCase
     public function testExceptionIsThrownIfRemovingTheDefaultAllocation()
     {
         $server = $this->createServerModel();
-        /** @var \Pterodactyl\Models\Allocation[] $allocations */
+        /** @var \App\Models\Allocation[] $allocations */
         $allocations = Allocation::factory()->times(4)->create(['node_id' => $server->node_id]);
 
         $allocations[0]->update(['server_id' => $server->id]);
@@ -99,11 +99,11 @@ class BuildModificationServiceTest extends IntegrationTestCase
     }
 
     /**
-     * Test that the build data for the server is properly passed along to the Wings instance so that
+     * Test that the build data for the server is properly passed along to the daemon instance so that
      * the server data is updated in realtime. This test also ensures that only certain fields get updated
      * for the server, and not just any arbitrary field.
      */
-    public function testServerBuildDataIsProperlyUpdatedOnWings()
+    public function testServerBuildDataIsProperlyUpdatedOndaemon()
     {
         $server = $this->createServerModel();
 
@@ -139,8 +139,8 @@ class BuildModificationServiceTest extends IntegrationTestCase
     }
 
     /**
-     * Test that an exception when connecting to the Wings instance is properly ignored
-     * when making updates. This allows for a server to be modified even when the Wings
+     * Test that an exception when connecting to the Daemon instance is properly ignored
+     * when making updates. This allows for a server to be modified even when the Daemon
      * node is offline.
      */
     public function testConnectionExceptionIsIgnoredWhenUpdatingServerSettings()
@@ -168,7 +168,7 @@ class BuildModificationServiceTest extends IntegrationTestCase
     public function testNoExceptionIsThrownIfOnlyRemovingAllocation()
     {
         $server = $this->createServerModel();
-        /** @var \Pterodactyl\Models\Allocation $allocation */
+        /** @var \App\Models\Allocation $allocation */
         $allocation = Allocation::factory()->create(['node_id' => $server->node_id, 'server_id' => $server->id]);
 
         $this->daemonServerRepository->expects('setServer->sync')->andReturnUndefined();
@@ -191,7 +191,7 @@ class BuildModificationServiceTest extends IntegrationTestCase
     public function testAllocationInBothAddAndRemoveIsAdded()
     {
         $server = $this->createServerModel();
-        /** @var \Pterodactyl\Models\Allocation $allocation */
+        /** @var \App\Models\Allocation $allocation */
         $allocation = Allocation::factory()->create(['node_id' => $server->node_id]);
 
         $this->daemonServerRepository->expects('setServer->sync')->andReturnUndefined();
@@ -210,9 +210,9 @@ class BuildModificationServiceTest extends IntegrationTestCase
     public function testUsingSameAllocationIdMultipleTimesDoesNotError()
     {
         $server = $this->createServerModel();
-        /** @var \Pterodactyl\Models\Allocation $allocation */
+        /** @var \App\Models\Allocation $allocation */
         $allocation = Allocation::factory()->create(['node_id' => $server->node_id, 'server_id' => $server->id]);
-        /** @var \Pterodactyl\Models\Allocation $allocation2 */
+        /** @var \App\Models\Allocation $allocation2 */
         $allocation2 = Allocation::factory()->create(['node_id' => $server->node_id]);
 
         $this->daemonServerRepository->expects('setServer->sync')->andReturnUndefined();
@@ -235,7 +235,7 @@ class BuildModificationServiceTest extends IntegrationTestCase
     public function testThatUpdatesAreRolledBackIfExceptionIsEncountered()
     {
         $server = $this->createServerModel();
-        /** @var \Pterodactyl\Models\Allocation $allocation */
+        /** @var \App\Models\Allocation $allocation */
         $allocation = Allocation::factory()->create(['node_id' => $server->node_id]);
 
         $this->daemonServerRepository->expects('setServer->sync')->andThrows(new DisplayException('Test'));

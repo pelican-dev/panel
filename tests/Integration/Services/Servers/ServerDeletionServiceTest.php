@@ -1,18 +1,18 @@
 <?php
 
-namespace Pterodactyl\Tests\Integration\Services\Servers;
+namespace App\Tests\Integration\Services\Servers;
 
 use Mockery\MockInterface;
 use GuzzleHttp\Psr7\Request;
 use GuzzleHttp\Psr7\Response;
-use Pterodactyl\Models\Database;
-use Pterodactyl\Models\DatabaseHost;
+use App\Models\Database;
+use App\Models\DatabaseHost;
 use GuzzleHttp\Exception\BadResponseException;
-use Pterodactyl\Tests\Integration\IntegrationTestCase;
-use Pterodactyl\Services\Servers\ServerDeletionService;
-use Pterodactyl\Repositories\Wings\DaemonServerRepository;
-use Pterodactyl\Services\Databases\DatabaseManagementService;
-use Pterodactyl\Exceptions\Http\Connection\DaemonConnectionException;
+use App\Tests\Integration\IntegrationTestCase;
+use App\Services\Servers\ServerDeletionService;
+use App\Repositories\Daemon\DaemonServerRepository;
+use App\Services\Databases\DatabaseManagementService;
+use App\Exceptions\Http\Connection\DaemonConnectionException;
 
 class ServerDeletionServiceTest extends IntegrationTestCase
 {
@@ -53,9 +53,9 @@ class ServerDeletionServiceTest extends IntegrationTestCase
 
     /**
      * Test that a server is not deleted if the force option is not set and an error
-     * is returned by wings.
+     * is returned by daemon.
      */
-    public function testRegularDeleteFailsIfWingsReturnsError()
+    public function testRegularDeleteFailsIfDaemonReturnsError()
     {
         $server = $this->createServerModel();
 
@@ -71,9 +71,9 @@ class ServerDeletionServiceTest extends IntegrationTestCase
     }
 
     /**
-     * Test that a 404 from Wings while deleting a server does not cause the deletion to fail.
+     * Test that a 404 from Daemon while deleting a server does not cause the deletion to fail.
      */
-    public function testRegularDeleteIgnores404FromWings()
+    public function testRegularDeleteIgnores404FromDaemon()
     {
         $server = $this->createServerModel();
 
@@ -87,10 +87,10 @@ class ServerDeletionServiceTest extends IntegrationTestCase
     }
 
     /**
-     * Test that an error from Wings does not cause the deletion to fail if the server is being
+     * Test that an error from Daemon does not cause the deletion to fail if the server is being
      * force deleted.
      */
-    public function testForceDeleteIgnoresExceptionFromWings()
+    public function testForceDeleteIgnoresExceptionFromDaemon()
     {
         $server = $this->createServerModel();
 
@@ -112,7 +112,7 @@ class ServerDeletionServiceTest extends IntegrationTestCase
         $server = $this->createServerModel();
         $host = DatabaseHost::factory()->create();
 
-        /** @var \Pterodactyl\Models\Database $db */
+        /** @var \App\Models\Database $db */
         $db = Database::factory()->create(['database_host_id' => $host->id, 'server_id' => $server->id]);
 
         $server->refresh();
@@ -137,7 +137,7 @@ class ServerDeletionServiceTest extends IntegrationTestCase
         $server = $this->createServerModel();
         $host = DatabaseHost::factory()->create();
 
-        /** @var \Pterodactyl\Models\Database $db */
+        /** @var \App\Models\Database $db */
         $db = Database::factory()->create(['database_host_id' => $host->id, 'server_id' => $server->id]);
 
         $server->refresh();

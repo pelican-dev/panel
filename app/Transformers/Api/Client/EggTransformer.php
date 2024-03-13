@@ -1,8 +1,8 @@
 <?php
 
-namespace Pterodactyl\Transformers\Api\Client;
+namespace App\Transformers\Api\Client;
 
-use Pterodactyl\Models\Egg;
+use App\Models\Egg;
 
 class EggTransformer extends BaseClientTransformer
 {

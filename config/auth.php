@@ -6,7 +6,7 @@ return [
     | Lockout Configuration
     |--------------------------------------------------------------------------
     |
-    | These options are Pterodactyl specific and allow you to configure how
+    | These options are Panel specific and allow you to configure how
     | long a user should be locked out for if they input a username or
     | password incorrectly.
     |
@@ -81,7 +81,7 @@ return [
     'providers' => [
         'users' => [
             'driver' => 'eloquent',
-            'model' => Pterodactyl\Models\User::class,
+            'model' => App\Models\User::class,
         ],
     ],
 

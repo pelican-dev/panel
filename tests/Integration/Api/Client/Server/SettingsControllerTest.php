@@ -1,12 +1,12 @@
 <?php
 
-namespace Pterodactyl\Tests\Integration\Api\Client\Server;
+namespace App\Tests\Integration\Api\Client\Server;
 
 use Illuminate\Http\Response;
-use Pterodactyl\Models\Server;
-use Pterodactyl\Models\Permission;
-use Pterodactyl\Repositories\Wings\DaemonServerRepository;
-use Pterodactyl\Tests\Integration\Api\Client\ClientApiIntegrationTestCase;
+use App\Models\Server;
+use App\Models\Permission;
+use App\Repositories\Daemon\DaemonServerRepository;
+use App\Tests\Integration\Api\Client\ClientApiIntegrationTestCase;
 
 class SettingsControllerTest extends ClientApiIntegrationTestCase
 {
@@ -17,7 +17,7 @@ class SettingsControllerTest extends ClientApiIntegrationTestCase
      */
     public function testServerNameCanBeChanged(array $permissions)
     {
-        /** @var \Pterodactyl\Models\Server $server */
+        /** @var \App\Models\Server $server */
         [$user, $server] = $this->generateTestAccount($permissions);
         $originalName = $server->name;
         $originalDescription = $server->description;
@@ -73,7 +73,7 @@ class SettingsControllerTest extends ClientApiIntegrationTestCase
      */
     public function testServerCanBeReinstalled(array $permissions)
     {
-        /** @var \Pterodactyl\Models\Server $server */
+        /** @var \App\Models\Server $server */
         [$user, $server] = $this->generateTestAccount($permissions);
         $this->assertTrue($server->isInstalled());
 

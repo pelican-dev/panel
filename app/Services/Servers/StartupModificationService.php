@@ -1,14 +1,14 @@
 <?php
 
-namespace Pterodactyl\Services\Servers;
+namespace App\Services\Servers;
 
 use Illuminate\Support\Arr;
-use Pterodactyl\Models\Egg;
-use Pterodactyl\Models\User;
-use Pterodactyl\Models\Server;
-use Pterodactyl\Models\ServerVariable;
+use App\Models\Egg;
+use App\Models\User;
+use App\Models\Server;
+use App\Models\ServerVariable;
 use Illuminate\Database\ConnectionInterface;
-use Pterodactyl\Traits\Services\HasUserLevels;
+use App\Traits\Services\HasUserLevels;
 
 class StartupModificationService
 {
@@ -56,7 +56,7 @@ class StartupModificationService
             // in more to figure it out, but luckily we have a test case covering this
             // specific call so we can be assured we're not breaking it _here_ at least.
             //
-            // TODO(dane): this seems like a red-flag for the code powering the relationship
+            // TODO: this seems like a red-flag for the code powering the relationship
             //  that should be looked into more.
             return $server->fresh();
         });
@@ -70,7 +70,7 @@ class StartupModificationService
         $eggId = Arr::get($data, 'egg_id');
 
         if (is_digit($eggId) && $server->egg_id !== (int) $eggId) {
-            /** @var \Pterodactyl\Models\Egg $egg */
+            /** @var \App\Models\Egg $egg */
             $egg = Egg::query()->findOrFail($data['egg_id']);
 
             $server = $server->forceFill([

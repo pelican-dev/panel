@@ -1,10 +1,10 @@
 <?php
 
-namespace Pterodactyl\Traits\Services;
+namespace App\Traits\Services;
 
 use Illuminate\Support\Str;
 use Illuminate\Contracts\Validation\Factory as ValidationFactory;
-use Pterodactyl\Exceptions\Service\Egg\Variable\BadValidationRuleException;
+use App\Exceptions\Service\Egg\Variable\BadValidationRuleException;
 
 trait ValidatesValidationRules
 {
@@ -14,7 +14,7 @@ trait ValidatesValidationRules
      * Validate that the rules being provided are valid for Laravel and can
      * be resolved.
      *
-     * @throws \Pterodactyl\Exceptions\Service\Egg\Variable\BadValidationRuleException
+     * @throws \App\Exceptions\Service\Egg\Variable\BadValidationRuleException
      */
     public function validateRules(array|string $rules): void
     {

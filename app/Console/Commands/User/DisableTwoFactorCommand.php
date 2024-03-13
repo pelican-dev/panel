@@ -1,9 +1,9 @@
 <?php
 
-namespace Pterodactyl\Console\Commands\User;
+namespace App\Console\Commands\User;
 
 use Illuminate\Console\Command;
-use Pterodactyl\Contracts\Repository\UserRepositoryInterface;
+use App\Contracts\Repository\UserRepositoryInterface;
 
 class DisableTwoFactorCommand extends Command
 {
@@ -22,8 +22,8 @@ class DisableTwoFactorCommand extends Command
     /**
      * Handle command execution process.
      *
-     * @throws \Pterodactyl\Exceptions\Model\DataValidationException
-     * @throws \Pterodactyl\Exceptions\Repository\RecordNotFoundException
+     * @throws \App\Exceptions\Model\DataValidationException
+     * @throws \App\Exceptions\Repository\RecordNotFoundException
      */
     public function handle()
     {

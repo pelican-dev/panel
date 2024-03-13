@@ -1,16 +1,16 @@
 <?php
 
-namespace Pterodactyl\Tests\Integration\Api\Client\Server;
+namespace App\Tests\Integration\Api\Client\Server;
 
 use GuzzleHttp\Psr7\Request;
 use Illuminate\Http\Response;
-use Pterodactyl\Models\Server;
-use Pterodactyl\Models\Permission;
+use App\Models\Server;
+use App\Models\Permission;
 use GuzzleHttp\Exception\BadResponseException;
 use GuzzleHttp\Psr7\Response as GuzzleResponse;
-use Pterodactyl\Repositories\Wings\DaemonCommandRepository;
-use Pterodactyl\Exceptions\Http\Connection\DaemonConnectionException;
-use Pterodactyl\Tests\Integration\Api\Client\ClientApiIntegrationTestCase;
+use App\Repositories\Daemon\DaemonCommandRepository;
+use App\Exceptions\Http\Connection\DaemonConnectionException;
+use App\Tests\Integration\Api\Client\ClientApiIntegrationTestCase;
 
 class CommandControllerTest extends ClientApiIntegrationTestCase
 {

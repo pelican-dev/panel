@@ -1,19 +1,19 @@
 <?php
 
-namespace Pterodactyl\Jobs\Schedule;
+namespace App\Jobs\Schedule;
 
 use Exception;
-use Pterodactyl\Jobs\Job;
+use App\Jobs\Job;
 use Carbon\CarbonImmutable;
-use Pterodactyl\Models\Task;
+use App\Models\Task;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\DispatchesJobs;
-use Pterodactyl\Services\Backups\InitiateBackupService;
-use Pterodactyl\Repositories\Wings\DaemonPowerRepository;
-use Pterodactyl\Repositories\Wings\DaemonCommandRepository;
-use Pterodactyl\Exceptions\Http\Connection\DaemonConnectionException;
+use App\Services\Backups\InitiateBackupService;
+use App\Repositories\Daemon\DaemonPowerRepository;
+use App\Repositories\Daemon\DaemonCommandRepository;
+use App\Exceptions\Http\Connection\DaemonConnectionException;
 
 class RunTaskJob extends Job implements ShouldQueue
 {
@@ -99,7 +99,7 @@ class RunTaskJob extends Job implements ShouldQueue
      */
     private function queueNextTask()
     {
-        /** @var \Pterodactyl\Models\Task|null $nextTask */
+        /** @var \App\Models\Task|null $nextTask */
         $nextTask = Task::query()->where('schedule_id', $this->task->schedule_id)
             ->orderBy('sequence_id', 'asc')
             ->where('sequence_id', '>', $this->task->sequence_id)

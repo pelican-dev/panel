@@ -1,6 +1,6 @@
 <?php
 
-namespace Pterodactyl\Http\Controllers\Auth;
+namespace App\Http\Controllers\Auth;
 
 use Illuminate\Support\Str;
 use Illuminate\Http\JsonResponse;
@@ -8,11 +8,11 @@ use Illuminate\Contracts\Hashing\Hasher;
 use Illuminate\Support\Facades\Password;
 use Illuminate\Auth\Events\PasswordReset;
 use Illuminate\Contracts\Events\Dispatcher;
-use Pterodactyl\Exceptions\DisplayException;
-use Pterodactyl\Http\Controllers\Controller;
+use App\Exceptions\DisplayException;
+use App\Http\Controllers\Controller;
 use Illuminate\Foundation\Auth\ResetsPasswords;
-use Pterodactyl\Http\Requests\Auth\ResetPasswordRequest;
-use Pterodactyl\Contracts\Repository\UserRepositoryInterface;
+use App\Http\Requests\Auth\ResetPasswordRequest;
+use App\Contracts\Repository\UserRepositoryInterface;
 
 class ResetPasswordController extends Controller
 {
@@ -38,7 +38,7 @@ class ResetPasswordController extends Controller
     /**
      * Reset the given user's password.
      *
-     * @throws \Pterodactyl\Exceptions\DisplayException
+     * @throws \App\Exceptions\DisplayException
      */
     public function __invoke(ResetPasswordRequest $request): JsonResponse
     {
@@ -67,11 +67,11 @@ class ResetPasswordController extends Controller
      * account do not automatically log them in. In those cases, send the user back to the login
      * form with a note telling them their password was changed and to log back in.
      *
-     * @param \Illuminate\Contracts\Auth\CanResetPassword|\Pterodactyl\Models\User $user
+     * @param \Illuminate\Contracts\Auth\CanResetPassword|\App\Models\User $user
      * @param string $password
      *
-     * @throws \Pterodactyl\Exceptions\Model\DataValidationException
-     * @throws \Pterodactyl\Exceptions\Repository\RecordNotFoundException
+     * @throws \App\Exceptions\Model\DataValidationException
+     * @throws \App\Exceptions\Repository\RecordNotFoundException
      */
     protected function resetPassword($user, $password)
     {

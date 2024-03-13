@@ -1,6 +1,6 @@
 <?php
 
-namespace Pterodactyl\Extensions\Themes;
+namespace App\Extensions\Themes;
 
 class Theme
 {
@@ -16,6 +16,6 @@ class Theme
 
     protected function getUrl($path): string
     {
-        return '/themes/pterodactyl/' . ltrim($path, '/');
+        return '/themes/panel/' . ltrim($path, '/');
     }
 }

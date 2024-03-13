@@ -1,19 +1,19 @@
 <?php
 
-namespace Pterodactyl\Repositories\Eloquent;
+namespace App\Repositories\Eloquent;
 
 use Illuminate\Http\Request;
 use Webmozart\Assert\Assert;
 use Illuminate\Support\Collection;
 use Illuminate\Database\Eloquent\Model;
-use Pterodactyl\Repositories\Repository;
+use App\Repositories\Repository;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Query\Expression;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
-use Pterodactyl\Contracts\Repository\RepositoryInterface;
-use Pterodactyl\Exceptions\Model\DataValidationException;
-use Pterodactyl\Exceptions\Repository\RecordNotFoundException;
+use App\Contracts\Repository\RepositoryInterface;
+use App\Exceptions\Model\DataValidationException;
+use App\Exceptions\Repository\RecordNotFoundException;
 
 abstract class EloquentRepository extends Repository implements RepositoryInterface
 {
@@ -22,7 +22,7 @@ abstract class EloquentRepository extends Repository implements RepositoryInterf
     /**
      * Determines if the repository function should use filters off the request object
      * present when returning results. This allows repository methods to be called in API
-     * context's such that we can pass through ?filter[name]=Dane&sort=desc for example.
+     * context's such that we can pass through ?filter[name]=Lance&sort=desc for example.
      */
     public function usingRequestFilters(bool $usingFilters = true): self
     {
@@ -71,7 +71,7 @@ abstract class EloquentRepository extends Repository implements RepositoryInterf
     /**
      * Create a new record in the database and return the associated model.
      *
-     * @throws \Pterodactyl\Exceptions\Model\DataValidationException
+     * @throws \App\Exceptions\Model\DataValidationException
      */
     public function create(array $fields, bool $validate = true, bool $force = false): Model|bool
     {
@@ -92,7 +92,7 @@ abstract class EloquentRepository extends Repository implements RepositoryInterf
     /**
      * Find a model that has the specific ID passed.
      *
-     * @throws \Pterodactyl\Exceptions\Repository\RecordNotFoundException
+     * @throws \App\Exceptions\Repository\RecordNotFoundException
      */
     public function find(int $id): Model
     {
@@ -114,7 +114,7 @@ abstract class EloquentRepository extends Repository implements RepositoryInterf
     /**
      * Find and return the first matching instance for the given fields.
      *
-     * @throws \Pterodactyl\Exceptions\Repository\RecordNotFoundException
+     * @throws \App\Exceptions\Repository\RecordNotFoundException
      */
     public function findFirstWhere(array $fields): Model
     {
@@ -154,8 +154,8 @@ abstract class EloquentRepository extends Repository implements RepositoryInterf
     /**
      * Update a given ID with the passed array of fields.
      *
-     * @throws \Pterodactyl\Exceptions\Model\DataValidationException
-     * @throws \Pterodactyl\Exceptions\Repository\RecordNotFoundException
+     * @throws \App\Exceptions\Model\DataValidationException
+     * @throws \App\Exceptions\Repository\RecordNotFoundException
      */
     public function update(int $id, array $fields, bool $validate = true, bool $force = false): Model|bool
     {
@@ -200,8 +200,8 @@ abstract class EloquentRepository extends Repository implements RepositoryInterf
     /**
      * Update a record if it exists in the database, otherwise create it.
      *
-     * @throws \Pterodactyl\Exceptions\Model\DataValidationException
-     * @throws \Pterodactyl\Exceptions\Repository\RecordNotFoundException
+     * @throws \App\Exceptions\Model\DataValidationException
+     * @throws \App\Exceptions\Repository\RecordNotFoundException
      */
     public function updateOrCreate(array $where, array $fields, bool $validate = true, bool $force = false): Model|bool
     {

@@ -1,6 +1,6 @@
 <?php
 
-namespace Pterodactyl\Contracts\Repository;
+namespace App\Contracts\Repository;
 
 use Illuminate\Support\Collection;
 use Illuminate\Database\Eloquent\Model;
@@ -54,14 +54,14 @@ interface RepositoryInterface
     /**
      * Create a new model instance and persist it to the database.
      *
-     * @throws \Pterodactyl\Exceptions\Model\DataValidationException
+     * @throws \App\Exceptions\Model\DataValidationException
      */
     public function create(array $fields, bool $validate = true, bool $force = false): mixed;
 
     /**
      * Find a model that has the specific ID passed.
      *
-     * @throws \Pterodactyl\Exceptions\Repository\RecordNotFoundException
+     * @throws \App\Exceptions\Repository\RecordNotFoundException
      */
     public function find(int $id): mixed;
 
@@ -73,7 +73,7 @@ interface RepositoryInterface
     /**
      * Find and return the first matching instance for the given fields.
      *
-     * @throws \Pterodactyl\Exceptions\Repository\RecordNotFoundException
+     * @throws \App\Exceptions\Repository\RecordNotFoundException
      */
     public function findFirstWhere(array $fields): mixed;
 
@@ -95,8 +95,8 @@ interface RepositoryInterface
     /**
      * Update a given ID with the passed array of fields.
      *
-     * @throws \Pterodactyl\Exceptions\Model\DataValidationException
-     * @throws \Pterodactyl\Exceptions\Repository\RecordNotFoundException
+     * @throws \App\Exceptions\Model\DataValidationException
+     * @throws \App\Exceptions\Repository\RecordNotFoundException
      */
     public function update(int $id, array $fields, bool $validate = true, bool $force = false): mixed;
 
@@ -109,7 +109,7 @@ interface RepositoryInterface
     /**
      * Update a record if it exists in the database, otherwise create it.
      *
-     * @throws \Pterodactyl\Exceptions\Model\DataValidationException
+     * @throws \App\Exceptions\Model\DataValidationException
      */
     public function updateOrCreate(array $where, array $fields, bool $validate = true, bool $force = false): mixed;
 

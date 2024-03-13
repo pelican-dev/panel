@@ -1,9 +1,9 @@
 <?php
 
-namespace Pterodactyl\Events\Server;
+namespace App\Events\Server;
 
-use Pterodactyl\Events\Event;
-use Pterodactyl\Models\Server;
+use App\Events\Event;
+use App\Models\Server;
 use Illuminate\Queue\SerializesModels;
 
 class Saved extends Event

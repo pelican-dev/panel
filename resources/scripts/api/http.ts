@@ -58,7 +58,7 @@ export function httpErrorToHuman(error: any): string {
             return data.errors[0].detail;
         }
 
-        // Errors from wings directory, mostly just for file uploads.
+        // Errors from daemon directory, mostly just for file uploads.
         if (data.error && typeof data.error === 'string') {
             return data.error;
         }

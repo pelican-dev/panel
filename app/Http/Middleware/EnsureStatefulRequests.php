@@ -1,6 +1,6 @@
 <?php
 
-namespace Pterodactyl\Http\Middleware;
+namespace App\Http\Middleware;
 
 use Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful;
 
@@ -9,7 +9,7 @@ class EnsureStatefulRequests extends EnsureFrontendRequestsAreStateful
     /**
      * Determines if a request is stateful or not. This is determined using the default
      * Sanctum "fromFrontend" helper method. However, we also check if the request includes
-     * a cookie value for the Pterodactyl session. If so, we assume this is a stateful
+     * a cookie value for the Panel session. If so, we assume this is a stateful
      * request.
      *
      * We don't want to support API usage using the cookies, except for requests stemming

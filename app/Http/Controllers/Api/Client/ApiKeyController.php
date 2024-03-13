@@ -1,14 +1,14 @@
 <?php
 
-namespace Pterodactyl\Http\Controllers\Api\Client;
+namespace App\Http\Controllers\Api\Client;
 
-use Pterodactyl\Models\ApiKey;
+use App\Models\ApiKey;
 use Illuminate\Http\JsonResponse;
-use Pterodactyl\Facades\Activity;
-use Pterodactyl\Exceptions\DisplayException;
-use Pterodactyl\Http\Requests\Api\Client\ClientApiRequest;
-use Pterodactyl\Transformers\Api\Client\ApiKeyTransformer;
-use Pterodactyl\Http\Requests\Api\Client\Account\StoreApiKeyRequest;
+use App\Facades\Activity;
+use App\Exceptions\DisplayException;
+use App\Http\Requests\Api\Client\ClientApiRequest;
+use App\Transformers\Api\Client\ApiKeyTransformer;
+use App\Http\Requests\Api\Client\Account\StoreApiKeyRequest;
 
 class ApiKeyController extends ClientApiController
 {
@@ -25,7 +25,7 @@ class ApiKeyController extends ClientApiController
     /**
      * Store a new API key for a user's account.
      *
-     * @throws \Pterodactyl\Exceptions\DisplayException
+     * @throws \App\Exceptions\DisplayException
      */
     public function store(StoreApiKeyRequest $request): array
     {
@@ -54,7 +54,7 @@ class ApiKeyController extends ClientApiController
      */
     public function delete(ClientApiRequest $request, string $identifier): JsonResponse
     {
-        /** @var \Pterodactyl\Models\ApiKey $key */
+        /** @var \App\Models\ApiKey $key */
         $key = $request->user()->apiKeys()
             ->where('key_type', ApiKey::TYPE_ACCOUNT)
             ->where('identifier', $identifier)

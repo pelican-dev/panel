@@ -1,14 +1,14 @@
 <?php
 
-namespace Pterodactyl\Services\Eggs\Variables;
+namespace App\Services\Eggs\Variables;
 
 use Illuminate\Support\Str;
-use Pterodactyl\Models\EggVariable;
-use Pterodactyl\Exceptions\DisplayException;
-use Pterodactyl\Traits\Services\ValidatesValidationRules;
+use App\Models\EggVariable;
+use App\Exceptions\DisplayException;
+use App\Traits\Services\ValidatesValidationRules;
 use Illuminate\Contracts\Validation\Factory as ValidationFactory;
-use Pterodactyl\Contracts\Repository\EggVariableRepositoryInterface;
-use Pterodactyl\Exceptions\Service\Egg\Variable\ReservedVariableNameException;
+use App\Contracts\Repository\EggVariableRepositoryInterface;
+use App\Exceptions\Service\Egg\Variable\ReservedVariableNameException;
 
 class VariableUpdateService
 {
@@ -33,10 +33,10 @@ class VariableUpdateService
     /**
      * Update a specific egg variable.
      *
-     * @throws \Pterodactyl\Exceptions\DisplayException
-     * @throws \Pterodactyl\Exceptions\Model\DataValidationException
-     * @throws \Pterodactyl\Exceptions\Repository\RecordNotFoundException
-     * @throws \Pterodactyl\Exceptions\Service\Egg\Variable\ReservedVariableNameException
+     * @throws \App\Exceptions\DisplayException
+     * @throws \App\Exceptions\Model\DataValidationException
+     * @throws \App\Exceptions\Repository\RecordNotFoundException
+     * @throws \App\Exceptions\Service\Egg\Variable\ReservedVariableNameException
      */
     public function handle(EggVariable $variable, array $data): mixed
     {

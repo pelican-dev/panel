@@ -6,7 +6,7 @@
 @endsection
 
 @section('content-header')
-    <h1>Panel Settings<small>Configure Pterodactyl to your liking.</small></h1>
+    <h1>Panel Settings<small>Configure Panel to your liking.</small></h1>
     <ol class="breadcrumb">
         <li><a href="{{ route('admin.index') }}">Admin</a></li>
         <li class="active">Settings</li>
@@ -36,16 +36,16 @@
                                 <div>
                                     <div class="btn-group" data-toggle="buttons">
                                         @php
-                                            $level = old('pterodactyl:auth:2fa_required', config('pterodactyl.auth.2fa_required'));
+                                            $level = old('panel:auth:2fa_required', config('panel.auth.2fa_required'));
                                         @endphp
                                         <label class="btn btn-primary @if ($level == 0) active @endif">
-                                            <input type="radio" name="pterodactyl:auth:2fa_required" autocomplete="off" value="0" @if ($level == 0) checked @endif> Not Required
+                                            <input type="radio" name="panel:auth:2fa_required" autocomplete="off" value="0" @if ($level == 0) checked @endif> Not Required
                                         </label>
                                         <label class="btn btn-primary @if ($level == 1) active @endif">
-                                            <input type="radio" name="pterodactyl:auth:2fa_required" autocomplete="off" value="1" @if ($level == 1) checked @endif> Admin Only
+                                            <input type="radio" name="panel:auth:2fa_required" autocomplete="off" value="1" @if ($level == 1) checked @endif> Admin Only
                                         </label>
                                         <label class="btn btn-primary @if ($level == 2) active @endif">
-                                            <input type="radio" name="pterodactyl:auth:2fa_required" autocomplete="off" value="2" @if ($level == 2) checked @endif> All Users
+                                            <input type="radio" name="panel:auth:2fa_required" autocomplete="off" value="2" @if ($level == 2) checked @endif> All Users
                                         </label>
                                     </div>
                                     <p class="text-muted"><small>If enabled, any account falling into the selected grouping will be required to have 2-Factor authentication enabled to use the Panel.</small></p>

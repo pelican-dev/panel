@@ -1,16 +1,16 @@
 <?php
 
-namespace Pterodactyl\Http\Controllers\Admin\Nests;
+namespace App\Http\Controllers\Admin\Nests;
 
-use Pterodactyl\Models\Egg;
+use App\Models\Egg;
 use Illuminate\Http\RedirectResponse;
 use Prologue\Alerts\AlertsMessageBag;
-use Pterodactyl\Http\Controllers\Controller;
+use App\Http\Controllers\Controller;
 use Symfony\Component\HttpFoundation\Response;
-use Pterodactyl\Services\Eggs\Sharing\EggExporterService;
-use Pterodactyl\Services\Eggs\Sharing\EggImporterService;
-use Pterodactyl\Http\Requests\Admin\Egg\EggImportFormRequest;
-use Pterodactyl\Services\Eggs\Sharing\EggUpdateImporterService;
+use App\Services\Eggs\Sharing\EggExporterService;
+use App\Services\Eggs\Sharing\EggImporterService;
+use App\Http\Requests\Admin\Egg\EggImportFormRequest;
+use App\Services\Eggs\Sharing\EggUpdateImporterService;
 
 class EggShareController extends Controller
 {
@@ -26,7 +26,7 @@ class EggShareController extends Controller
     }
 
     /**
-     * @throws \Pterodactyl\Exceptions\Repository\RecordNotFoundException
+     * @throws \App\Exceptions\Repository\RecordNotFoundException
      */
     public function export(Egg $egg): Response
     {
@@ -43,10 +43,10 @@ class EggShareController extends Controller
     /**
      * Import a new service option using an XML file.
      *
-     * @throws \Pterodactyl\Exceptions\Model\DataValidationException
-     * @throws \Pterodactyl\Exceptions\Repository\RecordNotFoundException
-     * @throws \Pterodactyl\Exceptions\Service\Egg\BadJsonFormatException
-     * @throws \Pterodactyl\Exceptions\Service\InvalidFileUploadException
+     * @throws \App\Exceptions\Model\DataValidationException
+     * @throws \App\Exceptions\Repository\RecordNotFoundException
+     * @throws \App\Exceptions\Service\Egg\BadJsonFormatException
+     * @throws \App\Exceptions\Service\InvalidFileUploadException
      */
     public function import(EggImportFormRequest $request): RedirectResponse
     {
@@ -59,10 +59,10 @@ class EggShareController extends Controller
     /**
      * Update an existing Egg using a new imported file.
      *
-     * @throws \Pterodactyl\Exceptions\Model\DataValidationException
-     * @throws \Pterodactyl\Exceptions\Repository\RecordNotFoundException
-     * @throws \Pterodactyl\Exceptions\Service\Egg\BadJsonFormatException
-     * @throws \Pterodactyl\Exceptions\Service\InvalidFileUploadException
+     * @throws \App\Exceptions\Model\DataValidationException
+     * @throws \App\Exceptions\Repository\RecordNotFoundException
+     * @throws \App\Exceptions\Service\Egg\BadJsonFormatException
+     * @throws \App\Exceptions\Service\InvalidFileUploadException
      */
     public function update(EggImportFormRequest $request, Egg $egg): RedirectResponse
     {

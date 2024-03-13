@@ -1,26 +1,26 @@
 <?php
 
-namespace Pterodactyl\Http\Controllers\Admin;
+namespace App\Http\Controllers\Admin;
 
 use Illuminate\View\View;
 use Illuminate\Http\Request;
-use Pterodactyl\Models\User;
-use Pterodactyl\Models\Model;
+use App\Models\User;
+use App\Models\Model;
 use Illuminate\Support\Collection;
 use Illuminate\Http\RedirectResponse;
 use Prologue\Alerts\AlertsMessageBag;
 use Spatie\QueryBuilder\QueryBuilder;
 use Illuminate\View\Factory as ViewFactory;
-use Pterodactyl\Exceptions\DisplayException;
-use Pterodactyl\Http\Controllers\Controller;
+use App\Exceptions\DisplayException;
+use App\Http\Controllers\Controller;
 use Illuminate\Contracts\Translation\Translator;
-use Pterodactyl\Services\Users\UserUpdateService;
-use Pterodactyl\Traits\Helpers\AvailableLanguages;
-use Pterodactyl\Services\Users\UserCreationService;
-use Pterodactyl\Services\Users\UserDeletionService;
-use Pterodactyl\Http\Requests\Admin\UserFormRequest;
-use Pterodactyl\Http\Requests\Admin\NewUserFormRequest;
-use Pterodactyl\Contracts\Repository\UserRepositoryInterface;
+use App\Services\Users\UserUpdateService;
+use App\Traits\Helpers\AvailableLanguages;
+use App\Services\Users\UserCreationService;
+use App\Services\Users\UserDeletionService;
+use App\Http\Requests\Admin\UserFormRequest;
+use App\Http\Requests\Admin\NewUserFormRequest;
+use App\Contracts\Repository\UserRepositoryInterface;
 
 class UserController extends Controller
 {
@@ -85,7 +85,7 @@ class UserController extends Controller
      * Delete a user from the system.
      *
      * @throws \Exception
-     * @throws \Pterodactyl\Exceptions\DisplayException
+     * @throws \App\Exceptions\DisplayException
      */
     public function delete(Request $request, User $user): RedirectResponse
     {
@@ -115,8 +115,8 @@ class UserController extends Controller
     /**
      * Update a user on the system.
      *
-     * @throws \Pterodactyl\Exceptions\Model\DataValidationException
-     * @throws \Pterodactyl\Exceptions\Repository\RecordNotFoundException
+     * @throws \App\Exceptions\Model\DataValidationException
+     * @throws \App\Exceptions\Repository\RecordNotFoundException
      */
     public function update(UserFormRequest $request, User $user): RedirectResponse
     {

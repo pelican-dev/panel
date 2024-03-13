@@ -48,7 +48,7 @@ export default () => {
         socket.on('token expired', () => updateToken(uuid, socket));
         socket.on('jwt error', (error: string) => {
             setConnectionState(false);
-            console.warn('JWT validation error from wings:', error);
+            console.warn('JWT validation error from daemon:', error);
 
             if (reconnectErrors.find((v) => error.toLowerCase().indexOf(v) >= 0)) {
                 updateToken(uuid, socket);

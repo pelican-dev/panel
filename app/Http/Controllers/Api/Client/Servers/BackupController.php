@@ -1,24 +1,24 @@
 <?php
 
-namespace Pterodactyl\Http\Controllers\Api\Client\Servers;
+namespace App\Http\Controllers\Api\Client\Servers;
 
 use Illuminate\Http\Request;
-use Pterodactyl\Models\Backup;
-use Pterodactyl\Models\Server;
+use App\Models\Backup;
+use App\Models\Server;
 use Illuminate\Http\JsonResponse;
-use Pterodactyl\Facades\Activity;
-use Pterodactyl\Models\Permission;
+use App\Facades\Activity;
+use App\Models\Permission;
 use Illuminate\Auth\Access\AuthorizationException;
-use Pterodactyl\Services\Backups\DeleteBackupService;
-use Pterodactyl\Services\Backups\DownloadLinkService;
-use Pterodactyl\Repositories\Eloquent\BackupRepository;
-use Pterodactyl\Services\Backups\InitiateBackupService;
-use Pterodactyl\Repositories\Wings\DaemonBackupRepository;
-use Pterodactyl\Transformers\Api\Client\BackupTransformer;
-use Pterodactyl\Http\Controllers\Api\Client\ClientApiController;
+use App\Services\Backups\DeleteBackupService;
+use App\Services\Backups\DownloadLinkService;
+use App\Repositories\Eloquent\BackupRepository;
+use App\Services\Backups\InitiateBackupService;
+use App\Repositories\Daemon\DaemonBackupRepository;
+use App\Transformers\Api\Client\BackupTransformer;
+use App\Http\Controllers\Api\Client\ClientApiController;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
-use Pterodactyl\Http\Requests\Api\Client\Servers\Backups\StoreBackupRequest;
-use Pterodactyl\Http\Requests\Api\Client\Servers\Backups\RestoreBackupRequest;
+use App\Http\Requests\Api\Client\Servers\Backups\StoreBackupRequest;
+use App\Http\Requests\Api\Client\Servers\Backups\RestoreBackupRequest;
 
 class BackupController extends ClientApiController
 {
@@ -164,7 +164,7 @@ class BackupController extends ClientApiController
             throw new AuthorizationException();
         }
 
-        if ($backup->disk !== Backup::ADAPTER_AWS_S3 && $backup->disk !== Backup::ADAPTER_WINGS) {
+        if ($backup->disk !== Backup::ADAPTER_AWS_S3 && $backup->disk !== Backup::ADAPTER_DAEMON) {
             throw new BadRequestHttpException('The backup requested references an unknown disk driver type and cannot be downloaded.');
         }
 
@@ -179,7 +179,7 @@ class BackupController extends ClientApiController
     }
 
     /**
-     * Handles restoring a backup by making a request to the Wings instance telling it
+     * Handles restoring a backup by making a request to the daemon instance telling it
      * to begin the process of finding (or downloading) the backup and unpacking it
      * over the server files.
      *
@@ -207,7 +207,7 @@ class BackupController extends ClientApiController
 
         $log->transaction(function () use ($backup, $server, $request) {
             // If the backup is for an S3 file we need to generate a unique Download link for
-            // it that will allow Wings to actually access the file.
+            // it that will allow daemon to actually access the file.
             if ($backup->disk === Backup::ADAPTER_AWS_S3) {
                 $url = $this->downloadLinkService->handle($backup, $request->user());
             }

@@ -1,17 +1,17 @@
 <?php
 
-namespace Pterodactyl\Http\Requests\Api\Client\Account;
+namespace App\Http\Requests\Api\Client\Account;
 
-use Pterodactyl\Models\User;
+use App\Models\User;
 use Illuminate\Container\Container;
 use Illuminate\Contracts\Hashing\Hasher;
-use Pterodactyl\Http\Requests\Api\Client\ClientApiRequest;
-use Pterodactyl\Exceptions\Http\Base\InvalidPasswordProvidedException;
+use App\Http\Requests\Api\Client\ClientApiRequest;
+use App\Exceptions\Http\Base\InvalidPasswordProvidedException;
 
 class UpdateEmailRequest extends ClientApiRequest
 {
     /**
-     * @throws \Pterodactyl\Exceptions\Http\Base\InvalidPasswordProvidedException
+     * @throws \App\Exceptions\Http\Base\InvalidPasswordProvidedException
      */
     public function authorize(): bool
     {

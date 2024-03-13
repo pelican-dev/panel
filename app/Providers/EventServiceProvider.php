@@ -1,18 +1,18 @@
 <?php
 
-namespace Pterodactyl\Providers;
+namespace App\Providers;
 
-use Pterodactyl\Models\User;
-use Pterodactyl\Models\Server;
-use Pterodactyl\Models\Subuser;
-use Pterodactyl\Models\EggVariable;
-use Pterodactyl\Observers\UserObserver;
-use Pterodactyl\Observers\ServerObserver;
-use Pterodactyl\Observers\SubuserObserver;
-use Pterodactyl\Observers\EggVariableObserver;
-use Pterodactyl\Listeners\Auth\AuthenticationListener;
-use Pterodactyl\Events\Server\Installed as ServerInstalledEvent;
-use Pterodactyl\Notifications\ServerInstalled as ServerInstalledNotification;
+use App\Models\User;
+use App\Models\Server;
+use App\Models\Subuser;
+use App\Models\EggVariable;
+use App\Observers\UserObserver;
+use App\Observers\ServerObserver;
+use App\Observers\SubuserObserver;
+use App\Observers\EggVariableObserver;
+use App\Listeners\Auth\AuthenticationListener;
+use App\Events\Server\Installed as ServerInstalledEvent;
+use App\Notifications\ServerInstalled as ServerInstalledNotification;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
 
 class EventServiceProvider extends ServiceProvider

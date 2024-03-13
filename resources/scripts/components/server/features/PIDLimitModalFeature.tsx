@@ -64,12 +64,12 @@ const PIDLimitModalFeature = () => {
                     </div>
                     <p css={tw`mt-4`}>This server has reached the maximum process or memory limit.</p>
                     <p css={tw`mt-4`}>
-                        Increasing <code css={tw`font-mono bg-neutral-900`}>container_pid_limit</code> in the wings
+                        Increasing <code css={tw`font-mono bg-neutral-900`}>container_pid_limit</code> in the daemon
                         configuration, <code css={tw`font-mono bg-neutral-900`}>config.yml</code>, might help resolve
                         this issue.
                     </p>
                     <p css={tw`mt-4`}>
-                        <b>Note: Wings must be restarted for the configuration file changes to take effect</b>
+                        <b>Note: Daemon must be restarted for the configuration file changes to take effect</b>
                     </p>
                     <div css={tw`mt-8 sm:flex items-center justify-end`}>
                         <Button onClick={() => setVisible(false)} css={tw`w-full sm:w-auto border-transparent`}>

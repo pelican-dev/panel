@@ -1,11 +1,11 @@
 <?php
 
-namespace Pterodactyl\Console\Commands\Environment;
+namespace App\Console\Commands\Environment;
 
 use Illuminate\Console\Command;
 use Illuminate\Contracts\Console\Kernel;
 use Illuminate\Database\DatabaseManager;
-use Pterodactyl\Traits\Commands\EnvironmentWriterTrait;
+use App\Traits\Commands\EnvironmentWriterTrait;
 
 class DatabaseSettingsCommand extends Command
 {
@@ -32,8 +32,6 @@ class DatabaseSettingsCommand extends Command
 
     /**
      * Handle command execution.
-     *
-     * @throws \Pterodactyl\Exceptions\PterodactylException
      */
     public function handle(): int
     {
@@ -56,7 +54,7 @@ class DatabaseSettingsCommand extends Command
         $this->output->note('Using the "root" account for MySQL connections is not only highly frowned upon, it is also not allowed by this application. You\'ll need to have created a MySQL user for this software.');
         $this->variables['DB_USERNAME'] = $this->option('username') ?? $this->ask(
             'Database Username',
-            config('database.connections.mysql.username', 'pterodactyl')
+            config('database.connections.mysql.username', 'panel')
         );
 
         $askForMySQLPassword = true;
@@ -76,7 +74,7 @@ class DatabaseSettingsCommand extends Command
             $this->output->error('Your connection credentials have NOT been saved. You will need to provide valid connection information before proceeding.');
 
             if ($this->confirm('Go back and try again?')) {
-                $this->database->disconnect('_pterodactyl_command_test');
+                $this->database->disconnect('_panel_command_test');
 
                 return $this->handle();
             }
@@ -96,7 +94,7 @@ class DatabaseSettingsCommand extends Command
      */
     private function testMySQLConnection()
     {
-        config()->set('database.connections._pterodactyl_command_test', [
+        config()->set('database.connections._panel_command_test', [
             'driver' => 'mysql',
             'host' => $this->variables['DB_HOST'],
             'port' => $this->variables['DB_PORT'],
@@ -108,6 +106,6 @@ class DatabaseSettingsCommand extends Command
             'strict' => true,
         ]);
 
-        $this->database->connection('_pterodactyl_command_test')->getPdo();
+        $this->database->connection('_panel_command_test')->getPdo();
     }
 }

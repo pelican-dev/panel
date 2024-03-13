@@ -1,9 +1,9 @@
 <?php
 
-namespace Pterodactyl\Events\Subuser;
+namespace App\Events\Subuser;
 
-use Pterodactyl\Events\Event;
-use Pterodactyl\Models\Subuser;
+use App\Events\Event;
+use App\Models\Subuser;
 use Illuminate\Queue\SerializesModels;
 
 class Deleted extends Event

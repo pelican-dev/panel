@@ -1,10 +1,10 @@
 <?php
 
-namespace Pterodactyl\Repositories\Eloquent;
+namespace App\Repositories\Eloquent;
 
-use Pterodactyl\Models\Node;
+use App\Models\Node;
 use Illuminate\Support\Collection;
-use Pterodactyl\Contracts\Repository\NodeRepositoryInterface;
+use App\Contracts\Repository\NodeRepositoryInterface;
 
 class NodeRepository extends EloquentRepository implements NodeRepositoryInterface
 {

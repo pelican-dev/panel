@@ -1,10 +1,10 @@
 <?php
 
-namespace Pterodactyl\Providers;
+namespace App\Providers;
 
-use Pterodactyl\Extensions\Hashids;
+use App\Extensions\Hashids;
 use Illuminate\Support\ServiceProvider;
-use Pterodactyl\Contracts\Extensions\HashidsInterface;
+use App\Contracts\Extensions\HashidsInterface;
 
 class HashidsServiceProvider extends ServiceProvider
 {

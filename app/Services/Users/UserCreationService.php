@@ -1,14 +1,14 @@
 <?php
 
-namespace Pterodactyl\Services\Users;
+namespace App\Services\Users;
 
 use Ramsey\Uuid\Uuid;
-use Pterodactyl\Models\User;
+use App\Models\User;
 use Illuminate\Contracts\Hashing\Hasher;
 use Illuminate\Database\ConnectionInterface;
 use Illuminate\Contracts\Auth\PasswordBroker;
-use Pterodactyl\Notifications\AccountCreated;
-use Pterodactyl\Contracts\Repository\UserRepositoryInterface;
+use App\Notifications\AccountCreated;
+use App\Contracts\Repository\UserRepositoryInterface;
 
 class UserCreationService
 {
@@ -27,7 +27,7 @@ class UserCreationService
      * Create a new user on the system.
      *
      * @throws \Exception
-     * @throws \Pterodactyl\Exceptions\Model\DataValidationException
+     * @throws \App\Exceptions\Model\DataValidationException
      */
     public function handle(array $data): User
     {
@@ -41,7 +41,7 @@ class UserCreationService
             $data['password'] = $this->hasher->make(str_random(30));
         }
 
-        /** @var \Pterodactyl\Models\User $user */
+        /** @var \App\Models\User $user */
         $user = $this->repository->create(array_merge($data, [
             'uuid' => Uuid::uuid4()->toString(),
         ]), true, true);

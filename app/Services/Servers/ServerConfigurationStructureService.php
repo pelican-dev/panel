@@ -1,9 +1,9 @@
 <?php
 
-namespace Pterodactyl\Services\Servers;
+namespace App\Services\Servers;
 
-use Pterodactyl\Models\Mount;
-use Pterodactyl\Models\Server;
+use App\Models\Mount;
+use App\Models\Server;
 
 class ServerConfigurationStructureService
 {
@@ -17,7 +17,7 @@ class ServerConfigurationStructureService
     /**
      * Return a configuration array for a specific server when passed a server model.
      *
-     * DO NOT MODIFY THIS FUNCTION. This powers legacy code handling for the new Wings
+     * DO NOT MODIFY THIS FUNCTION. This powers legacy code handling for the new daemon
      * daemon, if you modify the structure eggs will break unexpectedly.
      */
     public function handle(Server $server, array $override = [], bool $legacy = false): array
@@ -38,7 +38,7 @@ class ServerConfigurationStructureService
     }
 
     /**
-     * Returns the new data format used for the Wings daemon.
+     * Returns the new data format used for the daemon daemon.
      */
     protected function returnCurrentFormat(Server $server): array
     {

@@ -1,14 +1,14 @@
 <?php
 
-use Pterodactyl\Models\Backup;
+use App\Models\Backup;
 
 return [
     // The backup driver to use for this Panel instance. All client generated server backups
     // will be stored in this location by default. It is possible to change this once backups
     // have been made, without losing data.
-    'default' => env('APP_BACKUP_DRIVER', Backup::ADAPTER_WINGS),
+    'default' => env('APP_BACKUP_DRIVER', Backup::ADAPTER_DAEMON),
 
-    // This value is used to determine the lifespan of UploadPart presigned urls that wings
+    // This value is used to determine the lifespan of UploadPart presigned urls that daemon
     // uses to upload backups to S3 storage.  Value is in minutes, so this would default to an hour.
     'presigned_url_lifespan' => env('BACKUP_PRESIGNED_URL_LIFESPAN', 60),
 
@@ -32,10 +32,10 @@ return [
     ],
 
     'disks' => [
-        // There is no configuration for the local disk for Wings. That configuration
+        // There is no configuration for the local disk for Daemon. That configuration
         // is determined by the Daemon configuration, and not the Panel.
-        'wings' => [
-            'adapter' => Backup::ADAPTER_WINGS,
+        'daemon' => [
+            'adapter' => Backup::ADAPTER_DAEMON,
         ],
 
         // Configuration for storing backups in Amazon S3. This uses the same credentials

@@ -1,9 +1,9 @@
 <?php
 
-namespace Pterodactyl\Events\Auth;
+namespace App\Events\Auth;
 
-use Pterodactyl\Models\User;
-use Pterodactyl\Events\Event;
+use App\Models\User;
+use App\Events\Event;
 
 class DirectLogin extends Event
 {

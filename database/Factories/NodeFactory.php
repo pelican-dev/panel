@@ -4,7 +4,7 @@ namespace Database\Factories;
 
 use Ramsey\Uuid\Uuid;
 use Illuminate\Support\Str;
-use Pterodactyl\Models\Node;
+use App\Models\Node;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
@@ -38,7 +38,7 @@ class NodeFactory extends Factory
             'daemon_token' => Crypt::encrypt(Str::random(Node::DAEMON_TOKEN_LENGTH)),
             'daemonListen' => 8080,
             'daemonSFTP' => 2022,
-            'daemonBase' => '/var/lib/pterodactyl/volumes',
+            'daemonBase' => '/var/lib/panel/volumes',
         ];
     }
 }

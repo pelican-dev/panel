@@ -40,7 +40,7 @@ const ModalContent = ({ ...props }: RequiredModalProps) => {
                         label={'Ignored Files & Directories'}
                         description={`
                             Enter the files or folders to ignore while generating this backup. Leave blank to use
-                            the contents of the .pteroignore file in the root of the server directory if present.
+                            the contents of the .panelignore file in the root of the server directory if present.
                             Wildcard matching of files and folders is supported in addition to negating a rule by
                             prefixing the path with an exclamation point.
                         `}

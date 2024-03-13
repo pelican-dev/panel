@@ -1,11 +1,11 @@
 <?php
 
-namespace Pterodactyl\Extensions;
+namespace App\Extensions;
 
-use Pterodactyl\Models\DatabaseHost;
+use App\Models\DatabaseHost;
 use Illuminate\Contracts\Encryption\Encrypter;
 use Illuminate\Config\Repository as ConfigRepository;
-use Pterodactyl\Contracts\Repository\DatabaseHostRepositoryInterface;
+use App\Contracts\Repository\DatabaseHostRepositoryInterface;
 
 class DynamicDatabaseConnection
 {
@@ -26,7 +26,7 @@ class DynamicDatabaseConnection
     /**
      * Adds a dynamic database connection entry to the runtime config.
      *
-     * @throws \Pterodactyl\Exceptions\Repository\RecordNotFoundException
+     * @throws \App\Exceptions\Repository\RecordNotFoundException
      */
     public function set(string $connection, DatabaseHost|int $host, string $database = 'mysql'): void
     {

@@ -1,15 +1,15 @@
 <?php
 
-namespace Pterodactyl\Services\Activity;
+namespace App\Services\Activity;
 
 use Illuminate\Support\Arr;
 use Webmozart\Assert\Assert;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Log;
-use Pterodactyl\Models\ActivityLog;
+use App\Models\ActivityLog;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Request;
-use Pterodactyl\Models\ActivityLogSubject;
+use App\Models\ActivityLogSubject;
 use Illuminate\Database\ConnectionInterface;
 use Illuminate\Contracts\Auth\Factory as AuthFactory;
 

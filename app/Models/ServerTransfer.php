@@ -1,6 +1,6 @@
 <?php
 
-namespace Pterodactyl\Models;
+namespace App\Models;
 
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -18,9 +18,9 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property bool $archived
  * @property \Carbon\Carbon $created_at
  * @property \Carbon\Carbon $updated_at
- * @property \Pterodactyl\Models\Server $server
- * @property \Pterodactyl\Models\Node $oldNode
- * @property \Pterodactyl\Models\Node $newNode
+ * @property \App\Models\Server $server
+ * @property \App\Models\Node $oldNode
+ * @property \App\Models\Node $newNode
  */
 class ServerTransfer extends Model
 {

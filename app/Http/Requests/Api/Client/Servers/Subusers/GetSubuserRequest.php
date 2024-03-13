@@ -1,8 +1,8 @@
 <?php
 
-namespace Pterodactyl\Http\Requests\Api\Client\Servers\Subusers;
+namespace App\Http\Requests\Api\Client\Servers\Subusers;
 
-use Pterodactyl\Models\Permission;
+use App\Models\Permission;
 
 class GetSubuserRequest extends SubuserRequest
 {

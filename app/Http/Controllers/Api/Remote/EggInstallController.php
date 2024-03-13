@@ -1,12 +1,12 @@
 <?php
 
-namespace Pterodactyl\Http\Controllers\Api\Remote;
+namespace App\Http\Controllers\Api\Remote;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
-use Pterodactyl\Http\Controllers\Controller;
-use Pterodactyl\Services\Servers\EnvironmentService;
-use Pterodactyl\Contracts\Repository\ServerRepositoryInterface;
+use App\Http\Controllers\Controller;
+use App\Services\Servers\EnvironmentService;
+use App\Contracts\Repository\ServerRepositoryInterface;
 
 class EggInstallController extends Controller
 {
@@ -21,13 +21,13 @@ class EggInstallController extends Controller
      * Handle request to get script and installation information for a server
      * that is being created on the node.
      *
-     * @throws \Pterodactyl\Exceptions\Repository\RecordNotFoundException
+     * @throws \App\Exceptions\Repository\RecordNotFoundException
      */
     public function index(Request $request, string $uuid): JsonResponse
     {
         $node = $request->attributes->get('node');
 
-        /** @var \Pterodactyl\Models\Server $server */
+        /** @var \App\Models\Server $server */
         $server = $this->repository->findFirstWhere([
             ['uuid', '=', $uuid],
             ['node_id', '=', $node->id],

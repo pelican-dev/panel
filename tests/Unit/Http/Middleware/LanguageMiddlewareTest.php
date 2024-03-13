@@ -1,12 +1,12 @@
 <?php
 
-namespace Pterodactyl\Tests\Unit\Http\Middleware;
+namespace App\Tests\Unit\Http\Middleware;
 
 use Mockery as m;
 use Mockery\MockInterface;
-use Pterodactyl\Models\User;
+use App\Models\User;
 use Illuminate\Foundation\Application;
-use Pterodactyl\Http\Middleware\LanguageMiddleware;
+use App\Http\Middleware\LanguageMiddleware;
 
 class LanguageMiddlewareTest extends MiddlewareTestCase
 {

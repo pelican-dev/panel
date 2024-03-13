@@ -1,9 +1,9 @@
 <?php
 
-namespace Pterodactyl\Http\Requests\Api\Client\Servers\Files;
+namespace App\Http\Requests\Api\Client\Servers\Files;
 
-use Pterodactyl\Models\Permission;
-use Pterodactyl\Http\Requests\Api\Client\ClientApiRequest;
+use App\Models\Permission;
+use App\Http\Requests\Api\Client\ClientApiRequest;
 
 class CompressFilesRequest extends ClientApiRequest
 {

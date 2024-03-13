@@ -1,14 +1,14 @@
 <?php
 
-namespace Pterodactyl\Models;
+namespace App\Models;
 
 use Illuminate\Support\Str;
 use Webmozart\Assert\Assert;
-use Pterodactyl\Services\Acl\Api\AdminAcl;
+use App\Services\Acl\Api\AdminAcl;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
- * Pterodactyl\Models\ApiKey.
+ * App\Models\ApiKey.
  *
  * @property int $id
  * @property int $user_id
@@ -30,8 +30,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property int $r_eggs
  * @property int $r_database_hosts
  * @property int $r_server_databases
- * @property \Pterodactyl\Models\User $tokenable
- * @property \Pterodactyl\Models\User $user
+ * @property \App\Models\User $tokenable
+ * @property \App\Models\User $user
  *
  * @method static \Database\Factories\ApiKeyFactory factory(...$parameters)
  * @method static \Illuminate\Database\Eloquent\Builder|ApiKey newModelQuery()

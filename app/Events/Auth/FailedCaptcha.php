@@ -1,8 +1,8 @@
 <?php
 
-namespace Pterodactyl\Events\Auth;
+namespace App\Events\Auth;
 
-use Pterodactyl\Events\Event;
+use App\Events\Event;
 use Illuminate\Queue\SerializesModels;
 
 class FailedCaptcha extends Event

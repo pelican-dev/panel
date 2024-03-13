@@ -26,7 +26,7 @@ class ChangeServicesToUseAMoreUniqueIdentifier extends Migration
 
         DB::table('services')->get(['id', 'author', 'uuid'])->each(function ($service) {
             DB::table('services')->where('id', $service->id)->update([
-                'author' => ($service->author === 'ptrdctyl-v040-11e6-8b77-86f30ca893d3') ? 'support@pterodactyl.io' : 'unknown@unknown-author.com',
+                'author' => ($service->author === 'ptrdctyl-v040-11e6-8b77-86f30ca893d3') ? 'panel@example.com' : 'unknown@unknown-author.com',
                 'uuid' => Uuid::uuid4()->toString(),
             ]);
         });

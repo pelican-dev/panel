@@ -1,12 +1,12 @@
 <?php
 
-namespace Pterodactyl\Http\Controllers\Api\Client;
+namespace App\Http\Controllers\Api\Client;
 
-use Pterodactyl\Models\ActivityLog;
+use App\Models\ActivityLog;
 use Spatie\QueryBuilder\QueryBuilder;
 use Spatie\QueryBuilder\AllowedFilter;
-use Pterodactyl\Http\Requests\Api\Client\ClientApiRequest;
-use Pterodactyl\Transformers\Api\Client\ActivityLogTransformer;
+use App\Http\Requests\Api\Client\ClientApiRequest;
+use App\Transformers\Api\Client\ActivityLogTransformer;
 
 class ActivityLogController extends ClientApiController
 {

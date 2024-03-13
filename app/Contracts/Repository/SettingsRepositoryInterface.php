@@ -1,14 +1,14 @@
 <?php
 
-namespace Pterodactyl\Contracts\Repository;
+namespace App\Contracts\Repository;
 
 interface SettingsRepositoryInterface extends RepositoryInterface
 {
     /**
      * Store a new persistent setting in the database.
      *
-     * @throws \Pterodactyl\Exceptions\Model\DataValidationException
-     * @throws \Pterodactyl\Exceptions\Repository\RecordNotFoundException
+     * @throws \App\Exceptions\Model\DataValidationException
+     * @throws \App\Exceptions\Repository\RecordNotFoundException
      */
     public function set(string $key, string $value = null);
 

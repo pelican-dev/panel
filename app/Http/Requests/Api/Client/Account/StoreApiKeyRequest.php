@@ -1,11 +1,11 @@
 <?php
 
-namespace Pterodactyl\Http\Requests\Api\Client\Account;
+namespace App\Http\Requests\Api\Client\Account;
 
 use IPTools\Range;
-use Pterodactyl\Models\ApiKey;
+use App\Models\ApiKey;
 use Illuminate\Validation\Validator;
-use Pterodactyl\Http\Requests\Api\Client\ClientApiRequest;
+use App\Http\Requests\Api\Client\ClientApiRequest;
 
 class StoreApiKeyRequest extends ClientApiRequest
 {

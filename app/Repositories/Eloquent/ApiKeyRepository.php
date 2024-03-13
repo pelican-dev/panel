@@ -1,11 +1,11 @@
 <?php
 
-namespace Pterodactyl\Repositories\Eloquent;
+namespace App\Repositories\Eloquent;
 
-use Pterodactyl\Models\User;
-use Pterodactyl\Models\ApiKey;
+use App\Models\User;
+use App\Models\ApiKey;
 use Illuminate\Support\Collection;
-use Pterodactyl\Contracts\Repository\ApiKeyRepositoryInterface;
+use App\Contracts\Repository\ApiKeyRepositoryInterface;
 
 class ApiKeyRepository extends EloquentRepository implements ApiKeyRepositoryInterface
 {

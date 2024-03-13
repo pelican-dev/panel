@@ -1,6 +1,6 @@
 <?php
 
-namespace Pterodactyl\Http\Requests\Auth;
+namespace App\Http\Requests\Auth;
 
 use Illuminate\Foundation\Http\FormRequest;
 

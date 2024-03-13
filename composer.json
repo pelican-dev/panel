@@ -1,21 +1,6 @@
 {
-    "name": "pterodactyl/panel",
+    "name": "lancepioch/panel",
     "description": "The free, open-source game management panel. Supporting Minecraft, Spigot, BungeeCord, and SRCDS servers.",
-    "license": "MIT",
-    "authors": [
-        {
-            "name": "Matthew Penner",
-            "email": "matthew@pterodactyl.io",
-            "homepage": "https://github.com/matthewpi",
-            "role": "Lead Developer"
-        },
-        {
-            "name": "Dane Everitt",
-            "email": "dane@daneeveritt.com",
-            "homepage": "https://github.com/DaneEveritt",
-            "role": "Developer"
-        }
-    ],
     "require": {
         "php": "^8.1 || ^8.2",
         "ext-json": "*",
@@ -69,14 +54,14 @@
             "app/helpers.php"
         ],
         "psr-4": {
-            "Pterodactyl\\": "app/",
+            "App\\": "app/",
             "Database\\Factories\\": "database/Factories/",
             "Database\\Seeders\\": "database/Seeders/"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "Pterodactyl\\Tests\\": "tests/"
+            "App\\Tests\\": "tests/"
         }
     },
     "scripts": {

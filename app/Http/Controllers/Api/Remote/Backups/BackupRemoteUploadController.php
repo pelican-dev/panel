@@ -1,14 +1,14 @@
 <?php
 
-namespace Pterodactyl\Http\Controllers\Api\Remote\Backups;
+namespace App\Http\Controllers\Api\Remote\Backups;
 
 use Carbon\CarbonImmutable;
 use Illuminate\Http\Request;
-use Pterodactyl\Models\Backup;
+use App\Models\Backup;
 use Illuminate\Http\JsonResponse;
-use Pterodactyl\Http\Controllers\Controller;
-use Pterodactyl\Extensions\Backups\BackupManager;
-use Pterodactyl\Extensions\Filesystem\S3Filesystem;
+use App\Http\Controllers\Controller;
+use App\Extensions\Backups\BackupManager;
+use App\Extensions\Filesystem\S3Filesystem;
 use Symfony\Component\HttpKernel\Exception\ConflictHttpException;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
@@ -38,7 +38,7 @@ class BackupRemoteUploadController extends Controller
             throw new BadRequestHttpException('A non-empty "size" query parameter must be provided.');
         }
 
-        /** @var \Pterodactyl\Models\Backup $backup */
+        /** @var \App\Models\Backup $backup */
         $backup = Backup::query()->where('uuid', $backup)->firstOrFail();
 
         // Prevent backups that have already been completed from trying to

@@ -1,6 +1,6 @@
 <?php
 
-use Pterodactyl\Models\Setting;
+use App\Models\Setting;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Migrations\Migration;
 

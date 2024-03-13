@@ -1,12 +1,12 @@
 <?php
 
-namespace Pterodactyl\Services\Backups;
+namespace App\Services\Backups;
 
 use Carbon\CarbonImmutable;
-use Pterodactyl\Models\User;
-use Pterodactyl\Models\Backup;
-use Pterodactyl\Services\Nodes\NodeJWTService;
-use Pterodactyl\Extensions\Backups\BackupManager;
+use App\Models\User;
+use App\Models\Backup;
+use App\Services\Nodes\NodeJWTService;
+use App\Extensions\Backups\BackupManager;
 
 class DownloadLinkService
 {
@@ -19,7 +19,7 @@ class DownloadLinkService
 
     /**
      * Returns the URL that allows for a backup to be downloaded by an individual
-     * user, or by the Wings control software.
+     * user, or by the daemon control software.
      */
     public function handle(Backup $backup, User $user): string
     {
@@ -45,7 +45,7 @@ class DownloadLinkService
      */
     protected function getS3BackupUrl(Backup $backup): string
     {
-        /** @var \Pterodactyl\Extensions\Filesystem\S3Filesystem $adapter */
+        /** @var \App\Extensions\Filesystem\S3Filesystem $adapter */
         $adapter = $this->backupManager->adapter(Backup::ADAPTER_AWS_S3);
 
         $request = $adapter->getClient()->createPresignedRequest(

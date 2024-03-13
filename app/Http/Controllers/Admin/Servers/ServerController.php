@@ -1,14 +1,14 @@
 <?php
 
-namespace Pterodactyl\Http\Controllers\Admin\Servers;
+namespace App\Http\Controllers\Admin\Servers;
 
 use Illuminate\View\View;
 use Illuminate\Http\Request;
-use Pterodactyl\Models\Server;
+use App\Models\Server;
 use Spatie\QueryBuilder\QueryBuilder;
 use Spatie\QueryBuilder\AllowedFilter;
-use Pterodactyl\Http\Controllers\Controller;
-use Pterodactyl\Models\Filters\AdminServerFilter;
+use App\Http\Controllers\Controller;
+use App\Models\Filters\AdminServerFilter;
 use Illuminate\Contracts\View\Factory as ViewFactory;
 
 class ServerController extends Controller
@@ -31,7 +31,7 @@ class ServerController extends Controller
                 AllowedFilter::exact('owner_id'),
                 AllowedFilter::custom('*', new AdminServerFilter()),
             ])
-            ->paginate(config()->get('pterodactyl.paginate.admin.servers'));
+            ->paginate(config()->get('panel.paginate.admin.servers'));
 
         return $this->view->make('admin.servers.index', ['servers' => $servers]);
     }

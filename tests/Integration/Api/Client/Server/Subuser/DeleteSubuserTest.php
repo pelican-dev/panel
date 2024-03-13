@@ -1,13 +1,13 @@
 <?php
 
-namespace Pterodactyl\Tests\Integration\Api\Client\Server\Subuser;
+namespace App\Tests\Integration\Api\Client\Server\Subuser;
 
 use Ramsey\Uuid\Uuid;
-use Pterodactyl\Models\User;
-use Pterodactyl\Models\Subuser;
-use Pterodactyl\Models\Permission;
-use Pterodactyl\Repositories\Wings\DaemonServerRepository;
-use Pterodactyl\Tests\Integration\Api\Client\ClientApiIntegrationTestCase;
+use App\Models\User;
+use App\Models\Subuser;
+use App\Models\Permission;
+use App\Repositories\Daemon\DaemonServerRepository;
+use App\Tests\Integration\Api\Client\ClientApiIntegrationTestCase;
 
 class DeleteSubuserTest extends ClientApiIntegrationTestCase
 {
@@ -19,8 +19,6 @@ class DeleteSubuserTest extends ClientApiIntegrationTestCase
      * For example, 12aaaaaa-bbbb-cccc-ddddeeeeffff would be cast to "12" if you tried to cast
      * it to an integer. Then, in the deep API middlewares you would end up trying to load a user
      * with an ID of 12, which may or may not exist and be wrongly assigned to the model object.
-     *
-     * @see https://github.com/pterodactyl/panel/issues/2359
      */
     public function testCorrectSubuserIsDeletedFromServer()
     {
@@ -28,14 +26,14 @@ class DeleteSubuserTest extends ClientApiIntegrationTestCase
 
         [$user, $server] = $this->generateTestAccount();
 
-        /** @var \Pterodactyl\Models\User $differentUser */
+        /** @var \App\Models\User $differentUser */
         $differentUser = User::factory()->create();
 
         $real = Uuid::uuid4()->toString();
         // Generate a UUID that lines up with a user in the database if it were to be cast to an int.
         $uuid = $differentUser->id . substr($real, strlen((string) $differentUser->id));
 
-        /** @var \Pterodactyl\Models\User $subuser */
+        /** @var \App\Models\User $subuser */
         $subuser = User::factory()->create(['uuid' => $uuid]);
 
         Subuser::query()->forceCreate([
@@ -51,7 +49,7 @@ class DeleteSubuserTest extends ClientApiIntegrationTestCase
         // Try the same test, but this time with a UUID that if cast to an int (shouldn't) line up with
         // anything in the database.
         $uuid = '18180000' . substr(Uuid::uuid4()->toString(), 8);
-        /** @var \Pterodactyl\Models\User $subuser */
+        /** @var \App\Models\User $subuser */
         $subuser = User::factory()->create(['uuid' => $uuid]);
 
         Subuser::query()->forceCreate([

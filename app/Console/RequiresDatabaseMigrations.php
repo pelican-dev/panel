@@ -1,6 +1,6 @@
 <?php
 
-namespace Pterodactyl\Console;
+namespace App\Console;
 
 /**
  * @mixin \Illuminate\Console\Command
@@ -46,7 +46,7 @@ You must run the following command to finish migrating your database:
 
   <fg=green;options=bold>php artisan migrate --step --force</>
 
-You will not be able to use Pterodactyl Panel as expected without fixing your
+You will not be able to use the Panel as expected without fixing your
 database state by running the command above.
 ');
 

@@ -1,18 +1,18 @@
 <?php
 
-namespace Pterodactyl\Http\Controllers\Api\Remote\Backups;
+namespace App\Http\Controllers\Api\Remote\Backups;
 
 use Carbon\CarbonImmutable;
 use Illuminate\Http\Request;
-use Pterodactyl\Models\Backup;
+use App\Models\Backup;
 use Illuminate\Http\JsonResponse;
-use Pterodactyl\Facades\Activity;
-use Pterodactyl\Exceptions\DisplayException;
-use Pterodactyl\Http\Controllers\Controller;
-use Pterodactyl\Extensions\Backups\BackupManager;
-use Pterodactyl\Extensions\Filesystem\S3Filesystem;
+use App\Facades\Activity;
+use App\Exceptions\DisplayException;
+use App\Http\Controllers\Controller;
+use App\Extensions\Backups\BackupManager;
+use App\Extensions\Filesystem\S3Filesystem;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
-use Pterodactyl\Http\Requests\Api\Remote\ReportBackupCompleteRequest;
+use App\Http\Requests\Api\Remote\ReportBackupCompleteRequest;
 
 class BackupStatusController extends Controller
 {
@@ -30,7 +30,7 @@ class BackupStatusController extends Controller
      */
     public function index(ReportBackupCompleteRequest $request, string $backup): JsonResponse
     {
-        /** @var \Pterodactyl\Models\Backup $model */
+        /** @var \App\Models\Backup $model */
         $model = Backup::query()->where('uuid', $backup)->firstOrFail();
 
         if ($model->is_successful) {
@@ -77,7 +77,7 @@ class BackupStatusController extends Controller
      */
     public function restore(Request $request, string $backup): JsonResponse
     {
-        /** @var \Pterodactyl\Models\Backup $model */
+        /** @var \App\Models\Backup $model */
         $model = Backup::query()->where('uuid', $backup)->firstOrFail();
 
         $model->server->update(['status' => null]);
@@ -95,7 +95,7 @@ class BackupStatusController extends Controller
      * the given backup.
      *
      * @throws \Exception
-     * @throws \Pterodactyl\Exceptions\DisplayException
+     * @throws \App\Exceptions\DisplayException
      */
     protected function completeMultipartUpload(Backup $backup, S3Filesystem $adapter, bool $successful, ?array $parts): void
     {

@@ -1,9 +1,9 @@
 <?php
 
-namespace Pterodactyl\Observers;
+namespace App\Observers;
 
-use Pterodactyl\Events;
-use Pterodactyl\Models\User;
+use App\Events;
+use App\Models\User;
 
 class UserObserver
 {

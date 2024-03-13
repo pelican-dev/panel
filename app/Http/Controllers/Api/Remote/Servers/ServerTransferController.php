@@ -1,18 +1,18 @@
 <?php
 
-namespace Pterodactyl\Http\Controllers\Api\Remote\Servers;
+namespace App\Http\Controllers\Api\Remote\Servers;
 
 use Illuminate\Http\Response;
 use Illuminate\Http\JsonResponse;
-use Pterodactyl\Models\Allocation;
+use App\Models\Allocation;
 use Illuminate\Support\Facades\Log;
-use Pterodactyl\Models\ServerTransfer;
+use App\Models\ServerTransfer;
 use Illuminate\Database\ConnectionInterface;
-use Pterodactyl\Http\Controllers\Controller;
-use Pterodactyl\Repositories\Eloquent\ServerRepository;
-use Pterodactyl\Repositories\Wings\DaemonServerRepository;
+use App\Http\Controllers\Controller;
+use App\Repositories\Eloquent\ServerRepository;
+use App\Repositories\Daemon\DaemonServerRepository;
 use Symfony\Component\HttpKernel\Exception\ConflictHttpException;
-use Pterodactyl\Exceptions\Http\Connection\DaemonConnectionException;
+use App\Exceptions\Http\Connection\DaemonConnectionException;
 
 class ServerTransferController extends Controller
 {
@@ -55,7 +55,7 @@ class ServerTransferController extends Controller
             throw new ConflictHttpException('Server is not being transferred.');
         }
 
-        /** @var \Pterodactyl\Models\Server $server */
+        /** @var \App\Models\Server $server */
         $server = $this->connection->transaction(function () use ($server, $transfer) {
             $allocations = array_merge([$transfer->old_allocation], $transfer->old_additional_allocations);
 

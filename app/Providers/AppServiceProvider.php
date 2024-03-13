@@ -1,8 +1,8 @@
 <?php
 
-namespace Pterodactyl\Providers;
+namespace App\Providers;
 
-use Pterodactyl\Models;
+use App\Models;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Pagination\Paginator;
@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\View;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\ServiceProvider;
-use Pterodactyl\Extensions\Themes\Theme;
+use App\Extensions\Themes\Theme;
 use Illuminate\Database\Eloquent\Relations\Relation;
 
 class AppServiceProvider extends ServiceProvider
@@ -30,8 +30,6 @@ class AppServiceProvider extends ServiceProvider
         // If the APP_URL value is set with https:// make sure we force it here. Theoretically
         // this should just work with the proxy logic, but there are a lot of cases where it
         // doesn't, and it triggers a lot of support requests, so lets just head it off here.
-        //
-        // @see https://github.com/pterodactyl/panel/issues/3623
         if (Str::startsWith(config('app.url') ?? '', 'https://')) {
             URL::forceScheme('https');
         }
@@ -58,7 +56,7 @@ class AppServiceProvider extends ServiceProvider
     {
         // Only load the settings service provider if the environment
         // is configured to allow it.
-        if (!config('pterodactyl.load_environment_only', false) && $this->app->environment() !== 'testing') {
+        if (!config('panel.load_environment_only', false) && $this->app->environment() !== 'testing') {
             $this->app->register(SettingsServiceProvider::class);
         }
 

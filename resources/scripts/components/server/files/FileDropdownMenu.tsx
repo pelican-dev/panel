@@ -65,7 +65,7 @@ const FileDropdownMenu = ({ file }: { file: FileObject }) => {
     const { clearAndAddHttpError, clearFlashes } = useFlash();
     const directory = ServerContext.useStoreState((state) => state.files.directory);
 
-    useEventListener(`pterodactyl:files:ctx:${file.key}`, (e: CustomEvent) => {
+    useEventListener(`panel:files:ctx:${file.key}`, (e: CustomEvent) => {
         if (onClickRef.current) {
             onClickRef.current.triggerMenu(e.detail);
         }

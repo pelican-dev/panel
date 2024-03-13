@@ -1,14 +1,14 @@
 <?php
 
-namespace Pterodactyl\Services\Servers;
+namespace App\Services\Servers;
 
 use Illuminate\Http\Response;
-use Pterodactyl\Models\Server;
+use App\Models\Server;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Database\ConnectionInterface;
-use Pterodactyl\Repositories\Wings\DaemonServerRepository;
-use Pterodactyl\Services\Databases\DatabaseManagementService;
-use Pterodactyl\Exceptions\Http\Connection\DaemonConnectionException;
+use App\Repositories\Daemon\DaemonServerRepository;
+use App\Services\Databases\DatabaseManagementService;
+use App\Exceptions\Http\Connection\DaemonConnectionException;
 
 class ServerDeletionService
 {
@@ -38,7 +38,7 @@ class ServerDeletionService
      * Delete a server from the panel and remove any associated databases from hosts.
      *
      * @throws \Throwable
-     * @throws \Pterodactyl\Exceptions\DisplayException
+     * @throws \App\Exceptions\DisplayException
      */
     public function handle(Server $server): void
     {
@@ -47,7 +47,7 @@ class ServerDeletionService
         } catch (DaemonConnectionException $exception) {
             // If there is an error not caused a 404 error and this isn't a forced delete,
             // go ahead and bail out. We specifically ignore a 404 since that can be assumed
-            // to be a safe error, meaning the server doesn't exist at all on Wings so there
+            // to be a safe error, meaning the server doesn't exist at all on daemon so there
             // is no reason we need to bail out from that.
             if (!$this->force && $exception->getStatusCode() !== Response::HTTP_NOT_FOUND) {
                 throw $exception;
@@ -69,8 +69,6 @@ class ServerDeletionService
                     // so that the server itself can be deleted. This will leave it dangling on
                     // the host instance, but we couldn't delete it anyways so not sure how we would
                     // handle this better anyways.
-                    //
-                    // @see https://github.com/pterodactyl/panel/issues/2085
                     $database->delete();
 
                     Log::warning($exception);

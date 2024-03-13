@@ -1,9 +1,9 @@
 <?php
 
-namespace Pterodactyl\Listeners\Auth;
+namespace App\Listeners\Auth;
 
-use Pterodactyl\Facades\Activity;
-use Pterodactyl\Events\Auth\ProvidedAuthenticationToken;
+use App\Facades\Activity;
+use App\Events\Auth\ProvidedAuthenticationToken;
 
 class TwoFactorListener
 {

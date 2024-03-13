@@ -1,8 +1,8 @@
 <?php
 
-namespace Pterodactyl\Contracts\Repository;
+namespace App\Contracts\Repository;
 
-use Pterodactyl\Models\Server;
+use App\Models\Server;
 use Illuminate\Support\Collection;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 
@@ -26,7 +26,7 @@ interface ServerRepositoryInterface extends RepositoryInterface
     /**
      * Return a server model and all variables associated with the server.
      *
-     * @throws \Pterodactyl\Exceptions\Repository\RecordNotFoundException
+     * @throws \App\Exceptions\Repository\RecordNotFoundException
      */
     public function findWithVariables(int $id): Server;
 
@@ -57,7 +57,7 @@ interface ServerRepositoryInterface extends RepositoryInterface
     /**
      * Return a server by UUID.
      *
-     * @throws \Pterodactyl\Exceptions\Repository\RecordNotFoundException
+     * @throws \App\Exceptions\Repository\RecordNotFoundException
      */
     public function getByUuid(string $uuid): Server;
 

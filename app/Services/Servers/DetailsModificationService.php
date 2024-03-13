@@ -1,13 +1,13 @@
 <?php
 
-namespace Pterodactyl\Services\Servers;
+namespace App\Services\Servers;
 
 use Illuminate\Support\Arr;
-use Pterodactyl\Models\Server;
+use App\Models\Server;
 use Illuminate\Database\ConnectionInterface;
-use Pterodactyl\Traits\Services\ReturnsUpdatedModels;
-use Pterodactyl\Repositories\Wings\DaemonServerRepository;
-use Pterodactyl\Exceptions\Http\Connection\DaemonConnectionException;
+use App\Traits\Services\ReturnsUpdatedModels;
+use App\Repositories\Daemon\DaemonServerRepository;
+use App\Exceptions\Http\Connection\DaemonConnectionException;
 
 class DetailsModificationService
 {
@@ -38,13 +38,13 @@ class DetailsModificationService
             ])->saveOrFail();
 
             // If the owner_id value is changed we need to revoke any tokens that exist for the server
-            // on the Wings instance so that the old owner no longer has any permission to access the
+            // on the daemon instance so that the old owner no longer has any permission to access the
             // websockets.
             if ($server->owner_id !== $owner) {
                 try {
                     $this->serverRepository->setServer($server)->revokeUserJTI($owner);
                 } catch (DaemonConnectionException $exception) {
-                    // Do nothing. A failure here is not ideal, but it is likely to be caused by Wings
+                    // Do nothing. A failure here is not ideal, but it is likely to be caused by daemon
                     // being offline, or in an entirely broken state. Remember, these tokens reset every
                     // few minutes by default, we're just trying to help it along a little quicker.
                 }

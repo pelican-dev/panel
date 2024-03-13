@@ -1,10 +1,10 @@
 <?php
 
-namespace Pterodactyl\Repositories\Eloquent;
+namespace App\Repositories\Eloquent;
 
-use Pterodactyl\Models\Subuser;
-use Pterodactyl\Exceptions\Repository\RecordNotFoundException;
-use Pterodactyl\Contracts\Repository\SubuserRepositoryInterface;
+use App\Models\Subuser;
+use App\Exceptions\Repository\RecordNotFoundException;
+use App\Contracts\Repository\SubuserRepositoryInterface;
 
 class SubuserRepository extends EloquentRepository implements SubuserRepositoryInterface
 {
@@ -51,7 +51,7 @@ class SubuserRepository extends EloquentRepository implements SubuserRepositoryI
     /**
      * Return a subuser and associated permissions given a user_id and server_id.
      *
-     * @throws \Pterodactyl\Exceptions\Repository\RecordNotFoundException
+     * @throws \App\Exceptions\Repository\RecordNotFoundException
      */
     public function getWithPermissionsUsingUserAndServer(int $user, int $server): Subuser
     {

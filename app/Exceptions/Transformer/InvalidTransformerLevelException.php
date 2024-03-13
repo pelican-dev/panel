@@ -1,9 +1,9 @@
 <?php
 
-namespace Pterodactyl\Exceptions\Transformer;
+namespace App\Exceptions\Transformer;
 
-use Pterodactyl\Exceptions\PterodactylException;
+use App\Exceptions\PanelException;
 
-class InvalidTransformerLevelException extends PterodactylException
+class InvalidTransformerLevelException extends PanelException
 {
 }

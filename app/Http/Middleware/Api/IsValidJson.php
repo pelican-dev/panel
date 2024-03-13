@@ -1,6 +1,6 @@
 <?php
 
-namespace Pterodactyl\Http\Middleware\Api;
+namespace App\Http\Middleware\Api;
 
 use Illuminate\Http\Request;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;

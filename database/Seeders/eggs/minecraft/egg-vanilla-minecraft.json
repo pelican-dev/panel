@@ -1,12 +1,12 @@
 {
-    "_comment": "DO NOT EDIT: FILE GENERATED AUTOMATICALLY BY PTERODACTYL PANEL - PTERODACTYL.IO",
+    "_comment": "DO NOT EDIT: FILE GENERATED AUTOMATICALLY BY PANEL",
     "meta": {
         "version": "PTDL_v2",
         "update_url": null
     },
     "exported_at": "2022-06-17T08:11:58+03:00",
     "name": "Vanilla Minecraft",
-    "author": "support@pterodactyl.io",
+    "author": "panel@example.com",
     "description": "Minecraft is a game about placing blocks and going on adventures. Explore randomly generated worlds and build amazing things from the simplest of homes to the grandest of castles. Play in Creative Mode with unlimited resources or mine deep in Survival Mode, crafting weapons and armor to fend off dangerous mobs. Do all this alone or with friends.",
     "features": [
         "eula",
@@ -14,10 +14,10 @@
         "pid_limit"
     ],
     "docker_images": {
-        "Java 17": "ghcr.io\/pterodactyl\/yolks:java_17",
-        "Java 16": "ghcr.io\/pterodactyl\/yolks:java_16",
-        "Java 11": "ghcr.io\/pterodactyl\/yolks:java_11",
-        "Java 8": "ghcr.io\/pterodactyl\/yolks:java_8"
+        "Java 17": "ghcr.io\/App\/yolks:java_17",
+        "Java 16": "ghcr.io\/App\/yolks:java_16",
+        "Java 11": "ghcr.io\/App\/yolks:java_11",
+        "Java 8": "ghcr.io\/App\/yolks:java_8"
     },
     "file_denylist": [],
     "startup": "java -Xms128M -XX:MaxRAMPercentage=95.0 -jar {{SERVER_JARFILE}}",
@@ -30,7 +30,7 @@
     "scripts": {
         "installation": {
             "script": "#!\/bin\/ash\r\n# Vanilla MC Installation Script\r\n#\r\n# Server Files: \/mnt\/server\r\nmkdir -p \/mnt\/server\r\ncd \/mnt\/server\r\n\r\nLATEST_VERSION=`curl https:\/\/launchermeta.mojang.com\/mc\/game\/version_manifest.json | jq -r '.latest.release'`\r\nLATEST_SNAPSHOT_VERSION=`curl https:\/\/launchermeta.mojang.com\/mc\/game\/version_manifest.json | jq -r '.latest.snapshot'`\r\n\r\necho -e \"latest version is $LATEST_VERSION\"\r\necho -e \"latest snapshot is $LATEST_SNAPSHOT_VERSION\"\r\n\r\nif [ -z \"$VANILLA_VERSION\" ] || [ \"$VANILLA_VERSION\" == \"latest\" ]; then\r\n  MANIFEST_URL=$(curl -sSL https:\/\/launchermeta.mojang.com\/mc\/game\/version_manifest.json | jq --arg VERSION $LATEST_VERSION -r '.versions | .[] | select(.id== $VERSION )|.url')\r\nelif [ \"$VANILLA_VERSION\" == \"snapshot\" ]; then\r\n  MANIFEST_URL=$(curl -sSL https:\/\/launchermeta.mojang.com\/mc\/game\/version_manifest.json | jq --arg VERSION $LATEST_SNAPSHOT_VERSION -r '.versions | .[] | select(.id== $VERSION )|.url')\r\nelse\r\n  MANIFEST_URL=$(curl -sSL https:\/\/launchermeta.mojang.com\/mc\/game\/version_manifest.json | jq --arg VERSION $VANILLA_VERSION -r '.versions | .[] | select(.id== $VERSION )|.url')\r\nfi\r\n\r\nDOWNLOAD_URL=$(curl ${MANIFEST_URL} | jq .downloads.server | jq -r '. | .url')\r\n\r\necho -e \"running: curl -o ${SERVER_JARFILE} $DOWNLOAD_URL\"\r\ncurl -o ${SERVER_JARFILE} $DOWNLOAD_URL\r\n\r\necho -e \"Install Complete\"",
-            "container": "ghcr.io\/pterodactyl\/installers:alpine",
+            "container": "ghcr.io\/App\/installers:alpine",
             "entrypoint": "ash"
         }
     },

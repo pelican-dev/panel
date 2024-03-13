@@ -1,16 +1,16 @@
 <?php
 
-namespace Pterodactyl\Services\Servers;
+namespace App\Services\Servers;
 
 use Illuminate\Support\Arr;
-use Pterodactyl\Models\Server;
-use Pterodactyl\Models\Allocation;
+use App\Models\Server;
+use App\Models\Allocation;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Database\ConnectionInterface;
-use Pterodactyl\Exceptions\DisplayException;
+use App\Exceptions\DisplayException;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
-use Pterodactyl\Repositories\Wings\DaemonServerRepository;
-use Pterodactyl\Exceptions\Http\Connection\DaemonConnectionException;
+use App\Repositories\Daemon\DaemonServerRepository;
+use App\Exceptions\Http\Connection\DaemonConnectionException;
 
 class BuildModificationService
 {
@@ -28,11 +28,11 @@ class BuildModificationService
      * Change the build details for a specified server.
      *
      * @throws \Throwable
-     * @throws \Pterodactyl\Exceptions\DisplayException
+     * @throws \App\Exceptions\DisplayException
      */
     public function handle(Server $server, array $data): Server
     {
-        /** @var \Pterodactyl\Models\Server $server */
+        /** @var \App\Models\Server $server */
         $server = $this->connection->transaction(function () use ($server, $data) {
             $this->processAllocations($server, $data);
 
@@ -59,7 +59,7 @@ class BuildModificationService
 
         $updateData = $this->structureService->handle($server);
 
-        // Because Wings always fetches an updated configuration from the Panel when booting
+        // Because daemon always fetches an updated configuration from the Panel when booting
         // a server this type of exception can be safely "ignored" and just written to the logs.
         // Ideally this request succeeds, so we can apply resource modifications on the fly, but
         // if it fails we can just continue on as normal.
@@ -77,7 +77,7 @@ class BuildModificationService
     /**
      * Process the allocations being assigned in the data and ensure they are available for a server.
      *
-     * @throws \Pterodactyl\Exceptions\DisplayException
+     * @throws \App\Exceptions\DisplayException
      */
     private function processAllocations(Server $server, array &$data): void
     {

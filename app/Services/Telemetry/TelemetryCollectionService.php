@@ -1,23 +1,23 @@
 <?php
 
-namespace Pterodactyl\Services\Telemetry;
+namespace App\Services\Telemetry;
 
 use Exception;
 use Ramsey\Uuid\Uuid;
 use Illuminate\Support\Arr;
-use Pterodactyl\Models\Egg;
-use Pterodactyl\Models\Nest;
-use Pterodactyl\Models\Node;
-use Pterodactyl\Models\User;
-use Pterodactyl\Models\Mount;
-use Pterodactyl\Models\Backup;
-use Pterodactyl\Models\Server;
-use Pterodactyl\Models\Location;
+use App\Models\Egg;
+use App\Models\Nest;
+use App\Models\Node;
+use App\Models\User;
+use App\Models\Mount;
+use App\Models\Backup;
+use App\Models\Server;
+use App\Models\Location;
 use Illuminate\Support\Facades\DB;
-use Pterodactyl\Models\Allocation;
+use App\Models\Allocation;
 use Illuminate\Support\Facades\Http;
-use Pterodactyl\Repositories\Eloquent\SettingsRepository;
-use Pterodactyl\Repositories\Wings\DaemonConfigurationRepository;
+use App\Repositories\Eloquent\SettingsRepository;
+use App\Repositories\Daemon\DaemonConfigurationRepository;
 
 class TelemetryCollectionService
 {
@@ -31,7 +31,7 @@ class TelemetryCollectionService
     }
 
     /**
-     * Collects telemetry data and sends it to the Pterodactyl Telemetry Service.
+     * Collects telemetry data and sends it to the Telemetry Service.
      */
     public function __invoke(): void
     {
@@ -41,13 +41,13 @@ class TelemetryCollectionService
             return;
         }
 
-        Http::post('https://telemetry.pterodactyl.io', $data);
+        Http::post('https://telemetry.example.com', $data);
     }
 
     /**
      * Collects telemetry data and returns it as an array.
      *
-     * @throws \Pterodactyl\Exceptions\Model\DataValidationException
+     * @throws \App\Exceptions\Model\DataValidationException
      */
     public function collect(): array
     {

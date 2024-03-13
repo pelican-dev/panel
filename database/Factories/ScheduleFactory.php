@@ -2,7 +2,7 @@
 
 namespace Database\Factories;
 
-use Pterodactyl\Models\Schedule;
+use App\Models\Schedule;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class ScheduleFactory extends Factory

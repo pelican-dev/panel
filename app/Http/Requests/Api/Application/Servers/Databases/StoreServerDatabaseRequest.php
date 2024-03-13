@@ -1,14 +1,14 @@
 <?php
 
-namespace Pterodactyl\Http\Requests\Api\Application\Servers\Databases;
+namespace App\Http\Requests\Api\Application\Servers\Databases;
 
 use Webmozart\Assert\Assert;
-use Pterodactyl\Models\Server;
+use App\Models\Server;
 use Illuminate\Validation\Rule;
 use Illuminate\Database\Query\Builder;
-use Pterodactyl\Services\Acl\Api\AdminAcl;
-use Pterodactyl\Services\Databases\DatabaseManagementService;
-use Pterodactyl\Http\Requests\Api\Application\ApplicationApiRequest;
+use App\Services\Acl\Api\AdminAcl;
+use App\Services\Databases\DatabaseManagementService;
+use App\Http\Requests\Api\Application\ApplicationApiRequest;
 
 class StoreServerDatabaseRequest extends ApplicationApiRequest
 {

@@ -1,11 +1,11 @@
 <?php
 
-namespace Pterodactyl\Providers;
+namespace App\Providers;
 
 use Laravel\Sanctum\Sanctum;
-use Pterodactyl\Models\ApiKey;
-use Pterodactyl\Models\Server;
-use Pterodactyl\Policies\ServerPolicy;
+use App\Models\ApiKey;
+use App\Models\Server;
+use App\Policies\ServerPolicy;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
 
 class AuthServiceProvider extends ServiceProvider

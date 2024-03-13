@@ -1,6 +1,6 @@
 <?php
 
-namespace Pterodactyl\Contracts\Extensions;
+namespace App\Contracts\Extensions;
 
 use Hashids\HashidsInterface as VendorHashidsInterface;
 
