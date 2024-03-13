@@ -14,7 +14,7 @@ use App\Contracts\Core\ReceivesEvents;
 use Illuminate\Contracts\Notifications\Dispatcher;
 use Illuminate\Notifications\Messages\MailMessage;
 
-class ServerInstalled extends Notification implements ShouldQueue, ReceivesEvents
+class ServerInstalled extends Notification implements ReceivesEvents, ShouldQueue
 {
     use Queueable;
 

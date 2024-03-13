@@ -3,17 +3,15 @@ name: Tests
 on:
   push:
     branches:
-      - "develop"
-      - "1.0-develop"
+      - '**'
   pull_request:
     branches:
-      - "develop"
-      - "1.0-develop"
+      - '**'
 
 jobs:
   tests:
     name: Tests
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
@@ -30,7 +28,7 @@ jobs:
         options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
     steps:
       - name: Code Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Get cache directory
         id: composer-cache
@@ -38,7 +36,7 @@ jobs:
           echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
 
       - name: Cache
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: ${{ steps.composer-cache.outputs.dir }}
           key: ${{ runner.os }}-composer-${{ matrix.php }}-${{ hashFiles('**/composer.lock') }}
@@ -54,10 +52,13 @@ jobs:
           coverage: none
 
       - name: Setup .env
-        run: cp .env.ci .env
+        run: cp .env.example .env
 
       - name: Install dependencies
         run: composer install --no-interaction --no-progress --no-suggest --prefer-dist
+
+      - name: Generate App Key
+        run: php artisan key:generate
 
       - name: Unit tests
         run: vendor/bin/phpunit --bootstrap vendor/autoload.php tests/Unit

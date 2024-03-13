@@ -3,20 +3,18 @@ name: Lint
 on:
   push:
     branches:
-      - "develop"
-      - "1.0-develop"
+      - '**'
   pull_request:
     branches:
-      - "develop"
-      - "1.0-develop"
+      - '**'
 
 jobs:
   lint:
     name: Lint
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest
     steps:
       - name: Code Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
@@ -27,10 +25,10 @@ jobs:
           coverage: none
 
       - name: Setup .env
-        run: cp .env.ci .env
+        run: cp .env.example .env
 
       - name: Install dependencies
         run: composer install --no-interaction --no-progress --no-suggest --prefer-dist
 
-      - name: PHP CS Fixer
-        run: vendor/bin/php-cs-fixer fix --dry-run --diff
+      - name: Pint
+        run: vendor/bin/pint --test

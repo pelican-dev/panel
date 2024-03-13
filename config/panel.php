@@ -177,16 +177,4 @@ return [
         // Should an email be sent to a server owner whenever their server is reinstalled?
         'send_reinstall_notification' => env('PANEL_SEND_REINSTALL_NOTIFICATION', true),
     ],
-
-    /*
-    |--------------------------------------------------------------------------
-    | Telemetry Settings
-    |--------------------------------------------------------------------------
-    |
-    | This section controls the telemetry.
-    */
-
-    'telemetry' => [
-        'enabled' => env('PANEL_TELEMETRY_ENABLED', true),
-    ],
 ];

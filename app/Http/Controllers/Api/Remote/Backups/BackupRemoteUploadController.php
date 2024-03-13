@@ -84,7 +84,7 @@ class BackupRemoteUploadController extends Controller
 
         // Create as many UploadPart presigned urls as needed
         $parts = [];
-        for ($i = 0; $i < ($size / $maxPartSize); ++$i) {
+        for ($i = 0; $i < ($size / $maxPartSize); $i++) {
             $parts[] = $client->createPresignedRequest(
                 $client->getCommand('UploadPart', array_merge($params, ['PartNumber' => $i + 1])),
                 $expires

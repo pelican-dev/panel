@@ -33,7 +33,7 @@ class TwoFactorSetupService
     {
         $secret = '';
         try {
-            for ($i = 0; $i < $this->config->get('panel.auth.2fa.bytes', 16); ++$i) {
+            for ($i = 0; $i < $this->config->get('panel.auth.2fa.bytes', 16); $i++) {
                 $secret .= substr(self::VALID_BASE32_CHARACTERS, random_int(0, 31), 1);
             }
         } catch (\Exception $exception) {

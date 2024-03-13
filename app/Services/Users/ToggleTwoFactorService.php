@@ -56,7 +56,7 @@ class ToggleTwoFactorService
             $tokens = [];
             if ((!$toggleState && !$user->use_totp) || $toggleState) {
                 $inserts = [];
-                for ($i = 0; $i < 10; ++$i) {
+                for ($i = 0; $i < 10; $i++) {
                     $token = Str::random(10);
 
                     $inserts[] = [

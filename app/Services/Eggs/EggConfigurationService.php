@@ -190,6 +190,7 @@ class EggConfigurationService
                 $plucked = Arr::get($structure, preg_replace('/^server\./', '', $key), '');
 
                 $value = str_replace("{{{$key}}}", $plucked, $value);
+
                 continue;
             }
 

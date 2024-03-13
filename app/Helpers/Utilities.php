@@ -19,7 +19,7 @@ class Utilities
         // Given a random string of characters, randomly loop through the characters and replace some
         // with special characters to avoid issues with MySQL password requirements on some servers.
         try {
-            for ($i = 0; $i < random_int(2, 6); ++$i) {
+            for ($i = 0; $i < random_int(2, 6); $i++) {
                 $character = ['!', '@', '=', '.', '+', '^'][random_int(0, 5)];
 
                 $string = substr_replace($string, $character, random_int(0, $length - 1), 1);

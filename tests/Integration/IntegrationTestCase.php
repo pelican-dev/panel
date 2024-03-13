@@ -13,8 +13,8 @@ use App\Transformers\Api\Application\BaseTransformer;
 
 abstract class IntegrationTestCase extends TestCase
 {
-    use CreatesTestModels;
     use AssertsActivityLogged;
+    use CreatesTestModels;
 
     protected array $connectionsToTransact = ['mysql'];
 

@@ -2,8 +2,10 @@
 
 namespace App\Console\Commands\User;
 
+use Exception;
 use Illuminate\Console\Command;
 use App\Services\Users\UserCreationService;
+use Illuminate\Support\Facades\DB;
 
 class MakeUserCommand extends Command
 {
@@ -22,11 +24,17 @@ class MakeUserCommand extends Command
     /**
      * Handle command request to create a new user.
      *
-     * @throws \Exception
+     * @throws Exception
      * @throws \App\Exceptions\Model\DataValidationException
      */
     public function handle()
     {
+        try {
+            DB::select('select 1 where 1');
+        } catch (Exception $exception) {
+            return $this->error($exception->getMessage()) ?? 0;
+        }
+
         $root_admin = $this->option('admin') ?? $this->confirm(trans('command/messages.user.ask_admin'));
         $email = $this->option('email') ?? $this->ask(trans('command/messages.user.ask_email'));
         $username = $this->option('username') ?? $this->ask(trans('command/messages.user.ask_username'));

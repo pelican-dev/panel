@@ -82,7 +82,7 @@ class ApiKeyControllerTest extends ClientApiIntegrationTestCase
     public function testApiKeyCannotSpecifyMoreThanFiftyIps()
     {
         $ips = [];
-        for ($i = 0; $i < 100; ++$i) {
+        for ($i = 0; $i < 100; $i++) {
             $ips[] = '127.0.0.' . $i;
         }
 
@@ -140,9 +140,9 @@ class ApiKeyControllerTest extends ClientApiIntegrationTestCase
             ->assertJsonPath('errors.0.detail', 'The description may not be greater than 500 characters.');
 
         $this->postJson('/api/client/account/api-keys', [
-                'description' => 'Foobar',
-                'allowed_ips' => ['hodor', '127.0.0.1', 'hodor/24'],
-            ])
+            'description' => 'Foobar',
+            'allowed_ips' => ['hodor', '127.0.0.1', 'hodor/24'],
+        ])
             ->assertUnprocessable()
             ->assertJsonPath('errors.0.detail', '"hodor" is not a valid IP address or CIDR range.')
             ->assertJsonPath('errors.0.meta.source_field', 'allowed_ips.0')

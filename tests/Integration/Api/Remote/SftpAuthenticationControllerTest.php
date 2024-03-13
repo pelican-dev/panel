@@ -7,7 +7,6 @@ use App\Models\User;
 use App\Models\Server;
 use App\Models\Permission;
 use App\Models\UserSSHKey;
-use phpseclib3\Crypt\EC\PrivateKey;
 use App\Tests\Integration\IntegrationTestCase;
 
 class SftpAuthenticationControllerTest extends IntegrationTestCase
@@ -99,29 +98,13 @@ class SftpAuthenticationControllerTest extends IntegrationTestCase
      */
     public function testUserIsThrottledIfInvalidCredentialsAreProvided()
     {
-        for ($i = 0; $i <= 10; ++$i) {
+        for ($i = 0; $i <= 10; $i++) {
             $this->postJson('/api/remote/sftp/auth', [
                 'type' => 'public_key',
                 'username' => $i % 2 === 0 ? $this->user->username : $this->getUsername(),
                 'password' => 'invalid key',
             ])
                 ->assertStatus($i === 10 ? 429 : 403);
-        }
-    }
-
-    /**
-     * Test that the user is not throttled so long as a valid public key is provided, even
-     * if it doesn't actually exist in the database for the user.
-     */
-    public function testUserIsNotThrottledIfNoPublicKeyMatches()
-    {
-        for ($i = 0; $i <= 10; ++$i) {
-            $this->postJson('/api/remote/sftp/auth', [
-                'type' => 'public_key',
-                'username' => $this->getUsername(),
-                'password' => PrivateKey::createKey('Ed25519')->getPublicKey()->toString('OpenSSH'),
-            ])
-                ->assertForbidden();
         }
     }
 

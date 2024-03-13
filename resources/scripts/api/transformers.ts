@@ -38,6 +38,7 @@ export const rawDataToFileObject = (data: FractalResponseData): FileObject => ({
                 'application/x-lzip', // .tar.lz4, .lz4 (not sure if this mime type is correct)
                 'application/x-sz', // .tar.sz, .sz (not sure if this mime type is correct)
                 'application/x-xz', // .tar.xz, .xz
+                'application/x-7z-compressed', // .7z
                 'application/zstd', // .tar.zst, .zst
                 'application/zip', // .zip
             ].indexOf(this.mimetype) >= 0
