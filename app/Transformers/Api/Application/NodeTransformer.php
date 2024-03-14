@@ -75,26 +75,6 @@ class NodeTransformer extends BaseTransformer
      *
      * @throws \App\Exceptions\Transformer\InvalidTransformerLevelException
      */
-    public function includeLocation(Node $node): Item|NullResource
-    {
-        if (!$this->authorize(AdminAcl::RESOURCE_LOCATIONS)) {
-            return $this->null();
-        }
-
-        $node->loadMissing('location');
-
-        return $this->item(
-            $node->getRelation('location'),
-            $this->makeTransformer(LocationTransformer::class),
-            'location'
-        );
-    }
-
-    /**
-     * Return the nodes associated with this location.
-     *
-     * @throws \App\Exceptions\Transformer\InvalidTransformerLevelException
-     */
     public function includeServers(Node $node): Collection|NullResource
     {
         if (!$this->authorize(AdminAcl::RESOURCE_SERVERS)) {

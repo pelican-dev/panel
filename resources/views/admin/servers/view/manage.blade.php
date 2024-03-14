@@ -106,7 +106,7 @@
                     </div>
 
                     <div class="box-footer">
-                        @if($canTransfer)
+                        @if(!$canTransfer)
                             <button class="btn btn-success" data-toggle="modal" data-target="#transferServerModal">Transfer Server</button>
                         @else
                             <button class="btn btn-success disabled">Transfer Server</button>
@@ -150,18 +150,10 @@
                             <div class="form-group col-md-12">
                                 <label for="pNodeId">Node</label>
                                 <select name="node_id" id="pNodeId" class="form-control">
-                                    @foreach($locations as $location)
-                                        <optgroup label="{{ $location->long }} ({{ $location->short }})">
-                                            @foreach($location->nodes as $node)
-
-                                                @if($node->id != $server->node_id)
-                                                    <option value="{{ $node->id }}"
-                                                            @if($location->id === old('location_id')) selected @endif
-                                                    >{{ $node->name }}</option>
-                                                @endif
-
-                                            @endforeach
-                                        </optgroup>
+                                    @foreach($nodes as $node)
+                                        @if($node->id != $server->node_id)
+                                            <option value="{{ $node->id }}">{{ $node->name }}</option>
+                                        @endif
                                     @endforeach
                                 </select>
                                 <p class="small text-muted no-margin">The node which this server will be transferred to.</p>

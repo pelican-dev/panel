@@ -73,14 +73,10 @@ class NodeRepository extends EloquentRepository implements NodeRepositoryInterfa
     }
 
     /**
-     * Return a single node with location and server information.
+     * Return a single node with server information.
      */
-    public function loadLocationAndServerCount(Node $node, bool $refresh = false): Node
+    public function loadServerCount(Node $node, bool $refresh = false): Node
     {
-        if (!$node->relationLoaded('location') || $refresh) {
-            $node->load('location');
-        }
-
         // This is quite ugly and can probably be improved down the road.
         // And by probably, I mean it should.
         if (is_null($node->servers_count) || $refresh) {

@@ -50,24 +50,6 @@ Route::group(['prefix' => '/nodes'], function () {
 
 /*
 |--------------------------------------------------------------------------
-| Location Controller Routes
-|--------------------------------------------------------------------------
-|
-| Endpoint: /api/application/locations
-|
-*/
-Route::group(['prefix' => '/locations'], function () {
-    Route::get('/', [Application\Locations\LocationController::class, 'index'])->name('api.applications.locations');
-    Route::get('/{location:id}', [Application\Locations\LocationController::class, 'view'])->name('api.application.locations.view');
-
-    Route::post('/', [Application\Locations\LocationController::class, 'store']);
-    Route::patch('/{location:id}', [Application\Locations\LocationController::class, 'update']);
-
-    Route::delete('/{location:id}', [Application\Locations\LocationController::class, 'delete']);
-});
-
-/*
-|--------------------------------------------------------------------------
 | Server Controller Routes
 |--------------------------------------------------------------------------
 |

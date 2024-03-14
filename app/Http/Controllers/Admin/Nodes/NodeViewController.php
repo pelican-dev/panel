@@ -13,7 +13,6 @@ use App\Repositories\Eloquent\NodeRepository;
 use App\Repositories\Eloquent\ServerRepository;
 use App\Traits\Controllers\JavascriptInjection;
 use App\Services\Helpers\SoftwareVersionService;
-use App\Repositories\Eloquent\LocationRepository;
 use App\Repositories\Eloquent\AllocationRepository;
 
 class NodeViewController extends Controller
@@ -25,7 +24,6 @@ class NodeViewController extends Controller
      */
     public function __construct(
         private AllocationRepository $allocationRepository,
-        private LocationRepository $locationRepository,
         private NodeRepository $repository,
         private ServerRepository $serverRepository,
         private SoftwareVersionService $versionService,
@@ -38,7 +36,7 @@ class NodeViewController extends Controller
      */
     public function index(Request $request, Node $node): View
     {
-        $node = $this->repository->loadLocationAndServerCount($node);
+        $node = $this->repository->loadServerCount($node);
 
         return $this->view->make('admin.nodes.view.index', [
             'node' => $node,
@@ -54,7 +52,6 @@ class NodeViewController extends Controller
     {
         return $this->view->make('admin.nodes.view.settings', [
             'node' => $node,
-            'locations' => $this->locationRepository->all(),
         ]);
     }
 

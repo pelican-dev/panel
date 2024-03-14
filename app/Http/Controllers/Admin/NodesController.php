@@ -22,7 +22,6 @@ use App\Contracts\Repository\NodeRepositoryInterface;
 use App\Contracts\Repository\ServerRepositoryInterface;
 use App\Http\Requests\Admin\Node\AllocationFormRequest;
 use App\Services\Allocations\AllocationDeletionService;
-use App\Contracts\Repository\LocationRepositoryInterface;
 use App\Contracts\Repository\AllocationRepositoryInterface;
 use App\Http\Requests\Admin\Node\AllocationAliasFormRequest;
 
@@ -39,7 +38,6 @@ class NodesController extends Controller
         protected CacheRepository $cache,
         protected NodeCreationService $creationService,
         protected NodeDeletionService $deletionService,
-        protected LocationRepositoryInterface $locationRepository,
         protected NodeRepositoryInterface $repository,
         protected ServerRepositoryInterface $serverRepository,
         protected NodeUpdateService $updateService,
@@ -53,14 +51,7 @@ class NodesController extends Controller
      */
     public function create(): View|RedirectResponse
     {
-        $locations = $this->locationRepository->all();
-        if (count($locations) < 1) {
-            $this->alert->warning(trans('admin/node.notices.location_required'))->flash();
-
-            return redirect()->route('admin.locations');
-        }
-
-        return $this->view->make('admin.nodes.new', ['locations' => $locations]);
+        return $this->view->make('admin.nodes.new');
     }
 
     /**

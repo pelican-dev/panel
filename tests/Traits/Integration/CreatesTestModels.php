@@ -8,7 +8,6 @@ use App\Models\Node;
 use App\Models\User;
 use App\Models\Server;
 use App\Models\Subuser;
-use App\Models\Location;
 use App\Models\Allocation;
 
 trait CreatesTestModels
@@ -33,14 +32,8 @@ trait CreatesTestModels
         }
 
         if (!isset($attributes['node_id'])) {
-            if (!isset($attributes['location_id'])) {
-                /** @var \App\Models\Location $location */
-                $location = Location::factory()->create();
-                $attributes['location_id'] = $location->id;
-            }
-
             /** @var \App\Models\Node $node */
-            $node = Node::factory()->create(['location_id' => $attributes['location_id']]);
+            $node = Node::factory()->create();
             $attributes['node_id'] = $node->id;
         }
 
@@ -56,7 +49,7 @@ trait CreatesTestModels
             $attributes['egg_id'] = $egg->id;
         }
 
-        unset($attributes['user_id'], $attributes['location_id']);
+        unset($attributes['user_id']);
 
         /** @var \App\Models\Server $server */
         $server = Server::factory()->create($attributes);
@@ -64,7 +57,7 @@ trait CreatesTestModels
         Allocation::query()->where('id', $server->allocation_id)->update(['server_id' => $server->id]);
 
         return $server->fresh([
-            'location', 'user', 'node', 'allocation', 'egg',
+            'user', 'node', 'allocation', 'egg',
         ]);
     }
 

@@ -5,7 +5,6 @@ namespace App\Http\Controllers\Admin\Servers;
 use App\Models\Egg;
 use Illuminate\View\View;
 use App\Models\Node;
-use App\Models\Location;
 use Illuminate\Http\RedirectResponse;
 use Prologue\Alerts\AlertsMessageBag;
 use Illuminate\View\Factory as ViewFactory;
@@ -49,8 +48,8 @@ class CreateServerController extends Controller
         ]);
 
         return $this->view->make('admin.servers.new', [
-            'locations' => Location::all(),
             'eggs' => $eggs,
+            'nodes' => Node::all(),
         ]);
     }
 

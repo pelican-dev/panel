@@ -290,16 +290,6 @@ class Server extends Model
     }
 
     /**
-     * Returns the location that a server belongs to.
-     *
-     * @throws \Exception
-     */
-    public function location(): \Znck\Eloquent\Relations\BelongsToThrough
-    {
-        return $this->belongsToThrough(Location::class, Node::class);
-    }
-
-    /**
      * Returns the associated server transfer.
      */
     public function transfer(): HasOne

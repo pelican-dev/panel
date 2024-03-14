@@ -8,7 +8,7 @@ Route::get('/', [Admin\BaseController::class, 'index'])->name('admin.index');
 
 /*
 |--------------------------------------------------------------------------
-| Location Controller Routes
+| API Controller Routes
 |--------------------------------------------------------------------------
 |
 | Endpoint: /admin/api
@@ -21,22 +21,6 @@ Route::group(['prefix' => 'api'], function () {
     Route::post('/new', [Admin\ApiController::class, 'store']);
 
     Route::delete('/revoke/{identifier}', [Admin\ApiController::class, 'delete'])->name('admin.api.delete');
-});
-
-/*
-|--------------------------------------------------------------------------
-| Location Controller Routes
-|--------------------------------------------------------------------------
-|
-| Endpoint: /admin/locations
-|
-*/
-Route::group(['prefix' => 'locations'], function () {
-    Route::get('/', [Admin\LocationController::class, 'index'])->name('admin.locations');
-    Route::get('/view/{location:id}', [Admin\LocationController::class, 'view'])->name('admin.locations.view');
-
-    Route::post('/', [Admin\LocationController::class, 'create']);
-    Route::patch('/view/{location:id}', [Admin\LocationController::class, 'update']);
 });
 
 /*

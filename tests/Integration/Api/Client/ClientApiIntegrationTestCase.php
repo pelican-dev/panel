@@ -9,7 +9,6 @@ use App\Models\Model;
 use App\Models\Backup;
 use App\Models\Server;
 use App\Models\Database;
-use App\Models\Location;
 use App\Models\Schedule;
 use Illuminate\Support\Collection;
 use App\Models\Allocation;
@@ -31,7 +30,6 @@ abstract class ClientApiIntegrationTestCase extends IntegrationTestCase
         Backup::query()->forceDelete();
         Server::query()->forceDelete();
         Node::query()->forceDelete();
-        Location::query()->forceDelete();
         User::query()->forceDelete();
 
         parent::tearDown();

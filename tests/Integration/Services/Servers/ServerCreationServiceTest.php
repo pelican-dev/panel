@@ -9,7 +9,6 @@ use App\Models\Node;
 use App\Models\User;
 use GuzzleHttp\Psr7\Response;
 use App\Models\Server;
-use App\Models\Location;
 use App\Models\Allocation;
 use Illuminate\Foundation\Testing\WithFaker;
 use GuzzleHttp\Exception\BadResponseException;
@@ -57,20 +56,15 @@ class ServerCreationServiceTest extends IntegrationTestCase
         /** @var \App\Models\User $user */
         $user = User::factory()->create();
 
-        /** @var \App\Models\Location $location */
-        $location = Location::factory()->create();
-
         /** @var \App\Models\Node $node */
-        $node = Node::factory()->create([
-            'location_id' => $location->id,
-        ]);
+        $node = Node::factory()->create();
 
         /** @var \App\Models\Allocation[]|\Illuminate\Database\Eloquent\Collection $allocations */
         $allocations = Allocation::factory()->times(5)->create([
             'node_id' => $node->id,
         ]);
 
-        $deployment = (new DeploymentObject())->setDedicated(true)->setLocations([$node->location_id])->setPorts([
+        $deployment = (new DeploymentObject())->setDedicated(true)->setPorts([
             $allocations[0]->port,
         ]);
 
@@ -159,13 +153,8 @@ class ServerCreationServiceTest extends IntegrationTestCase
         /** @var \App\Models\User $user */
         $user = User::factory()->create();
 
-        /** @var \App\Models\Location $location */
-        $location = Location::factory()->create();
-
         /** @var \App\Models\Node $node */
-        $node = Node::factory()->create([
-            'location_id' => $location->id,
-        ]);
+        $node = Node::factory()->create();
 
         /** @var \App\Models\Allocation $allocation */
         $allocation = Allocation::factory()->create([

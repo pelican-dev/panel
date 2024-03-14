@@ -27,7 +27,7 @@ class NodeDeploymentController extends ApplicationApiController
     public function __invoke(GetDeployableNodesRequest $request): array
     {
         $data = $request->validated();
-        $nodes = $this->viableNodesService->setLocations($data['location_ids'] ?? [])
+        $nodes = $this->viableNodesService
             ->setMemory($data['memory'])
             ->setDisk($data['disk'])
             ->handle($request->query('per_page'), $request->query('page'));

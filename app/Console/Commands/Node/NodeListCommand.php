@@ -16,7 +16,6 @@ class NodeListCommand extends Command
                 'id' => $node->id,
                 'uuid' => $node->uuid,
                 'name' => $node->name,
-                'location' => $node->location->short,
                 'host' => $node->getConnectionAddress(),
             ];
         });
@@ -24,7 +23,7 @@ class NodeListCommand extends Command
         if ($this->option('format') === 'json') {
             $this->output->write($nodes->toJson(JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
         } else {
-            $this->table(['ID', 'UUID', 'Name', 'Location', 'Host'], $nodes->toArray());
+            $this->table(['ID', 'UUID', 'Name', 'Host'], $nodes->toArray());
         }
 
         $this->output->newLine();

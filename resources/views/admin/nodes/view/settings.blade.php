@@ -50,16 +50,6 @@
                         </div>
                     </div>
                     <div class="form-group col-xs-12">
-                        <label for="name" class="control-label">Location</label>
-                        <div>
-                            <select name="location_id" class="form-control">
-                                @foreach($locations as $location)
-                                    <option value="{{ $location->id }}" {{ (old('location_id', $node->location_id) === $location->id) ? 'selected' : '' }}>{{ $location->long }} ({{ $location->short }})</option>
-                                @endforeach
-                            </select>
-                        </div>
-                    </div>
-                    <div class="form-group col-xs-12">
                         <label for="public" class="control-label">Allow Automatic Allocation <sup><a data-toggle="tooltip" data-placement="top" title="Allow automatic allocation to this Node?">?</a></sup></label>
                         <div>
                             <input type="radio" name="public" value="1" {{ (old('public', $node->public)) ? 'checked' : '' }} id="public_1" checked> <label for="public_1" style="padding-left:5px;">Yes</label><br />

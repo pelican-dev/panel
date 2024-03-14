@@ -20,7 +20,6 @@ class StoreNodeRequest extends ApplicationApiRequest
         return collect($rules ?? Node::getRules())->only([
             'public',
             'name',
-            'location_id',
             'fqdn',
             'scheme',
             'behind_proxy',
@@ -48,7 +47,6 @@ class StoreNodeRequest extends ApplicationApiRequest
         return [
             'daemon_base' => 'Daemon Base Path',
             'upload_size' => 'File Upload Size Limit',
-            'location_id' => 'Location',
             'public' => 'Node Visibility',
         ];
     }

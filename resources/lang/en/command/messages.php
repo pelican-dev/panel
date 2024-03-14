@@ -1,13 +1,6 @@
 <?php
 
 return [
-    'location' => [
-        'no_location_found' => 'Could not locate a record matching the provided short code.',
-        'ask_short' => 'Location Short Code',
-        'ask_long' => 'Location Description',
-        'created' => 'Successfully created a new location (:name) with an ID of :id.',
-        'deleted' => 'Successfully deleted the requested location.',
-    ],
     'user' => [
         'search_users' => 'Enter a Username, User ID, or Email Address',
         'select_search_user' => 'ID of user to delete (Enter \'0\' to re-search)',

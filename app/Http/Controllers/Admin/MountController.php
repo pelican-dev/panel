@@ -8,14 +8,12 @@ use Illuminate\View\View;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use App\Models\Mount;
-use App\Models\Location;
 use Illuminate\Http\RedirectResponse;
 use Prologue\Alerts\AlertsMessageBag;
 use Illuminate\View\Factory as ViewFactory;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\MountFormRequest;
 use App\Repositories\Eloquent\MountRepository;
-use App\Contracts\Repository\LocationRepositoryInterface;
 
 class MountController extends Controller
 {
@@ -24,7 +22,6 @@ class MountController extends Controller
      */
     public function __construct(
         protected AlertsMessageBag $alert,
-        protected LocationRepositoryInterface $locationRepository,
         protected MountRepository $repository,
         protected ViewFactory $view
     ) {
@@ -48,12 +45,10 @@ class MountController extends Controller
     public function view(string $id): View
     {
         $eggs = Egg::all();
-        $locations = Location::query()->with('nodes')->get();
 
         return $this->view->make('admin.mounts.view', [
             'mount' => $this->repository->getWithRelations($id),
             'eggs' => $eggs,
-            'locations' => $locations,
         ]);
     }
 

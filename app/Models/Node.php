@@ -17,7 +17,6 @@ use Illuminate\Database\Eloquent\Relations\HasManyThrough;
  * @property bool $public
  * @property string $name
  * @property string|null $description
- * @property int $location_id
  * @property string $fqdn
  * @property string $scheme
  * @property bool $behind_proxy
@@ -34,7 +33,6 @@ use Illuminate\Database\Eloquent\Relations\HasManyThrough;
  * @property string $daemonBase
  * @property \Carbon\Carbon $created_at
  * @property \Carbon\Carbon $updated_at
- * @property \App\Models\Location $location
  * @property \App\Models\Mount[]|\Illuminate\Database\Eloquent\Collection $mounts
  * @property \App\Models\Server[]|\Illuminate\Database\Eloquent\Collection $servers
  * @property \App\Models\Allocation[]|\Illuminate\Database\Eloquent\Collection $allocations
@@ -66,7 +64,6 @@ class Node extends Model
      * Cast values to correct type.
      */
     protected $casts = [
-        'location_id' => 'integer',
         'memory' => 'integer',
         'disk' => 'integer',
         'daemonListen' => 'integer',
@@ -80,7 +77,7 @@ class Node extends Model
      * Fields that are mass assignable.
      */
     protected $fillable = [
-        'public', 'name', 'location_id',
+        'public', 'name',
         'fqdn', 'scheme', 'behind_proxy',
         'memory', 'memory_overallocate', 'disk',
         'disk_overallocate', 'upload_size', 'daemonBase',
@@ -91,7 +88,6 @@ class Node extends Model
     public static array $validationRules = [
         'name' => 'required|regex:/^([\w .-]{1,100})$/',
         'description' => 'string|nullable',
-        'location_id' => 'required|exists:locations,id',
         'public' => 'boolean',
         'fqdn' => 'required|string',
         'scheme' => 'required',
@@ -194,14 +190,6 @@ class Node extends Model
     public function mounts(): HasManyThrough
     {
         return $this->hasManyThrough(Mount::class, MountNode::class, 'node_id', 'id', 'id', 'mount_id');
-    }
-
-    /**
-     * Gets the location associated with a node.
-     */
-    public function location(): BelongsTo
-    {
-        return $this->belongsTo(Location::class);
     }
 
     /**

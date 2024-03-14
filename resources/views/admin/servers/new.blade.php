@@ -68,16 +68,8 @@
                     <div class="form-group col-sm-4">
                         <label for="pNodeId">Node</label>
                         <select name="node_id" id="pNodeId" class="form-control">
-                            @foreach($locations as $location)
-                                <optgroup label="{{ $location->long }} ({{ $location->short }})">
-                                @foreach($location->nodes as $node)
-
-                                <option value="{{ $node->id }}"
-                                    @if($location->id === old('location_id')) selected @endif
-                                >{{ $node->name }}</option>
-
-                                @endforeach
-                                </optgroup>
+                            @foreach($nodes as $node)
+                                <option value="{{ $node->id }}">{{ $node->name }}</option>
                             @endforeach
                         </select>
 

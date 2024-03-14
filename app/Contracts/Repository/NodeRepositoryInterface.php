@@ -23,7 +23,7 @@ interface NodeRepositoryInterface extends RepositoryInterface
     /**
      * Return a single node with location and server information.
      */
-    public function loadLocationAndServerCount(Node $node, bool $refresh = false): Node;
+    public function loadServerCount(Node $node, bool $refresh = false): Node;
 
     /**
      * Attach a paginated set of allocations to a node mode including

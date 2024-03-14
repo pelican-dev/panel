@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin\Servers;
 
 use App\Models\Egg;
+use App\Models\Node;
 use App\Repositories\Eloquent\EggRepository;
 use Illuminate\View\View;
 use Illuminate\Http\Request;
@@ -15,7 +16,6 @@ use App\Repositories\Eloquent\NodeRepository;
 use App\Repositories\Eloquent\MountRepository;
 use App\Repositories\Eloquent\ServerRepository;
 use App\Traits\Controllers\JavascriptInjection;
-use App\Repositories\Eloquent\LocationRepository;
 use App\Repositories\Eloquent\DatabaseHostRepository;
 
 class ServerViewController extends Controller
@@ -27,7 +27,6 @@ class ServerViewController extends Controller
      */
     public function __construct(
         private DatabaseHostRepository $databaseHostRepository,
-        private LocationRepository $locationRepository,
         private MountRepository $mountRepository,
         private EggRepository $eggRepository,
         private NodeRepository $nodeRepository,
@@ -134,8 +133,8 @@ class ServerViewController extends Controller
         ]);
 
         return $this->view->make('admin.servers.view.manage', [
+            'nodes' => Node::all(),
             'server' => $server,
-            'locations' => $this->locationRepository->all(),
             'canTransfer' => $canTransfer,
         ]);
     }

@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
-use Exception;
+use App\Models\Node;
 use Illuminate\View\View;
 use App\Models\DatabaseHost;
 use Illuminate\Http\RedirectResponse;
@@ -14,7 +14,6 @@ use App\Http\Requests\Admin\DatabaseHostFormRequest;
 use App\Services\Databases\Hosts\HostCreationService;
 use App\Services\Databases\Hosts\HostDeletionService;
 use App\Contracts\Repository\DatabaseRepositoryInterface;
-use App\Contracts\Repository\LocationRepositoryInterface;
 use App\Contracts\Repository\DatabaseHostRepositoryInterface;
 
 class DatabaseController extends Controller
@@ -29,7 +28,6 @@ class DatabaseController extends Controller
         private HostCreationService $creationService,
         private HostDeletionService $deletionService,
         private HostUpdateService $updateService,
-        private LocationRepositoryInterface $locationRepository,
         private ViewFactory $view
     ) {
     }
@@ -40,7 +38,7 @@ class DatabaseController extends Controller
     public function index(): View
     {
         return $this->view->make('admin.databases.index', [
-            'locations' => $this->locationRepository->getAllWithNodes(),
+            'nodes' => Node::all(),
             'hosts' => $this->repository->getWithViewDetails(),
         ]);
     }
@@ -53,7 +51,6 @@ class DatabaseController extends Controller
     public function view(int $host): View
     {
         return $this->view->make('admin.databases.view', [
-            'locations' => $this->locationRepository->getAllWithNodes(),
             'host' => $this->repository->find($host),
             'databases' => $this->databaseRepository->getDatabasesForHost($host),
         ]);

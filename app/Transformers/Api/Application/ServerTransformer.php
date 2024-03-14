@@ -170,22 +170,6 @@ class ServerTransformer extends BaseTransformer
     }
 
     /**
-     * Return a generic array with location information for this server.
-     *
-     * @throws \App\Exceptions\Transformer\InvalidTransformerLevelException
-     */
-    public function includeLocation(Server $server): Item|NullResource
-    {
-        if (!$this->authorize(AdminAcl::RESOURCE_LOCATIONS)) {
-            return $this->null();
-        }
-
-        $server->loadMissing('location');
-
-        return $this->item($server->getRelation('location'), $this->makeTransformer(LocationTransformer::class), 'location');
-    }
-
-    /**
      * Return a generic array with node information for this server.
      *
      * @throws \App\Exceptions\Transformer\InvalidTransformerLevelException

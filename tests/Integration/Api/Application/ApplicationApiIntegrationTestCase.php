@@ -84,7 +84,6 @@ abstract class ApplicationApiIntegrationTestCase extends IntegrationTestCase
             'r_nodes' => AdminAcl::READ | AdminAcl::WRITE,
             'r_allocations' => AdminAcl::READ | AdminAcl::WRITE,
             'r_users' => AdminAcl::READ | AdminAcl::WRITE,
-            'r_locations' => AdminAcl::READ | AdminAcl::WRITE,
             'r_eggs' => AdminAcl::READ | AdminAcl::WRITE,
             'r_database_hosts' => AdminAcl::READ | AdminAcl::WRITE,
             'r_server_databases' => AdminAcl::READ | AdminAcl::WRITE,

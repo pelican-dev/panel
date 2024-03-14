@@ -28,7 +28,6 @@ class AdminAcl
     public const RESOURCE_NODES = 'nodes';
     public const RESOURCE_ALLOCATIONS = 'allocations';
     public const RESOURCE_USERS = 'users';
-    public const RESOURCE_LOCATIONS = 'locations';
     public const RESOURCE_EGGS = 'eggs';
     public const RESOURCE_DATABASE_HOSTS = 'database_hosts';
     public const RESOURCE_SERVER_DATABASES = 'server_databases';

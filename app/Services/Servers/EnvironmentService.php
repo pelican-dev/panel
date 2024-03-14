@@ -66,7 +66,6 @@ class EnvironmentService
     {
         return [
             'STARTUP' => 'startup',
-            'P_SERVER_LOCATION' => 'location.short',
             'P_SERVER_UUID' => 'uuid',
         ];
     }
