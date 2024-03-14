@@ -4,7 +4,6 @@ namespace App\Services\Servers;
 
 use Ramsey\Uuid\Uuid;
 use Illuminate\Support\Arr;
-use App\Models\Egg;
 use App\Models\User;
 use Webmozart\Assert\Assert;
 use App\Models\Server;
@@ -65,12 +64,6 @@ class ServerCreationService
             Assert::false(empty($data['allocation_id']), 'Expected a non-empty allocation_id in server creation data.');
 
             $data['node_id'] = Allocation::query()->findOrFail($data['allocation_id'])->node_id;
-        }
-
-        if (empty($data['nest_id'])) {
-            Assert::false(empty($data['egg_id']), 'Expected a non-empty egg_id in server creation data.');
-
-            $data['nest_id'] = Egg::query()->findOrFail($data['egg_id'])->nest_id;
         }
 
         $eggVariableData = $this->validatorService
@@ -155,7 +148,6 @@ class ServerCreationService
             'threads' => Arr::get($data, 'threads'),
             'oom_disabled' => Arr::get($data, 'oom_disabled') ?? true,
             'allocation_id' => Arr::get($data, 'allocation_id'),
-            'nest_id' => Arr::get($data, 'nest_id'),
             'egg_id' => Arr::get($data, 'egg_id'),
             'startup' => Arr::get($data, 'startup'),
             'image' => Arr::get($data, 'image'),

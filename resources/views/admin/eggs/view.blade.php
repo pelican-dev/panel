@@ -1,15 +1,14 @@
 @extends('layouts.admin')
 
 @section('title')
-    Nests &rarr; Egg: {{ $egg->name }}
+    Eggs &rarr; Egg: {{ $egg->name }}
 @endsection
 
 @section('content-header')
     <h1>{{ $egg->name }}<small>{{ str_limit($egg->description, 50) }}</small></h1>
     <ol class="breadcrumb">
         <li><a href="{{ route('admin.index') }}">Admin</a></li>
-        <li><a href="{{ route('admin.nests') }}">Nests</a></li>
-        <li><a href="{{ route('admin.nests.view', $egg->nest->id) }}">{{ $egg->nest->name }}</a></li>
+        <li><a href="{{ route('admin.eggs') }}">Eggs</a></li>
         <li class="active">{{ $egg->name }}</li>
     </ol>
 @endsection
@@ -19,14 +18,14 @@
     <div class="col-xs-12">
         <div class="nav-tabs-custom nav-tabs-floating">
             <ul class="nav nav-tabs">
-                <li class="active"><a href="{{ route('admin.nests.egg.view', $egg->id) }}">Configuration</a></li>
-                <li><a href="{{ route('admin.nests.egg.variables', $egg->id) }}">Variables</a></li>
-                <li><a href="{{ route('admin.nests.egg.scripts', $egg->id) }}">Install Script</a></li>
+                <li class="active"><a href="{{ route('admin.eggs.view', $egg->id) }}">Configuration</a></li>
+                <li><a href="{{ route('admin.eggs.variables', $egg->id) }}">Variables</a></li>
+                <li><a href="{{ route('admin.eggs.scripts', $egg->id) }}">Install Script</a></li>
             </ul>
         </div>
     </div>
 </div>
-<form action="{{ route('admin.nests.egg.view', $egg->id) }}" enctype="multipart/form-data" method="POST">
+<form action="{{ route('admin.eggs.view', $egg->id) }}" enctype="multipart/form-data" method="POST">
     <div class="row">
         <div class="col-xs-12">
             <div class="box box-danger">
@@ -51,7 +50,7 @@
         </div>
     </div>
 </form>
-<form action="{{ route('admin.nests.egg.view', $egg->id) }}" method="POST">
+<form action="{{ route('admin.eggs.view', $egg->id) }}" method="POST">
     <div class="row">
         <div class="col-xs-12">
             <div class="box">
@@ -137,7 +136,7 @@
                                 <label for="pConfigFrom" class="form-label">Copy Settings From</label>
                                 <select name="config_from" id="pConfigFrom" class="form-control">
                                     <option value="">None</option>
-                                    @foreach($egg->nest->eggs as $o)
+                                    @foreach($egg->newQuery()->get() as $o)
                                         <option value="{{ $o->id }}" {{ ($egg->config_from !== $o->id) ?: 'selected' }}>{{ $o->name }} &lt;{{ $o->author }}&gt;</option>
                                     @endforeach
                                 </select>
@@ -171,7 +170,7 @@
                 <div class="box-footer">
                     {!! csrf_field() !!}
                     <button type="submit" name="_method" value="PATCH" class="btn btn-primary btn-sm pull-right">Save</button>
-                    <a href="{{ route('admin.nests.egg.export', $egg->id) }}" class="btn btn-sm btn-info pull-right" style="margin-right:10px;">Export</a>
+                    <a href="{{ route('admin.eggs.export', $egg->id) }}" class="btn btn-sm btn-info pull-right" style="margin-right:10px;">Export</a>
                     <button id="deleteButton" type="submit" name="_method" value="DELETE" class="btn btn-danger btn-sm muted muted-hover">
                         <i class="fa fa-trash-o"></i>
                     </button>

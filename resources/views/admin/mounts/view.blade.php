@@ -118,7 +118,7 @@
                         @foreach ($mount->eggs as $egg)
                             <tr>
                                 <td class="col-sm-2 middle"><code>{{ $egg->id }}</code></td>
-                                <td class="middle"><a href="{{ route('admin.nests.egg.view', $egg->id) }}">{{ $egg->name }}</a></td>
+                                <td class="middle"><a href="{{ route('admin.eggs.view', $egg->id) }}">{{ $egg->name }}</a></td>
                                 <td class="col-sm-1 middle">
                                     <button data-action="detach-egg" data-id="{{ $egg->id }}" class="btn btn-sm btn-danger"><i class="fa fa-trash-o"></i></button>
                                 </td>
@@ -179,16 +179,10 @@
                             <div class="form-group col-md-12">
                                 <label for="pEggs">Eggs</label>
                                 <select id="pEggs" name="eggs[]" class="form-control" multiple>
-                                    @foreach ($nests as $nest)
-                                        <optgroup label="{{ $nest->name }}">
-                                            @foreach ($nest->eggs as $egg)
-
-                                                @if (! in_array($egg->id, $mount->eggs->pluck('id')->toArray()))
-                                                    <option value="{{ $egg->id }}">{{ $egg->name }}</option>
-                                                @endif
-
-                                            @endforeach
-                                        </optgroup>
+                                    @foreach ($eggs as $egg)
+                                        @if (! in_array($egg->id, $mount->eggs->pluck('id')->toArray()))
+                                            <option value="{{ $egg->id }}">{{ $egg->name }}</option>
+                                        @endif
                                     @endforeach
                                 </select>
                             </div>

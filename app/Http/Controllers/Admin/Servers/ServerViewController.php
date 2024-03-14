@@ -2,15 +2,15 @@
 
 namespace App\Http\Controllers\Admin\Servers;
 
+use App\Models\Egg;
+use App\Repositories\Eloquent\EggRepository;
 use Illuminate\View\View;
 use Illuminate\Http\Request;
-use App\Models\Nest;
 use App\Models\Server;
 use App\Exceptions\DisplayException;
 use App\Http\Controllers\Controller;
 use App\Services\Servers\EnvironmentService;
 use Illuminate\Contracts\View\Factory as ViewFactory;
-use App\Repositories\Eloquent\NestRepository;
 use App\Repositories\Eloquent\NodeRepository;
 use App\Repositories\Eloquent\MountRepository;
 use App\Repositories\Eloquent\ServerRepository;
@@ -29,7 +29,7 @@ class ServerViewController extends Controller
         private DatabaseHostRepository $databaseHostRepository,
         private LocationRepository $locationRepository,
         private MountRepository $mountRepository,
-        private NestRepository $nestRepository,
+        private EggRepository $eggRepository,
         private NodeRepository $nodeRepository,
         private ServerRepository $repository,
         private EnvironmentService $environmentService,
@@ -74,20 +74,16 @@ class ServerViewController extends Controller
      */
     public function startup(Request $request, Server $server): View
     {
-        $nests = $this->nestRepository->getWithEggs();
         $variables = $this->environmentService->handle($server);
+        $eggs = Egg::all()->keyBy('id');
 
         $this->plainInject([
             'server' => $server,
             'server_variables' => $variables,
-            'nests' => $nests->map(function (Nest $item) {
-                return array_merge($item->toArray(), [
-                    'eggs' => $item->eggs->keyBy('id')->toArray(),
-                ]);
-            })->keyBy('id'),
+            'eggs' => $eggs,
         ]);
 
-        return $this->view->make('admin.servers.view.startup', compact('server', 'nests'));
+        return $this->view->make('admin.servers.view.startup', compact('server', 'eggs'));
     }
 
     /**

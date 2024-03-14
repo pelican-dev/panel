@@ -22,10 +22,6 @@ class EggFormRequest extends AdminFormRequest
             'config_files' => 'required_without:config_from|nullable|json',
         ];
 
-        if ($this->method() === 'POST') {
-            $rules['nest_id'] = 'required|numeric|exists:nests,id';
-        }
-
         return $rules;
     }
 

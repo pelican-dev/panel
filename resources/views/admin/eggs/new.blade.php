@@ -1,20 +1,20 @@
 @extends('layouts.admin')
 
 @section('title')
-    Nests &rarr; New Egg
+    Eggs &rarr; New Egg
 @endsection
 
 @section('content-header')
     <h1>New Egg<small>Create a new Egg to assign to servers.</small></h1>
     <ol class="breadcrumb">
         <li><a href="{{ route('admin.index') }}">Admin</a></li>
-        <li><a href="{{ route('admin.nests') }}">Nests</a></li>
+        <li><a href="{{ route('admin.eggs') }}">Eggs</a></li>
         <li class="active">New Egg</li>
     </ol>
 @endsection
 
 @section('content')
-<form action="{{ route('admin.nests.egg.new') }}" method="POST">
+<form action="{{ route('admin.eggs.new') }}" method="POST">
     <div class="row">
         <div class="col-xs-12">
             <div class="box">
@@ -24,17 +24,6 @@
                 <div class="box-body">
                     <div class="row">
                         <div class="col-sm-6">
-                            <div class="form-group">
-                                <label for="pNestId" class="form-label">Associated Nest</label>
-                                <div>
-                                    <select name="nest_id" id="pNestId">
-                                        @foreach($nests as $nest)
-                                            <option value="{{ $nest->id }}" {{ old('nest_id') != $nest->id ?: 'selected' }}>{{ $nest->name }} &lt;{{ $nest->author }}&gt;</option>
-                                        @endforeach
-                                    </select>
-                                    <p class="text-muted small">Think of a Nest as a category. You can put multiple Eggs in a nest, but consider putting only Eggs that are related to each other in each Nest.</p>
-                                </div>
-                            </div>
                             <div class="form-group">
                                 <label for="pName" class="form-label">Name</label>
                                 <input type="text" id="pName" name="name" value="{{ old('name') }}" class="form-control" />
@@ -63,7 +52,7 @@
                         </div>
                         <div class="col-sm-6">
                             <div class="form-group">
-                                <label for="pDockerImage" class="control-label">Docker Images</label>
+                                <label for="pDockerImages" class="control-label">Docker Images</label>
                                 <textarea id="pDockerImages" name="docker_images" rows="4" placeholder="quay.io/panel/service" class="form-control">{{ old('docker_images') }}</textarea>
                                 <p class="text-muted small">The docker images available to servers using this egg. Enter one per line. Users will be able to select from this list of images if more than one value is provided.</p>
                             </div>
@@ -137,18 +126,7 @@
     {!! Theme::js('vendor/lodash/lodash.js') !!}
     <script>
     $(document).ready(function() {
-        $('#pNestId').select2().change();
         $('#pConfigFrom').select2();
-    });
-    $('#pNestId').on('change', function (event) {
-        $('#pConfigFrom').html('<option value="">None</option>').select2({
-            data: $.map(_.get(Panel.nests, $(this).val() + '.eggs', []), function (item) {
-                return {
-                    id: item.id,
-                    text: item.name + ' <' + item.author + '>',
-                };
-            }),
-        });
     });
     $('textarea[data-action="handle-tabs"]').on('keydown', function(event) {
         if (event.keyCode === 9) {

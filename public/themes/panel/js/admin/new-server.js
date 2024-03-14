@@ -1,11 +1,7 @@
 $(document).ready(function() {
-    $('#pNestId').select2({
-        placeholder: 'Select a Nest',
-    }).change();
-
     $('#pEggId').select2({
-        placeholder: 'Select a Nest Egg',
-    });
+        placeholder: 'Select an Egg',
+    }).change();
 
     $('#pPackId').select2({
         placeholder: 'Select a Service Pack',
@@ -48,20 +44,8 @@ $('#pNodeId').on('change', function () {
     });
 });
 
-$('#pNestId').on('change', function (event) {
-    $('#pEggId').html('').select2({
-        data: $.map(_.get(Panel.nests, $(this).val() + '.eggs', []), function (item) {
-            return {
-                id: item.id,
-                text: item.name,
-            };
-        }),
-    }).change();
-});
-
 $('#pEggId').on('change', function (event) {
-    let parentChain = _.get(Panel.nests, $('#pNestId').val(), null);
-    let objectChain = _.get(parentChain, 'eggs.' + $(this).val(), null);
+    let objectChain = _.get(Panel.eggs, $('#pEggId').val(), null);
 
     const images = _.get(objectChain, 'docker_images', {})
     $('#pDefaultContainer').html('');
@@ -73,11 +57,7 @@ $('#pEggId').on('change', function (event) {
         $('#pDefaultContainer').append(opt);
     }
 
-    if (!_.get(objectChain, 'startup', false)) {
-        $('#pStartup').val(_.get(parentChain, 'startup', 'ERROR: Startup Not Defined!'));
-    } else {
-        $('#pStartup').val(_.get(objectChain, 'startup'));
-    }
+    $('#pStartup').val(_.get(objectChain, 'startup'));
 
     $('#pPackId').html('').select2({
         data: [{ id: 0, text: 'No Service Pack' }].concat(
@@ -110,7 +90,7 @@ $('#pEggId').on('change', function (event) {
 
     // If you receive a warning on this line, it should be fine to ignore. this function is
     // defined in "resources/views/admin/servers/new.blade.php" near the bottom of the file.
-    serviceVariablesUpdated($('#pEggId').val(), variableIds);
+    eggVariablesUpdated($('#pEggId').val(), variableIds);
 });
 
 $('#pAllocation').on('change', function () {

@@ -4,7 +4,6 @@ namespace App\Transformers\Api\Application;
 
 use Illuminate\Support\Arr;
 use App\Models\Egg;
-use App\Models\Nest;
 use App\Models\Server;
 use League\Fractal\Resource\Item;
 use App\Models\EggVariable;
@@ -18,7 +17,6 @@ class EggTransformer extends BaseTransformer
      * Relationships that can be loaded onto this transformation.
      */
     protected array $availableIncludes = [
-        'nest',
         'servers',
         'config',
         'script',
@@ -42,15 +40,11 @@ class EggTransformer extends BaseTransformer
     public function transform(Egg $model): array
     {
         $files = json_decode($model->config_files, true, 512, JSON_THROW_ON_ERROR);
-        if (empty($files)) {
-            $files = new \stdClass();
-        }
 
         return [
             'id' => $model->id,
             'uuid' => $model->uuid,
             'name' => $model->name,
-            'nest' => $model->nest_id,
             'author' => $model->author,
             'description' => $model->description,
             // "docker_image" is deprecated, but left here to avoid breaking too many things at once
@@ -77,22 +71,6 @@ class EggTransformer extends BaseTransformer
             $model->getCreatedAtColumn() => $this->formatTimestamp($model->created_at),
             $model->getUpdatedAtColumn() => $this->formatTimestamp($model->updated_at),
         ];
-    }
-
-    /**
-     * Include the Nest relationship for the given Egg in the transformation.
-     *
-     * @throws \App\Exceptions\Transformer\InvalidTransformerLevelException
-     */
-    public function includeNest(Egg $model): Item|NullResource
-    {
-        if (!$this->authorize(AdminAcl::RESOURCE_NESTS)) {
-            return $this->null();
-        }
-
-        $model->loadMissing('nest');
-
-        return $this->item($model->getRelation('nest'), $this->makeTransformer(NestTransformer::class), Nest::RESOURCE_NAME);
     }
 
     /**

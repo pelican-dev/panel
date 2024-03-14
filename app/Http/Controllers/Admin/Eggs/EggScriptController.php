@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Admin\Nests;
+namespace App\Http\Controllers\Admin\Eggs;
 
 use Illuminate\View\View;
 use App\Models\Egg;
@@ -33,7 +33,6 @@ class EggScriptController extends Controller
         $egg = $this->repository->getWithCopyAttributes($egg);
         $copy = $this->repository->findWhere([
             ['copy_script_from', '=', null],
-            ['nest_id', '=', $egg->nest_id],
             ['id', '!=', $egg],
         ]);
 
@@ -53,13 +52,12 @@ class EggScriptController extends Controller
      *
      * @throws \App\Exceptions\Model\DataValidationException
      * @throws \App\Exceptions\Repository\RecordNotFoundException
-     * @throws \App\Exceptions\Service\Egg\InvalidCopyFromException
      */
     public function update(EggScriptFormRequest $request, Egg $egg): RedirectResponse
     {
         $this->installScriptService->handle($egg, $request->normalize());
-        $this->alert->success(trans('admin/nests.eggs.notices.script_updated'))->flash();
+        $this->alert->success(trans('admin/eggs.notices.script_updated'))->flash();
 
-        return redirect()->route('admin.nests.egg.scripts', $egg);
+        return redirect()->route('admin.eggs.scripts', $egg);
     }
 }

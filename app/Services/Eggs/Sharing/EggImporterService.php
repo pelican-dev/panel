@@ -5,7 +5,6 @@ namespace App\Services\Eggs\Sharing;
 use Ramsey\Uuid\Uuid;
 use Illuminate\Support\Arr;
 use App\Models\Egg;
-use App\Models\Nest;
 use Illuminate\Http\UploadedFile;
 use App\Models\EggVariable;
 use Illuminate\Database\ConnectionInterface;
@@ -22,17 +21,13 @@ class EggImporterService
      *
      * @throws \App\Exceptions\Service\InvalidFileUploadException|\Throwable
      */
-    public function handle(UploadedFile $file, int $nest): Egg
+    public function handle(UploadedFile $file): Egg
     {
         $parsed = $this->parser->handle($file);
 
-        /** @var \App\Models\Nest $nest */
-        $nest = Nest::query()->with('eggs', 'eggs.variables')->findOrFail($nest);
-
-        return $this->connection->transaction(function () use ($nest, $parsed) {
+        return $this->connection->transaction(function () use ($parsed) {
             $egg = (new Egg())->forceFill([
                 'uuid' => Uuid::uuid4()->toString(),
-                'nest_id' => $nest->id,
                 'author' => Arr::get($parsed, 'author'),
                 'copy_script_from' => null,
             ]);

@@ -4,7 +4,6 @@ namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
 use App\Repositories\Eloquent\EggRepository;
-use App\Repositories\Eloquent\NestRepository;
 use App\Repositories\Eloquent\NodeRepository;
 use App\Repositories\Eloquent\TaskRepository;
 use App\Repositories\Eloquent\UserRepository;
@@ -19,7 +18,6 @@ use App\Repositories\Eloquent\SettingsRepository;
 use App\Repositories\Eloquent\AllocationRepository;
 use App\Contracts\Repository\EggRepositoryInterface;
 use App\Repositories\Eloquent\EggVariableRepository;
-use App\Contracts\Repository\NestRepositoryInterface;
 use App\Contracts\Repository\NodeRepositoryInterface;
 use App\Contracts\Repository\TaskRepositoryInterface;
 use App\Contracts\Repository\UserRepositoryInterface;
@@ -53,7 +51,6 @@ class RepositoryServiceProvider extends ServiceProvider
         $this->app->bind(EggRepositoryInterface::class, EggRepository::class);
         $this->app->bind(EggVariableRepositoryInterface::class, EggVariableRepository::class);
         $this->app->bind(LocationRepositoryInterface::class, LocationRepository::class);
-        $this->app->bind(NestRepositoryInterface::class, NestRepository::class);
         $this->app->bind(NodeRepositoryInterface::class, NodeRepository::class);
         $this->app->bind(ScheduleRepositoryInterface::class, ScheduleRepository::class);
         $this->app->bind(ServerRepositoryInterface::class, ServerRepository::class);

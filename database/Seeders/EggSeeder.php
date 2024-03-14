@@ -3,7 +3,6 @@
 namespace Database\Seeders;
 
 use App\Models\Egg;
-use App\Models\Nest;
 use Exception;
 use Illuminate\Database\Seeder;
 use Illuminate\Http\UploadedFile;
@@ -19,7 +18,7 @@ class EggSeeder extends Seeder
     /**
      * @var string[]
      */
-    public static array $import = [
+    public static array $imports = [
         'Minecraft',
         'Source Engine',
         'Voice Servers',
@@ -42,22 +41,20 @@ class EggSeeder extends Seeder
      */
     public function run()
     {
-        foreach (static::$import as $nest) {
+        foreach (static::$imports as $import) {
             /* @noinspection PhpParamsInspection */
-            $this->parseEggFiles(
-                Nest::query()->where('author', 'panel@example.com')->where('name', $nest)->firstOrFail()
-            );
+            $this->parseEggFiles($import);
         }
     }
 
     /**
      * Loop through the list of egg files and import them.
      */
-    protected function parseEggFiles(Nest $nest)
+    protected function parseEggFiles($name)
     {
-        $files = new \DirectoryIterator(database_path('Seeders/eggs/' . kebab_case($nest->name)));
+        $files = new \DirectoryIterator(database_path('Seeders/eggs/' . kebab_case($name)));
 
-        $this->command->alert('Updating Eggs for Nest: ' . $nest->name);
+        $this->command->alert('Updating Eggs for: ' . $name);
         /** @var \DirectoryIterator $file */
         foreach ($files as $file) {
             if (!$file->isFile() || !$file->isReadable()) {
@@ -72,7 +69,7 @@ class EggSeeder extends Seeder
 
             $file = new UploadedFile($file->getPathname(), $file->getFilename(), 'application/json');
 
-            $egg = $nest->eggs()
+            $egg = Egg::query()
                 ->where('author', $decoded['author'])
                 ->where('name', $decoded['name'])
                 ->first();
@@ -81,7 +78,7 @@ class EggSeeder extends Seeder
                 $this->updateImporterService->handle($egg, $file);
                 $this->command->info('Updated ' . $decoded['name']);
             } else {
-                $this->importerService->handle($file, $nest->id);
+                $this->importerService->handle($file);
                 $this->command->comment('Created ' . $decoded['name']);
             }
         }

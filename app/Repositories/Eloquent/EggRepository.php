@@ -72,15 +72,4 @@ class EggRepository extends EloquentRepository implements EggRepositoryInterface
             throw new RecordNotFoundException();
         }
     }
-
-    /**
-     * Confirm a copy script belongs to the same nest as the item trying to use it.
-     */
-    public function isCopyableScript(int $copyFromId, int $service): bool
-    {
-        return $this->getBuilder()->whereNull('copy_script_from')
-            ->where('id', '=', $copyFromId)
-            ->where('nest_id', '=', $service)
-            ->exists();
-    }
 }

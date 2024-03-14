@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin\Servers;
 
+use App\Models\Egg;
 use Illuminate\View\View;
 use App\Models\Node;
 use App\Models\Location;
@@ -9,7 +10,6 @@ use Illuminate\Http\RedirectResponse;
 use Prologue\Alerts\AlertsMessageBag;
 use Illuminate\View\Factory as ViewFactory;
 use App\Http\Controllers\Controller;
-use App\Repositories\Eloquent\NestRepository;
 use App\Repositories\Eloquent\NodeRepository;
 use App\Http\Requests\Admin\ServerFormRequest;
 use App\Services\Servers\ServerCreationService;
@@ -21,7 +21,6 @@ class CreateServerController extends Controller
      */
     public function __construct(
         private AlertsMessageBag $alert,
-        private NestRepository $nestRepository,
         private NodeRepository $nodeRepository,
         private ServerCreationService $creationService,
         private ViewFactory $view
@@ -42,20 +41,16 @@ class CreateServerController extends Controller
             return redirect()->route('admin.nodes');
         }
 
-        $nests = $this->nestRepository->getWithEggs();
+        $eggs = Egg::with('variables')->get();
 
         \JavaScript::put([
             'nodeData' => $this->nodeRepository->getNodesForServerCreation(),
-            'nests' => $nests->map(function ($item) {
-                return array_merge($item->toArray(), [
-                    'eggs' => $item->eggs->keyBy('id')->toArray(),
-                ]);
-            })->keyBy('id'),
+            'eggs' => $eggs->keyBy('id'),
         ]);
 
         return $this->view->make('admin.servers.new', [
             'locations' => Location::all(),
-            'nests' => $nests,
+            'eggs' => $eggs,
         ]);
     }
 

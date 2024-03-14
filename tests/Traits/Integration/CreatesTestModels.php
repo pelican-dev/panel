@@ -51,16 +51,9 @@ trait CreatesTestModels
         }
 
         if (empty($attributes['egg_id'])) {
-            $egg = !empty($attributes['nest_id'])
-                ? Egg::query()->where('nest_id', $attributes['nest_id'])->firstOrFail()
-                : $this->getBungeecordEgg();
+            $egg = $this->getBungeecordEgg();
 
             $attributes['egg_id'] = $egg->id;
-            $attributes['nest_id'] = $egg->nest_id;
-        }
-
-        if (empty($attributes['nest_id'])) {
-            $attributes['nest_id'] = Egg::query()->findOrFail($attributes['egg_id'])->nest_id;
         }
 
         unset($attributes['user_id'], $attributes['location_id']);
@@ -71,7 +64,7 @@ trait CreatesTestModels
         Allocation::query()->where('id', $server->allocation_id)->update(['server_id' => $server->id]);
 
         return $server->fresh([
-            'location', 'user', 'node', 'allocation', 'nest', 'egg',
+            'location', 'user', 'node', 'allocation', 'egg',
         ]);
     }
 

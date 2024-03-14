@@ -43,34 +43,29 @@
         <div class="col-md-6">
             <div class="box">
                 <div class="box-header with-border">
-                    <h3 class="box-title">Service Configuration</h3>
+                    <h3 class="box-title">Egg Configuration</h3>
                 </div>
                 <div class="box-body row">
                     <div class="col-xs-12">
                         <p class="small text-danger">
                             Changing any of the below values will result in the server processing a re-install command. The server will be stopped and will then proceed.
-                            If you would like the service scripts to not run, ensure the box is checked at the bottom.
+                            If you would like the egg scripts to not run, ensure the box is checked at the bottom.
                         </p>
                         <p class="small text-danger">
                             <strong>This is a destructive operation in many cases. This server will be stopped immediately in order for this action to proceed.</strong>
                         </p>
                     </div>
                     <div class="form-group col-xs-12">
-                        <label for="pNestId">Nest</label>
-                        <select name="nest_id" id="pNestId" class="form-control">
-                            @foreach($nests as $nest)
-                                <option value="{{ $nest->id }}"
-                                    @if($nest->id === $server->nest_id)
+                        <label for="pEggId">Egg</label>
+                        <select name="egg_id" id="pEggId" class="form-control">
+                            @foreach($eggs as $egg)
+                                <option value="{{ $egg->id }}"
+                                    @if($egg->id === $server->egg_id)
                                         selected
                                     @endif
-                                >{{ $nest->name }}</option>
+                                >{{ $egg->name }}</option>
                             @endforeach
                         </select>
-                        <p class="small text-muted no-margin">Select the Nest that this server will be grouped into.</p>
-                    </div>
-                    <div class="form-group col-xs-12">
-                        <label for="pEggId">Egg</label>
-                        <select name="egg_id" id="pEggId" class="form-control"></select>
                         <p class="small text-muted no-margin">Select the Egg that will provide processing data for this server.</p>
                     </div>
                     <div class="form-group col-xs-12">
@@ -82,6 +77,8 @@
                     </div>
                 </div>
             </div>
+        </div>
+        <div class="col-md-6">
             <div class="box">
                 <div class="box-header with-border">
                     <h3 class="box-title">Docker Image Configuration</h3>
@@ -108,10 +105,8 @@
     {!! Theme::js('vendor/lodash/lodash.js') !!}
     <script>
     $(document).ready(function () {
-        $('#pEggId').select2({placeholder: 'Select a Nest Egg'}).on('change', function () {
-            var selectedEgg = _.isNull($(this).val()) ? $(this).find('option').first().val() : $(this).val();
-            var parentChain = _.get(Panel.nests, $("#pNestId").val());
-            var objectChain = _.get(parentChain, 'eggs.' + selectedEgg);
+        $('#pEggId').select2({placeholder: 'Select an Egg'}).on('change', function () {
+            var objectChain = _.get(Panel.eggs, $("#pEggId").val());
 
             const images = _.get(objectChain, 'docker_images', [])
             $('#pDockerImage').html('');
@@ -135,11 +130,7 @@
                 }
             }
 
-            if (!_.get(objectChain, 'startup', false)) {
-                $('#pDefaultStartupCommand').val(_.get(parentChain, 'startup', 'ERROR: Startup Not Defined!'));
-            } else {
-                $('#pDefaultStartupCommand').val(_.get(objectChain, 'startup'));
-            }
+            $('#pDefaultStartupCommand').val(_.get(objectChain, 'startup'));
 
             $('#appendVariablesTo').html('');
             $.each(_.get(objectChain, 'variables', []), function (i, item) {
@@ -163,23 +154,6 @@
                     </div>';
                 $('#appendVariablesTo').append(dataAppend).find('#egg_variable_' + item.env_variable).val(setValue);
             });
-        });
-
-        $('#pNestId').select2({placeholder: 'Select a Nest'}).on('change', function () {
-            $('#pEggId').html('').select2({
-                data: $.map(_.get(Panel.nests, $(this).val() + '.eggs', []), function (item) {
-                    return {
-                        id: item.id,
-                        text: item.name,
-                    };
-                }),
-            });
-
-            if (_.isObject(_.get(Panel.nests, $(this).val() + '.eggs.' + Panel.server.egg_id))) {
-                $('#pEggId').val(Panel.server.egg_id);
-            }
-
-            $('#pEggId').change();
         }).change();
     });
     </script>

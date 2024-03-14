@@ -21,7 +21,7 @@ class VariableValidatorService
     }
 
     /**
-     * Validate all of the passed data against the given service option variables.
+     * Validate all of the passed data against the given egg variables.
      *
      * @throws \Illuminate\Validation\ValidationException
      */

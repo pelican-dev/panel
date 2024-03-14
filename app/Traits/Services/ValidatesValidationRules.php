@@ -23,7 +23,7 @@ trait ValidatesValidationRules
         } catch (\BadMethodCallException $exception) {
             $matches = [];
             if (preg_match('/Method \[(.+)\] does not exist\./', $exception->getMessage(), $matches)) {
-                throw new BadValidationRuleException(trans('exceptions.nest.variables.bad_validation_rule', ['rule' => Str::snake(str_replace('validate', '', array_get($matches, 1, 'unknownRule')))]), $exception);
+                throw new BadValidationRuleException(trans('exceptions.variables.bad_validation_rule', ['rule' => Str::snake(str_replace('validate', '', array_get($matches, 1, 'unknownRule')))]), $exception);
             }
 
             throw $exception;

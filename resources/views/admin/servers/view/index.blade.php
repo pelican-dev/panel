@@ -44,8 +44,7 @@
                             <tr>
                                 <td>Current Egg</td>
                                 <td>
-                                    <a href="{{ route('admin.nests.view', $server->nest_id) }}">{{ $server->nest->name }}</a> ::
-                                    <a href="{{ route('admin.nests.egg.view', $server->egg_id) }}">{{ $server->egg->name }}</a>
+                                    <a href="{{ route('admin.eggs.view', $server->egg_id) }}">{{ $server->egg->name }}</a>
                                 </td>
                             </tr>
                             <tr>

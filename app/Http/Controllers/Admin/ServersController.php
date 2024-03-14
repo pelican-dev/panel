@@ -24,7 +24,6 @@ use App\Services\Servers\BuildModificationService;
 use App\Services\Databases\DatabasePasswordService;
 use App\Services\Servers\DetailsModificationService;
 use App\Services\Servers\StartupModificationService;
-use App\Contracts\Repository\NestRepositoryInterface;
 use App\Repositories\Eloquent\DatabaseHostRepository;
 use App\Services\Databases\DatabaseManagementService;
 use Illuminate\Contracts\Config\Repository as ConfigRepository;
@@ -54,7 +53,6 @@ class ServersController extends Controller
         protected ReinstallServerService $reinstallService,
         protected ServerRepositoryInterface $repository,
         protected MountRepository $mountRepository,
-        protected NestRepositoryInterface $nestRepository,
         protected ServerConfigurationStructureService $serverConfigurationStructureService,
         protected StartupModificationService $startupModificationService,
         protected SuspensionService $suspensionService

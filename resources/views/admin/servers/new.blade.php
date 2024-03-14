@@ -226,31 +226,25 @@
         <div class="col-md-6">
             <div class="box">
                 <div class="box-header with-border">
-                    <h3 class="box-title">Nest Configuration</h3>
+                    <h3 class="box-title">Egg Configuration</h3>
                 </div>
 
                 <div class="box-body row">
                     <div class="form-group col-xs-12">
-                        <label for="pNestId">Nest</label>
-
-                        <select id="pNestId" name="nest_id" class="form-control">
-                            @foreach($nests as $nest)
-                                <option value="{{ $nest->id }}"
-                                    @if($nest->id === old('nest_id'))
+                        <label for="pEggId">Egg</label>
+                        <select id="pEggId" name="egg_id" class="form-control">
+                            @foreach($eggs as $egg)
+                                <option value="{{ $egg->id }}"
+                                    @if($egg->id === old('egg_id'))
                                         selected="selected"
                                     @endif
-                                >{{ $nest->name }}</option>
+                                >{{ $egg->name }}</option>
                             @endforeach
                         </select>
 
-                        <p class="small text-muted no-margin">Select the Nest that this server will be grouped under.</p>
-                    </div>
-
-                    <div class="form-group col-xs-12">
-                        <label for="pEggId">Egg</label>
-                        <select id="pEggId" name="egg_id" class="form-control"></select>
                         <p class="small text-muted no-margin">Select the Egg that will define how this server should operate.</p>
                     </div>
+
                     <div class="form-group col-xs-12">
                         <div class="checkbox checkbox-primary no-margin-bottom">
                             <input type="checkbox" id="pSkipScripting" name="skip_scripts" value="1" {{ \App\Helpers\Utilities::checked('skip_scripts', 0) }} />
@@ -297,7 +291,7 @@
                 </div>
 
                 <div class="box-header with-border" style="margin-top:-10px;">
-                    <h3 class="box-title">Service Variables</h3>
+                    <h3 class="box-title">Egg Variables</h3>
                 </div>
 
                 <div class="box-body row" id="appendVariablesTo"></div>
@@ -317,8 +311,8 @@
     {!! Theme::js('vendor/lodash/lodash.js') !!}
 
     <script type="application/javascript">
-        // Persist 'Service Variables'
-        function serviceVariablesUpdated(eggId, ids) {
+        // Persist 'Egg Variables'
+        function eggVariablesUpdated(eggId, ids) {
             @if (old('egg_id'))
                 // Check if the egg id matches.
                 if (eggId != '{{ old('egg_id') }}') {
@@ -335,7 +329,7 @@
                 $('#pDefaultContainer').val('{{ old('image') }}');
             @endif
         }
-        // END Persist 'Service Variables'
+        // END Persist 'Egg Variables'
     </script>
 
     {!! Theme::js('js/admin/new-server.js?v=20220530') !!}
@@ -379,17 +373,11 @@
             @endif
             // END Persist 'Node' select2
 
-            // Persist 'Nest' select2
-            @if (old('nest_id'))
-                $('#pNestId').val('{{ old('nest_id') }}').change();
-
-                // Persist 'Egg' select2
-                @if (old('egg_id'))
-                    $('#pEggId').val('{{ old('egg_id') }}').change();
-                @endif
-                // END Persist 'Egg' select2
+            // Persist 'Egg' select2
+            @if (old('egg_id'))
+                $('#pEggId').val('{{ old('egg_id') }}').change();
             @endif
-            // END Persist 'Nest' select2
+            // END Persist 'Egg' select2
         });
     </script>
 @endsection

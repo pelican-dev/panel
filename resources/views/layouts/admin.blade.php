@@ -69,23 +69,12 @@
             <aside class="main-sidebar">
                 <section class="sidebar">
                     <ul class="sidebar-menu">
-                        <li class="header">BASIC ADMINISTRATION</li>
+                        <li class="header">MANAGEMENT</li>
                         <li class="{{ Route::currentRouteName() !== 'admin.index' ?: 'active' }}">
                             <a href="{{ route('admin.index') }}">
                                 <i class="fa fa-home"></i> <span>Overview</span>
                             </a>
                         </li>
-                        <li class="{{ ! starts_with(Route::currentRouteName(), 'admin.settings') ?: 'active' }}">
-                            <a href="{{ route('admin.settings')}}">
-                                <i class="fa fa-wrench"></i> <span>Settings</span>
-                            </a>
-                        </li>
-                        <li class="{{ ! starts_with(Route::currentRouteName(), 'admin.api') ?: 'active' }}">
-                            <a href="{{ route('admin.api.index')}}">
-                                <i class="fa fa-gamepad"></i> <span>Application API</span>
-                            </a>
-                        </li>
-                        <li class="header">MANAGEMENT</li>
                         <li class="{{ ! starts_with(Route::currentRouteName(), 'admin.databases') ?: 'active' }}">
                             <a href="{{ route('admin.databases') }}">
                                 <i class="fa fa-database"></i> <span>Databases</span>
@@ -111,15 +100,26 @@
                                 <i class="fa fa-users"></i> <span>Users</span>
                             </a>
                         </li>
-                        <li class="header">SERVICE MANAGEMENT</li>
+                        <li class="header">SERVICES</li>
+                        <li class="{{ ! starts_with(Route::currentRouteName(), 'admin.eggs') ?: 'active' }}">
+                            <a href="{{ route('admin.eggs') }}">
+                                <i class="fa fa-th-large"></i> <span>Eggs</span>
+                            </a>
+                        </li>
                         <li class="{{ ! starts_with(Route::currentRouteName(), 'admin.mounts') ?: 'active' }}">
                             <a href="{{ route('admin.mounts') }}">
                                 <i class="fa fa-magic"></i> <span>Mounts</span>
                             </a>
                         </li>
-                        <li class="{{ ! starts_with(Route::currentRouteName(), 'admin.nests') ?: 'active' }}">
-                            <a href="{{ route('admin.nests') }}">
-                                <i class="fa fa-th-large"></i> <span>Nests</span>
+                        <li class="header">OTHER</li>
+                        <li class="{{ ! starts_with(Route::currentRouteName(), 'admin.settings') ?: 'active' }}">
+                            <a href="{{ route('admin.settings')}}">
+                                <i class="fa fa-wrench"></i> <span>Settings</span>
+                            </a>
+                        </li>
+                        <li class="{{ ! starts_with(Route::currentRouteName(), 'admin.api') ?: 'active' }}">
+                            <a href="{{ route('admin.api.index')}}">
+                                <i class="fa fa-gamepad"></i> <span>Application API</span>
                             </a>
                         </li>
                     </ul>

@@ -33,7 +33,6 @@ use App\Exceptions\Http\Server\ServerStateConflictException;
  * @property string|null $threads
  * @property bool $oom_disabled
  * @property int $allocation_id
- * @property int $nest_id
  * @property int $egg_id
  * @property string $startup
  * @property string $image
@@ -55,7 +54,6 @@ use App\Exceptions\Http\Server\ServerStateConflictException;
  * @property \App\Models\Egg|null $egg
  * @property \Illuminate\Database\Eloquent\Collection|\App\Models\Mount[] $mounts
  * @property int|null $mounts_count
- * @property \App\Models\Nest $nest
  * @property \App\Models\Node $node
  * @property \Illuminate\Notifications\DatabaseNotificationCollection|\Illuminate\Notifications\DatabaseNotification[] $notifications
  * @property int|null $notifications_count
@@ -87,7 +85,6 @@ use App\Exceptions\Http\Server\ServerStateConflictException;
  * @method static \Illuminate\Database\Eloquent\Builder|Server whereIo($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Server whereMemory($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Server whereName($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Server whereNestId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Server whereNodeId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Server whereOomDisabled($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Server whereOwnerId($value)
@@ -159,7 +156,6 @@ class Server extends Model
         'oom_disabled' => 'sometimes|boolean',
         'disk' => 'required|numeric|min:0',
         'allocation_id' => 'required|bail|unique:servers|exists:allocations,id',
-        'nest_id' => 'required|exists:nests,id',
         'egg_id' => 'required|exists:eggs,id',
         'startup' => 'required|string',
         'skip_scripts' => 'sometimes|boolean',
@@ -183,7 +179,6 @@ class Server extends Model
         'cpu' => 'integer',
         'oom_disabled' => 'boolean',
         'allocation_id' => 'integer',
-        'nest_id' => 'integer',
         'egg_id' => 'integer',
         'database_limit' => 'integer',
         'allocation_limit' => 'integer',
@@ -247,14 +242,6 @@ class Server extends Model
     }
 
     /**
-     * Gets information for the nest associated with this server.
-     */
-    public function nest(): BelongsTo
-    {
-        return $this->belongsTo(Nest::class);
-    }
-
-    /**
      * Gets information for the egg associated with this server.
      */
     public function egg(): HasOne
@@ -263,7 +250,7 @@ class Server extends Model
     }
 
     /**
-     * Gets information for the service variables associated with this server.
+     * Gets information for the egg variables associated with this server.
      */
     public function variables(): HasMany
     {

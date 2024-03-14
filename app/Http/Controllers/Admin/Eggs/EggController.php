@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Admin\Nests;
+namespace App\Http\Controllers\Admin\Eggs;
 
 use Illuminate\View\View;
 use App\Models\Egg;
@@ -13,7 +13,6 @@ use App\Services\Eggs\EggCreationService;
 use App\Services\Eggs\EggDeletionService;
 use App\Http\Requests\Admin\Egg\EggFormRequest;
 use App\Contracts\Repository\EggRepositoryInterface;
-use App\Contracts\Repository\NestRepositoryInterface;
 
 class EggController extends Controller
 {
@@ -26,9 +25,20 @@ class EggController extends Controller
         protected EggDeletionService $deletionService,
         protected EggRepositoryInterface $repository,
         protected EggUpdateService $updateService,
-        protected NestRepositoryInterface $nestRepository,
         protected ViewFactory $view
     ) {
+    }
+
+    /**
+     * Render eggs listing page.
+     *
+     * @throws \App\Exceptions\Repository\RecordNotFoundException
+     */
+    public function index(): View
+    {
+        return $this->view->make('admin.eggs.index', [
+            'eggs' => Egg::all(),
+        ]);
     }
 
     /**
@@ -38,10 +48,10 @@ class EggController extends Controller
      */
     public function create(): View
     {
-        $nests = $this->nestRepository->getWithEggs();
-        \JavaScript::put(['nests' => $nests->keyBy('id')]);
+        $eggs = Egg::all();
+        \JavaScript::put(['eggs' => $eggs->keyBy('id')]);
 
-        return $this->view->make('admin.eggs.new', ['nests' => $nests]);
+        return $this->view->make('admin.eggs.new', ['eggs' => $eggs]);
     }
 
     /**
@@ -56,9 +66,9 @@ class EggController extends Controller
         $data['docker_images'] = $this->normalizeDockerImages($data['docker_images'] ?? null);
 
         $egg = $this->creationService->handle($data);
-        $this->alert->success(trans('admin/nests.eggs.notices.egg_created'))->flash();
+        $this->alert->success(trans('admin/eggs.notices.egg_created'))->flash();
 
-        return redirect()->route('admin.nests.egg.view', $egg->id);
+        return redirect()->route('admin.eggs.view', $egg->id);
     }
 
     /**
@@ -89,9 +99,9 @@ class EggController extends Controller
         $data['docker_images'] = $this->normalizeDockerImages($data['docker_images'] ?? null);
 
         $this->updateService->handle($egg, $data);
-        $this->alert->success(trans('admin/nests.eggs.notices.updated'))->flash();
+        $this->alert->success(trans('admin/eggs.notices.updated'))->flash();
 
-        return redirect()->route('admin.nests.egg.view', $egg->id);
+        return redirect()->route('admin.eggs.view', $egg->id);
     }
 
     /**
@@ -103,9 +113,9 @@ class EggController extends Controller
     public function destroy(Egg $egg): RedirectResponse
     {
         $this->deletionService->handle($egg->id);
-        $this->alert->success(trans('admin/nests.eggs.notices.deleted'))->flash();
+        $this->alert->success(trans('admin/eggs.notices.deleted'))->flash();
 
-        return redirect()->route('admin.nests.view', $egg->nest_id);
+        return redirect()->route('admin.eggs.view', $egg->id);
     }
 
     /**

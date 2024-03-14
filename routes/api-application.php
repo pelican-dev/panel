@@ -11,7 +11,6 @@ use App\Http\Controllers\Api\Application;
 | Endpoint: /api/application/users
 |
 */
-
 Route::group(['prefix' => '/users'], function () {
     Route::get('/', [Application\Users\UserController::class, 'index'])->name('api.application.users');
     Route::get('/{user:id}', [Application\Users\UserController::class, 'view'])->name('api.application.users.view');
@@ -106,19 +105,13 @@ Route::group(['prefix' => '/servers'], function () {
 
 /*
 |--------------------------------------------------------------------------
-| Nest Controller Routes
+| Egg Controller Routes
 |--------------------------------------------------------------------------
 |
-| Endpoint: /api/application/nests
+| Endpoint: /api/application/eggs
 |
 */
-Route::group(['prefix' => '/nests'], function () {
-    Route::get('/', [Application\Nests\NestController::class, 'index'])->name('api.application.nests');
-    Route::get('/{nest:id}', [Application\Nests\NestController::class, 'view'])->name('api.application.nests.view');
-
-    // Egg Management Endpoint
-    Route::group(['prefix' => '/{nest:id}/eggs'], function () {
-        Route::get('/', [Application\Nests\EggController::class, 'index'])->name('api.application.nests.eggs');
-        Route::get('/{egg:id}', [Application\Nests\EggController::class, 'view'])->name('api.application.nests.eggs.view');
-    });
+Route::group(['prefix' => '/eggs'], function () {
+    Route::get('/', [Application\Eggs\EggController::class, 'index'])->name('api.application.eggs.eggs');
+    Route::get('/{egg:id}', [Application\Eggs\EggController::class, 'view'])->name('api.application.eggs.eggs.view');
 });

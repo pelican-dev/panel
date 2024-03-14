@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Models\Egg;
 use Ramsey\Uuid\Uuid;
 use Illuminate\View\View;
 use Illuminate\Http\Request;
-use App\Models\Nest;
 use Illuminate\Http\Response;
 use App\Models\Mount;
 use App\Models\Location;
@@ -15,7 +15,6 @@ use Illuminate\View\Factory as ViewFactory;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\MountFormRequest;
 use App\Repositories\Eloquent\MountRepository;
-use App\Contracts\Repository\NestRepositoryInterface;
 use App\Contracts\Repository\LocationRepositoryInterface;
 
 class MountController extends Controller
@@ -25,7 +24,6 @@ class MountController extends Controller
      */
     public function __construct(
         protected AlertsMessageBag $alert,
-        protected NestRepositoryInterface $nestRepository,
         protected LocationRepositoryInterface $locationRepository,
         protected MountRepository $repository,
         protected ViewFactory $view
@@ -49,12 +47,12 @@ class MountController extends Controller
      */
     public function view(string $id): View
     {
-        $nests = Nest::query()->with('eggs')->get();
+        $eggs = Egg::all();
         $locations = Location::query()->with('nodes')->get();
 
         return $this->view->make('admin.mounts.view', [
             'mount' => $this->repository->getWithRelations($id),
-            'nests' => $nests,
+            'eggs' => $eggs,
             'locations' => $locations,
         ]);
     }

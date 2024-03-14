@@ -20,7 +20,6 @@ class ServerTransformer extends BaseTransformer
         'allocations',
         'user',
         'subusers',
-        'nest',
         'egg',
         'variables',
         'location',
@@ -77,7 +76,6 @@ class ServerTransformer extends BaseTransformer
             'user' => $server->owner_id,
             'node' => $server->node_id,
             'allocation' => $server->allocation_id,
-            'nest' => $server->nest_id,
             'egg' => $server->egg_id,
             'container' => [
                 'startup_command' => $server->startup,
@@ -137,22 +135,6 @@ class ServerTransformer extends BaseTransformer
         $server->loadMissing('user');
 
         return $this->item($server->getRelation('user'), $this->makeTransformer(UserTransformer::class), 'user');
-    }
-
-    /**
-     * Return a generic array with nest information for this server.
-     *
-     * @throws \App\Exceptions\Transformer\InvalidTransformerLevelException
-     */
-    public function includeNest(Server $server): Item|NullResource
-    {
-        if (!$this->authorize(AdminAcl::RESOURCE_NESTS)) {
-            return $this->null();
-        }
-
-        $server->loadMissing('nest');
-
-        return $this->item($server->getRelation('nest'), $this->makeTransformer(NestTransformer::class), 'nest');
     }
 
     /**

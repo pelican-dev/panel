@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Admin\Nests;
+namespace App\Http\Controllers\Admin\Eggs;
 
 use App\Models\Egg;
 use Illuminate\Http\RedirectResponse;
@@ -41,7 +41,7 @@ class EggShareController extends Controller
     }
 
     /**
-     * Import a new service option using an XML file.
+     * Import a new egg using an XML file.
      *
      * @throws \App\Exceptions\Model\DataValidationException
      * @throws \App\Exceptions\Repository\RecordNotFoundException
@@ -50,10 +50,10 @@ class EggShareController extends Controller
      */
     public function import(EggImportFormRequest $request): RedirectResponse
     {
-        $egg = $this->importerService->handle($request->file('import_file'), $request->input('import_to_nest'));
-        $this->alert->success(trans('admin/nests.eggs.notices.imported'))->flash();
+        $egg = $this->importerService->handle($request->file('import_file'));
+        $this->alert->success(trans('admin/eggs.notices.imported'))->flash();
 
-        return redirect()->route('admin.nests.egg.view', ['egg' => $egg->id]);
+        return redirect()->route('admin.eggs.view', ['egg' => $egg->id]);
     }
 
     /**
@@ -67,8 +67,8 @@ class EggShareController extends Controller
     public function update(EggImportFormRequest $request, Egg $egg): RedirectResponse
     {
         $this->updateImporterService->handle($egg, $request->file('import_file'));
-        $this->alert->success(trans('admin/nests.eggs.notices.updated_via_import'))->flash();
+        $this->alert->success(trans('admin/eggs.notices.updated_via_import'))->flash();
 
-        return redirect()->route('admin.nests.egg.view', ['egg' => $egg]);
+        return redirect()->route('admin.eggs.view', ['egg' => $egg]);
     }
 }

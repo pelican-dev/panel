@@ -26,7 +26,6 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property int $r_allocations
  * @property int $r_users
  * @property int $r_locations
- * @property int $r_nests
  * @property int $r_eggs
  * @property int $r_database_hosts
  * @property int $r_server_databases
@@ -48,7 +47,6 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @method static \Illuminate\Database\Eloquent\Builder|ApiKey whereRDatabaseHosts($value)
  * @method static \Illuminate\Database\Eloquent\Builder|ApiKey whereREggs($value)
  * @method static \Illuminate\Database\Eloquent\Builder|ApiKey whereRLocations($value)
- * @method static \Illuminate\Database\Eloquent\Builder|ApiKey whereRNests($value)
  * @method static \Illuminate\Database\Eloquent\Builder|ApiKey whereRNodes($value)
  * @method static \Illuminate\Database\Eloquent\Builder|ApiKey whereRServerDatabases($value)
  * @method static \Illuminate\Database\Eloquent\Builder|ApiKey whereRServers($value)
@@ -108,7 +106,7 @@ class ApiKey extends Model
         'r_' . AdminAcl::RESOURCE_SERVER_DATABASES => 'int',
         'r_' . AdminAcl::RESOURCE_EGGS => 'int',
         'r_' . AdminAcl::RESOURCE_LOCATIONS => 'int',
-        'r_' . AdminAcl::RESOURCE_NESTS => 'int',
+        'r_' . AdminAcl::RESOURCE_EGGS => 'int',
         'r_' . AdminAcl::RESOURCE_NODES => 'int',
         'r_' . AdminAcl::RESOURCE_SERVERS => 'int',
     ];
@@ -150,7 +148,7 @@ class ApiKey extends Model
         'r_' . AdminAcl::RESOURCE_SERVER_DATABASES => 'integer|min:0|max:3',
         'r_' . AdminAcl::RESOURCE_EGGS => 'integer|min:0|max:3',
         'r_' . AdminAcl::RESOURCE_LOCATIONS => 'integer|min:0|max:3',
-        'r_' . AdminAcl::RESOURCE_NESTS => 'integer|min:0|max:3',
+        'r_' . AdminAcl::RESOURCE_EGGS => 'integer|min:0|max:3',
         'r_' . AdminAcl::RESOURCE_NODES => 'integer|min:0|max:3',
         'r_' . AdminAcl::RESOURCE_SERVERS => 'integer|min:0|max:3',
     ];

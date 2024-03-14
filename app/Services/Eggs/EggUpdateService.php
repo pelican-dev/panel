@@ -16,7 +16,7 @@ class EggUpdateService
     }
 
     /**
-     * Update a service option.
+     * Update an egg.
      *
      * @throws \App\Exceptions\Model\DataValidationException
      * @throws \App\Exceptions\Repository\RecordNotFoundException
@@ -26,12 +26,11 @@ class EggUpdateService
     {
         if (!is_null(array_get($data, 'config_from'))) {
             $results = $this->repository->findCountWhere([
-                ['nest_id', '=', $egg->nest_id],
                 ['id', '=', array_get($data, 'config_from')],
             ]);
 
             if ($results !== 1) {
-                throw new NoParentConfigurationFoundException(trans('exceptions.nest.egg.must_be_child'));
+                throw new NoParentConfigurationFoundException(trans('exceptions.egg.invalid_copy_id'));
             }
         }
 

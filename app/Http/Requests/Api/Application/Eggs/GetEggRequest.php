@@ -1,9 +1,9 @@
 <?php
 
-namespace App\Http\Requests\Api\Application\Nests\Eggs;
+namespace App\Http\Requests\Api\Application\Eggs;
 
-use App\Services\Acl\Api\AdminAcl;
 use App\Http\Requests\Api\Application\ApplicationApiRequest;
+use App\Services\Acl\Api\AdminAcl;
 
 class GetEggRequest extends ApplicationApiRequest
 {

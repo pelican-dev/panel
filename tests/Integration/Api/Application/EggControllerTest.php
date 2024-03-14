@@ -1,23 +1,22 @@
 <?php
 
-namespace App\Tests\Integration\Api\Application\Nests;
+namespace App\Tests\Integration\Api\Application;
 
-use Illuminate\Support\Arr;
 use App\Models\Egg;
-use Illuminate\Http\Response;
 use App\Transformers\Api\Application\EggTransformer;
-use App\Tests\Integration\Api\Application\ApplicationApiIntegrationTestCase;
+use Illuminate\Http\Response;
+use Illuminate\Support\Arr;
 
 class EggControllerTest extends ApplicationApiIntegrationTestCase
 {
     /**
-     * Test that all the eggs belonging to a given nest can be returned.
+     * Test that all the eggs can be returned.
      */
-    public function testListAllEggsInNest()
+    public function testListAllEggs()
     {
-        $eggs = Egg::query()->where('nest_id', 1)->get();
+        $eggs = Egg::query()->get();
 
-        $response = $this->getJson('/api/application/nests/' . $eggs->first()->nest_id . '/eggs');
+        $response = $this->getJson('/api/application/eggs');
         $response->assertStatus(Response::HTTP_OK);
         $response->assertJsonCount(count($eggs), 'data');
         $response->assertJsonStructure([
@@ -26,7 +25,7 @@ class EggControllerTest extends ApplicationApiIntegrationTestCase
                 [
                     'object',
                     'attributes' => [
-                        'id', 'uuid', 'nest', 'author', 'description', 'docker_image', 'startup', 'created_at', 'updated_at',
+                        'id', 'uuid', 'author', 'description', 'docker_image', 'startup', 'created_at', 'updated_at',
                         'script' => ['privileged', 'install', 'entry', 'container', 'extends'],
                         'config' => [
                             'files' => [],
@@ -61,12 +60,12 @@ class EggControllerTest extends ApplicationApiIntegrationTestCase
     {
         $egg = Egg::query()->findOrFail(1);
 
-        $response = $this->getJson('/api/application/nests/' . $egg->nest_id . '/eggs/' . $egg->id);
+        $response = $this->getJson('/api/application/eggs/' . $egg->id);
         $response->assertStatus(Response::HTTP_OK);
         $response->assertJsonStructure([
             'object',
             'attributes' => [
-                'id', 'uuid', 'nest', 'author', 'description', 'docker_image', 'startup', 'script' => [], 'config' => [], 'created_at', 'updated_at',
+                'id', 'uuid', 'author', 'description', 'docker_image', 'startup', 'script' => [], 'config' => [], 'created_at', 'updated_at',
             ],
         ]);
 
@@ -83,13 +82,12 @@ class EggControllerTest extends ApplicationApiIntegrationTestCase
     {
         $egg = Egg::query()->findOrFail(1);
 
-        $response = $this->getJson('/api/application/nests/' . $egg->nest_id . '/eggs/' . $egg->id . '?include=servers,variables,nest');
+        $response = $this->getJson('/api/application/eggs/' . $egg->id . '?include=servers,variables');
         $response->assertStatus(Response::HTTP_OK);
         $response->assertJsonStructure([
             'object',
             'attributes' => [
                 'relationships' => [
-                    'nest' => ['object', 'attributes'],
                     'servers' => ['object', 'data' => []],
                     'variables' => ['object', 'data' => []],
                 ],
@@ -102,9 +100,7 @@ class EggControllerTest extends ApplicationApiIntegrationTestCase
      */
     public function testGetMissingEgg()
     {
-        $egg = Egg::query()->findOrFail(1);
-
-        $response = $this->getJson('/api/application/nests/' . $egg->nest_id . '/eggs/nil');
+        $response = $this->getJson('/api/application/eggs/nil');
         $this->assertNotFoundJson($response);
     }
 
@@ -117,7 +113,7 @@ class EggControllerTest extends ApplicationApiIntegrationTestCase
         $egg = Egg::query()->findOrFail(1);
         $this->createNewDefaultApiKey($this->getApiUser(), ['r_eggs' => 0]);
 
-        $response = $this->getJson('/api/application/nests/' . $egg->nest_id . '/eggs');
+        $response = $this->getJson('/api/application/eggs');
         $this->assertAccessDeniedJson($response);
     }
 }

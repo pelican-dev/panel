@@ -8,9 +8,8 @@
     <h1>{{ $egg->name }}<small>Managing variables for this Egg.</small></h1>
     <ol class="breadcrumb">
         <li><a href="{{ route('admin.index') }}">Admin</a></li>
-        <li><a href="{{ route('admin.nests') }}">Nests</a></li>
-        <li><a href="{{ route('admin.nests.view', $egg->nest->id) }}">{{ $egg->nest->name }}</a></li>
-        <li><a href="{{ route('admin.nests.egg.view', $egg->id) }}">{{ $egg->name }}</a></li>
+        <li><a href="{{ route('admin.eggs') }}">Eggs</a></li>
+        <li><a href="{{ route('admin.eggs.view', $egg->id) }}">{{ $egg->name }}</a></li>
         <li class="active">Variables</li>
     </ol>
 @endsection
@@ -20,9 +19,9 @@
     <div class="col-xs-12">
         <div class="nav-tabs-custom nav-tabs-floating">
             <ul class="nav nav-tabs">
-                <li><a href="{{ route('admin.nests.egg.view', $egg->id) }}">Configuration</a></li>
-                <li class="active"><a href="{{ route('admin.nests.egg.variables', $egg->id) }}">Variables</a></li>
-                <li><a href="{{ route('admin.nests.egg.scripts', $egg->id) }}">Install Script</a></li>
+                <li><a href="{{ route('admin.eggs.view', $egg->id) }}">Configuration</a></li>
+                <li class="active"><a href="{{ route('admin.eggs.variables', $egg->id) }}">Variables</a></li>
+                <li><a href="{{ route('admin.eggs.scripts', $egg->id) }}">Install Script</a></li>
             </ul>
         </div>
     </div>
@@ -43,7 +42,7 @@
                 <div class="box-header with-border">
                     <h3 class="box-title">{{ $variable->name }}</h3>
                 </div>
-                <form action="{{ route('admin.nests.egg.variables.edit', ['egg' => $egg->id, 'variable' => $variable->id]) }}" method="POST">
+                <form action="{{ route('admin.eggs.variables.edit', ['egg' => $egg->id, 'variable' => $variable->id]) }}" method="POST">
                     <div class="box-body">
                         <div class="form-group">
                             <label class="form-label">Name</label>
@@ -96,7 +95,7 @@
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
                 <h4 class="modal-title">Create New Egg Variable</h4>
             </div>
-            <form action="{{ route('admin.nests.egg.variables', $egg->id) }}" method="POST">
+            <form action="{{ route('admin.eggs.variables', $egg->id) }}" method="POST">
                 <div class="modal-body">
                     <div class="form-group">
                         <label class="control-label">Name <span class="field-required"></span></label>

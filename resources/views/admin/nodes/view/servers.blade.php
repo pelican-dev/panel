@@ -40,14 +40,14 @@
                         <th>ID</th>
                         <th>Server Name</th>
                         <th>Owner</th>
-                        <th>Service</th>
+                        <th>Egg</th>
                     </tr>
                     @foreach($servers as $server)
                         <tr data-server="{{ $server->uuid }}">
                             <td><code>{{ $server->uuidShort }}</code></td>
                             <td><a href="{{ route('admin.servers.view', $server->id) }}">{{ $server->name }}</a></td>
                             <td><a href="{{ route('admin.users.view', $server->owner_id) }}">{{ $server->user->username }}</a></td>
-                            <td>{{ $server->nest->name }} ({{ $server->egg->name }})</td>
+                            <td><a href="{{ route('admin.eggs.view', $server->egg) }}">{{ $server->egg->name }}</a></td>
                         </tr>
                     @endforeach
                 </table>

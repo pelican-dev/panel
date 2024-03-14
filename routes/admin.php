@@ -194,35 +194,37 @@ Route::group(['prefix' => 'mounts'], function () {
 
 /*
 |--------------------------------------------------------------------------
-| Nest Controller Routes
+| Egg Controller Routes
 |--------------------------------------------------------------------------
 |
-| Endpoint: /admin/nests
+| Endpoint: /admin/eggs
 |
 */
-Route::group(['prefix' => 'nests'], function () {
-    Route::get('/', [Admin\Nests\NestController::class, 'index'])->name('admin.nests');
-    Route::get('/new', [Admin\Nests\NestController::class, 'create'])->name('admin.nests.new');
-    Route::get('/view/{nest:id}', [Admin\Nests\NestController::class, 'view'])->name('admin.nests.view');
-    Route::get('/egg/new', [Admin\Nests\EggController::class, 'create'])->name('admin.nests.egg.new');
-    Route::get('/egg/{egg:id}', [Admin\Nests\EggController::class, 'view'])->name('admin.nests.egg.view');
-    Route::get('/egg/{egg:id}/export', [Admin\Nests\EggShareController::class, 'export'])->name('admin.nests.egg.export');
-    Route::get('/egg/{egg:id}/variables', [Admin\Nests\EggVariableController::class, 'view'])->name('admin.nests.egg.variables');
-    Route::get('/egg/{egg:id}/scripts', [Admin\Nests\EggScriptController::class, 'index'])->name('admin.nests.egg.scripts');
+Route::group(['prefix' => 'eggs'], function () {
+    Route::controller(Admin\Eggs\EggController::class)->group(function () {
+        Route::get('/', 'index')->name('admin.eggs');
+        Route::get('/new', 'create')->name('admin.eggs.new');
+        Route::post('/new', 'store');
+        Route::patch('/{egg:id}', 'update');
+        Route::get('/{egg:id}', 'view')->name('admin.eggs.view');
+        Route::delete('/{egg:id}', 'destroy');
+    });
 
-    Route::post('/new', [Admin\Nests\NestController::class, 'store']);
-    Route::post('/import', [Admin\Nests\EggShareController::class, 'import'])->name('admin.nests.egg.import');
-    Route::post('/egg/new', [Admin\Nests\EggController::class, 'store']);
-    Route::post('/egg/{egg:id}/variables', [Admin\Nests\EggVariableController::class, 'store']);
+    Route::controller(Admin\Eggs\EggShareController::class)->group(function () {
+        Route::put('/{egg:id}', 'update');
+        Route::post('/import', 'import')->name('admin.eggs.import');
+        Route::get('/{egg:id}/export', 'export')->name('admin.eggs.export');
+    });
 
-    Route::put('/egg/{egg:id}', [Admin\Nests\EggShareController::class, 'update']);
+    Route::controller(Admin\Eggs\EggScriptController::class)->group(function () {
+        Route::get('/{egg:id}/scripts', 'index')->name('admin.eggs.scripts');
+        Route::patch('/{egg:id}/scripts', 'update');
+    });
 
-    Route::patch('/view/{nest:id}', [Admin\Nests\NestController::class, 'update']);
-    Route::patch('/egg/{egg:id}', [Admin\Nests\EggController::class, 'update']);
-    Route::patch('/egg/{egg:id}/scripts', [Admin\Nests\EggScriptController::class, 'update']);
-    Route::patch('/egg/{egg:id}/variables/{variable:id}', [Admin\Nests\EggVariableController::class, 'update'])->name('admin.nests.egg.variables.edit');
-
-    Route::delete('/view/{nest:id}', [Admin\Nests\NestController::class, 'destroy']);
-    Route::delete('/egg/{egg:id}', [Admin\Nests\EggController::class, 'destroy']);
-    Route::delete('/egg/{egg:id}/variables/{variable:id}', [Admin\Nests\EggVariableController::class, 'destroy']);
+    Route::controller(Admin\Eggs\EggVariableController::class)->group(function () {
+        Route::patch('/{egg:id}/variables/{variable:id}', 'update')->name('admin.eggs.variables.edit');
+        Route::get('/{egg:id}/variables', 'view')->name('admin.eggs.variables');
+        Route::post('/{egg:id}/variables', 'store');
+        Route::delete('/{egg:id}/variables/{variable:id}', 'destroy');
+    });
 });
