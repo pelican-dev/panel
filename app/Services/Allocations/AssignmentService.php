@@ -2,11 +2,11 @@
 
 namespace App\Services\Allocations;
 
+use App\Models\Allocation;
 use IPTools\Network;
 use App\Models\Node;
 use Illuminate\Database\ConnectionInterface;
 use App\Exceptions\DisplayException;
-use App\Contracts\Repository\AllocationRepositoryInterface;
 use App\Exceptions\Service\Allocation\CidrOutOfRangeException;
 use App\Exceptions\Service\Allocation\PortOutOfRangeException;
 use App\Exceptions\Service\Allocation\InvalidPortMappingException;
@@ -24,7 +24,7 @@ class AssignmentService
     /**
      * AssignmentService constructor.
      */
-    public function __construct(protected AllocationRepositoryInterface $repository, protected ConnectionInterface $connection)
+    public function __construct(protected ConnectionInterface $connection)
     {
     }
 
@@ -99,7 +99,7 @@ class AssignmentService
                     ];
                 }
 
-                $this->repository->insertIgnore($insertData);
+                Allocation::query()->insertOrIgnore($insertData);
             }
         }
 

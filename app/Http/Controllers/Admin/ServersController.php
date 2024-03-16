@@ -28,7 +28,6 @@ use App\Repositories\Eloquent\DatabaseHostRepository;
 use App\Services\Databases\DatabaseManagementService;
 use Illuminate\Contracts\Config\Repository as ConfigRepository;
 use App\Contracts\Repository\DatabaseRepositoryInterface;
-use App\Contracts\Repository\AllocationRepositoryInterface;
 use App\Services\Servers\ServerConfigurationStructureService;
 use App\Http\Requests\Admin\Servers\Databases\StoreServerDatabaseRequest;
 
@@ -39,7 +38,6 @@ class ServersController extends Controller
      */
     public function __construct(
         protected AlertsMessageBag $alert,
-        protected AllocationRepositoryInterface $allocationRepository,
         protected BuildModificationService $buildModificationService,
         protected ConfigRepository $config,
         protected DaemonServerRepository $daemonServerRepository,

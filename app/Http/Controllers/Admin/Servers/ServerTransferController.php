@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Admin\Servers;
 
 use App\Exceptions\Http\Connection\DaemonConnectionException;
+use App\Models\Allocation;
+use App\Models\Node;
 use Carbon\CarbonImmutable;
 use GuzzleHttp\Exception\TransferException;
 use Illuminate\Http\Request;
@@ -16,7 +18,6 @@ use Illuminate\Database\ConnectionInterface;
 use App\Http\Controllers\Controller;
 use App\Services\Nodes\NodeJWTService;
 use App\Repositories\Eloquent\NodeRepository;
-use App\Contracts\Repository\AllocationRepositoryInterface;
 
 class ServerTransferController extends Controller
 {
@@ -25,7 +26,6 @@ class ServerTransferController extends Controller
      */
     public function __construct(
         private AlertsMessageBag $alert,
-        private AllocationRepositoryInterface $allocationRepository,
         private ConnectionInterface $connection,
         private NodeJWTService $nodeJWTService,
         private NodeRepository $nodeRepository
@@ -120,7 +120,11 @@ class ServerTransferController extends Controller
         $allocations = $additional_allocations;
         $allocations[] = $allocation_id;
 
-        $unassigned = $this->allocationRepository->getUnassignedAllocationIds($node_id);
+        $node = Node::query()->findOrFail($node_id);
+        $unassigned = $node->allocations()
+            ->whereNull('server_id')
+            ->pluck('id')
+            ->toArray();
 
         $updateIds = [];
         foreach ($allocations as $allocation) {
@@ -132,7 +136,7 @@ class ServerTransferController extends Controller
         }
 
         if (!empty($updateIds)) {
-            $this->allocationRepository->updateWhereIn('id', $updateIds, ['server_id' => $server->id]);
+            Allocation::query()->whereIn('id', $updateIds)->update(['server_id' => $server->id]);
         }
     }
 }

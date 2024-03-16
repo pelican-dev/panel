@@ -12,7 +12,6 @@ use Illuminate\Contracts\View\Factory as ViewFactory;
 use App\Repositories\Eloquent\NodeRepository;
 use App\Traits\Controllers\JavascriptInjection;
 use App\Services\Helpers\SoftwareVersionService;
-use App\Repositories\Eloquent\AllocationRepository;
 
 class NodeViewController extends Controller
 {
@@ -22,7 +21,6 @@ class NodeViewController extends Controller
      * NodeViewController constructor.
      */
     public function __construct(
-        private AllocationRepository $allocationRepository,
         private NodeRepository $repository,
         private SoftwareVersionService $versionService,
         private ViewFactory $view

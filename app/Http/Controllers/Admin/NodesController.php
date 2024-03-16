@@ -21,7 +21,6 @@ use App\Http\Requests\Admin\Node\NodeFormRequest;
 use App\Contracts\Repository\NodeRepositoryInterface;
 use App\Http\Requests\Admin\Node\AllocationFormRequest;
 use App\Services\Allocations\AllocationDeletionService;
-use App\Contracts\Repository\AllocationRepositoryInterface;
 use App\Http\Requests\Admin\Node\AllocationAliasFormRequest;
 
 class NodesController extends Controller
@@ -32,7 +31,6 @@ class NodesController extends Controller
     public function __construct(
         protected AlertsMessageBag $alert,
         protected AllocationDeletionService $allocationDeletionService,
-        protected AllocationRepositoryInterface $allocationRepository,
         protected AssignmentService $assignmentService,
         protected CacheRepository $cache,
         protected NodeCreationService $creationService,
@@ -114,11 +112,12 @@ class NodesController extends Controller
      */
     public function allocationRemoveBlock(Request $request, int $node): RedirectResponse
     {
-        $this->allocationRepository->deleteWhere([
-            ['node_id', '=', $node],
-            ['server_id', '=', null],
-            ['ip', '=', $request->input('ip')],
-        ]);
+        /** @var Node $node */
+        $node = Node::query()->findOrFail($node);
+        $node->allocations()
+            ->where('ip', $request->input('ip'))
+            ->whereNull('server_id')
+            ->delete();
 
         $this->alert->success(trans('admin/node.notices.unallocated_deleted', ['ip' => $request->input('ip')]))
             ->flash();
@@ -134,9 +133,9 @@ class NodesController extends Controller
      */
     public function allocationSetAlias(AllocationAliasFormRequest $request): \Symfony\Component\HttpFoundation\Response
     {
-        $this->allocationRepository->update($request->input('allocation_id'), [
-            'ip_alias' => (empty($request->input('alias'))) ? null : $request->input('alias'),
-        ]);
+        $allocation = Allocation::query()->findOrFail($request->input('allocation_id'));
+        $alias = (empty($request->input('alias'))) ? null : $request->input('alias');
+        $allocation->update(['ip_alias' => $alias]);
 
         return response('', 204);
     }
