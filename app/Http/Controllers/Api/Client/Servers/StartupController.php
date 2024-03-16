@@ -4,8 +4,8 @@ namespace App\Http\Controllers\Api\Client\Servers;
 
 use App\Models\Server;
 use App\Facades\Activity;
+use App\Models\ServerVariable;
 use App\Services\Servers\StartupCommandService;
-use App\Repositories\Eloquent\ServerVariableRepository;
 use App\Transformers\Api\Client\EggVariableTransformer;
 use App\Http\Controllers\Api\Client\ClientApiController;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
@@ -19,7 +19,6 @@ class StartupController extends ClientApiController
      */
     public function __construct(
         private StartupCommandService $startupCommandService,
-        private ServerVariableRepository $repository
     ) {
         parent::__construct();
     }
@@ -66,7 +65,7 @@ class StartupController extends ClientApiController
         // Revalidate the variable value using the egg variable specific validation rules for it.
         $this->validate($request, ['value' => $variable->rules]);
 
-        $this->repository->updateOrCreate([
+        ServerVariable::query()->updateOrCreate([
             'server_id' => $server->id,
             'variable_id' => $variable->id,
         ], [

@@ -16,7 +16,6 @@ use App\Repositories\Eloquent\EggVariableRepository;
 use App\Contracts\Repository\NodeRepositoryInterface;
 use App\Repositories\Eloquent\DatabaseHostRepository;
 use App\Contracts\Repository\ApiKeyRepositoryInterface;
-use App\Repositories\Eloquent\ServerVariableRepository;
 use App\Contracts\Repository\SessionRepositoryInterface;
 use App\Contracts\Repository\SubuserRepositoryInterface;
 use App\Contracts\Repository\DatabaseRepositoryInterface;
@@ -24,7 +23,6 @@ use App\Contracts\Repository\SettingsRepositoryInterface;
 use App\Contracts\Repository\AllocationRepositoryInterface;
 use App\Contracts\Repository\EggVariableRepositoryInterface;
 use App\Contracts\Repository\DatabaseHostRepositoryInterface;
-use App\Contracts\Repository\ServerVariableRepositoryInterface;
 
 class RepositoryServiceProvider extends ServiceProvider
 {
@@ -41,7 +39,6 @@ class RepositoryServiceProvider extends ServiceProvider
         $this->app->bind(EggRepositoryInterface::class, EggRepository::class);
         $this->app->bind(EggVariableRepositoryInterface::class, EggVariableRepository::class);
         $this->app->bind(NodeRepositoryInterface::class, NodeRepository::class);
-        $this->app->bind(ServerVariableRepositoryInterface::class, ServerVariableRepository::class);
         $this->app->bind(SessionRepositoryInterface::class, SessionRepository::class);
         $this->app->bind(SettingsRepositoryInterface::class, SettingsRepository::class);
         $this->app->bind(SubuserRepositoryInterface::class, SubuserRepository::class);

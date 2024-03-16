@@ -2,6 +2,7 @@
 
 namespace App\Services\Servers;
 
+use App\Models\ServerVariable;
 use Ramsey\Uuid\Uuid;
 use Illuminate\Support\Arr;
 use App\Models\User;
@@ -13,7 +14,6 @@ use Illuminate\Database\ConnectionInterface;
 use App\Models\Objects\DeploymentObject;
 use App\Repositories\Daemon\DaemonServerRepository;
 use App\Services\Deployment\FindViableNodesService;
-use App\Repositories\Eloquent\ServerVariableRepository;
 use App\Services\Deployment\AllocationSelectionService;
 use App\Exceptions\Http\Connection\DaemonConnectionException;
 
@@ -28,7 +28,6 @@ class ServerCreationService
         private DaemonServerRepository $daemonServerRepository,
         private FindViableNodesService $findViableNodesService,
         private ServerDeletionService $serverDeletionService,
-        private ServerVariableRepository $serverVariableRepository,
         private VariableValidatorService $validatorService
     ) {
     }
@@ -183,7 +182,7 @@ class ServerCreationService
         })->toArray();
 
         if (!empty($records)) {
-            $this->serverVariableRepository->insert($records);
+            ServerVariable::query()->insert($records);
         }
     }
 
