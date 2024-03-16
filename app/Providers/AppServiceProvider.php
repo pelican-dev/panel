@@ -52,12 +52,12 @@ class AppServiceProvider extends ServiceProvider
 
         Http::macro(
             'daemon',
-            fn (Node $node, array $headers = []) => Http::acceptJson()->withHeaders([
-                    'Authorization' => 'Bearer ' . $node->getDecryptedKey(),
-                ] + $headers)
+            fn (Node $node, array $headers = []) => Http::acceptJson()
+                ->withToken($node->getDecryptedKey())
+                ->withHeaders($headers)
                 ->withOptions(['verify' => (bool) app()->environment('production')])
-                ->timeout(config('pterodactyl.guzzle.timeout'))
-                ->connectTimeout(config('pterodactyl.guzzle.connect_timeout'))
+                ->timeout(config('panel.guzzle.timeout'))
+                ->connectTimeout(config('panel.guzzle.connect_timeout'))
                 ->baseUrl($node->getConnectionAddress())
         );
     }
