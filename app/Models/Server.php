@@ -2,8 +2,13 @@
 
 namespace App\Models;
 
+use App\Exceptions\Http\Connection\DaemonConnectionException;
+use GuzzleHttp\Exception\GuzzleException;
+use GuzzleHttp\Exception\TransferException;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Query\JoinClause;
+use Illuminate\Support\Facades\Http;
+use Psr\Http\Message\ResponseInterface;
 use Znck\Eloquent\Traits\BelongsToThrough;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -364,5 +369,21 @@ class Server extends Model
             ->firstOrFail();
 
         return $server;
+    }
+
+    /**
+     * Sends a command or multiple commands to a running server instance.
+     *
+     * @throws DaemonConnectionException|GuzzleException
+     */
+    public function send(array|string $command): ResponseInterface
+    {
+        try {
+            return Http::daemon($this->node)->post("/api/servers/{$this->uuid}/commands", [
+                'commands' => is_array($command) ? $command : [$command],
+            ])->toPsrResponse();
+        } catch (TransferException $exception) {
+            throw new DaemonConnectionException($exception);
+        }
     }
 }

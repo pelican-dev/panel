@@ -16,14 +16,6 @@ use App\Exceptions\Http\Connection\DaemonConnectionException;
 class CommandController extends ClientApiController
 {
     /**
-     * CommandController constructor.
-     */
-    public function __construct(private DaemonCommandRepository $repository)
-    {
-        parent::__construct();
-    }
-
-    /**
      * Send a command to a running server.
      *
      * @throws \App\Exceptions\Http\Connection\DaemonConnectionException
@@ -31,7 +23,7 @@ class CommandController extends ClientApiController
     public function index(SendCommandRequest $request, Server $server): Response
     {
         try {
-            $this->repository->setServer($server)->send($request->input('command'));
+            $server->send($request->input('command'));
         } catch (DaemonConnectionException $exception) {
             $previous = $exception->getPrevious();
 

@@ -2,7 +2,6 @@
 
 namespace App\Jobs\Schedule;
 
-use Exception;
 use App\Jobs\Job;
 use Carbon\CarbonImmutable;
 use App\Models\Task;
@@ -12,7 +11,6 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\DispatchesJobs;
 use App\Services\Backups\InitiateBackupService;
 use App\Repositories\Daemon\DaemonPowerRepository;
-use App\Repositories\Daemon\DaemonCommandRepository;
 use App\Exceptions\Http\Connection\DaemonConnectionException;
 
 class RunTaskJob extends Job implements ShouldQueue
@@ -35,7 +33,6 @@ class RunTaskJob extends Job implements ShouldQueue
      * @throws \Throwable
      */
     public function handle(
-        DaemonCommandRepository $commandRepository,
         InitiateBackupService $backupService,
         DaemonPowerRepository $powerRepository
     ) {
@@ -65,7 +62,7 @@ class RunTaskJob extends Job implements ShouldQueue
                     $powerRepository->setServer($server)->send($this->task->payload);
                     break;
                 case Task::ACTION_COMMAND:
-                    $commandRepository->setServer($server)->send($this->task->payload);
+                    $server->send($this->task->payload);
                     break;
                 case Task::ACTION_BACKUP:
                     $backupService->setIgnoredFiles(explode(PHP_EOL, $this->task->payload))->handle($server, null, true);

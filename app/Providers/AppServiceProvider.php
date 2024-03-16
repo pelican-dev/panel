@@ -3,6 +3,8 @@
 namespace App\Providers;
 
 use App\Models;
+use App\Models\Node;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Pagination\Paginator;
@@ -47,6 +49,17 @@ class AppServiceProvider extends ServiceProvider
             'task' => Models\Task::class,
             'user' => Models\User::class,
         ]);
+
+        Http::macro(
+            'daemon',
+            fn (Node $node, array $headers = []) => Http::acceptJson()->withHeaders([
+                    'Authorization' => 'Bearer ' . $node->getDecryptedKey(),
+                ] + $headers)
+                ->withOptions(['verify' => (bool) app()->environment('production')])
+                ->timeout(config('pterodactyl.guzzle.timeout'))
+                ->connectTimeout(config('pterodactyl.guzzle.connect_timeout'))
+                ->baseUrl($node->getConnectionAddress())
+        );
     }
 
     /**
