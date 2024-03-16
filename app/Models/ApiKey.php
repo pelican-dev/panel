@@ -143,8 +143,6 @@ class ApiKey extends Model
         'r_' . AdminAcl::RESOURCE_DATABASE_HOSTS => 'integer|min:0|max:3',
         'r_' . AdminAcl::RESOURCE_SERVER_DATABASES => 'integer|min:0|max:3',
         'r_' . AdminAcl::RESOURCE_EGGS => 'integer|min:0|max:3',
-        'r_' . AdminAcl::RESOURCE_LOCATIONS => 'integer|min:0|max:3',
-        'r_' . AdminAcl::RESOURCE_EGGS => 'integer|min:0|max:3',
         'r_' . AdminAcl::RESOURCE_NODES => 'integer|min:0|max:3',
         'r_' . AdminAcl::RESOURCE_SERVERS => 'integer|min:0|max:3',
     ];

@@ -73,7 +73,7 @@ class Fqdn implements DataAwareRule, Rule
      */
     public static function make(string $schemeField = null): self
     {
-        return tap(new static(), function ($fqdn) use ($schemeField) {
+        return tap(new self(), function ($fqdn) use ($schemeField) {
             $fqdn->schemeField = $schemeField;
         });
     }

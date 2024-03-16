@@ -19,7 +19,7 @@ class ServerVariableTransformer extends BaseTransformer
      */
     public function getResourceName(): string
     {
-        return ServerVariable::RESOURCE_NAME;
+        return EggVariable::RESOURCE_NAME;
     }
 
     /**

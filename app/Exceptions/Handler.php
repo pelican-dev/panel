@@ -233,7 +233,7 @@ class Handler extends ExceptionHandler
      */
     public static function isReportable(\Exception $exception): bool
     {
-        return (new static(Container::getInstance()))->shouldReport($exception);
+        return (new self(Container::getInstance()))->shouldReport($exception);
     }
 
     /**

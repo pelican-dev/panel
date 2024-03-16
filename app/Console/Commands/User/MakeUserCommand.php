@@ -32,7 +32,9 @@ class MakeUserCommand extends Command
         try {
             DB::select('select 1 where 1');
         } catch (Exception $exception) {
-            return $this->error($exception->getMessage()) ?? 0;
+            $this->error($exception->getMessage());
+
+            return 1;
         }
 
         $root_admin = $this->option('admin') ?? $this->confirm(trans('command/messages.user.ask_admin'));
