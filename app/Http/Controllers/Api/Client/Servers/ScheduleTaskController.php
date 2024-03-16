@@ -10,7 +10,6 @@ use Illuminate\Http\JsonResponse;
 use App\Facades\Activity;
 use App\Models\Permission;
 use Illuminate\Database\ConnectionInterface;
-use App\Repositories\Eloquent\TaskRepository;
 use App\Exceptions\Http\HttpForbiddenException;
 use App\Transformers\Api\Client\TaskTransformer;
 use App\Http\Requests\Api\Client\ClientApiRequest;
@@ -26,7 +25,6 @@ class ScheduleTaskController extends ClientApiController
      */
     public function __construct(
         private ConnectionInterface $connection,
-        private TaskRepository $repository
     ) {
         parent::__construct();
     }
@@ -72,7 +70,7 @@ class ScheduleTaskController extends ClientApiController
                 $sequenceId = $requestSequenceId;
             }
 
-            return $this->repository->create([
+            return Task::query()->create([
                 'schedule_id' => $schedule->id,
                 'sequence_id' => $sequenceId,
                 'action' => $request->input('action'),
@@ -128,7 +126,7 @@ class ScheduleTaskController extends ClientApiController
                     ->decrement('sequence_id');
             }
 
-            $this->repository->update($task->id, [
+            $task->update([
                 'sequence_id' => $sequenceId,
                 'action' => $request->input('action'),
                 'payload' => $request->input('payload') ?? '',

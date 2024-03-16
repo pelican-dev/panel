@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api\Client\Servers;
 
 use Carbon\Carbon;
+use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use App\Models\Server;
@@ -11,7 +12,6 @@ use Illuminate\Http\JsonResponse;
 use App\Facades\Activity;
 use App\Helpers\Utilities;
 use App\Exceptions\DisplayException;
-use App\Repositories\Eloquent\ScheduleRepository;
 use App\Services\Schedules\ProcessScheduleService;
 use App\Transformers\Api\Client\ScheduleTransformer;
 use App\Http\Controllers\Api\Client\ClientApiController;
@@ -27,7 +27,7 @@ class ScheduleController extends ClientApiController
     /**
      * ScheduleController constructor.
      */
-    public function __construct(private ScheduleRepository $repository, private ProcessScheduleService $service)
+    public function __construct(private ProcessScheduleService $service)
     {
         parent::__construct();
     }
@@ -53,7 +53,7 @@ class ScheduleController extends ClientApiController
     public function store(StoreScheduleRequest $request, Server $server): array
     {
         /** @var \App\Models\Schedule $model */
-        $model = $this->repository->create([
+        $model = Schedule::query()->create([
             'server_id' => $server->id,
             'name' => $request->input('name'),
             'cron_day_of_week' => $request->input('day_of_week'),
@@ -121,7 +121,7 @@ class ScheduleController extends ClientApiController
             $data['is_processing'] = false;
         }
 
-        $this->repository->update($schedule->id, $data);
+        $schedule->update($data);
 
         Activity::event('server:schedule.update')
             ->subject($schedule)
@@ -153,7 +153,7 @@ class ScheduleController extends ClientApiController
      */
     public function delete(DeleteScheduleRequest $request, Server $server, Schedule $schedule): JsonResponse
     {
-        $this->repository->delete($schedule->id);
+        $schedule->delete();
 
         Activity::event('server:schedule.delete')->subject($schedule)->property('name', $schedule->name)->log();
 
@@ -175,7 +175,7 @@ class ScheduleController extends ClientApiController
                 $request->input('month'),
                 $request->input('day_of_week')
             );
-        } catch (\Exception $exception) {
+        } catch (Exception) {
             throw new DisplayException('The cron data provided does not evaluate to a valid expression.');
         }
     }
