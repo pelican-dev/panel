@@ -55,10 +55,8 @@ class LoginCheckpointController extends AbstractLoginController
             $this->sendFailedLoginResponse($request);
         }
 
-        try {
-            /** @var \App\Models\User $user */
-            $user = User::query()->findOrFail($details['user_id']);
-        } catch (ModelNotFoundException) {
+        $user = User::query()->find($details['user_id']);
+        if (!$user) {
             $this->sendFailedLoginResponse($request, null, self::TOKEN_EXPIRED_MESSAGE);
         }
 

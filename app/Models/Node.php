@@ -60,6 +60,9 @@ class Node extends Model
      */
     protected $hidden = ['daemon_token_id', 'daemon_token'];
 
+    private int $sum_memory;
+    private int $sum_disk;
+
     /**
      * Cast values to correct type.
      */

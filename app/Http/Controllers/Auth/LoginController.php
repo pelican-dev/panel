@@ -45,12 +45,9 @@ class LoginController extends AbstractLoginController
             $this->sendLockoutResponse($request);
         }
 
-        try {
-            $username = $request->input('user');
-
-            /** @var \App\Models\User $user */
-            $user = User::query()->where($this->getField($username), $username)->firstOrFail();
-        } catch (ModelNotFoundException) {
+        $username = $request->input('user');
+        $user = User::query()->where($this->getField($username), $username)->first();
+        if (!$user) {
             $this->sendFailedLoginResponse($request);
         }
 
