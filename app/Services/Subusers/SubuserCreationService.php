@@ -9,7 +9,6 @@ use App\Models\Subuser;
 use Illuminate\Database\ConnectionInterface;
 use App\Services\Users\UserCreationService;
 use App\Repositories\Eloquent\SubuserRepository;
-use App\Exceptions\Repository\RecordNotFoundException;
 use App\Exceptions\Service\Subuser\UserIsServerOwnerException;
 use App\Exceptions\Service\Subuser\ServerSubuserExistsException;
 
@@ -22,7 +21,6 @@ class SubuserCreationService
         private ConnectionInterface $connection,
         private SubuserRepository $subuserRepository,
         private UserCreationService $userCreationService,
-        private UserRepositoryInterface $userRepository
     ) {
     }
 

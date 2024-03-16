@@ -363,7 +363,7 @@ class Server extends Model
     public static function findOrFailByUuid(string $uuid): Server
     {
         /** @var Server $server */
-        $server = Server::with(['nest', 'node'])
+        $server = Server::with(['node'])
             ->where('uuidShort', $uuid)
             ->orWhere('uuid', $uuid)
             ->firstOrFail();

@@ -91,7 +91,7 @@ class NodeViewController extends Controller
 
         return $this->view->make('admin.nodes.view.servers', [
             'node' => $node,
-            'servers' => $node->servers()->with(['user', 'nest', 'egg'])->paginate(25),
+            'servers' => $node->servers()->with(['user', 'egg'])->paginate(25),
         ]);
     }
 }

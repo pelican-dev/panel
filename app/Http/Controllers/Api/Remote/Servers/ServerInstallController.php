@@ -28,7 +28,7 @@ class ServerInstallController extends Controller
      */
     public function index(Request $request, string $uuid): JsonResponse
     {
-        $server = $this->repository->getByUuid($uuid);
+        $server = Server::findOrFailByUuid($uuid);
         $egg = $server->egg;
 
         return new JsonResponse([
