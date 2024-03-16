@@ -2,18 +2,18 @@
 
 namespace App\Http\Controllers\Api\Remote;
 
+use App\Models\Server;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use App\Http\Controllers\Controller;
 use App\Services\Servers\EnvironmentService;
-use App\Contracts\Repository\ServerRepositoryInterface;
 
 class EggInstallController extends Controller
 {
     /**
      * EggInstallController constructor.
      */
-    public function __construct(private EnvironmentService $environment, private ServerRepositoryInterface $repository)
+    public function __construct(private EnvironmentService $environment)
     {
     }
 
@@ -21,20 +21,18 @@ class EggInstallController extends Controller
      * Handle request to get script and installation information for a server
      * that is being created on the node.
      *
-     * @throws \App\Exceptions\Repository\RecordNotFoundException
      */
     public function index(Request $request, string $uuid): JsonResponse
     {
         $node = $request->attributes->get('node');
 
-        /** @var \App\Models\Server $server */
-        $server = $this->repository->findFirstWhere([
-            ['uuid', '=', $uuid],
-            ['node_id', '=', $node->id],
-        ]);
+        $server = Server::query()
+            ->with('egg.scriptFrom')
+            ->where('uuid', $uuid)
+            ->where('node_id', $node->id)
+            ->firstOrFail();
 
-        $this->repository->loadEggRelations($server);
-        $egg = $server->getRelation('egg');
+        $egg = $server->egg;
 
         return response()->json([
             'scripts' => [

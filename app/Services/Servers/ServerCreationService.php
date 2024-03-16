@@ -11,7 +11,6 @@ use Illuminate\Support\Collection;
 use App\Models\Allocation;
 use Illuminate\Database\ConnectionInterface;
 use App\Models\Objects\DeploymentObject;
-use App\Repositories\Eloquent\ServerRepository;
 use App\Repositories\Daemon\DaemonServerRepository;
 use App\Services\Deployment\FindViableNodesService;
 use App\Repositories\Eloquent\ServerVariableRepository;
@@ -28,7 +27,6 @@ class ServerCreationService
         private ConnectionInterface $connection,
         private DaemonServerRepository $daemonServerRepository,
         private FindViableNodesService $findViableNodesService,
-        private ServerRepository $repository,
         private ServerDeletionService $serverDeletionService,
         private ServerVariableRepository $serverVariableRepository,
         private VariableValidatorService $validatorService
@@ -129,8 +127,7 @@ class ServerCreationService
     {
         $uuid = $this->generateUniqueUuidCombo();
 
-        /** @var \App\Models\Server $model */
-        $model = $this->repository->create([
+        return Server::create([
             'external_id' => Arr::get($data, 'external_id'),
             'uuid' => $uuid,
             'uuidShort' => substr($uuid, 0, 8),
@@ -155,8 +152,6 @@ class ServerCreationService
             'allocation_limit' => Arr::get($data, 'allocation_limit') ?? 0,
             'backup_limit' => Arr::get($data, 'backup_limit') ?? 0,
         ]);
-
-        return $model;
     }
 
     /**
@@ -199,7 +194,8 @@ class ServerCreationService
     {
         $uuid = Uuid::uuid4()->toString();
 
-        if (!$this->repository->isUniqueUuidCombo($uuid, substr($uuid, 0, 8))) {
+        $shortUuid = str($uuid)->substr(0, 8);
+        if (Server::query()->where('uuid', $uuid)->orWhere('uuidShort', $shortUuid)->exists()) {
             return $this->generateUniqueUuidCombo();
         }
 

@@ -10,7 +10,6 @@ use App\Models\Allocation;
 use App\Http\Controllers\Controller;
 use Illuminate\Contracts\View\Factory as ViewFactory;
 use App\Repositories\Eloquent\NodeRepository;
-use App\Repositories\Eloquent\ServerRepository;
 use App\Traits\Controllers\JavascriptInjection;
 use App\Services\Helpers\SoftwareVersionService;
 use App\Repositories\Eloquent\AllocationRepository;
@@ -25,7 +24,6 @@ class NodeViewController extends Controller
     public function __construct(
         private AllocationRepository $allocationRepository,
         private NodeRepository $repository,
-        private ServerRepository $serverRepository,
         private SoftwareVersionService $versionService,
         private ViewFactory $view
     ) {
@@ -93,7 +91,7 @@ class NodeViewController extends Controller
 
         return $this->view->make('admin.nodes.view.servers', [
             'node' => $node,
-            'servers' => $this->serverRepository->loadAllServersForNode($node->id, 25),
+            'servers' => $node->servers()->with(['user', 'nest', 'egg'])->paginate(25),
         ]);
     }
 }

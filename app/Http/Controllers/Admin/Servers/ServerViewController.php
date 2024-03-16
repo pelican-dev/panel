@@ -14,7 +14,6 @@ use App\Services\Servers\EnvironmentService;
 use Illuminate\Contracts\View\Factory as ViewFactory;
 use App\Repositories\Eloquent\NodeRepository;
 use App\Repositories\Eloquent\MountRepository;
-use App\Repositories\Eloquent\ServerRepository;
 use App\Traits\Controllers\JavascriptInjection;
 use App\Repositories\Eloquent\DatabaseHostRepository;
 
@@ -30,7 +29,6 @@ class ServerViewController extends Controller
         private MountRepository $mountRepository,
         private EggRepository $eggRepository,
         private NodeRepository $nodeRepository,
-        private ServerRepository $repository,
         private EnvironmentService $environmentService,
         private ViewFactory $view
     ) {

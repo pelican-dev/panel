@@ -19,7 +19,6 @@ use App\Services\Allocations\AssignmentService;
 use App\Services\Helpers\SoftwareVersionService;
 use App\Http\Requests\Admin\Node\NodeFormRequest;
 use App\Contracts\Repository\NodeRepositoryInterface;
-use App\Contracts\Repository\ServerRepositoryInterface;
 use App\Http\Requests\Admin\Node\AllocationFormRequest;
 use App\Services\Allocations\AllocationDeletionService;
 use App\Contracts\Repository\AllocationRepositoryInterface;
@@ -39,7 +38,6 @@ class NodesController extends Controller
         protected NodeCreationService $creationService,
         protected NodeDeletionService $deletionService,
         protected NodeRepositoryInterface $repository,
-        protected ServerRepositoryInterface $serverRepository,
         protected NodeUpdateService $updateService,
         protected SoftwareVersionService $versionService,
         protected ViewFactory $view

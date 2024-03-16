@@ -27,7 +27,6 @@ use App\Services\Servers\StartupModificationService;
 use App\Repositories\Eloquent\DatabaseHostRepository;
 use App\Services\Databases\DatabaseManagementService;
 use Illuminate\Contracts\Config\Repository as ConfigRepository;
-use App\Contracts\Repository\ServerRepositoryInterface;
 use App\Contracts\Repository\DatabaseRepositoryInterface;
 use App\Contracts\Repository\AllocationRepositoryInterface;
 use App\Services\Servers\ServerConfigurationStructureService;
@@ -51,7 +50,6 @@ class ServersController extends Controller
         protected ServerDeletionService $deletionService,
         protected DetailsModificationService $detailsModificationService,
         protected ReinstallServerService $reinstallService,
-        protected ServerRepositoryInterface $repository,
         protected MountRepository $mountRepository,
         protected ServerConfigurationStructureService $serverConfigurationStructureService,
         protected StartupModificationService $startupModificationService,
@@ -89,9 +87,8 @@ class ServersController extends Controller
             throw new DisplayException(trans('admin/server.exceptions.marked_as_failed'));
         }
 
-        $this->repository->update($server->id, [
-            'status' => $server->isInstalled() ? Server::STATUS_INSTALLING : null,
-        ], true, true);
+        $server->status = $server->isInstalled() ? Server::STATUS_INSTALLING : null;
+        $server->save();
 
         $this->alert->success(trans('admin/server.alerts.install_toggled'))->flash();
 

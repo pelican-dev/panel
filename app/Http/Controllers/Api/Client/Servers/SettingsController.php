@@ -6,7 +6,6 @@ use Illuminate\Http\Response;
 use App\Models\Server;
 use Illuminate\Http\JsonResponse;
 use App\Facades\Activity;
-use App\Repositories\Eloquent\ServerRepository;
 use App\Services\Servers\ReinstallServerService;
 use App\Http\Controllers\Api\Client\ClientApiController;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
@@ -20,7 +19,6 @@ class SettingsController extends ClientApiController
      * SettingsController constructor.
      */
     public function __construct(
-        private ServerRepository $repository,
         private ReinstallServerService $reinstallServerService
     ) {
         parent::__construct();
@@ -28,18 +26,15 @@ class SettingsController extends ClientApiController
 
     /**
      * Renames a server.
-     *
-     * @throws \App\Exceptions\Model\DataValidationException
-     * @throws \App\Exceptions\Repository\RecordNotFoundException
      */
     public function rename(RenameServerRequest $request, Server $server): JsonResponse
     {
         $name = $request->input('name');
         $description = $request->has('description') ? (string) $request->input('description') : $server->description;
-        $this->repository->update($server->id, [
-            'name' => $name,
-            'description' => $description,
-        ]);
+
+        $server->name = $name;
+        $server->description = $description;
+        $server->save();
 
         if ($server->name !== $name) {
             Activity::event('server:settings.rename')

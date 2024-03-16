@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\Api\Remote\Servers;
 
-use Carbon\CarbonImmutable;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use App\Models\Server;
@@ -18,14 +17,14 @@ class ServerInstallController extends Controller
     /**
      * ServerInstallController constructor.
      */
-    public function __construct(private ServerRepository $repository, private EventDispatcher $eventDispatcher)
+    public function __construct(private EventDispatcher $eventDispatcher)
     {
     }
 
     /**
      * Returns installation information for a server.
      *
-     * @throws \App\Exceptions\Repository\RecordNotFoundException
+     * @throws RecordNotFoundException
      */
     public function index(Request $request, string $uuid): JsonResponse
     {
@@ -47,7 +46,7 @@ class ServerInstallController extends Controller
      */
     public function store(InstallationDataRequest $request, string $uuid): JsonResponse
     {
-        $server = $this->repository->getByUuid($uuid);
+        $server = Server::findOrFailByUuid($uuid);
         $status = null;
 
         // Make sure the type of failure is accurate
@@ -64,11 +63,15 @@ class ServerInstallController extends Controller
             $status = Server::STATUS_SUSPENDED;
         }
 
-        $this->repository->update($server->id, ['status' => $status, 'installed_at' => CarbonImmutable::now()], true, true);
+        $previouslyInstalledAt = $server->installed_at;
+
+        $server->status = $status;
+        $server->installed_at = now();
+        $server->save();
 
         // If the server successfully installed, fire installed event.
         // This logic allows individually disabling install and reinstall notifications separately.
-        $isInitialInstall = is_null($server->installed_at);
+        $isInitialInstall = is_null($previouslyInstalledAt);
         if ($isInitialInstall && config()->get('panel.email.send_install_notification', true)) {
             $this->eventDispatcher->dispatch(new ServerInstalled($server));
         } elseif (!$isInitialInstall && config()->get('panel.email.send_reinstall_notification', true)) {

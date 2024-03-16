@@ -6,7 +6,6 @@ use App\Models\Node;
 use Illuminate\Contracts\Translation\Translator;
 use App\Contracts\Repository\NodeRepositoryInterface;
 use App\Exceptions\Service\HasActiveServersException;
-use App\Contracts\Repository\ServerRepositoryInterface;
 
 class NodeDeletionService
 {
@@ -15,7 +14,6 @@ class NodeDeletionService
      */
     public function __construct(
         protected NodeRepositoryInterface $repository,
-        protected ServerRepositoryInterface $serverRepository,
         protected Translator $translator
     ) {
     }
@@ -23,16 +21,15 @@ class NodeDeletionService
     /**
      * Delete a node from the panel if no servers are attached to it.
      *
-     * @throws \App\Exceptions\Service\HasActiveServersException
+     * @throws HasActiveServersException
      */
     public function handle(int|Node $node): int
     {
-        if ($node instanceof Node) {
-            $node = $node->id;
+        if (is_int($node)) {
+            $node = Node::findOrFail($node);
         }
 
-        $servers = $this->serverRepository->setColumns('id')->findCountWhere([['node_id', '=', $node]]);
-        if ($servers > 0) {
+        if ($node->servers()->count() > 0) {
             throw new HasActiveServersException($this->translator->get('exceptions.node.servers_attached'));
         }
 

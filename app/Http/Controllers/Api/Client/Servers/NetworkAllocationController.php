@@ -7,7 +7,6 @@ use Illuminate\Http\JsonResponse;
 use App\Facades\Activity;
 use App\Models\Allocation;
 use App\Exceptions\DisplayException;
-use App\Repositories\Eloquent\ServerRepository;
 use App\Transformers\Api\Client\AllocationTransformer;
 use App\Http\Controllers\Api\Client\ClientApiController;
 use App\Services\Allocations\FindAssignableAllocationService;
@@ -24,7 +23,6 @@ class NetworkAllocationController extends ClientApiController
      */
     public function __construct(
         private FindAssignableAllocationService $assignableAllocationService,
-        private ServerRepository $serverRepository
     ) {
         parent::__construct();
     }
@@ -72,7 +70,8 @@ class NetworkAllocationController extends ClientApiController
      */
     public function setPrimary(SetPrimaryAllocationRequest $request, Server $server, Allocation $allocation): array
     {
-        $this->serverRepository->update($server->id, ['allocation_id' => $allocation->id]);
+        $server->allocation()->associate($allocation);
+        $server->save();
 
         Activity::event('server:allocation.primary')
             ->subject($allocation)

@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api\Remote\Servers;
 
 use App\Models\Server;
 use App\Repositories\Daemon\DaemonRepository;
+use App\Repositories\Daemon\DaemonServerRepository;
 use GuzzleHttp\Exception\GuzzleException;
 use Illuminate\Http\Response;
 use Illuminate\Http\JsonResponse;
@@ -12,7 +13,6 @@ use Illuminate\Support\Facades\Log;
 use App\Models\ServerTransfer;
 use Illuminate\Database\ConnectionInterface;
 use App\Http\Controllers\Controller;
-use App\Repositories\Eloquent\ServerRepository;
 use Lcobucci\JWT\Token\Plain;
 use Symfony\Component\HttpKernel\Exception\ConflictHttpException;
 use App\Exceptions\Http\Connection\DaemonConnectionException;
@@ -24,8 +24,8 @@ class ServerTransferController extends Controller
      */
     public function __construct(
         private ConnectionInterface $connection,
-        private ServerRepository $repository,
         private DaemonRepository $daemonRepository,
+        private DaemonServerRepository $daemonServerRepository,
     ) {
     }
 
@@ -55,7 +55,7 @@ class ServerTransferController extends Controller
      */
     public function failure(string $uuid): JsonResponse
     {
-        $server = $this->repository->getByUuid($uuid);
+        $server = Server::findOrFailByUuid($uuid);
         $transfer = $server->transfer;
         if (is_null($transfer)) {
             throw new ConflictHttpException('Server is not being transferred.');
@@ -71,7 +71,7 @@ class ServerTransferController extends Controller
      */
     public function success(string $uuid): JsonResponse
     {
-        $server = $this->repository->getByUuid($uuid);
+        $server = Server::findOrFailByUuid($uuid);
         $transfer = $server->transfer;
         if (is_null($transfer)) {
             throw new ConflictHttpException('Server is not being transferred.');
