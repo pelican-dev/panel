@@ -42,6 +42,7 @@
         "barryvdh/laravel-ide-helper": "~2.13.0",
         "fakerphp/faker": "~1.21.0",
         "itsgoingd/clockwork": "~5.1.12",
+        "larastan/larastan": "^2.0",
         "laravel/pint": "^1.14",
         "laravel/sail": "~1.21.0",
         "mockery/mockery": "~1.5.1",
