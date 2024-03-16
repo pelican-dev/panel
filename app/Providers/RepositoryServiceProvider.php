@@ -6,7 +6,6 @@ use Illuminate\Support\ServiceProvider;
 use App\Repositories\Eloquent\EggRepository;
 use App\Repositories\Eloquent\NodeRepository;
 use App\Repositories\Eloquent\TaskRepository;
-use App\Repositories\Eloquent\UserRepository;
 use App\Repositories\Eloquent\ApiKeyRepository;
 use App\Repositories\Eloquent\SessionRepository;
 use App\Repositories\Eloquent\SubuserRepository;
@@ -18,7 +17,6 @@ use App\Contracts\Repository\EggRepositoryInterface;
 use App\Repositories\Eloquent\EggVariableRepository;
 use App\Contracts\Repository\NodeRepositoryInterface;
 use App\Contracts\Repository\TaskRepositoryInterface;
-use App\Contracts\Repository\UserRepositoryInterface;
 use App\Repositories\Eloquent\DatabaseHostRepository;
 use App\Contracts\Repository\ApiKeyRepositoryInterface;
 use App\Repositories\Eloquent\ServerVariableRepository;
@@ -53,6 +51,5 @@ class RepositoryServiceProvider extends ServiceProvider
         $this->app->bind(SettingsRepositoryInterface::class, SettingsRepository::class);
         $this->app->bind(SubuserRepositoryInterface::class, SubuserRepository::class);
         $this->app->bind(TaskRepositoryInterface::class, TaskRepository::class);
-        $this->app->bind(UserRepositoryInterface::class, UserRepository::class);
     }
 }

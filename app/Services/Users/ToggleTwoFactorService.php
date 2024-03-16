@@ -8,7 +8,6 @@ use App\Models\User;
 use PragmaRX\Google2FA\Google2FA;
 use Illuminate\Database\ConnectionInterface;
 use Illuminate\Contracts\Encryption\Encrypter;
-use App\Contracts\Repository\UserRepositoryInterface;
 use App\Repositories\Eloquent\RecoveryTokenRepository;
 use App\Exceptions\Service\User\TwoFactorAuthenticationTokenInvalid;
 
@@ -22,7 +21,6 @@ class ToggleTwoFactorService
         private Encrypter $encrypter,
         private Google2FA $google2FA,
         private RecoveryTokenRepository $recoveryTokenRepository,
-        private UserRepositoryInterface $repository
     ) {
     }
 
@@ -78,10 +76,9 @@ class ToggleTwoFactorService
                 $this->recoveryTokenRepository->insert($inserts);
             }
 
-            $this->repository->withoutFreshModel()->update($user->id, [
-                'totp_authenticated_at' => Carbon::now(),
-                'use_totp' => (is_null($toggleState) ? !$user->use_totp : $toggleState),
-            ]);
+            $user->totp_authenticated_at = now();
+            $user->use_totp = (is_null($toggleState) ? !$user->use_totp : $toggleState);
+            $user->save();
 
             return $tokens;
         });

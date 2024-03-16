@@ -12,7 +12,6 @@ use App\Exceptions\DisplayException;
 use App\Http\Controllers\Controller;
 use Illuminate\Foundation\Auth\ResetsPasswords;
 use App\Http\Requests\Auth\ResetPasswordRequest;
-use App\Contracts\Repository\UserRepositoryInterface;
 
 class ResetPasswordController extends Controller
 {
@@ -31,7 +30,6 @@ class ResetPasswordController extends Controller
     public function __construct(
         private Dispatcher $dispatcher,
         private Hasher $hasher,
-        private UserRepositoryInterface $userRepository
     ) {
     }
 
@@ -75,10 +73,9 @@ class ResetPasswordController extends Controller
      */
     protected function resetPassword($user, $password)
     {
-        $user = $this->userRepository->update($user->id, [
-            'password' => $this->hasher->make($password),
-            $user->getRememberTokenName() => Str::random(60),
-        ]);
+        $user->password = $this->hasher->make($password);
+        $user->setRememberToken(Str::random(60));
+        $user->save();
 
         $this->dispatcher->dispatch(new PasswordReset($user));
 

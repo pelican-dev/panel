@@ -8,7 +8,6 @@ use Illuminate\Contracts\Hashing\Hasher;
 use Illuminate\Database\ConnectionInterface;
 use Illuminate\Contracts\Auth\PasswordBroker;
 use App\Notifications\AccountCreated;
-use App\Contracts\Repository\UserRepositoryInterface;
 
 class UserCreationService
 {
@@ -19,7 +18,6 @@ class UserCreationService
         private ConnectionInterface $connection,
         private Hasher $hasher,
         private PasswordBroker $passwordBroker,
-        private UserRepositoryInterface $repository
     ) {
     }
 
@@ -36,15 +34,14 @@ class UserCreationService
         }
 
         $this->connection->beginTransaction();
-        if (!isset($data['password']) || empty($data['password'])) {
+        if (empty($data['password'])) {
             $generateResetToken = true;
             $data['password'] = $this->hasher->make(str_random(30));
         }
 
-        /** @var \App\Models\User $user */
-        $user = $this->repository->create(array_merge($data, [
+        $user = User::query()->forceCreate(array_merge($data, [
             'uuid' => Uuid::uuid4()->toString(),
-        ]), true, true);
+        ]));
 
         if (isset($generateResetToken)) {
             $token = $this->passwordBroker->createToken($user);

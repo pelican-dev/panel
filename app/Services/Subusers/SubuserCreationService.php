@@ -2,13 +2,13 @@
 
 namespace App\Services\Subusers;
 
+use App\Models\User;
 use Illuminate\Support\Str;
 use App\Models\Server;
 use App\Models\Subuser;
 use Illuminate\Database\ConnectionInterface;
 use App\Services\Users\UserCreationService;
 use App\Repositories\Eloquent\SubuserRepository;
-use App\Contracts\Repository\UserRepositoryInterface;
 use App\Exceptions\Repository\RecordNotFoundException;
 use App\Exceptions\Service\Subuser\UserIsServerOwnerException;
 use App\Exceptions\Service\Subuser\ServerSubuserExistsException;
@@ -39,18 +39,8 @@ class SubuserCreationService
     public function handle(Server $server, string $email, array $permissions): Subuser
     {
         return $this->connection->transaction(function () use ($server, $email, $permissions) {
-            try {
-                $user = $this->userRepository->findFirstWhere([['email', '=', $email]]);
-
-                if ($server->owner_id === $user->id) {
-                    throw new UserIsServerOwnerException(trans('exceptions.subusers.user_is_owner'));
-                }
-
-                $subuserCount = $this->subuserRepository->findCountWhere([['user_id', '=', $user->id], ['server_id', '=', $server->id]]);
-                if ($subuserCount !== 0) {
-                    throw new ServerSubuserExistsException(trans('exceptions.subusers.subuser_exists'));
-                }
-            } catch (RecordNotFoundException) {
+            $user = User::query()->where('email', $email)->first();
+            if (!$user) {
                 // Just cap the username generated at 64 characters at most and then append a random string
                 // to the end to make it "unique"...
                 $username = substr(preg_replace('/([^\w\.-]+)/', '', strtok($email, '@')), 0, 64) . Str::random(3);
@@ -62,6 +52,15 @@ class SubuserCreationService
                     'name_last' => 'Subuser',
                     'root_admin' => false,
                 ]);
+            }
+
+            if ($server->owner_id === $user->id) {
+                throw new UserIsServerOwnerException(trans('exceptions.subusers.user_is_owner'));
+            }
+
+            $subuserCount = $this->subuserRepository->findCountWhere([['user_id', '=', $user->id], ['server_id', '=', $server->id]]);
+            if ($subuserCount !== 0) {
+                throw new ServerSubuserExistsException(trans('exceptions.subusers.subuser_exists'));
             }
 
             return $this->subuserRepository->create([

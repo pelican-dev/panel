@@ -4,7 +4,6 @@ namespace App\Services\Users;
 
 use App\Models\User;
 use Illuminate\Contracts\Encryption\Encrypter;
-use App\Contracts\Repository\UserRepositoryInterface;
 use Illuminate\Contracts\Config\Repository as ConfigRepository;
 
 class TwoFactorSetupService
@@ -17,7 +16,6 @@ class TwoFactorSetupService
     public function __construct(
         private ConfigRepository $config,
         private Encrypter $encrypter,
-        private UserRepositoryInterface $repository
     ) {
     }
 
@@ -40,9 +38,8 @@ class TwoFactorSetupService
             throw new \RuntimeException($exception->getMessage(), 0, $exception);
         }
 
-        $this->repository->withoutFreshModel()->update($user->id, [
-            'totp_secret' => $this->encrypter->encrypt($secret),
-        ]);
+        $user->totp_secret = $this->encrypter->encrypt($secret);
+        $user->save();
 
         $company = urlencode(preg_replace('/\s/', '', $this->config->get('app.name')));
 

@@ -5,7 +5,6 @@ namespace App\Services\Users;
 use App\Models\User;
 use App\Exceptions\DisplayException;
 use Illuminate\Contracts\Translation\Translator;
-use App\Contracts\Repository\UserRepositoryInterface;
 
 class UserDeletionService
 {
@@ -13,7 +12,6 @@ class UserDeletionService
      * UserDeletionService constructor.
      */
     public function __construct(
-        protected UserRepositoryInterface $repository,
         protected Translator $translator
     ) {
     }
@@ -33,6 +31,6 @@ class UserDeletionService
             throw new DisplayException($this->translator->get('admin/user.exceptions.user_has_servers'));
         }
 
-        return $this->repository->delete($user->id);
+        return $user->delete();
     }
 }

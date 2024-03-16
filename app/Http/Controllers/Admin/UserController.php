@@ -20,7 +20,6 @@ use App\Services\Users\UserCreationService;
 use App\Services\Users\UserDeletionService;
 use App\Http\Requests\Admin\UserFormRequest;
 use App\Http\Requests\Admin\NewUserFormRequest;
-use App\Contracts\Repository\UserRepositoryInterface;
 
 class UserController extends Controller
 {
@@ -35,7 +34,6 @@ class UserController extends Controller
         protected UserDeletionService $deletionService,
         protected Translator $translator,
         protected UserUpdateService $updateService,
-        protected UserRepositoryInterface $repository,
         protected ViewFactory $view
     ) {
     }
