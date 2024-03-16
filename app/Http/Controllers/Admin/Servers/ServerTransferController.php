@@ -2,17 +2,20 @@
 
 namespace App\Http\Controllers\Admin\Servers;
 
+use App\Exceptions\Http\Connection\DaemonConnectionException;
 use Carbon\CarbonImmutable;
+use GuzzleHttp\Exception\TransferException;
 use Illuminate\Http\Request;
 use App\Models\Server;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Facades\Http;
+use Lcobucci\JWT\Token\Plain;
 use Prologue\Alerts\AlertsMessageBag;
 use App\Models\ServerTransfer;
 use Illuminate\Database\ConnectionInterface;
 use App\Http\Controllers\Controller;
 use App\Services\Nodes\NodeJWTService;
 use App\Repositories\Eloquent\NodeRepository;
-use App\Repositories\Daemon\DaemonTransferRepository;
 use App\Contracts\Repository\AllocationRepositoryInterface;
 
 class ServerTransferController extends Controller
@@ -24,10 +27,28 @@ class ServerTransferController extends Controller
         private AlertsMessageBag $alert,
         private AllocationRepositoryInterface $allocationRepository,
         private ConnectionInterface $connection,
-        private DaemonTransferRepository $daemonTransferRepository,
         private NodeJWTService $nodeJWTService,
         private NodeRepository $nodeRepository
     ) {
+    }
+
+    private function notify(Server $server, Plain $token): void
+    {
+        try {
+            Http::daemon($server->node)->post('/api/transfer', [
+                'json' => [
+                    'server_id' => $server->uuid,
+                    'url' => $server->node->getConnectionAddress() . "/api/servers/$server->uuid/archive",
+                    'token' => 'Bearer ' . $token->toString(),
+                    'server' => [
+                        'uuid' => $server->uuid,
+                        'start_on_completion' => false,
+                    ],
+                ],
+            ])->toPsrResponse();
+        } catch (TransferException $exception) {
+            throw new DaemonConnectionException($exception);
+        }
     }
 
     /**
@@ -81,7 +102,7 @@ class ServerTransferController extends Controller
                 ->handle($transfer->newNode, $server->uuid, 'sha256');
 
             // Notify the source node of the pending outgoing transfer.
-            $this->daemonTransferRepository->setServer($server)->notify($transfer->newNode, $token);
+            $this->notify($server, $token);
 
             return $transfer;
         });

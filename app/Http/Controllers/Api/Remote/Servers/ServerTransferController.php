@@ -3,9 +3,7 @@
 namespace App\Http\Controllers\Api\Remote\Servers;
 
 use App\Models\Server;
-use App\Repositories\Daemon\DaemonRepository;
 use App\Repositories\Daemon\DaemonServerRepository;
-use GuzzleHttp\Exception\GuzzleException;
 use Illuminate\Http\Response;
 use Illuminate\Http\JsonResponse;
 use App\Models\Allocation;
@@ -13,7 +11,6 @@ use Illuminate\Support\Facades\Log;
 use App\Models\ServerTransfer;
 use Illuminate\Database\ConnectionInterface;
 use App\Http\Controllers\Controller;
-use Lcobucci\JWT\Token\Plain;
 use Symfony\Component\HttpKernel\Exception\ConflictHttpException;
 use App\Exceptions\Http\Connection\DaemonConnectionException;
 
@@ -24,28 +21,8 @@ class ServerTransferController extends Controller
      */
     public function __construct(
         private ConnectionInterface $connection,
-        private DaemonRepository $daemonRepository,
         private DaemonServerRepository $daemonServerRepository,
     ) {
-    }
-
-    private function notify(DaemonRepository $repository, Server $server, Plain $token): void
-    {
-        try {
-            $repository->getHttpClient()->post('/api/transfer', [
-                'json' => [
-                    'server_id' => $server->uuid,
-                    'url' => $server->node->getConnectionAddress() . "/api/servers/$server->uuid/archive",
-                    'token' => 'Bearer ' . $token->toString(),
-                    'server' => [
-                        'uuid' => $server->uuid,
-                        'start_on_completion' => false,
-                    ],
-                ],
-            ]);
-        } catch (GuzzleException $exception) {
-            throw new DaemonConnectionException($exception);
-        }
     }
 
     /**
