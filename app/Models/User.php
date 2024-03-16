@@ -81,7 +81,7 @@ use App\Notifications\SendPasswordReset as ResetPasswordNotification;
 class User extends Model implements AuthenticatableContract, AuthorizableContract, CanResetPasswordContract
 {
     use Authenticatable;
-    use Authorizable;
+    use Authorizable {can as protected canned;}
     use AvailableLanguages;
     use CanResetPassword;
     use HasAccessTokens;
@@ -266,5 +266,41 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
                 $builder->where('servers.owner_id', $this->id)->orWhere('subusers.user_id', $this->id);
             })
             ->groupBy('servers.id');
+    }
+
+    protected function checkPermission(Server $server, string $permission = ''): bool
+    {
+        if ($this->root_admin || $server->owner_id === $this->id) {
+            return true;
+        }
+
+        $subuser = $server->subusers->where('user_id', $this->id)->first();
+        if (!$subuser || empty($permission)) {
+            return false;
+        }
+
+        $check = in_array($permission, $subuser->permissions);
+
+        return $check;
+    }
+
+    /**
+     * Laravel's policies strictly check for the existence of a real method,
+     * this checks if the ability is one of our permissions and then checks if the user can do it or not
+     * Otherwise it calls the Authorizable trait's parent method
+     */
+    public function can($abilities, mixed $arguments = []): bool
+    {
+        if (is_string($abilities) && str_contains($abilities, '.')) {
+            [$permission, $key] = str($abilities)->explode('.', 2);
+
+            if (isset(Permission::permissions()[$permission]['keys'][$key])) {
+                if ($arguments instanceof Server) {
+                    return $this->checkPermission($arguments, $abilities);
+                }
+            }
+        }
+
+        return $this->canned($abilities, $arguments);
     }
 }
