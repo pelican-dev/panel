@@ -8,7 +8,6 @@ use Illuminate\Database\QueryException;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Contracts\Encryption\Encrypter;
 use Illuminate\Contracts\Encryption\DecryptException;
-use Illuminate\Contracts\Config\Repository as ConfigRepository;
 
 class SettingsServiceProvider extends ServiceProvider
 {
@@ -57,11 +56,11 @@ class SettingsServiceProvider extends ServiceProvider
     /**
      * Boot the service provider.
      */
-    public function boot(ConfigRepository $config, Encrypter $encrypter, Log $log): void
+    public function boot(Encrypter $encrypter, Log $log): void
     {
         // Only set the email driver settings from the database if we
         // are configured using SMTP as the driver.
-        if ($config->get('mail.default') === 'smtp') {
+        if (config('mail.default') === 'smtp') {
             $this->keys = array_merge($this->keys, $this->emailKeys);
         }
 
@@ -76,7 +75,7 @@ class SettingsServiceProvider extends ServiceProvider
         }
 
         foreach ($this->keys as $key) {
-            $value = array_get($values, 'settings::' . $key, $config->get(str_replace(':', '.', $key)));
+            $value = array_get($values, 'settings::' . $key, config(str_replace(':', '.', $key)));
             if (in_array($key, self::$encrypted)) {
                 try {
                     $value = $encrypter->decrypt($value);
@@ -102,7 +101,7 @@ class SettingsServiceProvider extends ServiceProvider
                     $value = null;
             }
 
-            $config->set(str_replace(':', '.', $key), $value);
+            config()->set(str_replace(':', '.', $key), $value);
         }
     }
 
