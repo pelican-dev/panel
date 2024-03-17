@@ -66,3 +66,6 @@ jobs:
 
       - name: Integration tests
         run: vendor/bin/phpunit tests/Integration
+        env:
+          DB_PORT: ${{ job.services.database.ports[3306] }}
+          DB_USERNAME: root
