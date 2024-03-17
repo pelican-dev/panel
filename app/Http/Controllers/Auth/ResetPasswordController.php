@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Auth;
 
+use App\Models\User;
 use Illuminate\Support\Str;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Contracts\Hashing\Hasher;
@@ -72,6 +73,7 @@ class ResetPasswordController extends Controller
      */
     protected function resetPassword($user, $password)
     {
+        /** @var User $user */
         $user->password = $this->hasher->make($password);
         $user->setRememberToken(Str::random(60));
         $user->save();

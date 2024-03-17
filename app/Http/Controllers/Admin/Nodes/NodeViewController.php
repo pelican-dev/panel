@@ -31,7 +31,7 @@ class NodeViewController extends Controller
      */
     public function index(Request $request, Node $node): View
     {
-        $node->load('location')->loadCount('servers');
+        $node->loadCount('servers');
 
         $stats = Node::query()
             ->selectRaw('IFNULL(SUM(servers.memory), 0) as sum_memory, IFNULL(SUM(servers.disk), 0) as sum_disk')
@@ -61,7 +61,7 @@ class NodeViewController extends Controller
 
         return view('admin.nodes.view.index', [
             'node' => $node,
-            'stats' => $stats,
+            'stats' => $usageStats,
             'version' => $this->versionService,
         ]);
     }

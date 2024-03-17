@@ -114,7 +114,7 @@ class InitiateBackupService
                 'ignored_files' => array_values($this->ignoredFiles ?? []),
                 'disk' => $this->backupManager->getDefaultAdapter(),
                 'is_locked' => $this->isLocked,
-            ], true, true);
+            ]);
 
             $this->daemonBackupRepository->setServer($server)
                 ->setBackupAdapter($this->backupManager->getDefaultAdapter())

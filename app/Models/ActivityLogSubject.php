@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Relations\Pivot;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
  * \App\Models\ActivityLogSubject.
@@ -37,7 +38,9 @@ class ActivityLogSubject extends Pivot
     public function subject()
     {
         $morph = $this->morphTo();
-        if (method_exists($morph, 'withTrashed')) {
+
+        if (in_array(SoftDeletes::class, class_uses_recursive($morph::class))) {
+            /** @var self|Backup|UserSSHKey $morph - cannot use traits in doc blocks */
             return $morph->withTrashed();
         }
 

@@ -34,7 +34,6 @@ class EggScriptController extends Controller
 
         $copy = Egg::query()
             ->whereNull('copy_script_from')
-            ->where('nest_id', $egg->nest_id)
             ->whereNot('id', $egg->id)
             ->firstOrFail();
 

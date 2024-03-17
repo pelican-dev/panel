@@ -393,7 +393,7 @@ class Server extends Model
      */
     public function getBackupsGeneratedDuringTimespan(int $seconds = 600): array|Collection
     {
-        return self::query()
+        return $this
             ->backups()
             ->where(fn ($query) => $query->whereNull('completed_at')->orWhere('is_successful', true))
             ->where('created_at', '>=', now()->subSeconds($seconds))

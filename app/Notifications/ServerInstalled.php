@@ -25,7 +25,7 @@ class ServerInstalled extends Notification implements ShouldQueue
      * Handle a direct call to this notification from the server installed event. This is configured
      * in the event service provider.
      */
-    public function handle(Event|Installed $event): void
+    public function handle(Installed $event): void
     {
         $event->server->loadMissing('user');
 

@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers\Api\Remote\Servers;
 
+use App\Models\ActivityLogSubject;
+use App\Models\Backup;
 use Illuminate\Http\Request;
 use App\Models\Server;
 use Illuminate\Http\JsonResponse;
@@ -48,7 +50,7 @@ class ServerDetailsController extends Controller
 
         // Avoid run-away N+1 SQL queries by preloading the relationships that are used
         // within each of the services called below.
-        $servers = Server::query()->with('allocations', 'egg', 'mounts', 'variables', 'location')
+        $servers = Server::query()->with('allocations', 'egg', 'mounts', 'variables')
             ->where('node_id', $node->id)
             // If you don't cast this to a string you'll end up with a stringified per_page returned in
             // the metadata, and then daemon will panic crash as a result.
@@ -90,15 +92,19 @@ class ServerDetailsController extends Controller
             foreach ($servers as $server) {
                 /** @var \App\Models\ActivityLog|null $activity */
                 $activity = $server->activity->first();
-                if (!is_null($activity)) {
-                    if ($subject = $activity->subjects->where('subject_type', 'backup')->first()) {
-                        // Just create a new audit entry for this event and update the server state
-                        // so that power actions, file management, and backups can resume as normal.
-                        Activity::event('server:backup.restore-failed')
-                            ->subject($server, $subject->subject)
-                            ->property('name', $subject->subject->name)
-                            ->log();
-                    }
+                if (!$activity) {
+                    continue;
+                }
+
+                if ($subject = $activity->subjects()->where('subject_type', 'backup')->first()) {
+                    /** @var Backup $backup */
+                    $backup = $subject->subject;
+                    // Just create a new audit entry for this event and update the server state
+                    // so that power actions, file management, and backups can resume as normal.
+                    Activity::event('server:backup.restore-failed')
+                        ->subject($server, $backup)
+                        ->property('name', $backup->name)
+                        ->log();
                 }
             }
 

@@ -2,6 +2,8 @@
 
 namespace App\Services\Backups;
 
+use App\Extensions\Filesystem\S3Filesystem;
+use Aws\S3\S3Client;
 use Illuminate\Http\Response;
 use App\Models\Backup;
 use GuzzleHttp\Exception\ClientException;
@@ -70,10 +72,13 @@ class DeleteBackupService
         $this->connection->transaction(function () use ($backup) {
             $backup->delete();
 
-            /** @var \App\Extensions\Filesystem\S3Filesystem $adapter */
+            /** @var S3Filesystem $adapter */
             $adapter = $this->manager->adapter(Backup::ADAPTER_AWS_S3);
 
-            $adapter->getClient()->deleteObject([
+            /** @var S3Client $client */
+            $client = $adapter->getClient();
+
+            $client->deleteObject([
                 'Bucket' => $adapter->getBucket(),
                 'Key' => sprintf('%s/%s.tar.gz', $backup->server->uuid, $backup->uuid),
             ]);

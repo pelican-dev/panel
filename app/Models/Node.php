@@ -59,8 +59,8 @@ class Node extends Model
      */
     protected $hidden = ['daemon_token_id', 'daemon_token'];
 
-    private int $sum_memory;
-    private int $sum_disk;
+    public int $sum_memory;
+    public int $sum_disk;
 
     /**
      * Cast values to correct type.
@@ -228,7 +228,7 @@ class Node extends Model
                 return collect($map)->only(['id', 'ip', 'port']);
             });
 
-            $item->ports = $filtered->map(function ($map) {
+            $ports = $filtered->map(function ($map) {
                 return [
                     'id' => $map['id'],
                     'text' => sprintf('%s:%s', $map['ip'], $map['port']),
@@ -238,7 +238,7 @@ class Node extends Model
             return [
                 'id' => $item->id,
                 'text' => $item->name,
-                'allocations' => $item->ports,
+                'allocations' => $ports,
             ];
         })->values();
     }

@@ -1,0 +1,146 @@
+parameters:
+	ignoreErrors:
+		-
+			message: "#^Call to an undefined method Prologue\\\\Alerts\\\\AlertsMessageBag\\:\\:danger\\(\\)\\.$#"
+			count: 1
+			path: app/Exceptions/DisplayException.php
+
+		-
+			message: "#^Call to an undefined method Prologue\\\\Alerts\\\\AlertsMessageBag\\:\\:success\\(\\)\\.$#"
+			count: 1
+			path: app/Http/Controllers/Admin/ApiController.php
+
+		-
+			message: "#^Call to an undefined method Prologue\\\\Alerts\\\\AlertsMessageBag\\:\\:danger\\(\\)\\.$#"
+			count: 2
+			path: app/Http/Controllers/Admin/DatabaseController.php
+
+		-
+			message: "#^Call to an undefined method Prologue\\\\Alerts\\\\AlertsMessageBag\\:\\:success\\(\\)\\.$#"
+			count: 3
+			path: app/Http/Controllers/Admin/DatabaseController.php
+
+		-
+			message: "#^Call to an undefined method Prologue\\\\Alerts\\\\AlertsMessageBag\\:\\:success\\(\\)\\.$#"
+			count: 3
+			path: app/Http/Controllers/Admin/Eggs/EggController.php
+
+		-
+			message: "#^Access to an undefined property App\\\\Models\\\\Egg\\:\\:\\$nest_id\\.$#"
+			count: 1
+			path: app/Http/Controllers/Admin/Eggs/EggScriptController.php
+
+		-
+			message: "#^Call to an undefined method Prologue\\\\Alerts\\\\AlertsMessageBag\\:\\:success\\(\\)\\.$#"
+			count: 1
+			path: app/Http/Controllers/Admin/Eggs/EggScriptController.php
+
+		-
+			message: "#^Call to an undefined method Prologue\\\\Alerts\\\\AlertsMessageBag\\:\\:success\\(\\)\\.$#"
+			count: 2
+			path: app/Http/Controllers/Admin/Eggs/EggShareController.php
+
+		-
+			message: "#^Call to an undefined method Prologue\\\\Alerts\\\\AlertsMessageBag\\:\\:success\\(\\)\\.$#"
+			count: 3
+			path: app/Http/Controllers/Admin/Eggs/EggVariableController.php
+
+		-
+			message: "#^Call to an undefined method Prologue\\\\Alerts\\\\AlertsMessageBag\\:\\:success\\(\\)\\.$#"
+			count: 4
+			path: app/Http/Controllers/Admin/MountController.php
+
+		-
+			message: "#^Access to private property App\\\\Models\\\\Node\\:\\:\\$sum_disk\\.$#"
+			count: 1
+			path: app/Http/Controllers/Admin/Nodes/NodeViewController.php
+
+		-
+			message: "#^Access to private property App\\\\Models\\\\Node\\:\\:\\$sum_memory\\.$#"
+			count: 1
+			path: app/Http/Controllers/Admin/Nodes/NodeViewController.php
+
+		-
+			message: "#^Call to an undefined method Prologue\\\\Alerts\\\\AlertsMessageBag\\:\\:info\\(\\)\\.$#"
+			count: 1
+			path: app/Http/Controllers/Admin/NodesController.php
+
+		-
+			message: "#^Call to an undefined method Prologue\\\\Alerts\\\\AlertsMessageBag\\:\\:success\\(\\)\\.$#"
+			count: 4
+			path: app/Http/Controllers/Admin/NodesController.php
+
+		-
+			message: "#^Call to an undefined method Prologue\\\\Alerts\\\\AlertsMessageBag\\:\\:success\\(\\)\\.$#"
+			count: 1
+			path: app/Http/Controllers/Admin/Servers/CreateServerController.php
+
+		-
+			message: "#^Call to an undefined method Prologue\\\\Alerts\\\\AlertsMessageBag\\:\\:warning\\(\\)\\.$#"
+			count: 1
+			path: app/Http/Controllers/Admin/Servers/CreateServerController.php
+
+		-
+			message: "#^Call to an undefined method Prologue\\\\Alerts\\\\AlertsMessageBag\\:\\:danger\\(\\)\\.$#"
+			count: 1
+			path: app/Http/Controllers/Admin/Servers/ServerTransferController.php
+
+		-
+			message: "#^Call to an undefined method Prologue\\\\Alerts\\\\AlertsMessageBag\\:\\:success\\(\\)\\.$#"
+			count: 1
+			path: app/Http/Controllers/Admin/Servers/ServerTransferController.php
+
+		-
+			message: "#^Call to an undefined method Prologue\\\\Alerts\\\\AlertsMessageBag\\:\\:success\\(\\)\\.$#"
+			count: 9
+			path: app/Http/Controllers/Admin/ServersController.php
+
+		-
+			message: "#^Call to an undefined method Prologue\\\\Alerts\\\\AlertsMessageBag\\:\\:success\\(\\)\\.$#"
+			count: 1
+			path: app/Http/Controllers/Admin/Settings/AdvancedController.php
+
+		-
+			message: "#^Call to an undefined method Prologue\\\\Alerts\\\\AlertsMessageBag\\:\\:success\\(\\)\\.$#"
+			count: 1
+			path: app/Http/Controllers/Admin/Settings/IndexController.php
+
+		-
+			message: "#^Access to an undefined property App\\\\Models\\\\User\\|Illuminate\\\\Database\\\\Eloquent\\\\Collection\\<int, App\\\\Models\\\\User\\>\\:\\:\\$md5\\.$#"
+			count: 1
+			path: app/Http/Controllers/Admin/UserController.php
+
+		-
+			message: "#^Access to an undefined property Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:\\$email\\.$#"
+			count: 1
+			path: app/Http/Controllers/Admin/UserController.php
+
+		-
+			message: "#^Access to an undefined property Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:\\$md5\\.$#"
+			count: 1
+			path: app/Http/Controllers/Admin/UserController.php
+
+		-
+			message: "#^Call to an undefined method Prologue\\\\Alerts\\\\AlertsMessageBag\\:\\:success\\(\\)\\.$#"
+			count: 2
+			path: app/Http/Controllers/Admin/UserController.php
+
+		-
+			message: "#^Call to an undefined method Illuminate\\\\Database\\\\Eloquent\\\\Builder\\:\\:allowedFilters\\(\\)\\.$#"
+			count: 1
+			path: app/Http/Controllers/Api/Client/ActivityLogController.php
+
+		-
+			message: "#^Call to an undefined method Illuminate\\\\Database\\\\Eloquent\\\\Builder\\:\\:allowedSorts\\(\\)\\.$#"
+			count: 1
+			path: app/Http/Controllers/Api/Client/Servers/ActivityLogController.php
+
+		-
+			message: "#^Access to an undefined property Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:\\$name\\.$#"
+			count: 1
+			path: app/Http/Controllers/Api/Remote/Servers/ServerDetailsController.php
+
+		-
+			message: "#^Call to an undefined method Prologue\\\\Alerts\\\\AlertsMessageBag\\:\\:danger\\(\\)\\.$#"
+			count: 1
+			path: app/Http/Middleware/RequireTwoFactorAuthentication.php

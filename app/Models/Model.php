@@ -8,12 +8,12 @@ use Illuminate\Support\Str;
 use Illuminate\Support\Carbon;
 use Illuminate\Validation\Rule;
 use Illuminate\Container\Container;
-use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Validation\ValidationException;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use App\Exceptions\Model\DataValidationException;
 use Illuminate\Database\Eloquent\Model as IlluminateModel;
 use Illuminate\Contracts\Validation\Factory as ValidationFactory;
+use Illuminate\Validation\Validator;
 
 abstract class Model extends IlluminateModel
 {
@@ -72,23 +72,13 @@ abstract class Model extends IlluminateModel
     }
 
     /**
-     * Set the model to skip validation when saving.
-     */
-    public function skipValidation(): self
-    {
-        $this->skipValidation = true;
-
-        return $this;
-    }
-
-    /**
      * Returns the validator instance used by this model.
      */
     public function getValidator(): Validator
     {
         $rules = $this->exists ? static::getRulesForUpdate($this) : static::getRules();
 
-        return static::$validatorFactory->make([], $rules, [], []);
+        return static::$validatorFactory->make([], $rules);
     }
 
     /**
@@ -97,7 +87,7 @@ abstract class Model extends IlluminateModel
     public static function getRules(): array
     {
         $rules = static::$validationRules;
-        foreach ($rules as $key => &$rule) {
+        foreach ($rules as &$rule) {
             $rule = is_array($rule) ? $rule : explode('|', $rule);
         }
 

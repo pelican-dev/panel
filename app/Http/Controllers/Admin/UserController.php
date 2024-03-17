@@ -136,13 +136,13 @@ class UserController extends Controller
         // Handle single user requests.
         if ($request->query('user_id')) {
             $user = User::query()->findOrFail($request->input('user_id'));
-            $user->md5 = md5(strtolower($user->email));
+            $user['md5'] = md5(strtolower($user->email));
 
             return $user;
         }
 
-        return $users->map(function ($item) {
-            $item->md5 = md5(strtolower($item->email));
+        return $users->map(function (User $item) {
+            $item['md5'] = md5(strtolower($item->email));
 
             return $item;
         });

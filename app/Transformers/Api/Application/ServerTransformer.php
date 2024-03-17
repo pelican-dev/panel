@@ -22,7 +22,6 @@ class ServerTransformer extends BaseTransformer
         'subusers',
         'egg',
         'variables',
-        'location',
         'node',
         'databases',
         'transfer',
