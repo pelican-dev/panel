@@ -33,7 +33,7 @@ class EggVariableController extends Controller
     {
         $egg = Egg::with('variables')->findOrFail($egg);
 
-        return $this->view->make('admin.eggs.variables', ['egg' => $egg]);
+        return view('admin.eggs.variables', ['egg' => $egg]);
     }
 
     /**

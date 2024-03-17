@@ -12,7 +12,6 @@ use App\Models\Server;
 use App\Exceptions\DisplayException;
 use App\Http\Controllers\Controller;
 use App\Services\Servers\EnvironmentService;
-use Illuminate\Contracts\View\Factory as ViewFactory;
 use App\Traits\Controllers\JavascriptInjection;
 
 class ServerViewController extends Controller
@@ -24,7 +23,6 @@ class ServerViewController extends Controller
      */
     public function __construct(
         private EnvironmentService $environmentService,
-        private ViewFactory $view
     ) {
     }
 
@@ -33,7 +31,7 @@ class ServerViewController extends Controller
      */
     public function index(Request $request, Server $server): View
     {
-        return $this->view->make('admin.servers.view.index', compact('server'));
+        return view('admin.servers.view.index', compact('server'));
     }
 
     /**
@@ -41,7 +39,7 @@ class ServerViewController extends Controller
      */
     public function details(Request $request, Server $server): View
     {
-        return $this->view->make('admin.servers.view.details', compact('server'));
+        return view('admin.servers.view.details', compact('server'));
     }
 
     /**
@@ -51,7 +49,7 @@ class ServerViewController extends Controller
     {
         $allocations = $server->node->allocations->toBase();
 
-        return $this->view->make('admin.servers.view.build', [
+        return view('admin.servers.view.build', [
             'server' => $server,
             'assigned' => $allocations->where('server_id', $server->id)->sortBy('port')->sortBy('ip'),
             'unassigned' => $allocations->where('server_id', null)->sortBy('port')->sortBy('ip'),
@@ -74,7 +72,7 @@ class ServerViewController extends Controller
             'eggs' => $eggs,
         ]);
 
-        return $this->view->make('admin.servers.view.startup', compact('server', 'eggs'));
+        return view('admin.servers.view.startup', compact('server', 'eggs'));
     }
 
     /**
@@ -82,7 +80,7 @@ class ServerViewController extends Controller
      */
     public function database(Request $request, Server $server): View
     {
-        return $this->view->make('admin.servers.view.database', [
+        return view('admin.servers.view.database', [
             'hosts' => DatabaseHost::all(),
             'server' => $server,
         ]);
@@ -100,7 +98,7 @@ class ServerViewController extends Controller
             ->whereHas('nodes', fn ($q) => $q->where('id', $server->node_id))
             ->get();
 
-        return $this->view->make('admin.servers.view.mounts', [
+        return view('admin.servers.view.mounts', [
             'mounts' => $mounts,
             'server' => $server,
         ]);
@@ -129,7 +127,7 @@ class ServerViewController extends Controller
             'nodeData' => Node::getForServerCreation(),
         ]);
 
-        return $this->view->make('admin.servers.view.manage', [
+        return view('admin.servers.view.manage', [
             'nodes' => Node::all(),
             'server' => $server,
             'canTransfer' => $canTransfer,
@@ -141,6 +139,6 @@ class ServerViewController extends Controller
      */
     public function delete(Request $request, Server $server): View
     {
-        return $this->view->make('admin.servers.view.delete', compact('server'));
+        return view('admin.servers.view.delete', compact('server'));
     }
 }

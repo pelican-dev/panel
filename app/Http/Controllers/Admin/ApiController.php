@@ -35,7 +35,7 @@ class ApiController extends Controller
             ->where('key_type', ApiKey::TYPE_APPLICATION)
             ->get();
 
-        return $this->view->make('admin.api.index', [
+        return view('admin.api.index', [
             'keys' => $keys,
         ]);
     }
@@ -50,7 +50,7 @@ class ApiController extends Controller
         $resources = AdminAcl::getResourceList();
         sort($resources);
 
-        return $this->view->make('admin.api.new', [
+        return view('admin.api.new', [
             'resources' => $resources,
             'permissions' => [
                 'r' => AdminAcl::READ,

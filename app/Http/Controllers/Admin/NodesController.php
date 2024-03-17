@@ -45,7 +45,7 @@ class NodesController extends Controller
      */
     public function create(): View|RedirectResponse
     {
-        return $this->view->make('admin.nodes.new');
+        return view('admin.nodes.new');
     }
 
     /**

@@ -38,7 +38,7 @@ class DatabaseController extends Controller
             ->with('node')
             ->get();
 
-        return $this->view->make('admin.databases.index', [
+        return view('admin.databases.index', [
             'nodes' => Node::all(),
             'hosts' => $hosts,
         ]);
@@ -55,7 +55,7 @@ class DatabaseController extends Controller
         $host = DatabaseHost::query()->findOrFail($host);
         $databases = $host->databases()->with('server')->paginate(25);
 
-        return $this->view->make('admin.databases.view', [
+        return view('admin.databases.view', [
             'nodes' => Node::all(),
             'host' => $host,
             'databases' => $databases,

@@ -45,7 +45,7 @@ class CreateServerController extends Controller
             'eggs' => $eggs->keyBy('id'),
         ]);
 
-        return $this->view->make('admin.servers.new', [
+        return view('admin.servers.new', [
             'eggs' => $eggs,
             'nodes' => Node::all(),
         ]);

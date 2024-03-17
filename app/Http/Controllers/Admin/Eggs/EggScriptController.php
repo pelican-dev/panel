@@ -40,7 +40,7 @@ class EggScriptController extends Controller
 
         $rely = Egg::query()->where('copy_script_from', $egg->id)->firstOrFail();
 
-        return $this->view->make('admin.eggs.scripts', [
+        return view('admin.eggs.scripts', [
             'copyFromOptions' => $copy,
             'relyOnScript' => $rely,
             'egg' => $egg,

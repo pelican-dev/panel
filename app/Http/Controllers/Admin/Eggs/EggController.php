@@ -32,7 +32,7 @@ class EggController extends Controller
      */
     public function index(): View
     {
-        return $this->view->make('admin.eggs.index', [
+        return view('admin.eggs.index', [
             'eggs' => Egg::all(),
         ]);
     }
@@ -47,7 +47,7 @@ class EggController extends Controller
         $eggs = Egg::all();
         \JavaScript::put(['eggs' => $eggs->keyBy('id')]);
 
-        return $this->view->make('admin.eggs.new', ['eggs' => $eggs]);
+        return view('admin.eggs.new', ['eggs' => $eggs]);
     }
 
     /**
@@ -72,7 +72,7 @@ class EggController extends Controller
      */
     public function view(Egg $egg): View
     {
-        return $this->view->make('admin.eggs.view', [
+        return view('admin.eggs.view', [
             'egg' => $egg,
             'images' => array_map(
                 fn ($key, $value) => $key === $value ? $value : "$key|$value",

@@ -30,7 +30,7 @@ class MountController extends Controller
      */
     public function index(): View
     {
-        return $this->view->make('admin.mounts.index', [
+        return view('admin.mounts.index', [
             'mounts' => Mount::query()->withCount(['eggs', 'nodes'])->get(),
         ]);
     }
@@ -42,7 +42,7 @@ class MountController extends Controller
      */
     public function view(string $id): View
     {
-        return $this->view->make('admin.mounts.view', [
+        return view('admin.mounts.view', [
             'mount' => Mount::with(['eggs', 'nodes'])->findOrFail($id),
             'eggs' => Egg::all(),
         ]);
