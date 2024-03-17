@@ -46,7 +46,6 @@ class MailController extends Controller
      *
      * @throws DisplayException
      * @throws \App\Exceptions\Model\DataValidationException
-     * @throws \App\Exceptions\Repository\RecordNotFoundException
      */
     public function update(MailSettingsFormRequest $request): Response
     {

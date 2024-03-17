@@ -66,7 +66,6 @@ class NodesController extends Controller
      *
      * @throws \App\Exceptions\DisplayException
      * @throws \App\Exceptions\Model\DataValidationException
-     * @throws \App\Exceptions\Repository\RecordNotFoundException
      */
     public function updateSettings(NodeFormRequest $request, Node $node): RedirectResponse
     {
@@ -127,7 +126,6 @@ class NodesController extends Controller
      * Sets an alias for a specific allocation on a node.
      *
      * @throws \App\Exceptions\Model\DataValidationException
-     * @throws \App\Exceptions\Repository\RecordNotFoundException
      */
     public function allocationSetAlias(AllocationAliasFormRequest $request): \Symfony\Component\HttpFoundation\Response
     {

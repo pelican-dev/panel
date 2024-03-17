@@ -59,7 +59,6 @@ class ServerViewController extends Controller
     /**
      * Returns the server startup management page.
      *
-     * @throws \App\Exceptions\Repository\RecordNotFoundException
      */
     public function startup(Request $request, Server $server): View
     {

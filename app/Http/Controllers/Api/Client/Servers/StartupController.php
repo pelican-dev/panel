@@ -47,7 +47,6 @@ class StartupController extends ClientApiController
      *
      * @throws \Illuminate\Validation\ValidationException
      * @throws \App\Exceptions\Model\DataValidationException
-     * @throws \App\Exceptions\Repository\RecordNotFoundException
      */
     public function update(UpdateStartupVariableRequest $request, Server $server): array
     {

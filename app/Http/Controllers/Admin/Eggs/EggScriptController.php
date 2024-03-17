@@ -51,7 +51,6 @@ class EggScriptController extends Controller
      * Handle a request to update the installation script for an Egg.
      *
      * @throws \App\Exceptions\Model\DataValidationException
-     * @throws \App\Exceptions\Repository\RecordNotFoundException
      */
     public function update(EggScriptFormRequest $request, Egg $egg): RedirectResponse
     {

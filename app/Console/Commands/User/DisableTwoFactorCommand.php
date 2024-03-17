@@ -15,7 +15,6 @@ class DisableTwoFactorCommand extends Command
      * Handle command execution process.
      *
      * @throws \App\Exceptions\Model\DataValidationException
-     * @throws \App\Exceptions\Repository\RecordNotFoundException
      */
     public function handle()
     {

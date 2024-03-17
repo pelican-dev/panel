@@ -69,7 +69,6 @@ class ResetPasswordController extends Controller
      * @param string $password
      *
      * @throws \App\Exceptions\Model\DataValidationException
-     * @throws \App\Exceptions\Repository\RecordNotFoundException
      */
     protected function resetPassword($user, $password)
     {

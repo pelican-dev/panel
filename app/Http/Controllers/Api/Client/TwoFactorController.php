@@ -31,7 +31,6 @@ class TwoFactorController extends ClientApiController
      * will return a 400 error.
      *
      * @throws \App\Exceptions\Model\DataValidationException
-     * @throws \App\Exceptions\Repository\RecordNotFoundException
      */
     public function index(Request $request): JsonResponse
     {

@@ -47,7 +47,6 @@ class DatabaseController extends Controller
     /**
      * Display database host to user.
      *
-     * @throws \App\Exceptions\Repository\RecordNotFoundException
      */
     public function view(int $host): View
     {

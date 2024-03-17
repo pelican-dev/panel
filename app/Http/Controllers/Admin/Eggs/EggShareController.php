@@ -25,9 +25,6 @@ class EggShareController extends Controller
     ) {
     }
 
-    /**
-     * @throws \App\Exceptions\Repository\RecordNotFoundException
-     */
     public function export(Egg $egg): Response
     {
         $filename = trim(preg_replace('/\W/', '-', kebab_case($egg->name)), '-');
@@ -44,7 +41,6 @@ class EggShareController extends Controller
      * Import a new egg using an XML file.
      *
      * @throws \App\Exceptions\Model\DataValidationException
-     * @throws \App\Exceptions\Repository\RecordNotFoundException
      * @throws \App\Exceptions\Service\Egg\BadJsonFormatException
      * @throws \App\Exceptions\Service\InvalidFileUploadException
      */
@@ -60,7 +56,6 @@ class EggShareController extends Controller
      * Update an existing Egg using a new imported file.
      *
      * @throws \App\Exceptions\Model\DataValidationException
-     * @throws \App\Exceptions\Repository\RecordNotFoundException
      * @throws \App\Exceptions\Service\Egg\BadJsonFormatException
      * @throws \App\Exceptions\Service\InvalidFileUploadException
      */

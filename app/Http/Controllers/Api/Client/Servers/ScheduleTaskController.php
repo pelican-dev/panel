@@ -94,7 +94,6 @@ class ScheduleTaskController extends ClientApiController
      * Updates a given task for a server.
      *
      * @throws \App\Exceptions\Model\DataValidationException
-     * @throws \App\Exceptions\Repository\RecordNotFoundException
      */
     public function update(StoreTaskRequest $request, Server $server, Schedule $schedule, Task $task): array
     {

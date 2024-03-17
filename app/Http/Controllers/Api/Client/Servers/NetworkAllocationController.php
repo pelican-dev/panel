@@ -42,7 +42,6 @@ class NetworkAllocationController extends ClientApiController
      * Set the primary allocation for a server.
      *
      * @throws \App\Exceptions\Model\DataValidationException
-     * @throws \App\Exceptions\Repository\RecordNotFoundException
      */
     public function update(UpdateAllocationRequest $request, Server $server, Allocation $allocation): array
     {
@@ -66,7 +65,6 @@ class NetworkAllocationController extends ClientApiController
      * Set the primary allocation for a server.
      *
      * @throws \App\Exceptions\Model\DataValidationException
-     * @throws \App\Exceptions\Repository\RecordNotFoundException
      */
     public function setPrimary(SetPrimaryAllocationRequest $request, Server $server, Allocation $allocation): array
     {

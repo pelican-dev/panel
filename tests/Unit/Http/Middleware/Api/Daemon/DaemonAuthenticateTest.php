@@ -8,7 +8,6 @@ use Mockery\MockInterface;
 use App\Models\Node;
 use Illuminate\Contracts\Encryption\Encrypter;
 use Symfony\Component\HttpKernel\Exception\HttpException;
-use App\Exceptions\Repository\RecordNotFoundException;
 use App\Http\Middleware\Api\Daemon\DaemonAuthenticate;
 use App\Tests\Unit\Http\Middleware\MiddlewareTestCase;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;

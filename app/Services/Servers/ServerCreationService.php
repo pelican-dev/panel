@@ -41,7 +41,6 @@ class ServerCreationService
      * @throws \Throwable
      * @throws \App\Exceptions\DisplayException
      * @throws \Illuminate\Validation\ValidationException
-     * @throws \App\Exceptions\Repository\RecordNotFoundException
      * @throws \App\Exceptions\Service\Deployment\NoViableNodeException
      * @throws \App\Exceptions\Service\Deployment\NoViableAllocationException
      */

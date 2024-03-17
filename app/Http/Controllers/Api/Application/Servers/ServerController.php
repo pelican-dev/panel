@@ -49,7 +49,6 @@ class ServerController extends ApplicationApiController
      * @throws \Illuminate\Validation\ValidationException
      * @throws \App\Exceptions\DisplayException
      * @throws \App\Exceptions\Model\DataValidationException
-     * @throws \App\Exceptions\Repository\RecordNotFoundException
      * @throws \App\Exceptions\Service\Deployment\NoViableAllocationException
      * @throws \App\Exceptions\Service\Deployment\NoViableNodeException
      */

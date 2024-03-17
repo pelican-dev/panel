@@ -23,8 +23,6 @@ class ServerInstallController extends Controller
 
     /**
      * Returns installation information for a server.
-     *
-     * @throws RecordNotFoundException
      */
     public function index(Request $request, string $uuid): JsonResponse
     {
@@ -41,7 +39,6 @@ class ServerInstallController extends Controller
     /**
      * Updates the installation state of a server.
      *
-     * @throws \App\Exceptions\Repository\RecordNotFoundException
      * @throws \App\Exceptions\Model\DataValidationException
      */
     public function store(InstallationDataRequest $request, string $uuid): JsonResponse

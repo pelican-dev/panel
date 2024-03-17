@@ -25,7 +25,6 @@ class StartupController extends ApplicationApiController
      * @throws \Illuminate\Validation\ValidationException
      * @throws \App\Exceptions\Http\Connection\DaemonConnectionException
      * @throws \App\Exceptions\Model\DataValidationException
-     * @throws \App\Exceptions\Repository\RecordNotFoundException
      */
     public function index(UpdateServerStartupRequest $request, Server $server): array
     {

@@ -65,7 +65,6 @@ class UserController extends ApplicationApiController
      * meta. If there are no errors this is an empty array.
      *
      * @throws \App\Exceptions\Model\DataValidationException
-     * @throws \App\Exceptions\Repository\RecordNotFoundException
      */
     public function update(UpdateUserRequest $request, User $user): array
     {

@@ -27,7 +27,6 @@ class CreateServerController extends Controller
     /**
      * Displays the create server page.
      *
-     * @throws \App\Exceptions\Repository\RecordNotFoundException
      */
     public function index(): View|RedirectResponse
     {

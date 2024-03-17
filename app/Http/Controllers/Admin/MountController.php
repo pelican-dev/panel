@@ -38,7 +38,6 @@ class MountController extends Controller
     /**
      * Return the mount view page.
      *
-     * @throws \App\Exceptions\Repository\RecordNotFoundException
      */
     public function view(string $id): View
     {

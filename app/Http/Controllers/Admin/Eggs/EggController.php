@@ -40,7 +40,6 @@ class EggController extends Controller
     /**
      * Handle a request to display the Egg creation page.
      *
-     * @throws \App\Exceptions\Repository\RecordNotFoundException
      */
     public function create(): View
     {
@@ -86,7 +85,6 @@ class EggController extends Controller
      * Handle request to update an Egg.
      *
      * @throws \App\Exceptions\Model\DataValidationException
-     * @throws \App\Exceptions\Repository\RecordNotFoundException
      * @throws \App\Exceptions\Service\Egg\NoParentConfigurationFoundException
      */
     public function update(EggFormRequest $request, Egg $egg): RedirectResponse

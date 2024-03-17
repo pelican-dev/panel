@@ -81,7 +81,6 @@ class SubuserController extends ClientApiController
      * Update a given subuser in the system for the server.
      *
      * @throws \App\Exceptions\Model\DataValidationException
-     * @throws \App\Exceptions\Repository\RecordNotFoundException
      */
     public function update(UpdateSubuserRequest $request, Server $server): array
     {
