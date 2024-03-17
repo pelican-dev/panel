@@ -2,23 +2,15 @@
 
 namespace App\Console\Commands\Maintenance;
 
+use App\Models\Backup;
 use Carbon\CarbonImmutable;
 use Illuminate\Console\Command;
-use App\Repositories\Eloquent\BackupRepository;
 
 class PruneOrphanedBackupsCommand extends Command
 {
     protected $signature = 'p:maintenance:prune-backups {--prune-age=}';
 
     protected $description = 'Marks all backups older than "n" minutes that have not yet completed as being failed.';
-
-    /**
-     * PruneOrphanedBackupsCommand constructor.
-     */
-    public function __construct(private BackupRepository $backupRepository)
-    {
-        parent::__construct();
-    }
 
     public function handle()
     {
@@ -27,7 +19,7 @@ class PruneOrphanedBackupsCommand extends Command
             throw new \InvalidArgumentException('The "--prune-age" argument must be a value greater than 0.');
         }
 
-        $query = $this->backupRepository->getBuilder()
+        $query = Backup::query()
             ->whereNull('completed_at')
             ->where('created_at', '<=', CarbonImmutable::now()->subMinutes($since)->toDateTimeString());
 

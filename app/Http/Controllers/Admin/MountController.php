@@ -13,7 +13,6 @@ use Prologue\Alerts\AlertsMessageBag;
 use Illuminate\View\Factory as ViewFactory;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\MountFormRequest;
-use App\Repositories\Eloquent\MountRepository;
 
 class MountController extends Controller
 {
@@ -22,7 +21,6 @@ class MountController extends Controller
      */
     public function __construct(
         protected AlertsMessageBag $alert,
-        protected MountRepository $repository,
         protected ViewFactory $view
     ) {
     }
@@ -33,7 +31,7 @@ class MountController extends Controller
     public function index(): View
     {
         return $this->view->make('admin.mounts.index', [
-            'mounts' => $this->repository->getAllWithDetails(),
+            'mounts' => Mount::query()->withCount(['eggs', 'nodes'])->get(),
         ]);
     }
 
@@ -44,11 +42,9 @@ class MountController extends Controller
      */
     public function view(string $id): View
     {
-        $eggs = Egg::all();
-
         return $this->view->make('admin.mounts.view', [
-            'mount' => $this->repository->getWithRelations($id),
-            'eggs' => $eggs,
+            'mount' => Mount::with(['eggs', 'nodes'])->findOrFail($id),
+            'eggs' => Egg::all(),
         ]);
     }
 

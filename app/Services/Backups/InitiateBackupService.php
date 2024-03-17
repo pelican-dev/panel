@@ -9,7 +9,6 @@ use App\Models\Backup;
 use App\Models\Server;
 use Illuminate\Database\ConnectionInterface;
 use App\Extensions\Backups\BackupManager;
-use App\Repositories\Eloquent\BackupRepository;
 use App\Repositories\Daemon\DaemonBackupRepository;
 use App\Exceptions\Service\Backup\TooManyBackupsException;
 use Symfony\Component\HttpKernel\Exception\TooManyRequestsHttpException;
@@ -24,7 +23,6 @@ class InitiateBackupService
      * InitiateBackupService constructor.
      */
     public function __construct(
-        private BackupRepository $repository,
         private ConnectionInterface $connection,
         private DaemonBackupRepository $daemonBackupRepository,
         private DeleteBackupService $deleteBackupService,
@@ -78,7 +76,7 @@ class InitiateBackupService
         $limit = config('backups.throttles.limit');
         $period = config('backups.throttles.period');
         if ($period > 0) {
-            $previous = $this->repository->getBackupsGeneratedDuringTimespan($server->id, $period);
+            $previous = $server->getBackupsGeneratedDuringTimespan($period);
             if ($previous->count() >= $limit) {
                 $message = sprintf('Only %d backups may be generated within a %d second span of time.', $limit, $period);
 
@@ -88,7 +86,7 @@ class InitiateBackupService
 
         // Check if the server has reached or exceeded its backup limit.
         // completed_at == null will cover any ongoing backups, while is_successful == true will cover any completed backups.
-        $successful = $this->repository->getNonFailedBackups($server);
+        $successful = $server->getNonFailedBackups();
         if (!$server->backup_limit || $successful->count() >= $server->backup_limit) {
             // Do not allow the user to continue if this server is already at its limit and can't override.
             if (!$override || $server->backup_limit <= 0) {
@@ -109,7 +107,7 @@ class InitiateBackupService
 
         return $this->connection->transaction(function () use ($server, $name) {
             /** @var \App\Models\Backup $backup */
-            $backup = $this->repository->create([
+            $backup = Backup::query()->create([
                 'server_id' => $server->id,
                 'uuid' => Uuid::uuid4()->toString(),
                 'name' => trim($name) ?: sprintf('Backup at %s', CarbonImmutable::now()->toDateTimeString()),

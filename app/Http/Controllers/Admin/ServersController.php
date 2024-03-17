@@ -15,7 +15,6 @@ use App\Exceptions\DisplayException;
 use App\Http\Controllers\Controller;
 use Illuminate\Validation\ValidationException;
 use App\Services\Servers\SuspensionService;
-use App\Repositories\Eloquent\MountRepository;
 use App\Services\Servers\ServerDeletionService;
 use App\Services\Servers\ReinstallServerService;
 use App\Exceptions\Model\DataValidationException;
@@ -44,7 +43,6 @@ class ServersController extends Controller
         protected ServerDeletionService $deletionService,
         protected DetailsModificationService $detailsModificationService,
         protected ReinstallServerService $reinstallService,
-        protected MountRepository $mountRepository,
         protected ServerConfigurationStructureService $serverConfigurationStructureService,
         protected StartupModificationService $startupModificationService,
         protected SuspensionService $suspensionService

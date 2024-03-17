@@ -11,7 +11,6 @@ use App\Models\Permission;
 use Illuminate\Auth\Access\AuthorizationException;
 use App\Services\Backups\DeleteBackupService;
 use App\Services\Backups\DownloadLinkService;
-use App\Repositories\Eloquent\BackupRepository;
 use App\Services\Backups\InitiateBackupService;
 use App\Repositories\Daemon\DaemonBackupRepository;
 use App\Transformers\Api\Client\BackupTransformer;
@@ -30,7 +29,6 @@ class BackupController extends ClientApiController
         private DeleteBackupService $deleteBackupService,
         private InitiateBackupService $initiateBackupService,
         private DownloadLinkService $downloadLinkService,
-        private BackupRepository $repository
     ) {
         parent::__construct();
     }
@@ -52,7 +50,7 @@ class BackupController extends ClientApiController
         return $this->fractal->collection($server->backups()->paginate($limit))
             ->transformWith($this->getTransformer(BackupTransformer::class))
             ->addMeta([
-                'backup_count' => $this->repository->getNonFailedBackups($server)->count(),
+                'backup_count' => $server->getNonFailedBackups()->count(),
             ])
             ->toArray();
     }

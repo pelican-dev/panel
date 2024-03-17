@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin\Servers;
 
 use App\Models\DatabaseHost;
 use App\Models\Egg;
+use App\Models\Mount;
 use App\Models\Node;
 use Illuminate\View\View;
 use Illuminate\Http\Request;
@@ -12,7 +13,6 @@ use App\Exceptions\DisplayException;
 use App\Http\Controllers\Controller;
 use App\Services\Servers\EnvironmentService;
 use Illuminate\Contracts\View\Factory as ViewFactory;
-use App\Repositories\Eloquent\MountRepository;
 use App\Traits\Controllers\JavascriptInjection;
 
 class ServerViewController extends Controller
@@ -23,7 +23,6 @@ class ServerViewController extends Controller
      * ServerViewController constructor.
      */
     public function __construct(
-        private MountRepository $mountRepository,
         private EnvironmentService $environmentService,
         private ViewFactory $view
     ) {
@@ -96,8 +95,13 @@ class ServerViewController extends Controller
     {
         $server->load('mounts');
 
+        $mounts = Mount::query()
+            ->whereHas('eggs', fn ($q) => $q->where('id', $server->egg_id))
+            ->whereHas('nodes', fn ($q) => $q->where('id', $server->node_id))
+            ->get();
+
         return $this->view->make('admin.servers.view.mounts', [
-            'mounts' => $this->mountRepository->getMountListForServer($server),
+            'mounts' => $mounts,
             'server' => $server,
         ]);
     }
