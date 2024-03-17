@@ -7,7 +7,6 @@ use App\Helpers\Utilities;
 use Illuminate\Database\ConnectionInterface;
 use Illuminate\Contracts\Encryption\Encrypter;
 use App\Extensions\DynamicDatabaseConnection;
-use App\Contracts\Repository\DatabaseRepositoryInterface;
 
 class DatabasePasswordService
 {
@@ -18,30 +17,31 @@ class DatabasePasswordService
         private ConnectionInterface $connection,
         private DynamicDatabaseConnection $dynamic,
         private Encrypter $encrypter,
-        private DatabaseRepositoryInterface $repository
     ) {
     }
 
     /**
      * Updates a password for a given database.
-     *
-     * @throws \Throwable
      */
     public function handle(Database|int $database): string
     {
+        if (is_int($database)) {
+            $database = Database::query()->findOrFail($database);
+        }
+
         $password = Utilities::randomStringWithSpecialCharacters(24);
 
         $this->connection->transaction(function () use ($database, $password) {
             $this->dynamic->set('dynamic', $database->database_host_id);
 
-            $this->repository->withoutFreshModel()->update($database->id, [
+            $database->update($database->id, [
                 'password' => $this->encrypter->encrypt($password),
             ]);
 
-            $this->repository->dropUser($database->username, $database->remote);
-            $this->repository->createUser($database->username, $database->remote, $password, $database->max_connections);
-            $this->repository->assignUserToDatabase($database->database, $database->username, $database->remote);
-            $this->repository->flush();
+            $database->dropUser($database->username, $database->remote);
+            $database->createUser($database->username, $database->remote, $password, $database->max_connections);
+            $database->assignUserToDatabase($database->database, $database->username, $database->remote);
+            $database->flush();
         });
 
         return $password;
