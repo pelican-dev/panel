@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin\Servers;
 
+use App\Models\DatabaseHost;
 use App\Models\Egg;
 use App\Models\Node;
 use Illuminate\View\View;
@@ -13,7 +14,6 @@ use App\Services\Servers\EnvironmentService;
 use Illuminate\Contracts\View\Factory as ViewFactory;
 use App\Repositories\Eloquent\MountRepository;
 use App\Traits\Controllers\JavascriptInjection;
-use App\Repositories\Eloquent\DatabaseHostRepository;
 
 class ServerViewController extends Controller
 {
@@ -23,7 +23,6 @@ class ServerViewController extends Controller
      * ServerViewController constructor.
      */
     public function __construct(
-        private DatabaseHostRepository $databaseHostRepository,
         private MountRepository $mountRepository,
         private EnvironmentService $environmentService,
         private ViewFactory $view
@@ -85,7 +84,7 @@ class ServerViewController extends Controller
     public function database(Request $request, Server $server): View
     {
         return $this->view->make('admin.servers.view.database', [
-            'hosts' => $this->databaseHostRepository->all(),
+            'hosts' => DatabaseHost::all(),
             'server' => $server,
         ]);
     }

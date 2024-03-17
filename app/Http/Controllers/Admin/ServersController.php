@@ -24,7 +24,6 @@ use App\Services\Servers\BuildModificationService;
 use App\Services\Databases\DatabasePasswordService;
 use App\Services\Servers\DetailsModificationService;
 use App\Services\Servers\StartupModificationService;
-use App\Repositories\Eloquent\DatabaseHostRepository;
 use App\Services\Databases\DatabaseManagementService;
 use Illuminate\Contracts\Config\Repository as ConfigRepository;
 use App\Services\Servers\ServerConfigurationStructureService;
@@ -42,7 +41,6 @@ class ServersController extends Controller
         protected DaemonServerRepository $daemonServerRepository,
         protected DatabaseManagementService $databaseManagementService,
         protected DatabasePasswordService $databasePasswordService,
-        protected DatabaseHostRepository $databaseHostRepository,
         protected ServerDeletionService $deletionService,
         protected DetailsModificationService $detailsModificationService,
         protected ReinstallServerService $reinstallService,

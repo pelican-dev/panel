@@ -13,7 +13,6 @@ use App\Services\Databases\Hosts\HostUpdateService;
 use App\Http\Requests\Admin\DatabaseHostFormRequest;
 use App\Services\Databases\Hosts\HostCreationService;
 use App\Services\Databases\Hosts\HostDeletionService;
-use App\Contracts\Repository\DatabaseHostRepositoryInterface;
 
 class DatabaseController extends Controller
 {
@@ -22,7 +21,6 @@ class DatabaseController extends Controller
      */
     public function __construct(
         private AlertsMessageBag $alert,
-        private DatabaseHostRepositoryInterface $repository,
         private HostCreationService $creationService,
         private HostDeletionService $deletionService,
         private HostUpdateService $updateService,
@@ -35,9 +33,14 @@ class DatabaseController extends Controller
      */
     public function index(): View
     {
+        $hosts = DatabaseHost::query()
+            ->withCount('databases')
+            ->with('node')
+            ->get();
+
         return $this->view->make('admin.databases.index', [
             'nodes' => Node::all(),
-            'hosts' => $this->repository->getWithViewDetails(),
+            'hosts' => $hosts,
         ]);
     }
 

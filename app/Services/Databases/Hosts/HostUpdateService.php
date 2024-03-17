@@ -7,7 +7,6 @@ use Illuminate\Database\DatabaseManager;
 use Illuminate\Database\ConnectionInterface;
 use Illuminate\Contracts\Encryption\Encrypter;
 use App\Extensions\DynamicDatabaseConnection;
-use App\Contracts\Repository\DatabaseHostRepositoryInterface;
 
 class HostUpdateService
 {
@@ -19,7 +18,6 @@ class HostUpdateService
         private DatabaseManager $databaseManager,
         private DynamicDatabaseConnection $dynamic,
         private Encrypter $encrypter,
-        private DatabaseHostRepositoryInterface $repository
     ) {
     }
 
@@ -37,7 +35,9 @@ class HostUpdateService
         }
 
         return $this->connection->transaction(function () use ($data, $hostId) {
-            $host = $this->repository->update($hostId, $data);
+            /** @var DatabaseHost $host */
+            $host = DatabaseHost::query()->findOrFail($hostId);
+            $host->update($data);
             $this->dynamic->set('dynamic', $host);
             $this->databaseManager->connection('dynamic')->select('SELECT 1 FROM dual');
 

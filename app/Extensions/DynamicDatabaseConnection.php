@@ -5,7 +5,6 @@ namespace App\Extensions;
 use App\Models\DatabaseHost;
 use Illuminate\Contracts\Encryption\Encrypter;
 use Illuminate\Config\Repository as ConfigRepository;
-use App\Contracts\Repository\DatabaseHostRepositoryInterface;
 
 class DynamicDatabaseConnection
 {
@@ -19,7 +18,6 @@ class DynamicDatabaseConnection
     public function __construct(
         protected ConfigRepository $config,
         protected Encrypter $encrypter,
-        protected DatabaseHostRepositoryInterface $repository
     ) {
     }
 
@@ -31,7 +29,7 @@ class DynamicDatabaseConnection
     public function set(string $connection, DatabaseHost|int $host, string $database = 'mysql'): void
     {
         if (!$host instanceof DatabaseHost) {
-            $host = $this->repository->find($host);
+            $host = DatabaseHost::query()->findOrFail($host);
         }
 
         $this->config->set('database.connections.' . $connection, [

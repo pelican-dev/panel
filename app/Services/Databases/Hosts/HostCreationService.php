@@ -7,7 +7,6 @@ use Illuminate\Database\DatabaseManager;
 use Illuminate\Database\ConnectionInterface;
 use Illuminate\Contracts\Encryption\Encrypter;
 use App\Extensions\DynamicDatabaseConnection;
-use App\Contracts\Repository\DatabaseHostRepositoryInterface;
 
 class HostCreationService
 {
@@ -19,7 +18,6 @@ class HostCreationService
         private DatabaseManager $databaseManager,
         private DynamicDatabaseConnection $dynamic,
         private Encrypter $encrypter,
-        private DatabaseHostRepositoryInterface $repository
     ) {
     }
 
@@ -31,7 +29,7 @@ class HostCreationService
     public function handle(array $data): DatabaseHost
     {
         return $this->connection->transaction(function () use ($data) {
-            $host = $this->repository->create([
+            $host = DatabaseHost::query()->create([
                 'password' => $this->encrypter->encrypt(array_get($data, 'password')),
                 'name' => array_get($data, 'name'),
                 'host' => array_get($data, 'host'),
