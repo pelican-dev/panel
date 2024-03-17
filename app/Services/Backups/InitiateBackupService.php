@@ -76,7 +76,13 @@ class InitiateBackupService
         $limit = config('backups.throttles.limit');
         $period = config('backups.throttles.period');
         if ($period > 0) {
-            $previous = $server->getBackupsGeneratedDuringTimespan($period);
+            $previous = $server
+                ->backups()
+                ->where('created_at', '>=', now()->subSeconds($period))
+                ->nonFailed()
+                ->withTrashed()
+                ->get();
+
             if ($previous->count() >= $limit) {
                 $message = sprintf('Only %d backups may be generated within a %d second span of time.', $limit, $period);
 
