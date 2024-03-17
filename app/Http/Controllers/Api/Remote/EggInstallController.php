@@ -20,7 +20,6 @@ class EggInstallController extends Controller
     /**
      * Handle request to get script and installation information for a server
      * that is being created on the node.
-     *
      */
     public function index(Request $request, string $uuid): JsonResponse
     {

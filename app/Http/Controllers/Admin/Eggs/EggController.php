@@ -39,7 +39,6 @@ class EggController extends Controller
 
     /**
      * Handle a request to display the Egg creation page.
-     *
      */
     public function create(): View
     {

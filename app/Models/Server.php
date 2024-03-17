@@ -3,7 +3,6 @@
 namespace App\Models;
 
 use App\Exceptions\Http\Connection\DaemonConnectionException;
-use Carbon\Carbon;
 use GuzzleHttp\Exception\GuzzleException;
 use GuzzleHttp\Exception\TransferException;
 use Illuminate\Notifications\Notifiable;

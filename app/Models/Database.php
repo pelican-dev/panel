@@ -111,7 +111,6 @@ class Database extends Model
         return $this->belongsTo(Server::class);
     }
 
-
     /**
      * Run the provided statement against the database on a given connection.
      */

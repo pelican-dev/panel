@@ -8,7 +8,6 @@ use App\Models\Server;
 use App\Models\Permission;
 use GuzzleHttp\Exception\BadResponseException;
 use GuzzleHttp\Psr7\Response as GuzzleResponse;
-use App\Repositories\Daemon\DaemonCommandRepository;
 use App\Exceptions\Http\Connection\DaemonConnectionException;
 use App\Tests\Integration\Api\Client\ClientApiIntegrationTestCase;
 

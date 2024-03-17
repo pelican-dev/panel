@@ -46,7 +46,6 @@ class DatabaseController extends Controller
 
     /**
      * Display database host to user.
-     *
      */
     public function view(int $host): View
     {

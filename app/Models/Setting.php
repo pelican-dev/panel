@@ -31,7 +31,6 @@ class Setting extends Model
 
     /**
      * Store a new persistent setting in the database.
-     *
      */
     public static function set(string $key, string $value = null): void
     {

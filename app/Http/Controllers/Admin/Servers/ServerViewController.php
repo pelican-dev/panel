@@ -58,7 +58,6 @@ class ServerViewController extends Controller
 
     /**
      * Returns the server startup management page.
-     *
      */
     public function startup(Request $request, Server $server): View
     {

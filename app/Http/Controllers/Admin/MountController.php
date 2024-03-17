@@ -37,7 +37,6 @@ class MountController extends Controller
 
     /**
      * Return the mount view page.
-     *
      */
     public function view(string $id): View
     {

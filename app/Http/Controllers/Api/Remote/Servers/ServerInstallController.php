@@ -7,7 +7,6 @@ use Illuminate\Http\Response;
 use App\Models\Server;
 use Illuminate\Http\JsonResponse;
 use App\Http\Controllers\Controller;
-use App\Repositories\Eloquent\ServerRepository;
 use App\Events\Server\Installed as ServerInstalled;
 use Illuminate\Contracts\Events\Dispatcher as EventDispatcher;
 use App\Http\Requests\Api\Remote\InstallationDataRequest;

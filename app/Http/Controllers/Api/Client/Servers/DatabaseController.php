@@ -85,7 +85,6 @@ class DatabaseController extends ClientApiController
 
     /**
      * Removes a database from the server.
-     *
      */
     public function delete(DeleteDatabaseRequest $request, Server $server, Database $database): Response
     {

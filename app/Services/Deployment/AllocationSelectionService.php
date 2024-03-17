@@ -102,6 +102,7 @@ class AllocationSelectionService
                 foreach ($ports as $port) {
                     if (is_array($port)) {
                         $inner->orWhereBetween('port', $port);
+
                         continue;
                     }
 

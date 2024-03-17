@@ -26,7 +26,6 @@ class CreateServerController extends Controller
 
     /**
      * Displays the create server page.
-     *
      */
     public function index(): View|RedirectResponse
     {

@@ -9,10 +9,8 @@ use App\Models\EggVariable;
 
 class EggExporterService
 {
-
     /**
      * Return a JSON representation of an egg and its variables.
-     *
      */
     public function handle(int $egg): string
     {

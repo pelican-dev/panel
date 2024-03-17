@@ -8,7 +8,6 @@ use App\Facades\Activity;
 use Psr\Http\Message\ResponseInterface;
 use GuzzleHttp\Exception\BadResponseException;
 use Symfony\Component\HttpKernel\Exception\HttpException;
-use App\Repositories\Daemon\DaemonCommandRepository;
 use App\Http\Controllers\Api\Client\ClientApiController;
 use App\Http\Requests\Api\Client\Servers\SendCommandRequest;
 use App\Exceptions\Http\Connection\DaemonConnectionException;

@@ -81,7 +81,7 @@ use App\Notifications\SendPasswordReset as ResetPasswordNotification;
 class User extends Model implements AuthenticatableContract, AuthorizableContract, CanResetPasswordContract
 {
     use Authenticatable;
-    use Authorizable {can as protected canned;}
+    use Authorizable {can as protected canned; }
     use AvailableLanguages;
     use CanResetPassword;
     use HasAccessTokens;
