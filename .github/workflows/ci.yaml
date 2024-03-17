@@ -58,8 +58,11 @@ jobs:
         run: php artisan key:generate
 
       - name: Unit tests
-        run: vendor/bin/phpunit --bootstrap vendor/autoload.php tests/Unit
+        run: vendor/bin/phpunit tests/Unit
         if: ${{ always() }}
+        env:
+          DB_HOST: UNIT_NO_DB
+          SKIP_MIGRATIONS: true
 
       - name: Integration tests
         run: vendor/bin/phpunit tests/Integration
