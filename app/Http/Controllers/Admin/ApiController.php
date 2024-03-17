@@ -22,7 +22,6 @@ class ApiController extends Controller
     public function __construct(
         private AlertsMessageBag $alert,
         private KeyCreationService $keyCreationService,
-        private ViewFactory $view,
     ) {
     }
 

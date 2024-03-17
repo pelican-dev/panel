@@ -21,7 +21,6 @@ class AdvancedController extends Controller
         private AlertsMessageBag $alert,
         private ConfigRepository $config,
         private Kernel $kernel,
-        private ViewFactory $view
     ) {
     }
 

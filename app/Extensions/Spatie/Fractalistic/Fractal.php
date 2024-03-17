@@ -20,20 +20,20 @@ class Fractal extends SpatieFractal
     public function createData(): Scope
     {
         // Set the serializer by default.
-        if (is_null($this->serializer)) {
+        if (empty($this->serializer)) {
             $this->serializer = new PanelSerializer();
         }
 
         // Automatically set the paginator on the response object if the
         // data being provided implements a paginator.
-        if (is_null($this->paginator) && $this->data instanceof LengthAwarePaginator) {
+        if ($this->data instanceof LengthAwarePaginator) {
             $this->paginator = new IlluminatePaginatorAdapter($this->data);
         }
 
         // If the resource name is not set attempt to pull it off the transformer
         // itself and set it automatically.
         if (
-            is_null($this->resourceName)
+            empty($this->resourceName)
             && $this->transformer instanceof TransformerAbstract
             && method_exists($this->transformer, 'getResourceName')
         ) {

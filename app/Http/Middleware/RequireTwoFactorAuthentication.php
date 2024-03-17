@@ -35,7 +35,6 @@ class RequireTwoFactorAuthentication
      */
     public function handle(Request $request, \Closure $next): mixed
     {
-        /** @var \App\Models\User $user */
         $user = $request->user();
         $uri = rtrim($request->getRequestUri(), '/') . '/';
         $current = $request->route()->getName();
@@ -43,6 +42,8 @@ class RequireTwoFactorAuthentication
         if (!$user || Str::startsWith($uri, ['/auth/']) || Str::startsWith($current, ['auth.', 'account.'])) {
             return $next($request);
         }
+
+        /** @var \App\Models\User $user */
 
         $level = (int) config('panel.auth.2fa_required');
         // If this setting is not configured, or the user is already using 2FA then we can just

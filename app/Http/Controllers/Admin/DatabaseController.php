@@ -24,7 +24,6 @@ class DatabaseController extends Controller
         private HostCreationService $creationService,
         private HostDeletionService $deletionService,
         private HostUpdateService $updateService,
-        private ViewFactory $view
     ) {
     }
 

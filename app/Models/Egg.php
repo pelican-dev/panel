@@ -146,7 +146,7 @@ class Egg extends Model
      */
     public function getCopyScriptInstallAttribute(): ?string
     {
-        if (!is_null($this->script_install) || is_null($this->copy_script_from)) {
+        if (!empty($this->script_install) || empty($this->copy_script_from)) {
             return $this->script_install;
         }
 
@@ -159,7 +159,7 @@ class Egg extends Model
      */
     public function getCopyScriptEntryAttribute(): string
     {
-        if (!is_null($this->script_entry) || is_null($this->copy_script_from)) {
+        if (!empty($this->script_entry) || empty($this->copy_script_from)) {
             return $this->script_entry;
         }
 
@@ -172,7 +172,7 @@ class Egg extends Model
      */
     public function getCopyScriptContainerAttribute(): string
     {
-        if (!is_null($this->script_container) || is_null($this->copy_script_from)) {
+        if (!empty($this->script_container) || empty($this->copy_script_from)) {
             return $this->script_container;
         }
 

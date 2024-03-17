@@ -24,7 +24,6 @@ class IndexController extends Controller
         private AlertsMessageBag $alert,
         private Kernel $kernel,
         private SoftwareVersionService $versionService,
-        private ViewFactory $view
     ) {
     }
 

@@ -20,7 +20,6 @@ class CreateServerController extends Controller
     public function __construct(
         private AlertsMessageBag $alert,
         private ServerCreationService $creationService,
-        private ViewFactory $view
     ) {
     }
 

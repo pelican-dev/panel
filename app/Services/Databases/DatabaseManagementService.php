@@ -94,40 +94,23 @@ class DatabaseManagementService
             ),
         ]);
 
-        $database = null;
+        return $this->connection->transaction(function () use ($data, &$database) {
+            $database = $this->createModel($data);
 
-        try {
-            return $this->connection->transaction(function () use ($data, &$database) {
-                $database = $this->createModel($data);
+            $this->dynamic->set('dynamic', $data['database_host_id']);
 
-                $this->dynamic->set('dynamic', $data['database_host_id']);
+            $database->createDatabase($database->database);
+            $database->createUser(
+                $database->username,
+                $database->remote,
+                $this->encrypter->decrypt($database->password),
+                $database->max_connections
+            );
+            $database->assignUserToDatabase($database->database, $database->username, $database->remote);
+            $database->flush();
 
-                $database->createDatabase($database->database);
-                $database->createUser(
-                    $database->username,
-                    $database->remote,
-                    $this->encrypter->decrypt($database->password),
-                    $database->max_connections
-                );
-                $database->assignUserToDatabase($database->database, $database->username, $database->remote);
-                $database->flush();
-
-                return $database;
-            });
-        } catch (Exception $exception) {
-            try {
-                if ($database instanceof Database) {
-                    $database->dropDatabase($database->database);
-                    $database->dropUser($database->username, $database->remote);
-                    $database->flush();
-                }
-            } catch (Exception) {
-                // Do nothing here. We've already encountered an issue before this point so no
-                // reason to prioritize this error over the initial one.
-            }
-
-            throw $exception;
-        }
+            return $database;
+        });
     }
 
     /**
