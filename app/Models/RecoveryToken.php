@@ -20,10 +20,12 @@ class RecoveryToken extends Model
 
     public $timestamps = true;
 
-    protected bool $immutableDates = true;
-
     public static array $validationRules = [
         'token' => 'required|string',
+    ];
+
+    protected $casts = [
+        'created_at' => 'immutable_datetime',
     ];
 
     public function user(): BelongsTo

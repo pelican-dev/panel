@@ -22,8 +22,6 @@ class ServerVariable extends Model
      */
     public const RESOURCE_NAME = 'server_variable';
 
-    protected bool $immutableDates = true;
-
     protected $table = 'server_variables';
 
     protected $guarded = ['id', 'created_at', 'updated_at'];
@@ -31,6 +29,8 @@ class ServerVariable extends Model
     protected $casts = [
         'server_id' => 'integer',
         'variable_id' => 'integer',
+        'created_at' => 'immutable_datetime',
+        'updated_at' => 'immutable_datetime',
     ];
 
     public static array $validationRules = [

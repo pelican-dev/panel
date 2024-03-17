@@ -20,11 +20,6 @@ abstract class Model extends IlluminateModel
     use HasFactory;
 
     /**
-     * Set to true to return immutable Carbon date instances from the model.
-     */
-    protected bool $immutableDates = false;
-
-    /**
      * Determines if the model should undergo data validation before it is saved
      * to the database.
      */
@@ -159,19 +154,5 @@ abstract class Model extends IlluminateModel
         if (!$validator->passes()) {
             throw new ValidationException($validator);
         }
-    }
-
-    /**
-     * Return a timestamp as DateTime object.
-     *
-     * @param mixed $value
-     */
-    protected function asDateTime($value): Carbon|CarbonImmutable
-    {
-        if (!$this->immutableDates) {
-            return parent::asDateTime($value);
-        }
-
-        return parent::asDateTime($value)->toImmutable();
     }
 }

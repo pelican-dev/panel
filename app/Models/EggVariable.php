@@ -38,8 +38,6 @@ class EggVariable extends Model
      */
     public const RESERVED_ENV_NAMES = 'SERVER_MEMORY,SERVER_IP,SERVER_PORT,ENV,HOME,USER,STARTUP,SERVER_UUID,UUID';
 
-    protected bool $immutableDates = true;
-
     /**
      * The table associated with the model.
      */
@@ -57,6 +55,8 @@ class EggVariable extends Model
         'egg_id' => 'integer',
         'user_viewable' => 'bool',
         'user_editable' => 'bool',
+        'created_at' => 'immutable_datetime',
+        'updated_at' => 'immutable_datetime',
     ];
 
     public static array $validationRules = [

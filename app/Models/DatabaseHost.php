@@ -25,8 +25,6 @@ class DatabaseHost extends Model
      */
     public const RESOURCE_NAME = 'database_host';
 
-    protected bool $immutableDates = true;
-
     /**
      * The table associated with the model.
      */
@@ -51,6 +49,8 @@ class DatabaseHost extends Model
         'id' => 'integer',
         'max_databases' => 'integer',
         'node_id' => 'integer',
+        'created_at' => 'immutable_datetime',
+        'updated_at' => 'immutable_datetime',
     ];
 
     /**

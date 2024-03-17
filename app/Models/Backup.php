@@ -36,15 +36,16 @@ class Backup extends Model
 
     protected $table = 'backups';
 
-    protected bool $immutableDates = true;
-
     protected $casts = [
         'id' => 'int',
         'is_successful' => 'bool',
         'is_locked' => 'bool',
         'ignored_files' => 'array',
         'bytes' => 'int',
-        'completed_at' => 'datetime',
+        'completed_at' => 'immutable_datetime',
+        'created_at' => 'immutable_datetime',
+        'updated_at' => 'immutable_datetime',
+        'deleted_at' => 'immutable_datetime',
     ];
 
     protected $attributes = [
