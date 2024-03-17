@@ -4,7 +4,6 @@ namespace App\Extensions;
 
 use App\Models\DatabaseHost;
 use Illuminate\Contracts\Encryption\Encrypter;
-use Illuminate\Config\Repository as ConfigRepository;
 
 class DynamicDatabaseConnection
 {
@@ -16,7 +15,6 @@ class DynamicDatabaseConnection
      * DynamicDatabaseConnection constructor.
      */
     public function __construct(
-        protected ConfigRepository $config,
         protected Encrypter $encrypter,
     ) {
     }
@@ -32,7 +30,7 @@ class DynamicDatabaseConnection
             $host = DatabaseHost::query()->findOrFail($host);
         }
 
-        $this->config->set('database.connections.' . $connection, [
+        config()->set('database.connections.' . $connection, [
             'driver' => self::DB_DRIVER,
             'host' => $host->host,
             'port' => $host->port,
