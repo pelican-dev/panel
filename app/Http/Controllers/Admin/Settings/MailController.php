@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin\Settings;
 
+use App\Models\Setting;
 use Illuminate\View\View;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -14,7 +15,6 @@ use App\Http\Controllers\Controller;
 use Illuminate\Contracts\Encryption\Encrypter;
 use App\Providers\SettingsServiceProvider;
 use Illuminate\Contracts\Config\Repository as ConfigRepository;
-use App\Contracts\Repository\SettingsRepositoryInterface;
 use App\Http\Requests\Admin\Settings\MailSettingsFormRequest;
 
 class MailController extends Controller
@@ -26,7 +26,6 @@ class MailController extends Controller
         private ConfigRepository $config,
         private Encrypter $encrypter,
         private Kernel $kernel,
-        private SettingsRepositoryInterface $settings,
         private ViewFactory $view
     ) {
     }
@@ -65,7 +64,7 @@ class MailController extends Controller
                 $value = $this->encrypter->encrypt($value);
             }
 
-            $this->settings->set('settings::' . $key, $value);
+            Setting::set('settings::' . $key, $value);
         }
 
         $this->kernel->call('queue:restart');

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin\Settings;
 
+use App\Models\Setting;
 use Illuminate\View\View;
 use Illuminate\Http\RedirectResponse;
 use Prologue\Alerts\AlertsMessageBag;
@@ -10,7 +11,6 @@ use Illuminate\View\Factory as ViewFactory;
 use App\Http\Controllers\Controller;
 use App\Traits\Helpers\AvailableLanguages;
 use App\Services\Helpers\SoftwareVersionService;
-use App\Contracts\Repository\SettingsRepositoryInterface;
 use App\Http\Requests\Admin\Settings\BaseSettingsFormRequest;
 
 class IndexController extends Controller
@@ -23,7 +23,6 @@ class IndexController extends Controller
     public function __construct(
         private AlertsMessageBag $alert,
         private Kernel $kernel,
-        private SettingsRepositoryInterface $settings,
         private SoftwareVersionService $versionService,
         private ViewFactory $view
     ) {
@@ -49,7 +48,7 @@ class IndexController extends Controller
     public function update(BaseSettingsFormRequest $request): RedirectResponse
     {
         foreach ($request->normalize() as $key => $value) {
-            $this->settings->set('settings::' . $key, $value);
+            Setting::set('settings::' . $key, $value);
         }
 
         $this->kernel->call('queue:restart');

@@ -2,13 +2,13 @@
 
 namespace App\Providers;
 
+use App\Models\Setting;
 use Psr\Log\LoggerInterface as Log;
 use Illuminate\Database\QueryException;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Contracts\Encryption\Encrypter;
 use Illuminate\Contracts\Encryption\DecryptException;
 use Illuminate\Contracts\Config\Repository as ConfigRepository;
-use App\Contracts\Repository\SettingsRepositoryInterface;
 
 class SettingsServiceProvider extends ServiceProvider
 {
@@ -57,7 +57,7 @@ class SettingsServiceProvider extends ServiceProvider
     /**
      * Boot the service provider.
      */
-    public function boot(ConfigRepository $config, Encrypter $encrypter, Log $log, SettingsRepositoryInterface $settings): void
+    public function boot(ConfigRepository $config, Encrypter $encrypter, Log $log): void
     {
         // Only set the email driver settings from the database if we
         // are configured using SMTP as the driver.
@@ -66,7 +66,7 @@ class SettingsServiceProvider extends ServiceProvider
         }
 
         try {
-            $values = $settings->all()->mapWithKeys(function ($setting) {
+            $values = Setting::all()->mapWithKeys(function ($setting) {
                 return [$setting->key => $setting->value];
             })->toArray();
         } catch (QueryException $exception) {
