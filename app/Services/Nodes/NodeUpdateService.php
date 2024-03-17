@@ -7,7 +7,6 @@ use App\Models\Node;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Database\ConnectionInterface;
 use Illuminate\Contracts\Encryption\Encrypter;
-use App\Repositories\Eloquent\NodeRepository;
 use App\Repositories\Daemon\DaemonConfigurationRepository;
 use App\Exceptions\Http\Connection\DaemonConnectionException;
 use App\Exceptions\Service\Node\ConfigurationNotPersistedException;
@@ -21,7 +20,6 @@ class NodeUpdateService
         private ConnectionInterface $connection,
         private DaemonConfigurationRepository $configurationRepository,
         private Encrypter $encrypter,
-        private NodeRepository $repository
     ) {
     }
 
@@ -39,7 +37,7 @@ class NodeUpdateService
 
         [$updated, $exception] = $this->connection->transaction(function () use ($data, $node) {
             /** @var \App\Models\Node $updated */
-            $updated = $this->repository->withFreshModel()->update($node->id, $data, true, true);
+            $updated = $node->replicate()->forceFill($data)->save();
 
             try {
                 // If we're changing the FQDN for the node, use the newly provided FQDN for the connection

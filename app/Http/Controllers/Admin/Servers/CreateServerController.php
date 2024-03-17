@@ -9,7 +9,6 @@ use Illuminate\Http\RedirectResponse;
 use Prologue\Alerts\AlertsMessageBag;
 use Illuminate\View\Factory as ViewFactory;
 use App\Http\Controllers\Controller;
-use App\Repositories\Eloquent\NodeRepository;
 use App\Http\Requests\Admin\ServerFormRequest;
 use App\Services\Servers\ServerCreationService;
 
@@ -20,7 +19,6 @@ class CreateServerController extends Controller
      */
     public function __construct(
         private AlertsMessageBag $alert,
-        private NodeRepository $nodeRepository,
         private ServerCreationService $creationService,
         private ViewFactory $view
     ) {
@@ -43,7 +41,7 @@ class CreateServerController extends Controller
         $eggs = Egg::with('variables')->get();
 
         \JavaScript::put([
-            'nodeData' => $this->nodeRepository->getNodesForServerCreation(),
+            'nodeData' => Node::getForServerCreation(),
             'eggs' => $eggs->keyBy('id'),
         ]);
 

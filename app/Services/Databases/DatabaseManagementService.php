@@ -9,7 +9,6 @@ use App\Helpers\Utilities;
 use Illuminate\Database\ConnectionInterface;
 use Illuminate\Contracts\Encryption\Encrypter;
 use App\Extensions\DynamicDatabaseConnection;
-use App\Repositories\Eloquent\DatabaseRepository;
 use App\Exceptions\Repository\DuplicateDatabaseNameException;
 use App\Exceptions\Service\Database\TooManyDatabasesException;
 use App\Exceptions\Service\Database\DatabaseClientFeatureNotEnabledException;

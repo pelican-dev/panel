@@ -11,7 +11,6 @@ use App\Exceptions\DisplayException;
 use App\Http\Controllers\Controller;
 use App\Services\Servers\EnvironmentService;
 use Illuminate\Contracts\View\Factory as ViewFactory;
-use App\Repositories\Eloquent\NodeRepository;
 use App\Repositories\Eloquent\MountRepository;
 use App\Traits\Controllers\JavascriptInjection;
 use App\Repositories\Eloquent\DatabaseHostRepository;
@@ -26,7 +25,6 @@ class ServerViewController extends Controller
     public function __construct(
         private DatabaseHostRepository $databaseHostRepository,
         private MountRepository $mountRepository,
-        private NodeRepository $nodeRepository,
         private EnvironmentService $environmentService,
         private ViewFactory $view
     ) {
@@ -118,14 +116,14 @@ class ServerViewController extends Controller
         }
 
         // Check if the panel doesn't have at least 2 nodes configured.
-        $nodes = $this->nodeRepository->all();
+        $nodeCount = Node::query()->count();
         $canTransfer = false;
-        if (count($nodes) >= 2) {
+        if ($nodeCount >= 2) {
             $canTransfer = true;
         }
 
         \JavaScript::put([
-            'nodeData' => $this->nodeRepository->getNodesForServerCreation(),
+            'nodeData' => Node::getForServerCreation(),
         ]);
 
         return $this->view->make('admin.servers.view.manage', [

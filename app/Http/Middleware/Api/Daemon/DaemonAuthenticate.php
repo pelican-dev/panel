@@ -2,11 +2,10 @@
 
 namespace App\Http\Middleware\Api\Daemon;
 
+use App\Models\Node;
 use Illuminate\Http\Request;
 use Illuminate\Contracts\Encryption\Encrypter;
-use App\Repositories\Eloquent\NodeRepository;
 use Symfony\Component\HttpKernel\Exception\HttpException;
-use App\Exceptions\Repository\RecordNotFoundException;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 
@@ -22,7 +21,7 @@ class DaemonAuthenticate
     /**
      * DaemonAuthenticate constructor.
      */
-    public function __construct(private Encrypter $encrypter, private NodeRepository $repository)
+    public function __construct(private Encrypter $encrypter)
     {
     }
 
@@ -42,24 +41,18 @@ class DaemonAuthenticate
         }
 
         $parts = explode('.', $bearer);
-        // Ensure that all of the correct parts are provided in the header.
+        // Ensure that all the correct parts are provided in the header.
         if (count($parts) !== 2 || empty($parts[0]) || empty($parts[1])) {
             throw new BadRequestHttpException('The Authorization header provided was not in a valid format.');
         }
 
-        try {
-            /** @var \App\Models\Node $node */
-            $node = $this->repository->findFirstWhere([
-                'daemon_token_id' => $parts[0],
-            ]);
+        /** @var Node $node */
+        $node = Node::query()->where('daemon_token_id', $parts[0])->firstOrFail();
 
-            if (hash_equals((string) $this->encrypter->decrypt($node->daemon_token), $parts[1])) {
-                $request->attributes->set('node', $node);
+        if (hash_equals((string) $this->encrypter->decrypt($node->daemon_token), $parts[1])) {
+            $request->attributes->set('node', $node);
 
-                return $next($request);
-            }
-        } catch (RecordNotFoundException $exception) {
-            // Do nothing, we don't want to expose a node not existing at all.
+            return $next($request);
         }
 
         throw new AccessDeniedHttpException('You are not authorized to access this resource.');

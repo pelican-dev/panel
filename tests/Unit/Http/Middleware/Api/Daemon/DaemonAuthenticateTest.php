@@ -2,11 +2,11 @@
 
 namespace App\Tests\Unit\Http\Middleware\Api\Daemon;
 
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Mockery as m;
 use Mockery\MockInterface;
 use App\Models\Node;
 use Illuminate\Contracts\Encryption\Encrypter;
-use App\Repositories\Eloquent\NodeRepository;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 use App\Exceptions\Repository\RecordNotFoundException;
 use App\Http\Middleware\Api\Daemon\DaemonAuthenticate;
@@ -18,8 +18,6 @@ class DaemonAuthenticateTest extends MiddlewareTestCase
 {
     private MockInterface $encrypter;
 
-    private MockInterface $repository;
-
     /**
      * Setup tests.
      */
@@ -28,11 +26,10 @@ class DaemonAuthenticateTest extends MiddlewareTestCase
         parent::setUp();
 
         $this->encrypter = m::mock(Encrypter::class);
-        $this->repository = m::mock(NodeRepository::class);
     }
 
     /**
-     * Test that if we are accessing the daemon.configuration route this middleware is not
+     * Test that if we are accessing the daemon configuration route this middleware is not
      * applied in order to allow an unauthenticated request to use a token to grab data.
      */
     public function testResponseShouldContinueIfRouteIsExempted()
@@ -83,16 +80,14 @@ class DaemonAuthenticateTest extends MiddlewareTestCase
      */
     public function testResponseShouldFailIfTokenIsNotValid()
     {
+        $node = Node::factory()->create();
+
         $this->expectException(AccessDeniedHttpException::class);
 
-        /** @var \App\Models\Node $model */
-        $model = Node::factory()->make();
-
         $this->request->expects('route->getName')->withNoArgs()->andReturn('random.route');
-        $this->request->expects('bearerToken')->withNoArgs()->andReturn($model->daemon_token_id . '.random_string_123');
+        $this->request->expects('bearerToken')->withNoArgs()->andReturn($node->daemon_token_id . '.random_string_123');
 
-        $this->repository->expects('findFirstWhere')->with(['daemon_token_id' => $model->daemon_token_id])->andReturn($model);
-        $this->encrypter->expects('decrypt')->with($model->daemon_token)->andReturns(decrypt($model->daemon_token));
+        $this->encrypter->expects('decrypt')->with($node->daemon_token)->andReturns(decrypt($node->daemon_token));
 
         $this->getMiddleware()->handle($this->request, $this->getClosureAssertions());
     }
@@ -103,12 +98,10 @@ class DaemonAuthenticateTest extends MiddlewareTestCase
      */
     public function testResponseShouldFailIfNodeIsNotFound()
     {
-        $this->expectException(AccessDeniedHttpException::class);
+        $this->expectException(ModelNotFoundException::class);
 
         $this->request->expects('route->getName')->withNoArgs()->andReturn('random.route');
         $this->request->expects('bearerToken')->withNoArgs()->andReturn('abcd1234.random_string_123');
-
-        $this->repository->expects('findFirstWhere')->with(['daemon_token_id' => 'abcd1234'])->andThrow(RecordNotFoundException::class);
 
         $this->getMiddleware()->handle($this->request, $this->getClosureAssertions());
     }
@@ -118,18 +111,17 @@ class DaemonAuthenticateTest extends MiddlewareTestCase
      */
     public function testSuccessfulMiddlewareProcess()
     {
-        /** @var \App\Models\Node $model */
-        $model = Node::factory()->make();
+        $node = Node::factory()->create();
+        $node->daemon_token = encrypt('the_same');
+        $node->save();
 
         $this->request->expects('route->getName')->withNoArgs()->andReturn('random.route');
-        $this->request->expects('bearerToken')->withNoArgs()->andReturn($model->daemon_token_id . '.' . decrypt($model->daemon_token));
-
-        $this->repository->expects('findFirstWhere')->with(['daemon_token_id' => $model->daemon_token_id])->andReturn($model);
-        $this->encrypter->expects('decrypt')->with($model->daemon_token)->andReturns(decrypt($model->daemon_token));
+        $this->request->expects('bearerToken')->withNoArgs()->andReturn($node->daemon_token_id . '.the_same');
+        $this->encrypter->expects('decrypt')->with($node->daemon_token)->andReturns(decrypt($node->daemon_token));
 
         $this->getMiddleware()->handle($this->request, $this->getClosureAssertions());
         $this->assertRequestHasAttribute('node');
-        $this->assertRequestAttributeEquals($model, 'node');
+        $this->assertRequestAttributeEquals($node->fresh(), 'node');
     }
 
     /**
@@ -156,6 +148,6 @@ class DaemonAuthenticateTest extends MiddlewareTestCase
      */
     private function getMiddleware(): DaemonAuthenticate
     {
-        return new DaemonAuthenticate($this->encrypter, $this->repository);
+        return new DaemonAuthenticate($this->encrypter);
     }
 }

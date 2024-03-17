@@ -18,7 +18,6 @@ use App\Services\Nodes\NodeDeletionService;
 use App\Services\Allocations\AssignmentService;
 use App\Services\Helpers\SoftwareVersionService;
 use App\Http\Requests\Admin\Node\NodeFormRequest;
-use App\Contracts\Repository\NodeRepositoryInterface;
 use App\Http\Requests\Admin\Node\AllocationFormRequest;
 use App\Services\Allocations\AllocationDeletionService;
 use App\Http\Requests\Admin\Node\AllocationAliasFormRequest;
@@ -35,7 +34,6 @@ class NodesController extends Controller
         protected CacheRepository $cache,
         protected NodeCreationService $creationService,
         protected NodeDeletionService $deletionService,
-        protected NodeRepositoryInterface $repository,
         protected NodeUpdateService $updateService,
         protected SoftwareVersionService $versionService,
         protected ViewFactory $view

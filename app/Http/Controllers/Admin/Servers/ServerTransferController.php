@@ -17,7 +17,6 @@ use App\Models\ServerTransfer;
 use Illuminate\Database\ConnectionInterface;
 use App\Http\Controllers\Controller;
 use App\Services\Nodes\NodeJWTService;
-use App\Repositories\Eloquent\NodeRepository;
 
 class ServerTransferController extends Controller
 {
@@ -28,7 +27,6 @@ class ServerTransferController extends Controller
         private AlertsMessageBag $alert,
         private ConnectionInterface $connection,
         private NodeJWTService $nodeJWTService,
-        private NodeRepository $nodeRepository
     ) {
     }
 
@@ -69,7 +67,13 @@ class ServerTransferController extends Controller
         $additional_allocations = array_map('intval', $validatedData['allocation_additional'] ?? []);
 
         // Check if the node is viable for the transfer.
-        $node = $this->nodeRepository->getNodeWithResourceUsage($node_id);
+        $node = Node::query()
+            ->select(['nodes.id', 'nodes.fqdn', 'nodes.scheme', 'nodes.daemon_token', 'nodes.daemonListen', 'nodes.memory', 'nodes.disk', 'nodes.memory_overallocate', 'nodes.disk_overallocate'])
+            ->selectRaw('IFNULL(SUM(servers.memory), 0) as sum_memory, IFNULL(SUM(servers.disk), 0) as sum_disk')
+            ->leftJoin('servers', 'servers.node_id', '=', 'nodes.id')
+            ->where('nodes.id', $node_id)
+            ->first();
+
         if (!$node->isViable($server->memory, $server->disk)) {
             $this->alert->danger(trans('admin/server.alerts.transfer_not_viable'))->flash();
 

@@ -4,7 +4,6 @@ namespace App\Services\Nodes;
 
 use App\Models\Node;
 use Illuminate\Contracts\Translation\Translator;
-use App\Contracts\Repository\NodeRepositoryInterface;
 use App\Exceptions\Service\HasActiveServersException;
 
 class NodeDeletionService
@@ -13,7 +12,6 @@ class NodeDeletionService
      * NodeDeletionService constructor.
      */
     public function __construct(
-        protected NodeRepositoryInterface $repository,
         protected Translator $translator
     ) {
     }
@@ -33,6 +31,6 @@ class NodeDeletionService
             throw new HasActiveServersException($this->translator->get('exceptions.node.servers_attached'));
         }
 
-        return $this->repository->delete($node);
+        return $node->delete();
     }
 }
