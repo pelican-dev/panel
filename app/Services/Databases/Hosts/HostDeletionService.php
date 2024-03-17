@@ -21,6 +21,6 @@ class HostDeletionService
             throw new HasActiveServersException(trans('exceptions.databases.delete_has_databases'));
         }
 
-        return $host->delete();
+        return (int) $host->delete();
     }
 }

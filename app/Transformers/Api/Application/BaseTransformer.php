@@ -50,7 +50,7 @@ abstract class BaseTransformer extends TransformerAbstract
     /**
      * Returns a new transformer instance with the request set on the instance.
      */
-    public static function fromRequest(Request $request): BaseTransformer
+    public static function fromRequest(Request $request): static
     {
         return app(static::class)->setRequest($request);
     }

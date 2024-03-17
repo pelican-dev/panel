@@ -31,6 +31,6 @@ class NodeDeletionService
             throw new HasActiveServersException($this->translator->get('exceptions.node.servers_attached'));
         }
 
-        return $node->delete();
+        return (int) $node->delete();
     }
 }

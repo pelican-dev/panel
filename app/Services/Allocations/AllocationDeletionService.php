@@ -19,6 +19,6 @@ class AllocationDeletionService
             throw new ServerUsingAllocationException(trans('exceptions.allocations.server_using'));
         }
 
-        return $allocation->delete();
+        return (int) $allocation->delete();
     }
 }

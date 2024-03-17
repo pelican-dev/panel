@@ -12,7 +12,7 @@ use Illuminate\Validation\ValidationException;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use App\Exceptions\Model\DataValidationException;
 use Illuminate\Database\Eloquent\Model as IlluminateModel;
-use Illuminate\Contracts\Validation\Factory as ValidationFactory;
+use Illuminate\Validation\Factory as ValidationFactory;
 use Illuminate\Validation\Validator;
 
 abstract class Model extends IlluminateModel

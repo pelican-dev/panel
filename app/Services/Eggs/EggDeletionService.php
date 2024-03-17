@@ -28,6 +28,6 @@ class EggDeletionService
 
         $egg = Egg::query()->findOrFail($egg);
 
-        return $egg->delete();
+        return (int) $egg->delete();
     }
 }
