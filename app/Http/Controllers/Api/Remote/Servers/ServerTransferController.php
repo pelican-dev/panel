@@ -7,7 +7,6 @@ use App\Repositories\Daemon\DaemonServerRepository;
 use Illuminate\Http\Response;
 use Illuminate\Http\JsonResponse;
 use App\Models\Allocation;
-use Illuminate\Support\Facades\Log;
 use App\Models\ServerTransfer;
 use Illuminate\Database\ConnectionInterface;
 use App\Http\Controllers\Controller;
@@ -80,7 +79,7 @@ class ServerTransferController extends Controller
                 ->setNode($transfer->oldNode)
                 ->delete();
         } catch (DaemonConnectionException $exception) {
-            Log::warning($exception, ['transfer_id' => $server->transfer->id]);
+            logger()->warning($exception, ['transfer_id' => $server->transfer->id]);
         }
 
         return new JsonResponse([], Response::HTTP_NO_CONTENT);

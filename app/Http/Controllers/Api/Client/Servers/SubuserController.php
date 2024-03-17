@@ -7,7 +7,6 @@ use App\Models\Server;
 use Illuminate\Http\JsonResponse;
 use App\Facades\Activity;
 use App\Models\Permission;
-use Illuminate\Support\Facades\Log;
 use App\Services\Subusers\SubuserCreationService;
 use App\Repositories\Daemon\DaemonServerRepository;
 use App\Transformers\Api\Client\SubuserTransformer;
@@ -115,7 +114,7 @@ class SubuserController extends ClientApiController
                 } catch (DaemonConnectionException $exception) {
                     // Don't block this request if we can't connect to the daemon instance. Chances are it is
                     // offline and the token will be invalid once daemon boots back.
-                    Log::warning($exception, ['user_id' => $subuser->user_id, 'server_id' => $server->id]);
+                    logger()->warning($exception, ['user_id' => $subuser->user_id, 'server_id' => $server->id]);
 
                     $instance->property('revoked', false);
                 }
@@ -149,7 +148,7 @@ class SubuserController extends ClientApiController
                 $this->serverRepository->setServer($server)->revokeUserJTI($subuser->user_id);
             } catch (DaemonConnectionException $exception) {
                 // Don't block this request if we can't connect to the daemon instance.
-                Log::warning($exception, ['user_id' => $subuser->user_id, 'server_id' => $server->id]);
+                logger()->warning($exception, ['user_id' => $subuser->user_id, 'server_id' => $server->id]);
 
                 $instance->property('revoked', false);
             }

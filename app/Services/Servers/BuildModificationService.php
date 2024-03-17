@@ -5,7 +5,6 @@ namespace App\Services\Servers;
 use Illuminate\Support\Arr;
 use App\Models\Server;
 use App\Models\Allocation;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Database\ConnectionInterface;
 use App\Exceptions\DisplayException;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
@@ -67,7 +66,7 @@ class BuildModificationService
             try {
                 $this->daemonServerRepository->setServer($server)->sync();
             } catch (DaemonConnectionException $exception) {
-                Log::warning($exception, ['server_id' => $server->id]);
+                logger()->warning($exception, ['server_id' => $server->id]);
             }
         }
 

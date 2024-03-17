@@ -3,7 +3,6 @@
 namespace App\Exceptions\Http\Connection;
 
 use Illuminate\Http\Response;
-use Illuminate\Support\Facades\Log;
 use GuzzleHttp\Exception\GuzzleException;
 use App\Exceptions\DisplayException;
 
@@ -70,7 +69,7 @@ class DaemonConnectionException extends DisplayException
      */
     public function report()
     {
-        Log::{$this->getErrorLevel()}($this->getPrevious(), [
+        logger()->{$this->getErrorLevel()}($this->getPrevious(), [
             'request_id' => $this->requestId,
         ]);
     }

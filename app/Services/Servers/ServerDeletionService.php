@@ -4,7 +4,6 @@ namespace App\Services\Servers;
 
 use Illuminate\Http\Response;
 use App\Models\Server;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Database\ConnectionInterface;
 use App\Repositories\Daemon\DaemonServerRepository;
 use App\Services\Databases\DatabaseManagementService;
@@ -53,7 +52,7 @@ class ServerDeletionService
                 throw $exception;
             }
 
-            Log::warning($exception);
+            logger()->warning($exception);
         }
 
         $this->connection->transaction(function () use ($server) {
@@ -71,7 +70,7 @@ class ServerDeletionService
                     // handle this better anyways.
                     $database->delete();
 
-                    Log::warning($exception);
+                    logger()->warning($exception);
                 }
             }
 

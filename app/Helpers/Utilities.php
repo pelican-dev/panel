@@ -4,7 +4,6 @@ namespace App\Helpers;
 
 use Carbon\Carbon;
 use Cron\CronExpression;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\ViewErrorBag;
 
 class Utilities
@@ -26,7 +25,7 @@ class Utilities
             }
         } catch (\Exception $exception) {
             // Just log the error and hope for the best at this point.
-            Log::error($exception);
+            logger()->error($exception);
         }
 
         return $string;

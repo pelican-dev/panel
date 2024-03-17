@@ -4,7 +4,6 @@ namespace App\Services\Nodes;
 
 use Illuminate\Support\Str;
 use App\Models\Node;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Database\ConnectionInterface;
 use Illuminate\Contracts\Encryption\Encrypter;
 use App\Repositories\Daemon\DaemonConfigurationRepository;
@@ -51,7 +50,7 @@ class NodeUpdateService
 
                 $this->configurationRepository->setNode($node)->update($updated);
             } catch (DaemonConnectionException $exception) {
-                Log::warning($exception, ['node_id' => $node->id]);
+                logger()->warning($exception, ['node_id' => $node->id]);
 
                 // Never actually throw these exceptions up the stack. If we were able to change the settings
                 // but something went wrong with daemon we just want to store the update and let the user manually

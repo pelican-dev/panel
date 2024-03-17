@@ -7,7 +7,6 @@ use Illuminate\Support\Str;
 use App\Models\User;
 use Webmozart\Assert\Assert;
 use App\Models\Server;
-use Illuminate\Support\Facades\Log;
 use App\Models\ActivityLog;
 use App\Models\ActivityLogSubject;
 use App\Http\Controllers\Controller;
@@ -40,7 +39,7 @@ class ActivityProcessingController extends Controller
                     'UTC'
                 );
             } catch (\Exception $exception) {
-                Log::warning($exception, ['timestamp' => $datum['timestamp']]);
+                logger()->warning($exception, ['timestamp' => $datum['timestamp']]);
 
                 // If we cannot parse the value for some reason don't blow up this request, just go ahead
                 // and log the event with the current time, and set the metadata value to have the original

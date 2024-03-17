@@ -5,7 +5,6 @@ namespace App\Services\Activity;
 use Illuminate\Support\Arr;
 use Webmozart\Assert\Assert;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\Log;
 use App\Models\ActivityLog;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Request;
@@ -147,7 +146,7 @@ class ActivityLogService
                 throw $exception;
             }
 
-            Log::error($exception);
+            logger()->error($exception);
         }
 
         return $activity;
