@@ -4,7 +4,6 @@ namespace App\Http\Controllers\Admin\Servers;
 
 use App\Models\Egg;
 use App\Models\Node;
-use App\Repositories\Eloquent\EggRepository;
 use Illuminate\View\View;
 use Illuminate\Http\Request;
 use App\Models\Server;
@@ -27,7 +26,6 @@ class ServerViewController extends Controller
     public function __construct(
         private DatabaseHostRepository $databaseHostRepository,
         private MountRepository $mountRepository,
-        private EggRepository $eggRepository,
         private NodeRepository $nodeRepository,
         private EnvironmentService $environmentService,
         private ViewFactory $view

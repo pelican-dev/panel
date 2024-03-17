@@ -12,7 +12,6 @@ use App\Services\Eggs\EggUpdateService;
 use App\Services\Eggs\EggCreationService;
 use App\Services\Eggs\EggDeletionService;
 use App\Http\Requests\Admin\Egg\EggFormRequest;
-use App\Contracts\Repository\EggRepositoryInterface;
 
 class EggController extends Controller
 {
@@ -23,7 +22,6 @@ class EggController extends Controller
         protected AlertsMessageBag $alert,
         protected EggCreationService $creationService,
         protected EggDeletionService $deletionService,
-        protected EggRepositoryInterface $repository,
         protected EggUpdateService $updateService,
         protected ViewFactory $view
     ) {
@@ -31,8 +29,6 @@ class EggController extends Controller
 
     /**
      * Render eggs listing page.
-     *
-     * @throws \App\Exceptions\Repository\RecordNotFoundException
      */
     public function index(): View
     {

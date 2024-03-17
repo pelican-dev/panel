@@ -6,16 +6,9 @@ use Carbon\Carbon;
 use App\Models\Egg;
 use Illuminate\Support\Collection;
 use App\Models\EggVariable;
-use App\Contracts\Repository\EggRepositoryInterface;
 
 class EggExporterService
 {
-    /**
-     * EggExporterService constructor.
-     */
-    public function __construct(protected EggRepositoryInterface $repository)
-    {
-    }
 
     /**
      * Return a JSON representation of an egg and its variables.
@@ -24,7 +17,7 @@ class EggExporterService
      */
     public function handle(int $egg): string
     {
-        $egg = $this->repository->getWithExportAttributes($egg);
+        $egg = Egg::with(['scriptFrom', 'configFrom', 'variables'])->findOrFail($egg);
 
         $struct = [
             '_comment' => 'DO NOT EDIT: FILE GENERATED AUTOMATICALLY BY PANEL',

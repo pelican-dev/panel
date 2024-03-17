@@ -9,7 +9,6 @@ use Illuminate\Http\RedirectResponse;
 use Prologue\Alerts\AlertsMessageBag;
 use Illuminate\View\Factory as ViewFactory;
 use App\Http\Controllers\Controller;
-use App\Contracts\Repository\EggRepositoryInterface;
 use App\Services\Eggs\Variables\VariableUpdateService;
 use App\Http\Requests\Admin\Egg\EggVariableFormRequest;
 use App\Services\Eggs\Variables\VariableCreationService;
@@ -24,7 +23,6 @@ class EggVariableController extends Controller
         protected AlertsMessageBag $alert,
         protected VariableCreationService $creationService,
         protected VariableUpdateService $updateService,
-        protected EggRepositoryInterface $repository,
         protected EggVariableRepositoryInterface $variableRepository,
         protected ViewFactory $view
     ) {
@@ -32,12 +30,10 @@ class EggVariableController extends Controller
 
     /**
      * Handle request to view the variables attached to an Egg.
-     *
-     * @throws \App\Exceptions\Repository\RecordNotFoundException
      */
     public function view(int $egg): View
     {
-        $egg = $this->repository->getWithVariables($egg);
+        $egg = Egg::with('variables')->findOrFail($egg);
 
         return $this->view->make('admin.eggs.variables', ['egg' => $egg]);
     }

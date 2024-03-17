@@ -2,21 +2,13 @@
 
 namespace App\Services\Eggs;
 
-use App\Contracts\Repository\EggRepositoryInterface;
 use App\Exceptions\Service\Egg\HasChildrenException;
 use App\Exceptions\Service\HasActiveServersException;
+use App\Models\Egg;
 use App\Models\Server;
 
 class EggDeletionService
 {
-    /**
-     * EggDeletionService constructor.
-     */
-    public function __construct(
-        protected EggRepositoryInterface $repository
-    ) {
-    }
-
     /**
      * Delete an Egg from the database if it has no active servers attached to it.
      *
@@ -29,11 +21,13 @@ class EggDeletionService
             throw new HasActiveServersException(trans('exceptions.egg.delete_has_servers'));
         }
 
-        $children = $this->repository->findCountWhere([['config_from', '=', $egg]]);
+        $children = Egg::query()->where('config_from', $egg)->count();
         if ($children > 0) {
             throw new HasChildrenException(trans('exceptions.egg.has_children'));
         }
 
-        return $this->repository->delete($egg);
+        $egg = Egg::query()->findOrFail($egg);
+
+        return $egg->delete();
     }
 }
