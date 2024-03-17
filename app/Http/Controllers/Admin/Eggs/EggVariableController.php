@@ -12,7 +12,6 @@ use App\Http\Controllers\Controller;
 use App\Services\Eggs\Variables\VariableUpdateService;
 use App\Http\Requests\Admin\Egg\EggVariableFormRequest;
 use App\Services\Eggs\Variables\VariableCreationService;
-use App\Contracts\Repository\EggVariableRepositoryInterface;
 
 class EggVariableController extends Controller
 {
@@ -23,7 +22,6 @@ class EggVariableController extends Controller
         protected AlertsMessageBag $alert,
         protected VariableCreationService $creationService,
         protected VariableUpdateService $updateService,
-        protected EggVariableRepositoryInterface $variableRepository,
         protected ViewFactory $view
     ) {
     }
@@ -76,7 +74,7 @@ class EggVariableController extends Controller
      */
     public function destroy(int $egg, EggVariable $variable): RedirectResponse
     {
-        $this->variableRepository->delete($variable->id);
+        $variable->delete();
         $this->alert->success(trans('admin/eggs.variables.notices.variable_deleted', [
             'variable' => $variable->name,
         ]))->flash();

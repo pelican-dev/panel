@@ -8,7 +8,6 @@ use Illuminate\Http\JsonResponse;
 use App\Facades\Activity;
 use App\Models\Permission;
 use Illuminate\Support\Facades\Log;
-use App\Repositories\Eloquent\SubuserRepository;
 use App\Services\Subusers\SubuserCreationService;
 use App\Repositories\Daemon\DaemonServerRepository;
 use App\Transformers\Api\Client\SubuserTransformer;
@@ -25,7 +24,6 @@ class SubuserController extends ClientApiController
      * SubuserController constructor.
      */
     public function __construct(
-        private SubuserRepository $repository,
         private SubuserCreationService $creationService,
         private DaemonServerRepository $serverRepository
     ) {
@@ -110,9 +108,7 @@ class SubuserController extends ClientApiController
         // have actually changed for the user.
         if ($permissions !== $current) {
             $log->transaction(function ($instance) use ($request, $subuser, $server) {
-                $this->repository->update($subuser->id, [
-                    'permissions' => $this->getDefaultPermissions($request),
-                ]);
+                $subuser->update(['permissions' => $this->getDefaultPermissions($request)]);
 
                 try {
                     $this->serverRepository->setServer($server)->revokeUserJTI($subuser->user_id);

@@ -8,7 +8,6 @@ use App\Models\Server;
 use App\Models\Subuser;
 use Illuminate\Database\ConnectionInterface;
 use App\Services\Users\UserCreationService;
-use App\Repositories\Eloquent\SubuserRepository;
 use App\Exceptions\Service\Subuser\UserIsServerOwnerException;
 use App\Exceptions\Service\Subuser\ServerSubuserExistsException;
 
@@ -19,7 +18,6 @@ class SubuserCreationService
      */
     public function __construct(
         private ConnectionInterface $connection,
-        private SubuserRepository $subuserRepository,
         private UserCreationService $userCreationService,
     ) {
     }
@@ -56,12 +54,12 @@ class SubuserCreationService
                 throw new UserIsServerOwnerException(trans('exceptions.subusers.user_is_owner'));
             }
 
-            $subuserCount = $this->subuserRepository->findCountWhere([['user_id', '=', $user->id], ['server_id', '=', $server->id]]);
+            $subuserCount = $server->subusers()->where('user_id', $user->id)->count();
             if ($subuserCount !== 0) {
                 throw new ServerSubuserExistsException(trans('exceptions.subusers.subuser_exists'));
             }
 
-            return $this->subuserRepository->create([
+            return Subuser::query()->create([
                 'user_id' => $user->id,
                 'server_id' => $server->id,
                 'permissions' => array_unique($permissions),
