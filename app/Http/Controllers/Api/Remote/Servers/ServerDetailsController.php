@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\Api\Remote\Servers;
 
-use App\Models\ActivityLogSubject;
 use App\Models\Backup;
 use Illuminate\Http\Request;
 use App\Models\Server;

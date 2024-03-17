@@ -9,7 +9,6 @@ use App\Models\ApiKey;
 use Illuminate\Http\RedirectResponse;
 use Prologue\Alerts\AlertsMessageBag;
 use App\Services\Acl\Api\AdminAcl;
-use Illuminate\View\Factory as ViewFactory;
 use App\Http\Controllers\Controller;
 use App\Services\Api\KeyCreationService;
 use App\Http\Requests\Admin\Api\StoreApplicationApiKeyRequest;

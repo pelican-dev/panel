@@ -8,7 +8,6 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Contracts\Console\Kernel;
 use App\Notifications\MailTested;
-use Illuminate\View\Factory as ViewFactory;
 use Illuminate\Support\Facades\Notification;
 use App\Exceptions\DisplayException;
 use App\Http\Controllers\Controller;

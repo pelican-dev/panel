@@ -7,7 +7,6 @@ use Illuminate\View\View;
 use Illuminate\Http\RedirectResponse;
 use Prologue\Alerts\AlertsMessageBag;
 use Illuminate\Contracts\Console\Kernel;
-use Illuminate\View\Factory as ViewFactory;
 use App\Http\Controllers\Controller;
 use Illuminate\Contracts\Config\Repository as ConfigRepository;
 use App\Http\Requests\Admin\Settings\AdvancedSettingsFormRequest;

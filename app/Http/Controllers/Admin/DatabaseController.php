@@ -7,7 +7,6 @@ use Illuminate\View\View;
 use App\Models\DatabaseHost;
 use Illuminate\Http\RedirectResponse;
 use Prologue\Alerts\AlertsMessageBag;
-use Illuminate\View\Factory as ViewFactory;
 use App\Http\Controllers\Controller;
 use App\Services\Databases\Hosts\HostUpdateService;
 use App\Http\Requests\Admin\DatabaseHostFormRequest;
