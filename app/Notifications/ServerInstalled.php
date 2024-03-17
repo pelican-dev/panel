@@ -10,11 +10,10 @@ use Illuminate\Container\Container;
 use App\Events\Server\Installed;
 use Illuminate\Notifications\Notification;
 use Illuminate\Contracts\Queue\ShouldQueue;
-use App\Contracts\Core\ReceivesEvents;
 use Illuminate\Contracts\Notifications\Dispatcher;
 use Illuminate\Notifications\Messages\MailMessage;
 
-class ServerInstalled extends Notification implements ReceivesEvents, ShouldQueue
+class ServerInstalled extends Notification implements ShouldQueue
 {
     use Queueable;
 
