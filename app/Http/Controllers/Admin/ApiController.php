@@ -12,7 +12,6 @@ use App\Services\Acl\Api\AdminAcl;
 use Illuminate\View\Factory as ViewFactory;
 use App\Http\Controllers\Controller;
 use App\Services\Api\KeyCreationService;
-use App\Contracts\Repository\ApiKeyRepositoryInterface;
 use App\Http\Requests\Admin\Api\StoreApplicationApiKeyRequest;
 
 class ApiController extends Controller
@@ -22,7 +21,6 @@ class ApiController extends Controller
      */
     public function __construct(
         private AlertsMessageBag $alert,
-        private ApiKeyRepositoryInterface $repository,
         private KeyCreationService $keyCreationService,
         private ViewFactory $view,
     ) {
@@ -33,8 +31,12 @@ class ApiController extends Controller
      */
     public function index(Request $request): View
     {
+        $keys = $request->user()->apiKeys()
+            ->where('key_type', ApiKey::TYPE_APPLICATION)
+            ->get();
+
         return $this->view->make('admin.api.index', [
-            'keys' => $this->repository->getApplicationKeys($request->user()),
+            'keys' => $keys,
         ]);
     }
 
@@ -80,7 +82,10 @@ class ApiController extends Controller
      */
     public function delete(Request $request, string $identifier): Response
     {
-        $this->repository->deleteApplicationKey($request->user(), $identifier);
+        $request->user()->apiKeys()
+            ->where('key_type', ApiKey::TYPE_APPLICATION)
+            ->where('identifier', $identifier)
+            ->delete();
 
         return response('', 204);
     }

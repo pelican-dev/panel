@@ -4,7 +4,6 @@ namespace App\Services\Api;
 
 use App\Models\ApiKey;
 use Illuminate\Contracts\Encryption\Encrypter;
-use App\Contracts\Repository\ApiKeyRepositoryInterface;
 
 class KeyCreationService
 {
@@ -13,12 +12,12 @@ class KeyCreationService
     /**
      * ApiKeyService constructor.
      */
-    public function __construct(private ApiKeyRepositoryInterface $repository, private Encrypter $encrypter)
+    public function __construct(private Encrypter $encrypter)
     {
     }
 
     /**
-     * Set the type of key that should be created. By default an orphaned key will be
+     * Set the type of key that should be created. By default, an orphaned key will be
      * created. These keys cannot be used for anything, and will not render in the UI.
      */
     public function setKeyType(int $type): self
@@ -47,6 +46,6 @@ class KeyCreationService
             $data = array_merge($data, $permissions);
         }
 
-        return $this->repository->create($data, true, true);
+        return ApiKey::query()->forceCreate($data);
     }
 }

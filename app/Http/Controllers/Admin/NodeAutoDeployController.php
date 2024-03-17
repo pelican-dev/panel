@@ -9,7 +9,6 @@ use Illuminate\Http\JsonResponse;
 use App\Http\Controllers\Controller;
 use Illuminate\Contracts\Encryption\Encrypter;
 use App\Services\Api\KeyCreationService;
-use App\Repositories\Eloquent\ApiKeyRepository;
 
 class NodeAutoDeployController extends Controller
 {
@@ -17,7 +16,6 @@ class NodeAutoDeployController extends Controller
      * NodeAutoDeployController constructor.
      */
     public function __construct(
-        private ApiKeyRepository $repository,
         private Encrypter $encrypter,
         private KeyCreationService $keyCreationService
     ) {
@@ -31,8 +29,12 @@ class NodeAutoDeployController extends Controller
      */
     public function __invoke(Request $request, Node $node): JsonResponse
     {
-        /** @var \App\Models\ApiKey|null $key */
-        $key = $this->repository->getApplicationKeys($request->user())
+        $keys = $request->user()->apiKeys()
+            ->where('key_type', ApiKey::TYPE_APPLICATION)
+            ->get();
+
+        /** @var ApiKey|null $key */
+        $key = $keys
             ->filter(function (ApiKey $key) {
                 foreach ($key->getAttributes() as $permission => $value) {
                     if ($permission === 'r_nodes' && $value === 1) {

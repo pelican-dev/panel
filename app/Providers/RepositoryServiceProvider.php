@@ -5,7 +5,6 @@ namespace App\Providers;
 use Illuminate\Support\ServiceProvider;
 use App\Repositories\Eloquent\EggRepository;
 use App\Repositories\Eloquent\NodeRepository;
-use App\Repositories\Eloquent\ApiKeyRepository;
 use App\Repositories\Eloquent\SessionRepository;
 use App\Repositories\Eloquent\SubuserRepository;
 use App\Repositories\Eloquent\DatabaseRepository;
@@ -14,7 +13,6 @@ use App\Contracts\Repository\EggRepositoryInterface;
 use App\Repositories\Eloquent\EggVariableRepository;
 use App\Contracts\Repository\NodeRepositoryInterface;
 use App\Repositories\Eloquent\DatabaseHostRepository;
-use App\Contracts\Repository\ApiKeyRepositoryInterface;
 use App\Contracts\Repository\SessionRepositoryInterface;
 use App\Contracts\Repository\SubuserRepositoryInterface;
 use App\Contracts\Repository\DatabaseRepositoryInterface;
@@ -30,7 +28,6 @@ class RepositoryServiceProvider extends ServiceProvider
     public function register(): void
     {
         // Eloquent Repositories
-        $this->app->bind(ApiKeyRepositoryInterface::class, ApiKeyRepository::class);
         $this->app->bind(DatabaseRepositoryInterface::class, DatabaseRepository::class);
         $this->app->bind(DatabaseHostRepositoryInterface::class, DatabaseHostRepository::class);
         $this->app->bind(EggRepositoryInterface::class, EggRepository::class);
