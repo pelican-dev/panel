@@ -16,7 +16,7 @@ if (!function_exists('object_get_strict')) {
      * Get an object using dot notation. An object key with a value of null is still considered valid
      * and will not trigger the response of a default value (unlike object_get).
      */
-    function object_get_strict(object $object, ?string $key, $default = null): mixed
+    function object_get_strict(object $object, ?string $key, mixed $default = null): mixed
     {
         if (is_null($key) || trim($key) == '') {
             return $object;
