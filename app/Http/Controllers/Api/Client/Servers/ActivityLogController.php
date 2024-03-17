@@ -31,7 +31,7 @@ class ActivityLogController extends ClientApiController
             ->when(config('activity.hide_admin_activity'), function (Builder $builder) use ($server) {
                 // We could do this with a query and a lot of joins, but that gets pretty
                 // painful so for now we'll execute a simpler query.
-                $subusers = $server->subusers()->pluck('user_id')->merge($server->owner_id);
+                $subusers = $server->subusers()->pluck('user_id')->merge([$server->owner_id]);
 
                 $builder->select('activity_logs.*')
                     ->leftJoin('users', function (JoinClause $join) {
@@ -44,7 +44,7 @@ class ActivityLogController extends ClientApiController
                             ->orWhereIn('users.id', $subusers);
                     });
             })
-            ->paginate(min($request->query('per_page', 25), 100))
+            ->paginate(min($request->query('per_page', '25'), 100))
             ->appends($request->query());
 
         return $this->fractal->collection($activity)

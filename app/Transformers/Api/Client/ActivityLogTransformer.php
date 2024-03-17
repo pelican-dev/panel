@@ -22,7 +22,7 @@ class ActivityLogTransformer extends BaseClientTransformer
             // This is not for security, it is only to provide a unique identifier to
             // the front-end for each entry to improve rendering performance since there
             // is nothing else sufficiently unique to key off at this point.
-            'id' => sha1($model->id),
+            'id' => sha1((string) $model->id),
             'batch' => $model->batch,
             'event' => $model->event,
             'is_api' => !is_null($model->api_key_id),
@@ -73,7 +73,7 @@ class ActivityLogTransformer extends BaseClientTransformer
 
         $keys = $properties->keys()->filter(fn ($key) => Str::endsWith($key, '_count'))->values();
         if ($keys->containsOneItem()) {
-            $properties = $properties->merge(['count' => $properties->get($keys[0])])->except($keys[0]);
+            $properties = $properties->merge(['count' => $properties->get($keys[0])])->except([$keys[0]]);
         }
 
         return (object) $properties->toArray();

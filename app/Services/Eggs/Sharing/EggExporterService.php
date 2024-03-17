@@ -45,11 +45,10 @@ class EggExporterService
                     'entrypoint' => $egg->copy_script_entry,
                 ],
             ],
-            'variables' => $egg->variables->transform(function (EggVariable $item) {
-                return Collection::make($item->toArray())
+            'variables' => $egg->variables->map(function (EggVariable $eggVariable) {
+                return Collection::make($eggVariable->toArray())
                     ->except(['id', 'egg_id', 'created_at', 'updated_at'])
-                    ->merge(['field_type' => 'text'])
-                    ->toArray();
+                    ->merge(['field_type' => 'text']);
             }),
         ];
 

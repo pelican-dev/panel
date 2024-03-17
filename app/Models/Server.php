@@ -400,14 +400,4 @@ class Server extends Model
             ->withTrashed()
             ->get();
     }
-
-    /**
-     * Returns a query filtering only non-failed backups for a specific server.
-     */
-    public function getNonFailedBackups(): HasMany
-    {
-        return $this->backups()->where(
-            fn ($query) => $query->whereNull('completed_at')->orWhere('is_successful', true)
-        );
-    }
 }

@@ -2,11 +2,10 @@
 
 namespace App\Http\Controllers\Admin;
 
+use Illuminate\Http\JsonResponse;
 use Illuminate\View\View;
 use Illuminate\Http\Request;
 use App\Models\User;
-use App\Models\Model;
-use Illuminate\Support\Collection;
 use Illuminate\Http\RedirectResponse;
 use Prologue\Alerts\AlertsMessageBag;
 use Spatie\QueryBuilder\QueryBuilder;
@@ -129,22 +128,25 @@ class UserController extends Controller
     /**
      * Get a JSON response of users on the system.
      */
-    public function json(Request $request): Model|Collection
+    public function json(Request $request): JsonResponse
     {
-        $users = QueryBuilder::for(User::query())->allowedFilters(['email'])->paginate(25);
+        $userPaginator = QueryBuilder::for(User::query())->allowedFilters(['email'])->paginate(25);
+
+        /** @var User[] $users */
+        $users = $userPaginator->items();
 
         // Handle single user requests.
         if ($request->query('user_id')) {
             $user = User::query()->findOrFail($request->input('user_id'));
             $user['md5'] = md5(strtolower($user->email));
 
-            return $user;
+            return response()->json($user);
         }
 
-        return $users->map(function (User $item) {
-            $item['md5'] = md5(strtolower($item->email));
+        return response()->json(collect($users)->map(function (User $user) {
+            $user['md5'] = md5(strtolower($user->email));
 
-            return $item;
-        });
+            return $user;
+        }));
     }
 }

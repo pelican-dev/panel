@@ -34,7 +34,7 @@ class DatabasePasswordService
         $this->connection->transaction(function () use ($database, $password) {
             $this->dynamic->set('dynamic', $database->database_host_id);
 
-            $database->update($database->id, [
+            $database->update([
                 'password' => $this->encrypter->encrypt($password),
             ]);
 

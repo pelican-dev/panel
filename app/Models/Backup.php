@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
@@ -72,5 +73,13 @@ class Backup extends Model
     public function server(): BelongsTo
     {
         return $this->belongsTo(Server::class);
+    }
+
+    /**
+     * Returns a query filtering only non-failed backups for a specific server.
+     */
+    public function scopeNonFailed(Builder $query): void
+    {
+        $query->whereNull('completed_at')->orWhere('is_successful', true);
     }
 }

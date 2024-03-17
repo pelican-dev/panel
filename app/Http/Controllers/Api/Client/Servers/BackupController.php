@@ -50,7 +50,7 @@ class BackupController extends ClientApiController
         return $this->fractal->collection($server->backups()->paginate($limit))
             ->transformWith($this->getTransformer(BackupTransformer::class))
             ->addMeta([
-                'backup_count' => $server->getNonFailedBackups()->count(),
+                'backup_count' => $server->backups()->nonFailed()->count(),
             ])
             ->toArray();
     }

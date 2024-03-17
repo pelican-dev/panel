@@ -7,7 +7,7 @@ parameters:
         - app/
 
     # Level 9 is the highest level
-    level: 4
+    level: 5
 
     ignoreErrors:
         # Prologue\Alerts defines its methods from its configuration file dynamically

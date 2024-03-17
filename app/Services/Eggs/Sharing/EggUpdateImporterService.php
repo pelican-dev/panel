@@ -36,7 +36,7 @@ class EggUpdateImporterService
                 EggVariable::unguarded(function () use ($egg, $variable) {
                     $egg->variables()->updateOrCreate([
                         'env_variable' => $variable['env_variable'],
-                    ], Collection::make($variable)->except('egg_id', 'env_variable')->toArray());
+                    ], Collection::make($variable)->except(['egg_id', 'env_variable'])->toArray());
                 });
             }
 
