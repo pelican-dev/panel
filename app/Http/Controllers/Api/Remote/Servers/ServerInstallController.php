@@ -23,9 +23,8 @@ class ServerInstallController extends Controller
     /**
      * Returns installation information for a server.
      */
-    public function index(Request $request, string $uuid): JsonResponse
+    public function index(Server $server): JsonResponse
     {
-        $server = Server::findOrFailByUuid($uuid);
         $egg = $server->egg;
 
         return new JsonResponse([
@@ -40,9 +39,8 @@ class ServerInstallController extends Controller
      *
      * @throws \App\Exceptions\Model\DataValidationException
      */
-    public function store(InstallationDataRequest $request, string $uuid): JsonResponse
+    public function store(InstallationDataRequest $request, Server $server): JsonResponse
     {
-        $server = Server::findOrFailByUuid($uuid);
         $status = null;
 
         // Make sure the type of failure is accurate

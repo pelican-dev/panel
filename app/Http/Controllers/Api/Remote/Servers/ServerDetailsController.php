@@ -29,10 +29,8 @@ class ServerDetailsController extends Controller
      * Returns details about the server that allows daemon to self-recover and ensure
      * that the state of the server matches the Panel at all times.
      */
-    public function __invoke(Request $request, string $uuid): JsonResponse
+    public function __invoke(Server $server): JsonResponse
     {
-        $server = Server::findOrFailByUuid($uuid);
-
         return new JsonResponse([
             'settings' => $this->configurationStructureService->handle($server),
             'process_configuration' => $this->eggConfigurationService->handle($server),

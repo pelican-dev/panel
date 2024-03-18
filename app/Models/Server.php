@@ -324,6 +324,14 @@ class Server extends Model
         return $this->morphToMany(ActivityLog::class, 'subject', 'activity_log_subjects');
     }
 
+    public function resolveRouteBinding($value, $field = null): ?self
+    {
+        return match($field) {
+            'uuid' => $this->where('uuidShort', $value)->orWhere('uuid', $value)->firstOrFail(),
+            default => $this->where('id', $value)->firstOrFail(),
+        };
+    }
+
     /**
      * Checks if the server is currently in a user-accessible state. If not, an
      * exception is raised. This should be called whenever something needs to make
@@ -359,17 +367,6 @@ class Server extends Model
         ) {
             throw new ServerStateConflictException($this);
         }
-    }
-
-    public static function findOrFailByUuid(string $uuid): Server
-    {
-        /** @var Server $server */
-        $server = Server::with(['node'])
-            ->where('uuidShort', $uuid)
-            ->orWhere('uuid', $uuid)
-            ->firstOrFail();
-
-        return $server;
     }
 
     /**
