@@ -19,7 +19,6 @@ use App\Services\Allocations\AssignmentService;
 use App\Services\Helpers\SoftwareVersionService;
 use App\Http\Requests\Admin\Node\NodeFormRequest;
 use App\Http\Requests\Admin\Node\AllocationFormRequest;
-use App\Services\Allocations\AllocationDeletionService;
 use App\Http\Requests\Admin\Node\AllocationAliasFormRequest;
 
 class NodesController extends Controller
@@ -29,7 +28,6 @@ class NodesController extends Controller
      */
     public function __construct(
         protected AlertsMessageBag $alert,
-        protected AllocationDeletionService $allocationDeletionService,
         protected AssignmentService $assignmentService,
         protected CacheRepository $cache,
         protected NodeCreationService $creationService,
@@ -82,7 +80,7 @@ class NodesController extends Controller
      */
     public function allocationRemoveSingle(int $node, Allocation $allocation): Response
     {
-        $this->allocationDeletionService->handle($allocation);
+        $allocation->delete();
 
         return response('', 204);
     }

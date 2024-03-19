@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Exceptions\Service\Allocation\ServerUsingAllocationException;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
@@ -73,6 +74,13 @@ class Allocation extends Model
         'server_id' => 'nullable|exists:servers,id',
         'notes' => 'nullable|string|max:256',
     ];
+
+    protected static function booted(): void
+    {
+        static::deleting(function (self $allocation) {
+            throw_if($allocation->server_id, new ServerUsingAllocationException(trans('exceptions.allocations.server_using')));
+        });
+    }
 
     /**
      * {@inheritDoc}

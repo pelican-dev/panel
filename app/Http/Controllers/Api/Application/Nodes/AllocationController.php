@@ -9,7 +9,6 @@ use Spatie\QueryBuilder\QueryBuilder;
 use Spatie\QueryBuilder\AllowedFilter;
 use Illuminate\Database\Eloquent\Builder;
 use App\Services\Allocations\AssignmentService;
-use App\Services\Allocations\AllocationDeletionService;
 use App\Transformers\Api\Application\AllocationTransformer;
 use App\Http\Controllers\Api\Application\ApplicationApiController;
 use App\Http\Requests\Api\Application\Allocations\GetAllocationsRequest;
@@ -23,7 +22,6 @@ class AllocationController extends ApplicationApiController
      */
     public function __construct(
         private AssignmentService $assignmentService,
-        private AllocationDeletionService $deletionService
     ) {
         parent::__construct();
     }
@@ -71,12 +69,10 @@ class AllocationController extends ApplicationApiController
 
     /**
      * Delete a specific allocation from the Panel.
-     *
-     * @throws \App\Exceptions\Service\Allocation\ServerUsingAllocationException
      */
     public function delete(DeleteAllocationRequest $request, Node $node, Allocation $allocation): JsonResponse
     {
-        $this->deletionService->handle($allocation);
+        $allocation->delete();
 
         return new JsonResponse([], JsonResponse::HTTP_NO_CONTENT);
     }
