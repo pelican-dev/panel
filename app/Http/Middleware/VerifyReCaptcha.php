@@ -6,7 +6,6 @@ use GuzzleHttp\Client;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use App\Events\Auth\FailedCaptcha;
-use Illuminate\Contracts\Config\Repository;
 use Illuminate\Contracts\Events\Dispatcher;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 
@@ -15,7 +14,7 @@ class VerifyReCaptcha
     /**
      * VerifyReCaptcha constructor.
      */
-    public function __construct(private Dispatcher $dispatcher, private Repository $config)
+    public function __construct(private Dispatcher $dispatcher)
     {
     }
 
@@ -24,15 +23,15 @@ class VerifyReCaptcha
      */
     public function handle(Request $request, \Closure $next): mixed
     {
-        if (!$this->config->get('recaptcha.enabled')) {
+        if (!config('recaptcha.enabled')) {
             return $next($request);
         }
 
         if ($request->filled('g-recaptcha-response')) {
             $client = new Client();
-            $res = $client->post($this->config->get('recaptcha.domain'), [
+            $res = $client->post(config('recaptcha.domain'), [
                 'form_params' => [
-                    'secret' => $this->config->get('recaptcha.secret_key'),
+                    'secret' => config('recaptcha.secret_key'),
                     'response' => $request->input('g-recaptcha-response'),
                 ],
             ]);
@@ -40,7 +39,7 @@ class VerifyReCaptcha
             if ($res->getStatusCode() === 200) {
                 $result = json_decode($res->getBody());
 
-                if ($result->success && (!$this->config->get('recaptcha.verify_domain') || $this->isResponseVerified($result, $request))) {
+                if ($result->success && (!config('recaptcha.verify_domain') || $this->isResponseVerified($result, $request))) {
                     return $next($request);
                 }
             }
@@ -61,7 +60,7 @@ class VerifyReCaptcha
      */
     private function isResponseVerified(\stdClass $result, Request $request): bool
     {
-        if (!$this->config->get('recaptcha.verify_domain')) {
+        if (!config('recaptcha.verify_domain')) {
             return false;
         }
 

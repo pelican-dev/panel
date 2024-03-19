@@ -4,7 +4,6 @@ namespace App\Services\Users;
 
 use App\Models\User;
 use Illuminate\Contracts\Encryption\Encrypter;
-use Illuminate\Contracts\Config\Repository as ConfigRepository;
 
 class TwoFactorSetupService
 {
@@ -14,7 +13,6 @@ class TwoFactorSetupService
      * TwoFactorSetupService constructor.
      */
     public function __construct(
-        private ConfigRepository $config,
         private Encrypter $encrypter,
     ) {
     }
@@ -30,7 +28,7 @@ class TwoFactorSetupService
     {
         $secret = '';
         try {
-            for ($i = 0; $i < $this->config->get('panel.auth.2fa.bytes', 16); $i++) {
+            for ($i = 0; $i < config('panel.auth.2fa.bytes', 16); $i++) {
                 $secret .= substr(self::VALID_BASE32_CHARACTERS, random_int(0, 31), 1);
             }
         } catch (\Exception $exception) {
@@ -40,7 +38,7 @@ class TwoFactorSetupService
         $user->totp_secret = $this->encrypter->encrypt($secret);
         $user->save();
 
-        $company = urlencode(preg_replace('/\s/', '', $this->config->get('app.name')));
+        $company = urlencode(preg_replace('/\s/', '', config('app.name')));
 
         return [
             'image_url_data' => sprintf(

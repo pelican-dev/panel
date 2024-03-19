@@ -13,7 +13,6 @@ use App\Exceptions\DisplayException;
 use App\Http\Controllers\Controller;
 use Illuminate\Contracts\Encryption\Encrypter;
 use App\Providers\SettingsServiceProvider;
-use Illuminate\Contracts\Config\Repository as ConfigRepository;
 use App\Http\Requests\Admin\Settings\MailSettingsFormRequest;
 
 class MailController extends Controller
@@ -22,7 +21,6 @@ class MailController extends Controller
      * MailController constructor.
      */
     public function __construct(
-        private ConfigRepository $config,
         private Encrypter $encrypter,
         private Kernel $kernel,
     ) {
@@ -35,7 +33,7 @@ class MailController extends Controller
     public function index(): View
     {
         return view('admin.settings.mail', [
-            'disabled' => $this->config->get('mail.default') !== 'smtp',
+            'disabled' => config('mail.default') !== 'smtp',
         ]);
     }
 
@@ -47,7 +45,7 @@ class MailController extends Controller
      */
     public function update(MailSettingsFormRequest $request): Response
     {
-        if ($this->config->get('mail.default') !== 'smtp') {
+        if (config('mail.default') !== 'smtp') {
             throw new DisplayException('This feature is only available if SMTP is the selected email driver for the Panel.');
         }
 

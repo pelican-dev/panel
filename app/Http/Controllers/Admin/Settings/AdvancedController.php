@@ -8,7 +8,6 @@ use Illuminate\Http\RedirectResponse;
 use Prologue\Alerts\AlertsMessageBag;
 use Illuminate\Contracts\Console\Kernel;
 use App\Http\Controllers\Controller;
-use Illuminate\Contracts\Config\Repository as ConfigRepository;
 use App\Http\Requests\Admin\Settings\AdvancedSettingsFormRequest;
 
 class AdvancedController extends Controller
@@ -18,7 +17,6 @@ class AdvancedController extends Controller
      */
     public function __construct(
         private AlertsMessageBag $alert,
-        private ConfigRepository $config,
         private Kernel $kernel,
     ) {
     }
@@ -30,8 +28,8 @@ class AdvancedController extends Controller
     {
         $showRecaptchaWarning = false;
         if (
-            $this->config->get('recaptcha._shipped_secret_key') === $this->config->get('recaptcha.secret_key')
-            || $this->config->get('recaptcha._shipped_website_key') === $this->config->get('recaptcha.website_key')
+            config('recaptcha._shipped_secret_key') === config('recaptcha.secret_key')
+            || config('recaptcha._shipped_website_key') === config('recaptcha.website_key')
         ) {
             $showRecaptchaWarning = true;
         }

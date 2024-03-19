@@ -11,12 +11,9 @@ use Illuminate\Foundation\Application;
 use League\Flysystem\FilesystemAdapter;
 use App\Extensions\Filesystem\S3Filesystem;
 use League\Flysystem\InMemory\InMemoryFilesystemAdapter;
-use Illuminate\Contracts\Config\Repository as ConfigRepository;
 
 class BackupManager
 {
-    protected ConfigRepository $config;
-
     /**
      * The array of resolved backup drivers.
      */
@@ -32,7 +29,6 @@ class BackupManager
      */
     public function __construct(protected Application $app)
     {
-        $this->config = $app->make(ConfigRepository::class);
     }
 
     /**
@@ -127,7 +123,7 @@ class BackupManager
      */
     protected function getConfig(string $name): array
     {
-        return $this->config->get("backups.disks.$name") ?: [];
+        return config("backups.disks.$name") ?: [];
     }
 
     /**
@@ -135,7 +131,7 @@ class BackupManager
      */
     public function getDefaultAdapter(): string
     {
-        return $this->config->get('backups.default');
+        return config('backups.default');
     }
 
     /**
@@ -143,7 +139,7 @@ class BackupManager
      */
     public function setDefaultAdapter(string $name): void
     {
-        $this->config->set('backups.default', $name);
+        config()->set('backups.default', $name);
     }
 
     /**
@@ -163,7 +159,7 @@ class BackupManager
     /**
      * Register a custom adapter creator closure.
      */
-    public function extend(string $adapter, \Closure $callback): self
+    public function extend(string $adapter, Closure $callback): self
     {
         $this->customCreators[$adapter] = $callback;
 

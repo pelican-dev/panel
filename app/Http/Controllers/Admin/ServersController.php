@@ -24,7 +24,6 @@ use App\Services\Databases\DatabasePasswordService;
 use App\Services\Servers\DetailsModificationService;
 use App\Services\Servers\StartupModificationService;
 use App\Services\Databases\DatabaseManagementService;
-use Illuminate\Contracts\Config\Repository as ConfigRepository;
 use App\Services\Servers\ServerConfigurationStructureService;
 use App\Http\Requests\Admin\Servers\Databases\StoreServerDatabaseRequest;
 
@@ -36,7 +35,6 @@ class ServersController extends Controller
     public function __construct(
         protected AlertsMessageBag $alert,
         protected BuildModificationService $buildModificationService,
-        protected ConfigRepository $config,
         protected DaemonServerRepository $daemonServerRepository,
         protected DatabaseManagementService $databaseManagementService,
         protected DatabasePasswordService $databasePasswordService,

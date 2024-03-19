@@ -4,18 +4,10 @@ namespace App\Services\Eggs;
 
 use Ramsey\Uuid\Uuid;
 use App\Models\Egg;
-use Illuminate\Contracts\Config\Repository as ConfigRepository;
 use App\Exceptions\Service\Egg\NoParentConfigurationFoundException;
 
 class EggCreationService
 {
-    /**
-     * EggCreationService constructor.
-     */
-    public function __construct(private ConfigRepository $config)
-    {
-    }
-
     /**
      * Create a new egg.
      *
@@ -32,7 +24,7 @@ class EggCreationService
 
         return Egg::query()->create(array_merge($data, [
             'uuid' => Uuid::uuid4()->toString(),
-            'author' => $this->config->get('panel.service.author'),
+            'author' => config('panel.service.author'),
         ]));
     }
 }
