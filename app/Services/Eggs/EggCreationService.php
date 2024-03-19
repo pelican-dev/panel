@@ -26,19 +26,13 @@ class EggCreationService
     {
         $data['config_from'] = array_get($data, 'config_from');
         if (!is_null($data['config_from'])) {
-            $results = Egg::query()
-                ->where('nest_id', array_get($data, 'nest_id'))
-                ->where('id', array_get($data, 'config_from'))
-                ->count();
-
-            if ($results !== 1) {
-                throw new NoParentConfigurationFoundException(trans('exceptions.egg.invalid_copy_id'));
-            }
+            $parentEgg = Egg::query()->find(array_get($data, 'config_from'));
+            throw_unless($parentEgg, new NoParentConfigurationFoundException(trans('exceptions.egg.invalid_copy_id')));
         }
 
         return Egg::query()->create(array_merge($data, [
             'uuid' => Uuid::uuid4()->toString(),
-            'author' => $this->config->get('pterodactyl.service.author'),
+            'author' => $this->config->get('panel.service.author'),
         ]));
     }
 }
