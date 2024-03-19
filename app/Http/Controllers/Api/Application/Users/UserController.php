@@ -7,7 +7,6 @@ use Illuminate\Http\JsonResponse;
 use Spatie\QueryBuilder\QueryBuilder;
 use App\Services\Users\UserUpdateService;
 use App\Services\Users\UserCreationService;
-use App\Services\Users\UserDeletionService;
 use App\Transformers\Api\Application\UserTransformer;
 use App\Http\Requests\Api\Application\Users\GetUsersRequest;
 use App\Http\Requests\Api\Application\Users\StoreUserRequest;
@@ -22,7 +21,6 @@ class UserController extends ApplicationApiController
      */
     public function __construct(
         private UserCreationService $creationService,
-        private UserDeletionService $deletionService,
         private UserUpdateService $updateService
     ) {
         parent::__construct();
@@ -99,14 +97,11 @@ class UserController extends ApplicationApiController
     }
 
     /**
-     * Handle a request to delete a user from the Panel. Returns a HTTP/204 response
-     * on successful deletion.
-     *
-     * @throws \App\Exceptions\DisplayException
+     * Handle a request to delete a user from the Panel. Returns a HTTP/204 response on successful deletion.
      */
     public function delete(DeleteUserRequest $request, User $user): JsonResponse
     {
-        $this->deletionService->handle($user);
+        $user->delete();
 
         return new JsonResponse([], JsonResponse::HTTP_NO_CONTENT);
     }

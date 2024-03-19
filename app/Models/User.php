@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Exceptions\DisplayException;
 use App\Rules\Username;
 use App\Facades\Activity;
 use Illuminate\Support\Collection;
@@ -166,6 +167,15 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
         'use_totp' => 'boolean',
         'totp_secret' => 'nullable|string',
     ];
+
+    protected static function booted(): void
+    {
+        static::deleting(function (self $user) {
+            throw_if($user->servers()->count() > 0, new DisplayException(__('admin/user.exceptions.user_has_servers')));
+
+            throw_if(request()->user()?->id === $user->id, new DisplayException(__('admin/user.exceptions.user_is_self')));
+        });
+    }
 
     /**
      * Implement language verification by overriding Eloquence's gather

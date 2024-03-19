@@ -10,13 +10,11 @@ use Illuminate\Http\RedirectResponse;
 use Prologue\Alerts\AlertsMessageBag;
 use Spatie\QueryBuilder\QueryBuilder;
 use Illuminate\View\Factory as ViewFactory;
-use App\Exceptions\DisplayException;
 use App\Http\Controllers\Controller;
 use Illuminate\Contracts\Translation\Translator;
 use App\Services\Users\UserUpdateService;
 use App\Traits\Helpers\AvailableLanguages;
 use App\Services\Users\UserCreationService;
-use App\Services\Users\UserDeletionService;
 use App\Http\Requests\Admin\UserFormRequest;
 use App\Http\Requests\Admin\NewUserFormRequest;
 
@@ -30,7 +28,6 @@ class UserController extends Controller
     public function __construct(
         protected AlertsMessageBag $alert,
         protected UserCreationService $creationService,
-        protected UserDeletionService $deletionService,
         protected Translator $translator,
         protected UserUpdateService $updateService,
         protected ViewFactory $view
@@ -84,13 +81,9 @@ class UserController extends Controller
      * @throws \Exception
      * @throws \App\Exceptions\DisplayException
      */
-    public function delete(Request $request, User $user): RedirectResponse
+    public function delete(User $user): RedirectResponse
     {
-        if ($request->user()->id === $user->id) {
-            throw new DisplayException($this->translator->get('admin/user.exceptions.user_has_servers'));
-        }
-
-        $this->deletionService->handle($user);
+        $user->delete();
 
         return redirect()->route('admin.users');
     }
@@ -130,18 +123,19 @@ class UserController extends Controller
      */
     public function json(Request $request): JsonResponse
     {
-        $userPaginator = QueryBuilder::for(User::query())->allowedFilters(['email'])->paginate(25);
-
-        /** @var User[] $users */
-        $users = $userPaginator->items();
-
-        // Handle single user requests.
-        if ($request->query('user_id')) {
-            $user = User::query()->findOrFail($request->input('user_id'));
+        // Handle single user requests | TODO: Separate this out into its own method
+        if ($userId = $request->query('user_id')) {
+            $user = User::query()->findOrFail($userId);
             $user['md5'] = md5(strtolower($user->email));
 
             return response()->json($user);
         }
+
+        // Handle all users list
+        $userPaginator = QueryBuilder::for(User::query())->allowedFilters(['email'])->paginate(25);
+
+        /** @var User[] $users */
+        $users = $userPaginator->items();
 
         return response()->json(collect($users)->map(function (User $user) {
             $user['md5'] = md5(strtolower($user->email));

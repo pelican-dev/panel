@@ -5,21 +5,12 @@ namespace App\Console\Commands\User;
 use App\Models\User;
 use Webmozart\Assert\Assert;
 use Illuminate\Console\Command;
-use App\Services\Users\UserDeletionService;
 
 class DeleteUserCommand extends Command
 {
     protected $description = 'Deletes a user from the Panel if no servers are attached to their account.';
 
     protected $signature = 'p:user:delete {--user=}';
-
-    /**
-     * DeleteUserCommand constructor.
-     */
-    public function __construct(private UserDeletionService $deletionService)
-    {
-        parent::__construct();
-    }
 
     public function handle(): int
     {
@@ -62,7 +53,9 @@ class DeleteUserCommand extends Command
         }
 
         if ($this->confirm(trans('command/messages.user.confirm_delete')) || !$this->input->isInteractive()) {
-            $this->deletionService->handle($deleteUser);
+            $user = User::query()->findOrFail($deleteUser);
+            $user->delete();
+
             $this->info(trans('command/messages.user.deleted'));
         }
 
