@@ -5,7 +5,6 @@ namespace App\Services\Databases\Hosts;
 use App\Models\DatabaseHost;
 use Illuminate\Database\DatabaseManager;
 use Illuminate\Database\ConnectionInterface;
-use Illuminate\Contracts\Encryption\Encrypter;
 use App\Extensions\DynamicDatabaseConnection;
 
 class HostCreationService
@@ -17,7 +16,6 @@ class HostCreationService
         private ConnectionInterface $connection,
         private DatabaseManager $databaseManager,
         private DynamicDatabaseConnection $dynamic,
-        private Encrypter $encrypter,
     ) {
     }
 
@@ -30,7 +28,7 @@ class HostCreationService
     {
         return $this->connection->transaction(function () use ($data) {
             $host = DatabaseHost::query()->create([
-                'password' => $this->encrypter->encrypt(array_get($data, 'password')),
+                'password' => encrypt(array_get($data, 'password')),
                 'name' => array_get($data, 'name'),
                 'host' => array_get($data, 'host'),
                 'port' => array_get($data, 'port'),

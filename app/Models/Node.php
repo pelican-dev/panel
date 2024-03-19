@@ -4,9 +4,7 @@ namespace App\Models;
 
 use Illuminate\Support\Str;
 use Symfony\Component\Yaml\Yaml;
-use Illuminate\Container\Container;
 use Illuminate\Notifications\Notifiable;
-use Illuminate\Contracts\Encryption\Encrypter;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 
@@ -136,7 +134,7 @@ class Node extends Model
             'debug' => false,
             'uuid' => $this->uuid,
             'token_id' => $this->daemon_token_id,
-            'token' => Container::getInstance()->make(Encrypter::class)->decrypt($this->daemon_token),
+            'token' => decrypt($this->daemon_token),
             'api' => [
                 'host' => '0.0.0.0',
                 'port' => $this->daemonListen,
@@ -179,7 +177,7 @@ class Node extends Model
      */
     public function getDecryptedKey(): string
     {
-        return (string) Container::getInstance()->make(Encrypter::class)->decrypt(
+        return (string) decrypt(
             $this->daemon_token
         );
     }

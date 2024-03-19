@@ -8,7 +8,6 @@ use Illuminate\Support\Str;
 use App\Models\User;
 use PragmaRX\Google2FA\Google2FA;
 use Illuminate\Database\ConnectionInterface;
-use Illuminate\Contracts\Encryption\Encrypter;
 use App\Exceptions\Service\User\TwoFactorAuthenticationTokenInvalid;
 
 class ToggleTwoFactorService
@@ -18,7 +17,6 @@ class ToggleTwoFactorService
      */
     public function __construct(
         private ConnectionInterface $connection,
-        private Encrypter $encrypter,
         private Google2FA $google2FA,
     ) {
     }
@@ -34,7 +32,7 @@ class ToggleTwoFactorService
      */
     public function handle(User $user, string $token, bool $toggleState = null): array
     {
-        $secret = $this->encrypter->decrypt($user->totp_secret);
+        $secret = decrypt($user->totp_secret);
 
         $isValidToken = $this->google2FA->verifyKey($secret, $token, config()->get('panel.auth.2fa.window'));
 

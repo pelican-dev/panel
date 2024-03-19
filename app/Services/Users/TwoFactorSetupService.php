@@ -3,19 +3,10 @@
 namespace App\Services\Users;
 
 use App\Models\User;
-use Illuminate\Contracts\Encryption\Encrypter;
 
 class TwoFactorSetupService
 {
     public const VALID_BASE32_CHARACTERS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ234567';
-
-    /**
-     * TwoFactorSetupService constructor.
-     */
-    public function __construct(
-        private Encrypter $encrypter,
-    ) {
-    }
 
     /**
      * Generate a 2FA token and store it in the database before returning the
@@ -35,7 +26,7 @@ class TwoFactorSetupService
             throw new \RuntimeException($exception->getMessage(), 0, $exception);
         }
 
-        $user->totp_secret = $this->encrypter->encrypt($secret);
+        $user->totp_secret = encrypt($secret);
         $user->save();
 
         $company = urlencode(preg_replace('/\s/', '', config('app.name')));

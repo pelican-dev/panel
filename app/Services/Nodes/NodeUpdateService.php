@@ -5,7 +5,6 @@ namespace App\Services\Nodes;
 use Illuminate\Support\Str;
 use App\Models\Node;
 use Illuminate\Database\ConnectionInterface;
-use Illuminate\Contracts\Encryption\Encrypter;
 use App\Repositories\Daemon\DaemonConfigurationRepository;
 use App\Exceptions\Http\Connection\DaemonConnectionException;
 use App\Exceptions\Service\Node\ConfigurationNotPersistedException;
@@ -18,7 +17,6 @@ class NodeUpdateService
     public function __construct(
         private ConnectionInterface $connection,
         private DaemonConfigurationRepository $configurationRepository,
-        private Encrypter $encrypter,
     ) {
     }
 
@@ -30,7 +28,7 @@ class NodeUpdateService
     public function handle(Node $node, array $data, bool $resetToken = false): Node
     {
         if ($resetToken) {
-            $data['daemon_token'] = $this->encrypter->encrypt(Str::random(Node::DAEMON_TOKEN_LENGTH));
+            $data['daemon_token'] = encrypt(Str::random(Node::DAEMON_TOKEN_LENGTH));
             $data['daemon_token_id'] = Str::random(Node::DAEMON_TOKEN_ID_LENGTH);
         }
 

@@ -8,7 +8,6 @@ use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use PragmaRX\Google2FA\Google2FA;
 use Illuminate\Support\Facades\Event;
-use Illuminate\Contracts\Encryption\Encrypter;
 use App\Events\Auth\ProvidedAuthenticationToken;
 use App\Http\Requests\Auth\LoginCheckpointRequest;
 use Illuminate\Contracts\Validation\Factory as ValidationFactory;
@@ -21,7 +20,6 @@ class LoginCheckpointController extends AbstractLoginController
      * LoginCheckpointController constructor.
      */
     public function __construct(
-        private Encrypter $encrypter,
         private Google2FA $google2FA,
         private ValidationFactory $validation
     ) {
@@ -67,7 +65,7 @@ class LoginCheckpointController extends AbstractLoginController
                 return $this->sendLoginResponse($user, $request);
             }
         } else {
-            $decrypted = $this->encrypter->decrypt($user->totp_secret);
+            $decrypted = decrypt($user->totp_secret);
 
             if ($this->google2FA->verifyKey($decrypted, (string) $request->input('authentication_code'), config('panel.auth.2fa.window'))) {
                 Event::dispatch(new ProvidedAuthenticationToken($user));

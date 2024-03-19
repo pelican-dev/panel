@@ -7,21 +7,10 @@ use League\Fractal\Resource\Item;
 use App\Models\DatabaseHost;
 use League\Fractal\Resource\NullResource;
 use App\Services\Acl\Api\AdminAcl;
-use Illuminate\Contracts\Encryption\Encrypter;
 
 class ServerDatabaseTransformer extends BaseTransformer
 {
     protected array $availableIncludes = ['password', 'host'];
-
-    private Encrypter $encrypter;
-
-    /**
-     * Perform dependency injection.
-     */
-    public function handle(Encrypter $encrypter)
-    {
-        $this->encrypter = $encrypter;
-    }
 
     /**
      * Return the resource name for the JSONAPI output.
@@ -56,7 +45,7 @@ class ServerDatabaseTransformer extends BaseTransformer
     {
         return $this->item($model, function (Database $model) {
             return [
-                'password' => $this->encrypter->decrypt($model->password),
+                'password' => decrypt($model->password),
             ];
         }, 'database_password');
     }

@@ -2,12 +2,10 @@
 
 namespace App\Services\Databases;
 
-use Exception;
 use App\Models\Server;
 use App\Models\Database;
 use App\Helpers\Utilities;
 use Illuminate\Database\ConnectionInterface;
-use Illuminate\Contracts\Encryption\Encrypter;
 use App\Extensions\DynamicDatabaseConnection;
 use App\Exceptions\Repository\DuplicateDatabaseNameException;
 use App\Exceptions\Service\Database\TooManyDatabasesException;
@@ -34,7 +32,6 @@ class DatabaseManagementService
     public function __construct(
         protected ConnectionInterface $connection,
         protected DynamicDatabaseConnection $dynamic,
-        protected Encrypter $encrypter,
     ) {
     }
 
@@ -89,7 +86,7 @@ class DatabaseManagementService
         $data = array_merge($data, [
             'server_id' => $server->id,
             'username' => sprintf('u%d_%s', $server->id, str_random(10)),
-            'password' => $this->encrypter->encrypt(
+            'password' => encrypt(
                 Utilities::randomStringWithSpecialCharacters(24)
             ),
         ]);
@@ -103,7 +100,7 @@ class DatabaseManagementService
             $database->createUser(
                 $database->username,
                 $database->remote,
-                $this->encrypter->decrypt($database->password),
+                decrypt($database->password),
                 $database->max_connections
             );
             $database->assignUserToDatabase($database->database, $database->username, $database->remote);

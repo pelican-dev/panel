@@ -5,28 +5,13 @@ namespace App\Tests\Integration\Api\Daemon;
 use App\Http\Middleware\Api\Daemon\DaemonAuthenticate;
 use App\Models\Node;
 use App\Tests\Unit\Http\Middleware\MiddlewareTestCase;
-use Illuminate\Contracts\Encryption\Encrypter;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
-use Mockery as m;
-use Mockery\MockInterface;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 
 class DaemonAuthenticateTest extends MiddlewareTestCase
 {
-    private MockInterface $encrypter;
-
-    /**
-     * Setup tests.
-     */
-    public function setUp(): void
-    {
-        parent::setUp();
-
-        $this->encrypter = m::mock(Encrypter::class);
-    }
-
     /**
      * Test that if we are accessing the daemon configuration route this middleware is not
      * applied in order to allow an unauthenticated request to use a token to grab data.
@@ -86,8 +71,6 @@ class DaemonAuthenticateTest extends MiddlewareTestCase
         $this->request->expects('route->getName')->withNoArgs()->andReturn('random.route');
         $this->request->expects('bearerToken')->withNoArgs()->andReturn($node->daemon_token_id . '.random_string_123');
 
-        $this->encrypter->expects('decrypt')->with($node->daemon_token)->andReturns(decrypt($node->daemon_token));
-
         $this->getMiddleware()->handle($this->request, $this->getClosureAssertions());
     }
 
@@ -116,7 +99,6 @@ class DaemonAuthenticateTest extends MiddlewareTestCase
 
         $this->request->expects('route->getName')->withNoArgs()->andReturn('random.route');
         $this->request->expects('bearerToken')->withNoArgs()->andReturn($node->daemon_token_id . '.the_same');
-        $this->encrypter->expects('decrypt')->with($node->daemon_token)->andReturns(decrypt($node->daemon_token));
 
         $this->getMiddleware()->handle($this->request, $this->getClosureAssertions());
         $this->assertRequestHasAttribute('node');
@@ -147,6 +129,6 @@ class DaemonAuthenticateTest extends MiddlewareTestCase
      */
     private function getMiddleware(): DaemonAuthenticate
     {
-        return new DaemonAuthenticate($this->encrypter);
+        return new DaemonAuthenticate();
     }
 }

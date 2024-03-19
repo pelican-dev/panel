@@ -3,21 +3,12 @@
 namespace App\Extensions;
 
 use App\Models\DatabaseHost;
-use Illuminate\Contracts\Encryption\Encrypter;
 
 class DynamicDatabaseConnection
 {
     public const DB_CHARSET = 'utf8';
     public const DB_COLLATION = 'utf8_unicode_ci';
     public const DB_DRIVER = 'mysql';
-
-    /**
-     * DynamicDatabaseConnection constructor.
-     */
-    public function __construct(
-        protected Encrypter $encrypter,
-    ) {
-    }
 
     /**
      * Adds a dynamic database connection entry to the runtime config.
@@ -34,7 +25,7 @@ class DynamicDatabaseConnection
             'port' => $host->port,
             'database' => $database,
             'username' => $host->username,
-            'password' => $this->encrypter->decrypt($host->password),
+            'password' => decrypt($host->password),
             'charset' => self::DB_CHARSET,
             'collation' => self::DB_COLLATION,
         ]);

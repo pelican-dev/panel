@@ -7,7 +7,6 @@ use App\Models\Node;
 use App\Models\ApiKey;
 use Illuminate\Http\JsonResponse;
 use App\Http\Controllers\Controller;
-use Illuminate\Contracts\Encryption\Encrypter;
 use App\Services\Api\KeyCreationService;
 
 class NodeAutoDeployController extends Controller
@@ -16,7 +15,6 @@ class NodeAutoDeployController extends Controller
      * NodeAutoDeployController constructor.
      */
     public function __construct(
-        private Encrypter $encrypter,
         private KeyCreationService $keyCreationService
     ) {
     }
@@ -58,7 +56,7 @@ class NodeAutoDeployController extends Controller
 
         return new JsonResponse([
             'node' => $node->id,
-            'token' => $key->identifier . $this->encrypter->decrypt($key->token),
+            'token' => $key->identifier . decrypt($key->token),
         ]);
     }
 }

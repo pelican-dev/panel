@@ -5,7 +5,6 @@ namespace App\Services\Databases;
 use App\Models\Database;
 use App\Helpers\Utilities;
 use Illuminate\Database\ConnectionInterface;
-use Illuminate\Contracts\Encryption\Encrypter;
 use App\Extensions\DynamicDatabaseConnection;
 
 class DatabasePasswordService
@@ -16,7 +15,6 @@ class DatabasePasswordService
     public function __construct(
         private ConnectionInterface $connection,
         private DynamicDatabaseConnection $dynamic,
-        private Encrypter $encrypter,
     ) {
     }
 
@@ -35,7 +33,7 @@ class DatabasePasswordService
             $this->dynamic->set('dynamic', $database->database_host_id);
 
             $database->update([
-                'password' => $this->encrypter->encrypt($password),
+                'password' => encrypt($password),
             ]);
 
             $database->dropUser($database->username, $database->remote);

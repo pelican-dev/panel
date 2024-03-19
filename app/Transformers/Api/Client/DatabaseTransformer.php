@@ -6,23 +6,19 @@ use App\Models\Database;
 use League\Fractal\Resource\Item;
 use App\Models\Permission;
 use League\Fractal\Resource\NullResource;
-use Illuminate\Contracts\Encryption\Encrypter;
 use App\Contracts\Extensions\HashidsInterface;
 
 class DatabaseTransformer extends BaseClientTransformer
 {
     protected array $availableIncludes = ['password'];
 
-    private Encrypter $encrypter;
-
     private HashidsInterface $hashids;
 
     /**
      * Handle dependency injection.
      */
-    public function handle(Encrypter $encrypter, HashidsInterface $hashids)
+    public function handle(HashidsInterface $hashids)
     {
-        $this->encrypter = $encrypter;
         $this->hashids = $hashids;
     }
 
@@ -59,7 +55,7 @@ class DatabaseTransformer extends BaseClientTransformer
 
         return $this->item($database, function (Database $model) {
             return [
-                'password' => $this->encrypter->decrypt($model->password),
+                'password' => decrypt($model->password),
             ];
         }, 'database_password');
     }

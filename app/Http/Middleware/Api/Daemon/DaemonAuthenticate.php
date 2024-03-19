@@ -4,7 +4,6 @@ namespace App\Http\Middleware\Api\Daemon;
 
 use App\Models\Node;
 use Illuminate\Http\Request;
-use Illuminate\Contracts\Encryption\Encrypter;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
@@ -17,13 +16,6 @@ class DaemonAuthenticate
     protected array $except = [
         'daemon.configuration',
     ];
-
-    /**
-     * DaemonAuthenticate constructor.
-     */
-    public function __construct(private Encrypter $encrypter)
-    {
-    }
 
     /**
      * Check if a request from the daemon can be properly attributed back to a single node instance.
@@ -49,7 +41,7 @@ class DaemonAuthenticate
         /** @var Node $node */
         $node = Node::query()->where('daemon_token_id', $parts[0])->firstOrFail();
 
-        if (hash_equals((string) $this->encrypter->decrypt($node->daemon_token), $parts[1])) {
+        if (hash_equals((string) decrypt($node->daemon_token), $parts[1])) {
             $request->attributes->set('node', $node);
 
             return $next($request);

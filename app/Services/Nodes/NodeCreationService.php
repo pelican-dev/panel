@@ -5,7 +5,6 @@ namespace App\Services\Nodes;
 use Ramsey\Uuid\Uuid;
 use Illuminate\Support\Str;
 use App\Models\Node;
-use Illuminate\Contracts\Encryption\Encrypter;
 
 class NodeCreationService
 {
@@ -17,7 +16,7 @@ class NodeCreationService
     public function handle(array $data): Node
     {
         $data['uuid'] = Uuid::uuid4()->toString();
-        $data['daemon_token'] = app(Encrypter::class)->encrypt(Str::random(Node::DAEMON_TOKEN_LENGTH));
+        $data['daemon_token'] = encrypt(Str::random(Node::DAEMON_TOKEN_LENGTH));
         $data['daemon_token_id'] = Str::random(Node::DAEMON_TOKEN_ID_LENGTH);
 
         return Node::query()->create($data);

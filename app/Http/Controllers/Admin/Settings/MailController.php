@@ -11,7 +11,6 @@ use App\Notifications\MailTested;
 use Illuminate\Support\Facades\Notification;
 use App\Exceptions\DisplayException;
 use App\Http\Controllers\Controller;
-use Illuminate\Contracts\Encryption\Encrypter;
 use App\Providers\SettingsServiceProvider;
 use App\Http\Requests\Admin\Settings\MailSettingsFormRequest;
 
@@ -21,7 +20,6 @@ class MailController extends Controller
      * MailController constructor.
      */
     public function __construct(
-        private Encrypter $encrypter,
         private Kernel $kernel,
     ) {
     }
@@ -56,7 +54,7 @@ class MailController extends Controller
 
         foreach ($values as $key => $value) {
             if (in_array($key, SettingsServiceProvider::getEncryptedKeys()) && !empty($value)) {
-                $value = $this->encrypter->encrypt($value);
+                $value = encrypt($value);
             }
 
             Setting::set('settings::' . $key, $value);

@@ -3,18 +3,10 @@
 namespace App\Services\Api;
 
 use App\Models\ApiKey;
-use Illuminate\Contracts\Encryption\Encrypter;
 
 class KeyCreationService
 {
     private int $keyType = ApiKey::TYPE_NONE;
-
-    /**
-     * ApiKeyService constructor.
-     */
-    public function __construct(private Encrypter $encrypter)
-    {
-    }
 
     /**
      * Set the type of key that should be created. By default, an orphaned key will be
@@ -39,7 +31,7 @@ class KeyCreationService
         $data = array_merge($data, [
             'key_type' => $this->keyType,
             'identifier' => ApiKey::generateTokenIdentifier($this->keyType),
-            'token' => $this->encrypter->encrypt(str_random(ApiKey::KEY_LENGTH)),
+            'token' => encrypt(str_random(ApiKey::KEY_LENGTH)),
         ]);
 
         if ($this->keyType === ApiKey::TYPE_APPLICATION) {
