@@ -21,11 +21,11 @@ class DatabaseHostFactory extends Factory
     public function definition(): array
     {
         return [
-            'name' => $this->faker->colorName,
-            'host' => $this->faker->unique()->ipv4,
+            'name' => $this->faker->colorName(),
+            'host' => $this->faker->unique()->ipv4(),
             'port' => 3306,
-            'username' => $this->faker->colorName,
-            'password' => Crypt::encrypt($this->faker->word),
+            'username' => $this->faker->colorName(),
+            'password' => Crypt::encrypt($this->faker->word()),
         ];
     }
 }

@@ -24,7 +24,7 @@ class CreateServerSubuserTest extends ClientApiIntegrationTestCase
         [$user, $server] = $this->generateTestAccount($permissions);
 
         $response = $this->actingAs($user)->postJson($this->link($server) . '/users', [
-            'email' => $email = $this->faker->email,
+            'email' => $email = $this->faker->email(),
             'permissions' => [
                 Permission::ACTION_USER_CREATE,
             ],
@@ -61,7 +61,7 @@ class CreateServerSubuserTest extends ClientApiIntegrationTestCase
         ]);
 
         $response = $this->actingAs($user)->postJson($this->link($server) . '/users', [
-            'email' => $this->faker->email,
+            'email' => $this->faker->email(),
             'permissions' => [
                 Permission::ACTION_USER_CREATE,
                 Permission::ACTION_USER_UPDATE, // This permission is not assigned to the subuser.
@@ -112,7 +112,7 @@ class CreateServerSubuserTest extends ClientApiIntegrationTestCase
         [$user, $server] = $this->generateTestAccount();
 
         /** @var \App\Models\User $existing */
-        $existing = User::factory()->create(['email' => $this->faker->email]);
+        $existing = User::factory()->create(['email' => $this->faker->email()]);
 
         $response = $this->actingAs($user)->postJson($this->link($server) . '/users', [
             'email' => $existing->email,
@@ -135,7 +135,7 @@ class CreateServerSubuserTest extends ClientApiIntegrationTestCase
         [$user, $server] = $this->generateTestAccount();
 
         $response = $this->actingAs($user)->postJson($this->link($server) . '/users', [
-            'email' => $email = $this->faker->email,
+            'email' => $email = $this->faker->email(),
             'permissions' => [
                 Permission::ACTION_USER_CREATE,
             ],

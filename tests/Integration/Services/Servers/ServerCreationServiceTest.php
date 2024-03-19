@@ -76,8 +76,8 @@ class ServerCreationServiceTest extends IntegrationTestCase
         ]);
 
         $data = [
-            'name' => $this->faker->name,
-            'description' => $this->faker->sentence,
+            'name' => $this->faker->name(),
+            'description' => $this->faker->sentence(),
             'owner_id' => $user->id,
             'memory' => 256,
             'swap' => 128,
@@ -162,8 +162,8 @@ class ServerCreationServiceTest extends IntegrationTestCase
         ]);
 
         $data = [
-            'name' => $this->faker->name,
-            'description' => $this->faker->sentence,
+            'name' => $this->faker->name(),
+            'description' => $this->faker->sentence(),
             'owner_id' => $user->id,
             'allocation_id' => $allocation->id,
             'node_id' => $allocation->node_id,

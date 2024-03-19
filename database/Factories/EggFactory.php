@@ -22,7 +22,7 @@ class EggFactory extends Factory
     {
         return [
             'uuid' => Uuid::uuid4()->toString(),
-            'name' => $this->faker->name,
+            'name' => $this->faker->name(),
             'description' => implode(' ', $this->faker->sentences()),
             'startup' => 'java -jar test.jar',
         ];
