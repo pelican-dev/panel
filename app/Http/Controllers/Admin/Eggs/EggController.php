@@ -10,7 +10,6 @@ use Illuminate\View\Factory as ViewFactory;
 use App\Http\Controllers\Controller;
 use App\Services\Eggs\EggUpdateService;
 use App\Services\Eggs\EggCreationService;
-use App\Services\Eggs\EggDeletionService;
 use App\Http\Requests\Admin\Egg\EggFormRequest;
 
 class EggController extends Controller
@@ -21,7 +20,6 @@ class EggController extends Controller
     public function __construct(
         protected AlertsMessageBag $alert,
         protected EggCreationService $creationService,
-        protected EggDeletionService $deletionService,
         protected EggUpdateService $updateService,
         protected ViewFactory $view
     ) {
@@ -105,7 +103,8 @@ class EggController extends Controller
      */
     public function destroy(Egg $egg): RedirectResponse
     {
-        $this->deletionService->handle($egg->id);
+        $egg->delete();
+
         $this->alert->success(trans('admin/eggs.notices.deleted'))->flash();
 
         return redirect()->route('admin.eggs.view', $egg->id);

@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use App\Exceptions\Service\Egg\HasChildrenException;
+use App\Exceptions\Service\HasActiveServersException;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
@@ -140,6 +142,15 @@ class Egg extends Model
         'update_url' => null,
     ];
 
+    protected static function booted(): void
+    {
+        static::deleting(function (self $egg) {
+            throw_if($egg->servers()->count(), new HasActiveServersException(trans('exceptions.egg.delete_has_servers')));
+
+            throw_if($egg->children()->count(), new HasChildrenException(trans('exceptions.egg.has_children')));
+        });
+    }
+
     /**
      * Returns the install script for the egg; if egg is copying from another
      * it will return the copied script.
@@ -275,6 +286,11 @@ class Egg extends Model
     public function scriptFrom(): BelongsTo
     {
         return $this->belongsTo(self::class, 'copy_script_from');
+    }
+
+    public function children(): HasMany
+    {
+        return $this->hasMany(self::class, 'config_from');
     }
 
     /**

@@ -45,10 +45,8 @@ class DatabaseController extends Controller
     /**
      * Display database host to user.
      */
-    public function view(int $host): View
+    public function view(DatabaseHost $host): View
     {
-        /** @var DatabaseHost $host */
-        $host = DatabaseHost::query()->findOrFail($host);
         $databases = $host->databases()->with('server')->paginate(25);
 
         return view('admin.databases.view', [
