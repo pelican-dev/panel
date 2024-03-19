@@ -7,7 +7,6 @@ use GuzzleHttp\Exception\GuzzleException;
 use GuzzleHttp\Exception\TransferException;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Query\JoinClause;
-use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Http;
 use Psr\Http\Message\ResponseInterface;
 use Znck\Eloquent\Traits\BelongsToThrough;
@@ -326,7 +325,7 @@ class Server extends Model
 
     public function resolveRouteBinding($value, $field = null): ?self
     {
-        return match($field) {
+        return match ($field) {
             'uuid' => $this->where('uuidShort', $value)->orWhere('uuid', $value)->firstOrFail(),
             default => $this->where('id', $value)->firstOrFail(),
         };

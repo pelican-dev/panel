@@ -2,10 +2,8 @@
 
 namespace App\Models;
 
-use Carbon\CarbonImmutable;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
-use Illuminate\Support\Carbon;
 use Illuminate\Validation\Rule;
 use Illuminate\Container\Container;
 use Illuminate\Validation\ValidationException;

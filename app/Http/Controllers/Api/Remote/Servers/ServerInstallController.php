@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\Api\Remote\Servers;
 
-use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use App\Models\Server;
 use Illuminate\Http\JsonResponse;
