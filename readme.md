@@ -1,3 +1,5 @@
+![image](https://github.com/pelican-dev/panel/assets/1296882/6c545ae3-24b9-4d30-af21-d08d2e53b673)
+
 # Pelican Panel
 
 Pelican® is a free, open-source game server management panel built with PHP, React, and Go. Designed with security
