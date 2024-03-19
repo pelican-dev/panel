@@ -6,18 +6,10 @@ use GuzzleHttp\Client;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use App\Events\Auth\FailedCaptcha;
-use Illuminate\Contracts\Events\Dispatcher;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 
 class VerifyReCaptcha
 {
-    /**
-     * VerifyReCaptcha constructor.
-     */
-    public function __construct(private Dispatcher $dispatcher)
-    {
-    }
-
     /**
      * Handle an incoming request.
      */
@@ -45,12 +37,7 @@ class VerifyReCaptcha
             }
         }
 
-        $this->dispatcher->dispatch(
-            new FailedCaptcha(
-                $request->ip(),
-                !empty($result) ? ($result->hostname ?? null) : null
-            )
-        );
+        event(new FailedCaptcha($request->ip(), $result->hostname ?? null));
 
         throw new HttpException(Response::HTTP_BAD_REQUEST, 'Failed to validate reCAPTCHA data.');
     }

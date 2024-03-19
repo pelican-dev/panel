@@ -8,7 +8,7 @@ use Illuminate\Http\Request;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use App\Facades\Activity;
-use Illuminate\Contracts\View\View;
+use Illuminate\View\View;
 
 class LoginController extends AbstractLoginController
 {

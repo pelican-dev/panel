@@ -5,10 +5,9 @@ namespace App\Listeners\Auth;
 use App\Facades\Activity;
 use Illuminate\Auth\Events\Failed;
 use App\Events\Auth\DirectLogin;
-use Illuminate\Contracts\Events\Dispatcher;
-use App\Extensions\Illuminate\Events\Contracts\SubscribesToEvents;
+use Illuminate\Events\Dispatcher;
 
-class AuthenticationListener implements SubscribesToEvents
+class AuthenticationListener
 {
     /**
      * Handles an authentication event by logging the user and information about

@@ -8,7 +8,6 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Contracts\Hashing\Hasher;
 use Illuminate\Support\Facades\Password;
 use Illuminate\Auth\Events\PasswordReset;
-use Illuminate\Contracts\Events\Dispatcher;
 use App\Exceptions\DisplayException;
 use App\Http\Controllers\Controller;
 use Illuminate\Foundation\Auth\ResetsPasswords;
@@ -29,7 +28,6 @@ class ResetPasswordController extends Controller
      * ResetPasswordController constructor.
      */
     public function __construct(
-        private Dispatcher $dispatcher,
         private Hasher $hasher,
     ) {
     }
@@ -78,7 +76,7 @@ class ResetPasswordController extends Controller
         $user->setRememberToken(Str::random(60));
         $user->save();
 
-        $this->dispatcher->dispatch(new PasswordReset($user));
+        event(new PasswordReset($user));
 
         // If the user is not using 2FA log them in, otherwise skip this step and force a
         // fresh login where they'll be prompted to enter a token.
