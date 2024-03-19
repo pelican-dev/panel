@@ -9,7 +9,7 @@ use Symfony\Component\Console\Helper\ProgressBar;
 
 class UpgradeCommand extends Command
 {
-    protected const DEFAULT_URL = 'https://github.com/pterodactyl/panel/releases/%s/panel.tar.gz';
+    protected const DEFAULT_URL = 'https://github.com/pelican-dev/panel/releases/%s/panel.tar.gz';
 
     protected $signature = 'p:upgrade
         {--user= : The user that PHP runs under. All files will be owned by this user.}

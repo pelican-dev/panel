@@ -5,23 +5,23 @@ body:
 - type: markdown
   attributes:
     value: |
-      Bug reports should only be used for reporting issues with how the software works. For assistance installing this software, as well as debugging issues with dependencies, please use our [Discord server](https://discord.gg/pterodactyl).
+      Bug reports should only be used for reporting issues with how the software works. For assistance installing this software, as well as debugging issues with dependencies, please use our Discord Server.
 
-- type: textarea      
+- type: textarea
   attributes:
     label: Current Behavior
     description: Please provide a clear & concise description of the issue.
   validations:
     required: true
 
-- type: textarea      
+- type: textarea
   attributes:
     label: Expected Behavior
     description: Please describe what you expected to happen.
   validations:
     required: true
 
-- type: textarea      
+- type: textarea
   attributes:
     label: Steps to Reproduce
     description: Please be as detailed as possible when providing steps to reproduce, failure to provide steps will result in this issue being closed.
@@ -45,20 +45,20 @@ body:
     placeholder: 1.4.2
   validations:
     required: true
-    
+
 - type: input
   id: egg-details
   attributes:
     label: Games and/or Eggs Affected
     description: Please include the specific game(s) or egg(s) you are running into this bug with.
     placeholder: Minecraft (Paper), Minecraft (Forge)
- 
+
 - type: input
   id: docker-image
   attributes:
     label: Docker Image
     description: The specific Docker image you are using for the game(s) above.
-    placeholder: ghcr.io/pterodactyl/yolks:java_17
+    placeholder: ghcr.io/pelican-dev/yolks:java_17
 
 - type: textarea
   id: panel-logs
@@ -66,18 +66,18 @@ body:
     label: Error Logs
     description: |
       Run the following command to collect logs on your system.
-      
+
       Wings: `sudo wings diagnostics`
-      Panel: `tail -n 150 /var/www/pterodactyl/storage/logs/laravel-$(date +%F).log | nc pteropaste.com 99`
-    placeholder: "https://pteropaste.com/a1h6z"
+      Panel: `tail -n 150 /var/www/pelican/storage/logs/laravel-$(date +%F).log | nc pelipaste.com 99`
+    placeholder: "https://pelipaste.com/a1h6z"
     render: bash
   validations:
     required: false
-    
+
 - type: checkboxes
   attributes:
     label: Is there an existing issue for this?
-    description: Please [search here](https://github.com/pterodactyl/panel/issues) to see if an issue already exists for your problem.
+    description: Please [search here](https://github.com/pelican-dev/panel/issues) to see if an issue already exists for your problem.
     options:
     - label: I have searched the existing issues before opening this issue.
       required: true

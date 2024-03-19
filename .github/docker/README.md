@@ -1,8 +1,8 @@
-# Pterodactyl Panel - Docker Image
+# Pelican Panel - Docker Image
 This is a ready to use docker image for the panel.
 
 ## Requirements
-This docker image requires some additional software to function. The software can either be provided in other containers (see the [docker-compose.yml](https://github.com/pterodactyl/panel/blob/develop/docker-compose.example.yml) as an example) or as existing instances.
+This docker image requires some additional software to function. The software can either be provided in other containers (see the [docker-compose.yml](https://github.com/pelican-dev/panel/blob/develop/docker-compose.example.yml) as an example) or as existing instances.
 
 A mysql database is required. We recommend the stock [MariaDB Image](https://hub.docker.com/_/mariadb/) image if you prefer to run it in a docker container. As a non-containerized option we recommend mariadb.
 
@@ -12,7 +12,7 @@ You can provide additional settings using a custom `.env` file or by setting the
 
 ## Setup
 
-Start the docker container and the required dependencies (either provide existing ones or start containers as well, see the [docker-compose.yml](https://github.com/pterodactyl/panel/blob/develop/docker-compose.example.yml) file as an example.
+Start the docker container and the required dependencies (either provide existing ones or start containers as well, see the [docker-compose.yml](https://github.com/pelican-dev/panel/blob/develop/docker-compose.example.yml) file as an example.
 
 After the startup is complete you'll need to create a user.
 If you are running the docker container without docker-compose, use:
