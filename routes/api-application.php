@@ -11,7 +11,7 @@ use App\Http\Controllers\Api\Application;
 | Endpoint: /api/application/users
 |
 */
-Route::group(['prefix' => '/users'], function () {
+Route::prefix('/users')->group(function () {
     Route::get('/', [Application\Users\UserController::class, 'index'])->name('api.application.users');
     Route::get('/{user:id}', [Application\Users\UserController::class, 'view'])->name('api.application.users.view');
     Route::get('/external/{external_id}', [Application\Users\ExternalUserController::class, 'index'])->name('api.application.users.external');
@@ -30,7 +30,7 @@ Route::group(['prefix' => '/users'], function () {
 | Endpoint: /api/application/nodes
 |
 */
-Route::group(['prefix' => '/nodes'], function () {
+Route::prefix('/nodes')->group(function () {
     Route::get('/', [Application\Nodes\NodeController::class, 'index'])->name('api.application.nodes');
     Route::get('/deployable', Application\Nodes\NodeDeploymentController::class);
     Route::get('/{node:id}', [Application\Nodes\NodeController::class, 'view'])->name('api.application.nodes.view');
@@ -41,7 +41,7 @@ Route::group(['prefix' => '/nodes'], function () {
 
     Route::delete('/{node:id}', [Application\Nodes\NodeController::class, 'delete']);
 
-    Route::group(['prefix' => '/{node:id}/allocations'], function () {
+    Route::prefix('/{node:id}/allocations')->group(function () {
         Route::get('/', [Application\Nodes\AllocationController::class, 'index'])->name('api.application.allocations');
         Route::post('/', [Application\Nodes\AllocationController::class, 'store']);
         Route::delete('/{allocation:id}', [Application\Nodes\AllocationController::class, 'delete'])->name('api.application.allocations.view');
@@ -56,7 +56,7 @@ Route::group(['prefix' => '/nodes'], function () {
 | Endpoint: /api/application/servers
 |
 */
-Route::group(['prefix' => '/servers'], function () {
+Route::prefix('/servers')->group(function () {
     Route::get('/', [Application\Servers\ServerController::class, 'index'])->name('api.application.servers');
     Route::get('/{server:id}', [Application\Servers\ServerController::class, 'view'])->name('api.application.servers.view');
     Route::get('/external/{external_id}', [Application\Servers\ExternalServerController::class, 'index'])->name('api.application.servers.external');
@@ -74,7 +74,7 @@ Route::group(['prefix' => '/servers'], function () {
     Route::delete('/{server:id}/{force?}', [Application\Servers\ServerController::class, 'delete']);
 
     // Database Management Endpoint
-    Route::group(['prefix' => '/{server:id}/databases'], function () {
+    Route::prefix('/{server:id}/databases')->group(function () {
         Route::get('/', [Application\Servers\DatabaseController::class, 'index'])->name('api.application.servers.databases');
         Route::get('/{database:id}', [Application\Servers\DatabaseController::class, 'view'])->name('api.application.servers.databases.view');
 
@@ -93,7 +93,7 @@ Route::group(['prefix' => '/servers'], function () {
 | Endpoint: /api/application/eggs
 |
 */
-Route::group(['prefix' => '/eggs'], function () {
+Route::prefix('/eggs')->group(function () {
     Route::get('/', [Application\Eggs\EggController::class, 'index'])->name('api.application.eggs.eggs');
     Route::get('/{egg:id}', [Application\Eggs\EggController::class, 'view'])->name('api.application.eggs.eggs.view');
 });

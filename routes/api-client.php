@@ -51,14 +51,7 @@ Route::prefix('/account')->middleware(AccountSubject::class)->group(function () 
 | Endpoint: /api/client/servers/{server}
 |
 */
-Route::group([
-    'prefix' => '/servers/{server}',
-    'middleware' => [
-        ServerSubject::class,
-        AuthenticateServerAccess::class,
-        ResourceBelongsToServer::class,
-    ],
-], function () {
+Route::prefix('/servers/{server}')->middleware(ServerSubject::class, AuthenticateServerAccess::class, ResourceBelongsToServer::class)->group(function () {
     Route::get('/', [Client\Servers\ServerController::class, 'index'])->name('api:client:server.view');
     Route::get('/websocket', Client\Servers\WebsocketController::class)->name('api:client:server.ws');
     Route::get('/resources', Client\Servers\ResourceUtilizationController::class)->name('api:client:server.resources');
@@ -67,14 +60,14 @@ Route::group([
     Route::post('/command', [Client\Servers\CommandController::class, 'index']);
     Route::post('/power', [Client\Servers\PowerController::class, 'index']);
 
-    Route::group(['prefix' => '/databases'], function () {
+    Route::prefix('/databases')->group(function () {
         Route::get('/', [Client\Servers\DatabaseController::class, 'index']);
         Route::post('/', [Client\Servers\DatabaseController::class, 'store']);
         Route::post('/{database}/rotate-password', [Client\Servers\DatabaseController::class, 'rotatePassword']);
         Route::delete('/{database}', [Client\Servers\DatabaseController::class, 'delete']);
     });
 
-    Route::group(['prefix' => '/files'], function () {
+    Route::prefix('/files')->group(function () {
         Route::get('/list', [Client\Servers\FileController::class, 'directory']);
         Route::get('/contents', [Client\Servers\FileController::class, 'contents']);
         Route::get('/download', [Client\Servers\FileController::class, 'download']);
@@ -90,7 +83,7 @@ Route::group([
         Route::get('/upload', Client\Servers\FileUploadController::class);
     });
 
-    Route::group(['prefix' => '/schedules'], function () {
+    Route::prefix('/schedules')->group(function () {
         Route::get('/', [Client\Servers\ScheduleController::class, 'index']);
         Route::post('/', [Client\Servers\ScheduleController::class, 'store']);
         Route::get('/{schedule}', [Client\Servers\ScheduleController::class, 'view']);
@@ -103,7 +96,7 @@ Route::group([
         Route::delete('/{schedule}/tasks/{task}', [Client\Servers\ScheduleTaskController::class, 'delete']);
     });
 
-    Route::group(['prefix' => '/network'], function () {
+    Route::prefix('/network')->group(function () {
         Route::get('/allocations', [Client\Servers\NetworkAllocationController::class, 'index']);
         Route::post('/allocations', [Client\Servers\NetworkAllocationController::class, 'store']);
         Route::post('/allocations/{allocation}', [Client\Servers\NetworkAllocationController::class, 'update']);
@@ -111,7 +104,7 @@ Route::group([
         Route::delete('/allocations/{allocation}', [Client\Servers\NetworkAllocationController::class, 'delete']);
     });
 
-    Route::group(['prefix' => '/users'], function () {
+    Route::prefix('/users')->group(function () {
         Route::get('/', [Client\Servers\SubuserController::class, 'index']);
         Route::post('/', [Client\Servers\SubuserController::class, 'store']);
         Route::get('/{user}', [Client\Servers\SubuserController::class, 'view']);
@@ -119,7 +112,7 @@ Route::group([
         Route::delete('/{user}', [Client\Servers\SubuserController::class, 'delete']);
     });
 
-    Route::group(['prefix' => '/backups'], function () {
+    Route::prefix('/backups')->group(function () {
         Route::get('/', [Client\Servers\BackupController::class, 'index']);
         Route::post('/', [Client\Servers\BackupController::class, 'store']);
         Route::get('/{backup}', [Client\Servers\BackupController::class, 'view']);
@@ -129,12 +122,12 @@ Route::group([
         Route::delete('/{backup}', [Client\Servers\BackupController::class, 'delete']);
     });
 
-    Route::group(['prefix' => '/startup'], function () {
+    Route::prefix('/startup')->group(function () {
         Route::get('/', [Client\Servers\StartupController::class, 'index']);
         Route::put('/variable', [Client\Servers\StartupController::class, 'update']);
     });
 
-    Route::group(['prefix' => '/settings'], function () {
+    Route::prefix('/settings')->group(function () {
         Route::post('/rename', [Client\Servers\SettingsController::class, 'rename']);
         Route::post('/reinstall', [Client\Servers\SettingsController::class, 'reinstall']);
         Route::put('/docker-image', [Client\Servers\SettingsController::class, 'dockerImage']);

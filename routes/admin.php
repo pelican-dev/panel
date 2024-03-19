@@ -14,7 +14,7 @@ Route::get('/', [Admin\BaseController::class, 'index'])->name('admin.index');
 | Endpoint: /admin/api
 |
 */
-Route::group(['prefix' => 'api'], function () {
+Route::prefix('api')->group(function () {
     Route::get('/', [Admin\ApiController::class, 'index'])->name('admin.api.index');
     Route::get('/new', [Admin\ApiController::class, 'create'])->name('admin.api.new');
 
@@ -31,7 +31,7 @@ Route::group(['prefix' => 'api'], function () {
 | Endpoint: /admin/databases
 |
 */
-Route::group(['prefix' => 'databases'], function () {
+Route::prefix('databases')->group(function () {
     Route::get('/', [Admin\DatabaseController::class, 'index'])->name('admin.databases');
     Route::get('/view/{host:id}', [Admin\DatabaseController::class, 'view'])->name('admin.databases.view');
 
@@ -48,7 +48,7 @@ Route::group(['prefix' => 'databases'], function () {
 | Endpoint: /admin/settings
 |
 */
-Route::group(['prefix' => 'settings'], function () {
+Route::prefix('settings')->group(function () {
     Route::get('/', [Admin\Settings\IndexController::class, 'index'])->name('admin.settings');
     Route::get('/mail', [Admin\Settings\MailController::class, 'index'])->name('admin.settings.mail');
     Route::get('/advanced', [Admin\Settings\AdvancedController::class, 'index'])->name('admin.settings.advanced');
@@ -68,7 +68,7 @@ Route::group(['prefix' => 'settings'], function () {
 | Endpoint: /admin/users
 |
 */
-Route::group(['prefix' => 'users'], function () {
+Route::prefix('users')->group(function () {
     Route::get('/', [Admin\UserController::class, 'index'])->name('admin.users');
     Route::get('/accounts.json', [Admin\UserController::class, 'json'])->name('admin.users.json');
     Route::get('/new', [Admin\UserController::class, 'create'])->name('admin.users.new');
@@ -88,12 +88,12 @@ Route::group(['prefix' => 'users'], function () {
 | Endpoint: /admin/servers
 |
 */
-Route::group(['prefix' => 'servers'], function () {
+Route::prefix('servers')->group(function () {
     Route::get('/', [Admin\Servers\ServerController::class, 'index'])->name('admin.servers');
     Route::get('/new', [Admin\Servers\CreateServerController::class, 'index'])->name('admin.servers.new');
     Route::get('/view/{server:id}', [Admin\Servers\ServerViewController::class, 'index'])->name('admin.servers.view');
 
-    Route::group(['middleware' => [ServerInstalled::class]], function () {
+    Route::middleware(ServerInstalled::class)->group(function () {
         Route::get('/view/{server:id}/details', [Admin\Servers\ServerViewController::class, 'details'])->name('admin.servers.view.details');
         Route::get('/view/{server:id}/build', [Admin\Servers\ServerViewController::class, 'build'])->name('admin.servers.view.build');
         Route::get('/view/{server:id}/startup', [Admin\Servers\ServerViewController::class, 'startup'])->name('admin.servers.view.startup');
@@ -131,7 +131,7 @@ Route::group(['prefix' => 'servers'], function () {
 | Endpoint: /admin/nodes
 |
 */
-Route::group(['prefix' => 'nodes'], function () {
+Route::prefix('nodes')->group(function () {
     Route::get('/', [Admin\Nodes\NodeController::class, 'index'])->name('admin.nodes');
     Route::get('/new', [Admin\NodesController::class, 'create'])->name('admin.nodes.new');
     Route::get('/view/{node:id}', [Admin\Nodes\NodeViewController::class, 'index'])->name('admin.nodes.view');
@@ -162,7 +162,7 @@ Route::group(['prefix' => 'nodes'], function () {
 | Endpoint: /admin/mounts
 |
 */
-Route::group(['prefix' => 'mounts'], function () {
+Route::prefix('mounts')->group(function () {
     Route::get('/', [Admin\MountController::class, 'index'])->name('admin.mounts');
     Route::get('/view/{mount:id}', [Admin\MountController::class, 'view'])->name('admin.mounts.view');
 
@@ -184,7 +184,7 @@ Route::group(['prefix' => 'mounts'], function () {
 | Endpoint: /admin/eggs
 |
 */
-Route::group(['prefix' => 'eggs'], function () {
+Route::prefix('eggs')->group(function () {
     Route::controller(Admin\Eggs\EggController::class)->group(function () {
         Route::get('/', 'index')->name('admin.eggs');
         Route::get('/new', 'create')->name('admin.eggs.new');
