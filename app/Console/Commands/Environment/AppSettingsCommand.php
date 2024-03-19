@@ -92,7 +92,7 @@ class AppSettingsCommand extends Command
         );
 
         $selected = config('cache.default', 'redis');
-        $this->variables['CACHE_DRIVER'] = $this->option('cache') ?? $this->choice(
+        $this->variables['CACHE_STORE'] = $this->option('cache') ?? $this->choice(
             'Cache Driver',
             self::CACHE_DRIVERS,
             array_key_exists($selected, self::CACHE_DRIVERS) ? $selected : null
