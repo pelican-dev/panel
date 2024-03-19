@@ -90,7 +90,7 @@ class RouteServiceProvider extends ServiceProvider
         // This means that an authenticated API user cannot use IP switching to get
         // around the limits.
         RateLimiter::for('api.client', function (Request $request) {
-            $key = optional($request->user())->uuid ?: $request->ip();
+            $key = $request->user()?->uuid ?: $request->ip();
 
             return Limit::perMinutes(
                 config('http.rate_limit.client_period'),
@@ -99,7 +99,7 @@ class RouteServiceProvider extends ServiceProvider
         });
 
         RateLimiter::for('api.application', function (Request $request) {
-            $key = optional($request->user())->uuid ?: $request->ip();
+            $key = $request->user()?->uuid ?: $request->ip();
 
             return Limit::perMinutes(
                 config('http.rate_limit.application_period'),

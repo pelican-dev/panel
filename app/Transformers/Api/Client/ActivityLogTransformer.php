@@ -55,7 +55,7 @@ class ActivityLogTransformer extends BaseClientTransformer
 
         $properties = $model->properties
             ->mapWithKeys(function ($value, $key) use ($model) {
-                if ($key === 'ip' && !optional($model->actor)->is($this->request->user())) {
+                if ($key === 'ip' && !$model->actor?->is($this->request->user())) {
                     return [$key => '[hidden]'];
                 }
 
@@ -113,6 +113,6 @@ class ActivityLogTransformer extends BaseClientTransformer
      */
     protected function canViewIP(Model $actor = null): bool
     {
-        return optional($actor)->is($this->request->user()) || $this->request->user()->root_admin;
+        return $actor?->is($this->request->user()) || $this->request->user()->root_admin;
     }
 }
