@@ -2,18 +2,21 @@
 
 namespace App\Providers;
 
-use App\Models;
-use App\Models\Node;
-use Illuminate\Support\Facades\Http;
-use Illuminate\Support\Str;
-use Illuminate\Support\Facades\URL;
-use Illuminate\Pagination\Paginator;
-use Illuminate\Support\Facades\View;
-use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Facades\Schema;
-use Illuminate\Support\ServiceProvider;
 use App\Extensions\Themes\Theme;
+use App\Models;
+use App\Models\ApiKey;
+use App\Models\Node;
 use Illuminate\Database\Eloquent\Relations\Relation;
+use Illuminate\Pagination\Paginator;
+use Illuminate\Support\Facades\Broadcast;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Facades\URL;
+use Illuminate\Support\Facades\View;
+use Illuminate\Support\ServiceProvider;
+use Illuminate\Support\Str;
+use Laravel\Sanctum\Sanctum;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -60,6 +63,9 @@ class AppServiceProvider extends ServiceProvider
                 ->connectTimeout(config('panel.guzzle.connect_timeout'))
                 ->baseUrl($node->getConnectionAddress())
         );
+
+        $this->bootAuth();
+        $this->bootBroadcast();
     }
 
     /**
@@ -76,6 +82,8 @@ class AppServiceProvider extends ServiceProvider
         $this->app->singleton('extensions.themes', function () {
             return new Theme();
         });
+
+        $this->registerAuth();
     }
 
     /**
@@ -104,5 +112,27 @@ class AppServiceProvider extends ServiceProvider
                 'is_git' => false,
             ];
         });
+    }
+
+    public function bootAuth(): void
+    {
+        Sanctum::usePersonalAccessTokenModel(ApiKey::class);
+    }
+
+    public function bootBroadcast(): void
+    {
+        Broadcast::routes();
+
+        /*
+         * Authenticate the user's personal channel...
+         */
+        Broadcast::channel('App.User.*', function ($user, $userId) {
+            return (int) $user->id === (int) $userId;
+        });
+    }
+
+    public function registerAuth(): void
+    {
+        Sanctum::ignoreMigrations();
     }
 }
