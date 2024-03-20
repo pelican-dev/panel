@@ -16,11 +16,11 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('users', function (Blueprint $table) {
-            $table->string('external_id')->default(null)->change();
+            $table->string('external_id')->nullable()->default(null)->change();
         });
 
         DB::transaction(function () {
-            DB::table('users')->where('external_id', '=', 'NULL')->update([
+            DB::table('users')->where('external_id', 'NULL')->update([
                 'external_id' => null,
             ]);
         });
