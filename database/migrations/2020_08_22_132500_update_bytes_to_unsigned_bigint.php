@@ -11,7 +11,7 @@ return new class extends Migration
      *
      * @return void
      */
-    public function up()
+    public function up(): void
     {
         Schema::table('backups', function (Blueprint $table) {
             $table->unsignedBigInteger('bytes')->default(0)->change();
@@ -23,7 +23,7 @@ return new class extends Migration
      *
      * @return void
      */
-    public function down()
+    public function down(): void
     {
         Schema::table('backups', function (Blueprint $table) {
             $table->integer('bytes')->default(0)->change();

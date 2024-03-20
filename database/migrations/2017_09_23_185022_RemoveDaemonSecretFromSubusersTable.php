@@ -11,7 +11,7 @@ return new class extends Migration
     /**
      * Run the migrations.
      */
-    public function up()
+    public function up(): void
     {
         $inserts = [];
         $subusers = DB::table('subusers')->get();
@@ -39,7 +39,7 @@ return new class extends Migration
     /**
      * Reverse the migrations.
      */
-    public function down()
+    public function down(): void
     {
         Schema::table('subusers', function (Blueprint $table) {
             $table->char('daemonSecret', 36)->after('server_id');

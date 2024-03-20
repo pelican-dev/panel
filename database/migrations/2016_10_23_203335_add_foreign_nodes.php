@@ -9,7 +9,7 @@ return new class extends Migration
     /**
      * Run the migrations.
      */
-    public function up()
+    public function up(): void
     {
         DB::statement('ALTER TABLE nodes MODIFY location INT(10) UNSIGNED NOT NULL');
 
@@ -21,7 +21,7 @@ return new class extends Migration
     /**
      * Reverse the migrations.
      */
-    public function down()
+    public function down(): void
     {
         Schema::table('nodes', function (Blueprint $table) {
             $table->dropForeign('nodes_location_foreign');

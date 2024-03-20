@@ -32,7 +32,7 @@ class BulkPowerActionCommand extends Command
      *
      * @throws \Illuminate\Validation\ValidationException
      */
-    public function handle()
+    public function handle(): void
     {
         $action = $this->argument('action');
         $nodes = empty($this->option('nodes')) ? [] : explode(',', $this->option('nodes'));

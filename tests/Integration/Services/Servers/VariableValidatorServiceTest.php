@@ -27,7 +27,7 @@ class VariableValidatorServiceTest extends IntegrationTestCase
     /**
      * Test that environment variables for a server are validated as expected.
      */
-    public function testEnvironmentVariablesCanBeValidated()
+    public function testEnvironmentVariablesCanBeValidated(): void
     {
         $egg = $this->cloneEggAndVariables($this->egg);
 
@@ -64,7 +64,7 @@ class VariableValidatorServiceTest extends IntegrationTestCase
      * Test that variables that are user_editable=false do not get validated (or returned) by
      * the handler.
      */
-    public function testNormalUserCannotValidateNonUserEditableVariables()
+    public function testNormalUserCannotValidateNonUserEditableVariables(): void
     {
         $egg = $this->cloneEggAndVariables($this->egg);
         $egg->variables()->first()->update([
@@ -83,7 +83,7 @@ class VariableValidatorServiceTest extends IntegrationTestCase
         $this->assertSame('server.jar', $response->get(0)->value);
     }
 
-    public function testEnvironmentVariablesCanBeUpdatedAsAdmin()
+    public function testEnvironmentVariablesCanBeUpdatedAsAdmin(): void
     {
         $egg = $this->cloneEggAndVariables($this->egg);
         $egg->variables()->first()->update([
@@ -115,7 +115,7 @@ class VariableValidatorServiceTest extends IntegrationTestCase
         $this->assertSame('server.jar', $response->get(1)->value);
     }
 
-    public function testNullableEnvironmentVariablesCanBeUsedCorrectly()
+    public function testNullableEnvironmentVariablesCanBeUsedCorrectly(): void
     {
         $egg = $this->cloneEggAndVariables($this->egg);
         $egg->variables()->where('env_variable', '!=', 'BUNGEE_VERSION')->delete();

@@ -13,7 +13,7 @@ return new class extends Migration
      * @throws \Exception
      * @throws \Throwable
      */
-    public function up()
+    public function up(): void
     {
         Schema::table('users', function (Blueprint $table) {
             $table->string('external_id')->default(null)->change();
@@ -31,7 +31,7 @@ return new class extends Migration
      *
      * @return void
      */
-    public function down()
+    public function down(): void
     {
         // This should not be rolled back.
     }

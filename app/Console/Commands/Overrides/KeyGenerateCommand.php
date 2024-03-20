@@ -10,7 +10,7 @@ class KeyGenerateCommand extends BaseKeyGenerateCommand
      * Override the default Laravel key generation command to throw a warning to the user
      * if it appears that they have already generated an application encryption key.
      */
-    public function handle()
+    public function handle(): void
     {
         if (!empty(config('app.key')) && $this->input->isInteractive()) {
             $this->output->warning('It appears you have already configured an application encryption key. Continuing with this process with overwrite that key and cause data corruption for any existing encrypted data. DO NOT CONTINUE UNLESS YOU KNOW WHAT YOU ARE DOING.');

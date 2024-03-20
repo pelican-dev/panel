@@ -30,7 +30,7 @@ class UpgradeCommand extends Command
      *
      * @throws \Exception
      */
-    public function handle()
+    public function handle(): void
     {
         $skipDownload = $this->option('skip-download');
         if (!$skipDownload) {

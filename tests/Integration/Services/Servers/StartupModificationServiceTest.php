@@ -19,7 +19,7 @@ class StartupModificationServiceTest extends IntegrationTestCase
      * egg_id variable which should have no impact if the request is coming from
      * a non-admin entity.
      */
-    public function testNonAdminCanModifyServerVariables()
+    public function testNonAdminCanModifyServerVariables(): void
     {
         $server = $this->createServerModel();
 
@@ -67,7 +67,7 @@ class StartupModificationServiceTest extends IntegrationTestCase
     /**
      * Test that modifying an egg as an admin properly updates the data for the server.
      */
-    public function testServerIsProperlyModifiedAsAdminUser()
+    public function testServerIsProperlyModifiedAsAdminUser(): void
     {
         /** @var \App\Models\Egg $nextEgg */
         $nextEgg = Egg::query()->findOrFail(6);
@@ -99,7 +99,7 @@ class StartupModificationServiceTest extends IntegrationTestCase
      * Test that hidden variables can be updated by an admin but are not affected by a
      * regular user who attempts to pass them through.
      */
-    public function testEnvironmentVariablesCanBeUpdatedByAdmin()
+    public function testEnvironmentVariablesCanBeUpdatedByAdmin(): void
     {
         $server = $this->createServerModel();
         $server->loadMissing(['egg', 'variables']);
@@ -147,7 +147,7 @@ class StartupModificationServiceTest extends IntegrationTestCase
      * Test that passing an invalid egg ID into the function throws an exception
      * rather than silently failing or skipping.
      */
-    public function testInvalidEggIdTriggersException()
+    public function testInvalidEggIdTriggersException(): void
     {
         $server = $this->createServerModel();
 

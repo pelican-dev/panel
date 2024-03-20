@@ -18,7 +18,7 @@ class ProcessScheduleServiceTest extends IntegrationTestCase
     /**
      * Test that a schedule with no tasks registered returns an error.
      */
-    public function testScheduleWithNoTasksReturnsException()
+    public function testScheduleWithNoTasksReturnsException(): void
     {
         $server = $this->createServerModel();
         $schedule = Schedule::factory()->create(['server_id' => $server->id]);
@@ -32,7 +32,7 @@ class ProcessScheduleServiceTest extends IntegrationTestCase
     /**
      * Test that an error during the schedule update is not persisted to the database.
      */
-    public function testErrorDuringScheduleDataUpdateDoesNotPersistChanges()
+    public function testErrorDuringScheduleDataUpdateDoesNotPersistChanges(): void
     {
         $server = $this->createServerModel();
 
@@ -58,7 +58,7 @@ class ProcessScheduleServiceTest extends IntegrationTestCase
      *
      * @dataProvider dispatchNowDataProvider
      */
-    public function testJobCanBeDispatchedWithExpectedInitialDelay(bool $now)
+    public function testJobCanBeDispatchedWithExpectedInitialDelay(bool $now): void
     {
         Bus::fake();
 
@@ -89,7 +89,7 @@ class ProcessScheduleServiceTest extends IntegrationTestCase
      * Test that even if a schedule's task sequence gets messed up the first task based on
      * the ascending order of tasks is used.
      */
-    public function testFirstSequenceTaskIsFound()
+    public function testFirstSequenceTaskIsFound(): void
     {
         Bus::fake();
 
@@ -118,7 +118,7 @@ class ProcessScheduleServiceTest extends IntegrationTestCase
      * Tests that a task's processing state is reset correctly if using "dispatchNow" and there is
      * an exception encountered while running it.
      */
-    public function testTaskDispatchedNowIsResetProperlyIfErrorIsEncountered()
+    public function testTaskDispatchedNowIsResetProperlyIfErrorIsEncountered(): void
     {
         $this->swap(Dispatcher::class, $dispatcher = \Mockery::mock(Dispatcher::class));
 

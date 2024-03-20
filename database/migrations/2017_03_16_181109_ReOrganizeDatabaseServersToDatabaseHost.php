@@ -9,7 +9,7 @@ return new class extends Migration
     /**
      * Run the migrations.
      */
-    public function up()
+    public function up(): void
     {
         Schema::table('database_servers', function (Blueprint $table) {
             $table->dropForeign(['linked_node']);
@@ -27,7 +27,7 @@ return new class extends Migration
     /**
      * Reverse the migrations.
      */
-    public function down()
+    public function down(): void
     {
         Schema::table('database_hosts', function (Blueprint $table) {
             $table->dropForeign(['node_id']);

@@ -35,7 +35,7 @@ class SftpAuthenticationControllerTest extends IntegrationTestCase
     /**
      * Test that a public key is validated correctly.
      */
-    public function testPublicKeyIsValidatedCorrectly()
+    public function testPublicKeyIsValidatedCorrectly(): void
     {
         $key = UserSSHKey::factory()->for($this->user)->create();
 
@@ -65,7 +65,7 @@ class SftpAuthenticationControllerTest extends IntegrationTestCase
     /**
      * Test that an account password is validated correctly.
      */
-    public function testPasswordIsValidatedCorrectly()
+    public function testPasswordIsValidatedCorrectly(): void
     {
         $this->postJson('/api/remote/sftp/auth', [
             'username' => $this->getUsername(),
@@ -96,7 +96,7 @@ class SftpAuthenticationControllerTest extends IntegrationTestCase
      *
      * @dataProvider authorizationTypeDataProvider
      */
-    public function testUserIsThrottledIfInvalidCredentialsAreProvided()
+    public function testUserIsThrottledIfInvalidCredentialsAreProvided(): void
     {
         for ($i = 0; $i <= 10; $i++) {
             $this->postJson('/api/remote/sftp/auth', [
@@ -114,7 +114,7 @@ class SftpAuthenticationControllerTest extends IntegrationTestCase
      *
      * @dataProvider authorizationTypeDataProvider
      */
-    public function testRequestIsRejectedIfServerBelongsToDifferentNode(string $type)
+    public function testRequestIsRejectedIfServerBelongsToDifferentNode(string $type): void
     {
         $node2 = $this->createServerModel()->node;
 
@@ -132,7 +132,7 @@ class SftpAuthenticationControllerTest extends IntegrationTestCase
             ->assertForbidden();
     }
 
-    public function testRequestIsDeniedIfUserLacksSftpPermission()
+    public function testRequestIsDeniedIfUserLacksSftpPermission(): void
     {
         [$user, $server] = $this->generateTestAccount([Permission::ACTION_FILE_READ]);
 
@@ -151,7 +151,7 @@ class SftpAuthenticationControllerTest extends IntegrationTestCase
     /**
      * @dataProvider serverStateDataProvider
      */
-    public function testInvalidServerStateReturnsConflictError(string $status)
+    public function testInvalidServerStateReturnsConflictError(string $status): void
     {
         $this->server->update(['status' => $status]);
 
@@ -162,7 +162,7 @@ class SftpAuthenticationControllerTest extends IntegrationTestCase
     /**
      * Test that permissions are returned for the user account correctly.
      */
-    public function testUserPermissionsAreReturnedCorrectly()
+    public function testUserPermissionsAreReturnedCorrectly(): void
     {
         [$user, $server] = $this->generateTestAccount([Permission::ACTION_FILE_READ, Permission::ACTION_FILE_SFTP]);
 

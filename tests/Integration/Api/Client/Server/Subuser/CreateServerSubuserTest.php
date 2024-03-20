@@ -19,7 +19,7 @@ class CreateServerSubuserTest extends ClientApiIntegrationTestCase
      *
      * @dataProvider permissionsDataProvider
      */
-    public function testSubuserCanBeCreated(array $permissions)
+    public function testSubuserCanBeCreated(array $permissions): void
     {
         [$user, $server] = $this->generateTestAccount($permissions);
 
@@ -52,7 +52,7 @@ class CreateServerSubuserTest extends ClientApiIntegrationTestCase
      * Tests that an error is returned if a subuser attempts to create a new subuser and assign
      * permissions that their account does not also possess.
      */
-    public function testErrorIsReturnedIfAssigningPermissionsNotAssignedToSelf()
+    public function testErrorIsReturnedIfAssigningPermissionsNotAssignedToSelf(): void
     {
         [$user, $server] = $this->generateTestAccount([
             Permission::ACTION_USER_CREATE,
@@ -76,7 +76,7 @@ class CreateServerSubuserTest extends ClientApiIntegrationTestCase
     /**
      * Throws some bad data at the API and ensures that a subuser cannot be created.
      */
-    public function testSubuserWithExcessivelyLongEmailCannotBeCreated()
+    public function testSubuserWithExcessivelyLongEmailCannotBeCreated(): void
     {
         [$user, $server] = $this->generateTestAccount();
 
@@ -107,7 +107,7 @@ class CreateServerSubuserTest extends ClientApiIntegrationTestCase
      * Test that creating a subuser when there is already an account with that email runs
      * as expected and does not create a new account.
      */
-    public function testCreatingSubuserWithSameEmailAsExistingUserWorks()
+    public function testCreatingSubuserWithSameEmailAsExistingUserWorks(): void
     {
         [$user, $server] = $this->generateTestAccount();
 
@@ -130,7 +130,7 @@ class CreateServerSubuserTest extends ClientApiIntegrationTestCase
      * Test that an error is returned if the account associated with an email address is already
      * associated with the server instance.
      */
-    public function testAddingSubuserThatAlreadyIsAssignedReturnsError()
+    public function testAddingSubuserThatAlreadyIsAssignedReturnsError(): void
     {
         [$user, $server] = $this->generateTestAccount();
 

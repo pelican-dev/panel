@@ -11,7 +11,7 @@ return new class extends Migration
      *
      * @return void
      */
-    public function up()
+    public function up(): void
     {
         Schema::table('egg_variables', function (Blueprint $table) {
             $table->text('default_value')->change();
@@ -23,7 +23,7 @@ return new class extends Migration
      *
      * @return void
      */
-    public function down()
+    public function down(): void
     {
         Schema::table('egg_variables', function (Blueprint $table) {
             $table->string('default_value')->change();

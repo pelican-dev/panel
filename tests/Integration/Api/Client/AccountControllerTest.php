@@ -12,7 +12,7 @@ class AccountControllerTest extends ClientApiIntegrationTestCase
     /**
      * Test that the user's account details are returned from the account endpoint.
      */
-    public function testAccountDetailsAreReturned()
+    public function testAccountDetailsAreReturned(): void
     {
         /** @var \App\Models\User $user */
         $user = User::factory()->create();
@@ -36,7 +36,7 @@ class AccountControllerTest extends ClientApiIntegrationTestCase
     /**
      * Test that the user's email address can be updated via the API.
      */
-    public function testEmailIsUpdated()
+    public function testEmailIsUpdated(): void
     {
         /** @var \App\Models\User $user */
         $user = User::factory()->create();
@@ -55,7 +55,7 @@ class AccountControllerTest extends ClientApiIntegrationTestCase
      * Tests that an email is not updated if the password provided in the request is not
      * valid for the account.
      */
-    public function testEmailIsNotUpdatedWhenPasswordIsInvalid()
+    public function testEmailIsNotUpdatedWhenPasswordIsInvalid(): void
     {
         /** @var \App\Models\User $user */
         $user = User::factory()->create();
@@ -74,7 +74,7 @@ class AccountControllerTest extends ClientApiIntegrationTestCase
      * Tests that an email is not updated if an invalid email address is passed through
      * in the request.
      */
-    public function testEmailIsNotUpdatedWhenNotValid()
+    public function testEmailIsNotUpdatedWhenNotValid(): void
     {
         /** @var \App\Models\User $user */
         $user = User::factory()->create();
@@ -101,7 +101,7 @@ class AccountControllerTest extends ClientApiIntegrationTestCase
     /**
      * Test that the password for an account can be successfully updated.
      */
-    public function testPasswordIsUpdated()
+    public function testPasswordIsUpdated(): void
     {
         /** @var \App\Models\User $user */
         $user = User::factory()->create();
@@ -127,7 +127,7 @@ class AccountControllerTest extends ClientApiIntegrationTestCase
      * Test that the password for an account is not updated if the current password is not
      * provided correctly.
      */
-    public function testPasswordIsNotUpdatedIfCurrentPasswordIsInvalid()
+    public function testPasswordIsNotUpdatedIfCurrentPasswordIsInvalid(): void
     {
         /** @var \App\Models\User $user */
         $user = User::factory()->create();
@@ -147,7 +147,7 @@ class AccountControllerTest extends ClientApiIntegrationTestCase
      * Test that a validation error is returned to the user if no password is provided or if
      * the password is below the minimum password length.
      */
-    public function testErrorIsReturnedForInvalidRequestData()
+    public function testErrorIsReturnedForInvalidRequestData(): void
     {
         $user = User::factory()->create();
 
@@ -170,7 +170,7 @@ class AccountControllerTest extends ClientApiIntegrationTestCase
      * Test that a validation error is returned if the password passed in the request
      * does not have a confirmation, or the confirmation is not the same as the password.
      */
-    public function testErrorIsReturnedIfPasswordIsNotConfirmed()
+    public function testErrorIsReturnedIfPasswordIsNotConfirmed(): void
     {
         /** @var \App\Models\User $user */
         $user = User::factory()->create();

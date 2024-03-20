@@ -27,7 +27,7 @@ class MaintenanceMiddlewareTest extends MiddlewareTestCase
     /**
      * Test that a node not in maintenance mode continues through the request cycle.
      */
-    public function testHandle()
+    public function testHandle(): void
     {
         $server = Server::factory()->make();
         $node = Node::factory()->make(['maintenance' => 0]);
@@ -41,7 +41,7 @@ class MaintenanceMiddlewareTest extends MiddlewareTestCase
     /**
      * Test that a node in maintenance mode returns an error view.
      */
-    public function testHandleInMaintenanceMode()
+    public function testHandleInMaintenanceMode(): void
     {
         $server = Server::factory()->make();
         $node = Node::factory()->make(['maintenance_mode' => 1]);

@@ -40,7 +40,7 @@ class MakeNodeCommand extends Command
      *
      * @throws \App\Exceptions\Model\DataValidationException
      */
-    public function handle()
+    public function handle(): void
     {
         $data['name'] = $this->option('name') ?? $this->ask('Enter a short identifier used to distinguish this node from others');
         $data['description'] = $this->option('description') ?? $this->ask('Enter a description to identify the node');

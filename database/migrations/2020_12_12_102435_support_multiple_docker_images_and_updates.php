@@ -12,7 +12,7 @@ return new class extends Migration
      *
      * @return void
      */
-    public function up()
+    public function up(): void
     {
         Schema::table('eggs', function (Blueprint $table) {
             $table->json('docker_images')->after('docker_image')->nullable();
@@ -33,7 +33,7 @@ return new class extends Migration
      *
      * @return void
      */
-    public function down()
+    public function down(): void
     {
         Schema::table('eggs', function (Blueprint $table) {
             $table->text('docker_image')->after('docker_images');

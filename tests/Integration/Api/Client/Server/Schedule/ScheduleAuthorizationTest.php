@@ -19,7 +19,7 @@ class ScheduleAuthorizationTest extends ClientApiIntegrationTestCase
      *
      * @dataProvider methodDataProvider
      */
-    public function testAccessToAServersSchedulesIsRestrictedProperly(string $method, string $endpoint)
+    public function testAccessToAServersSchedulesIsRestrictedProperly(string $method, string $endpoint): void
     {
         // The API $user is the owner of $server1.
         [$user, $server1] = $this->generateTestAccount();

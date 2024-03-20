@@ -16,7 +16,7 @@ class DisableTwoFactorCommand extends Command
      *
      * @throws \App\Exceptions\Model\DataValidationException
      */
-    public function handle()
+    public function handle(): void
     {
         if ($this->input->isInteractive()) {
             $this->output->warning(trans('command/messages.user.2fa_help_text'));

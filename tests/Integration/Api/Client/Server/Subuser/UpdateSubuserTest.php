@@ -13,7 +13,7 @@ class UpdateSubuserTest extends ClientApiIntegrationTestCase
      * Test that the correct permissions are applied to the account when making updates
      * to a subusers permissions.
      */
-    public function testCorrectPermissionsAreRequiredForUpdating()
+    public function testCorrectPermissionsAreRequiredForUpdating(): void
     {
         [$user, $server] = $this->generateTestAccount(['user.read']);
 
@@ -53,7 +53,7 @@ class UpdateSubuserTest extends ClientApiIntegrationTestCase
      * Tests that permissions for the account are updated and any extraneous values
      * we don't know about are removed.
      */
-    public function testPermissionsAreSavedToAccount()
+    public function testPermissionsAreSavedToAccount(): void
     {
         [$user, $server] = $this->generateTestAccount();
 
@@ -88,7 +88,7 @@ class UpdateSubuserTest extends ClientApiIntegrationTestCase
      * Ensure a subuser cannot assign permissions to an account that they do not have
      * themselves.
      */
-    public function testUserCannotAssignPermissionsTheyDoNotHave()
+    public function testUserCannotAssignPermissionsTheyDoNotHave(): void
     {
         [$user, $server] = $this->generateTestAccount([Permission::ACTION_USER_READ, Permission::ACTION_USER_UPDATE]);
 
@@ -109,7 +109,7 @@ class UpdateSubuserTest extends ClientApiIntegrationTestCase
     /**
      * Test that a user cannot update thyself.
      */
-    public function testUserCannotUpdateSelf()
+    public function testUserCannotUpdateSelf(): void
     {
         [$user, $server] = $this->generateTestAccount([Permission::ACTION_USER_READ, Permission::ACTION_USER_UPDATE]);
 
@@ -121,7 +121,7 @@ class UpdateSubuserTest extends ClientApiIntegrationTestCase
     /**
      * Test that an error is returned if you attempt to update a subuser on a different account.
      */
-    public function testCannotUpdateSubuserForDifferentServer()
+    public function testCannotUpdateSubuserForDifferentServer(): void
     {
         [$user, $server] = $this->generateTestAccount();
         [$user2] = $this->generateTestAccount(['foo.bar']);

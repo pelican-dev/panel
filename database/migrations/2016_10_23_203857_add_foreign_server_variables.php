@@ -9,7 +9,7 @@ return new class extends Migration
     /**
      * Run the migrations.
      */
-    public function up()
+    public function up(): void
     {
         DB::statement('ALTER TABLE server_variables
             MODIFY COLUMN server_id INT(10) UNSIGNED NULL,
@@ -25,7 +25,7 @@ return new class extends Migration
     /**
      * Reverse the migrations.
      */
-    public function down()
+    public function down(): void
     {
         Schema::table('server_variables', function (Blueprint $table) {
             $table->dropForeign(['server_id']);

@@ -25,7 +25,7 @@ class RedirectIfAuthenticatedTest extends MiddlewareTestCase
     /**
      * Test that an authenticated user is redirected.
      */
-    public function testAuthenticatedUserIsRedirected()
+    public function testAuthenticatedUserIsRedirected(): void
     {
         $this->authManager->shouldReceive('guard')->with(null)->once()->andReturnSelf();
         $this->authManager->shouldReceive('check')->withNoArgs()->once()->andReturn(true);
@@ -38,7 +38,7 @@ class RedirectIfAuthenticatedTest extends MiddlewareTestCase
     /**
      * Test that a non-authenticated user continues through the middleware.
      */
-    public function testNonAuthenticatedUserIsNotRedirected()
+    public function testNonAuthenticatedUserIsNotRedirected(): void
     {
         $this->authManager->shouldReceive('guard')->with(null)->once()->andReturnSelf();
         $this->authManager->shouldReceive('check')->withNoArgs()->once()->andReturn(false);

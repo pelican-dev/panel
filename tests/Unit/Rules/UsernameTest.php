@@ -10,7 +10,7 @@ class UsernameTest extends TestCase
     /**
      * Test that this rule can be cast to a string correctly.
      */
-    public function testRuleIsStringable()
+    public function testRuleIsStringable(): void
     {
         $this->assertSame('p_username', (string) new Username());
     }
@@ -20,7 +20,7 @@ class UsernameTest extends TestCase
      *
      * @dataProvider validUsernameDataProvider
      */
-    public function testValidUsernames(string $username)
+    public function testValidUsernames(string $username): void
     {
         $this->assertTrue((new Username())->passes('test', $username), 'Assert username is valid.');
     }
@@ -30,7 +30,7 @@ class UsernameTest extends TestCase
      *
      * @dataProvider invalidUsernameDataProvider
      */
-    public function testInvalidUsernames(string $username)
+    public function testInvalidUsernames(string $username): void
     {
         $this->assertFalse((new Username())->passes('test', $username), 'Assert username is not valid.');
     }

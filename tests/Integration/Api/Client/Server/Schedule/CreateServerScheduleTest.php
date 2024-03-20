@@ -14,7 +14,7 @@ class CreateServerScheduleTest extends ClientApiIntegrationTestCase
      *
      * @dataProvider permissionsDataProvider
      */
-    public function testScheduleCanBeCreatedForServer(array $permissions)
+    public function testScheduleCanBeCreatedForServer(array $permissions): void
     {
         [$user, $server] = $this->generateTestAccount($permissions);
 
@@ -50,7 +50,7 @@ class CreateServerScheduleTest extends ClientApiIntegrationTestCase
     /**
      * Test that the validation rules for scheduling work as expected.
      */
-    public function testScheduleValidationRules()
+    public function testScheduleValidationRules(): void
     {
         [$user, $server] = $this->generateTestAccount();
 
@@ -80,7 +80,7 @@ class CreateServerScheduleTest extends ClientApiIntegrationTestCase
     /**
      * Test that a subuser without required permissions cannot create a schedule.
      */
-    public function testSubuserCannotCreateScheduleWithoutPermissions()
+    public function testSubuserCannotCreateScheduleWithoutPermissions(): void
     {
         [$user, $server] = $this->generateTestAccount([Permission::ACTION_SCHEDULE_UPDATE]);
 

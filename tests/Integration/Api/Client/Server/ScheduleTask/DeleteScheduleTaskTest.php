@@ -14,7 +14,7 @@ class DeleteScheduleTaskTest extends ClientApiIntegrationTestCase
     /**
      * Test that an error is returned if the schedule does not belong to the server.
      */
-    public function testScheduleNotBelongingToServerReturnsError()
+    public function testScheduleNotBelongingToServerReturnsError(): void
     {
         $server2 = $this->createServerModel();
         [$user] = $this->generateTestAccount();
@@ -29,7 +29,7 @@ class DeleteScheduleTaskTest extends ClientApiIntegrationTestCase
      * Test that an error is returned if the task and schedule in the URL do not line up
      * with each other.
      */
-    public function testTaskBelongingToDifferentScheduleReturnsError()
+    public function testTaskBelongingToDifferentScheduleReturnsError(): void
     {
         [$user, $server] = $this->generateTestAccount();
 
@@ -43,7 +43,7 @@ class DeleteScheduleTaskTest extends ClientApiIntegrationTestCase
     /**
      * Test that a user without the required permissions returns an error.
      */
-    public function testUserWithoutPermissionReturnsError()
+    public function testUserWithoutPermissionReturnsError(): void
     {
         [$user, $server] = $this->generateTestAccount([Permission::ACTION_SCHEDULE_CREATE]);
 
@@ -61,7 +61,7 @@ class DeleteScheduleTaskTest extends ClientApiIntegrationTestCase
      * Test that a schedule task is deleted and items with a higher sequence ID are decremented
      * properly in the database.
      */
-    public function testScheduleTaskIsDeletedAndSubsequentTasksAreUpdated()
+    public function testScheduleTaskIsDeletedAndSubsequentTasksAreUpdated(): void
     {
         [$user, $server] = $this->generateTestAccount();
 

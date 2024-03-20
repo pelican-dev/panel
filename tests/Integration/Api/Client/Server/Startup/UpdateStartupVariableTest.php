@@ -15,7 +15,7 @@ class UpdateStartupVariableTest extends ClientApiIntegrationTestCase
      *
      * @dataProvider permissionsDataProvider
      */
-    public function testStartupVariableCanBeUpdated(array $permissions)
+    public function testStartupVariableCanBeUpdated(array $permissions): void
     {
         /** @var \App\Models\Server $server */
         [$user, $server] = $this->generateTestAccount($permissions);
@@ -50,7 +50,7 @@ class UpdateStartupVariableTest extends ClientApiIntegrationTestCase
      *
      * @dataProvider permissionsDataProvider
      */
-    public function testStartupVariableCannotBeUpdatedIfNotUserViewableOrEditable(array $permissions)
+    public function testStartupVariableCannotBeUpdatedIfNotUserViewableOrEditable(array $permissions): void
     {
         /** @var \App\Models\Server $server */
         [$user, $server] = $this->generateTestAccount($permissions);
@@ -85,7 +85,7 @@ class UpdateStartupVariableTest extends ClientApiIntegrationTestCase
      * Test that a hidden variable is not included in the startup_command output for the server if
      * a different variable is updated.
      */
-    public function testHiddenVariablesAreNotReturnedInStartupCommandWhenUpdatingVariable()
+    public function testHiddenVariablesAreNotReturnedInStartupCommandWhenUpdatingVariable(): void
     {
         /** @var \App\Models\Server $server */
         [$user, $server] = $this->generateTestAccount();
@@ -114,7 +114,7 @@ class UpdateStartupVariableTest extends ClientApiIntegrationTestCase
      * Test that an egg variable with a validation rule of 'nullable|string' works if no value
      * is passed through in the request.
      */
-    public function testEggVariableWithNullableStringIsNotRequired()
+    public function testEggVariableWithNullableStringIsNotRequired(): void
     {
         /** @var \App\Models\Server $server */
         [$user, $server] = $this->generateTestAccount();
@@ -138,7 +138,7 @@ class UpdateStartupVariableTest extends ClientApiIntegrationTestCase
      * Test that a variable cannot be updated if the user does not have permission to perform
      * that action, or they aren't assigned at all to the server.
      */
-    public function testStartupVariableCannotBeUpdatedIfNotUserViewable()
+    public function testStartupVariableCannotBeUpdatedIfNotUserViewable(): void
     {
         [$user, $server] = $this->generateTestAccount([Permission::ACTION_WEBSOCKET_CONNECT]);
         $this->actingAs($user)->putJson($this->link($server) . '/startup/variable')->assertForbidden();

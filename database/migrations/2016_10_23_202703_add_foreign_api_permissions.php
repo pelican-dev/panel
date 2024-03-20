@@ -9,7 +9,7 @@ return new class extends Migration
     /**
      * Run the migrations.
      */
-    public function up()
+    public function up(): void
     {
         DB::statement('ALTER TABLE api_permissions MODIFY key_id INT(10) UNSIGNED NOT NULL');
 
@@ -21,7 +21,7 @@ return new class extends Migration
     /**
      * Reverse the migrations.
      */
-    public function down()
+    public function down(): void
     {
         Schema::table('api_permissions', function (Blueprint $table) {
             $table->dropForeign('api_permissions_key_id_foreign');

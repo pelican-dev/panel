@@ -11,7 +11,7 @@ return new class extends Migration
      *
      * @return void
      */
-    public function up()
+    public function up(): void
     {
         Schema::table('audit_logs', function (Blueprint $table) {
             // Doing the index in this order lets me use the action alone without the server
@@ -30,7 +30,7 @@ return new class extends Migration
      *
      * @return void
      */
-    public function down()
+    public function down(): void
     {
         Schema::table('audit_logs', function (Blueprint $table) {
             $table->dropIndex(['action', 'server_id']);

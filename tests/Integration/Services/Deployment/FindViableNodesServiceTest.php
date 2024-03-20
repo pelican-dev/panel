@@ -19,7 +19,7 @@ class FindViableNodesServiceTest extends IntegrationTestCase
         Node::query()->delete();
     }
 
-    public function testExceptionIsThrownIfNoDiskSpaceHasBeenSet()
+    public function testExceptionIsThrownIfNoDiskSpaceHasBeenSet(): void
     {
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('Disk space must be an int, got NULL');
@@ -27,7 +27,7 @@ class FindViableNodesServiceTest extends IntegrationTestCase
         $this->getService()->handle();
     }
 
-    public function testExceptionIsThrownIfNoMemoryHasBeenSet()
+    public function testExceptionIsThrownIfNoMemoryHasBeenSet(): void
     {
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('Memory usage must be an int, got NULL');

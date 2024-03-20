@@ -55,7 +55,7 @@ class ServerDeletionServiceTest extends IntegrationTestCase
      * Test that a server is not deleted if the force option is not set and an error
      * is returned by daemon.
      */
-    public function testRegularDeleteFailsIfDaemonReturnsError()
+    public function testRegularDeleteFailsIfDaemonReturnsError(): void
     {
         $server = $this->createServerModel();
 
@@ -73,7 +73,7 @@ class ServerDeletionServiceTest extends IntegrationTestCase
     /**
      * Test that a 404 from Daemon while deleting a server does not cause the deletion to fail.
      */
-    public function testRegularDeleteIgnores404FromDaemon()
+    public function testRegularDeleteIgnores404FromDaemon(): void
     {
         $server = $this->createServerModel();
 
@@ -90,7 +90,7 @@ class ServerDeletionServiceTest extends IntegrationTestCase
      * Test that an error from Daemon does not cause the deletion to fail if the server is being
      * force deleted.
      */
-    public function testForceDeleteIgnoresExceptionFromDaemon()
+    public function testForceDeleteIgnoresExceptionFromDaemon(): void
     {
         $server = $this->createServerModel();
 
@@ -107,7 +107,7 @@ class ServerDeletionServiceTest extends IntegrationTestCase
      * Test that a non-force-delete call does not delete the server if one of the databases
      * cannot be deleted from the host.
      */
-    public function testExceptionWhileDeletingStopsProcess()
+    public function testExceptionWhileDeletingStopsProcess(): void
     {
         $server = $this->createServerModel();
         $host = DatabaseHost::factory()->create();
@@ -132,7 +132,7 @@ class ServerDeletionServiceTest extends IntegrationTestCase
     /**
      * Test that a server is deleted even if the server databases cannot be deleted from the host.
      */
-    public function testExceptionWhileDeletingDatabasesDoesNotAbortIfForceDeleted()
+    public function testExceptionWhileDeletingDatabasesDoesNotAbortIfForceDeleted(): void
     {
         $server = $this->createServerModel();
         $host = DatabaseHost::factory()->create();

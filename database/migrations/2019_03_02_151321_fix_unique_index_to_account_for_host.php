@@ -11,7 +11,7 @@ return new class extends Migration
      *
      * @return void
      */
-    public function up()
+    public function up(): void
     {
         Schema::table('databases', function (Blueprint $table) {
             $table->dropUnique(['database']);
@@ -27,7 +27,7 @@ return new class extends Migration
      *
      * @return void
      */
-    public function down()
+    public function down(): void
     {
         Schema::table('databases', function (Blueprint $table) {
             $table->dropForeign(['database_host_id']);

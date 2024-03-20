@@ -17,7 +17,7 @@ class ExecuteScheduleTest extends ClientApiIntegrationTestCase
      *
      * @dataProvider permissionsDataProvider
      */
-    public function testScheduleIsExecutedRightAway(array $permissions)
+    public function testScheduleIsExecutedRightAway(array $permissions): void
     {
         [$user, $server] = $this->generateTestAccount($permissions);
 
@@ -54,7 +54,7 @@ class ExecuteScheduleTest extends ClientApiIntegrationTestCase
     /**
      * Test that a user without the schedule update permission cannot execute it.
      */
-    public function testUserWithoutScheduleUpdatePermissionCannotExecute()
+    public function testUserWithoutScheduleUpdatePermissionCannotExecute(): void
     {
         [$user, $server] = $this->generateTestAccount([Permission::ACTION_SCHEDULE_CREATE]);
 

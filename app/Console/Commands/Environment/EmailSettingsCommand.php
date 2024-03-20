@@ -29,7 +29,7 @@ class EmailSettingsCommand extends Command
      *
      * @throws \App\Exceptions\PanelException
      */
-    public function handle()
+    public function handle(): void
     {
         $this->variables['MAIL_DRIVER'] = $this->option('driver') ?? $this->choice(
             trans('command/messages.environment.mail.ask_driver'),

@@ -16,7 +16,7 @@ use App\Exceptions\Http\Connection\DaemonConnectionException;
 
 class DeleteBackupServiceTest extends IntegrationTestCase
 {
-    public function testLockedBackupCannotBeDeleted()
+    public function testLockedBackupCannotBeDeleted(): void
     {
         $server = $this->createServerModel();
         $backup = Backup::factory()->create([
@@ -29,7 +29,7 @@ class DeleteBackupServiceTest extends IntegrationTestCase
         $this->app->make(DeleteBackupService::class)->handle($backup);
     }
 
-    public function testFailedBackupThatIsLockedCanBeDeleted()
+    public function testFailedBackupThatIsLockedCanBeDeleted(): void
     {
         $server = $this->createServerModel();
         $backup = Backup::factory()->create([
@@ -48,7 +48,7 @@ class DeleteBackupServiceTest extends IntegrationTestCase
         $this->assertNotNull($backup->deleted_at);
     }
 
-    public function testExceptionThrownDueToMissingBackupIsIgnored()
+    public function testExceptionThrownDueToMissingBackupIsIgnored(): void
     {
         $server = $this->createServerModel();
         $backup = Backup::factory()->create(['server_id' => $server->id]);
@@ -67,7 +67,7 @@ class DeleteBackupServiceTest extends IntegrationTestCase
         $this->assertNotNull($backup->deleted_at);
     }
 
-    public function testExceptionIsThrownIfNot404()
+    public function testExceptionIsThrownIfNot404(): void
     {
         $server = $this->createServerModel();
         $backup = Backup::factory()->create(['server_id' => $server->id]);
@@ -88,7 +88,7 @@ class DeleteBackupServiceTest extends IntegrationTestCase
         $this->assertNull($backup->deleted_at);
     }
 
-    public function testS3ObjectCanBeDeleted()
+    public function testS3ObjectCanBeDeleted(): void
     {
         $server = $this->createServerModel();
         $backup = Backup::factory()->create([

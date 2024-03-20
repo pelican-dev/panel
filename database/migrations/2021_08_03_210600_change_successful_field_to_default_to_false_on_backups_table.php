@@ -12,7 +12,7 @@ return new class extends Migration
      *
      * @return void
      */
-    public function up()
+    public function up(): void
     {
         Schema::table('backups', function (Blueprint $table) {
             $table->boolean('is_successful')->after('uuid')->default(false)->change();
@@ -29,7 +29,7 @@ return new class extends Migration
      *
      * @return void
      */
-    public function down()
+    public function down(): void
     {
         Schema::table('backups', function (Blueprint $table) {
             $table->boolean('is_successful')->after('uuid')->default(true)->change();

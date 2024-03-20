@@ -17,7 +17,7 @@ class UserControllerTest extends IntegrationTestCase
      * data with the number of servers they are assigned to, and the number of servers they
      * are a subuser of.
      */
-    public function testIndexReturnsExpectedData()
+    public function testIndexReturnsExpectedData(): void
     {
         $unique = Str::random();
         $users = [

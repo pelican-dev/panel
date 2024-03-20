@@ -35,7 +35,7 @@ class RunTaskJob extends Job implements ShouldQueue
     public function handle(
         InitiateBackupService $backupService,
         DaemonPowerRepository $powerRepository
-    ) {
+    ): void {
         // Do not process a task that is not set to active, unless it's been manually triggered.
         if (!$this->task->schedule->is_active && !$this->manualRun) {
             $this->markTaskNotQueued();

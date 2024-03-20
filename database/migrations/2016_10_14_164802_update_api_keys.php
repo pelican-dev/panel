@@ -9,7 +9,7 @@ return new class extends Migration
     /**
      * Run the migrations.
      */
-    public function up()
+    public function up(): void
     {
         Schema::table('api_keys', function (Blueprint $table) {
             $table->unsignedInteger('user')->after('id');
@@ -21,7 +21,7 @@ return new class extends Migration
     /**
      * Reverse the migrations.
      */
-    public function down()
+    public function down(): void
     {
         Schema::table('api_keys', function (Blueprint $table) {
             $table->dropColumn('user');

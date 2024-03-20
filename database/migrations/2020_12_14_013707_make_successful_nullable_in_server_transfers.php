@@ -11,7 +11,7 @@ return new class extends Migration
      *
      * @return void
      */
-    public function up()
+    public function up(): void
     {
         Schema::table('server_transfers', function (Blueprint $table) {
             $table->boolean('successful')->nullable()->default(null)->change();
@@ -23,7 +23,7 @@ return new class extends Migration
      *
      * @return void
      */
-    public function down()
+    public function down(): void
     {
         Schema::table('server_transfers', function (Blueprint $table) {
             $table->boolean('successful')->default(0)->change();

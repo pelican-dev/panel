@@ -11,7 +11,7 @@ class SSHKeyControllerTest extends ClientApiIntegrationTestCase
     /**
      * Test that only the SSH keys for the authenticated user are returned.
      */
-    public function testSSHKeysAreReturned()
+    public function testSSHKeysAreReturned(): void
     {
         $user = User::factory()->create();
         $user2 = User::factory()->create();
@@ -32,7 +32,7 @@ class SSHKeyControllerTest extends ClientApiIntegrationTestCase
      * Test that a user's SSH key can be deleted, and that passing the fingerprint
      * of another user's SSH key won't delete that key.
      */
-    public function testSSHKeyCanBeDeleted()
+    public function testSSHKeyCanBeDeleted(): void
     {
         $user = User::factory()->create();
         $user2 = User::factory()->create();
@@ -58,7 +58,7 @@ class SSHKeyControllerTest extends ClientApiIntegrationTestCase
         $this->assertNotSoftDeleted($key2);
     }
 
-    public function testDSAKeyIsRejected()
+    public function testDSAKeyIsRejected(): void
     {
         $user = User::factory()->create();
         $key = UserSSHKey::factory()->dsa()->make();
@@ -73,7 +73,7 @@ class SSHKeyControllerTest extends ClientApiIntegrationTestCase
         $this->assertEquals(0, $user->sshKeys()->count());
     }
 
-    public function testWeakRSAKeyIsRejected()
+    public function testWeakRSAKeyIsRejected(): void
     {
         $user = User::factory()->create();
         $key = UserSSHKey::factory()->rsa(true)->make();
@@ -88,7 +88,7 @@ class SSHKeyControllerTest extends ClientApiIntegrationTestCase
         $this->assertEquals(0, $user->sshKeys()->count());
     }
 
-    public function testInvalidOrPrivateKeyIsRejected()
+    public function testInvalidOrPrivateKeyIsRejected(): void
     {
         $user = User::factory()->create();
 
@@ -110,7 +110,7 @@ class SSHKeyControllerTest extends ClientApiIntegrationTestCase
             ->assertJsonPath('errors.0.detail', 'The public key provided is not valid.');
     }
 
-    public function testPublicKeyCanBeStored()
+    public function testPublicKeyCanBeStored(): void
     {
         $user = User::factory()->create();
         $key = UserSSHKey::factory()->make();
@@ -127,7 +127,7 @@ class SSHKeyControllerTest extends ClientApiIntegrationTestCase
         $this->assertEquals($key->public_key, $user->sshKeys[0]->public_key);
     }
 
-    public function testPublicKeyThatAlreadyExistsCannotBeAddedASecondTime()
+    public function testPublicKeyThatAlreadyExistsCannotBeAddedASecondTime(): void
     {
         $user = User::factory()->create();
         $key = UserSSHKey::factory()->for($user)->create();

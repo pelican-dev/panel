@@ -27,7 +27,7 @@ class MakeUserCommand extends Command
      * @throws Exception
      * @throws \App\Exceptions\Model\DataValidationException
      */
-    public function handle()
+    public function handle(): int
     {
         try {
             DB::select('select 1 where 1');

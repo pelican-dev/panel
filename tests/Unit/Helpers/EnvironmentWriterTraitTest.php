@@ -10,7 +10,7 @@ class EnvironmentWriterTraitTest extends TestCase
     /**
      * @dataProvider variableDataProvider
      */
-    public function testVariableIsEscapedProperly($input, $expected)
+    public function testVariableIsEscapedProperly($input, $expected): void
     {
         $output = (new FooClass())->escapeEnvironmentValue($input);
 

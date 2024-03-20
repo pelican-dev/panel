@@ -44,7 +44,7 @@ class DeployServerDatabaseServiceTest extends IntegrationTestCase
      *
      * @dataProvider invalidDataProvider
      */
-    public function testErrorIsThrownIfDatabaseNameIsEmpty(array $data)
+    public function testErrorIsThrownIfDatabaseNameIsEmpty(array $data): void
     {
         $server = $this->createServerModel();
 
@@ -57,7 +57,7 @@ class DeployServerDatabaseServiceTest extends IntegrationTestCase
      * Test that an error is thrown if there are no database hosts on the same node as the
      * server and the allow_random config value is false.
      */
-    public function testErrorIsThrownIfNoDatabaseHostsExistOnNode()
+    public function testErrorIsThrownIfNoDatabaseHostsExistOnNode(): void
     {
         $server = $this->createServerModel();
 
@@ -77,7 +77,7 @@ class DeployServerDatabaseServiceTest extends IntegrationTestCase
     /**
      * Test that an error is thrown if no database hosts exist at all on the system.
      */
-    public function testErrorIsThrownIfNoDatabaseHostsExistOnSystem()
+    public function testErrorIsThrownIfNoDatabaseHostsExistOnSystem(): void
     {
         $server = $this->createServerModel();
 
@@ -92,7 +92,7 @@ class DeployServerDatabaseServiceTest extends IntegrationTestCase
     /**
      * Test that a database host on the same node as the server is preferred.
      */
-    public function testDatabaseHostOnSameNodeIsPreferred()
+    public function testDatabaseHostOnSameNodeIsPreferred(): void
     {
         $server = $this->createServerModel();
 
@@ -119,7 +119,7 @@ class DeployServerDatabaseServiceTest extends IntegrationTestCase
      * there are no same-node hosts and the allow_random configuration value is set to
      * true.
      */
-    public function testDatabaseHostIsSelectedIfNoSuitableHostExistsOnSameNode()
+    public function testDatabaseHostIsSelectedIfNoSuitableHostExistsOnSameNode(): void
     {
         $server = $this->createServerModel();
 

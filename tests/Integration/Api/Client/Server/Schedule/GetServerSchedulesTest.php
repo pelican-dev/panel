@@ -25,7 +25,7 @@ class GetServerSchedulesTest extends ClientApiIntegrationTestCase
      *
      * @dataProvider permissionsDataProvider
      */
-    public function testServerSchedulesAreReturned(array $permissions, bool $individual)
+    public function testServerSchedulesAreReturned(array $permissions, bool $individual): void
     {
         [$user, $server] = $this->generateTestAccount($permissions);
 
@@ -59,7 +59,7 @@ class GetServerSchedulesTest extends ClientApiIntegrationTestCase
     /**
      * Test that a schedule belonging to another server cannot be viewed.
      */
-    public function testScheduleBelongingToAnotherServerCannotBeViewed()
+    public function testScheduleBelongingToAnotherServerCannotBeViewed(): void
     {
         [$user, $server] = $this->generateTestAccount();
         $server2 = $this->createServerModel(['owner_id' => $user->id]);
@@ -74,7 +74,7 @@ class GetServerSchedulesTest extends ClientApiIntegrationTestCase
     /**
      * Test that a subuser without the required permissions is unable to access the schedules endpoint.
      */
-    public function testUserWithoutPermissionCannotViewSchedules()
+    public function testUserWithoutPermissionCannotViewSchedules(): void
     {
         [$user, $server] = $this->generateTestAccount([Permission::ACTION_WEBSOCKET_CONNECT]);
 

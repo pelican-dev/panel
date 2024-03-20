@@ -15,7 +15,7 @@ return new class extends Migration
      *
      * @throws \Exception
      */
-    public function up()
+    public function up(): void
     {
         Schema::table('nodes', function (Blueprint $table) {
             $table->dropUnique(['daemonSecret']);
@@ -51,7 +51,7 @@ return new class extends Migration
      *
      * @return void
      */
-    public function down()
+    public function down(): void
     {
         DB::transaction(function () {
             foreach (DB::select('SELECT id, daemon_token_id, daemon_token FROM nodes') as $datum) {

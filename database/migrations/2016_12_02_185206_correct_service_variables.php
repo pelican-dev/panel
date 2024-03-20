@@ -7,7 +7,7 @@ return new class extends Migration
     /**
      * Run the migrations.
      */
-    public function up()
+    public function up(): void
     {
         DB::transaction(function () {
             // Modify Default Spigot Startup Line
@@ -66,7 +66,7 @@ return new class extends Migration
     /**
      * Reverse the migrations.
      */
-    public function down()
+    public function down(): void
     {
         // do nothing
     }

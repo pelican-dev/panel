@@ -30,7 +30,7 @@ class CleanServiceBackupFilesCommand extends Command
     /**
      * Handle command execution.
      */
-    public function handle()
+    public function handle(): void
     {
         $files = $this->disk->files('services/.bak');
 

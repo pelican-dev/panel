@@ -12,7 +12,7 @@ return new class extends Migration
      *
      * @return void
      */
-    public function up()
+    public function up(): void
     {
         $db = config('database.default');
         // There exists a backups plugin for the 0.7 version of the Panel. However, it didn't properly
@@ -52,7 +52,7 @@ return new class extends Migration
      *
      * @return void
      */
-    public function down()
+    public function down(): void
     {
         Schema::dropIfExists('backups');
     }

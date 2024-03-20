@@ -14,7 +14,7 @@ return new class extends Migration
      * @throws \Exception
      * @throws \Throwable
      */
-    public function up()
+    public function up(): void
     {
         Schema::table('api_keys', function (Blueprint $table) {
             $table->char('identifier', 16)->nullable()->unique()->after('user_id');
@@ -34,7 +34,7 @@ return new class extends Migration
      * @throws \Exception
      * @throws \Throwable
      */
-    public function down()
+    public function down(): void
     {
         Schema::table('api_keys', function (Blueprint $table) {
             $table->dropColumn('identifier');

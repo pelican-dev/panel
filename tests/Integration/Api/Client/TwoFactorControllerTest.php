@@ -15,7 +15,7 @@ class TwoFactorControllerTest extends ClientApiIntegrationTestCase
      * Test that image data for enabling 2FA is returned by the endpoint and that the user
      * record in the database is updated as expected.
      */
-    public function testTwoFactorImageDataIsReturned()
+    public function testTwoFactorImageDataIsReturned(): void
     {
         /** @var \App\Models\User $user */
         $user = User::factory()->create(['use_totp' => false]);
@@ -39,7 +39,7 @@ class TwoFactorControllerTest extends ClientApiIntegrationTestCase
     /**
      * Test that an error is returned if the user's account already has 2FA enabled on it.
      */
-    public function testErrorIsReturnedWhenTwoFactorIsAlreadyEnabled()
+    public function testErrorIsReturnedWhenTwoFactorIsAlreadyEnabled(): void
     {
         /** @var \App\Models\User $user */
         $user = User::factory()->create(['use_totp' => true]);
@@ -54,7 +54,7 @@ class TwoFactorControllerTest extends ClientApiIntegrationTestCase
     /**
      * Test that a validation error is thrown if invalid data is passed to the 2FA endpoint.
      */
-    public function testValidationErrorIsReturnedIfInvalidDataIsPassedToEnabled2FA()
+    public function testValidationErrorIsReturnedIfInvalidDataIsPassedToEnabled2FA(): void
     {
         /** @var \App\Models\User $user */
         $user = User::factory()->create(['use_totp' => false]);
@@ -71,7 +71,7 @@ class TwoFactorControllerTest extends ClientApiIntegrationTestCase
     /**
      * Tests that 2FA can be enabled on an account for the user.
      */
-    public function testTwoFactorCanBeEnabledOnAccount()
+    public function testTwoFactorCanBeEnabledOnAccount(): void
     {
         /** @var \App\Models\User $user */
         $user = User::factory()->create(['use_totp' => false]);
@@ -123,7 +123,7 @@ class TwoFactorControllerTest extends ClientApiIntegrationTestCase
      * Test that two-factor authentication can be disabled on an account as long as the password
      * provided is valid for the account.
      */
-    public function testTwoFactorCanBeDisabledOnAccount()
+    public function testTwoFactorCanBeDisabledOnAccount(): void
     {
         Carbon::setTestNow(Carbon::now());
 
@@ -154,7 +154,7 @@ class TwoFactorControllerTest extends ClientApiIntegrationTestCase
      * Test that no error is returned when trying to disabled two factor on an account where it
      * was not enabled in the first place.
      */
-    public function testNoErrorIsReturnedIfTwoFactorIsNotEnabled()
+    public function testNoErrorIsReturnedIfTwoFactorIsNotEnabled(): void
     {
         Carbon::setTestNow(Carbon::now());
 
@@ -171,7 +171,7 @@ class TwoFactorControllerTest extends ClientApiIntegrationTestCase
     /**
      * Test that a valid account password is required when enabling two-factor.
      */
-    public function testEnablingTwoFactorRequiresValidPassword()
+    public function testEnablingTwoFactorRequiresValidPassword(): void
     {
         $user = User::factory()->create(['use_totp' => false]);
 
@@ -189,7 +189,7 @@ class TwoFactorControllerTest extends ClientApiIntegrationTestCase
     /**
      * Test that a valid account password is required when disabling two-factor.
      */
-    public function testDisablingTwoFactorRequiresValidPassword()
+    public function testDisablingTwoFactorRequiresValidPassword(): void
     {
         $user = User::factory()->create(['use_totp' => true]);
 

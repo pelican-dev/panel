@@ -17,7 +17,7 @@ class CommandControllerTest extends ClientApiIntegrationTestCase
      * Test that a validation error is returned if there is no command present in the
      * request.
      */
-    public function testValidationErrorIsReturnedIfNoCommandIsPresent()
+    public function testValidationErrorIsReturnedIfNoCommandIsPresent(): void
     {
         [$user, $server] = $this->generateTestAccount();
 
@@ -33,7 +33,7 @@ class CommandControllerTest extends ClientApiIntegrationTestCase
      * Test that a subuser without the required permission receives an error when trying to
      * execute the command.
      */
-    public function testSubuserWithoutPermissionReceivesError()
+    public function testSubuserWithoutPermissionReceivesError(): void
     {
         [$user, $server] = $this->generateTestAccount([Permission::ACTION_WEBSOCKET_CONNECT]);
 
@@ -47,7 +47,7 @@ class CommandControllerTest extends ClientApiIntegrationTestCase
     /**
      * Test that a command can be sent to the server.
      */
-    public function testCommandCanSendToServer()
+    public function testCommandCanSendToServer(): void
     {
         [$user, $server] = $this->generateTestAccount([Permission::ACTION_CONTROL_CONSOLE]);
 
@@ -69,7 +69,7 @@ class CommandControllerTest extends ClientApiIntegrationTestCase
      * Test that an error is returned when the server is offline that is more specific than the
      * regular daemon connection error.
      */
-    public function testErrorIsReturnedWhenServerIsOffline()
+    public function testErrorIsReturnedWhenServerIsOffline(): void
     {
         [$user, $server] = $this->generateTestAccount();
 

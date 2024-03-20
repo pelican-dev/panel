@@ -23,7 +23,7 @@ class SuspensionServiceTest extends IntegrationTestCase
         $this->app->instance(DaemonServerRepository::class, $this->repository);
     }
 
-    public function testServerIsSuspendedAndUnsuspended()
+    public function testServerIsSuspendedAndUnsuspended(): void
     {
         $server = $this->createServerModel();
 
@@ -38,7 +38,7 @@ class SuspensionServiceTest extends IntegrationTestCase
         $this->assertFalse($server->refresh()->isSuspended());
     }
 
-    public function testNoActionIsTakenIfSuspensionStatusIsUnchanged()
+    public function testNoActionIsTakenIfSuspensionStatusIsUnchanged(): void
     {
         $server = $this->createServerModel();
 
@@ -54,7 +54,7 @@ class SuspensionServiceTest extends IntegrationTestCase
         $this->assertTrue($server->isSuspended());
     }
 
-    public function testExceptionIsThrownIfInvalidActionsArePassed()
+    public function testExceptionIsThrownIfInvalidActionsArePassed(): void
     {
         $server = $this->createServerModel();
 

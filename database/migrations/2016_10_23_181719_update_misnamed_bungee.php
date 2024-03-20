@@ -7,7 +7,7 @@ return new class extends Migration
     /**
      * Run the migrations.
      */
-    public function up()
+    public function up(): void
     {
         DB::table('service_variables')->select('env_variable')->where('env_variable', 'BUNGE_VERSION')->update([
             'env_variable' => 'BUNGEE_VERSION',
@@ -17,7 +17,7 @@ return new class extends Migration
     /**
      * Reverse the migrations.
      */
-    public function down()
+    public function down(): void
     {
     }
 };

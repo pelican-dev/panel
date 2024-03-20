@@ -11,7 +11,7 @@ class ResourceUtilizationControllerTest extends ClientApiIntegrationTestCase
     /**
      * Test that the resource utilization for a server is returned in the expected format.
      */
-    public function testServerResourceUtilizationIsReturned()
+    public function testServerResourceUtilizationIsReturned(): void
     {
         $service = \Mockery::mock(DaemonServerRepository::class);
         $this->app->instance(DaemonServerRepository::class, $service);

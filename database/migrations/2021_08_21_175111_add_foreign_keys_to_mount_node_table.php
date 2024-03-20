@@ -12,7 +12,7 @@ return new class extends Migration
      *
      * @return void
      */
-    public function up()
+    public function up(): void
     {
         // Fix the columns having a different type than their relations.
         Schema::table('mount_node', function (Blueprint $table) {
@@ -49,7 +49,7 @@ return new class extends Migration
      *
      * @return void
      */
-    public function down()
+    public function down(): void
     {
         Schema::table('mount_node', function (Blueprint $table) {
             $table->dropForeign(['node_id']);

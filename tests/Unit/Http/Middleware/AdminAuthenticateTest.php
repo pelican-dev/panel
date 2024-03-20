@@ -11,7 +11,7 @@ class AdminAuthenticateTest extends MiddlewareTestCase
     /**
      * Test that an admin is authenticated.
      */
-    public function testAdminsAreAuthenticated()
+    public function testAdminsAreAuthenticated(): void
     {
         $user = User::factory()->make(['root_admin' => 1]);
 
@@ -23,7 +23,7 @@ class AdminAuthenticateTest extends MiddlewareTestCase
     /**
      * Test that a missing user in the request triggers an error.
      */
-    public function testExceptionIsThrownIfUserDoesNotExist()
+    public function testExceptionIsThrownIfUserDoesNotExist(): void
     {
         $this->expectException(AccessDeniedHttpException::class);
 
@@ -35,7 +35,7 @@ class AdminAuthenticateTest extends MiddlewareTestCase
     /**
      * Test that an exception is thrown if the user is not an admin.
      */
-    public function testExceptionIsThrownIfUserIsNotAnAdmin()
+    public function testExceptionIsThrownIfUserIsNotAnAdmin(): void
     {
         $this->expectException(AccessDeniedHttpException::class);
 

@@ -11,7 +11,7 @@ class AllocationAuthorizationTest extends ClientApiIntegrationTestCase
     /**
      * @dataProvider methodDataProvider
      */
-    public function testAccessToAServersAllocationsIsRestrictedProperly(string $method, string $endpoint)
+    public function testAccessToAServersAllocationsIsRestrictedProperly(string $method, string $endpoint): void
     {
         // The API $user is the owner of $server1.
         [$user, $server1] = $this->generateTestAccount();

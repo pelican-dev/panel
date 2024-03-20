@@ -27,7 +27,7 @@ class UpdateServerScheduleTest extends ClientApiIntegrationTestCase
      *
      * @dataProvider permissionsDataProvider
      */
-    public function testScheduleCanBeUpdated(array $permissions)
+    public function testScheduleCanBeUpdated(array $permissions): void
     {
         [$user, $server] = $this->generateTestAccount($permissions);
 
@@ -52,7 +52,7 @@ class UpdateServerScheduleTest extends ClientApiIntegrationTestCase
      * Test that an error is returned if the schedule exists but does not belong to this
      * specific server instance.
      */
-    public function testErrorIsReturnedIfScheduleDoesNotBelongToServer()
+    public function testErrorIsReturnedIfScheduleDoesNotBelongToServer(): void
     {
         [$user, $server] = $this->generateTestAccount();
         $server2 = $this->createServerModel(['owner_id' => $user->id]);
@@ -68,7 +68,7 @@ class UpdateServerScheduleTest extends ClientApiIntegrationTestCase
      * Test that an error is returned if the subuser does not have permission to modify a
      * server schedule.
      */
-    public function testErrorIsReturnedIfSubuserDoesNotHavePermissionToModifySchedule()
+    public function testErrorIsReturnedIfSubuserDoesNotHavePermissionToModifySchedule(): void
     {
         [$user, $server] = $this->generateTestAccount([Permission::ACTION_SCHEDULE_CREATE]);
 
@@ -83,7 +83,7 @@ class UpdateServerScheduleTest extends ClientApiIntegrationTestCase
      * Test that the "is_processing" field gets reset to false when the schedule is enabled
      * or disabled so that an invalid state can be more easily fixed.
      */
-    public function testScheduleIsProcessingIsSetToFalseWhenActiveStateChanges()
+    public function testScheduleIsProcessingIsSetToFalseWhenActiveStateChanges(): void
     {
         [$user, $server] = $this->generateTestAccount();
 

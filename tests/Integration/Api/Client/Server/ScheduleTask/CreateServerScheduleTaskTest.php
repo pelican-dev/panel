@@ -15,7 +15,7 @@ class CreateServerScheduleTaskTest extends ClientApiIntegrationTestCase
      *
      * @dataProvider permissionsDataProvider
      */
-    public function testTaskCanBeCreated(array $permissions)
+    public function testTaskCanBeCreated(array $permissions): void
     {
         [$user, $server] = $this->generateTestAccount($permissions);
 
@@ -45,7 +45,7 @@ class CreateServerScheduleTaskTest extends ClientApiIntegrationTestCase
     /**
      * Test that validation errors are returned correctly if bad data is passed into the API.
      */
-    public function testValidationErrorsAreReturned()
+    public function testValidationErrorsAreReturned(): void
     {
         [$user, $server] = $this->generateTestAccount();
 
@@ -90,7 +90,7 @@ class CreateServerScheduleTaskTest extends ClientApiIntegrationTestCase
     /**
      * Test that backups can not be tasked when the backup limit is 0.
      */
-    public function testBackupsCanNotBeTaskedIfLimit0()
+    public function testBackupsCanNotBeTaskedIfLimit0(): void
     {
         [$user, $server] = $this->generateTestAccount();
 
@@ -117,7 +117,7 @@ class CreateServerScheduleTaskTest extends ClientApiIntegrationTestCase
      * Test that an error is returned if the user attempts to create an additional task that
      * would put the schedule over the task limit.
      */
-    public function testErrorIsReturnedIfTooManyTasksExistForSchedule()
+    public function testErrorIsReturnedIfTooManyTasksExistForSchedule(): void
     {
         config()->set('panel.client_features.schedules.per_schedule_task_limit', 2);
 
@@ -141,7 +141,7 @@ class CreateServerScheduleTaskTest extends ClientApiIntegrationTestCase
      * Test that an error is returned if the targeted schedule does not belong to the server
      * in the request.
      */
-    public function testErrorIsReturnedIfScheduleDoesNotBelongToServer()
+    public function testErrorIsReturnedIfScheduleDoesNotBelongToServer(): void
     {
         [$user, $server] = $this->generateTestAccount();
         $server2 = $this->createServerModel(['owner_id' => $user->id]);
@@ -158,7 +158,7 @@ class CreateServerScheduleTaskTest extends ClientApiIntegrationTestCase
      * Test that an error is returned if the subuser making the request does not have permission
      * to update a schedule.
      */
-    public function testErrorIsReturnedIfSubuserDoesNotHaveScheduleUpdatePermissions()
+    public function testErrorIsReturnedIfSubuserDoesNotHaveScheduleUpdatePermissions(): void
     {
         [$user, $server] = $this->generateTestAccount([Permission::ACTION_SCHEDULE_CREATE]);
 

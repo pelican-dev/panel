@@ -22,7 +22,7 @@ class ServerFactory extends Factory
      *
      * @return array
      */
-    public function definition()
+    public function definition(): array
     {
         return [
             'uuid' => Uuid::uuid4()->toString(),

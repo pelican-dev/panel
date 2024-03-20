@@ -15,7 +15,7 @@ class DeleteServerScheduleTest extends ClientApiIntegrationTestCase
      *
      * @dataProvider permissionsDataProvider
      */
-    public function testScheduleCanBeDeleted(array $permissions)
+    public function testScheduleCanBeDeleted(array $permissions): void
     {
         [$user, $server] = $this->generateTestAccount($permissions);
 
@@ -33,7 +33,7 @@ class DeleteServerScheduleTest extends ClientApiIntegrationTestCase
     /**
      * Test that no error is returned if the schedule does not exist on the system at all.
      */
-    public function testNotFoundErrorIsReturnedIfScheduleDoesNotExistAtAll()
+    public function testNotFoundErrorIsReturnedIfScheduleDoesNotExistAtAll(): void
     {
         [$user, $server] = $this->generateTestAccount();
 
@@ -46,7 +46,7 @@ class DeleteServerScheduleTest extends ClientApiIntegrationTestCase
      * Ensure that a schedule belonging to another server cannot be deleted and its presence is not
      * revealed to the user.
      */
-    public function testNotFoundErrorIsReturnedIfScheduleDoesNotBelongToServer()
+    public function testNotFoundErrorIsReturnedIfScheduleDoesNotBelongToServer(): void
     {
         [$user, $server] = $this->generateTestAccount();
         $server2 = $this->createServerModel(['owner_id' => $user->id]);
@@ -64,7 +64,7 @@ class DeleteServerScheduleTest extends ClientApiIntegrationTestCase
      * Test that an error is returned if the subuser does not have the required permissions to
      * delete the schedule from the server.
      */
-    public function testErrorIsReturnedIfSubuserDoesNotHaveRequiredPermissions()
+    public function testErrorIsReturnedIfSubuserDoesNotHaveRequiredPermissions(): void
     {
         [$user, $server] = $this->generateTestAccount([Permission::ACTION_SCHEDULE_UPDATE]);
 

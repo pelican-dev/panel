@@ -9,7 +9,7 @@ return new class extends Migration
     /**
      * Run the migrations.
      */
-    public function up()
+    public function up(): void
     {
         Schema::table('databases', function (Blueprint $table) {
             $table->foreign('server_id')->references('id')->on('servers');
@@ -20,7 +20,7 @@ return new class extends Migration
     /**
      * Reverse the migrations.
      */
-    public function down()
+    public function down(): void
     {
         Schema::table('databases', function (Blueprint $table) {
             $table->dropForeign('databases_server_id_foreign');

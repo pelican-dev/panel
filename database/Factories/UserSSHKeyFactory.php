@@ -24,7 +24,7 @@ class UserSSHKeyFactory extends Factory
      *
      * @return array
      */
-    public function definition()
+    public function definition(): array
     {
         $key = PublicKeyLoader::loadPublicKey(static::$keys['ed25519']);
 

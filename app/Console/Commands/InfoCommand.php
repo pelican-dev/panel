@@ -22,7 +22,7 @@ class InfoCommand extends Command
     /**
      * Handle execution of command.
      */
-    public function handle()
+    public function handle(): void
     {
         $this->output->title('Version Information');
         $this->table([], [

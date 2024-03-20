@@ -14,7 +14,7 @@ class SubuserAuthorizationTest extends ClientApiIntegrationTestCase
      *
      * @dataProvider methodDataProvider
      */
-    public function testUserCannotAccessResourceBelongingToOtherServers(string $method)
+    public function testUserCannotAccessResourceBelongingToOtherServers(string $method): void
     {
         // Generic subuser, the specific resource we're trying to access.
         /** @var \App\Models\User $internal */

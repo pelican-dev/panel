@@ -8,7 +8,7 @@ return new class extends Migration
     /**
      * Run the migrations.
      */
-    public function up()
+    public function up(): void
     {
         $permissions = DB::table('permissions')->where('permission', 'like', '%-task%')->get();
         foreach ($permissions as $record) {
@@ -26,7 +26,7 @@ return new class extends Migration
     /**
      * Reverse the migrations.
      */
-    public function down()
+    public function down(): void
     {
         $permissions = DB::table('permissions')->where('permission', 'like', '%-schedule%')->get();
         foreach ($permissions as $record) {

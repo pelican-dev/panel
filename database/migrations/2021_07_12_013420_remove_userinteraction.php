@@ -10,7 +10,7 @@ return new class extends Migration
      *
      * @return void
      */
-    public function up()
+    public function up(): void
     {
         // Remove User Interaction from startup config
         DB::table('eggs')->update([
@@ -18,7 +18,7 @@ return new class extends Migration
         ]);
     }
 
-    public function down()
+    public function down(): void
     {
         // Add blank User Interaction array back to startup config
         DB::table('eggs')->update([

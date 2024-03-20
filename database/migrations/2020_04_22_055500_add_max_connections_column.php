@@ -11,7 +11,7 @@ return new class extends Migration
      *
      * @return void
      */
-    public function up()
+    public function up(): void
     {
         Schema::table('databases', function (Blueprint $table) {
             $table->integer('max_connections')->nullable()->default(0)->after('password');
@@ -23,7 +23,7 @@ return new class extends Migration
      *
      * @return void
      */
-    public function down()
+    public function down(): void
     {
         Schema::table('databases', function (Blueprint $table) {
             $table->dropColumn('max_connections');

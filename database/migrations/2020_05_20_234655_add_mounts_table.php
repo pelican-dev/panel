@@ -11,7 +11,7 @@ return new class extends Migration
      *
      * @return void
      */
-    public function up()
+    public function up(): void
     {
         Schema::create('mounts', function (Blueprint $table) {
             $table->increments('id')->unique();
@@ -44,7 +44,7 @@ return new class extends Migration
      *
      * @return void
      */
-    public function down()
+    public function down(): void
     {
         Schema::dropIfExists('mount_node');
         Schema::dropIfExists('egg_mount');

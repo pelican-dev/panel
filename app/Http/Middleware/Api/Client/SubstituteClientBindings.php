@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware\Api\Client;
 
+use Illuminate\Http\Request;
 use App\Models\Server;
 use Illuminate\Contracts\Routing\Registrar;
 use Illuminate\Routing\Middleware\SubstituteBindings;
@@ -13,7 +14,7 @@ class SubstituteClientBindings extends SubstituteBindings
         parent::__construct($router);
     }
 
-    public function handle($request, \Closure $next): mixed
+    public function handle(Request $request, \Closure $next): mixed
     {
         // Override default behavior of the model binding to use a specific table
         // column rather than the default 'id'.

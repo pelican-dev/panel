@@ -21,7 +21,7 @@ class RunTaskJobTest extends IntegrationTestCase
     /**
      * An inactive job should not be run by the system.
      */
-    public function testInactiveJobIsNotRun()
+    public function testInactiveJobIsNotRun(): void
     {
         $server = $this->createServerModel();
 
@@ -48,7 +48,7 @@ class RunTaskJobTest extends IntegrationTestCase
         $this->assertTrue(CarbonImmutable::now()->isSameAs(\DateTimeInterface::ATOM, $schedule->last_run_at));
     }
 
-    public function testJobWithInvalidActionThrowsException()
+    public function testJobWithInvalidActionThrowsException(): void
     {
         $server = $this->createServerModel();
 
@@ -67,7 +67,7 @@ class RunTaskJobTest extends IntegrationTestCase
     /**
      * @dataProvider isManualRunDataProvider
      */
-    public function testJobIsExecuted(bool $isManualRun)
+    public function testJobIsExecuted(bool $isManualRun): void
     {
         $server = $this->createServerModel();
 
@@ -108,7 +108,7 @@ class RunTaskJobTest extends IntegrationTestCase
     /**
      * @dataProvider isManualRunDataProvider
      */
-    public function testExceptionDuringRunIsHandledCorrectly(bool $continueOnFailure)
+    public function testExceptionDuringRunIsHandledCorrectly(bool $continueOnFailure): void
     {
         $server = $this->createServerModel();
 
@@ -148,7 +148,7 @@ class RunTaskJobTest extends IntegrationTestCase
     /**
      * Test that a schedule is not executed if the server is suspended.
      */
-    public function testTaskIsNotRunIfServerIsSuspended()
+    public function testTaskIsNotRunIfServerIsSuspended(): void
     {
         $server = $this->createServerModel([
             'status' => Server::STATUS_SUSPENDED,

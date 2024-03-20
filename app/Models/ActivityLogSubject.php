@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\Pivot;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
@@ -30,7 +31,7 @@ class ActivityLogSubject extends Pivot
 
     protected $guarded = ['id'];
 
-    public function activityLog()
+    public function activityLog(): BelongsTo
     {
         return $this->belongsTo(ActivityLog::class);
     }
