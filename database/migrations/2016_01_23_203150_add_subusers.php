@@ -3,7 +3,7 @@
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class AddSubusers extends Migration
+return new class extends Migration
 {
     /**
      * Run the migrations.
@@ -26,4 +26,4 @@ class AddSubusers extends Migration
     {
         Schema::dropIfExists('subusers');
     }
-}
+};

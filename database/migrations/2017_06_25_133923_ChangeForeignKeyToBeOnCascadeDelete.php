@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class ChangeForeignKeyToBeOnCascadeDelete extends Migration
+return new class extends Migration
 {
     /**
      * Run the migrations.
@@ -29,4 +29,4 @@ class ChangeForeignKeyToBeOnCascadeDelete extends Migration
             $table->foreign('key_id')->references('id')->on('api_keys');
         });
     }
-}
+};

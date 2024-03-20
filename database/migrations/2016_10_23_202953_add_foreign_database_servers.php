@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class AddForeignDatabaseServers extends Migration
+return new class extends Migration
 {
     /**
      * Run the migrations.
@@ -26,4 +26,4 @@ class AddForeignDatabaseServers extends Migration
             $table->dropIndex('database_servers_linked_node_foreign');
         });
     }
-}
+};

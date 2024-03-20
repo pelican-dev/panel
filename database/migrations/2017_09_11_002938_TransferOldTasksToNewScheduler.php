@@ -5,7 +5,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class TransferOldTasksToNewScheduler extends Migration
+return new class extends Migration
 {
     /**
      * Run the migrations.
@@ -72,4 +72,4 @@ class TransferOldTasksToNewScheduler extends Migration
             $table->timestamps();
         });
     }
-}
+};

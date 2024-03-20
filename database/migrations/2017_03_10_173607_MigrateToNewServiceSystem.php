@@ -2,7 +2,7 @@
 
 use Illuminate\Database\Migrations\Migration;
 
-class MigrateToNewServiceSystem extends Migration
+return new class extends Migration
 {
     /**
      * Run the migrations.
@@ -36,4 +36,4 @@ class MigrateToNewServiceSystem extends Migration
     {
         // Not doing reversals right now...
     }
-}
+};

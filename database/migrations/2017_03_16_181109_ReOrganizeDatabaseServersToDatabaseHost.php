@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class ReOrganizeDatabaseServersToDatabaseHost extends Migration
+return new class extends Migration
 {
     /**
      * Run the migrations.
@@ -41,4 +41,4 @@ class ReOrganizeDatabaseServersToDatabaseHost extends Migration
             $table->foreign('linked_node')->references('id')->on('nodes');
         });
     }
-}
+};

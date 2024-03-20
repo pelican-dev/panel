@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CascadeDeletionWhenAParentServiceIsDeleted extends Migration
+return new class extends Migration
 {
     /**
      * Run the migrations.
@@ -29,4 +29,4 @@ class CascadeDeletionWhenAParentServiceIsDeleted extends Migration
             $table->foreign('service_id')->references('id')->on('services');
         });
     }
-}
+};

@@ -5,7 +5,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class ChangeSuccessfulFieldToDefaultToFalseOnBackupsTable extends Migration
+return new class extends Migration
 {
     /**
      * Run the migrations.
@@ -35,4 +35,4 @@ class ChangeSuccessfulFieldToDefaultToFalseOnBackupsTable extends Migration
             $table->boolean('is_successful')->after('uuid')->default(true)->change();
         });
     }
-}
+};

@@ -6,7 +6,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class ChangeToABetterUniqueServiceConfiguration extends Migration
+return new class extends Migration
 {
     /**
      * Run the migrations.
@@ -56,4 +56,4 @@ class ChangeToABetterUniqueServiceConfiguration extends Migration
             });
         });
     }
-}
+};

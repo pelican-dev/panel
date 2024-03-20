@@ -5,7 +5,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class UpgradeTaskSystem extends Migration
+return new class extends Migration
 {
     /**
      * Run the migrations.
@@ -45,4 +45,4 @@ class UpgradeTaskSystem extends Migration
             $table->foreign('server')->references('id')->on('servers');
         });
     }
-}
+};

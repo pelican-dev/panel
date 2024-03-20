@@ -3,7 +3,7 @@
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Migrations\Migration;
 
-class RenameTasksTableForStructureRefactor extends Migration
+return new class extends Migration
 {
     /**
      * Run the migrations.
@@ -20,4 +20,4 @@ class RenameTasksTableForStructureRefactor extends Migration
     {
         Schema::rename('tasks_old', 'tasks');
     }
-}
+};

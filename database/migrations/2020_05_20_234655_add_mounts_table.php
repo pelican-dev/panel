@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class AddMountsTable extends Migration
+return new class extends Migration
 {
     /**
      * Run the migrations.
@@ -50,4 +50,4 @@ class AddMountsTable extends Migration
         Schema::dropIfExists('egg_mount');
         Schema::dropIfExists('mounts');
     }
-}
+};

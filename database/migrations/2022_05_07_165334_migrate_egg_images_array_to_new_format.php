@@ -3,7 +3,7 @@
 use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Migrations\Migration;
 
-class MigrateEggImagesArrayToNewFormat extends Migration
+return new class extends Migration
 {
     /**
      * Run the migrations. This will loop over every egg on the system and update the
@@ -37,4 +37,4 @@ class MigrateEggImagesArrayToNewFormat extends Migration
             ]);
         });
     }
-}
+};

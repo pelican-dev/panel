@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class Add2FaLastAuthorizationTimeColumn extends Migration
+return new class extends Migration
 {
     /**
      * Run the migrations.
@@ -57,4 +57,4 @@ class Add2FaLastAuthorizationTimeColumn extends Migration
             $table->dropColumn('totp_authenticated_at');
         });
     }
-}
+};

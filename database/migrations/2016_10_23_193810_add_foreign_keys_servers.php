@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class AddForeignKeysServers extends Migration
+return new class extends Migration
 {
     /**
      * Run the migrations.
@@ -58,4 +58,4 @@ class AddForeignKeysServers extends Migration
             MODIFY COLUMN `option` MEDIUMINT(8) UNSIGNED NOT NULL
         ');
     }
-}
+};

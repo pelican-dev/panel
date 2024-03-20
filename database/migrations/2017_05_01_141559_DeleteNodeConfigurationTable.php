@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class DeleteNodeConfigurationTable extends Migration
+return new class extends Migration
 {
     /**
      * Run the migrations.
@@ -30,4 +30,4 @@ class DeleteNodeConfigurationTable extends Migration
             $table->foreign('node_id')->references('id')->on('nodes');
         });
     }
-}
+};

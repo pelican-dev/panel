@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class UpdateColumnNames extends Migration
+return new class extends Migration
 {
     /**
      * Run the migrations.
@@ -71,4 +71,4 @@ class UpdateColumnNames extends Migration
             $table->foreign('pack')->references('id')->on('service_packs');
         });
     }
-}
+};

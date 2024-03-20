@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class AddAbilityToDefineConnectionOverSSLWithDaemonBehindProxy extends Migration
+return new class extends Migration
 {
     /**
      * Run the migrations.
@@ -25,4 +25,4 @@ class AddAbilityToDefineConnectionOverSSLWithDaemonBehindProxy extends Migration
             $table->dropColumn('behind_proxy');
         });
     }
-}
+};

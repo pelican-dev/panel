@@ -3,7 +3,7 @@
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class ServicesToNestsConversion extends Migration
+return new class extends Migration
 {
     /**
      * Run the migrations.
@@ -56,4 +56,4 @@ class ServicesToNestsConversion extends Migration
 
         Schema::enableForeignKeyConstraints();
     }
-}
+};

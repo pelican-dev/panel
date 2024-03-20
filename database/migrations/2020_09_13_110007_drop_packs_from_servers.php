@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class DropPacksFromServers extends Migration
+return new class extends Migration
 {
     /**
      * Run the migrations.
@@ -31,4 +31,4 @@ class DropPacksFromServers extends Migration
             $table->foreign('pack_id')->references('id')->on('packs');
         });
     }
-}
+};

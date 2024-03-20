@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class RemovePackWhenParentServiceOptionIsDeleted extends Migration
+return new class extends Migration
 {
     /**
      * Run the migrations.
@@ -29,4 +29,4 @@ class RemovePackWhenParentServiceOptionIsDeleted extends Migration
             $table->foreign('option_id')->references('id')->on('service_options');
         });
     }
-}
+};

@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class DropAllocationsWhenNodeIsDeleted extends Migration
+return new class extends Migration
 {
     /**
      * Run the migrations.
@@ -29,4 +29,4 @@ class DropAllocationsWhenNodeIsDeleted extends Migration
             $table->foreign('node_id')->references('id')->on('nodes');
         });
     }
-}
+};

@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class DropPermissionsTable extends Migration
+return new class extends Migration
 {
     /**
      * Run the migrations.
@@ -31,4 +31,4 @@ class DropPermissionsTable extends Migration
             $table->foreign('subuser_id')->references('id')->on('subusers')->onDelete('cascade');
         });
     }
-}
+};

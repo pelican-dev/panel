@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class AddForeignApiPermissions extends Migration
+return new class extends Migration
 {
     /**
      * Run the migrations.
@@ -30,4 +30,4 @@ class AddForeignApiPermissions extends Migration
 
         DB::statement('ALTER TABLE api_permissions MODIFY key_id MEDIUMINT(8) UNSIGNED NOT NULL');
     }
-}
+};

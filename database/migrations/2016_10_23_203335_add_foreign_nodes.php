@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class AddForeignNodes extends Migration
+return new class extends Migration
 {
     /**
      * Run the migrations.
@@ -30,4 +30,4 @@ class AddForeignNodes extends Migration
 
         DB::statement('ALTER TABLE nodes MODIFY location MEDIUMINT(10) UNSIGNED NOT NULL');
     }
-}
+};

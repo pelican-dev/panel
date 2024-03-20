@@ -2,7 +2,7 @@
 
 use Illuminate\Database\Migrations\Migration;
 
-class AddNullableFieldLastrun extends Migration
+return new class extends Migration
 {
     /**
      * Run the migrations.
@@ -21,4 +21,4 @@ class AddNullableFieldLastrun extends Migration
         $table = DB::getQueryGrammar()->wrapTable('tasks');
         DB::statement('ALTER TABLE ' . $table . ' CHANGE `last_run` `last_run` TIMESTAMP;');
     }
-}
+};

@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class AddNewServiceOptionsColumns extends Migration
+return new class extends Migration
 {
     /**
      * Run the migrations.
@@ -41,4 +41,4 @@ class AddNewServiceOptionsColumns extends Migration
             $table->string('executable')->after('docker_image')->nullable();
         });
     }
-}
+};

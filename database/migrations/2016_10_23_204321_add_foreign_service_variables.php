@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class AddForeignServiceVariables extends Migration
+return new class extends Migration
 {
     /**
      * Run the migrations.
@@ -30,4 +30,4 @@ class AddForeignServiceVariables extends Migration
 
         DB::statement('ALTER TABLE service_variables MODIFY option_id MEDIUMINT(8) UNSIGNED NOT NULL');
     }
-}
+};

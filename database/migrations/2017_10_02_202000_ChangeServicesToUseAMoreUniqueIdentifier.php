@@ -6,7 +6,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class ChangeServicesToUseAMoreUniqueIdentifier extends Migration
+return new class extends Migration
 {
     /**
      * Run the migrations.
@@ -52,4 +52,4 @@ class ChangeServicesToUseAMoreUniqueIdentifier extends Migration
             $table->unique('folder', 'services_file_unique');
         });
     }
-}
+};
