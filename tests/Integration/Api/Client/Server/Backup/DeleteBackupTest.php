@@ -15,7 +15,7 @@ class DeleteBackupTest extends ClientApiIntegrationTestCase
 {
     private MockInterface $repository;
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
 

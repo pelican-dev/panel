@@ -12,7 +12,7 @@ class CreateNewAllocationTest extends ClientApiIntegrationTestCase
     /**
      * Setup tests.
      */
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
 

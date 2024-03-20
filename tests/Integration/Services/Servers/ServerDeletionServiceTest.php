@@ -25,7 +25,7 @@ class ServerDeletionServiceTest extends IntegrationTestCase
     /**
      * Stub out services that we don't want to test in here.
      */
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
 

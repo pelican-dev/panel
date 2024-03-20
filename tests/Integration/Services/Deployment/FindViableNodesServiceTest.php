@@ -10,7 +10,7 @@ use App\Services\Deployment\FindViableNodesService;
 
 class FindViableNodesServiceTest extends IntegrationTestCase
 {
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
 

@@ -30,7 +30,7 @@ class ServerCreationServiceTest extends IntegrationTestCase
     /**
      * Stub the calls to daemon so that we don't actually hit those API endpoints.
      */
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
 

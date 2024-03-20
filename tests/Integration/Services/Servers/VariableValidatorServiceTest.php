@@ -13,7 +13,7 @@ class VariableValidatorServiceTest extends IntegrationTestCase
 {
     protected Egg $egg;
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
 

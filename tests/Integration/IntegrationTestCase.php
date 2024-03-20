@@ -22,7 +22,7 @@ abstract class IntegrationTestCase extends TestCase
         'Accept' => 'application/json',
     ];
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
 

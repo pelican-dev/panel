@@ -15,7 +15,7 @@ class SuspensionServiceTest extends IntegrationTestCase
     /**
      * Setup test instance.
      */
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
 
