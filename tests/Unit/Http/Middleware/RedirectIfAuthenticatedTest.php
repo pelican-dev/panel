@@ -6,7 +6,7 @@ use Mockery as m;
 use Mockery\MockInterface;
 use Illuminate\Auth\AuthManager;
 use Illuminate\Http\RedirectResponse;
-use App\Http\Middleware\RedirectIfAuthenticated;
+use Illuminate\Auth\Middleware\RedirectIfAuthenticated;
 
 class RedirectIfAuthenticatedTest extends MiddlewareTestCase
 {
