@@ -73,8 +73,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        // Only load the settings service provider if the environment
-        // is configured to allow it.
+        // Only load the settings service provider if the environment is configured to allow it.
         if (!config('panel.load_environment_only', false) && $this->app->environment() !== 'testing') {
             $this->app->register(SettingsServiceProvider::class);
         }
@@ -82,8 +81,6 @@ class AppServiceProvider extends ServiceProvider
         $this->app->singleton('extensions.themes', function () {
             return new Theme();
         });
-
-        $this->registerAuth();
     }
 
     /**
@@ -129,10 +126,5 @@ class AppServiceProvider extends ServiceProvider
         Broadcast::channel('App.User.*', function ($user, $userId) {
             return (int) $user->id === (int) $userId;
         });
-    }
-
-    public function registerAuth(): void
-    {
-        Sanctum::ignoreMigrations();
     }
 }
