@@ -17,7 +17,7 @@ trait AvailableLanguages
      */
     public function getAvailableLanguages(bool $localize = false): array
     {
-        return collect($this->getFilesystemInstance()->directories(resource_path('lang')))->mapWithKeys(function ($path) use ($localize) {
+        return collect($this->getFilesystemInstance()->directories(base_path('lang')))->mapWithKeys(function ($path) use ($localize) {
             $code = basename($path);
             $value = $localize ? $this->getIsoInstance()->nativeByCode1($code) : $this->getIsoInstance()->languageByCode1($code);
 
