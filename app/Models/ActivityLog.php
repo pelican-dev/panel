@@ -67,11 +67,6 @@ class ActivityLog extends Model
         'timestamp',
     ];
 
-    protected $casts = [
-        'properties' => 'collection',
-        'timestamp' => 'datetime',
-    ];
-
     protected $with = ['subjects'];
 
     public static array $validationRules = [
@@ -81,6 +76,14 @@ class ActivityLog extends Model
         'description' => ['nullable', 'string'],
         'properties' => ['array'],
     ];
+
+    protected function casts(): array
+    {
+        return [
+            'properties' => 'collection',
+            'timestamp' => 'datetime',
+        ];
+    }
 
     public function actor(): MorphTo
     {

@@ -99,19 +99,6 @@ class Egg extends Model
         'copy_script_from',
     ];
 
-    /**
-     * Cast values to correct type.
-     */
-    protected $casts = [
-        'config_from' => 'integer',
-        'script_is_privileged' => 'boolean',
-        'force_outgoing_ip' => 'boolean',
-        'copy_script_from' => 'integer',
-        'features' => 'array',
-        'docker_images' => 'array',
-        'file_denylist' => 'array',
-    ];
-
     public static array $validationRules = [
         'uuid' => 'required|string|size:36',
         'name' => 'required|string|max:191',
@@ -141,6 +128,19 @@ class Egg extends Model
         'config_files' => null,
         'update_url' => null,
     ];
+
+    protected function casts(): array
+    {
+        return [
+            'config_from' => 'integer',
+            'script_is_privileged' => 'boolean',
+            'force_outgoing_ip' => 'boolean',
+            'copy_script_from' => 'integer',
+            'features' => 'array',
+            'docker_images' => 'array',
+            'file_denylist' => 'array',
+        ];
+    }
 
     protected static function booted(): void
     {

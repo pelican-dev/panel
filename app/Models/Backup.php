@@ -36,18 +36,6 @@ class Backup extends Model
 
     protected $table = 'backups';
 
-    protected $casts = [
-        'id' => 'int',
-        'is_successful' => 'bool',
-        'is_locked' => 'bool',
-        'ignored_files' => 'array',
-        'bytes' => 'int',
-        'completed_at' => 'immutable_datetime',
-        'created_at' => 'immutable_datetime',
-        'updated_at' => 'immutable_datetime',
-        'deleted_at' => 'immutable_datetime',
-    ];
-
     protected $attributes = [
         'is_successful' => false,
         'is_locked' => false,
@@ -70,6 +58,21 @@ class Backup extends Model
         'bytes' => 'numeric',
         'upload_id' => 'nullable|string',
     ];
+
+    protected function casts(): array
+    {
+        return [
+            'id' => 'int',
+            'is_successful' => 'bool',
+            'is_locked' => 'bool',
+            'ignored_files' => 'array',
+            'bytes' => 'int',
+            'completed_at' => 'immutable_datetime',
+            'created_at' => 'immutable_datetime',
+            'updated_at' => 'immutable_datetime',
+            'deleted_at' => 'immutable_datetime',
+        ];
+    }
 
     public function server(): BelongsTo
     {

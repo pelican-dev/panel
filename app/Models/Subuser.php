@@ -36,21 +36,21 @@ class Subuser extends Model
      */
     protected $guarded = ['id', 'created_at', 'updated_at'];
 
-    /**
-     * Cast values to correct type.
-     */
-    protected $casts = [
-        'user_id' => 'int',
-        'server_id' => 'int',
-        'permissions' => 'array',
-    ];
-
     public static array $validationRules = [
         'user_id' => 'required|numeric|exists:users,id',
         'server_id' => 'required|numeric|exists:servers,id',
         'permissions' => 'nullable|array',
         'permissions.*' => 'string',
     ];
+
+    protected function casts(): array
+    {
+        return [
+            'user_id' => 'int',
+            'server_id' => 'int',
+            'permissions' => 'array',
+        ];
+    }
 
     /**
      * Return a hashid encoded string to represent the ID of the subuser.

@@ -37,15 +37,6 @@ class Mount extends Model
     protected $guarded = ['id', 'uuid'];
 
     /**
-     * Default values for specific fields in the database.
-     */
-    protected $casts = [
-        'id' => 'int',
-        'read_only' => 'bool',
-        'user_mountable' => 'bool',
-    ];
-
-    /**
      * Rules verifying that the data being stored matches the expectations of the database.
      */
     public static array $validationRules = [
@@ -91,6 +82,15 @@ class Mount extends Model
     public static $invalidTargetPaths = [
         '/home/container',
     ];
+
+    protected function casts(): array
+    {
+        return [
+            'id' => 'int',
+            'read_only' => 'bool',
+            'user_mountable' => 'bool',
+        ];
+    }
 
     /**
      * Returns all eggs that have this mount assigned.

@@ -40,21 +40,6 @@ class ServerTransfer extends Model
      */
     protected $guarded = ['id', 'created_at', 'updated_at'];
 
-    /**
-     * Cast values to correct type.
-     */
-    protected $casts = [
-        'server_id' => 'int',
-        'old_node' => 'int',
-        'new_node' => 'int',
-        'old_allocation' => 'int',
-        'new_allocation' => 'int',
-        'old_additional_allocations' => 'array',
-        'new_additional_allocations' => 'array',
-        'successful' => 'bool',
-        'archived' => 'bool',
-    ];
-
     public static array $validationRules = [
         'server_id' => 'required|numeric|exists:servers,id',
         'old_node' => 'required|numeric',
@@ -67,6 +52,21 @@ class ServerTransfer extends Model
         'new_additional_allocations.*' => 'numeric',
         'successful' => 'sometimes|nullable|boolean',
     ];
+
+    protected function casts(): array
+    {
+        return [
+            'server_id' => 'int',
+            'old_node' => 'int',
+            'new_node' => 'int',
+            'old_allocation' => 'int',
+            'new_allocation' => 'int',
+            'old_additional_allocations' => 'array',
+            'new_additional_allocations' => 'array',
+            'successful' => 'bool',
+            'archived' => 'bool',
+        ];
+    }
 
     /**
      * Gets the server associated with a server transfer.

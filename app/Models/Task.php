@@ -63,18 +63,6 @@ class Task extends Model
     ];
 
     /**
-     * Cast values to correct type.
-     */
-    protected $casts = [
-        'id' => 'integer',
-        'schedule_id' => 'integer',
-        'sequence_id' => 'integer',
-        'time_offset' => 'integer',
-        'is_queued' => 'boolean',
-        'continue_on_failure' => 'boolean',
-    ];
-
-    /**
      * Default attributes when creating a new model.
      */
     protected $attributes = [
@@ -93,9 +81,18 @@ class Task extends Model
         'continue_on_failure' => 'boolean',
     ];
 
-    /**
-     * {@inheritDoc}
-     */
+    protected function casts(): array
+    {
+        return [
+            'id' => 'integer',
+            'schedule_id' => 'integer',
+            'sequence_id' => 'integer',
+            'time_offset' => 'integer',
+            'is_queued' => 'boolean',
+            'continue_on_failure' => 'boolean',
+        ];
+    }
+
     public function getRouteKeyName(): string
     {
         return $this->getKeyName();

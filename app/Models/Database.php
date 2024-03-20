@@ -48,15 +48,6 @@ class Database extends Model
         'server_id', 'database_host_id', 'database', 'username', 'password', 'remote', 'max_connections',
     ];
 
-    /**
-     * Cast values to correct type.
-     */
-    protected $casts = [
-        'server_id' => 'integer',
-        'database_host_id' => 'integer',
-        'max_connections' => 'integer',
-    ];
-
     public static array $validationRules = [
         'server_id' => 'required|numeric|exists:servers,id',
         'database_host_id' => 'required|exists:database_hosts,id',
@@ -67,9 +58,15 @@ class Database extends Model
         'password' => 'string',
     ];
 
-    /**
-     * {@inheritDoc}
-     */
+    protected function casts(): array
+    {
+        return [
+            'server_id' => 'integer',
+            'database_host_id' => 'integer',
+            'max_connections' => 'integer',
+        ];
+    }
+
     public function getRouteKeyName(): string
     {
         return $this->getKeyName();

@@ -126,16 +126,6 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
     ];
 
     /**
-     * Cast values to correct type.
-     */
-    protected $casts = [
-        'root_admin' => 'boolean',
-        'use_totp' => 'boolean',
-        'gravatar' => 'boolean',
-        'totp_authenticated_at' => 'datetime',
-    ];
-
-    /**
      * The attributes excluded from the model's JSON form.
      */
     protected $hidden = ['password', 'remember_token', 'totp_secret', 'totp_authenticated_at'];
@@ -167,6 +157,16 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
         'use_totp' => 'boolean',
         'totp_secret' => 'nullable|string',
     ];
+
+    protected function casts(): array
+    {
+        return [
+            'root_admin' => 'boolean',
+            'use_totp' => 'boolean',
+            'gravatar' => 'boolean',
+            'totp_authenticated_at' => 'datetime',
+        ];
+    }
 
     protected static function booted(): void
     {

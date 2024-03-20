@@ -89,25 +89,6 @@ class ApiKey extends Model
     protected $table = 'api_keys';
 
     /**
-     * Cast values to correct type.
-     */
-    protected $casts = [
-        'allowed_ips' => 'array',
-        'user_id' => 'int',
-        'last_used_at' => 'datetime',
-        'expires_at' => 'datetime',
-        self::CREATED_AT => 'datetime',
-        self::UPDATED_AT => 'datetime',
-        'r_' . AdminAcl::RESOURCE_USERS => 'int',
-        'r_' . AdminAcl::RESOURCE_ALLOCATIONS => 'int',
-        'r_' . AdminAcl::RESOURCE_DATABASE_HOSTS => 'int',
-        'r_' . AdminAcl::RESOURCE_SERVER_DATABASES => 'int',
-        'r_' . AdminAcl::RESOURCE_EGGS => 'int',
-        'r_' . AdminAcl::RESOURCE_NODES => 'int',
-        'r_' . AdminAcl::RESOURCE_SERVERS => 'int',
-    ];
-
-    /**
      * Fields that are mass assignable.
      */
     protected $fillable = [
@@ -146,6 +127,25 @@ class ApiKey extends Model
         'r_' . AdminAcl::RESOURCE_NODES => 'integer|min:0|max:3',
         'r_' . AdminAcl::RESOURCE_SERVERS => 'integer|min:0|max:3',
     ];
+
+    protected function casts(): array
+    {
+        return [
+            'allowed_ips' => 'array',
+            'user_id' => 'int',
+            'last_used_at' => 'datetime',
+            'expires_at' => 'datetime',
+            self::CREATED_AT => 'datetime',
+            self::UPDATED_AT => 'datetime',
+            'r_' . AdminAcl::RESOURCE_USERS => 'int',
+            'r_' . AdminAcl::RESOURCE_ALLOCATIONS => 'int',
+            'r_' . AdminAcl::RESOURCE_DATABASE_HOSTS => 'int',
+            'r_' . AdminAcl::RESOURCE_SERVER_DATABASES => 'int',
+            'r_' . AdminAcl::RESOURCE_EGGS => 'int',
+            'r_' . AdminAcl::RESOURCE_NODES => 'int',
+            'r_' . AdminAcl::RESOURCE_SERVERS => 'int',
+        ];
+    }
 
     /**
      * Returns the user this token is assigned to.

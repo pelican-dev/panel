@@ -65,16 +65,6 @@ class Schedule extends Model
         'next_run_at',
     ];
 
-    protected $casts = [
-        'id' => 'integer',
-        'server_id' => 'integer',
-        'is_active' => 'boolean',
-        'is_processing' => 'boolean',
-        'only_when_online' => 'boolean',
-        'last_run_at' => 'datetime',
-        'next_run_at' => 'datetime',
-    ];
-
     protected $attributes = [
         'name' => null,
         'cron_day_of_week' => '*',
@@ -102,9 +92,19 @@ class Schedule extends Model
         'next_run_at' => 'nullable|date',
     ];
 
-    /**
-     * {@inheritDoc}
-     */
+    protected function casts(): array
+    {
+        return [
+            'id' => 'integer',
+            'server_id' => 'integer',
+            'is_active' => 'boolean',
+            'is_processing' => 'boolean',
+            'only_when_online' => 'boolean',
+            'last_run_at' => 'datetime',
+            'next_run_at' => 'datetime',
+        ];
+    }
+
     public function getRouteKeyName(): string
     {
         return $this->getKeyName();

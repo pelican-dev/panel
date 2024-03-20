@@ -80,13 +80,6 @@ class Permission extends Model
      */
     protected $guarded = ['id', 'created_at', 'updated_at'];
 
-    /**
-     * Cast values to correct type.
-     */
-    protected $casts = [
-        'subuser_id' => 'integer',
-    ];
-
     public static array $validationRules = [
         'subuser_id' => 'required|numeric|min:1',
         'permission' => 'required|string',
@@ -207,6 +200,13 @@ class Permission extends Model
             ],
         ],
     ];
+
+    protected function casts(): array
+    {
+        return [
+            'subuser_id' => 'integer',
+        ];
+    }
 
     /**
      * Returns all the permissions available on the system for a user to

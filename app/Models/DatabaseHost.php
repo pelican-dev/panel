@@ -43,17 +43,6 @@ class DatabaseHost extends Model
     ];
 
     /**
-     * Cast values to correct type.
-     */
-    protected $casts = [
-        'id' => 'integer',
-        'max_databases' => 'integer',
-        'node_id' => 'integer',
-        'created_at' => 'immutable_datetime',
-        'updated_at' => 'immutable_datetime',
-    ];
-
-    /**
      * Validation rules to assign to this model.
      */
     public static array $validationRules = [
@@ -64,6 +53,17 @@ class DatabaseHost extends Model
         'password' => 'nullable|string',
         'node_id' => 'sometimes|nullable|integer|exists:nodes,id',
     ];
+
+    protected function casts(): array
+    {
+        return [
+            'id' => 'integer',
+            'max_databases' => 'integer',
+            'node_id' => 'integer',
+            'created_at' => 'immutable_datetime',
+            'updated_at' => 'immutable_datetime',
+        ];
+    }
 
     /**
      * Gets the node associated with a database host.

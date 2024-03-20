@@ -170,29 +170,29 @@ class Server extends Model
         'backup_limit' => 'present|nullable|integer|min:0',
     ];
 
-    /**
-     * Cast values to correct type.
-     */
-    protected $casts = [
-        'node_id' => 'integer',
-        'skip_scripts' => 'boolean',
-        'owner_id' => 'integer',
-        'memory' => 'integer',
-        'swap' => 'integer',
-        'disk' => 'integer',
-        'io' => 'integer',
-        'cpu' => 'integer',
-        'oom_disabled' => 'boolean',
-        'allocation_id' => 'integer',
-        'egg_id' => 'integer',
-        'database_limit' => 'integer',
-        'allocation_limit' => 'integer',
-        'backup_limit' => 'integer',
-        self::CREATED_AT => 'datetime',
-        self::UPDATED_AT => 'datetime',
-        'deleted_at' => 'datetime',
-        'installed_at' => 'datetime',
-    ];
+    protected function casts(): array
+    {
+        return [
+            'node_id' => 'integer',
+            'skip_scripts' => 'boolean',
+            'owner_id' => 'integer',
+            'memory' => 'integer',
+            'swap' => 'integer',
+            'disk' => 'integer',
+            'io' => 'integer',
+            'cpu' => 'integer',
+            'oom_disabled' => 'boolean',
+            'allocation_id' => 'integer',
+            'egg_id' => 'integer',
+            'database_limit' => 'integer',
+            'allocation_limit' => 'integer',
+            'backup_limit' => 'integer',
+            self::CREATED_AT => 'datetime',
+            self::UPDATED_AT => 'datetime',
+            'deleted_at' => 'datetime',
+            'installed_at' => 'datetime',
+        ];
+    }
 
     /**
      * Returns the format for server allocations when communicating with the Daemon.

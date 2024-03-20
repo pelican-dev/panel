@@ -48,17 +48,6 @@ class EggVariable extends Model
      */
     protected $guarded = ['id', 'created_at', 'updated_at'];
 
-    /**
-     * Cast values to correct type.
-     */
-    protected $casts = [
-        'egg_id' => 'integer',
-        'user_viewable' => 'bool',
-        'user_editable' => 'bool',
-        'created_at' => 'immutable_datetime',
-        'updated_at' => 'immutable_datetime',
-    ];
-
     public static array $validationRules = [
         'egg_id' => 'exists:eggs,id',
         'name' => 'required|string|between:1,191',
@@ -74,6 +63,17 @@ class EggVariable extends Model
         'user_editable' => 0,
         'user_viewable' => 0,
     ];
+
+    protected function casts(): array
+    {
+        return [
+            'egg_id' => 'integer',
+            'user_viewable' => 'bool',
+            'user_editable' => 'bool',
+            'created_at' => 'immutable_datetime',
+            'updated_at' => 'immutable_datetime',
+        ];
+    }
 
     public function getRequiredAttribute(): bool
     {

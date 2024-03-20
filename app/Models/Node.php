@@ -61,19 +61,6 @@ class Node extends Model
     public int $sum_disk;
 
     /**
-     * Cast values to correct type.
-     */
-    protected $casts = [
-        'memory' => 'integer',
-        'disk' => 'integer',
-        'daemonListen' => 'integer',
-        'daemonSFTP' => 'integer',
-        'behind_proxy' => 'boolean',
-        'public' => 'boolean',
-        'maintenance_mode' => 'boolean',
-    ];
-
-    /**
      * Fields that are mass assignable.
      */
     protected $fillable = [
@@ -116,6 +103,19 @@ class Node extends Model
         'daemonListen' => 8080,
         'maintenance_mode' => false,
     ];
+
+    protected function casts(): array
+    {
+        return [
+            'memory' => 'integer',
+            'disk' => 'integer',
+            'daemonListen' => 'integer',
+            'daemonSFTP' => 'integer',
+            'behind_proxy' => 'boolean',
+            'public' => 'boolean',
+            'maintenance_mode' => 'boolean',
+        ];
+    }
 
     /**
      * Get the connection address to use when making calls to this node.

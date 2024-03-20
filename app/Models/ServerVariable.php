@@ -26,18 +26,21 @@ class ServerVariable extends Model
 
     protected $guarded = ['id', 'created_at', 'updated_at'];
 
-    protected $casts = [
-        'server_id' => 'integer',
-        'variable_id' => 'integer',
-        'created_at' => 'immutable_datetime',
-        'updated_at' => 'immutable_datetime',
-    ];
-
     public static array $validationRules = [
         'server_id' => 'required|int',
         'variable_id' => 'required|int',
         'variable_value' => 'string',
     ];
+
+    protected function casts(): array
+    {
+        return [
+            'server_id' => 'integer',
+            'variable_id' => 'integer',
+            'created_at' => 'immutable_datetime',
+            'updated_at' => 'immutable_datetime',
+        ];
+    }
 
     /**
      * Returns the server this variable is associated with.

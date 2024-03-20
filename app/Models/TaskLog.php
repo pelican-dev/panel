@@ -16,15 +16,15 @@ class TaskLog extends Model
      */
     protected $guarded = ['id', 'created_at', 'updated_at'];
 
-    /**
-     * Cast values to correct type.
-     */
-    protected $casts = [
-        'id' => 'integer',
-        'task_id' => 'integer',
-        'run_status' => 'integer',
-        'run_time' => 'datetime',
-        'created_at' => 'datetime',
-        'updated_at' => 'datetime',
-    ];
+    protected function casts(): array
+    {
+        return [
+            'id' => 'integer',
+            'task_id' => 'integer',
+            'run_status' => 'integer',
+            'run_time' => 'datetime',
+            'created_at' => 'datetime',
+            'updated_at' => 'datetime',
+        ];
+    }
 }

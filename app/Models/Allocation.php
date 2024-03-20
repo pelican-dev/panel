@@ -57,15 +57,6 @@ class Allocation extends Model
      */
     protected $guarded = ['id', 'created_at', 'updated_at'];
 
-    /**
-     * Cast values to correct type.
-     */
-    protected $casts = [
-        'node_id' => 'integer',
-        'port' => 'integer',
-        'server_id' => 'integer',
-    ];
-
     public static array $validationRules = [
         'node_id' => 'required|exists:nodes,id',
         'ip' => 'required|ip',
@@ -82,9 +73,15 @@ class Allocation extends Model
         });
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    protected function casts(): array
+    {
+        return [
+            'node_id' => 'integer',
+            'port' => 'integer',
+            'server_id' => 'integer',
+        ];
+    }
+
     public function getRouteKeyName(): string
     {
         return $this->getKeyName();

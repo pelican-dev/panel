@@ -11,11 +11,11 @@ class Session extends Model
      */
     protected $table = 'sessions';
 
-    /**
-     * Cast values to correct type.
-     */
-    protected $casts = [
-        'id' => 'string',
-        'user_id' => 'integer',
-    ];
+    protected function casts(): array
+    {
+        return [
+            'id' => 'string',
+            'user_id' => 'integer',
+        ];
+    }
 }

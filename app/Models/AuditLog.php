@@ -26,17 +26,20 @@ class AuditLog extends Model
 
     protected $table = 'audit_logs';
 
-    protected $casts = [
-        'is_system' => 'bool',
-        'device' => 'array',
-        'metadata' => 'array',
-        'created_at' => 'immutable_datetime',
-    ];
-
     protected $guarded = [
         'id',
         'created_at',
     ];
+
+    protected function casts(): array
+    {
+        return [
+            'is_system' => 'bool',
+            'device' => 'array',
+            'metadata' => 'array',
+            'created_at' => 'immutable_datetime',
+        ];
+    }
 
     public function user(): BelongsTo
     {
