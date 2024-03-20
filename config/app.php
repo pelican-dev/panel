@@ -1,6 +1,5 @@
 <?php
 
-use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\Facade;
 
 return [
@@ -10,7 +9,6 @@ return [
     'exceptions' => [
         'report_all' => env('APP_REPORT_ALL_EXCEPTIONS', false),
     ],
-
 
     'aliases' => Facade::defaultAliases()->merge([
         'Alert' => Prologue\Alerts\Facades\Alert::class,

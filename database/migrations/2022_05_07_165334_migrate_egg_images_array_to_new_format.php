@@ -26,8 +26,6 @@ return new class extends Migration
 
     /**
      * Reverse the migrations. This just keeps the values from the docker images array.
-     *
-     * @return void
      */
     public function down(): void
     {

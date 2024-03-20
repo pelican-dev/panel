@@ -9,7 +9,6 @@ return new class extends Migration
     /**
      * Run the migrations.
      *
-     * @return void
      *
      * @throws \Exception
      * @throws \Throwable
@@ -29,7 +28,6 @@ return new class extends Migration
     /**
      * Reverse the migrations.
      *
-     * @return void
      *
      * @throws \Exception
      * @throws \Throwable

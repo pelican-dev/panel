@@ -11,7 +11,6 @@ return new class extends Migration
     /**
      * Run the migrations.
      *
-     * @return void
      *
      * @throws \Exception
      */
@@ -48,8 +47,6 @@ return new class extends Migration
 
     /**
      * Reverse the migrations.
-     *
-     * @return void
      */
     public function down(): void
     {

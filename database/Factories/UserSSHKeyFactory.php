@@ -21,8 +21,6 @@ class UserSSHKeyFactory extends Factory
 
     /**
      * Returns a fake public key for use on the system.
-     *
-     * @return array
      */
     public function definition(): array
     {
