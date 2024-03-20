@@ -17,9 +17,6 @@ class SubstituteClientBindings extends SubstituteBindings
     public function handle($request, Closure $next): mixed
     {
         // Override default behavior of the model binding to use a specific table column rather than the default 'id'.
-        $this->router->bind('server', function ($value) {
-            return $this->server->query()->where(strlen($value) === 8 ? 'uuidShort' : 'uuid', $value)->firstOrFail();
-        });
 
         $this->router->bind('user', function ($value, $route) {
             /** @var \App\Models\Subuser $match */

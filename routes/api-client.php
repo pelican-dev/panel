@@ -51,7 +51,7 @@ Route::prefix('/account')->middleware(AccountSubject::class)->group(function () 
 | Endpoint: /api/client/servers/{server}
 |
 */
-Route::prefix('/servers/{server}')->middleware(ServerSubject::class, AuthenticateServerAccess::class, ResourceBelongsToServer::class)->group(function () {
+Route::prefix('/servers/{server:uuid}')->middleware([ServerSubject::class, AuthenticateServerAccess::class, ResourceBelongsToServer::class])->group(function () {
     Route::get('/', [Client\Servers\ServerController::class, 'index'])->name('api:client:server.view');
     Route::get('/websocket', Client\Servers\WebsocketController::class)->name('api:client:server.ws');
     Route::get('/resources', Client\Servers\ResourceUtilizationController::class)->name('api:client:server.resources');
