@@ -1,8 +1,8 @@
 <?php
 
-use Illuminate\Support\Str;
-
 return [
+
+    'default' => env('CACHE_STORE', env('CACHE_DRIVER', 'file')),
 
     'stores' => [
         'sessions' => [
