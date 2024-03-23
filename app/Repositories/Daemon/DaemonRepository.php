@@ -4,6 +4,8 @@ namespace App\Repositories\Daemon;
 
 use GuzzleHttp\Client;
 use App\Models\Node;
+use Illuminate\Http\Client\PendingRequest;
+use Illuminate\Support\Facades\Http;
 use Webmozart\Assert\Assert;
 use App\Models\Server;
 use Illuminate\Contracts\Foundation\Application;
@@ -48,20 +50,10 @@ abstract class DaemonRepository
     /**
      * Return an instance of the Guzzle HTTP Client to be used for requests.
      */
-    public function getHttpClient(array $headers = []): Client
+    public function getHttpClient(array $headers = []): PendingRequest
     {
         Assert::isInstanceOf($this->node, Node::class);
 
-        return new Client([
-            'verify' => $this->app->environment('production'),
-            'base_uri' => $this->node->getConnectionAddress(),
-            'timeout' => config('panel.guzzle.timeout'),
-            'connect_timeout' => config('panel.guzzle.connect_timeout'),
-            'headers' => array_merge($headers, [
-                'Authorization' => 'Bearer ' . $this->node->getDecryptedKey(),
-                'Accept' => 'application/json',
-                'Content-Type' => 'application/json',
-            ]),
-        ]);
+        return Http::daemon($this->node, $headers);
     }
 }

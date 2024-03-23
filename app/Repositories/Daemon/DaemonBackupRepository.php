@@ -5,7 +5,6 @@ namespace App\Repositories\Daemon;
 use Webmozart\Assert\Assert;
 use App\Models\Backup;
 use App\Models\Server;
-use Psr\Http\Message\ResponseInterface;
 use GuzzleHttp\Exception\TransferException;
 use App\Exceptions\Http\Connection\DaemonConnectionException;
 
@@ -28,7 +27,7 @@ class DaemonBackupRepository extends DaemonRepository
      *
      * @throws \App\Exceptions\Http\Connection\DaemonConnectionException
      */
-    public function backup(Backup $backup): ResponseInterface
+    public function backup(Backup $backup)
     {
         Assert::isInstanceOf($this->server, Server::class);
 
@@ -53,7 +52,7 @@ class DaemonBackupRepository extends DaemonRepository
      *
      * @throws \App\Exceptions\Http\Connection\DaemonConnectionException
      */
-    public function restore(Backup $backup, string $url = null, bool $truncate = false): ResponseInterface
+    public function restore(Backup $backup, string $url = null, bool $truncate = false)
     {
         Assert::isInstanceOf($this->server, Server::class);
 
@@ -78,7 +77,7 @@ class DaemonBackupRepository extends DaemonRepository
      *
      * @throws \App\Exceptions\Http\Connection\DaemonConnectionException
      */
-    public function delete(Backup $backup): ResponseInterface
+    public function delete(Backup $backup)
     {
         Assert::isInstanceOf($this->server, Server::class);
 

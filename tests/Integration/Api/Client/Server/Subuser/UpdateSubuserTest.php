@@ -6,6 +6,7 @@ use App\Models\User;
 use App\Models\Subuser;
 use App\Models\Permission;
 use App\Tests\Integration\Api\Client\ClientApiIntegrationTestCase;
+use Illuminate\Support\Facades\Http;
 
 class UpdateSubuserTest extends ClientApiIntegrationTestCase
 {
@@ -16,6 +17,8 @@ class UpdateSubuserTest extends ClientApiIntegrationTestCase
     public function testCorrectPermissionsAreRequiredForUpdating(): void
     {
         [$user, $server] = $this->generateTestAccount(['user.read']);
+
+        Http::fake();
 
         $subuser = Subuser::factory()
             ->for(User::factory()->create())
@@ -64,6 +67,8 @@ class UpdateSubuserTest extends ClientApiIntegrationTestCase
             ->create([
                 'permissions' => ['control.restart', 'websocket.connect', 'foo.bar'],
             ]);
+
+        Http::fake();
 
         $this->actingAs($user)
             ->postJson("/api/client/servers/$server->uuid/users/{$subuser->user->uuid}", [

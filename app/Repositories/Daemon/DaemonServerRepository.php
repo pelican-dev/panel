@@ -27,10 +27,11 @@ class DaemonServerRepository extends DaemonRepository
             throw new DaemonConnectionException($exception, false);
         }
 
-        return json_decode($response->getBody()->__toString(), true);
+        return $response->json();
     }
 
     /**
+     * Creates a new server on the daemon.
      *
      * @throws \App\Exceptions\Http\Connection\DaemonConnectionException
      */

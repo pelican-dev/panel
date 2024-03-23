@@ -93,7 +93,7 @@ class RunTaskJobTest extends IntegrationTestCase
         $mock->expects('setServer')->with(\Mockery::on(function ($value) use ($server) {
             return $value instanceof Server && $value->id === $server->id;
         }))->andReturnSelf();
-        $mock->expects('send')->with('start')->andReturn(new Response());
+        $mock->expects('send')->with('start');
 
         Bus::dispatchSync(new RunTaskJob($task, $isManualRun));
 

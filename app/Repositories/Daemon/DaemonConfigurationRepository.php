@@ -3,7 +3,6 @@
 namespace App\Repositories\Daemon;
 
 use App\Models\Node;
-use Psr\Http\Message\ResponseInterface;
 use GuzzleHttp\Exception\TransferException;
 use App\Exceptions\Http\Connection\DaemonConnectionException;
 
@@ -22,7 +21,7 @@ class DaemonConfigurationRepository extends DaemonRepository
             throw new DaemonConnectionException($exception);
         }
 
-        return json_decode($response->getBody()->__toString(), true);
+        return $response->json();
     }
 
     /**
@@ -32,7 +31,7 @@ class DaemonConfigurationRepository extends DaemonRepository
      *
      * @throws \App\Exceptions\Http\Connection\DaemonConnectionException
      */
-    public function update(Node $node): ResponseInterface
+    public function update(Node $node)
     {
         try {
             return $this->getHttpClient()->post(
