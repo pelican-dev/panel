@@ -387,7 +387,7 @@ class Server extends Model
             return Http::daemon($this->node)->post("/api/servers/{$this->uuid}/commands", [
                 'commands' => is_array($command) ? $command : [$command],
             ])->toPsrResponse();
-        } catch (TransferException $exception) {
+        } catch (GuzzleException $exception) {
             throw new DaemonConnectionException($exception);
         }
     }
