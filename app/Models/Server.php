@@ -331,6 +331,14 @@ class Server extends Model
         };
     }
 
+    public function resolveChildRouteBinding($childType, $value, $field)
+    {
+        return match ($childType) {
+            'user' => $this->subusers()->whereRelation('user', 'uuid', $value)->firstOrFail()->user,
+            default => parent::resolveChildRouteBinding($childType, $value, $field),
+        };
+    }
+
     /**
      * Checks if the server is currently in a user-accessible state. If not, an
      * exception is raised. This should be called whenever something needs to make

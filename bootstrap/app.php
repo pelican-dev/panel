@@ -35,7 +35,7 @@ return Application::configure(basePath: dirname(__DIR__))
         ]);
 
         $middleware->group('client-api', [
-            \App\Http\Middleware\Api\Client\SubstituteClientBindings::class,
+            \Illuminate\Routing\Middleware\SubstituteBindings::class,
             \App\Http\Middleware\Api\Client\RequireClientApiKey::class,
         ]);
 

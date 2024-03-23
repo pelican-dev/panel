@@ -107,9 +107,9 @@ Route::prefix('/servers/{server:uuid}')->middleware([ServerSubject::class, Authe
     Route::prefix('/users')->group(function () {
         Route::get('/', [Client\Servers\SubuserController::class, 'index']);
         Route::post('/', [Client\Servers\SubuserController::class, 'store']);
-        Route::get('/{user}', [Client\Servers\SubuserController::class, 'view']);
-        Route::post('/{user}', [Client\Servers\SubuserController::class, 'update']);
-        Route::delete('/{user}', [Client\Servers\SubuserController::class, 'delete']);
+        Route::get('/{user:uuid}', [Client\Servers\SubuserController::class, 'view']);
+        Route::post('/{user:uuid}', [Client\Servers\SubuserController::class, 'update']);
+        Route::delete('/{user:uuid}', [Client\Servers\SubuserController::class, 'delete']);
     });
 
     Route::prefix('/backups')->group(function () {
