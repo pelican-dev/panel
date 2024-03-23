@@ -60,7 +60,7 @@ class UserController extends Controller
     public function create(): View
     {
         return view('admin.users.new', [
-            'languages' => $this->getAvailableLanguages(true),
+            'languages' => $this->getAvailableLanguages(),
         ]);
     }
 
@@ -71,7 +71,7 @@ class UserController extends Controller
     {
         return view('admin.users.view', [
             'user' => $user,
-            'languages' => $this->getAvailableLanguages(true),
+            'languages' => $this->getAvailableLanguages(),
         ]);
     }
 

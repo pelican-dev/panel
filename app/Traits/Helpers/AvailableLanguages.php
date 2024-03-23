@@ -13,9 +13,9 @@ trait AvailableLanguages
      * Return all the available languages on the Panel based on those
      * that are present in the language folder.
      */
-    public function getAvailableLanguages(bool $localize = false): array
+    public function getAvailableLanguages(): array
     {
-        return collect($this->getFilesystemInstance()->directories(base_path('lang')))->mapWithKeys(function ($path) use ($localize) {
+        return collect($this->getFilesystemInstance()->directories(base_path('lang')))->mapWithKeys(function ($path) {
             $code = basename($path);
 
             $value = Locale::getDisplayName($code, app()->currentLocale());
