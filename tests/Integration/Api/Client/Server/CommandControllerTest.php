@@ -85,7 +85,6 @@ class CommandControllerTest extends ClientApiIntegrationTestCase
 
         $this->instance(Server::class, $server);
 
-
         $request = new SendCommandRequest(['command' => 'say Test']);
         $cc = resolve(CommandController::class);
 

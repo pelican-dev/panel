@@ -4,7 +4,6 @@ namespace App\Models;
 
 use App\Exceptions\Http\Connection\DaemonConnectionException;
 use GuzzleHttp\Exception\GuzzleException;
-use GuzzleHttp\Exception\TransferException;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Query\JoinClause;
 use Illuminate\Support\Facades\Http;
