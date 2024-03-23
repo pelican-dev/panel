@@ -4,6 +4,8 @@ use Illuminate\Support\Facades\Facade;
 
 return [
 
+    'name' => 'Pelican',
+
     'version' => 'canary',
 
     'exceptions' => [
