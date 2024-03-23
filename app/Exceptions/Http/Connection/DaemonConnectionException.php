@@ -5,6 +5,7 @@ namespace App\Exceptions\Http\Connection;
 use Illuminate\Http\Response;
 use GuzzleHttp\Exception\GuzzleException;
 use App\Exceptions\DisplayException;
+use Illuminate\Support\Facades\Context;
 
 /**
  * @method \GuzzleHttp\Exception\GuzzleException getPrevious()
@@ -29,6 +30,8 @@ class DaemonConnectionException extends DisplayException
         /** @var \GuzzleHttp\Psr7\Response|null $response */
         $response = method_exists($previous, 'getResponse') ? $previous->getResponse() : null;
         $this->requestId = $response?->getHeaderLine('X-Request-Id');
+
+        Context::add('request_id', $this->requestId);
 
         if ($useStatusCode) {
             $this->statusCode = is_null($response) ? $this->statusCode : $response->getStatusCode();
@@ -64,26 +67,10 @@ class DaemonConnectionException extends DisplayException
     }
 
     /**
-     * Override the default reporting method for DisplayException by just logging immediately
-     * here and including the specific X-Request-Id header that was returned by the call.
-     */
-    public function report()
-    {
-        logger()->{$this->getErrorLevel()}($this->getPrevious(), [
-            'request_id' => $this->requestId,
-        ]);
-    }
-
-    /**
      * Return the HTTP status code for this exception.
      */
     public function getStatusCode(): int
     {
         return $this->statusCode;
-    }
-
-    public function getRequestId(): ?string
-    {
-        return $this->requestId;
     }
 }
