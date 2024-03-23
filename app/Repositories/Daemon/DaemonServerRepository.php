@@ -31,7 +31,6 @@ class DaemonServerRepository extends DaemonRepository
     }
 
     /**
-     * Creates a new server on the daemon daemon.
      *
      * @throws \App\Exceptions\Http\Connection\DaemonConnectionException
      */

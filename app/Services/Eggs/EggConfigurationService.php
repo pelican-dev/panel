@@ -84,7 +84,7 @@ class EggConfigurationService
         $structure = $this->configurationStructureService->handle($server, [], true);
 
         $response = [];
-        // Normalize the output of the configuration for the new daemon Daemon to more
+        // Normalize the output of the configuration for the new Daemon to more
         // easily ingest, as well as make things more flexible down the road.
         foreach ($configs as $file => $data) {
             // Try to head off any errors relating to parsing a set of configuration files

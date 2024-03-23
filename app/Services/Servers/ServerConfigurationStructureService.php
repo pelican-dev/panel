@@ -38,7 +38,7 @@ class ServerConfigurationStructureService
     }
 
     /**
-     * Returns the new data format used for the daemon daemon.
+     * Returns the new data format used for the daemon.
      */
     protected function returnCurrentFormat(Server $server): array
     {
