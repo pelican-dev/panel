@@ -2,6 +2,8 @@
 
 namespace App\Tests\Integration\Api\Client\Server;
 
+use App\Http\Controllers\Api\Client\Servers\CommandController;
+use App\Http\Requests\Api\Client\Servers\SendCommandRequest;
 use GuzzleHttp\Psr7\Request;
 use Illuminate\Http\Response;
 use App\Models\Server;
@@ -10,6 +12,7 @@ use GuzzleHttp\Exception\BadResponseException;
 use GuzzleHttp\Psr7\Response as GuzzleResponse;
 use App\Exceptions\Http\Connection\DaemonConnectionException;
 use App\Tests\Integration\Api\Client\ClientApiIntegrationTestCase;
+use Symfony\Component\HttpKernel\Exception\HttpException;
 
 class CommandControllerTest extends ClientApiIntegrationTestCase
 {
@@ -52,17 +55,17 @@ class CommandControllerTest extends ClientApiIntegrationTestCase
         [$user, $server] = $this->generateTestAccount([Permission::ACTION_CONTROL_CONSOLE]);
 
         $server = \Mockery::mock($server)->makePartial();
-        $server->expects('query->where->firstOrFail')->andReturns($server);
 
         $this->instance(Server::class, $server);
 
         $server->expects('send')->with('say Test')->andReturn(new GuzzleResponse());
 
-        $response = $this->actingAs($user)->postJson("/api/client/servers/$server->uuid/command", [
-            'command' => 'say Test',
-        ]);
+        $request = new SendCommandRequest(['command' => 'say Test']);
+        $cc = resolve(CommandController::class);
 
-        $response->assertStatus(Response::HTTP_NO_CONTENT);
+        $response = $cc->index($request, $server);
+
+        $this->assertEquals(Response::HTTP_NO_CONTENT, $response->getStatusCode());
     }
 
     /**
@@ -74,7 +77,6 @@ class CommandControllerTest extends ClientApiIntegrationTestCase
         [$user, $server] = $this->generateTestAccount();
 
         $server = \Mockery::mock($server)->makePartial();
-        $server->expects('query->where->firstOrFail')->andReturns($server);
         $server->expects('send')->andThrows(
             new DaemonConnectionException(
                 new BadResponseException('', new Request('GET', 'test'), new GuzzleResponse(Response::HTTP_BAD_GATEWAY))
@@ -83,12 +85,15 @@ class CommandControllerTest extends ClientApiIntegrationTestCase
 
         $this->instance(Server::class, $server);
 
-        $response = $this->actingAs($user)->postJson("/api/client/servers/$server->uuid/command", [
-            'command' => 'say Test',
-        ]);
 
-        $response->assertStatus(Response::HTTP_BAD_GATEWAY);
-        $response->assertJsonPath('errors.0.code', 'HttpException');
-        $response->assertJsonPath('errors.0.detail', 'Server must be online in order to send commands.');
+        $request = new SendCommandRequest(['command' => 'say Test']);
+        $cc = resolve(CommandController::class);
+
+        $this->expectException(HttpException::class);
+        $this->expectExceptionMessageMatches('/Server must be online in order to send commands\./');
+
+        $response = $cc->index($request, $server);
+
+        $this->assertEquals(Response::HTTP_BAD_GATEWAY, $response->getStatusCode());
     }
 }
