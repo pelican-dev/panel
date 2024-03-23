@@ -76,8 +76,6 @@ CREATE TABLE `api_keys` (
   `r_nodes` tinyint unsigned NOT NULL DEFAULT '0',
   `r_allocations` tinyint unsigned NOT NULL DEFAULT '0',
   `r_users` tinyint unsigned NOT NULL DEFAULT '0',
-  `r_locations` tinyint unsigned NOT NULL DEFAULT '0',
-  `r_nests` tinyint unsigned NOT NULL DEFAULT '0',
   `r_eggs` tinyint unsigned NOT NULL DEFAULT '0',
   `r_database_hosts` tinyint unsigned NOT NULL DEFAULT '0',
   `r_server_databases` tinyint unsigned NOT NULL DEFAULT '0',
@@ -231,7 +229,6 @@ DROP TABLE IF EXISTS `eggs`;
 CREATE TABLE `eggs` (
   `id` int unsigned NOT NULL AUTO_INCREMENT,
   `uuid` char(36) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `nest_id` int unsigned NOT NULL,
   `author` varchar(191) COLLATE utf8mb4_unicode_ci NOT NULL,
   `name` varchar(191) COLLATE utf8mb4_unicode_ci NOT NULL,
   `description` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
@@ -255,12 +252,10 @@ CREATE TABLE `eggs` (
   `force_outgoing_ip` tinyint(1) NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`),
   UNIQUE KEY `service_options_uuid_unique` (`uuid`),
-  KEY `service_options_nest_id_foreign` (`nest_id`),
   KEY `eggs_config_from_foreign` (`config_from`),
   KEY `eggs_copy_script_from_foreign` (`copy_script_from`),
   CONSTRAINT `eggs_config_from_foreign` FOREIGN KEY (`config_from`) REFERENCES `eggs` (`id`) ON DELETE SET NULL,
-  CONSTRAINT `eggs_copy_script_from_foreign` FOREIGN KEY (`copy_script_from`) REFERENCES `eggs` (`id`) ON DELETE SET NULL,
-  CONSTRAINT `service_options_nest_id_foreign` FOREIGN KEY (`nest_id`) REFERENCES `nests` (`id`) ON DELETE CASCADE
+  CONSTRAINT `eggs_copy_script_from_foreign` FOREIGN KEY (`copy_script_from`) REFERENCES `eggs` (`id`) ON DELETE SET NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 DROP TABLE IF EXISTS `failed_jobs`;
@@ -291,19 +286,6 @@ CREATE TABLE `jobs` (
   `created_at` int unsigned NOT NULL,
   PRIMARY KEY (`id`),
   KEY `jobs_queue_reserved_at_index` (`queue`,`reserved_at`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-DROP TABLE IF EXISTS `locations`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `locations` (
-  `id` int unsigned NOT NULL AUTO_INCREMENT,
-  `short` varchar(191) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `long` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
-  `created_at` timestamp NULL DEFAULT NULL,
-  `updated_at` timestamp NULL DEFAULT NULL,
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `locations_short_unique` (`short`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 DROP TABLE IF EXISTS `migrations`;
@@ -358,21 +340,6 @@ CREATE TABLE `mounts` (
   UNIQUE KEY `mounts_name_unique` (`name`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
-DROP TABLE IF EXISTS `nests`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `nests` (
-  `id` int unsigned NOT NULL AUTO_INCREMENT,
-  `uuid` char(36) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `author` char(191) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
-  `name` varchar(191) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `description` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
-  `created_at` timestamp NULL DEFAULT NULL,
-  `updated_at` timestamp NULL DEFAULT NULL,
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `services_uuid_unique` (`uuid`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
 DROP TABLE IF EXISTS `nodes`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
@@ -402,8 +369,7 @@ CREATE TABLE `nodes` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `nodes_uuid_unique` (`uuid`),
   UNIQUE KEY `nodes_daemon_token_id_unique` (`daemon_token_id`),
-  KEY `nodes_location_id_foreign` (`location_id`),
-  CONSTRAINT `nodes_location_id_foreign` FOREIGN KEY (`location_id`) REFERENCES `locations` (`id`)
+  KEY `nodes_location_id_foreign` (`location_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 DROP TABLE IF EXISTS `notifications`;
@@ -530,7 +496,6 @@ CREATE TABLE `servers` (
   `threads` varchar(191) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `oom_disabled` tinyint unsigned NOT NULL DEFAULT '0',
   `allocation_id` int unsigned NOT NULL,
-  `nest_id` int unsigned NOT NULL,
   `egg_id` int unsigned NOT NULL,
   `startup` text COLLATE utf8mb4_unicode_ci NOT NULL,
   `image` varchar(191) COLLATE utf8mb4_unicode_ci NOT NULL,
@@ -547,11 +512,9 @@ CREATE TABLE `servers` (
   UNIQUE KEY `servers_external_id_unique` (`external_id`),
   KEY `servers_node_id_foreign` (`node_id`),
   KEY `servers_owner_id_foreign` (`owner_id`),
-  KEY `servers_nest_id_foreign` (`nest_id`),
   KEY `servers_egg_id_foreign` (`egg_id`),
   CONSTRAINT `servers_allocation_id_foreign` FOREIGN KEY (`allocation_id`) REFERENCES `allocations` (`id`),
   CONSTRAINT `servers_egg_id_foreign` FOREIGN KEY (`egg_id`) REFERENCES `eggs` (`id`),
-  CONSTRAINT `servers_nest_id_foreign` FOREIGN KEY (`nest_id`) REFERENCES `nests` (`id`),
   CONSTRAINT `servers_node_id_foreign` FOREIGN KEY (`node_id`) REFERENCES `nodes` (`id`),
   CONSTRAINT `servers_owner_id_foreign` FOREIGN KEY (`owner_id`) REFERENCES `users` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -876,3 +839,5 @@ INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (191,'2022_08_16_23
 INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (192,'2022_12_12_213937_update_mail_settings_to_new_format',1);
 INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (193,'2023_01_24_210051_add_uuid_column_to_failed_jobs_table',1);
 INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (194,'2023_02_23_191004_add_expires_at_column_to_api_keys_table',1);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (195,'2024_03_12_154408_remove_nests_table',2);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (196,'2024_03_14_055537_remove_locations_table',2);
