@@ -39,12 +39,7 @@ abstract class ClientApiIntegrationTestCase extends IntegrationTestCase
      * Override the default createTestResponse from Illuminate so that we can
      * just dump 500-level errors to the screen in the tests without having
      * to keep re-assigning variables.
-     *
-     * @param \Illuminate\Http\Response $response
-     *
-     * @return \Illuminate\Testing\TestResponse
-     */
-    protected function createTestResponse($response)
+    protected function createTestResponse($response, $request): \Illuminate\Testing\TestResponse
     {
         return TestResponse::fromBaseResponse($response);
     }
