@@ -7,18 +7,10 @@ use App\Models\Server;
 use Illuminate\Http\JsonResponse;
 use App\Http\Controllers\Controller;
 use App\Events\Server\Installed as ServerInstalled;
-use Illuminate\Contracts\Events\Dispatcher as EventDispatcher;
 use App\Http\Requests\Api\Remote\InstallationDataRequest;
 
 class ServerInstallController extends Controller
 {
-    /**
-     * ServerInstallController constructor.
-     */
-    public function __construct(private EventDispatcher $eventDispatcher)
-    {
-    }
-
     /**
      * Returns installation information for a server.
      */
@@ -66,9 +58,11 @@ class ServerInstallController extends Controller
         // This logic allows individually disabling install and reinstall notifications separately.
         $isInitialInstall = is_null($previouslyInstalledAt);
         if ($isInitialInstall && config()->get('panel.email.send_install_notification', true)) {
-            $this->eventDispatcher->dispatch(new ServerInstalled($server));
-        } elseif (!$isInitialInstall && config()->get('panel.email.send_reinstall_notification', true)) {
-            $this->eventDispatcher->dispatch(new ServerInstalled($server));
+            event(new ServerInstalled($server));
+        }
+
+        if (!$isInitialInstall && config()->get('panel.email.send_reinstall_notification', true)) {
+            event(new ServerInstalled($server));
         }
 
         return new JsonResponse([], Response::HTTP_NO_CONTENT);
