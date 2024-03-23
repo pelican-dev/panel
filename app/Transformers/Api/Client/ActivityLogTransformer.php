@@ -55,7 +55,7 @@ class ActivityLogTransformer extends BaseClientTransformer
 
         $properties = $model->properties
             ->mapWithKeys(function ($value, $key) use ($model) {
-                if ($key === 'ip' && !$model->actor?->is($this->request->user())) {
+                if ($key === 'ip' && !$model->actor->is($this->request->user())) {
                     return [$key => '[hidden]'];
                 }
 
