@@ -56,6 +56,7 @@ class AppServiceProvider extends ServiceProvider
         Http::macro(
             'daemon',
             fn (Node $node, array $headers = []) => Http::acceptJson()
+                ->asJson()
                 ->withToken($node->getDecryptedKey())
                 ->withHeaders($headers)
                 ->withOptions(['verify' => (bool) app()->environment('production')])
