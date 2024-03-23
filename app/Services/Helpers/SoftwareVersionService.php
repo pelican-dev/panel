@@ -46,7 +46,7 @@ class SoftwareVersionService
      */
     public function getDiscord(): string
     {
-        return Arr::get(self::$result, 'discord') ?? 'https://example.com/discord';
+        return Arr::get(self::$result, 'discord') ?? 'https://pelican.dev/discord';
     }
 
     /**
