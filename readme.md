@@ -2,11 +2,11 @@
 
 # Pelican Panel
 
-Pelican® is a free, open-source game server management panel built with PHP, React, and Go. Designed with security
-in mind, Pelican runs all game servers in isolated Docker containers while exposing a beautiful and intuitive
-UI to end users.
+Pelican Panel is an open-source, web-based application designed for easy management of game servers.
+It offers a user-friendly interface for deploying, configuring, and managing servers, with features like real-time resource monitoring, Docker container isolation, and extensive customization options.
+Ideal for both individual gamers and hosting companies, it simplifies server administration without requiring deep technical knowledge.
 
-Stop settling for less. Make game servers a first class citizen on your platform.
+Fly High, Game On: Pelican's pledge for unrivaled game servers.
 
 ## Documentation
 
