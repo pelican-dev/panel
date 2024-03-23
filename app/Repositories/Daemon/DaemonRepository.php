@@ -2,26 +2,17 @@
 
 namespace App\Repositories\Daemon;
 
-use GuzzleHttp\Client;
 use App\Models\Node;
 use Illuminate\Http\Client\PendingRequest;
 use Illuminate\Support\Facades\Http;
 use Webmozart\Assert\Assert;
 use App\Models\Server;
-use Illuminate\Contracts\Foundation\Application;
 
 abstract class DaemonRepository
 {
     protected ?Server $server;
 
     protected ?Node $node;
-
-    /**
-     * DaemonRepository constructor.
-     */
-    public function __construct(protected Application $app)
-    {
-    }
 
     /**
      * Set the server model this request is stemming from.
