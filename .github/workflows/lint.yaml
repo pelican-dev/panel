@@ -28,7 +28,7 @@ jobs:
         run: cp .env.example .env
 
       - name: Install dependencies
-        run: composer install --no-interaction --no-progress --no-suggest --prefer-dist
+        run: composer install --no-interaction --no-progress --prefer-dist
 
       - name: Pint
         run: vendor/bin/pint --test

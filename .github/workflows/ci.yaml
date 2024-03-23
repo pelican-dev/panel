@@ -52,7 +52,7 @@ jobs:
         run: cp .env.example .env
 
       - name: Install dependencies
-        run: composer install --no-interaction --no-progress --no-suggest --prefer-dist
+        run: composer install --no-interaction --no-suggest --prefer-dist
 
       - name: Generate App Key
         run: php artisan key:generate
