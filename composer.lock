@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "18ac8919a27faeada6f125c3403b2986",
+    "content-hash": "85c3b25cf3be086a864772cccbbc4881",
     "packages": [
         {
             "name": "aws/aws-crt-php",
@@ -2973,57 +2973,6 @@
             "time": "2024-01-28T23:22:08+00:00"
         },
         {
-            "name": "matriphe/iso-639",
-            "version": "2.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/matriphe/php-iso-639.git",
-                "reference": "3b7855e794ba31cdde1b464f66de3d39779b7a9e"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/matriphe/php-iso-639/zipball/3b7855e794ba31cdde1b464f66de3d39779b7a9e",
-                "reference": "3b7855e794ba31cdde1b464f66de3d39779b7a9e",
-                "shasum": ""
-            },
-            "require": {
-                "php": "8.*"
-            },
-            "require-dev": {
-                "phpunit/phpunit": ">=10"
-            },
-            "type": "library",
-            "autoload": {
-                "psr-4": {
-                    "Matriphe\\ISO639\\": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Muhammad Zamroni",
-                    "email": "halo@matriphe.com"
-                }
-            ],
-            "description": "PHP library to convert ISO-639-1 code to language name.",
-            "keywords": [
-                "639",
-                "iso",
-                "iso-639",
-                "lang",
-                "language",
-                "laravel"
-            ],
-            "support": {
-                "issues": "https://github.com/matriphe/php-iso-639/issues",
-                "source": "https://github.com/matriphe/php-iso-639/tree/2.0"
-            },
-            "time": "2024-03-17T22:44:23+00:00"
-        },
-        {
             "name": "monolog/monolog",
             "version": "3.5.0",
             "source": {
@@ -5165,71 +5114,6 @@
                 }
             ],
             "time": "2024-02-06T20:07:16+00:00"
-        },
-        {
-            "name": "staudenmeir/belongs-to-through",
-            "version": "v2.16",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/staudenmeir/belongs-to-through.git",
-                "reference": "79667db6660fa0065b24415bab29a5f85a0128c7"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/staudenmeir/belongs-to-through/zipball/79667db6660fa0065b24415bab29a5f85a0128c7",
-                "reference": "79667db6660fa0065b24415bab29a5f85a0128c7",
-                "shasum": ""
-            },
-            "require": {
-                "illuminate/database": "^11.0",
-                "php": "^8.2"
-            },
-            "require-dev": {
-                "barryvdh/laravel-ide-helper": "^3.0",
-                "orchestra/testbench": "^9.0",
-                "phpstan/phpstan": "^1.10",
-                "phpunit/phpunit": "^10.5"
-            },
-            "type": "library",
-            "extra": {
-                "laravel": {
-                    "providers": [
-                        "Staudenmeir\\BelongsToThrough\\IdeHelperServiceProvider"
-                    ]
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "Znck\\Eloquent\\": "src/",
-                    "Staudenmeir\\BelongsToThrough\\": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Rahul Kadyan",
-                    "email": "hi@znck.me"
-                },
-                {
-                    "name": "Jonas Staudenmeir",
-                    "email": "mail@jonas-staudenmeir.de"
-                }
-            ],
-            "description": "Laravel Eloquent BelongsToThrough relationships",
-            "support": {
-                "issues": "https://github.com/staudenmeir/belongs-to-through/issues",
-                "source": "https://github.com/staudenmeir/belongs-to-through/tree/v2.16"
-            },
-            "funding": [
-                {
-                    "url": "https://paypal.me/JonasStaudenmeir",
-                    "type": "custom"
-                }
-            ],
-            "time": "2024-03-09T09:53:11+00:00"
         },
         {
             "name": "symfony/clock",
@@ -11318,6 +11202,7 @@
     "prefer-lowest": false,
     "platform": {
         "php": "^8.2",
+        "ext-intl": "*",
         "ext-json": "*",
         "ext-mbstring": "*",
         "ext-pdo": "*",
