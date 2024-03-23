@@ -3,7 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Container\Container;
-use Znck\Eloquent\Traits\BelongsToThrough;
+use Illuminate\Database\Eloquent\Relations\HasOneThrough;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use App\Contracts\Extensions\HashidsInterface;
 
@@ -24,8 +24,6 @@ use App\Contracts\Extensions\HashidsInterface;
  */
 class Task extends Model
 {
-    use BelongsToThrough;
-
     /**
      * The resource name for this model when it is transformed into an
      * API representation using fractal.
@@ -117,8 +115,15 @@ class Task extends Model
     /**
      * Return the server a task is assigned to, acts as a belongsToThrough.
      */
-    public function server(): \Znck\Eloquent\Relations\BelongsToThrough
+    public function server(): HasOneThrough
     {
-        return $this->belongsToThrough(Server::class, Schedule::class);
+        return $this->hasOneThrough(
+            Server::class,
+            Schedule::class,
+            'id', // schedules.id
+            'id', // servers.id
+            'schedule_id', // tasks.schedule_id
+            'server_id' // schedules.server_id
+        );
     }
 }

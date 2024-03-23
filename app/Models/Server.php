@@ -8,7 +8,6 @@ use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Query\JoinClause;
 use Illuminate\Support\Facades\Http;
 use Psr\Http\Message\ResponseInterface;
-use Znck\Eloquent\Traits\BelongsToThrough;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -105,7 +104,6 @@ use App\Exceptions\Http\Server\ServerStateConflictException;
  */
 class Server extends Model
 {
-    use BelongsToThrough;
     use Notifiable;
 
     /**
