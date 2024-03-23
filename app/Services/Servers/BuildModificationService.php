@@ -7,7 +7,6 @@ use App\Models\Server;
 use App\Models\Allocation;
 use Illuminate\Database\ConnectionInterface;
 use App\Exceptions\DisplayException;
-use Illuminate\Database\Eloquent\ModelNotFoundException;
 use App\Repositories\Daemon\DaemonServerRepository;
 use App\Exceptions\Http\Connection\DaemonConnectionException;
 
@@ -36,15 +35,12 @@ class BuildModificationService
             $this->processAllocations($server, $data);
 
             if (isset($data['allocation_id']) && $data['allocation_id'] != $server->allocation_id) {
-                try {
-                    Allocation::query()->where('id', $data['allocation_id'])->where('server_id', $server->id)->firstOrFail();
-                } catch (ModelNotFoundException) {
-                    throw new DisplayException('The requested default allocation is not currently assigned to this server.');
-                }
+                $existingAllocation = $server->allocations()->findOrFail($data['allocation_id']);
+
+                throw_unless($existingAllocation, new DisplayException('The requested default allocation is not currently assigned to this server.'));
             }
 
-            // If any of these values are passed through in the data array go ahead and set
-            // them correctly on the server model.
+            // If any of these values are passed through in the data array go ahead and set them correctly on the server model.
             $merge = Arr::only($data, ['oom_disabled', 'memory', 'swap', 'io', 'cpu', 'threads', 'disk', 'allocation_id']);
 
             $server->forceFill(array_merge($merge, [
