@@ -13,7 +13,7 @@ Stop settling for less. Make game servers a first class citizen on your platform
 * [Panel Documentation](https://pelican.dev/panel/1.0/getting_started.html)
 * [Wings Documentation](https://pelican.dev/wings/1.0/installing.html)
 * [Community Guides](https://pelican.dev/community/about.html)
-* [Official Discord](https://discord.gg/GB87YZDW8U)
+* [Official Discord](https://pelican.dev/discord)
 
 ### Supported Games
 
