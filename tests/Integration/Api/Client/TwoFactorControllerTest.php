@@ -110,13 +110,9 @@ class TwoFactorControllerTest extends ClientApiIntegrationTestCase
 
         $rawTokens = $response->json('attributes.tokens');
         $rawToken = reset($rawTokens);
+        $hashed = reset($tokens);
 
-        $working = false;
-        foreach ($tokens as $hashed) {
-            $working = $working || password_verify($rawToken, $hashed);
-        }
-
-        throw_unless($working, new ExpectationFailedException(sprintf('Failed asserting that token [%s] exists as a hashed value in recovery_tokens table.', $rawToken)));
+        throw_unless(password_verify($rawToken, $hashed), new ExpectationFailedException(sprintf('Failed asserting that token [%s] exists as a hashed value in recovery_tokens table.', $rawToken)));
     }
 
     /**
