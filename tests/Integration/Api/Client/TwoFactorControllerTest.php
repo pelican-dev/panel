@@ -102,21 +102,21 @@ class TwoFactorControllerTest extends ClientApiIntegrationTestCase
         $tokens = RecoveryToken::query()->where('user_id', $user->id)->get();
         $this->assertCount(10, $tokens);
         $this->assertStringStartsWith('$2y$10$', $tokens[0]->token);
-        // Ensure the recovery tokens that were created include a "created_at" timestamp
-        // value on them.
+
+        // Ensure the recovery tokens that were created include a "created_at" timestamp value on them.
         $this->assertNotNull($tokens[0]->created_at);
 
         $tokens = $tokens->pluck('token')->toArray();
 
-        foreach ($response->json('attributes.tokens') as $raw) {
-            foreach ($tokens as $hashed) {
-                if (password_verify($raw, $hashed)) {
-                    continue 2;
-                }
-            }
+        $rawTokens = $response->json('attributes.tokens');
+        $rawToken = reset($rawTokens);
 
-            throw new ExpectationFailedException(sprintf('Failed asserting that token [%s] exists as a hashed value in recovery_tokens table.', $raw));
+        $working = false;
+        foreach ($tokens as $hashed) {
+            $working = $working || password_verify($rawToken, $hashed);
         }
+
+        throw_unless($working, new ExpectationFailedException(sprintf('Failed asserting that token [%s] exists as a hashed value in recovery_tokens table.', $rawToken)));
     }
 
     /**
