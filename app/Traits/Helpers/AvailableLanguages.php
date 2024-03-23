@@ -2,13 +2,11 @@
 
 namespace App\Traits\Helpers;
 
-use Matriphe\ISO639\ISO639;
+use Locale;
 use Illuminate\Filesystem\Filesystem;
 
 trait AvailableLanguages
 {
-    private ?ISO639 $iso639 = null;
-
     private ?Filesystem $filesystem = null;
 
     /**
@@ -19,7 +17,8 @@ trait AvailableLanguages
     {
         return collect($this->getFilesystemInstance()->directories(base_path('lang')))->mapWithKeys(function ($path) use ($localize) {
             $code = basename($path);
-            $value = $localize ? $this->getIsoInstance()->nativeByCode1($code) : $this->getIsoInstance()->languageByCode1($code);
+
+            $value = Locale::getDisplayName($code, app()->currentLocale());
 
             return [$code => title_case($value)];
         })->toArray();
@@ -31,13 +30,5 @@ trait AvailableLanguages
     private function getFilesystemInstance(): Filesystem
     {
         return $this->filesystem = $this->filesystem ?: app()->make(Filesystem::class);
-    }
-
-    /**
-     * Return an instance of the ISO639 class for generating names.
-     */
-    private function getIsoInstance(): ISO639
-    {
-        return $this->iso639 = $this->iso639 ?: app()->make(ISO639::class);
     }
 }
