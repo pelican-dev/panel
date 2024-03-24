@@ -151,6 +151,11 @@ class Egg extends Model
         });
     }
 
+    public function getRouteKeyName(): string
+    {
+        return 'id';
+    }
+
     /**
      * Returns the install script for the egg; if egg is copying from another
      * it will return the copied script.
