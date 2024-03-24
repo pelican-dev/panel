@@ -18,17 +18,18 @@ class EggParserService
      */
     public function handle(UploadedFile $file): array
     {
-        if ($file->getError() !== UPLOAD_ERR_OK || !$file->isFile()) {
-            throw new InvalidFileUploadException('The selected file is not valid and cannot be imported.');
+        if ($file->getError() !== UPLOAD_ERR_OK) {
+            throw new InvalidFileUploadException('The selected file was not uploaded successfully');
         }
 
-        /** @var array $parsed */
-        $parsed = json_decode($file->openFile()->fread($file->getSize()), true, 512, JSON_THROW_ON_ERROR);
-        if (!in_array(Arr::get($parsed, 'meta.version') ?? '', ['PTDL_v1', 'PTDL_v2'])) {
-            throw new InvalidFileUploadException('The JSON file provided is not in a format that can be recognized.');
-        }
+        $parsed = json_decode($file->getContent(), true, 512, JSON_THROW_ON_ERROR);
 
-        return $this->convertToV2($parsed);
+        $version = $parsed['meta']['version'] ?? '';
+        return match ($version) {
+            'PTDL_v1' => $this->convertToV2($parsed),
+            'PTDL_v2' => $parsed,
+            default => throw new InvalidFileUploadException('The JSON file provided is not in a format that can be recognized.')
+        };
     }
 
     /**
@@ -62,10 +63,6 @@ class EggParserService
      */
     protected function convertToV2(array $parsed): array
     {
-        if (Arr::get($parsed, 'meta.version') === Egg::EXPORT_VERSION) {
-            return $parsed;
-        }
-
         // Maintain backwards compatability for eggs that are still using the old single image
         // string format. New eggs can provide an array of Docker images that can be used.
         if (!isset($parsed['images'])) {
