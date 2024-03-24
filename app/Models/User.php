@@ -179,6 +179,11 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
         });
     }
 
+    public function getRouteKeyName(): string
+    {
+        return 'id';
+    }
+
     /**
      * Implement language verification by overriding Eloquence's gather
      * rules function.
@@ -278,6 +283,11 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
                 $builder->where('servers.owner_id', $this->id)->orWhere('subusers.user_id', $this->id);
             })
             ->groupBy('servers.id');
+    }
+
+    public function subusers(): HasMany
+    {
+        return $this->hasMany(Subuser::class);
     }
 
     protected function checkPermission(Server $server, string $permission = ''): bool

@@ -25,42 +25,14 @@ class UserResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make('external_id')
-                    ->maxLength(191),
-                Forms\Components\TextInput::make('uuid')
-                    ->label('UUID')
-                    ->required()
-                    ->maxLength(36),
-                Forms\Components\TextInput::make('username')
-                    ->required()
-                    ->maxLength(191),
-                Forms\Components\TextInput::make('email')
-                    ->email()
-                    ->required()
-                    ->maxLength(191),
-                Forms\Components\TextInput::make('name_first')
-                    ->maxLength(191),
-                Forms\Components\TextInput::make('name_last')
-                    ->maxLength(191),
-                Forms\Components\Textarea::make('password')
-                    ->required()
-                    ->columnSpanFull(),
-                Forms\Components\TextInput::make('language')
-                    ->required()
-                    ->maxLength(5)
-                    ->default('en'),
-                Forms\Components\TextInput::make('root_admin')
-                    ->required()
-                    ->numeric()
-                    ->default(0),
-                Forms\Components\TextInput::make('use_totp')
-                    ->required()
-                    ->numeric(),
-                Forms\Components\Textarea::make('totp_secret')
-                    ->columnSpanFull(),
-                Forms\Components\DateTimePicker::make('totp_authenticated_at'),
-                Forms\Components\Toggle::make('gravatar')
-                    ->required(),
+                Forms\Components\TextInput::make('username')->required()->maxLength(191),
+                Forms\Components\TextInput::make('email')->email()->required()->maxLength(191),
+                Forms\Components\TextInput::make('name_first')->maxLength(191),
+                Forms\Components\TextInput::make('name_last')->maxLength(191),
+                Forms\Components\TextInput::make('password')->password()->columnSpanFull(),
+                Forms\Components\Select::make('language')->required()->default('en')
+                    ->options(fn (User $user) => $user->getAvailableLanguages()),
+                Forms\Components\Toggle::make('root_admin')->required()->default(0),
             ]);
     }
 
@@ -68,32 +40,32 @@ class UserResource extends Resource
     {
         return $table
             ->columns([
+                Tables\Columns\ImageColumn::make('picture')
+                    ->defaultImageUrl(fn (User $user) => 'https://gravatar.com/avatar/' . md5(strtolower($user->email))),
                 Tables\Columns\TextColumn::make('external_id')
-                    ->searchable(),
+                    ->searchable()
+                    ->hidden(),
                 Tables\Columns\TextColumn::make('uuid')
                     ->label('UUID')
+                    ->hidden()
                     ->searchable(),
                 Tables\Columns\TextColumn::make('username')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('email')
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('name_first')
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('name_last')
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('language')
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('root_admin')
-                    ->numeric()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('use_totp')
-                    ->numeric()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('totp_authenticated_at')
-                    ->dateTime()
-                    ->sortable(),
-                Tables\Columns\IconColumn::make('gravatar')
-                    ->boolean(),
+                Tables\Columns\TextColumn::make('email')->searchable(),
+                Tables\Columns\TextColumn::make('name')->searchable(),
+                Tables\Columns\IconColumn::make('root_admin')->label('Admin')->boolean()->sortable(),
+                Tables\Columns\IconColumn::make('use_totp')->label('2FA')
+                    ->icon(fn (User $user) => $user->use_totp ? 'heroicon-o-lock-closed' : 'heroicon-o-lock-open')
+                    ->boolean()->sortable(),
+                Tables\Columns\TextColumn::make('servers_count')
+                    ->counts('servers')
+                    ->icon('heroicon-m-server-stack')
+                    ->label('Servers Owned'),
+                Tables\Columns\TextColumn::make('subusers_count')
+                    ->counts('subusers')
+                    ->icon('heroicon-m-users')
+                    // ->formatStateUsing(fn (string $state, $record): string => (string) ($record->servers_count + $record->subusers_count))
+                    ->label('Subusers'),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
