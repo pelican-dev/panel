@@ -12,6 +12,7 @@
         "ext-zip": "*",
         "aws/aws-sdk-php": "~3.288.1",
         "doctrine/dbal": "~3.6.0",
+        "filament/filament": "^3.2",
         "guzzlehttp/guzzle": "^7.5",
         "hashids/hashids": "~5.0.0",
         "laracasts/utilities": "~3.2.2",
@@ -67,7 +68,8 @@
         "cs:check": "php-cs-fixer fix --dry-run --diff --verbose",
         "post-autoload-dump": [
             "Illuminate\\Foundation\\ComposerScripts::postAutoloadDump",
-            "@php artisan package:discover --ansi || true"
+            "@php artisan package:discover --ansi || true",
+            "@php artisan filament:upgrade"
         ],
         "post-root-package-install": [
             "@php -r \"file_exists('.env') || copy('.env.example', '.env');\""
