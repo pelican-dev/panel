@@ -5,6 +5,8 @@ namespace App\Models;
 use App\Exceptions\DisplayException;
 use App\Rules\Username;
 use App\Facades\Activity;
+use Filament\Models\Contracts\FilamentUser;
+use Filament\Panel;
 use Illuminate\Support\Collection;
 use Illuminate\Validation\Rules\In;
 use Illuminate\Auth\Authenticatable;
@@ -79,7 +81,7 @@ use App\Notifications\SendPasswordReset as ResetPasswordNotification;
  *
  * @mixin \Eloquent
  */
-class User extends Model implements AuthenticatableContract, AuthorizableContract, CanResetPasswordContract
+class User extends Model implements AuthenticatableContract, AuthorizableContract, CanResetPasswordContract, FilamentUser
 {
     use Authenticatable;
     use Authorizable {can as protected canned; }
@@ -312,5 +314,10 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
         }
 
         return $this->canned($abilities, $arguments);
+    }
+
+    public function canAccessPanel(Panel $panel): bool
+    {
+        return $this->root_admin;
     }
 }
