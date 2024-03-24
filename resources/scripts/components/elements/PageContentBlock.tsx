@@ -28,7 +28,7 @@ const PageContentBlock: React.FC<PageContentBlockProps> = ({ title, showFlashKey
                     <p css={tw`text-center text-neutral-500 text-xs`}>
                         <a
                             rel={'noopener nofollow noreferrer'}
-                            href={'https://example.com'}
+                            href={'https://pelican.dev'}
                             target={'_blank'}
                             css={tw`no-underline text-neutral-500 hover:text-neutral-300`}
                         >
