@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use App\Repositories\Daemon\DaemonConfigurationRepository;
+use Exception;
 use Illuminate\Support\Str;
 use Symfony\Component\Yaml\Yaml;
 use Illuminate\Notifications\Notifiable;
@@ -79,9 +81,9 @@ class Node extends Model
         'fqdn' => 'required|string',
         'scheme' => 'required',
         'behind_proxy' => 'boolean',
-        'memory' => 'required|numeric|min:1',
+        'memory' => 'required|numeric|min:0',
         'memory_overallocate' => 'required|numeric|min:-1',
-        'disk' => 'required|numeric|min:1',
+        'disk' => 'required|numeric|min:0',
         'disk_overallocate' => 'required|numeric|min:-1',
         'daemonBase' => 'sometimes|required|regex:/^([\/][\d\w.\-\/]+)$/',
         'daemonSFTP' => 'required|numeric|between:1,65535',
@@ -96,9 +98,11 @@ class Node extends Model
     protected $attributes = [
         'public' => true,
         'behind_proxy' => false,
+        'memory' => 0,
         'memory_overallocate' => 0,
+        'disk' => 0,
         'disk_overallocate' => 0,
-        'daemonBase' => '/var/lib/panel/volumes',
+        'daemonBase' => '/var/lib/pelican/volumes',
         'daemonSFTP' => 2022,
         'daemonListen' => 8080,
         'maintenance_mode' => false,
@@ -115,6 +119,23 @@ class Node extends Model
             'public' => 'boolean',
             'maintenance_mode' => 'boolean',
         ];
+    }
+
+    public function getRouteKeyName(): string
+    {
+        return 'id';
+    }
+
+
+    protected static function booted(): void
+    {
+        static::creating(function (self $node) {
+            $node->uuid = Str::uuid();
+            $node->daemon_token = encrypt(Str::random(self::DAEMON_TOKEN_LENGTH));
+            $node->daemon_token_id = Str::random(self::DAEMON_TOKEN_ID_LENGTH);
+
+            return true;
+        });
     }
 
     /**
@@ -239,5 +260,28 @@ class Node extends Model
                 'allocations' => $ports,
             ];
         })->values();
+    }
+
+    public function systemInformation(): array
+    {
+        return once(function () {
+            try {
+                return resolve(DaemonConfigurationRepository::class)
+                    ->setNode($this)
+                    ->getSystemInformation(connectTimeout: 1);
+            } catch (Exception $exception) {
+                $message = str($exception->getMessage());
+
+                if ($message->startsWith('cURL error 6: Could not resolve host')) {
+                    $message = str('Could not resolve host');
+                }
+
+                if ($message->startsWith('cURL error 28: Failed to connect to ')) {
+                    $message = $message->after('cURL error 28: ')->before(' after ');
+                }
+
+                return ['exception' => $message->toString()];
+            }
+        });
     }
 }

@@ -3,15 +3,12 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\NodeResource\Pages;
-use App\Filament\Resources\NodeResource\RelationManagers;
 use App\Models\Node;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class NodeResource extends Resource
 {
@@ -25,31 +22,8 @@ class NodeResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make('uuid')
-                    ->label('UUID')
-                    ->required()
-                    ->maxLength(36),
-                Forms\Components\TextInput::make('public')
-                    ->required()
-                    ->numeric(),
-                Forms\Components\TextInput::make('name')
-                    ->required()
-                    ->maxLength(191),
-                Forms\Components\Textarea::make('description')
-                    ->columnSpanFull(),
-                Forms\Components\TextInput::make('location_id')
-                    ->required()
-                    ->numeric(),
-                Forms\Components\TextInput::make('fqdn')
-                    ->required()
-                    ->maxLength(191),
-                Forms\Components\TextInput::make('scheme')
-                    ->required()
-                    ->maxLength(191)
-                    ->default('https'),
                 Forms\Components\Toggle::make('behind_proxy')
-                    ->required(),
-                Forms\Components\Toggle::make('maintenance_mode')
+                    ->helperText('If you are running the daemon behind a proxy such as Cloudflare, select this to have the daemon skip looking for certificates on boot.')
                     ->required(),
                 Forms\Components\TextInput::make('memory')
                     ->required()
@@ -67,23 +41,40 @@ class NodeResource extends Resource
                     ->default(0),
                 Forms\Components\TextInput::make('upload_size')
                     ->required()
-                    ->numeric()
+                    ->integer()
                     ->default(100),
-                Forms\Components\TextInput::make('daemon_token_id')
-                    ->required()
-                    ->maxLength(16),
                 Forms\Components\TextInput::make('daemonListen')
                     ->required()
-                    ->numeric()
+                    ->integer()
+                    ->label('Daemon Port')
                     ->default(8080),
                 Forms\Components\TextInput::make('daemonSFTP')
                     ->required()
-                    ->numeric()
+                    ->integer()
+                    ->label('Daemon SFTP Port')
                     ->default(2022),
                 Forms\Components\TextInput::make('daemonBase')
                     ->required()
                     ->maxLength(191)
                     ->default('/home/daemon-files'),
+
+                Forms\Components\ToggleButtons::make('public')
+                    ->label('Node Visibility')
+                    ->inline()
+                    ->default(true)
+                    ->helperText('By setting a node to private you will be denying the ability to auto-deploy to this node.')
+                    ->options([
+                        true => 'Public',
+                        false => 'Private',
+                    ])
+                    ->colors([
+                        true => 'warning',
+                        false => 'danger',
+                    ])
+                    ->icons([
+                        true => 'heroicon-m-eye',
+                        false => 'heroicon-m-lock-closed',
+                    ]),
             ]);
     }
 
@@ -93,48 +84,39 @@ class NodeResource extends Resource
             ->columns([
                 Tables\Columns\TextColumn::make('uuid')
                     ->label('UUID')
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('public')
-                    ->numeric()
-                    ->sortable(),
+                    ->searchable()
+                    ->hidden(),
+                Tables\Columns\IconColumn::make('health')
+                    ->alignCenter()
+                    ->state(fn (Node $node) => $node->systemInformation()['version'] ?? false)
+                    ->tooltip(fn (Node $node) => $node->systemInformation()['version'] ?? $node->systemInformation()['exception'] ?? 'Not Connected')
+                    ->trueIcon('heroicon-m-heart')
+                    ->default(false),
                 Tables\Columns\TextColumn::make('name')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('location_id')
-                    ->numeric()
-                    ->sortable(),
                 Tables\Columns\TextColumn::make('fqdn')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('scheme')
-                    ->searchable(),
-                Tables\Columns\IconColumn::make('behind_proxy')
-                    ->boolean(),
-                Tables\Columns\IconColumn::make('maintenance_mode')
-                    ->boolean(),
                 Tables\Columns\TextColumn::make('memory')
-                    ->numeric()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('memory_overallocate')
                     ->numeric()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('disk')
                     ->numeric()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('disk_overallocate')
-                    ->numeric()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('upload_size')
-                    ->numeric()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('daemon_token_id')
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('daemonListen')
-                    ->numeric()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('daemonSFTP')
-                    ->numeric()
-                    ->sortable(),
                 Tables\Columns\TextColumn::make('daemonBase')
                     ->searchable(),
+                Tables\Columns\IconColumn::make('scheme')
+                    ->label('SSL')
+                    ->trueIcon('heroicon-m-lock-closed')
+                    ->falseIcon('heroicon-m-lock-open')
+                    ->state(fn (Node $node) => $node->scheme === 'https'),
+                Tables\Columns\IconColumn::make('public')
+                    ->trueIcon('heroicon-m-eye')
+                    ->falseIcon('heroicon-m-eye-slash')
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('servers_count')
+                    ->counts('servers')
+                    ->label('Servers')
+                    ->icon('heroicon-m-server-stack'),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
