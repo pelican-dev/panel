@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::table('nodes', function (Blueprint $table) {
             $table->dropForeign('nodes_location_id_foreign');
+            $table->dropColumn('location_id');
         });
 
         Schema::drop('locations');
@@ -32,6 +33,11 @@ return new class extends Migration
             $table->string('short');
             $table->text('long')->nullable();
             $table->timestamps();
+        });
+
+        Schema::table('nodes', function (Blueprint $table) {
+            $table->unsignedInteger('location_id')->default(0);
+            $table->foreign('location_id')->references('id')->on('locations');
         });
 
         Schema::table('api_keys', function (Blueprint $table) {
