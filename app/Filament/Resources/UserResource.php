@@ -52,7 +52,9 @@ class UserResource extends Resource
                 Tables\Columns\TextColumn::make('username')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('email')->searchable(),
-                Tables\Columns\TextColumn::make('name')->searchable(),
+                Tables\Columns\TextColumn::make('name')
+                    ->hidden()
+                    ->searchable(),
                 Tables\Columns\IconColumn::make('root_admin')->label('Admin')->boolean()->sortable(),
                 Tables\Columns\IconColumn::make('use_totp')->label('2FA')
                     ->icon(fn (User $user) => $user->use_totp ? 'heroicon-o-lock-closed' : 'heroicon-o-lock-open')
