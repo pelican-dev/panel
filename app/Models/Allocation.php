@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Exceptions\Service\Allocation\ServerUsingAllocationException;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
@@ -111,9 +112,16 @@ class Allocation extends Model
         return !is_null($this->ip_alias);
     }
 
+    public function address(): Attribute
+    {
+        return Attribute::make(
+            get: fn () => "$this->ip:$this->port",
+        );
+    }
+
     public function toString(): string
     {
-        return sprintf('%s:%s', $this->ip, $this->port);
+        return $this->address;
     }
 
     /**
