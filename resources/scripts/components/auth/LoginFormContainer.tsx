@@ -40,6 +40,6 @@ export default forwardRef<HTMLFormElement, Props>(({ title, ...props }, ref) => 
                 <div css={tw`flex-1`}>{props.children}</div>
             </div>
         </Form>
-        <p css={tw`text-center text-neutral-500 text-xs mt-4`}>&copy; 2015 - {new Date().getFullYear()}&nbsp;</p>
+        <p css={tw`text-center text-neutral-500 text-xs mt-4`}>&copy; 2024 - {new Date().getFullYear()}&nbsp;</p>
     </Container>
 ));

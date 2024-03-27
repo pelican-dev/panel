@@ -27,7 +27,7 @@
             </div>
             <div class="box-body">
                 @if ($version->isLatestPanel())
-                    You are running Panel version <code>{{ config('app.version') }}</code>. Your panel is up-to-date!
+                    You are running Pelican version <code>{{ config('app.version') }}</code>. Your panel is up-to-date!
                 @else
                     Your panel is <strong>not up-to-date!</strong> The latest version is
                     <a>
