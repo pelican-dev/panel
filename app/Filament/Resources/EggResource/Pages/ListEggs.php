@@ -38,21 +38,21 @@ class ListEggs extends ListRecords
                         $newEgg = $eggImportService->handle($eggFile);
                     } catch (Exception $exception) {
                         Notification::make()
-                            ->title("Imported egg successfully: {$exception->getMessage()}")
-                            ->success()
+                            ->title('Egg Import Failed')
+                            ->danger()
                             ->send();
+
+                        report($exception);
 
                         return;
                     }
 
                     Notification::make()
-                        ->title("Imported egg successfully: $newEgg->name")
+                        ->title("Egg Import Success: $newEgg->name")
                         ->success()
                         ->send();
 
                     redirect()->route('filament.admin.resources.eggs.edit', [$newEgg]);
-
-                    // $livewire->redirect(route('filament.admin.resources.eggs.edit', [$newEgg]));
                 })
         ];
     }
