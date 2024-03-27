@@ -4,16 +4,11 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\EggResource\Pages;
 use App\Models\Egg;
-use App\Services\Eggs\Sharing\EggImporterService;
-use Exception;
 use Filament\Forms;
 use Filament\Forms\Form;
-use Filament\Notifications\Notification;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
-use Livewire\Component;
-use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 
 class EggResource extends Resource
 {
@@ -178,35 +173,7 @@ class EggResource extends Resource
                 Tables\Actions\EditAction::make(),
             ])
             ->headerActions([
-                Tables\Actions\Action::make('Import Egg')
-                    ->form([
-                        Forms\Components\FileUpload::make('egg')->storeFiles(false),
-                    ])
-                    ->action(function (array $data, Component $livewire): void {
-                        /** @var TemporaryUploadedFile $eggFile */
-                        $eggFile = $data['egg'];
-
-                        /** @var EggImporterService $eggImportService */
-                        $eggImportService = resolve(EggImporterService::class);
-
-                        try {
-                            $newEgg = $eggImportService->handle($eggFile);
-                        } catch (Exception $exception) {
-                            Notification::make()
-                                ->title("Imported egg successfully: {$exception->getMessage()}")
-                                ->success()
-                                ->send();
-
-                            return;
-                        }
-
-                        Notification::make()
-                            ->title("Imported egg successfully: $newEgg->name")
-                            ->success()
-                            ->send();
-
-                        $livewire->redirect(route('filament.admin.resources.eggs.edit', [$newEgg]));
-                    })
+                //
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
