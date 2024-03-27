@@ -95,6 +95,7 @@ class NodeResource extends Resource
                 Tables\Columns\TextColumn::make('name')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('fqdn')
+                    ->label('Address')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('memory')
                     ->numeric()
@@ -102,8 +103,6 @@ class NodeResource extends Resource
                 Tables\Columns\TextColumn::make('disk')
                     ->numeric()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('daemonBase')
-                    ->searchable(),
                 Tables\Columns\IconColumn::make('scheme')
                     ->label('SSL')
                     ->trueIcon('heroicon-m-lock-closed')

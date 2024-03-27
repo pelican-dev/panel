@@ -4,6 +4,7 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\ServerResource\Pages;
 use App\Filament\Resources\ServerResource\RelationManagers;
+use App\Models\Node;
 use App\Models\Server;
 use Filament\Forms;
 use Filament\Forms\Form;
@@ -100,59 +101,29 @@ class ServerResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('external_id')
-                    ->searchable(),
                 Tables\Columns\TextColumn::make('uuid')
+                    ->hidden()
                     ->label('UUID')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('uuidShort')
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('node.name')
-                    ->numeric()
+                Tables\Columns\TextColumn::make('name')
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('node.id')
+                    ->url(fn ($state): string => route('filament.admin.resources.nodes.edit', ['record' => $state]))
                     ->sortable(),
                 Tables\Columns\TextColumn::make('name')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('status')
-                    ->searchable(),
-                Tables\Columns\IconColumn::make('skip_scripts')
-                    ->boolean(),
-                Tables\Columns\TextColumn::make('owner_id')
+                Tables\Columns\TextColumn::make('user.username')
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('allocation.address')
                     ->numeric()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('memory')
+                Tables\Columns\TextColumn::make('egg.name')
                     ->numeric()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('swap')
-                    ->numeric()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('disk')
-                    ->numeric()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('io')
-                    ->numeric()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('cpu')
-                    ->numeric()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('threads')
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('oom_disabled')
-                    ->numeric()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('allocation.id')
-                    ->numeric()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('egg_id')
-                    ->numeric()
-                    ->sortable(),
-                Tables\Columns\ImageColumn::make('image'),
-                Tables\Columns\TextColumn::make('allocation_limit')
-                    ->numeric()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('database_limit')
-                    ->numeric()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('backup_limit')
+                Tables\Columns\TextColumn::make('image')->hidden(),
+                Tables\Columns\TextColumn::make('backups_count')
+                    ->counts('backups')
+                    ->label('Backups')
                     ->numeric()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('created_at')
@@ -165,7 +136,8 @@ class ServerResource extends Resource
                     ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('installed_at')
                     ->dateTime()
-                    ->sortable(),
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
                 //
