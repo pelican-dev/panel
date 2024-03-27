@@ -88,10 +88,8 @@ class NodeResource extends Resource
                     ->hidden(),
                 Tables\Columns\IconColumn::make('health')
                     ->alignCenter()
-                    ->state(fn (Node $node) => $node->systemInformation()['version'] ?? false)
-                    ->tooltip(fn (Node $node) => $node->systemInformation()['version'] ?? $node->systemInformation()['exception'] ?? 'Not Connected')
-                    ->trueIcon('heroicon-m-heart')
-                    ->default(false),
+                    ->state(fn (Node $node) => $node)
+                    ->view('livewire.columns.version-column'),
                 Tables\Columns\TextColumn::make('name')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('fqdn')
