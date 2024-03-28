@@ -2,7 +2,6 @@
 
 namespace App\Http\Requests\Admin\Node;
 
-use App\Rules\Fqdn;
 use App\Models\Node;
 use App\Http\Requests\Admin\AdminFormRequest;
 
@@ -17,9 +16,6 @@ class NodeFormRequest extends AdminFormRequest
             return Node::getRulesForUpdate($this->route()->parameter('node'));
         }
 
-        $data = Node::getRules();
-        $data['fqdn'][] = Fqdn::make('scheme');
-
-        return $data;
+        return Node::getRules();
     }
 }
