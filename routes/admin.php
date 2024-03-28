@@ -156,28 +156,6 @@ Route::prefix('nodes')->group(function () {
 
 /*
 |--------------------------------------------------------------------------
-| Mount Controller Routes
-|--------------------------------------------------------------------------
-|
-| Endpoint: /admin/mounts
-|
-*/
-Route::prefix('mounts')->group(function () {
-    Route::get('/', [Admin\MountController::class, 'index'])->name('admin.mounts');
-    Route::get('/view/{mount:id}', [Admin\MountController::class, 'view'])->name('admin.mounts.view');
-
-    Route::post('/', [Admin\MountController::class, 'create']);
-    Route::post('/{mount:id}/eggs', [Admin\MountController::class, 'addEggs'])->name('admin.mounts.eggs');
-    Route::post('/{mount:id}/nodes', [Admin\MountController::class, 'addNodes'])->name('admin.mounts.nodes');
-
-    Route::patch('/view/{mount:id}', [Admin\MountController::class, 'update']);
-
-    Route::delete('/{mount:id}/eggs/{egg_id}', [Admin\MountController::class, 'deleteEgg']);
-    Route::delete('/{mount:id}/nodes/{node_id}', [Admin\MountController::class, 'deleteNode']);
-});
-
-/*
-|--------------------------------------------------------------------------
 | Egg Controller Routes
 |--------------------------------------------------------------------------
 |
