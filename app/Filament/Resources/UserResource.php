@@ -17,7 +17,7 @@ class UserResource extends Resource
 {
     protected static ?string $model = User::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-user-group';
+    protected static ?string $navigationIcon = 'tabler-users';
 
     protected static ?string $recordTitleAttribute = 'username';
 
@@ -57,15 +57,15 @@ class UserResource extends Resource
                     ->searchable(),
                 Tables\Columns\IconColumn::make('root_admin')->label('Admin')->boolean()->sortable(),
                 Tables\Columns\IconColumn::make('use_totp')->label('2FA')
-                    ->icon(fn (User $user) => $user->use_totp ? 'heroicon-o-lock-closed' : 'heroicon-o-lock-open')
+                    ->icon(fn (User $user) => $user->use_totp ? 'tabler-lock' : 'tabler-lock-open-off')
                     ->boolean()->sortable(),
                 Tables\Columns\TextColumn::make('servers_count')
                     ->counts('servers')
-                    ->icon('heroicon-m-server-stack')
+                    ->icon('tabler-server')
                     ->label('Servers Owned'),
                 Tables\Columns\TextColumn::make('subusers_count')
                     ->counts('subusers')
-                    ->icon('heroicon-m-users')
+                    ->icon('tabler-users')
                     // ->formatStateUsing(fn (string $state, $record): string => (string) ($record->servers_count + $record->subusers_count))
                     ->label('Subusers'),
                 Tables\Columns\TextColumn::make('created_at')

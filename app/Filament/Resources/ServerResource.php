@@ -18,7 +18,7 @@ class ServerResource extends Resource
 {
     protected static ?string $model = Server::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-server-stack';
+    protected static ?string $navigationIcon = 'tabler-server';
 
     protected static ?string $recordTitleAttribute = 'name';
 

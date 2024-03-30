@@ -17,7 +17,7 @@ class DatabaseResource extends Resource
 {
     protected static ?string $model = Database::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-circle-stack';
+    protected static ?string $navigationIcon = 'tabler-database';
 
     public static function form(Form $form): Form
     {

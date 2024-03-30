@@ -14,7 +14,7 @@ class EggResource extends Resource
 {
     protected static ?string $model = Egg::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-ellipsis-horizontal-circle';
+    protected static ?string $navigationIcon = 'tabler-eggs';
 
     protected static ?string $recordTitleAttribute = 'name';
 
@@ -146,7 +146,7 @@ class EggResource extends Resource
                     ->wrap(),
                 Tables\Columns\TextColumn::make('servers_count')
                     ->counts('servers')
-                    ->icon('heroicon-m-server-stack')
+                    ->icon('tabler-server')
                     ->label('Servers'),
                 Tables\Columns\TextColumn::make('script_container')
                     ->searchable()

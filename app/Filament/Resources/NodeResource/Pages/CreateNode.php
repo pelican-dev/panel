@@ -59,7 +59,7 @@ class CreateNode extends CreateRecord
                     ->inline()
                     ->helperText(function (Forms\Get $get) {
                         if (request()->isSecure()) {
-                            return 'Your Panel is using a secure (https) connection, therefore your Daemon has to as well.';
+                            return 'Your Panel is using a secure (SSL/TLS) connection, therefore your Daemon has to as well.';
                         }
 
                         if (is_ip($get('fqdn'))) {
@@ -79,15 +79,15 @@ class CreateNode extends CreateRecord
                     })
                     ->options([
                         'http' => 'HTTP',
-                        'https' => 'SSL (HTTPS)',
+                        'https' => 'HTTPS (SSL)',
                     ])
                     ->colors([
                         'http' => 'warning',
                         'https' => 'success',
                     ])
                     ->icons([
-                        'http' => 'heroicon-m-lock-open',
-                        'https' => 'heroicon-m-lock-closed',
+                        'http' => 'tabler-lock-open-off',
+                        'https' => 'tabler-lock',
                     ])
                     ->default('http'),
                 Forms\Components\TextInput::make('name')

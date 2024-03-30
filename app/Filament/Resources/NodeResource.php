@@ -14,7 +14,7 @@ class NodeResource extends Resource
 {
     protected static ?string $model = Node::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationIcon = 'tabler-server-2';
 
     protected static ?string $recordTitleAttribute = 'name';
 
@@ -72,8 +72,8 @@ class NodeResource extends Resource
                         false => 'danger',
                     ])
                     ->icons([
-                        true => 'heroicon-m-eye',
-                        false => 'heroicon-m-lock-closed',
+                        true => 'tabler-eye-check',
+                        false => 'tabler-eye-cancel',
                     ]),
             ]);
     }
@@ -103,17 +103,17 @@ class NodeResource extends Resource
                     ->sortable(),
                 Tables\Columns\IconColumn::make('scheme')
                     ->label('SSL')
-                    ->trueIcon('heroicon-m-lock-closed')
-                    ->falseIcon('heroicon-m-lock-open')
+                    ->trueIcon('tabler-lock')
+                    ->falseIcon('tabler-lock-open-off')
                     ->state(fn (Node $node) => $node->scheme === 'https'),
                 Tables\Columns\IconColumn::make('public')
-                    ->trueIcon('heroicon-m-eye')
-                    ->falseIcon('heroicon-m-eye-slash')
+                    ->trueIcon('tabler-eye-check')
+                    ->falseIcon('tabler-eye-cancel')
                     ->sortable(),
                 Tables\Columns\TextColumn::make('servers_count')
                     ->counts('servers')
                     ->label('Servers')
-                    ->icon('heroicon-m-server-stack'),
+                    ->icon('tabler-server'),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()

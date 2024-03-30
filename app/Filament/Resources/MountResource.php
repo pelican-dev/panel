@@ -17,7 +17,7 @@ class MountResource extends Resource
 {
     protected static ?string $model = Mount::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-link';
+    protected static ?string $navigationIcon = 'tabler-layers-linked';
 
     public static function form(Form $form): Form
     {
