@@ -32,7 +32,8 @@ class UserResource extends Resource
                 Forms\Components\TextInput::make('password')->password()->columnSpanFull(),
                 Forms\Components\Select::make('language')->required()->default('en')
                     ->options(fn (User $user) => $user->getAvailableLanguages()),
-                Forms\Components\Toggle::make('root_admin')->required()->default(0),
+                Forms\Components\Toggle::make('root_admin')->required()->default(0)
+                    ->disabled(fn () => User::where('root_admin', true)->count() <= 1),
             ]);
     }
 
