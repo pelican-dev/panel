@@ -18,7 +18,7 @@ class ServerResource extends Resource
 {
     protected static ?string $model = Server::class;
 
-    protected static ?string $navigationIcon = 'tabler-server';
+    protected static ?string $navigationIcon = 'tabler-container';
 
     protected static ?string $recordTitleAttribute = 'name';
 
@@ -106,24 +106,30 @@ class ServerResource extends Resource
                     ->label('UUID')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('name')
+                    ->icon('tabler-container')
+                    ->searchable()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('node.id')
-                    ->url(fn ($state): string => route('filament.admin.resources.nodes.edit', ['record' => $state]))
+                Tables\Columns\TextColumn::make('node.name')
+                    ->icon('tabler-server-2')
+                    ->url(fn (Server $server): string => route('filament.admin.resources.nodes.edit', ['record' => $server->node]))
                     ->sortable(),
-                Tables\Columns\TextColumn::make('name')
-                    ->searchable(),
                 Tables\Columns\TextColumn::make('user.username')
+                    ->icon('tabler-user')
+                    ->url(fn (Server $server): string => route('filament.admin.resources.users.edit', ['record' => $server->user]))
                     ->sortable(),
                 Tables\Columns\TextColumn::make('allocation.address')
+                    ->icon('tabler-network')
                     ->numeric()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('egg.name')
-                    ->numeric()
+                    ->icon('tabler-egg')
+                    ->url(fn (Server $server): string => route('filament.admin.resources.eggs.edit', ['record' => $server->egg]))
                     ->sortable(),
                 Tables\Columns\TextColumn::make('image')->hidden(),
                 Tables\Columns\TextColumn::make('backups_count')
                     ->counts('backups')
                     ->label('Backups')
+                    ->icon('tabler-file-download')
                     ->numeric()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('created_at')
