@@ -27,13 +27,16 @@ class UserResource extends Resource
             ->schema([
                 Forms\Components\TextInput::make('username')->required()->maxLength(191),
                 Forms\Components\TextInput::make('email')->email()->required()->maxLength(191),
-                Forms\Components\TextInput::make('name_first')->maxLength(191),
-                Forms\Components\TextInput::make('name_last')->maxLength(191),
+                Forms\Components\TextInput::make('name_first')->maxLength(191)->label('First Name'),
+                Forms\Components\TextInput::make('name_last')->maxLength(191)->label('Last Name'),
                 Forms\Components\TextInput::make('password')->password()->columnSpanFull(),
+                Forms\Components\Hidden::make('skipValidation')->default(true),
                 Forms\Components\Select::make('language')->required()->default('en')
                     ->options(fn (User $user) => $user->getAvailableLanguages()),
-                Forms\Components\Toggle::make('root_admin')->required()->default(0)
-                    ->disabled(fn () => User::where('root_admin', true)->count() <= 1),
+                Forms\Components\Toggle::make('root_admin')
+                    ->required()
+                    ->default(false),
+                    // ->disabled(fn () => User::where('root_admin', true)->count() <= 1),
             ]);
     }
 
@@ -52,11 +55,18 @@ class UserResource extends Resource
                     ->searchable(),
                 Tables\Columns\TextColumn::make('username')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('email')->searchable(),
+                Tables\Columns\TextColumn::make('email')
+                    ->searchable()
+                    ->icon('tabler-mail'),
                 Tables\Columns\TextColumn::make('name')
                     ->hidden()
                     ->searchable(),
-                Tables\Columns\IconColumn::make('root_admin')->label('Admin')->boolean()->sortable(),
+                Tables\Columns\IconColumn::make('root_admin')
+                    ->label('Admin')
+                    ->boolean()
+                    ->trueIcon('tabler-adjustments-check')
+                    ->falseIcon('tabler-adjustments-cancel')
+                    ->sortable(),
                 Tables\Columns\IconColumn::make('use_totp')->label('2FA')
                     ->icon(fn (User $user) => $user->use_totp ? 'tabler-lock' : 'tabler-lock-open-off')
                     ->boolean()->sortable(),

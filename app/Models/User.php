@@ -7,7 +7,7 @@ use App\Rules\Username;
 use App\Facades\Activity;
 use Filament\Models\Contracts\FilamentUser;
 use Filament\Panel;
-use Illuminate\Support\Collection;
+use Illuminate\Support\Str;
 use Illuminate\Validation\Rules\In;
 use Illuminate\Auth\Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -141,18 +141,20 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
         'language' => 'en',
         'use_totp' => false,
         'totp_secret' => null,
+        'name_first' => '',
+        'name_last' => '',
     ];
 
     /**
      * Rules verifying that the data being stored matches the expectations of the database.
      */
     public static array $validationRules = [
-        'uuid' => 'required|string|size:36|unique:users,uuid',
+        'uuid' => 'nullable|string|size:36|unique:users,uuid',
         'email' => 'required|email|between:1,191|unique:users,email',
         'external_id' => 'sometimes|nullable|string|max:191|unique:users,external_id',
         'username' => 'required|between:1,191|unique:users,username',
-        'name_first' => 'required|string|between:1,191',
-        'name_last' => 'required|string|between:1,191',
+        'name_first' => 'nullable|string|between:0,191',
+        'name_last' => 'nullable|string|between:0,191',
         'password' => 'sometimes|nullable|string',
         'root_admin' => 'boolean',
         'language' => 'string',
@@ -172,6 +174,12 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
 
     protected static function booted(): void
     {
+        static::creating(function (self $user) {
+            $user->uuid = Str::uuid();
+
+            return true;
+        });
+
         static::deleting(function (self $user) {
             throw_if($user->servers()->count() > 0, new DisplayException(__('admin/user.exceptions.user_has_servers')));
 
