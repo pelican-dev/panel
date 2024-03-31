@@ -3,6 +3,8 @@
 namespace App\Filament\Resources\NodeResource\Pages;
 
 use App\Filament\Resources\NodeResource;
+use App\Models\Node;
+use Filament\Actions\Action;
 use Filament\Forms;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\CreateRecord;
@@ -12,9 +14,12 @@ class CreateNode extends CreateRecord
 {
     protected static string $resource = NodeResource::class;
 
+    private $forceReloadToggle = false;
+
     public function form(Forms\Form $form): Forms\Form
     {
         return $form
+            ->debounce(0)
             ->columns(4)
             ->schema([
                 Forms\Components\TextInput::make('fqdn')
@@ -32,14 +37,27 @@ class CreateNode extends CreateRecord
 
 //                        if (!is_ip($state) && !empty($state) && !checkdnsrr("$state.", 'A')) {
 //                            return 'Your hostname does not appear to have a valid A record.';
+//                        }
 
                         return '';
                     })
                     ->helperText(fn ($state) => is_ip($state) ? 'You can also enter in the domain name instead!' : 'You can also enter the IP address instead!')
                     ->afterStateUpdated(function (Forms\Set $set, ?string $state) {
-                        [$subdomain] = str($state)->explode('.', 2);
 
-                        $set('name', $subdomain);
+                        $set('isInsecureIp', is_ip($state) && request()->isSecure());
+
+                        $this->forceReloadToggle = !$this->forceReloadToggle;
+
+                        if (is_ip($state)) {
+                            $set('name', '');
+
+                            return;
+                        }
+
+                        [$subdomain] = str($state)->explode('.', 2);
+                        if (!is_numeric($subdomain)) {
+                            $set('name', $subdomain);
+                        }
                     })
                     ->maxLength(191),
 
@@ -101,6 +119,33 @@ class CreateNode extends CreateRecord
                     ->hidden()
                     ->columnSpanFull()
                     ->rows(5),
+                Forms\Components\Hidden::make('skipValidation')->default(true),
+                Forms\Components\Hidden::make('isInsecureIp')->default(false),
             ]);
+    }
+
+    protected function getCreateFormAction(): Action
+    {
+        $label = 'Create';
+
+        if ($this->data['isInsecureIp']) {
+            return Action::make('ip-ssl')
+                ->label($label)
+                ->requiresConfirmation()
+                ->modalIconColor('danger')
+                ->modalHeading('Using an IP Address with (SSL) Panel')
+                ->modalDescription('
+                    In order for your Panel to connect to your Node,
+                    you must get an SSL certificate for specifically your IP Address.
+                    This is very rare and extremely difficult to accomplish.
+                    Are you absolutely sure you want to continue?
+                ')
+                ->modalSubmitAction(false)
+                ->extraModalFooterActions([
+                    Action::make('create')->action(fn () => $this->create())->color('danger'),
+                ]);
+        }
+
+        return parent::getCreateFormAction()->label($label);
     }
 }
