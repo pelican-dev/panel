@@ -96,7 +96,7 @@ class CreateNode extends CreateRecord
                     ->required()
                     ->columnSpanFull()
                     ->regex('/[a-zA-Z0-9_\.\- ]+/')
-                    ->helperText('Character limits: [a-zA-Z0-9_.-] and [Space]')
+                    ->helperText('This is just a display name and can be changed later. Character limits: a-Z, 0-9, and [.-_ ]')
                     ->maxLength(100),
                 Forms\Components\Textarea::make('description')
                     ->hidden()
