@@ -30,9 +30,8 @@ class CreateNode extends CreateRecord
                             return 'You currently have a secure connection to the panel.';
                         }
 
-                        if (!is_ip($state) && !empty($state) && !checkdnsrr("$state.", 'A')) {
-                            return 'Your hostname does not appear to have a valid A record.';
-                        }
+//                        if (!is_ip($state) && !empty($state) && !checkdnsrr("$state.", 'A')) {
+//                            return 'Your hostname does not appear to have a valid A record.';
 
                         return '';
                     })
