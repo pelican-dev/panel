@@ -117,9 +117,9 @@ class ServerResource extends Resource
                     ->icon('tabler-user')
                     ->url(fn (Server $server): string => route('filament.admin.resources.users.edit', ['record' => $server->user]))
                     ->sortable(),
-                Tables\Columns\TextColumn::make('allocation.address')
-                    ->icon('tabler-network')
-                    ->numeric()
+                Tables\Columns\SelectColumn::make('allocation.id')
+                    ->options(fn ($state, Server $server) => [$server->allocation->id => $server->allocation->address])
+                    ->selectablePlaceholder(false)
                     ->sortable(),
                 Tables\Columns\TextColumn::make('egg.name')
                     ->icon('tabler-egg')
