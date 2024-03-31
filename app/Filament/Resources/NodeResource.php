@@ -91,14 +91,18 @@ class NodeResource extends Resource
                     ->state(fn (Node $node) => $node)
                     ->view('livewire.columns.version-column'),
                 Tables\Columns\TextColumn::make('name')
+                    ->icon('tabler-server-2')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('fqdn')
                     ->label('Address')
+                    ->icon('tabler-network')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('memory')
+                    ->icon('tabler-device-desktop-analytics')
                     ->numeric()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('disk')
+                    ->icon('tabler-file')
                     ->numeric()
                     ->sortable(),
                 Tables\Columns\IconColumn::make('scheme')
@@ -113,7 +117,7 @@ class NodeResource extends Resource
                 Tables\Columns\TextColumn::make('servers_count')
                     ->counts('servers')
                     ->label('Servers')
-                    ->icon('tabler-server'),
+                    ->icon('tabler-brand-docker'),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()

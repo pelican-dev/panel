@@ -18,7 +18,7 @@ class ServerResource extends Resource
 {
     protected static ?string $model = Server::class;
 
-    protected static ?string $navigationIcon = 'tabler-container';
+    protected static ?string $navigationIcon = 'tabler-brand-docker';
 
     protected static ?string $recordTitleAttribute = 'name';
 
@@ -106,7 +106,7 @@ class ServerResource extends Resource
                     ->label('UUID')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('name')
-                    ->icon('tabler-container')
+                    ->icon('tabler-brand-docker')
                     ->searchable()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('node.name')
