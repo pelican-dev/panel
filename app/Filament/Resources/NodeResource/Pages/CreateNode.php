@@ -69,15 +69,15 @@ class CreateNode extends CreateRecord
 
                         return '';
                     })
-                    ->disabled(function (Forms\Get $get, Forms\Set $set) {
-                        if (request()->isSecure()) {
-                            $set('scheme', 'https');
-
-                            return true;
-                        }
-
-                        return false;
-                    })
+//                    ->disabled(function (Forms\Get $get, Forms\Set $set) {
+//                        if (request()->isSecure()) {
+//                            $set('scheme', 'https');
+//
+//                            return true;
+//                        }
+//
+//                        return false;
+//                    })
                     ->options([
                         'http' => 'HTTP',
                         'https' => 'HTTPS (SSL)',
