@@ -91,7 +91,7 @@ class CreateNode extends CreateRecord
                         'http' => 'tabler-lock-open-off',
                         'https' => 'tabler-lock',
                     ])
-                    ->default('http'),
+                    ->default(fn () => request()->isSecure() ? 'https' : 'http'),
                 Forms\Components\TextInput::make('name')
                     ->required()
                     ->columnSpanFull()
