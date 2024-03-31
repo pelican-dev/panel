@@ -35,6 +35,7 @@
         "symfony/mailgun-mailer": "^7.0",
         "symfony/postmark-mailer": "^7.0",
         "symfony/yaml": "^7.0",
+        "webbingbrasil/filament-copyactions": "^3.0",
         "webmozart/assert": "~1.11.0"
     },
     "require-dev": {
