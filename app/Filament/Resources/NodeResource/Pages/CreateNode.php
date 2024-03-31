@@ -98,7 +98,10 @@ class CreateNode extends CreateRecord
                     ->regex('/[a-zA-Z0-9_\.\- ]+/')
                     ->helperText('Character limits: [a-zA-Z0-9_.-] and [Space]')
                     ->maxLength(100),
-                Forms\Components\Textarea::make('description')->columnSpanFull()->rows(5),
+                Forms\Components\Textarea::make('description')
+                    ->hidden()
+                    ->columnSpanFull()
+                    ->rows(5),
             ]);
     }
 }
