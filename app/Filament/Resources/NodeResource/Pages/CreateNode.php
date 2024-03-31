@@ -105,4 +105,11 @@ class CreateNode extends CreateRecord
                 Forms\Components\Hidden::make('skipValidation')->default(true),
             ]);
     }
+
+    protected function getRedirectUrlParameters(): array
+    {
+        return [
+            'step' => 'configuration',
+        ];
+    }
 }
