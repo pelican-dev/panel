@@ -38,7 +38,9 @@ class CreateNode extends CreateRecord
                     })
                     ->helperText(fn ($state) => is_ip($state) ? 'You can also enter in the domain name instead!' : 'You can also enter the IP address instead!')
                     ->afterStateUpdated(function (Forms\Set $set, ?string $state) {
-                        $set('name', $state);
+                        [$subdomain] = str($state)->explode('.', 2);
+
+                        $set('name', $subdomain);
                     })
                     ->maxLength(191),
 
