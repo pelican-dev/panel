@@ -130,16 +130,13 @@ class EggResource extends Resource
             ->columns([
                 Tables\Columns\TextColumn::make('id')
                     ->label('Id')
-                    // ->hidden()
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('uuid')
-                    ->label('UUID')
-                    ->hidden()
+                    ->toggleable(isToggledHiddenByDefault: true)
                     ->searchable(),
                 Tables\Columns\TextColumn::make('name')
+                    ->icon('tabler-egg')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('author')
-                    ->hidden()
+                    ->toggleable(isToggledHiddenByDefault: true)
                     ->searchable(),
                 Tables\Columns\TextColumn::make('description')
                     ->words(50)

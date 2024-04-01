@@ -45,6 +45,7 @@ class UserResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\ImageColumn::make('picture')
+                    ->label('')
                     ->defaultImageUrl(fn (User $user) => 'https://gravatar.com/avatar/' . md5(strtolower($user->email))),
                 Tables\Columns\TextColumn::make('external_id')
                     ->searchable()
@@ -73,7 +74,7 @@ class UserResource extends Resource
                 Tables\Columns\TextColumn::make('servers_count')
                     ->counts('servers')
                     ->icon('tabler-server')
-                    ->label('Servers Owned'),
+                    ->label('Servers'),
                 Tables\Columns\TextColumn::make('subusers_count')
                     ->counts('subusers')
                     ->icon('tabler-users')

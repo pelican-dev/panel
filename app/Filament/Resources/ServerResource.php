@@ -25,32 +25,40 @@ class ServerResource extends Resource
     public static function form(Form $form): Form
     {
         return $form
+            ->columns(4)
             ->schema([
-                Forms\Components\TextInput::make('external_id')
+                Forms\Components\TextInput::make('external_id')->maxLength(191)->hidden(),
+                Forms\Components\TextInput::make('name')
+                    ->columnSpanFull()
+                    ->required()
                     ->maxLength(191),
-                Forms\Components\TextInput::make('uuid')
-                    ->label('UUID')
-                    ->required()
-                    ->maxLength(36),
-                Forms\Components\TextInput::make('uuidShort')
-                    ->required()
-                    ->maxLength(8),
                 Forms\Components\Select::make('node_id')
                     ->relationship('node', 'name')
+                    ->searchable()
+                    ->preload()
                     ->required(),
-                Forms\Components\TextInput::make('name')
-                    ->required()
-                    ->maxLength(191),
+                Forms\Components\Select::make('egg_id')
+                    ->relationship('egg', 'name')
+                    ->searchable()
+                    ->preload()
+                    ->required(),
+                Forms\Components\Select::make('owner_id')
+                    ->relationship('user', 'username')
+                    ->searchable()
+                    ->preload()
+                    ->default(auth()->user()->id)
+                    ->required(),
+                Forms\Components\Select::make('allocation_id')
+                    ->relationship('allocation', 'address')
+                    ->searchable()
+                    ->required(),
                 Forms\Components\Textarea::make('description')
+                    ->hidden()
+                    ->default('')
                     ->required()
                     ->columnSpanFull(),
-                Forms\Components\TextInput::make('status')
-                    ->maxLength(191),
                 Forms\Components\Toggle::make('skip_scripts')
                     ->required(),
-                Forms\Components\TextInput::make('owner_id')
-                    ->required()
-                    ->numeric(),
                 Forms\Components\TextInput::make('memory')
                     ->required()
                     ->numeric(),
@@ -72,17 +80,10 @@ class ServerResource extends Resource
                     ->required()
                     ->numeric()
                     ->default(0),
-                Forms\Components\Select::make('allocation_id')
-                    ->relationship('allocation', 'id')
-                    ->required(),
-                Forms\Components\TextInput::make('egg_id')
-                    ->required()
-                    ->numeric(),
                 Forms\Components\Textarea::make('startup')
                     ->required()
                     ->columnSpanFull(),
-                Forms\Components\FileUpload::make('image')
-                    ->image()
+                Forms\Components\TextInput::make('image')
                     ->required(),
                 Forms\Components\TextInput::make('allocation_limit')
                     ->numeric(),
@@ -93,7 +94,6 @@ class ServerResource extends Resource
                     ->required()
                     ->numeric()
                     ->default(0),
-                Forms\Components\DateTimePicker::make('installed_at'),
             ]);
     }
 

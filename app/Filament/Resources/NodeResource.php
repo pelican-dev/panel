@@ -100,10 +100,14 @@ class NodeResource extends Resource
                 Tables\Columns\TextColumn::make('memory')
                     ->icon('tabler-device-desktop-analytics')
                     ->numeric()
+                    ->suffix(' GB')
+                    ->formatStateUsing(fn ($state) => number_format($state / 1000, 2))
                     ->sortable(),
                 Tables\Columns\TextColumn::make('disk')
                     ->icon('tabler-file')
                     ->numeric()
+                    ->suffix(' GB')
+                    ->formatStateUsing(fn ($state) => number_format($state / 1000, 2))
                     ->sortable(),
                 Tables\Columns\IconColumn::make('scheme')
                     ->label('SSL')
