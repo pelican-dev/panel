@@ -268,7 +268,7 @@ class Node extends Model
             try {
                 return resolve(DaemonConfigurationRepository::class)
                     ->setNode($this)
-                    ->getSystemInformation(connectTimeout: 1);
+                    ->getSystemInformation(connectTimeout: 3);
             } catch (Exception $exception) {
                 $message = str($exception->getMessage());
 
