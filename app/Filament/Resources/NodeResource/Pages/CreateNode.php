@@ -112,13 +112,15 @@ class CreateNode extends CreateRecord
                     ->regex('/[a-zA-Z0-9_\.\- ]+/')
                     ->helperText('This is the display name and can be changed later. Character limits: a-Z, 0-9, and [.-_ ]')
                     ->maxLength(100),
+
                 Forms\Components\ToggleButtons::make('scheme')
                     ->label('Communicate over SSL')
+                    ->columnSpan(2)
                     ->required()
                     ->inline()
                     ->helperText(function (Forms\Get $get) {
                         if (request()->isSecure()) {
-                            return 'Your Panel is using a secure (SSL/TLS) connection, therefore your Daemon has to as well.';
+                            return 'Your Panel is using a secure (SSL/TLS) connection. Therefore your Daemon must too.';
                         }
 
                         if (is_ip($get('fqdn'))) {
