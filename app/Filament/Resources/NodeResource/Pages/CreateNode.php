@@ -52,19 +52,47 @@ class CreateNode extends CreateRecord
                             return 'You cannot connect to an IP Address over SSL';
                         }
 
-//                        if (!is_ip($state) && !empty($state) && !checkdnsrr("$state.", 'A')) {
-//                            return 'Your hostname does not have a valid A record';
-//                        }
-
                         return '';
                     })
                     ->afterStateUpdated(function (Forms\Set $set, ?string $state) {
+                        $set('dns', null);
                         [$subdomain] = str($state)->explode('.', 2);
                         if (!is_numeric($subdomain)) {
                             $set('name', $subdomain);
                         }
+
+                        if (!$state || is_ip($state)) {
+                            $set('dns', null);
+
+                            return;
+                        }
+
+                        $validRecord = checkdnsrr("$state.", 'A');
+                        if ($validRecord) {
+                            $set('dns', true);
+
+                            return;
+                        }
+
+                        $set('dns', false);
                     })
                     ->maxLength(191),
+
+                Forms\Components\ToggleButtons::make('dns')
+                    ->label('DNS Record Check')
+                    ->helperText('This lets you know if your DNS record points to an IP Address.')
+                    ->disabled()
+                    ->inline()
+                    ->default(null)
+                    // ->hidden()
+                    ->options([
+                        true => 'Valid',
+                        false => 'Invalid'
+                    ])
+                    ->colors([
+                        true => 'success',
+                        false => 'danger'
+                    ]),
 
                 Forms\Components\TextInput::make('daemonListen')
                     ->columnSpan(1)
