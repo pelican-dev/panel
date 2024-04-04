@@ -67,7 +67,7 @@ class CreateNode extends CreateRecord
                     ->maxLength(191),
 
                 Forms\Components\TextInput::make('daemonListen')
-                    ->columns(1)
+                    ->columnSpan(1)
                     ->label('Port')
                     ->helperText('If you are running the daemon behind Cloudflare you should set the daemon port to 8443 to allow websocket proxying over SSL.')
                     ->minValue(0)
