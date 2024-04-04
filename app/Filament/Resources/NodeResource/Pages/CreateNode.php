@@ -76,6 +76,14 @@ class CreateNode extends CreateRecord
                     ->required()
                     ->integer(),
 
+
+
+                Forms\Components\TextInput::make('name')
+                    ->columnSpan(2)
+                    ->required()
+                    ->regex('/[a-zA-Z0-9_\.\- ]+/')
+                    ->helperText('This is the display name and can be changed later. Character limits: a-Z, 0-9, and [.-_ ]')
+                    ->maxLength(100),
                 Forms\Components\ToggleButtons::make('scheme')
                     ->label('Communicate over SSL')
                     ->required()
@@ -105,12 +113,7 @@ class CreateNode extends CreateRecord
                         'https' => 'tabler-lock',
                     ])
                     ->default(fn () => request()->isSecure() ? 'https' : 'http'),
-                Forms\Components\TextInput::make('name')
-                    ->required()
-                    ->columnSpanFull()
-                    ->regex('/[a-zA-Z0-9_\.\- ]+/')
-                    ->helperText('This is just a display name and can be changed later. Character limits: a-Z, 0-9, and [.-_ ]')
-                    ->maxLength(100),
+
                 Forms\Components\Textarea::make('description')
                     ->hidden()
                     ->columnSpanFull()
