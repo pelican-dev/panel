@@ -29,10 +29,23 @@ class CreateNode extends CreateRecord
                     ->rule('prohibited', fn ($state) => is_ip($state) && request()->isSecure())
                     ->label(fn ($state) => is_ip($state) ? 'IP Address' : 'Domain Name')
                     ->placeholder(fn ($state) => is_ip($state) ? '192.168.1.1' : 'node.example.com')
-                    ->helperText(fn ($state) => is_ip($state) && request()->isSecure() ? '
-                        Your panel is currently secured via an SSL certificate and that means your nodes require one too.
-                        You must use a domain name, because you cannot get SSL certificates for IP Addresses'
-                    : '')
+                    ->helperText(function ($state) {
+                        if (is_ip($state)) {
+                            if (request()->isSecure()) {
+                                return '
+                                    Your panel is currently secured via an SSL certificate and that means your nodes require one too.
+                                    You must use a domain name, because you cannot get SSL certificates for IP Addresses
+                                ';
+                            }
+
+                            return '';
+                        }
+
+                        return "
+                            This is the domain name that points to your node's IP Address.
+                            If you've already set up this, you can verify it by checking the next field!
+                        ";
+                    })
                     ->hintColor('danger')
                     ->hint(function ($state) {
                         if (is_ip($state) && request()->isSecure()) {
