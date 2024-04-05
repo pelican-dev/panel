@@ -113,6 +113,10 @@ class ServerResource extends Resource
                     ->icon('tabler-server-2')
                     ->url(fn (Server $server): string => route('filament.admin.resources.nodes.edit', ['record' => $server->node]))
                     ->sortable(),
+                Tables\Columns\TextColumn::make('egg.name')
+                    ->icon('tabler-egg')
+                    ->url(fn (Server $server): string => route('filament.admin.resources.eggs.edit', ['record' => $server->egg]))
+                    ->sortable(),
                 Tables\Columns\TextColumn::make('user.username')
                     ->icon('tabler-user')
                     ->url(fn (Server $server): string => route('filament.admin.resources.users.edit', ['record' => $server->user]))
@@ -120,10 +124,6 @@ class ServerResource extends Resource
                 Tables\Columns\SelectColumn::make('allocation.id')
                     ->options(fn ($state, Server $server) => [$server->allocation->id => $server->allocation->address])
                     ->selectablePlaceholder(false)
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('egg.name')
-                    ->icon('tabler-egg')
-                    ->url(fn (Server $server): string => route('filament.admin.resources.eggs.edit', ['record' => $server->egg]))
                     ->sortable(),
                 Tables\Columns\TextColumn::make('image')->hidden(),
                 Tables\Columns\TextColumn::make('backups_count')
