@@ -207,6 +207,14 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
     }
 
     /**
+     * Return the user model in a format that can be passed over to Vue templates.
+     */
+    public function toVueObject(): array
+    {
+        return Collection::make($this->toArray())->except(['id', 'external_id'])->toArray();
+    }
+
+    /**
      * Send the password reset notification.
      *
      * @param string $token
