@@ -131,7 +131,8 @@ class ServerResource extends Resource
                     ->label('Backups')
                     ->icon('tabler-file-download')
                     ->numeric()
-                    ->sortable(),
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
