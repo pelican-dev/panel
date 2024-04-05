@@ -23,27 +23,57 @@ class MountResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make('uuid')
-                    ->label('UUID')
-                    ->required()
-                    ->maxLength(36),
                 Forms\Components\TextInput::make('name')
                     ->required()
+                    ->helperText('Unique name used to separate this mount from another.')
                     ->maxLength(191),
-                Forms\Components\Textarea::make('description')
-                    ->columnSpanFull(),
+                Forms\Components\ToggleButtons::make('read_only')
+                    ->label('Read only?')
+                    ->helperText('Is the mount read only inside the container?')
+                    ->options([
+                        false => 'Writeable',
+                        true => 'Read only',
+                    ])
+                    ->icons([
+                        false => 'tabler-writing',
+                        true => 'tabler-writing-off',
+                    ])
+                    ->colors([
+                        false => 'warning',
+                        true => 'success',
+                    ])
+                    ->inline()
+                    ->default(false)
+                    ->required(),
                 Forms\Components\TextInput::make('source')
                     ->required()
+                    ->helperText('File path on the host system to mount to a container.')
                     ->maxLength(191),
                 Forms\Components\TextInput::make('target')
                     ->required()
+                    ->helperText('Where the mount will be accessible inside a container.')
                     ->maxLength(191),
-                Forms\Components\TextInput::make('read_only')
-                    ->required()
-                    ->numeric(),
-                Forms\Components\TextInput::make('user_mountable')
-                    ->required()
-                    ->numeric(),
+                Forms\Components\ToggleButtons::make('user_mountable')
+                    ->hidden()
+                    ->label('User mountable?')
+                    ->options([
+                        false => 'No',
+                        true => 'Yes',
+                    ])
+                    ->icons([
+                        false => 'tabler-user-cancel',
+                        true => 'tabler-user-bolt',
+                    ])
+                    ->colors([
+                        false => 'success',
+                        true => 'warning',
+                    ])
+                    ->default(false)
+                    ->inline()
+                    ->required(),
+                Forms\Components\Textarea::make('description')
+                    ->helperText('A longer description for this mount.')
+                    ->columnSpanFull(),
             ]);
     }
 
