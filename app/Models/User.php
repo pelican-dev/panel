@@ -211,7 +211,7 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
      */
     public function toVueObject(): array
     {
-        return Collection::make($this->toArray())->except(['id', 'external_id'])->toArray();
+        return collect($this->toArray())->except(['id', 'external_id'])->toArray();
     }
 
     /**
