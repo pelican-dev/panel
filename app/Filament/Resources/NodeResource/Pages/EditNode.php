@@ -47,8 +47,26 @@ class EditNode extends EditRecord
                         ]),
                     Tabs\Tab::make('Allocations')
                         ->icon('tabler-plug-connected')
+                        ->columns(5)
                         ->schema([
-                            // ...
+                            Forms\Components\Repeater::make('allocations')
+                                ->orderColumn('server_id')
+                                ->columnSpan(3)
+                                ->columns(4)
+                                ->relationship()
+                                ->addActionLabel('Create New Allocation')
+                                ->addAction(fn ($action) => $action->color('info'))
+                                ->schema([
+                                    Forms\Components\TextInput::make('ip')
+                                        ->label('IP Address'),
+                                    Forms\Components\TextInput::make('ip_alias')
+                                        ->label('Alias'),
+                                    Forms\Components\TextInput::make('port')
+                                        ->minValue(0)
+                                        ->maxValue(65535)
+                                        ->numeric(),
+                                    Forms\Components\Select::make('server_id')->relationship('server', 'name'),
+                                ])
                         ]),
                 ])
         ]);
