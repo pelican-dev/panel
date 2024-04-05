@@ -25,6 +25,8 @@ class DatabaseResource extends Resource
             ->schema([
                 Forms\Components\Select::make('server_id')
                     ->relationship('server', 'name')
+                    ->searchable()
+                    ->preload()
                     ->required(),
                 Forms\Components\TextInput::make('database_host_id')
                     ->required()
@@ -32,18 +34,20 @@ class DatabaseResource extends Resource
                 Forms\Components\TextInput::make('database')
                     ->required()
                     ->maxLength(191),
-                Forms\Components\TextInput::make('username')
-                    ->required()
-                    ->maxLength(191),
                 Forms\Components\TextInput::make('remote')
                     ->required()
                     ->maxLength(191)
                     ->default('%'),
-                Forms\Components\Textarea::make('password')
+                Forms\Components\TextInput::make('username')
                     ->required()
-                    ->columnSpanFull(),
+                    ->maxLength(191),
+                Forms\Components\TextInput::make('password')
+                    ->password()
+                    ->revealable()
+                    ->required(),
                 Forms\Components\TextInput::make('max_connections')
                     ->numeric()
+                    ->minValue(0)
                     ->default(0),
             ]);
     }
