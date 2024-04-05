@@ -28,6 +28,7 @@ class AdminPanelProvider extends PanelProvider
             ->path('panel')
             ->login()
             ->brandName('Pelican')
+            ->homeUrl('/')
             ->favicon('/favicon.ico')
             ->colors([
                 'danger' => Color::Red,
