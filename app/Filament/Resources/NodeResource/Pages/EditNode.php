@@ -6,6 +6,7 @@ use App\Filament\Resources\NodeResource;
 use App\Models\Node;
 use Filament\Actions;
 use Filament\Forms;
+use Filament\Forms\Components\Tabs;
 use Filament\Forms\Components\Wizard;
 use Filament\Resources\Pages\EditRecord;
 use Illuminate\Support\HtmlString;
@@ -17,19 +18,25 @@ class EditNode extends EditRecord
 
     public function form(Forms\Form $form): Forms\Form
     {
-        return $form
-            ->schema([
-                Wizard::make([
-                    Forms\Components\Wizard\Step::make('Basic')
-                        ->description('')
+        return $form->schema([
+            Tabs::make('Tabs')
+                ->columns(4)
+                ->persistTabInQueryString()
+                ->columnSpanFull()
+                ->tabs([
+                    Tabs\Tab::make('Basic Settings')
+                        ->icon('tabler-server')
                         ->schema((new CreateNode())->form($form)->getComponents()),
-                    Forms\Components\Wizard\Step::make('Configuration')
-                        ->description('')
+                    Tabs\Tab::make('Advanced Settings')
+                        ->icon('tabler-server-cog'),
+                    Tabs\Tab::make('Configuration')
+                        ->icon('tabler-code')
                         ->schema([
                             Forms\Components\Placeholder::make('instructions')
                                 ->columnSpanFull()
                                 ->content(new HtmlString('
-                                  This file should be placed in your daemon\'s root directory (usually <code>/etc/pelican</code>) in a file called <code>config.yml</code>.
+                                  This file should be placed in your daemon\'s root directory
+                                  (usually <code>/etc/pelican</code>) in a file called <code>config.yml</code>.
                             ')),
                             Forms\Components\Textarea::make('config')
                                 ->label('Configuration File')
@@ -38,15 +45,13 @@ class EditNode extends EditRecord
                                 ->hintAction(CopyAction::make())
                                 ->columnSpanFull(),
                         ]),
+                    Tabs\Tab::make('Allocations')
+                        ->icon('tabler-plug-connected')
+                        ->schema([
+                            // ...
+                        ]),
                 ])
-                    ->columns(4)
-                    ->persistStepInQueryString()
-                    ->columnSpanFull()
-                    // ->startOnStep($this->getStartStep())
-                    // ->cancelAction($this->getCancelFormAction())
-                    // ->submitAction($this->getSubmitFormAction())
-                    // ->skippable($this->hasSkippableSteps()),
-            ]);
+        ]);
     }
 
     protected function mutateFormDataBeforeFill(array $data): array

@@ -148,6 +148,7 @@ class CreateNode extends CreateRecord
                     ->hidden()
                     ->columnSpanFull()
                     ->rows(5),
+
                 Forms\Components\Hidden::make('skipValidation')->default(true),
             ]);
     }
@@ -155,7 +156,7 @@ class CreateNode extends CreateRecord
     protected function getRedirectUrlParameters(): array
     {
         return [
-            'step' => 'configuration',
+            'tab' => '-configuration-tab',
         ];
     }
 }
