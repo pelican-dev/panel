@@ -6,6 +6,8 @@ use App\Exceptions\DisplayException;
 use App\Rules\Username;
 use App\Facades\Activity;
 use Filament\Models\Contracts\FilamentUser;
+use Filament\Models\Contracts\HasAvatar;
+use Filament\Models\Contracts\HasName;
 use Filament\Panel;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rules\In;
@@ -81,7 +83,7 @@ use App\Notifications\SendPasswordReset as ResetPasswordNotification;
  *
  * @mixin \Eloquent
  */
-class User extends Model implements AuthenticatableContract, AuthorizableContract, CanResetPasswordContract, FilamentUser
+class User extends Model implements AuthenticatableContract, AuthorizableContract, CanResetPasswordContract, FilamentUser, HasName, HasAvatar
 {
     use Authenticatable;
     use Authorizable {can as protected canned; }
@@ -337,5 +339,15 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
     public function canAccessPanel(Panel $panel): bool
     {
         return $this->root_admin;
+    }
+
+    public function getFilamentName(): string
+    {
+        return $this->name_first ?: $this->username;
+    }
+
+    public function getFilamentAvatarUrl(): ?string
+    {
+        return 'https://gravatar.com/avatar/' . md5(strtolower($this->email));
     }
 }
