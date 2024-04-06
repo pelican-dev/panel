@@ -11,23 +11,23 @@ class AppSettingsCommand extends Command
     use EnvironmentWriterTrait;
 
     public const CACHE_DRIVERS = [
-        'redis' => 'Redis (recommended)',
+        'redis' => 'Redis',
         'memcached' => 'Memcached',
-        'file' => 'Filesystem',
+        'file' => 'Filesystem (recommended)',
     ];
 
     public const SESSION_DRIVERS = [
-        'redis' => 'Redis (recommended)',
+        'redis' => 'Redis',
         'memcached' => 'Memcached',
         'database' => 'MySQL Database',
-        'file' => 'Filesystem',
+        'file' => 'Filesystem (recommended)',
         'cookie' => 'Cookie',
     ];
 
     public const QUEUE_DRIVERS = [
-        'redis' => 'Redis (recommended)',
+        'redis' => 'Redis',
         'database' => 'MySQL Database',
-        'sync' => 'Sync',
+        'sync' => 'Sync (recommended)',
     ];
 
     protected $description = 'Configure basic environment settings for the Panel.';
@@ -91,21 +91,21 @@ class AppSettingsCommand extends Command
             config('app.timezone')
         );
 
-        $selected = config('cache.default', 'redis');
+        $selected = config('cache.default', 'file');
         $this->variables['CACHE_STORE'] = $this->option('cache') ?? $this->choice(
             'Cache Driver',
             self::CACHE_DRIVERS,
             array_key_exists($selected, self::CACHE_DRIVERS) ? $selected : null
         );
 
-        $selected = config('session.driver', 'redis');
+        $selected = config('session.driver', 'file');
         $this->variables['SESSION_DRIVER'] = $this->option('session') ?? $this->choice(
             'Session Driver',
             self::SESSION_DRIVERS,
             array_key_exists($selected, self::SESSION_DRIVERS) ? $selected : null
         );
 
-        $selected = config('queue.default', 'redis');
+        $selected = config('queue.default', 'sync');
         $this->variables['QUEUE_CONNECTION'] = $this->option('queue') ?? $this->choice(
             'Queue Driver',
             self::QUEUE_DRIVERS,
