@@ -69,6 +69,7 @@ class ServerResource extends Resource
                     ->required()
                     ->numeric(),
                 Forms\Components\TextInput::make('io')
+                    ->default(500)
                     ->required()
                     ->numeric(),
                 Forms\Components\TextInput::make('cpu')
