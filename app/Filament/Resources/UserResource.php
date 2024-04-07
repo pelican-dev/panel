@@ -28,21 +28,52 @@ class UserResource extends Resource
             ->schema([
                 Forms\Components\TextInput::make('username')->required()->maxLength(191),
                 Forms\Components\TextInput::make('email')->email()->required()->maxLength(191),
-                Forms\Components\TextInput::make('name_first')->maxLength(191)->label('First Name'),
-                Forms\Components\TextInput::make('name_last')->maxLength(191)->label('Last Name'),
+
+                Forms\Components\TextInput::make('name_first')
+                    ->maxLength(191)
+                    ->hidden(fn (string $operation): bool => $operation === 'create')
+                    ->label('First Name'),
+                Forms\Components\TextInput::make('name_last')
+                    ->maxLength(191)
+                    ->hidden(fn (string $operation): bool => $operation === 'create')
+                    ->label('Last Name'),
+
                 Forms\Components\TextInput::make('password')
-                    ->password()
                     ->dehydrateStateUsing(fn (string $state): string => Hash::make($state))
                     ->dehydrated(fn (?string $state): bool => filled($state))
                     ->required(fn (string $operation): bool => $operation === 'create')
-                    ->columnSpanFull(),
-                Forms\Components\Hidden::make('skipValidation')->default(true),
-                Forms\Components\Select::make('language')->required()->default('en')
-                    ->options(fn (User $user) => $user->getAvailableLanguages()),
-                Forms\Components\Toggle::make('root_admin')
+                    ->password(),
+
+                Forms\Components\ToggleButtons::make('root_admin')
+                    ->label('Administrator (Root)')
+                    ->options([
+                        false => 'No',
+                        true => 'Admin',
+                    ])
+                    ->colors([
+                        false => 'primary',
+                        true => 'danger',
+                    ])
+                    ->disableOptionWhen(function (string $operation, $value, User $user) {
+                        if ($operation !== 'edit' || $value) {
+                            return false;
+                        }
+
+                        return $user->isLastRootAdmin();
+                    })
+                    ->hint(fn (User $user) => $user->isLastRootAdmin() ? 'This is the last root administrator!' : '')
+                    ->helperText(fn (User $user) => $user->isLastRootAdmin() ? 'You must have at least one root administrator in your system.' : '')
+                    ->hintColor('warning')
+                    ->inline()
                     ->required()
                     ->default(false),
-                    // ->disabled(fn () => User::where('root_admin', true)->count() <= 1),
+
+                Forms\Components\Hidden::make('skipValidation')->default(true),
+                Forms\Components\Select::make('language')
+                    ->required()
+                    ->hidden()
+                    ->default('en')
+                    ->options(fn (User $user) => $user->getAvailableLanguages()),
             ]);
     }
 
@@ -65,8 +96,13 @@ class UserResource extends Resource
                 Tables\Columns\TextColumn::make('email')
                     ->searchable()
                     ->icon('tabler-mail'),
-                Tables\Columns\TextColumn::make('name')
-                    ->hidden()
+                Tables\Columns\TextColumn::make('name_first')
+                    ->toggleable(isToggledHiddenByDefault: true)
+                    ->label('First Name')
+                    ->searchable(),
+                Tables\Columns\TextColumn::make('name_last')
+                    ->toggleable(isToggledHiddenByDefault: true)
+                    ->label('Last Name')
                     ->searchable(),
                 Tables\Columns\IconColumn::make('root_admin')
                     ->label('Admin')
@@ -82,10 +118,11 @@ class UserResource extends Resource
                     ->icon('tabler-server')
                     ->label('Servers'),
                 Tables\Columns\TextColumn::make('subusers_count')
+                    ->toggleable(isToggledHiddenByDefault: true)
                     ->counts('subusers')
                     ->icon('tabler-users')
                     // ->formatStateUsing(fn (string $state, $record): string => (string) ($record->servers_count + $record->subusers_count))
-                    ->label('Subusers'),
+                    ->label('Subuser Accounts'),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()

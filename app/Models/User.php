@@ -336,6 +336,13 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
         return $this->canned($abilities, $arguments);
     }
 
+    public function isLastRootAdmin(): bool
+    {
+        $rootAdmins = User::query()->where('root_admin', true)->limit(2)->get();
+
+        return once(fn() => $rootAdmins->count() === 1 && $rootAdmins->first()->is($this));
+    }
+
     public function canAccessPanel(Panel $panel): bool
     {
         return $this->root_admin;
