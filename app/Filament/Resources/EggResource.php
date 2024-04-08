@@ -82,6 +82,7 @@ class EggResource extends Resource
                         // ->columns(2)
                         ->schema([
                             Forms\Components\Repeater::make('Blah')
+                                ->grid(3)
                                 ->relationship('variables')
                                 ->name('name')
                                 ->columns(1)
