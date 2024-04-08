@@ -144,4 +144,29 @@ class ActivityLog extends Model
             Event::dispatch(new ActivityLogged($model));
         });
     }
+
+    public function htmlable()
+    {
+        $user = $this->actor;
+        if (!$user instanceof User) {
+            $user = new User([
+                'email' => 'system@pelican.dev',
+                'username' => 'system',
+            ]);
+        }
+
+        $event = __('activity.'.str($this->event)->replace(':', '.'));
+
+        return "
+            <div style='display: flex; align-items: center;'>
+                <img width='50px' height='50px' src='{$user->getFilamentAvatarUrl()}' style='margin-right: 15px' />
+
+                <div>
+                    <p>$user->username — $this->event</p>
+                    <p>$event</p>
+                    <p>$this->ip — <span title='{$this->timestamp->format('M j, Y g:ia')}'>{$this->timestamp->diffForHumans()}</span></p>
+                </div>
+            </div>
+        ";
+    }
 }

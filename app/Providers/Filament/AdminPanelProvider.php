@@ -2,6 +2,7 @@
 
 namespace App\Providers\Filament;
 
+use App\Filament\Resources\UserResource\Pages\EditProfile;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
@@ -37,11 +38,7 @@ class AdminPanelProvider extends PanelProvider
             ->brandName('Pelican')
             ->homeUrl('/')
             ->favicon('/favicon.ico')
-            ->userMenuItems([
-                'profile' => MenuItem::make()
-                    ->label('Edit profile')
-                    ->url(fn (Guard $guard) => '/panel/users/' . $guard->id() . '/edit'),
-            ])
+            ->profile(EditProfile::class, false)
             ->colors([
                 'danger' => Color::Red,
                 'gray' => Color::Zinc,
