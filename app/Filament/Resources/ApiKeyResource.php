@@ -127,17 +127,13 @@ class ApiKeyResource extends Resource
                     ->hidden()
                     ->sortable(),
 
-                Tables\Columns\TextColumn::make('key_type')
-                    ->label('Type')
-                    ->state(fn (ApiKey $key) => $key->type())
-                    ->hidden()
-                    ->sortable(),
-
                 Tables\Columns\TextColumn::make('key')
                     ->copyable()
+                    ->icon('tabler-clipboard-text')
                     ->state(fn (ApiKey $key) => $key->identifier . decrypt($key->token)),
 
                 Tables\Columns\TextColumn::make('memo')
+                    ->label('Description')
                     ->wrap()
                     ->limit(50),
 
@@ -146,16 +142,13 @@ class ApiKeyResource extends Resource
                     ->searchable(),
 
                 Tables\Columns\TextColumn::make('last_used_at')
+                    ->label('Last Used')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(),
 
-                Tables\Columns\TextColumn::make('expires_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
-
                 Tables\Columns\TextColumn::make('created_at')
+                    ->label('Created')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(),
