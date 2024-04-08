@@ -83,6 +83,8 @@ class ApiKey extends Model
      */
     public const KEY_LENGTH = 32;
 
+    public const RESOURCES = ['servers', 'nodes', 'allocations', 'users', 'eggs', 'database_hosts', 'server_databases'];
+
     /**
      * The table associated with the model.
      */
@@ -92,12 +94,21 @@ class ApiKey extends Model
      * Fields that are mass assignable.
      */
     protected $fillable = [
+        'user_id',
+        'key_type',
         'identifier',
         'token',
         'allowed_ips',
         'memo',
         'last_used_at',
         'expires_at',
+        'r_' . AdminAcl::RESOURCE_USERS,
+        'r_' . AdminAcl::RESOURCE_ALLOCATIONS,
+        'r_' . AdminAcl::RESOURCE_DATABASE_HOSTS,
+        'r_' . AdminAcl::RESOURCE_SERVER_DATABASES,
+        'r_' . AdminAcl::RESOURCE_EGGS,
+        'r_' . AdminAcl::RESOURCE_NODES,
+        'r_' . AdminAcl::RESOURCE_SERVERS,
     ];
 
     /**
