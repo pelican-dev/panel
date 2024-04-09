@@ -139,6 +139,7 @@ class Egg extends Model
             'features' => 'array',
             'docker_images' => 'array',
             'file_denylist' => 'array',
+            'tags' => 'array',
         ];
     }
 
