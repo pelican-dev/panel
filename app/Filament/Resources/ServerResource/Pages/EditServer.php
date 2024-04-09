@@ -25,11 +25,13 @@ class EditServer extends EditRecord
             ->columns(6)
             ->schema([
                 Forms\Components\TextInput::make('name')
+                    ->label('Display Name')
                     ->columnSpan(4)
                     ->required()
                     ->maxLength(191),
 
                 Forms\Components\Select::make('owner_id')
+                    ->label('Owner')
                     ->columnSpan(2)
                     ->relationship('user', 'username')
                     ->searchable()
@@ -53,8 +55,6 @@ class EditServer extends EditRecord
                     ->required()
                     ->columnSpanFull(),
 
-                Forms\Components\Toggle::make('skip_scripts')
-                    ->required(),
                 Forms\Components\TextInput::make('memory')
                     ->label('Allocated Memory')
                     ->suffix('MB')
@@ -85,6 +85,7 @@ class EditServer extends EditRecord
                     ->numeric(),
 
                 Forms\Components\TextInput::make('cpu')
+                    ->columnSpan(1)
                     ->label('CPU Limit')
                     ->suffix('%')
                     ->required()
@@ -99,6 +100,20 @@ class EditServer extends EditRecord
                     ->label('CPU Pinning')
                     ->suffixIcon('tabler-cpu')
                     ->maxLength(191),
+
+                Forms\Components\ToggleButtons::make('skip_scripts')
+                    ->label('Run Egg Install Script?')
+                    ->columnSpan(1)
+                    ->options([
+                        false => 'Yes',
+                        true => 'Skip',
+                    ])
+                    ->colors([
+                        false => 'primary',
+                        true => 'danger',
+                    ])
+                    ->inline()
+                    ->required(),
 
                 Forms\Components\ToggleButtons::make('oom_disabled')
                     ->columnSpan(2)
@@ -116,16 +131,25 @@ class EditServer extends EditRecord
 
                 Forms\Components\Textarea::make('startup')
                     ->required()
+                    ->rows(4)
                     ->columnSpanFull(),
+
                 Forms\Components\TextInput::make('image')
+                    ->label('Docker Image')
+                    ->columnSpan(2)
                     ->required(),
+
                 Forms\Components\TextInput::make('allocation_limit')
+                    ->label('Allocation Limit')
                     ->numeric(),
+
                 Forms\Components\TextInput::make('database_limit')
+                    ->label('Database Limit')
                     ->numeric()
                     ->default(0),
 
                 Forms\Components\TextInput::make('backup_limit')
+                    ->label('Backup Limit')
                     ->required()
                     ->numeric()
                     ->default(0),
