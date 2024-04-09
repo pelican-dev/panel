@@ -81,6 +81,7 @@ class NodeResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
+            ->searchable(false)
             ->columns([
                 Tables\Columns\TextColumn::make('uuid')
                     ->label('UUID')
@@ -92,10 +93,13 @@ class NodeResource extends Resource
                     ->view('livewire.columns.version-column'),
                 Tables\Columns\TextColumn::make('name')
                     ->icon('tabler-server-2')
+                    ->sortable()
                     ->searchable(),
                 Tables\Columns\TextColumn::make('fqdn')
                     ->label('Address')
                     ->icon('tabler-network')
+                    ->formatStateUsing(fn ($state) => 'node.'.fake()->word.'.com')
+                    ->sortable()
                     ->searchable(),
                 Tables\Columns\TextColumn::make('memory')
                     ->icon('tabler-device-desktop-analytics')
@@ -116,20 +120,12 @@ class NodeResource extends Resource
                     ->state(fn (Node $node) => $node->scheme === 'https'),
                 Tables\Columns\IconColumn::make('public')
                     ->trueIcon('tabler-eye-check')
-                    ->falseIcon('tabler-eye-cancel')
-                    ->sortable(),
+                    ->falseIcon('tabler-eye-cancel'),
                 Tables\Columns\TextColumn::make('servers_count')
                     ->counts('servers')
                     ->label('Servers')
+                    ->sortable()
                     ->icon('tabler-brand-docker'),
-                Tables\Columns\TextColumn::make('created_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\TextColumn::make('updated_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
                 //
