@@ -80,7 +80,7 @@ class CreateNode extends CreateRecord
 
                 Forms\Components\ToggleButtons::make('dns')
                     ->label('DNS Record Check')
-                    ->helperText('This lets you know if your DNS record points to an IP Address.')
+                    ->helperText('This lets you know if your DNS record correctly points to an IP Address.')
                     ->disabled()
                     ->inline()
                     ->default(null)
@@ -107,10 +107,11 @@ class CreateNode extends CreateRecord
 
 
                 Forms\Components\TextInput::make('name')
+                    ->label('Display Name')
                     ->columnSpan(2)
                     ->required()
                     ->regex('/[a-zA-Z0-9_\.\- ]+/')
-                    ->helperText('This is the display name and can be changed later. Character limits: a-Z, 0-9, and [.-_ ]')
+                    ->helperText('This name is for display only and can be changed later.')
                     ->maxLength(100),
 
                 Forms\Components\ToggleButtons::make('scheme')
@@ -120,7 +121,7 @@ class CreateNode extends CreateRecord
                     ->inline()
                     ->helperText(function (Forms\Get $get) {
                         if (request()->isSecure()) {
-                            return 'Your Panel is using a secure (SSL/TLS) connection. Therefore your Daemon must too.';
+                            return new HtmlString('Your Panel is using a secure SSL connection,<br>so your Daemon must too.');
                         }
 
                         if (is_ip($get('fqdn'))) {
