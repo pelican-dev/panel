@@ -19,6 +19,8 @@ class DatabaseResource extends Resource
 
     protected static ?string $navigationIcon = 'tabler-database';
 
+    protected static bool $shouldRegisterNavigation = false;
+
     public static function form(Form $form): Form
     {
         return $form
