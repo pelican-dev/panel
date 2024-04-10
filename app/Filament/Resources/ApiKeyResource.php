@@ -87,7 +87,7 @@ class ApiKeyResource extends Resource
                                 3 => 'tabler-writing',
                             ])
                             ->colors([
-                                0 => 'primary',
+                                0 => 'success',
                                 1 => 'warning',
                                 2 => 'danger',
                                 3 => 'danger',

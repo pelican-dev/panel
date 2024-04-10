@@ -128,16 +128,17 @@ class EggResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
+            ->searchable(false)
             ->columns([
                 Tables\Columns\TextColumn::make('id')
                     ->label('Id')
-                    ->toggleable(isToggledHiddenByDefault: true)
+                    ->hidden()
                     ->searchable(),
                 Tables\Columns\TextColumn::make('name')
                     ->icon('tabler-egg')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('author')
-                    ->toggleable(isToggledHiddenByDefault: true)
+                    ->hidden()
                     ->searchable(),
                 Tables\Columns\TextColumn::make('description')
                     ->words(50)
@@ -155,14 +156,6 @@ class EggResource extends Resource
                 Tables\Columns\TextColumn::make('script_entry')
                     ->hidden()
                     ->searchable(),
-                Tables\Columns\TextColumn::make('created_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\TextColumn::make('updated_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
                 //
