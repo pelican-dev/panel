@@ -120,6 +120,7 @@ class ServerResource extends Resource
                     ->sortable(),
                 Tables\Columns\TextColumn::make('user.username')
                     ->icon('tabler-user')
+                    ->label('Owner')
                     ->url(fn (Server $server): string => route('filament.admin.resources.users.edit', ['record' => $server->user]))
                     ->sortable(),
                 Tables\Columns\SelectColumn::make('allocation.id')
