@@ -27,7 +27,6 @@ return new class extends Migration
                 ->update(['tags' => "[\"$egg->name\"]"]);
         }
 
-
         Schema::table('eggs', function (Blueprint $table) {
             $table->dropForeign('service_options_nest_id_foreign');
             $table->dropColumn('nest_id');
