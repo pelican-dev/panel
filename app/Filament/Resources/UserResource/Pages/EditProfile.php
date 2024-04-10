@@ -76,7 +76,7 @@ class EditProfile extends \Filament\Pages\Auth\EditProfile
                                 ]),
 
                             Tab::make('Activity')
-                                ->icon('tabler-activity')
+                                ->icon('tabler-history')
                                 ->schema([
                                     Repeater::make('activity')
                                         ->deletable(false)
