@@ -16,6 +16,8 @@ class CreateNode extends CreateRecord
 
     protected static bool $canCreateAnother = false;
 
+    protected ?string $subheading = '(a machine that runs Wings to connect back to this Panel)';
+
     public function form(Forms\Form $form): Forms\Form
     {
         return $form
@@ -56,6 +58,8 @@ class CreateNode extends CreateRecord
                     })
                     ->afterStateUpdated(function (Forms\Set $set, ?string $state) {
                         $set('dns', null);
+                        $set('ip', null);
+
                         [$subdomain] = str($state)->explode('.', 2);
                         if (!is_numeric($subdomain)) {
                             $set('name', $subdomain);
@@ -67,9 +71,11 @@ class CreateNode extends CreateRecord
                             return;
                         }
 
-                        $validRecord = checkdnsrr("$state.", 'A');
-                        if ($validRecord) {
+                        $validRecords = gethostbynamel($state);
+                        if ($validRecords) {
                             $set('dns', true);
+
+                            $set('ip', collect($validRecords)->first());
 
                             return;
                         }
@@ -78,13 +84,18 @@ class CreateNode extends CreateRecord
                     })
                     ->maxLength(191),
 
+                Forms\Components\TextInput::make('ip')
+                    ->disabled()
+                    ->hidden(),
+
                 Forms\Components\ToggleButtons::make('dns')
                     ->label('DNS Record Check')
                     ->helperText('This lets you know if your DNS record correctly points to an IP Address.')
                     ->disabled()
                     ->inline()
                     ->default(null)
-                    // ->hidden()
+                    ->hint(fn (Forms\Get $get) => $get('ip'))
+                    ->hintColor('success')
                     ->options([
                         true => 'Valid',
                         false => 'Invalid'
