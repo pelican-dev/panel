@@ -27,6 +27,7 @@ return new class extends Migration
                 ->update(['tags' => "[\"$egg->name\"]"]);
         }
 
+
         Schema::table('eggs', function (Blueprint $table) {
             $table->dropForeign('service_options_nest_id_foreign');
             $table->dropColumn('nest_id');
@@ -44,6 +45,7 @@ return new class extends Migration
         });
     }
 
+    // Not really reversible, but...
     public function down(): void
     {
         Schema::table('api_keys', function (Blueprint $table) {
@@ -62,12 +64,12 @@ return new class extends Migration
         Schema::table('eggs', function (Blueprint $table) {
             $table->dropColumn('tags');
             $table->mediumInteger('nest_id')->unsigned();
-            // $table->foreign(['nest_id'], 'service_options_nest_id_foreign');
+            $table->foreign(['nest_id'], 'service_options_nest_id_foreign');
         });
 
         Schema::table('servers', function (Blueprint $table) {
             $table->mediumInteger('nest_id')->unsigned();
-            // $table->foreign(['nest_id'], 'servers_nest_id_foreign');
+            $table->foreign(['nest_id'], 'servers_nest_id_foreign');
         });
 
         if (class_exists('Database\Seeders\NestSeeder')) {
