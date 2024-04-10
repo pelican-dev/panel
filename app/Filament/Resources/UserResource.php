@@ -107,8 +107,8 @@ class UserResource extends Resource
                 Tables\Columns\IconColumn::make('root_admin')
                     ->label('Admin')
                     ->boolean()
-                    ->trueIcon('tabler-adjustments-check')
-                    ->falseIcon('tabler-adjustments-cancel')
+                    ->trueIcon('tabler-star')
+                    ->falseIcon('tabler-star-off')
                     ->sortable(),
                 Tables\Columns\IconColumn::make('use_totp')->label('2FA')
                     ->icon(fn (User $user) => $user->use_totp ? 'tabler-lock' : 'tabler-lock-open-off')
