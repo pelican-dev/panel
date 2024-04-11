@@ -34,11 +34,10 @@ class EditNode extends EditRecord
                             Forms\Components\Placeholder::make('instructions')
                                 ->columnSpanFull()
                                 ->content(new HtmlString('
-                                  This file should be placed in your daemon\'s root directory
-                                  (usually <code>/etc/pelican</code>) in a file called <code>config.yml</code>.
+                                  Save this file to your <span title="usually /etc/pelican/">daemon\'s root directory</span>, named <code>config.yml</code>
                             ')),
                             Forms\Components\Textarea::make('config')
-                                ->label('Configuration File')
+                                ->label('/etc/pelican/config.yml')
                                 ->disabled()
                                 ->rows(19)
                                 ->hintAction(CopyAction::make())
