@@ -37,7 +37,7 @@ class AssignmentService
      * @throws \App\Exceptions\Service\Allocation\PortOutOfRangeException
      * @throws \App\Exceptions\Service\Allocation\TooManyPortsInRangeException
      */
-    public function handle(Node $node, array $data): void
+    public function handle(Node $node, array $data): array
     {
         $explode = explode('/', $data['allocation_ip']);
         if (count($explode) !== 1) {
@@ -58,6 +58,8 @@ class AssignmentService
         }
 
         $this->connection->beginTransaction();
+
+        $ids = [];
         foreach ($parsed as $ip) {
             foreach ($data['allocation_ports'] as $port) {
                 if (!is_digit($port) && !preg_match(self::PORT_RANGE_REGEX, $port)) {
@@ -99,10 +101,12 @@ class AssignmentService
                     ];
                 }
 
-                Allocation::query()->insertOrIgnore($insertData);
+                $ids = Allocation::query()->insertOrIgnore($insertData);
             }
         }
 
         $this->connection->commit();
+
+        return $ids;
     }
 }
