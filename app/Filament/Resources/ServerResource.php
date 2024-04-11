@@ -137,14 +137,35 @@ class ServerResource extends Resource
                     ->required(),
 
                 Forms\Components\Select::make('image')
+                    ->hidden(fn (Forms\Get $get) => $get('custom_image'))
+                    ->disabled(fn (Forms\Get $get) => $get('custom_image'))
+                    ->label('Docker Image')
                     ->options(fn (Forms\Get $get) => array_flip(Egg::find($get('egg_id'))->docker_images ?? []))
                     ->selectablePlaceholder(false)
+                    ->columnSpan(2)
                     ->required(),
 
                 Forms\Components\TextInput::make('image')
+                    ->hidden(fn (Forms\Get $get) => !$get('custom_image'))
+                    ->disabled(fn (Forms\Get $get) => !$get('custom_image'))
                     ->label('Docker Image')
-                    ->placeholder('Or enter a custom Image...')
-                    ->columnSpan(2),
+                    ->placeholder('Enter a custom Image')
+                    ->columnSpan(2)
+                    ->required(),
+
+                Forms\Components\ToggleButtons::make('custom_image')
+                    ->live()
+                    ->label('Custom Image?')
+                    ->default(false)
+                    ->options([
+                        false => 'No',
+                        true => 'Yes',
+                    ])
+                    ->colors([
+                        false => 'primary',
+                        true => 'danger',
+                    ])
+                    ->inline(),
 
                 Forms\Components\Fieldset::make('Application Feature Limits')
                     ->inlineLabel()
