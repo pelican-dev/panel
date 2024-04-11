@@ -85,12 +85,18 @@ class ServerResource extends Resource
                     ->createOptionForm([
                         Forms\Components\TextInput::make('allocation_ip')
                             ->label('IP Address')
+                            ->helperText('Usually your machine\'s public IP unless you are port forwarding.')
                             ->required(),
                         Forms\Components\TextInput::make('allocation_alias')
                             ->label('Alias')
+                            ->helperText('This is just a display only name to help you recognize what this Allocation is used for.')
                             ->required(false),
                         Forms\Components\TagsInput::make('allocation_ports')
                             ->placeholder('Examples: 27015, 27017-27019')
+                            ->helperText('
+                                These are the ports that users can connect to this Server through.
+                                They usually consist of the port forwarded ones.
+                            ')
                             ->label('Ports')
                             ->required(),
                     ])
