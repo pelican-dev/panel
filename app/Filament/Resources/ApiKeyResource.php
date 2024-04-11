@@ -121,6 +121,7 @@ class ApiKeyResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
+            ->searchable(false)
             ->columns([
                 Tables\Columns\TextColumn::make('user.username')
                     ->searchable()
@@ -144,14 +145,12 @@ class ApiKeyResource extends Resource
                 Tables\Columns\TextColumn::make('last_used_at')
                     ->label('Last Used')
                     ->dateTime()
-                    ->sortable()
-                    ->toggleable(),
+                    ->sortable(),
 
                 Tables\Columns\TextColumn::make('created_at')
                     ->label('Created')
                     ->dateTime()
-                    ->sortable()
-                    ->toggleable(),
+                    ->sortable(),
             ])
             ->filters([
                 //

@@ -80,6 +80,7 @@ class UserResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
+            ->searchable(false)
             ->columns([
                 Tables\Columns\ImageColumn::make('picture')
                     ->label('')
@@ -96,14 +97,6 @@ class UserResource extends Resource
                 Tables\Columns\TextColumn::make('email')
                     ->searchable()
                     ->icon('tabler-mail'),
-                Tables\Columns\TextColumn::make('name_first')
-                    ->toggleable(isToggledHiddenByDefault: true)
-                    ->label('First Name')
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('name_last')
-                    ->toggleable(isToggledHiddenByDefault: true)
-                    ->label('Last Name')
-                    ->searchable(),
                 Tables\Columns\IconColumn::make('root_admin')
                     ->label('Admin')
                     ->boolean()
@@ -118,19 +111,10 @@ class UserResource extends Resource
                     ->icon('tabler-server')
                     ->label('Servers'),
                 Tables\Columns\TextColumn::make('subusers_count')
-                    ->toggleable(isToggledHiddenByDefault: true)
                     ->counts('subusers')
                     ->icon('tabler-users')
                     // ->formatStateUsing(fn (string $state, $record): string => (string) ($record->servers_count + $record->subusers_count))
                     ->label('Subuser Accounts'),
-                Tables\Columns\TextColumn::make('created_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\TextColumn::make('updated_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
                 //

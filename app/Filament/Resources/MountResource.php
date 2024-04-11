@@ -80,6 +80,7 @@ class MountResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
+            ->searchable(false)
             ->columns([
                 Tables\Columns\TextColumn::make('uuid')
                     ->label('UUID')
