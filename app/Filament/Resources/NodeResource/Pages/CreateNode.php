@@ -16,7 +16,7 @@ class CreateNode extends CreateRecord
 
     protected static bool $canCreateAnother = false;
 
-    protected ?string $subheading = '(a machine that runs Wings to connect back to this Panel)';
+    protected ?string $subheading = 'which is a machine that runs your Servers';
 
     public function form(Forms\Form $form): Forms\Form
     {
