@@ -230,9 +230,13 @@ class ServerResource extends Resource
                 Forms\Components\Textarea::make('startup')
                     ->label('Startup Command')
                     ->required()
-                    ->rows(1)
+                    ->live()
+                    ->rows(function ($state) {
+                        return str($state)->explode("\n")->reduce(fn (int $carry, $line)
+                            => $carry + floor(strlen($line) / 125),
+                        0);
+                    })
                     ->columnSpanFull(),
-
 
                 Forms\Components\Repeater::make('s')
                     ->reorderable(false)
