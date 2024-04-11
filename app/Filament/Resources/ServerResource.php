@@ -51,6 +51,7 @@ class ServerResource extends Resource
                     ->required(),
 
                 Forms\Components\Select::make('node_id')
+                    ->default(fn () => Node::query()->latest()->first()->id)
                     ->columnSpan(2)
                     ->live()
                     ->relationship('node', 'name')
