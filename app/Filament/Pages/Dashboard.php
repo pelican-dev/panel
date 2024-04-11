@@ -9,13 +9,17 @@ use App\Models\Server;
 use App\Models\User;
 use Filament\Pages\Page;
 
-class Introduction extends Page
+class Dashboard extends Page
 {
-    protected static ?string $navigationIcon = 'heroicon-o-document-text';
+    protected static ?string $navigationIcon = 'tabler-layout-dashboard';
 
-    protected static string $view = 'filament.pages.introduction';
+    protected static string $view = 'filament.pages.dashboard';
 
     protected ?string $heading = '';
+
+    protected static ?string $title = 'Dashboard';
+
+    protected static ?string $slug = '/';
 
     public string $activeTab = 'nodes';
 
