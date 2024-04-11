@@ -89,7 +89,7 @@ class EggResource extends Resource
                                 ->columnSpan(1)
                                 ->itemLabel(fn (array $state) => $state['name'])
                                 ->schema([
-                                    Forms\Components\TextInput::make('name')->maxLength(191)->columnSpanFull(),
+                                    Forms\Components\TextInput::make('name')->live()->maxLength(191)->columnSpanFull(),
                                     Forms\Components\Textarea::make('description')->columnSpanFull(),
                                     Forms\Components\TextInput::make('env_variable')->maxLength(191),
                                     Forms\Components\TextInput::make('default_value')->maxLength(191),
