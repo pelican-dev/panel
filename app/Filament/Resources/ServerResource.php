@@ -137,8 +137,7 @@ class ServerResource extends Resource
                 Forms\Components\TextInput::make('image')
                     ->label('Docker Image')
                     ->placeholder('Or enter a custom Image...')
-                    ->columnSpan(2)
-                    ->required(),
+                    ->columnSpan(2),
 
                 Forms\Components\Fieldset::make('Application Feature Limits')
                     ->inlineLabel()
