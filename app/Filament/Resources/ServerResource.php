@@ -4,6 +4,7 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\ServerResource\Pages;
 use App\Filament\Resources\ServerResource\RelationManagers;
+use App\Models\Egg;
 use App\Models\Node;
 use App\Models\Server;
 use Filament\Forms;
@@ -41,6 +42,7 @@ class ServerResource extends Resource
                     ->relationship('egg', 'name')
                     ->searchable()
                     ->preload()
+                    ->live()
                     ->required(),
                 Forms\Components\Select::make('owner_id')
                     ->relationship('user', 'username')
@@ -81,11 +83,16 @@ class ServerResource extends Resource
                     ->required()
                     ->numeric()
                     ->default(0),
-                Forms\Components\Textarea::make('startup')
+
+                Forms\Components\Select::make('startup')
                     ->required()
                     ->columnSpanFull(),
-                Forms\Components\TextInput::make('image')
+
+                Forms\Components\Select::make('image')
+                    ->options(fn (Forms\Get $get) => array_flip(Egg::find($get('egg_id'))->docker_images ?? []))
+                    ->selectablePlaceholder(false)
                     ->required(),
+
                 Forms\Components\TextInput::make('allocation_limit')
                     ->numeric(),
                 Forms\Components\TextInput::make('database_limit')
