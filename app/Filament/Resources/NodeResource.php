@@ -98,7 +98,6 @@ class NodeResource extends Resource
                 Tables\Columns\TextColumn::make('fqdn')
                     ->label('Address')
                     ->icon('tabler-network')
-                    ->formatStateUsing(fn ($state) => 'node.'.fake()->word.'.com')
                     ->sortable()
                     ->searchable(),
                 Tables\Columns\TextColumn::make('memory')
