@@ -267,6 +267,11 @@ class Server extends Model
             });
     }
 
+    public function serverVariables(): HasMany
+    {
+        return $this->hasMany(ServerVariable::class);
+    }
+
     /**
      * Gets information for the node associated with this server.
      */
