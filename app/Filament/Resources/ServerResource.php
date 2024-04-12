@@ -62,6 +62,7 @@ class ServerResource extends Resource
                     ->required(),
 
                 Forms\Components\Select::make('node_id')
+                    ->disabledOn('edit')
                     ->prefixIcon('tabler-server-2')
                     ->default(fn () => Node::query()->latest()->first()->id)
                     ->columnSpan(2)
@@ -212,14 +213,17 @@ class ServerResource extends Resource
                     ->columns(3)
                     ->schema([
                         Forms\Components\TextInput::make('allocation_limit')
+                            ->suffixIcon('tabler-network')
                             ->required()
                             ->numeric()
                             ->default(0),
                         Forms\Components\TextInput::make('database_limit')
+                            ->suffixIcon('tabler-database')
                             ->required()
                             ->numeric()
                             ->default(0),
                         Forms\Components\TextInput::make('backup_limit')
+                            ->suffixIcon('tabler-copy-check')
                             ->required()
                             ->numeric()
                             ->default(0),
@@ -290,6 +294,10 @@ class ServerResource extends Resource
                                 false => 'success',
                                 true => 'danger',
                             ])
+                            ->icons([
+                                false => 'tabler-sword-off',
+                                true => 'tabler-sword',
+                            ])
                             ->required(),
                     ]),
 
@@ -327,8 +335,6 @@ class ServerResource extends Resource
 
                             ->schema([
                                 Forms\Components\TextInput::make('variable_value')
-                                    //->rule(0, fn (Forms\Get $get) => str($get('rules'))) // TODO
-
                                     ->rules([
                                         fn (Forms\Get $get): Closure => function (string $attribute, $value, Closure $fail) use ($get) {
                                             $validator = Validator::make(['validatorkey' => $value], [
