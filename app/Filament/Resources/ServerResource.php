@@ -38,6 +38,15 @@ class ServerResource extends Resource
                 Forms\Components\TextInput::make('name')
                     ->prefixIcon('tabler-server')
                     ->label('Display Name')
+                    ->suffixAction(Forms\Components\Actions\Action::make('random')
+                        ->icon('tabler-dice-' . random_int(1, 6))
+                        ->color('primary')
+                        ->action(function (Forms\Set $set, Forms\Get $get) {
+                            $egg = Egg::find($get('egg_id'));
+                            $prefix = $egg ? str($egg->name)->lower()->snake() . '-' : '';
+
+                            $set('name', $prefix . fake()->domainWord);
+                        }))
                     ->columnSpan(4)
                     ->required()
                     ->maxLength(191),
