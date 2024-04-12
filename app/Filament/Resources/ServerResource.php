@@ -265,9 +265,8 @@ class ServerResource extends Resource
                     ->required()
                     ->live()
                     ->rows(function ($state) {
-                        return str($state)->explode("\n")->reduce(fn (int $carry, $line)
-                            => $carry + floor(strlen($line) / 125),
-                        0);
+                        return str($state)->explode("\n")->reduce(fn (int $carry, $line) => $carry + floor(strlen($line) / 125),
+                            0);
                     })
                     ->columnSpanFull(),
 
