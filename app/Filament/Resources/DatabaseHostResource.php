@@ -72,7 +72,6 @@ class DatabaseHostResource extends Resource
                 Tables\Columns\TextColumn::make('host')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('port')
-                    ->numeric()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('username')
                     ->searchable(),
