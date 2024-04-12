@@ -3,19 +3,19 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\ServerResource\Pages;
-use App\Filament\Resources\ServerResource\RelationManagers;
 use App\Models\Allocation;
 use App\Models\Egg;
 use App\Models\Node;
 use App\Models\Server;
 use App\Services\Allocations\AssignmentService;
+use Closure;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\HtmlString;
 
 class ServerResource extends Resource
@@ -123,7 +123,22 @@ class ServerResource extends Resource
                     ->searchable()
                     ->preload()
                     ->live()
-                    ->afterStateUpdated(fn ($state, Forms\Set $set) => $set('startup', Egg::find($state)->startup))
+                    ->afterStateUpdated(function ($state, Forms\Set $set) {
+                        $egg = Egg::find($state);
+                        $set('startup', $egg->startup);
+
+                        $variables = $egg->variables ?? [];
+                        $serverVariables = collect();
+                        foreach ($variables as $variable) {
+                            $serverVariables->add($variable->toArray());
+                        }
+
+                        $set($path = 'server_variables', $serverVariables->all());
+                        for ($i = 0; $i < $serverVariables->count(); $i++) {
+                            $set("$path.$i.variable_value", $serverVariables[$i]['default_value']);
+                            $set("$path.$i.variable_id", $serverVariables[$i]['id']);
+                        }
+                    })
                     ->required(),
 
                 Forms\Components\ToggleButtons::make('skip_scripts')
@@ -270,41 +285,56 @@ class ServerResource extends Resource
                     })
                     ->columnSpanFull(),
 
-                Forms\Components\Repeater::make('s')
-                    ->reorderable(false)
-                    ->addable(false)
-                    ->deletable(false)
-                    ->label('Egg Variables')
-                    ->columnSpanFull()
-                    ->grid(2)
-                    ->default(function (Forms\Get $get) {
-                        $variables = Egg::find($get('egg_id'))->variables ?? [];
-                        $serverVariables = collect();
-                        foreach ($variables as $variable) {
-                            $serverVariables->add($variable->toArray());
-                        }
-
-                        return $serverVariables->all();
-                    })
-                    // ->relationship('serverVariables')
-                    // ->default([1, 2, 3])
-                    ->name('name')
-                    // ->itemLabel(fn (array $state) => 'asdf')
+                Forms\Components\Section::make('Egg Variables')
+                    ->icon('tabler-eggs')
+                    ->iconColor('primary')
+                    ->collapsible()
+                    ->collapsed()
                     ->schema([
-                        Forms\Components\TextInput::make('value')
-                            ->label(fn (Forms\Get $get) => $get('name'))
-                            ->helperText(fn (Forms\Get $get) => new HtmlString("
-                                {$get('description')}<br />
-                                Access in Startup: <code>{{{$get('env_variable')}}}</code><br />
-                                Validation Rules: <code>{$get('rules')}</code>
-                            "))
-                            // ->inlineLabel()
-                            ->maxLength(191),
-//                        Forms\Components\Textarea::make('description')->columnSpanFull(),
-//                        Forms\Components\TextInput::make('env_variable')->maxLength(191),
-//                        Forms\Components\TextInput::make('default_value')->maxLength(191),
-//                        Forms\Components\Textarea::make('rules')->rows(3)->columnSpanFull()->required(),
-                    ])
+                        Forms\Components\Placeholder::make('Select an egg first to show its variables!')
+                            ->hidden(fn (Forms\Get $get) => !empty($get('server_variables'))),
+
+                        Forms\Components\Repeater::make('server_variables')
+                            ->relationship('serverVariables')
+                            ->grid(2)
+                            ->reorderable(false)
+                            ->addable(false)
+                            ->deletable(false)
+                            ->default([])
+                            ->hidden(fn ($state) => empty($state))
+                            ->afterStateUpdated(function () {
+
+                            })
+
+                            ->schema([
+                                Forms\Components\TextInput::make('variable_value')
+                                    //->rule(0, fn (Forms\Get $get) => str($get('rules'))) // TODO
+
+                                    ->rules([
+                                        fn (Forms\Get $get): Closure => function (string $attribute, $value, Closure $fail) use ($get) {
+                                            $validator = Validator::make(['validatorkey' => $value], [
+                                                'validatorkey' => $get('rules'),
+                                            ]);
+
+                                            if ($validator->fails()) {
+                                                $message = str($validator->errors()->first())->replace('validatorkey', $get('name'));
+
+                                                $fail($message);
+                                            }
+                                        },
+                                    ])
+
+                                    ->label(fn (Forms\Get $get) => $get('name'))
+                                    ->hint(fn (Forms\Get $get) => $get('rules'))
+                                    ->prefix(fn (Forms\Get $get) => '{{' . $get('env_variable') . '}}')
+
+                                    ->helperText(fn (Forms\Get $get) => empty($get('description')) ? '—' : $get('description'))
+                                    ->maxLength(191),
+
+                                Forms\Components\Hidden::make('variable_id')->default(0)
+                            ])
+                            ->columnSpanFull(),
+                    ]),
             ]);
     }
 

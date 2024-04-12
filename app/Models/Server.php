@@ -251,6 +251,11 @@ class Server extends Model
         return $this->hasOne(Egg::class, 'id', 'egg_id');
     }
 
+    public function eggVariables(): HasMany
+    {
+        return $this->hasMany(EggVariable::class, 'egg_id', 'egg_id');
+    }
+
     /**
      * Gets information for the egg variables associated with this server.
      */
