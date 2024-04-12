@@ -129,6 +129,7 @@ class EggResource extends Resource
     {
         return $table
             ->searchable(false)
+            ->defaultPaginationPageOption(25)
             ->columns([
                 Tables\Columns\TextColumn::make('id')
                     ->label('Id')

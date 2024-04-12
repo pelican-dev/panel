@@ -127,6 +127,7 @@ class ServerResource extends Resource
                     ->columnSpanFull(),
 
                 Forms\Components\Select::make('egg_id')
+                    ->disabledOn('edit')
                     ->prefixIcon('tabler-egg')
                     ->columnSpan(2)
                     ->relationship('egg', 'name')
