@@ -71,8 +71,8 @@ class Mount extends Model
      * Blacklisted source paths.
      */
     public static $invalidSourcePaths = [
-        '/etc/panel',
-        '/var/lib/panel/volumes',
+        '/etc/pelican',
+        '/var/lib/pelican/volumes',
         '/srv/daemon-data',
     ];
 
