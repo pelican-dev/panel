@@ -82,8 +82,8 @@ class MountResource extends Resource
         return $table
             ->searchable(false)
             ->columns([
-                Tables\Columns\TextColumn::make('uuid')
-                    ->label('UUID')
+                Tables\Columns\TextColumn::make('id')
+                    ->label('')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('name')
                     ->searchable(),
@@ -91,11 +91,14 @@ class MountResource extends Resource
                     ->searchable(),
                 Tables\Columns\TextColumn::make('target')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('read_only')
-                    ->numeric()
+                Tables\Columns\IconColumn::make('read_only')
+                    ->icon(fn (bool $state) => $state ? 'tabler-circle-check-filled' : 'tabler-circle-x-filled')
+                    ->color(fn (bool $state) => $state ? 'success' : 'danger')
                     ->sortable(),
-                Tables\Columns\TextColumn::make('user_mountable')
-                    ->numeric()
+                Tables\Columns\IconColumn::make('user_mountable')
+                    ->hidden()
+                    ->icon(fn (bool $state) => $state ? 'tabler-circle-check-filled' : 'tabler-circle-x-filled')
+                    ->color(fn (bool $state) => $state ? 'success' : 'danger')
                     ->sortable(),
             ])
             ->filters([
