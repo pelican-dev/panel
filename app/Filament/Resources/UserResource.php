@@ -84,6 +84,7 @@ class UserResource extends Resource
             ->columns([
                 Tables\Columns\ImageColumn::make('picture')
                     ->label('')
+                    ->extraImgAttributes(['class' => 'rounded-full'])
                     ->defaultImageUrl(fn (User $user) => 'https://gravatar.com/avatar/' . md5(strtolower($user->email))),
                 Tables\Columns\TextColumn::make('external_id')
                     ->searchable()
