@@ -64,7 +64,7 @@ class ServerResource extends Resource
                 Forms\Components\Select::make('node_id')
                     ->disabledOn('edit')
                     ->prefixIcon('tabler-server-2')
-                    ->default(fn () => Node::query()->latest()->first()->id)
+                    ->default(fn () => Node::query()->latest()->first()?->id)
                     ->columnSpan(2)
                     ->live()
                     ->relationship('node', 'name')
@@ -78,8 +78,9 @@ class ServerResource extends Resource
                     ->columnSpan(3)
                     ->disabled(fn (Forms\Get $get) => $get('node_id') === null)
                     ->searchable(['ip', 'port', 'ip_alias'])
-                    ->getOptionLabelFromRecordUsing(fn (Allocation $allocation) => "$allocation->ip:$allocation->port" .
-                        ($allocation->ip_alias ? " ($allocation->ip_alias)" : '')
+                    ->getOptionLabelFromRecordUsing(
+                        fn (Allocation $allocation) => "$allocation->ip:$allocation->port" .
+                            ($allocation->ip_alias ? " ($allocation->ip_alias)" : '')
                     )
                     ->placeholder(function (Forms\Get $get) {
                         $node = Node::find($get('node_id'));
@@ -308,8 +309,10 @@ class ServerResource extends Resource
                     ->required()
                     ->live()
                     ->rows(function ($state) {
-                        return str($state)->explode("\n")->reduce(fn (int $carry, $line) => $carry + floor(strlen($line) / 125),
-                            0);
+                        return str($state)->explode("\n")->reduce(
+                            fn (int $carry, $line) => $carry + floor(strlen($line) / 125),
+                            0
+                        );
                     })
                     ->columnSpanFull(),
 
@@ -331,7 +334,6 @@ class ServerResource extends Resource
                             ->default([])
                             ->hidden(fn ($state) => empty($state))
                             ->afterStateUpdated(function () {
-
                             })
 
                             ->schema([
