@@ -163,6 +163,10 @@ class ServerResource extends Resource
                         false => 'primary',
                         true => 'danger',
                     ])
+                    ->icons([
+                        false => 'tabler-code',
+                        true => 'tabler-code-off',
+                    ])
                     ->inline()
                     ->required(),
 
@@ -195,6 +199,10 @@ class ServerResource extends Resource
                     ->colors([
                         false => 'primary',
                         true => 'danger',
+                    ])
+                    ->icons([
+                        false => 'tabler-settings-cancel',
+                        true => 'tabler-settings-check',
                     ])
                     ->inline(),
 
