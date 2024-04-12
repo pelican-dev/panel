@@ -78,7 +78,7 @@
     @endif
 
     {{-- No Nodes Created --}}
-    @if ($nodesCount > 0)
+    @if ($nodesCount <= 0)
         <x-filament::section icon="tabler-server-2" icon-color="primary" id="intro-first-node" collapsible persist-collapsed>
             <x-slot name="heading">Create First New Node</x-slot>
 
