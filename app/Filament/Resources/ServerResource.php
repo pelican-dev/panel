@@ -136,6 +136,8 @@ class ServerResource extends Resource
                         $egg = Egg::find($state);
                         $set('startup', $egg->startup);
 
+                        $set('image', array_flip($egg->docker_images ?? []));
+
                         $variables = $egg->variables ?? [];
                         $serverVariables = collect();
                         foreach ($variables as $variable) {
