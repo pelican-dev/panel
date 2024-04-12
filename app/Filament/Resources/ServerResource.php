@@ -36,12 +36,14 @@ class ServerResource extends Resource
                     ->hidden(),
 
                 Forms\Components\TextInput::make('name')
+                    ->prefixIcon('tabler-server')
                     ->label('Display Name')
                     ->columnSpan(4)
                     ->required()
                     ->maxLength(191),
 
                 Forms\Components\Select::make('owner_id')
+                    ->prefixIcon('tabler-user')
                     ->default(auth()->user()->id)
                     ->label('Owner')
                     ->columnSpan(2)
@@ -51,6 +53,7 @@ class ServerResource extends Resource
                     ->required(),
 
                 Forms\Components\Select::make('node_id')
+                    ->prefixIcon('tabler-server-2')
                     ->default(fn () => Node::query()->latest()->first()->id)
                     ->columnSpan(2)
                     ->live()
@@ -60,12 +63,12 @@ class ServerResource extends Resource
                     ->required(),
 
                 Forms\Components\Select::make('allocation_id')
+                    ->prefixIcon('tabler-network')
                     ->label('Primary Allocation')
                     ->columnSpan(3)
                     ->disabled(fn (Forms\Get $get) => $get('node_id') === null)
                     ->searchable(['ip', 'port', 'ip_alias'])
-                    ->getOptionLabelFromRecordUsing(fn (Allocation $allocation) =>
-                        "$allocation->ip:$allocation->port" .
+                    ->getOptionLabelFromRecordUsing(fn (Allocation $allocation) => "$allocation->ip:$allocation->port" .
                         ($allocation->ip_alias ? " ($allocation->ip_alias)" : '')
                     )
                     ->placeholder(function (Forms\Get $get) {
@@ -114,6 +117,7 @@ class ServerResource extends Resource
                     ->columnSpanFull(),
 
                 Forms\Components\Select::make('egg_id')
+                    ->prefixIcon('tabler-egg')
                     ->columnSpan(2)
                     ->relationship('egg', 'name')
                     ->searchable()
@@ -140,6 +144,7 @@ class ServerResource extends Resource
                     ->hidden(fn (Forms\Get $get) => $get('custom_image'))
                     ->disabled(fn (Forms\Get $get) => $get('custom_image'))
                     ->label('Docker Image')
+                    ->prefixIcon('tabler-brand-docker')
                     ->options(fn (Forms\Get $get) => array_flip(Egg::find($get('egg_id'))->docker_images ?? []))
                     ->selectablePlaceholder(false)
                     ->columnSpan(2)
@@ -214,7 +219,6 @@ class ServerResource extends Resource
                             ->required()
                             ->numeric(),
 
-
                         Forms\Components\TextInput::make('cpu')
                             ->default(0)
                             ->label('CPU Limit')
@@ -256,6 +260,7 @@ class ServerResource extends Resource
                     ]),
 
                 Forms\Components\Textarea::make('startup')
+                    ->hintIcon('tabler-code')
                     ->label('Startup Command')
                     ->required()
                     ->live()
