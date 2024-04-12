@@ -8,7 +8,6 @@
         "ext-mbstring": "*",
         "ext-pdo": "*",
         "ext-pdo_mysql": "*",
-        "ext-posix": "*",
         "ext-zip": "*",
         "aws/aws-sdk-php": "~3.288.1",
         "doctrine/dbal": "~3.6.0",
