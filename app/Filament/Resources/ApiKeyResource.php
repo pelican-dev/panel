@@ -46,6 +46,7 @@ class ApiKeyResource extends Resource
                 Forms\Components\Hidden::make('token')->default(encrypt(str_random(ApiKey::KEY_LENGTH))),
 
                 Forms\Components\Select::make('user_id')
+                    ->hidden()
                     ->searchable()
                     ->preload()
                     ->relationship('user', 'username')
@@ -66,6 +67,7 @@ class ApiKeyResource extends Resource
                             ->filter(fn ($value, $key) => $key <= ApiKey::TYPE_APPLICATION || $apiKey->key_type === $key)
                             ->all();
                     })
+                    ->hidden()
                     ->selectablePlaceholder(false)
                     ->required()
                     ->default(ApiKey::TYPE_APPLICATION),
