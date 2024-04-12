@@ -95,13 +95,32 @@ class ServerResource extends Resource
                         'ip',
                         fn (Builder $query, Forms\Get $get) => $query->where('node_id', $get('node_id')),
                     )
-                    ->createOptionForm([
+                    ->createOptionForm(fn (Forms\Get $get) => [
                         Forms\Components\TextInput::make('allocation_ip')
+                            ->ipv4()
+                            ->datalist(function () use ($get) {
+                                $node = Node::find($get('node_id'));
+                                if (is_ip($node->fqdn)) {
+                                    return [$node->fqdn];
+                                }
+
+                                $validRecords = gethostbynamel($node->fqdn);
+                                if (!$validRecords) {
+                                    return [];
+                                }
+
+                                return $validRecords ?: [];
+                            })
                             ->label('IP Address')
-                            ->helperText('Usually your machine\'s public IP unless you are port forwarding.')
+                            ->helperText("Usually your machine's public IP unless you are port forwarding.")
                             ->required(),
                         Forms\Components\TextInput::make('allocation_alias')
                             ->label('Alias')
+                            ->default(null)
+                            ->datalist([
+                                $get('name'),
+                                Egg::find($get('egg_id'))?->name,
+                            ])
                             ->helperText('This is just a display only name to help you recognize what this Allocation is used for.')
                             ->required(false),
                         Forms\Components\TagsInput::make('allocation_ports')
