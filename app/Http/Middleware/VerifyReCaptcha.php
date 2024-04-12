@@ -19,6 +19,10 @@ class VerifyReCaptcha
             return $next($request);
         }
 
+        if (app()->isLocal()) {
+            return $next($request);
+        }
+
         if ($request->filled('g-recaptcha-response')) {
             $client = new Client();
             $res = $client->post(config('recaptcha.domain'), [
