@@ -1,19 +1,15 @@
 <?php
 
 return [
-    'notices' => [
-        'imported' => 'Successfully imported this Egg and its associated variables.',
-        'updated_via_import' => 'This Egg has been updated using the file provided.',
-        'deleted' => 'Successfully deleted the requested egg from the Panel.',
-        'updated' => 'Egg configuration has been updated successfully.',
-        'script_updated' => 'Egg install script has been updated and will run whenever servers are installed.',
-        'egg_created' => 'A new egg was laid successfully. You will need to restart any running daemons to apply this new egg.',
+    'validation' => [
+        'fqdn_not_resolvable' => 'The FQDN or IP address provided does not resolve to a valid IP address.',
+        'fqdn_required_for_ssl' => 'A fully qualified domain name that resolves to a public IP address is required in order to use SSL for this node.',
     ],
-    'variables' => [
-        'notices' => [
-            'variable_deleted' => 'The variable ":variable" has been deleted and will no longer be available to servers once rebuilt.',
-            'variable_updated' => 'The variable ":variable" has been updated. You will need to rebuild any servers using this variable in order to apply changes.',
-            'variable_created' => 'New variable has successfully been created and assigned to this egg.',
-        ],
+    'notices' => [
+        'allocations_added' => 'Allocations have successfully been added to this node.',
+        'node_deleted' => 'Node has been successfully removed from the panel.',
+        'node_created' => 'Successfully created new node. You can automatically configure the daemon on this machine by visiting the \'Configuration\' tab. <strong>Before you can add any servers you must first allocate at least one IP address and port.</strong>',
+        'node_updated' => 'Node information has been updated. If any daemon settings were changed you will need to reboot it for those changes to take effect.',
+        'unallocated_deleted' => 'Deleted all un-allocated ports for <code>:ip</code>.',
     ],
 ];
