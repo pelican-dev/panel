@@ -348,7 +348,8 @@ class ServerResource extends Resource
                     ->columnSpanFull(),
 
                 Forms\Components\KeyValue::make('environment')
-                    ->default([]),
+                    ->default([])
+                    ->columnSpanFull(),
 
                 Forms\Components\Section::make('Egg Variables')
                     ->icon('tabler-eggs')
