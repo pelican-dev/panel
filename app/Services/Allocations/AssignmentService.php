@@ -101,7 +101,7 @@ class AssignmentService
                     ];
                 }
 
-                $ids = Allocation::query()->insertOrIgnore($insertData);
+                $ids[] = Allocation::query()->insertOrIgnore($insertData);
             }
         }
 

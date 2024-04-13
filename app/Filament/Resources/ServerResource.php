@@ -70,9 +70,11 @@ class ServerResource extends Resource
                     ->relationship('node', 'name')
                     ->searchable()
                     ->preload()
+                    ->afterStateUpdated(fn (Forms\Set $set) => $set('allocation_id', null))
                     ->required(),
 
                 Forms\Components\Select::make('allocation_id')
+                    ->preload()
                     ->prefixIcon('tabler-network')
                     ->label('Primary Allocation')
                     ->columnSpan(3)
@@ -93,7 +95,9 @@ class ServerResource extends Resource
                     ->relationship(
                         'allocation',
                         'ip',
-                        fn (Builder $query, Forms\Get $get) => $query->where('node_id', $get('node_id')),
+                        fn (Builder $query, Forms\Get $get) => $query
+                            ->where('node_id', $get('node_id'))
+                            ->whereNull('server_id'),
                     )
                     ->createOptionForm(fn (Forms\Get $get) => [
                         Forms\Components\TextInput::make('allocation_ip')
@@ -153,11 +157,9 @@ class ServerResource extends Resource
                     ->searchable()
                     ->preload()
                     ->live()
-                    ->afterStateUpdated(function ($state, Forms\Set $set) {
+                    ->afterStateUpdated(function ($state, Forms\Set $set, Forms\Get $get) {
                         $egg = Egg::find($state);
                         $set('startup', $egg->startup);
-
-                        $set('image', array_flip($egg->docker_images ?? []));
 
                         $variables = $egg->variables ?? [];
                         $serverVariables = collect();
@@ -165,11 +167,15 @@ class ServerResource extends Resource
                             $serverVariables->add($variable->toArray());
                         }
 
+                        $variables = [];
                         $set($path = 'server_variables', $serverVariables->all());
                         for ($i = 0; $i < $serverVariables->count(); $i++) {
                             $set("$path.$i.variable_value", $serverVariables[$i]['default_value']);
                             $set("$path.$i.variable_id", $serverVariables[$i]['id']);
+                            $variables[$serverVariables[$i]['env_variable']] = $serverVariables[$i]['default_value'];
                         }
+
+                        $set('environment', $variables);
                     })
                     ->required(),
 
@@ -196,7 +202,14 @@ class ServerResource extends Resource
                     ->disabled(fn (Forms\Get $get) => $get('custom_image'))
                     ->label('Docker Image')
                     ->prefixIcon('tabler-brand-docker')
-                    ->options(fn (Forms\Get $get) => array_flip(Egg::find($get('egg_id'))->docker_images ?? []))
+                    ->options(function (Forms\Get $get, Forms\Set $set) {
+                        $images = Egg::find($get('egg_id'))->docker_images ?? [];
+
+                        $set('image', collect($images)->first());
+
+                        return $images;
+                    })
+                    ->disabled(fn (Forms\Components\Select $component) => empty($component->getOptions()))
                     ->selectablePlaceholder(false)
                     ->columnSpan(2)
                     ->required(),
@@ -332,6 +345,9 @@ class ServerResource extends Resource
                     })
                     ->columnSpanFull(),
 
+                Forms\Components\KeyValue::make('environment')
+                    ->default([]),
+
                 Forms\Components\Section::make('Egg Variables')
                     ->icon('tabler-eggs')
                     ->iconColor('primary')
@@ -349,10 +365,6 @@ class ServerResource extends Resource
                             ->deletable(false)
                             ->default([])
                             ->hidden(fn ($state) => empty($state))
-                            ->afterStateUpdated(function () {
-
-                            })
-
                             ->schema([
                                 Forms\Components\TextInput::make('variable_value')
                                     ->rules([
@@ -368,11 +380,9 @@ class ServerResource extends Resource
                                             }
                                         },
                                     ])
-
                                     ->label(fn (Forms\Get $get) => $get('name'))
                                     ->hint(fn (Forms\Get $get) => $get('rules'))
                                     ->prefix(fn (Forms\Get $get) => '{{' . $get('env_variable') . '}}')
-
                                     ->helperText(fn (Forms\Get $get) => empty($get('description')) ? '—' : $get('description'))
                                     ->maxLength(191),
 
