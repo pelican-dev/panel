@@ -28,7 +28,7 @@ Some of our core supported games include:
 * Teamspeak
 * Mumble
 * Team Fortress 2
-* Counter Strike: Global Offensive
+* Counter Strike 2
 * Garry's Mod
 * ARK: Survival Evolved
 
