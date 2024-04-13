@@ -12,9 +12,9 @@ return [
         'success' => 'Logget ind',
         'password-reset' => 'Nulstil adgangskode',
         'reset-password' => 'Anmodet om nulstilling af adgangskode',
-        'checkpoint' => 'Two-factor godkendelse anmodet',
-        'recovery-token' => 'Two-factor gendannelses-token brugt',
-        'token' => 'Løst two-factor udfordring',
+        'checkpoint' => '2-factor godkendelse anmodet',
+        'recovery-token' => '2-factor gendannelses-token brugt',
+        'token' => 'Løst 2-factor udfordring',
         'ip-blocked' => 'Blokeret anmodning fra ikke-listet IP-adresse for :identifier',
         'sftp' => [
             'fail' => 'SFTP log ind mislykkedes',
@@ -34,8 +34,8 @@ return [
             'delete' => 'SSH-nøgle :fingerprint fjernet fra konto',
         ],
         'two-factor' => [
-            'create' => 'Two-factor godkendelse aktiveret',
-            'delete' => 'Two-factor godkendelse deaktiveret',
+            'create' => '2-factor godkendelse aktiveret',
+            'delete' => '2-factor godkendelse deaktiveret',
         ],
     ],
     'server' => [
