@@ -32,7 +32,6 @@
 - **Positive Votes:** 0
 - **Negative Votes:** 0
 - **Winning Words:** 2284
-- **Avatar:** ![Damian Bergemann Avatar](https://crowdin-static.downloads.crowdin.com/avatar/16325024/medium/895f90d6f3c0a8a693ee25e1798e98de.png)
 
 #### Torsten Widmann (gOOvER)
 - **Username:** gOOvER
@@ -44,7 +43,6 @@
 - **Positive Votes:** 0
 - **Negative Votes:** 0
 - **Winning Words:** 486
-- **Avatar:** ![Torsten Widmann Avatar](https://crowdin-static.downloads.crowdin.com/avatar/12367828/medium/7624d10575f31fd21d8e324944761837.jpg)
 
 ### Croatian
 <!-- Croatian Statistics -->
