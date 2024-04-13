@@ -81,12 +81,6 @@ class DatabaseHostResource extends Resource
                 Tables\Columns\TextColumn::make('node.name')
                     ->numeric()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('created_at')
-                    ->dateTime()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('updated_at')
-                    ->dateTime()
-                    ->sortable(),
             ])
             ->filters([
                 //
