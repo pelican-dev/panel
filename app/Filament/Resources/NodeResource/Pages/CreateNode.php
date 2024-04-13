@@ -3,10 +3,7 @@
 namespace App\Filament\Resources\NodeResource\Pages;
 
 use App\Filament\Resources\NodeResource;
-use App\Models\Node;
-use Filament\Actions\Action;
 use Filament\Forms;
-use Filament\Notifications\Notification;
 use Filament\Resources\Pages\CreateRecord;
 use Illuminate\Support\HtmlString;
 
@@ -98,11 +95,11 @@ class CreateNode extends CreateRecord
                     ->hintColor('success')
                     ->options([
                         true => 'Valid',
-                        false => 'Invalid'
+                        false => 'Invalid',
                     ])
                     ->colors([
                         true => 'success',
-                        false => 'danger'
+                        false => 'danger',
                     ]),
 
                 Forms\Components\TextInput::make('daemonListen')
@@ -114,8 +111,6 @@ class CreateNode extends CreateRecord
                     ->default(8080)
                     ->required()
                     ->integer(),
-
-
 
                 Forms\Components\TextInput::make('name')
                     ->label('Display Name')

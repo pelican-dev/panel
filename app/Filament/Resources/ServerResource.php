@@ -16,7 +16,6 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Validator;
-use Illuminate\Support\HtmlString;
 
 class ServerResource extends Resource
 {
@@ -359,7 +358,7 @@ class ServerResource extends Resource
                                     ->helperText(fn (Forms\Get $get) => empty($get('description')) ? '—' : $get('description'))
                                     ->maxLength(191),
 
-                                Forms\Components\Hidden::make('variable_id')->default(0)
+                                Forms\Components\Hidden::make('variable_id')->default(0),
                             ])
                             ->columnSpanFull(),
                     ]),

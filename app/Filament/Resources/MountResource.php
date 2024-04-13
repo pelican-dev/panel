@@ -88,7 +88,7 @@ class MountResource extends Resource
                             ->relationship('nodes', 'name')
                             ->searchable(['name', 'fqdn'])
                             ->preload(),
-                    ])
+                    ]),
                 ])->columns([
                     'default' => 1,
                 ]),

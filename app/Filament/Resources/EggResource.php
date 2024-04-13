@@ -20,7 +20,6 @@ class EggResource extends Resource
 
     protected static ?string $recordRouteKeyName = 'id';
 
-
     public static function form(Form $form): Form
     {
         return $form
@@ -94,7 +93,7 @@ class EggResource extends Resource
                                     Forms\Components\TextInput::make('env_variable')->maxLength(191),
                                     Forms\Components\TextInput::make('default_value')->maxLength(191),
                                     Forms\Components\Textarea::make('rules')->rows(3)->columnSpanFull()->required(),
-                                ])
+                                ]),
                         ]),
                     Forms\Components\Tabs\Tab::make('Install Script')
                         ->columns(3)

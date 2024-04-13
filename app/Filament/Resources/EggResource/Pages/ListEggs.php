@@ -53,7 +53,7 @@ class ListEggs extends ListRecords
                         ->send();
 
                     redirect()->route('filament.admin.resources.eggs.edit', [$newEgg]);
-                })
+                }),
         ];
     }
 }

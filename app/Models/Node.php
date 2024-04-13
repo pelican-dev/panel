@@ -126,7 +126,6 @@ class Node extends Model
         return 'id';
     }
 
-
     protected static function booted(): void
     {
         static::creating(function (self $node) {

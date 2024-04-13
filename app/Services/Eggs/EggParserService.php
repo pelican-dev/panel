@@ -25,6 +25,7 @@ class EggParserService
         $parsed = json_decode($file->getContent(), true, 512, JSON_THROW_ON_ERROR);
 
         $version = $parsed['meta']['version'] ?? '';
+
         return match ($version) {
             'PTDL_v1' => $this->convertToV2($parsed),
             'PTDL_v2' => $parsed,

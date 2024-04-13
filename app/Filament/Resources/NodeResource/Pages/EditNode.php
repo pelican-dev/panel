@@ -64,9 +64,9 @@ class EditNode extends EditRecord
                                         ->maxValue(65535)
                                         ->numeric(),
                                     Forms\Components\Select::make('server_id')->relationship('server', 'name'),
-                                ])
+                                ]),
                         ]),
-                ])
+                ]),
         ]);
     }
 
