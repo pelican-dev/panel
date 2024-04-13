@@ -3,8 +3,10 @@
 namespace App\Filament\Resources\UserResource\Pages;
 
 use App\Models\ActivityLog;
+use App\Models\User;
 use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\Repeater;
+use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Tabs;
 use Filament\Forms\Components\Tabs\Tab;
 use Filament\Forms\Components\TextInput;
@@ -54,6 +56,11 @@ class EditProfile extends \Filament\Pages\Auth\EditProfile
                                         ->required()
                                         ->visible(fn (Get $get): bool => filled($get('password')))
                                         ->dehydrated(false),
+
+                                    Select::make('language')
+                                        ->required()
+                                        ->default('en')
+                                        ->options(fn (User $user) => $user->getAvailableLanguages()),
                                 ]),
 
                             Tab::make('2FA')
