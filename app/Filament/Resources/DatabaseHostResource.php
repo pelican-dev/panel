@@ -3,15 +3,12 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\DatabaseHostResource\Pages;
-use App\Filament\Resources\DatabaseHostResource\RelationManagers;
 use App\Models\DatabaseHost;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class DatabaseHostResource extends Resource
 {
@@ -80,12 +77,6 @@ class DatabaseHostResource extends Resource
                     ->sortable(),
                 Tables\Columns\TextColumn::make('node.name')
                     ->numeric()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('created_at')
-                    ->dateTime()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('updated_at')
-                    ->dateTime()
                     ->sortable(),
             ])
             ->filters([

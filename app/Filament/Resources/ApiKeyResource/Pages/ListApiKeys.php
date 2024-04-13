@@ -25,17 +25,15 @@ class ListApiKeys extends ListRecords
         return [
             'all' => Tab::make('All Keys'),
             'application' => Tab::make('Application Keys')
-                ->modifyQueryUsing(fn (Builder $query) =>
-                    $query->where('key_type', ApiKey::TYPE_APPLICATION)
+                ->modifyQueryUsing(fn (Builder $query) => $query->where('key_type', ApiKey::TYPE_APPLICATION)
                 ),
             'account' => Tab::make('Account Keys')
-                ->modifyQueryUsing(fn (Builder $query) =>
-                    $query->where('key_type', ApiKey::TYPE_ACCOUNT)
+                ->modifyQueryUsing(fn (Builder $query) => $query->where('key_type', ApiKey::TYPE_ACCOUNT)
                 ),
         ];
     }
 
-    public function getDefaultActiveTab(): string | int | null
+    public function getDefaultActiveTab(): string|int|null
     {
         return 'application';
     }

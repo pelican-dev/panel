@@ -83,7 +83,7 @@ use App\Notifications\SendPasswordReset as ResetPasswordNotification;
  *
  * @mixin \Eloquent
  */
-class User extends Model implements AuthenticatableContract, AuthorizableContract, CanResetPasswordContract, FilamentUser, HasName, HasAvatar
+class User extends Model implements AuthenticatableContract, AuthorizableContract, CanResetPasswordContract, FilamentUser, HasAvatar, HasName
 {
     use Authenticatable;
     use Authorizable {can as protected canned; }
@@ -340,7 +340,7 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
     {
         $rootAdmins = User::query()->where('root_admin', true)->limit(2)->get();
 
-        return once(fn() => $rootAdmins->count() === 1 && $rootAdmins->first()->is($this));
+        return once(fn () => $rootAdmins->count() === 1 && $rootAdmins->first()->is($this));
     }
 
     public function canAccessPanel(Panel $panel): bool

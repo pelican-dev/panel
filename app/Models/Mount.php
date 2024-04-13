@@ -115,4 +115,9 @@ class Mount extends Model
     {
         return $this->belongsToMany(Server::class);
     }
+
+    public function getRouteKeyName(): string
+    {
+        return 'id';
+    }
 }

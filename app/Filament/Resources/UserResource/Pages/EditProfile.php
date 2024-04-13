@@ -8,7 +8,6 @@ use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Tabs;
 use Filament\Forms\Components\Tabs\Tab;
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Form;
 use Filament\Forms\Get;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\HtmlString;
@@ -85,14 +84,14 @@ class EditProfile extends \Filament\Pages\Auth\EditProfile
 
                                         ->schema([
                                             Placeholder::make('activity!')->label('')->content(fn (ActivityLog $log) => new HtmlString($log->htmlable())),
-                                        ])
+                                        ]),
                                 ]),
                         ]),
                     ])
                     ->operation('edit')
                     ->model($this->getUser())
                     ->statePath('data')
-                    ->inlineLabel(! static::isSimple()),
+                    ->inlineLabel(!static::isSimple()),
             ),
         ];
     }

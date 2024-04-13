@@ -33,7 +33,7 @@ class ApiKeyResource extends Resource
         ];
     }
 
-    public function getDefaultActiveTab(): string | int | null
+    public function getDefaultActiveTab(): string|int|null
     {
         return 'application';
     }
@@ -73,32 +73,31 @@ class ApiKeyResource extends Resource
                     ->default(ApiKey::TYPE_APPLICATION),
 
                 Forms\Components\Fieldset::make('Permissions')->schema(
-                    collect(ApiKey::RESOURCES)->map(fn ($resource) =>
-                        Forms\Components\ToggleButtons::make("r_$resource")
-                            ->label(str($resource)->replace('_', ' ')->title())
-                            ->options([
-                                0 => 'None',
-                                1 => 'Read',
-                                // 2 => 'Write',
-                                3 => 'Read & Write',
-                            ])
-                            ->icons([
-                                0 => 'tabler-book-off',
-                                1 => 'tabler-book',
-                                2 => 'tabler-writing',
-                                3 => 'tabler-writing',
-                            ])
-                            ->colors([
-                                0 => 'success',
-                                1 => 'warning',
-                                2 => 'danger',
-                                3 => 'danger',
-                            ])
-                            ->inline()
-                            ->required()
-                            ->disabledOn('edit')
-                            ->default(0),
-                        )->all(),
+                    collect(ApiKey::RESOURCES)->map(fn ($resource) => Forms\Components\ToggleButtons::make("r_$resource")
+                        ->label(str($resource)->replace('_', ' ')->title())
+                        ->options([
+                            0 => 'None',
+                            1 => 'Read',
+                            // 2 => 'Write',
+                            3 => 'Read & Write',
+                        ])
+                        ->icons([
+                            0 => 'tabler-book-off',
+                            1 => 'tabler-book',
+                            2 => 'tabler-writing',
+                            3 => 'tabler-writing',
+                        ])
+                        ->colors([
+                            0 => 'success',
+                            1 => 'warning',
+                            2 => 'danger',
+                            3 => 'danger',
+                        ])
+                        ->inline()
+                        ->required()
+                        ->disabledOn('edit')
+                        ->default(0),
+                    )->all(),
                 ),
 
                 Forms\Components\TagsInput::make('allowed_ips')
