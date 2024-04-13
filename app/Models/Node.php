@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Exceptions\Service\HasActiveServersException;
 use App\Repositories\Daemon\DaemonConfigurationRepository;
 use Exception;
 use Illuminate\Support\Str;
@@ -134,6 +135,10 @@ class Node extends Model
             $node->daemon_token_id = Str::random(self::DAEMON_TOKEN_ID_LENGTH);
 
             return true;
+        });
+
+        static::deleting(function (self $node) {
+            throw_if($node->servers()->count(), new HasActiveServersException(trans('exceptions.egg.delete_has_servers')));
         });
     }
 
