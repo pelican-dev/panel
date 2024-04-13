@@ -1,6 +1,7 @@
 # Pelican Panel Crowdin Top Members Report
 
 ## Available Languages:
+- [Arabic](#arabic)
 - [Croatian](#croatian)
 - [Czech](#czech)
 - [Dutch](#dutch)
@@ -19,7 +20,10 @@
 
 **Report Link:** [Pelican Panel on Crowdin](https://crowdin.com/project/pelican-panel/reports/top-members)
 
-## Top Contributors
+## Top Contributors:
+
+### Arabic
+
 
 ### German
 #### Damian Bergemann (crocofied)
