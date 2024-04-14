@@ -18,7 +18,7 @@ return new class extends Migration
         });
 
         Schema::table('servers', function (Blueprint $table) {
-           $table->renameColumn('uuidShort', 'uuid_short');
+            $table->renameColumn('uuidShort', 'uuid_short');
         });
     }
 
