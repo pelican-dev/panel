@@ -74,7 +74,7 @@ return [
             'create-directory' => 'Created directory :directory:name',
             'decompress' => 'Decompressed :files in :directory',
             'delete_one' => 'Deleted :directory:files.0',
-            'delete_other' => 'Deleted :count files in :directory',
+            'delete_other' => 'Удалено :count файлов в :directory',
             'download' => 'Downloaded :file',
             'pull' => 'Downloaded a remote file from :url to :directory',
             'rename_one' => 'Renamed :directory:files.0.from to :directory:files.0.to',
