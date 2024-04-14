@@ -8,13 +8,13 @@
  */
 return [
     'auth' => [
-        'fail' => 'Failed log in',
-        'success' => 'Logged in',
-        'password-reset' => 'Password reset',
-        'reset-password' => 'Requested password reset',
-        'checkpoint' => 'Two-factor authentication requested',
-        'recovery-token' => 'Used two-factor recovery token',
-        'token' => 'Solved two-factor challenge',
+        'fail' => 'ログインに失敗しました',
+        'success' => 'ログインしました',
+        'password-reset' => 'パスワードのリセット',
+        'reset-password' => 'パスワードリセットを要求する',
+        'checkpoint' => '二段階認証がリクエストされました',
+        'recovery-token' => '二段階認証回復トークン',
+        'token' => '二段階認証が完了しました。',
         'ip-blocked' => 'Blocked request from unlisted IP address for :identifier',
         'sftp' => [
             'fail' => 'Failed SFTP log in',
