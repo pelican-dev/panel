@@ -50,6 +50,6 @@ return [
         'no_viable_allocations' => 'No allocations satisfying the requirements for automatic deployment were found.',
     ],
     'api' => [
-        'resource_not_found' => 'The requested resource does not exist on this server.',
+        'resource_not_found' => 'Запрашиваемый ресурс не существует на сервере.',
     ],
 ];
