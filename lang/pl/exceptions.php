@@ -1,16 +1,16 @@
 <?php
 
 return [
-    'daemon_connection_failed' => 'There was an exception while attempting to communicate with the daemon resulting in a HTTP/:code response code. This exception has been logged.',
+    'daemon_connection_failed' => 'Wystąpił wyjątek podczas próby komunikacji z demonem skutkujący kodem odpowiedzi HTTP/:code. Wyjątek ten został zarejestrowany.',
     'node' => [
         'servers_attached' => 'Aby usunąć ten węzeł, nie możesz mieć podłączonych do niego serwerów.',
-        'daemon_off_config_updated' => 'The daemon configuration <strong>has been updated</strong>, however there was an error encountered while attempting to automatically update the configuration file on the Daemon. You will need to manually update the configuration file (config.yml) for the daemon to apply these changes.',
+        'daemon_off_config_updated' => 'Konfiguracja deamona <strong>została zaktualizowana</strong>, jednak wystąpił błąd podczas próby automatycznej aktualizacji pliku konfiguracyjnego deamona. Aby zastosować te zmiany, należy ręcznie zaktualizować plik konfiguracyjny (config.yml).',
     ],
     'allocations' => [
         'server_using' => 'Serwer jest obecnie przypisany do tej alokacji. Alokację można usunąć tylko wtedy, gdy żaden serwer nie jest do niej przypisany.',
         'too_many_ports' => 'Dodawanie więcej niż 1000 portów w jednym zakresie nie jest obsługiwane.',
-        'invalid_mapping' => 'The mapping provided for :port was invalid and could not be processed.',
-        'cidr_out_of_range' => 'CIDR notation only allows masks between /25 and /32.',
+        'invalid_mapping' => 'Mapowanie podane dla :port było nieprawidłowe i nie mogło zostać przetworzone.',
+        'cidr_out_of_range' => 'Notacja CIDR dopuszcza tylko maski od /25 do /32.',
         'port_out_of_range' => 'Porty w alokacji muszą być większe niż 1024 i mniejsze lub równe 65535.',
     ],
     'egg' => [
@@ -29,18 +29,18 @@ return [
         'invalid_json_provided' => 'Podany plik JSON nie jest w formacie, który może być rozpoznany.',
     ],
     'subusers' => [
-        'editing_self' => 'Editing your own subuser account is not permitted.',
-        'user_is_owner' => 'You cannot add the server owner as a subuser for this server.',
+        'editing_self' => 'Edytowanie własnego konta podużytkownika jest niedozwolone.',
+        'user_is_owner' => 'Nie można dodać właściciela serwera jako podużytkownika tego serwera.',
         'subuser_exists' => 'Użytkownik z tym adresem e-mail jest już przypisany jako podużytkownik dla tego serwera.',
     ],
     'databases' => [
-        'delete_has_databases' => 'Cannot delete a database host server that has active databases linked to it.',
+        'delete_has_databases' => 'Nie można usunąć serwera hosta bazy danych, z którym powiązane są aktywne bazy danych.',
     ],
     'tasks' => [
-        'chain_interval_too_long' => 'The maximum interval time for a chained task is 15 minutes.',
+        'chain_interval_too_long' => 'Maksymalny odstęp czasu dla zadania, które zostało zablokowane wynosi 15 minut.',
     ],
     'locations' => [
-        'has_nodes' => 'Cannot delete a location that has active nodes attached to it.',
+        'has_nodes' => 'Nie można usunąć lokalizacji, do której dołączone są aktywne węzły.',
     ],
     'users' => [
         'node_revocation_failed' => 'Failed to revoke keys on <a href=":link">Node #:node</a>. :error',
