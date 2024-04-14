@@ -7,7 +7,7 @@ return [
     ],
     'password' => [
         'title' => 'Change your password',
-        'requirements' => 'Your new password should be at least 8 characters in length.',
+        'requirements' => 'Длина вашего нового пароля должна быть не менее 8 символов.',
         'updated' => 'Your password has been updated.',
     ],
     'two_factor' => [
