@@ -14,12 +14,12 @@ return [
         'port_out_of_range' => 'Ports in einer Zuteilung müssen größer als 1024 und kleiner oder gleich 65535 sein.',
     ],
     'egg' => [
-        'delete_has_servers' => 'Ein Ei mit aktiven Servern kann nicht aus dem Panel gelöscht werden.',
-        'invalid_copy_id' => 'Das Ei, das für das Kopieren eines Skripts ausgewählt wurde, existiert entweder nicht oder kopiert ein Skript selbst.',
-        'has_children' => 'Dieses Ei ist ein Eltern-Ei für ein oder mehreren anderen Eiern. Bitte löschen Sie diese Eier bevor Sie dieses Ei löschen.',
+        'delete_has_servers' => 'Ein Egg mit aktiven Servern kann nicht aus dem Panel gelöscht werden.',
+        'invalid_copy_id' => 'Das Egg, das für das Kopieren eines Skripts ausgewählt wurde, existiert entweder nicht oder kopiert ein Skript selbst.',
+        'has_children' => 'Dieses Egg ist ein Eltern-Ei für ein oder mehreren anderen Eiern. Bitte löschen Sie diese Eier bevor Sie dieses Ei löschen.',
     ],
     'variables' => [
-        'env_not_unique' => 'Die Umgebungsvariable :name muss für dieses Ei eindeutig sein.',
+        'env_not_unique' => 'Die Umgebungsvariable :name muss für dieses Egg eindeutig sein.',
         'reserved_name' => 'Die Umgebungsvariable :name ist geschützt und kann nicht einer Variable zugewiesen werden.',
         'bad_validation_rule' => 'Die Validierungsregel ":rule" ist keine gültige Regel für diese Anwendung.',
     ],
@@ -31,22 +31,22 @@ return [
     'subusers' => [
         'editing_self' => 'Das Bearbeiten Ihres eigenen Unterbenutzerkontos ist nicht zulässig.',
         'user_is_owner' => 'Du kannst den Serverbesitzer nicht als Unterbenutzer für diesen Server hinzufügen.',
-        'subuser_exists' => 'Ein Benutzer mit dieser E-Mail-Adresse ist bereits als Unterbenutzer für diesen Server zugewiesen.',
+        'subuser_exists' => 'Ein Benutzer mit dieser E-Mail Adresse ist bereits als Unterbenutzer für diesen Server zugewiesen.',
     ],
     'databases' => [
-        'delete_has_databases' => 'Ein Datenbank-Host-Server kann nicht gelöscht werden, der aktive Datenbanken enthält.',
+        'delete_has_databases' => 'Ein Datenbank Host kann nicht gelöscht werden, der aktive Datenbanken enthält.',
     ],
     'tasks' => [
         'chain_interval_too_long' => 'Die maximale Intervallzeit einer verketteten Aufgabe beträgt 15 Minuten.',
     ],
     'locations' => [
-        'has_nodes' => 'Ein Ort, der aktive Nodes hat, kann nicht gelöscht werden.',
+        'has_nodes' => 'Ein Standort, der aktive Nodes hat, kann nicht gelöscht werden.',
     ],
     'users' => [
         'node_revocation_failed' => 'Fehler beim Widerrufen der Schlüssel auf <a href=":link">Node #:node</a>. :error',
     ],
     'deployment' => [
-        'no_viable_nodes' => 'Es konnten keine Knoten gefunden werden, die die für den automatischen Einsatz angegebenen Anforderungen erfüllen.',
+        'no_viable_nodes' => 'Es konnten keine Nodes gefunden werden, die die für den automatischen Einsatz angegebenen Anforderungen erfüllen.',
         'no_viable_allocations' => 'Es wurden keine Zuweisungen gefunden, die die Anforderungen für den automatischen Einsatz erfüllen.',
     ],
     'api' => [
