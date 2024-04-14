@@ -1,8 +1,8 @@
 <?php
 
 return [
-    'search' => 'Search for servers...',
-    'no_matches' => 'There were no servers found matching the search criteria provided.',
-    'cpu_title' => 'CPU',
-    'memory_title' => 'Memory',
+    'search' => '看找服务器',
+    'no_matches' => '没有符合该搜索条件的服务器。',
+    'cpu_title' => '计算机处理器',
+    'memory_title' => '电脑内存',
 ];
