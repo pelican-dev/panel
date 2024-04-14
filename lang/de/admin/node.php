@@ -2,7 +2,7 @@
 
 return [
     'validation' => [
-        'fqdn_not_resolvable' => 'Die angegebene FQDN oder IP-Adresse wird nicht mit einer gültigen IP-Adresse aufgelöst.',
+        'fqdn_not_resolvable' => 'Der angegebene FQDN oder die IP-Adresse wird nicht mit einer gültigen IP-Adresse aufgelöst.',
         'fqdn_required_for_ssl' => 'Um SSL für diese Node nutzen zu können, ist ein FQDN erforderlich, welcher eine öffentliche IP besitzt.',
     ],
     'notices' => [
