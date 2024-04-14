@@ -15,6 +15,8 @@ class CreateServer extends CreateRecord
 
     protected function handleRecordCreation(array $data): Model
     {
+        $data['allocation_additional'] = collect($data['allocation_additional'])->filter()->all();
+
         /** @var ServerCreationService $service */
         $service = resolve(ServerCreationService::class);
 
