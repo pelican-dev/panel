@@ -6,7 +6,7 @@ return [
         'control_console' => 'Permet à l\'utilisateur d\'envoyer des commandes à la console du serveur.',
         'control_start' => 'Autorise l\'utilisateur à démarrer l\'instance du serveur.',
         'control_stop' => 'Autorise l\'utilisateur à arrêter l\'instance du serveur.',
-        'control_restart' => 'Allows the user to restart the server instance.',
+        'control_restart' => 'Autorise l\'utilisateur à redémarrer l\'instance du serveur.',
         'control_kill' => 'Allows the user to kill the server instance.',
         'user_create' => 'Permet à l\'utilisateur de créer de nouveaux comptes utilisateur pour le serveur.',
         'user_read' => 'Autorise l\'utilisateur à voir les utilisateurs associés à ce serveur.',
