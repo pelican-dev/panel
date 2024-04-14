@@ -8,29 +8,29 @@ return [
     ],
     'allocations' => [
         'server_using' => 'Server již využívá tuhle alokaci. Pro odstranění alokace, nesmí být žádný server spojen s alokací.',
-        'too_many_ports' => 'Přidávat více než 1000 portů v jednom rozsahu není podporováno.',
-        'invalid_mapping' => 'Mapování poskytnuto pro port :port bylo nesprávné a nebylo možné ho zpracovat.',
+        'too_many_ports' => 'Přidání více než 1000 portů v jednom rozsahu najednou není podporováno.',
+        'invalid_mapping' => 'Mapování poskytnuto pro :port bylo nesprávné a nebylo možné ho zpracovat.',
         'cidr_out_of_range' => 'CIDR zápis je možný jen pro masky /25 až /32 subnetu.',
         'port_out_of_range' => 'Porty v alokacích musí být vyšší než 1024 a nížší nebo se rovnat 65535.',
     ],
     'egg' => [
-        'delete_has_servers' => 'Egg s aktivními servery není možné smazat z panelu.',
-        'invalid_copy_id' => 'Zvolený egg na kopii skriptu buď neexistuje nebo neobsahuje samotný skript.',
-        'has_children' => 'Tento egg je parent jednoho či více eggů. Prosím vymažte tyto eggy předtím než smažete tento.',
+        'delete_has_servers' => 'Vejce s aktivními servery není možné smazat z panelu.',
+        'invalid_copy_id' => 'Zvolený vejce na kopii skriptu buď neexistuje nebo neobsahuje samotný skript.',
+        'has_children' => 'Toto vejce je nadřazeno jednomu či více vajec. Prosím vymažte tyto vejce předtím než smažete toto.',
     ],
     'variables' => [
-        'env_not_unique' => 'Proměnná prostředí :name musí mít unikátní pro tento egg.',
+        'env_not_unique' => 'Proměnná prostředí :name musí mít unikátní pro toto vejce.',
         'reserved_name' => 'Proměnná prostředí :name je chráněna a nemůže být přidělena k této proměnné',
-        'bad_validation_rule' => 'The validation rule ":rule" is not a valid rule for this application. Ověřovací pravidlo ":rule" není platné pravidlo pro toto využití/aplikaci.',
+        'bad_validation_rule' => 'Pravidlo pro ověření „:rule“ není platné pravidlo pro tuto aplikaci.',
     ],
     'importer' => [
-        'json_error' => 'Byla zde chyba při pokusu převodu (parsing) JSON souboru: :error.',
+        'json_error' => 'Při pokusu o analyzování souboru JSON došlo k chybě: :error.',
         'file_error' => 'Poskytnutý JSON soubor není platný.',
         'invalid_json_provided' => 'Formát poskytnutého JSON souboru nebylo možné rozeznat',
     ],
     'subusers' => [
         'editing_self' => 'Úprava tvého vlastního podúčtu není dovolena.',
-        'user_is_owner' => 'Nemůžeš přidat nového vlastníka jako poduživatel pro tento server.',
+        'user_is_owner' => 'Nemůžete přidat vlastníka serveru jako poduživatele pro tento server.',
         'subuser_exists' => 'Uživatel s touto emailovou adresou je již poduživatel na tomto serveru.',
     ],
     'databases' => [
@@ -43,13 +43,13 @@ return [
         'has_nodes' => 'Nelze smazat lokaci, která má s ní spojené aktivní uzly.',
     ],
     'users' => [
-        'node_revocation_failed' => 'Odstranění klíču pro uzel <a href=":link">Node #:node</a> nevyšlo: :error.',
+        'node_revocation_failed' => 'Odstranění klíču pro uzel <a href=":link">Uzel #:node</a> nevyšlo: :error.',
     ],
     'deployment' => [
         'no_viable_nodes' => 'Žadné uzly nesplňují specifikované požadavky pro automatické aplikování.',
         'no_viable_allocations' => 'Žádné alokace nesplňující požadavky pro automatickou aplikaci nebyly nalezeny.',
     ],
     'api' => [
-        'resource_not_found' => 'Požadováný zdroj//prostředí (resource) neexistuje v tomto server.',
+        'resource_not_found' => 'Požadovaný dokument neexistuje na tomto serveru.',
     ],
 ];
