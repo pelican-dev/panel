@@ -1,16 +1,16 @@
 <?php
 
 return [
-    'daemon_connection_failed' => 'There was an exception while attempting to communicate with the daemon resulting in a HTTP/:code response code. This exception has been logged.',
+    'daemon_connection_failed' => 'Une erreur est survenue lors de la tentative de communication avec le démon, entraînant un code de réponse HTTP/:code. Cette exception a été enregistrée.',
     'node' => [
-        'servers_attached' => 'A node must have no servers linked to it in order to be deleted.',
+        'servers_attached' => 'Un nœud ne doit avoir aucun serveur lié à lui pour être supprimé.',
         'daemon_off_config_updated' => 'The daemon configuration <strong>has been updated</strong>, however there was an error encountered while attempting to automatically update the configuration file on the Daemon. You will need to manually update the configuration file (config.yml) for the daemon to apply these changes.',
     ],
     'allocations' => [
         'server_using' => 'A server is currently assigned to this allocation. An allocation can only be deleted if no server is currently assigned.',
-        'too_many_ports' => 'Adding more than 1000 ports in a single range at once is not supported.',
+        'too_many_ports' => 'L\'ajout de plus de 1000 ports dans une seule plage à la fois n\'est pas supporté.',
         'invalid_mapping' => 'The mapping provided for :port was invalid and could not be processed.',
-        'cidr_out_of_range' => 'CIDR notation only allows masks between /25 and /32.',
+        'cidr_out_of_range' => 'La notation CIDR permet uniquement les masques entre /25 et /32.',
         'port_out_of_range' => 'Ports in an allocation must be greater than 1024 and less than or equal to 65535.',
     ],
     'egg' => [
@@ -24,20 +24,20 @@ return [
         'bad_validation_rule' => 'The validation rule ":rule" is not a valid rule for this application.',
     ],
     'importer' => [
-        'json_error' => 'There was an error while attempting to parse the JSON file: :error.',
+        'json_error' => 'Une erreur s\'est produite lors de l\'analyse du fichier JSON: :error.',
         'file_error' => 'Le fichier JSON fourni n\'est pas valide.',
-        'invalid_json_provided' => 'The JSON file provided is not in a format that can be recognized.',
+        'invalid_json_provided' => 'Le fichier JSON fourni n\'est pas dans un format qui peut être reconnu.',
     ],
     'subusers' => [
-        'editing_self' => 'Editing your own subuser account is not permitted.',
-        'user_is_owner' => 'You cannot add the server owner as a subuser for this server.',
-        'subuser_exists' => 'A user with that email address is already assigned as a subuser for this server.',
+        'editing_self' => 'Vous n\'êtes pas autorisé à modifier votre propre compte de sous-utilisateur',
+        'user_is_owner' => 'Vous ne pouvez pas ajouter le propriétaire du serveur en tant que sous-utilisateur pour ce serveur.',
+        'subuser_exists' => 'Un utilisateur avec cette adresse e-mail est déjà assigné en tant que sous-utilisateur pour ce serveur.',
     ],
     'databases' => [
         'delete_has_databases' => 'Cannot delete a database host server that has active databases linked to it.',
     ],
     'tasks' => [
-        'chain_interval_too_long' => 'The maximum interval time for a chained task is 15 minutes.',
+        'chain_interval_too_long' => 'L\'intervalle maximum pour une tâche chaînée est de 15 minutes.',
     ],
     'locations' => [
         'has_nodes' => 'Cannot delete a location that has active nodes attached to it.',
@@ -46,10 +46,10 @@ return [
         'node_revocation_failed' => 'Failed to revoke keys on <a href=":link">Node #:node</a>. :error',
     ],
     'deployment' => [
-        'no_viable_nodes' => 'No nodes satisfying the requirements specified for automatic deployment could be found.',
-        'no_viable_allocations' => 'No allocations satisfying the requirements for automatic deployment were found.',
+        'no_viable_nodes' => 'Aucun nœud satisfaisant les exigences spécifiées pour le déploiement automatique n\'a pu être trouvé.',
+        'no_viable_allocations' => 'Aucun nœud satisfaisant les exigences spécifiées pour le déploiement automatique n\'a pu être trouvé.',
     ],
     'api' => [
-        'resource_not_found' => 'The requested resource does not exist on this server.',
+        'resource_not_found' => 'La ressource demandée n\'existe pas sur ce serveur.',
     ],
 ];
