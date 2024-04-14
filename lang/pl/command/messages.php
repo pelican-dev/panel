@@ -2,8 +2,8 @@
 
 return [
     'user' => [
-        'search_users' => 'Enter a Username, User ID, or Email Address',
-        'select_search_user' => 'ID of user to delete (Enter \'0\' to re-search)',
+        'search_users' => 'Wprowadź nazwę użytkownika, identyfikator użytkownika lub adres e-mail',
+        'select_search_user' => 'ID użytkownika do usunięcia (Wpisz \'0\' aby wyszukać ponownie)',
         'deleted' => 'Użytkownik został pomyślnie usunięty z Panelu.',
         'confirm_delete' => 'Czy na pewno chcesz usunąć tego użytkownika z Panelu?',
         'no_users_found' => 'Nie znaleziono użytkowników dla podanego terminu wyszukiwania.',
@@ -26,7 +26,7 @@ return [
         'output_line' => 'Dispatching job for first task in `:schedule` (:hash).',
     ],
     'maintenance' => [
-        'deleting_service_backup' => 'Deleting service backup file :file.',
+        'deleting_service_backup' => 'Usuwanie pliku kopii zapasowej usługi :file.',
     ],
     'server' => [
         'rebuild_failed' => 'Rebuild request for ":name" (#:id) on node ":node" failed with error: :message',
@@ -41,11 +41,11 @@ return [
     ],
     'environment' => [
         'mail' => [
-            'ask_smtp_host' => 'SMTP Host (e.g. smtp.gmail.com)',
-            'ask_smtp_port' => 'SMTP Port',
-            'ask_smtp_username' => 'SMTP Username',
-            'ask_smtp_password' => 'SMTP Password',
-            'ask_mailgun_domain' => 'Mailgun Domain',
+            'ask_smtp_host' => 'Serwer SMTP (np. smtp.gmail.com)',
+            'ask_smtp_port' => 'Port SMTP',
+            'ask_smtp_username' => 'Nazwa użytkownika SMTP',
+            'ask_smtp_password' => 'Hasło SMTP',
+            'ask_mailgun_domain' => 'Serwer Mailgun',
             'ask_mailgun_endpoint' => 'Mailgun Endpoint',
             'ask_mailgun_secret' => 'Mailgun Secret',
             'ask_mandrill_secret' => 'Mandrill Secret',
