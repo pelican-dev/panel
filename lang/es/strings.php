@@ -15,7 +15,7 @@ return [
     'node' => 'Nodo',
     'connection' => 'Conexión',
     'memory' => 'Memoria',
-    'cpu' => 'CPU',
+    'cpu' => 'UPC',
     'disk' => 'Disco',
     'status' => 'Estado',
     'search' => 'Buscar',
