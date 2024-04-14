@@ -12,13 +12,13 @@ return [
     |
     */
 
-    'accepted' => 'The :attribute must be accepted.',
-    'active_url' => 'The :attribute is not a valid URL.',
-    'after' => 'The :attribute must be a date after :date.',
-    'after_or_equal' => 'The :attribute must be a date after or equal to :date.',
-    'alpha' => 'The :attribute may only contain letters.',
-    'alpha_dash' => 'The :attribute may only contain letters, numbers, and dashes.',
-    'alpha_num' => 'The :attribute may only contain letters and numbers.',
+    'accepted' => ':attribute musi zostać zaakceptowany.',
+    'active_url' => ':attribute jest nieprawidłowym adresem URL.',
+    'after' => ':attribute musi być późniejszą datą w stosunku do :date.',
+    'after_or_equal' => ':attribute musi być datą późniejszą lub tą samą co :date.',
+    'alpha' => ':attribute może zawierać wyłącznie litery.',
+    'alpha_dash' => ':attribute może zawierać tylko litery, cyfry i myślniki.',
+    'alpha_num' => ':attribute może zawierać jedynie litery oraz cyfry.',
     'array' => 'The :attribute must be an array.',
     'before' => 'The :attribute must be a date before :date.',
     'before_or_equal' => 'The :attribute must be a date before or equal to :date.',
@@ -100,7 +100,7 @@ return [
 
     // Internal validation logic for Panel
     'internal' => [
-        'variable_value' => ':env variable',
-        'invalid_password' => 'The password provided was invalid for this account.',
+        'variable_value' => 'Zmienna :env',
+        'invalid_password' => 'Podane hasło jest nieprawidłowe.',
     ],
 ];

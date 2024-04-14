@@ -12,7 +12,7 @@ return [
     'servers' => 'Servery',
     'id' => 'ID',
     'name' => 'Název',
-    'node' => 'Node',
+    'node' => 'Uzel',
     'connection' => 'Připojení',
     'memory' => 'Paměť',
     'cpu' => 'CPU',

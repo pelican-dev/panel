@@ -14,10 +14,10 @@ return [
         'reset-password' => 'Angefordertes Passwort zurücksetzen',
         'checkpoint' => 'Zwei-Faktor-Authentifizierung angefordert',
         'recovery-token' => 'Zwei-Faktor-Wiederherstellungs-Token verwendet',
-        'token' => 'Zwei-Faktor-Herausforderung gelöst',
+        'token' => '2FA Überprüfung abgeschlossen',
         'ip-blocked' => 'Blockierte Anfrage von nicht gelisteter IP-Adresse für :identifier',
         'sftp' => [
-            'fail' => 'Fehler beim SFTP-Login',
+            'fail' => 'Fehlgeschlagener SFTP Login',
         ],
     ],
     'user' => [
@@ -39,7 +39,7 @@ return [
         ],
     ],
     'server' => [
-        'reinstall' => 'Server wurde neu installiert',
+        'reinstall' => 'Server neuinstalliert',
         'console' => [
             'command' => '":command" auf dem Server ausgeführt',
         ],

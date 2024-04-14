@@ -20,7 +20,7 @@ return [
             'Cette commande désactivera la double authentification pour le compte d\'un utilisateur s\'il est activé. Ceci ne devrait être utilisé comme une commande de récupération de compte que si l\'utilisateur est bloqué sur son compte.',
             'If this is not what you wanted to do, press CTRL+C to exit this process.',
         ],
-        '2fa_disabled' => '2-Factor authentication has been disabled for :email.',
+        '2fa_disabled' => 'L\'authentification à 2 facteurs a été désactivée pour :email.',
     ],
     'schedule' => [
         'output_line' => 'Dispatching job for first task in `:schedule` (:hash).',
