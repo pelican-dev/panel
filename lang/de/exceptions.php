@@ -1,55 +1,55 @@
 <?php
 
 return [
-    'daemon_connection_failed' => 'There was an exception while attempting to communicate with the daemon resulting in a HTTP/:code response code. This exception has been logged.',
+    'daemon_connection_failed' => 'Beim Versuch, mit dem Daemon zu kommunizieren, gab es einen Fehler, was zu einem HTTP/:code Antwortcode führte. Dieser Fehler wurde protokolliert.',
     'node' => [
-        'servers_attached' => 'A node must have no servers linked to it in order to be deleted.',
-        'daemon_off_config_updated' => 'The daemon configuration <strong>has been updated</strong>, however there was an error encountered while attempting to automatically update the configuration file on the Daemon. You will need to manually update the configuration file (config.yml) for the daemon to apply these changes.',
+        'servers_attached' => 'Ein Node darf keine Server haben, die mit ihm verknüpft sind, um gelöscht zu werden.',
+        'daemon_off_config_updated' => 'Die Daemon Konfiguration <strong>wurde aktualisiert</strong>, jedoch gab es einen Fehler bei dem Versuch, die Konfigurationsdatei des Daemon automatisch zu aktualisieren. Du musst die Konfigurationsdatei (config.yml) manuell anpassen, damit die Änderungen übernommen werden.',
     ],
     'allocations' => [
-        'server_using' => 'A server is currently assigned to this allocation. An allocation can only be deleted if no server is currently assigned.',
-        'too_many_ports' => 'Adding more than 1000 ports in a single range at once is not supported.',
-        'invalid_mapping' => 'The mapping provided for :port was invalid and could not be processed.',
-        'cidr_out_of_range' => 'CIDR notation only allows masks between /25 and /32.',
-        'port_out_of_range' => 'Ports in an allocation must be greater than 1024 and less than or equal to 65535.',
+        'server_using' => 'Derzeit ist ein Server dieser Zuweisung zugewiesen. Eine Zuordnung kann nur gelöscht werden, wenn derzeit kein Server zugewiesen ist.',
+        'too_many_ports' => 'Das Hinzufügen von mehr als 1000 Ports in einem einzigen Bereich wird nicht unterstützt.',
+        'invalid_mapping' => 'Das für :port angegebene Mapping war ungültig und konnte nicht verarbeitet werden.',
+        'cidr_out_of_range' => 'CIDR-Notation erlaubt nur Masken zwischen /25 und /32.',
+        'port_out_of_range' => 'Ports in einer Zuteilung müssen größer als 1024 und kleiner oder gleich 65535 sein.',
     ],
     'egg' => [
-        'delete_has_servers' => 'An Egg with active servers attached to it cannot be deleted from the Panel.',
-        'invalid_copy_id' => 'The Egg selected for copying a script from either does not exist, or is copying a script itself.',
-        'has_children' => 'This Egg is a parent to one or more other Eggs. Please delete those Eggs before deleting this Egg.',
+        'delete_has_servers' => 'Ein Ei mit aktiven Servern kann nicht aus dem Panel gelöscht werden.',
+        'invalid_copy_id' => 'Das Ei, das für das Kopieren eines Skripts ausgewählt wurde, existiert entweder nicht oder kopiert ein Skript selbst.',
+        'has_children' => 'Dieses Ei ist ein Eltern-Ei für ein oder mehreren anderen Eiern. Bitte löschen Sie diese Eier bevor Sie dieses Ei löschen.',
     ],
     'variables' => [
-        'env_not_unique' => 'The environment variable :name must be unique to this Egg.',
-        'reserved_name' => 'The environment variable :name is protected and cannot be assigned to a variable.',
-        'bad_validation_rule' => 'The validation rule ":rule" is not a valid rule for this application.',
+        'env_not_unique' => 'Die Umgebungsvariable :name muss für dieses Ei eindeutig sein.',
+        'reserved_name' => 'Die Umgebungsvariable :name ist geschützt und kann nicht einer Variable zugewiesen werden.',
+        'bad_validation_rule' => 'Die Validierungsregel ":rule" ist keine gültige Regel für diese Anwendung.',
     ],
     'importer' => [
-        'json_error' => 'There was an error while attempting to parse the JSON file: :error.',
-        'file_error' => 'The JSON file provided was not valid.',
-        'invalid_json_provided' => 'The JSON file provided is not in a format that can be recognized.',
+        'json_error' => 'Beim Verarbeiten der JSON-Datei ist ein Fehler aufgetreten: :error.',
+        'file_error' => 'Die angegebene JSON-Datei war ungültig.',
+        'invalid_json_provided' => 'Die angegebene JSON-Datei ist nicht in einem Format, das erkannt werden kann.',
     ],
     'subusers' => [
-        'editing_self' => 'Editing your own subuser account is not permitted.',
-        'user_is_owner' => 'You cannot add the server owner as a subuser for this server.',
-        'subuser_exists' => 'A user with that email address is already assigned as a subuser for this server.',
+        'editing_self' => 'Das Bearbeiten Ihres eigenen Unterbenutzerkontos ist nicht zulässig.',
+        'user_is_owner' => 'Du kannst den Serverbesitzer nicht als Unterbenutzer für diesen Server hinzufügen.',
+        'subuser_exists' => 'Ein Benutzer mit dieser E-Mail-Adresse ist bereits als Unterbenutzer für diesen Server zugewiesen.',
     ],
     'databases' => [
-        'delete_has_databases' => 'Cannot delete a database host server that has active databases linked to it.',
+        'delete_has_databases' => 'Ein Datenbank-Host-Server kann nicht gelöscht werden, der aktive Datenbanken enthält.',
     ],
     'tasks' => [
-        'chain_interval_too_long' => 'The maximum interval time for a chained task is 15 minutes.',
+        'chain_interval_too_long' => 'Die maximale Intervallzeit einer verketteten Aufgabe beträgt 15 Minuten.',
     ],
     'locations' => [
-        'has_nodes' => 'Cannot delete a location that has active nodes attached to it.',
+        'has_nodes' => 'Ein Ort, der aktive Nodes hat, kann nicht gelöscht werden.',
     ],
     'users' => [
-        'node_revocation_failed' => 'Failed to revoke keys on <a href=":link">Node #:node</a>. :error',
+        'node_revocation_failed' => 'Fehler beim Widerrufen der Schlüssel auf <a href=":link">Node #:node</a>. :error',
     ],
     'deployment' => [
-        'no_viable_nodes' => 'No nodes satisfying the requirements specified for automatic deployment could be found.',
-        'no_viable_allocations' => 'No allocations satisfying the requirements for automatic deployment were found.',
+        'no_viable_nodes' => 'Es konnten keine Knoten gefunden werden, die die für den automatischen Einsatz angegebenen Anforderungen erfüllen.',
+        'no_viable_allocations' => 'Es wurden keine Zuweisungen gefunden, die die Anforderungen für den automatischen Einsatz erfüllen.',
     ],
     'api' => [
-        'resource_not_found' => 'The requested resource does not exist on this server.',
+        'resource_not_found' => 'Die angeforderte Ressource existiert nicht auf diesem Server.',
     ],
 ];

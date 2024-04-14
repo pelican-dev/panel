@@ -1,9 +1,9 @@
 <?php
 
 return [
-    'daemon_connection_failed' => 'There was an exception while attempting to communicate with the daemon resulting in a HTTP/:code response code. This exception has been logged.',
+    'daemon_connection_failed' => 'Ocorreu um erro ao tentar se comunicar com a máquina, resultando um status code HTTP/:code. Esse problema foi gerado com request id :request_id',
     'node' => [
-        'servers_attached' => 'A node must have no servers linked to it in order to be deleted.',
+        'servers_attached' => 'Um node não pode possuir servidores configurados para ser excluídos.',
         'daemon_off_config_updated' => 'The daemon configuration <strong>has been updated</strong>, however there was an error encountered while attempting to automatically update the configuration file on the Daemon. You will need to manually update the configuration file (config.yml) for the daemon to apply these changes.',
     ],
     'allocations' => [
