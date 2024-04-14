@@ -459,7 +459,7 @@ class ServerResource extends Resource
                     })
                     ->columnSpanFull(),
 
-                Forms\Components\KeyValue::make('environment')
+                Forms\Components\Hidden::make('environment')
                     ->default([])
                     ->columnSpanFull(),
 
