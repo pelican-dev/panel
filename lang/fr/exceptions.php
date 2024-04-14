@@ -20,12 +20,12 @@ return [
     ],
     'variables' => [
         'env_not_unique' => 'The environment variable :name must be unique to this Egg.',
-        'reserved_name' => 'The environment variable :name is protected and cannot be assigned to a variable.',
+        'reserved_name' => 'La variable d\'environnement :name est protégée et ne peut pas être assignée à une variable.',
         'bad_validation_rule' => 'The validation rule ":rule" is not a valid rule for this application.',
     ],
     'importer' => [
         'json_error' => 'There was an error while attempting to parse the JSON file: :error.',
-        'file_error' => 'The JSON file provided was not valid.',
+        'file_error' => 'Le fichier JSON fourni n\'est pas valide.',
         'invalid_json_provided' => 'The JSON file provided is not in a format that can be recognized.',
     ],
     'subusers' => [
