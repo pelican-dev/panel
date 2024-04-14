@@ -8,10 +8,10 @@
  */
 return [
     'auth' => [
-        'fail' => 'Failed log in',
-        'success' => 'Logged in',
-        'password-reset' => 'Password reset',
-        'reset-password' => 'Requested password reset',
+        'fail' => 'Не удалось войти',
+        'success' => 'Вход выполнен',
+        'password-reset' => 'Сброс пароля',
+        'reset-password' => 'Запрошен сброс пароля',
         'checkpoint' => 'Two-factor authentication requested',
         'recovery-token' => 'Used two-factor recovery token',
         'token' => 'Solved two-factor challenge',
@@ -22,16 +22,16 @@ return [
     ],
     'user' => [
         'account' => [
-            'email-changed' => 'Changed email from :old to :new',
-            'password-changed' => 'Changed password',
+            'email-changed' => 'Изменена эл. почта с :old на :new',
+            'password-changed' => 'Изменен пароль',
         ],
         'api-key' => [
-            'create' => 'Created new API key :identifier',
-            'delete' => 'Deleted API key :identifier',
+            'create' => 'Создан новый API ключ :identifier',
+            'delete' => 'Удален API ключ :identifier',
         ],
         'ssh-key' => [
-            'create' => 'Added SSH key :fingerprint to account',
-            'delete' => 'Removed SSH key :fingerprint from account',
+            'create' => 'Добавлен ключ SSH :fingerprint в аккаунт',
+            'delete' => 'SSH ключ :fingerprint удален из аккаунта',
         ],
         'two-factor' => [
             'create' => 'Enabled two-factor auth',
@@ -39,15 +39,15 @@ return [
         ],
     ],
     'server' => [
-        'reinstall' => 'Reinstalled server',
+        'reinstall' => 'Сервер переустановлен',
         'console' => [
             'command' => 'Executed ":command" on the server',
         ],
         'power' => [
-            'start' => 'Started the server',
-            'stop' => 'Stopped the server',
-            'restart' => 'Restarted the server',
-            'kill' => 'Killed the server process',
+            'start' => 'Сервер запущен',
+            'stop' => 'Сервер остановлен',
+            'restart' => 'Сервер перезапущен',
+            'kill' => 'Сервер убит',
         ],
         'backup' => [
             'download' => 'Downloaded the :name backup',
@@ -69,7 +69,7 @@ return [
         'file' => [
             'compress_one' => 'Compressed :directory:file',
             'compress_other' => 'Compressed :count files in :directory',
-            'read' => 'Viewed the contents of :file',
+            'read' => 'Просмотрел содержимое :file',
             'copy' => 'Created a copy of :file',
             'create-directory' => 'Created directory :directory:name',
             'decompress' => 'Decompressed :files in :directory',
