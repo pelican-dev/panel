@@ -3,12 +3,12 @@
 return [
     'daemon_connection_failed' => 'There was an exception while attempting to communicate with the daemon resulting in a HTTP/:code response code. This exception has been logged.',
     'node' => [
-        'servers_attached' => 'A node must have no servers linked to it in order to be deleted.',
+        'servers_attached' => 'Aby usunąć ten węzeł, nie możesz mieć podłączonych do niego serwerów.',
         'daemon_off_config_updated' => 'The daemon configuration <strong>has been updated</strong>, however there was an error encountered while attempting to automatically update the configuration file on the Daemon. You will need to manually update the configuration file (config.yml) for the daemon to apply these changes.',
     ],
     'allocations' => [
-        'server_using' => 'A server is currently assigned to this allocation. An allocation can only be deleted if no server is currently assigned.',
-        'too_many_ports' => 'Adding more than 1000 ports in a single range at once is not supported.',
+        'server_using' => 'Serwer jest obecnie przypisany do tej alokacji. Alokację można usunąć tylko wtedy, gdy żaden serwer nie jest do niej przypisany.',
+        'too_many_ports' => 'Dodawanie więcej niż 1000 portów w jednym zakresie nie jest obsługiwane.',
         'invalid_mapping' => 'The mapping provided for :port was invalid and could not be processed.',
         'cidr_out_of_range' => 'CIDR notation only allows masks between /25 and /32.',
         'port_out_of_range' => 'Porty w alokacji muszą być większe niż 1024 i mniejsze lub równe 65535.',
@@ -31,7 +31,7 @@ return [
     'subusers' => [
         'editing_self' => 'Editing your own subuser account is not permitted.',
         'user_is_owner' => 'You cannot add the server owner as a subuser for this server.',
-        'subuser_exists' => 'A user with that email address is already assigned as a subuser for this server.',
+        'subuser_exists' => 'Użytkownik z tym adresem e-mail jest już przypisany jako podużytkownik dla tego serwera.',
     ],
     'databases' => [
         'delete_has_databases' => 'Cannot delete a database host server that has active databases linked to it.',
@@ -50,6 +50,6 @@ return [
         'no_viable_allocations' => 'No allocations satisfying the requirements for automatic deployment were found.',
     ],
     'api' => [
-        'resource_not_found' => 'The requested resource does not exist on this server.',
+        'resource_not_found' => 'Żądany zasób nie istnieje na tym serwerze.',
     ],
 ];
