@@ -154,12 +154,8 @@ class ServerResource extends Resource
                     ->label('Additional Allocations')
                     ->columnSpan(2)
                     ->disabled(fn (Forms\Get $get) => $get('allocation_id') === null)
-                    ->hintActions([Forms\Components\Actions\Action::make('asdf')->action(function (Forms\Components\Repeater $component) {
-                        $state = $component->getState();
-                        dd($state);
-                    })])
                     // ->addable() TODO disable when all allocations are taken
-                        // ->addable() TODO disable until first additional allocation is selected
+                    // ->addable() TODO disable until first additional allocation is selected
                     ->simple(
                         Forms\Components\Select::make('extra_allocations')
                             ->live()
