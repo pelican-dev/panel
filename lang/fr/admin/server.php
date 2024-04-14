@@ -3,14 +3,14 @@
 return [
     'exceptions' => [
         'no_new_default_allocation' => 'Vous essayez de supprimer l\'allocation par défaut pour ce serveur, mais il n\'y a pas d\'allocation de secours à utiliser.',
-        'marked_as_failed' => 'This server was marked as having failed a previous installation. Current status cannot be toggled in this state.',
+        'marked_as_failed' => 'Ce serveur a été marqué comme ayant échoué à l\'installation précédente. Le statut actuel ne peut pas être basculé dans cet état.',
         'bad_variable' => 'Il y a eu une erreur de validation avec la variable :name.',
         'daemon_exception' => 'Une erreur est survenue lors de la tentative de communication avec le démon, entraînant un code de réponse HTTP/:code. Cette exception a été enregistrée. (request id: :request_id)',
-        'default_allocation_not_found' => 'The requested default allocation was not found in this server\'s allocations.',
+        'default_allocation_not_found' => 'L\'allocation par défaut demandée n\'a pas été trouvée dans les allocations de ce serveur.',
     ],
     'alerts' => [
-        'startup_changed' => 'The startup configuration for this server has been updated. If this server\'s egg was changed a reinstall will be occurring now.',
-        'server_deleted' => 'Server has successfully been deleted from the system.',
+        'startup_changed' => 'La configuration de démarrage de ce serveur a été mise à jour. Si l\'œuf de ce serveur a été modifié, une réinstallation aura lieu maintenant.',
+        'server_deleted' => 'Le serveur a été supprimé du système avec succès.',
         'server_created' => 'Server was successfully created on the panel. Please allow the daemon a few minutes to completely install this server.',
         'build_updated' => 'The build details for this server have been updated. Some changes may require a restart to take effect.',
         'suspension_toggled' => 'Le statut de suspension du serveur a été changé à :status.',
