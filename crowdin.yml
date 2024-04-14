@@ -1,0 +1,3 @@
+files:
+  - source: /lang/en/*.php
+    translation: /lang/%two_letters_code%/%original_file_name%
