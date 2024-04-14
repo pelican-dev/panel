@@ -152,7 +152,7 @@ class Server extends Model
         'status' => 'nullable|string',
         'memory' => 'required|numeric|min:0',
         'swap' => 'required|numeric|min:-1',
-        'io' => 'required|numeric|between:10,1000',
+        'io' => 'required|numeric|between:0,1000',
         'cpu' => 'required|numeric|min:0',
         'threads' => 'nullable|regex:/^[0-9-,]+$/',
         'oom_disabled' => 'sometimes|boolean',
