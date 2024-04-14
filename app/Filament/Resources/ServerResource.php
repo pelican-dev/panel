@@ -7,7 +7,6 @@ use App\Models\Allocation;
 use App\Models\Egg;
 use App\Models\Node;
 use App\Models\Server;
-use App\Repositories\Daemon\DaemonServerRepository;
 use App\Services\Allocations\AssignmentService;
 use Closure;
 use Filament\Forms;
@@ -154,12 +153,12 @@ class ServerResource extends Resource
                     ->label('Additional Allocations')
                     ->columnSpan(2)
                     ->disabled(fn (Forms\Get $get) => $get('allocation_id') === null)
-                    ->hintActions([Forms\Components\Actions\Action::make('asdf')->action(function (Forms\Components\Repeater $component) {
-                        $state = $component->getState();
-                        dd($state);
-                    })])
+                    // ->hintActions([Forms\Components\Actions\Action::make('asdf')->action(function (Forms\Components\Repeater $component) {
+                    //     $state = $component->getState();
+                    //     dd($state);
+                    // })])
                     // ->addable() TODO disable when all allocations are taken
-                        // ->addable() TODO disable until first additional allocation is selected
+                    // ->addable() TODO disable until first additional allocation is selected
                     ->simple(
                         Forms\Components\Select::make('extra_allocations')
                             ->live()
@@ -180,7 +179,9 @@ class ServerResource extends Resource
                                 'ip',
                                 fn (Builder $query, Forms\Get $get, Forms\Components\Select $component, $state) => $query
                                     ->where('node_id', $get('../../node_id'))
-                                        ->whereNotIn('id', collect(($repeater = $component->getParentRepeater())->getState())
+                                    ->whereNotIn(
+                                        'id',
+                                        collect(($repeater = $component->getParentRepeater())->getState())
                                             ->pluck(
                                                 (string) str($component->getStatePath())
                                                     ->after("{$repeater->getStatePath()}.")
@@ -444,66 +445,6 @@ class ServerResource extends Resource
                                 true => 'tabler-sword',
                             ])
                             ->required(),
-                    ]),
-
-                Forms\Components\Textarea::make('startup')
-                    ->hintIcon('tabler-code')
-                    ->label('Startup Command')
-                    ->required()
-                    ->live()
-                    ->rows(function ($state) {
-                        return str($state)->explode("\n")->reduce(
-                            fn (int $carry, $line) => $carry + floor(strlen($line) / 125),
-                            0
-                        );
-                    })
-                    ->columnSpanFull(),
-
-                Forms\Components\Hidden::make('environment')
-                    ->default([])
-                    ->columnSpanFull(),
-
-                Forms\Components\Section::make('Egg Variables')
-                    ->icon('tabler-eggs')
-                    ->iconColor('primary')
-                    ->collapsible()
-                    ->collapsed()
-                    ->schema([
-                        Forms\Components\Placeholder::make('Select an egg first to show its variables!')
-                            ->hidden(fn (Forms\Get $get) => !empty($get('server_variables'))),
-
-                        Forms\Components\Repeater::make('server_variables')
-                            ->relationship('serverVariables')
-                            ->grid(2)
-                            ->reorderable(false)
-                            ->addable(false)
-                            ->deletable(false)
-                            ->default([])
-                            ->hidden(fn ($state) => empty($state))
-                            ->schema([
-                                Forms\Components\TextInput::make('variable_value')
-                                    ->rules([
-                                        fn (Forms\Get $get): Closure => function (string $attribute, $value, Closure $fail) use ($get) {
-                                            $validator = Validator::make(['validatorkey' => $value], [
-                                                'validatorkey' => $get('rules'),
-                                            ]);
-
-                                            if ($validator->fails()) {
-                                                $message = str($validator->errors()->first())->replace('validatorkey', $get('name'));
-
-                                                $fail($message);
-                                            }
-                                        },
-                                    ])
-                                    ->label(fn (Forms\Get $get) => $get('name'))
-                                    ->hint(fn (Forms\Get $get) => $get('rules'))
-                                    ->prefix(fn (Forms\Get $get) => '{{' . $get('env_variable') . '}}')
-                                    ->helperText(fn (Forms\Get $get) => empty($get('description')) ? '—' : $get('description'))
-                                    ->maxLength(191),
-
-                                Forms\Components\Hidden::make('variable_id')->default(0),
-                            ])
-                            ->columnSpanFull(),
                     ]),
             ]);
     }
