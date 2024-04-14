@@ -2,12 +2,12 @@
 
 return [
     'permissions' => [
-        'websocket_*' => 'Allows access to the websocket for this server.',
-        'control_console' => 'Allows the user to send data to the server console.',
-        'control_start' => 'Allows the user to start the server instance.',
-        'control_stop' => 'Allows the user to stop the server instance.',
-        'control_restart' => 'Allows the user to restart the server instance.',
-        'control_kill' => 'Allows the user to kill the server instance.',
+        'websocket_*' => 'Разрешает доступ к веб-сокету для этого сервера.',
+        'control_console' => 'Позволяет пользователю отправлять данные в консоль сервера.',
+        'control_start' => 'Позволяет пользователю запускать сервер.',
+        'control_stop' => 'Позволяет пользователю остановить сервер.',
+        'control_restart' => 'Позволяет пользователю перезапустить сервер.',
+        'control_kill' => 'Позволяет пользователю убить сервер.',
         'user_create' => 'Allows the user to create new user accounts for the server.',
         'user_read' => 'Allows the user permission to view users associated with this server.',
         'user_update' => 'Allows the user to modify other users associated with this server.',
@@ -15,7 +15,7 @@ return [
         'file_create' => 'Allows the user permission to create new files and directories.',
         'file_read' => 'Allows the user to see files and folders associated with this server instance, as well as view their contents.',
         'file_update' => 'Allows the user to update files and folders associated with the server.',
-        'file_delete' => 'Allows the user to delete files and directories.',
+        'file_delete' => 'Позволяет пользователю удалять файлы и папки.',
         'file_archive' => 'Allows the user to create file archives and decompress existing archives.',
         'file_sftp' => 'Allows the user to perform the above file actions using a SFTP client.',
         'allocation_read' => 'Allows access to the server allocation management pages.',
