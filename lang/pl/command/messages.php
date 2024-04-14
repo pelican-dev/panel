@@ -23,20 +23,20 @@ return [
         '2fa_disabled' => 'Uwierzytelnianie dwuskładnikowe zostało wyłączone dla :email',
     ],
     'schedule' => [
-        'output_line' => 'Dispatching job for first task in `:schedule` (:hash).',
+        'output_line' => 'Wysyłanie żądania dla pierwszego zadania w `:schedule` (:hash).',
     ],
     'maintenance' => [
         'deleting_service_backup' => 'Usuwanie pliku kopii zapasowej usługi :file.',
     ],
     'server' => [
-        'rebuild_failed' => 'Rebuild request for ":name" (#:id) on node ":node" failed with error: :message',
+        'rebuild_failed' => 'Żądanie przebudowy dla ":name" (#:id) na węźle ":node" nie powiodło się z błędem: :message',
         'reinstall' => [
-            'failed' => 'Reinstall request for ":name" (#:id) on node ":node" failed with error: :message',
-            'confirm' => 'You are about to reinstall against a group of servers. Do you wish to continue?',
+            'failed' => 'Żądanie ponownej instalacji dla ":name" (#:id) na węźle ":node" nie powiodło się z błędem: :message',
+            'confirm' => 'Przed Tobą ponowna instalacja na grupie serwerów. Czy chcesz kontynuować?',
         ],
         'power' => [
-            'confirm' => 'You are about to perform a :action against :count servers. Do you wish to continue?',
-            'action_failed' => 'Power action request for ":name" (#:id) on node ":node" failed with error: :message',
+            'confirm' => 'Zamierzasz wykonać :action przeciwko :count serwerom. Czy chcesz kontynuować?',
+            'action_failed' => 'Żądanie akcji zasilania dla ":name" (#:id) na węźle ":node" nie powiodło się z błędem: :message',
         ],
     ],
     'environment' => [
