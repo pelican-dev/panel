@@ -17,12 +17,12 @@ return [
         'invalid' => 'Podany token jest nieprawidłowy.',
         'setup' => [
             'title' => 'Skonfiguruj uwierzytelnianie dwuetapowe.',
-            'help' => 'Can\'t scan the code? Enter the code below into your application:',
-            'field' => 'Enter token',
+            'help' => 'Nie udało Ci się zeskanować kodu? Wprowadź poniższy kod do swojej aplikacji:',
+            'field' => 'Wprowadź token',
         ],
         'disable' => [
-            'title' => 'Disable two-factor authentication',
-            'field' => 'Enter token',
+            'title' => 'Wyłącz uwierzytelnianie dwuetapowe',
+            'field' => 'Wprowadź token',
         ],
     ],
 ];
