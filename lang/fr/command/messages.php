@@ -18,7 +18,7 @@ return [
         'ask_password_help' => 'Les mots de passe doivent comporter au moins 8 caractères et contenir au moins une lettre majuscule et un chiffre.',
         '2fa_help_text' => [
             'Cette commande désactivera la double authentification pour le compte d\'un utilisateur s\'il est activé. Ceci ne devrait être utilisé comme une commande de récupération de compte que si l\'utilisateur est bloqué sur son compte.',
-            'If this is not what you wanted to do, press CTRL+C to exit this process.',
+            'Si ce n\'étais pas ce que vous vouliez faire, appuyez sur CTRL + C pour quitter le processus.',
         ],
         '2fa_disabled' => 'L\'authentification à 2 facteurs a été désactivée pour :email.',
     ],
@@ -31,8 +31,8 @@ return [
     'server' => [
         'rebuild_failed' => 'Rebuild request for ":name" (#:id) on node ":node" failed with error: :message',
         'reinstall' => [
-            'failed' => 'Reinstall request for ":name" (#:id) on node ":node" failed with error: :message',
-            'confirm' => 'You are about to reinstall against a group of servers. Do you wish to continue?',
+            'failed' => 'La demande de réinstallation pour ":name" (#:id) sur le nœud ":node" a échoué avec l\'erreur : :message',
+            'confirm' => 'Vous êtes sur le point de procéder à une réinstallation sur un groupe de serveurs. Voulez-vous continuer ?',
         ],
         'power' => [
             'confirm' => 'You are about to perform a :action against :count servers. Do you wish to continue?',
