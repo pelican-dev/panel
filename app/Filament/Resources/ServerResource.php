@@ -7,6 +7,7 @@ use App\Models\Allocation;
 use App\Models\Egg;
 use App\Models\Node;
 use App\Models\Server;
+use App\Repositories\Daemon\DaemonServerRepository;
 use App\Services\Allocations\AssignmentService;
 use Closure;
 use Filament\Forms;
@@ -15,6 +16,7 @@ use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Validator;
 
 class ServerResource extends Resource
@@ -42,7 +44,7 @@ class ServerResource extends Resource
                         ->color('primary')
                         ->action(function (Forms\Set $set, Forms\Get $get) {
                             $egg = Egg::find($get('egg_id'));
-                            $prefix = $egg ? str($egg->name)->lower()->snake() . '-' : '';
+                            $prefix = $egg ? str($egg->name)->lower()->kebab() . '-' : '';
 
                             $set('name', $prefix . fake()->domainWord);
                         }))
@@ -74,11 +76,16 @@ class ServerResource extends Resource
 
                 Forms\Components\Select::make('allocation_id')
                     ->preload()
+                    ->live()
                     ->prefixIcon('tabler-network')
                     ->label('Primary Allocation')
-                    ->columnSpan(3)
+                    ->columnSpan(2)
                     ->disabled(fn (Forms\Get $get) => $get('node_id') === null)
                     ->searchable(['ip', 'port', 'ip_alias'])
+                    ->afterStateUpdated(function (Forms\Set $set) {
+                        $set('allocation_additional', null);
+                        $set('allocation_additional.needstobeastringhere.extra_allocations', null);
+                    })
                     ->getOptionLabelFromRecordUsing(
                         fn (Allocation $allocation) => "$allocation->ip:$allocation->port" .
                             ($allocation->ip_alias ? " ($allocation->ip_alias)" : '')
@@ -143,6 +150,51 @@ class ServerResource extends Resource
                     })
                     ->required(),
 
+                Forms\Components\Repeater::make('allocation_additional')
+                    ->label('Additional Allocations')
+                    ->columnSpan(2)
+                    ->disabled(fn (Forms\Get $get) => $get('allocation_id') === null)
+                    ->hintActions([Forms\Components\Actions\Action::make('asdf')->action(function (Forms\Components\Repeater $component) {
+                        $state = $component->getState();
+                        dd($state);
+                    })])
+                    // ->addable() TODO disable when all allocations are taken
+                        // ->addable() TODO disable until first additional allocation is selected
+                    ->simple(
+                        Forms\Components\Select::make('extra_allocations')
+                            ->live()
+                            ->preload()
+                            ->disableOptionsWhenSelectedInSiblingRepeaterItems()
+                            ->prefixIcon('tabler-network')
+                            ->label('Additional Allocations')
+                            ->columnSpan(2)
+                            ->disabled(fn (Forms\Get $get) => $get('../../node_id') === null)
+                            ->searchable(['ip', 'port', 'ip_alias'])
+                            ->getOptionLabelFromRecordUsing(
+                                fn (Allocation $allocation) => "$allocation->ip:$allocation->port" .
+                                    ($allocation->ip_alias ? " ($allocation->ip_alias)" : '')
+                            )
+                            ->placeholder('Select additional Allocations')
+                            ->relationship(
+                                'allocations',
+                                'ip',
+                                fn (Builder $query, Forms\Get $get, Forms\Components\Select $component, $state) => $query
+                                    ->where('node_id', $get('../../node_id'))
+                                        ->whereNotIn('id', collect(($repeater = $component->getParentRepeater())->getState())
+                                            ->pluck(
+                                                (string) str($component->getStatePath())
+                                                    ->after("{$repeater->getStatePath()}.")
+                                                    ->after('.'),
+                                            )
+                                            ->flatten()
+                                            ->diff(Arr::wrap($state))
+                                            ->filter(fn (mixed $siblingItemState): bool => filled($siblingItemState))
+                                            ->add($get('../../allocation_id'))
+                                    )
+                                    ->whereNull('server_id'),
+                            ),
+                    ),
+
                 Forms\Components\Textarea::make('description')
                     ->hidden()
                     ->default('')
@@ -157,7 +209,7 @@ class ServerResource extends Resource
                     ->searchable()
                     ->preload()
                     ->live()
-                    ->afterStateUpdated(function ($state, Forms\Set $set, Forms\Get $get) {
+                    ->afterStateUpdated(function ($state, Forms\Set $set) {
                         $egg = Egg::find($state);
                         $set('startup', $egg->startup);
 
@@ -262,9 +314,69 @@ class ServerResource extends Resource
                             ->default(0),
                     ]),
 
-                Forms\Components\Fieldset::make('Resource Management')
-                    // ->inlineLabel()
-                    ->hiddenOn('create')
+                Forms\Components\Textarea::make('startup')
+                    ->hintIcon('tabler-code')
+                    ->label('Startup Command')
+                    ->required()
+                    ->live()
+                    ->rows(function ($state) {
+                        return str($state)->explode("\n")->reduce(
+                            fn (int $carry, $line) => $carry + floor(strlen($line) / 125),
+                            0
+                        );
+                    })
+                    ->columnSpanFull(),
+
+                Forms\Components\Hidden::make('environment')->default([]),
+
+                Forms\Components\Section::make('Egg Variables')
+                    ->icon('tabler-eggs')
+                    ->iconColor('primary')
+                    ->collapsible()
+                    ->collapsed()
+                    ->schema([
+                        Forms\Components\Placeholder::make('Select an egg first to show its variables!')
+                            ->hidden(fn (Forms\Get $get) => !empty($get('server_variables'))),
+
+                        Forms\Components\Repeater::make('server_variables')
+                            ->relationship('serverVariables')
+                            ->grid(2)
+                            ->reorderable(false)
+                            ->addable(false)
+                            ->deletable(false)
+                            ->default([])
+                            ->hidden(fn ($state) => empty($state))
+                            ->schema([
+                                Forms\Components\TextInput::make('variable_value')
+                                    ->rules([
+                                        fn (Forms\Get $get): Closure => function (string $attribute, $value, Closure $fail) use ($get) {
+                                            $validator = Validator::make(['validatorkey' => $value], [
+                                                'validatorkey' => $get('rules'),
+                                            ]);
+
+                                            if ($validator->fails()) {
+                                                $message = str($validator->errors()->first())->replace('validatorkey', $get('name'));
+
+                                                $fail($message);
+                                            }
+                                        },
+                                    ])
+                                    ->label(fn (Forms\Get $get) => $get('name'))
+                                    ->hint(fn (Forms\Get $get) => $get('rules'))
+                                    ->prefix(fn (Forms\Get $get) => '{{' . $get('env_variable') . '}}')
+                                    ->helperText(fn (Forms\Get $get) => empty($get('description')) ? '—' : $get('description'))
+                                    ->maxLength(191),
+
+                                Forms\Components\Hidden::make('variable_id')->default(0),
+                            ])
+                            ->columnSpanFull(),
+                    ]),
+
+                Forms\Components\Section::make('Resource Management')
+                    // ->hiddenOn('create')
+                    ->collapsed()
+                    ->icon('tabler-server-cog')
+                    ->iconColor('primary')
                     ->columns(3)
                     ->schema([
                         Forms\Components\TextInput::make('memory')
@@ -309,10 +421,10 @@ class ServerResource extends Resource
                             ->helperText('The IO performance relative to other running containers')
                             ->label('Block IO Proportion')
                             ->required()
-                            ->minValue(10)
+                            ->minValue(0)
                             ->maxValue(1000)
                             ->step(10)
-                            ->default(500)
+                            ->default(0)
                             ->numeric(),
 
                         Forms\Components\ToggleButtons::make('oom_disabled')
@@ -332,65 +444,6 @@ class ServerResource extends Resource
                                 true => 'tabler-sword',
                             ])
                             ->required(),
-                    ]),
-
-                Forms\Components\Textarea::make('startup')
-                    ->hintIcon('tabler-code')
-                    ->label('Startup Command')
-                    ->required()
-                    ->live()
-                    ->rows(function ($state) {
-                        return str($state)->explode("\n")->reduce(
-                            fn (int $carry, $line) => $carry + floor(strlen($line) / 125),
-                            0
-                        );
-                    })
-                    ->columnSpanFull(),
-
-                Forms\Components\KeyValue::make('environment')
-                    ->default([]),
-
-                Forms\Components\Section::make('Egg Variables')
-                    ->icon('tabler-eggs')
-                    ->iconColor('primary')
-                    ->collapsible()
-                    ->collapsed()
-                    ->schema([
-                        Forms\Components\Placeholder::make('Select an egg first to show its variables!')
-                            ->hidden(fn (Forms\Get $get) => !empty($get('server_variables'))),
-
-                        Forms\Components\Repeater::make('server_variables')
-                            ->relationship('serverVariables')
-                            ->grid(2)
-                            ->reorderable(false)
-                            ->addable(false)
-                            ->deletable(false)
-                            ->default([])
-                            ->hidden(fn ($state) => empty($state))
-                            ->schema([
-                                Forms\Components\TextInput::make('variable_value')
-                                    ->rules([
-                                        fn (Forms\Get $get): Closure => function (string $attribute, $value, Closure $fail) use ($get) {
-                                            $validator = Validator::make(['validatorkey' => $value], [
-                                                'validatorkey' => $get('rules'),
-                                            ]);
-
-                                            if ($validator->fails()) {
-                                                $message = str($validator->errors()->first())->replace('validatorkey', $get('name'));
-
-                                                $fail($message);
-                                            }
-                                        },
-                                    ])
-                                    ->label(fn (Forms\Get $get) => $get('name'))
-                                    ->hint(fn (Forms\Get $get) => $get('rules'))
-                                    ->prefix(fn (Forms\Get $get) => '{{' . $get('env_variable') . '}}')
-                                    ->helperText(fn (Forms\Get $get) => empty($get('description')) ? '—' : $get('description'))
-                                    ->maxLength(191),
-
-                                Forms\Components\Hidden::make('variable_id')->default(0),
-                            ])
-                            ->columnSpanFull(),
                     ]),
             ]);
     }
@@ -442,7 +495,7 @@ class ServerResource extends Resource
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
+                    // Tables\Actions\DeleteBulkAction::make(),
                 ]),
             ]);
     }
