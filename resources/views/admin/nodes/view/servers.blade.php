@@ -44,7 +44,7 @@
                     </tr>
                     @foreach($servers as $server)
                         <tr data-server="{{ $server->uuid }}">
-                            <td><code>{{ $server->uuidShort }}</code></td>
+                            <td><code>{{ $server->uuid_short }}</code></td>
                             <td><a href="{{ route('admin.servers.view', $server->id) }}">{{ $server->name }}</a></td>
                             <td><a href="{{ route('admin.users.view', $server->owner_id) }}">{{ $server->user->username }}</a></td>
                             <td><a href="{{ route('admin.eggs.view', $server->egg) }}">{{ $server->egg->name }}</a></td>

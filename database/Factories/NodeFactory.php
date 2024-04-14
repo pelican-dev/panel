@@ -36,9 +36,9 @@ class NodeFactory extends Factory
             'upload_size' => 100,
             'daemon_token_id' => Str::random(Node::DAEMON_TOKEN_ID_LENGTH),
             'daemon_token' => Crypt::encrypt(Str::random(Node::DAEMON_TOKEN_LENGTH)),
-            'daemonListen' => 8080,
-            'daemonSFTP' => 2022,
-            'daemonBase' => '/var/lib/panel/volumes',
+            'daemon_listen' => 8080,
+            'daemon_sftp' => 2022,
+            'daemon_base' => '/var/lib/panel/volumes',
         ];
     }
 }

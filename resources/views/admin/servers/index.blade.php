@@ -43,7 +43,7 @@
                             <th></th>
                         </tr>
                         @foreach ($servers as $server)
-                            <tr data-server="{{ $server->uuidShort }}">
+                            <tr data-server="{{ $server->uuid_short }}">
                                 <td><a href="{{ route('admin.servers.view', $server->id) }}">{{ $server->name }}</a></td>
                                 <td><code title="{{ $server->uuid }}">{{ $server->uuid }}</code></td>
                                 <td><a href="{{ route('admin.users.view', $server->user->id) }}">{{ $server->user->username }}</a></td>
@@ -61,7 +61,7 @@
                                     @endif
                                 </td>
                                 <td class="text-center">
-                                    <a class="btn btn-xs btn-default" href="/server/{{ $server->uuidShort }}"><i class="fa fa-wrench"></i></a>
+                                    <a class="btn btn-xs btn-default" href="/server/{{ $server->uuid_short }}"><i class="fa fa-wrench"></i></a>
                                 </td>
                             </tr>
                         @endforeach

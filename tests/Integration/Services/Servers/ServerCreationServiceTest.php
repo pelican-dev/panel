@@ -118,7 +118,7 @@ class ServerCreationServiceTest extends IntegrationTestCase
 
         $this->assertInstanceOf(Server::class, $response);
         $this->assertNotNull($response->uuid);
-        $this->assertSame($response->uuidShort, substr($response->uuid, 0, 8));
+        $this->assertSame($response->uuid_short, substr($response->uuid, 0, 8));
         $this->assertSame($egg->id, $response->egg_id);
         $this->assertCount(2, $response->variables);
         $this->assertSame('123', $response->variables[0]->server_value);

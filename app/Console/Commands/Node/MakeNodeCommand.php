@@ -58,9 +58,9 @@ class MakeNodeCommand extends Command
         $data['disk'] = $this->option('maxDisk') ?? $this->ask('Enter the maximum amount of disk space');
         $data['disk_overallocate'] = $this->option('overallocateDisk') ?? $this->ask('Enter the amount of memory to over allocate by, -1 will disable checking and 0 will prevent creating new server');
         $data['upload_size'] = $this->option('uploadSize') ?? $this->ask('Enter the maximum filesize upload', '100');
-        $data['daemonListen'] = $this->option('daemonListeningPort') ?? $this->ask('Enter the daemon listening port', '8080');
-        $data['daemonSFTP'] = $this->option('daemonSFTPPort') ?? $this->ask('Enter the daemon SFTP listening port', '2022');
-        $data['daemonBase'] = $this->option('daemonBase') ?? $this->ask('Enter the base folder', '/var/lib/panel/volumes');
+        $data['daemon_listen'] = $this->option('daemonListeningPort') ?? $this->ask('Enter the daemon listening port', '8080');
+        $data['daemon_sftp'] = $this->option('daemonSFTPPort') ?? $this->ask('Enter the daemon SFTP listening port', '2022');
+        $data['daemon_base'] = $this->option('daemonBase') ?? $this->ask('Enter the base folder', '/var/lib/panel/volumes');
 
         $node = $this->creationService->handle($data);
         $this->line('Successfully created a new node with the name ' . $data['name'] . ' and has an id of ' . $node->id . '.');

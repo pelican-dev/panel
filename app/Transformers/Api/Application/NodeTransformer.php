@@ -31,7 +31,7 @@ class NodeTransformer extends BaseTransformer
         $response = collect($node->toArray())->mapWithKeys(function ($value, $key) {
             // I messed up early in 2016 when I named this column as poorly
             // as I did. This is the tragic result of my mistakes.
-            $key = ($key === 'daemonSFTP') ? 'daemonSftp' : $key;
+            $key = ($key === 'daemon_sftp') ? 'daemon_sftp' : $key;
 
             return [snake_case($key) => $value];
         })->toArray();
