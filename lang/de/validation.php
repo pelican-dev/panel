@@ -53,8 +53,8 @@ return [
         'string' => ':attribute darf nicht größer als :max Zeichen sein.',
         'array' => ':attribute darf nicht mehr als :max Elemente haben.',
     ],
-    'mimes' => ':attribute muss eine Datei des Typs :values sein.',
-    'mimetypes' => ':attribute muss eine Datei des Typs :values sein.',
+    'mimes' => ':attribute muss den Dateityp :values haben.',
+    'mimetypes' => ':attribute muss den Dateityp :values haben.',
     'min' => [
         'numeric' => ':attribute muss mindestens :min sein.',
         'file' => ':attribute muss mindestens :min Kilobytes groß sein.',
@@ -75,7 +75,7 @@ return [
     'same' => ':attribute und :other müssen übereinstimmen.',
     'size' => [
         'numeric' => ':attribute muss :size sein.',
-        'file' => ':attribute muss :size kilobytes sein.',
+        'file' => ':attribute muss :size Kilobyte groß sein.',
         'string' => ':attribute muss :size Zeichen haben.',
         'array' => ':attribute muss :size Elemente enthalten.',
     ],
