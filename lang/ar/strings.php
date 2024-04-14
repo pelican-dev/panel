@@ -30,7 +30,7 @@ return [
     'close' => 'إغلاق',
     'settings' => 'الإعدادات',
     'configuration' => 'التكوين',
-    'sftp' => 'SFTP',
+    'sftp' => 'اتصال FTP محمى',
     'databases' => 'قواعد البيانات',
     'memo' => 'مذكرة',
     'created' => 'تم إنشاؤه',
@@ -91,5 +91,5 @@ return [
     'enable' => 'تمكين',
     'disable' => 'تعطيل',
     'save' => 'حفظ',
-    'copyright' => '&reg; 2024 - :year Pelican',
+    'copyright' => '&reg; 2024 - بيليكان سنة',
 ];
