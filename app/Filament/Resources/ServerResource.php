@@ -445,6 +445,66 @@ class ServerResource extends Resource
                             ])
                             ->required(),
                     ]),
+
+                Forms\Components\Textarea::make('startup')
+                    ->hintIcon('tabler-code')
+                    ->label('Startup Command')
+                    ->required()
+                    ->live()
+                    ->rows(function ($state) {
+                        return str($state)->explode("\n")->reduce(
+                            fn (int $carry, $line) => $carry + floor(strlen($line) / 125),
+                            0
+                        );
+                    })
+                    ->columnSpanFull(),
+
+                Forms\Components\KeyValue::make('environment')
+                    ->default([])
+                    ->columnSpanFull(),
+
+                Forms\Components\Section::make('Egg Variables')
+                    ->icon('tabler-eggs')
+                    ->iconColor('primary')
+                    ->collapsible()
+                    ->collapsed()
+                    ->schema([
+                        Forms\Components\Placeholder::make('Select an egg first to show its variables!')
+                            ->hidden(fn (Forms\Get $get) => !empty($get('server_variables'))),
+
+                        Forms\Components\Repeater::make('server_variables')
+                            ->relationship('serverVariables')
+                            ->grid(2)
+                            ->reorderable(false)
+                            ->addable(false)
+                            ->deletable(false)
+                            ->default([])
+                            ->hidden(fn ($state) => empty($state))
+                            ->schema([
+                                Forms\Components\TextInput::make('variable_value')
+                                    ->rules([
+                                        fn (Forms\Get $get): Closure => function (string $attribute, $value, Closure $fail) use ($get) {
+                                            $validator = Validator::make(['validatorkey' => $value], [
+                                                'validatorkey' => $get('rules'),
+                                            ]);
+
+                                            if ($validator->fails()) {
+                                                $message = str($validator->errors()->first())->replace('validatorkey', $get('name'));
+
+                                                $fail($message);
+                                            }
+                                        },
+                                    ])
+                                    ->label(fn (Forms\Get $get) => $get('name'))
+                                    ->hint(fn (Forms\Get $get) => $get('rules'))
+                                    ->prefix(fn (Forms\Get $get) => '{{' . $get('env_variable') . '}}')
+                                    ->helperText(fn (Forms\Get $get) => empty($get('description')) ? '—' : $get('description'))
+                                    ->maxLength(191),
+
+                                Forms\Components\Hidden::make('variable_id')->default(0),
+                            ])
+                            ->columnSpanFull(),
+                    ]),
             ]);
     }
 
