@@ -3,7 +3,7 @@
 return [
     'exceptions' => [
         'no_new_default_allocation' => 'Pokoušíte se odstranit výchozí alokaci pro tento server, ale není k dispozici žádná záložní alokace.',
-        'marked_as_failed' => 'Tento server byl označen jako s neúspěšnou předchozí instalací. Aktuální stav nelze v tomto stavu přepnout.',
+        'marked_as_failed' => 'Tento server byl označen jako neúspěšný předchozí instalace. Aktuální stav nelze v tomto stavu přepnout.',
         'bad_variable' => 'Došlo k chybě ověření proměnné :name.',
         'daemon_exception' => 'Při pokusu o komunikaci s daemonem došlo k výjimce, která vedla k HTTP/:code kódu odpovědi. Tato výjimka byla zaznamenána. (požadavek id: :request_id)',
         'default_allocation_not_found' => 'Požadovaná výchozí alokace nebyla nalezena v alokaci tohoto serveru.',
