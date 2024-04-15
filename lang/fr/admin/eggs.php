@@ -2,7 +2,7 @@
 
 return [
     'notices' => [
-        'imported' => 'Cet Egg et ses variables ont été importés avec succès.',
+        'imported' => 'Cet Œuf et ses variables ont été importés avec succès.',
         'updated_via_import' => 'Cet Œuf a été mis à jour en utilisant le fichier fourni.',
         'deleted' => 'L\'Œuf demandé a été supprimé du panneau.',
         'updated' => 'La configuration de l\'œuf a été mise à jour avec succès.',
