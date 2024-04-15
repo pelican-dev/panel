@@ -22,6 +22,6 @@ return [
     ],
 
     'throttle' => 'Çok fazla hatalı giriş yaptınız. Lütfen :seconds saniye sonra tekrar deneyiniz.',
-    'password_requirements' => 'Password must be at least 8 characters in length and should be unique to this site.',
-    '2fa_must_be_enabled' => 'The administrator has required that 2-Factor Authentication be enabled for your account in order to use the Panel.',
+    'password_requirements' => 'Şifre en az 8 karakter uzunluğunda olmalı.',
+    '2fa_must_be_enabled' => 'Yönetici, Paneli kullanabilmeniz için hesabınızda 2 Faktörlü Kimlik Doğrulamanın etkinleştirilmesini zorunlu kılmıştır.',
 ];
