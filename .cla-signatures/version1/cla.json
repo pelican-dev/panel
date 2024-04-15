@@ -1,0 +1,20 @@
+{
+  "signedContributors": [
+    {
+      "name": "iamkubi",
+      "id": 6176191,
+      "comment_id": 2053767631,
+      "created_at": "2024-04-13T21:39:53Z",
+      "repoId": 774258963,
+      "pullRequestNo": 64
+    },
+    {
+      "name": "notAreYouScared",
+      "id": 1757840,
+      "comment_id": 2053849162,
+      "created_at": "2024-04-14T01:59:04Z",
+      "repoId": 774258963,
+      "pullRequestNo": 66
+    }
+  ]
+}

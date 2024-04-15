@@ -35,7 +35,7 @@ return [
     'memo' => 'Nota',
     'created' => 'Creado',
     'expires' => 'Caduca',
-    'public_key' => 'Token',
+    'public_key' => 'Clave',
     'api_access' => 'Acceso API',
     'never' => 'nunca',
     'sign_out' => 'Cerrar sesión',

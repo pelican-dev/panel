@@ -36,7 +36,7 @@ return [
     'created' => 'Oprettet',
     'expires' => 'Udløber',
     'public_key' => 'Token',
-    'api_access' => 'Api Adgang',
+    'api_access' => 'Api adgang',
     'never' => 'aldrig',
     'sign_out' => 'Log ud',
     'admin_control' => 'Admin Kontrol',
