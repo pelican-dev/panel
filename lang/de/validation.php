@@ -14,7 +14,7 @@ return [
 
     'accepted' => ':attribute muss akzeptiert werden.',
     'active_url' => ':attribute ist keine gültige URL.',
-    'after' => ':attribute muss ein Datum nach dem :date sein.',
+    'after' => ':attribute muss ein Datum nach :date sein.',
     'after_or_equal' => ':attribute muss ein Datum nach oder gleich :date sein.',
     'alpha' => ':attribute darf nur Buchstaben enthalten.',
     'alpha_dash' => ':attribute darf nur Buchstaben, Zahlen und Bindestriche enthalten.',
