@@ -17,12 +17,12 @@ return [
         'token' => 'Tweestapsverificatie voltooid',
         'ip-blocked' => 'Geblokkeerd verzoek van niet in de lijst opgenomen IP-adres voor :identifier',
         'sftp' => [
-            'fail' => 'SFTP inloggen mislukt',
+            'fail' => 'Mislukte SFTP login',
         ],
     ],
     'user' => [
         'account' => [
-            'email-changed' => 'E-mailadres veranderd van :old naar :new',
+            'email-changed' => 'E-mailadres gewijzigd van :old naar :new',
             'password-changed' => 'Wachtwoord gewijzigd',
         ],
         'api-key' => [
