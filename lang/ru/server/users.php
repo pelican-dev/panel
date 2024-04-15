@@ -2,12 +2,12 @@
 
 return [
     'permissions' => [
-        'websocket_*' => 'Разрешает доступ к веб-сокету для этого сервера.',
+        'websocket_*' => 'Разрешает доступ к веб-сокету этого сервера.',
         'control_console' => 'Позволяет пользователю отправлять данные в консоль сервера.',
-        'control_start' => 'Позволяет пользователю запускать сервер.',
+        'control_start' => 'Позволяет пользователю запустить сервер.',
         'control_stop' => 'Позволяет пользователю остановить сервер.',
         'control_restart' => 'Позволяет пользователю перезапустить сервер.',
-        'control_kill' => 'Позволяет пользователю убить сервер.',
+        'control_kill' => 'Позволяет пользователю принудительно остановить сервер.',
         'user_create' => 'Allows the user to create new user accounts for the server.',
         'user_read' => 'Allows the user permission to view users associated with this server.',
         'user_update' => 'Allows the user to modify other users associated with this server.',
