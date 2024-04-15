@@ -25,9 +25,9 @@ return [
         'database_update' => 'Autorise un utilisateur à modifier une base de données. Si l\'utilisateur n\'a pas la permission "Voir le mot de passe", il ne sera pas en mesure de modifier le mot de passe.',
         'database_delete' => 'Autorise un utilisateur à supprimer une base de données.',
         'database_view_password' => 'Autorise un utilisateur à visualiser un mot de passe de base de données.',
-        'schedule_create' => 'Allows a user to create a new schedule for the server.',
-        'schedule_read' => 'Allows a user permission to view schedules for a server.',
-        'schedule_update' => 'Allows a user permission to make modifications to an existing server schedule.',
-        'schedule_delete' => 'Allows a user to delete a schedule for the server.',
+        'schedule_create' => 'Autorise un utilisateur à créer une planification pour le serveur.',
+        'schedule_read' => 'Autorise un utilisateur à voir les planifications d\'un serveur.',
+        'schedule_update' => 'Autorise un utilisateur à apporter des modifications à une planification d\'un serveur existant.',
+        'schedule_delete' => 'Autorise un utilisateur à supprimer une planification pour le serveur.',
     ],
 ];
