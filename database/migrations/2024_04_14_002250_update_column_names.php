@@ -12,6 +12,10 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('nodes', function (Blueprint $table) {
+            $table->string('daemonBase', 191)->default(null)->change();
+        });
+
+        Schema::table('nodes', function (Blueprint $table) {
             $table->renameColumn('daemonListen', 'daemon_listen');
             $table->renameColumn('daemonBase', 'daemon_base');
             $table->renameColumn('daemonSFTP', 'daemon_sftp');
