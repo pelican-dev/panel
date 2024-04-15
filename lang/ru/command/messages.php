@@ -42,9 +42,9 @@ return [
     'environment' => [
         'mail' => [
             'ask_smtp_host' => 'SMTP хост (например, smtp.gmail.com)',
-            'ask_smtp_port' => 'Порт SMTP',
+            'ask_smtp_port' => 'SMTP Порт',
             'ask_smtp_username' => 'SMTP Username',
-            'ask_smtp_password' => 'Пароль SMTP',
+            'ask_smtp_password' => 'SMTP пароль',
             'ask_mailgun_domain' => 'Mailgun Domain',
             'ask_mailgun_endpoint' => 'Mailgun Endpoint',
             'ask_mailgun_secret' => 'Mailgun Secret',
@@ -53,7 +53,7 @@ return [
             'ask_driver' => 'Which driver should be used for sending emails?',
             'ask_mail_from' => 'Email address emails should originate from',
             'ask_mail_name' => 'Name that emails should appear from',
-            'ask_encryption' => 'Encryption method to use',
+            'ask_encryption' => 'Метод шифрования',
         ],
     ],
 ];
