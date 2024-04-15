@@ -1,18 +1,18 @@
 <?php
 
 return [
-    'sign_in' => 'Sign In',
-    'go_to_login' => 'Go to Login',
+    'sign_in' => 'Log ind',
+    'go_to_login' => 'Gå til login',
     'failed' => 'No account matching those credentials could be found.',
 
     'forgot_password' => [
-        'label' => 'Forgot Password?',
+        'label' => 'Glemt adgangskode?',
         'label_help' => 'Enter your account email address to receive instructions on resetting your password.',
-        'button' => 'Recover Account',
+        'button' => 'Gendan konto',
     ],
 
     'reset_password' => [
-        'button' => 'Reset and Sign In',
+        'button' => 'Nulstil og log ind',
     ],
 
     'two_factor' => [
