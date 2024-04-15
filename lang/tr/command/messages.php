@@ -14,29 +14,29 @@ return [
         'ask_name_first' => 'Adı',
         'ask_name_last' => 'Soyadı',
         'ask_password' => 'Parola',
-        'ask_password_tip' => 'If you would like to create an account with a random password emailed to the user, re-run this command (CTRL+C) and pass the `--no-password` flag.',
-        'ask_password_help' => 'Passwords must be at least 8 characters in length and contain at least one capital letter and number.',
+        'ask_password_tip' => 'Kullanıcıya e-postayla gönderilen rastgele bir parolayla bir hesap oluşturmak istiyorsanız, bu komutu (CTRL+C) yeniden çalıştırın ve "--no-password" işaretini iletin.',
+        'ask_password_help' => 'Şifreler en az 8 karakter uzunluğunda olmalı ve en az bir büyük harf ve rakam içermelidir.',
         '2fa_help_text' => [
-            'This command will disable 2-factor authentication for a user\'s account if it is enabled. This should only be used as an account recovery command if the user is locked out of their account.',
-            'If this is not what you wanted to do, press CTRL+C to exit this process.',
+            'Bu komut, eğer etkinleştirilmişse, kullanıcı hesabı için 2 faktörlü kimlik doğrulamayı devre dışı bırakacaktır. Bu yalnızca kullanıcının hesabının kilitlenmesi durumunda hesap kurtarma komutu olarak kullanılmalıdır.',
+            'Yapmak istediğiniz bu değilse CTRL+C tuşlarına basarak bu işlemden çıkın.',
         ],
-        '2fa_disabled' => '2-Factor authentication has been disabled for :email.',
+        '2fa_disabled' => ':email kullanıcısına ait iki adımlı doğrulama devredışı bırakıldı.',
     ],
     'schedule' => [
-        'output_line' => 'Dispatching job for first task in `:schedule` (:hash).',
+        'output_line' => '`:schedule` (:hash) içindeki ilk görev için iş gönderiliyor.',
     ],
     'maintenance' => [
-        'deleting_service_backup' => 'Deleting service backup file :file.',
+        'deleting_service_backup' => ':file adlı servis yedeği silindi.',
     ],
     'server' => [
-        'rebuild_failed' => 'Rebuild request for ":name" (#:id) on node ":node" failed with error: :message',
+        'rebuild_failed' => '":node" düğümünde ":name" (#:id) için yeniden oluşturma isteği şu hatayla başarısız oldu: :message',
         'reinstall' => [
-            'failed' => 'Reinstall request for ":name" (#:id) on node ":node" failed with error: :message',
-            'confirm' => 'You are about to reinstall against a group of servers. Do you wish to continue?',
+            'failed' => '":name" (#:id) için ":node" düğümüne yeniden yükleme isteği hatayla başarısız oldu: :message',
+            'confirm' => 'Bir grup sunucuya yeniden kurulum yapmak üzeresiniz. Devam etmek istiyor musunuz?',
         ],
         'power' => [
-            'confirm' => 'You are about to perform a :action against :count servers. Do you wish to continue?',
-            'action_failed' => 'Power action request for ":name" (#:id) on node ":node" failed with error: :message',
+            'confirm' => ':count sunucularına karşı bir :action gerçekleştirmek üzeresiniz. Devam etmek ister misiniz?',
+            'action_failed' => '":node" düğümündeki ":name" (#:id) için güç eylemi isteği şu hatayla başarısız oldu: :message',
         ],
     ],
     'environment' => [
@@ -53,7 +53,7 @@ return [
             'ask_driver' => 'Hangi servis ile E-Posta gönderilsin?',
             'ask_mail_from' => 'E-posta adresi e-postaları şu kaynaktan gelmelidir:',
             'ask_mail_name' => 'E-postalarda görünecek ad',
-            'ask_encryption' => 'Encryption method to use',
+            'ask_encryption' => 'Kullanılacak şifreleme yöntemi',
         ],
     ],
 ];
