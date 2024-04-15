@@ -14,10 +14,10 @@ return [
         'reset-password' => 'Запрошен сброс пароля',
         'checkpoint' => 'Two-factor authentication requested',
         'recovery-token' => 'Used two-factor recovery token',
-        'token' => 'Solved two-factor challenge',
+        'token' => 'Пройдена двухфакторная проверка',
         'ip-blocked' => 'Blocked request from unlisted IP address for :identifier',
         'sftp' => [
-            'fail' => 'Failed SFTP log in',
+            'fail' => 'Не удалось войти в SFTP',
         ],
     ],
     'user' => [
@@ -34,14 +34,14 @@ return [
             'delete' => 'SSH ключ :fingerprint удален из аккаунта',
         ],
         'two-factor' => [
-            'create' => 'Enabled two-factor auth',
-            'delete' => 'Disabled two-factor auth',
+            'create' => 'Включена двухфакторная авторизация',
+            'delete' => 'Двухфакторная авторизация отключена',
         ],
     ],
     'server' => [
         'reinstall' => 'Сервер переустановлен',
         'console' => [
-            'command' => 'Executed ":command" on the server',
+            'command' => 'Выполнено ":command" на сервере',
         ],
         'power' => [
             'start' => 'Сервер запущен',
@@ -63,25 +63,25 @@ return [
         ],
         'database' => [
             'create' => 'Created new database :name',
-            'rotate-password' => 'Password rotated for database :name',
-            'delete' => 'Deleted database :name',
+            'rotate-password' => 'Сменен пароль для базы данных :name',
+            'delete' => 'Удалена база данных :name',
         ],
         'file' => [
             'compress_one' => 'Compressed :directory:file',
             'compress_other' => 'Compressed :count files in :directory',
             'read' => 'Просмотрел содержимое :file',
-            'copy' => 'Created a copy of :file',
-            'create-directory' => 'Created directory :directory:name',
+            'copy' => 'Создана копия :file',
+            'create-directory' => 'Создана папка :directory:name',
             'decompress' => 'Decompressed :files in :directory',
             'delete_one' => 'Deleted :directory:files.0',
             'delete_other' => 'Удалено :count файлов в :directory',
-            'download' => 'Downloaded :file',
+            'download' => 'Скачан :file',
             'pull' => 'Downloaded a remote file from :url to :directory',
             'rename_one' => 'Renamed :directory:files.0.from to :directory:files.0.to',
-            'rename_other' => 'Renamed :count files in :directory',
+            'rename_other' => 'Переименовано :count файлов в :directory',
             'write' => 'Wrote new content to :file',
             'upload' => 'Began a file upload',
-            'uploaded' => 'Uploaded :directory:file',
+            'uploaded' => 'Загружено :directory:file',
         ],
         'sftp' => [
             'denied' => 'Blocked SFTP access due to permissions',
