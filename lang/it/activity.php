@@ -8,25 +8,25 @@
  */
 return [
     'auth' => [
-        'fail' => 'Failed log in',
-        'success' => 'Logged in',
-        'password-reset' => 'Password reset',
-        'reset-password' => 'Requested password reset',
-        'checkpoint' => 'Two-factor authentication requested',
-        'recovery-token' => 'Used two-factor recovery token',
+        'fail' => 'Accesso non riuscito',
+        'success' => 'Accesso effettuato',
+        'password-reset' => 'Reimposta Password',
+        'reset-password' => 'Richiedi reimpostazione della password',
+        'checkpoint' => 'Autenticazione a due fattori necessaria',
+        'recovery-token' => 'Token di recupero a due fattori utilizzato',
         'token' => 'Solved two-factor challenge',
-        'ip-blocked' => 'Blocked request from unlisted IP address for :identifier',
+        'ip-blocked' => 'Richiesta bloccata dall\'indirizzo IP non elencato per :identifier',
         'sftp' => [
-            'fail' => 'Failed SFTP log in',
+            'fail' => 'Accesso SFTP non riuscito',
         ],
     ],
     'user' => [
         'account' => [
-            'email-changed' => 'Changed email from :old to :new',
-            'password-changed' => 'Changed password',
+            'email-changed' => 'Email modificata da :old a :new',
+            'password-changed' => 'Password modificata',
         ],
         'api-key' => [
-            'create' => 'Created new API key :identifier',
+            'create' => 'Creata una nuova chiave API :identifier',
             'delete' => 'Deleted API key :identifier',
         ],
         'ssh-key' => [
