@@ -92,7 +92,7 @@ return [
             'delete_one' => 'تم حذف :files.0',
             'delete_other' => 'تم حذف :count ملف',
             'create-directory_one' => 'تم إنشاء دليل :files.0',
-            'create-directory_other' => 'تم إنشاء :count دليل',
+            'create-directory_other' => 'تم إنشاء :count مجلد',
             'rename_one' => 'تم تغيير اسم :files.0.from إلى :files.0.to',
             'rename_other' => 'تم تغيير اسم أو نقل :count ملف',
         ],
