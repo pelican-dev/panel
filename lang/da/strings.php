@@ -89,7 +89,7 @@ return [
     ],
     'last_used' => 'Last Used',
     'enable' => 'Aktivér',
-    'disable' => 'Disable',
-    'save' => 'Save',
+    'disable' => 'Deaktivér',
+    'save' => 'Gem',
     'copyright' => '&reg; 2024 - :year Pelican',
 ];
