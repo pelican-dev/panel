@@ -43,11 +43,11 @@ return [
         'has_nodes' => 'Nie można usunąć lokalizacji, do której dołączone są aktywne węzły.',
     ],
     'users' => [
-        'node_revocation_failed' => 'Failed to revoke keys on <a href=":link">Node #:node</a>. :error',
+        'node_revocation_failed' => 'Nie udało się odwołać kluczy na <a href=":link">węźle #:node</a>. :error',
     ],
     'deployment' => [
-        'no_viable_nodes' => 'No nodes satisfying the requirements specified for automatic deployment could be found.',
-        'no_viable_allocations' => 'No allocations satisfying the requirements for automatic deployment were found.',
+        'no_viable_nodes' => 'Nie znaleziono węzłów spełniających wymagania dla automatycznego wdrażania.',
+        'no_viable_allocations' => 'Nie znaleziono portów spełniających wymagania dla automatycznego wdrażania.',
     ],
     'api' => [
         'resource_not_found' => 'Żądany zasób nie istnieje na tym serwerze.',
