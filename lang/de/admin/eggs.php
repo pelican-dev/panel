@@ -7,7 +7,7 @@ return [
         'deleted' => 'Das angeforderte Egg wurde erfolgreich aus dem Panel gelöscht.',
         'updated' => 'Egg Konfiguration wurde erfolgreich aktualisiert.',
         'script_updated' => 'Das Egg-Installationsskript wurde aktualisiert und wird bei der Installation von Servern ausgeführt.',
-        'egg_created' => 'Ein neues Egg wurde erfolgreich gelegt. Du musst alle laufenden Daemons neu starten, um dieses neue Ei zu übernehmen.',
+        'egg_created' => 'Ein neues Egg wurde erfolgreich erstellt.',
     ],
     'variables' => [
         'notices' => [
