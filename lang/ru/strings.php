@@ -9,7 +9,7 @@ return [
     'confirm_password' => 'Повторите пароль',
     'login' => 'Авторизация',
     'home' => 'Главная',
-    'servers' => 'Сервера',
+    'servers' => 'Серверы',
     'id' => 'ID',
     'name' => 'Имя',
     'node' => 'Узел',
