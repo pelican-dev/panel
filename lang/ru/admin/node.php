@@ -2,14 +2,14 @@
 
 return [
     'validation' => [
-        'fqdn_not_resolvable' => 'The FQDN or IP address provided does not resolve to a valid IP address.',
-        'fqdn_required_for_ssl' => 'A fully qualified domain name that resolves to a public IP address is required in order to use SSL for this node.',
+        'fqdn_not_resolvable' => 'Введенные IP адрес или домен не преобразуются в IP-адрес.',
+        'fqdn_required_for_ssl' => 'Для использования SSL на этом узле необходимо полное доменное имя, преобразующееся в действительный публичный IP-адрес.',
     ],
     'notices' => [
         'allocations_added' => 'Allocations have successfully been added to this node.',
-        'node_deleted' => 'Node has been successfully removed from the panel.',
-        'node_created' => 'Successfully created new node. You can automatically configure the daemon on this machine by visiting the \'Configuration\' tab. <strong>Before you can add any servers you must first allocate at least one IP address and port.</strong>',
-        'node_updated' => 'Node information has been updated. If any daemon settings were changed you will need to reboot it for those changes to take effect.',
-        'unallocated_deleted' => 'Удалены все не выделенные порты для <code>:ip</code>.',
+        'node_deleted' => 'Узел успешно удален из панели.',
+        'node_created' => 'Узел успешно создан. Вы можете автоматически настроить демон на нем, используя вкладку Конфигурация. <strong>Перед созданием серверов на этом узле Вы должны выделить как минимум один IP-адрес и порт.</strong>',
+        'node_updated' => 'Информация об узле успешно обновлена. Если Вы изменили настройки демона, нужно будет перезагрузить его на узле для применения изменений.',
+        'unallocated_deleted' => 'Удалены все не назначенные порты для <code>:ip</code>.',
     ],
 ];
