@@ -23,20 +23,20 @@ return [
         '2fa_disabled' => 'L\'authentification à 2 facteurs a été désactivée pour :email.',
     ],
     'schedule' => [
-        'output_line' => 'Dispatching job for first task in `:schedule` (:hash).',
+        'output_line' => 'Envoi du travail pour la première tâche `:schedule` (:hash).',
     ],
     'maintenance' => [
-        'deleting_service_backup' => 'Deleting service backup file :file.',
+        'deleting_service_backup' => 'Suppression du fichier de sauvegarde :file.',
     ],
     'server' => [
-        'rebuild_failed' => 'Rebuild request for ":name" (#:id) on node ":node" failed with error: :message',
+        'rebuild_failed' => 'Demande de Rebuild ":name" (#:id) sur le nœud ":node" échoué avec l\'erreur :message',
         'reinstall' => [
             'failed' => 'La demande de réinstallation pour ":name" (#:id) sur le nœud ":node" a échoué avec l\'erreur : :message',
             'confirm' => 'Vous êtes sur le point de procéder à une réinstallation sur un groupe de serveurs. Voulez-vous continuer ?',
         ],
         'power' => [
-            'confirm' => 'You are about to perform a :action against :count servers. Do you wish to continue?',
-            'action_failed' => 'Power action request for ":name" (#:id) on node ":node" failed with error: :message',
+            'confirm' => 'Vous êtes sur le point d\'effectuer l\'action :action sur :count serveurs. Souhaitez-vous continuer ?',
+            'action_failed' => 'Demande d\'action d\'alimentation pour ":name" (#:id) sur le noeud ":node" à échoué avec l\'erreur: :message',
         ],
     ],
     'environment' => [
