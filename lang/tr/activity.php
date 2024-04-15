@@ -15,7 +15,7 @@ return [
         'checkpoint' => '2 aşamalı doğrulama talep edildi',
         'recovery-token' => '2 aşamalı doğrulama',
         'token' => '2 aşamalı doğrulama',
-        'ip-blocked' => ':identifier olarak listelenmiş IP adresinden gelen istek engellendi',
+        'ip-blocked' => ':identifier olarak listelenmemiş IP adresinden gelen istek engellendi',
         'sftp' => [
             'fail' => 'SFTP girişi yapılamadı',
         ],
@@ -35,7 +35,7 @@ return [
         ],
         'two-factor' => [
             'create' => '2 aşamalı doğrulama etkinleştirildi',
-            'delete' => '2 aşamalı doğrulama devre dışı bırakıldı',
+            'delete' => 'İki Adımlı Doğrulama devre dışı bırakıldı',
         ],
     ],
     'server' => [
