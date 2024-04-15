@@ -30,7 +30,7 @@ return [
             'delete' => 'Удален API ключ :identifier',
         ],
         'ssh-key' => [
-            'create' => 'Добавлен ключ SSH :fingerprint в аккаунт',
+            'create' => 'Добавлен SSH ключ :fingerprint в аккаунт',
             'delete' => 'SSH ключ :fingerprint удален из аккаунта',
         ],
         'two-factor' => [
@@ -71,7 +71,7 @@ return [
             'compress_other' => 'Архивировано :count файлов из директории :directory',
             'read' => 'Просмотрено содержимое :file',
             'copy' => 'Создана копия :file',
-            'create-directory' => 'Создана папка :directory:name',
+            'create-directory' => 'Создана директория :directory:name',
             'decompress' => 'Разархивировано :files файлов в :directory',
             'delete_one' => 'Deleted :directory:files.0',
             'delete_other' => 'Удалено :count файлов из :directory',
