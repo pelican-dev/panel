@@ -8,33 +8,33 @@
  */
 return [
     'auth' => [
-        'fail' => 'Connexion échouée',
+        'fail' => 'Échec de la connexion',
         'success' => 'Connecté',
         'password-reset' => 'Réinitialisation du mot de passe',
         'reset-password' => 'Demande de réinitialisation de mot de passe',
         'checkpoint' => 'Authentification à deux facteurs demandée',
         'recovery-token' => 'Jeton de récupération à deux facteurs utilisé',
         'token' => 'Défi à deux facteurs résolu',
-        'ip-blocked' => 'Requête bloquée à partir d\'une adresse IP non listée pour :identifier',
+        'ip-blocked' => 'Demande bloquée provenant d\'une adresse IP non répertoriée pour :identifier',
         'sftp' => [
-            'fail' => 'Connexion SFTP échouée',
+            'fail' => 'Échec de la connexion SFTP',
         ],
     ],
     'user' => [
         'account' => [
-            'email-changed' => 'Adresse e-mail changée de :old à :new',
+            'email-changed' => 'Changement d\'adresse électronique de :old à :new',
             'password-changed' => 'Mot de passe modifié',
         ],
         'api-key' => [
-            'create' => 'Nouvelle clé API créée :identifier',
-            'delete' => 'Clé API supprimée :identifier',
+            'create' => 'Création d\'une nouvelle clé API :identifiant',
+            'delete' => 'Clé API supprimée :identifiant',
         ],
         'ssh-key' => [
-            'create' => 'Clé SSH :fingerprint ajoutée au compte',
-            'delete' => 'Clé SSH :fingerprint retirée du compte',
+            'create' => 'Ajout de la clé SSH :fingerprint au compte',
+            'delete' => 'Suppression de la clé SSH :fingerprint du compte',
         ],
         'two-factor' => [
-            'create' => 'Authentification à deux facteurs activée',
+            'create' => 'Activation de l\'authentification à deux facteurs',
             'delete' => 'Authentification à deux facteurs désactivée',
         ],
     ],
