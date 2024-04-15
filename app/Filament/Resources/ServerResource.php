@@ -7,6 +7,7 @@ use App\Models\Allocation;
 use App\Models\Egg;
 use App\Models\Node;
 use App\Models\Server;
+use App\Repositories\Daemon\DaemonServerRepository;
 use App\Services\Allocations\AssignmentService;
 use Closure;
 use Filament\Forms;
@@ -17,6 +18,7 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Str;
 
 class ServerResource extends Resource
 {
@@ -31,6 +33,67 @@ class ServerResource extends Resource
         return $form
             ->columns(6)
             ->schema([
+                Forms\Components\ToggleButtons::make('docker')
+                    ->label('Container Status')
+                    ->hiddenOn('create')
+                    ->disableOptionWhen(fn ($state, $value) => $state !== $value)
+                    ->formatStateUsing(function ($state, Server $server) {
+                        if ($server->node_id === null) {
+                            return 'unknown';
+                        }
+
+                        /** @var DaemonServerRepository $service */
+                        $service = resolve(DaemonServerRepository::class);
+                        $details = $service->setServer($server)->getDetails();
+
+                        return $details['state'] ?? 'unknown';
+                    })
+                    ->options([
+                        'running' => 'Running',
+                        'starting' => 'Starting',
+                        'stopping' => 'Stopping',
+                        'offline' => 'Offline',
+                        'unknown' => 'Unknown',
+                    ])
+
+                    ->colors([
+                        'running' => 'success',
+                        'offline' => 'danger',
+                        'starting' => 'primary',
+                        'stopping' => 'warning',
+                        'unknown' => 'primary',
+                    ])
+                    ->grouped()
+                    ->columnSpanFull()
+                    ->inline(),
+
+                Forms\Components\ToggleButtons::make('status')
+                    ->label('Server State')
+                    ->helperText('')
+                    ->hiddenOn('create')
+                    ->disableOptionWhen(fn ($state, $value) => $state !== $value)
+                    ->formatStateUsing(fn ($state) => $state ?? 'none')
+                    ->options([
+                        'none' => 'None',
+                        Server::STATUS_INSTALLING => str(Server::STATUS_INSTALLING)->title()->replace('_', ' '),
+                        Server::STATUS_INSTALL_FAILED => str(Server::STATUS_INSTALL_FAILED)->title()->replace('_', ' '),
+                        Server::STATUS_REINSTALL_FAILED => str(Server::STATUS_REINSTALL_FAILED)->title()->replace('_', ' '),
+                        Server::STATUS_SUSPENDED => str(Server::STATUS_SUSPENDED)->title()->replace('_', ' '),
+                        Server::STATUS_RESTORING_BACKUP => str(Server::STATUS_RESTORING_BACKUP)->title()->replace('_', ' '),
+                    ])
+
+                    ->colors([
+                        'none' => 'primary',
+                        Server::STATUS_INSTALLING => 'primary',
+                        Server::STATUS_INSTALL_FAILED => 'danger',
+                        Server::STATUS_REINSTALL_FAILED => 'danger',
+                        Server::STATUS_SUSPENDED => 'danger',
+                        Server::STATUS_RESTORING_BACKUP => 'primary',
+                    ])
+                    ->grouped()
+                    ->columnSpanFull()
+                    ->inline(),
+
                 Forms\Components\TextInput::make('external_id')
                     ->maxLength(191)
                     ->hidden(),
