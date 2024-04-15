@@ -7,9 +7,9 @@ return [
     ],
     'notices' => [
         'allocations_added' => 'このノードに割り当てを追加しました。',
-        'node_deleted' => 'Node has been successfully removed from the panel.',
-        'node_created' => 'Successfully created new node. You can automatically configure the daemon on this machine by visiting the \'Configuration\' tab. <strong>Before you can add any servers you must first allocate at least one IP address and port.</strong>',
-        'node_updated' => 'Node information has been updated. If any daemon settings were changed you will need to reboot it for those changes to take effect.',
-        'unallocated_deleted' => 'Deleted all un-allocated ports for <code>:ip</code>.',
+        'node_deleted' => 'ノードがパネルから削除されました。',
+        'node_created' => '正常に新しいノードを作成しました。「設定」タブでデーモンを自動的に設定できます。 <strong>サーバーを追加する前に、最初に少なくとも1つのIPアドレスとポートを割り当てる必要があります。</strong>',
+        'node_updated' => 'ノード情報が更新されました。デーモンの設定が変更された場合は、変更を反映するために再起動する必要があります。',
+        'unallocated_deleted' => '<code>:ip</code> に割り当てられていないポートをすべて削除しました。',
     ],
 ];
