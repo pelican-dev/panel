@@ -97,7 +97,7 @@ return [
             'rename_other' => 'Renamed or moved :count files',
         ],
         'allocation' => [
-            'create' => 'Added :allocation to the server',
+            'create' => ':allocation lokasyonuna sunucu eklendi',
             'notes' => 'Updated the notes for :allocation from ":old" to ":new"',
             'primary' => 'Set :allocation as the primary server allocation',
             'delete' => 'Deleted the :allocation allocation',
