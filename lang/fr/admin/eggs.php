@@ -3,10 +3,10 @@
 return [
     'notices' => [
         'imported' => 'Cet Egg et ses variables ont été importés avec succès.',
-        'updated_via_import' => 'Cet Oeuf a été mis à jour en utilisant le fichier fourni.',
-        'deleted' => 'L\'Egg demandé a été supprimé du panneau.',
-        'updated' => 'La configuration de l\'oeuf a été mise à jour avec succès.',
-        'script_updated' => 'Le script d\'installation d\'oeuf a été mis à jour et s\'exécutera chaque fois que les serveurs sont installés.',
+        'updated_via_import' => 'Cet Œuf a été mis à jour en utilisant le fichier fourni.',
+        'deleted' => 'L\'Œuf demandé a été supprimé du panneau.',
+        'updated' => 'La configuration de l\'œuf a été mise à jour avec succès.',
+        'script_updated' => 'Le script d\'installation d\'œuf a été mis à jour et s\'exécutera chaque fois que les serveurs sont installés.',
         'egg_created' => 'Un nouvel œuf a été pondu avec succès. Vous devrez redémarrer tous les daemons en cours d\'exécution pour appliquer ce nouvel œuf.',
     ],
     'variables' => [
