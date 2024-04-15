@@ -3,6 +3,7 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\EggResource\Pages;
+use AbdelhamidErrahmouni\FilamentMonacoEditor\MonacoEditor;
 use App\Models\Egg;
 use Filament\Forms;
 use Filament\Forms\Form;
@@ -98,7 +99,6 @@ class EggResource extends Resource
                     Forms\Components\Tabs\Tab::make('Install Script')
                         ->columns(3)
                         ->schema([
-                            Forms\Components\Textarea::make('script_install')->rows(20)->columnSpanFull(),
 
                             Forms\Components\Select::make('copy_script_from')
                                 ->placeholder('None')
@@ -113,9 +113,15 @@ class EggResource extends Resource
                                 ->required()
                                 ->maxLength(191)
                                 ->default('ash'),
+
+                            MonacoEditor::make('script_install')
+                                ->columnSpanFull()
+                                ->fontSize('16px')
+                                ->language('shell')
+                                ->view('filament.plugins.monaco-editor'),
                         ]),
 
-                ])->columnSpanFull(),
+                ])->columnSpanFull()->persistTabInQueryString(),
 
                 // Forms\Components\TagsInput::make('features'),
                 // Forms\Components\TagsInput::make('file_denylist')->placeholder('new-file.txt'),
