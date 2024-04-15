@@ -326,6 +326,8 @@ class ServerResource extends Resource
 
                 Forms\Components\Hidden::make('environment')->default([]),
 
+                Forms\Components\Hidden::make('start_on_completion')->default(true),
+
                 Forms\Components\Section::make('Egg Variables')
                     ->icon('tabler-eggs')
                     ->iconColor('primary')
