@@ -56,7 +56,7 @@ return [
     'mimes' => 'Le champ :attribute doit être un fichier de type : :values.',
     'mimetypes' => 'Le champ :attribute doit être un fichier de type : :values.',
     'min' => [
-        'numeric' => 'La champ :attribute doit être supérieure ou égale à :min.',
+        'numeric' => 'Le champ :attribute doit être supérieur ou égale à :min.',
         'file' => 'Le champ :attribute doit être d\'au moins :min kilo-octets.',
         'string' => 'Le champ :attribute doit contenir au moins :min caractères.',
         'array' => 'Le champ :attribute doit avoir au moins :min éléments.',
@@ -65,7 +65,7 @@ return [
     'numeric' => 'Le champ :attribute doit être un nombre.',
     'present' => 'Le champ :attribute doit être présent.',
     'regex' => 'Le format du champ :attribute est invalide.',
-    'required' => 'Le champ :attribute est obligatoire.',
+    'required' => 'Le champ :attribute est requis.',
     'required_if' => 'Le champ :attribute est requis lorsque :other est :value.',
     'required_unless' => 'Le champ :attribute est requis sauf si :other est dans :values.',
     'required_with' => 'Le champ :attribute est requis lorsque :values est présent.',
