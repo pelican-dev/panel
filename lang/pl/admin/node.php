@@ -3,7 +3,7 @@
 return [
     'validation' => [
         'fqdn_not_resolvable' => 'Podany adres FQDN lub IP nie jest poprawnym adresem IP.',
-        'fqdn_required_for_ssl' => 'Aby używać SSL dla tego węzła, wymagana jest pełna nazwa domeny, która rozwiązuje się do publicznego adresu IP.',
+        'fqdn_required_for_ssl' => 'Aby używać SSL dla tego węzła, wymagana jest pełna nazwa domeny, która nawiązuje do publicznego adresu IP.',
     ],
     'notices' => [
         'allocations_added' => 'Pomyślnie dodano alokacje do tego węzła.',
