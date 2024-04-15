@@ -3,7 +3,7 @@
 return [
     'sign_in' => 'Zaloguj',
     'go_to_login' => 'Przejdź do logowania',
-    'failed' => 'No account matching those credentials could be found.',
+    'failed' => 'Nie znaleziono konta pasującego do tych danych.',
 
     'forgot_password' => [
         'label' => 'Nie pamiętasz hasła?',
