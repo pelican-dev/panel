@@ -10,7 +10,7 @@ return [
     'auth' => [
         'fail' => 'Connexion échouée',
         'success' => 'Connecté',
-        'password-reset' => 'Réinitialiser le mot de passe',
+        'password-reset' => 'Réinitialisation du mot de passe',
         'reset-password' => 'Demande de réinitialisation de mot de passe',
         'checkpoint' => 'Authentification à deux facteurs demandée',
         'recovery-token' => 'Jeton de récupération à deux facteurs utilisé',
