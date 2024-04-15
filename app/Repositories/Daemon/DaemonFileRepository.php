@@ -103,10 +103,8 @@ class DaemonFileRepository extends DaemonRepository
             return $this->getHttpClient()->post(
                 sprintf('/api/servers/%s/files/create-directory', $this->server->uuid),
                 [
-                    'json' => [
-                        'name' => $name,
-                        'path' => $path,
-                    ],
+                    'name' => $name,
+                    'path' => $path,
                 ]
             );
         } catch (TransferException $exception) {
@@ -151,9 +149,7 @@ class DaemonFileRepository extends DaemonRepository
             return $this->getHttpClient()->post(
                 sprintf('/api/servers/%s/files/copy', $this->server->uuid),
                 [
-                    'json' => [
-                        'location' => $location,
-                    ],
+                    'location' => $location,
                 ]
             );
         } catch (TransferException $exception) {
@@ -174,10 +170,8 @@ class DaemonFileRepository extends DaemonRepository
             return $this->getHttpClient()->post(
                 sprintf('/api/servers/%s/files/delete', $this->server->uuid),
                 [
-                    'json' => [
-                        'root' => $root ?? '/',
-                        'files' => $files,
-                    ],
+                    'root' => $root ?? '/',
+                    'files' => $files,
                 ]
             );
         } catch (TransferException $exception) {
@@ -195,18 +189,17 @@ class DaemonFileRepository extends DaemonRepository
         Assert::isInstanceOf($this->server, Server::class);
 
         try {
-            $response = $this->getHttpClient()->post(
-                sprintf('/api/servers/%s/files/compress', $this->server->uuid),
-                [
-                    'json' => [
+            $response = $this->getHttpClient()
+                // Wait for up to 15 minutes for the archive to be completed when calling this endpoint
+                // since it will likely take quite awhile for large directories.
+                ->timeout(60 * 15)
+                ->post(
+                    sprintf('/api/servers/%s/files/compress', $this->server->uuid),
+                    [
                         'root' => $root ?? '/',
                         'files' => $files,
-                    ],
-                    // Wait for up to 15 minutes for the archive to be completed when calling this endpoint
-                    // since it will likely take quite awhile for large directories.
-                    'timeout' => 60 * 15,
-                ]
-            );
+                    ]
+                );
         } catch (TransferException $exception) {
             throw new DaemonConnectionException($exception);
         }
@@ -224,18 +217,17 @@ class DaemonFileRepository extends DaemonRepository
         Assert::isInstanceOf($this->server, Server::class);
 
         try {
-            return $this->getHttpClient()->post(
-                sprintf('/api/servers/%s/files/decompress', $this->server->uuid),
-                [
-                    'json' => [
+            return $this->getHttpClient()
+                // Wait for up to 15 minutes for the decompress to be completed when calling this endpoint
+                // since it will likely take quite awhile for large directories.
+                ->timeout((int) CarbonInterval::minutes(15)->totalSeconds)
+                ->post(
+                    sprintf('/api/servers/%s/files/decompress', $this->server->uuid),
+                    [
                         'root' => $root ?? '/',
                         'file' => $file,
-                    ],
-                    // Wait for up to 15 minutes for the decompress to be completed when calling this endpoint
-                    // since it will likely take quite awhile for large directories.
-                    'timeout' => (int) CarbonInterval::minutes(15)->totalSeconds,
-                ]
-            );
+                    ]
+                );
         } catch (TransferException $exception) {
             throw new DaemonConnectionException($exception);
         }
@@ -254,10 +246,8 @@ class DaemonFileRepository extends DaemonRepository
             return $this->getHttpClient()->post(
                 sprintf('/api/servers/%s/files/chmod', $this->server->uuid),
                 [
-                    'json' => [
-                        'root' => $root ?? '/',
-                        'files' => $files,
-                    ],
+                    'root' => $root ?? '/',
+                    'files' => $files,
                 ]
             );
         } catch (TransferException $exception) {
@@ -286,7 +276,7 @@ class DaemonFileRepository extends DaemonRepository
             return $this->getHttpClient()->post(
                 sprintf('/api/servers/%s/files/pull', $this->server->uuid),
                 [
-                    'json' => array_filter($attributes, fn ($value) => !is_null($value)),
+                    array_filter($attributes, fn ($value) => !is_null($value)),
                 ]
             );
         } catch (TransferException $exception) {
