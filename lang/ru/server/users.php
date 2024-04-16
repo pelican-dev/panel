@@ -25,9 +25,9 @@ return [
         'database_update' => 'Allows a user permission to make modifications to a database. If the user does not have the "View Password" permission as well they will not be able to modify the password.',
         'database_delete' => 'Allows a user permission to delete a database instance.',
         'database_view_password' => 'Allows a user permission to view a database password in the system.',
-        'schedule_create' => 'Allows a user to create a new schedule for the server.',
-        'schedule_read' => 'Allows a user permission to view schedules for a server.',
+        'schedule_create' => 'Позволяет пользователю создавать новые расписания сервера.',
+        'schedule_read' => 'Позволяет пользователю просматривать расписания сервера.',
         'schedule_update' => 'Allows a user permission to make modifications to an existing server schedule.',
-        'schedule_delete' => 'Allows a user to delete a schedule for the server.',
+        'schedule_delete' => 'Позволяет пользователю удалять расписания сервера.',
     ],
 ];
