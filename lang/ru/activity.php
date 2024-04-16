@@ -103,15 +103,15 @@ return [
             'delete' => 'Deleted the :allocation allocation',
         ],
         'schedule' => [
-            'create' => 'Created the :name schedule',
-            'update' => 'Updated the :name schedule',
-            'execute' => 'Manually executed the :name schedule',
-            'delete' => 'Deleted the :name schedule',
+            'create' => 'Создано расписание :name',
+            'update' => 'Изменено расписание :name',
+            'execute' => 'Вручную выполнено расписание :name',
+            'delete' => 'Удалено расписание :name',
         ],
         'task' => [
-            'create' => 'Created a new ":action" task for the :name schedule',
-            'update' => 'Updated the ":action" task for the :name schedule',
-            'delete' => 'Deleted a task for the :name schedule',
+            'create' => 'Создана новая задача ":action" для расписания :name',
+            'update' => 'Изменена задача ":action" для расписания :name',
+            'delete' => 'Удалена задача в расписании :name',
         ],
         'settings' => [
             'rename' => 'Название сервера изменено с :old на :new',
