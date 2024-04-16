@@ -12,9 +12,9 @@ return [
         'success' => 'Giriş yapıldı',
         'password-reset' => 'Şifre sıfırlama',
         'reset-password' => 'Şifre sıfırlama istendi',
-        'checkpoint' => '2 aşamalı doğrulama talep edildi',
-        'recovery-token' => '2 aşamalı doğrulama',
-        'token' => '2 aşamalı doğrulama',
+        'checkpoint' => 'İki faktörlü kimlik doğrulama istendi',
+        'recovery-token' => 'İki faktörlü kurtarma tokeni kullanıldı',
+        'token' => 'İki faktörlü doğrulama çözüldü',
         'ip-blocked' => ':identifier olarak listelenmemiş IP adresinden gelen istek engellendi',
         'sftp' => [
             'fail' => 'SFTP girişi yapılamadı',
@@ -34,14 +34,14 @@ return [
             'delete' => 'SSH anahtarı :fingerprint kaldırıldı',
         ],
         'two-factor' => [
-            'create' => '2 aşamalı doğrulama etkinleştirildi',
+            'create' => 'İki Adımlı Doğrulama etkinleştirildi',
             'delete' => 'İki Adımlı Doğrulama devre dışı bırakıldı',
         ],
     ],
     'server' => [
-        'reinstall' => 'Sunucu yeniden indirildi',
+        'reinstall' => 'Sunucu yeniden kuruldu',
         'console' => [
-            'command' => 'Sunucuda :command komutu kullanıldı',
+            'command' => 'Sunucuda :command komutu çalıştırıldı',
         ],
         'power' => [
             'start' => 'Sunucu başlatıldı',
