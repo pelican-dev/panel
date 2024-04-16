@@ -25,11 +25,11 @@ return [
     'between' => [
         'numeric' => ':attribute, :min ve :max arasında olmalıdır.',
         'file' => ':attribute, :min ve :max kilobyte boyutları arasında olmalıdır.',
-        'string' => ':attribute :min karakter ve :max karakter olmalıdır.',
+        'string' => ':attribute :min karakter ve :max karakter arasında olmalıdır.',
         'array' => ':attribute, :min ve :max öge arasında olmalıdır.',
     ],
     'boolean' => ':attribute sadece doğru veya yanlış olmalıdır.',
-    'confirmed' => ':attribute doğrulaması eşleşmedi.',
+    'confirmed' => ':attribute doğrulaması uyuşmuyor.',
     'date' => ':attribute geçersiz bir tarih.',
     'date_format' => ':attribute :format formatına uymuyor.',
     'different' => ':attribute ve :other birbirinden farklı olmalıdır.',
