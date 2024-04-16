@@ -47,7 +47,7 @@ return [
             'start' => 'Sunucu başlatıldı',
             'stop' => 'Sunucu durduruldu',
             'restart' => 'Sunucu yeniden başlatıldı',
-            'kill' => 'Sunucu işlemi',
+            'kill' => 'Sunucu zorla kapatıldı',
         ],
         'backup' => [
             'download' => 'Yedek :name indirildi',
@@ -58,7 +58,7 @@ return [
             'start' => 'Yeni yedek :name başlatıldı',
             'complete' => ':name yedeği başarılı olarak kaydedildi',
             'fail' => ':name yedeklemesi başarısız olarak işaretlendi',
-            'lock' => ':name yedeğini kilitledi',
+            'lock' => ':name yedeği kilitlendi',
             'unlock' => ':name yedeklemesinin kilidi açıldı',
         ],
         'database' => [
