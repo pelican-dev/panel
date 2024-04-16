@@ -133,7 +133,6 @@ class EggResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
-            ->searchable(false)
             ->defaultPaginationPageOption(25)
             ->columns([
                 Tables\Columns\TextColumn::make('id')
@@ -142,13 +141,12 @@ class EggResource extends Resource
                     ->searchable(),
                 Tables\Columns\TextColumn::make('name')
                     ->icon('tabler-egg')
+                    ->description(fn ($record): string => $record->description)
+                    ->wrap()
                     ->searchable(),
                 Tables\Columns\TextColumn::make('author')
                     ->hidden()
                     ->searchable(),
-                Tables\Columns\TextColumn::make('description')
-                    ->words(50)
-                    ->wrap(),
                 Tables\Columns\TextColumn::make('servers_count')
                     ->counts('servers')
                     ->icon('tabler-server')

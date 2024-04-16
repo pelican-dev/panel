@@ -72,33 +72,44 @@ class ApiKeyResource extends Resource
                     ->required()
                     ->default(ApiKey::TYPE_APPLICATION),
 
-                Forms\Components\Fieldset::make('Permissions')->schema(
-                    collect(ApiKey::RESOURCES)->map(fn ($resource) => Forms\Components\ToggleButtons::make("r_$resource")
-                        ->label(str($resource)->replace('_', ' ')->title())
-                        ->options([
-                            0 => 'None',
-                            1 => 'Read',
-                            // 2 => 'Write',
-                            3 => 'Read & Write',
-                        ])
-                        ->icons([
-                            0 => 'tabler-book-off',
-                            1 => 'tabler-book',
-                            2 => 'tabler-writing',
-                            3 => 'tabler-writing',
-                        ])
-                        ->colors([
-                            0 => 'success',
-                            1 => 'warning',
-                            2 => 'danger',
-                            3 => 'danger',
-                        ])
-                        ->inline()
-                        ->required()
-                        ->disabledOn('edit')
-                        ->default(0),
-                    )->all(),
-                ),
+                Forms\Components\Fieldset::make('Permissions')
+                    ->columns([
+                        'default' => 1,
+                        'sm' => 1,
+                        'md' => 2,
+                    ])
+                    ->schema(
+                        collect(ApiKey::RESOURCES)->map(fn ($resource) => Forms\Components\ToggleButtons::make("r_$resource")
+                            ->label(str($resource)->replace('_', ' ')->title())
+                            ->options([
+                                0 => 'None',
+                                1 => 'Read',
+                                // 2 => 'Write',
+                                3 => 'Read & Write',
+                            ])
+                            ->icons([
+                                0 => 'tabler-book-off',
+                                1 => 'tabler-book',
+                                2 => 'tabler-writing',
+                                3 => 'tabler-writing',
+                            ])
+                            ->colors([
+                                0 => 'success',
+                                1 => 'warning',
+                                2 => 'danger',
+                                3 => 'danger',
+                            ])
+                            ->inline()
+                            ->required()
+                            ->disabledOn('edit')
+                            ->columnSpan([
+                                'default' => 1,
+                                'sm' => 1,
+                                'md' => 1,
+                            ])
+                            ->default(0),
+                        )->all(),
+                    ),
 
                 Forms\Components\TagsInput::make('allowed_ips')
                     ->placeholder('Example: 127.0.0.1 or 192.168.1.1')
