@@ -11,8 +11,8 @@ return [
     ],
     'variables' => [
         'notices' => [
-            'variable_deleted' => 'Variablen :variable er blevet slettet og vil ikke længere være tilgængelig for servere, der er blevet genopbygget.',
-            'variable_updated' => 'Variablen :variable er blevet opdateret. Du skal genopbygge eventuelle servere, der bruger denne variabel for at anvende ændringer.',
+            'variable_deleted' => 'Variablen :variable er blevet slettet og vil ikke længere være tilgængelig for servere der er blevet genstartet.',
+            'variable_updated' => 'Variablen :variable er blevet opdateret. Du skal genstarte eventuelle servere, der bruger denne variabel for at anvende ændringer.',
             'variable_created' => 'Ny variabel er blevet oprettet og tildelt dette egg.',
         ],
     ],
