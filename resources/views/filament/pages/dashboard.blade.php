@@ -50,58 +50,39 @@
     <p>You can expand the following sections:</p>
 
     @if ($inDevelopment)
-        <x-filament::section icon="tabler-code" icon-color="primary" id="intro-developers" collapsible persist-collapsed collapsed>
+        <x-filament::section
+            icon="tabler-code"
+            icon-color="primary"
+            id="intro-developers"
+            collapsible
+            persist-collapsed
+            collapsed
+           :header-actions="$devActions"
+        >
             <x-slot name="heading">Information for Developers</x-slot>
 
             <p>Thank you for trying out the development version!</p>
 
-            <p>
-                <br />
-                If you run into any issues, please report them on GitHub.
-                <br />
-                <br />
-            </p>
+            <p><br /></p>
 
-            <p>
-                <x-filament::button
-                    style="margin-top: 5px;"
-                    icon="tabler-brand-github"
-                    color="gray"
-                    tag="a"
-                    href="https://github.com/pelican-dev/panel/issues/new/choose"
-                >
-                    Report Issue on GitHub
-                </x-filament::button>
-            </p>
+            <p>If you run into any issues, please report them on GitHub.</p>
 
         </x-filament::section>
     @endif
 
     {{-- No Nodes Created --}}
     @if ($nodesCount <= 0)
-        <x-filament::section icon="tabler-server-2" icon-color="primary" id="intro-first-node" collapsible persist-collapsed>
-            <x-slot name="heading">Create First New Node</x-slot>
+        <x-filament::section
+            icon="tabler-server-2"
+            icon-color="primary"
+            id="intro-first-node"
+            collapsible
+            persist-collapsed
+            :header-actions="$nodeActions"
+        >
+            <x-slot name="heading">No Nodes Detected</x-slot>
 
-            <p>It looks like you don't have any Nodes set up yet, but don't worry because you can follow along below:</p>
-
-            <p>
-                <br />
-                If you run into any issues, please report them on GitHub.
-                <br />
-                <br />
-            </p>
-
-            <p>
-                <x-filament::button
-                    style="margin-top: 5px;"
-                    icon="tabler-server-2"
-                    color="primary"
-                    tag="a"
-                    :href="route('filament.admin.resources.nodes.create')"
-                >
-                    Create Node in Pelican
-                </x-filament::button>
-            </p>
+            <p>It looks like you don't have any Nodes set up yet, but don't worry because you click the action button to create your first one!</p>
 
         </x-filament::section>
     @endif
@@ -109,7 +90,14 @@
     {{-- No Nodes Active --}}
 
 
-    <x-filament::section icon="tabler-cash" icon-color="success" id="intro-support" collapsible persist-collapsed>
+    <x-filament::section
+        icon="tabler-heart-filled"
+        icon-color="danger"
+        id="intro-support"
+        collapsible
+        persist-collapsed
+        :header-actions="$supportActions"
+    >
         <x-slot name="heading">Support Pelican</x-slot>
 
         <p>Thank you for using Pelican, this could only be achieved through the support of you, our contributors, and the rest of our supporters!</p>
@@ -118,46 +106,21 @@
 
         <p>We appreciate any and all support from anybody.</p>
 
-        <p><br /></p>
-
-        <x-filament::button
-            style="margin-top: 5px;"
-            color="success"
-            icon="tabler-pig-money"
-            tag="a"
-            href="https://pelican.dev/donate"
-        >
-            Donate Directly
-        </x-filament::button>
-
     </x-filament::section>
 
 
 
-    <x-filament::section icon="tabler-question-mark" icon-color="info" id="intro-help" collapsible persist-collapsed>
+    <x-filament::section
+        icon="tabler-question-mark"
+        icon-color="info"
+        id="intro-help"
+        collapsible
+        persist-collapsed
+        :header-actions="$helpActions"
+    >
         <x-slot name="heading">Need Help?</x-slot>
 
         <p>Check out the documentation first! If you still need assistance then, fly onto our Discord server!</p>
-
-        <p><br /></p>
-
-        <x-filament::button
-            color="primary"
-            icon="tabler-speedboat"
-            tag="a"
-            href="https://pelican.dev/docs"
-        >
-            Read Documentation
-        </x-filament::button>
-
-        <x-filament::button
-            color="info"
-            icon="tabler-brand-discord"
-            tag="a"
-            href="https://discord.gg/pelican-panel"
-        >
-            Get Help in Discord
-        </x-filament::button>
 
     </x-filament::section>
 
