@@ -1,0 +1,68 @@
+<?php
+
+namespace App\Console\Commands;
+
+use Illuminate\Console\Command;
+use Illuminate\Support\Facades\Artisan;
+
+class Debug extends Command
+{
+    /**
+     * The name and signature of the console command.
+     *
+     * @var string
+     */
+    protected $signature = 'debug';
+
+    /**
+     * The console command description.
+     *
+     * @var string
+     */
+    protected $description = 'Enable or disable debug mode.';
+
+    /**
+     * Handle command execution.
+     *
+     * @return int
+     */
+    public function handle()
+    {
+        $envFilePath = base_path('.env');
+
+        if (!file_exists($envFilePath)) {
+            $this->error('.env file not found.');
+            return 1;
+        }
+
+        $envContents = file_get_contents($envFilePath);
+
+        $question = $this->choice('What do you want to do with debug mode?', [
+            'Enable it',
+            'Disable it',
+            'Cancel command',
+        ]);
+
+        if ($question === 'Enable it') {
+            Artisan::call('down');
+            $envContents = str_replace('APP_DEBUG=false', 'APP_DEBUG=true', $envContents);
+            $this->info('Debug mode enabled.');
+            Artisan::call('up');
+        } elseif ($question === 'Disable it') {
+            Artisan::call('down');
+            $envContents = str_replace('APP_DEBUG=true', 'APP_DEBUG=false', $envContents);
+            $this->info('Debug mode disabled.');
+            Artisan::call('up');
+        } elseif ($question === 'Cancel command') {
+            $this->info('Command successfully canceled.');
+            return 0;
+        } else {
+            $this->error('Invalid choice. Debug mode is unchanged.');
+            return 1;
+        }
+
+        file_put_contents($envFilePath, $envContents);
+
+        return 0;
+    }
+}
