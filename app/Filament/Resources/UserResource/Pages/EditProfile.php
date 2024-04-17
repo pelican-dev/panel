@@ -35,6 +35,7 @@ class EditProfile extends \Filament\Pages\Auth\EditProfile
                                         ->autofocus(),
 
                                     TextInput::make('email')
+                                        ->prefixIcon('tabler-mail')
                                         ->email()
                                         ->required()
                                         ->maxLength(191)
@@ -42,6 +43,7 @@ class EditProfile extends \Filament\Pages\Auth\EditProfile
 
                                     TextInput::make('password')
                                         ->password()
+                                        ->prefixIcon('tabler-password')
                                         ->revealable(filament()->arePasswordsRevealable())
                                         ->rule(Password::default())
                                         ->autocomplete('new-password')
@@ -52,6 +54,7 @@ class EditProfile extends \Filament\Pages\Auth\EditProfile
 
                                     TextInput::make('passwordConfirmation')
                                         ->password()
+                                        ->prefixIcon('tabler-password-fingerprint')
                                         ->revealable(filament()->arePasswordsRevealable())
                                         ->required()
                                         ->visible(fn (Get $get): bool => filled($get('password')))
@@ -59,7 +62,16 @@ class EditProfile extends \Filament\Pages\Auth\EditProfile
 
                                     Select::make('language')
                                         ->required()
+                                        ->prefixIcon('tabler-flag')
+                                        ->live()
                                         ->default('en')
+                                        ->helperText(fn (User $user, $state) =>
+                                            new HtmlString($user->isLanguageTranslated($state) ? '' : "
+                                                Your language ($state) has not been translated yet!
+                                                But never fear, you can help fix that by
+                                                <a style='color: rgb(56, 189, 248)' href='https://crowdin.com/project/pelican-dev'>contributing directly here</a>.
+                                            ")
+                                        )
                                         ->options(fn (User $user) => $user->getAvailableLanguages()),
                                 ]),
 
