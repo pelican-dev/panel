@@ -4,9 +4,9 @@ return [
     'notices' => [
         'imported' => 'Bu Egg ve ilişkili değişkenleri başarıyla içe aktarıldı.',
         'updated_via_import' => 'Bu Egg sağlanan dosya kullanılarak güncellendi.',
-        'deleted' => 'İstenen Egg Panelden başarıyla silindi.',
+        'deleted' => 'İstenen Egg panelden başarıyla silindi.',
         'updated' => 'Egg konfigürasyonu başarıyla güncellendi.',
-        'script_updated' => 'Egg kurulum betiği güncellendi ve sunucular kurulduğunda çalışacak.',
+        'script_updated' => 'Egg kurulum scripti güncellendi ve sunucular kurulduğunda çalıştırılacaktır..',
         'egg_created' => 'Yeni bir Egg başarıyla eklendi. Bu yeni Egg\'i uygulamak için çalışan tüm arka plan programlarını yeniden başlatmanız gerekecek.',
     ],
     'variables' => [
