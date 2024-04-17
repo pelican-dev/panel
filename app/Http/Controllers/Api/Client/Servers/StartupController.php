@@ -26,7 +26,7 @@ class StartupController extends ClientApiController
     /**
      * Returns the startup information for the server including all the variables.
      */
-    public function index(GetStartupRequest $request, Server $server): array
+    public function index(Server $server): array
     {
         $startup = $this->startupCommandService->handle($server);
 

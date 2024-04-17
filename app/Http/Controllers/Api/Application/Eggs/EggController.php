@@ -13,7 +13,7 @@ class EggController extends ApplicationApiController
     /**
      * Return all eggs
      */
-    public function index(GetEggsRequest $request): array
+    public function index(): array
     {
         return $this->fractal->collection(Egg::all())
             ->transformWith($this->getTransformer(EggTransformer::class))
@@ -23,7 +23,7 @@ class EggController extends ApplicationApiController
     /**
      * Return a single egg that exists
      */
-    public function view(GetEggRequest $request, Egg $egg): array
+    public function view(Egg $egg): array
     {
         return $this->fractal->item($egg)
             ->transformWith($this->getTransformer(EggTransformer::class))

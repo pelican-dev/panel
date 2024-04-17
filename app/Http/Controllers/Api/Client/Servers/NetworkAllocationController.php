@@ -31,7 +31,7 @@ class NetworkAllocationController extends ClientApiController
      * Lists all the allocations available to a server and whether
      * they are currently assigned as the primary for this server.
      */
-    public function index(GetNetworkRequest $request, Server $server): array
+    public function index(Server $server): array
     {
         return $this->fractal->collection($server->allocations)
             ->transformWith($this->getTransformer(AllocationTransformer::class))
@@ -43,7 +43,7 @@ class NetworkAllocationController extends ClientApiController
      *
      * @throws \App\Exceptions\Model\DataValidationException
      */
-    public function update(UpdateAllocationRequest $request, Server $server, Allocation $allocation): array
+    public function update(UpdateAllocationRequest $request, Allocation $allocation): array
     {
         $original = $allocation->notes;
 
@@ -66,7 +66,7 @@ class NetworkAllocationController extends ClientApiController
      *
      * @throws \App\Exceptions\Model\DataValidationException
      */
-    public function setPrimary(SetPrimaryAllocationRequest $request, Server $server, Allocation $allocation): array
+    public function setPrimary(Server $server, Allocation $allocation): array
     {
         $server->allocation()->associate($allocation);
         $server->save();
@@ -87,7 +87,7 @@ class NetworkAllocationController extends ClientApiController
      *
      * @throws \App\Exceptions\DisplayException
      */
-    public function store(NewAllocationRequest $request, Server $server): array
+    public function store(Server $server): array
     {
         if ($server->allocations()->count() >= $server->allocation_limit) {
             throw new DisplayException('Cannot assign additional allocations to this server: limit has been reached.');
@@ -110,7 +110,7 @@ class NetworkAllocationController extends ClientApiController
      *
      * @throws \App\Exceptions\DisplayException
      */
-    public function delete(DeleteAllocationRequest $request, Server $server, Allocation $allocation): JsonResponse
+    public function delete(Server $server, Allocation $allocation): JsonResponse
     {
         // Don't allow the deletion of allocations if the server does not have an
         // allocation limit set.

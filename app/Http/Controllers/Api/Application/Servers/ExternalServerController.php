@@ -12,7 +12,7 @@ class ExternalServerController extends ApplicationApiController
     /**
      * Retrieve a specific server from the database using its external ID.
      */
-    public function index(GetExternalServerRequest $request, string $external_id): array
+    public function index(string $external_id): array
     {
         $server = Server::query()->where('external_id', $external_id)->firstOrFail();
 

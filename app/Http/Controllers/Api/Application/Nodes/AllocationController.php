@@ -70,7 +70,7 @@ class AllocationController extends ApplicationApiController
     /**
      * Delete a specific allocation from the Panel.
      */
-    public function delete(DeleteAllocationRequest $request, Node $node, Allocation $allocation): JsonResponse
+    public function delete(Allocation $allocation): JsonResponse
     {
         $allocation->delete();
 

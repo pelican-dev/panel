@@ -26,7 +26,7 @@ class ServerManagementController extends ApplicationApiController
      *
      * @throws \Throwable
      */
-    public function suspend(ServerWriteRequest $request, Server $server): Response
+    public function suspend(Server $server): Response
     {
         $this->suspensionService->toggle($server);
 
@@ -38,7 +38,7 @@ class ServerManagementController extends ApplicationApiController
      *
      * @throws \Throwable
      */
-    public function unsuspend(ServerWriteRequest $request, Server $server): Response
+    public function unsuspend(Server $server): Response
     {
         $this->suspensionService->toggle($server, SuspensionService::ACTION_UNSUSPEND);
 
@@ -51,7 +51,7 @@ class ServerManagementController extends ApplicationApiController
      * @throws \App\Exceptions\DisplayException
      * @throws \App\Exceptions\Model\DataValidationException
      */
-    public function reinstall(ServerWriteRequest $request, Server $server): Response
+    public function reinstall(Server $server): Response
     {
         $this->reinstallServerService->handle($server);
 

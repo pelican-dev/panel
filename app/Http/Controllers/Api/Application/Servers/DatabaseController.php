@@ -31,7 +31,7 @@ class DatabaseController extends ApplicationApiController
      * Return a listing of all databases currently available to a single
      * server.
      */
-    public function index(GetServerDatabasesRequest $request, Server $server): array
+    public function index(Server $server): array
     {
         return $this->fractal->collection($server->databases)
             ->transformWith($this->getTransformer(ServerDatabaseTransformer::class))
@@ -41,7 +41,7 @@ class DatabaseController extends ApplicationApiController
     /**
      * Return a single server database.
      */
-    public function view(GetServerDatabaseRequest $request, Server $server, Database $database): array
+    public function view(Database $database): array
     {
         return $this->fractal->item($database)
             ->transformWith($this->getTransformer(ServerDatabaseTransformer::class))
@@ -53,7 +53,7 @@ class DatabaseController extends ApplicationApiController
      *
      * @throws \Throwable
      */
-    public function resetPassword(ServerDatabaseWriteRequest $request, Server $server, Database $database): JsonResponse
+    public function resetPassword(Database $database): JsonResponse
     {
         $this->databasePasswordService->handle($database);
 
@@ -85,7 +85,7 @@ class DatabaseController extends ApplicationApiController
     /**
      * Handle a request to delete a specific server database from the Panel.
      */
-    public function delete(ServerDatabaseWriteRequest $request, Server $server, Database $database): Response
+    public function delete(Database $database): Response
     {
         $this->databaseManagementService->delete($database);
 

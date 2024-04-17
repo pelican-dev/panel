@@ -47,7 +47,7 @@ class UserController extends ApplicationApiController
      * Handle a request to view a single user. Includes any relations that
      * were defined in the request.
      */
-    public function view(GetUsersRequest $request, User $user): array
+    public function view(User $user): array
     {
         return $this->fractal->item($user)
             ->transformWith($this->getTransformer(UserTransformer::class))
@@ -99,7 +99,7 @@ class UserController extends ApplicationApiController
     /**
      * Handle a request to delete a user from the Panel. Returns a HTTP/204 response on successful deletion.
      */
-    public function delete(DeleteUserRequest $request, User $user): JsonResponse
+    public function delete(User $user): JsonResponse
     {
         $user->delete();
 

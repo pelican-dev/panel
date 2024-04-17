@@ -47,7 +47,7 @@ class NodeController extends ApplicationApiController
     /**
      * Return data for a single instance of a node.
      */
-    public function view(GetNodeRequest $request, Node $node): array
+    public function view(Node $node): array
     {
         return $this->fractal->item($node)
             ->transformWith($this->getTransformer(NodeTransformer::class))
@@ -98,7 +98,7 @@ class NodeController extends ApplicationApiController
      *
      * @throws \App\Exceptions\Service\HasActiveServersException
      */
-    public function delete(DeleteNodeRequest $request, Node $node): JsonResponse
+    public function delete(Node $node): JsonResponse
     {
         $this->deletionService->handle($node);
 

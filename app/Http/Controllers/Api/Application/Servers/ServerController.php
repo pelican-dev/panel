@@ -64,7 +64,7 @@ class ServerController extends ApplicationApiController
     /**
      * Show a single server transformed for the application API.
      */
-    public function view(GetServerRequest $request, Server $server): array
+    public function view(Server $server): array
     {
         return $this->fractal->item($server)
             ->transformWith($this->getTransformer(ServerTransformer::class))
@@ -76,7 +76,7 @@ class ServerController extends ApplicationApiController
      *
      * @throws \App\Exceptions\DisplayException
      */
-    public function delete(ServerWriteRequest $request, Server $server, string $force = ''): Response
+    public function delete(Server $server, string $force = ''): Response
     {
         $this->deletionService->withForce($force === 'force')->handle($server);
 

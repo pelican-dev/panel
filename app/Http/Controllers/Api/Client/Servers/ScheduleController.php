@@ -79,7 +79,7 @@ class ScheduleController extends ClientApiController
     /**
      * Returns a specific schedule for the server.
      */
-    public function view(ViewScheduleRequest $request, Server $server, Schedule $schedule): array
+    public function view(Server $server, Schedule $schedule): array
     {
         if ($schedule->server_id !== $server->id) {
             throw new NotFoundHttpException();
@@ -98,7 +98,7 @@ class ScheduleController extends ClientApiController
      * @throws \App\Exceptions\DisplayException
      * @throws \App\Exceptions\Model\DataValidationException
      */
-    public function update(UpdateScheduleRequest $request, Server $server, Schedule $schedule): array
+    public function update(UpdateScheduleRequest $request, Schedule $schedule): array
     {
         $active = (bool) $request->input('is_active');
 
@@ -138,7 +138,7 @@ class ScheduleController extends ClientApiController
      *
      * @throws \Throwable
      */
-    public function execute(TriggerScheduleRequest $request, Server $server, Schedule $schedule): JsonResponse
+    public function execute(Schedule $schedule): JsonResponse
     {
         $this->service->handle($schedule, true);
 
@@ -150,7 +150,7 @@ class ScheduleController extends ClientApiController
     /**
      * Deletes a schedule and it's associated tasks.
      */
-    public function delete(DeleteScheduleRequest $request, Server $server, Schedule $schedule): JsonResponse
+    public function delete(Schedule $schedule): JsonResponse
     {
         $schedule->delete();
 

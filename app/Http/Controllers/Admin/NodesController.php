@@ -78,7 +78,7 @@ class NodesController extends Controller
      *
      * @throws \App\Exceptions\Service\Allocation\ServerUsingAllocationException
      */
-    public function allocationRemoveSingle(int $node, Allocation $allocation): Response
+    public function allocationRemoveSingle(Allocation $allocation): Response
     {
         $allocation->delete();
 

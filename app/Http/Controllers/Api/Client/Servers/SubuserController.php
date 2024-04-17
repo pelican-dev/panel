@@ -33,7 +33,7 @@ class SubuserController extends ClientApiController
     /**
      * Return the users associated with this server instance.
      */
-    public function index(GetSubuserRequest $request, Server $server): array
+    public function index(Server $server): array
     {
         return $this->fractal->collection($server->subusers)
             ->transformWith($this->getTransformer(SubuserTransformer::class))
@@ -43,7 +43,7 @@ class SubuserController extends ClientApiController
     /**
      * Returns a single subuser associated with this server instance.
      */
-    public function view(GetSubuserRequest $request, Server $server, User $user): array
+    public function view(GetSubuserRequest $request): array
     {
         $subuser = $request->attributes->get('subuser');
 
@@ -83,7 +83,7 @@ class SubuserController extends ClientApiController
      *
      * @throws \App\Exceptions\Model\DataValidationException
      */
-    public function update(UpdateSubuserRequest $request, Server $server, User $user): array
+    public function update(UpdateSubuserRequest $request, Server $server): array
     {
         /** @var \App\Models\Subuser $subuser */
         $subuser = $request->attributes->get('subuser');
@@ -131,7 +131,7 @@ class SubuserController extends ClientApiController
     /**
      * Removes a subusers from a server's assignment.
      */
-    public function delete(DeleteSubuserRequest $request, Server $server, User $user): JsonResponse
+    public function delete(DeleteSubuserRequest $request, Server $server): JsonResponse
     {
         /** @var \App\Models\Subuser $subuser */
         $subuser = $request->attributes->get('subuser');

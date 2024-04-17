@@ -213,7 +213,7 @@ class ServersController extends Controller
      *
      * @throws \Exception
      */
-    public function deleteDatabase(Server $server, Database $database): Response
+    public function deleteDatabase(Database $database): Response
     {
         $this->databaseManagementService->delete($database);
 
