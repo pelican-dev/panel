@@ -112,6 +112,15 @@ class AppSettingsCommand extends Command
             array_key_exists($selected, self::QUEUE_DRIVERS) ? $selected : null
         );
 
+        $this->output->comment('Choose a language for your panel.');
+        $langDirectory = 'lang';
+        $files = scandir($langDirectory);
+        $languages = array_filter($files, function($item) use ($langDirectory) {
+            return is_dir($langDirectory . '/' . $item);
+        }); 
+        $languages = array_diff($languages, ['.', '..']);
+        $this->variables['APP_LOCALE'] = $this->choice('What language do you want to use?', $languages, config('app.locale', 'en'));
+
         if (!is_null($this->option('settings-ui'))) {
             $this->variables['APP_ENVIRONMENT_ONLY'] = $this->option('settings-ui') == 'true' ? 'false' : 'true';
         } else {
