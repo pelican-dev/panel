@@ -466,7 +466,7 @@ class ServerResource extends Resource
                                     ->label(fn (Forms\Get $get) => $get('name'))
                                     //->hint('Rule')
                                     ->hintIcon('tabler-code')
-                                    //->hintIconTooltip(fn (Forms\Get $get) => $get('rules'))
+                                    ->hintIconTooltip(fn (Forms\Get $get) => $get('rules'))
                                     ->prefix(fn (Forms\Get $get) => '{{' . $get('env_variable') . '}}')
                                     ->helperText(fn (Forms\Get $get) => empty($get('description')) ? '—' : $get('description'))
                                     ->maxLength(191),
