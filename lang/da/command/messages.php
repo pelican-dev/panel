@@ -15,7 +15,7 @@ return [
         'ask_name_last' => 'Efternavn',
         'ask_password' => 'Adgangskode',
         'ask_password_tip' => 'Hvis du vil oprette en konto med en tilfældig adgangskode sendt til brugeren, skal du køre denne kommando igen (CTRL+C) og tilføje `--no-password` flaget.',
-        'ask_password_help' => 'Adgangskoder skal være mindst 8 tegn lange og indeholde mindst et stort bogstav og et tal.',
+        'ask_password_help' => 'Adgangskoder skal være mindst 8 tegn og indeholde mindst et stort bogstav og et tal.',
         '2fa_help_text' => [
             'Denne kommando vil deaktivere 2-faktor godkendelse for en brugers konto, hvis det er aktiveret. Dette bør kun bruges som en konto recovery kommando, hvis brugeren er låst ude af deres konto.',
             'Hvis dette ikke er det du ønskede at gøre, tryk CTRL+C for at afslutte denne proces.',
