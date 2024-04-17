@@ -215,6 +215,7 @@ class ServerResource extends Resource
                 Forms\Components\Repeater::make('allocation_additional')
                     ->label('Additional Allocations')
                     ->columnSpan(2)
+                    ->addActionLabel('Add Allocation')
                     ->disabled(fn (Forms\Get $get) => $get('allocation_id') === null)
                     // ->addable() TODO disable when all allocations are taken
                     // ->addable() TODO disable until first additional allocation is selected
