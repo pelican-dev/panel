@@ -2,8 +2,8 @@
 
 return [
     'email' => [
-        'title' => 'Opdater din email',
-        'updated' => 'Din email adresse er blevet opdateret.',
+        'title' => 'Opdater din e-mail',
+        'updated' => 'Din e-mailadresse er blevet opdateret.',
     ],
     'password' => [
         'title' => 'Skift din adgangskode',
