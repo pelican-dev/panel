@@ -11,9 +11,9 @@ return [
     | has failed, such as for an invalid token or invalid new password.
     |
     */
-    'password' => 'Heslo musí obsahovat alespoň 6 znaků a musí se shodovat s ověřením.',
-    'reset' => 'Vaše heslo bylo obnoveno!',
-    'sent' => 'Na váš e-mal byl odeslán link pro obnovu hesla!',
-    'token' => 'Tento klíč pro obnovu hesla je neplatný.',
-    'user' => "Nelze najít uživatele s touto e-mailovou adresou.",
+    'password' => 'Passwords must be at least six characters and match the confirmation.',
+    'reset' => 'Your password has been reset!',
+    'sent' => 'We have e-mailed your password reset link!',
+    'token' => 'This password reset token is invalid.',
+    'user' => "We can't find a user with that e-mail address.",
 ];
