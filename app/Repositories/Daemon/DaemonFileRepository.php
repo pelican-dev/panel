@@ -74,7 +74,8 @@ class DaemonFileRepository extends DaemonRepository
 
         try {
             $response = $this->getHttpClient()->get(
-                sprintf('/api/servers/%s/files/list-directory', $this->server->uuid)
+                sprintf('/api/servers/%s/files/list-directory', $this->server->uuid),
+                ['directory' => $path]
             );
         } catch (TransferException $exception) {
             throw new DaemonConnectionException($exception);
