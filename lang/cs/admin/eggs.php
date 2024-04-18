@@ -2,18 +2,18 @@
 
 return [
     'notices' => [
-        'imported' => 'Úspěšně importováno toto vejce a jeho související proměnné.',
-        'updated_via_import' => 'Toto vejce bylo aktualizováno pomocí poskytnutého souboru.',
-        'deleted' => 'Požadované vejce bylo úspěšně smazáno z panelu.',
-        'updated' => 'Konfigurace vejce byla úspěšně aktualizována.',
-        'script_updated' => 'Instalační skript vejce byl aktualizován a bude spuštěn vždy, když budou nainstalovány servery.',
-        'egg_created' => 'Nové vejce bylo úspěšně přidáno. Abyste mohli použít toto nové vejce, budete muset restartovat všechny spuštěné daemony.',
+        'imported' => 'Successfully imported this Egg and its associated variables.',
+        'updated_via_import' => 'This Egg has been updated using the file provided.',
+        'deleted' => 'Successfully deleted the requested egg from the Panel.',
+        'updated' => 'Egg configuration has been updated successfully.',
+        'script_updated' => 'Egg install script has been updated and will run whenever servers are installed.',
+        'egg_created' => 'A new egg was laid successfully. You will need to restart any running daemons to apply this new egg.',
     ],
     'variables' => [
         'notices' => [
-            'variable_deleted' => 'Proměnná „:variable“ byla odstraněna a nebude serverům po rekonstrukci k dispozici.',
-            'variable_updated' => 'Proměnná „:variable“ byla aktualizována. Budete muset obnovit všechny servery používající tuto proměnnou pro použití změn.',
-            'variable_created' => 'Nová proměnná byla úspěšně vytvořena a přiřazena k tomuto vejci.',
+            'variable_deleted' => 'The variable ":variable" has been deleted and will no longer be available to servers once rebuilt.',
+            'variable_updated' => 'The variable ":variable" has been updated. You will need to rebuild any servers using this variable in order to apply changes.',
+            'variable_created' => 'New variable has successfully been created and assigned to this egg.',
         ],
     ],
 ];
