@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\NodeResource\Pages;
 
 use App\Filament\Resources\NodeResource;
+use App\Models\Allocation;
 use App\Models\Node;
 use Filament\Actions;
 use Filament\Forms;
@@ -63,7 +64,37 @@ class EditNode extends EditRecord
                                         ->minValue(0)
                                         ->maxValue(65535)
                                         ->numeric(),
-                                    Forms\Components\Select::make('server_id')->relationship('server', 'name'),
+                                    Forms\Components\TextInput::make('server')
+                                        ->formatStateUsing(fn (Allocation $allocation) => $allocation->server?->name)
+                                        ->readOnly()
+                                        ->placeholder('No Server'),
+                                ]),
+                            Forms\Components\Section::make('Assign New Allocations')
+                                ->columnSpan(2)
+                                ->inlineLabel()
+                                ->headerActions([
+                                    Forms\Components\Actions\Action::make('submit')
+                                        ->color('success')
+                                        ->action(function () {
+                                            // ...
+                                        }),
+                                ])
+                                ->schema([
+                                    Forms\Components\TextInput::make('ip')
+                                        ->label('IP Address')
+                                        ->placeholder('0.0.0.0')
+                                        ->helperText('IP address to assign ports to')
+                                        ->columnSpanFull(),
+                                    Forms\Components\TextInput::make('ip_alias')
+                                        ->label('Alias')
+                                        ->placeholder('minecraft')
+                                        ->helperText('Display name to help you remember')
+                                        ->columnSpanFull(),
+                                    Forms\Components\TextInput::make('ports')
+                                        ->label('Ports')
+                                        ->placeholder('25565')
+                                        ->helperText('Individual ports or port ranges here separated by commas or spaces')
+                                        ->columnSpanFull(),
                                 ]),
                         ]),
                 ]),
