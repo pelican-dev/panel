@@ -1,8 +1,8 @@
 <?php
 
 return [
-    'search' => 'Szerverek keresése...',
-    'no_matches' => 'Nem található szerver a megadott feltételekkel.',
+    'search' => 'Search for servers...',
+    'no_matches' => 'There were no servers found matching the search criteria provided.',
     'cpu_title' => 'CPU',
-    'memory_title' => 'Memória',
+    'memory_title' => 'Memory',
 ];
