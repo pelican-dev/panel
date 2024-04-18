@@ -3,12 +3,30 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
     public function up(): void
     {
+        Schema::table('eggs', function (Blueprint $table) {
+            $table->text('tags');
+        });
+
+        DB::table('eggs')->update(['tags' => '[]']);
+
+        $eggsWithNests = DB::table('eggs')
+            ->select(['eggs.id', 'nests.name'])
+            ->join('nests', 'nests.id', '=', 'eggs.nest_id')
+            ->get();
+
+        foreach ($eggsWithNests as $egg) {
+            DB::table('eggs')
+                ->where('id', $egg->id)
+                ->update(['tags' => "[\"$egg->name\"]"]);
+        }
+
         Schema::table('eggs', function (Blueprint $table) {
             $table->dropForeign('service_options_nest_id_foreign');
             $table->dropColumn('nest_id');
@@ -26,6 +44,7 @@ return new class extends Migration
         });
     }
 
+    // Not really reversible, but...
     public function down(): void
     {
         Schema::table('api_keys', function (Blueprint $table) {
@@ -42,6 +61,7 @@ return new class extends Migration
         });
 
         Schema::table('eggs', function (Blueprint $table) {
+            $table->dropColumn('tags');
             $table->mediumInteger('nest_id')->unsigned();
             $table->foreign(['nest_id'], 'service_options_nest_id_foreign');
         });

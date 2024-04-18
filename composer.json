@@ -8,7 +8,6 @@
         "ext-mbstring": "*",
         "ext-pdo": "*",
         "ext-pdo_mysql": "*",
-        "ext-posix": "*",
         "ext-zip": "*",
         "abdelhamiderrahmouni/filament-monaco-editor": "^0.2.0",
         "aws/aws-sdk-php": "~3.288.1",
