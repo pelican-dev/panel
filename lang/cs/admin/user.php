@@ -2,11 +2,11 @@
 
 return [
     'exceptions' => [
-        'user_has_servers' => 'Nelze odstranit uživatele s aktivními servery připojenými k jeho účtu. Před pokračováním prosím odstraňte jeho servery.',
-        'user_is_self' => 'Nemůžete smazat svůj vlastní uživatelský účet!',
+        'user_has_servers' => 'Cannot delete a user with active servers attached to their account. Please delete their servers before continuing.',
+        'user_is_self' => 'Cannot delete your own user account.',
     ],
     'notices' => [
-        'account_created' => 'Účet byl úspěšně vytvořen',
-        'account_updated' => 'Účet byl úspěšně aktualizován.',
+        'account_created' => 'Account has been created successfully.',
+        'account_updated' => 'Account has been successfully updated.',
     ],
 ];
