@@ -5,11 +5,12 @@ namespace App\Console\Commands\Environment;
 use Illuminate\Console\Command;
 use Illuminate\Contracts\Console\Kernel;
 use App\Traits\Commands\EnvironmentWriterTrait;
+use App\Traits\Helpers\AvailableLanguages;
 
 class AppSettingsCommand extends Command
 {
     use EnvironmentWriterTrait;
-
+    use AvailableLanguages;
     public const CACHE_DRIVERS = [
         'redis' => 'Redis',
         'memcached' => 'Memcached',
@@ -113,11 +114,14 @@ class AppSettingsCommand extends Command
         );
 
         $this->output->comment('Choose a language for your panel.');
+        /*
         $langDirectory = 'lang';
         $files = scandir($langDirectory);
         $languages = array_filter($files, function($item) use ($langDirectory) {
             return is_dir($langDirectory . '/' . $item);
-        }); 
+        });
+        */
+        $languages = $this->getAvailableLanguages();
         $languages = array_diff($languages, ['.', '..']);
         $this->variables['APP_LOCALE'] = $this->choice('What language do you want to use?', $languages, config('app.locale', 'en'));
 
