@@ -2,14 +2,14 @@
 
 return [
     'validation' => [
-        'fqdn_not_resolvable' => 'Наданий домен або IP-адреса не перетворюється на дійсну IP-адресу.',
-        'fqdn_required_for_ssl' => 'Щоб використовувати SSL для цього вузла, потрібне повне доменне ім’я, яке перетворюється на дійсну загальнодоступну IP-адресу.',
+        'fqdn_not_resolvable' => 'The FQDN or IP address provided does not resolve to a valid IP address.',
+        'fqdn_required_for_ssl' => 'A fully qualified domain name that resolves to a public IP address is required in order to use SSL for this node.',
     ],
     'notices' => [
-        'allocations_added' => 'Призначення успішно додано до цього вузла.',
-        'node_deleted' => 'Вузол було успішно видалено з панелі.',
-        'node_created' => 'Успішно створений новий вузол. Ви можете автоматично налаштувати демон на ньому, відвідавши вкладку \'Налаштування\'. <strong>Перед доданням будь-яких серверів, ви повинні спочатку виділити хоча б одну IP адресу та порт.</strong>',
-        'node_updated' => 'Інформація вузла була успішно оновлена. Якщо Ви змінили налаштування демона, то Вам необхідно перезапустити вузол для застосування змін.',
-        'unallocated_deleted' => 'Видалено всі невиділені порти для <code>:ip</code>.',
+        'allocations_added' => 'Allocations have successfully been added to this node.',
+        'node_deleted' => 'Node has been successfully removed from the panel.',
+        'node_created' => 'Successfully created new node. You can automatically configure the daemon on this machine by visiting the \'Configuration\' tab. <strong>Before you can add any servers you must first allocate at least one IP address and port.</strong>',
+        'node_updated' => 'Node information has been updated. If any daemon settings were changed you will need to reboot it for those changes to take effect.',
+        'unallocated_deleted' => 'Deleted all un-allocated ports for <code>:ip</code>.',
     ],
 ];
