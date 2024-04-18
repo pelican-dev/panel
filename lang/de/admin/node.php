@@ -2,14 +2,14 @@
 
 return [
     'validation' => [
-        'fqdn_not_resolvable' => 'Der angegebene FQDN oder die IP-Adresse wird nicht mit einer gültigen IP-Adresse aufgelöst.',
-        'fqdn_required_for_ssl' => 'Um SSL für diese Node nutzen zu können, ist ein FQDN erforderlich, welcher eine öffentliche IP besitzt.',
+        'fqdn_not_resolvable' => 'The FQDN or IP address provided does not resolve to a valid IP address.',
+        'fqdn_required_for_ssl' => 'A fully qualified domain name that resolves to a public IP address is required in order to use SSL for this node.',
     ],
     'notices' => [
-        'allocations_added' => 'Zuweisungen wurden erfolgreich zu dieser Node hinzugefügt.',
-        'node_deleted' => 'Node wurde erfolgreich aus dem Panel entfernt.',
-        'node_created' => 'Neue Node erfolgreich erstellt. Du kannst den Daemon auf dieser Maschine automatisch konfigurieren, indem du die Registerkarte "Konfiguration" aufrufst. <strong>Bevor du Server hinzufügen kannst, musst du zuerst mindestens eine IP-Adresse und einen Port zuweisen.</strong>',
-        'node_updated' => 'Nodeinformationen wurden aktualisiert. Wenn irgendwelche Daemon-Einstellungen geändert wurden, musst du den Node neu starten, damit diese Änderungen wirksam werden.',
-        'unallocated_deleted' => 'Alle nicht zugewiesenen Ports für <code>:ip</code> gelöscht.',
+        'allocations_added' => 'Allocations have successfully been added to this node.',
+        'node_deleted' => 'Node has been successfully removed from the panel.',
+        'node_created' => 'Successfully created new node. You can automatically configure the daemon on this machine by visiting the \'Configuration\' tab. <strong>Before you can add any servers you must first allocate at least one IP address and port.</strong>',
+        'node_updated' => 'Node information has been updated. If any daemon settings were changed you will need to reboot it for those changes to take effect.',
+        'unallocated_deleted' => 'Deleted all un-allocated ports for <code>:ip</code>.',
     ],
 ];
