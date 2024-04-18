@@ -25,3 +25,5 @@ jobs:
           path-to-document: 'https://github.com/pelican-dev/panel/blob/3.x/contributor_license_agreement.md'
           branch: '3.x'
           allowlist: dependabot[bot]
+          remote-organization-name: pelican-dev
+          remote-repository-name: cla-signatures
