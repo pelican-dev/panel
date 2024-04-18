@@ -2,18 +2,18 @@
 
 return [
     'notices' => [
-        'imported' => 'تم استيراد هذا البيض والمتغيرات المرتبطة به بنجاح.',
-        'updated_via_import' => 'تم تحديث هذا البيض باستخدام الملف المقدم.',
-        'deleted' => 'تم حذف البيض المطلوب بنجاح من اللوحة.',
-        'updated' => 'تم تحديث تكوين البيض بنجاح.',
-        'script_updated' => 'تم تحديث سكريبت تثبيت البيض وسيتم تشغيله كلما تم تثبيت خوادم.',
-        'egg_created' => 'تم وضع بيضة جديدة بنجاح. ستحتاج إلى إعادة تشغيل أي دايمونات جارية لتطبيق هذا البيض الجديد.',
+        'imported' => 'Successfully imported this Egg and its associated variables.',
+        'updated_via_import' => 'This Egg has been updated using the file provided.',
+        'deleted' => 'Successfully deleted the requested egg from the Panel.',
+        'updated' => 'Egg configuration has been updated successfully.',
+        'script_updated' => 'Egg install script has been updated and will run whenever servers are installed.',
+        'egg_created' => 'A new egg was laid successfully. You will need to restart any running daemons to apply this new egg.',
     ],
     'variables' => [
         'notices' => [
-            'variable_deleted' => 'تم حذف المتغير ":variable" ولن يكون متاحًا بعد الآن للخوادم بمجرد إعادة بنائها.',
-            'variable_updated' => 'تم تحديث المتغير ":variable". ستحتاج إلى إعادة بناء أي خوادم تستخدم هذا المتغير لتطبيق التغييرات.',
-            'variable_created' => 'تم إنشاء متغير جديد بنجاح وتعيينه لهذا البيض.',
+            'variable_deleted' => 'The variable ":variable" has been deleted and will no longer be available to servers once rebuilt.',
+            'variable_updated' => 'The variable ":variable" has been updated. You will need to rebuild any servers using this variable in order to apply changes.',
+            'variable_created' => 'New variable has successfully been created and assigned to this egg.',
         ],
     ],
 ];
