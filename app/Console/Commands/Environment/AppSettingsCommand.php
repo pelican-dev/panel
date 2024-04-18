@@ -5,11 +5,11 @@ namespace App\Console\Commands\Environment;
 use Illuminate\Console\Command;
 use Illuminate\Contracts\Console\Kernel;
 use App\Traits\Commands\EnvironmentWriterTrait;
+use App\Traits\Helpers\AvailableLanguages;
 
 class AppSettingsCommand extends Command
 {
     use EnvironmentWriterTrait;
-
     public const CACHE_DRIVERS = [
         'redis' => 'Redis',
         'memcached' => 'Memcached',
@@ -62,11 +62,12 @@ class AppSettingsCommand extends Command
      */
     public function handle(): int
     {
+
         if (empty(config('hashids.salt')) || $this->option('new-salt')) {
             $this->variables['HASHIDS_SALT'] = str_random(20);
         }
 
-        $this->output->comment('Provide the email address that eggs exported by this Panel should be from. This should be a valid email address.');
+        $this->output->comment(__('commands.appsettings.comment.author'));
         $this->variables['APP_SERVICE_AUTHOR'] = $this->option('author') ?? $this->ask(
             'Egg Author Email',
             config('panel.service.author', 'unknown@unknown.com')
@@ -78,13 +79,13 @@ class AppSettingsCommand extends Command
             return 1;
         }
 
-        $this->output->comment('The application URL MUST begin with https:// or http:// depending on if you are using SSL or not. If you do not include the scheme your emails and other content will link to the wrong location.');
+        $this->output->comment(__('commands.appsettings.comment.url'));
         $this->variables['APP_URL'] = $this->option('url') ?? $this->ask(
             'Application URL',
             config('app.url', 'https://example.com')
         );
 
-        $this->output->comment('The timezone should match one of PHP\'s supported timezones. If you are unsure, please reference https://php.net/manual/en/timezones.php.');
+        $this->output->comment(__('commands.appsettings.comment.timezone'));
         $this->variables['APP_TIMEZONE'] = $this->option('timezone') ?? $this->anticipate(
             'Application Timezone',
             \DateTimeZone::listIdentifiers(),
@@ -115,7 +116,7 @@ class AppSettingsCommand extends Command
         if (!is_null($this->option('settings-ui'))) {
             $this->variables['APP_ENVIRONMENT_ONLY'] = $this->option('settings-ui') == 'true' ? 'false' : 'true';
         } else {
-            $this->variables['APP_ENVIRONMENT_ONLY'] = $this->confirm('Enable UI based settings editor?', true) ? 'false' : 'true';
+            $this->variables['APP_ENVIRONMENT_ONLY'] = $this->confirm(__('commands.appsettings.comment.settings_ui'), true) ? 'false' : 'true';
         }
 
         // Make sure session cookies are set as "secure" when using HTTPS
