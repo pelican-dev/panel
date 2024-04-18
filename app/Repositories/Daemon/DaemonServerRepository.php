@@ -147,7 +147,7 @@ class DaemonServerRepository extends DaemonRepository
         try {
             $this->getHttpClient()
                 ->post(sprintf('/api/servers/%s/ws/deny', $this->server->uuid), [
-                    'jtis' => $jtis
+                    'jtis' => $jtis,
                 ]);
         } catch (TransferException $exception) {
             throw new DaemonConnectionException($exception);
