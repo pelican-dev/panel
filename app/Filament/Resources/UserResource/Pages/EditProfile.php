@@ -4,6 +4,11 @@ namespace App\Filament\Resources\UserResource\Pages;
 
 use App\Models\ActivityLog;
 use App\Models\User;
+use App\Services\Users\TwoFactorSetupService;
+use chillerlan\QRCode\Common\EccLevel;
+use chillerlan\QRCode\Common\Version;
+use chillerlan\QRCode\QRCode;
+use chillerlan\QRCode\QROptions;
 use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Select;
@@ -77,9 +82,63 @@ class EditProfile extends \Filament\Pages\Auth\EditProfile
 
                             Tab::make('2FA')
                                 ->icon('tabler-shield-lock')
-                                ->schema([
-                                    Placeholder::make('Coming soon!'),
-                                ]),
+                                ->schema(function () {
+
+                                    if ($this->getUser()->use_totp) {
+                                        return [
+                                            Placeholder::make('2FA already enabled!'),
+                                        ];
+                                    }
+                                    $setupService = app(TwoFactorSetupService::class);
+
+                                    ['image_url_data' => $url] = $setupService->handle($this->getUser());
+
+                                    $options = new QROptions([
+                                        'svgLogo' => public_path('pelican.svg'),
+                                        'addLogoSpace'        => true,
+                                        'logoSpaceWidth'      => 13,
+                                        'logoSpaceHeight'     => 13,
+                                    ]);
+
+                                    // https://github.com/chillerlan/php-qrcode/blob/main/examples/svgWithLogo.php
+
+                                    // SVG logo options (see extended class)
+                                    $options->svgLogo             = public_path('pelican.svg'); // logo from: https://github.com/simple-icons/simple-icons
+                                    $options->svgLogoScale        = 0.05;
+                                    // $options->svgLogoCssClass     = 'dark';
+
+                                    // QROptions
+                                    $options->version             = Version::AUTO;
+                                    // $options->outputInterface     = QRSvgWithLogo::class;
+                                    $options->outputBase64        = false;
+                                    $options->eccLevel            = EccLevel::H; // ECC level H is necessary when using logos
+                                    $options->addQuietzone        = true;
+                                    // $options->drawLightModules    = true;
+                                    $options->connectPaths        = true;
+                                    $options->drawCircularModules = true;
+                                    // $options->circleRadius        = 0.45;
+
+                                    $options->svgDefs = '<linearGradient id="gradient" x1="100%" y2="100%">
+                                            <stop stop-color="#7dd4fc" offset="0"/>
+                                            <stop stop-color="#38bdf8" offset="0.5"/>
+                                            <stop stop-color="#0369a1" offset="1"/>
+                                        </linearGradient>
+                                        <style><![CDATA[
+                                            .dark{fill: url(#gradient);}
+                                            .light{fill: #000;}
+                                        ]]></style>';
+
+                                    $image = (new QRCode($options))->render($url);
+
+                                    return [
+                                        Placeholder::make('qr')
+                                            ->label('Scan QR Code')
+                                            ->content(fn () => new HtmlString("
+                                                <div style='width: 300px'>$image</div>
+                                            "))
+                                            ->default('asdfasdf'),
+                                    ];
+                                }),
 
                             Tab::make('API Keys')
                                 ->icon('tabler-key')
