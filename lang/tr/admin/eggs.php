@@ -2,18 +2,18 @@
 
 return [
     'notices' => [
-        'imported' => 'Bu Egg ve ilişkili değişkenleri başarıyla içe aktarıldı.',
-        'updated_via_import' => 'Bu Egg sağlanan dosya kullanılarak güncellendi.',
-        'deleted' => 'İstenen Egg panelden başarıyla silindi.',
-        'updated' => 'Egg konfigürasyonu başarıyla güncellendi.',
-        'script_updated' => 'Egg kurulum scripti güncellendi ve sunucular kurulduğunda çalıştırılacaktır..',
-        'egg_created' => 'Yeni bir Egg başarıyla eklendi. Bu yeni Egg\'i uygulamak için çalışan tüm arka plan programlarını yeniden başlatmanız gerekecek.',
+        'imported' => 'Successfully imported this Egg and its associated variables.',
+        'updated_via_import' => 'This Egg has been updated using the file provided.',
+        'deleted' => 'Successfully deleted the requested egg from the Panel.',
+        'updated' => 'Egg configuration has been updated successfully.',
+        'script_updated' => 'Egg install script has been updated and will run whenever servers are installed.',
+        'egg_created' => 'A new egg was laid successfully. You will need to restart any running daemons to apply this new egg.',
     ],
     'variables' => [
         'notices' => [
-            'variable_deleted' => '":variable" değişkeni silindi ve yeniden oluşturulduktan sonra artık sunucular tarafından kullanılamayacak.',
-            'variable_updated' => '":variable" değişkeni güncellendi. Değişiklikleri uygulamak için bu değişkeni kullanarak tüm sunucuları yeniden oluşturmanız gerekecektir.',
-            'variable_created' => 'Yeni değişken başarıyla oluşturuldu ve bu Egg atandı.',
+            'variable_deleted' => 'The variable ":variable" has been deleted and will no longer be available to servers once rebuilt.',
+            'variable_updated' => 'The variable ":variable" has been updated. You will need to rebuild any servers using this variable in order to apply changes.',
+            'variable_created' => 'New variable has successfully been created and assigned to this egg.',
         ],
     ],
 ];
