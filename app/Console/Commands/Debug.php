@@ -12,7 +12,7 @@ class Debug extends Command
      *
      * @var string
      */
-    protected $signature = 'debug';
+    protected $signature = 'p:debug';
 
     /**
      * The console command description.
