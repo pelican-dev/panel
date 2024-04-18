@@ -5,7 +5,6 @@ namespace App\Console\Commands\Environment;
 use Illuminate\Console\Command;
 use Illuminate\Contracts\Console\Kernel;
 use App\Traits\Commands\EnvironmentWriterTrait;
-use App\Traits\Helpers\AvailableLanguages;
 
 class AppSettingsCommand extends Command
 {
@@ -146,7 +145,7 @@ class AppSettingsCommand extends Command
             return;
         }
 
-        $this->output->note('You\'ve selected the Redis driver for one or more options, please provide valid connection information below. In most cases you can use the defaults provided unless you have modified your setup.');
+        $this->output->note(__('commands.appsettings.redis.note'));
         $this->variables['REDIS_HOST'] = $this->option('redis-host') ?? $this->ask(
             'Redis Host',
             config('database.redis.default.host')
@@ -159,7 +158,7 @@ class AppSettingsCommand extends Command
         }
 
         if ($askForRedisPassword) {
-            $this->output->comment('By default a Redis server instance has no password as it is running locally and inaccessible to the outside world. If this is the case, simply hit enter without entering a value.');
+            $this->output->comment(__('commands.appsettings.redis.comment'));
             $this->variables['REDIS_PASSWORD'] = $this->option('redis-pass') ?? $this->output->askHidden(
                 'Redis Password'
             );
