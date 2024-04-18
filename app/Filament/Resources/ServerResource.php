@@ -2,6 +2,8 @@
 
 namespace App\Filament\Resources;
 
+use App\Enums\ContainerStatus;
+use App\Enums\ServerState;
 use App\Filament\Resources\ServerResource\Pages;
 use App\Models\Allocation;
 use App\Models\Egg;
@@ -511,6 +513,40 @@ class ServerResource extends Resource
         return $table
             ->searchable(false)
             ->columns([
+                Tables\Columns\TextColumn::make('status')
+                    ->default('unknown')
+                    ->badge()
+                    ->default(function (Server $server) {
+                        if ($server->status !== null) {
+                            return $server->status;
+                        }
+
+                        $statuses = collect($server->retrieveStatus())
+                            ->mapWithKeys(function ($status) {
+                                return [$status['configuration']['uuid'] => $status['state']];
+                            })->all();
+
+                        return $statuses[$server->uuid] ?? 'node_fail';
+                    })
+                    ->icon(fn ($state) => match ($state) {
+                        'node_fail' => 'tabler-server-off',
+                        'running' => 'tabler-heartbeat',
+                        'removing' => 'tabler-heart-x',
+                        'offline' => 'tabler-heart-off',
+                        'paused' => 'tabler-heart-pause',
+                        'installing' => 'tabler-heart-bolt',
+                        'suspended' => 'tabler-heart-cancel',
+                        default => 'tabler-heart-question',
+                    })
+                    ->color(fn (string $state): string => match ($state) {
+                        'running' => 'success',
+                        'installing', 'restarting' => 'primary',
+                        'paused', 'removing' => 'warning',
+                        'node_fail', 'install_failed', 'suspended' => 'danger',
+                        default => 'gray',
+                    })
+                ,
+
                 Tables\Columns\TextColumn::make('uuid')
                     ->hidden()
                     ->label('UUID')

@@ -394,4 +394,9 @@ class Server extends Model
             throw new DaemonConnectionException($exception);
         }
     }
+
+    public function retrieveStatus()
+    {
+        return $this->node->serverStatuses();
+    }
 }

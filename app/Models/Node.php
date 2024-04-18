@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Exceptions\Service\HasActiveServersException;
 use App\Repositories\Daemon\DaemonConfigurationRepository;
 use Exception;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Str;
 use Symfony\Component\Yaml\Yaml;
 use Illuminate\Notifications\Notifiable;
@@ -287,5 +288,18 @@ class Node extends Model
                 return ['exception' => $message->toString()];
             }
         });
+    }
+
+    public function serverStatuses(): array
+    {
+        try {
+            /** @var \Illuminate\Http\Client\Response $response */
+            $response = Http::daemon($this)->connectTimeout(1)->timeout(1)->get('/api/servers');
+            $statuses = $response->json();
+        } catch (Exception) {
+            $statuses = [];
+        }
+
+        return cache()->remember("nodes.$this->id.servers", now()->addSeconds(2), fn () => $statuses);
     }
 }
