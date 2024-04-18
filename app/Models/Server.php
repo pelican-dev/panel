@@ -112,7 +112,7 @@ class Server extends Model
      * API representation using fractal.
      */
     public const RESOURCE_NAME = 'server';
-    
+
     /**
      * The table associated with the model.
      */
