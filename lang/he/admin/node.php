@@ -2,14 +2,14 @@
 
 return [
     'validation' => [
-        'fqdn_not_resolvable' => 'כתובת ה-FQDN או ה-IP שסופקו אינם פונים לכתובת IP חוקית.',
-        'fqdn_required_for_ssl' => 'דרוש שם דומיין מוסמך במלואו שמגיע לכתובת IP ציבורית כדי להשתמש ב-SSL עבור צומת זה.',
+        'fqdn_not_resolvable' => 'The FQDN or IP address provided does not resolve to a valid IP address.',
+        'fqdn_required_for_ssl' => 'A fully qualified domain name that resolves to a public IP address is required in order to use SSL for this node.',
     ],
     'notices' => [
-        'allocations_added' => 'הקצאות נוספו בהצלחה לצומת זה.',
-        'node_deleted' => 'הצומת הוסר מהחלונית בהצלחה.',
-        'node_created' => 'צומת חדש נוצר בהצלחה. אתה יכול להגדיר באופן אוטומטי את הדמון במחשב זה על ידי ביקור בכרטיסייה \'תצורה\'. <strong>לפני שתוכל להוסיף שרתים, תחילה עליך להקצות לפחות כתובת IP אחת ויציאה אחת.</strong>',
-        'node_updated' => 'מידע הצומת עודכן. אם הגדרות דמון כלשהן שונו, תצטרך לאתחל אותה כדי שהשינויים האלה ייכנסו לתוקף.',
-        'unallocated_deleted' => 'מחק את כל היציאות שלא הוקצו עבור <code>:ip</code>.',
+        'allocations_added' => 'Allocations have successfully been added to this node.',
+        'node_deleted' => 'Node has been successfully removed from the panel.',
+        'node_created' => 'Successfully created new node. You can automatically configure the daemon on this machine by visiting the \'Configuration\' tab. <strong>Before you can add any servers you must first allocate at least one IP address and port.</strong>',
+        'node_updated' => 'Node information has been updated. If any daemon settings were changed you will need to reboot it for those changes to take effect.',
+        'unallocated_deleted' => 'Deleted all un-allocated ports for <code>:ip</code>.',
     ],
 ];
