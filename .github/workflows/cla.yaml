@@ -20,6 +20,7 @@ jobs:
         uses: contributor-assistant/github-action@v2.3.0
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PERSONAL_ACCESS_TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
         with:
           path-to-signatures: 'version1/cla.json'
           path-to-document: 'https://github.com/pelican-dev/panel/blob/3.x/contributor_license_agreement.md'
