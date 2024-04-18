@@ -2,6 +2,7 @@
 
 namespace App\Tests\Integration\Jobs\Schedule;
 
+use App\Enums\ServerState;
 use Carbon\Carbon;
 use Carbon\CarbonImmutable;
 use GuzzleHttp\Psr7\Request;
@@ -151,7 +152,7 @@ class RunTaskJobTest extends IntegrationTestCase
     public function testTaskIsNotRunIfServerIsSuspended(): void
     {
         $server = $this->createServerModel([
-            'status' => Server::STATUS_SUSPENDED,
+            'status' => ServerState::Suspended,
         ]);
 
         $schedule = Schedule::factory()->for($server)->create([

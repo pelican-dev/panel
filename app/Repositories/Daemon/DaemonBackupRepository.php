@@ -35,11 +35,9 @@ class DaemonBackupRepository extends DaemonRepository
             return $this->getHttpClient()->post(
                 sprintf('/api/servers/%s/backup', $this->server->uuid),
                 [
-                    'json' => [
-                        'adapter' => $this->adapter ?? config('backups.default'),
-                        'uuid' => $backup->uuid,
-                        'ignore' => implode("\n", $backup->ignored_files),
-                    ],
+                    'adapter' => $this->adapter ?? config('backups.default'),
+                    'uuid' => $backup->uuid,
+                    'ignore' => implode("\n", $backup->ignored_files),
                 ]
             );
         } catch (TransferException $exception) {
@@ -60,11 +58,9 @@ class DaemonBackupRepository extends DaemonRepository
             return $this->getHttpClient()->post(
                 sprintf('/api/servers/%s/backup/%s/restore', $this->server->uuid, $backup->uuid),
                 [
-                    'json' => [
-                        'adapter' => $backup->disk,
-                        'truncate_directory' => $truncate,
-                        'download_url' => $url ?? '',
-                    ],
+                    'adapter' => $backup->disk,
+                    'truncate_directory' => $truncate,
+                    'download_url' => $url ?? '',
                 ]
             );
         } catch (TransferException $exception) {

@@ -71,8 +71,8 @@ class Mount extends Model
      * Blacklisted source paths.
      */
     public static $invalidSourcePaths = [
-        '/etc/panel',
-        '/var/lib/panel/volumes',
+        '/etc/pelican',
+        '/var/lib/pelican/volumes',
         '/srv/daemon-data',
     ];
 
@@ -114,5 +114,10 @@ class Mount extends Model
     public function servers(): BelongsToMany
     {
         return $this->belongsToMany(Server::class);
+    }
+
+    public function getRouteKeyName(): string
+    {
+        return 'id';
     }
 }

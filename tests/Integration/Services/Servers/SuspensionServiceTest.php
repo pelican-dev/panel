@@ -2,8 +2,8 @@
 
 namespace App\Tests\Integration\Services\Servers;
 
+use App\Enums\ServerState;
 use Mockery\MockInterface;
-use App\Models\Server;
 use App\Services\Servers\SuspensionService;
 use App\Tests\Integration\IntegrationTestCase;
 use App\Repositories\Daemon\DaemonServerRepository;
@@ -47,7 +47,7 @@ class SuspensionServiceTest extends IntegrationTestCase
         $server->refresh();
         $this->assertFalse($server->isSuspended());
 
-        $server->update(['status' => Server::STATUS_SUSPENDED]);
+        $server->update(['status' => ServerState::Suspended]);
         $this->getService()->toggle($server);
 
         $server->refresh();

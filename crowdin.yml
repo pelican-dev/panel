@@ -1,0 +1,11 @@
+files:
+  - source: /lang/en/*.php
+    translation: /lang/%two_letters_code%/%original_file_name%
+  - source: /lang/en/admin
+    translation: /lang/%two_letters_code%/admin/%original_file_name%
+  - source: /lang/en/command
+    translation: /lang/%two_letters_code%/command/%original_file_name%
+  - source: /lang/en/dashboard
+    translation: /lang/%two_letters_code%/dashboard/%original_file_name%
+  - source: /lang/en/server
+    translation: /lang/%two_letters_code%/server/%original_file_name%
