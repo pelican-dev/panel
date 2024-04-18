@@ -1,8 +1,8 @@
 <?php
 
 return [
-    'search' => 'Vyhledat servery...',
-    'no_matches' => 'Nebyly nalezeny žádné servery, které odpovídají zadaným kritériím.',
+    'search' => 'Search for servers...',
+    'no_matches' => 'There were no servers found matching the search criteria provided.',
     'cpu_title' => 'CPU',
-    'memory_title' => 'Paměť',
+    'memory_title' => 'Memory',
 ];
