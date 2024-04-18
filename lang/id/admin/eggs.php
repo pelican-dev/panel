@@ -2,10 +2,10 @@
 
 return [
     'notices' => [
-        'imported' => 'Berhasil mengimport Egg dan variabel terkaitnya.',
-        'updated_via_import' => 'Egg ini telah diperbarui menggunakan file yang disediakan.',
-        'deleted' => 'Berhasil menghapus Egg dari Panel.',
-        'updated' => 'Konfigurasi Egg ini telah berhasil diperbarui.',
+        'imported' => 'Successfully imported this Egg and its associated variables.',
+        'updated_via_import' => 'This Egg has been updated using the file provided.',
+        'deleted' => 'Successfully deleted the requested egg from the Panel.',
+        'updated' => 'Egg configuration has been updated successfully.',
         'script_updated' => 'Egg install script has been updated and will run whenever servers are installed.',
         'egg_created' => 'A new egg was laid successfully. You will need to restart any running daemons to apply this new egg.',
     ],
