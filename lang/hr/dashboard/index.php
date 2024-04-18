@@ -1,8 +1,8 @@
 <?php
 
 return [
-    'search' => 'Pretraži servere...',
-    'no_matches' => 'Nisu pronađeni serveri koji odgovaraju navedenim kriterijima pretraživanja.',
+    'search' => 'Search for servers...',
+    'no_matches' => 'There were no servers found matching the search criteria provided.',
     'cpu_title' => 'CPU',
-    'memory_title' => 'Memorija',
+    'memory_title' => 'Memory',
 ];
