@@ -12,7 +12,7 @@ class Debug extends Command
      *
      * @var string
      */
-    protected $signature = 'p:debug';
+    protected $signature = 'p:debug {--enable : enable debug mode} {--disable : disable debug mode}';
 
     /**
      * The console command description.
@@ -34,8 +34,26 @@ class Debug extends Command
             $this->error('.env file not found.');
             return 1;
         }
-
+        
+        $enable = $this->option('enable');
+        $disable = $this->option('disable');
         $envContents = file_get_contents($envFilePath);
+
+        if ($enable) {
+            Artisan::call('down');
+            $envContents = str_replace('APP_DEBUG=false', 'APP_DEBUG=true', $envContents);
+            file_put_contents($envFilePath, $envContents);
+            Artisan::call('up');
+            $this->info('Debug mode enabled.');
+            return 0;
+        } elseif ($disable) {
+            Artisan::call('down');
+            $envContents = str_replace('APP_DEBUG=true', 'APP_DEBUG=false', $envContents);
+            file_put_contents($envFilePath, $envContents);
+            Artisan::call('up');
+            $this->info('Debug mode disabled.');
+            return 0;
+        }
 
         $question = $this->choice('What do you want to do with debug mode?', [
             'Enable it',
