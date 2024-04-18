@@ -16,6 +16,6 @@ class Theme
 
     protected function getUrl($path): string
     {
-        return '/themes/panel/' . ltrim($path, '/');
+        return url('/themes/panel/' . ltrim($path, '/'));
     }
 }

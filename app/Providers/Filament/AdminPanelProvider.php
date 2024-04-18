@@ -18,6 +18,7 @@ use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\AuthenticateSession;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
+use Livewire\Livewire;
 
 class AdminPanelProvider extends PanelProvider
 {
@@ -26,6 +27,11 @@ class AdminPanelProvider extends PanelProvider
         FilamentAsset::registerCssVariables([
             'sidebar-width' => '12rem !important',
         ]);
+        Livewire::setUpdateRoute(function ($handle) {
+            // url('/livewire/update') could return /livewire/update or /subfolder/livewire/update
+            // so we parse the url() and get the absolute path and give that to Livewire
+            return Route::post(parse_url(url('/livewire/update'))['path'], $handle)->middleware('web');
+        });
     }
 
     public function panel(Panel $panel): Panel
@@ -35,9 +41,9 @@ class AdminPanelProvider extends PanelProvider
             ->id('admin')
             ->path('panel')
             ->login()
-            ->brandName('Pelican')
-            ->homeUrl('/')
-            ->favicon('/pelican.ico')
+            ->brandName(config('app.name', 'Pelican'))
+            ->homeUrl(url('/'))
+            ->favicon(url('/pelican.ico'))
             ->profile(EditProfile::class, false)
             ->colors([
                 'danger' => Color::Red,
