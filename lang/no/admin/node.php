@@ -2,7 +2,7 @@
 
 return [
     'validation' => [
-        'fqdn_not_resolvable' => 'FQDN eller IP-adressen som er gitt, går ikke til en gyldig IP-adresse.',
+        'fqdn_not_resolvable' => 'The FQDN or IP address provided does not resolve to a valid IP address.',
         'fqdn_required_for_ssl' => 'A fully qualified domain name that resolves to a public IP address is required in order to use SSL for this node.',
     ],
     'notices' => [
