@@ -4,9 +4,12 @@ namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Artisan;
+use App\Traits\Commands\EnvironmentWriterTrait;
+
 
 class Debug extends Command
 {
+    use EnvironmentWriterTrait;
     /**
      * The name and signature of the console command.
      *
@@ -20,6 +23,7 @@ class Debug extends Command
      * @var string
      */
     protected $description = 'Enable or disable debug mode.';
+    protected array $variables = [];
 
     /**
      * Handle command execution.
@@ -28,28 +32,34 @@ class Debug extends Command
      */
     public function handle()
     {
+        /*
         $envFilePath = base_path('.env');
 
         if (!file_exists($envFilePath)) {
             $this->error('.env file not found.');
             return 1;
         }
+        */
         
         $enable = $this->option('enable');
         $disable = $this->option('disable');
-        $envContents = file_get_contents($envFilePath);
+        //$envContents = file_get_contents($envFilePath);
 
         if ($enable) {
             Artisan::call('down');
-            $envContents = str_replace('APP_DEBUG=false', 'APP_DEBUG=true', $envContents);
-            file_put_contents($envFilePath, $envContents);
+            //$envContents = str_replace('APP_DEBUG=false', 'APP_DEBUG=true', $envContents);
+            //file_put_contents($envFilePath, $envContents);
+            $this->variables['APP_DEBUG'] = "true";
+            $this->writeToEnvironment($this->variables);
             Artisan::call('up');
             $this->info('Debug mode enabled.');
             return 0;
         } elseif ($disable) {
             Artisan::call('down');
-            $envContents = str_replace('APP_DEBUG=true', 'APP_DEBUG=false', $envContents);
-            file_put_contents($envFilePath, $envContents);
+            //$envContents = str_replace('APP_DEBUG=true', 'APP_DEBUG=false', $envContents); // No longer needed
+            //file_put_contents($envFilePath, $envContents); // No longer needed
+            $this->variables['APP_DEBUG'] = "false";
+            $this->writeToEnvironment($this->variables);
             Artisan::call('up');
             $this->info('Debug mode disabled.');
             return 0;
@@ -63,12 +73,14 @@ class Debug extends Command
 
         if ($question === 'Enable it') {
             Artisan::call('down');
-            $envContents = str_replace('APP_DEBUG=false', 'APP_DEBUG=true', $envContents);
+            //$envContents = str_replace('APP_DEBUG=false', 'APP_DEBUG=true', $envContents);
+            $this->variables['APP_DEBUG'] = "true";
             $this->info('Debug mode enabled.');
             Artisan::call('up');
         } elseif ($question === 'Disable it') {
             Artisan::call('down');
-            $envContents = str_replace('APP_DEBUG=true', 'APP_DEBUG=false', $envContents);
+            //$envContents = str_replace('APP_DEBUG=true', 'APP_DEBUG=false', $envContents);
+            $this->variables['APP_DEBUG'] = "false";
             $this->info('Debug mode disabled.');
             Artisan::call('up');
         } elseif ($question === 'Cancel command') {
@@ -79,7 +91,8 @@ class Debug extends Command
             return 1;
         }
 
-        file_put_contents($envFilePath, $envContents);
+        //file_put_contents($envFilePath, $envContents);
+        $this->writeToEnvironment($this->variables);
 
         return 0;
     }
