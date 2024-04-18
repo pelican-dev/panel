@@ -4,7 +4,6 @@ namespace App\Filament\Resources\ServerResource\Pages;
 
 use App\Filament\Resources\ServerResource;
 use App\Services\Servers\ServerCreationService;
-use Filament\Actions;
 use Filament\Resources\Pages\CreateRecord;
 use Illuminate\Database\Eloquent\Model;
 
@@ -25,8 +24,8 @@ class CreateServer extends CreateRecord
         return $server;
     }
 
-//    protected function getRedirectUrl(): string
-//    {
-//        return $this->getResource()::getUrl('edit');
-//    }
+    //    protected function getRedirectUrl(): string
+    //    {
+    //        return $this->getResource()::getUrl('edit');
+    //    }
 }
