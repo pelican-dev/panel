@@ -2,14 +2,14 @@
 
 return [
     'validation' => [
-        'fqdn_not_resolvable' => 'FQDN eller IP-adressen, der er angivet, resulterer ikke i en gyldig IP-adresse.',
-        'fqdn_required_for_ssl' => 'Et fuldt kvalificeret domænenavn, der resulterer i en offentlig IP-adresse, er påkrævet for at bruge SSL til denne node.',
+        'fqdn_not_resolvable' => 'The FQDN or IP address provided does not resolve to a valid IP address.',
+        'fqdn_required_for_ssl' => 'A fully qualified domain name that resolves to a public IP address is required in order to use SSL for this node.',
     ],
     'notices' => [
-        'allocations_added' => 'Tildelinger er blevet tilføjet til denne node.',
-        'node_deleted' => 'Node er blevet slettet fra panelet.',
-        'node_created' => 'Ny node blev oprettet. Du kan automatisk konfigurere daemonen på denne maskine ved at besøge \'Configuration\' fanen for denne node. <strong>Før du kan tilføje nogen servere, skal du først tildele mindst en IP-adresse og port.</strong>',
-        'node_updated' => 'Node information er blevet opdateret. Hvis nogen daemon indstillinger blev ændret, skal du genstarte den for at anvende disse ændringer.',
-        'unallocated_deleted' => 'Slettede alle ikke-tildelte porte for <code>:ip</code>.',
+        'allocations_added' => 'Allocations have successfully been added to this node.',
+        'node_deleted' => 'Node has been successfully removed from the panel.',
+        'node_created' => 'Successfully created new node. You can automatically configure the daemon on this machine by visiting the \'Configuration\' tab. <strong>Before you can add any servers you must first allocate at least one IP address and port.</strong>',
+        'node_updated' => 'Node information has been updated. If any daemon settings were changed you will need to reboot it for those changes to take effect.',
+        'unallocated_deleted' => 'Deleted all un-allocated ports for <code>:ip</code>.',
     ],
 ];
