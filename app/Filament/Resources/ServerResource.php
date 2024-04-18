@@ -325,6 +325,15 @@ class ServerResource extends Resource
                     ->live()
                     ->label('Custom Image?')
                     ->default(false)
+                    ->formatStateUsing(function ($state, Forms\Get $get) {
+                        if ($state !== null) {
+                            return $state;
+                        }
+
+                        $images = Egg::find($get('egg_id'))->docker_images ?? [];
+
+                        return !in_array($get('image'), $images);
+                    })
                     ->options([
                         false => 'No',
                         true => 'Yes',
