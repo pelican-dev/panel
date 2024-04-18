@@ -2,18 +2,18 @@
 
 return [
     'notices' => [
-        'imported' => 'Яйце та його змінні успішно імпортовано.',
-        'updated_via_import' => 'Яйце було оновлено з файлу.',
-        'deleted' => 'Яйце було видалено з панелі.',
-        'updated' => 'Налаштування яйця були успішно оновленні.',
-        'script_updated' => 'Скрипт установки яйця був успішно оновлений і буде виконуватися під час встановлення серверів.',
-        'egg_created' => 'Нове яйце було успішно створено. Щоб застосувати це нове яйце Вам знадобиться перезавантажити Wings.',
+        'imported' => 'Successfully imported this Egg and its associated variables.',
+        'updated_via_import' => 'This Egg has been updated using the file provided.',
+        'deleted' => 'Successfully deleted the requested egg from the Panel.',
+        'updated' => 'Egg configuration has been updated successfully.',
+        'script_updated' => 'Egg install script has been updated and will run whenever servers are installed.',
+        'egg_created' => 'A new egg was laid successfully. You will need to restart any running daemons to apply this new egg.',
     ],
     'variables' => [
         'notices' => [
-            'variable_deleted' => 'Змінна ":variable" була видалена і більше не є доступна для серверів після перезавантаження.',
-            'variable_updated' => 'Змінна ":variable" була оновлена. Вам знадобиться перезавантажити будь-які сервери які використовують цю змінну щоб зміни ввійшли в силу.',
-            'variable_created' => 'Нову змінну успішно створено та призначено цьому яйцю.',
+            'variable_deleted' => 'The variable ":variable" has been deleted and will no longer be available to servers once rebuilt.',
+            'variable_updated' => 'The variable ":variable" has been updated. You will need to rebuild any servers using this variable in order to apply changes.',
+            'variable_created' => 'New variable has successfully been created and assigned to this egg.',
         ],
     ],
 ];
