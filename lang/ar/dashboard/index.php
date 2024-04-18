@@ -1,8 +1,8 @@
 <?php
 
 return [
-    'search' => 'ابحث عن الخوادم...',
-    'no_matches' => 'لم يتم العثور على خوادم تطابق معايير البحث المقدمة.',
-    'cpu_title' => 'المعالج',
-    'memory_title' => 'الذاكرة',
+    'search' => 'Search for servers...',
+    'no_matches' => 'There were no servers found matching the search criteria provided.',
+    'cpu_title' => 'CPU',
+    'memory_title' => 'Memory',
 ];
