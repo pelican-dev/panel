@@ -2,18 +2,18 @@
 
 return [
     'notices' => [
-        'imported' => 'S\'ha importat amb èxit aquest Egg i les seves variables associades.',
-        'updated_via_import' => 'Aquest Egg s\'ha actualitzat utilitzant el fitxer proporcionat.',
-        'deleted' => 'S\'ha eliminat amb èxit l\'egg sol·licitat del Panell.',
-        'updated' => 'La configuració de l\'Egg s\'ha actualitzat correctament.',
-        'script_updated' => 'El script d\'instal·lació de l\'Egg s\'ha actualitzat i s\'executarà sempre que s\'instal·lin els servidors.',
-        'egg_created' => 'S\'ha posat amb èxit un nou egg. Necessitarà reiniciar qualsevol daemon en execució per aplicar aquest nou egg.',
+        'imported' => 'Successfully imported this Egg and its associated variables.',
+        'updated_via_import' => 'This Egg has been updated using the file provided.',
+        'deleted' => 'Successfully deleted the requested egg from the Panel.',
+        'updated' => 'Egg configuration has been updated successfully.',
+        'script_updated' => 'Egg install script has been updated and will run whenever servers are installed.',
+        'egg_created' => 'A new egg was laid successfully. You will need to restart any running daemons to apply this new egg.',
     ],
     'variables' => [
         'notices' => [
-            'variable_deleted' => 'La variable ":variable" s\'ha eliminat i ja no estarà disponible per als servidors una vegada es reconstrueixin.',
-            'variable_updated' => 'S\'ha actualitzat la variable ":variable". Hauràs de reconstruir qualsevol servidor que utilitzi aquesta variable per aplicar els canvis.',
-            'variable_created' => 'S\'ha creat amb èxit una nova variable i s\'ha assignat a aquest egg.',
+            'variable_deleted' => 'The variable ":variable" has been deleted and will no longer be available to servers once rebuilt.',
+            'variable_updated' => 'The variable ":variable" has been updated. You will need to rebuild any servers using this variable in order to apply changes.',
+            'variable_created' => 'New variable has successfully been created and assigned to this egg.',
         ],
     ],
 ];
