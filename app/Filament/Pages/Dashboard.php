@@ -8,8 +8,6 @@ use App\Models\Node;
 use App\Models\Server;
 use App\Models\User;
 use Filament\Actions\CreateAction;
-use Filament\Infolists\Components\Concerns\HasHeaderActions;
-use Filament\Infolists\Infolist;
 use Filament\Pages\Page;
 
 class Dashboard extends Page

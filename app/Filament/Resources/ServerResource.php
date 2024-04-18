@@ -592,8 +592,7 @@ class ServerResource extends Resource
                         'paused', 'removing' => 'warning',
                         'node_fail', 'install_failed', 'suspended' => 'danger',
                         default => 'gray',
-                    })
-                ,
+                    }),
 
                 Tables\Columns\TextColumn::make('uuid')
                     ->hidden()

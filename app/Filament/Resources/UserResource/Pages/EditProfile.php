@@ -71,8 +71,7 @@ class EditProfile extends \Filament\Pages\Auth\EditProfile
                                         ->prefixIcon('tabler-flag')
                                         ->live()
                                         ->default('en')
-                                        ->helperText(fn (User $user, $state) =>
-                                            new HtmlString($user->isLanguageTranslated($state) ? '' : "
+                                        ->helperText(fn (User $user, $state) => new HtmlString($user->isLanguageTranslated($state) ? '' : "
                                                 Your language ($state) has not been translated yet!
                                                 But never fear, you can help fix that by
                                                 <a style='color: rgb(56, 189, 248)' href='https://crowdin.com/project/pelican-dev'>contributing directly here</a>.
@@ -96,26 +95,26 @@ class EditProfile extends \Filament\Pages\Auth\EditProfile
 
                                     $options = new QROptions([
                                         'svgLogo' => public_path('pelican.svg'),
-                                        'addLogoSpace'        => true,
-                                        'logoSpaceWidth'      => 13,
-                                        'logoSpaceHeight'     => 13,
+                                        'addLogoSpace' => true,
+                                        'logoSpaceWidth' => 13,
+                                        'logoSpaceHeight' => 13,
                                     ]);
 
                                     // https://github.com/chillerlan/php-qrcode/blob/main/examples/svgWithLogo.php
 
                                     // SVG logo options (see extended class)
-                                    $options->svgLogo             = public_path('pelican.svg'); // logo from: https://github.com/simple-icons/simple-icons
-                                    $options->svgLogoScale        = 0.05;
+                                    $options->svgLogo = public_path('pelican.svg'); // logo from: https://github.com/simple-icons/simple-icons
+                                    $options->svgLogoScale = 0.05;
                                     // $options->svgLogoCssClass     = 'dark';
 
                                     // QROptions
-                                    $options->version             = Version::AUTO;
+                                    $options->version = Version::AUTO;
                                     // $options->outputInterface     = QRSvgWithLogo::class;
-                                    $options->outputBase64        = false;
-                                    $options->eccLevel            = EccLevel::H; // ECC level H is necessary when using logos
-                                    $options->addQuietzone        = true;
+                                    $options->outputBase64 = false;
+                                    $options->eccLevel = EccLevel::H; // ECC level H is necessary when using logos
+                                    $options->addQuietzone = true;
                                     // $options->drawLightModules    = true;
-                                    $options->connectPaths        = true;
+                                    $options->connectPaths = true;
                                     $options->drawCircularModules = true;
                                     // $options->circleRadius        = 0.45;
 
@@ -153,7 +152,7 @@ class EditProfile extends \Filament\Pages\Auth\EditProfile
                                         ->hidden()
                                         ->default(null),
                                 ]),
-                            
+
                             Tab::make('SSH Keys')
                                 ->icon('tabler-lock-code')
                                 ->schema([
