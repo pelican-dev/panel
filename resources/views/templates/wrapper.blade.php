@@ -9,8 +9,8 @@
             <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
             <meta name="csrf-token" content="{{ csrf_token() }}">
             <meta name="robots" content="noindex">
-            <link rel="shortcut icon" href="/pelican.ico">
-            <meta name="msapplication-config" content="/favicons/browserconfig.xml">
+            <link rel="shortcut icon" href="{{ url('/pelican.ico') }}">
+            <meta name="msapplication-config" content="{{ url('/favicons/browserconfig.xml') }}">
             <meta name="theme-color" content="#0e4688">
         @show
 

@@ -7,7 +7,7 @@
         <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
         <meta name="_token" content="{{ csrf_token() }}">
 
-        <link rel="icon" type="image/x-icon" href="/pelican.ico">
+        <link rel="icon" type="image/x-icon" href="{{ url('/pelican.ico') }}">
         <meta name="theme-color" content="#0e4688">
 
         @include('layouts.scripts')
@@ -151,7 +151,7 @@
             </footer>
         </div>
         @section('footer-scripts')
-            <script src="/js/keyboard.polyfill.js" type="application/javascript"></script>
+            <script src="{{ url('/js/keyboard.polyfill.js') }}" type="application/javascript"></script>
             <script>keyboardeventKeyPolyfill.polyfill();</script>
 
             {!! Theme::js('vendor/jquery/jquery.min.js?t={cache-version}') !!}
@@ -162,7 +162,7 @@
             {!! Theme::js('vendor/bootstrap-notify/bootstrap-notify.min.js?t={cache-version}') !!}
             {!! Theme::js('vendor/select2/select2.full.min.js?t={cache-version}') !!}
             {!! Theme::js('js/admin/functions.js?t={cache-version}') !!}
-            <script src="/js/autocomplete.js" type="application/javascript"></script>
+            <script src="{{ url('/js/autocomplete.js') }}" type="application/javascript"></script>
 
             @if(Auth::user()->root_admin)
                 <script>
