@@ -75,7 +75,7 @@ class MountResource extends Resource
                     Forms\Components\Textarea::make('description')
                         ->helperText('A longer description for this mount.')
                         ->columnSpanFull(),
-                ])->columnSpan(2)->columns([
+                ])->columnSpan(1)->columns([
                     'default' => 1,
                     'lg' => 2,
                 ]),
@@ -91,10 +91,11 @@ class MountResource extends Resource
                     ]),
                 ])->columns([
                     'default' => 1,
+                    'lg' => 2,
                 ]),
             ])->columns([
                 'default' => 1,
-                'lg' => 3,
+                'lg' => 2,
             ]);
     }
 

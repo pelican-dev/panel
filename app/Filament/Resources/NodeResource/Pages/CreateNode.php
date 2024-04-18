@@ -18,13 +18,18 @@ class CreateNode extends CreateRecord
     public function form(Forms\Form $form): Forms\Form
     {
         return $form
-            ->columns(4)
+            ->columns([
+                'default' => 2,
+                'sm' => 3,
+                'md' => 3,
+                'lg' => 4,
+            ])
             ->schema([
                 Forms\Components\TextInput::make('fqdn')
                     ->columnSpan(2)
                     ->required()
                     ->autofocus()
-                    ->live(debounce: 500)
+                    ->live(debounce: 1500)
                     ->rule('prohibited', fn ($state) => is_ip($state) && request()->isSecure())
                     ->label(fn ($state) => is_ip($state) ? 'IP Address' : 'Domain Name')
                     ->placeholder(fn ($state) => is_ip($state) ? '192.168.1.1' : 'node.example.com')
@@ -100,10 +105,21 @@ class CreateNode extends CreateRecord
                     ->colors([
                         true => 'success',
                         false => 'danger',
+                    ])
+                    ->columnSpan([
+                        'default' => 1,
+                        'sm' => 1,
+                        'md' => 1,
+                        'lg' => 1,
                     ]),
 
                 Forms\Components\TextInput::make('daemonListen')
-                    ->columnSpan(1)
+                    ->columnSpan([
+                        'default' => 1,
+                        'sm' => 1,
+                        'md' => 1,
+                        'lg' => 1,
+                    ])
                     ->label('Port')
                     ->helperText('If you are running the daemon behind Cloudflare you should set the daemon port to 8443 to allow websocket proxying over SSL.')
                     ->minValue(0)
@@ -114,7 +130,12 @@ class CreateNode extends CreateRecord
 
                 Forms\Components\TextInput::make('name')
                     ->label('Display Name')
-                    ->columnSpan(2)
+                    ->columnSpan([
+                        'default' => 1,
+                        'sm' => 1,
+                        'md' => 1,
+                        'lg' => 2,
+                    ])
                     ->required()
                     ->regex('/[a-zA-Z0-9_\.\- ]+/')
                     ->helperText('This name is for display only and can be changed later.')
@@ -122,7 +143,12 @@ class CreateNode extends CreateRecord
 
                 Forms\Components\ToggleButtons::make('scheme')
                     ->label('Communicate over SSL')
-                    ->columnSpan(2)
+                    ->columnSpan([
+                        'default' => 1,
+                        'sm' => 1,
+                        'md' => 1,
+                        'lg' => 1,
+                    ])
                     ->required()
                     ->inline()
                     ->helperText(function (Forms\Get $get) {
@@ -153,7 +179,12 @@ class CreateNode extends CreateRecord
 
                 Forms\Components\Textarea::make('description')
                     ->hidden()
-                    ->columnSpanFull()
+                    ->columnSpan([
+                        'default' => 1,
+                        'sm' => 1,
+                        'md' => 2,
+                        'lg' => 4,
+                    ])
                     ->rows(5),
 
                 Forms\Components\Hidden::make('skipValidation')->default(true),

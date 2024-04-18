@@ -20,7 +20,12 @@ class EditNode extends EditRecord
     {
         return $form->schema([
             Tabs::make('Tabs')
-                ->columns(4)
+                ->columns([
+                    'default' => 2,
+                    'sm' => 3,
+                    'md' => 3,
+                    'lg' => 4,
+                ])
                 ->persistTabInQueryString()
                 ->columnSpanFull()
                 ->tabs([
@@ -46,11 +51,11 @@ class EditNode extends EditRecord
                         ]),
                     Tabs\Tab::make('Allocations')
                         ->icon('tabler-plug-connected')
-                        ->columns(5)
+                        ->columns(4)
                         ->schema([
                             Forms\Components\Repeater::make('allocations')
                                 ->orderColumn('server_id')
-                                ->columnSpan(3)
+                                ->columnSpan(1)
                                 ->columns(4)
                                 ->relationship()
                                 ->addActionLabel('Create New Allocation')

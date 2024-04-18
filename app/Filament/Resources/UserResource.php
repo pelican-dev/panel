@@ -84,6 +84,7 @@ class UserResource extends Resource
             ->searchable(false)
             ->columns([
                 Tables\Columns\ImageColumn::make('picture')
+                    ->visibleFrom('lg')
                     ->label('')
                     ->extraImgAttributes(['class' => 'rounded-full'])
                     ->defaultImageUrl(fn (User $user) => 'https://gravatar.com/avatar/' . md5(strtolower($user->email))),
@@ -100,12 +101,14 @@ class UserResource extends Resource
                     ->searchable()
                     ->icon('tabler-mail'),
                 Tables\Columns\IconColumn::make('root_admin')
+                    ->visibleFrom('md')
                     ->label('Admin')
                     ->boolean()
                     ->trueIcon('tabler-star')
                     ->falseIcon('tabler-star-off')
                     ->sortable(),
                 Tables\Columns\IconColumn::make('use_totp')->label('2FA')
+                    ->visibleFrom('lg')
                     ->icon(fn (User $user) => $user->use_totp ? 'tabler-lock' : 'tabler-lock-open-off')
                     ->boolean()->sortable(),
                 Tables\Columns\TextColumn::make('servers_count')
@@ -113,6 +116,7 @@ class UserResource extends Resource
                     ->icon('tabler-server')
                     ->label('Servers'),
                 Tables\Columns\TextColumn::make('subusers_count')
+                    ->visibleFrom('sm')
                     ->counts('subusers')
                     ->icon('tabler-users')
                     // ->formatStateUsing(fn (string $state, $record): string => (string) ($record->servers_count + $record->subusers_count))
