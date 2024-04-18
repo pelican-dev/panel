@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api\Remote\Servers;
 
+use App\Enums\ServerState;
 use App\Models\Backup;
 use Illuminate\Http\Request;
 use App\Models\Server;
@@ -81,7 +82,7 @@ class ServerDetailsController extends Controller
                     ->latest('timestamp'),
             ])
             ->where('node_id', $node->id)
-            ->where('status', Server::STATUS_RESTORING_BACKUP)
+            ->where('status', ServerState::RestoringBackup)
             ->get();
 
         $this->connection->transaction(function () use ($node, $servers) {
@@ -108,7 +109,7 @@ class ServerDetailsController extends Controller
             // Update any server marked as installing or restoring as being in a normal state
             // at this point in the process.
             Server::query()->where('node_id', $node->id)
-                ->whereIn('status', [Server::STATUS_INSTALLING, Server::STATUS_RESTORING_BACKUP])
+                ->whereIn('status', [ServerState::Installing, ServerState::RestoringBackup])
                 ->update(['status' => null]);
         });
 

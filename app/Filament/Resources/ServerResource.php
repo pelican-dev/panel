@@ -48,21 +48,15 @@ class ServerResource extends Resource
 
                         return $details['state'] ?? 'unknown';
                     })
-                    ->options([
-                        'running' => 'Running',
-                        'starting' => 'Starting',
-                        'stopping' => 'Stopping',
-                        'offline' => 'Offline',
-                        'unknown' => 'Unknown',
-                    ])
-
-                    ->colors([
-                        'running' => 'success',
-                        'offline' => 'danger',
-                        'starting' => 'primary',
-                        'stopping' => 'warning',
-                        'unknown' => 'primary',
-                    ])
+                    ->options(collect(ContainerStatus::cases())->mapWithKeys(
+                        fn (ContainerStatus $status) => [$status->value => str($status->value)->ucwords()]
+                    ))
+                    ->colors(collect(ContainerStatus::cases())->mapWithKeys(
+                        fn (ContainerStatus $status) => [$status->value => $status->color()]
+                    ))
+                    ->icons(collect(ContainerStatus::cases())->mapWithKeys(
+                        fn (ContainerStatus $status) => [$status->value => $status->icon()]
+                    ))
                     ->grouped()
                     ->columnSpanFull()
                     ->inline(),
@@ -73,23 +67,15 @@ class ServerResource extends Resource
                     ->hiddenOn('create')
                     ->disableOptionWhen(fn ($state, $value) => $state !== $value)
                     ->formatStateUsing(fn ($state) => $state ?? 'none')
-                    ->options([
-                        'none' => 'None',
-                        Server::STATUS_INSTALLING => str(Server::STATUS_INSTALLING)->title()->replace('_', ' '),
-                        Server::STATUS_INSTALL_FAILED => str(Server::STATUS_INSTALL_FAILED)->title()->replace('_', ' '),
-                        Server::STATUS_REINSTALL_FAILED => str(Server::STATUS_REINSTALL_FAILED)->title()->replace('_', ' '),
-                        Server::STATUS_SUSPENDED => str(Server::STATUS_SUSPENDED)->title()->replace('_', ' '),
-                        Server::STATUS_RESTORING_BACKUP => str(Server::STATUS_RESTORING_BACKUP)->title()->replace('_', ' '),
-                    ])
-
-                    ->colors([
-                        'none' => 'primary',
-                        Server::STATUS_INSTALLING => 'primary',
-                        Server::STATUS_INSTALL_FAILED => 'danger',
-                        Server::STATUS_REINSTALL_FAILED => 'danger',
-                        Server::STATUS_SUSPENDED => 'danger',
-                        Server::STATUS_RESTORING_BACKUP => 'primary',
-                    ])
+                    ->options(collect(ServerState::cases())->mapWithKeys(
+                        fn (ServerState $state) => [$state->value => str($state->value)->replace('_', ' ')->ucwords()]
+                    ))
+                    ->colors(collect(ServerState::cases())->mapWithKeys(
+                        fn (ServerState $state) => [$state->value => $state->color()]
+                    ))
+                    ->icons(collect(ServerState::cases())->mapWithKeys(
+                        fn (ServerState $state) => [$state->value => $state->icon()]
+                    ))
                     ->grouped()
                     ->columnSpanFull()
                     ->inline(),

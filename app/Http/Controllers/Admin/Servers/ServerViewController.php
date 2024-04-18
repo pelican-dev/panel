@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin\Servers;
 
+use App\Enums\ServerState;
 use App\Models\DatabaseHost;
 use App\Models\Egg;
 use App\Models\Mount;
@@ -110,7 +111,7 @@ class ServerViewController extends Controller
      */
     public function manage(Request $request, Server $server): View
     {
-        if ($server->status === Server::STATUS_INSTALL_FAILED) {
+        if ($server->status === ServerState::InstallFailed) {
             throw new DisplayException('This server is in a failed install state and cannot be recovered. Please delete and re-create the server.');
         }
 

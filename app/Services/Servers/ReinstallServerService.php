@@ -2,6 +2,7 @@
 
 namespace App\Services\Servers;
 
+use App\Enums\ServerState;
 use App\Models\Server;
 use Illuminate\Database\ConnectionInterface;
 use App\Repositories\Daemon\DaemonServerRepository;
@@ -25,7 +26,7 @@ class ReinstallServerService
     public function handle(Server $server): Server
     {
         return $this->connection->transaction(function () use ($server) {
-            $server->fill(['status' => Server::STATUS_INSTALLING])->save();
+            $server->fill(['status' => ServerState::Installing])->save();
 
             $this->daemonServerRepository->setServer($server)->reinstall();
 

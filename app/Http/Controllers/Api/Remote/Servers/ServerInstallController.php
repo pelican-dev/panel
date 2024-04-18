@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api\Remote\Servers;
 
+use App\Enums\ServerState;
 use Illuminate\Http\Response;
 use App\Models\Server;
 use Illuminate\Http\JsonResponse;
@@ -36,16 +37,16 @@ class ServerInstallController extends Controller
 
         // Make sure the type of failure is accurate
         if (!$request->boolean('successful')) {
-            $status = Server::STATUS_INSTALL_FAILED;
+            $status = ServerState::InstallFailed;
 
             if ($request->boolean('reinstall')) {
-                $status = Server::STATUS_REINSTALL_FAILED;
+                $status = ServerState::ReinstallFailed;
             }
         }
 
         // Keep the server suspended if it's already suspended
-        if ($server->status === Server::STATUS_SUSPENDED) {
-            $status = Server::STATUS_SUSPENDED;
+        if ($server->status === ServerState::Suspended) {
+            $status = ServerState::Suspended;
         }
 
         $previouslyInstalledAt = $server->installed_at;

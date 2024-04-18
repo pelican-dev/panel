@@ -2,6 +2,7 @@
 
 namespace App\Tests\Integration\Api\Remote;
 
+use App\Enums\ServerState;
 use App\Models\Node;
 use App\Models\User;
 use App\Models\Server;
@@ -207,9 +208,9 @@ class SftpAuthenticationControllerTest extends IntegrationTestCase
     public static function serverStateDataProvider(): array
     {
         return [
-            'installing' => [Server::STATUS_INSTALLING],
-            'suspended' => [Server::STATUS_SUSPENDED],
-            'restoring a backup' => [Server::STATUS_RESTORING_BACKUP],
+            'installing' => [ServerState::Installing->value],
+            'suspended' => [ServerState::Suspended->value],
+            'restoring a backup' => [ServerState::RestoringBackup->value],
         ];
     }
 
