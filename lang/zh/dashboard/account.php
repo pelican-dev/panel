@@ -18,11 +18,11 @@ return [
         'setup' => [
             'title' => 'Setup two-factor authentication',
             'help' => 'Can\'t scan the code? Enter the code below into your application:',
-            'field' => '输入令牌',
+            'field' => 'Enter token',
         ],
         'disable' => [
-            'title' => '禁用两因素身份验证',
-            'field' => '输入令牌',
+            'title' => 'Disable two-factor authentication',
+            'field' => 'Enter token',
         ],
     ],
 ];
