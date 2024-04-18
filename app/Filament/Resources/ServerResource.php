@@ -18,7 +18,6 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Validator;
-use Illuminate\Support\Str;
 
 class ServerResource extends Resource
 {
@@ -31,7 +30,12 @@ class ServerResource extends Resource
     public static function form(Form $form): Form
     {
         return $form
-            ->columns(6)
+            ->columns([
+                'default' => 2,
+                'sm' => 2,
+                'md' => 4,
+                'lg' => 6,
+            ])
             ->schema([
                 Forms\Components\ToggleButtons::make('docker')
                     ->label('Container Status')
@@ -110,7 +114,12 @@ class ServerResource extends Resource
 
                             $set('name', $prefix . fake()->domainWord);
                         }))
-                    ->columnSpan(4)
+                    ->columnSpan([
+                        'default' => 2,
+                        'sm' => 4,
+                        'md' => 2,
+                        'lg' => 3,
+                    ])
                     ->required()
                     ->maxLength(191),
 
@@ -118,7 +127,12 @@ class ServerResource extends Resource
                     ->prefixIcon('tabler-user')
                     ->default(auth()->user()->id)
                     ->label('Owner')
-                    ->columnSpan(2)
+                    ->columnSpan([
+                        'default' => 2,
+                        'sm' => 4,
+                        'md' => 2,
+                        'lg' => 3,
+                    ])
                     ->relationship('user', 'username')
                     ->searchable()
                     ->preload()
@@ -264,7 +278,12 @@ class ServerResource extends Resource
                 Forms\Components\Select::make('egg_id')
                     ->disabledOn('edit')
                     ->prefixIcon('tabler-egg')
-                    ->columnSpan(2)
+                    ->columnSpan([
+                        'default' => 2,
+                        'sm' => 2,
+                        'md' => 2,
+                        'lg' => 6,
+                    ])
                     ->relationship('egg', 'name')
                     ->searchable()
                     ->preload()
@@ -309,31 +328,6 @@ class ServerResource extends Resource
                     ->inline()
                     ->required(),
 
-                Forms\Components\Select::make('image')
-                    ->hidden(fn (Forms\Get $get) => $get('custom_image'))
-                    ->disabled(fn (Forms\Get $get) => $get('custom_image'))
-                    ->label('Docker Image')
-                    ->prefixIcon('tabler-brand-docker')
-                    ->options(function (Forms\Get $get, Forms\Set $set) {
-                        $images = Egg::find($get('egg_id'))->docker_images ?? [];
-
-                        $set('image', collect($images)->first());
-
-                        return $images;
-                    })
-                    ->disabled(fn (Forms\Components\Select $component) => empty($component->getOptions()))
-                    ->selectablePlaceholder(false)
-                    ->columnSpan(2)
-                    ->required(),
-
-                Forms\Components\TextInput::make('image')
-                    ->hidden(fn (Forms\Get $get) => !$get('custom_image'))
-                    ->disabled(fn (Forms\Get $get) => !$get('custom_image'))
-                    ->label('Docker Image')
-                    ->placeholder('Enter a custom Image')
-                    ->columnSpan(2)
-                    ->required(),
-
                 Forms\Components\ToggleButtons::make('custom_image')
                     ->live()
                     ->label('Custom Image?')
@@ -351,6 +345,41 @@ class ServerResource extends Resource
                         true => 'tabler-settings-check',
                     ])
                     ->inline(),
+
+                Forms\Components\TextInput::make('image')
+                    ->hidden(fn (Forms\Get $get) => !$get('custom_image'))
+                    ->disabled(fn (Forms\Get $get) => !$get('custom_image'))
+                    ->label('Docker Image')
+                    ->placeholder('Enter a custom Image')
+                    ->columnSpan([
+                        'default' => 2,
+                        'sm' => 2,
+                        'md' => 2,
+                        'lg' => 4,
+                    ])
+                    ->required(),
+
+                Forms\Components\Select::make('image')
+                    ->hidden(fn (Forms\Get $get) => $get('custom_image'))
+                    ->disabled(fn (Forms\Get $get) => $get('custom_image'))
+                    ->label('Docker Image')
+                    ->prefixIcon('tabler-brand-docker')
+                    ->options(function (Forms\Get $get, Forms\Set $set) {
+                        $images = Egg::find($get('egg_id'))->docker_images ?? [];
+
+                        $set('image', collect($images)->first());
+
+                        return $images;
+                    })
+                    ->disabled(fn (Forms\Components\Select $component) => empty($component->getOptions()))
+                    ->selectablePlaceholder(false)
+                    ->columnSpan([
+                        'default' => 2,
+                        'sm' => 2,
+                        'md' => 2,
+                        'lg' => 4,
+                    ])
+                    ->required(),
 
                 Forms\Components\Fieldset::make('Application Feature Limits')
                     ->inlineLabel()
@@ -379,13 +408,18 @@ class ServerResource extends Resource
                     ->label('Startup Command')
                     ->required()
                     ->live()
+                    ->columnSpan([
+                        'default' => 2,
+                        'sm' => 4,
+                        'md' => 4,
+                        'lg' => 6,
+                    ])
                     ->rows(function ($state) {
                         return str($state)->explode("\n")->reduce(
                             fn (int $carry, $line) => $carry + floor(strlen($line) / 125),
                             0
                         );
-                    })
-                    ->columnSpanFull(),
+                    }),
 
                 Forms\Components\Hidden::make('environment')->default([]),
 
@@ -396,6 +430,12 @@ class ServerResource extends Resource
                     ->iconColor('primary')
                     ->collapsible()
                     ->collapsed()
+                    ->columnSpan(([
+                        'default' => 2,
+                        'sm' => 4,
+                        'md' => 4,
+                        'lg' => 6,
+                    ]))
                     ->schema([
                         Forms\Components\Placeholder::make('Select an egg first to show its variables!')
                             ->hidden(fn (Forms\Get $get) => !empty($get('server_variables'))),
@@ -424,14 +464,16 @@ class ServerResource extends Resource
                                         },
                                     ])
                                     ->label(fn (Forms\Get $get) => $get('name'))
-                                    ->hint(fn (Forms\Get $get) => $get('rules'))
+                                    //->hint('Rule')
+                                    ->hintIcon('tabler-code')
+                                    ->hintIconTooltip(fn (Forms\Get $get) => $get('rules'))
                                     ->prefix(fn (Forms\Get $get) => '{{' . $get('env_variable') . '}}')
                                     ->helperText(fn (Forms\Get $get) => empty($get('description')) ? '—' : $get('description'))
                                     ->maxLength(191),
 
                                 Forms\Components\Hidden::make('variable_id')->default(0),
                             ])
-                            ->columnSpanFull(),
+                            ->columnSpan(2),
                     ]),
 
                 Forms\Components\Section::make('Resource Management')
@@ -439,7 +481,13 @@ class ServerResource extends Resource
                     ->collapsed()
                     ->icon('tabler-server-cog')
                     ->iconColor('primary')
-                    ->columns(3)
+                    ->columns(2)
+                    ->columnSpan(([
+                        'default' => 2,
+                        'sm' => 4,
+                        'md' => 4,
+                        'lg' => 6,
+                    ]))
                     ->schema([
                         Forms\Components\TextInput::make('memory')
                             ->default(0)
