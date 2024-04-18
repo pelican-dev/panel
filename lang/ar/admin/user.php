@@ -2,11 +2,11 @@
 
 return [
     'exceptions' => [
-        'user_has_servers' => 'لا يمكن حذف مستخدم لديه خوادم نشطة مرتبطة بحسابه. يرجى حذف خوادمهم قبل المتابعة.',
-        'user_is_self' => 'لا يمكنك حذف حساب المستخدم الخاص بك.',
+        'user_has_servers' => 'Cannot delete a user with active servers attached to their account. Please delete their servers before continuing.',
+        'user_is_self' => 'Cannot delete your own user account.',
     ],
     'notices' => [
-        'account_created' => 'تم إنشاء الحساب بنجاح.',
-        'account_updated' => 'تم تحديث الحساب بنجاح.',
+        'account_created' => 'Account has been created successfully.',
+        'account_updated' => 'Account has been successfully updated.',
     ],
 ];
