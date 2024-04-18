@@ -41,10 +41,8 @@ class DaemonServerRepository extends DaemonRepository
 
         try {
             $this->getHttpClient()->post('/api/servers', [
-                'json' => [
-                    'uuid' => $this->server->uuid,
-                    'start_on_completion' => $startOnCompletion,
-                ],
+                'uuid' => $this->server->uuid,
+                'start_on_completion' => $startOnCompletion,
             ]);
         } catch (GuzzleException $exception) {
             throw new DaemonConnectionException($exception);
@@ -149,7 +147,7 @@ class DaemonServerRepository extends DaemonRepository
         try {
             $this->getHttpClient()
                 ->post(sprintf('/api/servers/%s/ws/deny', $this->server->uuid), [
-                    'json' => ['jtis' => $jtis],
+                    'jtis' => $jtis
                 ]);
         } catch (TransferException $exception) {
             throw new DaemonConnectionException($exception);

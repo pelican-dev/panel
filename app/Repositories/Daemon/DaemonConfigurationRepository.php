@@ -36,7 +36,7 @@ class DaemonConfigurationRepository extends DaemonRepository
         try {
             return $this->getHttpClient()->post(
                 '/api/update',
-                ['json' => $node->getConfiguration()]
+                $node->getConfiguration()
             );
         } catch (TransferException $exception) {
             throw new DaemonConnectionException($exception);

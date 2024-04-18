@@ -21,7 +21,7 @@ class DaemonPowerRepository extends DaemonRepository
         try {
             return $this->getHttpClient()->post(
                 sprintf('/api/servers/%s/power', $this->server->uuid),
-                ['json' => ['action' => $action]]
+                ['action' => $action]
             );
         } catch (TransferException $exception) {
             throw new DaemonConnectionException($exception);
