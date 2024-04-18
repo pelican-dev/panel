@@ -523,9 +523,11 @@ class ServerResource extends Resource
                     ->label('Owner')
                     ->url(fn (Server $server): string => route('filament.admin.resources.users.edit', ['record' => $server->user]))
                     ->sortable(),
-                Tables\Columns\SelectColumn::make('allocation.id')
+                Tables\Columns\SelectColumn::make('allocation_id')
                     ->label('Primary Allocation')
-                    ->options(fn ($state, Server $server) => [$server->allocation->id => $server->allocation->address])
+                    ->options(fn ($state, Server $server) => $server->allocations->mapWithKeys(
+                        fn ($allocation) => [$allocation->id => $allocation->address])
+                    )
                     ->selectablePlaceholder(false)
                     ->sortable(),
                 Tables\Columns\TextColumn::make('image')->hidden(),
