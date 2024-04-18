@@ -37,12 +37,13 @@ class EggResource extends Resource
                                 ->helperText('This is the globally unique identifier for this Egg which the Daemon uses as an identifier.'),
                             Forms\Components\TextInput::make('author')->required()->maxLength(191)->disabled()
                                 ->helperText('The author of this version of the Egg. Uploading a new Egg configuration from a different author will change this.'),
+                            Forms\Components\Textarea::make('startup')->rows(3)->columnSpanFull()
+                                ->helperText('The default startup command that should be used for new servers using this Egg.'),
+                            Forms\Components\TagsInput::make('file_denylist')->placeholder('denied-file.txt'),
                             Forms\Components\Toggle::make('force_outgoing_ip')->required()
                                 ->helperText("Forces all outgoing network traffic to have its Source IP NATed to the IP of the server's primary allocation IP.
                                     Required for certain games to work properly when the Node has multiple public IP addresses.
                                     Enabling this option will disable internal networking for any servers using this egg, causing them to be unable to internally access other servers on the same node."),
-                            Forms\Components\Textarea::make('startup')->rows(5)
-                                ->helperText('The default startup command that should be used for new servers using this Egg.'),
                             Forms\Components\KeyValue::make('docker_images')
                                 ->columnSpanFull()
                                 ->addActionLabel('Add Image')
@@ -50,6 +51,7 @@ class EggResource extends Resource
                                 ->valueLabel('Image URI')
                                 ->helperText('The docker images available to servers using this egg.'),
                         ]),
+
 
                     Forms\Components\Tabs\Tab::make('Process Management')
                         ->columns(2)
@@ -79,21 +81,23 @@ class EggResource extends Resource
                         ]),
                     Forms\Components\Tabs\Tab::make('Variables')
                         ->columnSpanFull()
-                        // ->columns(2)
+                        ->columns(2)
                         ->schema([
                             Forms\Components\Repeater::make('Blah')
-                                ->grid(3)
+                                ->grid()
                                 ->relationship('variables')
                                 ->name('name')
-                                ->columns(1)
-                                ->columnSpan(1)
+                                ->columns(2)
+                                ->reorderable()->reorderableWithDragAndDrop()
+                                ->collapsible()->collapsed()
+                                ->columnSpan(2)
                                 ->itemLabel(fn (array $state) => $state['name'])
                                 ->schema([
                                     Forms\Components\TextInput::make('name')->live()->maxLength(191)->columnSpanFull(),
                                     Forms\Components\Textarea::make('description')->columnSpanFull(),
-                                    Forms\Components\TextInput::make('env_variable')->maxLength(191),
+                                    Forms\Components\TextInput::make('env_variable')->maxLength(191)->required()->hint(fn ($state) => "{{{$state}}}"),
                                     Forms\Components\TextInput::make('default_value')->maxLength(191),
-                                    Forms\Components\Textarea::make('rules')->rows(3)->columnSpanFull()->required(),
+                                    Forms\Components\TextInput::make('rules')->columnSpanFull()->required(),
                                 ]),
                         ]),
                     Forms\Components\Tabs\Tab::make('Install Script')
@@ -124,7 +128,6 @@ class EggResource extends Resource
                 ])->columnSpanFull()->persistTabInQueryString(),
 
                 // Forms\Components\TagsInput::make('features'),
-                // Forms\Components\TagsInput::make('file_denylist')->placeholder('new-file.txt'),
                 // Forms\Components\TextInput::make('update_url'),
                 // Forms\Components\Toggle::make('script_is_privileged')->required(),
             ]);
