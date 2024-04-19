@@ -2,14 +2,14 @@
 @include('partials/admin.settings.nav', ['activeTab' => 'advanced'])
 
 @section('title')
-    Advanced Settings
+    {{ trans('views/admin.advanced_settings.advanced_settings') }}
 @endsection
 
 @section('content-header')
-    <h1>Advanced Settings<small>Configure advanced settings for Panel.</small></h1>
+    <h1>{{ trans('views/admin.advanced_settings.advanced_settings') }}<small>Configure advanced settings for Panel.</small></h1>
     <ol class="breadcrumb">
-        <li><a href="{{ route('admin.index') }}">Admin</a></li>
-        <li class="active">Settings</li>
+        <li><a href="{{ route('admin.index') }}">{{ trans('views/admin.index_settings.admin') }}</a></li>
+        <li class="active">{{ trans('views/admin.index_settings.settings') }}</li>
     </ol>
 @endsection
 
@@ -20,31 +20,31 @@
             <form action="" method="POST">
                 <div class="box">
                     <div class="box-header with-border">
-                        <h3 class="box-title">reCAPTCHA</h3>
+                        <h3 class="box-title">{{ trans('views/admin.advanced_settings.reCAPTCHA') }}</h3>
                     </div>
                     <div class="box-body">
                         <div class="row">
                             <div class="form-group col-md-4">
-                                <label class="control-label">Status</label>
+                                <label class="control-label">{{ trans('views/admin.advanced_settings.status') }}</label>
                                 <div>
                                     <select class="form-control" name="recaptcha:enabled">
-                                        <option value="true">Enabled</option>
-                                        <option value="false" @if(old('recaptcha:enabled', config('recaptcha.enabled')) == '0') selected @endif>Disabled</option>
+                                        <option value="true">{{ trans('views/admin.advanced_settings.enabled') }}</option>
+                                        <option value="false" @if(old('recaptcha:enabled', config('recaptcha.enabled')) == '0') selected @endif>{{ trans('views/admin.advanced_settings.disabled') }}</option>
                                     </select>
-                                    <p class="text-muted small">If enabled, login forms and password reset forms will do a silent captcha check and display a visible captcha if needed.</p>
+                                    <p class="text-muted small">{{ trans('views/admin.advanced_settings.reCAPTCHA_desc') }}</p>
                                 </div>
                             </div>
                             <div class="form-group col-md-4">
-                                <label class="control-label">Site Key</label>
+                                <label class="control-label">{{ trans('views/admin.advanced_settings.site_key') }}</label>
                                 <div>
                                     <input type="text" required class="form-control" name="recaptcha:website_key" value="{{ old('recaptcha:website_key', config('recaptcha.website_key')) }}">
                                 </div>
                             </div>
                             <div class="form-group col-md-4">
-                                <label class="control-label">Secret Key</label>
+                                <label class="control-label">{{ trans('views/admin.advanced_settings.secret_key') }}</label>
                                 <div>
                                     <input type="text" required class="form-control" name="recaptcha:secret_key" value="{{ old('recaptcha:secret_key', config('recaptcha.secret_key')) }}">
-                                    <p class="text-muted small">Used for communication between your site and Google. Be sure to keep it a secret.</p>
+                                    <p class="text-muted small">{{ trans('views/admin.advanced_settings.secret_key_desc') }}</p>
                                 </div>
                             </div>
                         </div>
