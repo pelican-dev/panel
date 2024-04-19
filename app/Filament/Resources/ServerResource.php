@@ -193,6 +193,7 @@ class ServerResource extends Resource
                                 They usually consist of the port forwarded ones.
                             ')
                             ->label('Ports')
+                            ->splitKeys(['Tab', ' ', ','])
                             ->required(),
                     ])
                     ->createOptionUsing(function (array $data, Forms\Get $get): int {
