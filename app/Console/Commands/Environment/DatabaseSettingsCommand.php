@@ -35,7 +35,7 @@ class DatabaseSettingsCommand extends Command
      */
     public function handle(): int
     {
-        $this->output->note(__("commands.database_settings.DB_HOST_note"));
+        $this->output->note(__('commands.database_settings.DB_HOST_note'));
         $this->variables['DB_HOST'] = $this->option('host') ?? $this->ask(
             'Database Host',
             config('database.connections.mysql.host', '127.0.0.1')
@@ -51,7 +51,7 @@ class DatabaseSettingsCommand extends Command
             config('database.connections.mysql.database', 'panel')
         );
 
-        $this->output->note(__("commands.database_settings.DB_USERNAME_note"));
+        $this->output->note(__('commands.database_settings.DB_USERNAME_note'));
         $this->variables['DB_USERNAME'] = $this->option('username') ?? $this->ask(
             'Database Username',
             config('database.connections.mysql.username', 'panel')
@@ -60,7 +60,7 @@ class DatabaseSettingsCommand extends Command
         $askForMySQLPassword = true;
         if (!empty(config('database.connections.mysql.password')) && $this->input->isInteractive()) {
             $this->variables['DB_PASSWORD'] = config('database.connections.mysql.password');
-            $askForMySQLPassword = $this->confirm(__("commands.database_settings.DB_PASSWORD_note"));
+            $askForMySQLPassword = $this->confirm(__('commands.database_settings.DB_PASSWORD_note'));
         }
 
         if ($askForMySQLPassword) {
@@ -71,7 +71,7 @@ class DatabaseSettingsCommand extends Command
             $this->testMySQLConnection();
         } catch (\PDOException $exception) {
             $this->output->error(sprintf('Unable to connect to the MySQL server using the provided credentials. The error returned was "%s".', $exception->getMessage()));
-            $this->output->error(__("commands.database_settings.DB_error_2"));
+            $this->output->error(__('commands.database_settings.DB_error_2'));
 
             if ($this->confirm('Go back and try again?')) {
                 $this->database->disconnect('_panel_command_test');
