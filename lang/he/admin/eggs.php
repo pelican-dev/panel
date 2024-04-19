@@ -2,18 +2,18 @@
 
 return [
     'notices' => [
-        'imported' => 'Successfully imported this Egg and its associated variables.',
-        'updated_via_import' => 'This Egg has been updated using the file provided.',
-        'deleted' => 'Successfully deleted the requested egg from the Panel.',
-        'updated' => 'Egg configuration has been updated successfully.',
-        'script_updated' => 'Egg install script has been updated and will run whenever servers are installed.',
-        'egg_created' => 'A new egg was laid successfully. You will need to restart any running daemons to apply this new egg.',
+        'imported' => 'ביצה זו והמשתנים הקשורים לה יובאו בהצלחה.',
+        'updated_via_import' => 'ביצה זו עודכנה באמצעות הקובץ שסופק.',
+        'deleted' => 'נמחקה בהצלחה הביצה המבוקשת מהחלונית.',
+        'updated' => 'תצורת הביצה עודכנה בהצלחה.',
+        'script_updated' => 'סקריפט התקנת הביצה עודכן ויפעל בכל פעם שיותקנו שרתים.',
+        'egg_created' => 'ביצה חדשה הוטלה בהצלחה. תצטרך להפעיל מחדש את כל הדמונים הפועלים כדי להחיל את התיקון החדש הזה.',
     ],
     'variables' => [
         'notices' => [
-            'variable_deleted' => 'The variable ":variable" has been deleted and will no longer be available to servers once rebuilt.',
-            'variable_updated' => 'The variable ":variable" has been updated. You will need to rebuild any servers using this variable in order to apply changes.',
-            'variable_created' => 'New variable has successfully been created and assigned to this egg.',
+            'variable_deleted' => 'המשתנה ":variable" נמחק ולא יהיה זמין יותר לשרתים לאחר הבנייה מחדש.',
+            'variable_updated' => 'המשתנה ":variable" עודכן. תצטרך לבנות מחדש את כל השרתים המשתמשים במשתנה זה כדי להחיל שינויים.',
+            'variable_created' => 'משתנה חדש נוצר בהצלחה והוקצה לביצה זו.',
         ],
     ],
 ];
