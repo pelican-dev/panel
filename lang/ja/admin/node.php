@@ -2,14 +2,14 @@
 
 return [
     'validation' => [
-        'fqdn_not_resolvable' => 'The FQDN or IP address provided does not resolve to a valid IP address.',
-        'fqdn_required_for_ssl' => 'A fully qualified domain name that resolves to a public IP address is required in order to use SSL for this node.',
+        'fqdn_not_resolvable' => '入力されたFQDNまたはIPアドレスは、有効なIPアドレスに解決しません。',
+        'fqdn_required_for_ssl' => 'このノードにSSLを使用するには、公開IPアドレスに解決するFQDNが必要です。',
     ],
     'notices' => [
-        'allocations_added' => 'Allocations have successfully been added to this node.',
-        'node_deleted' => 'Node has been successfully removed from the panel.',
-        'node_created' => 'Successfully created new node. You can automatically configure the daemon on this machine by visiting the \'Configuration\' tab. <strong>Before you can add any servers you must first allocate at least one IP address and port.</strong>',
-        'node_updated' => 'Node information has been updated. If any daemon settings were changed you will need to reboot it for those changes to take effect.',
-        'unallocated_deleted' => 'Deleted all un-allocated ports for <code>:ip</code>.',
+        'allocations_added' => '割り当てを追加しました。',
+        'node_deleted' => 'ノードを削除しました。',
+        'node_created' => 'ノードを作成しました。「設定」タブでDaemonを自動的に設定できます。 <strong>サーバーを追加する前に、割り当てを追加してください。</strong>',
+        'node_updated' => 'ノードを更新しました。Deamon設定を変更した場合、適用のため再起動が必要です。',
+        'unallocated_deleted' => '<code>:ip</code>に割り当てられていないポートをすべて削除しました。',
     ],
 ];
