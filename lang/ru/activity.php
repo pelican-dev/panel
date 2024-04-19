@@ -12,10 +12,10 @@ return [
         'success' => 'Вход выполнен',
         'password-reset' => 'Пароль сброшен',
         'reset-password' => 'Запрошен сброс пароля',
-        'checkpoint' => 'Two-factor authentication requested',
+        'checkpoint' => 'Двухфакторная аутентификация включена',
         'recovery-token' => 'Использован резервный код 2FA',
         'token' => 'Пройдена двухфакторная проверка',
-        'ip-blocked' => 'Blocked request from unlisted IP address for :identifier',
+        'ip-blocked' => 'Заблокирован запрос с IP адреса не внесенного в список для :identifier',
         'sftp' => [
             'fail' => 'Не удалось войти в SFTP',
         ],
@@ -73,7 +73,7 @@ return [
             'copy' => 'Создана копия :file',
             'create-directory' => 'Создана директория :directory:name',
             'decompress' => 'Разархивировано :files файлов в :directory',
-            'delete_one' => 'Deleted :directory:files.0',
+            'delete_one' => 'Удалено :directory:files.0',
             'delete_other' => 'Удалено :count файлов из :directory',
             'download' => 'Скачан :file',
             'pull' => 'Скачан файл из :url в :directory',
@@ -98,9 +98,9 @@ return [
         ],
         'allocation' => [
             'create' => 'Добавлен порт :allocation',
-            'notes' => 'Updated the notes for :allocation from ":old" to ":new"',
+            'notes' => 'Обновлены заметки для :allocation с ":old" на ":new"',
             'primary' => ':allocation установлен как основной порт сервера',
-            'delete' => 'Deleted the :allocation allocation',
+            'delete' => 'Порт :allocation был удален',
         ],
         'schedule' => [
             'create' => 'Создано расписание :name',
