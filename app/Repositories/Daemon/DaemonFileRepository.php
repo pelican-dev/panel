@@ -26,11 +26,10 @@ class DaemonFileRepository extends DaemonRepository
         Assert::isInstanceOf($this->server, Server::class);
 
         try {
-            $response = $this->getHttpClient()
-                ->withQueryParameters(['file' => $path])
-                ->get(
-                    sprintf('/api/servers/%s/files/contents', $this->server->uuid)
-                );
+            $response = $this->getHttpClient()->get(
+                sprintf('/api/servers/%s/files/contents', $this->server->uuid),
+                ['file' => $path]
+            );
         } catch (ClientException|TransferException $exception) {
             throw new DaemonConnectionException($exception);
         }
