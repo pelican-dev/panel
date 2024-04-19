@@ -193,6 +193,52 @@ class ServerResource extends Resource
                                 They usually consist of the port forwarded ones.
                             ')
                             ->label('Ports')
+                            ->live()
+                            ->afterStateUpdated(function ($state, Forms\Set $set) {
+                                $ports = collect();
+                                $update = false;
+                                foreach ($state as $portEntry) {
+                                    if (!str_contains($portEntry, '-')) {
+                                        if (is_numeric($portEntry)) {
+                                            $ports->push((int) $portEntry);
+
+                                            continue;
+                                        }
+
+                                        // Do not add non numerical ports
+                                        $update = true;
+                                        continue;
+                                    }
+
+                                    $update = true;
+                                    [$start, $end] = explode('-', $portEntry);
+                                    if (!is_numeric($start) || !is_numeric($end)) {
+                                        continue;
+                                    }
+
+                                    $start = max((int) $start, 0);
+                                    $end = min((int) $end, 2**16-1);
+                                    for ($i = $start; $i <= $end; $i++) {
+                                        $ports->push($i);
+                                    }
+                                }
+
+                                $uniquePorts = $ports->unique()->values();
+                                if ($ports->count() > $uniquePorts->count()) {
+                                    $update = true;
+                                    $ports = $uniquePorts;
+                                }
+
+                                $sortedPorts = $ports->sort()->values();
+                                if ($sortedPorts->all() !== $ports->all()) {
+                                    $update = true;
+                                    $ports = $sortedPorts;
+                                }
+
+                                if ($update) {
+                                    $set('allocation_ports', $ports->all());
+                                }
+                            })
                             ->splitKeys(['Tab', ' ', ','])
                             ->required(),
                     ])
