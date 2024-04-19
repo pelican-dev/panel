@@ -134,6 +134,7 @@ class EggResource extends Resource
     {
         return $table
             ->defaultPaginationPageOption(25)
+            ->checkIfRecordIsSelectableUsing(fn (Egg $egg) => $egg->servers_count <= 0)
             ->columns([
                 Tables\Columns\TextColumn::make('id')
                     ->label('Id')
