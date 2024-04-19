@@ -8,7 +8,7 @@ return [
     ],
     'allocations' => [
         'server_using' => 'A server is currently assigned to this allocation. An allocation can only be deleted if no server is currently assigned.',
-        'too_many_ports' => 'Adding more than 1000 ports in a single range at once is not supported.',
+        'too_many_ports' => 'Добавление более 1000 портов в одном диапазоне за раз не поддерживается.',
         'invalid_mapping' => 'The mapping provided for :port was invalid and could not be processed.',
         'cidr_out_of_range' => 'CIDR notation only allows masks between /25 and /32.',
         'port_out_of_range' => 'Ports in an allocation must be greater than 1024 and less than or equal to 65535.',
@@ -25,7 +25,7 @@ return [
     ],
     'importer' => [
         'json_error' => 'There was an error while attempting to parse the JSON file: :error.',
-        'file_error' => 'The JSON file provided was not valid.',
+        'file_error' => 'Указанный JSON файл недействителен.',
         'invalid_json_provided' => 'The JSON file provided is not in a format that can be recognized.',
     ],
     'subusers' => [
@@ -50,6 +50,6 @@ return [
         'no_viable_allocations' => 'No allocations satisfying the requirements for automatic deployment were found.',
     ],
     'api' => [
-        'resource_not_found' => 'The requested resource does not exist on this server.',
+        'resource_not_found' => 'Запрашиваемый ресурс не существует на сервере.',
     ],
 ];
