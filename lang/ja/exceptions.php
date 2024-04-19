@@ -21,7 +21,7 @@ return [
     'variables' => [
         'env_not_unique' => '環境変数「:name」はこの卵に固有でなければなりません。',
         'reserved_name' => '環境変数「:name」は保護されているため、変数に割り当てることはできません。',
-        'bad_validation_rule' => '検証ルール「:rule」は、このアプリケーションの有効なルールではありません。',
+        'bad_validation_rule' => '検証ルール ":rule" は、このアプリケーションの有効なルールではありません。',
     ],
     'importer' => [
         'json_error' => 'JSON ファイルの解析中にエラーが発生しました: :error',
