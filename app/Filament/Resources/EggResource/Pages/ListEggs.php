@@ -21,11 +21,12 @@ class ListEggs extends ListRecords
             Actions\CreateAction::make(),
 
             Actions\Action::make('import')
-                ->label('Import Egg')
+                ->label('Import')
                 ->form([
                     Forms\Components\FileUpload::make('egg')
                         ->acceptedFileTypes(['application/json'])
-                        ->storeFiles(false),
+                        ->storeFiles(false)
+                        ->multiple(),
                 ])
                 ->action(function (array $data): void {
                     /** @var TemporaryUploadedFile $eggFile */
@@ -35,7 +36,7 @@ class ListEggs extends ListRecords
                     $eggImportService = resolve(EggImporterService::class);
 
                     try {
-                        $newEgg = $eggImportService->handle($eggFile);
+                        $eggImportService->handle($eggFile);
                     } catch (Exception $exception) {
                         Notification::make()
                             ->title('Egg Import Failed')
@@ -48,11 +49,9 @@ class ListEggs extends ListRecords
                     }
 
                     Notification::make()
-                        ->title("Egg Import Success: $newEgg->name")
+                        ->title('Egg Import Success')
                         ->success()
                         ->send();
-
-                    redirect()->route('filament.admin.resources.eggs.edit', [$newEgg]);
                 }),
         ];
     }

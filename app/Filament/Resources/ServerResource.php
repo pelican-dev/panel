@@ -207,6 +207,7 @@ class ServerResource extends Resource
 
                                         // Do not add non numerical ports
                                         $update = true;
+
                                         continue;
                                     }
 
@@ -217,7 +218,7 @@ class ServerResource extends Resource
                                     }
 
                                     $start = max((int) $start, 0);
-                                    $end = min((int) $end, 2**16-1);
+                                    $end = min((int) $end, 2 ** 16 - 1);
                                     for ($i = $start; $i <= $end; $i++) {
                                         $ports->push($i);
                                     }

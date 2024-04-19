@@ -1,12 +1,10 @@
 <x-filament-panels::page>
 
-    <x-filament::tabs label="Content tabs">
-        <x-filament::tabs.item disabled>Panel's Resources: </x-filament::tabs.item>
+    <x-filament::tabs disabled>
+        <x-filament::tabs.item disabled>Overview: </x-filament::tabs.item>
 
         <x-filament::tabs.item
             icon="tabler-server-2"
-            :active="$activeTab === 'nodes'"
-            wire:click="$set('activeTab', 'nodes')"
         >
             Nodes
             <x-slot name="badge">{{ $nodesCount }}</x-slot>
@@ -14,8 +12,6 @@
 
         <x-filament::tabs.item
             icon="tabler-brand-docker"
-            :active="$activeTab === 'servers'"
-            wire:click="$set('activeTab', 'servers')"
         >
             Servers
             <x-slot name="badge">{{ $serversCount }}</x-slot>
@@ -23,8 +19,6 @@
 
         <x-filament::tabs.item
             icon="tabler-eggs"
-            :active="$activeTab === 'eggs'"
-            wire:click="$set('activeTab', 'eggs')"
         >
             Eggs
             <x-slot name="badge">{{ $eggsCount }}</x-slot>
@@ -32,8 +26,6 @@
 
         <x-filament::tabs.item
             icon="tabler-users"
-            :active="$activeTab === 'users'"
-            wire:click="$set('activeTab', 'users')"
         >
             Users
             <x-slot name="badge">{{ $usersCount }}</x-slot>

@@ -5,7 +5,6 @@ namespace App\Services\Eggs\Sharing;
 use Ramsey\Uuid\Uuid;
 use Illuminate\Support\Arr;
 use App\Models\Egg;
-use Illuminate\Http\UploadedFile;
 use App\Models\EggVariable;
 use Illuminate\Database\ConnectionInterface;
 use App\Services\Eggs\EggParserService;
@@ -21,25 +20,31 @@ class EggImporterService
      *
      * @throws \App\Exceptions\Service\InvalidFileUploadException|\Throwable
      */
-    public function handle(UploadedFile $file): Egg
+    public function handle(array $files): array
     {
-        $parsed = $this->parser->handle($file);
+        $eggs = [];
 
-        return $this->connection->transaction(function () use ($parsed) {
-            $egg = (new Egg())->forceFill([
-                'uuid' => Uuid::uuid4()->toString(),
-                'author' => Arr::get($parsed, 'author'),
-                'copy_script_from' => null,
-            ]);
+        foreach ($files as $file) {
+            $parsed = $this->parser->handle($file);
 
-            $egg = $this->parser->fillFromParsed($egg, $parsed);
-            $egg->save();
+            $egg = $this->connection->transaction(function () use ($parsed) {
+                $egg = (new Egg())->forceFill([
+                    'uuid' => Uuid::uuid4()->toString(),
+                    'author' => Arr::get($parsed, 'author'),
+                    'copy_script_from' => null,
+                ]);
 
-            foreach ($parsed['variables'] ?? [] as $variable) {
-                EggVariable::query()->forceCreate(array_merge($variable, ['egg_id' => $egg->id]));
-            }
+                $egg = $this->parser->fillFromParsed($egg, $parsed);
+                $egg->save();
 
-            return $egg;
-        });
+                foreach ($parsed['variables'] ?? [] as $variable) {
+                    EggVariable::query()->forceCreate(array_merge($variable, ['egg_id' => $egg->id]));
+                }
+
+                return $egg;
+            });
+        }
+
+        return $eggs;
     }
 }
