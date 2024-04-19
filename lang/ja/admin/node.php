@@ -2,14 +2,14 @@
 
 return [
     'validation' => [
-        'fqdn_not_resolvable' => '入力されたFQDNまたはIPアドレスは、有効なIPアドレスに解決しません。',
-        'fqdn_required_for_ssl' => 'このノードにSSLを使用するには、公開IPアドレスに解決するFQDNが必要です。',
+        'fqdn_not_resolvable' => '提供された FQDN または IP アドレスは、有効な IP アドレスには解決しません。',
+        'fqdn_required_for_ssl' => 'このノードにSSLを使用するには、ドメイン名が必要です。',
     ],
     'notices' => [
-        'allocations_added' => '割り当てを追加しました。',
-        'node_deleted' => 'ノードを削除しました。',
-        'node_created' => 'ノードを作成しました。「設定」タブでDaemonを自動的に設定できます。 <strong>サーバーを追加する前に、割り当てを追加してください。</strong>',
-        'node_updated' => 'ノードを更新しました。Deamon設定を変更した場合、適用のため再起動が必要です。',
-        'unallocated_deleted' => '<code>:ip</code>に割り当てられていないポートをすべて削除しました。',
+        'allocations_added' => 'このノードに割り当てを追加しました。',
+        'node_deleted' => 'ノードがパネルから削除されました。',
+        'node_created' => '正常に新しいノードを作成しました。「設定」タブでデーモンを自動的に設定できます。 <strong>サーバーを追加する前に、最初に少なくとも1つのIPアドレスとポートを割り当てる必要があります。</strong>',
+        'node_updated' => 'ノード情報が更新されました。デーモンの設定が変更された場合は、変更を反映するために再起動する必要があります。',
+        'unallocated_deleted' => '<code>:ip</code> に割り当てられていないポートをすべて削除しました。',
     ],
 ];
