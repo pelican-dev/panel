@@ -9,8 +9,8 @@ use App\Traits\Helpers\AvailableLanguages;
 
 class AppSettingsCommand extends Command
 {
-    use EnvironmentWriterTrait;
     use AvailableLanguages;
+    use EnvironmentWriterTrait;
     public const CACHE_DRIVERS = [
         'redis' => 'Redis',
         'memcached' => 'Memcached',
@@ -75,7 +75,6 @@ class AppSettingsCommand extends Command
         $languages = array_diff($languages, ['.', '..']);
         $this->variables['APP_LOCALE'] = $this->choice('What language do you want to use?', $languages, config('app.locale', 'en'));
 
-        
         if (empty(config('hashids.salt')) || $this->option('new-salt')) {
             $this->variables['HASHIDS_SALT'] = str_random(20);
         }
