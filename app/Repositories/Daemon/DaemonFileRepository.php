@@ -56,9 +56,7 @@ class DaemonFileRepository extends DaemonRepository
             return $this->getHttpClient()
                 ->withQueryParameters(['file' => $path])
                 ->withBody($content)
-                ->post(
-                    sprintf('/api/servers/%s/files/write', $this->server->uuid)
-                );
+                ->post(sprintf('/api/servers/%s/files/write', $this->server->uuid));
         } catch (TransferException $exception) {
             throw new DaemonConnectionException($exception);
         }
