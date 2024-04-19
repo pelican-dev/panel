@@ -2,14 +2,14 @@
 
 return [
     'validation' => [
-        'fqdn_not_resolvable' => 'The FQDN or IP address provided does not resolve to a valid IP address.',
-        'fqdn_required_for_ssl' => 'A fully qualified domain name that resolves to a public IP address is required in order to use SSL for this node.',
+        'fqdn_not_resolvable' => 'A megadott FQDN vagy IP-cím nem felel meg érvényes IP-címnek.',
+        'fqdn_required_for_ssl' => 'Az SSL használatához ehhez a csomóponthoz egy teljesen minősített tartománynévre van szükség, amely nyilvános IP-címet eredményez.',
     ],
     'notices' => [
-        'allocations_added' => 'Allocations have successfully been added to this node.',
-        'node_deleted' => 'Node has been successfully removed from the panel.',
-        'node_created' => 'Successfully created new node. You can automatically configure the daemon on this machine by visiting the \'Configuration\' tab. <strong>Before you can add any servers you must first allocate at least one IP address and port.</strong>',
-        'node_updated' => 'Node information has been updated. If any daemon settings were changed you will need to reboot it for those changes to take effect.',
-        'unallocated_deleted' => 'Deleted all un-allocated ports for <code>:ip</code>.',
+        'allocations_added' => 'Sikeresen hozzáadtad a allokációkat ehhez a node-hoz.',
+        'node_deleted' => 'Sikeresen törölted a node-ot.',
+        'node_created' => 'Sikeresen létrehoztál egy új node-ot. A daemon-t automatikusan konfigurálhatod a "Konfiguráció" fülön. <strong>Mielőtt új szervert készítenél, legalább egy IP címet és portot kell allokálnod.</strong>',
+        'node_updated' => 'Node információk frissítve. Ha a daemon beállításait módosítottad, újra kell indítani a daemont a módosítások érvénybe léptetéséhez.',
+        'unallocated_deleted' => 'Törölted a <code>:ip</code> összes ki nem osztott portját.',
     ],
 ];
