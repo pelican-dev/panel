@@ -2,14 +2,14 @@
 
 return [
     'permissions' => [
-        'websocket_*' => 'Allows access to the websocket for this server.',
-        'control_console' => 'Allows the user to send data to the server console.',
-        'control_start' => 'Allows the user to start the server instance.',
-        'control_stop' => 'Allows the user to stop the server instance.',
-        'control_restart' => 'Allows the user to restart the server instance.',
-        'control_kill' => 'Allows the user to kill the server instance.',
-        'user_create' => 'Allows the user to create new user accounts for the server.',
-        'user_read' => 'Allows the user permission to view users associated with this server.',
+        'websocket_*' => 'Gir tilgang til websocketen for denne serveren.',
+        'control_console' => 'Tillater brukeren å sende data til server konsollet.',
+        'control_start' => 'Tillater brukeren å starte serverinstansen.',
+        'control_stop' => 'Tillater brukeren å stoppe serverinstansen.',
+        'control_restart' => 'Tillater brukeren å restarte serverinstansen.',
+        'control_kill' => 'Tillater brukeren å drepe serveren.',
+        'user_create' => 'Tillater brukeren å opprette nye brukerkontoer for serveren.',
+        'user_read' => 'Tillater bruker å se brukere tilknyttet denne serveren.',
         'user_update' => 'Allows the user to modify other users associated with this server.',
         'user_delete' => 'Allows the user to delete other users associated with this server.',
         'file_create' => 'Allows the user permission to create new files and directories.',
