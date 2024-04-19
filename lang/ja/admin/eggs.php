@@ -2,18 +2,18 @@
 
 return [
     'notices' => [
-        'imported' => 'Successfully imported this Egg and its associated variables.',
-        'updated_via_import' => 'This Egg has been updated using the file provided.',
-        'deleted' => 'Successfully deleted the requested egg from the Panel.',
-        'updated' => 'Egg configuration has been updated successfully.',
-        'script_updated' => 'Egg install script has been updated and will run whenever servers are installed.',
-        'egg_created' => 'A new egg was laid successfully. You will need to restart any running daemons to apply this new egg.',
+        'imported' => 'このEggと関連する変数を正常にインポートしました。',
+        'updated_via_import' => 'ファイルを使用してこのEggを更新しました。',
+        'deleted' => 'Eggを削除しました。',
+        'updated' => 'Eggの設定を更新しました。',
+        'script_updated' => 'Eggのインストールスクリプトが更新されました。サーバーのインストール時に実行されます。',
+        'egg_created' => 'Eggを作成しました。このEggを適用するには、実行中のDaemonを再起動してください。',
     ],
     'variables' => [
         'notices' => [
-            'variable_deleted' => 'The variable ":variable" has been deleted and will no longer be available to servers once rebuilt.',
-            'variable_updated' => 'The variable ":variable" has been updated. You will need to rebuild any servers using this variable in order to apply changes.',
-            'variable_created' => 'New variable has successfully been created and assigned to this egg.',
+            'variable_deleted' => '変数「:variable」を削除しました。再起動後は使用できなくなります。',
+            'variable_updated' => '変数「:variable」を更新しました。再起動後に適用されます。',
+            'variable_created' => '変数が作成され、このEggに割り当てられました。',
         ],
     ],
 ];
