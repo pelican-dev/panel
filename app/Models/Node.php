@@ -307,7 +307,7 @@ class Node extends Model
             $ips = collect();
             if (is_ip($this->fqdn)) {
                 $ips->push($this->fqdn);
-            } else if ($dnsRecords = gethostbynamel($this->fqdn)) {
+            } elseif ($dnsRecords = gethostbynamel($this->fqdn)) {
                 $ips->concat($dnsRecords);
             }
 
