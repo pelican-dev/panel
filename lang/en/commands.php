@@ -54,5 +54,33 @@ return [
         'succes1' => 'Successfully created a new node with the name: ',
         'succes2' => 'and has an id of: ',
     ],
+    'node_config' => [
+        'error_not_exist' => 'The selected node does not exist.',
+        'error_invalid_format' => 'Invalid format specified. Valid options are yaml and json.',
+    ],
+    'key_generate' => [
+        'error_already_exist' => 'It appears you have already configured an application encryption key. Continuing with this process with overwrite that key and cause data corruption for any existing encrypted data. DO NOT CONTINUE UNLESS YOU KNOW WHAT YOU ARE DOING.',
+        'understand' => 'I understand the consequences of performing this command and accept all responsibility for the loss of encrypted data.',
+        'continue' => 'Are you sure you wish to continue? Changing the application encryption key WILL CAUSE DATA LOSS.',
+    ],
+    'schedule' => [
+        'process' => [
+            'no_tasks' => 'There are no scheduled tasks for servers that need to be run.',
+            'error_message' => 'An error was encountered while processing Schedule: ',
+        ],
+    ],
+    'upgrade' => [
+        'integrity' => 'This command does not verify the integrity of downloaded assets. Please ensure that you trust the download source before continuing. If you do not wish to download an archive, please indicate that using the --skip-download flag, or answering "no" to the question below.',
+        'source_url' => 'Download Source (set with --url=):',
+        'php_version' => 'Cannot execute self-upgrade process. The minimum required PHP version required is 7.4.0, you have',
+        'skipDownload' => 'Would you like to download and unpack the archive files for the latest version?',
+        'webserver_user' => 'Your webserver user has been detected as <fg=blue>[{:user}]:</> is this correct?',
+        'name_webserver' => 'Please enter the name of the user running your webserver process. This varies from system to system, but is generally "www-data", "nginx", or "apache".',
+        'group_webserver' => 'Your webserver group has been detected as <fg=blue>[{:group}]:</> is this correct?',
+        'group_webserver_question' => 'Please enter the name of the group running your webserver process. Normally this is the same as your user.',
+        'are_your_sure' => 'Are you sure you want to run the upgrade process for your Panel?',
+        'terminated' => 'Upgrade process terminated by user.',
+        'success' => 'Panel has been successfully upgraded. Please ensure you also update any Daemon instances',
 
+    ],
 ];
