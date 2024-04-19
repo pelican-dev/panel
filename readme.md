@@ -8,40 +8,58 @@ Ideal for both individual gamers and hosting companies, it simplifies server adm
 
 Fly High, Game On: Pelican's pledge for unrivaled game servers.
 
-## Documentation
+## Links
 
-* [Panel Documentation](https://pelican.dev/panel/1.0/getting_started.html)
-* [Wings Documentation](https://pelican.dev/wings/1.0/installing.html)
-* [Community Guides](https://pelican.dev/community/about.html)
-* [Official Discord](https://pelican.dev/discord)
+* [Official Discord](https://discord.gg/pelican-panel)
+* [Wings](https://github.com/pelican-dev/wings)
 
-### Supported Games
+### Supported Games and Servers
 
-Pelican supports a wide variety of games by utilizing Docker containers to isolate each instance. This gives
-you the power to run game servers without bloating machines with a host of additional dependencies.
+Pelican supports a wide variety of games by utilizing Docker containers to isolate each instance.
+This gives you the power to run game servers without bloating machines with a host of additional dependencies.
 
-Some of our core supported games include:
+Some of our popular eggs include but are not limited to:
 
-* Minecraft — including Paper, Sponge, Bungeecord, Waterfall, and more
-* Rust
-* Terraria
-* Teamspeak
-* Mumble
-* Team Fortress 2
-* Counter Strike: Global Offensive
-* Garry's Mod
-* ARK: Survival Evolved
-
-In addition to our standard nest of supported games, our community is constantly pushing the limits of this software
-and there are plenty more games available provided by the community. Some of these games include:
-
-* Factorio
-* San Andreas: MP
-* Pocketmine MP
-* Squad
-* Xonotic
-* Starmade
-* Discord ATLBot, and most other Node.js/Python discord bots
-* [and many more...](https://github.com/parkervcp/eggs)
+* [Minecraft](https://github.com/pelican-eggs/minecraft)
+  * Paper
+  * Sponge
+  * Bungeecord
+  * Waterfall
+* [SteamCMD](https://github.com/pelican-eggs/steamcmd)
+  * 7 Days to Die
+  * ARK: Survival
+  * ARMA
+  * Counter Strike
+  * DayZ
+  * Enshrouded
+  * Left 4 Dead
+  * Palworld
+  * Project Zomboid
+  * Sons of the Forest
+* [Other Games](https://github.com/pelican-eggs/games)
+  * Among Us
+  * Factorio
+  * GTA
+  * Rimworld
+  * Terraria
+* [Discord Bots](https://github.com/pelican-eggs/chatbots)
+  * Redbot
+  * JMusicBot
+  * SinusBot
+  * Dynamica
+* [Software](https://github.com/pelican-eggs/software)
+* [Programming Languages](https://github.com/pelican-eggs/generic)
+  * C#
+  * Java
+  * Lua
+  * Node.js
+  * Python
+* [Database](https://github.com/pelican-eggs/database)
+  * Redis
+  * MariaDB
+  * PostgreSQL
+* [Voice Servers](https://github.com/pelican-eggs/voice)
+* [Storage](https://github.com/pelican-eggs/storage)
+* [Monitoring](https://github.com/pelican-eggs/monitoring)
 
 Copyright Pelican® 2024

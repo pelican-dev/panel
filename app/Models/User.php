@@ -5,7 +5,11 @@ namespace App\Models;
 use App\Exceptions\DisplayException;
 use App\Rules\Username;
 use App\Facades\Activity;
-use Illuminate\Support\Collection;
+use Filament\Models\Contracts\FilamentUser;
+use Filament\Models\Contracts\HasAvatar;
+use Filament\Models\Contracts\HasName;
+use Filament\Panel;
+use Illuminate\Support\Str;
 use Illuminate\Validation\Rules\In;
 use Illuminate\Auth\Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -79,7 +83,7 @@ use App\Notifications\SendPasswordReset as ResetPasswordNotification;
  *
  * @mixin \Eloquent
  */
-class User extends Model implements AuthenticatableContract, AuthorizableContract, CanResetPasswordContract
+class User extends Model implements AuthenticatableContract, AuthorizableContract, CanResetPasswordContract, FilamentUser, HasAvatar, HasName
 {
     use Authenticatable;
     use Authorizable {can as protected canned; }
@@ -139,18 +143,20 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
         'language' => 'en',
         'use_totp' => false,
         'totp_secret' => null,
+        'name_first' => '',
+        'name_last' => '',
     ];
 
     /**
      * Rules verifying that the data being stored matches the expectations of the database.
      */
     public static array $validationRules = [
-        'uuid' => 'required|string|size:36|unique:users,uuid',
+        'uuid' => 'nullable|string|size:36|unique:users,uuid',
         'email' => 'required|email|between:1,191|unique:users,email',
         'external_id' => 'sometimes|nullable|string|max:191|unique:users,external_id',
         'username' => 'required|between:1,191|unique:users,username',
-        'name_first' => 'required|string|between:1,191',
-        'name_last' => 'required|string|between:1,191',
+        'name_first' => 'nullable|string|between:0,191',
+        'name_last' => 'nullable|string|between:0,191',
         'password' => 'sometimes|nullable|string',
         'root_admin' => 'boolean',
         'language' => 'string',
@@ -170,11 +176,22 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
 
     protected static function booted(): void
     {
+        static::creating(function (self $user) {
+            $user->uuid = Str::uuid()->toString();
+
+            return true;
+        });
+
         static::deleting(function (self $user) {
             throw_if($user->servers()->count() > 0, new DisplayException(__('admin/user.exceptions.user_has_servers')));
 
             throw_if(request()->user()?->id === $user->id, new DisplayException(__('admin/user.exceptions.user_is_self')));
         });
+    }
+
+    public function getRouteKeyName(): string
+    {
+        return 'id';
     }
 
     /**
@@ -196,7 +213,7 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
      */
     public function toVueObject(): array
     {
-        return Collection::make($this->toArray())->except(['id', 'external_id'])->toArray();
+        return collect($this->toArray())->except(['id', 'external_id'])->toArray();
     }
 
     /**
@@ -278,6 +295,11 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
             ->groupBy('servers.id');
     }
 
+    public function subusers(): HasMany
+    {
+        return $this->hasMany(Subuser::class);
+    }
+
     protected function checkPermission(Server $server, string $permission = ''): bool
     {
         if ($this->root_admin || $server->owner_id === $this->id) {
@@ -312,5 +334,27 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
         }
 
         return $this->canned($abilities, $arguments);
+    }
+
+    public function isLastRootAdmin(): bool
+    {
+        $rootAdmins = User::query()->where('root_admin', true)->limit(2)->get();
+
+        return once(fn () => $rootAdmins->count() === 1 && $rootAdmins->first()->is($this));
+    }
+
+    public function canAccessPanel(Panel $panel): bool
+    {
+        return $this->root_admin;
+    }
+
+    public function getFilamentName(): string
+    {
+        return $this->name_first ?: $this->username;
+    }
+
+    public function getFilamentAvatarUrl(): ?string
+    {
+        return 'https://gravatar.com/avatar/' . md5(strtolower($this->email));
     }
 }

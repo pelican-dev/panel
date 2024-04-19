@@ -65,6 +65,11 @@ class DatabaseHost extends Model
         ];
     }
 
+    public function getRouteKeyName(): string
+    {
+        return 'id';
+    }
+
     /**
      * Gets the node associated with a database host.
      */

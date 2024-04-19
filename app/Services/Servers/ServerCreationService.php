@@ -2,6 +2,7 @@
 
 namespace App\Services\Servers;
 
+use App\Enums\ServerState;
 use App\Models\ServerVariable;
 use Ramsey\Uuid\Uuid;
 use Illuminate\Support\Arr;
@@ -132,7 +133,7 @@ class ServerCreationService
             'node_id' => Arr::get($data, 'node_id'),
             'name' => Arr::get($data, 'name'),
             'description' => Arr::get($data, 'description') ?? '',
-            'status' => Server::STATUS_INSTALLING,
+            'status' => ServerState::Installing,
             'skip_scripts' => Arr::get($data, 'skip_scripts') ?? isset($data['skip_scripts']),
             'owner_id' => Arr::get($data, 'owner_id'),
             'memory' => Arr::get($data, 'memory'),

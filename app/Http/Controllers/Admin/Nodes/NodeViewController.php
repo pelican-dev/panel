@@ -39,29 +39,8 @@ class NodeViewController extends Controller
             ->where('node_id', '=', $node->id)
             ->first();
 
-        $usageStats = Collection::make(['disk' => $stats->sum_disk, 'memory' => $stats->sum_memory])
-            ->mapWithKeys(function ($value, $key) use ($node) {
-                $maxUsage = $node->{$key};
-                if ($node->{$key . '_overallocate'} > 0) {
-                    $maxUsage = $node->{$key} * (1 + ($node->{$key . '_overallocate'} / 100));
-                }
-
-                $percent = ($value / $maxUsage) * 100;
-
-                return [
-                    $key => [
-                        'value' => number_format($value),
-                        'max' => number_format($maxUsage),
-                        'percent' => $percent,
-                        'css' => ($percent <= self::THRESHOLD_PERCENTAGE_LOW) ? 'green' : (($percent > self::THRESHOLD_PERCENTAGE_MEDIUM) ? 'red' : 'yellow'),
-                    ],
-                ];
-            })
-            ->toArray();
-
         return view('admin.nodes.view.index', [
             'node' => $node,
-            'stats' => $usageStats,
             'version' => $this->versionService,
         ]);
     }

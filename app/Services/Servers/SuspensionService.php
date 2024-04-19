@@ -2,6 +2,7 @@
 
 namespace App\Services\Servers;
 
+use App\Enums\ServerState;
 use Webmozart\Assert\Assert;
 use App\Models\Server;
 use App\Repositories\Daemon\DaemonServerRepository;
@@ -44,7 +45,7 @@ class SuspensionService
 
         // Update the server's suspension status.
         $server->update([
-            'status' => $isSuspending ? Server::STATUS_SUSPENDED : null,
+            'status' => $isSuspending ? ServerState::Suspended : null,
         ]);
 
         try {
@@ -53,7 +54,7 @@ class SuspensionService
         } catch (\Exception $exception) {
             // Rollback the server's suspension status if daemon fails to sync the server.
             $server->update([
-                'status' => $isSuspending ? null : Server::STATUS_SUSPENDED,
+                'status' => $isSuspending ? null : ServerState::Suspended,
             ]);
             throw $exception;
         }

@@ -49,6 +49,7 @@ class MakeNodeCommand extends Command
             ['https', 'http'],
             'https'
         );
+      
         $data['fqdn'] = $this->option('fqdn') ?? $this->ask(__('commands.make_node.fqdn'));
         $data['public'] = $this->option('public') ?? $this->confirm(__('commands.make_node.public'), true);
         $data['behind_proxy'] = $this->option('proxy') ?? $this->confirm(__('commands.make_node.behind_proxy'));
@@ -61,7 +62,6 @@ class MakeNodeCommand extends Command
         $data['daemonListen'] = $this->option('daemonListeningPort') ?? $this->ask(__('commands.make_node.daemonListen'), '8080');
         $data['daemonSFTP'] = $this->option('daemonSFTPPort') ?? $this->ask(__('commands.make_node.daemonSFTP'), '2022');
         $data['daemonBase'] = $this->option('daemonBase') ?? $this->ask(__('commands.make_node.daemonBase'), '/var/lib/panel/volumes');
-
         $node = $this->creationService->handle($data);
         $this->line(__('commands.make_node.succes1') . $data['name'] . __('commands.make_node.succes2')  . $node->id . '.');
     }
