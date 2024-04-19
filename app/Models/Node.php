@@ -292,14 +292,12 @@ class Node extends Model
 
     public function serverStatuses(): array
     {
-        try {
-            /** @var \Illuminate\Http\Client\Response $response */
-            $response = Http::daemon($this)->connectTimeout(1)->timeout(1)->get('/api/servers');
-            $statuses = $response->json();
-        } catch (Exception) {
-            $statuses = [];
-        }
-
-        return cache()->remember("nodes.$this->id.servers", now()->addSeconds(2), fn () => $statuses);
+        return cache()->remember("nodes.$this->id.servers", now()->addMinute(), function () {
+            try {
+                return Http::daemon($this)->connectTimeout(1)->timeout(1)->get('/api/servers')->json();
+            } catch (Exception) {
+                return [];
+            }
+        });
     }
 }
