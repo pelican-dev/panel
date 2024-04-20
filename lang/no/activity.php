@@ -11,7 +11,7 @@ return [
         'fail' => 'Innlogging feilet',
         'success' => 'Logget inn',
         'password-reset' => 'Tilbakestill passord',
-        'reset-password' => 'Requested password reset',
+        'reset-password' => 'Tilbakestilling av passord forespurt',
         'checkpoint' => 'Two-factor authentication requested',
         'recovery-token' => 'Used two-factor recovery token',
         'token' => 'Solved two-factor challenge',
