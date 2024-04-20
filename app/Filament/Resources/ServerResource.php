@@ -623,7 +623,7 @@ class ServerResource extends Resource
                         'suspended' => 'tabler-heart-cancel',
                         default => 'tabler-heart-question',
                     })
-                    ->color(fn (string $state): string => match ($state) {
+                    ->color(fn ($state): string => match ($state) {
                         'running' => 'success',
                         'installing', 'restarting' => 'primary',
                         'paused', 'removing' => 'warning',
