@@ -171,11 +171,12 @@ class ServerResource extends Resource
                             ->whereNull('server_id'),
                     )
                     ->createOptionForm(fn (Forms\Get $get) => [
-                        Forms\Components\Select::make('allocation_ip')
-                            ->options(Node::find($get('node_id'))?->ipAddresses() ?? [])
+                        Forms\Components\TextInput::make('allocation_ip')
+                            ->datalist(Node::find($get('node_id'))?->ipAddresses() ?? [])
                             ->label('IP Address')
+                            ->ipv4()
                             ->helperText("Usually your machine's public IP unless you are port forwarding.")
-                            ->selectablePlaceholder(false)
+                            // ->selectablePlaceholder(false)
                             ->required(),
                         Forms\Components\TextInput::make('allocation_alias')
                             ->label('Alias')
