@@ -35,17 +35,19 @@ class ListEggs extends ListRecords
                     /** @var EggImporterService $eggImportService */
                     $eggImportService = resolve(EggImporterService::class);
 
-                    try {
-                        $eggImportService->handle($eggFile);
-                    } catch (Exception $exception) {
-                        Notification::make()
-                            ->title('Egg Import Failed')
-                            ->danger()
-                            ->send();
+                    foreach ($eggFile as $file) {
+                        try {
+                            $eggImportService->handle($file);
+                        } catch (Exception $exception) {
+                            Notification::make()
+                                ->title('Egg Import Failed')
+                                ->danger()
+                                ->send();
 
-                        report($exception);
+                            report($exception);
 
-                        return;
+                            return;
+                        }
                     }
 
                     Notification::make()
