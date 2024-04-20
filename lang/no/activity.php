@@ -30,8 +30,8 @@ return [
             'delete' => 'Deleted API key :identifier',
         ],
         'ssh-key' => [
-            'create' => 'Added SSH key :fingerprint to account',
-            'delete' => 'Removed SSH key :fingerprint from account',
+            'create' => 'SSH-nøkkel :fingerprint ble lagt til kontoen',
+            'delete' => 'SSH-nøkkel :fingerprint ble fjernet fra kontoen',
         ],
         'two-factor' => [
             'create' => 'Enabled two-factor auth',
@@ -51,7 +51,7 @@ return [
         ],
         'backup' => [
             'download' => 'Lastet ned :name sikkerhetskopi',
-            'delete' => 'Deleted the :name backup',
+            'delete' => 'Sikkerhetskopi :name ble slettet',
             'restore' => 'Restored the :name backup (deleted files: :truncate)',
             'restore-complete' => 'Completed restoration of the :name backup',
             'restore-failed' => 'Failed to complete restoration of the :name backup',
