@@ -1,55 +1,55 @@
 <?php
 
 return [
-    'daemon_connection_failed' => 'There was an exception while attempting to communicate with the daemon resulting in a HTTP/:code response code. This exception has been logged.',
+    'daemon_connection_failed' => 'При попытке связи с узлом произошла ошибка HTTP/:code. Информация была передана администрации. (идентификатор запроса: :request_id)',
     'node' => [
-        'servers_attached' => 'A node must have no servers linked to it in order to be deleted.',
-        'daemon_off_config_updated' => 'The daemon configuration <strong>has been updated</strong>, however there was an error encountered while attempting to automatically update the configuration file on the Daemon. You will need to manually update the configuration file (config.yml) for the daemon to apply these changes.',
+        'servers_attached' => 'Узел не должен иметь подключенных к нему серверов, чтобы быть удален.',
+        'daemon_off_config_updated' => 'Конфигурация демона <strong>была обновлена</strong>, но при попытке автоматического обновления конфигурационного файла произошла ошибка. Вам нужно вручную обновить конфигурационный файл (config.yml) для применения этих изменений.',
     ],
     'allocations' => [
-        'server_using' => 'A server is currently assigned to this allocation. An allocation can only be deleted if no server is currently assigned.',
-        'too_many_ports' => 'Adding more than 1000 ports in a single range at once is not supported.',
-        'invalid_mapping' => 'The mapping provided for :port was invalid and could not be processed.',
-        'cidr_out_of_range' => 'CIDR notation only allows masks between /25 and /32.',
-        'port_out_of_range' => 'Ports in an allocation must be greater than 1024 and less than or equal to 65535.',
+        'server_using' => 'Сервер в настоящее время назначается для этого размещения. Распределение может быть удалено, только если ни один сервер не назначен.',
+        'too_many_ports' => 'Добавление более 1000 портов в одном диапазоне за раз не поддерживается.',
+        'invalid_mapping' => 'Сопоставление, предоставленное для порта {port}, было недопустимым и не могло быть обработано.',
+        'cidr_out_of_range' => 'Нотация CIDR допускает только маски между /25 и /32.',
+        'port_out_of_range' => 'Порты в распределении должны быть больше 1024 и меньше или равны 65535.',
     ],
     'egg' => [
-        'delete_has_servers' => 'An Egg with active servers attached to it cannot be deleted from the Panel.',
-        'invalid_copy_id' => 'The Egg selected for copying a script from either does not exist, or is copying a script itself.',
-        'has_children' => 'This Egg is a parent to one or more other Eggs. Please delete those Eggs before deleting this Egg.',
+        'delete_has_servers' => 'Яйцо с подключенными к нему серверами не может быть удалено из панели.',
+        'invalid_copy_id' => 'Яйцо, выбранное для копирования сценария, либо не существует, либо копирует сценарий из самого себя.',
+        'has_children' => 'Это яйцо является родительским для одного или нескольких других яиц. Пожалуйста, удалите эти яйца, прежде чем удалять это яйцо.',
     ],
     'variables' => [
-        'env_not_unique' => 'The environment variable :name must be unique to this Egg.',
-        'reserved_name' => 'The environment variable :name is protected and cannot be assigned to a variable.',
-        'bad_validation_rule' => 'The validation rule ":rule" is not a valid rule for this application.',
+        'env_not_unique' => 'Переменная окружения :name должна быть уникальной для этого яйца.',
+        'reserved_name' => 'Переменная окружения :name защищена и не может быть назначена переменной.',
+        'bad_validation_rule' => 'Правило проверки ":rule" не является правилом для этого приложения.',
     ],
     'importer' => [
-        'json_error' => 'There was an error while attempting to parse the JSON file: :error.',
-        'file_error' => 'The JSON file provided was not valid.',
-        'invalid_json_provided' => 'The JSON file provided is not in a format that can be recognized.',
+        'json_error' => 'Произошла ошибка при попытке разобрать файл JSON: :error.',
+        'file_error' => 'Указанный JSON файл недействителен.',
+        'invalid_json_provided' => 'Предоставленный файл JSON не имеет формата, который можно распознать.',
     ],
     'subusers' => [
-        'editing_self' => 'Editing your own subuser account is not permitted.',
-        'user_is_owner' => 'You cannot add the server owner as a subuser for this server.',
-        'subuser_exists' => 'A user with that email address is already assigned as a subuser for this server.',
+        'editing_self' => 'Редактирование вашей учетной записи подпользователя запрещено.',
+        'user_is_owner' => 'Вы не можете добавить владельца сервера в качестве субпользователя для этого сервера.',
+        'subuser_exists' => 'Пользователь с таким адресом электронной почты уже назначен в качестве субпользователя для этого сервера.',
     ],
     'databases' => [
-        'delete_has_databases' => 'Cannot delete a database host server that has active databases linked to it.',
+        'delete_has_databases' => 'Невозможно удалить сервер хоста базы данных, на котором есть активные базы данных.',
     ],
     'tasks' => [
-        'chain_interval_too_long' => 'The maximum interval time for a chained task is 15 minutes.',
+        'chain_interval_too_long' => 'Максимальное время интервала для связанной задачи составляет 15 минут.',
     ],
     'locations' => [
-        'has_nodes' => 'Cannot delete a location that has active nodes attached to it.',
+        'has_nodes' => 'Невозможно удалить местоположение, в котором к нему прикреплены активные узлы.',
     ],
     'users' => [
-        'node_revocation_failed' => 'Failed to revoke keys on <a href=":link">Node #:node</a>. :error',
+        'node_revocation_failed' => 'Не удалось отозвать ключи на <a href=":link">узле #:node</a>. :error',
     ],
     'deployment' => [
         'no_viable_nodes' => 'No nodes satisfying the requirements specified for automatic deployment could be found.',
-        'no_viable_allocations' => 'No allocations satisfying the requirements for automatic deployment were found.',
+        'no_viable_allocations' => 'Не найдено ни одного распределения, удовлетворяющего требованиям для автоматического развертывания на этом узле.',
     ],
     'api' => [
-        'resource_not_found' => 'The requested resource does not exist on this server.',
+        'resource_not_found' => 'Запрашиваемый ресурс не существует на сервере.',
     ],
 ];

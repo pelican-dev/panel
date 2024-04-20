@@ -2,18 +2,18 @@
 
 return [
     'notices' => [
-        'imported' => 'Successfully imported this Egg and its associated variables.',
-        'updated_via_import' => 'This Egg has been updated using the file provided.',
-        'deleted' => 'Successfully deleted the requested egg from the Panel.',
-        'updated' => 'Egg configuration has been updated successfully.',
-        'script_updated' => 'Egg install script has been updated and will run whenever servers are installed.',
-        'egg_created' => 'A new egg was laid successfully. You will need to restart any running daemons to apply this new egg.',
+        'imported' => 'Pomyślnie zaimportowano to jądro i związane z nim zmienne.',
+        'updated_via_import' => 'To jądro zostało zaktualizowane przy użyciu dostarczonego pliku.',
+        'deleted' => 'Pomyślnie usunięto żądane jądro z Panelu.',
+        'updated' => 'Konfiguracja jądra została pomyślnie zaktualizowana.',
+        'script_updated' => 'Skrypt instalacyjny jądra został zaktualizowany i zostanie uruchomiony za każdym razem, gdy serwery zostaną zainstalowane.',
+        'egg_created' => 'Nowe jądro zostało dodane. Musisz zrestartować wszystkie uruchomione Daemon\'y, aby zastosować nowe jądro.',
     ],
     'variables' => [
         'notices' => [
-            'variable_deleted' => 'The variable ":variable" has been deleted and will no longer be available to servers once rebuilt.',
-            'variable_updated' => 'The variable ":variable" has been updated. You will need to rebuild any servers using this variable in order to apply changes.',
-            'variable_created' => 'New variable has successfully been created and assigned to this egg.',
+            'variable_deleted' => 'Zmienna ":variable" została usunięta i nie będzie już dostępna dla serwerów po przebudowie.',
+            'variable_updated' => 'Zmienna ":variable" została zaktualizowana. Musisz przebudować serwery za pomocą tej zmiennej, aby zastosować zmiany.',
+            'variable_created' => 'Nowa zmienna została pomyślnie stworzona i przypisana do tego jądra.',
         ],
     ],
 ];

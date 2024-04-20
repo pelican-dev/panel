@@ -25,8 +25,8 @@ return [
     ],
     'importer' => [
         'json_error' => 'There was an error while attempting to parse the JSON file: :error.',
-        'file_error' => 'The JSON file provided was not valid.',
-        'invalid_json_provided' => 'The JSON file provided is not in a format that can be recognized.',
+        'file_error' => 'JSON-filen som ble oppgitt er ugyldig.',
+        'invalid_json_provided' => 'JSON-filen som er angitt er ikke i et format som kan gjenkjennes.',
     ],
     'subusers' => [
         'editing_self' => 'Editing your own subuser account is not permitted.',
@@ -50,6 +50,6 @@ return [
         'no_viable_allocations' => 'No allocations satisfying the requirements for automatic deployment were found.',
     ],
     'api' => [
-        'resource_not_found' => 'The requested resource does not exist on this server.',
+        'resource_not_found' => 'Den forespurte ressursen finnes ikke på denne serveren.',
     ],
 ];
