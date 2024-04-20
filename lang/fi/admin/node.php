@@ -2,14 +2,14 @@
 
 return [
     'validation' => [
-        'fqdn_not_resolvable' => 'The FQDN or IP address provided does not resolve to a valid IP address.',
-        'fqdn_required_for_ssl' => 'A fully qualified domain name that resolves to a public IP address is required in order to use SSL for this node.',
+        'fqdn_not_resolvable' => 'Annettua FQDN:ää tai IP-osoitetta ei voida muuntaa kelvolliseksi IP-osoitteeksi.',
+        'fqdn_required_for_ssl' => 'SSL:n käyttämiseksi tälle solmulle tarvitaan täysin määritelty verkkotunnusnimi, joka muuntuu julkiseksi IP-osoitteeksi.',
     ],
     'notices' => [
-        'allocations_added' => 'Allocations have successfully been added to this node.',
-        'node_deleted' => 'Node has been successfully removed from the panel.',
-        'node_created' => 'Successfully created new node. You can automatically configure the daemon on this machine by visiting the \'Configuration\' tab. <strong>Before you can add any servers you must first allocate at least one IP address and port.</strong>',
-        'node_updated' => 'Node information has been updated. If any daemon settings were changed you will need to reboot it for those changes to take effect.',
-        'unallocated_deleted' => 'Deleted all un-allocated ports for <code>:ip</code>.',
+        'allocations_added' => 'Varaukset on onnistuneesti lisätty tähän solmuun.',
+        'node_deleted' => 'Solmu on onnistuneesti poistettu paneelista.',
+        'node_created' => 'Uusi palvelin luotiin onnistuneesti. Voit automaattisesti määrittää daemonin tälle koneelle käymällä \'Configuration\' välilehdellä. <strong>Ennen kuin voit lisätä mitään palvelimia, sinun on ensin varattava vähintään yksi IP-osoite ja portti.</strong>',
+        'node_updated' => 'Palvelimen tiedot on päivitetty. Jos jokin Daemonin asetuksia on muutettu, sinun täytyy käynnistää ne uudelleen, jotta nämä muutokset tulevat voimaan.',
+        'unallocated_deleted' => 'Poistettiin kaikki kohdentamattomat portit <code>:ip</code>.',
     ],
 ];
