@@ -1,7 +1,7 @@
 <?php
 
 return [
-    'email' => 'Email',
+    'email' => 'E-mail',
     'email_address' => 'E-mailová adresa',
     'user_identifier' => 'Uživatelské jméno nebo e-mail',
     'password' => 'Heslo',
@@ -16,7 +16,7 @@ return [
     'connection' => 'Připojení',
     'memory' => 'Paměť',
     'cpu' => 'CPU',
-    'disk' => 'Disk',
+    'disk' => 'Úložiště',
     'status' => 'Stav',
     'search' => 'Hledat',
     'suspended' => 'Pozastaveno',
