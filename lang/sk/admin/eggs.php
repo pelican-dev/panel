@@ -2,11 +2,11 @@
 
 return [
     'notices' => [
-        'imported' => 'Successfully imported this Egg and its associated variables.',
-        'updated_via_import' => 'This Egg has been updated using the file provided.',
-        'deleted' => 'Successfully deleted the requested egg from the Panel.',
-        'updated' => 'Egg configuration has been updated successfully.',
-        'script_updated' => 'Egg install script has been updated and will run whenever servers are installed.',
+        'imported' => 'Toto vajce a jeho potrebné premenné boli importované úspešne.',
+        'updated_via_import' => 'Toto vajce bolo aktualizované pomocou nahraného súboru.',
+        'deleted' => 'Požadované vajce bolo úspešne odstránené z panelu.',
+        'updated' => 'Konfigurácia vajca bola aktualizovaná úspešne.',
+        'script_updated' => 'Inštalačný skript vajca bol aktualizovaný a bude spustený vždy pri inštalácii servera.',
         'egg_created' => 'A new egg was laid successfully. You will need to restart any running daemons to apply this new egg.',
     ],
     'variables' => [
