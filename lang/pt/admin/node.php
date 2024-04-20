@@ -2,14 +2,14 @@
 
 return [
     'validation' => [
-        'fqdn_not_resolvable' => 'The FQDN or IP address provided does not resolve to a valid IP address.',
-        'fqdn_required_for_ssl' => 'A fully qualified domain name that resolves to a public IP address is required in order to use SSL for this node.',
+        'fqdn_not_resolvable' => 'O FQDN ou endereço IP providenciado não é valido.',
+        'fqdn_required_for_ssl' => 'É necessário de um FQDN para ser utilizado o SSL.',
     ],
     'notices' => [
-        'allocations_added' => 'Allocations have successfully been added to this node.',
-        'node_deleted' => 'Node has been successfully removed from the panel.',
-        'node_created' => 'Successfully created new node. You can automatically configure the daemon on this machine by visiting the \'Configuration\' tab. <strong>Before you can add any servers you must first allocate at least one IP address and port.</strong>',
-        'node_updated' => 'Node information has been updated. If any daemon settings were changed you will need to reboot it for those changes to take effect.',
-        'unallocated_deleted' => 'Deleted all un-allocated ports for <code>:ip</code>.',
+        'allocations_added' => 'As alocações foram adicionadas com sucesso no node.',
+        'node_deleted' => 'O node foi removido com sucesso do painel.',
+        'node_created' => 'O node foi criado com sucesso. Você pode automaticamente configurar esse node na máquina entrando na aba Configurações. <strong>Antes de adicionar os servidores, é necessário criar uma alocação com endereço IP da máquina e a porta.</strong>',
+        'node_updated' => 'As informações do node foi atualizada. Caso foi feito uma configuração na máquina do node, será necessário reiniciar para aplicar as alterações.',
+        'unallocated_deleted' => 'Foram removidos todas as portas não alocadas para <code>:ip</code>',
     ],
 ];

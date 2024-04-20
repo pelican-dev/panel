@@ -2,18 +2,18 @@
 
 return [
     'notices' => [
-        'imported' => 'Successfully imported this Egg and its associated variables.',
-        'updated_via_import' => 'This Egg has been updated using the file provided.',
-        'deleted' => 'Successfully deleted the requested egg from the Panel.',
-        'updated' => 'Egg configuration has been updated successfully.',
-        'script_updated' => 'Egg install script has been updated and will run whenever servers are installed.',
-        'egg_created' => 'A new egg was laid successfully. You will need to restart any running daemons to apply this new egg.',
+        'imported' => 'As eggs e as suas variáveis de ambiente foram importadas com sucesso.',
+        'updated_via_import' => 'Essa egg foi atualizada usando o arquivo fornecido.',
+        'deleted' => 'A egg solicitada foi removida com sucesso do Painel.',
+        'updated' => 'As configurações da egg foi atualizada com sucesso.',
+        'script_updated' => 'O script de instação da egg foi atualizado e poderá ser executado quando os servidores forem instalados.',
+        'egg_created' => 'Um novo egg \'foi criado com sucesso. Reinicie os daemons em execução para aplicar essa nova egg.',
     ],
     'variables' => [
         'notices' => [
-            'variable_deleted' => 'The variable ":variable" has been deleted and will no longer be available to servers once rebuilt.',
-            'variable_updated' => 'The variable ":variable" has been updated. You will need to rebuild any servers using this variable in order to apply changes.',
-            'variable_created' => 'New variable has successfully been created and assigned to this egg.',
+            'variable_deleted' => 'A variável ":variable" foi removida com sucesso e não estará mais disponível para os servidores após a reinstalação.',
+            'variable_updated' => 'A variável ":variable" foi atualizada. Reinstale os servidores utilizando essa variável para as aplicações serem alteradas.',
+            'variable_created' => 'Essa variável foi criada com sucesso e vinculada com a egg.',
         ],
     ],
 ];

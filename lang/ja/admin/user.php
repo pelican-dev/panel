@@ -2,11 +2,11 @@
 
 return [
     'exceptions' => [
-        'user_has_servers' => 'Cannot delete a user with active servers attached to their account. Please delete their servers before continuing.',
-        'user_is_self' => 'Cannot delete your own user account.',
+        'user_has_servers' => 'アクティブなサーバーを持つユーザーは削除できません。続行する前にサーバーを削除してください。',
+        'user_is_self' => '自分のユーザーアカウントは削除できません。',
     ],
     'notices' => [
-        'account_created' => 'Account has been created successfully.',
-        'account_updated' => 'Account has been successfully updated.',
+        'account_created' => 'アカウントを作成しました。',
+        'account_updated' => 'アカウントが更新されました。',
     ],
 ];

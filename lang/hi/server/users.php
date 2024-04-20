@@ -2,10 +2,10 @@
 
 return [
     'permissions' => [
-        'websocket_*' => 'Allows access to the websocket for this server.',
-        'control_console' => 'Allows the user to send data to the server console.',
-        'control_start' => 'Allows the user to start the server instance.',
-        'control_stop' => 'Allows the user to stop the server instance.',
+        'websocket_*' => 'इस सर्वर के लिए वेबसॉकेट तक पहुँच देता है।',
+        'control_console' => 'उपयोगकर्ता को सर्वर कंसोल में डेटा भेजने की अनुमति देता है।',
+        'control_start' => 'उपयोगकर्ता को सर्वर उदाहरण को प्रारंभ करने की अनुमति देता है।',
+        'control_stop' => 'उपयोगकर्ता को सर्वर उदाहरण को प्रारंभ करने की अनुमति देता है।',
         'control_restart' => 'Allows the user to restart the server instance.',
         'control_kill' => 'Allows the user to kill the server instance.',
         'user_create' => 'Allows the user to create new user accounts for the server.',
