@@ -16,10 +16,10 @@ return [
     'egg' => [
         'delete_has_servers' => 'Un Egg con servidores activos vinculados a él no puede ser eliminado del Panel.',
         'invalid_copy_id' => 'El Egg seleccionado para copiar un script desde no existe o está copiando un script en sí mismo.',
-        'has_children' => 'Este Huevo es padre de uno o más otros Huevos. Por favor, elimina esos Huevos antes de eliminar este Huevo.',
+        'has_children' => 'Este Egg es padre de uno o más otros Eggs. Por favor, elimina esos Eggs antes de eliminar este Egg.',
     ],
     'variables' => [
-        'env_not_unique' => 'La variable de entorno :name debe ser única para este Huevo.',
+        'env_not_unique' => 'La variable de entorno :name debe ser única para este Egg.',
         'reserved_name' => 'La variable de entorno :name está protegida y no se puede asignar a una variable.',
         'bad_validation_rule' => 'La regla de validación ":rule" no es una regla válida para esta aplicación.',
     ],
@@ -34,7 +34,7 @@ return [
         'subuser_exists' => 'Ya hay un usuario con esa dirección de correo electrónico asignado como subusuario para este servidor.',
     ],
     'databases' => [
-        'delete_has_databases' => 'No se puede eliminar un servidor de host de base de datos que tiene bases de datos activas vinculadas a él.',
+        'delete_has_databases' => 'No se puede eliminar un servidor de base de datos que tiene bases de datos activas vinculadas a él.',
     ],
     'tasks' => [
         'chain_interval_too_long' => 'El tiempo máximo de intervalo para una tarea encadenada es de 15 minutos.',
