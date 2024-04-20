@@ -145,12 +145,11 @@ class EditProfile extends \Filament\Pages\Auth\EditProfile
                                 ->schema([
                                     Placeholder::make('Coming soon!'),
                                     TagsInput::make('allowed_ips')
+                                        ->splitKeys([',', ' ', 'Tab'])
                                         ->placeholder('Example: 127.0.0.1 or 192.168.1.1')
                                         ->label('Whitelisted IPv4 Addresses')
                                         ->helperText('Press enter to add a new IP address or leave blank to allow any IP address')
-                                        ->columnSpanFull()
-                                        ->hidden()
-                                        ->default(null),
+                                        ->columnSpanFull(),
                                 ]),
 
                             Tab::make('SSH Keys')
