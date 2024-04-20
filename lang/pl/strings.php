@@ -91,5 +91,5 @@ return [
     'enable' => 'Włącz',
     'disable' => 'Wyłącz',
     'save' => 'Zapisz',
-    'copyright' => '&reg; 2024 - :year Pelican',
+    'copyright' => '&reg; 2024 - :year Pelican | Supported by PM-Kirill',
 ];
