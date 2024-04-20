@@ -2,7 +2,7 @@
 
 return [
     'notices' => [
-        'imported' => 'Sikeresen importáltad ezt az Egg-et és a hozzátartozó változókat.',
+        'imported' => 'Sikeresen importáltad ezt az Egg-et és a hozzátartozó változókat',
         'updated_via_import' => 'Ez az Egg frissítve lett a megadott fájl segítségével.',
         'deleted' => 'Sikeresen törölted a kívánt Egg-et a panelből.',
         'updated' => 'Az Egg konfigurációja sikeresen frissítve lett.',
