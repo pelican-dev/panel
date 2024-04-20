@@ -7,13 +7,13 @@ return [
         'deleted' => 'Požadované vajce bolo úspešne odstránené z panelu.',
         'updated' => 'Konfigurácia vajca bola aktualizovaná úspešne.',
         'script_updated' => 'Inštalačný skript vajca bol aktualizovaný a bude spustený vždy pri inštalácii servera.',
-        'egg_created' => 'A new egg was laid successfully. You will need to restart any running daemons to apply this new egg.',
+        'egg_created' => 'Nové vajce bolo znesené úspešne. Budete musieť reštartovať spustené daemony na aplikovanie nového vajca.',
     ],
     'variables' => [
         'notices' => [
-            'variable_deleted' => 'The variable ":variable" has been deleted and will no longer be available to servers once rebuilt.',
-            'variable_updated' => 'The variable ":variable" has been updated. You will need to rebuild any servers using this variable in order to apply changes.',
-            'variable_created' => 'New variable has successfully been created and assigned to this egg.',
+            'variable_deleted' => 'Premenná ":variable" bola zmazaná a po prestavaní nebude pre servery dostupná.',
+            'variable_updated' => 'Premenná ":variable" bola aktualizovaná. Servery, ktoré používajú danú premennú je potrebné prestavať pre aplikovanie zmien.',
+            'variable_created' => 'Nová premenná bola úspešne vytvorená a priradená k tomuto vajcu.',
         ],
     ],
 ];
