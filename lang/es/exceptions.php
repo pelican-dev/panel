@@ -14,8 +14,8 @@ return [
         'port_out_of_range' => 'Los puertos en una asignación deben ser mayores que 1024 y menores o iguales a 65535.',
     ],
     'egg' => [
-        'delete_has_servers' => 'Un Huevo con servidores activos vinculados a él no puede ser eliminado del Panel.',
-        'invalid_copy_id' => 'El Huevo seleccionado para copiar un script desde no existe o está copiando un script en sí mismo.',
+        'delete_has_servers' => 'Un Egg con servidores activos vinculados a él no puede ser eliminado del Panel.',
+        'invalid_copy_id' => 'El Egg seleccionado para copiar un script desde no existe o está copiando un script en sí mismo.',
         'has_children' => 'Este Huevo es padre de uno o más otros Huevos. Por favor, elimina esos Huevos antes de eliminar este Huevo.',
     ],
     'variables' => [
