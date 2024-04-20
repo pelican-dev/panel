@@ -1,16 +1,16 @@
 <?php
 
 return [
-    'daemon_connection_failed' => 'There was an exception while attempting to communicate with the daemon resulting in a HTTP/:code response code. This exception has been logged.',
+    'daemon_connection_failed' => 'Pri pokuse o komunikáciu s daemonom sa vyskytla chyba s kódom HTTP/:code. Táto chyba bola zaznamenaná.',
     'node' => [
-        'servers_attached' => 'A node must have no servers linked to it in order to be deleted.',
-        'daemon_off_config_updated' => 'The daemon configuration <strong>has been updated</strong>, however there was an error encountered while attempting to automatically update the configuration file on the Daemon. You will need to manually update the configuration file (config.yml) for the daemon to apply these changes.',
+        'servers_attached' => 'Uzol nemôže mať priradené žiadne servery aby mohol byť vymazaný.',
+        'daemon_off_config_updated' => 'Konfigurácia daemonu <strong>bola aktualizovaná</strong>, no pri pokuse o automatickú aktualizáciu konfigurácie na daemonovi sa vyskytla chyba. Budete musieť manuálne aktualizovať konfiguračný súbor (config.yml) aby sa táto zmena aplikovala na daemon.',
     ],
     'allocations' => [
-        'server_using' => 'A server is currently assigned to this allocation. An allocation can only be deleted if no server is currently assigned.',
-        'too_many_ports' => 'Adding more than 1000 ports in a single range at once is not supported.',
-        'invalid_mapping' => 'The mapping provided for :port was invalid and could not be processed.',
-        'cidr_out_of_range' => 'CIDR notation only allows masks between /25 and /32.',
+        'server_using' => 'Server je momentálne priradený k tejto alokácii. Alokácia môže byť zmazaná, len ak k nej nieje priradený žiadny server.',
+        'too_many_ports' => 'Pridanie viac ako 1000 portov v jednom rozsahu nieje podporované.',
+        'invalid_mapping' => 'Mapovanie poskytnuté pre port :port nieje správne a nemohlo byť spracované.',
+        'cidr_out_of_range' => 'CIDR notácia dovoľuje len masky medzi /25 a /32.',
         'port_out_of_range' => 'Porty v alokácii musia mať vyššiu hodnotu ako 1024 a menšiu, alebo rovnú 65535.',
     ],
     'egg' => [
@@ -46,10 +46,10 @@ return [
         'node_revocation_failed' => 'Nebolo možné odobrať kľúče na <a href=":link"> Uzol #:node</a>. :error',
     ],
     'deployment' => [
-        'no_viable_nodes' => 'No nodes satisfying the requirements specified for automatic deployment could be found.',
-        'no_viable_allocations' => 'No allocations satisfying the requirements for automatic deployment were found.',
+        'no_viable_nodes' => 'Neboli nájdené žiadne uzly spĺňajúce požiadavky pre automatické nasadenie.',
+        'no_viable_allocations' => 'Neboli nájdené žiadne alokácie spĺňajúce požiadavky pre automatické nasadenie.',
     ],
     'api' => [
-        'resource_not_found' => 'The requested resource does not exist on this server.',
+        'resource_not_found' => 'Požadovaný zdroj neexistuje na tomto servery.',
     ],
 ];
