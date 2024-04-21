@@ -60,7 +60,7 @@ class MakeNodeCommand extends Command
         $data['upload_size'] = $this->option('uploadSize') ?? $this->ask('Enter the maximum filesize upload', '100');
         $data['daemon_listen'] = $this->option('daemonListeningPort') ?? $this->ask('Enter the daemon listening port', '8080');
         $data['daemon_sftp'] = $this->option('daemonSFTPPort') ?? $this->ask('Enter the daemon SFTP listening port', '2022');
-        $data['daemon_base'] = $this->option('daemonBase') ?? $this->ask('Enter the base folder', '/var/lib/panel/volumes');
+        $data['daemon_base'] = $this->option('daemonBase') ?? $this->ask('Enter the base folder', '/var/lib/pelican/volumes');
 
         $node = $this->creationService->handle($data);
         $this->line('Successfully created a new node with the name ' . $data['name'] . ' and has an id of ' . $node->id . '.');
