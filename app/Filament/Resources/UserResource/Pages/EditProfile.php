@@ -2,21 +2,27 @@
 
 namespace App\Filament\Resources\UserResource\Pages;
 
+use App\Facades\Activity;
 use App\Models\ActivityLog;
+use App\Models\ApiKey;
 use App\Models\User;
 use App\Services\Users\TwoFactorSetupService;
 use chillerlan\QRCode\Common\EccLevel;
 use chillerlan\QRCode\Common\Version;
 use chillerlan\QRCode\QRCode;
 use chillerlan\QRCode\QROptions;
+use Filament\Forms\Components\Actions\Action;
+use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\Repeater;
+use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Tabs;
 use Filament\Forms\Components\TagsInput;
 use Filament\Forms\Components\Tabs\Tab;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Get;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\HtmlString;
 use Illuminate\Validation\Rules\Password;
@@ -144,13 +150,55 @@ class EditProfile extends \Filament\Pages\Auth\EditProfile
                             Tab::make('API Keys')
                                 ->icon('tabler-key')
                                 ->schema([
-                                    Placeholder::make('Coming soon!'),
-                                    TagsInput::make('allowed_ips')
-                                        ->splitKeys([',', ' ', 'Tab'])
-                                        ->placeholder('Example: 127.0.0.1 or 192.168.1.1')
-                                        ->label('Whitelisted IPv4 Addresses')
-                                        ->helperText('Press enter to add a new IP address or leave blank to allow any IP address')
-                                        ->columnSpanFull(),
+                                    Grid::make('asdf')->columns(5)->schema([
+                                        Section::make('Create API Key')->columnSpan(3)->schema([
+                                            TextInput::make('description'),
+                                            TagsInput::make('allowed_ips')
+                                                ->splitKeys([',', ' ', 'Tab'])
+                                                ->placeholder('Example: 127.0.0.1 or 192.168.1.1')
+                                                ->label('Whitelisted IP\'s')
+                                                ->helperText('Press enter to add a new IP address or leave blank to allow any IP address')
+                                                ->columnSpanFull(),
+                                        ])->headerActions([
+                                            Action::make('Create')
+                                                ->successRedirectUrl('/panel/profile?tab=-api-keys-tab')
+                                                ->action(function (Get $get, Action $action) {
+                                                    $token = auth()->user()->createToken(
+                                                        $get('description'),
+                                                        $get('allowed_ips'),
+                                                    );
+
+                                                    Activity::event('user:api-key.create')
+                                                        ->subject($token->accessToken)
+                                                        ->property('identifier', $token->accessToken->identifier)
+                                                        ->log();
+
+                                                    $action->success();
+                                                })
+                                        ]),
+                                        Section::make('API Keys')->columnSpan(2)->schema([
+                                            Repeater::make('keys')
+                                                ->relationship('apiKeys')
+                                                ->addable(false)
+                                                ->itemLabel(fn ($state) => $state['identifier'])
+                                                ->deleteAction(function (Action $action) {
+                                                    $action->requiresConfirmation()->action(function (array $arguments, Repeater $component) {
+                                                        $items = $component->getState();
+                                                        $key = $items[$arguments['item']];
+                                                        ApiKey::find($key['id'] ?? null)?->delete();
+
+                                                        unset($items[$arguments['item']]);
+
+                                                        $component->state($items);
+
+                                                        $component->callAfterStateUpdated();
+                                                    });
+                                                })
+                                                ->schema(fn () => [
+                                                    Placeholder::make('adf')->label(fn (ApiKey $key) => $key->memo),
+                                                ]),
+                                        ]),
+                                    ]),
                                 ]),
 
                             Tab::make('SSH Keys')
