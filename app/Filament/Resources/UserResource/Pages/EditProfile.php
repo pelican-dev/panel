@@ -165,8 +165,9 @@ class EditProfile extends \Filament\Pages\Auth\EditProfile
                                     Repeater::make('activity')
                                         ->deletable(false)
                                         ->addable(false)
-                                        ->relationship()
-
+                                        ->relationship(null, function (Builder $query) {
+                                            $query->orderBy('timestamp', 'desc');
+                                        })
                                         ->schema([
                                             Placeholder::make('activity!')->label('')->content(fn (ActivityLog $log) => new HtmlString($log->htmlable())),
                                         ]),
