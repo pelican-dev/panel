@@ -72,7 +72,7 @@ class ServerResource extends Resource
                     ->helperText('')
                     ->hiddenOn('create')
                     ->disableOptionWhen(fn ($state, $value) => $state !== $value)
-                    ->formatStateUsing(fn ($state) => $state ?? 'none')
+                    ->formatStateUsing(fn ($state) => $state ?? ServerState::Normal)
                     ->options(collect(ServerState::cases())->mapWithKeys(
                         fn (ServerState $state) => [$state->value => str($state->value)->replace('_', ' ')->ucwords()]
                     ))
