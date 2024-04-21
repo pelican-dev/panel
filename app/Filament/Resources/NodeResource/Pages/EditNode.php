@@ -3,12 +3,12 @@
 namespace App\Filament\Resources\NodeResource\Pages;
 
 use App\Filament\Resources\NodeResource;
-use App\Models\Allocation;
 use App\Models\Node;
 use Filament\Actions;
 use Filament\Forms;
 use Filament\Forms\Components\Tabs;
 use Filament\Resources\Pages\EditRecord;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\HtmlString;
 use Webbingbrasil\FilamentCopyActions\Forms\Actions\CopyAction;
 
@@ -91,6 +91,52 @@ class EditNode extends EditRecord
                                             'md' => 1,
                                             'lg' => 1,
                                         ])
+                                        ->live()
+                                        ->afterStateUpdated(function ($state, Forms\Set $set) {
+                                            $ports = collect();
+                                            $update = false;
+                                            foreach ($state as $portEntry) {
+                                                if (!str_contains($portEntry, '-')) {
+                                                    if (is_numeric($portEntry)) {
+                                                        $ports->push((int) $portEntry);
+
+                                                        continue;
+                                                    }
+
+                                                    // Do not add non numerical ports
+                                                    $update = true;
+
+                                                    continue;
+                                                }
+
+                                                $update = true;
+                                                [$start, $end] = explode('-', $portEntry);
+                                                if (!is_numeric($start) || !is_numeric($end)) {
+                                                    continue;
+                                                }
+
+                                                $start = max((int) $start, 0);
+                                                $end = min((int) $end, 2 ** 16 - 1);
+                                                for ($i = $start; $i <= $end; $i++) {
+                                                    $ports->push($i);
+                                                }
+                                            }
+
+                                            $uniquePorts = $ports->unique()->values();
+                                            if ($ports->count() > $uniquePorts->count()) {
+                                                $update = true;
+                                                $ports = $uniquePorts;
+                                            }
+
+                                            $sortedPorts = $ports->sort()->values();
+                                            if ($sortedPorts->all() !== $ports->all()) {
+                                                $update = true;
+                                                $ports = $sortedPorts;
+                                            }
+                                            if ($update) {
+                                                $set('port', $ports->all());
+                                            }
+                                        })
                                         ->placeholder('25565')
                                         ->helperText('Individual ports or port ranges here separated by spaces')
                                         ->splitKeys(['Tab', ' ']),
@@ -108,6 +154,15 @@ class EditNode extends EditRecord
                             Forms\Components\Repeater::make('allocations')
                                 ->orderColumn('server_id')
                                 ->columnSpan(4)
+                                ->collapsible()->collapsed()
+                                ->itemLabel(function (array $state) {
+                                    $host = $state['ip'] . ':' . $state['port'];
+                                    if ($state['ip_alias']) {
+                                        return $state['ip_alias'] ." ($host)";
+                                    }
+
+                                    return $host;
+                                })
                                 ->columns([
                                     'default' => 1,
                                     'sm' => 3,
@@ -133,7 +188,7 @@ class EditNode extends EditRecord
                                             'default' => 1,
                                             'sm' => 1,
                                             'md' => 1,
-                                            'lg' => 1,
+                                            'lg' => 2,
                                         ])
                                         ->minValue(0)
                                         ->maxValue(65535)
@@ -147,15 +202,21 @@ class EditNode extends EditRecord
                                             'lg' => 3,
                                         ])
                                         ->label('Alias'),
-                                    Forms\Components\TextInput::make('server')
+                                    Forms\Components\Select::make('server')
                                         ->columnSpan([
                                             'default' => 1,
                                             'sm' => 1,
                                             'md' => 2,
-                                            'lg' => 3,
+                                            'lg' => 2,
                                         ])
-                                        ->formatStateUsing(fn (Allocation $allocation) => $allocation->server?->name)
-                                        ->activeUrl(true)
+                                        ->searchable()
+                                        ->preload()
+                                        ->relationship(
+                                            'server',
+                                            'name',
+                                            fn (Builder $query, Forms\Get $get) => $query
+                                                ->where('node_id', $get('node_id')),
+                                        )
                                         ->placeholder('Not assigned'),
                                 ]),
                         ]),

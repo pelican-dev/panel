@@ -113,7 +113,7 @@ class CreateNode extends CreateRecord
                         'lg' => 1,
                     ]),
 
-                Forms\Components\TextInput::make('daemonListen')
+                Forms\Components\TextInput::make('daemon_listen')
                     ->columnSpan([
                         'default' => 1,
                         'sm' => 1,

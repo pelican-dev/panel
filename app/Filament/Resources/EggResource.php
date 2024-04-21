@@ -100,11 +100,11 @@ class EggResource extends Resource
                                 ->label('Log Configuration')
                                 ->helperText('This should be a JSON representation of where log files are stored, and whether or not the daemon should be creating custom logs.'),
                         ]),
-                    Forms\Components\Tabs\Tab::make('Variables')
+                    Forms\Components\Tabs\Tab::make('Egg Variables')
                         ->columnSpanFull()
                         ->columns(2)
                         ->schema([
-                            Forms\Components\Repeater::make('Blah')
+                            Forms\Components\Repeater::make('variables')
                                 ->grid()
                                 ->relationship('variables')
                                 ->name('name')
@@ -113,12 +113,36 @@ class EggResource extends Resource
                                 ->collapsible()->collapsed()
                                 ->columnSpan(2)
                                 ->itemLabel(fn (array $state) => $state['name'])
+                                ->mutateRelationshipDataBeforeCreateUsing(function (array $data): array {
+                                    $data['default_value'] ??= '';
+                                    $data['description'] ??= '';
+                                    $data['rules'] ??= '';
+
+                                    return $data;
+                                })
+                                ->mutateRelationshipDataBeforeSaveUsing(function (array $data): array {
+                                    $data['default_value'] ??= '';
+                                    $data['description'] ??= '';
+                                    $data['rules'] ??= '';
+
+                                    return $data;
+                                })
                                 ->schema([
-                                    Forms\Components\TextInput::make('name')->live()->maxLength(191)->columnSpanFull(),
+                                    Forms\Components\TextInput::make('name')
+                                        ->live()
+                                        ->debounce(1000)
+                                        ->maxLength(191)
+                                        ->columnSpanFull()
+                                        ->afterStateUpdated(fn (Forms\Set $set, $state) => $set('env_variable', str($state)->trim()->snake()->upper()))
+                                        ->required(),
                                     Forms\Components\Textarea::make('description')->columnSpanFull(),
-                                    Forms\Components\TextInput::make('env_variable')->maxLength(191)->required()->hint(fn ($state) => "{{{$state}}}"),
-                                    Forms\Components\TextInput::make('default_value')->maxLength(191)->required(),
-                                    Forms\Components\TextInput::make('rules')->columnSpanFull()->required(),
+                                    Forms\Components\TextInput::make('env_variable')
+                                        ->label('Environment Variable')
+                                        ->maxLength(191)
+                                        ->hint(fn ($state) => "{{{$state}}}")
+                                        ->required(),
+                                    Forms\Components\TextInput::make('default_value')->maxLength(191),
+                                    Forms\Components\Textarea::make('rules')->rows(3)->columnSpanFull(),
                                 ]),
                         ]),
                     Forms\Components\Tabs\Tab::make('Install Script')
