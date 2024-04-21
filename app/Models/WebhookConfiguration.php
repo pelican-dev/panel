@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use App\Events\Event;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -16,7 +18,7 @@ class WebhookConfiguration extends Model
     protected $fillable = [
         'endpoint',
         'description',
-        'events'
+        'events',
     ];
 
     protected function casts(): array
@@ -26,8 +28,8 @@ class WebhookConfiguration extends Model
         ];
     }
 
-    public function findManyByEvent()
+    public function scopeForEvent(Builder $builder, Event $event): Builder
     {
-
+        return $builder->whereJsonContains('event', $event::class);
     }
 }
