@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('webhooks', function (Blueprint $table) {
             $table->uuid()->primary();
             $table->string('endpoint');
-            $table->boolean('was_successful');
+            $table->timestamp('successful_at')->nullable();
             $table->json('payload');
             $table->timestamps();
         });
