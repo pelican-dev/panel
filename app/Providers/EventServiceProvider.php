@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Listeners\DispatchWebhooks;
 use App\Models\User;
 use App\Models\Server;
 use App\Models\Subuser;
@@ -21,6 +22,9 @@ class EventServiceProvider extends ServiceProvider
      */
     protected $listen = [
         ServerInstalledEvent::class => [ServerInstalledNotification::class],
+        'App\Events\Server\*' => [DispatchWebhooks::class],
+        'App\Events\User\*' => [DispatchWebhooks::class],
+        'App\Events\Subuser\*' => [DispatchWebhooks::class],
     ];
 
     /**
