@@ -13,10 +13,13 @@ class DaemonConfigurationRepository extends DaemonRepository
      *
      * @throws \App\Exceptions\Http\Connection\DaemonConnectionException
      */
-    public function getSystemInformation(?int $version = null): array
+    public function getSystemInformation(?int $version = null, $connectTimeout = 5): array
     {
         try {
-            $response = $this->getHttpClient()->get('/api/system' . (!is_null($version) ? '?v=' . $version : ''));
+            $response = $this
+                ->getHttpClient()
+                ->connectTimeout($connectTimeout)
+                ->get('/api/system' . (!is_null($version) ? '?v=' . $version : ''));
         } catch (TransferException $exception) {
             throw new DaemonConnectionException($exception);
         }
@@ -36,7 +39,7 @@ class DaemonConfigurationRepository extends DaemonRepository
         try {
             return $this->getHttpClient()->post(
                 '/api/update',
-                ['json' => $node->getConfiguration()]
+                $node->getConfiguration(),
             );
         } catch (TransferException $exception) {
             throw new DaemonConnectionException($exception);

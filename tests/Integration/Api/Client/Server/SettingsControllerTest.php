@@ -2,6 +2,7 @@
 
 namespace App\Tests\Integration\Api\Client\Server;
 
+use App\Enums\ServerState;
 use Illuminate\Http\Response;
 use App\Models\Server;
 use App\Models\Permission;
@@ -93,7 +94,7 @@ class SettingsControllerTest extends ClientApiIntegrationTestCase
             ->assertStatus(Response::HTTP_ACCEPTED);
 
         $server = $server->refresh();
-        $this->assertSame(Server::STATUS_INSTALLING, $server->status);
+        $this->assertSame(ServerState::Installing, $server->status);
     }
 
     /**

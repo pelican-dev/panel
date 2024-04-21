@@ -44,7 +44,6 @@ class InfoCommand extends Command
             ['Session Driver', config('session.driver')],
             ['Filesystem Driver', config('filesystems.default')],
             ['Default Theme', config('themes.active')],
-            ['Proxies', config('trustedproxies.proxies')],
         ], 'compact');
 
         $this->output->title('Database Configuration');

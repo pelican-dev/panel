@@ -9,6 +9,15 @@ trait AvailableLanguages
 {
     private ?Filesystem $filesystem = null;
 
+    public const TRANSLATED = [
+        'cz',
+        'da',
+        'de',
+        'en',
+        'es',
+        'tr',
+    ];
+
     /**
      * Return all the available languages on the Panel based on those
      * that are present in the language folder.
@@ -18,10 +27,15 @@ trait AvailableLanguages
         return collect($this->getFilesystemInstance()->directories(base_path('lang')))->mapWithKeys(function ($path) {
             $code = basename($path);
 
-            $value = Locale::getDisplayName($code, app()->currentLocale());
+            $value = Locale::getDisplayName($code, $code);
 
             return [$code => title_case($value)];
         })->toArray();
+    }
+
+    public function isLanguageTranslated(string $countryCode = 'en'): bool
+    {
+        return in_array($countryCode, self::TRANSLATED, true);
     }
 
     /**
