@@ -20,9 +20,6 @@ class DispatchWebhooksJob implements ShouldQueue
         //
     }
 
-    /**
-     * Execute the job.
-     */
     public function handle(): void
     {
         WebhookConfiguration::query()
