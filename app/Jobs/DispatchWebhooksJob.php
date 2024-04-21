@@ -15,9 +15,6 @@ class DispatchWebhooksJob implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
-    /**
-     * Create a new job instance.
-     */
     public function __construct(private ShouldDispatchWebhooks $event)
     {
         //
