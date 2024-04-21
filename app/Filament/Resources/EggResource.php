@@ -103,9 +103,18 @@ class EggResource extends Resource
                                     return $data;
                                 })
                                 ->schema([
-                                    Forms\Components\TextInput::make('name')->live()->maxLength(191)->columnSpanFull()->required(),
+                                    Forms\Components\TextInput::make('name')
+                                        ->live()
+                                        ->debounce(1000)
+                                        ->maxLength(191)
+                                        ->columnSpanFull()
+                                        ->afterStateUpdated(fn (Forms\Set $set, $state) => $set('env_variable', str($state)->trim()->snake()->upper()))
+                                        ->required(),
                                     Forms\Components\Textarea::make('description')->columnSpanFull(),
-                                    Forms\Components\TextInput::make('env_variable')->maxLength(191)->required(),
+                                    Forms\Components\TextInput::make('env_variable')
+                                        ->label('Environment Variable')
+                                        ->maxLength(191)
+                                        ->required(),
                                     Forms\Components\TextInput::make('default_value')->maxLength(191),
                                     Forms\Components\Textarea::make('rules')->rows(3)->columnSpanFull(),
                                 ]),
