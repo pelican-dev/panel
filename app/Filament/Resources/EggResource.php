@@ -142,7 +142,7 @@ class EggResource extends Resource
                     ->searchable(),
                 Tables\Columns\TextColumn::make('name')
                     ->icon('tabler-egg')
-                    ->description(fn ($record): string => $record->description)
+                    ->description(fn ($record): ?string => $record->description)
                     ->wrap()
                     ->searchable(),
                 Tables\Columns\TextColumn::make('author')
