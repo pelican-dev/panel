@@ -21,6 +21,7 @@ trait AvailableLanguages
         'ja',
         'nl',
         'pl',
+        'sk',
         'ru',
         'tr',
     ];
