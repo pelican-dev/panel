@@ -30,6 +30,6 @@ class WebhookConfiguration extends Model
 
     public function scopeForEvent(Builder $builder, Event $event): Builder
     {
-        return $builder->whereJsonContains('event', $event::class);
+        return $builder->whereJsonContains('events', $event::class);
     }
 }
