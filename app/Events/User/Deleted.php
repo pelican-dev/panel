@@ -2,13 +2,16 @@
 
 namespace App\Events\User;
 
+use App\Events\ShouldDispatchWebhooks;
 use App\Models\User;
 use App\Events\Event;
+use App\Traits\Services\HasWebhookPayload;
 use Illuminate\Queue\SerializesModels;
 
-class Deleted extends Event
+class Deleted extends Event implements ShouldDispatchWebhooks
 {
     use SerializesModels;
+    use HasWebhookPayload;
 
     /**
      * Create a new event instance.
