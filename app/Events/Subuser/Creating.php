@@ -10,8 +10,8 @@ use Illuminate\Queue\SerializesModels;
 
 class Creating extends Event implements ShouldDispatchWebhooks
 {
-    use SerializesModels;
     use HasWebhookPayload;
+    use SerializesModels;
 
     /**
      * Create a new event instance.

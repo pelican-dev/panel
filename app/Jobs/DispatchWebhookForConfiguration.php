@@ -2,7 +2,6 @@
 
 namespace App\Jobs;
 
-use App\Events\Event;
 use App\Events\ShouldDispatchWebhooks;
 use App\Models\WebhookConfiguration;
 use Illuminate\Bus\Queueable;
@@ -10,15 +9,16 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\Http;
 
-class DispatchWebhooksJob implements ShouldQueue
+class DispatchWebhookForConfiguration implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
     /**
      * Create a new job instance.
      */
-    public function __construct(private ShouldDispatchWebhooks&Event $event)
+    public function __construct(private WebhookConfiguration $configuration, private ShouldDispatchWebhooks $event)
     {
         //
     }
@@ -28,8 +28,8 @@ class DispatchWebhooksJob implements ShouldQueue
      */
     public function handle(): void
     {
-        WebhookConfiguration::query()
-            ->forEvent($this->event)
-            ->eachById(fn (WebhookConfiguration $configuration) => DispatchWebhookForConfiguration::dispatch($configuration, $this->event));
+        // Move to dedicated service to handle Webhook Model creation to save webhook history
+        Http::post($this->configuration->endpoint, $this->event->getPayload())
+            ->throw();
     }
 }
