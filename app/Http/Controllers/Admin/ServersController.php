@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Enums\ServerState;
 use Illuminate\Http\Request;
 use App\Models\User;
 use Illuminate\Http\Response;
@@ -71,11 +72,11 @@ class ServersController extends Controller
      */
     public function toggleInstall(Server $server): RedirectResponse
     {
-        if ($server->status === Server::STATUS_INSTALL_FAILED) {
+        if ($server->status === ServerState::InstallFailed) {
             throw new DisplayException(trans('admin/server.exceptions.marked_as_failed'));
         }
 
-        $server->status = $server->isInstalled() ? Server::STATUS_INSTALLING : null;
+        $server->status = $server->isInstalled() ? ServerState::Installing : null;
         $server->save();
 
         $this->alert->success(trans('admin/server.alerts.install_toggled'))->flash();

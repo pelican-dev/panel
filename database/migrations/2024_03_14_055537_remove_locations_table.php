@@ -2,17 +2,33 @@
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
         Schema::table('nodes', function (Blueprint $table) {
+            $table->text('tags');
+        });
+
+        DB::table('nodes')->update(['tags' => '[]']);
+
+        $nodesWithLocations = DB::table('nodes')
+            ->select(['nodes.id', 'locations.short'])
+            ->join('locations', 'locations.id', '=', 'nodes.location_id')
+            ->get();
+
+        foreach ($nodesWithLocations as $node) {
+            DB::table('nodes')
+                ->where('id', $node->id)
+                ->update(['tags' => "[\"$node->short\"]"]);
+        }
+
+        Schema::table('nodes', function (Blueprint $table) {
             $table->dropForeign('nodes_location_id_foreign');
+            $table->dropColumn('location_id');
         });
 
         Schema::drop('locations');
@@ -22,9 +38,7 @@ return new class extends Migration
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
+    // Not really reversible, but...
     public function down(): void
     {
         Schema::create('locations', function (Blueprint $table) {
@@ -32,6 +46,11 @@ return new class extends Migration
             $table->string('short');
             $table->text('long')->nullable();
             $table->timestamps();
+        });
+
+        Schema::table('nodes', function (Blueprint $table) {
+            $table->unsignedInteger('location_id')->default(0);
+            $table->foreign('location_id')->references('id')->on('locations');
         });
 
         Schema::table('api_keys', function (Blueprint $table) {

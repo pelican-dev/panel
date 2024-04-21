@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\NodeResource\Pages;
 
 use App\Filament\Resources\NodeResource;
+use App\Models\Allocation;
 use App\Models\Node;
 use Filament\Actions;
 use Filament\Forms;
@@ -50,27 +51,115 @@ class EditNode extends EditRecord
                         ]),
                     Tabs\Tab::make('Allocations')
                         ->icon('tabler-plug-connected')
-                        ->columns(4)
+                        ->columns([
+                            'default' => 1,
+                            'sm' => 2,
+                            'md' => 4,
+                        ])
                         ->schema([
+                            Forms\Components\Section::make('Create Allocation')
+                                ->columnSpan(4)
+                                ->columns([
+                                    'default' => 1,
+                                    'sm' => 2,
+                                    'md' => 4,
+                                    'lg' => 5,
+                                ])
+                                //->inlineLabel()
+                                ->headerActions([
+                                    Forms\Components\Actions\Action::make('submit')
+                                        ->color('success')
+                                        ->action(function () {
+                                            // ...
+                                        }),
+                                ])
+                                ->schema([
+                                    Forms\Components\TextInput::make('ip')
+                                        ->columnSpan([
+                                            'default' => 1,
+                                            'sm' => 1,
+                                            'md' => 2,
+                                            'lg' => 2,
+                                        ])
+                                        ->label('IP Address')
+                                        ->placeholder('x.x.x.x')
+                                        ->helperText('IP address to assign ports to'),
+                                    Forms\Components\TagsInput::make('port')
+                                        ->columnSpan([
+                                            'default' => 1,
+                                            'sm' => 1,
+                                            'md' => 1,
+                                            'lg' => 1,
+                                        ])
+                                        ->placeholder('25565')
+                                        ->helperText('Individual ports or port ranges here separated by spaces')
+                                        ->splitKeys(['Tab', ' ']),
+                                    Forms\Components\TextInput::make('ip_alias')
+                                        ->columnSpan([
+                                            'default' => 1,
+                                            'sm' => 2,
+                                            'md' => 1,
+                                            'lg' => 2,
+                                        ])
+                                        ->label('Alias')
+                                        ->placeholder('minecraft.pelican.dev')
+                                        ->helperText('Display name to help you remember.'),
+                                ]),
                             Forms\Components\Repeater::make('allocations')
                                 ->orderColumn('server_id')
-                                ->columnSpan(1)
-                                ->columns(4)
+                                ->columnSpan(4)
+                                ->columns([
+                                    'default' => 1,
+                                    'sm' => 3,
+                                    'md' => 4,
+                                    'lg' => 9,
+                                ])
                                 ->relationship()
                                 ->addActionLabel('Create New Allocation')
                                 ->addAction(fn ($action) => $action->color('info'))
                                 ->schema([
                                     Forms\Components\TextInput::make('ip')
-                                        ->label('IP Address'),
-                                    Forms\Components\TextInput::make('ip_alias')
-                                        ->label('Alias'),
+                                        ->label('IP Address')
+                                        ->placeholder('x.x.x.x')
+                                        ->columnSpan([
+                                            'default' => 1,
+                                            'sm' => 2,
+                                            'md' => 3,
+                                            'lg' => 2,
+                                        ]),
                                     Forms\Components\TextInput::make('port')
+                                        ->placeholder('25565')
+                                        ->columnSpan([
+                                            'default' => 1,
+                                            'sm' => 1,
+                                            'md' => 1,
+                                            'lg' => 1,
+                                        ])
                                         ->minValue(0)
                                         ->maxValue(65535)
                                         ->numeric(),
-                                    Forms\Components\Select::make('server_id')->relationship('server', 'name'),
+                                    Forms\Components\TextInput::make('ip_alias')
+                                        ->placeholder('mincraft.pelican.dev')
+                                        ->columnSpan([
+                                            'default' => 1,
+                                            'sm' => 2,
+                                            'md' => 2,
+                                            'lg' => 3,
+                                        ])
+                                        ->label('Alias'),
+                                    Forms\Components\TextInput::make('server')
+                                        ->columnSpan([
+                                            'default' => 1,
+                                            'sm' => 1,
+                                            'md' => 2,
+                                            'lg' => 3,
+                                        ])
+                                        ->formatStateUsing(fn (Allocation $allocation) => $allocation->server?->name)
+                                        ->activeUrl(true)
+                                        ->placeholder('Not assigned'),
                                 ]),
                         ]),
+
                 ]),
         ]);
     }

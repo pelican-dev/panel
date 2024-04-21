@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api\Client\Servers;
 
+use App\Enums\ServerState;
 use Illuminate\Http\Request;
 use App\Models\Backup;
 use App\Models\Server;
@@ -212,7 +213,7 @@ class BackupController extends ClientApiController
 
             // Update the status right away for the server so that we know not to allow certain
             // actions against it via the Panel API.
-            $server->update(['status' => Server::STATUS_RESTORING_BACKUP]);
+            $server->update(['status' => ServerState::RestoringBackup]);
 
             $this->daemonRepository->setServer($server)->restore($backup, $url ?? null, $request->input('truncate'));
         });

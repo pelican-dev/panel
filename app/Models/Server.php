@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\ServerState;
 use App\Exceptions\Http\Connection\DaemonConnectionException;
 use GuzzleHttp\Exception\GuzzleException;
 use Illuminate\Notifications\Notifiable;
@@ -112,12 +113,6 @@ class Server extends Model
      */
     public const RESOURCE_NAME = 'server';
 
-    public const STATUS_INSTALLING = 'installing';
-    public const STATUS_INSTALL_FAILED = 'install_failed';
-    public const STATUS_REINSTALL_FAILED = 'reinstall_failed';
-    public const STATUS_SUSPENDED = 'suspended';
-    public const STATUS_RESTORING_BACKUP = 'restoring_backup';
-
     /**
      * The table associated with the model.
      */
@@ -128,7 +123,7 @@ class Server extends Model
      * on server instances unless the user specifies otherwise in the request.
      */
     protected $attributes = [
-        'status' => self::STATUS_INSTALLING,
+        'status' => ServerState::Installing,
         'oom_disabled' => true,
         'installed_at' => null,
     ];
@@ -171,6 +166,7 @@ class Server extends Model
     {
         return [
             'node_id' => 'integer',
+            'status' => ServerState::class,
             'skip_scripts' => 'boolean',
             'owner_id' => 'integer',
             'memory' => 'integer',
@@ -203,12 +199,12 @@ class Server extends Model
 
     public function isInstalled(): bool
     {
-        return $this->status !== self::STATUS_INSTALLING && $this->status !== self::STATUS_INSTALL_FAILED;
+        return $this->status !== ServerState::Installing && $this->status !== ServerState::InstallFailed;
     }
 
     public function isSuspended(): bool
     {
-        return $this->status === self::STATUS_SUSPENDED;
+        return $this->status === ServerState::Suspended;
     }
 
     /**
@@ -359,7 +355,7 @@ class Server extends Model
             $this->isSuspended() ||
             $this->node->isUnderMaintenance() ||
             !$this->isInstalled() ||
-            $this->status === self::STATUS_RESTORING_BACKUP ||
+            $this->status === ServerState::RestoringBackup ||
             !is_null($this->transfer)
         ) {
             throw new ServerStateConflictException($this);
@@ -376,7 +372,7 @@ class Server extends Model
     {
         if (
             !$this->isInstalled() ||
-            $this->status === self::STATUS_RESTORING_BACKUP ||
+            $this->status === ServerState::RestoringBackup ||
             !is_null($this->transfer)
         ) {
             throw new ServerStateConflictException($this);
@@ -397,5 +393,10 @@ class Server extends Model
         } catch (GuzzleException $exception) {
             throw new DaemonConnectionException($exception);
         }
+    }
+
+    public function retrieveStatus()
+    {
+        return $this->node->serverStatuses();
     }
 }

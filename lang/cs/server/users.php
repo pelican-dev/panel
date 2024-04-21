@@ -1,0 +1,33 @@
+<?php
+
+return [
+    'permissions' => [
+        'websocket_*' => 'Umožňuje přístup do websocketu pro tento server.',
+        'control_console' => 'Umožňuje uživateli odesílat data do konzole serveru.',
+        'control_start' => 'Umožňuje uživateli spustit instanci serveru.',
+        'control_stop' => 'Umožňuje uživateli zastavit instanci serveru.',
+        'control_restart' => 'Umožňuje uživateli restartovat instanci serveru.',
+        'control_kill' => 'Umožňuje uživateli ukončit instanci serveru.',
+        'user_create' => 'Umožňuje uživateli vytvářet nové uživatelské účty pro server.',
+        'user_read' => 'Umožňuje uživateli zobrazit oprávnění uživatele asociované s tímto serverem.',
+        'user_update' => 'Umožňuje uživateli upravovat ostatní oprávnění uživatelů spojené s tímto serverem.',
+        'user_delete' => 'Umožňuje uživateli odstranit ostatní uživatele přidružené k tomuto serveru.',
+        'file_create' => 'Umožňuje uživateli oprávnění vytvářet nové soubory a adresáře.',
+        'file_read' => 'Umožňuje uživateli vidět soubory a složky spojené s touto instancí serveru a také zobrazit jejich obsah.',
+        'file_update' => 'Umožňuje uživateli aktualizovat soubory a složky spojené se serverem.',
+        'file_delete' => 'Umožňuje uživateli odstranit soubory a adresáře.',
+        'file_archive' => 'Umožňuje uživateli vytvářet archivy souborů a dekomprimovat existující archivy.',
+        'file_sftp' => 'Umožňuje uživateli provést výše uvedené akce souborů pomocí SFTP klienta.',
+        'allocation_read' => 'Umožňuje přístup ke stránkám správy alokace serveru.',
+        'allocation_update' => 'Umožňuje uživateli oprávnění provádět změny alokací serveru.',
+        'database_create' => 'Umožňuje uživateli oprávnění k vytvoření nové databáze pro server.',
+        'database_read' => 'Umožňuje uživateli oprávnění zobrazit databáze serverů.',
+        'database_update' => 'Umožňuje uživateli oprávnění provádět změny v databázi. Pokud uživatel nemá také oprávnění "Zobrazit heslo", nebude moci heslo upravit.',
+        'database_delete' => 'Umožňuje uživateli oprávnění odstranit instanci databáze.',
+        'database_view_password' => 'Umožňuje uživateli oprávnění zobrazit heslo do databáze.',
+        'schedule_create' => 'Umožňuje uživateli vytvořit nový plán pro server.',
+        'schedule_read' => 'Umožňuje uživateli oprávnění k prohlížení plánů serveru.',
+        'schedule_update' => 'Umožňuje uživateli oprávnění provádět změny plánu existujícího serveru.',
+        'schedule_delete' => 'Umožňuje uživateli odstranit plán pro server.',
+    ],
+];

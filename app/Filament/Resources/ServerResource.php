@@ -2,6 +2,8 @@
 
 namespace App\Filament\Resources;
 
+use App\Enums\ContainerStatus;
+use App\Enums\ServerState;
 use App\Filament\Resources\ServerResource\Pages;
 use App\Models\Allocation;
 use App\Models\Egg;
@@ -52,21 +54,15 @@ class ServerResource extends Resource
 
                         return $details['state'] ?? 'unknown';
                     })
-                    ->options([
-                        'running' => 'Running',
-                        'starting' => 'Starting',
-                        'stopping' => 'Stopping',
-                        'offline' => 'Offline',
-                        'unknown' => 'Unknown',
-                    ])
-
-                    ->colors([
-                        'running' => 'success',
-                        'offline' => 'danger',
-                        'starting' => 'primary',
-                        'stopping' => 'warning',
-                        'unknown' => 'primary',
-                    ])
+                    ->options(collect(ContainerStatus::cases())->mapWithKeys(
+                        fn (ContainerStatus $status) => [$status->value => str($status->value)->ucwords()]
+                    ))
+                    ->colors(collect(ContainerStatus::cases())->mapWithKeys(
+                        fn (ContainerStatus $status) => [$status->value => $status->color()]
+                    ))
+                    ->icons(collect(ContainerStatus::cases())->mapWithKeys(
+                        fn (ContainerStatus $status) => [$status->value => $status->icon()]
+                    ))
                     ->grouped()
                     ->columnSpanFull()
                     ->inline(),
@@ -76,24 +72,16 @@ class ServerResource extends Resource
                     ->helperText('')
                     ->hiddenOn('create')
                     ->disableOptionWhen(fn ($state, $value) => $state !== $value)
-                    ->formatStateUsing(fn ($state) => $state ?? 'none')
-                    ->options([
-                        'none' => 'None',
-                        Server::STATUS_INSTALLING => str(Server::STATUS_INSTALLING)->title()->replace('_', ' '),
-                        Server::STATUS_INSTALL_FAILED => str(Server::STATUS_INSTALL_FAILED)->title()->replace('_', ' '),
-                        Server::STATUS_REINSTALL_FAILED => str(Server::STATUS_REINSTALL_FAILED)->title()->replace('_', ' '),
-                        Server::STATUS_SUSPENDED => str(Server::STATUS_SUSPENDED)->title()->replace('_', ' '),
-                        Server::STATUS_RESTORING_BACKUP => str(Server::STATUS_RESTORING_BACKUP)->title()->replace('_', ' '),
-                    ])
-
-                    ->colors([
-                        'none' => 'primary',
-                        Server::STATUS_INSTALLING => 'primary',
-                        Server::STATUS_INSTALL_FAILED => 'danger',
-                        Server::STATUS_REINSTALL_FAILED => 'danger',
-                        Server::STATUS_SUSPENDED => 'danger',
-                        Server::STATUS_RESTORING_BACKUP => 'primary',
-                    ])
+                    ->formatStateUsing(fn ($state) => $state ?? ServerState::Normal)
+                    ->options(collect(ServerState::cases())->mapWithKeys(
+                        fn (ServerState $state) => [$state->value => str($state->value)->replace('_', ' ')->ucwords()]
+                    ))
+                    ->colors(collect(ServerState::cases())->mapWithKeys(
+                        fn (ServerState $state) => [$state->value => $state->color()]
+                    ))
+                    ->icons(collect(ServerState::cases())->mapWithKeys(
+                        fn (ServerState $state) => [$state->value => $state->icon()]
+                    ))
                     ->grouped()
                     ->columnSpanFull()
                     ->inline(),
@@ -184,22 +172,11 @@ class ServerResource extends Resource
                     )
                     ->createOptionForm(fn (Forms\Get $get) => [
                         Forms\Components\TextInput::make('allocation_ip')
-                            ->ipv4()
-                            ->datalist(function () use ($get) {
-                                $node = Node::find($get('node_id'));
-                                if (is_ip($node->fqdn)) {
-                                    return [$node->fqdn];
-                                }
-
-                                $validRecords = gethostbynamel($node->fqdn);
-                                if (!$validRecords) {
-                                    return [];
-                                }
-
-                                return $validRecords ?: [];
-                            })
+                            ->datalist(Node::find($get('node_id'))?->ipAddresses() ?? [])
                             ->label('IP Address')
+                            ->ipv4()
                             ->helperText("Usually your machine's public IP unless you are port forwarding.")
+                            // ->selectablePlaceholder(false)
                             ->required(),
                         Forms\Components\TextInput::make('allocation_alias')
                             ->label('Alias')
@@ -217,6 +194,54 @@ class ServerResource extends Resource
                                 They usually consist of the port forwarded ones.
                             ')
                             ->label('Ports')
+                            ->live()
+                            ->afterStateUpdated(function ($state, Forms\Set $set) {
+                                $ports = collect();
+                                $update = false;
+                                foreach ($state as $portEntry) {
+                                    if (!str_contains($portEntry, '-')) {
+                                        if (is_numeric($portEntry)) {
+                                            $ports->push((int) $portEntry);
+
+                                            continue;
+                                        }
+
+                                        // Do not add non numerical ports
+                                        $update = true;
+
+                                        continue;
+                                    }
+
+                                    $update = true;
+                                    [$start, $end] = explode('-', $portEntry);
+                                    if (!is_numeric($start) || !is_numeric($end)) {
+                                        continue;
+                                    }
+
+                                    $start = max((int) $start, 0);
+                                    $end = min((int) $end, 2 ** 16 - 1);
+                                    for ($i = $start; $i <= $end; $i++) {
+                                        $ports->push($i);
+                                    }
+                                }
+
+                                $uniquePorts = $ports->unique()->values();
+                                if ($ports->count() > $uniquePorts->count()) {
+                                    $update = true;
+                                    $ports = $uniquePorts;
+                                }
+
+                                $sortedPorts = $ports->sort()->values();
+                                if ($sortedPorts->all() !== $ports->all()) {
+                                    $update = true;
+                                    $ports = $sortedPorts;
+                                }
+
+                                if ($update) {
+                                    $set('allocation_ports', $ports->all());
+                                }
+                            })
+                            ->splitKeys(['Tab', ' ', ','])
                             ->required(),
                     ])
                     ->createOptionUsing(function (array $data, Forms\Get $get): int {
@@ -229,6 +254,7 @@ class ServerResource extends Resource
                 Forms\Components\Repeater::make('allocation_additional')
                     ->label('Additional Allocations')
                     ->columnSpan(2)
+                    ->addActionLabel('Add Allocation')
                     ->disabled(fn (Forms\Get $get) => $get('allocation_id') === null)
                     // ->addable() TODO disable when all allocations are taken
                     // ->addable() TODO disable until first additional allocation is selected
@@ -332,6 +358,15 @@ class ServerResource extends Resource
                     ->live()
                     ->label('Custom Image?')
                     ->default(false)
+                    ->formatStateUsing(function ($state, Forms\Get $get) {
+                        if ($state !== null) {
+                            return $state;
+                        }
+
+                        $images = Egg::find($get('egg_id'))->docker_images ?? [];
+
+                        return !in_array($get('image'), $images);
+                    })
                     ->options([
                         false => 'No',
                         true => 'Yes',
@@ -563,6 +598,39 @@ class ServerResource extends Resource
         return $table
             ->searchable(false)
             ->columns([
+                Tables\Columns\TextColumn::make('status')
+                    ->default('unknown')
+                    ->badge()
+                    ->default(function (Server $server) {
+                        if ($server->status !== null) {
+                            return $server->status;
+                        }
+
+                        $statuses = collect($server->retrieveStatus())
+                            ->mapWithKeys(function ($status) {
+                                return [$status['configuration']['uuid'] => $status['state']];
+                            })->all();
+
+                        return $statuses[$server->uuid] ?? 'node_fail';
+                    })
+                    ->icon(fn ($state) => match ($state) {
+                        'node_fail' => 'tabler-server-off',
+                        'running' => 'tabler-heartbeat',
+                        'removing' => 'tabler-heart-x',
+                        'offline' => 'tabler-heart-off',
+                        'paused' => 'tabler-heart-pause',
+                        'installing' => 'tabler-heart-bolt',
+                        'suspended' => 'tabler-heart-cancel',
+                        default => 'tabler-heart-question',
+                    })
+                    ->color(fn ($state): string => match ($state) {
+                        'running' => 'success',
+                        'installing', 'restarting' => 'primary',
+                        'paused', 'removing' => 'warning',
+                        'node_fail', 'install_failed', 'suspended' => 'danger',
+                        default => 'gray',
+                    }),
+
                 Tables\Columns\TextColumn::make('uuid')
                     ->hidden()
                     ->label('UUID')
@@ -584,9 +652,11 @@ class ServerResource extends Resource
                     ->label('Owner')
                     ->url(fn (Server $server): string => route('filament.admin.resources.users.edit', ['record' => $server->user]))
                     ->sortable(),
-                Tables\Columns\SelectColumn::make('allocation.id')
+                Tables\Columns\SelectColumn::make('allocation_id')
                     ->label('Primary Allocation')
-                    ->options(fn ($state, Server $server) => [$server->allocation->id => $server->allocation->address])
+                    ->options(fn ($state, Server $server) => $server->allocations->mapWithKeys(
+                        fn ($allocation) => [$allocation->id => $allocation->address])
+                    )
                     ->selectablePlaceholder(false)
                     ->sortable(),
                 Tables\Columns\TextColumn::make('image')->hidden(),

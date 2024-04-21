@@ -21,11 +21,12 @@ class ListEggs extends ListRecords
             Actions\CreateAction::make(),
 
             Actions\Action::make('import')
-                ->label('Import Egg')
+                ->label('Import')
                 ->form([
                     Forms\Components\FileUpload::make('egg')
                         ->acceptedFileTypes(['application/json'])
-                        ->storeFiles(false),
+                        ->storeFiles(false)
+                        ->multiple(),
                 ])
                 ->action(function (array $data): void {
                     /** @var TemporaryUploadedFile $eggFile */
@@ -34,25 +35,25 @@ class ListEggs extends ListRecords
                     /** @var EggImporterService $eggImportService */
                     $eggImportService = resolve(EggImporterService::class);
 
-                    try {
-                        $newEgg = $eggImportService->handle($eggFile);
-                    } catch (Exception $exception) {
-                        Notification::make()
-                            ->title('Egg Import Failed')
-                            ->danger()
-                            ->send();
+                    foreach ($eggFile as $file) {
+                        try {
+                            $eggImportService->handle($file);
+                        } catch (Exception $exception) {
+                            Notification::make()
+                                ->title('Import Failed')
+                                ->danger()
+                                ->send();
 
-                        report($exception);
+                            report($exception);
 
-                        return;
+                            return;
+                        }
                     }
 
                     Notification::make()
-                        ->title("Egg Import Success: $newEgg->name")
+                        ->title('Import Success')
                         ->success()
                         ->send();
-
-                    redirect()->route('filament.admin.resources.eggs.edit', [$newEgg]);
                 }),
         ];
     }

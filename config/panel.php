@@ -92,7 +92,7 @@ return [
 
     'cdn' => [
         'cache_time' => 60,
-        'url' => 'https://cdn.example.com/releases/latest.json',
+        'url' => 'https://cdn.pelican.dev/releases/latest.json',
     ],
 
     /*

@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Exceptions\Service\HasActiveServersException;
 use App\Repositories\Daemon\DaemonConfigurationRepository;
 use Exception;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Str;
 use Symfony\Component\Yaml\Yaml;
 use Illuminate\Notifications\Notifiable;
@@ -286,6 +287,38 @@ class Node extends Model
 
                 return ['exception' => $message->toString()];
             }
+        });
+    }
+
+    public function serverStatuses(): array
+    {
+        return cache()->remember("nodes.$this->id.servers", now()->addMinute(), function () {
+            try {
+                return Http::daemon($this)->connectTimeout(1)->timeout(1)->get('/api/servers')->json();
+            } catch (Exception) {
+                return [];
+            }
+        });
+    }
+
+    public function ipAddresses(): array
+    {
+        return cache()->remember("nodes.$this->id.ips", now()->addHour(), function () {
+            $ips = collect();
+            if (is_ip($this->fqdn)) {
+                $ips = $ips->push($this->fqdn);
+            } elseif ($dnsRecords = gethostbynamel($this->fqdn)) {
+                $ips = $ips->concat($dnsRecords);
+            }
+
+            try {
+                $addresses = Http::daemon($this)->connectTimeout(1)->timeout(1)->get('/api/system/ips')->json();
+                $ips = $ips->concat(fluent($addresses)->get('ip_addresses'));
+            } catch (Exception) {
+                // pass
+            }
+
+            return $ips->all();
         });
     }
 }

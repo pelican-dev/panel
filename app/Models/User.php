@@ -177,7 +177,7 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
     protected static function booted(): void
     {
         static::creating(function (self $user) {
-            $user->uuid = Str::uuid();
+            $user->uuid = Str::uuid()->toString();
 
             return true;
         });
