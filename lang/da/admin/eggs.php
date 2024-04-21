@@ -2,18 +2,18 @@
 
 return [
     'notices' => [
-        'imported' => 'Successfully imported this Egg and its associated variables.',
-        'updated_via_import' => 'This Egg has been updated using the file provided.',
-        'deleted' => 'Successfully deleted the requested egg from the Panel.',
-        'updated' => 'Egg configuration has been updated successfully.',
-        'script_updated' => 'Egg install script has been updated and will run whenever servers are installed.',
-        'egg_created' => 'A new egg was laid successfully. You will need to restart any running daemons to apply this new egg.',
+        'imported' => 'Dette Egg og dets tilknyttede variabler blev importeret med succes.',
+        'updated_via_import' => 'Dette Egg er blevet opdateret ved hjælp af den givne fil.',
+        'deleted' => 'Egget blev slettet fra panelet.',
+        'updated' => 'Egget blev opdateret med succes.',
+        'script_updated' => 'Eggets installationsscript er blevet opdateret, og vil blive kørt når servere installeres.',
+        'egg_created' => 'Et nyt egg blev lagt med succes. Du skal genstarte eventuelle kørende daemons for at anvende dette nye egg.',
     ],
     'variables' => [
         'notices' => [
-            'variable_deleted' => 'The variable ":variable" has been deleted and will no longer be available to servers once rebuilt.',
-            'variable_updated' => 'The variable ":variable" has been updated. You will need to rebuild any servers using this variable in order to apply changes.',
-            'variable_created' => 'New variable has successfully been created and assigned to this egg.',
+            'variable_deleted' => 'Variablen :variable er blevet slettet og vil ikke længere være tilgængelig for servere der er blevet genstartet.',
+            'variable_updated' => 'Variablen :variable er blevet opdateret. Du skal genstarte eventuelle servere, der bruger denne variabel for at anvende ændringer.',
+            'variable_created' => 'Ny variabel er blevet oprettet og tildelt dette egg.',
         ],
     ],
 ];

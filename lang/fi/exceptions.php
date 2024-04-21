@@ -1,55 +1,55 @@
 <?php
 
 return [
-    'daemon_connection_failed' => 'There was an exception while attempting to communicate with the daemon resulting in a HTTP/:code response code. This exception has been logged.',
+    'daemon_connection_failed' => 'Tapahtui poikkeus, kun yritettiin kommunikoida daemonin kanssa, mikä johti HTTP/:code -vastauskoodiin. Tämä poikkeus on kirjautunut.',
     'node' => [
-        'servers_attached' => 'A node must have no servers linked to it in order to be deleted.',
-        'daemon_off_config_updated' => 'The daemon configuration <strong>has been updated</strong>, however there was an error encountered while attempting to automatically update the configuration file on the Daemon. You will need to manually update the configuration file (config.yml) for the daemon to apply these changes.',
+        'servers_attached' => 'Palvelimella ei saa olla siihen linkitettyjä palvelimia, jotta se voitaisiin poistaa.',
+        'daemon_off_config_updated' => 'Daemon konfiguraatio <strong>on päivitetty</strong>, mutta virhe ilmeni yritettäessä päivittää konfiguraatiota automaattisesti daemoniin. Sinun tulee päivittää daemonin konfiguraatio (config.yml) manuaalisesti, jotta muutokset voidaan ottaa käyttöön.',
     ],
     'allocations' => [
-        'server_using' => 'A server is currently assigned to this allocation. An allocation can only be deleted if no server is currently assigned.',
-        'too_many_ports' => 'Adding more than 1000 ports in a single range at once is not supported.',
-        'invalid_mapping' => 'The mapping provided for :port was invalid and could not be processed.',
-        'cidr_out_of_range' => 'CIDR notation only allows masks between /25 and /32.',
-        'port_out_of_range' => 'Ports in an allocation must be greater than 1024 and less than or equal to 65535.',
+        'server_using' => 'Palvelin on tällä hetkellä määritelty tähän varaukseen. Varauksen voi poistaa vain, jos siihen ei ole tällä hetkellä määritettyä palvelinta.',
+        'too_many_ports' => 'Yli 1000 portin lisääminen yhteen alueeseen kerralla ei ole tuettua.',
+        'invalid_mapping' => ':port:lle annettu määritys oli virheellinen eikä sitä voitu käsitellä.',
+        'cidr_out_of_range' => 'CIDR-muoto sallii vain maskit välillä /25 ja /32.',
+        'port_out_of_range' => 'Varauksessa olevien porttien on oltava suurempia kuin 1024 ja enintään 65535.',
     ],
     'egg' => [
-        'delete_has_servers' => 'An Egg with active servers attached to it cannot be deleted from the Panel.',
-        'invalid_copy_id' => 'The Egg selected for copying a script from either does not exist, or is copying a script itself.',
-        'has_children' => 'This Egg is a parent to one or more other Eggs. Please delete those Eggs before deleting this Egg.',
+        'delete_has_servers' => 'Paneelista ei voi poistaa Munaa, johon on liitetty aktiivisia palvelimia.',
+        'invalid_copy_id' => 'Skriptin kopiointiin valittu Muna ei ole olemassa tai se kopioi itse skriptiä.',
+        'has_children' => 'Tämä Muna on yhden tai useamman muun Munan vanhempi. Poista Munat ennen tämän Munan poistamista.',
     ],
     'variables' => [
-        'env_not_unique' => 'The environment variable :name must be unique to this Egg.',
-        'reserved_name' => 'The environment variable :name is protected and cannot be assigned to a variable.',
-        'bad_validation_rule' => 'The validation rule ":rule" is not a valid rule for this application.',
+        'env_not_unique' => 'Ympäristömuuttujan :name on oltava yksilöllinen tähän Munaan.',
+        'reserved_name' => 'Ympäristömuuttuja :name on suojattu ja sitä ei voi liittää muuttujaan.',
+        'bad_validation_rule' => 'Vahvistussääntö ":rule" ei ole kelvollinen sääntö tälle sovellukselle.',
     ],
     'importer' => [
-        'json_error' => 'There was an error while attempting to parse the JSON file: :error.',
-        'file_error' => 'The JSON file provided was not valid.',
-        'invalid_json_provided' => 'The JSON file provided is not in a format that can be recognized.',
+        'json_error' => 'Tapahtui virhe yritettäessä jäsentää JSON tiedostoa: :error.',
+        'file_error' => 'Annettu JSON-tiedosto ei ollut kelvollinen.',
+        'invalid_json_provided' => 'Annettu JSON tiedosto ei ole muodossa, joka voidaan tunnistaa.',
     ],
     'subusers' => [
-        'editing_self' => 'Editing your own subuser account is not permitted.',
-        'user_is_owner' => 'You cannot add the server owner as a subuser for this server.',
-        'subuser_exists' => 'A user with that email address is already assigned as a subuser for this server.',
+        'editing_self' => 'Oman alikäyttäjätilin muokkaaminen ei ole sallittua.',
+        'user_is_owner' => 'Et voi lisätä palvelimen omistajaa alikäyttäjäksi tälle palvelimelle.',
+        'subuser_exists' => 'Käyttäjä, jolla on tämä sähköpostiosoite, on jo määritetty alikäyttäjäksi tälle palvelimelle.',
     ],
     'databases' => [
-        'delete_has_databases' => 'Cannot delete a database host server that has active databases linked to it.',
+        'delete_has_databases' => 'Ei voida poistaa tietokannan isäntäpalvelinta, jossa on siihen linkitettyjä aktiivisia tietokantoja.',
     ],
     'tasks' => [
-        'chain_interval_too_long' => 'The maximum interval time for a chained task is 15 minutes.',
+        'chain_interval_too_long' => 'Ketjutellun tehtävän aikaväli on enintään 15 minuuttia.',
     ],
     'locations' => [
-        'has_nodes' => 'Cannot delete a location that has active nodes attached to it.',
+        'has_nodes' => 'Ei voida poistaa sijaintia, jossa on aktiivisia palvelimia siihen liitettynä.',
     ],
     'users' => [
-        'node_revocation_failed' => 'Failed to revoke keys on <a href=":link">Node #:node</a>. :error',
+        'node_revocation_failed' => 'Avainten peruuttaminen epäonnistui <a href=":link">Palvelimen #:node</a> kohdalla. :error',
     ],
     'deployment' => [
-        'no_viable_nodes' => 'No nodes satisfying the requirements specified for automatic deployment could be found.',
-        'no_viable_allocations' => 'No allocations satisfying the requirements for automatic deployment were found.',
+        'no_viable_nodes' => 'Yhtään vaatimuksia täyttävää palvelinta automaattiseen käyttöönottamiseen ei löytynyt.',
+        'no_viable_allocations' => 'Yhtään automaattiseen käyttöönottoon soveltuvaa varausta ei löytynyt.',
     ],
     'api' => [
-        'resource_not_found' => 'The requested resource does not exist on this server.',
+        'resource_not_found' => 'Pyydettyä resurssia ei ole tällä palvelimella.',
     ],
 ];

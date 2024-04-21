@@ -49,6 +49,7 @@ class MakeNodeCommand extends Command
             ['https', 'http'],
             'https'
         );
+
         $data['fqdn'] = $this->option('fqdn') ?? $this->ask(__('commands.make_node.fqdn'));
         $data['public'] = $this->option('public') ?? $this->confirm(__('commands.make_node.public'), true);
         $data['behind_proxy'] = $this->option('proxy') ?? $this->confirm(__('commands.make_node.behind_proxy'));
@@ -58,9 +59,9 @@ class MakeNodeCommand extends Command
         $data['disk'] = $this->option('maxDisk') ?? $this->ask(__('commands.make_node.disk'));
         $data['disk_overallocate'] = $this->option('overallocateDisk') ?? $this->ask(__('commands.make_node.disk_overallocate'));
         $data['upload_size'] = $this->option('uploadSize') ?? $this->ask(__('commands.make_node.upload_size'), '100');
-        $data['daemonListen'] = $this->option('daemonListeningPort') ?? $this->ask(__('commands.make_node.daemonListen'), '8080');
-        $data['daemonSFTP'] = $this->option('daemonSFTPPort') ?? $this->ask(__('commands.make_node.daemonSFTP'), '2022');
-        $data['daemonBase'] = $this->option('daemonBase') ?? $this->ask(__('commands.make_node.daemonBase'), '/var/lib/panel/volumes');
+        $data['daemon_listen'] = $this->option('daemonListeningPort') ?? $this->ask(__('commands.make_node.daemonListen'), '8080');
+        $data['daemon_sftp'] = $this->option('daemonSFTPPort') ?? $this->ask(__('commands.make_node.daemonSFTP'), '2022');
+        $data['daemon_base'] = $this->option('daemonBase') ?? $this->ask(__('commands.make_node.daemonBase'), '/var/lib/pelican/volumes');
 
         $node = $this->creationService->handle($data);
         $this->line(__('commands.make_node.succes1') . $data['name'] . __('commands.make_node.succes2')  . $node->id . '.');

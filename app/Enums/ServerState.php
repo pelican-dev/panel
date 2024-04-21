@@ -4,7 +4,7 @@ namespace App\Enums;
 
 enum ServerState: string
 {
-    case None = 'none';
+    case Normal = 'normal';
     case Installing = 'installing';
     case InstallFailed = 'install_failed';
     case ReinstallFailed = 'reinstall_failed';
@@ -14,7 +14,7 @@ enum ServerState: string
     public function icon(): string
     {
         return match ($this) {
-            self::None => 'tabler-heart',
+            self::Normal => 'tabler-heart',
             self::Installing => 'tabler-heart-bolt',
             self::InstallFailed => 'tabler-heart-x',
             self::ReinstallFailed => 'tabler-heart-x',
@@ -26,7 +26,7 @@ enum ServerState: string
     public function color(): string
     {
         return match ($this) {
-            self::None => 'primary',
+            self::Normal => 'primary',
             self::Installing => 'info',
             self::InstallFailed => 'danger',
             self::ReinstallFailed => 'danger',

@@ -2,11 +2,11 @@
 
 return [
     'exceptions' => [
-        'user_has_servers' => 'Cannot delete a user with active servers attached to their account. Please delete their servers before continuing.',
-        'user_is_self' => 'Cannot delete your own user account.',
+        'user_has_servers' => 'Não é possível excluir este usuário porque ele possui servidores ativos na conta. Remova os servidores na conta antes de continuar.',
+        'user_is_self' => 'Não é possível excluir a sua própria conta.',
     ],
     'notices' => [
-        'account_created' => 'Account has been created successfully.',
-        'account_updated' => 'Account has been successfully updated.',
+        'account_created' => 'A conta foi criada com sucesso.',
+        'account_updated' => 'A conta foi atualizada com sucesso.',
     ],
 ];

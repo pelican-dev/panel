@@ -2,11 +2,11 @@
 
 return [
     'exceptions' => [
-        'user_has_servers' => 'Cannot delete a user with active servers attached to their account. Please delete their servers before continuing.',
-        'user_is_self' => 'Cannot delete your own user account.',
+        'user_has_servers' => 'Kan ikke slette en bruger med aktive servere knyttet til deres konto. Slet deres servere før du fortsætter.',
+        'user_is_self' => 'Kan ikke slette din egen konto.',
     ],
     'notices' => [
-        'account_created' => 'Account has been created successfully.',
-        'account_updated' => 'Account has been successfully updated.',
+        'account_created' => 'Kontoen er blevet oprettet.',
+        'account_updated' => 'Kontoen er blevet opdateret.',
     ],
 ];

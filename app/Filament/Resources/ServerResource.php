@@ -72,7 +72,7 @@ class ServerResource extends Resource
                     ->helperText('')
                     ->hiddenOn('create')
                     ->disableOptionWhen(fn ($state, $value) => $state !== $value)
-                    ->formatStateUsing(fn ($state) => $state ?? 'none')
+                    ->formatStateUsing(fn ($state) => $state ?? ServerState::Normal)
                     ->options(collect(ServerState::cases())->mapWithKeys(
                         fn (ServerState $state) => [$state->value => str($state->value)->replace('_', ' ')->ucwords()]
                     ))
@@ -171,11 +171,12 @@ class ServerResource extends Resource
                             ->whereNull('server_id'),
                     )
                     ->createOptionForm(fn (Forms\Get $get) => [
-                        Forms\Components\Select::make('allocation_ip')
-                            ->options(Node::find($get('node_id'))?->ipAddresses() ?? [])
+                        Forms\Components\TextInput::make('allocation_ip')
+                            ->datalist(Node::find($get('node_id'))?->ipAddresses() ?? [])
                             ->label('IP Address')
+                            ->ipv4()
                             ->helperText("Usually your machine's public IP unless you are port forwarding.")
-                            ->selectablePlaceholder(false)
+                            // ->selectablePlaceholder(false)
                             ->required(),
                         Forms\Components\TextInput::make('allocation_alias')
                             ->label('Alias')
@@ -207,6 +208,7 @@ class ServerResource extends Resource
 
                                         // Do not add non numerical ports
                                         $update = true;
+
                                         continue;
                                     }
 
@@ -217,7 +219,7 @@ class ServerResource extends Resource
                                     }
 
                                     $start = max((int) $start, 0);
-                                    $end = min((int) $end, 2**16-1);
+                                    $end = min((int) $end, 2 ** 16 - 1);
                                     for ($i = $start; $i <= $end; $i++) {
                                         $ports->push($i);
                                     }
@@ -621,7 +623,7 @@ class ServerResource extends Resource
                         'suspended' => 'tabler-heart-cancel',
                         default => 'tabler-heart-question',
                     })
-                    ->color(fn (string $state): string => match ($state) {
+                    ->color(fn ($state): string => match ($state) {
                         'running' => 'success',
                         'installing', 'restarting' => 'primary',
                         'paused', 'removing' => 'warning',

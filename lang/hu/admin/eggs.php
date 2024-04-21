@@ -2,18 +2,18 @@
 
 return [
     'notices' => [
-        'imported' => 'Successfully imported this Egg and its associated variables.',
-        'updated_via_import' => 'This Egg has been updated using the file provided.',
-        'deleted' => 'Successfully deleted the requested egg from the Panel.',
-        'updated' => 'Egg configuration has been updated successfully.',
-        'script_updated' => 'Egg install script has been updated and will run whenever servers are installed.',
-        'egg_created' => 'A new egg was laid successfully. You will need to restart any running daemons to apply this new egg.',
+        'imported' => 'Sikeresen importáltad ezt az Egg-et és a hozzátartozó változókat!',
+        'updated_via_import' => 'Ez az Egg frissítve lett a megadott fájl segítségével!',
+        'deleted' => 'Sikeresen törölted a kívánt Egg-et a panelből!',
+        'updated' => 'Az Egg konfigurációja sikeresen frissítve lett!',
+        'script_updated' => 'Az Egg telepítési scriptje frissítve lett, és szerver telepítésekor lefut!',
+        'egg_created' => 'Sikeresen hozzá adtál egy új egg-et. Újra kell indítanod minden futó daemon-t az Egg alkalmazásához!',
     ],
     'variables' => [
         'notices' => [
-            'variable_deleted' => 'The variable ":variable" has been deleted and will no longer be available to servers once rebuilt.',
-            'variable_updated' => 'The variable ":variable" has been updated. You will need to rebuild any servers using this variable in order to apply changes.',
-            'variable_created' => 'New variable has successfully been created and assigned to this egg.',
+            'variable_deleted' => 'A ":változó" változó törlésre került, és az újratelepítés után már nem lesz elérhető a szerverek számára!',
+            'variable_updated' => 'A ":változó" változót frissítettük. A változások alkalmazásához újra kell telepítenie az ezt a változót használó szervereket!',
+            'variable_created' => 'Az új változót sikeresen létrehoztuk és hozzárendeltük ehhez az Egg-hez!',
         ],
     ],
 ];

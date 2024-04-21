@@ -11,9 +11,9 @@ return [
     | has failed, such as for an invalid token or invalid new password.
     |
     */
-    'password' => 'Passwords must be at least six characters and match the confirmation.',
-    'reset' => 'Your password has been reset!',
-    'sent' => 'We have e-mailed your password reset link!',
-    'token' => 'This password reset token is invalid.',
-    'user' => 'We can\'t find a user with that e-mail address.',
+    'password' => 'Salasanan on oltava vähintään 6 merkkiä pitkä ja vastata vahvistuskenttää.',
+    'reset' => 'Salasanasi on palautettu!',
+    'sent' => 'Olemme lähettäneet salasanasi palautuslinkin sähköpostitse!',
+    'token' => 'Salasanan palautusavain on virheellinen.',
+    'user' => 'Käyttäjää tällä sähköpostiosoitteella ei löytynyt.',
 ];

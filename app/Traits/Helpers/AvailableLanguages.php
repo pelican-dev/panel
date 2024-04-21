@@ -10,11 +10,19 @@ trait AvailableLanguages
     private ?Filesystem $filesystem = null;
 
     public const TRANSLATED = [
+        'ar',
         'cz',
         'da',
         'de',
+        'dk',
         'en',
         'es',
+        'fi',
+        'ja',
+        'nl',
+        'pl',
+        'sk',
+        'ru',
         'tr',
     ];
 

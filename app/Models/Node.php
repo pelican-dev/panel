@@ -29,9 +29,9 @@ use Illuminate\Database\Eloquent\Relations\HasManyThrough;
  * @property int $upload_size
  * @property string $daemon_token_id
  * @property string $daemon_token
- * @property int $daemonListen
- * @property int $daemonSFTP
- * @property string $daemonBase
+ * @property int $daemon_listen
+ * @property int $daemon_sftp
+ * @property string $daemon_base
  * @property \Carbon\Carbon $created_at
  * @property \Carbon\Carbon $updated_at
  * @property \App\Models\Mount[]|\Illuminate\Database\Eloquent\Collection $mounts
@@ -71,8 +71,8 @@ class Node extends Model
         'public', 'name',
         'fqdn', 'scheme', 'behind_proxy',
         'memory', 'memory_overallocate', 'disk',
-        'disk_overallocate', 'upload_size', 'daemonBase',
-        'daemonSFTP', 'daemonListen',
+        'disk_overallocate', 'upload_size', 'daemon_base',
+        'daemon_sftp', 'daemon_listen',
         'description', 'maintenance_mode',
     ];
 
@@ -87,9 +87,9 @@ class Node extends Model
         'memory_overallocate' => 'required|numeric|min:-1',
         'disk' => 'required|numeric|min:0',
         'disk_overallocate' => 'required|numeric|min:-1',
-        'daemonBase' => 'sometimes|required|regex:/^([\/][\d\w.\-\/]+)$/',
-        'daemonSFTP' => 'required|numeric|between:1,65535',
-        'daemonListen' => 'required|numeric|between:1,65535',
+        'daemon_base' => 'sometimes|required|regex:/^([\/][\d\w.\-\/]+)$/',
+        'daemon_sftp' => 'required|numeric|between:1,65535',
+        'daemon_listen' => 'required|numeric|between:1,65535',
         'maintenance_mode' => 'boolean',
         'upload_size' => 'int|between:1,1024',
     ];
@@ -104,9 +104,9 @@ class Node extends Model
         'memory_overallocate' => 0,
         'disk' => 0,
         'disk_overallocate' => 0,
-        'daemonBase' => '/var/lib/pelican/volumes',
-        'daemonSFTP' => 2022,
-        'daemonListen' => 8080,
+        'daemon_base' => '/var/lib/pelican/volumes',
+        'daemon_sftp' => 2022,
+        'daemon_listen' => 8080,
         'maintenance_mode' => false,
     ];
 
@@ -115,8 +115,8 @@ class Node extends Model
         return [
             'memory' => 'integer',
             'disk' => 'integer',
-            'daemonListen' => 'integer',
-            'daemonSFTP' => 'integer',
+            'daemon_listen' => 'integer',
+            'daemon_sftp' => 'integer',
             'behind_proxy' => 'boolean',
             'public' => 'boolean',
             'maintenance_mode' => 'boolean',
@@ -148,7 +148,7 @@ class Node extends Model
      */
     public function getConnectionAddress(): string
     {
-        return "$this->scheme://$this->fqdn:$this->daemonListen";
+        return "$this->scheme://$this->fqdn:$this->daemon_listen";
     }
 
     /**
@@ -163,7 +163,7 @@ class Node extends Model
             'token' => decrypt($this->daemon_token),
             'api' => [
                 'host' => '0.0.0.0',
-                'port' => $this->daemonListen,
+                'port' => $this->daemon_listen,
                 'ssl' => [
                     'enabled' => (!$this->behind_proxy && $this->scheme === 'https'),
                     'cert' => '/etc/letsencrypt/live/' . Str::lower($this->fqdn) . '/fullchain.pem',
@@ -172,9 +172,9 @@ class Node extends Model
                 'upload_limit' => $this->upload_size,
             ],
             'system' => [
-                'data' => $this->daemonBase,
+                'data' => $this->daemon_base,
                 'sftp' => [
-                    'bind_port' => $this->daemonSFTP,
+                    'bind_port' => $this->daemon_sftp,
                 ],
             ],
             'allowed_mounts' => $this->mounts->pluck('source')->toArray(),
@@ -303,17 +303,17 @@ class Node extends Model
 
     public function ipAddresses(): array
     {
-        return cache()->remember("nodes.$this->id.servers", now()->addHour(), function () {
+        return cache()->remember("nodes.$this->id.ips", now()->addHour(), function () {
             $ips = collect();
             if (is_ip($this->fqdn)) {
-                $ips->push($this->fqdn);
-            } else if ($dnsRecords = gethostbynamel($this->fqdn)) {
-                $ips->concat($dnsRecords);
+                $ips = $ips->push($this->fqdn);
+            } elseif ($dnsRecords = gethostbynamel($this->fqdn)) {
+                $ips = $ips->concat($dnsRecords);
             }
 
             try {
                 $addresses = Http::daemon($this)->connectTimeout(1)->timeout(1)->get('/api/system/ips')->json();
-                $ips->concat(fluent($addresses)->get('ip_addresses'));
+                $ips = $ips->concat(fluent($addresses)->get('ip_addresses'));
             } catch (Exception) {
                 // pass
             }
