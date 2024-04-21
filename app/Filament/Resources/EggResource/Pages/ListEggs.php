@@ -40,7 +40,7 @@ class ListEggs extends ListRecords
                             $eggImportService->handle($file);
                         } catch (Exception $exception) {
                             Notification::make()
-                                ->title('Egg Import Failed')
+                                ->title('Import Failed')
                                 ->danger()
                                 ->send();
 
@@ -51,7 +51,7 @@ class ListEggs extends ListRecords
                     }
 
                     Notification::make()
-                        ->title('Egg Import Success')
+                        ->title('Import Success')
                         ->success()
                         ->send();
                 }),
