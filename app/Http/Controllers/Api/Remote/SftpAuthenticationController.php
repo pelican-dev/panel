@@ -89,7 +89,7 @@ class SftpAuthenticationController extends Controller
     protected function getServer(Request $request, string $uuid): Server
     {
         return Server::query()
-            ->where(fn ($builder) => $builder->where('uuid', $uuid)->orWhere('uuidShort', $uuid))
+            ->where(fn ($builder) => $builder->where('uuid', $uuid)->orWhere('uuid_short', $uuid))
             ->where('node_id', $request->attributes->get('node')->id)
             ->firstOr(function () use ($request) {
                 $this->reject($request);

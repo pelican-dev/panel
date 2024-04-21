@@ -22,7 +22,7 @@ use App\Exceptions\Http\Server\ServerStateConflictException;
  * @property int $id
  * @property string|null $external_id
  * @property string $uuid
- * @property string $uuidShort
+ * @property string $uuid_short
  * @property int $node_id
  * @property string $name
  * @property string $description
@@ -99,7 +99,7 @@ use App\Exceptions\Http\Server\ServerStateConflictException;
  * @method static \Illuminate\Database\Eloquent\Builder|Server whereThreads($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Server whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Server whereUuid($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Server whereUuidShort($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Server whereuuid_short($value)
  *
  * @mixin \Eloquent
  */
@@ -329,7 +329,7 @@ class Server extends Model
     public function resolveRouteBinding($value, $field = null): ?self
     {
         return match ($field) {
-            'uuid' => $this->where('uuidShort', $value)->orWhere('uuid', $value)->firstOrFail(),
+            'uuid' => $this->where('uuid_short', $value)->orWhere('uuid', $value)->firstOrFail(),
             default => $this->where('id', $value)->firstOrFail(),
         };
     }
