@@ -47,7 +47,7 @@ return [
             'ask_smtp_password' => 'SMTP Passwort',
             'ask_mailgun_domain' => 'Mailgun Domain',
             'ask_mailgun_endpoint' => 'Mailgun Endpunkt',
-            'ask_mailgun_secret' => 'Mailgun Secret',
+            'ask_mailgun_secret' => 'Mailgun Verschlüsselung',
             'ask_mandrill_secret' => 'Mandrill Secret',
             'ask_postmark_username' => 'Postmark API Schlüssel',
             'ask_driver' => 'Welcher Treiber soll für das Versenden von E-Mails verwendet werden?',

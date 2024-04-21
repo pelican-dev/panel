@@ -46,7 +46,7 @@ return [
             'ask_smtp_username' => 'Nazwa użytkownika SMTP',
             'ask_smtp_password' => 'Hasło SMTP',
             'ask_mailgun_domain' => 'Serwer Mailgun',
-            'ask_mailgun_endpoint' => 'Mailgun Endpoint',
+            'ask_mailgun_endpoint' => 'Punkt dostępowy Mailgun',
             'ask_mailgun_secret' => 'Sekret Mailgun',
             'ask_mandrill_secret' => 'Sekret Mandrill',
             'ask_postmark_username' => 'Klucz API Postmark',
