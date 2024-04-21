@@ -2,14 +2,14 @@
 
 return [
     'validation' => [
-        'fqdn_not_resolvable' => 'The FQDN or IP address provided does not resolve to a valid IP address.',
-        'fqdn_required_for_ssl' => 'A fully qualified domain name that resolves to a public IP address is required in order to use SSL for this node.',
+        'fqdn_not_resolvable' => 'Le nom de domaine ou l\'adresse IP fournie ne correspond pas à une adresse IP valide.',
+        'fqdn_required_for_ssl' => 'Un nom de domaine qui pointe vers une adresse IP publique est nécessaire pour utiliser SSL sur ce nœud.',
     ],
     'notices' => [
-        'allocations_added' => 'Allocations have successfully been added to this node.',
-        'node_deleted' => 'Node has been successfully removed from the panel.',
-        'node_created' => 'Successfully created new node. You can automatically configure the daemon on this machine by visiting the \'Configuration\' tab. <strong>Before you can add any servers you must first allocate at least one IP address and port.</strong>',
-        'node_updated' => 'Node information has been updated. If any daemon settings were changed you will need to reboot it for those changes to take effect.',
-        'unallocated_deleted' => 'Deleted all un-allocated ports for <code>:ip</code>.',
+        'allocations_added' => 'Les allocations ont été ajoutées à ce nœud.',
+        'node_deleted' => 'Le nœud a été supprimé du panneau avec succès.',
+        'node_created' => 'Nouveau nœud créé avec succès. Vous pouvez configurer automatiquement ce dernier sur cette machine en allant dans l\'onglet \'Configuration\'. <strong>Avant de pouvoir ajouter des serveurs, vous devez d\'abord allouer au moins une adresse IP et un port.</strong>',
+        'node_updated' => 'Les informations sur le nœud ont été mises à jour. Si des paramètres ont été modifiés, vous devrez le redémarrer le wings pour que ces modifications prennent effet.',
+        'unallocated_deleted' => 'Suppression de tous les ports non alloués pour <code>:ip</code>.',
     ],
 ];

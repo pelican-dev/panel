@@ -303,17 +303,17 @@ class Node extends Model
 
     public function ipAddresses(): array
     {
-        return cache()->remember("nodes.$this->id.servers", now()->addHour(), function () {
+        return cache()->remember("nodes.$this->id.ips", now()->addHour(), function () {
             $ips = collect();
             if (is_ip($this->fqdn)) {
-                $ips->push($this->fqdn);
+                $ips = $ips->push($this->fqdn);
             } elseif ($dnsRecords = gethostbynamel($this->fqdn)) {
-                $ips->concat($dnsRecords);
+                $ips = $ips->concat($dnsRecords);
             }
 
             try {
                 $addresses = Http::daemon($this)->connectTimeout(1)->timeout(1)->get('/api/system/ips')->json();
-                $ips->concat(fluent($addresses)->get('ip_addresses'));
+                $ips = $ips->concat(fluent($addresses)->get('ip_addresses'));
             } catch (Exception) {
                 // pass
             }

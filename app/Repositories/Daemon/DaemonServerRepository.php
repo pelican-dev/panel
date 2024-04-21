@@ -2,6 +2,8 @@
 
 namespace App\Repositories\Daemon;
 
+use App\Enums\ContainerStatus;
+use Exception;
 use Webmozart\Assert\Assert;
 use App\Models\Server;
 use GuzzleHttp\Exception\GuzzleException;
@@ -25,6 +27,8 @@ class DaemonServerRepository extends DaemonRepository
             );
         } catch (TransferException $exception) {
             throw new DaemonConnectionException($exception, false);
+        } catch (Exception) {
+            return ['state' => ContainerStatus::Missing->value];
         }
 
         return $response->json();

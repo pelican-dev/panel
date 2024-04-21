@@ -37,7 +37,7 @@ enum ContainerStatus: string
             self::Paused => 'warning',
             self::Dead => 'danger',
             self::Removing => 'warning',
-            self::Missing => 'gray',
+            self::Missing => 'danger',
         };
     }
 }
