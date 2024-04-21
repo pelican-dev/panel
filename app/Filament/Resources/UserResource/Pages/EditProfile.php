@@ -29,7 +29,8 @@ class EditProfile extends \Filament\Pages\Auth\EditProfile
             'form' => $this->form(
                 $this->makeForm()
                     ->schema([
-                        Tabs::make()->schema([
+                        Tabs::make()->persistTabInQueryString()
+                            ->schema([
                             Tab::make('Account')
                                 ->icon('tabler-user')
                                 ->schema([
