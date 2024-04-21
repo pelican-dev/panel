@@ -18,7 +18,7 @@ class DispatchWebhooksJob implements ShouldQueue
     /**
      * Create a new job instance.
      */
-    public function __construct(private ShouldDispatchWebhooks&Event $event)
+    public function __construct(private ShouldDispatchWebhooks $event)
     {
         //
     }
