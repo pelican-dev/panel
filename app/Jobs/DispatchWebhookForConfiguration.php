@@ -20,9 +20,6 @@ class DispatchWebhookForConfiguration implements ShouldQueue
         //
     }
 
-    /**
-     * Execute the job.
-     */
     public function handle(): void
     {
         // Move to dedicated service to handle Webhook Model creation to save webhook history
