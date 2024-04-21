@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('endpoint');
             $table->string('secret');
-            $table->string('description')->nullable();
+            $table->string('description');
             $table->json('events');
             $table->timestamps();
         });
