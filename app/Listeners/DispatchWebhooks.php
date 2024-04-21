@@ -8,9 +8,6 @@ use App\Jobs\DispatchWebhooksJob;
 
 class DispatchWebhooks
 {
-    /**
-     * Handle the event.
-     */
     public function handle(mixed $event): void
     {
         if ($event instanceof ShouldDispatchWebhooks) {
