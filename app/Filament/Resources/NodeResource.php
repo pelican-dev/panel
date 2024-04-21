@@ -43,17 +43,17 @@ class NodeResource extends Resource
                     ->required()
                     ->integer()
                     ->default(100),
-                Forms\Components\TextInput::make('daemonListen')
+                Forms\Components\TextInput::make('daemon_listen')
                     ->required()
                     ->integer()
                     ->label('Daemon Port')
                     ->default(8080),
-                Forms\Components\TextInput::make('daemonSFTP')
+                Forms\Components\TextInput::make('daemon_sftp')
                     ->required()
                     ->integer()
                     ->label('Daemon SFTP Port')
                     ->default(2022),
-                Forms\Components\TextInput::make('daemonBase')
+                Forms\Components\TextInput::make('daemon_base')
                     ->required()
                     ->maxLength(191)
                     ->default('/home/daemon-files'),
