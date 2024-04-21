@@ -98,7 +98,7 @@ class Node extends Model
         'behind_proxy' => false,
         'memory_overallocate' => 0,
         'disk_overallocate' => 0,
-        'daemon_base' => '/var/lib/panel/volumes',
+        'daemon_base' => '/var/lib/pelican/volumes',
         'daemon_sftp' => 2022,
         'daemon_listen' => 8080,
         'maintenance_mode' => false,
