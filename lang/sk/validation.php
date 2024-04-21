@@ -83,7 +83,7 @@ return [
     'timezone' => ':attribute musí byť platná zóna.',
     'unique' => ':atribút už bol použitý.',
     'uploaded' => ':attribute sa nepodarilo uploadnuť.',
-    'url' => 'The :attribute format is invalid.',
+    'url' => ':attribute formát je neplatný.',
 
     /*
     |--------------------------------------------------------------------------
@@ -101,6 +101,6 @@ return [
     // Internal validation logic for Panel
     'internal' => [
         'variable_value' => ':env variable',
-        'invalid_password' => 'The password provided was invalid for this account.',
+        'invalid_password' => 'Zadané heslo bolo pre tento účet neplatné.',
     ],
 ];
