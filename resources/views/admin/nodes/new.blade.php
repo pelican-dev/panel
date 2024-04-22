@@ -94,8 +94,8 @@
                 <div class="box-body">
                     <div class="row">
                         <div class="form-group col-md-6">
-                            <label for="pDaemonBase" class="form-label">Daemon Server File Directory</label>
-                            <input type="text" name="daemonBase" id="pDaemonBase" class="form-control" value="/var/lib/pelican/volumes" />
+                            <label for="pdaemon_base" class="form-label">Daemon Server File Directory</label>
+                            <input type="text" name="daemon_base" id="pdaemon_base" class="form-control" value="/var/lib/pelican/volumes" />
                             <p class="text-muted small">Enter the directory where server files should be stored. <strong>If you use OVH you should check your partition scheme. You may need to use <code>/home/daemon-data</code> to have enough space.</strong></p>
                         </div>
                         <div class="form-group col-md-6">
@@ -137,12 +137,12 @@
                     </div>
                     <div class="row">
                         <div class="form-group col-md-6">
-                            <label for="pDaemonListen" class="form-label">Daemon Port</label>
-                            <input type="text" name="daemonListen" class="form-control" id="pDaemonListen" value="8080" />
+                            <label for="pdaemon_listen" class="form-label">Daemon Port</label>
+                            <input type="text" name="daemon_listen" class="form-control" id="pdaemon_listen" value="8080" />
                         </div>
                         <div class="form-group col-md-6">
-                            <label for="pDaemonSFTP" class="form-label">Daemon SFTP Port</label>
-                            <input type="text" name="daemonSFTP" class="form-control" id="pDaemonSFTP" value="2022" />
+                            <label for="pdaemon_sftp" class="form-label">Daemon SFTP Port</label>
+                            <input type="text" name="daemon_sftp" class="form-control" id="pdaemon_sftp" value="2022" />
                         </div>
                         <div class="col-md-12">
                             <p class="text-muted small">The daemon runs its own SFTP management container and does not use the SSHd process on the main physical server. <Strong>Do not use the same port that you have assigned for your physical server's SSH process.</strong> If you will be running the daemon behind CloudFlare&reg; you should set the daemon port to <code>8443</code> to allow websocket proxying over SSL.</p>

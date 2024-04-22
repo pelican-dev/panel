@@ -2,14 +2,15 @@
 
 return [
     'validation' => [
-        'fqdn_not_resolvable' => 'The FQDN or IP address provided does not resolve to a valid IP address.',
-        'fqdn_required_for_ssl' => 'A fully qualified domain name that resolves to a public IP address is required in order to use SSL for this node.',
+        'fqdn_not_resolvable' => 'Navedeni FQDN ili IP adresa nema valjanu IP adresu.',
+        'fqdn_required_for_ssl' => 'Za korištenje SSL-a za ovaj node potreban je FQDN koji se pretvara u javnu IP adresu.',
     ],
     'notices' => [
-        'allocations_added' => 'Allocations have successfully been added to this node.',
-        'node_deleted' => 'Node has been successfully removed from the panel.',
-        'node_created' => 'Successfully created new node. You can automatically configure the daemon on this machine by visiting the \'Configuration\' tab. <strong>Before you can add any servers you must first allocate at least one IP address and port.</strong>',
-        'node_updated' => 'Node information has been updated. If any daemon settings were changed you will need to reboot it for those changes to take effect.',
-        'unallocated_deleted' => 'Deleted all un-allocated ports for <code>:ip</code>.',
+        'allocations_added' => 'Portovi su uspješno dodane ovom čvoru.',
+        'node_deleted' => 'Node je uspješno izbrisan sa panela.',
+        'node_created' => 'Uspješno ste napravili novi node. Možete automatski konfigurirati daemon na toj mašini ako posjetite \'Konfiguriracija\' karticu.
+<strong>Prije nego što napravite servere morate prvo dodijeliti barem jednu IP adresu i port.</strong>',
+        'node_updated' => 'Node informacije su uspješno ažurirane. Ako su neke daemon postavke promjenjene morate ponovno pokreniti kako bi se promjene primjenile.',
+        'unallocated_deleted' => 'Izbriši sve ne-nekorištene portovi za <code>:ip</code>.',
     ],
 ];

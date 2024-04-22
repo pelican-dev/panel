@@ -1,55 +1,55 @@
 <?php
 
 return [
-    'daemon_connection_failed' => 'There was an exception while attempting to communicate with the daemon resulting in a HTTP/:code response code. This exception has been logged.',
+    'daemon_connection_failed' => 'Pri pokuse o komunikáciu s daemonom sa vyskytla chyba s kódom HTTP/:code. Táto chyba bola zaznamenaná.',
     'node' => [
-        'servers_attached' => 'A node must have no servers linked to it in order to be deleted.',
-        'daemon_off_config_updated' => 'The daemon configuration <strong>has been updated</strong>, however there was an error encountered while attempting to automatically update the configuration file on the Daemon. You will need to manually update the configuration file (config.yml) for the daemon to apply these changes.',
+        'servers_attached' => 'Uzol nemôže mať priradené žiadne servery aby mohol byť vymazaný.',
+        'daemon_off_config_updated' => 'Konfigurácia daemonu <strong>bola aktualizovaná</strong>, no pri pokuse o automatickú aktualizáciu konfigurácie na daemonovi sa vyskytla chyba. Budete musieť manuálne aktualizovať konfiguračný súbor (config.yml) aby sa táto zmena aplikovala na daemon.',
     ],
     'allocations' => [
-        'server_using' => 'A server is currently assigned to this allocation. An allocation can only be deleted if no server is currently assigned.',
-        'too_many_ports' => 'Adding more than 1000 ports in a single range at once is not supported.',
-        'invalid_mapping' => 'The mapping provided for :port was invalid and could not be processed.',
-        'cidr_out_of_range' => 'CIDR notation only allows masks between /25 and /32.',
-        'port_out_of_range' => 'Ports in an allocation must be greater than 1024 and less than or equal to 65535.',
+        'server_using' => 'Server je momentálne priradený k tejto alokácii. Alokácia môže byť zmazaná, len ak k nej nieje priradený žiadny server.',
+        'too_many_ports' => 'Pridanie viac ako 1000 portov v jednom rozsahu nieje podporované.',
+        'invalid_mapping' => 'Mapovanie poskytnuté pre port :port nieje správne a nemohlo byť spracované.',
+        'cidr_out_of_range' => 'CIDR notácia dovoľuje len masky medzi /25 a /32.',
+        'port_out_of_range' => 'Porty v alokácii musia mať vyššiu hodnotu ako 1024 a menšiu, alebo rovnú 65535.',
     ],
     'egg' => [
-        'delete_has_servers' => 'An Egg with active servers attached to it cannot be deleted from the Panel.',
-        'invalid_copy_id' => 'The Egg selected for copying a script from either does not exist, or is copying a script itself.',
-        'has_children' => 'This Egg is a parent to one or more other Eggs. Please delete those Eggs before deleting this Egg.',
+        'delete_has_servers' => 'Vajce s priradenými aktívnymi servermi nemože byť vymazané z panelu.',
+        'invalid_copy_id' => 'Vybrané vajce na kopírovanie skriptu buď neexistuje, alebo samé ešte skript kopíruje.',
+        'has_children' => 'Toto vajce je rodičom ďalšieho jedného, alebo viacero iných vajec. Prosím zmažte tieto vajcia pred zmazaním tohto vajca.',
     ],
     'variables' => [
-        'env_not_unique' => 'The environment variable :name must be unique to this Egg.',
-        'reserved_name' => 'The environment variable :name is protected and cannot be assigned to a variable.',
-        'bad_validation_rule' => 'The validation rule ":rule" is not a valid rule for this application.',
+        'env_not_unique' => 'Premenná prostredia :name musí byť unikátna tomuto vajcu.',
+        'reserved_name' => 'Premenná prostredia :name je chránená a nemôže byť priradená premennej.',
+        'bad_validation_rule' => 'Pravidlo validácie ":rule" nieje validné pravidlo pre túto aplikáciu.',
     ],
     'importer' => [
-        'json_error' => 'There was an error while attempting to parse the JSON file: :error.',
-        'file_error' => 'The JSON file provided was not valid.',
-        'invalid_json_provided' => 'The JSON file provided is not in a format that can be recognized.',
+        'json_error' => 'Pri pokuse o analýzu JSON súboru sa vyskytla chyba: :error.',
+        'file_error' => 'Poskytnutý JSON súbor nieje validný.',
+        'invalid_json_provided' => 'JSON súbor nieje vo formáte, ktorý je možné rozpoznať.',
     ],
     'subusers' => [
-        'editing_self' => 'Editing your own subuser account is not permitted.',
-        'user_is_owner' => 'You cannot add the server owner as a subuser for this server.',
-        'subuser_exists' => 'A user with that email address is already assigned as a subuser for this server.',
+        'editing_self' => 'Upravovať vlastného podpoužívateľa nieje povolené.',
+        'user_is_owner' => 'Nemôžete pridať majiteľa serveru ako podpoužívateľa pre tento server.',
+        'subuser_exists' => 'Používateľov s rovnakou emailovou adresou je už priradený ako podpoužívateľ pre tento server.',
     ],
     'databases' => [
-        'delete_has_databases' => 'Cannot delete a database host server that has active databases linked to it.',
+        'delete_has_databases' => 'Nieje možné odstrániť databázový server, ktorý má priradené aktívne databázy.',
     ],
     'tasks' => [
-        'chain_interval_too_long' => 'The maximum interval time for a chained task is 15 minutes.',
+        'chain_interval_too_long' => 'Maximálny časový interval pre reťazovú úlohu je 15 minút.',
     ],
     'locations' => [
-        'has_nodes' => 'Cannot delete a location that has active nodes attached to it.',
+        'has_nodes' => 'Nieje možné zmazať lokáciu, ktorá má priradené aktívne uzly.',
     ],
     'users' => [
-        'node_revocation_failed' => 'Failed to revoke keys on <a href=":link">Node #:node</a>. :error',
+        'node_revocation_failed' => 'Nebolo možné odobrať kľúče na <a href=":link"> Uzol #:node</a>. :error',
     ],
     'deployment' => [
-        'no_viable_nodes' => 'No nodes satisfying the requirements specified for automatic deployment could be found.',
-        'no_viable_allocations' => 'No allocations satisfying the requirements for automatic deployment were found.',
+        'no_viable_nodes' => 'Neboli nájdené žiadne uzly spĺňajúce požiadavky pre automatické nasadenie.',
+        'no_viable_allocations' => 'Neboli nájdené žiadne alokácie spĺňajúce požiadavky pre automatické nasadenie.',
     ],
     'api' => [
-        'resource_not_found' => 'The requested resource does not exist on this server.',
+        'resource_not_found' => 'Požadovaný zdroj neexistuje na tomto servery.',
     ],
 ];

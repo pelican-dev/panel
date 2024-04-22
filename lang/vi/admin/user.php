@@ -2,11 +2,11 @@
 
 return [
     'exceptions' => [
-        'user_has_servers' => 'Cannot delete a user with active servers attached to their account. Please delete their servers before continuing.',
-        'user_is_self' => 'Cannot delete your own user account.',
+        'user_has_servers' => 'Không thể xóa một người dùng có máy chủ đang hoạt động có gắn kết với tài khoản của họ. Xin hãy xóa máy chủ của họ trước khi tiếp tục.',
+        'user_is_self' => 'Không thể xóa tài khoản người dùng của riêng bạn.',
     ],
     'notices' => [
-        'account_created' => 'Account has been created successfully.',
-        'account_updated' => 'Account has been successfully updated.',
+        'account_created' => 'Tài khoản đã được tạo thành công.',
+        'account_updated' => 'Tài khoản đã được cập nhật thành công.',
     ],
 ];

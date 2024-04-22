@@ -96,7 +96,7 @@ class NodeViewController extends Controller
     {
         $this->plainInject([
             'node' => Collection::wrap($node->makeVisible(['daemon_token_id', 'daemon_token']))
-                ->only(['scheme', 'fqdn', 'daemonListen', 'daemon_token_id', 'daemon_token']),
+                ->only(['scheme', 'fqdn', 'daemon_listen', 'daemon_token_id', 'daemon_token']),
         ]);
 
         return view('admin.nodes.view.servers', [

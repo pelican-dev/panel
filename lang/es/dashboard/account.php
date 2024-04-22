@@ -6,7 +6,7 @@ return [
         'updated' => 'Tu dirección de correo electrónico ha sido actualizada.',
     ],
     'password' => [
-        'title' => 'Cambiar tu contraseña',
+        'title' => 'Cambia tu contraseña',
         'requirements' => 'Tu nueva contraseña debe tener al menos 8 caracteres de longitud.',
         'updated' => 'Tu contraseña ha sido actualizada.',
     ],

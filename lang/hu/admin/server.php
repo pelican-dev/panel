@@ -3,8 +3,8 @@
 return [
     'exceptions' => [
         'no_new_default_allocation' => 'Megpróbáltad törölni az allokációt, de nincs másik alapértelmezett allokáció hozzáadva a szerverhez.',
-        'marked_as_failed' => 'This server was marked as having failed a previous installation. Current status cannot be toggled in this state.',
-        'bad_variable' => 'There was a validation error with the :name variable.',
+        'marked_as_failed' => 'Ezt a kiszolgálót úgy jelölték meg, hogy egy korábbi telepítés sikertelen volt. Az állapot követés nem kapcsolható be ebben az állapotban!',
+        'bad_variable' => 'Érvényesítési hiba történt a :name: váltózóval!',
         'daemon_exception' => 'There was an exception while attempting to communicate with the daemon resulting in a HTTP/:code response code. This exception has been logged. (request id: :request_id)',
         'default_allocation_not_found' => 'The requested default allocation was not found in this server\'s allocations.',
     ],
