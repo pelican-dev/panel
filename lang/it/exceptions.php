@@ -25,11 +25,11 @@ return [
     ],
     'importer' => [
         'json_error' => 'There was an error while attempting to parse the JSON file: :error.',
-        'file_error' => 'The JSON file provided was not valid.',
-        'invalid_json_provided' => 'The JSON file provided is not in a format that can be recognized.',
+        'file_error' => 'Il file JSON fornito non è valido.',
+        'invalid_json_provided' => 'Il file JSON fornito non è in un formato riconosciibile.',
     ],
     'subusers' => [
-        'editing_self' => 'Editing your own subuser account is not permitted.',
+        'editing_self' => 'Modificare il proprio account subuser non è consentito.',
         'user_is_owner' => 'You cannot add the server owner as a subuser for this server.',
         'subuser_exists' => 'A user with that email address is already assigned as a subuser for this server.',
     ],
