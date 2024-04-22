@@ -137,8 +137,7 @@ class EggResource extends Resource
                                         ->debounce(750)
                                         ->maxLength(191)
                                         ->columnSpanFull()
-                                        ->afterStateUpdated(fn (Forms\Set $set, $state) =>
-                                            $set('env_variable', str($state)->trim()->snake()->upper()->toString())
+                                        ->afterStateUpdated(fn (Forms\Set $set, $state) => $set('env_variable', str($state)->trim()->snake()->upper()->toString())
                                         )
                                         ->required(),
                                     Forms\Components\Textarea::make('description')->columnSpanFull(),
