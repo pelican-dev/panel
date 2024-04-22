@@ -2,7 +2,7 @@
 
 return [
     'exceptions' => [
-        'user_has_servers' => 'Ein Benutzer mit aktiven Servern, die mit seinem Konto verbunden sind, kann nicht gelöscht werden. Bitte lösche seine Server, bevor du fortfährst.',
+        'user_has_servers' => 'Ein Benutzer mit aktiven Servern, die mit seinem Konto verknüpft sind, kann nicht gelöscht werden. Bitte lösche die Server, bevor du fortfährst.',
         'user_is_self' => 'Du kannst dein eigenes Benutzerkonto nicht löschen.',
     ],
     'notices' => [
