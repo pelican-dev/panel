@@ -11,9 +11,9 @@ return [
     | has failed, such as for an invalid token or invalid new password.
     |
     */
-    'password' => 'Passwords must be at least six characters and match the confirmation.',
-    'reset' => 'Your password has been reset!',
-    'sent' => 'We have e-mailed your password reset link!',
-    'token' => 'This password reset token is invalid.',
-    'user' => 'We can\'t find a user with that e-mail address.',
+    'password' => 'Ο κωδικός πρόσβασης πρέπει να περιέχει τουλάχιστον έξι χαρακτήρες και να ταιριάζει με το πεδίο της επιβεβαίωση.',
+    'reset' => 'Η επαναφορά του κωδικού ολοκληρώθηκε!',
+    'sent' => 'Σας στείλαμε ένα e-mail με τον σύνδεσμο για την επαναφορά του κωδικού πρόσβασής σας!',
+    'token' => 'Αυτό το διακριτικό επαναφοράς κωδικού πρόσβασης δεν είναι έγκυρο.',
+    'user' => 'Δεν μπορούμε να βρόυμε κάποιον χρήστη με αυτή τη διεύθυνση e-mail.',
 ];
