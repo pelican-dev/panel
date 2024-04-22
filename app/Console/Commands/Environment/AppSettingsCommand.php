@@ -71,7 +71,7 @@ class AppSettingsCommand extends Command
             return is_dir($langDirectory . '/' . $item);
         });
         */
-        $languages = $this->getAvailableLanguages();
+        $languages = $this->isLanguageTranslated();
         $languages = array_diff($languages, ['.', '..']);
         $this->variables['APP_LOCALE'] = $this->choice('What language do you want to use?', $languages, config('app.locale', 'en'));
 
