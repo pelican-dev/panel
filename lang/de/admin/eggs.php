@@ -3,7 +3,7 @@
 return [
     'notices' => [
         'imported' => 'Das Egg und die zugehörigen Variablen wurden erfolgreich importiert.',
-        'updated_via_import' => 'Dieses Egg wurde mit der angegebenen Datei aktualisiert.',
+        'updated_via_import' => 'Das Egg wurde mit der bereitgestellten Datei aktualisiert.',
         'deleted' => 'Das angeforderte Egg wurde erfolgreich aus dem Panel gelöscht.',
         'updated' => 'Egg Konfiguration wurde erfolgreich aktualisiert.',
         'script_updated' => 'Das Egg-Installationsskript wurde aktualisiert und wird bei der Installation von Servern ausgeführt.',
