@@ -103,7 +103,7 @@ class EditNode extends EditRecord
                                                         continue;
                                                     }
 
-                                                    // Do not add non numerical ports
+                                                    // Do not add non-numerical ports
                                                     $update = true;
 
                                                     continue;

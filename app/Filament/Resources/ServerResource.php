@@ -9,6 +9,7 @@ use App\Models\Allocation;
 use App\Models\Egg;
 use App\Models\Node;
 use App\Models\Server;
+use App\Models\ServerVariable;
 use App\Repositories\Daemon\DaemonServerRepository;
 use App\Services\Allocations\AssignmentService;
 use Closure;
@@ -486,24 +487,24 @@ class ServerResource extends Resource
                             ->schema([
                                 Forms\Components\TextInput::make('variable_value')
                                     ->rules([
-                                        fn (Forms\Get $get): Closure => function (string $attribute, $value, Closure $fail) use ($get) {
+                                        fn (ServerVariable $variable): Closure => function (string $attribute, $value, Closure $fail) use ($variable) {
                                             $validator = Validator::make(['validatorkey' => $value], [
-                                                'validatorkey' => $get('rules'),
+                                                'validatorkey' => $variable->variable->rules,
                                             ]);
 
                                             if ($validator->fails()) {
-                                                $message = str($validator->errors()->first())->replace('validatorkey', $get('name'));
+                                                $message = str($validator->errors()->first())->replace('validatorkey', $variable->variable->name);
 
                                                 $fail($message);
                                             }
                                         },
                                     ])
-                                    ->label(fn (Forms\Get $get) => $get('name'))
+                                    ->label(fn (ServerVariable $variable) => $variable->variable->name)
                                     //->hint('Rule')
                                     ->hintIcon('tabler-code')
-                                    ->hintIconTooltip(fn (Forms\Get $get) => $get('rules'))
-                                    ->prefix(fn (Forms\Get $get) => '{{' . $get('env_variable') . '}}')
-                                    ->helperText(fn (Forms\Get $get) => empty($get('description')) ? '—' : $get('description'))
+                                    ->hintIconTooltip(fn (ServerVariable $variable) => $variable->variable->rules)
+                                    ->prefix(fn (ServerVariable $variable) => '{{' . $variable->variable->env_variable . '}}')
+                                    ->helperText(fn (ServerVariable $variable) => $variable->variable->description ?: '—')
                                     ->maxLength(191),
 
                                 Forms\Components\Hidden::make('variable_id')->default(0),
@@ -596,7 +597,7 @@ class ServerResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
-            ->searchable(false)
+            ->searchable()
             ->columns([
                 Tables\Columns\TextColumn::make('status')
                     ->default('unknown')
@@ -641,6 +642,7 @@ class ServerResource extends Resource
                     ->sortable(),
                 Tables\Columns\TextColumn::make('node.name')
                     ->icon('tabler-server-2')
+                    ->searchable()
                     ->url(fn (Server $server): string => route('filament.admin.resources.nodes.edit', ['record' => $server->node]))
                     ->sortable(),
                 Tables\Columns\TextColumn::make('egg.name')
