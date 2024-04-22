@@ -1,8 +1,8 @@
 <?php
 
 return [
-    'search' => 'Search for servers...',
-    'no_matches' => 'There were no servers found matching the search criteria provided.',
-    'cpu_title' => 'CPU',
-    'memory_title' => 'Memory',
+    'search' => 'Αναζήτηση διακομιστών...',
+    'no_matches' => 'Δεν βρέθηκαν διακομιστές που να ταιριάζουν στα κριτήρια αναζήτησης.',
+    'cpu_title' => 'Επεξεργαστής',
+    'memory_title' => 'Μνήμη',
 ];
