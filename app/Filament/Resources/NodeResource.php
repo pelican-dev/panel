@@ -14,6 +14,11 @@ class NodeResource extends Resource
 {
     protected static ?string $model = Node::class;
 
+    public static function getLabel(): string
+    {
+        return trans_choice('strings.nodes', 1);
+    }
+
     protected static ?string $navigationIcon = 'tabler-server-2';
 
     protected static ?string $recordTitleAttribute = 'name';
@@ -84,7 +89,7 @@ class NodeResource extends Resource
             ->searchable(false)
             ->columns([
                 Tables\Columns\TextColumn::make('uuid')
-                    ->label('UUID')
+                    ->label(trans('strings.uuid'))
                     ->searchable()
                     ->hidden(),
                 Tables\Columns\IconColumn::make('health')
@@ -128,7 +133,7 @@ class NodeResource extends Resource
                 Tables\Columns\TextColumn::make('servers_count')
                     ->visibleFrom('sm')
                     ->counts('servers')
-                    ->label('Servers')
+                    ->label(trans_choice('strings.servers', 2))
                     ->sortable()
                     ->icon('tabler-brand-docker'),
             ])

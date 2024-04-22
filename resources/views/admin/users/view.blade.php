@@ -23,13 +23,13 @@
                 </div>
                 <div class="box-body">
                     <div class="form-group">
-                        <label for="email" class="control-label">Email</label>
+                        <label for="email" class="control-label">@lang('strings.email')</label>
                         <div>
                             <input type="email" name="email" value="{{ $user->email }}" class="form-control form-autocomplete-stop">
                         </div>
                     </div>
                     <div class="form-group">
-                        <label for="registered" class="control-label">Username</label>
+                        <label for="registered" class="control-label">@lang('strings.username')</label>
                         <div>
                             <input type="text" name="username" value="{{ $user->username }}" class="form-control form-autocomplete-stop">
                         </div>
@@ -68,12 +68,12 @@
         <div class="col-md-6">
             <div class="box">
                 <div class="box-header with-border">
-                    <h3 class="box-title">Password</h3>
+                    <h3 class="box-title">@lang('strings.password')</h3>
                 </div>
                 <div class="box-body">
                     <div class="alert alert-success" style="display:none;margin-bottom:10px;" id="gen_pass"></div>
                     <div class="form-group no-margin-bottom">
-                        <label for="password" class="control-label">Password <span class="field-optional"></span></label>
+                        <label for="password" class="control-label">@lang('strings.password') <span class="field-optional"></span></label>
                         <div>
                             <input type="password" id="password" name="password" class="form-control form-autocomplete-stop">
                             <p class="text-muted small">Leave blank to keep this user's password the same. User will not receive any notification if password is changed.</p>

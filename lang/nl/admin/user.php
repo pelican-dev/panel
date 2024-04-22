@@ -9,4 +9,9 @@ return [
         'account_created' => 'Het account is succesvol aangemaakt.',
         'account_updated' => 'Het account is succesvol bijgewerkt.',
     ],
+    'last_admin' => [
+        'hint' => 'Dit is de laatste root administrator!',
+        'helper_text' => 'Je moet te minste één root administrator in je systeem hebben.',
+    ],
+    'root_admin' => 'Administrator (Root)',
 ];

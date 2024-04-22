@@ -17,6 +17,11 @@ class MountResource extends Resource
 {
     protected static ?string $model = Mount::class;
 
+    public static function getLabel(): string
+    {
+        return trans_choice('strings.mounts', 1);
+    }
+
     protected static ?string $navigationIcon = 'tabler-layers-linked';
 
     public static function form(Form $form): Form
@@ -25,15 +30,16 @@ class MountResource extends Resource
             ->schema([
                 Section::make()->schema([
                     Forms\Components\TextInput::make('name')
+                        ->label(trans('strings.name'))
                         ->required()
                         ->helperText('Unique name used to separate this mount from another.')
                         ->maxLength(64),
                     Forms\Components\ToggleButtons::make('read_only')
-                        ->label('Read only?')
+                        ->label(trans('strings.read_only?'))
                         ->helperText('Is the mount read only inside the container?')
                         ->options([
-                            false => 'Writeable',
-                            true => 'Read only',
+                            false => trans('strings.writable'),
+                            true => trans('strings.read_only'),
                         ])
                         ->icons([
                             false => 'tabler-writing',
@@ -58,8 +64,8 @@ class MountResource extends Resource
                         ->hidden()
                         ->label('User mountable?')
                         ->options([
-                            false => 'No',
-                            true => 'Yes',
+                            false => trans('strings.no'),
+                            true => trans('strings.yes'),
                         ])
                         ->icons([
                             false => 'tabler-user-cancel',
@@ -73,6 +79,7 @@ class MountResource extends Resource
                         ->inline()
                         ->required(),
                     Forms\Components\Textarea::make('description')
+                        ->label(trans('strings.description'))
                         ->helperText('A longer description for this mount.')
                         ->columnSpanFull(),
                 ])->columnSpan(1)->columns([
@@ -108,12 +115,14 @@ class MountResource extends Resource
                     ->label('')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('name')
+                    ->label(trans('strings.name'))
                     ->searchable(),
                 Tables\Columns\TextColumn::make('source')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('target')
                     ->searchable(),
                 Tables\Columns\IconColumn::make('read_only')
+                    ->label(trans('strings.read_only'))
                     ->icon(fn (bool $state) => $state ? 'tabler-circle-check-filled' : 'tabler-circle-x-filled')
                     ->color(fn (bool $state) => $state ? 'success' : 'danger')
                     ->sortable(),

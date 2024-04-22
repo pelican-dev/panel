@@ -23,6 +23,7 @@ class DatabaseResource extends Resource
         return $form
             ->schema([
                 Forms\Components\Select::make('server_id')
+                    ->label(trans_choice('strings.servers', 1))
                     ->relationship('server', 'name')
                     ->searchable()
                     ->preload()
@@ -38,9 +39,11 @@ class DatabaseResource extends Resource
                     ->maxLength(191)
                     ->default('%'),
                 Forms\Components\TextInput::make('username')
+                    ->label(trans('strings.username'))
                     ->required()
                     ->maxLength(191),
                 Forms\Components\TextInput::make('password')
+                    ->label(trans('strings.password'))
                     ->password()
                     ->revealable()
                     ->required(),
@@ -56,14 +59,17 @@ class DatabaseResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('server.name')
+                    ->label(trans_choice('strings.servers', 1))
                     ->numeric()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('database_host_id')
                     ->numeric()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('database')
+                    ->label(trans_choice('strings.databases', 1))
                     ->searchable(),
                 Tables\Columns\TextColumn::make('username')
+                    ->label(trans('strings.username'))
                     ->searchable(),
                 Tables\Columns\TextColumn::make('remote')
                     ->searchable(),
@@ -71,10 +77,12 @@ class DatabaseResource extends Resource
                     ->numeric()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('created_at')
+                    ->label(trans('strings.created_at'))
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('updated_at')
+                    ->label(trans('strings.updated_at'))
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),

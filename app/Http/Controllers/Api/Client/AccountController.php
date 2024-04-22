@@ -72,4 +72,13 @@ class AccountController extends ClientApiController
 
         return new JsonResponse([], Response::HTTP_NO_CONTENT);
     }
+
+    /**
+     * Get user language
+     */
+    public function getLocale(Request $request): JsonResponse
+    {
+        $original = $request->user()->language;
+        return new JsonResponse($original);
+    }
 }

@@ -4,8 +4,11 @@ import { faSearch } from '@fortawesome/free-solid-svg-icons';
 import useEventListener from '@/plugins/useEventListener';
 import SearchModal from '@/components/dashboard/search/SearchModal';
 import Tooltip from '@/components/elements/tooltip/Tooltip';
+import { useTranslation } from 'react-i18next';
 
 export default () => {
+    const { t } = useTranslation('strings');
+
     const [visible, setVisible] = useState(false);
 
     useEventListener('keydown', (e: KeyboardEvent) => {
@@ -19,7 +22,7 @@ export default () => {
     return (
         <>
             {visible && <SearchModal appear visible={visible} onDismissed={() => setVisible(false)} />}
-            <Tooltip placement={'bottom'} content={'Search'}>
+            <Tooltip placement={'bottom'} content={t<string>('search')}>
                 <div className={'navigation-link'} onClick={() => setVisible(true)}>
                     <FontAwesomeIcon icon={faSearch} />
                 </div>

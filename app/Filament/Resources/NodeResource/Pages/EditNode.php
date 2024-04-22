@@ -34,7 +34,7 @@ class EditNode extends EditRecord
                         ->schema((new CreateNode())->form($form)->getComponents()),
                     Tabs\Tab::make('Advanced Settings')
                         ->icon('tabler-server-cog'),
-                    Tabs\Tab::make('Configuration')
+                    Tabs\Tab::make(trans('strings.configuration'))
                         ->icon('tabler-code')
                         ->schema([
                             Forms\Components\Placeholder::make('instructions')

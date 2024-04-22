@@ -15,7 +15,11 @@ use Illuminate\Database\Eloquent\Builder;
 class ApiKeyResource extends Resource
 {
     protected static ?string $model = ApiKey::class;
-    protected static ?string $label = 'API Key';
+
+    public static function getLabel(): string
+    {
+        return trans_choice('strings.api_keys', 1);
+    }
 
     protected static ?string $navigationIcon = 'tabler-key';
 
@@ -121,7 +125,7 @@ class ApiKeyResource extends Resource
 
                 Forms\Components\Textarea::make('memo')
                     ->required()
-                    ->label('Description')
+                    ->label(trans('strings.description'))
                     ->helperText('
                         Once you have assigned permissions and created this set of credentials you will be unable to come back and edit it.
                         If you need to make changes down the road you will need to create a new set of credentials.
@@ -146,7 +150,7 @@ class ApiKeyResource extends Resource
                     ->state(fn (ApiKey $key) => $key->identifier . decrypt($key->token)),
 
                 Tables\Columns\TextColumn::make('memo')
-                    ->label('Description')
+                    ->label(trans('strings.description'))
                     ->wrap()
                     ->limit(50),
 
@@ -155,12 +159,12 @@ class ApiKeyResource extends Resource
                     ->searchable(),
 
                 Tables\Columns\TextColumn::make('last_used_at')
-                    ->label('Last Used')
+                    ->label(trans('strings.last_used'))
                     ->dateTime()
                     ->sortable(),
 
                 Tables\Columns\TextColumn::make('created_at')
-                    ->label('Created')
+                    ->label(trans('strings.created'))
                     ->dateTime()
                     ->sortable(),
             ])

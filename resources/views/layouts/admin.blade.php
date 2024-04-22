@@ -37,7 +37,7 @@
                 </a>
                 <nav class="navbar navbar-static-top">
                     <a href="#" class="sidebar-toggle" data-toggle="push-menu" role="button">
-                        <span class="sr-only">Toggle navigation</span>
+                        <span class="sr-only">@lang('admin/layout.navbar.toggle-navigation')</span>
                         <span class="icon-bar"></span>
                         <span class="icon-bar"></span>
                         <span class="icon-bar"></span>
@@ -46,15 +46,15 @@
                         <ul class="nav navbar-nav">
                             <li class="user-menu">
                                 <a href="{{ route('account') }}">
-                                    <img src="https://www.gravatar.com/avatar/{{ md5(strtolower(Auth::user()->email)) }}?s=160" class="user-image" alt="User Image">
+                                    <img src="https://www.gravatar.com/avatar/{{ md5(strtolower(Auth::user()->email)) }}?s=160" class="user-image" alt="@lang('admin/layout.navbar.user-image')">
                                     <span class="hidden-xs">{{ Auth::user()->name_first }} {{ Auth::user()->name_last }}</span>
                                 </a>
                             </li>
                             <li>
-                                <li><a href="{{ route('index') }}" data-toggle="tooltip" data-placement="bottom" title="Exit Admin Control"><i class="fa fa-server"></i></a></li>
+                                <li><a href="{{ route('index') }}" data-toggle="tooltip" data-placement="bottom" title="@lang('admin/layout.navbar.exit-admin-control')"><i class="fa fa-server"></i></a></li>
                             </li>
                             <li>
-                                <li><a href="{{ route('auth.logout') }}" id="logoutButton" data-toggle="tooltip" data-placement="bottom" title="Logout"><i class="fa fa-sign-out"></i></a></li>
+                                <li><a href="{{ route('auth.logout') }}" id="logoutButton" data-toggle="tooltip" data-placement="bottom" title="@lang('admin/layout.navbar.logout')"><i class="fa fa-sign-out"></i></a></li>
                             </li>
                         </ul>
                     </div>
@@ -63,47 +63,47 @@
             <aside class="main-sidebar">
                 <section class="sidebar">
                     <ul class="sidebar-menu">
-                        <li class="header">MANAGEMENT</li>
+                        <li class="header">{{ Str::upper(trans('admin/navigation.sidebar.management.header')) }}</li>
                         <li class="{{ Route::currentRouteName() !== 'admin.index' ?: 'active' }}">
                             <a href="{{ route('admin.index') }}">
-                                <i class="fa fa-home"></i> <span>Overview</span>
+                                <i class="fa fa-home"></i> <span>@lang('admin/navigation.sidebar.management.overview')</span>
                             </a>
                         </li>
                         <li class="{{ ! starts_with(Route::currentRouteName(), 'admin.databases') ?: 'active' }}">
                             <a href="{{ route('admin.databases') }}">
-                                <i class="fa fa-database"></i> <span>Databases</span>
+                                <i class="fa fa-database"></i> <span>@lang('admin/navigation.sidebar.management.databases')</span>
                             </a>
                         </li>
                         <li class="{{ ! starts_with(Route::currentRouteName(), 'admin.nodes') ?: 'active' }}">
                             <a href="{{ route('admin.nodes') }}">
-                                <i class="fa fa-sitemap"></i> <span>Nodes</span>
+                                <i class="fa fa-sitemap"></i> <span>@lang('admin/navigation.sidebar.management.nodes')</span>
                             </a>
                         </li>
                         <li class="{{ ! starts_with(Route::currentRouteName(), 'admin.servers') ?: 'active' }}">
                             <a href="{{ route('admin.servers') }}">
-                                <i class="fa fa-server"></i> <span>Servers</span>
+                                <i class="fa fa-server"></i> <span>@lang('admin/navigation.sidebar.management.servers')</span>
                             </a>
                         </li>
                         <li class="{{ ! starts_with(Route::currentRouteName(), 'admin.users') ?: 'active' }}">
                             <a href="{{ route('admin.users') }}">
-                                <i class="fa fa-users"></i> <span>Users</span>
+                                <i class="fa fa-users"></i> <span>@lang('admin/navigation.sidebar.management.users')</span>
                             </a>
                         </li>
-                        <li class="header">SERVICES</li>
+                        <li class="header">{{ Str::upper(trans('admin/navigation.sidebar.services.header')) }}</li>
                         <li class="{{ ! starts_with(Route::currentRouteName(), 'admin.eggs') ?: 'active' }}">
                             <a href="{{ route('admin.eggs') }}">
-                                <i class="fa fa-th-large"></i> <span>Eggs</span>
+                                <i class="fa fa-th-large"></i> <span>@lang('admin/navigation.sidebar.services.eggs')</span>
                             </a>
                         </li>
-                        <li class="header">OTHER</li>
+                        <li class="header">{{ Str::upper(trans('admin/navigation.sidebar.other.header')) }}</li>
                         <li class="{{ ! starts_with(Route::currentRouteName(), 'admin.settings') ?: 'active' }}">
-                            <a href="{{ route('admin.settings')}}">
-                                <i class="fa fa-wrench"></i> <span>Settings</span>
+                            <a href="{{ route('admin.settings') }}">
+                                <i class="fa fa-wrench"></i> <span>@lang('admin/navigation.sidebar.other.settings')</span>
                             </a>
                         </li>
                         <li class="{{ ! starts_with(Route::currentRouteName(), 'admin.api') ?: 'active' }}">
-                            <a href="{{ route('admin.api.index')}}">
-                                <i class="fa fa-gamepad"></i> <span>Application API</span>
+                            <a href="{{ route('admin.api.index') }}">
+                                <i class="fa fa-gamepad"></i> <span>@lang('admin/navigation.sidebar.other.application-api')</span>
                             </a>
                         </li>
                     </ul>
@@ -166,12 +166,12 @@
 
                         var that = this;
                         swal({
-                            title: 'Do you want to log out?',
+                            title: '{{ trans("admin/layout.logout.title") }}',
                             type: 'warning',
                             showCancelButton: true,
                             confirmButtonColor: '#d9534f',
                             cancelButtonColor: '#d33',
-                            confirmButtonText: 'Log out'
+                            confirmButtonText: '{{ trans("admin/layout.logout.button") }}'
                         }, function () {
                              $.ajax({
                                 type: 'POST',
@@ -179,7 +179,7 @@
                                 data: {
                                     _token: '{{ csrf_token() }}'
                                 },complete: function () {
-                                    window.location.href = '{{route('auth.login')}}';
+                                    window.location.href = '{{ route('auth.login') }}';
                                 }
                         });
                     });

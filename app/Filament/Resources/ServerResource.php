@@ -25,6 +25,11 @@ class ServerResource extends Resource
 {
     protected static ?string $model = Server::class;
 
+    public static function getLabel(): string
+    {
+        return trans_choice('strings.servers', 1);
+    }
+
     protected static ?string $navigationIcon = 'tabler-brand-docker';
 
     protected static ?string $recordTitleAttribute = 'name';
@@ -114,7 +119,7 @@ class ServerResource extends Resource
                 Forms\Components\Select::make('owner_id')
                     ->prefixIcon('tabler-user')
                     ->default(auth()->user()->id)
-                    ->label('Owner')
+                    ->label(trans('strings.owner'))
                     ->columnSpan([
                         'default' => 2,
                         'sm' => 4,
@@ -130,6 +135,7 @@ class ServerResource extends Resource
                     ->disabledOn('edit')
                     ->prefixIcon('tabler-server-2')
                     ->default(fn () => Node::query()->latest()->first()?->id)
+                    ->label(trans_choice('strings.nodes', 1))
                     ->columnSpan(2)
                     ->live()
                     ->relationship('node', 'name')
@@ -296,6 +302,7 @@ class ServerResource extends Resource
                     ),
 
                 Forms\Components\Textarea::make('description')
+                    ->label(trans('strings.description'))
                     ->hidden()
                     ->default('')
                     ->required()
@@ -304,6 +311,7 @@ class ServerResource extends Resource
                 Forms\Components\Select::make('egg_id')
                     ->disabledOn('edit')
                     ->prefixIcon('tabler-egg')
+                    ->label(trans_choice('strings.eggs', 1))
                     ->columnSpan([
                         'default' => 2,
                         'sm' => 2,
@@ -633,27 +641,30 @@ class ServerResource extends Resource
 
                 Tables\Columns\TextColumn::make('uuid')
                     ->hidden()
-                    ->label('UUID')
+                    ->label(trans('strings.uuid'))
                     ->searchable(),
                 Tables\Columns\TextColumn::make('name')
                     ->icon('tabler-brand-docker')
+                    ->label(trans('strings.name'))
                     ->searchable()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('node.name')
                     ->icon('tabler-server-2')
+                    ->label(trans_choice('strings.nodes', 1))
                     ->url(fn (Server $server): string => route('filament.admin.resources.nodes.edit', ['record' => $server->node]))
                     ->sortable(),
                 Tables\Columns\TextColumn::make('egg.name')
                     ->icon('tabler-egg')
+                    ->label(trans_choice('strings.eggs', 1))
                     ->url(fn (Server $server): string => route('filament.admin.resources.eggs.edit', ['record' => $server->egg]))
                     ->sortable(),
                 Tables\Columns\TextColumn::make('user.username')
                     ->icon('tabler-user')
-                    ->label('Owner')
+                    ->label(trans('strings.owner'))
                     ->url(fn (Server $server): string => route('filament.admin.resources.users.edit', ['record' => $server->user]))
                     ->sortable(),
                 Tables\Columns\SelectColumn::make('allocation_id')
-                    ->label('Primary Allocation')
+                    ->label(trans('strings.primary_allocation'))
                     ->options(fn ($state, Server $server) => $server->allocations->mapWithKeys(
                         fn ($allocation) => [$allocation->id => $allocation->address])
                     )

@@ -18,7 +18,10 @@ class Dashboard extends Page
 
     protected ?string $heading = '';
 
-    protected static ?string $title = 'Dashboard';
+    public function getTitle(): string
+    {
+        return trans('strings.dashboard');
+    }
 
     protected static ?string $slug = '/';
 
@@ -48,7 +51,7 @@ class Dashboard extends Page
             ],
             'nodeActions' => [
                 CreateAction::make()
-                    ->label('Create first Node in Pelican')
+                    ->label(trans('admin/index.intro-first-node.button_label'))
                     ->icon('tabler-server-2')
                     ->url(route('filament.admin.resources.nodes.create'))
                     ->color('primary'),

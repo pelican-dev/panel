@@ -17,6 +17,11 @@ class UserResource extends Resource
 {
     protected static ?string $model = User::class;
 
+    public static function getLabel(): string
+    {
+        return trans_choice('strings.users', 1);
+    }
+
     protected static ?string $navigationIcon = 'tabler-users';
 
     protected static ?string $recordTitleAttribute = 'username';
@@ -26,29 +31,30 @@ class UserResource extends Resource
         return $form
             ->schema([
                 Section::make()->schema([
-                    Forms\Components\TextInput::make('username')->required()->maxLength(191),
-                    Forms\Components\TextInput::make('email')->email()->required()->maxLength(191),
+                    Forms\Components\TextInput::make('username')->required()->maxLength(191)->label(trans('strings.username')),
+                    Forms\Components\TextInput::make('email')->email()->required()->maxLength(191)->label(trans('strings.email')),
 
                     Forms\Components\TextInput::make('name_first')
                         ->maxLength(191)
                         ->hidden(fn (string $operation): bool => $operation === 'create')
-                        ->label('First Name'),
+                        ->label(trans('strings.first_name')),
                     Forms\Components\TextInput::make('name_last')
                         ->maxLength(191)
                         ->hidden(fn (string $operation): bool => $operation === 'create')
-                        ->label('Last Name'),
+                        ->label(trans('strings.last_name')),
 
                     Forms\Components\TextInput::make('password')
+                        ->label(trans('strings.password'))
                         ->dehydrateStateUsing(fn (string $state): string => Hash::make($state))
                         ->dehydrated(fn (?string $state): bool => filled($state))
                         ->required(fn (string $operation): bool => $operation === 'create')
                         ->password(),
 
                     Forms\Components\ToggleButtons::make('root_admin')
-                        ->label('Administrator (Root)')
+                        ->label(trans('admin/user.root_admin'))
                         ->options([
-                            false => 'No',
-                            true => 'Admin',
+                            false => trans('strings.no'),
+                            true => trans('strings.admin'),
                         ])
                         ->colors([
                             false => 'primary',
@@ -61,8 +67,8 @@ class UserResource extends Resource
 
                             return $user->isLastRootAdmin();
                         })
-                        ->hint(fn (User $user) => $user->isLastRootAdmin() ? 'This is the last root administrator!' : '')
-                        ->helperText(fn (User $user) => $user->isLastRootAdmin() ? 'You must have at least one root administrator in your system.' : '')
+                        ->hint(fn (User $user) => $user->isLastRootAdmin() ? trans('admin/user.last_admin.hint') : '')
+                        ->helperText(fn (User $user) => $user->isLastRootAdmin() ? trans('admin/user.last_admin.helper_text') : '')
                         ->hintColor('warning')
                         ->inline()
                         ->required()
@@ -70,8 +76,9 @@ class UserResource extends Resource
 
                     Forms\Components\Hidden::make('skipValidation')->default(true),
                     Forms\Components\Select::make('language')
+                        ->label(trans('strings.language'))
                         ->required()
-                        ->hidden()
+                        //->hidden()
                         ->default('en')
                         ->options(fn (User $user) => $user->getAvailableLanguages()),
                 ])->columns(2),
@@ -92,29 +99,32 @@ class UserResource extends Resource
                     ->searchable()
                     ->hidden(),
                 Tables\Columns\TextColumn::make('uuid')
-                    ->label('UUID')
+                    ->label(trans('strings.uuid'))
                     ->hidden()
                     ->searchable(),
                 Tables\Columns\TextColumn::make('username')
+                    ->label(trans('strings.username'))
                     ->searchable(),
                 Tables\Columns\TextColumn::make('email')
+                    ->label(trans('strings.email'))
                     ->searchable()
                     ->icon('tabler-mail'),
                 Tables\Columns\IconColumn::make('root_admin')
                     ->visibleFrom('md')
-                    ->label('Admin')
+                    ->label(trans('strings.admin'))
                     ->boolean()
                     ->trueIcon('tabler-star')
                     ->falseIcon('tabler-star-off')
                     ->sortable(),
-                Tables\Columns\IconColumn::make('use_totp')->label('2FA')
+                Tables\Columns\IconColumn::make('use_totp')
+                    ->label(trans('strings.2fa'))
                     ->visibleFrom('lg')
                     ->icon(fn (User $user) => $user->use_totp ? 'tabler-lock' : 'tabler-lock-open-off')
                     ->boolean()->sortable(),
                 Tables\Columns\TextColumn::make('servers_count')
                     ->counts('servers')
                     ->icon('tabler-server')
-                    ->label('Servers'),
+                    ->label(trans_choice('strings.servers', 2)),
                 Tables\Columns\TextColumn::make('subusers_count')
                     ->visibleFrom('sm')
                     ->counts('subusers')

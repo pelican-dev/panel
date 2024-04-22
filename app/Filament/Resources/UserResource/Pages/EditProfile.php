@@ -37,10 +37,11 @@ class EditProfile extends \Filament\Pages\Auth\EditProfile
                     ->schema([
                         Tabs::make()->persistTabInQueryString()
                             ->schema([
-                                Tab::make('Account')
+                                Tab::make(trans('strings.account'))
                                     ->icon('tabler-user')
                                     ->schema([
                                         TextInput::make('username')
+                                            ->label(trans('strings.username'))
                                             ->disabled()
                                             ->readOnly()
                                             ->maxLength(191)
@@ -49,12 +50,14 @@ class EditProfile extends \Filament\Pages\Auth\EditProfile
 
                                         TextInput::make('email')
                                             ->prefixIcon('tabler-mail')
+                                            ->label(trans('strings.email'))
                                             ->email()
                                             ->required()
                                             ->maxLength(191)
                                             ->unique(ignoreRecord: true),
 
                                         TextInput::make('password')
+                                            ->label(trans('strings.password'))
                                             ->password()
                                             ->prefixIcon('tabler-password')
                                             ->revealable(filament()->arePasswordsRevealable())
@@ -66,6 +69,7 @@ class EditProfile extends \Filament\Pages\Auth\EditProfile
                                             ->same('passwordConfirmation'),
 
                                         TextInput::make('passwordConfirmation')
+                                            ->label(trans('strings.password_confirmation'))
                                             ->password()
                                             ->prefixIcon('tabler-password-fingerprint')
                                             ->revealable(filament()->arePasswordsRevealable())
@@ -74,6 +78,7 @@ class EditProfile extends \Filament\Pages\Auth\EditProfile
                                             ->dehydrated(false),
 
                                         Select::make('language')
+                                            ->label(trans('strings.language'))
                                             ->required()
                                             ->prefixIcon('tabler-flag')
                                             ->live()
