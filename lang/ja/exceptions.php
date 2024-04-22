@@ -9,7 +9,7 @@ return [
     'allocations' => [
         'server_using' => '現在サーバーは割り当てられています。割り当てはサーバーが現在割り当てられていない場合にのみ削除できます。',
         'too_many_ports' => '一度に1000以上のポートを追加することはできません。',
-        'invalid_mapping' => ':port のために提供されたマッピングは無効で、処理することができませんでした。',
+        'invalid_mapping' => ':port のマッピングは無効で、処理することができませんでした。',
         'cidr_out_of_range' => 'CIDR表記では/25から/32までのマスクのみ使用できます。',
         'port_out_of_range' => '割り当てのポートは 1024 以上、65535 以下である必要があります。',
     ],
@@ -21,7 +21,7 @@ return [
     'variables' => [
         'env_not_unique' => '環境変数「:name」はこの卵に固有でなければなりません。',
         'reserved_name' => '環境変数「:name」は保護されているため、変数に割り当てることはできません。',
-        'bad_validation_rule' => '検証ルール ":rule" は、このアプリケーションの有効なルールではありません。',
+        'bad_validation_rule' => '検証ルール「:rule」は、このアプリケーションの有効なルールではありません。',
     ],
     'importer' => [
         'json_error' => 'JSON ファイルの解析中にエラーが発生しました: :error',

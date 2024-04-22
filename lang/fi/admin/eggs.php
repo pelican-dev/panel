@@ -2,18 +2,18 @@
 
 return [
     'notices' => [
-        'imported' => 'Successfully imported this Egg and its associated variables.',
-        'updated_via_import' => 'This Egg has been updated using the file provided.',
-        'deleted' => 'Successfully deleted the requested egg from the Panel.',
-        'updated' => 'Egg configuration has been updated successfully.',
-        'script_updated' => 'Egg install script has been updated and will run whenever servers are installed.',
-        'egg_created' => 'A new egg was laid successfully. You will need to restart any running daemons to apply this new egg.',
+        'imported' => 'Tämän munan ja siihen liittyvien muuttujien tuonti onnistui.',
+        'updated_via_import' => 'Tämä muna on päivitetty toimitettua tiedostoa käyttäen.',
+        'deleted' => 'Pyydetyn munan poistaminen paneelista onnistui.',
+        'updated' => 'Munan määritys on päivitetty onnistuneesti.',
+        'script_updated' => 'Munan asennus koodi on päivitetty ja suoritetaan aina, kun palvelin asennetaan.',
+        'egg_created' => 'Uusi muna luotiin onnistuneesti ja se on valmis käytettäväksi. Sinun tulee käynnistää uudelleen kaikki käynnissä olevat daemonit, jotta uusi muna otetaan käyttöön',
     ],
     'variables' => [
         'notices' => [
-            'variable_deleted' => 'The variable ":variable" has been deleted and will no longer be available to servers once rebuilt.',
-            'variable_updated' => 'The variable ":variable" has been updated. You will need to rebuild any servers using this variable in order to apply changes.',
-            'variable_created' => 'New variable has successfully been created and assigned to this egg.',
+            'variable_deleted' => 'Muuttuja ":variable" on poistettu, eikä se enää ole palvelimien käytettävissä uudelleenrakennuksen jälkeen.',
+            'variable_updated' => 'Muuttuja ":variable" on päivitetty. Sinun on rakennettava uudelleen kaikki palvelimet, jotka käyttävät tätä muuttujaa, jotta muutokset voidaan ottaa käyttöön.',
+            'variable_created' => 'Uusi muuttuja on onnistuneesti luotu ja määritetty tähän munaan.',
         ],
     ],
 ];

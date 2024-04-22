@@ -2,18 +2,18 @@
 
 return [
     'notices' => [
-        'imported' => 'Successfully imported this Egg and its associated variables.',
-        'updated_via_import' => 'This Egg has been updated using the file provided.',
-        'deleted' => 'Successfully deleted the requested egg from the Panel.',
-        'updated' => 'Egg configuration has been updated successfully.',
-        'script_updated' => 'Egg install script has been updated and will run whenever servers are installed.',
-        'egg_created' => 'A new egg was laid successfully. You will need to restart any running daemons to apply this new egg.',
+        'imported' => 'Uspješno ste uvezli ovaj Egg i njegove varijable.',
+        'updated_via_import' => 'Ovaj Egg je ažuriran sa tom datotekom.',
+        'deleted' => 'Uspješno ste obrisali taj Egg sa panel-a.',
+        'updated' => 'Konfiguracija Egg-a je uspješno ažurirana.',
+        'script_updated' => 'Egg skripta za instaliranje je ažurirana i pokreniti će se kada se serveri instaliraju.',
+        'egg_created' => 'Uspješno ste napravili Egg. Morat ćete restartati sve pokrenute daemone da bih primjenilo ovaj novi Egg.',
     ],
     'variables' => [
         'notices' => [
-            'variable_deleted' => 'The variable ":variable" has been deleted and will no longer be available to servers once rebuilt.',
-            'variable_updated' => 'The variable ":variable" has been updated. You will need to rebuild any servers using this variable in order to apply changes.',
-            'variable_created' => 'New variable has successfully been created and assigned to this egg.',
+            'variable_deleted' => 'Varijabla ":variable" je uspješno obrisana i više neće biti dostupna za servera nakon obnovljenja.',
+            'variable_updated' => 'Varijabla ":variable" je ažurirana. Morat ćete obnoviti sve servere koji koriste ovu varijablu kako biste primijenili promjene.',
+            'variable_created' => 'Nova varijabla je uspješno napravljena i dodana ovom Egg-u.',
         ],
     ],
 ];

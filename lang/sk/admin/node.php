@@ -2,14 +2,14 @@
 
 return [
     'validation' => [
-        'fqdn_not_resolvable' => 'The FQDN or IP address provided does not resolve to a valid IP address.',
-        'fqdn_required_for_ssl' => 'A fully qualified domain name that resolves to a public IP address is required in order to use SSL for this node.',
+        'fqdn_not_resolvable' => 'Poskytnutá FQDN neodkazuje na platnú IP adresu.',
+        'fqdn_required_for_ssl' => 'Na použitie SSL pre tento uzol je potrebná plnohodnotná doména ukazujúca na verejnú IP adresu.',
     ],
     'notices' => [
-        'allocations_added' => 'Allocations have successfully been added to this node.',
-        'node_deleted' => 'Node has been successfully removed from the panel.',
-        'node_created' => 'Successfully created new node. You can automatically configure the daemon on this machine by visiting the \'Configuration\' tab. <strong>Before you can add any servers you must first allocate at least one IP address and port.</strong>',
-        'node_updated' => 'Node information has been updated. If any daemon settings were changed you will need to reboot it for those changes to take effect.',
-        'unallocated_deleted' => 'Deleted all un-allocated ports for <code>:ip</code>.',
+        'allocations_added' => 'Alokácie pre tento uzol boli úspešne pridané.',
+        'node_deleted' => 'Uzol bol úspešne vymazaný z panelu.',
+        'node_created' => 'Nový uzol bol úspešne vytvorený. Daemon na tomto uzle môžete automaticky nakonfigurovať na karte "Konfigurácie". <strong>Pred tým ako pridáte nové servery musíte prideliť aspoň jednu IP adresu a port.</strong>',
+        'node_updated' => 'Informácie o uzle boli aktualizované. Ak sa zmenili akékoľvek nastavenia daemonu, budete ho musieť reštartovať na aplikovanie týchto nastavení.',
+        'unallocated_deleted' => 'Boli zmazané všetky nepriradené porty pre <code>:ip</code>.',
     ],
 ];
