@@ -52,7 +52,7 @@ class EggVariable extends Model
         'egg_id' => 'exists:eggs,id',
         'name' => 'required|string|between:1,191',
         'description' => 'string',
-        'env_variable' => 'required|regex:/^[\w]{1,191}$/|notIn:' . self::RESERVED_ENV_NAMES,
+        'env_variable' => 'required|alphaDash|between:1,191|notIn:' . self::RESERVED_ENV_NAMES,
         'default_value' => 'string',
         'user_viewable' => 'boolean',
         'user_editable' => 'boolean',
