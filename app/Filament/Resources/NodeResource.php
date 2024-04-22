@@ -31,6 +31,7 @@ class NodeResource extends Resource
                     ->helperText('If you are running the daemon behind a proxy such as Cloudflare, select this to have the daemon skip looking for certificates on boot.')
                     ->required(),
                 Forms\Components\TextInput::make('memory')
+                    ->label(trans('strings.memory'))
                     ->required()
                     ->numeric(),
                 Forms\Components\TextInput::make('memory_overallocate')
@@ -38,6 +39,7 @@ class NodeResource extends Resource
                     ->numeric()
                     ->default(0),
                 Forms\Components\TextInput::make('disk')
+                    ->label(trans('strings.disk'))
                     ->required()
                     ->numeric(),
                 Forms\Components\TextInput::make('disk_overallocate')
@@ -97,6 +99,7 @@ class NodeResource extends Resource
                     ->state(fn (Node $node) => $node)
                     ->view('livewire.columns.version-column'),
                 Tables\Columns\TextColumn::make('name')
+                    ->label(trans('strings.name'))
                     ->icon('tabler-server-2')
                     ->sortable()
                     ->searchable(),
@@ -108,6 +111,7 @@ class NodeResource extends Resource
                     ->searchable(),
                 Tables\Columns\TextColumn::make('memory')
                     ->visibleFrom('sm')
+                    ->label(trans('strings.memory'))
                     ->icon('tabler-device-desktop-analytics')
                     ->numeric()
                     ->suffix(' GB')
@@ -115,6 +119,7 @@ class NodeResource extends Resource
                     ->sortable(),
                 Tables\Columns\TextColumn::make('disk')
                     ->visibleFrom('sm')
+                    ->label(trans('strings.disk'))
                     ->icon('tabler-file')
                     ->numeric()
                     ->suffix(' GB')
