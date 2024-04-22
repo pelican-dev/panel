@@ -194,7 +194,7 @@ class EditNode extends EditRecord
                                         ->maxValue(65535)
                                         ->numeric(),
                                     Forms\Components\TextInput::make('ip_alias')
-                                        ->placeholder('mincraft.pelican.dev')
+                                        ->placeholder('minecraft.pelican.dev')
                                         ->columnSpan([
                                             'default' => 1,
                                             'sm' => 2,
