@@ -51,6 +51,7 @@ class EggResource extends Resource
                             Forms\Components\Textarea::make('startup')
                                 ->rows(2)
                                 ->columnSpanFull()
+                                ->required()
                                 ->helperText('The default startup command that should be used for new servers using this Egg.'),
                             Forms\Components\TagsInput::make('file_denylist')
                                 ->placeholder('denied-file.txt')
@@ -72,6 +73,7 @@ class EggResource extends Resource
                                 ->columnSpan(['default' => 1, 'sm' => 1, 'md' => 2, 'lg' => 2]),
                             Forms\Components\KeyValue::make('docker_images')
                                 ->columnSpanFull()
+                                ->required()
                                 ->addActionLabel('Add Image')
                                 ->keyLabel('Name')
                                 ->valueLabel('Image URI')
@@ -105,18 +107,14 @@ class EggResource extends Resource
                         ->columns(2)
                         ->schema([
                             Forms\Components\Repeater::make('variables')
-<<<<<<< HEAD
                                 ->grid()
-=======
-                                ->grid(3)
->>>>>>> 0f360fcdd1fa5ab9d0ae87afeeb30061a5b6b4c9
                                 ->relationship('variables')
                                 ->name('name')
                                 ->columns(2)
                                 ->reorderable()
-                                // ->reorderableWithDragAndDrop()
                                 ->collapsible()
                                 ->collapsed()
+                                ->orderColumn()
                                 ->columnSpan(2)
                                 ->itemLabel(fn (array $state) => $state['name'])
                                 ->mutateRelationshipDataBeforeCreateUsing(function (array $data): array {
