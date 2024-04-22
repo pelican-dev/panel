@@ -2,8 +2,8 @@
 
 return [
     'email' => 'Email',
-    'email_address' => 'Email address',
-    'user_identifier' => 'Username or Email',
+    'email_address' => 'Indirizzo e-mail',
+    'user_identifier' => 'Nome utente o Email',
     'password' => 'Password',
     'new_password' => 'New password',
     'confirm_password' => 'Confirm new password',
