@@ -105,10 +105,12 @@ class EggResource extends Resource
                                 ->schema([
                                     Forms\Components\TextInput::make('name')
                                         ->live()
-                                        ->debounce(1000)
+                                        ->debounce(750)
                                         ->maxLength(191)
                                         ->columnSpanFull()
-                                        ->afterStateUpdated(fn (Forms\Set $set, $state) => $set('env_variable', str($state)->trim()->snake()->upper()))
+                                        ->afterStateUpdated(fn (Forms\Set $set, $state) =>
+                                            $set('env_variable', str($state)->trim()->snake()->upper()->toString())
+                                        )
                                         ->required(),
                                     Forms\Components\Textarea::make('description')->columnSpanFull(),
                                     Forms\Components\TextInput::make('env_variable')
