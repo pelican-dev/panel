@@ -109,8 +109,10 @@ class EggResource extends Resource
                                 ->relationship('variables')
                                 ->name('name')
                                 ->columns(2)
-                                ->reorderable()->reorderableWithDragAndDrop()
-                                ->collapsible()->collapsed()
+                                ->reorderable()
+                                // ->reorderableWithDragAndDrop()
+                                ->collapsible()
+                                ->collapsed()
                                 ->columnSpan(2)
                                 ->itemLabel(fn (array $state) => $state['name'])
                                 ->schema([
