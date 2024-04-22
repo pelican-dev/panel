@@ -113,7 +113,6 @@ return [
     'enable' => 'Enable',
     'disable' => 'Disable',
     'save' => 'Save',
-    'copyright' => '&reg; 2024 - :year Pelican',
     'error' => 'Error',
     'error_rendering_view' => 'An error was encountered by the application while rendering this view. Try refreshing the page.',
     'okay' => 'Okay',

@@ -5,7 +5,7 @@ return [
         'management' => [
             'header' => 'Beheer',
             'overview' => 'Overzicht',
-            'databases' => 'Databasen',
+            'databases' => 'Databases',
             'nodes' => 'Nodes',
             'servers' => 'Servers',
             'users' => 'Gebruikers',

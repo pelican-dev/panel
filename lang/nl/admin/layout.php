@@ -2,9 +2,9 @@
 
 return [
     'navbar' => [
-        'toggle-navigation' => 'Toggle navigation',
+        'toggle-navigation' => 'Schakel navigatie',
         'user-image' => 'Gebruikers Afbeelding',
-        'exit-admin-control' => 'Verlaat Admin Control',
+        'exit-admin-control' => 'Verlaat Admin Beheer',
         'logout' => 'Log uit',
     ],
     'logout' => [
