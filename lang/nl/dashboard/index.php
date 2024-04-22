@@ -15,6 +15,8 @@ return [
             'heading' => 'Informatie voor Ontwikkelaars',
             'content' => 'Bedankt voor het uitproberen van de ontwikkelingsversie!',
             'extra_note' => 'Als je problemen tegenkomt, kunt je deze melden op GitHub.',
+            'button_issues' => 'Probleem Melden',
+            'button_features' => 'Bespreek Ideeën',
             'button_label' => 'Rapporteer probleem op GitHub',
         ],
         'intro-first-node' => [
@@ -26,13 +28,14 @@ return [
             'heading' => 'Ondersteun Pelican',
             'content' => 'Bedankt dat je Pelican gebruikt, dit kon alleen worden bereikt door de steun van jou, onze bijdragers en de rest van onze supporters!',
             'extra_note' => 'Wij waarderen alle steun van wie dan ook.',
-            'button_label' => 'Doneer Direct',
+            'button_translate' => 'Help Vertalen',
+            'button_donate' => 'Doneer Direct',
         ],
         'intro-help' => [
             'heading' => 'Hulp nodig?',
             'content' => 'Bekijk eerst de documentatie! Als je nog steeds hulp nodig hebt, vlieg dan naar onze Discord-server!',
-            'button1_label' => 'Lees Documentatie',
-            'button2_label' => 'Krijg Hulp in Discord',
+            'button_docs' => 'Lees Documentatie',
+            'button_discord' => 'Krijg Hulp in Discord',
         ],
     ],
 
