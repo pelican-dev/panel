@@ -22,6 +22,6 @@ return [
     ],
 
     'throttle' => 'Παρα πολλές προσπάθειες σύνδεσης. Παρακαλώ δοκιμάστε ξανά σε :seconds δευτερόλεπτα.',
-    'password_requirements' => 'Password must be at least 8 characters in length and should be unique to this site.',
-    '2fa_must_be_enabled' => 'The administrator has required that 2-Factor Authentication be enabled for your account in order to use the Panel.',
+    'password_requirements' => 'Ο κωδικός πρόσβασης πρέπει να είναι τουλάχιστον 8 χαρακτήρες σε μήκος και θα πρέπει να είναι μοναδικός σε αυτό το site.',
+    '2fa_must_be_enabled' => 'Ο διαχειριστής απαιτεί την ενεργοποίηση του ελέγχου ταυτότητας 2 παραγόντων για το λογαριασμό σας για να χρησιμοποιήσετε το panel.',
 ];
