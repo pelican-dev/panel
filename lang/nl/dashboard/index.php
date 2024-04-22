@@ -7,8 +7,7 @@ return [
     'no-other-servers' => 'Er zijn geen andere servers om weer te geven.',
     'no-servers-associated' => 'Er zijn geen servers aan jouw account gekoppeld.',
 
-    'content_tabs' => 'Content tabladen',
-    'overview' => "Overzicht:",
+    'overview' => 'Overzicht:',
     'heading' => 'Welkom bij Pelican!',
     'expand_sections' => 'Je kunt de volgende secties uitklappen:',
     'sections' => [

@@ -79,6 +79,7 @@ class AccountController extends ClientApiController
     public function getLocale(Request $request): JsonResponse
     {
         $original = $request->user()->language;
+
         return new JsonResponse($original);
     }
 }
