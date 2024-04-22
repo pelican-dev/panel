@@ -6,7 +6,7 @@ return [
         'user_is_self' => 'Cannot delete your own user account.',
     ],
     'notices' => [
-        'account_created' => 'Account has been created successfully.',
-        'account_updated' => 'Account has been successfully updated.',
+        'account_created' => 'Akun telah berhasil dibuat',
+        'account_updated' => 'Akun telah berhasil diperbarui',
     ],
 ];
