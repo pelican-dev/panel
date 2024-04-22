@@ -16,12 +16,12 @@ return [
     ],
 
     'two_factor' => [
-        'label' => '2-Factor Token',
+        'label' => '2-Faktor Token',
         'label_help' => 'Denne konto kræver en anden form for godkendelse for at fortsætte. Indtast venligst koden genereret af din enhed for at fuldføre dette login.',
-        'checkpoint_failed' => '2-factor godkendelses-token var ugyldig.',
+        'checkpoint_failed' => '2-faktor godkendelses-token var ugyldig.',
     ],
 
     'throttle' => 'For mange login forsøg. Prøv igen om :sekunder sekunder.',
     'password_requirements' => 'Adgangskoden skal være mindst 8 tegn lang og bør være unik for dette website.',
-    '2fa_must_be_enabled' => 'Administratoren har krævet, at 2-factor godkendelse skal være aktiveret for din konto for at bruge panelet.',
+    '2fa_must_be_enabled' => 'Administratoren har krævet, at 2-faktor godkendelse skal være aktiveret for din konto for at bruge panelet.',
 ];
