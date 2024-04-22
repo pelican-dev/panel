@@ -76,11 +76,11 @@ return [
             'delete_one' => 'Eliminato :directory:files.0',
             'delete_other' => 'Eliminati :count file in :directory',
             'download' => 'Scaricato :file',
-            'pull' => 'Downloaded a remote file from :url to :directory',
+            'pull' => 'Scarica il remoto da :url alla :directory',
             'rename_one' => 'Renamed :directory:files.0.from to :directory:files.0.to',
             'rename_other' => 'Renamed :count files in :directory',
             'write' => 'Wrote new content to :file',
-            'upload' => 'Began a file upload',
+            'upload' => 'Iniziato il caricamento di un file',
             'uploaded' => 'Uploaded :directory:file',
         ],
         'sftp' => [
