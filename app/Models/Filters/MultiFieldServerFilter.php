@@ -61,7 +61,7 @@ class MultiFieldServerFilter implements Filter
             ->where(function (Builder $builder) use ($value) {
                 $builder->where('servers.uuid', $value)
                     ->orWhere('servers.uuid', 'LIKE', "$value%")
-                    ->orWhere('servers.uuidShort', $value)
+                    ->orWhere('servers.uuid_short', $value)
                     ->orWhere('servers.external_id', $value)
                     ->orWhereRaw('LOWER(servers.name) LIKE ?', ["%$value%"]);
             });

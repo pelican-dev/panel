@@ -24,7 +24,7 @@ return [
     */
 
     'service' => [
-        'author' => env('APP_SERVICE_AUTHOR', 'unknown@unknown.com'),
+        'author' => env('APP_SERVICE_AUTHOR', 'unknown@example.com'),
     ],
 
     /*

@@ -1,0 +1,33 @@
+<?php
+
+return [
+    'permissions' => [
+        'websocket_*' => 'Umožňuje prístup k websocketu pre tento server.',
+        'control_console' => 'Umožňuje používateľovi odosielať údaje do konzoly servera.',
+        'control_start' => 'Umožňuje používateľovi spustiť server.',
+        'control_stop' => 'Umožňuje používateľovi zastaviť server.',
+        'control_restart' => 'Umožňuje používateľovi reštartovať server.',
+        'control_kill' => 'Umožňuje používateľovi zabiť server.',
+        'user_create' => 'Umožňuje používateľovi vytvárať nové používateľské účty pre server.',
+        'user_read' => 'Umožňuje používateľovi zobraziť používateľov priradených k tomuto serveru.',
+        'user_update' => 'Umožňuje používateľovi upravovať ostatných používateľov priradených k tomuto serveru.',
+        'user_delete' => 'Umožňuje používateľovi odstrániť ostatných používateľov priradených k tomuto serveru.',
+        'file_create' => 'Umožňuje používateľovi vytvárať nové súbory a adresáre.',
+        'file_read' => 'Umožňuje používateľovi vidieť súbory a priečinky spojené s touto inštanciou servera, ako aj zobraziť ich obsah.',
+        'file_update' => 'Umožňuje používateľovi aktualizovať súbory a priečinky priradené k serveru.',
+        'file_delete' => 'Umožňuje užívateľovi mazať súbory a adresáre.',
+        'file_archive' => 'Umožňuje používateľovi vytvárať archívy súborov a dekomprimovať existujúce archívy.',
+        'file_sftp' => 'Umožňuje používateľovi vykonávať vyššie uvedené akcie so súbormi pomocou klienta SFTP.',
+        'allocation_read' => 'Umožňuje prístup k stránkam správy prideľovania serverov.',
+        'allocation_update' => 'Umožňuje používateľovi vykonávať úpravy pridelení servera.',
+        'database_create' => 'Umožňuje používateľovi vytvoriť novú databázu pre server.',
+        'database_read' => 'Umožňuje používateľovi prezerať databázy servera.',
+        'database_update' => 'Umožňuje používateľovi vykonávať úpravy v databáze. Ak používateľ nemá povolenie "Zobraziť heslo", nebude môcť heslo zmeniť.',
+        'database_delete' => 'Umožňuje používateľovi vymazať inštanciu databázy.',
+        'database_view_password' => 'Umožňuje používateľovi zobraziť heslo databázy v systéme.',
+        'schedule_create' => 'Umožňuje používateľovi vytvoriť nový časovač pre server.',
+        'schedule_read' => 'Umožňuje používateľovi zobraziť časovače pre server.',
+        'schedule_update' => 'Umožňuje používateľovi vykonávať úpravy existujúceho časovača.',
+        'schedule_delete' => 'Umožňuje používateľovi odstrániť časovač pre server.',
+    ],
+];

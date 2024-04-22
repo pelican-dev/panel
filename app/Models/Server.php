@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\ServerState;
 use App\Exceptions\Http\Connection\DaemonConnectionException;
 use GuzzleHttp\Exception\GuzzleException;
 use Illuminate\Notifications\Notifiable;
@@ -21,7 +22,7 @@ use App\Exceptions\Http\Server\ServerStateConflictException;
  * @property int $id
  * @property string|null $external_id
  * @property string $uuid
- * @property string $uuidShort
+ * @property string $uuid_short
  * @property int $node_id
  * @property string $name
  * @property string $description
@@ -98,7 +99,7 @@ use App\Exceptions\Http\Server\ServerStateConflictException;
  * @method static \Illuminate\Database\Eloquent\Builder|Server whereThreads($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Server whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Server whereUuid($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Server whereUuidShort($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Server whereuuid_short($value)
  *
  * @mixin \Eloquent
  */
@@ -112,12 +113,6 @@ class Server extends Model
      */
     public const RESOURCE_NAME = 'server';
 
-    public const STATUS_INSTALLING = 'installing';
-    public const STATUS_INSTALL_FAILED = 'install_failed';
-    public const STATUS_REINSTALL_FAILED = 'reinstall_failed';
-    public const STATUS_SUSPENDED = 'suspended';
-    public const STATUS_RESTORING_BACKUP = 'restoring_backup';
-
     /**
      * The table associated with the model.
      */
@@ -128,7 +123,7 @@ class Server extends Model
      * on server instances unless the user specifies otherwise in the request.
      */
     protected $attributes = [
-        'status' => self::STATUS_INSTALLING,
+        'status' => ServerState::Installing,
         'oom_disabled' => true,
         'installed_at' => null,
     ];
@@ -152,7 +147,7 @@ class Server extends Model
         'status' => 'nullable|string',
         'memory' => 'required|numeric|min:0',
         'swap' => 'required|numeric|min:-1',
-        'io' => 'required|numeric|between:10,1000',
+        'io' => 'required|numeric|between:0,1000',
         'cpu' => 'required|numeric|min:0',
         'threads' => 'nullable|regex:/^[0-9-,]+$/',
         'oom_disabled' => 'sometimes|boolean',
@@ -171,6 +166,7 @@ class Server extends Model
     {
         return [
             'node_id' => 'integer',
+            'status' => ServerState::class,
             'skip_scripts' => 'boolean',
             'owner_id' => 'integer',
             'memory' => 'integer',
@@ -203,12 +199,12 @@ class Server extends Model
 
     public function isInstalled(): bool
     {
-        return $this->status !== self::STATUS_INSTALLING && $this->status !== self::STATUS_INSTALL_FAILED;
+        return $this->status !== ServerState::Installing && $this->status !== ServerState::InstallFailed;
     }
 
     public function isSuspended(): bool
     {
-        return $this->status === self::STATUS_SUSPENDED;
+        return $this->status === ServerState::Suspended;
     }
 
     /**
@@ -251,6 +247,11 @@ class Server extends Model
         return $this->hasOne(Egg::class, 'id', 'egg_id');
     }
 
+    public function eggVariables(): HasMany
+    {
+        return $this->hasMany(EggVariable::class, 'egg_id', 'egg_id');
+    }
+
     /**
      * Gets information for the egg variables associated with this server.
      */
@@ -265,6 +266,11 @@ class Server extends Model
                 $join->on('server_variables.variable_id', 'egg_variables.id')
                     ->where('server_variables.server_id', $this->id);
             });
+    }
+
+    public function serverVariables(): HasMany
+    {
+        return $this->hasMany(ServerVariable::class);
     }
 
     /**
@@ -323,7 +329,7 @@ class Server extends Model
     public function resolveRouteBinding($value, $field = null): ?self
     {
         return match ($field) {
-            'uuid' => $this->where('uuidShort', $value)->orWhere('uuid', $value)->firstOrFail(),
+            'uuid' => $this->where('uuid_short', $value)->orWhere('uuid', $value)->firstOrFail(),
             default => $this->where('id', $value)->firstOrFail(),
         };
     }
@@ -349,7 +355,7 @@ class Server extends Model
             $this->isSuspended() ||
             $this->node->isUnderMaintenance() ||
             !$this->isInstalled() ||
-            $this->status === self::STATUS_RESTORING_BACKUP ||
+            $this->status === ServerState::RestoringBackup ||
             !is_null($this->transfer)
         ) {
             throw new ServerStateConflictException($this);
@@ -366,7 +372,7 @@ class Server extends Model
     {
         if (
             !$this->isInstalled() ||
-            $this->status === self::STATUS_RESTORING_BACKUP ||
+            $this->status === ServerState::RestoringBackup ||
             !is_null($this->transfer)
         ) {
             throw new ServerStateConflictException($this);
@@ -387,5 +393,10 @@ class Server extends Model
         } catch (GuzzleException $exception) {
             throw new DaemonConnectionException($exception);
         }
+    }
+
+    public function retrieveStatus()
+    {
+        return $this->node->serverStatuses();
     }
 }

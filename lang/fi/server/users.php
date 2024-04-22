@@ -1,0 +1,33 @@
+<?php
+
+return [
+    'permissions' => [
+        'websocket_*' => 'Mahdollistaa pääsyn WebSocketiin tälle palvelimelle.',
+        'control_console' => 'Salli käyttäjän lähettää tietoja palvelimen konsolille.',
+        'control_start' => 'Salli käyttäjän käynnistää palvelin instanssi.',
+        'control_stop' => 'Salli käyttäjän pysäyttää palvelimen instanssi.',
+        'control_restart' => 'Salli käyttäjän käynnistää palvelimen instanssi uudelleen.',
+        'control_kill' => 'Salli käyttäjän tappaa palvelimen instanssi.',
+        'user_create' => 'Salli käyttäjän luoda uusia käyttäjiä palvelimelle.',
+        'user_read' => 'Salli käyttäjäoikeus tarkastella käyttäjiä jotka on liitetty tähän palvelimeen.',
+        'user_update' => 'Salli käyttäjän muokata muita käyttäjiä jotka liittyvät tähän palvelimeen.',
+        'user_delete' => 'Salli käyttäjän poistaa muita käyttäjiä, jotka on liitetty tähän palvelimeen.',
+        'file_create' => 'Salli käyttäjäoikeuden luoda uusia tiedostoja ja kansioita.',
+        'file_read' => 'Sallii käyttäjän nähdä tämän palvelimen instanssiin liittyvät tiedostot ja kansiot sekä tarkastella niiden sisältöä.',
+        'file_update' => 'Salli käyttäjän päivittää palvelimeen liittyviä tiedostoja ja kansioita.',
+        'file_delete' => 'Salli käyttäjän poistaa tiedostoja ja kansioita.',
+        'file_archive' => 'Salli käyttäjän luoda tiedostoarkistoja ja purkaa olemassa olevat arkistot.',
+        'file_sftp' => 'Salli käyttäjän suorittaa edellä mainitut tiedostotoiminnot SFTP-asiakkaan avulla.',
+        'allocation_read' => 'Sallii pääsyn palvelimen allokoinnin hallintasivuille.',
+        'allocation_update' => 'Sallii käyttäjän oikeuden tehdä muutoksia palvelimen allokaatioihin.',
+        'database_create' => 'Sallii käyttäjän oikeuden luoda uuden tietokannan palvelimelle.',
+        'database_read' => 'Sallii käyttäjän oikeuden tarkastella palvelimen tietokantoja.',
+        'database_update' => 'Sallii käyttäjän oikeuden tehdä muutoksia tietokantaan. Jos käyttäjällä ei ole "Näytä salasana" käyttöoikeutta sekä, he eivät voi muokata salasanaa.',
+        'database_delete' => 'Sallii käyttäjän oikeuden poistaa tietokannan instanssin.',
+        'database_view_password' => 'Sallii käyttäjän oikeuden tarkastella tietokannan salasanaa järjestelmässä.',
+        'schedule_create' => 'Sallii käyttäjän luoda uuden aikataulun palvelimelle.',
+        'schedule_read' => 'Sallii käyttäjän oikeuden tarkastella aikatauluja palvelimelle.',
+        'schedule_update' => 'Sallii käyttäjän oikeuden tehdä muutoksia olemassa olevaan palvelimen aikatauluun.',
+        'schedule_delete' => 'Sallii käyttäjän poistaa aikataulun palvelimelta.',
+    ],
+];

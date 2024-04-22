@@ -1,0 +1,33 @@
+<?php
+
+return [
+    'permissions' => [
+        'websocket_*' => 'Websocketへのアクセスを許可します。',
+        'control_console' => 'コンソールへのデータ送信を許可します。',
+        'control_start' => 'サーバーの起動を許可します。',
+        'control_stop' => 'サーバーの停止を許可します。',
+        'control_restart' => 'サーバーの再起動を許可します。',
+        'control_kill' => 'サーバーの強制終了を許可します。',
+        'user_create' => 'サブユーザーの作成を許可します。',
+        'user_read' => 'サブユーザーの閲覧を許可します。',
+        'user_update' => 'サブユーザーの権限の変更を許可します。',
+        'user_delete' => 'サブユーザーの削除を許可します。',
+        'file_create' => 'ファイル・ディレクトリの作成を許可します。',
+        'file_read' => 'ファイル・ディレクトリの閲覧を許可します。',
+        'file_update' => 'ファイル・ディレクトリの編集を許可します。',
+        'file_delete' => 'ファイル・ディレクトリの削除を許可します。',
+        'file_archive' => 'ファイル・ディレクトリの展開、圧縮を許可します。',
+        'file_sftp' => 'SFTPでのアクセスを許可します。',
+        'allocation_read' => '割り当ての閲覧を許可します。',
+        'allocation_update' => '割り当ての変更を許可します。',
+        'database_create' => 'データベースの作成を許可します。',
+        'database_read' => 'データベースの閲覧を許可します。',
+        'database_update' => 'データベースの変更を許可します。（「パスワードの閲覧」権限がない場合、パスワードを変更できません。）',
+        'database_delete' => 'データベースの削除を許可します。',
+        'database_view_password' => 'データベースのパスワードの閲覧を許可します。',
+        'schedule_create' => 'スケジュールの作成を許可します。',
+        'schedule_read' => 'スケジュールの閲覧を許可します。',
+        'schedule_update' => 'スケジュールの変更を許可します。',
+        'schedule_delete' => 'スケジュールの削除を許可します。',
+    ],
+];

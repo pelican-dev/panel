@@ -2,12 +2,12 @@
 
 namespace App\Http\Controllers\Admin\Servers;
 
+use App\Enums\ServerState;
 use App\Models\DatabaseHost;
 use App\Models\Egg;
 use App\Models\Mount;
 use App\Models\Node;
 use Illuminate\View\View;
-use Illuminate\Http\Request;
 use App\Models\Server;
 use App\Exceptions\DisplayException;
 use App\Http\Controllers\Controller;
@@ -22,14 +22,14 @@ class ServerViewController extends Controller
      * ServerViewController constructor.
      */
     public function __construct(
-        private EnvironmentService $environmentService,
+        private readonly EnvironmentService $environmentService,
     ) {
     }
 
     /**
      * Returns the index view for a server.
      */
-    public function index(Request $request, Server $server): View
+    public function index(Server $server): View
     {
         return view('admin.servers.view.index', compact('server'));
     }
@@ -37,7 +37,7 @@ class ServerViewController extends Controller
     /**
      * Returns the server details page.
      */
-    public function details(Request $request, Server $server): View
+    public function details(Server $server): View
     {
         return view('admin.servers.view.details', compact('server'));
     }
@@ -45,7 +45,7 @@ class ServerViewController extends Controller
     /**
      * Returns a view of server build settings.
      */
-    public function build(Request $request, Server $server): View
+    public function build(Server $server): View
     {
         $allocations = $server->node->allocations->toBase();
 
@@ -59,7 +59,7 @@ class ServerViewController extends Controller
     /**
      * Returns the server startup management page.
      */
-    public function startup(Request $request, Server $server): View
+    public function startup(Server $server): View
     {
         $variables = $this->environmentService->handle($server);
         $eggs = Egg::all()->keyBy('id');
@@ -76,7 +76,7 @@ class ServerViewController extends Controller
     /**
      * Returns all the databases that exist for the server.
      */
-    public function database(Request $request, Server $server): View
+    public function database(Server $server): View
     {
         return view('admin.servers.view.database', [
             'hosts' => DatabaseHost::all(),
@@ -87,7 +87,7 @@ class ServerViewController extends Controller
     /**
      * Returns all the mounts that exist for the server.
      */
-    public function mounts(Request $request, Server $server): View
+    public function mounts(Server $server): View
     {
         $server->load('mounts');
 
@@ -108,9 +108,9 @@ class ServerViewController extends Controller
      *
      * @throws \App\Exceptions\DisplayException
      */
-    public function manage(Request $request, Server $server): View
+    public function manage(Server $server): View
     {
-        if ($server->status === Server::STATUS_INSTALL_FAILED) {
+        if ($server->status === ServerState::InstallFailed) {
             throw new DisplayException('This server is in a failed install state and cannot be recovered. Please delete and re-create the server.');
         }
 
@@ -135,7 +135,7 @@ class ServerViewController extends Controller
     /**
      * Returns the server deletion page.
      */
-    public function delete(Request $request, Server $server): View
+    public function delete(Server $server): View
     {
         return view('admin.servers.view.delete', compact('server'));
     }

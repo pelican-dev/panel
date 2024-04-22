@@ -27,7 +27,7 @@ class SubuserObserver
         $subuser->user->notify(new AddedToServer([
             'user' => $subuser->user->name_first,
             'name' => $subuser->server->name,
-            'uuidShort' => $subuser->server->uuidShort,
+            'uuid_short' => $subuser->server->uuid_short,
         ]));
     }
 

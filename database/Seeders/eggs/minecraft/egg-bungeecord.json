@@ -14,10 +14,10 @@
         "pid_limit"
     ],
     "docker_images": {
-        "Java 17": "ghcr.io\/App\/yolks:java_17",
-        "Java 16": "ghcr.io\/App\/yolks:java_16",
-        "Java 11": "ghcr.io\/App\/yolks:java_11",
-        "Java 8": "ghcr.io\/App\/yolks:java_8"
+        "Java 17": "ghcr.io\/pterodactyl\/yolks:java_17",
+        "Java 16": "ghcr.io\/pterodactyl\/yolks:java_16",
+        "Java 11": "ghcr.io\/pterodactyl\/yolks:java_11",
+        "Java 8": "ghcr.io\/pterodactyl\/yolks:java_8"
     },
     "file_denylist": [],
     "startup": "java -Xms128M -XX:MaxRAMPercentage=95.0 -jar {{SERVER_JARFILE}}",
@@ -30,7 +30,7 @@
     "scripts": {
         "installation": {
             "script": "#!\/bin\/ash\r\n# Bungeecord Installation Script\r\n#\r\n# Server Files: \/mnt\/server\r\n\r\ncd \/mnt\/server\r\n\r\nif [ -z \"${BUNGEE_VERSION}\" ] || [ \"${BUNGEE_VERSION}\" == \"latest\" ]; then\r\n    BUNGEE_VERSION=\"lastStableBuild\"\r\nfi\r\n\r\ncurl -o ${SERVER_JARFILE} https:\/\/ci.md-5.net\/job\/BungeeCord\/${BUNGEE_VERSION}\/artifact\/bootstrap\/target\/BungeeCord.jar",
-            "container": "ghcr.io\/App\/installers:alpine",
+            "container": "ghcr.io\/pterodactyl\/installers:alpine",
             "entrypoint": "ash"
         }
     },

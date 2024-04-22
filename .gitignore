@@ -34,3 +34,7 @@ resources/lang/locales.js
 /public/hot
 result
 docker-compose.yaml
+
+public/css/filament-monaco-editor/
+
+public/js/filament-monaco-editor/

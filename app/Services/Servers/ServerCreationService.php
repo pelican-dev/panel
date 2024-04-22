@@ -2,6 +2,7 @@
 
 namespace App\Services\Servers;
 
+use App\Enums\ServerState;
 use App\Models\ServerVariable;
 use Ramsey\Uuid\Uuid;
 use Illuminate\Support\Arr;
@@ -128,11 +129,11 @@ class ServerCreationService
         return Server::create([
             'external_id' => Arr::get($data, 'external_id'),
             'uuid' => $uuid,
-            'uuidShort' => substr($uuid, 0, 8),
+            'uuid_short' => substr($uuid, 0, 8),
             'node_id' => Arr::get($data, 'node_id'),
             'name' => Arr::get($data, 'name'),
             'description' => Arr::get($data, 'description') ?? '',
-            'status' => Server::STATUS_INSTALLING,
+            'status' => ServerState::Installing,
             'skip_scripts' => Arr::get($data, 'skip_scripts') ?? isset($data['skip_scripts']),
             'owner_id' => Arr::get($data, 'owner_id'),
             'memory' => Arr::get($data, 'memory'),
@@ -193,7 +194,7 @@ class ServerCreationService
         $uuid = Uuid::uuid4()->toString();
 
         $shortUuid = str($uuid)->substr(0, 8);
-        if (Server::query()->where('uuid', $uuid)->orWhere('uuidShort', $shortUuid)->exists()) {
+        if (Server::query()->where('uuid', $uuid)->orWhere('uuid_short', $shortUuid)->exists()) {
             return $this->generateUniqueUuidCombo();
         }
 

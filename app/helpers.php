@@ -11,6 +11,13 @@ if (!function_exists('is_digit')) {
     }
 }
 
+if (!function_exists('is_ip')) {
+    function is_ip(?string $address): bool
+    {
+        return $address !== null && filter_var($address, FILTER_VALIDATE_IP) !== false;
+    }
+}
+
 if (!function_exists('object_get_strict')) {
     /**
      * Get an object using dot notation. An object key with a value of null is still considered valid

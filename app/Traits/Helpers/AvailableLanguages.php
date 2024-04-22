@@ -35,8 +35,8 @@ trait AvailableLanguages
         return collect($this->getFilesystemInstance()->directories(base_path('lang')))->mapWithKeys(function ($path) {
             $code = basename($path);
 
-            $value = Locale::getDisplayName($code, app()->currentLocale());
-            
+            $value = Locale::getDisplayName($code, $code);
+
             return [$code => title_case($value)];
         })->toArray();
     }    
@@ -50,6 +50,11 @@ trait AvailableLanguages
         }, ARRAY_FILTER_USE_KEY);
         
         return $filteredLanguages;
+    }
+
+    public function isLanguageTranslated(string $countryCode = 'en'): bool
+    {
+        return in_array($countryCode, self::TRANSLATED, true);
     }
 
     /**
