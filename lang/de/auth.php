@@ -22,6 +22,6 @@ return [
     ],
 
     'throttle' => 'Zu viele Anmeldeversuche. Bitte versuche es in :seconds Sekunden erneut.',
-    'password_requirements' => 'Das Passwort muss mindestens 8 Zeichen lang sein und sollte auf dieser Seite eindeutig sein.',
-    '2fa_must_be_enabled' => 'Der Administrator hat festgelegt, dass die 2-Faktor-Authentifizierung für deinen Account angeschaltet sein muss, damit du dieses Panel nutzen kannst.',
+    'password_requirements' => 'Das Passwort muss mindestens 8 Zeichen lang sein und sollte auf dieser Seite einzigartig sein.',
+    '2fa_must_be_enabled' => 'Der Administrator hat festgelegt, dass die 2-Faktor-Authentifizierung für deinen Account aktiviert sein muss, damit du das Panel nutzen kannst.',
 ];
