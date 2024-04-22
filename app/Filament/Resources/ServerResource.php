@@ -597,7 +597,6 @@ class ServerResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
-            ->searchable()
             ->columns([
                 Tables\Columns\TextColumn::make('status')
                     ->default('unknown')
@@ -642,7 +641,6 @@ class ServerResource extends Resource
                     ->sortable(),
                 Tables\Columns\TextColumn::make('node.name')
                     ->icon('tabler-server-2')
-                    ->searchable()
                     ->url(fn (Server $server): string => route('filament.admin.resources.nodes.edit', ['record' => $server->node]))
                     ->sortable(),
                 Tables\Columns\TextColumn::make('egg.name')

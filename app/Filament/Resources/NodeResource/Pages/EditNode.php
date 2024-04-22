@@ -220,7 +220,6 @@ class EditNode extends EditRecord
                                         ->placeholder('Not assigned'),
                                 ]),
                         ]),
-
                 ]),
         ]);
     }
