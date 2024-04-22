@@ -79,7 +79,7 @@ return [
             'pull' => 'Scarica il remoto da :url alla :directory',
             'rename_one' => 'Renamed :directory:files.0.from to :directory:files.0.to',
             'rename_other' => 'Renamed :count files in :directory',
-            'write' => 'Wrote new content to :file',
+            'write' => 'Scritto nuovi contenuti in :file',
             'upload' => 'Iniziato il caricamento di un file',
             'uploaded' => 'Uploaded :directory:file',
         ],
