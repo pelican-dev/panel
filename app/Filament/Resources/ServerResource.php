@@ -616,6 +616,7 @@ class ServerResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
+            ->searchable(false)
             ->columns([
                 Tables\Columns\TextColumn::make('status')
                     ->default('unknown')

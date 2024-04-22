@@ -182,6 +182,7 @@ class EggResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
+            ->searchable(false)
             ->defaultPaginationPageOption(25)
             ->checkIfRecordIsSelectableUsing(fn (Egg $egg) => $egg->servers_count <= 0)
             ->columns([
