@@ -91,5 +91,5 @@ return [
     'enable' => 'Aktif',
     'disable' => 'Kapalı',
     'save' => 'Kaydet',
-    'copyright' => '&reg; 2024 - :year Pelican / Çeviri : robbinnn(Berke)',
+    'copyright' => '&reg; 2024 - :year Pelican',
 ];

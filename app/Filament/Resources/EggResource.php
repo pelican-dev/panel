@@ -105,12 +105,18 @@ class EggResource extends Resource
                         ->columns(2)
                         ->schema([
                             Forms\Components\Repeater::make('variables')
+<<<<<<< HEAD
                                 ->grid()
+=======
+                                ->grid(3)
+>>>>>>> 0f360fcdd1fa5ab9d0ae87afeeb30061a5b6b4c9
                                 ->relationship('variables')
                                 ->name('name')
                                 ->columns(2)
-                                ->reorderable()->reorderableWithDragAndDrop()
-                                ->collapsible()->collapsed()
+                                ->reorderable()
+                                // ->reorderableWithDragAndDrop()
+                                ->collapsible()
+                                ->collapsed()
                                 ->columnSpan(2)
                                 ->itemLabel(fn (array $state) => $state['name'])
                                 ->mutateRelationshipDataBeforeCreateUsing(function (array $data): array {
@@ -130,10 +136,12 @@ class EggResource extends Resource
                                 ->schema([
                                     Forms\Components\TextInput::make('name')
                                         ->live()
-                                        ->debounce(1000)
+                                        ->debounce(750)
                                         ->maxLength(191)
                                         ->columnSpanFull()
-                                        ->afterStateUpdated(fn (Forms\Set $set, $state) => $set('env_variable', str($state)->trim()->snake()->upper()))
+                                        ->afterStateUpdated(fn (Forms\Set $set, $state) =>
+                                            $set('env_variable', str($state)->trim()->snake()->upper()->toString())
+                                        )
                                         ->required(),
                                     Forms\Components\Textarea::make('description')->columnSpanFull(),
                                     Forms\Components\TextInput::make('env_variable')

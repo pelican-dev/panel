@@ -10,7 +10,7 @@ return [
     'auth' => [
         'fail' => 'Nie udało się zalogować',
         'success' => 'Zalogowano',
-        'password-reset' => 'Zmień Hasło',
+        'password-reset' => 'Zresetuj hasło',
         'reset-password' => 'Zażądano zresetowania hasła',
         'checkpoint' => 'Zażądano uwierzytelnienia dwuetapowego',
         'recovery-token' => 'Użyto tokena odzyskiwania uwierzytelnienia dwuetapowego',

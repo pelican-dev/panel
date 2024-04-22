@@ -2,7 +2,7 @@
 
 return [
     'user' => [
-        'search_users' => 'Enter a Username, User ID, or Email Address',
+        'search_users' => 'Kérlek írd ide a Discord felhasználóneved, ID számod, vagy E-mail címed!',
         'select_search_user' => 'ID of user to delete (Enter \'0\' to re-search)',
         'deleted' => 'User successfully deleted from the Panel.',
         'confirm_delete' => 'Are you sure you want to delete this user from the Panel?',
