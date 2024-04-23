@@ -3,6 +3,7 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\NodeResource\Pages;
+use App\Filament\Resources\NodeResource\RelationManagers;
 use App\Models\Node;
 use Filament\Forms;
 use Filament\Forms\Form;
@@ -148,7 +149,7 @@ class NodeResource extends Resource
     public static function getRelations(): array
     {
         return [
-            //
+            RelationManagers\NodesRelationManager::class,
         ];
     }
 

@@ -9,6 +9,7 @@ use App\Models\Allocation;
 use App\Models\Egg;
 use App\Models\Node;
 use App\Models\Server;
+use App\Models\ServerVariable;
 use App\Repositories\Daemon\DaemonServerRepository;
 use App\Services\Allocations\AssignmentService;
 use Closure;
@@ -42,7 +43,7 @@ class ServerResource extends Resource
                 Forms\Components\ToggleButtons::make('docker')
                     ->label('Container Status')
                     ->hiddenOn('create')
-                    ->disableOptionWhen(fn ($state, $value) => $state !== $value)
+                    ->inlineLabel()
                     ->formatStateUsing(function ($state, Server $server) {
                         if ($server->node_id === null) {
                             return 'unknown';
@@ -54,8 +55,8 @@ class ServerResource extends Resource
 
                         return $details['state'] ?? 'unknown';
                     })
-                    ->options(collect(ContainerStatus::cases())->mapWithKeys(
-                        fn (ContainerStatus $status) => [$status->value => str($status->value)->ucwords()]
+                    ->options(fn ($state) => collect(ContainerStatus::cases())->filter(fn ($containerStatus) => $containerStatus->value === $state)->mapWithKeys(
+                        fn (ContainerStatus $state) => [$state->value => str($state->value)->replace('_', ' ')->ucwords()]
                     ))
                     ->colors(collect(ContainerStatus::cases())->mapWithKeys(
                         fn (ContainerStatus $status) => [$status->value => $status->color()]
@@ -63,17 +64,21 @@ class ServerResource extends Resource
                     ->icons(collect(ContainerStatus::cases())->mapWithKeys(
                         fn (ContainerStatus $status) => [$status->value => $status->icon()]
                     ))
-                    ->grouped()
-                    ->columnSpanFull()
+                    ->columnSpan([
+                        'default' => 1,
+                        'sm' => 2,
+                        'md' => 2,
+                        'lg' => 3,
+                    ])
                     ->inline(),
 
                 Forms\Components\ToggleButtons::make('status')
                     ->label('Server State')
                     ->helperText('')
                     ->hiddenOn('create')
-                    ->disableOptionWhen(fn ($state, $value) => $state !== $value)
+                    ->inlineLabel()
                     ->formatStateUsing(fn ($state) => $state ?? ServerState::Normal)
-                    ->options(collect(ServerState::cases())->mapWithKeys(
+                    ->options(fn ($state) => collect(ServerState::cases())->filter(fn ($serverState) => $serverState->value === $state)->mapWithKeys(
                         fn (ServerState $state) => [$state->value => str($state->value)->replace('_', ' ')->ucwords()]
                     ))
                     ->colors(collect(ServerState::cases())->mapWithKeys(
@@ -82,8 +87,12 @@ class ServerResource extends Resource
                     ->icons(collect(ServerState::cases())->mapWithKeys(
                         fn (ServerState $state) => [$state->value => $state->icon()]
                     ))
-                    ->grouped()
-                    ->columnSpanFull()
+                    ->columnSpan([
+                        'default' => 1,
+                        'sm' => 2,
+                        'md' => 2,
+                        'lg' => 3,
+                    ])
                     ->inline(),
 
                 Forms\Components\TextInput::make('external_id')
@@ -419,7 +428,18 @@ class ServerResource extends Resource
                 Forms\Components\Fieldset::make('Application Feature Limits')
                     ->inlineLabel()
                     ->hiddenOn('create')
-                    ->columns(3)
+                    ->columnSpan([
+                        'default' => 2,
+                        'sm' => 4,
+                        'md' => 4,
+                        'lg' => 6,
+                    ])
+                    ->columns([
+                        'default' => 1,
+                        'sm' => 2,
+                        'md' => 3,
+                        'lg' => 3,
+                    ])
                     ->schema([
                         Forms\Components\TextInput::make('allocation_limit')
                             ->suffixIcon('tabler-network')
@@ -486,24 +506,24 @@ class ServerResource extends Resource
                             ->schema([
                                 Forms\Components\TextInput::make('variable_value')
                                     ->rules([
-                                        fn (Forms\Get $get): Closure => function (string $attribute, $value, Closure $fail) use ($get) {
+                                        fn (ServerVariable $variable): Closure => function (string $attribute, $value, Closure $fail) use ($variable) {
                                             $validator = Validator::make(['validatorkey' => $value], [
-                                                'validatorkey' => $get('rules'),
+                                                'validatorkey' => $variable->variable->rules,
                                             ]);
 
                                             if ($validator->fails()) {
-                                                $message = str($validator->errors()->first())->replace('validatorkey', $get('name'));
+                                                $message = str($validator->errors()->first())->replace('validatorkey', $variable->variable->name);
 
                                                 $fail($message);
                                             }
                                         },
                                     ])
-                                    ->label(fn (Forms\Get $get) => $get('name'))
+                                    ->label(fn (ServerVariable $variable) => $variable->variable->name)
                                     //->hint('Rule')
                                     ->hintIcon('tabler-code')
-                                    ->hintIconTooltip(fn (Forms\Get $get) => $get('rules'))
-                                    ->prefix(fn (Forms\Get $get) => '{{' . $get('env_variable') . '}}')
-                                    ->helperText(fn (Forms\Get $get) => empty($get('description')) ? '—' : $get('description'))
+                                    ->hintIconTooltip(fn (ServerVariable $variable) => $variable->variable->rules)
+                                    ->prefix(fn (ServerVariable $variable) => '{{' . $variable->variable->env_variable . '}}')
+                                    ->helperText(fn (ServerVariable $variable) => $variable->variable->description ?: '—')
                                     ->maxLength(191),
 
                                 Forms\Components\Hidden::make('variable_id')->default(0),

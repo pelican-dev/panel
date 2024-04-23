@@ -103,7 +103,7 @@ class EditNode extends EditRecord
                                                         continue;
                                                     }
 
-                                                    // Do not add non numerical ports
+                                                    // Do not add non-numerical ports
                                                     $update = true;
 
                                                     continue;
@@ -194,7 +194,7 @@ class EditNode extends EditRecord
                                         ->maxValue(65535)
                                         ->numeric(),
                                     Forms\Components\TextInput::make('ip_alias')
-                                        ->placeholder('mincraft.pelican.dev')
+                                        ->placeholder('minecraft.pelican.dev')
                                         ->columnSpan([
                                             'default' => 1,
                                             'sm' => 2,
@@ -220,7 +220,6 @@ class EditNode extends EditRecord
                                         ->placeholder('Not assigned'),
                                 ]),
                         ]),
-
                 ]),
         ]);
     }

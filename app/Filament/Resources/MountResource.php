@@ -104,9 +104,6 @@ class MountResource extends Resource
         return $table
             ->searchable(false)
             ->columns([
-                Tables\Columns\TextColumn::make('id')
-                    ->label('')
-                    ->searchable(),
                 Tables\Columns\TextColumn::make('name')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('source')
