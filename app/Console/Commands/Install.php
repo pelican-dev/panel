@@ -2,6 +2,8 @@
 
 namespace App\Console\Commands;
 
+// TODO Translate everything to /lang/en/commands.php
+
 use Illuminate\Console\Command;
 use App\Traits\Commands\EnvironmentWriterTrait;
 use Illuminate\Database\DatabaseManager;
@@ -82,11 +84,11 @@ class Install extends Command
                 __("commands.install.no_second"),
             ]);
             if ($second_question === __("commands.install.yes_second")) {
-                //$this->Command("cp .env.example .env");
-                //$this->Command("composer install --no-dev --optimize-autoloader");
-                //$this->Command("php artisan key:generate --force");
+                $this->Command("cp .env.example .env");
+                $this->Command("composer install --no-dev --optimize-autoloader");
+                $this->Command("php artisan key:generate --force");
                 $this->output->comment("Now we are going to setup your settings.");
-                //$this->setup_settings();
+                $this->setup_settings();
                 $this->output->comment("Now we are going to setup your database.");
                 $database_question = $this->choice(__("commands.install.database_question"), [
                     __("commands.install.yes_database"),
@@ -128,7 +130,7 @@ class Install extends Command
                     $this->output->comment("Now we are going to make a user for your panel");
                     $this->setup_first_user();
                     $this->output->comment("Now some final changes and you are good to go");
-                    //$this->Command("bash /var/www/pelican/app/Console/Commands/Scripts/add_cronjob.sh");
+                    $this->Command("bash /var/www/pelican/app/Console/Commands/Scripts/add_cronjob.sh");
                     $webserver = $this->choice(__("commands.install.webserver_question"), [
                         "NGINX/Apache",
                         "Rocky Linux NGINX",
