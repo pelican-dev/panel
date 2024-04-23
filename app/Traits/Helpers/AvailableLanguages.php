@@ -50,7 +50,7 @@ trait AvailableLanguages
         }, ARRAY_FILTER_USE_KEY);
 
         return $filteredLanguages;
-    }   
+    }
 
     /**
      * Return an instance of the filesystem for getting a folder listing.
