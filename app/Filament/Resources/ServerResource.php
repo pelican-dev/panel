@@ -497,9 +497,7 @@ class ServerResource extends Resource
 
                         Forms\Components\Repeater::make('server_variables')
                             ->relationship('serverVariables')
-                            ->grid(2)
-                            ->reorderable(false)
-                            ->addable(false)
+                            ->grid()
                             ->deletable(false)
                             ->default([])
                             ->hidden(fn ($state) => empty($state))
@@ -519,7 +517,6 @@ class ServerResource extends Resource
                                         },
                                     ])
                                     ->label(fn (ServerVariable $variable) => $variable->variable->name)
-                                    //->hint('Rule')
                                     ->hintIcon('tabler-code')
                                     ->hintIconTooltip(fn (ServerVariable $variable) => $variable->variable->rules)
                                     ->prefix(fn (ServerVariable $variable) => '{{' . $variable->variable->env_variable . '}}')

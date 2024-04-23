@@ -9,7 +9,6 @@ use App\Models\Allocation;
 use App\Models\Egg;
 use App\Models\Node;
 use App\Models\Server;
-use App\Models\ServerVariable;
 use App\Repositories\Daemon\DaemonServerRepository;
 use App\Services\Allocations\AssignmentService;
 use App\Services\Servers\ServerCreationService;
