@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 /**
  * @property int $id
  * @property int $egg_id
+ * @property null $sort
  * @property string $name
  * @property string $description
  * @property string $env_variable
@@ -50,6 +51,7 @@ class EggVariable extends Model
 
     public static array $validationRules = [
         'egg_id' => 'exists:eggs,id',
+        'sort' => 'nullable',
         'name' => 'required|string|between:1,191',
         'description' => 'string',
         'env_variable' => 'required|alphaDash|between:1,191|notIn:' . self::RESERVED_ENV_NAMES,
