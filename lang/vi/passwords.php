@@ -11,9 +11,9 @@ return [
     | has failed, such as for an invalid token or invalid new password.
     |
     */
-    'password' => 'Passwords must be at least six characters and match the confirmation.',
-    'reset' => 'Your password has been reset!',
+    'password' => 'Mật khẩu cần ít nhất 6 ký tự và trùng khớp với phần xác nhận mật khẩu.',
+    'reset' => 'Mật khẩu của bạn đã được thay đổi!',
     'sent' => 'We have e-mailed your password reset link!',
-    'token' => 'This password reset token is invalid.',
+    'token' => 'Token đổi mật khẩu không hợp lệ.',
     'user' => 'Chúng tôi không thể tìm thấy người dùng với địa chỉ email đó.',
 ];
