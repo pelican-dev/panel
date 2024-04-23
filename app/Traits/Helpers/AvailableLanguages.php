@@ -39,22 +39,17 @@ trait AvailableLanguages
 
             return [$code => title_case($value)];
         })->toArray();
-    }    
+    }
 
     public function isLanguageTranslated(string $countryCode = 'en'): array
     {
         $languages = $this->getAvailableLanguages();
-        
+
         $filteredLanguages = array_filter($languages, function ($code) {
             return in_array($code, self::TRANSLATED);
         }, ARRAY_FILTER_USE_KEY);
-        
-        return $filteredLanguages;
-    }
 
-    public function isLanguageTranslated(string $countryCode = 'en'): bool
-    {
-        return in_array($countryCode, self::TRANSLATED, true);
+        return $filteredLanguages;
     }
 
     /**
