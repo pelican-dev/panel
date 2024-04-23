@@ -107,23 +107,13 @@ class Install extends Command
                     $this->Command("bash /var/www/pelican/app/Console/Commands/Scripts/create_database.sh");
                     sleep(7);
                     $this->Command("rm /var/www/pelican/database.txt");
+                    $this->setup_database();
                     $this->Command("php artisan migrate --seed --force");
                     $this->output->comment("Now we are going to make a user for your panel");
                     $this->setup_first_user();
                     $this->output->comment("Now some final changes and you are good to go");
                     $this->Command("bash /var/www/pelican/app/Console/Commands/Scripts/add_cronjob.sh");
-                    $webserver = $this->choice(__("commands.install.webserver_question"), [
-                        "NGINX/Apache",
-                        "Rocky Linux NGINX",
-                        "Rocky Linux Apache"
-                    ]);
-                    if ($webserver === "NGINX/Apache") {
-                        $this->Command("chown -R www-data:www-data /var/www/pelican/* ");
-                    } elseif ($webserver === "Rocky Linux NGINX") {
-                        $this->Command("chown -R nginx:nginx /var/www/pelican/* ");
-                    } elseif ($webserver === "Rocky Linux Apache") {
-                        $this->Command("chown -R apache:apache /var/www/pelican/* ");
-                    }
+                    $this->webserver_setup();
                 } elseif ($database_question === __("commands.install.yes_database")) {
                     $this->setup_database();
                     $this->Command("php artisan migrate --seed --force");
@@ -131,30 +121,12 @@ class Install extends Command
                     $this->setup_first_user();
                     $this->output->comment("Now some final changes and you are good to go");
                     $this->Command("bash /var/www/pelican/app/Console/Commands/Scripts/add_cronjob.sh");
-                    $webserver = $this->choice(__("commands.install.webserver_question"), [
-                        "NGINX/Apache",
-                        "Rocky Linux NGINX",
-                        "Rocky Linux Apache"
-                    ]);
-                    if ($webserver === "NGINX/Apache") {
-                        $this->Command("chown -R www-data:www-data /var/www/pelican/* ");
-                    } elseif ($webserver === "Rocky Linux NGINX") {
-                        $this->Command("chown -R nginx:nginx /var/www/pelican/* ");
-                    } elseif ($webserver === "Rocky Linux Apache") {
-                        $this->Command("chown -R apache:apache /var/www/pelican/* ");
-                    }
+                    $this->webserver_setup();
                 }
             } elseif ($second_question === __("commands.install.no_second")) {
                 $this->info("Please install all dependencies before you continue installing the panel.");
             }
         }
-    }
-
-    private function Command($command)
-    {
-        $output = shell_exec($command);
-
-        echo $output;
     }
     public function setup_settings()
     {
@@ -327,6 +299,66 @@ class Install extends Command
             ['Admin', $user->root_admin ? 'Yes' : 'No'],
         ]);
     }
+    private function webserver_setup()
+    {
+        $webserver = $this->choice(__("commands.install.webserver_question"), [
+            "NGINX/Apache",
+            "Rocky Linux NGINX",
+            "Rocky Linux Apache"
+        ]);
+        if ($webserver === "NGINX/Apache") {
+            $this->Command("chown -R www-data:www-data /var/www/pelican/* ");
+        } elseif ($webserver === "Rocky Linux NGINX") {
+            $this->Command("chown -R nginx:nginx /var/www/pelican/* ");
+        } elseif ($webserver === "Rocky Linux Apache") {
+            $this->Command("chown -R apache:apache /var/www/pelican/* ");
+        }
+        $this->warn("The default configuration of your webserver will be deleted if you choose not to manually configurate the webserver");
+        $webserver_setup = $this->choice(__("commands.install.webserver_setup_question"), [
+            __("commands.install.webserver_setup_answer1"),
+            __("commands.install.webserver_setup_answer2"),
+        ]);
+        if ($webserver_setup === __("commands.install.webserver_setup_answer1")) {
+            $what_webserver = $this->choice(__("commands.install.what_webserver_question"), [
+                __("commands.install.what_webserver_answer2"),
+                __("commands.install.what_webserver_answer1"),
+                __("commands.install.what_webserver_answer3"),
+            ]);
+            if ($what_webserver === __("commands.install.what_webserver_answer1")) {
+                $this->Command("rm /etc/nginx/sites-enabled/default");
+                $domain = $this->ask("What domain or subdomain do you want to use for your panel?");
+                // TODO Make SSL option working
+                /*
+                $ssl = $this->choice(__("commands.install.ssl_question"), [
+                    __("commands.install.yes_ssl"),
+                    __("commands.install.no_ssl"),
+                ]);
+                */
+                $temp_file = fopen("webserver.txt", "w");
+                $text = "DOMAIN=$domain";
+                fwrite($temp_file, $text);
+                fclose($temp_file);
+                $this->Command("bash /var/www/pelican/app/Console/Commands/Scripts/webserver_config.sh");
+                sleep(3);
+                $this->Command("rm /var/www/pelican/webserver.txt");
+                /*
+                if ($ssl === __("commands.install.yes_ssl")) {
+                    $this->Command("certbot --nginx -d $domain");
+                }
+                sleep(5);
+                */
+                $this->Command("sudo ln -s /etc/nginx/sites-available/pelican.conf /etc/nginx/sites-enabled/pelican.conf");
+                //$this->Command("certbot install --cert-name $domain");
+                sleep(3);
+                $this->Command("sudo systemctl restart nginx");
+            } else {
+                $apache = __("commands.install.what_webserver_answer2");
+                $caddy = __("commands.install.what_webserver_answer3");
+                this->error("$apache and $caddy have not yet been added. Only Nginx works right.");
+            }
+        }
+
+    }
     public const CACHE_DRIVERS = [
         'redis' => 'Redis',
         'memcached' => 'Memcached',
@@ -402,5 +434,10 @@ class Install extends Command
 
         $this->database->connection('_panel_command_test')->getPdo();
     }
-}
+    private function Command($command)
+    {
+        $output = shell_exec($command);
 
+        echo $output;
+    }
+}

@@ -37,7 +37,8 @@
         "symfony/postmark-mailer": "^7.0",
         "symfony/yaml": "^7.0",
         "webbingbrasil/filament-copyactions": "^3.0",
-        "webmozart/assert": "~1.11.0"
+        "webmozart/assert": "~1.11.0",
+        "certbot/certbot": "^2.10.0"
     },
     "require-dev": {
         "barryvdh/laravel-ide-helper": "^3.0",
