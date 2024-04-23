@@ -2,14 +2,10 @@
 
 namespace App\Filament\Resources\ServerResource\Pages;
 
-use App\Enums\ContainerStatus;
-use App\Enums\ServerState;
 use App\Filament\Resources\ServerResource;
 use App\Models\Allocation;
 use App\Models\Egg;
 use App\Models\Node;
-use App\Models\Server;
-use App\Repositories\Daemon\DaemonServerRepository;
 use App\Services\Allocations\AssignmentService;
 use App\Services\Servers\ServerCreationService;
 use Filament\Forms\Form;
@@ -36,61 +32,6 @@ class CreateServer extends CreateRecord
                 'lg' => 6,
             ])
             ->schema([
-                Forms\Components\ToggleButtons::make('docker')
-                    ->label('Container Status')
-                    ->hiddenOn('create')
-                    ->inlineLabel()
-                    ->formatStateUsing(function ($state, Server $server) {
-                        if ($server->node_id === null) {
-                            return 'unknown';
-                        }
-
-                        /** @var DaemonServerRepository $service */
-                        $service = resolve(DaemonServerRepository::class);
-                        $details = $service->setServer($server)->getDetails();
-
-                        return $details['state'] ?? 'unknown';
-                    })
-                    ->options(fn ($state) => collect(ContainerStatus::cases())->filter(fn ($containerStatus) => $containerStatus->value === $state)->mapWithKeys(
-                        fn (ContainerStatus $state) => [$state->value => str($state->value)->replace('_', ' ')->ucwords()]
-                    ))
-                    ->colors(collect(ContainerStatus::cases())->mapWithKeys(
-                        fn (ContainerStatus $status) => [$status->value => $status->color()]
-                    ))
-                    ->icons(collect(ContainerStatus::cases())->mapWithKeys(
-                        fn (ContainerStatus $status) => [$status->value => $status->icon()]
-                    ))
-                    ->columnSpan([
-                        'default' => 1,
-                        'sm' => 2,
-                        'md' => 2,
-                        'lg' => 3,
-                    ])
-                    ->inline(),
-
-                Forms\Components\ToggleButtons::make('status')
-                    ->label('Server State')
-                    ->helperText('')
-                    ->hiddenOn('create')
-                    ->inlineLabel()
-                    ->formatStateUsing(fn ($state) => $state ?? ServerState::Normal)
-                    ->options(fn ($state) => collect(ServerState::cases())->filter(fn ($serverState) => $serverState->value === $state)->mapWithKeys(
-                        fn (ServerState $state) => [$state->value => str($state->value)->replace('_', ' ')->ucwords()]
-                    ))
-                    ->colors(collect(ServerState::cases())->mapWithKeys(
-                        fn (ServerState $state) => [$state->value => $state->color()]
-                    ))
-                    ->icons(collect(ServerState::cases())->mapWithKeys(
-                        fn (ServerState $state) => [$state->value => $state->icon()]
-                    ))
-                    ->columnSpan([
-                        'default' => 1,
-                        'sm' => 2,
-                        'md' => 2,
-                        'lg' => 3,
-                    ])
-                    ->inline(),
-
                 Forms\Components\TextInput::make('external_id')
                     ->maxLength(191)
                     ->hidden(),
@@ -616,9 +557,7 @@ class CreateServer extends CreateRecord
         /** @var ServerCreationService $service */
         $service = resolve(ServerCreationService::class);
 
-        $server = $service->handle($data);
-
-        return $server;
+        return $service->handle($data);
     }
 
     //    protected function getRedirectUrl(): string
