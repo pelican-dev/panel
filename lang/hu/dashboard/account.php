@@ -6,7 +6,7 @@ return [
         'updated' => 'Az email címed frissítve lett.',
     ],
     'password' => [
-        'title' => 'Jelszóváltoztatás',
+        'title' => 'Jelszavad megváltoztatása',
         'requirements' => 'Az új jelszavadnak legalább 8 karakter hosszúnak kell lennie.',
         'updated' => 'A jelszavad frissítve lett.',
     ],
