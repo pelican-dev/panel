@@ -41,10 +41,16 @@ trait AvailableLanguages
         })->toArray();
     }
 
-    public function isLanguageTranslated(string $countryCode = 'en'): bool
+    public function isLanguageTranslated(string $countryCode = 'en'): array
     {
-        return in_array($countryCode, self::TRANSLATED, true);
-    }
+        $languages = $this->getAvailableLanguages();
+
+        $filteredLanguages = array_filter($languages, function ($code) {
+            return in_array($code, self::TRANSLATED);
+        }, ARRAY_FILTER_USE_KEY);
+
+        return $filteredLanguages;
+    }   
 
     /**
      * Return an instance of the filesystem for getting a folder listing.

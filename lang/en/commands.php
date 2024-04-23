@@ -90,7 +90,12 @@ return [
         "no_first" => "No, I have run this command before on this panel",
         "dependency_not_installed" => ':Dependency is not installed',
         "dependency_installed" => ':Dependency is installed',
-        "yes_second" => "Yes, i want to install the above listed dependencies",
-        "no_second" => "No, I already have the dependencies installed so i dont need to install them",
+        "second_question" => "Have you installed all dependencies?",
+        "yes_second" => "Yes, I have installed all dependencies.",
+        "no_second" => "No, I have not installed all dependencies yet.",
+        "database_question" => "Have you already made a database and a user for the panel?", 
+        "no_database" => "No, I have not created a database and/or user for the panel.",
+        "yes_database" => "Yes, I have created a database and/or user for the panel",
+        "webserver_question" => "What webserver are you going to use?"
     ]
 ];
