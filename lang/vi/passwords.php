@@ -13,7 +13,7 @@ return [
     */
     'password' => 'Mật khẩu cần ít nhất 6 ký tự và trùng khớp với phần xác nhận mật khẩu.',
     'reset' => 'Mật khẩu của bạn đã được thay đổi!',
-    'sent' => 'We have e-mailed your password reset link!',
+    'sent' => 'Chúng tôi đã gửi đường dẫn thay đổi mật khẩu qua email!',
     'token' => 'Token đổi mật khẩu không hợp lệ.',
     'user' => 'Chúng tôi không thể tìm thấy người dùng với địa chỉ email đó.',
 ];
