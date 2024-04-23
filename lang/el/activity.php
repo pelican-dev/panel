@@ -63,7 +63,7 @@ return [
         ],
         'database' => [
             'create' => 'Δημιουργήθηκε νέα βάση δεδομένων :name',
-            'rotate-password' => 'Password rotated for database :name',
+            'rotate-password' => 'Πραγματοποιήθηκε rotate του κωδικού πρόσβασης για την βάση δεδομένων :name',
             'delete' => 'Διαγράφηκε η βάση δεδομένων :name',
         ],
         'file' => [
@@ -73,8 +73,8 @@ return [
             'copy' => 'Δημιουργήθηκε ένα αντίγραφο του :file',
             'create-directory' => 'Δημιουργήθηκε ο φάκελος :directory:name',
             'decompress' => 'Αποσυμπιέστηκαν :files αρχεία στο :directory',
-            'delete_one' => 'Διαγράφτηκε :Directory:files.0',
-            'delete_other' => 'Διαγράφτηκαν :count αρχεία στο :directory',
+            'delete_one' => 'Διαγράφηκε :Directory:files.0',
+            'delete_other' => 'Διαγράφηκαν :count αρχεία στο :directory',
             'download' => 'Έγινε λήψη του αρχείου :file',
             'pull' => 'Έγινε λήψη ενός απομακρυσμένου αρχείου από :url σε :directory',
             'rename_one' => 'Μετονομάστηκε :directory:files.0.from σε :directory:files.0.to',
@@ -87,10 +87,10 @@ return [
             'denied' => 'Αποκλεισμένη πρόσβαση SFTP λόγω αδειών',
             'create_one' => 'Δημιουργήθηκε :files.0',
             'create_other' => 'Δημιουργήθηκαν :count νέα αρχεία',
-            'write_one' => 'Επεξεργάστηκε το περιεχόμενο του :files.0',
-            'write_other' => 'Επεξεργάστηκαν τα περιεχόμενα :count αρχείων',
-            'delete_one' => 'Διαγράφτηκε :files.0',
-            'delete_other' => 'Διαγράφτηκαν :count αρχεία',
+            'write_one' => 'Έγινε επεξεργασία του περιεχομένου του :files.0',
+            'write_other' => 'Έγινε επεξεργασία στο περιεχόμενο :count αρχείων',
+            'delete_one' => 'Διαγράφηκε :files.0',
+            'delete_other' => 'Διαγράφηκαν :count αρχεία',
             'create-directory_one' => 'Δημιουργήθηκε ο φάκελος :files.0',
             'create-directory_other' => 'Δημιουργήθηκαν :count φάκελοι',
             'rename_one' => 'Μετονομάστηκε :files.0.from σε :files.0.to',
@@ -100,7 +100,7 @@ return [
             'create' => 'Προστέθηκε :allocation στο διακομιστή',
             'notes' => 'Ενημερώθηκαν οι σημειώσεις για :allocation από ":old" σε ":new"',
             'primary' => 'Ορίστηκε :allocation ως κύριο allocation του διακομιστή',
-            'delete' => 'Διαγράφτηκε το allocation :allocation',
+            'delete' => 'Διαγράφηκε το allocation :allocation',
         ],
         'schedule' => [
             'create' => 'Δημιουργήθηκε το χρονοδιάγραμμα :name',
@@ -119,7 +119,7 @@ return [
         ],
         'startup' => [
             'edit' => 'Άλλαξε η μεταβλητή :variable από ":old" σε ":new"',
-            'image' => 'Ενημέρωση εικόνας Docker για το διακομιστή από :old σε :new',
+            'image' => 'Ενημερώθηκε η εικόνα Docker για το διακομιστή από :old σε :new',
         ],
         'subuser' => [
             'create' => 'Προστέθηκε :email ως υποχρήστης',
