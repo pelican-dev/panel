@@ -334,7 +334,7 @@ class ServerResource extends Resource
                         }
 
                         $variables = [];
-                        $set($path = 'server_variables', $serverVariables->all());
+                        $set($path = 'server_variables', $serverVariables->sortBy(['sort'])->all());
                         for ($i = 0; $i < $serverVariables->count(); $i++) {
                             $set("$path.$i.variable_value", $serverVariables[$i]['default_value']);
                             $set("$path.$i.variable_id", $serverVariables[$i]['id']);
