@@ -1,17 +1,17 @@
 <?php
 
 return [
-    'daemon_connection_failed' => 'There was an exception while attempting to communicate with the daemon resulting in a HTTP/:code response code. This exception has been logged.',
+    'daemon_connection_failed' => 'เกิดข้อผิดพลาด HTTP/:code ระหว่างการพยายามสื่อสารกับโปรแกรเดมอน ข้อผิดพลาดนี้ถูกบันทึกแล้ว',
     'node' => [
-        'servers_attached' => 'A node must have no servers linked to it in order to be deleted.',
-        'daemon_off_config_updated' => 'The daemon configuration <strong>has been updated</strong>, however there was an error encountered while attempting to automatically update the configuration file on the Daemon. You will need to manually update the configuration file (config.yml) for the daemon to apply these changes.',
+        'servers_attached' => 'Node ต้องไม่ผูกอยู่กับเซิฟเวอร์ถึงจะทำการลบได้',
+        'daemon_off_config_updated' => 'การตั้งค่าเดมอนได้<strong>ถูกบันทึกแล้ว</strong> แต่ได้เกิดข้อผิดพลาดขึ้นระหว่างการพยายามปรับปรุงไฟล์ตั้งค่าของเดม่อน ท่านต้องแก้ไขไฟล์ตั้งค่า (config.yml) ของเดม่อนด้วยตัวเองเพื่อให้การตั้งค่าเป็นผล',
     ],
     'allocations' => [
-        'server_using' => 'A server is currently assigned to this allocation. An allocation can only be deleted if no server is currently assigned.',
-        'too_many_ports' => 'Adding more than 1000 ports in a single range at once is not supported.',
-        'invalid_mapping' => 'The mapping provided for :port was invalid and could not be processed.',
-        'cidr_out_of_range' => 'CIDR notation only allows masks between /25 and /32.',
-        'port_out_of_range' => 'Ports in an allocation must be greater than 1024 and less than or equal to 65535.',
+        'server_using' => 'พอร์ตนี้กำลังมีเซิฟเวอร์ใช้งานอยู่ จะสามารถลบพอร์ตได้ก็ต่อเมื่อไม่มีเซิฟเวอร์ผูกอยู่เท่านั้น',
+        'too_many_ports' => 'ไม่สามารถการเพิ่มพอร์ตมากกว่า 1000 พอร์ตในครั้งเดียวได้',
+        'invalid_mapping' => 'กำหนดสัดส่วนพอร์ตไม่ถูกต้อง ไม่สามารถดำเนินการได้',
+        'cidr_out_of_range' => 'สัญกรณ์ CIDR อนุญาติให้ใช้มาร์สได้ระหว่าง /25 ถึง /32 เท่านั้น',
+        'port_out_of_range' => 'พอร์ตต้องมีค่ามากกว่า 1024 และน้อยกว่าหรือเท่ากับ 65535',
     ],
     'egg' => [
         'delete_has_servers' => 'An Egg with active servers attached to it cannot be deleted from the Panel.',
