@@ -590,17 +590,17 @@ class EditServer extends EditRecord
     protected function getHeaderActions(): array
     {
         return [
-            Actions\Action::make('Force Delete')
-                ->successRedirectUrl($this->getResource()::getUrl('index'))
+            Actions\DeleteAction::make('Force Delete')
+                ->label('Force Delete')
+                ->successRedirectUrl(route('filament.admin.resources.servers.index'))
                 ->color('danger')
-                ->action(fn (Server $server) => resolve(ServerDeletionService::class)->withForce()->handle($server))
+                ->after(fn (Server $server) => resolve(ServerDeletionService::class)->withForce()->handle($server))
                 ->requiresConfirmation(),
-            Actions\Action::make('Delete')
-                ->successRedirectUrl($this->getResource()::getUrl('index'))
+            Actions\DeleteAction::make('Delete')
+                ->successRedirectUrl(route('filament.admin.resources.servers.index'))
                 ->color('danger')
-                ->action(fn (Server $server) => resolve(ServerDeletionService::class)->handle($server))
+                ->after(fn (Server $server) => resolve(ServerDeletionService::class)->handle($server))
                 ->requiresConfirmation(),
-
         ];
     }
 }

@@ -44,7 +44,7 @@ class ServerDeletionService
     {
         try {
             $this->daemonServerRepository->setServer($server)->delete();
-        } catch (Exception $exception) {
+        } catch (DaemonConnectionException $exception) {
             // If there is an error not caused a 404 error and this isn't a forced delete,
             // go ahead and bail out. We specifically ignore a 404 since that can be assumed
             // to be a safe error, meaning the server doesn't exist at all on daemon so there
@@ -54,6 +54,8 @@ class ServerDeletionService
             }
 
             logger()->warning($exception);
+        } catch (Exception $exception) {
+            report($exception);
         }
 
         $this->connection->transaction(function () use ($server) {
