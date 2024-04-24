@@ -8,7 +8,6 @@ use Filament\Actions;
 use Filament\Resources\Pages\ListRecords;
 use Filament\Tables\Table;
 use Filament\Tables;
-use Filament\Forms\Components\Toggle;
 
 class ListUsers extends ListRecords
 {
@@ -65,10 +64,10 @@ class ListUsers extends ListRecords
                     ->alignCenter()
                     ->action(fn (User $user) => ToggleAction::make()
                         ->name('toggleBan')
-                        ->visible(fn () => ! $user->is_banned)
-                        ->handler(fn (User $user) => $user->update(['is_banned' => ! $user->is_banned]))
+                        ->visible(fn () => !$user->is_banned)
+                        ->handler(fn (User $user) => $user->update(['is_banned' => !$user->is_banned]))
                     ),
-                
+
             ])
             ->filters([
                 //

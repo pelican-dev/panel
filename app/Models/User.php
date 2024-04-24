@@ -127,7 +127,7 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
         'totp_authenticated_at',
         'gravatar',
         'root_admin',
-        'is_banned'
+        'is_banned',
     ];
 
     /**
