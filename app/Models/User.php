@@ -127,6 +127,7 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
         'totp_authenticated_at',
         'gravatar',
         'root_admin',
+        'is_banned'
     ];
 
     /**
@@ -145,6 +146,7 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
         'totp_secret' => null,
         'name_first' => '',
         'name_last' => '',
+        'is_banned' => false,
     ];
 
     /**
@@ -162,6 +164,7 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
         'language' => 'string',
         'use_totp' => 'boolean',
         'totp_secret' => 'nullable|string',
+        'is_banned' => 'boolean',
     ];
 
     protected function casts(): array

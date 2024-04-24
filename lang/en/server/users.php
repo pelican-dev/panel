@@ -30,4 +30,7 @@ return [
         'schedule_update' => 'Allows a user permission to make modifications to an existing server schedule.',
         'schedule_delete' => 'Allows a user to delete a schedule for the server.',
     ],
+    'ban' => [
+        'ban_message' => 'Your account has been suspended.',
+    ]
 ];
