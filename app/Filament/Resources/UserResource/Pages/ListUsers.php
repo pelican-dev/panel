@@ -8,6 +8,7 @@ use Filament\Actions;
 use Filament\Resources\Pages\ListRecords;
 use Filament\Tables\Table;
 use Filament\Tables;
+use Filament\Forms\Components\Toggle;
 
 class ListUsers extends ListRecords
 {
@@ -56,18 +57,21 @@ class ListUsers extends ListRecords
                     ->icon('tabler-users')
                     // ->formatStateUsing(fn (string $state, $record): string => (string) ($record->servers_count + $record->subusers_count))
                     ->label('Subuser Accounts'),
-                Tables\Columns\ToggleColumn::make('is_banned')
-                    ->label(trans('string.suspended'))
+                    Tables\Columns\ToggleColumn::make('is_suspended')
+                    ->label(trans('strings.suspended'))
                     ->onColor('danger')
                     ->offColor('success')
                     ->sortable()
                     ->alignCenter()
-                    ->action(fn (User $user) => ToggleAction::make()
-                        ->name('toggleBan')
-                        ->visible(fn () => !$user->is_banned)
-                        ->handler(fn (User $user) => $user->update(['is_banned' => !$user->is_banned]))
-                    ),
-
+                    ->action(function (User $user) {
+                        if ($user->is_suspended) {
+                            $user->servers()->update(['status' => 'suspended']);
+                        } else {
+                            $user->servers()->update(['status' => 'active']);
+                        }
+                        $user->update(['is_suspended' => ! $user->is_suspended]);
+                    }),
+                
             ])
             ->filters([
                 //
