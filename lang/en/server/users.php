@@ -32,5 +32,5 @@ return [
     ],
     'suspend' => [
         'suspend_message' => 'Your account has been suspended.',
-    ]
+    ],
 ];

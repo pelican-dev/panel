@@ -8,7 +8,6 @@ use Filament\Actions;
 use Filament\Resources\Pages\ListRecords;
 use Filament\Tables\Table;
 use Filament\Tables;
-use Filament\Forms\Components\Toggle;
 
 class ListUsers extends ListRecords
 {
@@ -57,7 +56,7 @@ class ListUsers extends ListRecords
                     ->icon('tabler-users')
                     // ->formatStateUsing(fn (string $state, $record): string => (string) ($record->servers_count + $record->subusers_count))
                     ->label('Subuser Accounts'),
-                    Tables\Columns\ToggleColumn::make('is_suspended')
+                Tables\Columns\ToggleColumn::make('is_suspended')
                     ->label(trans('strings.suspended'))
                     ->onColor('danger')
                     ->offColor('success')
@@ -69,9 +68,9 @@ class ListUsers extends ListRecords
                         } else {
                             $user->servers()->update(['status' => 'active']);
                         }
-                        $user->update(['is_suspended' => ! $user->is_suspended]);
+                        $user->update(['is_suspended' => !$user->is_suspended]);
                     }),
-                
+
             ])
             ->filters([
                 //

@@ -12,12 +12,13 @@ class CheckBanned
         if (auth()->check() && auth()->user()->is_suspended) {
             $message = trans('server/users.suspend.suspend_message');
             Notification::make()
-            ->title(trans('strings.suspended'))
-            ->danger()
-            ->seconds(7)
-            ->body($message)
-            ->send();
+                ->title(trans('strings.suspended'))
+                ->danger()
+                ->seconds(7)
+                ->body($message)
+                ->send();
             auth()->logout();
+
             return redirect('panel/login');
         }
 
