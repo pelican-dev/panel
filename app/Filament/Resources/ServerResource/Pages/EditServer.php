@@ -590,11 +590,17 @@ class EditServer extends EditRecord
     protected function getHeaderActions(): array
     {
         return [
+            Actions\Action::make('Force Delete')
+                ->successRedirectUrl($this->getResource()::getUrl('index'))
+                ->color('danger')
+                ->action(fn (Server $server) => resolve(ServerDeletionService::class)->withForce()->handle($server))
+                ->requiresConfirmation(),
             Actions\Action::make('Delete')
                 ->successRedirectUrl($this->getResource()::getUrl('index'))
                 ->color('danger')
                 ->action(fn (Server $server) => resolve(ServerDeletionService::class)->handle($server))
                 ->requiresConfirmation(),
+
         ];
     }
 }

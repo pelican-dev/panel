@@ -2,6 +2,7 @@
 
 namespace App\Services\Servers;
 
+use Exception;
 use Illuminate\Http\Response;
 use App\Models\Server;
 use Illuminate\Database\ConnectionInterface;
@@ -43,7 +44,7 @@ class ServerDeletionService
     {
         try {
             $this->daemonServerRepository->setServer($server)->delete();
-        } catch (DaemonConnectionException $exception) {
+        } catch (Exception $exception) {
             // If there is an error not caused a 404 error and this isn't a forced delete,
             // go ahead and bail out. We specifically ignore a 404 since that can be assumed
             // to be a safe error, meaning the server doesn't exist at all on daemon so there
