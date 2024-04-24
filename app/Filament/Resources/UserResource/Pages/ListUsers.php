@@ -46,31 +46,22 @@ class ListUsers extends ListRecords
                     ->visibleFrom('lg')
                     ->icon(fn (User $user) => $user->use_totp ? 'tabler-lock' : 'tabler-lock-open-off')
                     ->boolean()->sortable(),
+                Tables\Columns\IconColumn::make('is_suspended')
+                    ->label('Suspended')
+                    ->falseIcon('tabler-user-cancel')->falseColor('danger')
+                    ->trueIcon('tabler-user-exclamation')->trueColor('warning')
+                    ->sortable()
+                    ->boolean(),
                 Tables\Columns\TextColumn::make('servers_count')
                     ->counts('servers')
                     ->icon('tabler-server')
                     ->label('Servers'),
                 Tables\Columns\TextColumn::make('subusers_count')
                     ->visibleFrom('sm')
+                    ->label('Subusers')
                     ->counts('subusers')
-                    ->icon('tabler-users')
-                    // ->formatStateUsing(fn (string $state, $record): string => (string) ($record->servers_count + $record->subusers_count))
-                    ->label('Subuser Accounts'),
-                Tables\Columns\ToggleColumn::make('is_suspended')
-                    ->label(trans('strings.suspended'))
-                    ->onColor('danger')
-                    ->offColor('success')
-                    ->sortable()
-                    ->alignCenter()
-                    ->action(function (User $user) {
-                        if ($user->is_suspended) {
-                            $user->servers()->update(['status' => 'suspended']);
-                        } else {
-                            $user->servers()->update(['status' => 'active']);
-                        }
-                        $user->update(['is_suspended' => !$user->is_suspended]);
-                    }),
-
+                    ->icon('tabler-users'),
+                // ->formatStateUsing(fn (string $state, $record): string => (string) ($record->servers_count + $record->subusers_count))
             ])
             ->filters([
                 //

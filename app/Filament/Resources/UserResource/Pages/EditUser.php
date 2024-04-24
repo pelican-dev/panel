@@ -62,18 +62,28 @@ class EditUser extends EditRecord
                         ->default(false),
 
                     Forms\Components\Hidden::make('skipValidation')->default(true),
+
                     Forms\Components\Select::make('language')
                         ->required()
                         ->hidden()
                         ->default('en')
                         ->options(fn (User $user) => $user->getAvailableLanguages()),
-                ])->columns(2),
+
+                ])->columns(),
             ]);
     }
     protected function getHeaderActions(): array
     {
         return [
             Actions\DeleteAction::make(),
+
+            Actions\Action::make('toggleSuspend')
+                ->label(fn (User $user) => $user->is_suspended ? 'Enable User' : 'Disable User')
+                ->color(fn (User $user) => $user->is_suspended ? 'success' : 'warning')
+                ->action(function (User $user) {
+                    $user->is_suspended = !$user->is_suspended;
+                    $user->save();
+                }),
         ];
     }
 }
