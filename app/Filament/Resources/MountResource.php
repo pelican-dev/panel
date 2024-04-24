@@ -17,11 +17,6 @@ class MountResource extends Resource
 {
     protected static ?string $model = Mount::class;
 
-    public static function getLabel(): string
-    {
-        return trans_choice('strings.mounts', 1);
-    }
-
     protected static ?string $navigationIcon = 'tabler-layers-linked';
 
     public static function form(Form $form): Form

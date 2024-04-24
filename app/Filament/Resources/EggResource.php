@@ -15,11 +15,6 @@ class EggResource extends Resource
 {
     protected static ?string $model = Egg::class;
 
-    public static function getLabel(): string
-    {
-        return trans_choice('strings.eggs', 1);
-    }
-
     protected static ?string $navigationIcon = 'tabler-eggs';
 
     protected static ?string $recordTitleAttribute = 'name';

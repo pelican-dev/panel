@@ -25,11 +25,6 @@ class ServerResource extends Resource
 {
     protected static ?string $model = Server::class;
 
-    public static function getLabel(): string
-    {
-        return trans_choice('strings.servers', 1);
-    }
-
     protected static ?string $navigationIcon = 'tabler-brand-docker';
 
     protected static ?string $recordTitleAttribute = 'name';

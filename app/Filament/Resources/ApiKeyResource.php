@@ -16,11 +16,6 @@ class ApiKeyResource extends Resource
 {
     protected static ?string $model = ApiKey::class;
 
-    public static function getLabel(): string
-    {
-        return trans_choice('strings.api_keys', 1);
-    }
-
     protected static ?string $navigationIcon = 'tabler-key';
 
     public static function canEdit($record): bool

@@ -15,10 +15,7 @@ class DatabaseHostResource extends Resource
 {
     protected static ?string $model = DatabaseHost::class;
 
-    public static function getLabel(): string
-    {
-        return trans_choice('strings.databases', 1);
-    }
+    protected static ?string $label = 'Databases';
 
     protected static ?string $navigationIcon = 'tabler-database';
 

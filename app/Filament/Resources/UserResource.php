@@ -17,11 +17,6 @@ class UserResource extends Resource
 {
     protected static ?string $model = User::class;
 
-    public static function getLabel(): string
-    {
-        return trans_choice('strings.users', 1);
-    }
-
     protected static ?string $navigationIcon = 'tabler-users';
 
     protected static ?string $recordTitleAttribute = 'username';

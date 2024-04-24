@@ -14,11 +14,6 @@ class NodeResource extends Resource
 {
     protected static ?string $model = Node::class;
 
-    public static function getLabel(): string
-    {
-        return trans_choice('strings.nodes', 1);
-    }
-
     protected static ?string $navigationIcon = 'tabler-server-2';
 
     protected static ?string $recordTitleAttribute = 'name';
