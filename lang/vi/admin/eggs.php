@@ -2,11 +2,11 @@
 
 return [
     'notices' => [
-        'imported' => 'Thành công thêm vào Egg này và những biến thể liên quan.',
+        'imported' => 'Thành công thêm vào Egg này và những biến liên quan.',
         'updated_via_import' => 'Egg này đã được cập nhật sử dụng tập tin được cung cấp.',
         'deleted' => 'Thành công xóa egg được yêu cầu khỏi bảng điều khiển.',
         'updated' => 'Cấu hình cho Egg đã được cập nhật thành công.',
-        'script_updated' => 'Tập lệnh cài đặt Egg đã được cập nhật và sẽ chạy bất cứ khi nào máy chủ được cài đặt.',
+        'script_updated' => 'Tập lệnh để cài đặt Egg đã được cập nhật và sẽ chạy bất cứ khi nào máy chủ được cài đặt.',
         'egg_created' => 'Một quả trứng mới đã được đẻ thành công. Bạn sẽ cần phải khởi động lại những daemon đang chạy để áp dụng egg mới này.',
     ],
     'variables' => [
