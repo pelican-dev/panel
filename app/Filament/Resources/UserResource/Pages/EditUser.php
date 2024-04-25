@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\UserResource\Pages;
 
 use App\Filament\Resources\UserResource;
+use App\Services\Servers\SuspensionService;
 use Filament\Actions;
 use Filament\Resources\Pages\EditRecord;
 use App\Models\User;
@@ -21,15 +22,6 @@ class EditUser extends EditRecord
                 Section::make()->schema([
                     Forms\Components\TextInput::make('username')->required()->maxLength(191),
                     Forms\Components\TextInput::make('email')->email()->required()->maxLength(191),
-
-                    Forms\Components\TextInput::make('name_first')
-                        ->maxLength(191)
-                        ->hidden(fn (string $operation): bool => $operation === 'create')
-                        ->label('First Name'),
-                    Forms\Components\TextInput::make('name_last')
-                        ->maxLength(191)
-                        ->hidden(fn (string $operation): bool => $operation === 'create')
-                        ->label('Last Name'),
 
                     Forms\Components\TextInput::make('password')
                         ->dehydrateStateUsing(fn (string $state): string => Hash::make($state))
@@ -78,11 +70,28 @@ class EditUser extends EditRecord
             Actions\DeleteAction::make(),
 
             Actions\Action::make('toggleSuspend')
-                ->label(fn (User $user) => $user->is_suspended ? 'Enable User' : 'Disable User')
-                ->color(fn (User $user) => $user->is_suspended ? 'success' : 'warning')
+                ->hidden(fn (User $user) => $user->is_suspended || $user->root_admin)
+                ->tooltip('testt')
+                ->label('Disable User')
+                ->color('warning')
                 ->action(function (User $user) {
-                    $user->is_suspended = !$user->is_suspended;
+                    $user->is_suspended = true;
                     $user->save();
+                    foreach ($user->servers as $server) {
+                        resolve(SuspensionService::class)->toggle($server);
+                    }
+                }),
+
+            Actions\Action::make('toggleUnsuspend')
+                ->hidden(fn (User $user) => !$user->is_suspended || $user->root_admin)
+                ->label('Re-enable User')
+                ->color('success')
+                ->action(function (User $user) {
+                    $user->is_suspended = false;
+                    $user->save();
+                    foreach ($user->servers as $server) {
+                        resolve(SuspensionService::class)->toggle($server, SuspensionService::ACTION_UNSUSPEND);
+                    }
                 }),
         ];
     }

@@ -14,6 +14,8 @@ class CreateUser extends CreateRecord
 {
     protected static string $resource = UserResource::class;
 
+    protected static bool $canCreateAnother = false;
+
     public function form(Form $form): Form
     {
         return $form
@@ -21,15 +23,6 @@ class CreateUser extends CreateRecord
                 Section::make()->schema([
                     Forms\Components\TextInput::make('username')->required()->maxLength(191),
                     Forms\Components\TextInput::make('email')->email()->required()->maxLength(191),
-
-                    Forms\Components\TextInput::make('name_first')
-                        ->maxLength(191)
-                        ->hidden(fn (string $operation): bool => $operation === 'create')
-                        ->label('First Name'),
-                    Forms\Components\TextInput::make('name_last')
-                        ->maxLength(191)
-                        ->hidden(fn (string $operation): bool => $operation === 'create')
-                        ->label('Last Name'),
 
                     Forms\Components\TextInput::make('password')
                         ->dehydrateStateUsing(fn (string $state): string => Hash::make($state))

@@ -294,7 +294,7 @@ class Node extends Model
     {
         return cache()->remember("nodes.$this->id.servers", now()->addMinute(), function () {
             try {
-                return Http::daemon($this)->connectTimeout(1)->timeout(1)->get('/api/servers')->json();
+                return Http::daemon($this)->connectTimeout(1)->timeout(1)->get('/api/servers')->json() ?? [];
             } catch (Exception) {
                 return [];
             }
