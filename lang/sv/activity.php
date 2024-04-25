@@ -23,14 +23,14 @@ return [
     'user' => [
         'account' => [
             'email-changed' => 'Ändrade e-post från :old till :new',
-            'password-changed' => 'Changed password',
+            'password-changed' => 'Ändrat lösenord',
         ],
         'api-key' => [
-            'create' => 'Created new API key :identifier',
-            'delete' => 'Deleted API key :identifier',
+            'create' => 'Skapade ny API-nyckel :identifier',
+            'delete' => 'Raderad API-nyckel :identifier',
         ],
         'ssh-key' => [
-            'create' => 'Added SSH key :fingerprint to account',
+            'create' => 'Lade till SSH-nyckeln :fingerprint to account',
             'delete' => 'Removed SSH key :fingerprint from account',
         ],
         'two-factor' => [
