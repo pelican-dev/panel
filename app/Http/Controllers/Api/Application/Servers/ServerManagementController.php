@@ -62,9 +62,6 @@ class ServerManagementController extends ApplicationApiController
 
     /**
      * Starts a transfer of a server to a new node.
-     *
-     * @throws \App\Exceptions\DisplayException
-     * @throws \App\Exceptions\Model\DataValidationException
      */
     public function startTransfer(ServerWriteRequest $request, Server $server): Response
     {
@@ -76,10 +73,30 @@ class ServerManagementController extends ApplicationApiController
 
         if ($this->transferServerService->handle($server, $validatedData)) {
             // Transfer started
-            return new Response('', Response::HTTP_NO_CONTENT);
+            $this->returnNoContent();
         } else {
             // Node was not viable
             return new Response('', Response::HTTP_NOT_ACCEPTABLE);
         }
+    }
+
+    /**
+     * Cancels a transfer of a server to a new node.
+     */
+    public function cancelTransfer(ServerWriteRequest $request, Server $server): Response
+    {
+        if (!$transfer = $server->transfer) {
+            // Server is not transferring
+            return new Response('', Response::HTTP_NOT_ACCEPTABLE);
+        }
+
+        $transfer->successful = true;
+        $transfer->save();
+
+        // TODO: cancel transfer on wings
+        //          on destination: https://github.com/pterodactyl/wings/blob/develop/router/router.go#L64
+        //          on source: https://github.com/pterodactyl/wings/blob/develop/router/router.go#L85
+
+        return $this->returnNoContent();
     }
 }
