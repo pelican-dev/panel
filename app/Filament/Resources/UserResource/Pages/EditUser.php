@@ -22,15 +22,6 @@ class EditUser extends EditRecord
                     Forms\Components\TextInput::make('username')->required()->maxLength(191),
                     Forms\Components\TextInput::make('email')->email()->required()->maxLength(191),
 
-                    Forms\Components\TextInput::make('name_first')
-                        ->maxLength(191)
-                        ->hidden(fn (string $operation): bool => $operation === 'create')
-                        ->label('First Name'),
-                    Forms\Components\TextInput::make('name_last')
-                        ->maxLength(191)
-                        ->hidden(fn (string $operation): bool => $operation === 'create')
-                        ->label('Last Name'),
-
                     Forms\Components\TextInput::make('password')
                         ->dehydrateStateUsing(fn (string $state): string => Hash::make($state))
                         ->dehydrated(fn (?string $state): bool => filled($state))
@@ -62,12 +53,14 @@ class EditUser extends EditRecord
                         ->default(false),
 
                     Forms\Components\Hidden::make('skipValidation')->default(true),
+
                     Forms\Components\Select::make('language')
                         ->required()
                         ->hidden()
                         ->default('en')
                         ->options(fn (User $user) => $user->getAvailableLanguages()),
-                ])->columns(2),
+
+                ])->columns(),
             ]);
     }
     protected function getHeaderActions(): array
