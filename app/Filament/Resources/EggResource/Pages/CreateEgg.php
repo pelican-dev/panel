@@ -11,6 +11,8 @@ use Filament\Forms\Form;
 class CreateEgg extends CreateRecord
 {
     protected static string $resource = EggResource::class;
+
+    protected static bool $canCreateAnother = false;
     public function form(Form $form): Form
     {
         return $form
@@ -44,6 +46,7 @@ class CreateEgg extends CreateRecord
                                 ->required()
                                 ->helperText('The default startup command that should be used for new servers using this Egg.'),
                             Forms\Components\TagsInput::make('file_denylist')
+                                ->hidden() // latest wings broke it
                                 ->placeholder('denied-file.txt')
                                 ->helperText('A list of files that the end user is not allowed to edit.')
                                 ->columnSpan(['default' => 1, 'sm' => 1, 'md' => 2, 'lg' => 2]),

@@ -34,13 +34,14 @@ class EmailSettingsCommand extends Command
         $this->variables['MAIL_DRIVER'] = $this->option('driver') ?? $this->choice(
             trans('command/messages.environment.mail.ask_driver'),
             [
+                'log' => 'Log',
                 'smtp' => 'SMTP Server',
                 'sendmail' => 'sendmail Binary',
-                'mailgun' => 'Mailgun Transactional Email',
-                'mandrill' => 'Mandrill Transactional Email',
-                'postmark' => 'Postmark Transactional Email',
+                'mailgun' => 'Mailgun',
+                'mandrill' => 'Mandrill',
+                'postmark' => 'Postmark',
             ],
-            config('mail.default', 'smtp')
+            'smtp',
         );
 
         $method = 'setup' . studly_case($this->variables['MAIL_DRIVER']) . 'DriverVariables';

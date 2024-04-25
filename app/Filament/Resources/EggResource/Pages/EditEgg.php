@@ -46,6 +46,7 @@ class EditEgg extends EditRecord
                                 ->required()
                                 ->helperText('The default startup command that should be used for new servers using this Egg.'),
                             Forms\Components\TagsInput::make('file_denylist')
+                                ->hidden() // latest wings breaks it.
                                 ->placeholder('denied-file.txt')
                                 ->helperText('A list of files that the end user is not allowed to edit.')
                                 ->columnSpan(['default' => 1, 'sm' => 1, 'md' => 2, 'lg' => 2]),
@@ -161,6 +162,7 @@ class EditEgg extends EditRecord
                                 ->default('ash'),
 
                             MonacoEditor::make('script_install')
+                                ->label('Install Script')
                                 ->columnSpanFull()
                                 ->fontSize('16px')
                                 ->language('shell')

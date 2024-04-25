@@ -72,7 +72,7 @@ class EditUser extends EditRecord
 
             Actions\Action::make('toggleSuspend')
                 ->hidden(fn (User $user) => $user->servers()->whereNot('status', ServerState::Suspended)->count() === 0)
-                ->label('Suspend All Servers')
+                ->label('Suspend Servers')
                 ->color('warning')
                 ->action(function (User $user) {
                     foreach ($user->servers()->whereNot('status', ServerState::Suspended)->get() as $server) {
@@ -82,7 +82,7 @@ class EditUser extends EditRecord
 
             Actions\Action::make('toggleUnsuspend')
                 ->hidden(fn (User $user) => $user->servers()->where('status', ServerState::Suspended)->count() === 0)
-                ->label('Unsuspend All Servers')
+                ->label('Unsuspend Servers')
                 ->color('success')
                 ->action(function (User $user) {
                     foreach ($user->servers()->where('status', ServerState::Suspended)->get() as $server) {

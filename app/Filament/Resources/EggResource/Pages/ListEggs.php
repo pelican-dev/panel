@@ -56,6 +56,11 @@ class ListEggs extends ListRecords
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
+                Tables\Actions\ExportAction::make()
+                    ->icon('tabler-download')
+                    ->label('Export')
+                    // uses old admin panel export service
+                    ->url(fn (Egg $egg): string => route('admin.eggs.export', ['egg' => $egg])),
             ])
             ->headerActions([
                 //
@@ -69,7 +74,7 @@ class ListEggs extends ListRecords
     protected function getHeaderActions(): array
     {
         return [
-            Actions\CreateAction::make(),
+            Actions\CreateAction::make('create')->label('Create Egg'),
 
             Actions\Action::make('import')
                 ->label('Import')
