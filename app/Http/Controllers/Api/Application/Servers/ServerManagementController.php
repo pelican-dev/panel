@@ -9,6 +9,7 @@ use App\Services\Servers\ReinstallServerService;
 use App\Services\Servers\TransferServerService;
 use App\Http\Requests\Api\Application\Servers\ServerWriteRequest;
 use App\Http\Controllers\Api\Application\ApplicationApiController;
+use App\Repositories\Daemon\DaemonServerRepository;
 
 class ServerManagementController extends ApplicationApiController
 {
@@ -19,6 +20,7 @@ class ServerManagementController extends ApplicationApiController
         private ReinstallServerService $reinstallServerService,
         private SuspensionService $suspensionService,
         private TransferServerService $transferServerService,
+        private DaemonServerRepository $daemonServerRepository,
     ) {
         parent::__construct();
     }
@@ -82,6 +84,8 @@ class ServerManagementController extends ApplicationApiController
 
     /**
      * Cancels a transfer of a server to a new node.
+     * 
+     * @throws \App\Exceptions\Http\Connection\DaemonConnectionException
      */
     public function cancelTransfer(ServerWriteRequest $request, Server $server): Response
     {
@@ -93,9 +97,7 @@ class ServerManagementController extends ApplicationApiController
         $transfer->successful = true;
         $transfer->save();
 
-        // TODO: cancel transfer on wings
-        //          on destination: https://github.com/pterodactyl/wings/blob/develop/router/router.go#L64
-        //          on source: https://github.com/pterodactyl/wings/blob/develop/router/router.go#L85
+        $this->daemonServerRepository->setServer($server)->cancelTransfer();
 
         return $this->returnNoContent();
     }

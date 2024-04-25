@@ -125,6 +125,46 @@ class DaemonServerRepository extends DaemonRepository
     }
 
     /**
+     * Cancels a server transfer.
+     *
+     * @throws \App\Exceptions\Http\Connection\DaemonConnectionException
+     */
+    public function cancelTransfer(): void
+    {
+        Assert::isInstanceOf($this->server, Server::class);
+
+        if ($transfer = $this->server->transfer) {
+            // Source node
+            $this->setNode($transfer->oldNode);
+
+            try {
+                $this->getHttpClient()->delete(sprintf(
+                    '/api/servers/%s/transfer',
+                    $this->server->uuid
+                ));
+            } catch (TransferException $exception) {
+                throw new DaemonConnectionException($exception);
+            }
+
+            // Destionation node
+            $this->setNode($transfer->newNode);
+
+            try {
+                $this->getHttpClient()->delete('/api/transfer', [
+                    'json' => [
+                        'server_id' => $this->server->uuid,
+                        'server' => [
+                            'uuid' => $this->server->uuid,
+                        ],
+                    ],
+                ]);
+            } catch (TransferException $exception) {
+                throw new DaemonConnectionException($exception);
+            }
+        }
+    }
+
+    /**
      * Revokes a single user's JTI by using their ID. This is simply a helper function to
      * make it easier to revoke tokens on the fly. This ensures that the JTI key is formatted
      * correctly and avoids any costly mistakes in the codebase.
