@@ -2,18 +2,18 @@
 
 return [
     'notices' => [
-        'imported' => 'As eggs e as suas variáveis de ambiente foram importadas com sucesso.',
-        'updated_via_import' => 'Essa egg foi atualizada usando o arquivo fornecido.',
-        'deleted' => 'A egg solicitada foi removida com sucesso do Painel.',
-        'updated' => 'As configurações da egg foi atualizada com sucesso.',
-        'script_updated' => 'O script de instação da egg foi atualizado e poderá ser executado quando os servidores forem instalados.',
-        'egg_created' => 'Um novo egg \'foi criado com sucesso. Reinicie os daemons em execução para aplicar essa nova egg.',
+        'imported' => 'Ovos e suas variáveis associadas foram importados com sucesso.',
+        'updated_via_import' => 'Este ovo foi atualizado usando o arquivo fornecido.',
+        'deleted' => 'O ovo solicitado foi excluído com sucesso do painel.',
+        'updated' => 'A configuração do ovo foi atualizada com sucesso.',
+        'script_updated' => 'O script de instalação do ovo foi atualizado e será executado sempre que os servidores forem instalados.',
+        'egg_created' => 'Um novo ovo foi criado com sucesso. Você precisará reiniciar quaisquer servidores em execução para aplicar este novo ovo.',
     ],
     'variables' => [
         'notices' => [
-            'variable_deleted' => 'A variável ":variable" foi removida com sucesso e não estará mais disponível para os servidores após a reinstalação.',
-            'variable_updated' => 'A variável ":variable" foi atualizada. Reinstale os servidores utilizando essa variável para as aplicações serem alteradas.',
-            'variable_created' => 'Essa variável foi criada com sucesso e vinculada com a egg.',
+            'variable_deleted' => 'A variável ":variable" foi excluída e não estará mais disponível para os servidores uma vez reconstruídos.',
+            'variable_updated' => 'A variável ":variable" foi atualizada. Você precisará reconstruir quaisquer servidores que usem esta variável para aplicar as mudanças.',
+            'variable_created' => 'Nova variável foi criada com sucesso e atribuída a este ovo.',
         ],
     ],
 ];
