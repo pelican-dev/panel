@@ -69,6 +69,7 @@ Route::prefix('/servers')->group(function () {
     Route::post('/{server:id}/suspend', [Application\Servers\ServerManagementController::class, 'suspend'])->name('api.application.servers.suspend');
     Route::post('/{server:id}/unsuspend', [Application\Servers\ServerManagementController::class, 'unsuspend'])->name('api.application.servers.unsuspend');
     Route::post('/{server:id}/reinstall', [Application\Servers\ServerManagementController::class, 'reinstall'])->name('api.application.servers.reinstall');
+    Route::post('/{server:id}/transfer', [Application\Servers\ServerManagementController::class, 'startTransfer'])->name('api.application.servers.transfer');
 
     Route::delete('/{server:id}', [Application\Servers\ServerController::class, 'delete']);
     Route::delete('/{server:id}/{force?}', [Application\Servers\ServerController::class, 'delete']);
