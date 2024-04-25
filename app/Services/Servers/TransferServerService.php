@@ -2,17 +2,17 @@
 
 namespace App\Services\Servers;
 
-use App\Models\Server;
-use Illuminate\Database\ConnectionInterface;
 use App\Exceptions\Http\Connection\DaemonConnectionException;
 use App\Models\Allocation;
 use App\Models\Node;
-use Carbon\CarbonImmutable;
-use GuzzleHttp\Exception\TransferException;
-use Illuminate\Support\Facades\Http;
-use Lcobucci\JWT\Token\Plain;
+use App\Models\Server;
 use App\Models\ServerTransfer;
 use App\Services\Nodes\NodeJWTService;
+use Carbon\CarbonImmutable;
+use GuzzleHttp\Exception\TransferException;
+use Illuminate\Database\ConnectionInterface;
+use Illuminate\Support\Facades\Http;
+use Lcobucci\JWT\Token\Plain;
 
 class TransferServerService
 {

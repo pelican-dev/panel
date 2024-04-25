@@ -2,12 +2,12 @@
 
 namespace App\Http\Controllers\Admin\Servers;
 
-use App\Models\Server;
-use Illuminate\Http\Request;
-use Illuminate\Http\RedirectResponse;
-use Prologue\Alerts\AlertsMessageBag;
 use App\Http\Controllers\Controller;
+use App\Models\Server;
 use App\Services\Servers\TransferServerService;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
+use Prologue\Alerts\AlertsMessageBag;
 
 class ServerTransferController extends Controller
 {

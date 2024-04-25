@@ -2,14 +2,14 @@
 
 namespace App\Http\Controllers\Api\Application\Servers;
 
-use Illuminate\Http\Response;
-use App\Models\Server;
-use App\Services\Servers\SuspensionService;
-use App\Services\Servers\ReinstallServerService;
-use App\Services\Servers\TransferServerService;
-use App\Http\Requests\Api\Application\Servers\ServerWriteRequest;
 use App\Http\Controllers\Api\Application\ApplicationApiController;
+use App\Http\Requests\Api\Application\Servers\ServerWriteRequest;
+use App\Models\Server;
 use App\Repositories\Daemon\DaemonServerRepository;
+use App\Services\Servers\ReinstallServerService;
+use App\Services\Servers\SuspensionService;
+use App\Services\Servers\TransferServerService;
+use Illuminate\Http\Response;
 
 class ServerManagementController extends ApplicationApiController
 {
@@ -84,7 +84,7 @@ class ServerManagementController extends ApplicationApiController
 
     /**
      * Cancels a transfer of a server to a new node.
-     * 
+     *
      * @throws \App\Exceptions\Http\Connection\DaemonConnectionException
      */
     public function cancelTransfer(ServerWriteRequest $request, Server $server): Response

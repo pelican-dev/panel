@@ -3,12 +3,12 @@
 namespace App\Repositories\Daemon;
 
 use App\Enums\ContainerStatus;
-use Exception;
-use Webmozart\Assert\Assert;
+use App\Exceptions\Http\Connection\DaemonConnectionException;
 use App\Models\Server;
+use Exception;
 use GuzzleHttp\Exception\GuzzleException;
 use GuzzleHttp\Exception\TransferException;
-use App\Exceptions\Http\Connection\DaemonConnectionException;
+use Webmozart\Assert\Assert;
 
 class DaemonServerRepository extends DaemonRepository
 {
@@ -146,7 +146,7 @@ class DaemonServerRepository extends DaemonRepository
                 throw new DaemonConnectionException($exception);
             }
 
-            // Destionation node
+            // Destination node
             $this->setNode($transfer->newNode);
 
             try {
