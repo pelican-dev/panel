@@ -71,7 +71,6 @@ class EditUser extends EditRecord
 
             Actions\Action::make('toggleSuspend')
                 ->hidden(fn (User $user) => $user->is_suspended || $user->root_admin)
-                ->tooltip('testt')
                 ->label('Disable User')
                 ->color('warning')
                 ->action(function (User $user) {
