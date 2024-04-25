@@ -8,21 +8,21 @@
  */
 return [
     'auth' => [
-        'fail' => 'Failed log in',
-        'success' => 'Logged in',
-        'password-reset' => 'Password reset',
-        'reset-password' => 'Requested password reset',
-        'checkpoint' => 'Two-factor authentication requested',
-        'recovery-token' => 'Used two-factor recovery token',
-        'token' => 'Solved two-factor challenge',
-        'ip-blocked' => 'Blocked request from unlisted IP address for :identifier',
+        'fail' => 'Kunde inte logga in',
+        'success' => 'Inloggad',
+        'password-reset' => 'Återställ lösenord',
+        'reset-password' => 'Begär att nollställa lösenord',
+        'checkpoint' => 'Tvåfaktorsautentisering begärd',
+        'recovery-token' => 'Använd tvåfaktorsåterställningstoken',
+        'token' => 'Löst tvåfaktorsutmaning',
+        'ip-blocked' => 'Blockerad förfrågan från onoterad IP-adress för :identifier',
         'sftp' => [
-            'fail' => 'Failed SFTP log in',
+            'fail' => 'Misslyckad SFTP-inloggning',
         ],
     ],
     'user' => [
         'account' => [
-            'email-changed' => 'Changed email from :old to :new',
+            'email-changed' => 'Ändrade e-post från :old till :new',
             'password-changed' => 'Changed password',
         ],
         'api-key' => [
