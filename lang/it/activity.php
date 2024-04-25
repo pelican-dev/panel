@@ -124,7 +124,7 @@ return [
         'subuser' => [
             'create' => 'Added :email as a subuser',
             'update' => 'Updated the subuser permissions for :email',
-            'delete' => 'Removed :email as a subuser',
+            'delete' => 'Rimosso :email come un sub utente',
         ],
     ],
 ];
