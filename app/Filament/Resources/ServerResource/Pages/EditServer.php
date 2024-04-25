@@ -603,4 +603,11 @@ class EditServer extends EditRecord
                 ->requiresConfirmation(),
         ];
     }
+
+    protected function mutateFormDataBeforeSave(array $data): array
+    {
+        unset($data['docker'], $data['status']);
+
+        return $data;
+    }
 }
