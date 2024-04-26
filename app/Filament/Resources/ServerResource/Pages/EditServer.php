@@ -131,175 +131,6 @@ class EditServer extends EditRecord
                     ->preload()
                     ->required(),
 
-                Forms\Components\Select::make('node_id')
-                    ->disabledOn('edit')
-                    ->prefixIcon('tabler-server-2')
-                    ->default(fn () => Node::query()->latest()->first()?->id)
-                    ->columnSpan(2)
-                    ->live()
-                    ->relationship('node', 'name')
-                    ->searchable()
-                    ->preload()
-                    ->afterStateUpdated(fn (Forms\Set $set) => $set('allocation_id', null))
-                    ->required(),
-
-                Forms\Components\Select::make('allocation_id')
-                    ->preload()
-                    ->live()
-                    ->prefixIcon('tabler-network')
-                    ->label('Primary Allocation')
-                    ->columnSpan(2)
-                    ->disabled(fn (Forms\Get $get) => $get('node_id') === null)
-                    ->searchable(['ip', 'port', 'ip_alias'])
-                    ->afterStateUpdated(function (Forms\Set $set) {
-                        $set('allocation_additional', null);
-                        $set('allocation_additional.needstobeastringhere.extra_allocations', null);
-                    })
-                    ->getOptionLabelFromRecordUsing(
-                        fn (Allocation $allocation) => "$allocation->ip:$allocation->port" .
-                            ($allocation->ip_alias ? " ($allocation->ip_alias)" : '')
-                    )
-                    ->placeholder(function (Forms\Get $get) {
-                        $node = Node::find($get('node_id'));
-
-                        if ($node?->allocations) {
-                            return 'Select an Allocation';
-                        }
-
-                        return 'Create a New Allocation';
-                    })
-                    ->relationship(
-                        'allocation',
-                        'ip',
-                        fn (Builder $query, Forms\Get $get) => $query
-                            ->where('node_id', $get('node_id'))
-                            ->whereNull('server_id'),
-                    )
-                    ->createOptionForm(fn (Forms\Get $get) => [
-                        Forms\Components\TextInput::make('allocation_ip')
-                            ->datalist(Node::find($get('node_id'))?->ipAddresses() ?? [])
-                            ->label('IP Address')
-                            ->ipv4()
-                            ->helperText("Usually your machine's public IP unless you are port forwarding.")
-                            // ->selectablePlaceholder(false)
-                            ->required(),
-                        Forms\Components\TextInput::make('allocation_alias')
-                            ->label('Alias')
-                            ->default(null)
-                            ->datalist([
-                                $get('name'),
-                                Egg::find($get('egg_id'))?->name,
-                            ])
-                            ->helperText('This is just a display only name to help you recognize what this Allocation is used for.')
-                            ->required(false),
-                        Forms\Components\TagsInput::make('allocation_ports')
-                            ->placeholder('Examples: 27015, 27017-27019')
-                            ->helperText('
-                                These are the ports that users can connect to this Server through.
-                                They usually consist of the port forwarded ones.
-                            ')
-                            ->label('Ports')
-                            ->live()
-                            ->afterStateUpdated(function ($state, Forms\Set $set) {
-                                $ports = collect();
-                                $update = false;
-                                foreach ($state as $portEntry) {
-                                    if (!str_contains($portEntry, '-')) {
-                                        if (is_numeric($portEntry)) {
-                                            $ports->push((int) $portEntry);
-
-                                            continue;
-                                        }
-
-                                        // Do not add non numerical ports
-                                        $update = true;
-
-                                        continue;
-                                    }
-
-                                    $update = true;
-                                    [$start, $end] = explode('-', $portEntry);
-                                    if (!is_numeric($start) || !is_numeric($end)) {
-                                        continue;
-                                    }
-
-                                    $start = max((int) $start, 0);
-                                    $end = min((int) $end, 2 ** 16 - 1);
-                                    for ($i = $start; $i <= $end; $i++) {
-                                        $ports->push($i);
-                                    }
-                                }
-
-                                $uniquePorts = $ports->unique()->values();
-                                if ($ports->count() > $uniquePorts->count()) {
-                                    $update = true;
-                                    $ports = $uniquePorts;
-                                }
-
-                                $sortedPorts = $ports->sort()->values();
-                                if ($sortedPorts->all() !== $ports->all()) {
-                                    $update = true;
-                                    $ports = $sortedPorts;
-                                }
-
-                                if ($update) {
-                                    $set('allocation_ports', $ports->all());
-                                }
-                            })
-                            ->splitKeys(['Tab', ' ', ','])
-                            ->required(),
-                    ])
-                    ->createOptionUsing(function (array $data, Forms\Get $get): int {
-                        return collect(
-                            resolve(AssignmentService::class)->handle(Node::find($get('node_id')), $data)
-                        )->first();
-                    })
-                    ->required(),
-
-                Forms\Components\Repeater::make('allocation_additional')
-                    ->label('Additional Allocations')
-                    ->columnSpan(2)
-                    ->addActionLabel('Add Allocation')
-                    ->disabled(fn (Forms\Get $get) => $get('allocation_id') === null)
-                    // ->addable() TODO disable when all allocations are taken
-                    // ->addable() TODO disable until first additional allocation is selected
-                    ->simple(
-                        Forms\Components\Select::make('extra_allocations')
-                            ->live()
-                            ->preload()
-                            ->disableOptionsWhenSelectedInSiblingRepeaterItems()
-                            ->prefixIcon('tabler-network')
-                            ->label('Additional Allocations')
-                            ->columnSpan(2)
-                            ->disabled(fn (Forms\Get $get) => $get('../../node_id') === null)
-                            ->searchable(['ip', 'port', 'ip_alias'])
-                            ->getOptionLabelFromRecordUsing(
-                                fn (Allocation $allocation) => "$allocation->ip:$allocation->port" .
-                                    ($allocation->ip_alias ? " ($allocation->ip_alias)" : '')
-                            )
-                            ->placeholder('Select additional Allocations')
-                            ->relationship(
-                                'allocations',
-                                'ip',
-                                fn (Builder $query, Forms\Get $get, Forms\Components\Select $component, $state) => $query
-                                    ->where('node_id', $get('../../node_id'))
-                                    ->whereNotIn(
-                                        'id',
-                                        collect(($repeater = $component->getParentRepeater())->getState())
-                                            ->pluck(
-                                                (string) str($component->getStatePath())
-                                                    ->after("{$repeater->getStatePath()}.")
-                                                    ->after('.'),
-                                            )
-                                            ->flatten()
-                                            ->diff(Arr::wrap($state))
-                                            ->filter(fn (mixed $siblingItemState): bool => filled($siblingItemState))
-                                            ->add($get('../../allocation_id'))
-                                    )
-                                    ->whereNull('server_id'),
-                            ),
-                    ),
-
                 Forms\Components\Textarea::make('description')
                     ->hidden()
                     ->default('')
@@ -549,23 +380,15 @@ class EditServer extends EditRecord
                             ->required()
                             ->numeric(),
 
-                        Forms\Components\TextInput::make('threads')
-                            ->hint('Advanced')
-                            ->hintColor('danger')
-                            ->helperText('Examples: 0, 0-1,3, or 0,1,3,4')
-                            ->label('CPU Pinning')
-                            ->suffixIcon('tabler-cpu')
-                            ->maxLength(191),
-
-                        Forms\Components\TextInput::make('io')
+                        Forms\Components\Hidden::make('io')
                             ->helperText('The IO performance relative to other running containers')
                             ->label('Block IO Proportion')
                             ->required()
-                            ->minValue(0)
-                            ->maxValue(1000)
-                            ->step(10)
-                            ->default(0)
-                            ->numeric(),
+//                            ->numeric()
+//                            ->minValue(0)
+//                            ->maxValue(1000)
+//                            ->step(10)
+                            ->default(0),
 
                         Forms\Components\ToggleButtons::make('oom_disabled')
                             ->label('OOM Killer')
@@ -609,5 +432,12 @@ class EditServer extends EditRecord
         unset($data['docker'], $data['status']);
 
         return $data;
+    }
+
+    public function getRelationManagers(): array
+    {
+        return [
+            ServerResource\RelationManagers\AllocationsRelationManager::class,
+        ];
     }
 }
