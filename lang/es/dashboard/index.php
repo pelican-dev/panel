@@ -1,15 +1,15 @@
 <?php
 
 return [
-    'title' => 'Dashboard',
-    'showing-your-servers' => 'Showing your servers',
-    'showing-others-servers' => "Showing other's servers",
-    'no-other-servers' => 'There are no other servers to display.',
-    'no-servers-associated' => 'There are no servers associated with your account.',
+    'title' => 'Panel de Control',
+    'showing-your-servers' => 'Mostrando tus servidores',
+    'showing-others-servers' => "Mostrando servidores de otros",
+    'no-other-servers' => 'No hay otros servidores para mostrar.',
+    'no-servers-associated' => 'No hay servidores asociados con tu cuenta.',
 
-    'content_tabs' => 'Content tabs',
-    'overview' => 'Overview',
-    'heading' => 'Welcome to Pelican!',
+    'content_tabs' => 'Pestañas de contenido',
+    'overview' => 'Resumen',
+    'heading' => '¡Bienvenido a Pelican!',
     'expand_sections' => 'You can expand the following sections:',
     'sections' => [
         'intro-developers' => [
