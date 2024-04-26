@@ -8,8 +8,8 @@ return [
     'notices' => [
         'allocations_added' => 'เพิ่มพอร์ตไปยังโหนดนี้สำเร็จแล้ว',
         'node_deleted' => 'โหนดถูกลบออกจากแผงเรียบร้อยแล้ว',
-        'node_created' => 'Successfully created new node. You can automatically configure the daemon on this machine by visiting the \'Configuration\' tab. <strong>Before you can add any servers you must first allocate at least one IP address and port.</strong>',
-        'node_updated' => 'Node information has been updated. If any daemon settings were changed you will need to reboot it for those changes to take effect.',
-        'unallocated_deleted' => 'Deleted all un-allocated ports for <code>:ip</code>.',
+        'node_created' => 'สร้างโหนดใหม่สำเร็จ คุณสามารถกำหนดค่าเดมอนบนเครื่องนี้โดยอัตโนมัติได้โดยไปที่แท็บ "การกำหนดค่า" <strong>ก่อนที่คุณจะสามารถเพิ่มเซิร์ฟเวอร์ใดๆ คุณต้องจัดที่อยู่ IP และพอร์ตอย่างน้อยหนึ่งรายการก่อน</strong>',
+        'node_updated' => 'ข้อมูลโหนดได้รับการอัปเดตแล้ว หากมีการเปลี่ยนแปลงการตั้งค่าเดมอน คุณจะต้องรีบูตเพื่อให้การเปลี่ยนแปลงมีผล',
+        'unallocated_deleted' => 'ลบพอร์ตที่ไม่ได้จัดสรรทั้งหมดสำหรับ <code>:ip</code>',
     ],
 ];
