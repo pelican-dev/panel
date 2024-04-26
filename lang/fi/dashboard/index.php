@@ -9,20 +9,20 @@ return [
 
     'content_tabs' => 'Sisältö välilehdet',
     'overview' => 'Yleiskatsaus',
-    'heading' => 'Welcome to Pelican!',
+    'heading' => 'Tervetuloa Pelikaaniin!',
     'expand_sections' => 'Voit laajentaa seuraavia osioita:',
     'sections' => [
         'intro-developers' => [
             'heading' => 'Tietoa kehittäjille',
             'content' => 'Kiitos, että kokeilit kehitysversiota!',
             'extra_note' => 'Jos kohtaat ongelmia, ilmoita niistä GitHubissa.',
-            'button_issues' => 'Create Issue',
-            'button_features' => 'Discuss Features',
+            'button_issues' => 'Luo Ongelma',
+            'button_features' => 'Keskustele Ominaisuuksista',
         ],
         'intro-first-node' => [
             'heading' => 'No Nodes Detected',
             'content' => "It looks like you don't have any Nodes set up yet, but don't worry because you click the action button to create your first one!",
-            'extra_note' => 'If you run into any issues, please report them on GitHub.',
+            'extra_note' => 'Jos kohtaat ongelmia, ilmoita niistä GitHubissa.',
             'button_label' => 'Create first Node in Pelican',
         ],
         'intro-support' => [
