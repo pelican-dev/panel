@@ -3,8 +3,8 @@
 return [
     'title' => 'Aperçu du compte',
     'email' => [
-        'title' => 'Update Email Address',
-        'button' => 'Update Email',
+        'title' => 'Mettre à jour l\'adresse e-mail',
+        'button' => 'Mettre à jour l\'e-mail',
         'updated' => 'Votre adresse e-mail principale a été mise à jour.',
     ],
     'password' => [
@@ -12,9 +12,9 @@ return [
         'button' => 'Mettre à jour le mot de passe',
         'requirements' => 'Votre nouveau mot de passe doit comporter au moins 8 caractères et être unique à ce site web.',
         'validation' => [
-            'account_password' => 'You must provide your account password.',
+            'account_password' => 'Vous devez fournir le mot de passe de votre compte.',
             'current_password' => 'Vous devez fournir votre mot de passe actuel.',
-            'password_confirmation' => 'Password confirmation does not match the password you entered.',
+            'password_confirmation' => 'La confirmation du mot de passe ne correspond pas au mot de passe que vous avez saisi.',
         ],
         'updated' => 'Votre mot de passe a été mis à jour.',
     ],
@@ -36,12 +36,12 @@ return [
         ],
         'setup' => [
             'title' => 'Activer la vérification en deux étapes',
-            'subtitle' => "Help protect your account from unauthorized access. You'll be prompted for a verification code each time you sign in.",
-            'help' => 'Scan the QR code above using the two-step authentication app of your choice. Then, enter the 6-digit code generated into the field below.',
+            'subtitle' => "Aide à protéger votre compte contre les accès non autorisés. Un code de vérification vous sera demandé chaque fois que vous vous connecterez.",
+            'help' => 'Scannez le code QR ci-dessus avec l\'application d\'authentification à deux facteurs de votre choix. Ensuite, entrez le code à 6 chiffres généré dans le champ ci-dessous.',
         ],
 
         'required' => [
-            'title' => '2-Factor Required',
+            'title' => 'Authentification à deux facteurs requise.',
             'description' => 'Votre compte doit avoir l\'authentification à deux facteurs activée pour continuer.',
         ],
     ],
