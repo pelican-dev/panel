@@ -19,7 +19,7 @@ return [
     'force_outgoing_ip' => 'Pakota Lähtevä IP-osoite',
     'startup' => 'Käynnistys',
     'docker_images' => 'Docker-kuva',
-    'linked_node' => 'Linked Node',
+    'linked_node' => 'Linkitetty Palvelin',
     'connection' => 'Yhteys',
     'memory' => 'Muisti',
     'cpu' => 'CPU',
@@ -110,6 +110,6 @@ return [
         'title' => 'Pääsy estetty',
         'message' => 'Sinulla ei ole oikeutta käyttää kyseistä sivua.',
     ],
-    'version' => 'Versio: {version}',
+    'version' => 'Versio: :version',
     'coming_soon' => 'Tulossa pian!',
 ];
