@@ -236,7 +236,7 @@ class Server extends Model
      */
     public function allocations(): HasMany
     {
-        return $this->hasMany(Allocation::class, 'server_id');
+        return $this->hasMany(Allocation::class);
     }
 
     /**
