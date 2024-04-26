@@ -103,10 +103,10 @@ Route::prefix('/eggs')->group(function () {
 | Database Host Controller Routes
 |--------------------------------------------------------------------------
 |
-| Endpoint: /api/application/databasehosts
+| Endpoint: /api/application/database-hosts
 |
 */
-Route::group(['prefix' => '/databasehosts'], function () {
+Route::group(['prefix' => '/database-hosts'], function () {
     Route::get('/', [Application\DatabaseHosts\DatabaseHostController::class, 'index'])->name('api.application.databasehosts');
     Route::get('/{databaseHost:id}', [Application\DatabaseHosts\DatabaseHostController::class, 'view'])->name('api.application.databasehosts.view');
 
