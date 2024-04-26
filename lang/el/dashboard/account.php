@@ -1,28 +1,48 @@
 <?php
 
 return [
+    'title' => 'Account Overview',
     'email' => [
-        'title' => 'Ενημερώστε το email σας',
-        'updated' => 'Η διεύθυνση email σας ενημερώθηκε.',
+        'title' => 'Update Email Address',
+        'button' => 'Update Email',
+        'updated' => 'Your primary email has been updated.',
     ],
     'password' => [
-        'title' => 'Αλλάξτε τον κωδικό πρόσβασής σας',
-        'requirements' => 'Ο νέος κωδικός πρόσβασης πρέπει να έχει μήκος τουλάχιστον 8 χαρακτήρων.',
+        'title' => 'Update Password',
+        'button' => 'Update Password',
+        'requirements' => 'Your new password should be at least 8 characters in length and unique to this website.',
+        'validation' => [
+            'account_password' => 'You must provide your account password.',
+            'current_password' => 'You must provide your current password.',
+            'password_confirmation' => 'Password confirmation does not match the password you entered.',
+        ],
         'updated' => 'Ο κωδικός πρόσβασης σας ενημερώθηκε.',
     ],
     'two_factor' => [
+        'title' => 'Two-Step Verification',
         'button' => 'Ρύθμιση Ελέγχου Ταυτότητας 2 Παραγόντων',
         'disabled' => 'Ο έλεγχος ταυτότητας δύο παραγόντων απενεργοποιήθηκε στο λογαριασμό σας. Δεν θα σας ζητηθεί πλέον να παρέχετε ένα διακριτικό κατά τη σύνδεση.',
         'enabled' => 'Ο έλεγχος ταυτότητας δύο παραγόντων ενεργοποιήθηκε στο λογαριασμό σας! Από δω και στο εξής, όταν θέλετε να συνδεθείτε, θα πρέπει να παρέχετε τον κωδικό που δημιουργείται από τη συσκευή σας.',
         'invalid' => 'Το διακριτικό που δόθηκε δεν ήταν έγκυρο.',
-        'setup' => [
-            'title' => 'Ρύθμιση ελέγχου ταυτότητας δύο παραγόντων',
-            'help' => 'Δεν είναι δυνατή η σάρωση του κωδικού; Εισάγετε τον παρακάτω κωδικό στην εφαρμογή σας:',
-            'field' => 'Εισαγωγή διακριτικού',
+        'enable' => [
+            'help' => 'You do not currently have two-step verification enabled on your account. Click the button below to begin configuring it.',
+            'button' => 'Enable Two-Step',
         ],
         'disable' => [
+            'help' => 'Two-step verification is currently enabled on your account.',
             'title' => 'Απενεργοποίηση ελέγχου ταυτότητας δύο παραγόντων',
             'field' => 'Εισαγωγή διακριτικού',
+            'button' => 'Disable Two-Step',
+        ],
+        'setup' => [
+            'title' => 'Enable Two-Step Verification',
+            'subtitle' => "Help protect your account from unauthorized access. You'll be prompted for a verification code each time you sign in.",
+            'help' => 'Scan the QR code above using the two-step authentication app of your choice. Then, enter the 6-digit code generated into the field below.',
+        ],
+
+        'required' => [
+            'title' => '2-Factor Required',
+            'description' => 'Your account must have two-factor authentication enabled in order to continue.',
         ],
     ],
 ];
