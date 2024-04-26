@@ -2,8 +2,10 @@
 
 namespace App\Transformers\Api\Application;
 
+use App\Models\Node;
 use App\Models\Database;
 use App\Models\DatabaseHost;
+use League\Fractal\Resource\Item;
 use League\Fractal\Resource\Collection;
 use League\Fractal\Resource\NullResource;
 use App\Services\Acl\Api\AdminAcl;
@@ -12,6 +14,7 @@ class DatabaseHostTransformer extends BaseTransformer
 {
     protected array $availableIncludes = [
         'databases',
+        'node',
     ];
 
     /**
@@ -53,5 +56,21 @@ class DatabaseHostTransformer extends BaseTransformer
         $model->loadMissing('databases');
 
         return $this->collection($model->getRelation('databases'), $this->makeTransformer(ServerDatabaseTransformer::class), Database::RESOURCE_NAME);
+    }
+
+    /**
+     * Include the node associated with this host.
+     *
+     * @throws \App\Exceptions\Transformer\InvalidTransformerLevelException
+     */
+    public function includeNode(DatabaseHost $model): Item|NullResource
+    {
+        if (!$this->authorize(AdminAcl::RESOURCE_NODES)) {
+            return $this->null();
+        }
+
+        $model->loadMissing('node');
+
+        return $this->item($model->getRelation('node'), $this->makeTransformer(NodeTransformer::class), Node::RESOURCE_NAME);
     }
 }
