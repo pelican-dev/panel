@@ -1,14 +1,14 @@
 @extends('layouts.admin')
 
 @section('title')
-    @lang('admin/databases.title')
+    Database Hosts
 @endsection
 
 @section('content-header')
-    <h1>@lang('admin/databases.header.title')<small>@lang('admin/databases.header.subtitle')</small></h1>
+    <h1>Database Hosts<small>Database hosts that servers can have databases created on.</small></h1>
     <ol class="breadcrumb">
-        <li><a href="{{ route('admin.index') }}">@lang('admin/navigation.breadcrumb.admin')</a></li>
-        <li class="active">@lang('admin/navigation.breadcrumb.databases')</li>
+        <li><a href="{{ route('admin.index') }}">Admin</a></li>
+        <li class="active">Database Hosts</li>
     </ol>
 @endsection
 

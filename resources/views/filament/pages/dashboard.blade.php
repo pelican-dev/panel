@@ -6,28 +6,28 @@
         <x-filament::tabs.item
             icon="tabler-server-2"
         >
-            {{ trans_choice('strings.nodes', 2) }}
+            Nodes
             <x-slot name="badge">{{ $nodesCount }}</x-slot>
         </x-filament::tabs.item>
 
         <x-filament::tabs.item
             icon="tabler-brand-docker"
         >
-            {{ trans_choice('strings.servers', 2) }}
+            Servers
             <x-slot name="badge">{{ $serversCount }}</x-slot>
         </x-filament::tabs.item>
 
         <x-filament::tabs.item
             icon="tabler-eggs"
         >
-            {{ trans_choice('strings.eggs', 2) }}
+            Eggs
             <x-slot name="badge">{{ $eggsCount }}</x-slot>
         </x-filament::tabs.item>
 
         <x-filament::tabs.item
             icon="tabler-users"
         >
-            {{ trans_choice('strings.users', 2) }}
+            Users
             <x-slot name="badge">{{ $usersCount }}</x-slot>
         </x-filament::tabs.item>
     </x-filament::tabs>
