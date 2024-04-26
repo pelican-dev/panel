@@ -8,12 +8,12 @@ return [
     ],
     'content' => [
         'title' => 'Informations systèmes',
-        'up-to-date' => 'You are running Pelican version <code>:version</code>. Your panel is up-to-date!',
-        'not-up-to-date1' => 'Your panel is <strong>not up-to-date!</strong> The latest version is',
-        'not-up-to-date2' => 'and you are currently running version <code>:version</code>.',
-        'get-help' => 'Get Help <small>(via Discord)</small>',
+        'up-to-date' => 'Vous utilisez la version <code>:version</code> de Pelican. Votre panel est à jour !',
+        'not-up-to-date1' => 'Votre panel n\'est <strong>pas à jour !</strong> La dernière version est',
+        'not-up-to-date2' => 'et vous utilisez actuellement la version <code>:version</code>.',
+        'get-help' => 'Obtenir de l\'aide <small>(via Discord)</small>',
         'documentation' => 'Documentation',
         'github' => 'Github',
-        'support-the-project' => 'Support the Project',
+        'support-the-project' => 'Soutenir le projet',
     ],
 ];
