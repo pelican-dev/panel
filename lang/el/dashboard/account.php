@@ -1,48 +1,48 @@
 <?php
 
 return [
-    'title' => 'Account Overview',
+    'title' => 'Επισκόπηση Λογαριασμού',
     'email' => [
-        'title' => 'Update Email Address',
-        'button' => 'Update Email',
-        'updated' => 'Your primary email has been updated.',
+        'title' => 'Ενημέρωση διεύθυνσης ηλεκτρονικού ταχυδρομείου',
+        'button' => 'Ενημέρωση Email',
+        'updated' => 'Το κύριο email σας ενημερώθηκε.',
     ],
     'password' => [
-        'title' => 'Update Password',
-        'button' => 'Update Password',
-        'requirements' => 'Your new password should be at least 8 characters in length and unique to this website.',
+        'title' => 'Ενημέρωση κωδικού πρόσβασης',
+        'button' => 'Ενημέρωση κωδικού πρόσβασης',
+        'requirements' => 'Ο νέος κωδικός πρόσβασης σας θα πρέπει να έχει μήκος τουλάχιστον 8 χαρακτήρων σε μήκος και να είναι μοναδικός σε αυτή την ιστοσελίδα.',
         'validation' => [
-            'account_password' => 'You must provide your account password.',
-            'current_password' => 'You must provide your current password.',
-            'password_confirmation' => 'Password confirmation does not match the password you entered.',
+            'account_password' => 'Πρέπει να συμπληρώσετε τον κωδικό πρόσβασης του λογαριασμού σας.',
+            'current_password' => 'Πρέπει να συμπληρώσετε τον τρέχοντα κωδικό πρόσβασής σας.',
+            'password_confirmation' => 'Η επιβεβαίωση κωδικού πρόσβασης δεν ταιριάζει με τον κωδικό πρόσβασης που εισαγάγατε.',
         ],
         'updated' => 'Ο κωδικός πρόσβασης σας ενημερώθηκε.',
     ],
     'two_factor' => [
-        'title' => 'Two-Step Verification',
+        'title' => 'Επαλήθευση Δύο Βημάτων',
         'button' => 'Ρύθμιση Ελέγχου Ταυτότητας 2 Παραγόντων',
         'disabled' => 'Ο έλεγχος ταυτότητας δύο παραγόντων απενεργοποιήθηκε στο λογαριασμό σας. Δεν θα σας ζητηθεί πλέον να παρέχετε ένα διακριτικό κατά τη σύνδεση.',
         'enabled' => 'Ο έλεγχος ταυτότητας δύο παραγόντων ενεργοποιήθηκε στο λογαριασμό σας! Από δω και στο εξής, όταν θέλετε να συνδεθείτε, θα πρέπει να παρέχετε τον κωδικό που δημιουργείται από τη συσκευή σας.',
         'invalid' => 'Το διακριτικό που δόθηκε δεν ήταν έγκυρο.',
         'enable' => [
-            'help' => 'You do not currently have two-step verification enabled on your account. Click the button below to begin configuring it.',
-            'button' => 'Enable Two-Step',
+            'help' => 'Δεν έχετε ενεργοποιήσει την επαλήθευση δύο βημάτων στο λογαριασμό σας. Κάντε κλικ στο παρακάτω κουμπί για να ξεκινήσετε τη ρύθμιση.',
+            'button' => 'Ενεργοποίηση Επαλήθευσης Δύο Βημάτων',
         ],
         'disable' => [
-            'help' => 'Two-step verification is currently enabled on your account.',
+            'help' => 'Η επαλήθευση δύο βημάτων είναι ενεργοποιημένη στο λογαριασμό σας.',
             'title' => 'Απενεργοποίηση ελέγχου ταυτότητας δύο παραγόντων',
             'field' => 'Εισαγωγή διακριτικού',
-            'button' => 'Disable Two-Step',
+            'button' => 'Απενεργοποίηση Επαλήθευσης Δύο Βημάτων',
         ],
         'setup' => [
-            'title' => 'Enable Two-Step Verification',
-            'subtitle' => "Help protect your account from unauthorized access. You'll be prompted for a verification code each time you sign in.",
-            'help' => 'Scan the QR code above using the two-step authentication app of your choice. Then, enter the 6-digit code generated into the field below.',
+            'title' => 'Ενεργοποίηση Επαλήθευσης Δύο Βημάτων',
+            'subtitle' => "Βοηθήστε στην προστασία του λογαριασμού σας από μη εξουσιοδοτημένη πρόσβαση. Θα σας ζητείται ένας κωδικός επαλήθευσης κάθε φορά που συνδέεστε.",
+            'help' => 'Σαρώστε τον παραπάνω QR code χρησιμοποιώντας την εφαρμογή ελέγχου ταυτότητας δύο βημάτων της επιλογής σας. Στη συνέχεια, εισάγετε τον 6-ψήφιο κωδικό που δημιουργήθηκε στο παρακάτω πεδίο.',
         ],
 
         'required' => [
-            'title' => '2-Factor Required',
-            'description' => 'Your account must have two-factor authentication enabled in order to continue.',
+            'title' => 'Η επαλήθευση δύο παραγόντων απαιτείται',
+            'description' => 'Ο λογαριασμός σας πρέπει να έχει ενεργοποιημένο τον έλεγχο ταυτότητας δύο παραγόντων για να συνεχίσετε.',
         ],
     ],
 ];
