@@ -11,11 +11,11 @@ return [
     ],
     'last_admin' => [
         'hint' => '¡Este es el último administrador root!',
-        'helper_text' => 'You must have at least one root administrator in your system.',
+        'helper_text' => 'Debes tener al menos un administrador root en tu sistema.',
     ],
-    'root_admin' => 'Administrator (Root)',
+    'root_admin' => 'Administrador (Root)',
     'language' => [
-        'helper_text1' => 'Your language (:state) has not been translated yet!\nBut never fear, you can help fix that by',
-        'helper_text2' => 'contributing directly here',
+        'helper_text1' => '¡Tu idioma (:state) no ha sido traducido todavía!\nPero no te preocupes, puedes ayudar a arreglarlo con',
+        'helper_text2' => 'contribuyendo directamente aquí',
     ],
 ];
