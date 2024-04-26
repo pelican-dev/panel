@@ -6,6 +6,7 @@ use App\Filament\Resources\NodeResource;
 use App\Models\Node;
 use Filament\Actions;
 use Filament\Resources\Pages\ListRecords;
+use Filament\Tables\Actions\CreateAction;
 use Filament\Tables\Table;
 use Filament\Tables;
 
@@ -77,6 +78,14 @@ class ListNodes extends ListRecords
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
                 ]),
+            ])
+            ->emptyStateIcon('tabler-server-2')
+            ->emptyStateDescription('')
+            ->emptyStateHeading('No Nodes')
+            ->emptyStateActions([
+                CreateAction::make('create')
+                    ->label('Create Node')
+                    ->button(),
             ]);
     }
 
@@ -84,7 +93,8 @@ class ListNodes extends ListRecords
     {
         return [
             Actions\CreateAction::make()
-                ->label('Create Node'),
+                ->label('Create Node')
+                ->hidden(fn () => Node::count() <= 0),
         ];
     }
 }

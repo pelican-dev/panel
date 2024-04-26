@@ -3,8 +3,10 @@
 namespace App\Filament\Resources\MountResource\Pages;
 
 use App\Filament\Resources\MountResource;
+use App\Models\Mount;
 use Filament\Actions;
 use Filament\Resources\Pages\ListRecords;
+use Filament\Tables\Actions\CreateAction;
 use Filament\Tables\Table;
 use Filament\Tables;
 
@@ -42,13 +44,22 @@ class ListMounts extends ListRecords
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
                 ]),
+            ])
+            ->emptyStateIcon('tabler-layers-linked')
+            ->emptyStateDescription('')
+            ->emptyStateHeading('No Mounts')
+            ->emptyStateActions([
+                CreateAction::make('create')
+                    ->label('Create Mount')
+                    ->button(),
             ]);
     }
     protected function getHeaderActions(): array
     {
         return [
             Actions\CreateAction::make()
-                ->label('Create Mount'),
+                ->label('Create Mount')
+                ->hidden(fn () => Mount::count() <= 0),
         ];
     }
 }
