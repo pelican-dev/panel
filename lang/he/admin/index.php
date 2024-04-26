@@ -1,19 +1,19 @@
 <?php
 
 return [
-    'title' => 'Administration',
+    'title' => 'אדמיניסטרציה',
     'header' => [
-        'title' => 'Administrative Overview',
-        'subtitle' => 'A quick glance at your system.',
+        'title' => 'סקירה מנהלית',
+        'subtitle' => 'מבט מהיר במערכת שלך.',
     ],
     'content' => [
-        'title' => 'System Information',
-        'up-to-date' => 'You are running Pelican version <code>:version</code>. Your panel is up-to-date!',
-        'not-up-to-date1' => 'Your panel is <strong>not up-to-date!</strong> The latest version is',
-        'not-up-to-date2' => 'and you are currently running version <code>:version</code>.',
-        'get-help' => 'Get Help <small>(via Discord)</small>',
-        'documentation' => 'Documentation',
+        'title' => 'מידע מערכת',
+        'up-to-date' => 'אתה מפעיל את גרסת Pelican <code>:version</code>. לוח הבקרה שלך מעודכן!',
+        'not-up-to-date1' => 'לוח הבקרה שלך <strong>אינה מעודכנת!</strong> הגרסה העדכנית ביותר היא',
+        'not-up-to-date2' => 'ואתה פועל כעת בגרסה <code>:version</code>.',
+        'get-help' => 'קבלו עזרה <small>(דרך Discord)</small>',
+        'documentation' => 'תיעוד',
         'github' => 'Github',
-        'support-the-project' => 'Support the Project',
+        'support-the-project' => 'תמכו בפרויקט',
     ],
 ];
