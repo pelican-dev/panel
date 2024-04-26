@@ -66,7 +66,7 @@ class DatabaseHostController extends ApplicationApiController
             ->transformWith($this->getTransformer(DatabaseHostTransformer::class))
             ->addMeta([
                 'resource' => route('api.application.databases.view', [
-                    'databaseHost' => $databaseHost->id,
+                    'database_host' => $databaseHost->id,
                 ]),
             ])
             ->respond(201);
