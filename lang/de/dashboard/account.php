@@ -1,15 +1,15 @@
 <?php
 
 return [
-    'title' => 'Account Overview',
+    'title' => 'Kontoübersicht',
     'email' => [
-        'title' => 'Update Email Address',
-        'button' => 'Update Email',
-        'updated' => 'Your primary email has been updated.',
+        'title' => 'E-Mail-Adresse aktualisieren',
+        'button' => 'E-Mail aktualisieren',
+        'updated' => 'Deine primäre E-Mail wurde aktualisiert.',
     ],
     'password' => [
-        'title' => 'Update Password',
-        'button' => 'Update Password',
+        'title' => 'Passwort ändern',
+        'button' => 'Passwort ändern',
         'requirements' => 'Your new password should be at least 8 characters in length and unique to this website.',
         'validation' => [
             'account_password' => 'You must provide your account password.',
@@ -41,8 +41,8 @@ return [
         ],
 
         'required' => [
-            'title' => '2-Factor Required',
-            'description' => 'Your account must have two-factor authentication enabled in order to continue.',
+            'title' => '2-Faktor erforderlich',
+            'description' => 'Dein Konto muss die Zwei-Faktor-Authentifizierung aktiviert haben, um fortzufahren.',
         ],
     ],
 ];
