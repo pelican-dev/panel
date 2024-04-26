@@ -10,12 +10,12 @@ return [
         'account_updated' => 'החשבון עודכן בהצלחה.',
     ],
     'last_admin' => [
-        'hint' => 'This is the last root administrator!',
-        'helper_text' => 'You must have at least one root administrator in your system.',
+        'hint' => 'זהו מנהל הבסיס האחרון!',
+        'helper_text' => 'דרוש לך לפחות מנהל בסיס אחד במערכת שלך.',
     ],
-    'root_admin' => 'Administrator (Root)',
+    'root_admin' => 'מנהל מערכת (בסיס)',
     'language' => [
-        'helper_text1' => 'Your language (:state) has not been translated yet!\nBut never fear, you can help fix that by',
-        'helper_text2' => 'contributing directly here',
+        'helper_text1' => 'השפה שלך (:state) עוד לא תורגם!\nאל חשש, תוכל לתקן את זה על ידי',
+        'helper_text2' => 'תורמים כאן ישירות',
     ],
 ];
