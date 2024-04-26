@@ -37,7 +37,8 @@ class EditProfile extends \Filament\Pages\Auth\EditProfile
                     ->schema([
                         Tabs::make()->persistTabInQueryString()
                             ->schema([
-                                Tab::make(trans('strings.account'))
+                                Tab::make('Account')
+                                    ->label(trans('strings.account'))
                                     ->icon('tabler-user')
                                     ->schema([
                                         TextInput::make('username')
