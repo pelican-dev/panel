@@ -116,4 +116,3 @@ Route::group(['prefix' => '/databasehosts'], function () {
 
     Route::delete('/{databaseHost:id}', [Application\DatabaseHosts\DatabaseHostController::class, 'delete']);
 });
-
