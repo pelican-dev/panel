@@ -111,5 +111,5 @@ return [
         'message' => 'Δεν έχετε δικαίωμα πρόσβασης σε αυτή τη σελίδα.',
     ],
     'version' => 'Έκδοση :version',
-    'coming_soon' => 'Coming soon!',
+    'coming_soon' => 'Έρχεται σύντομα!',
 ];
