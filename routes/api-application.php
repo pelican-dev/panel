@@ -116,6 +116,7 @@ Route::prefix('mounts')->group(function () {
 
     Route::patch('/{mount:id}', [Application\Mounts\MountController::class, 'update']);
 
+    Route::delete('/{mount:id}', [Application\Mounts\MountController::class, 'delete']);
     Route::delete('/{mount:id}/eggs/{egg_id}', [Application\Mounts\MountController::class, 'deleteEgg']);
     Route::delete('/{mount:id}/nodes/{node_id}', [Application\Mounts\MountController::class, 'deleteNode']);
 });
