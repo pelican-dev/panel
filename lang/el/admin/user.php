@@ -10,12 +10,12 @@ return [
         'account_updated' => 'Ο λογαριασμός ενημερώθηκε με επιτυχία.',
     ],
     'last_admin' => [
-        'hint' => 'This is the last root administrator!',
-        'helper_text' => 'You must have at least one root administrator in your system.',
+        'hint' => 'Αυτός είναι ο τελευταίος διαχειριστής root!',
+        'helper_text' => 'Πρέπει να έχετε τουλάχιστον έναν root διαχειριστή στο σύστημά σας.',
     ],
-    'root_admin' => 'Administrator (Root)',
+    'root_admin' => 'Διαχειριστής (Root)',
     'language' => [
-        'helper_text1' => 'Your language (:state) has not been translated yet!\nBut never fear, you can help fix that by',
-        'helper_text2' => 'contributing directly here',
+        'helper_text1' => 'Η γλώσσα σας (:state) δεν έχει μεταφραστεί ακόμα!\nΑλλά μην ανησυχείτε, μπορείτε να βοηθήσετε να το διορθώσετε αυτό',
+        'helper_text2' => 'συνεισφέροντας άμεσα εδώ',
     ],
 ];
