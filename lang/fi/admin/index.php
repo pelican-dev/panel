@@ -1,19 +1,19 @@
 <?php
 
 return [
-    'title' => 'Administration',
+    'title' => 'Hallinta',
     'header' => [
-        'title' => 'Administrative Overview',
-        'subtitle' => 'A quick glance at your system.',
+        'title' => 'Hallinnollinen Katsaus',
+        'subtitle' => 'Nopea katsaus järjestelmääsi.',
     ],
     'content' => [
-        'title' => 'System Information',
-        'up-to-date' => 'You are running Pelican version <code>:version</code>. Your panel is up-to-date!',
-        'not-up-to-date1' => 'Your panel is <strong>not up-to-date!</strong> The latest version is',
-        'not-up-to-date2' => 'and you are currently running version <code>:version</code>.',
-        'get-help' => 'Get Help <small>(via Discord)</small>',
-        'documentation' => 'Documentation',
-        'github' => 'Github',
-        'support-the-project' => 'Support the Project',
+        'title' => 'Järjestelmän tiedot',
+        'up-to-date' => 'Käytössäsi on Pelican versio <code>:version</code>. Paneelisi on ajan tasalla!',
+        'not-up-to-date1' => 'Paneeli <strong>ei ole ajan tasalla!</strong> Uusin versio on',
+        'not-up-to-date2' => 'ja parhaillaan käytössä oleva versio on <code>:version</code>.',
+        'get-help' => 'Hae apua<small>(Discordin kautta)</small>',
+        'documentation' => 'Dokumentaatio',
+        'github' => 'GitHub',
+        'support-the-project' => 'Tue tätä projektia',
     ],
 ];
