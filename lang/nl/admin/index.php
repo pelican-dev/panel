@@ -1,19 +1,19 @@
 <?php
 
 return [
-    'title' => 'Administration',
+    'title' => 'Beheer',
     'header' => [
-        'title' => 'Administrative Overview',
-        'subtitle' => 'A quick glance at your system.',
+        'title' => 'Beheer Overzicht',
+        'subtitle' => 'Een snelle blik op je systeem.',
     ],
     'content' => [
-        'title' => 'System Information',
-        'up-to-date' => 'You are running Pelican version <code>:version</code>. Your panel is up-to-date!',
-        'not-up-to-date1' => 'Your panel is <strong>not up-to-date!</strong> The latest version is',
-        'not-up-to-date2' => 'and you are currently running version <code>:version</code>.',
-        'get-help' => 'Get Help <small>(via Discord)</small>',
-        'documentation' => 'Documentation',
+        'title' => 'Systeeminformatie',
+        'up-to-date' => 'Je gebruikt Pelican versie <code>:version</code>. Je panel is up-to-date!',
+        'not-up-to-date1' => 'Jouw panel is <strong>niet up-to-date!</strong> De nieuwste versie is',
+        'not-up-to-date2' => 'en je gebruikt momenteel versie <code>:version</code>.',
+        'get-help' => 'Vraag hulp <small>(via Discord)</small>',
+        'documentation' => 'Documentatie',
         'github' => 'Github',
-        'support-the-project' => 'Support the Project',
+        'support-the-project' => 'Steun dit project',
     ],
 ];
