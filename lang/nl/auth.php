@@ -1,35 +1,35 @@
 <?php
 
 return [
-    'return_to_login' => 'Return to Login',
+    'return_to_login' => 'Keer terug naar inloggen',
     'failed' => 'Er werd geen account gevonden dat overeenkomt met deze inloggegevens.',
 
     'login' => [
-        'title' => 'Login to Continue',
-        'button' => 'Log In',
+        'title' => 'Log in om verder te gaan.',
+        'button' => 'Inloggen',
         'required' => [
-            'username_or_email' => 'A username or email must be provided.',
-            'password' => 'Please enter your account password.',
+            'username_or_email' => 'Een gebruikersnaam of wachtwoord moet worden gegeven.',
+            'password' => 'Voer het wachtwoord van uw account in.',
         ],
     ],
 
     'forgot_password' => [
-        'title' => 'Request Password Reset',
+        'title' => 'Wachtwoord reset aanvragen',
         'label' => 'Wachtwoord Vergeten?',
         'label_help' => 'Voer het e-mailadres van uw account in om instructies te ontvangen over het opnieuw instellen van uw wachtwoord.',
-        'button' => 'Send Email',
+        'button' => 'Verstuur e-mail',
         'required' => [
-            'email' => 'A valid email address must be provided to continue.',
+            'email' => 'Een geldig e-mailadres moet worden opgegeven om door te gaan.',
         ],
     ],
 
     'reset_password' => [
-        'title' => 'Reset Password',
-        'button' => 'Reset Password',
-        'new_password' => 'New Password',
-        'confirm_new_password' => 'Confirm New Password',
+        'title' => 'Wachtwoord opnieuw instellen',
+        'button' => 'Wachtwoord opnieuw instellen',
+        'new_password' => 'Nieuw Wachtwoord',
+        'confirm_new_password' => 'Bevestig nieuw wachtwoord',
         'requirement' => [
-            'password' => 'Passwords must be at least 8 characters in length.',
+            'password' => 'Wachtwoorden moeten tenminste 8 tekens lang zijn.',
         ],
         'required' => [
             'password' => 'A new password is required.',
