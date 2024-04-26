@@ -13,6 +13,8 @@ use Filament\Forms;
 class CreateMount extends CreateRecord
 {
     protected static string $resource = MountResource::class;
+
+    protected static bool $canCreateAnother = false;
     public function form(Form $form): Form
     {
         return $form

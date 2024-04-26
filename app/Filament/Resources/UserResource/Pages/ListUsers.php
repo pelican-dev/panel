@@ -63,6 +63,7 @@ class ListUsers extends ListRecords
             ->actions([
                 Tables\Actions\EditAction::make(),
             ])
+            ->checkIfRecordIsSelectableUsing(fn (User $user) => !$user->servers_count)
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),

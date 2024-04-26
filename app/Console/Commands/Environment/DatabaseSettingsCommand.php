@@ -54,7 +54,7 @@ class DatabaseSettingsCommand extends Command
         $this->output->note('Using the "root" account for MySQL connections is not only highly frowned upon, it is also not allowed by this application. You\'ll need to have created a MySQL user for this software.');
         $this->variables['DB_USERNAME'] = $this->option('username') ?? $this->ask(
             'Database Username',
-            config('database.connections.mysql.username', 'panel')
+            config('database.connections.mysql.username', 'pelican')
         );
 
         $askForMySQLPassword = true;

@@ -14,6 +14,8 @@ class CreateDatabaseHost extends CreateRecord
 
     protected ?string $heading = 'Database Hosts';
 
+    protected static bool $canCreateAnother = false;
+
     protected ?string $subheading = '(database servers that can have individual databases)';
 
     public function form(Form $form): Form
