@@ -1,48 +1,48 @@
 <?php
 
 return [
-    'title' => 'Account Overview',
+    'title' => 'Tilin yleiskatsaus',
     'email' => [
-        'title' => 'Update Email Address',
-        'button' => 'Update Email',
-        'updated' => 'Your primary email has been updated.',
+        'title' => 'Päivitä sähköpostiosoite',
+        'button' => 'Päivitä Sähköposti',
+        'updated' => 'Sinun ensisijainen sähköpostisi on päivitetty',
     ],
     'password' => [
-        'title' => 'Update Password',
-        'button' => 'Update Password',
-        'requirements' => 'Your new password should be at least 8 characters in length and unique to this website.',
+        'title' => 'Päivitä salasana',
+        'button' => 'Päivitä salasana',
+        'requirements' => 'Uuden salasanasi tulisi olla vähintään 8 merkkiä pitkä ja uniikki tälle verkkosivustolle.',
         'validation' => [
-            'account_password' => 'You must provide your account password.',
-            'current_password' => 'You must provide your current password.',
-            'password_confirmation' => 'Password confirmation does not match the password you entered.',
+            'account_password' => 'Sinun on annettava tilisi salasana.',
+            'current_password' => 'Syötä nykyinen salasana',
+            'password_confirmation' => 'Salasanan vahvistus ei vastaa antamaasi salasanaa.',
         ],
         'updated' => 'Salasanasi on päivitetty.',
     ],
     'two_factor' => [
-        'title' => 'Two-Step Verification',
+        'title' => 'Kaksivaiheinen todennus',
         'button' => 'Määritä Kaksivaiheinen Todennus',
         'disabled' => 'Kaksivaiheinen todennus on poistettu käytöstä tililtäsi. Sinua ei enää kehoteta antamaan tunnusta kirjautuessasi.',
         'enabled' => 'Kaksivaiheinen todennus on otettu käyttöön tililläsi! Tästä lähtien kun kirjaudut sisään, sinun on annettava laitteesi luoma koodi.',
         'invalid' => 'Annettu tunniste oli virheellinen.',
         'enable' => [
-            'help' => 'You do not currently have two-step verification enabled on your account. Click the button below to begin configuring it.',
-            'button' => 'Enable Two-Step',
+            'help' => 'Sinulla ei ole tällä hetkellä kaksivaiheista todennusta käytössä tililläsi. Aloita määrittäminen napsauttamalla alla olevaa painiketta.',
+            'button' => 'Ota Kaksivaiheinen todennus Käyttöön',
         ],
         'disable' => [
-            'help' => 'Two-step verification is currently enabled on your account.',
+            'help' => 'Kaksivaiheinen todennus on tällä hetkellä käytössä tililläsi.',
             'title' => 'Poista käytöstä kaksivaiheinen tunnistautuminen',
             'field' => 'Syötä tunnus',
-            'button' => 'Disable Two-Step',
+            'button' => 'Poista Kaksivaiheinen todennus käytöstä',
         ],
         'setup' => [
-            'title' => 'Enable Two-Step Verification',
-            'subtitle' => "Help protect your account from unauthorized access. You'll be prompted for a verification code each time you sign in.",
-            'help' => 'Scan the QR code above using the two-step authentication app of your choice. Then, enter the 6-digit code generated into the field below.',
+            'title' => 'Ota kaksivaiheinen todennus käyttöön',
+            'subtitle' => "Auta suojaamaan tilisi luvattomalta käytöltä. Sinulta pyydetään vahvistuskoodia joka kerta, kun kirjaudut sisään.",
+            'help' => 'Skannaa yllä oleva QR-koodi valitsemasi kaksivaiheisen todennuksen sovelluksella. Sitten syötä 6-numeroinen koodi alla olevaan kenttään.',
         ],
 
         'required' => [
-            'title' => '2-Factor Required',
-            'description' => 'Your account must have two-factor authentication enabled in order to continue.',
+            'title' => 'Kaksivaiheinen todennus vaaditaan',
+            'description' => 'Tililläsi täytyy olla kaksivaiheinen todennus käytössä, jotta voit jatkaa.',
         ],
     ],
 ];
