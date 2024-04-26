@@ -10,12 +10,12 @@ return [
         'account_updated' => 'Tili on päivitetty onnistuneesti.',
     ],
     'last_admin' => [
-        'hint' => 'This is the last root administrator!',
-        'helper_text' => 'You must have at least one root administrator in your system.',
+        'hint' => 'Tämä on viimeinen järjestelmänvalvoja!',
+        'helper_text' => 'Sinulla täytyy olla ainakin yksi järjestelmänvalvoja järjestelmässä.',
     ],
-    'root_admin' => 'Administrator (Root)',
+    'root_admin' => 'Järjestelmänvalvoja (Root)',
     'language' => [
-        'helper_text1' => 'Your language (:state) has not been translated yet!\nBut never fear, you can help fix that by',
-        'helper_text2' => 'contributing directly here',
+        'helper_text1' => 'Kielesi (:state) ei ole vielä käännetty!\nMutta älä pelkää, voit auttaa korjaamaan sen',
+        'helper_text2' => 'osallistumalla suoraan täältä',
     ],
 ];
