@@ -9,7 +9,7 @@ class UpdateDatabaseHostRequest extends StoreDatabaseHostRequest
     public function rules(array $rules = null): array
     {
         /** @var DatabaseHost $databaseHost */
-        $databaseHost = $this->route()->parameter('databaseHost');
+        $databaseHost = $this->route()->parameter('database_host');
 
         return $rules ?? DatabaseHost::getRulesForUpdate($databaseHost->id);
     }

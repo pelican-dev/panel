@@ -108,11 +108,11 @@ Route::prefix('/eggs')->group(function () {
 */
 Route::group(['prefix' => '/database-hosts'], function () {
     Route::get('/', [Application\DatabaseHosts\DatabaseHostController::class, 'index'])->name('api.application.databasehosts');
-    Route::get('/{databaseHost:id}', [Application\DatabaseHosts\DatabaseHostController::class, 'view'])->name('api.application.databasehosts.view');
+    Route::get('/{database_host:id}', [Application\DatabaseHosts\DatabaseHostController::class, 'view'])->name('api.application.databasehosts.view');
 
     Route::post('/', [Application\DatabaseHosts\DatabaseHostController::class, 'store']);
 
-    Route::patch('/{databaseHost:id}', [Application\DatabaseHosts\DatabaseHostController::class, 'update']);
+    Route::patch('/{database_host:id}', [Application\DatabaseHosts\DatabaseHostController::class, 'update']);
 
-    Route::delete('/{databaseHost:id}', [Application\DatabaseHosts\DatabaseHostController::class, 'delete']);
+    Route::delete('/{database_host:id}', [Application\DatabaseHosts\DatabaseHostController::class, 'delete']);
 });
