@@ -1,19 +1,19 @@
 <?php
 
 return [
-    'title' => 'Administration',
+    'title' => 'Διαχείριση',
     'header' => [
-        'title' => 'Administrative Overview',
-        'subtitle' => 'A quick glance at your system.',
+        'title' => 'Επισκόπηση Διαχείρισης',
+        'subtitle' => 'Μια γρήγορη ματιά στο σύστημά σας.',
     ],
     'content' => [
-        'title' => 'System Information',
-        'up-to-date' => 'You are running Pelican version <code>:version</code>. Your panel is up-to-date!',
-        'not-up-to-date1' => 'Your panel is <strong>not up-to-date!</strong> The latest version is',
-        'not-up-to-date2' => 'and you are currently running version <code>:version</code>.',
-        'get-help' => 'Get Help <small>(via Discord)</small>',
-        'documentation' => 'Documentation',
-        'github' => 'Github',
-        'support-the-project' => 'Support the Project',
+        'title' => 'Πληροφορίες συστήματος',
+        'up-to-date' => 'Τρέχετε την έκδοση Pelican <code>:version</code>. Το panel σας είναι ενημερωμένο!',
+        'not-up-to-date1' => 'Το panel σας <strong>δεν είναι ενημερωμένο!</strong> Η τελευταία έκδοση είναι',
+        'not-up-to-date2' => 'και αυτήν τη στιγμή τρέχετε την έκδοση <code>:version</code>.',
+        'get-help' => 'Λάβετε βοήθεια <small>(μέσω Discord)</small>',
+        'documentation' => 'Εγχειρίδιο',
+        'github' => 'GitHub',
+        'support-the-project' => 'Υποστηρίξτε το Project',
     ],
 ];
