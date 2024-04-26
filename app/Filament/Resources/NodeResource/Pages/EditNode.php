@@ -33,8 +33,11 @@ class EditNode extends EditRecord
                         ->icon('tabler-server')
                         ->schema((new CreateNode())->form($form)->getComponents()),
                     Tabs\Tab::make('Advanced Settings')
-                        ->icon('tabler-server-cog'),
-                    Tabs\Tab::make(trans('strings.configuration'))
+                        ->icon('tabler-server-cog')
+                        ->schema([
+                            Forms\Components\Placeholder::make('Coming soon!'),
+                        ]),
+                    Tabs\Tab::make('Configuration')
                         ->icon('tabler-code')
                         ->schema([
                             Forms\Components\Placeholder::make('instructions')
@@ -103,7 +106,7 @@ class EditNode extends EditRecord
                                                         continue;
                                                     }
 
-                                                    // Do not add non numerical ports
+                                                    // Do not add non-numerical ports
                                                     $update = true;
 
                                                     continue;
@@ -194,7 +197,7 @@ class EditNode extends EditRecord
                                         ->maxValue(65535)
                                         ->numeric(),
                                     Forms\Components\TextInput::make('ip_alias')
-                                        ->placeholder('mincraft.pelican.dev')
+                                        ->placeholder('minecraft.pelican.dev')
                                         ->columnSpan([
                                             'default' => 1,
                                             'sm' => 2,
@@ -220,7 +223,6 @@ class EditNode extends EditRecord
                                         ->placeholder('Not assigned'),
                                 ]),
                         ]),
-
                 ]),
         ]);
     }

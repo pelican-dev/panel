@@ -2,6 +2,7 @@
 
 namespace App\Services\Servers;
 
+use Exception;
 use Illuminate\Http\Response;
 use App\Models\Server;
 use Illuminate\Database\ConnectionInterface;
@@ -53,6 +54,8 @@ class ServerDeletionService
             }
 
             logger()->warning($exception);
+        } catch (Exception $exception) {
+            report($exception);
         }
 
         $this->connection->transaction(function () use ($server) {

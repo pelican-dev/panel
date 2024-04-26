@@ -24,7 +24,7 @@ class DaemonConfigurationRepository extends DaemonRepository
             throw new DaemonConnectionException($exception);
         }
 
-        return $response->json();
+        return $response->json() ?? [];
     }
 
     /**
