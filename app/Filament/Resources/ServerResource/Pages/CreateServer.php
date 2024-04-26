@@ -219,24 +219,13 @@ class CreateServer extends CreateRecord
                                     ($allocation->ip_alias ? " ($allocation->ip_alias)" : '')
                             )
                             ->placeholder('Select additional Allocations')
+                            ->disableOptionsWhenSelectedInSiblingRepeaterItems()
                             ->relationship(
                                 'allocations',
                                 'ip',
                                 fn (Builder $query, Forms\Get $get, Forms\Components\Select $component, $state) => $query
                                     ->where('node_id', $get('../../node_id'))
-                                    ->whereNotIn(
-                                        'id',
-                                        collect(($repeater = $component->getParentRepeater())->getState())
-                                            ->pluck(
-                                                (string) str($component->getStatePath())
-                                                    ->after("{$repeater->getStatePath()}.")
-                                                    ->after('.'),
-                                            )
-                                            ->flatten()
-                                            ->diff(Arr::wrap($state))
-                                            ->filter(fn (mixed $siblingItemState): bool => filled($siblingItemState))
-                                            ->add($get('../../allocation_id'))
-                                    )
+                                    ->whereNot('id', $get('../../allocation_id'))
                                     ->whereNull('server_id'),
                             ),
                     ),
