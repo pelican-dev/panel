@@ -10,12 +10,12 @@ return [
         'account_updated' => 'Hesap başarıyla güncellendi.',
     ],
     'last_admin' => [
-        'hint' => 'This is the last root administrator!',
-        'helper_text' => 'You must have at least one root administrator in your system.',
+        'hint' => 'Bu kalan tek root yönetici!',
+        'helper_text' => 'Sisteminizde en az bir adet root yönetici bulunması gerekiyor.',
     ],
-    'root_admin' => 'Administrator (Root)',
+    'root_admin' => 'Yönetici (Root)',
     'language' => [
-        'helper_text1' => 'Your language (:state) has not been translated yet!\nBut never fear, you can help fix that by',
-        'helper_text2' => 'contributing directly here',
+        'helper_text1' => 'Seçili dil (:state) daha çevrilmedi!\nAma korkmayın, bunu şöyle düzeltebilirsiniz:',
+        'helper_text2' => 'buradan katkıda bulunarak',
     ],
 ];
