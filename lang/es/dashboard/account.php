@@ -1,28 +1,48 @@
 <?php
 
 return [
+    'title' => 'Account Overview',
     'email' => [
-        'title' => 'Actualizar tu correo electrónico',
-        'updated' => 'Tu dirección de correo electrónico ha sido actualizada.',
+        'title' => 'Update Email Address',
+        'button' => 'Update Email',
+        'updated' => 'Your primary email has been updated.',
     ],
     'password' => [
-        'title' => 'Cambia tu contraseña',
-        'requirements' => 'Tu nueva contraseña debe tener al menos 8 caracteres de longitud.',
+        'title' => 'Update Password',
+        'button' => 'Update Password',
+        'requirements' => 'Your new password should be at least 8 characters in length and unique to this website.',
+        'validation' => [
+            'account_password' => 'You must provide your account password.',
+            'current_password' => 'You must provide your current password.',
+            'password_confirmation' => 'Password confirmation does not match the password you entered.',
+        ],
         'updated' => 'Tu contraseña ha sido actualizada.',
     ],
     'two_factor' => [
+        'title' => 'Two-Step Verification',
         'button' => 'Configurar autenticación de 2 factores',
         'disabled' => 'La autenticación de dos factores ha sido desactivada en tu cuenta. Ya no se te pedirá que proporciones un token al iniciar sesión.',
         'enabled' => '¡La autenticación de dos factores ha sido activada en tu cuenta! A partir de ahora, al iniciar sesión, se te pedirá que proporciones el código generado por tu dispositivo.',
         'invalid' => 'El token proporcionado no era válido.',
-        'setup' => [
-            'title' => 'Configurar autenticación de dos factores',
-            'help' => '¿No puedes escanear el código? Ingresa el código a continuación en tu aplicación:',
-            'field' => 'Introduce el token',
+        'enable' => [
+            'help' => 'You do not currently have two-step verification enabled on your account. Click the button below to begin configuring it.',
+            'button' => 'Enable Two-Step',
         ],
         'disable' => [
+            'help' => 'Two-step verification is currently enabled on your account.',
             'title' => 'Desactivar autenticación de dos factores',
             'field' => 'Introduce el token',
+            'button' => 'Disable Two-Step',
+        ],
+        'setup' => [
+            'title' => 'Enable Two-Step Verification',
+            'subtitle' => "Help protect your account from unauthorized access. You'll be prompted for a verification code each time you sign in.",
+            'help' => 'Scan the QR code above using the two-step authentication app of your choice. Then, enter the 6-digit code generated into the field below.',
+        ],
+
+        'required' => [
+            'title' => '2-Factor Required',
+            'description' => 'Your account must have two-factor authentication enabled in order to continue.',
         ],
     ],
 ];
