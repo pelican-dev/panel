@@ -97,3 +97,25 @@ Route::prefix('/eggs')->group(function () {
     Route::get('/', [Application\Eggs\EggController::class, 'index'])->name('api.application.eggs.eggs');
     Route::get('/{egg:id}', [Application\Eggs\EggController::class, 'view'])->name('api.application.eggs.eggs.view');
 });
+
+/*
+|--------------------------------------------------------------------------
+| Mount Controller Routes
+|--------------------------------------------------------------------------
+|
+| Endpoint: /api/application/mounts
+|
+*/
+Route::prefix('mounts')->group(function () {
+    Route::get('/', [Application\Mounts\MountController::class, 'index'])->name('api.application.mounts');
+    Route::get('/{mount:id}', [Application\Mounts\MountController::class, 'view'])->name('api.application.mounts.view');
+
+    Route::post('/', [Application\Mounts\MountController::class, 'store']);
+    Route::post('/{mount:id}/eggs', [Application\Mounts\MountController::class, 'addEggs'])->name('api.application.mounts.eggs');
+    Route::post('/{mount:id}/nodes', [Application\Mounts\MountController::class, 'addNodes'])->name('api.application.mounts.nodes');
+
+    Route::patch('/{mount:id}', [Application\Mounts\MountController::class, 'update']);
+
+    Route::delete('/{mount:id}/eggs/{egg_id}', [Application\Mounts\MountController::class, 'deleteEgg']);
+    Route::delete('/{mount:id}/nodes/{node_id}', [Application\Mounts\MountController::class, 'deleteNode']);
+});
