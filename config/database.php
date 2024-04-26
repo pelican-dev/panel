@@ -28,6 +28,19 @@ return [
                 PDO::MYSQL_ATTR_SSL_VERIFY_SERVER_CERT => env('MYSQL_ATTR_SSL_VERIFY_SERVER_CERT', true),
             ]) : [],
         ],
+            'pgsql' => [
+                'driver' => 'pgsql',
+                'host' => env('DB_HOST', 'localhost'),
+                'port' => env('DB_PORT', '5432'),
+                'database' => env('DB_DATABASE', 'panel'),
+                'username' => env('DB_USERNAME', 'pterodactyl'),
+                'password' => env('DB_PASSWORD', ''),
+                'charset' => 'utf8',
+                'prefix' => '',
+                'schema' => 'public',
+                'sslmode' => 'prefer',
+                'timezone' => env('DB_TIMEZONE', (env('APP_TIMEZONE', 'UTC')))
+        ],
     ],
 
     'migrations' => [
