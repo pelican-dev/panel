@@ -11,6 +11,7 @@ use Illuminate\Database\Eloquent\Builder;
 class ApiKeyResource extends Resource
 {
     protected static ?string $model = ApiKey::class;
+    protected static ?string $label = 'API Key';
 
     protected static ?string $navigationIcon = 'tabler-key';
 

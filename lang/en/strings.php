@@ -14,7 +14,6 @@ return [
     'language' => 'Language',
     'dashboard' => 'Dashboard',
     'id' => 'ID',
-    'uuid' => 'Uuid',
     'name' => 'Name',
     'description' => 'Description',
     'force_outgoing_ip' => 'Force Outgoing IP',
