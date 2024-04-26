@@ -1,28 +1,48 @@
 <?php
 
 return [
+    'title' => 'Account Overview',
     'email' => [
-        'title' => 'Päivitä sähköpostiosoitteesi',
-        'updated' => 'Sähköpostiosoite on päivitetty.',
+        'title' => 'Update Email Address',
+        'button' => 'Update Email',
+        'updated' => 'Your primary email has been updated.',
     ],
     'password' => [
-        'title' => 'Vaihda salasanasi',
-        'requirements' => 'Uuden salasanan on oltava vähintään 8 merkkiä pitkä',
+        'title' => 'Update Password',
+        'button' => 'Update Password',
+        'requirements' => 'Your new password should be at least 8 characters in length and unique to this website.',
+        'validation' => [
+            'account_password' => 'You must provide your account password.',
+            'current_password' => 'You must provide your current password.',
+            'password_confirmation' => 'Password confirmation does not match the password you entered.',
+        ],
         'updated' => 'Salasanasi on päivitetty.',
     ],
     'two_factor' => [
+        'title' => 'Two-Step Verification',
         'button' => 'Määritä Kaksivaiheinen Todennus',
         'disabled' => 'Kaksivaiheinen todennus on poistettu käytöstä tililtäsi. Sinua ei enää kehoteta antamaan tunnusta kirjautuessasi.',
         'enabled' => 'Kaksivaiheinen todennus on otettu käyttöön tililläsi! Tästä lähtien kun kirjaudut sisään, sinun on annettava laitteesi luoma koodi.',
         'invalid' => 'Annettu tunniste oli virheellinen.',
-        'setup' => [
-            'title' => 'Aseta kaksivaiheinen todennus',
-            'help' => 'Koodia ei voi skannata? Syötä alla oleva koodi sovelluksesi:',
-            'field' => 'Syötä tunnus',
+        'enable' => [
+            'help' => 'You do not currently have two-step verification enabled on your account. Click the button below to begin configuring it.',
+            'button' => 'Enable Two-Step',
         ],
         'disable' => [
+            'help' => 'Two-step verification is currently enabled on your account.',
             'title' => 'Poista käytöstä kaksivaiheinen tunnistautuminen',
             'field' => 'Syötä tunnus',
+            'button' => 'Disable Two-Step',
+        ],
+        'setup' => [
+            'title' => 'Enable Two-Step Verification',
+            'subtitle' => "Help protect your account from unauthorized access. You'll be prompted for a verification code each time you sign in.",
+            'help' => 'Scan the QR code above using the two-step authentication app of your choice. Then, enter the 6-digit code generated into the field below.',
+        ],
+
+        'required' => [
+            'title' => '2-Factor Required',
+            'description' => 'Your account must have two-factor authentication enabled in order to continue.',
         ],
     ],
 ];
