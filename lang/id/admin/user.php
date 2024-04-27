@@ -2,20 +2,20 @@
 
 return [
     'exceptions' => [
-        'user_has_servers' => 'Cannot delete a user with active servers attached to their account. Please delete their servers before continuing.',
-        'user_is_self' => 'Cannot delete your own user account.',
+        'user_has_servers' => 'Tidak dapat menghapus pengguna dengan server yamg masih aktif yang terhubung dengan akun mereka. Harap hapus server mereka sebelum melanjutkan.',
+        'user_is_self' => 'Tidak dapat menghapus akun anda sendiri.',
     ],
     'notices' => [
         'account_created' => 'Akun telah berhasil dibuat',
         'account_updated' => 'Akun telah berhasil diperbarui',
     ],
     'last_admin' => [
-        'hint' => 'This is the last root administrator!',
-        'helper_text' => 'You must have at least one root administrator in your system.',
+        'hint' => 'Ini adalah administrator root terakhir!',
+        'helper_text' => 'Anda harus memiliki setidaknya satu administrator root di sistem Anda.',
     ],
     'root_admin' => 'Administrator (Root)',
     'language' => [
-        'helper_text1' => 'Your language (:state) has not been translated yet!\nBut never fear, you can help fix that by',
-        'helper_text2' => 'contributing directly here',
+        'helper_text1' => 'Bahasa Anda (:state) belum diterjemahkan!\nTapi jangan khawatir, Anda dapat membantu memperbaikinya dengan',
+        'helper_text2' => 'berkontribusi langsung di sini',
     ],
 ];
