@@ -7,7 +7,7 @@ return [
         'subtitle' => 'A quick glance at your system.',
     ],
     'content' => [
-        'title' => 'Системная информация',
+        'title' => 'Системная Информация',
         'up-to-date' => 'Вы запустили Pelican версии <code>:version</code>. Ваша панель последней версии!',
         'not-up-to-date1' => 'Ваша панель <strong>устарела!</strong> Последняя версия',
         'not-up-to-date2' => 'и в данный момент вы используете версию <code>:version</code>.',
