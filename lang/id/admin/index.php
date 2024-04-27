@@ -1,19 +1,19 @@
 <?php
 
 return [
-    'title' => 'Administration',
+    'title' => 'Administrasi',
     'header' => [
-        'title' => 'Administrative Overview',
-        'subtitle' => 'A quick glance at your system.',
+        'title' => 'Tinjauan Administratif',
+        'subtitle' => 'Sekilas mengenai sistem Anda.',
     ],
     'content' => [
-        'title' => 'System Information',
-        'up-to-date' => 'You are running Pelican version <code>:version</code>. Your panel is up-to-date!',
-        'not-up-to-date1' => 'Your panel is <strong>not up-to-date!</strong> The latest version is',
-        'not-up-to-date2' => 'and you are currently running version <code>:version</code>.',
-        'get-help' => 'Get Help <small>(via Discord)</small>',
-        'documentation' => 'Documentation',
+        'title' => 'Informasi Sistem',
+        'up-to-date' => 'Anda menjalankan Pelican versi<code>:version</code>. Panel anda sudah berjalan pada versi terbaru!',
+        'not-up-to-date1' => 'Panel Anda <strong>tidak mutakhir!</strong> Versi terbaru adalah',
+        'not-up-to-date2' => 'dan anda sedang menjalankan versi <code>:version</code>.',
+        'get-help' => 'Dapatkan bantuan <small>(melalui Discord)</small>',
+        'documentation' => 'Dokumentasi',
         'github' => 'Github',
-        'support-the-project' => 'Support the Project',
+        'support-the-project' => 'Dukung proyek ini',
     ],
 ];
