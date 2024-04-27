@@ -17,7 +17,7 @@ return [
         ],
     ],
     'descriptions' => [
-        'name' => 'A simple, human-readable name to use as an identifier for this Egg.',
+        'name' => 'Een eenvoudige, menselijk leesbare naam om te gebruiken als identificator voor dit Egg.',
         'description' => 'A description of this Egg that will be displayed throughout the Panel as needed.',
         'uuid' => 'This is the globally unique identifier for this Egg which Wings uses as an identifier.',
         'author' => 'The author of this version of the Egg. Uploading a new Egg configuration from a different author will change this.',
