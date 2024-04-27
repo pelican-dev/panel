@@ -52,7 +52,7 @@ return [
             'ask_postmark_username' => 'Kunci API Postmark',
             'ask_driver' => 'Driver mana yang harus digunakan untuk mengirim email?',
             'ask_mail_from' => 'Driver mana yang harus digunakan untuk mengirim email?',
-            'ask_mail_name' => 'Name that emails should appear from',
+            'ask_mail_name' => 'Nama dari mana email akan dikirim',
             'ask_encryption' => 'Metode Enkripsi untuk digunakan',
         ],
     ],
