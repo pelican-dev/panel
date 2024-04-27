@@ -7,7 +7,7 @@ return [
     'no-other-servers' => 'Il n\'y a aucun autre serveur à afficher.',
     'no-servers-associated' => 'Il n\'y a aucun serveur associé à votre compte.',
 
-    'content_tabs' => 'Content tabs',
+    'content_tabs' => 'Onglets de contenu',
     'overview' => 'Vue d\'ensemble',
     'heading' => 'Bienvenue sur Pelican !',
     'expand_sections' => 'Vous pouvez développer les sections suivantes :',
@@ -23,14 +23,14 @@ return [
             'heading' => 'Aucun nœud détecté',
             'content' => "Il semble que vous n'ayez pas encore de nœuds configurés, mais pas d'inquiétude, vous pouvez cliquer sur le bouton d'action pour créer votre premier nœud !",
             'extra_note' => 'Si vous rencontrez des problèmes, merci de les signaler sur GitHub.',
-            'button_label' => 'Créer un premier nœud dans Pelican',
+            'button_label' => 'Créer le premier nœud dans Pelican',
         ],
         'intro-support' => [
             'heading' => 'Soutenir Pelican',
             'content' => 'Merci d\'utiliser Pelican, cela n\'aurait pas été possible sans votre soutien, celui de nos contributeurs, et de tous nos autres supporters !',
             'extra_note' => 'Nous apprécions tout soutien, quel qu\'il soit, de la part de tout le monde.',
             'button_translate' => 'Aider à la traduction',
-            'button_donate' => 'Donate Directly',
+            'button_donate' => 'Faire un don',
         ],
         'intro-help' => [
             'heading' => 'Besoin d’aide ?',
