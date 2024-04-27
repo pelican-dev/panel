@@ -5,25 +5,25 @@ return [
     'showing-your-servers' => 'Zeige deine Server',
     'showing-others-servers' => "Anderen Server anzeigen",
     'no-other-servers' => 'Es gibt keine anderen Server zum Anzeigen.',
-    'no-servers-associated' => 'There are no servers associated with your account.',
+    'no-servers-associated' => 'Es sind keine Server mit deinem Konto verbunden.',
 
     'content_tabs' => 'Inhaltsreiter',
     'overview' => 'Übersicht',
     'heading' => 'Willkommen zu Pelican!',
-    'expand_sections' => 'You can expand the following sections:',
+    'expand_sections' => 'Du kannst die folgenden Bereiche erweitern:',
     'sections' => [
         'intro-developers' => [
-            'heading' => 'Information for Developers',
+            'heading' => 'Informationen für Entwickler',
             'content' => 'Thank you for trying out the development version!',
             'extra_note' => 'If you run into any issues, please report them on GitHub.',
-            'button_issues' => 'Create Issue',
+            'button_issues' => 'Problem erstellen',
             'button_features' => 'Funktionen diskutieren',
         ],
         'intro-first-node' => [
-            'heading' => 'No Nodes Detected',
+            'heading' => 'Keine Nodes erkannt',
             'content' => "It looks like you don't have any Nodes set up yet, but don't worry because you click the action button to create your first one!",
             'extra_note' => 'If you run into any issues, please report them on GitHub.',
-            'button_label' => 'Create first Node in Pelican',
+            'button_label' => 'Erste Node in Pelican erstellen',
         ],
         'intro-support' => [
             'heading' => 'Pelican unterstützen',
