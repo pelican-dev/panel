@@ -1,48 +1,48 @@
 <?php
 
 return [
-    'title' => 'Account Overview',
+    'title' => 'Accountoverzicht',
     'email' => [
-        'title' => 'Update Email Address',
-        'button' => 'Update Email',
-        'updated' => 'Your primary email has been updated.',
+        'title' => 'E-mailadres Bijwerken',
+        'button' => 'E-mail bijwerken',
+        'updated' => 'Het primaire e-mailadres is bijgewerkt.',
     ],
     'password' => [
-        'title' => 'Update Password',
-        'button' => 'Update Password',
-        'requirements' => 'Your new password should be at least 8 characters in length and unique to this website.',
+        'title' => 'Wachtwoord Bijwerken',
+        'button' => 'Wachtwoord Bijwerken',
+        'requirements' => 'Je nieuwe wachtwoord moet minstens 8 tekens lang zijn en uniek voor deze website.',
         'validation' => [
-            'account_password' => 'You must provide your account password.',
-            'current_password' => 'You must provide your current password.',
-            'password_confirmation' => 'Password confirmation does not match the password you entered.',
+            'account_password' => 'Je moet jouw accountwachtwoord opgeven.',
+            'current_password' => 'Vul je huidige wachtwoord in.',
+            'password_confirmation' => 'De wachtwoordbevestiging komt niet overeen met het wachtwoord dat u hebt ingevoerd.',
         ],
         'updated' => 'Het wachtwoord is succesvol gewijzigd.',
     ],
     'two_factor' => [
-        'title' => 'Two-Step Verification',
+        'title' => 'Tweestapsverificatie',
         'button' => 'Tweestapsverificatie configureren',
         'disabled' => 'Tweestapsverificatie is uitgeschakeld voor je account. Je wordt niet meer gevraagd om een code op te geven bij het inloggen.',
         'enabled' => 'Tweestapsverificatie is ingeschakeld op je account! Vanaf nu moet je bij het inloggen de code opgeven die door je apparaat wordt gegenereerd.',
         'invalid' => 'De opgegeven code is ongeldig.',
         'enable' => [
-            'help' => 'You do not currently have two-step verification enabled on your account. Click the button below to begin configuring it.',
-            'button' => 'Enable Two-Step',
+            'help' => 'Je hebt momenteel geen tweestapsverificatie ingeschakeld voor je account. Klik op de knop hieronder om te beginnen met het configureren.',
+            'button' => 'Tweestapsverificatie inschakelen',
         ],
         'disable' => [
-            'help' => 'Two-step verification is currently enabled on your account.',
+            'help' => 'Tweestapsverificatie is momenteel ingeschakeld voor je account.',
             'title' => 'Tweestapsverificatie uitschakelen',
             'field' => 'Code invoeren',
-            'button' => 'Disable Two-Step',
+            'button' => 'Tweestapsverificatie uitschakelen',
         ],
         'setup' => [
-            'title' => 'Enable Two-Step Verification',
-            'subtitle' => "Help protect your account from unauthorized access. You'll be prompted for a verification code each time you sign in.",
-            'help' => 'Scan the QR code above using the two-step authentication app of your choice. Then, enter the 6-digit code generated into the field below.',
+            'title' => 'Tweestapsverificatie inschakelen',
+            'subtitle' => "Help je account te beschermen tegen ongeautoriseerde toegang. Je wordt om een verificatiecode gevraagd telkens wanneer je inlogt.",
+            'help' => 'Scan de QR-code hierboven met behulp van de tweestapsverificatie-app naar jouw keuze. Voer daarna de 6-cijferige code in die wordt gegenereerd in het onderstaande veld.',
         ],
 
         'required' => [
-            'title' => '2-Factor Required',
-            'description' => 'Your account must have two-factor authentication enabled in order to continue.',
+            'title' => 'Tweestapsverificatie Vereist',
+            'description' => 'Je account moet tweestapsverificatie ingeschakeld hebben om door te gaan.',
         ],
     ],
 ];
