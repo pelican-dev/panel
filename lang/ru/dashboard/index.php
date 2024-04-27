@@ -9,11 +9,11 @@ return [
 
     'content_tabs' => 'Content tabs',
     'overview' => 'Overview',
-    'heading' => 'Welcome to Pelican!',
+    'heading' => 'Добро пожаловать в Pelican!',
     'expand_sections' => 'You can expand the following sections:',
     'sections' => [
         'intro-developers' => [
-            'heading' => 'Information for Developers',
+            'heading' => 'Информация для Разработчиков',
             'content' => 'Thank you for trying out the development version!',
             'extra_note' => 'If you run into any issues, please report them on GitHub.',
             'button_issues' => 'Create Issue',
@@ -26,16 +26,16 @@ return [
             'button_label' => 'Create first Node in Pelican',
         ],
         'intro-support' => [
-            'heading' => 'Support Pelican',
+            'heading' => 'Поддержать Pelican',
             'content' => 'Thank you for using Pelican, this could only be achieved through the support of you, our contributors, and the rest of our supporters!',
             'extra_note' => 'We appreciate any and all support from anybody.',
             'button_translate' => 'Help Translate',
             'button_donate' => 'Donate Directly',
         ],
         'intro-help' => [
-            'heading' => 'Need Help?',
+            'heading' => 'Нужна Помощь?',
             'content' => 'Check out the documentation first! If you still need assistance then, fly onto our Discord server!',
-            'button_docs' => 'Read Documentation',
+            'button_docs' => 'Читать Документацию',
             'button_discord' => 'Get Help in Discord',
         ],
     ],
