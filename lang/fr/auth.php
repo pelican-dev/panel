@@ -42,7 +42,7 @@ return [
     ],
 
     'checkpoint' => [
-        'title' => 'Device Checkpoint',
+        'title' => 'Point de contrôle de l\'appareil',
         'recovery_code' => 'Code de récupération',
         'recovery_code_description' => 'Saisissez l\'un des codes de récupération générés lorsque vous avez configuré l\'authentification à deux facteurs sur ce compte pour continuer.',
         'authentication_code' => 'Code d\'authentification',
