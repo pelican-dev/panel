@@ -7,7 +7,7 @@ return [
         'deleted' => 'Berhasil menghapus Egg dari Panel.',
         'updated' => 'Konfigurasi Egg ini telah berhasil diperbarui.',
         'script_updated' => 'Pemasangan Script Egg telah diperbarui dan akan dijalankan setiap kali server dipasang.',
-        'egg_created' => 'A new egg was laid successfully. You will need to restart any running daemons to apply this new egg.',
+        'egg_created' => 'Telur baru berhasil dikeluarkan. Anda perlu memulai ulang semua daemon yang sedang berjalan untuk menerapkan telur baru ini.',
     ],
     'variables' => [
         'notices' => [
