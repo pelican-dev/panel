@@ -14,8 +14,8 @@ return [
     'sections' => [
         'intro-developers' => [
             'heading' => 'Informationen für Entwickler',
-            'content' => 'Thank you for trying out the development version!',
-            'extra_note' => 'If you run into any issues, please report them on GitHub.',
+            'content' => 'Vielen Dank für das ausprobieren der Entwicklungsversion!',
+            'extra_note' => 'Wenn du Probleme hast, melde sie bitte auf GitHub.',
             'button_issues' => 'Problem erstellen',
             'button_features' => 'Funktionen diskutieren',
         ],
