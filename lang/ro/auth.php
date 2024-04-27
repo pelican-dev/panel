@@ -1,22 +1,22 @@
 <?php
 
 return [
-    'return_to_login' => 'Return to Login',
-    'failed' => 'No account matching those credentials could be found.',
+    'return_to_login' => 'Înapoi la Conectare',
+    'failed' => 'Nu s-a putut găsi niciun cont care să corespundă acestor credențiale.',
 
     'login' => [
-        'title' => 'Login to Continue',
-        'button' => 'Log In',
+        'title' => 'Autentifică-te pentru a continua',
+        'button' => 'Conectează-te',
         'required' => [
-            'username_or_email' => 'A username or email must be provided.',
-            'password' => 'Please enter your account password.',
+            'username_or_email' => 'Trebuie furnizat un nume de utilizator sau un e-mail.',
+            'password' => 'Te rugăm să introduci parola contului.',
         ],
     ],
 
     'forgot_password' => [
-        'title' => 'Request Password Reset',
-        'label' => 'Forgot Password?',
-        'label_help' => 'Enter your account email address to receive instructions on resetting your password.',
+        'title' => 'Solicitare resetare parolă',
+        'label' => 'Aţi uitat parola?',
+        'label_help' => 'Introduceți adresa de e-mail a contului pentru a primi instrucțiuni despre resetarea parolei.',
         'button' => 'Send Email',
         'required' => [
             'email' => 'A valid email address must be provided to continue.',
