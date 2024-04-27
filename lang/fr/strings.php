@@ -16,7 +16,7 @@ return [
     'id' => 'ID',
     'name' => 'Nom',
     'description' => 'Description',
-    'force_outgoing_ip' => 'Force Outgoing IP',
+    'force_outgoing_ip' => 'Forcer l\'adresse IP sortante',
     'startup' => 'Démarrage',
     'docker_images' => 'Images Docker',
     'linked_node' => 'Nœud lié',
