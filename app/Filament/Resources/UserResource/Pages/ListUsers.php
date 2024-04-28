@@ -39,7 +39,7 @@ class ListUsers extends ListRecords
                     ->visibleFrom('md')
                     ->label('Admin')
                     ->boolean()
-                    ->trueIcon('tabler-star')
+                    ->trueIcon('tabler-star-filled')
                     ->falseIcon('tabler-star-off')
                     ->sortable(),
                 Tables\Columns\IconColumn::make('use_totp')->label('2FA')
