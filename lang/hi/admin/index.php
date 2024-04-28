@@ -14,6 +14,6 @@ return [
         'get-help' => 'Get Help <small>(via Discord)</small>',
         'documentation' => 'Documentation',
         'github' => 'Github',
-        'support-the-project' => 'Support the Project',
+        'support-the-project' => 'परियोजना का समर्थन करें',
     ],
 ];
