@@ -173,11 +173,15 @@ class ServerCreationService
      */
     private function storeEggVariables(Server $server, Collection $variables): void
     {
-        $records = $variables->map(function ($result) use ($server) {
+        $now = now();
+
+        $records = $variables->map(function ($result) use ($server, $now) {
             return [
                 'server_id' => $server->id,
                 'variable_id' => $result->id,
                 'variable_value' => $result->value ?? '',
+                'created_at' => $now,
+                'updated_at' => $now,
             ];
         })->toArray();
 
