@@ -1,19 +1,19 @@
 <?php
 
 return [
-    'title' => 'Administration',
+    'title' => 'Yönetim',
     'header' => [
-        'title' => 'Administrative Overview',
-        'subtitle' => 'A quick glance at your system.',
+        'title' => 'Yönetim Genel Bakış',
+        'subtitle' => 'Sisteminize hızlı bir bakış.',
     ],
     'content' => [
-        'title' => 'System Information',
-        'up-to-date' => 'You are running Pelican version <code>:version</code>. Your panel is up-to-date!',
-        'not-up-to-date1' => 'Your panel is <strong>not up-to-date!</strong> The latest version is',
-        'not-up-to-date2' => 'and you are currently running version <code>:version</code>.',
-        'get-help' => 'Get Help <small>(via Discord)</small>',
-        'documentation' => 'Documentation',
-        'github' => 'Github',
-        'support-the-project' => 'Support the Project',
+        'title' => 'Sistem Bilgisi',
+        'up-to-date' => 'Pelican sürümü <code>:version</code> kullanıyorsunuz. Panel en güncel sürümde!',
+        'not-up-to-date1' => 'Panelin <strong>güncel değil!</strong> En yeni sürüm ise',
+        'not-up-to-date2' => 've sen şu anda <code>:version</code> sürümünü kullanıyorsun.',
+        'get-help' => 'Yardım Al <small>(Discord aracılığıyla)</small>',
+        'documentation' => 'Kılavuz',
+        'github' => 'GitHub',
+        'support-the-project' => 'Projeyi Destekle',
     ],
 ];
