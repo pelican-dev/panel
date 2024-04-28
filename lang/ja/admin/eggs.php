@@ -17,12 +17,13 @@ return [
         ],
     ],
     'descriptions' => [
-        'name' => 'A simple, human-readable name to use as an identifier for this Egg.',
-        'description' => 'A description of this Egg that will be displayed throughout the Panel as needed.',
-        'uuid' => 'This is the globally unique identifier for this Egg which Wings uses as an identifier.',
-        'author' => 'The author of this version of the Egg. Uploading a new Egg configuration from a different author will change this.',
-        'force_outgoing_ip' => "Forces all outgoing network traffic to have its Source IP NATed to the IP of the server's primary allocation IP.\nRequired for certain games to work properly when the Node has multiple public IP addresses.\nEnabling this option will disable internal networking for any servers using this egg, causing them to be unable to internally access other servers on the same node.",
-        'startup' => 'The default startup command that should be used for new servers using this Egg.',
-        'docker_images' => 'The docker images available to servers using this egg.',
+        'name' => 'このEggの識別子として使用する、シンプルな名前です。',
+        'description' => '必要に応じてPanelに表示されるEggの説明です。',
+        'uuid' => 'Wingsが識別子として使用する、Eggの識別子です。',
+        'author' => 'このバージョンのEggの作者です。別の作成者から新しいEgg構成をアップロードすると、変更されます。',
+        'force_outgoing_ip' => "すべての発信ネットワークトラフィックの送信元IPが、サーバーのプライマリ割り当てIPのIPにNAT変換されるように強制します。 ノードに複数のパブリックIPアドレスがある場合、特定のゲームが正しく動作するために必要です。
+このオプションを有効にすると、このエッグを使用するサーバーの内部ネットワークが無効になり、 同じノード上の他のサーバーに内部的にアクセスできなくなります。 ",
+        'startup' => 'このEggで作成された新しいサーバーに使用するデフォルトの起動コマンドです。',
+        'docker_images' => 'このEggを使用するサーバーで使用できるDockerイメージです。',
     ],
 ];
