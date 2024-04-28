@@ -11,7 +11,7 @@ return [
     ],
     'last_admin' => [
         'hint' => 'Это последний root администратор!',
-        'helper_text' => 'You must have at least one root administrator in your system.',
+        'helper_text' => 'В вашей системе должен быть хотя бы один root администратор.',
     ],
     'root_admin' => 'Администратор (Root)',
     'language' => [
