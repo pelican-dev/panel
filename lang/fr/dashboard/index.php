@@ -29,7 +29,7 @@ return [
             'heading' => 'Soutenir Pelican',
             'content' => 'Merci d\'utiliser Pelican, cela n\'aurait pas été possible sans votre soutien, celui de nos contributeurs, et de tous nos autres supporters !',
             'extra_note' => 'Nous apprécions tout soutien, quel qu\'il soit, de la part de tout le monde.',
-            'button_translate' => 'Aider à la traduction',
+            'button_translate' => 'Aider à traduire',
             'button_donate' => 'Faire un don',
         ],
         'intro-help' => [
