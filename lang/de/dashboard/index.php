@@ -21,7 +21,7 @@ return [
         ],
         'intro-first-node' => [
             'heading' => 'Keine Nodes erkannt',
-            'content' => "It looks like you don't have any Nodes set up yet, but don't worry because you click the action button to create your first one!",
+            'content' => "Es sieht so aus als hätten Sie noch keine Nodes erstellt, aber keine Sorge drücken sie den Action-Button, um ihre erste zu erstellen!",
             'extra_note' => 'Wenn du Probleme hast, melde sie bitte auf GitHub.',
             'button_label' => 'Erste Node in Pelican erstellen',
         ],
@@ -34,7 +34,7 @@ return [
         ],
         'intro-help' => [
             'heading' => 'Brauchst du Hilfe?',
-            'content' => 'Check out the documentation first! If you still need assistance then, fly onto our Discord server!',
+            'content' => 'Schauen Sie sich zuerst die Dokumentation an! Wenn Sie dann noch immer Hilfe benötigen, fliege auf unseren Discord Server!',
             'button_docs' => 'Dokumentation lesen',
             'button_discord' => 'Erhalte Hilfe auf Discord',
         ],
