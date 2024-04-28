@@ -414,8 +414,6 @@ class EditServer extends EditRecord
     {
         unset($data['docker'], $data['status']);
 
-        // dd($data);
-
         return $data;
     }
 
