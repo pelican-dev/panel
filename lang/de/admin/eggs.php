@@ -21,7 +21,7 @@ return [
         'description' => 'Eine Beschreibung des Eggs, welche bei Bedarf im gesamten Panel angezeigt wird.',
         'uuid' => 'Dies ist der einzigartige Identifikator für dieses Egg, welches Wings als Identifikator verwendet.',
         'author' => 'Der Ersteller dieses Eggs. Das Hochladen einer neuer Konfiguration von einem anderen Autor ändert dies.',
-        'force_outgoing_ip' => "Forces all outgoing network traffic to have its Source IP NATed to the IP of the server's primary allocation IP.\nRequired for certain games to work properly when the Node has multiple public IP addresses.\nEnabling this option will disable internal networking for any servers using this egg, causing them to be unable to internally access other servers on the same node.",
+        'force_outgoing_ip' => "Erzwingt ausgehenden Netzwerkverkehr, seine Source IP auf die IP der primären Zuweisung des Servers zu ändern.\nWird benötigt damit bestimmte Spiele richtig funktionieren, wenn der Node mehrere öffentliche IP-Adressen hat.\nDas Aktivieren dieser Option deaktiviert das interne Netzwerk für alle Server, die dieses Egg verwenden, was dazu führt, dass sie intern auf keine anderen Server der selben Node zugreifen können.",
         'startup' => 'Der Standard Startbefehl, der für neue Server mit diesem Egg, verwendet werden soll.',
         'docker_images' => 'Die Docker Images, welche diesem Egg zur Verfügung stehen.',
     ],
