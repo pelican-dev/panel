@@ -282,8 +282,6 @@ class EditServer extends EditRecord
                         );
                     }),
 
-                Forms\Components\Hidden::make('environment')->default([]),
-
                 Forms\Components\Hidden::make('start_on_completion')->default(true),
 
                 Forms\Components\Section::make('Egg Variables')
@@ -308,7 +306,7 @@ class EditServer extends EditRecord
                             )
                             ->grid()
                             ->deletable(false)
-                            ->default([])
+                            ->addable(false)
                             ->hidden(fn ($state) => empty($state))
                             ->schema([
                                 Forms\Components\TextInput::make('variable_value')
