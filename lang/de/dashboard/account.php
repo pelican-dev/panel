@@ -25,7 +25,7 @@ return [
         'enabled' => 'Zwei-Faktor-Authentifizierung wurde auf deinem Konto aktiviert! Ab sofort musst du beim Einloggen den von deinem Gerät generierten Code zur Verfügung stellen.',
         'invalid' => 'Der angegebene Token ist ungültig.',
         'enable' => [
-            'help' => 'You do not currently have two-step verification enabled on your account. Click the button below to begin configuring it.',
+            'help' => 'Sie haben zurzeit keine 2-Faktor-Authentifizierung auf ihrem Konto aktiviert. Drücken Sie die untere Schaltfläche um es einzurichten.',
             'button' => 'Zweistufige (2-Faktor) Verifizierung aktivieren',
         ],
         'disable' => [
@@ -36,8 +36,8 @@ return [
         ],
         'setup' => [
             'title' => 'Zweistufige Verifizierung aktivieren',
-            'subtitle' => "Help protect your account from unauthorized access. You'll be prompted for a verification code each time you sign in.",
-            'help' => 'Scan the QR code above using the two-step authentication app of your choice. Then, enter the 6-digit code generated into the field below.',
+            'subtitle' => "Helfen Sie mit, Ihr Konto vor unbefugtem Zugriff zu schützen. Jedes Mal, wenn Sie sich anmelden, werden Sie nach einem Bestätigungscode gefragt.",
+            'help' => 'Scannen Sie den obigen QR-Code mit der 2-Faktor-Authentifizierungsapp Ihrer Wahl. Geben Sie danach den 6-stelligen Code in das Feld unten ein.',
         ],
 
         'required' => [
