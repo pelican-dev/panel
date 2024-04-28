@@ -1,48 +1,48 @@
 <?php
 
 return [
-    'title' => 'Account Overview',
+    'title' => 'Hesaba Genel Bakış',
     'email' => [
-        'title' => 'Update Email Address',
-        'button' => 'Update Email',
-        'updated' => 'Your primary email has been updated.',
+        'title' => 'E-posta Adresini Güncelle',
+        'button' => 'E-posta Güncelle',
+        'updated' => 'Birincil e-posta adresiniz güncellenmiştir.',
     ],
     'password' => [
-        'title' => 'Update Password',
-        'button' => 'Update Password',
-        'requirements' => 'Your new password should be at least 8 characters in length and unique to this website.',
+        'title' => 'Şifreyi Güncelle',
+        'button' => 'Şifreyi Güncelle',
+        'requirements' => 'Yeni şifreniz en az 8 karakter uzunluğunda ve bu siteye özel olmalıdır.',
         'validation' => [
-            'account_password' => 'You must provide your account password.',
-            'current_password' => 'You must provide your current password.',
-            'password_confirmation' => 'Password confirmation does not match the password you entered.',
+            'account_password' => 'Hesap şifrenizi girmeniz gerekiyor.',
+            'current_password' => 'Güncel şifrenizi girmeniz gerekiyor.',
+            'password_confirmation' => 'Şifre doğrulama girdiğiniz şifre ile eşleşmiyor.',
         ],
         'updated' => 'Parolan güncellendi.',
     ],
     'two_factor' => [
-        'title' => 'Two-Step Verification',
+        'title' => 'İki Aşamalı Doğrulama',
         'button' => 'İki faktörlü doğrulamayı yapılandır.',
         'disabled' => 'Hesabınızda iki faktörlü kimlik doğrulama devre dışı bırakıldı. Artık oturum açarken bir jeton sağlamanız istenmeyecek.',
         'enabled' => 'Hesabınızda iki faktörlü kimlik doğrulama etkinleştirildi! Artık giriş yaparken cihazınız tarafından oluşturulan kodu girmeniz istenecektir.',
         'invalid' => 'Sağlanan token geçersiz.',
         'enable' => [
-            'help' => 'You do not currently have two-step verification enabled on your account. Click the button below to begin configuring it.',
-            'button' => 'Enable Two-Step',
+            'help' => 'Şu anda hesabınızda 2 aşamalı doğrulama etkin değil. Ayarlamaya başlamak için aşağıdaki butona tıklayın.',
+            'button' => '2 Aşamayı Etkinleştir',
         ],
         'disable' => [
-            'help' => 'Two-step verification is currently enabled on your account.',
+            'help' => '2 aşamalı doğrulama şu anda hesabınızda aktif.',
             'title' => 'İki faktörlü kimlik doğrulamayı devre dışı bırak',
             'field' => 'Token gir',
-            'button' => 'Disable Two-Step',
+            'button' => '2 Aşamayı Kapat',
         ],
         'setup' => [
-            'title' => 'Enable Two-Step Verification',
-            'subtitle' => "Help protect your account from unauthorized access. You'll be prompted for a verification code each time you sign in.",
-            'help' => 'Scan the QR code above using the two-step authentication app of your choice. Then, enter the 6-digit code generated into the field below.',
+            'title' => '2 Aşamalı Doğrulamayı Etkinleştir',
+            'subtitle' => "Hesabınızı izinsiz erişimlerden koruyun. Her giriş yaptığında bir doğrulama kodu istenecek.",
+            'help' => 'Yukarıdaki QR kodu herhangi bir kimlik doğrulama uygulaması ile okutun. Ardından, oluşturulan 6 haneli rakamı aşağıdaki alana girin.',
         ],
 
         'required' => [
-            'title' => '2-Factor Required',
-            'description' => 'Your account must have two-factor authentication enabled in order to continue.',
+            'title' => '2 Aşamalı Doğrulama Zorunlu',
+            'description' => 'Devam etmek için hesabınızda 2 aşamalı doğrulamanın etkin olması gerekiyor.',
         ],
     ],
 ];
