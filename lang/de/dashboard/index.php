@@ -22,13 +22,13 @@ return [
         'intro-first-node' => [
             'heading' => 'Keine Nodes erkannt',
             'content' => "It looks like you don't have any Nodes set up yet, but don't worry because you click the action button to create your first one!",
-            'extra_note' => 'If you run into any issues, please report them on GitHub.',
+            'extra_note' => 'Wenn du Probleme hast, melde sie bitte auf GitHub.',
             'button_label' => 'Erste Node in Pelican erstellen',
         ],
         'intro-support' => [
             'heading' => 'Pelican unterstützen',
-            'content' => 'Thank you for using Pelican, this could only be achieved through the support of you, our contributors, and the rest of our supporters!',
-            'extra_note' => 'We appreciate any and all support from anybody.',
+            'content' => 'Vielen Dank für die Verwendung von Pelican, dies konnte nur durch die Unterstützung von Ihnen, unseren Mitwirkenden und den Rest unserer Unterstützer erreicht werden!',
+            'extra_note' => 'Wir freuen uns über jede Unterstützung von jedermann.',
             'button_translate' => 'Hilf beim Übersetzen',
             'button_donate' => 'Direkt spenden',
         ],
