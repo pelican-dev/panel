@@ -6,10 +6,10 @@ return [
 
     'login' => [
         'title' => 'Inicia sesión para continuar',
-        'button' => 'Iniciar sesión',
+        'button' => 'Iniciar Sesión',
         'required' => [
             'username_or_email' => 'Debe proporcionar un nombre de usuario o correo electrónico.',
-            'password' => 'Por favor, introduzca la contraseña de su cuenta',
+            'password' => 'Por favor, introduzca la contraseña de su cuenta.',
         ],
     ],
 
