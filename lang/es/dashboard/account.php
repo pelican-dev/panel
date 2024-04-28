@@ -5,7 +5,7 @@ return [
     'email' => [
         'title' => 'Actualizar dirección de correo',
         'button' => 'Actualizar Correo',
-        'updated' => 'Su correo principal ha sido actualizado',
+        'updated' => 'Su correo principal ha sido actualizado.',
     ],
     'password' => [
         'title' => 'Actualizar Contraseña',
@@ -41,8 +41,8 @@ return [
         ],
 
         'required' => [
-            'title' => '2-Factor Requerido',
-            'description' => 'Tu cuenta debe tener habilitada la autenticación de doble factor para continuar.',
+            'title' => 'Requiere verificación de 2 pasos',
+            'description' => 'Tu cuenta debe tener habilitada la autenticación en dos factores para continuar.',
         ],
     ],
 ];
