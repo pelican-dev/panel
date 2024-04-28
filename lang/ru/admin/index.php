@@ -4,7 +4,7 @@ return [
     'title' => 'Administration',
     'header' => [
         'title' => 'Administrative Overview',
-        'subtitle' => 'A quick glance at your system.',
+        'subtitle' => 'Быстрый взгляд на вашу систему.',
     ],
     'content' => [
         'title' => 'Системная Информация',
@@ -12,7 +12,7 @@ return [
         'not-up-to-date1' => 'Ваша панель <strong>устарела!</strong> Последняя версия',
         'not-up-to-date2' => 'и в данный момент вы используете версию <code>:version</code>.',
         'get-help' => 'Get Help <small>(via Discord)</small>',
-        'documentation' => 'Documentation',
+        'documentation' => 'Документация',
         'github' => 'Github',
         'support-the-project' => 'Support the Project',
     ],
