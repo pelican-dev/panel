@@ -15,6 +15,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Validator;
 use Closure;
 use Filament\Forms;
+use Illuminate\Support\HtmlString;
 
 class CreateServer extends CreateRecord
 {
@@ -119,26 +120,30 @@ class CreateServer extends CreateRecord
                         Forms\Components\TextInput::make('allocation_ip')
                             ->datalist(Node::find($get('node_id'))?->ipAddresses() ?? [])
                             ->label('IP Address')
+                            ->inlineLabel()
                             ->ipv4()
                             ->helperText("Usually your machine's public IP unless you are port forwarding.")
                             // ->selectablePlaceholder(false)
                             ->required(),
                         Forms\Components\TextInput::make('allocation_alias')
                             ->label('Alias')
+                            ->inlineLabel()
                             ->default(null)
                             ->datalist([
                                 $get('name'),
                                 Egg::find($get('egg_id'))?->name,
                             ])
-                            ->helperText('This is just a display only name to help you recognize what this Allocation is used for.')
+                            ->helperText('Optional display name to help you remember what these are.')
                             ->required(false),
                         Forms\Components\TagsInput::make('allocation_ports')
                             ->placeholder('Examples: 27015, 27017-27019')
-                            ->helperText('
+                            ->helperText(new HtmlString('
                                 These are the ports that users can connect to this Server through.
-                                They usually consist of the port forwarded ones.
-                            ')
+                                <br />
+                                You would have to port forward these on your home network.
+                            '))
                             ->label('Ports')
+                            ->inlineLabel()
                             ->live()
                             ->afterStateUpdated(function ($state, Forms\Set $set) {
                                 $ports = collect();
@@ -555,8 +560,4 @@ class CreateServer extends CreateRecord
         return $service->handle($data);
     }
 
-    //    protected function getRedirectUrl(): string
-    //    {
-    //        return $this->getResource()::getUrl('edit');
-    //    }
 }
