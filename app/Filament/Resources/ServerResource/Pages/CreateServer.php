@@ -423,6 +423,8 @@ class CreateServer extends CreateRecord
 
                         Forms\Components\Repeater::make('server_variables')
                             ->relationship('serverVariables')
+                            ->saveRelationshipsBeforeChildrenUsing(null)
+                            ->saveRelationshipsUsing(null)
                             ->grid(2)
                             ->reorderable(false)
                             ->addable(false)
