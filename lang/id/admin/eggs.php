@@ -21,7 +21,7 @@ return [
         'description' => 'Deskripsi Telur yang akan ditampilkan di seluruh Panel sesuai kebutuhan.',
         'uuid' => 'This is the globally unique identifier for this Egg which Wings uses as an identifier.',
         'author' => 'Penulis versi Telur ini. Mengunggah konfigurasi Telur baru dari pembuat yang berbeda akan mengubahnya.',
-        'force_outgoing_ip' => "Forces all outgoing network traffic to have its Source IP NATed to the IP of the server's primary allocation IP.\nRequired for certain games to work properly when the Node has multiple public IP addresses.\nEnabling this option will disable internal networking for any servers using this egg, causing them to be unable to internally access other servers on the same node.",
+        'force_outgoing_ip' => "Memaksa semua lalu lintas jaringan keluar agar IP Sumbernya di-NAT-kan ke IP dari IP alokasi utama server.\nDiperlukan supaya game tertentu dapat bekerja dengan baik ketika Node memiliki beberapa alamat IP publik.\nMengaktifkan opsi ini akan menonaktifkan jaringan internal untuk semua server yang menggunakan telur ini, menyebabkan mereka tidak dapat mengakses server lain secara internal pada node yang sama.",
         'startup' => 'Perintah startup default yang sebaiknya digunakan untuk server baru yang menggunakan Egg ini.',
         'docker_images' => 'The docker images available to servers using this egg.',
     ],
