@@ -435,8 +435,11 @@ class CreateServer extends CreateRecord
                             ->deletable(false)
                             ->default([])
                             ->hidden(fn ($state) => empty($state))
-                            ->schema([
-                                Forms\Components\TextInput::make('variable_value')
+                            ->schema(function () {
+
+                                $text = Forms\Components\TextInput::make('variable_value')
+                                    ->hidden($this->shouldHideComponent(...))
+                                    ->maxLength(191)
                                     ->rules([
                                         fn (Forms\Get $get): Closure => function (string $attribute, $value, Closure $fail) use ($get) {
                                             $validator = Validator::make(['validatorkey' => $value], [
@@ -450,21 +453,35 @@ class CreateServer extends CreateRecord
                                             }
                                         },
                                     ])
-                                    ->label(fn (Forms\Get $get) => $get('name'))
-                                    ->live()
-                                    ->afterStateUpdated(function (Forms\Set $set, Forms\Get $get, $state) {
-                                        $environment = $get($envPath = '../../environment');
-                                        $environment[$get('env_variable')] = $state;
-                                        $set($envPath, $environment);
-                                    })
-                                    ->hintIcon('tabler-code')
-                                    ->hintIconTooltip(fn (Forms\Get $get) => $get('rules'))
-                                    ->prefix(fn (Forms\Get $get) => '{{' . $get('env_variable') . '}}')
-                                    ->helperText(fn (Forms\Get $get) => empty($get('description')) ? '—' : $get('description'))
-                                    ->maxLength(191),
+                                ;
 
-                                Forms\Components\Hidden::make('variable_id')->default(0),
-                            ])
+                                $select = Forms\Components\Select::make('variable_value')
+                                    ->hidden($this->shouldHideComponent(...))
+                                    ->options($this->getSelectOptionsFromRules(...))
+                                    ->selectablePlaceholder(false)
+                                ;
+
+                                $components = [$text, $select];
+
+                                /** @var Forms\Components\Component $component */
+                                foreach ($components as &$component) {
+                                    $component = $component
+                                        ->live()
+                                        ->hintIcon('tabler-code')
+                                        ->label(fn (Forms\Get $get) => $get('name'))
+                                        ->hintIconTooltip(fn (Forms\Get $get) => $get('rules'))
+                                        ->prefix(fn (Forms\Get $get) => '{{' . $get('env_variable') . '}}')
+                                        ->helperText(fn (Forms\Get $get) => empty($get('description')) ? '—' : $get('description'))
+                                        ->afterStateUpdated(function (Forms\Set $set, Forms\Get $get, $state) {
+                                            $environment = $get($envPath = '../../environment');
+                                            $environment[$get('env_variable')] = $state;
+                                            $set($envPath, $environment);
+                                        })
+                                    ;
+                                }
+
+                                return $components;
+                            })
                             ->columnSpan(2),
                     ]),
 
@@ -560,4 +577,35 @@ class CreateServer extends CreateRecord
         return $service->handle($data);
     }
 
+    private function shouldHideComponent(Forms\Get $get, Forms\Components\Component $component): bool
+    {
+        $containsRuleIn = str($get('rules'))->explode('|')->reduce(
+            fn ($result, $value) => $result === true && !str($value)->startsWith('in:'), true
+        );
+
+        if ($component instanceof Forms\Components\Select) {
+            return $containsRuleIn;
+        }
+
+        if ($component instanceof Forms\Components\TextInput) {
+            return !$containsRuleIn;
+        }
+
+        throw new \Exception('Component type not supported: ' . $component::class);
+    }
+
+    private function getSelectOptionsFromRules(Forms\Get $get): array
+    {
+        $inRule = str($get('rules'))->explode('|')->reduce(
+            fn ($result, $value) => str($value)->startsWith('in:') ? $value : $result, ''
+        );
+
+        return str($inRule)
+            ->after('in:')
+            ->explode(',')
+            ->each(fn ($value) => str($value)->trim())
+            ->mapWithKeys(fn ($value) => [$value => $value])
+            ->all()
+        ;
+    }
 }
