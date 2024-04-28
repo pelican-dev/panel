@@ -77,7 +77,7 @@ return [
     'optional' => 'Opcional',
     'read_only' => 'Solo Lectura',
     'read_only?' => 'Solo Lectura?',
-    'writable' => 'Escritura permitida',
+    'writable' => 'Editable',
     'relation' => 'Relación',
     'owner' => 'Propietario',
     'admin' => 'Administrador',
