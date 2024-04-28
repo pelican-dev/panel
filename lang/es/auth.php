@@ -14,7 +14,7 @@ return [
     ],
 
     'forgot_password' => [
-        'title' => 'Solicitar restablecimiento de la contraseña',
+        'title' => 'Solicitar restablecimiento de contraseña',
         'label' => '¿Olvidaste tu contraseña?',
         'label_help' => 'Ingresa la dirección de correo electrónico de tu cuenta para recibir instrucciones sobre cómo restablecer tu contraseña.',
         'button' => 'Enviar correo electrónico',
@@ -44,7 +44,7 @@ return [
     'checkpoint' => [
         'title' => 'Punto de control',
         'recovery_code' => 'Código de Recuperación',
-        'recovery_code_description' => 'Introduzca uno de los códigos de recuperación generados al configurar la Autenticación de Dos Factores en esta cuenta para continuar.',
+        'recovery_code_description' => 'Introduce uno de los códigos de recuperación generados cuando configuraste la autenticación de dos factores en esta cuenta para continuar.',
         'authentication_code' => 'Código de Autenticación',
         'authentication_code_description' => 'Introduzca el token de doble factor generado por su dispositivo.',
         'button' => 'Continuar',
