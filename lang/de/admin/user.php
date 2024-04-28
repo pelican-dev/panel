@@ -10,8 +10,8 @@ return [
         'account_updated' => 'Konto wurde erfolgreich aktualisiert.',
     ],
     'last_admin' => [
-        'hint' => 'This is the last root administrator!',
-        'helper_text' => 'You must have at least one root administrator in your system.',
+        'hint' => 'Dies ist der letzte Root-Administrator!',
+        'helper_text' => 'Es muss mindestens ein Root-Administrator in ihrem System vorhanden sein.',
     ],
     'root_admin' => 'Administrator (Root)',
     'language' => [
