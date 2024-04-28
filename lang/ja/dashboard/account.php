@@ -1,48 +1,48 @@
 <?php
 
 return [
-    'title' => 'Account Overview',
+    'title' => 'アカウント概要',
     'email' => [
-        'title' => 'Update Email Address',
-        'button' => 'Update Email',
-        'updated' => 'Your primary email has been updated.',
+        'title' => 'メールアドレスを更新',
+        'button' => 'メールアドレスを更新',
+        'updated' => 'メールアドレスを更新しました。',
     ],
     'password' => [
-        'title' => 'Update Password',
-        'button' => 'Update Password',
-        'requirements' => 'Your new password should be at least 8 characters in length and unique to this website.',
+        'title' => 'パスワードを変更',
+        'button' => 'パスワードを変更',
+        'requirements' => '新しいパスワードは8文字以上で、他のサイトで使用していないものにしてください。',
         'validation' => [
-            'account_password' => 'You must provide your account password.',
-            'current_password' => 'You must provide your current password.',
-            'password_confirmation' => 'Password confirmation does not match the password you entered.',
+            'account_password' => 'パスワードを入力してください。',
+            'current_password' => '現在のパスワードを入力してください。',
+            'password_confirmation' => 'パスワードの確認と一致しません。',
         ],
         'updated' => 'パスワードを変更しました。',
     ],
     'two_factor' => [
-        'title' => 'Two-Step Verification',
+        'title' => '二段階認証',
         'button' => '二段階認証の設定',
         'disabled' => '二段階認証が無効化されています。ログイン時のトークン入力をスキップできます。',
         'enabled' => '二段階認証が有効化されています。ログイン時にトークン入力が必要です。',
         'invalid' => '入力されたトークンは無効です。',
         'enable' => [
-            'help' => 'You do not currently have two-step verification enabled on your account. Click the button below to begin configuring it.',
-            'button' => 'Enable Two-Step',
+            'help' => '現在、アカウントで二段階認証が有効になっていません。下のボタンを押して設定を開始してください。',
+            'button' => '二段階認証を有効化',
         ],
         'disable' => [
-            'help' => 'Two-step verification is currently enabled on your account.',
+            'help' => '現在、二段階認証が有効になっています。',
             'title' => '二段階認証の無効化',
             'field' => 'トークンを入力',
-            'button' => 'Disable Two-Step',
+            'button' => '二段階認証を無効化',
         ],
         'setup' => [
-            'title' => 'Enable Two-Step Verification',
-            'subtitle' => "Help protect your account from unauthorized access. You'll be prompted for a verification code each time you sign in.",
-            'help' => 'Scan the QR code above using the two-step authentication app of your choice. Then, enter the 6-digit code generated into the field below.',
+            'title' => '二段階認証を有効化',
+            'subtitle' => "アカウントを不正アクセスから保護します。ログイン時に認証コードが要求されます。",
+            'help' => '二要素認証アプリを使用して上記のQRコードを読み取ってください。 次に、生成された6桁の二要素認証コードを下記に入力してください。',
         ],
 
         'required' => [
-            'title' => '2-Factor Required',
-            'description' => 'Your account must have two-factor authentication enabled in order to continue.',
+            'title' => '二段階認証が必要です。',
+            'description' => '続行するには、アカウントで二段階認証の有効化が必要です。',
         ],
     ],
 ];
