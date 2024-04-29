@@ -108,6 +108,7 @@ class Node extends Model
         'daemon_sftp' => 2022,
         'daemon_listen' => 8080,
         'maintenance_mode' => false,
+        'tags' => '[]',
     ];
 
     protected function casts(): array
@@ -120,6 +121,7 @@ class Node extends Model
             'behind_proxy' => 'boolean',
             'public' => 'boolean',
             'maintenance_mode' => 'boolean',
+            'tags' => 'array',
         ];
     }
 
