@@ -452,14 +452,12 @@ class CreateServer extends CreateRecord
                                                 $fail($message);
                                             }
                                         },
-                                    ])
-                                ;
+                                    ]);
 
                                 $select = Forms\Components\Select::make('variable_value')
                                     ->hidden($this->shouldHideComponent(...))
                                     ->options($this->getSelectOptionsFromRules(...))
-                                    ->selectablePlaceholder(false)
-                                ;
+                                    ->selectablePlaceholder(false);
 
                                 $components = [$text, $select];
 
@@ -476,8 +474,7 @@ class CreateServer extends CreateRecord
                                             $environment = $get($envPath = '../../environment');
                                             $environment[$get('env_variable')] = $state;
                                             $set($envPath, $environment);
-                                        })
-                                    ;
+                                        });
                                 }
 
                                 return $components;
@@ -605,7 +602,6 @@ class CreateServer extends CreateRecord
             ->explode(',')
             ->each(fn ($value) => str($value)->trim())
             ->mapWithKeys(fn ($value) => [$value => $value])
-            ->all()
-        ;
+            ->all();
     }
 }

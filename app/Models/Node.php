@@ -301,7 +301,7 @@ class Node extends Model
 
         foreach ($statuses as $status) {
             $uuid = fluent($status)->get('configuration.uuid');
-            cache()->remember("servers.$uuid.container.status", now()->addMinute(), fn() => fluent($status)->get('state'));
+            cache()->remember("servers.$uuid.container.status", now()->addMinute(), fn () => fluent($status)->get('state'));
         }
 
         return $statuses;
