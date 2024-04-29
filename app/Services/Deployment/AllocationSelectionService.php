@@ -6,6 +6,7 @@ use App\Models\Allocation;
 use App\Exceptions\DisplayException;
 use App\Services\Allocations\AssignmentService;
 use App\Exceptions\Service\Deployment\NoViableAllocationException;
+use Illuminate\Support\Facades\DB;
 
 class AllocationSelectionService
 {
@@ -121,10 +122,17 @@ class AllocationSelectionService
             $discard = $this->getDiscardableDedicatedAllocations($nodes);
 
             if (!empty($discard)) {
-                $query->whereNotIn(
-                    Allocation::query()->raw('CONCAT_WS("-", node_id, ip)'),
-                    $discard
-                );
+                if (DB::getDriverName() === 'sqlite') {
+                    $query->whereNotIn(
+                        Allocation::query()->raw('node_id || "-" || ip'),
+                        $discard
+                    );
+                } else {
+                    $query->whereNotIn(
+                        Allocation::query()->raw('CONCAT_WS("-", node_id, ip)'),
+                        $discard
+                    );
+                }
             }
         }
 
@@ -141,6 +149,20 @@ class AllocationSelectionService
      */
     private function getDiscardableDedicatedAllocations(array $nodes = []): array
     {
+        if (DB::getDriverName() === 'sqlite') {
+            $query = Allocation::query()->selectRaw('(node_id || "-" || ip) as result');
+
+            if (!empty($nodes)) {
+                $query->whereIn('node_id', $nodes);
+            }
+
+            return $query->whereNotNull('server_id')
+                ->groupByRaw('node_id || ip')
+                ->get()
+                ->pluck('result')
+                ->toArray();
+        }
+
         $query = Allocation::query()->selectRaw('CONCAT_WS("-", node_id, ip) as result');
 
         if (!empty($nodes)) {
