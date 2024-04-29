@@ -292,13 +292,19 @@ class Node extends Model
 
     public function serverStatuses(): array
     {
-        return cache()->remember("nodes.$this->id.servers", now()->addMinute(), function () {
-            try {
-                return Http::daemon($this)->connectTimeout(1)->timeout(1)->get('/api/servers')->json() ?? [];
-            } catch (Exception) {
-                return [];
-            }
-        });
+        $statuses = [];
+        try {
+            $statuses = Http::daemon($this)->connectTimeout(1)->timeout(1)->get('/api/servers')->json() ?? [];
+        } catch (Exception $exception) {
+            report($exception);
+        }
+
+        foreach ($statuses as $status) {
+            $uuid = fluent($status)->get('configuration.uuid');
+            cache()->remember("servers.$uuid.container.status", now()->addMinute(), fn() => fluent($status)->get('state'));
+        }
+
+        return $statuses;
     }
 
     public function ipAddresses(): array
