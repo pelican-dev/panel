@@ -3,13 +3,13 @@
 return [
     'title' => 'Account Overview',
     'email' => [
-        'title' => 'Update Email Address',
-        'button' => 'Update Email',
-        'updated' => 'Your primary email has been updated.',
+        'title' => 'Perbarui Alamat Email',
+        'button' => 'Perbarui Email',
+        'updated' => 'Email utama anda telah diperbarui.',
     ],
     'password' => [
-        'title' => 'Update Password',
-        'button' => 'Update Password',
+        'title' => 'Perbarui Kata Sandi',
+        'button' => 'Perbarui Kata Sandi',
         'requirements' => 'Your new password should be at least 8 characters in length and unique to this website.',
         'validation' => [
             'account_password' => 'You must provide your account password.',
