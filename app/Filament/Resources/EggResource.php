@@ -25,7 +25,7 @@ class EggResource extends Resource
 
     public static function getGloballySearchableAttributes(): array
     {
-        return ['name', 'tags', 'uuid', 'id', ];
+        return ['name', 'tags', 'uuid', 'id'];
     }
 
     public static function getPages(): array

@@ -465,10 +465,10 @@ class EditServer extends EditRecord
         ];
 
     }
-        protected function getFormActions(): array
-        {
-            return [];
-        }
+    protected function getFormActions(): array
+    {
+        return [];
+    }
 
     protected function mutateFormDataBeforeSave(array $data): array
     {
