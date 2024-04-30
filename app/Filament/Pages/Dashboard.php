@@ -73,7 +73,7 @@ class Dashboard extends Page
                 CreateAction::make()
                     ->label(trans('dashboard/index.sections.intro-help.button_discord'))
                     ->icon('tabler-brand-discord')
-                    ->url('https://discord.gg/pelican-panel', true),
+                    ->url('https://discord.gg/pelican-panel', true)
                     ->color('blurple'),
             ],
         ];
