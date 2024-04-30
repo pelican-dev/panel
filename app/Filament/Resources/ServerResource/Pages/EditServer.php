@@ -166,7 +166,7 @@ class EditServer extends EditRecord
                             return $state;
                         }
 
-                        $images = Egg::find($get('egg_id'))->docker_images ?? [];
+                        $images = Egg::find($get('egg_id'))->docker_images;
 
                         return !in_array($get('image'), $images);
                     })
@@ -202,13 +202,7 @@ class EditServer extends EditRecord
                     ->disabled(fn (Forms\Get $get) => $get('custom_image'))
                     ->label('Docker Image')
                     ->prefixIcon('tabler-brand-docker')
-                    ->options(function (Forms\Get $get, Forms\Set $set) {
-                        $images = Egg::find($get('egg_id'))->docker_images ?? [];
-
-                        $set('image', collect($images)->first());
-
-                        return $images;
-                    })
+                    ->options(fn (Forms\Get $get) => Egg::find($get('egg_id'))->docker_images)
                     ->disabled(fn (Forms\Components\Select $component) => empty($component->getOptions()))
                     ->selectablePlaceholder(false)
                     ->columnSpan([
@@ -453,6 +447,10 @@ class EditServer extends EditRecord
     {
         return [
             $this->getSaveFormAction(),
+            Actions\Action::make('console')
+                ->label('Console')
+                ->icon('tabler-terminal')
+                ->url(fn (Server $server) => "/server/$server->uuid_short"),
             Actions\DeleteAction::make('Force Delete')
                 ->label('Force Delete')
                 ->successRedirectUrl(route('filament.admin.resources.servers.index'))
@@ -467,10 +465,10 @@ class EditServer extends EditRecord
         ];
 
     }
-    protected function getFormActions(): array
-    {
-        return [];
-    }
+    //    protected function getFormActions(): array
+    //    {
+    //        return [];
+    //    }
 
     protected function mutateFormDataBeforeSave(array $data): array
     {
