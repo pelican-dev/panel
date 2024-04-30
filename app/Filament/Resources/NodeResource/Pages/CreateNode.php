@@ -113,14 +113,14 @@ class CreateNode extends CreateRecord
                         'lg' => 1,
                     ]),
 
-                Forms\Components\TextInput::make('daemonListen')
+                Forms\Components\TextInput::make('daemon_listen')
                     ->columnSpan([
                         'default' => 1,
                         'sm' => 1,
                         'md' => 1,
                         'lg' => 1,
                     ])
-                    ->label('Port')
+                    ->label(trans('strings.port'))
                     ->helperText('If you are running the daemon behind Cloudflare you should set the daemon port to 8443 to allow websocket proxying over SSL.')
                     ->minValue(0)
                     ->maxValue(65536)
@@ -178,6 +178,7 @@ class CreateNode extends CreateRecord
                     ->default(fn () => request()->isSecure() ? 'https' : 'http'),
 
                 Forms\Components\Textarea::make('description')
+                    ->label('strings.description')
                     ->hidden()
                     ->columnSpan([
                         'default' => 1,

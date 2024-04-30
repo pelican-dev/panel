@@ -8,34 +8,34 @@
  */
 return [
     'auth' => [
-        'fail' => 'Failed log in',
-        'success' => 'Logged in',
-        'password-reset' => 'Password reset',
-        'reset-password' => 'Requested password reset',
+        'fail' => 'विफल लॉग इन',
+        'success' => 'लॉग इन किया गया',
+        'password-reset' => 'पासवर्ड रीसेट',
+        'reset-password' => 'पासवर्ड रीसेट का अनुरोध किया गया',
         'checkpoint' => 'Two-factor authentication requested',
-        'recovery-token' => 'Used two-factor recovery token',
-        'token' => 'Solved two-factor challenge',
-        'ip-blocked' => 'Blocked request from unlisted IP address for :identifier',
+        'recovery-token' => 'दो-कारक रिकवरी टोकन का उपयोग किया गया',
+        'token' => 'दो-कारक चुनौती का समाधान किया गया',
+        'ip-blocked' => 'अनसूचीबद्ध आईपी पते से :identifier के लिए अनुरोध अवरुद्ध किया गया',
         'sftp' => [
-            'fail' => 'Failed SFTP log in',
+            'fail' => 'एसएफटीपी लॉगइन विफल रहा',
         ],
     ],
     'user' => [
         'account' => [
-            'email-changed' => 'Changed email from :old to :new',
-            'password-changed' => 'Changed password',
+            'email-changed' => 'ईमेल :old से बदलकर :new कर दिया गया',
+            'password-changed' => 'पासवर्ड बदल दिया गया',
         ],
         'api-key' => [
-            'create' => 'Created new API key :identifier',
-            'delete' => 'Deleted API key :identifier',
+            'create' => 'नई एपीआई कुंजी :identifier बनाई गई',
+            'delete' => 'हटाई गई एपीआई की: पहचानकर्ता',
         ],
         'ssh-key' => [
-            'create' => 'Added SSH key :fingerprint to account',
-            'delete' => 'Removed SSH key :fingerprint from account',
+            'create' => 'खाते में एसएसएच कुंजी :fingerprint को जोड़ा गया',
+            'delete' => 'खाते से एसएसएच कुंजी :fingerprint को हटा दिया गया',
         ],
         'two-factor' => [
-            'create' => 'Enabled two-factor auth',
-            'delete' => 'Disabled two-factor auth',
+            'create' => 'दो-कारक प्रमाणीकरण को सक्षम किया गया',
+            'delete' => 'दो-कारक प्रमाणीकरण को निष्क्रिय कर दिया गया',
         ],
     ],
     'server' => [

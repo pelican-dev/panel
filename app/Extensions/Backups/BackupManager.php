@@ -97,7 +97,7 @@ class BackupManager
     /**
      * Creates a new daemon adapter.
      */
-    public function createDaemonAdapter(array $config): FilesystemAdapter
+    public function createWingsAdapter(array $config): FilesystemAdapter
     {
         return new InMemoryFilesystemAdapter();
     }

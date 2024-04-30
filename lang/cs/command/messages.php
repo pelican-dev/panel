@@ -42,7 +42,7 @@ return [
     'environment' => [
         'mail' => [
             'ask_smtp_host' => 'SMTP hostitel (např. smtp.gmail.com)',
-            'ask_smtp_port' => 'SMTP Port',
+            'ask_smtp_port' => 'SMTP port',
             'ask_smtp_username' => 'SMTP Uživatelské jméno',
             'ask_smtp_password' => 'SMTP heslo',
             'ask_mailgun_domain' => 'Mailgun doména',

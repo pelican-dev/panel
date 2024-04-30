@@ -97,6 +97,7 @@ class Egg extends Model
         'script_entry',
         'script_container',
         'copy_script_from',
+        'tags',
     ];
 
     public static array $validationRules = [

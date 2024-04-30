@@ -22,6 +22,8 @@ class ServersRelationManager extends RelationManager
                     ->searchable(),
                 Tables\Columns\TextColumn::make('name')
                     ->icon('tabler-brand-docker')
+                    ->label(trans('strings.name'))
+                    ->url(fn (Server $server): string => route('filament.admin.resources.servers.edit', ['record' => $server]))
                     ->searchable()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('node.name')

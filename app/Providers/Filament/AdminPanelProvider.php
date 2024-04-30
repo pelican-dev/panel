@@ -3,6 +3,7 @@
 namespace App\Providers\Filament;
 
 use App\Filament\Resources\UserResource\Pages\EditProfile;
+use App\Http\Middleware\LanguageMiddleware;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
@@ -42,8 +43,8 @@ class AdminPanelProvider extends PanelProvider
             ->colors([
                 'danger' => Color::Red,
                 'gray' => Color::Zinc,
-                'info' => Color::Blue,
-                'primary' => Color::Sky,
+                'info' => Color::Sky,
+                'primary' => Color::Blue,
                 'success' => Color::Green,
                 'warning' => Color::Amber,
             ])
@@ -67,6 +68,7 @@ class AdminPanelProvider extends PanelProvider
                 SubstituteBindings::class,
                 DisableBladeIconComponents::class,
                 DispatchServingFilamentEvent::class,
+                LanguageMiddleware::class,
             ])
             ->authMiddleware([
                 Authenticate::class,
