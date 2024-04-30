@@ -93,7 +93,6 @@ class EditServer extends EditRecord
                     ->label('Display Name')
                     ->suffixAction(Forms\Components\Actions\Action::make('random')
                         ->icon('tabler-dice-' . random_int(1, 6))
-                        ->color('primary')
                         ->action(function (Forms\Set $set, Forms\Get $get) {
                             $egg = Egg::find($get('egg_id'));
                             $prefix = $egg ? str($egg->name)->lower()->kebab() . '-' : '';
@@ -167,7 +166,7 @@ class EditServer extends EditRecord
                             return $state;
                         }
 
-                        $images = Egg::find($get('egg_id'))->docker_images ?? [];
+                        $images = Egg::find($get('egg_id'))->docker_images;
 
                         return !in_array($get('image'), $images);
                     })
@@ -203,13 +202,7 @@ class EditServer extends EditRecord
                     ->disabled(fn (Forms\Get $get) => $get('custom_image'))
                     ->label('Docker Image')
                     ->prefixIcon('tabler-brand-docker')
-                    ->options(function (Forms\Get $get, Forms\Set $set) {
-                        $images = Egg::find($get('egg_id'))->docker_images ?? [];
-
-                        $set('image', collect($images)->first());
-
-                        return $images;
-                    })
+                    ->options(fn (Forms\Get $get) => Egg::find($get('egg_id'))->docker_images)
                     ->disabled(fn (Forms\Components\Select $component) => empty($component->getOptions()))
                     ->selectablePlaceholder(false)
                     ->columnSpan([
@@ -453,25 +446,29 @@ class EditServer extends EditRecord
     protected function getHeaderActions(): array
     {
         return [
-            $this->getSaveFormAction(),
+            Actions\DeleteAction::make('Delete')
+                ->successRedirectUrl(route('filament.admin.resources.servers.index'))
+                ->color('danger')
+                ->after(fn (Server $server) => resolve(ServerDeletionService::class)->handle($server))
+                ->requiresConfirmation(),
             Actions\DeleteAction::make('Force Delete')
                 ->label('Force Delete')
                 ->successRedirectUrl(route('filament.admin.resources.servers.index'))
                 ->color('danger')
                 ->after(fn (Server $server) => resolve(ServerDeletionService::class)->withForce()->handle($server))
                 ->requiresConfirmation(),
-            Actions\DeleteAction::make('Delete')
-                ->successRedirectUrl(route('filament.admin.resources.servers.index'))
-                ->color('danger')
-                ->after(fn (Server $server) => resolve(ServerDeletionService::class)->handle($server))
-                ->requiresConfirmation(),
+            Actions\Action::make('console')
+                ->label('Console')
+                ->icon('tabler-terminal')
+                ->url(fn (Server $server) => "/server/$server->uuid_short"),
+            $this->getSaveFormAction()->formId('form'),
         ];
 
     }
-    protected function getFormActions(): array
-    {
-        return [];
-    }
+        protected function getFormActions(): array
+        {
+            return [];
+        }
 
     protected function mutateFormDataBeforeSave(array $data): array
     {
