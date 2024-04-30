@@ -2,7 +2,6 @@
 
 namespace App\Listeners;
 
-use App\Events\Event;
 use App\Events\ShouldDispatchWebhooks;
 use App\Jobs\DispatchWebhooksJob;
 

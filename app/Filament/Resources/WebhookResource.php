@@ -2,8 +2,10 @@
 
 namespace App\Filament\Resources;
 
-use App\Filament\Resources\WebhookResource\Pages;
-use App\Models\Webhook;
+use App\Filament\Resources\WebhookConfigurationResource\Pages;
+use App\Models\WebhookConfiguration;
+use App\Services\Webhooks\DiscoverWebhookEventsService;
+use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
@@ -11,17 +13,17 @@ use Filament\Tables\Table;
 
 class WebhookResource extends Resource
 {
-    protected static ?string $model = Webhook::class;
+    protected static ?string $model = WebhookConfiguration::class;
 
     protected static ?string $navigationIcon = 'tabler-webhook';
-
-    protected static ?string $navigationGroup = 'Webhooks';
 
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
-                //
+                Forms\Components\TextInput::make('endpoint')->activeUrl()->required(),
+                Forms\Components\TextInput::make('description')->nullable(),
+                Forms\Components\CheckboxList::make('events')->lazy()->options(fn () => DiscoverWebhookEventsService::toFilamentCheckboxList())->required(),
             ]);
     }
 
@@ -54,9 +56,9 @@ class WebhookResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListWebhooks::route('/'),
-            'create' => Pages\CreateWebhook::route('/create'),
-            'edit' => Pages\EditWebhook::route('/{record}/edit'),
+            'index' => Pages\ListWebhookConfigurations::route('/'),
+            'create' => Pages\CreateWebhookConfiguration::route('/create'),
+            'edit' => Pages\EditWebhookConfiguration::route('/{record}/edit'),
         ];
     }
 }

@@ -2,7 +2,6 @@
 
 namespace App\Jobs;
 
-use App\Events\Event;
 use App\Events\ShouldDispatchWebhooks;
 use App\Models\WebhookConfiguration;
 use Illuminate\Bus\Queueable;
@@ -17,7 +16,7 @@ class DispatchWebhooksJob implements ShouldQueue
 
     public function __construct(private ShouldDispatchWebhooks $event)
     {
-        
+
     }
 
     public function handle(): void
