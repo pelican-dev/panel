@@ -10,10 +10,10 @@ return [
         'account_updated' => 'บัญชีได้รับการอัปเดตเรียบร้อยแล้ว',
     ],
     'last_admin' => [
-        'hint' => 'This is the last root administrator!',
-        'helper_text' => 'You must have at least one root administrator in your system.',
+        'hint' => 'นี่คือผู้ดูแลระบบรูทคนสุดท้าย!',
+        'helper_text' => 'คุณต้องมีผู้ดูแลระบบรูทอย่างน้อยหนึ่งคนในระบบของคุณ',
     ],
-    'root_admin' => 'Administrator (Root)',
+    'root_admin' => 'ผู้ดูแลระบบ (รูท)',
     'language' => [
         'helper_text1' => 'Your language (:state) has not been translated yet!\nBut never fear, you can help fix that by',
         'helper_text2' => 'contributing directly here',
