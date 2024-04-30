@@ -1,7 +1,7 @@
 <?php
 
 return [
-    'title' => 'Dashboard',
+    'title' => '대시보드',
     'showing-your-servers' => 'Showing your servers',
     'showing-others-servers' => "Showing other's servers",
     'no-other-servers' => 'There are no other servers to display.',
@@ -29,19 +29,19 @@ return [
             'heading' => 'Support Pelican',
             'content' => 'Thank you for using Pelican, this could only be achieved through the support of you, our contributors, and the rest of our supporters!',
             'extra_note' => 'We appreciate any and all support from anybody.',
-            'button_translate' => 'Help Translate',
-            'button_donate' => 'Donate Directly',
+            'button_translate' => '번역 참여하기',
+            'button_donate' => '직접 후원하기',
         ],
         'intro-help' => [
-            'heading' => 'Need Help?',
+            'heading' => '도움이 필요한가요?',
             'content' => 'Check out the documentation first! If you still need assistance then, fly onto our Discord server!',
-            'button_docs' => 'Read Documentation',
-            'button_discord' => 'Get Help in Discord',
+            'button_docs' => '문서 읽기',
+            'button_discord' => 'Discord에서 도움 받기',
         ],
     ],
 
-    'search' => 'Search for servers...',
+    'search' => '서버 검색...',
     'no_matches' => 'There were no servers found matching the search criteria provided.',
     'cpu_title' => 'CPU',
-    'memory_title' => 'Memory',
+    'memory_title' => '메모리',
 ];
