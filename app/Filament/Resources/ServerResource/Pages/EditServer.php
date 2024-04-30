@@ -93,7 +93,6 @@ class EditServer extends EditRecord
                     ->label('Display Name')
                     ->suffixAction(Forms\Components\Actions\Action::make('random')
                         ->icon('tabler-dice-' . random_int(1, 6))
-                        ->color('primary')
                         ->action(function (Forms\Set $set, Forms\Get $get) {
                             $egg = Egg::find($get('egg_id'));
                             $prefix = $egg ? str($egg->name)->lower()->kebab() . '-' : '';
