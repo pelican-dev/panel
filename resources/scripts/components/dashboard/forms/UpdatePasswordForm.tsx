@@ -29,7 +29,7 @@ export default () => {
             function (value) {
                 return value === this.parent.password;
             }
-       ),
+        ),
     });
 
     const user = useStoreState((state: State<ApplicationStore>) => state.user.data);
@@ -80,9 +80,7 @@ export default () => {
                                     type={'password'}
                                     name={'password'}
                                     label={t('new_password', { ns: 'strings' })}
-                                    description={
-                                        t('password.requirements')
-                                    }
+                                    description={t('password.requirements')}
                                 />
                             </div>
                             <div css={tw`mt-6`}>

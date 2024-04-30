@@ -76,9 +76,7 @@ export default () => {
                             ))
                         ) : (
                             <p css={tw`text-center text-sm text-neutral-400`}>
-                                {showOnlyAdmin
-                                    ? t('no-other-servers')
-                                    : t('no-servers-associated')}
+                                {showOnlyAdmin ? t('no-other-servers') : t('no-servers-associated')}
                             </p>
                         )
                     }

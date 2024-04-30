@@ -59,7 +59,12 @@ export default () => {
                 <React.Fragment>
                     <SpinnerOverlay size={'large'} visible={isSubmitting} />
                     <Form css={tw`m-0`}>
-                        <Field id={'current_email'} type={'email'} name={'email'} label={t('email', { ns: 'strings' })} />
+                        <Field
+                            id={'current_email'}
+                            type={'email'}
+                            name={'email'}
+                            label={t('email', { ns: 'strings' })}
+                        />
                         <div css={tw`mt-6`}>
                             <Field
                                 id={'confirm_password'}
