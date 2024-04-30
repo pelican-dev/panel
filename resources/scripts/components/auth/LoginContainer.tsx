@@ -78,9 +78,21 @@ const LoginContainer = ({ history }: RouteComponentProps) => {
         >
             {({ isSubmitting, setSubmitting, submitForm }) => (
                 <LoginFormContainer title={t('login.title')} css={tw`w-full flex`}>
-                    <Field light type={'text'} label={t('user_identifier', { ns: 'strings' })} name={'username'} disabled={isSubmitting} />
+                    <Field
+                        light
+                        type={'text'}
+                        label={t('user_identifier', { ns: 'strings' })}
+                        name={'username'}
+                        disabled={isSubmitting}
+                    />
                     <div css={tw`mt-6`}>
-                        <Field light type={'password'} label={t('password', { ns: 'strings' })} name={'password'} disabled={isSubmitting} />
+                        <Field
+                            light
+                            type={'password'}
+                            label={t('password', { ns: 'strings' })}
+                            name={'password'}
+                            disabled={isSubmitting}
+                        />
                     </div>
                     <div css={tw`mt-6`}>
                         <Button type={'submit'} size={'xlarge'} isLoading={isSubmitting} disabled={isSubmitting}>

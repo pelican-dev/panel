@@ -18,6 +18,7 @@ class NodeResource extends Resource
     public static function getRelations(): array
     {
         return [
+            RelationManagers\AllocationsRelationManager::class,
             RelationManagers\NodesRelationManager::class,
         ];
     }

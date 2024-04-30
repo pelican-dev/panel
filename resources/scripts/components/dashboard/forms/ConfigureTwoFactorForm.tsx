@@ -33,14 +33,12 @@ export default () => {
             <SetupTOTPDialog open={visible === 'enable'} onClose={() => setVisible(null)} onTokens={onTokens} />
             <RecoveryTokensDialog tokens={tokens} open={tokens.length > 0} onClose={() => setTokens([])} />
             <DisableTOTPDialog open={visible === 'disable'} onClose={() => setVisible(null)} />
-            <p css={tw`text-sm`}>
-                {isEnabled
-                    ? t('two_factor.disable.help')
-                    : t('two_factor.enable.help')}
-            </p>
+            <p css={tw`text-sm`}>{isEnabled ? t('two_factor.disable.help') : t('two_factor.enable.help')}</p>
             <div css={tw`mt-6`}>
                 {isEnabled ? (
-                    <Button.Danger onClick={() => setVisible('disable')}>{t('two_factor.disable.button')}</Button.Danger>
+                    <Button.Danger onClick={() => setVisible('disable')}>
+                        {t('two_factor.disable.button')}
+                    </Button.Danger>
                 ) : (
                     <Button onClick={() => setVisible('enable')}>{t('two_factor.enable.button')}</Button>
                 )}

@@ -46,22 +46,19 @@ class Dashboard extends Page
                 CreateAction::make()
                     ->label(trans('dashboard/index.sections.intro-developers.button_features'))
                     ->icon('tabler-brand-github')
-                    ->url('https://github.com/pelican-dev/panel/discussions', true)
-                    ->color('primary'),
+                    ->url('https://github.com/pelican-dev/panel/discussions', true),
             ],
             'nodeActions' => [
                 CreateAction::make()
                     ->label(trans('dashboard/index.sections.intro-first-node.button_label'))
                     ->icon('tabler-server-2')
-                    ->url(route('filament.admin.resources.nodes.create'))
-                    ->color('primary'),
+                    ->url(route('filament.admin.resources.nodes.create')),
             ],
             'supportActions' => [
                 CreateAction::make()
                     ->label(trans('dashboard/index.sections.intro-support.button_translate'))
                     ->icon('tabler-language')
-                    ->url('https://crowdin.com/project/pelican-dev', true)
-                    ->color('info'),
+                    ->url('https://crowdin.com/project/pelican-dev', true),
                 CreateAction::make()
                     ->label(trans('dashboard/index.sections.intro-support.button_donate'))
                     ->icon('tabler-cash')
@@ -72,13 +69,11 @@ class Dashboard extends Page
                 CreateAction::make()
                     ->label(trans('dashboard/index.sections.intro-help.button_docs'))
                     ->icon('tabler-speedboat')
-                    ->url('https://pelican.dev/docs', true)
-                    ->color('info'),
+                    ->url('https://pelican.dev/docs', true),
                 CreateAction::make()
                     ->label(trans('dashboard/index.sections.intro-help.button_discord'))
                     ->icon('tabler-brand-discord')
-                    ->url('https://discord.gg/pelican-panel', true)
-                    ->color('primary'),
+                    ->url('https://discord.gg/pelican-panel', true),
             ],
         ];
     }

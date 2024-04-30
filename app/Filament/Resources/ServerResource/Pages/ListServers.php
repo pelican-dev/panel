@@ -27,12 +27,7 @@ class ListServers extends ListRecords
                             return $server->status;
                         }
 
-                        $statuses = collect($server->retrieveStatus())
-                            ->mapWithKeys(function ($status) {
-                                return [$status['configuration']['uuid'] => $status['state']];
-                            })->all();
-
-                        return $statuses[$server->uuid] ?? 'node_fail';
+                        return $server->retrieveStatus() ?? 'node_fail';
                     })
                     ->icon(fn ($state) => match ($state) {
                         'node_fail' => 'tabler-server-off',

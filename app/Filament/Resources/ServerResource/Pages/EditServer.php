@@ -33,7 +33,6 @@ class EditServer extends EditRecord
             ->schema([
                 Forms\Components\ToggleButtons::make('docker')
                     ->label('Container Status')
-                    ->hiddenOn('create')
                     ->inlineLabel()
                     ->formatStateUsing(function ($state, Server $server) {
                         if ($server->node_id === null) {
@@ -66,7 +65,6 @@ class EditServer extends EditRecord
                 Forms\Components\ToggleButtons::make('status')
                     ->label('Server State')
                     ->helperText('')
-                    ->hiddenOn('create')
                     ->inlineLabel()
                     ->formatStateUsing(fn ($state) => $state ?? ServerState::Normal)
                     ->options(fn ($state) => collect(ServerState::cases())->filter(fn ($serverState) => $serverState->value === $state)->mapWithKeys(
@@ -95,7 +93,6 @@ class EditServer extends EditRecord
                     ->label('Display Name')
                     ->suffixAction(Forms\Components\Actions\Action::make('random')
                         ->icon('tabler-dice-' . random_int(1, 6))
-                        ->color('primary')
                         ->action(function (Forms\Set $set, Forms\Get $get) {
                             $egg = Egg::find($get('egg_id'));
                             $prefix = $egg ? str($egg->name)->lower()->kebab() . '-' : '';
@@ -113,7 +110,6 @@ class EditServer extends EditRecord
 
                 Forms\Components\Select::make('owner_id')
                     ->prefixIcon('tabler-user')
-                    ->default(auth()->user()->id)
                     ->label('Owner')
                     ->columnSpan([
                         'default' => 2,
@@ -128,7 +124,6 @@ class EditServer extends EditRecord
 
                 Forms\Components\Textarea::make('description')
                     ->hidden()
-                    ->default('')
                     ->required()
                     ->columnSpanFull(),
 
@@ -148,7 +143,6 @@ class EditServer extends EditRecord
 
                 Forms\Components\ToggleButtons::make('skip_scripts')
                     ->label('Run Egg Install Script?')
-                    ->default(false)
                     ->options([
                         false => 'Yes',
                         true => 'Skip',
@@ -167,13 +161,12 @@ class EditServer extends EditRecord
                 Forms\Components\ToggleButtons::make('custom_image')
                     ->live()
                     ->label('Custom Image?')
-                    ->default(false)
                     ->formatStateUsing(function ($state, Forms\Get $get) {
                         if ($state !== null) {
                             return $state;
                         }
 
-                        $images = Egg::find($get('egg_id'))->docker_images ?? [];
+                        $images = Egg::find($get('egg_id'))->docker_images;
 
                         return !in_array($get('image'), $images);
                     })
@@ -209,13 +202,7 @@ class EditServer extends EditRecord
                     ->disabled(fn (Forms\Get $get) => $get('custom_image'))
                     ->label('Docker Image')
                     ->prefixIcon('tabler-brand-docker')
-                    ->options(function (Forms\Get $get, Forms\Set $set) {
-                        $images = Egg::find($get('egg_id'))->docker_images ?? [];
-
-                        $set('image', collect($images)->first());
-
-                        return $images;
-                    })
+                    ->options(fn (Forms\Get $get) => Egg::find($get('egg_id'))->docker_images)
                     ->disabled(fn (Forms\Components\Select $component) => empty($component->getOptions()))
                     ->selectablePlaceholder(false)
                     ->columnSpan([
@@ -228,7 +215,6 @@ class EditServer extends EditRecord
 
                 Forms\Components\Fieldset::make('Application Feature Limits')
                     ->inlineLabel()
-                    ->hiddenOn('create')
                     ->columnSpan([
                         'default' => 2,
                         'sm' => 4,
@@ -245,18 +231,15 @@ class EditServer extends EditRecord
                         Forms\Components\TextInput::make('allocation_limit')
                             ->suffixIcon('tabler-network')
                             ->required()
-                            ->numeric()
-                            ->default(0),
+                            ->numeric(),
                         Forms\Components\TextInput::make('database_limit')
                             ->suffixIcon('tabler-database')
                             ->required()
-                            ->numeric()
-                            ->default(0),
+                            ->numeric(),
                         Forms\Components\TextInput::make('backup_limit')
                             ->suffixIcon('tabler-copy-check')
                             ->required()
-                            ->numeric()
-                            ->default(0),
+                            ->numeric(),
                     ]),
 
                 Forms\Components\Textarea::make('startup')
@@ -277,7 +260,7 @@ class EditServer extends EditRecord
                         );
                     }),
 
-                Forms\Components\Hidden::make('start_on_completion')->default(true),
+                Forms\Components\Hidden::make('start_on_completion'),
 
                 Forms\Components\Section::make('Egg Variables')
                     ->icon('tabler-eggs')
@@ -291,18 +274,12 @@ class EditServer extends EditRecord
                         'lg' => 6,
                     ]))
                     ->schema([
-                        Forms\Components\Placeholder::make('Select an egg first to show its variables!')
-                            ->hidden(fn (Forms\Get $get) => !empty($get('server_variables'))),
-
                         Forms\Components\Repeater::make('server_variables')
-                            ->relationship('serverVariables', fn ($query) => $query
-                                ->join('egg_variables', 'egg_variables.id', '=', 'server_variables.variable_id')
-                                ->orderBy('egg_variables.sort')
-                            )
+                            ->label('')
+                            ->relationship('serverVariables')
                             ->grid()
                             ->deletable(false)
                             ->addable(false)
-                            ->hidden(fn ($state) => empty($state))
                             ->schema([
                                 Forms\Components\TextInput::make('variable_value')
                                     ->rules([
@@ -325,68 +302,136 @@ class EditServer extends EditRecord
                                     ->helperText(fn (ServerVariable $variable) => $variable->variable->description ?: '—')
                                     ->maxLength(191),
 
-                                Forms\Components\Hidden::make('variable_id')->default(0),
+                                Forms\Components\Hidden::make('variable_id'),
                             ])
                             ->columnSpan(2),
                     ]),
 
                 Forms\Components\Section::make('Resource Management')
-                    // ->hiddenOn('create')
                     ->collapsed()
                     ->icon('tabler-server-cog')
                     ->iconColor('primary')
-                    ->columns(2)
-                    ->columnSpan(([
+                    ->columns([
                         'default' => 2,
                         'sm' => 4,
                         'md' => 4,
-                        'lg' => 6,
-                    ]))
+                        'lg' => 4,
+                    ])
                     ->schema([
+                        Forms\Components\ToggleButtons::make('unlimited_mem')
+                            ->label('Memory')
+                            ->afterStateUpdated(fn (Forms\Set $set) => $set('memory', 0))
+                            ->inlineLabel()->inline()
+                            ->live()
+                            ->formatStateUsing(fn (Forms\Get $get) => $get('memory') <= 0)
+                            ->options([
+                                true => 'Unlimited',
+                                false => 'Limited',
+                            ])
+                            ->colors([
+                                true => 'primary',
+                                false => 'warning',
+                            ])
+                            ->columnSpan(2),
+
                         Forms\Components\TextInput::make('memory')
-                            ->default(0)
-                            ->label('Allocated Memory')
+                            ->disabled(fn (Forms\Get $get) => $get('unlimited_mem'))
+                            ->label('Memory Limit')
                             ->suffix('MB')
                             ->required()
+                            ->inlineLabel()
+                            ->columnSpan(2)
                             ->numeric(),
 
-                        Forms\Components\TextInput::make('swap')
-                            ->default(0)
-                            ->label('Swap Memory')
-                            ->suffix('MB')
-                            ->helperText('0 disables swap and -1 allows unlimited swap')
-                            ->minValue(-1)
-                            ->required()
-                            ->numeric(),
+                        Forms\Components\ToggleButtons::make('unlimited_disk')
+                            ->label('Disk Space')
+                            ->inlineLabel()->inline()
+                            ->live()
+                            ->afterStateUpdated(fn (Forms\Set $set) => $set('disk', 0))
+                            ->formatStateUsing(fn (Forms\Get $get) => $get('disk') <= 0)
+                            ->options([
+                                true => 'Unlimited',
+                                false => 'Limited',
+                            ])
+                            ->colors([
+                                true => 'primary',
+                                false => 'warning',
+                            ])
+                            ->columnSpan(2),
 
                         Forms\Components\TextInput::make('disk')
-                            ->default(0)
+                            ->disabled(fn (Forms\Get $get) => $get('unlimited_disk'))
                             ->label('Disk Space Limit')
                             ->suffix('MB')
                             ->required()
+                            ->inlineLabel()
+                            ->columnSpan(2)
                             ->numeric(),
 
+                        Forms\Components\ToggleButtons::make('unlimited_cpu')
+                            ->label('CPU')
+                            ->inlineLabel()->inline()
+                            ->afterStateUpdated(fn (Forms\Set $set) => $set('cpu', 0))
+                            ->live()
+                            ->formatStateUsing(fn (Forms\Get $get) => $get('cpu') <= 0)
+                            ->options([
+                                true => 'Unlimited',
+                                false => 'Limited',
+                            ])
+                            ->colors([
+                                true => 'primary',
+                                false => 'warning',
+                            ])
+                            ->columnSpan(2),
+
                         Forms\Components\TextInput::make('cpu')
-                            ->default(0)
+                            ->disabled(fn (Forms\Get $get) => $get('unlimited_cpu'))
                             ->label('CPU Limit')
                             ->suffix('%')
                             ->required()
+                            ->inlineLabel()
+                            ->columnSpan(2)
                             ->numeric(),
 
                         Forms\Components\Hidden::make('io')
                             ->helperText('The IO performance relative to other running containers')
                             ->label('Block IO Proportion')
+                            ->required(),
+                        //                            ->numeric()
+                        //                            ->minValue(0)
+                        //                            ->maxValue(1000)
+                        //                            ->step(10)
+
+                        Forms\Components\ToggleButtons::make('swap_support')
+                            ->label('Enable Swap Memory')
+                            ->columnSpan(2)
+                            ->inlineLabel()->inline()
+                            ->formatStateUsing(fn (Forms\Get $get) => $get('swap') <= 0)
+                            ->options([
+                                'unlimited' => 'Unlimited',
+                                'limited' => 'Limited',
+                                'disabled' => 'Disabled',
+                            ])
+                            ->colors([
+                                'unlimited' => 'primary',
+                                'limited' => 'warning',
+                                'disabled' => 'danger',
+                            ]),
+
+                        Forms\Components\TextInput::make('swap')
+                            ->disabled(fn (Forms\Get $get) => $get('swap_support'))
+                            ->label('Swap Memory')
+                            ->suffix('MB')
+                            ->minValue(-1)
+                            ->columnSpan(2)
+                            ->inlineLabel()
                             ->required()
-//                            ->numeric()
-//                            ->minValue(0)
-//                            ->maxValue(1000)
-//                            ->step(10)
-                            ->default(0),
+                            ->numeric(),
 
                         Forms\Components\ToggleButtons::make('oom_disabled')
                             ->label('OOM Killer')
                             ->inline()
-                            ->default(false)
+                            ->columnSpan(2)
                             ->options([
                                 false => 'Disabled',
                                 true => 'Enabled',
@@ -394,31 +439,36 @@ class EditServer extends EditRecord
                             ->colors([
                                 false => 'success',
                                 true => 'danger',
-                            ])
-                            ->icons([
-                                false => 'tabler-sword-off',
-                                true => 'tabler-sword',
-                            ])
-                            ->required(),
+                            ]),
                     ]),
             ]);
     }
     protected function getHeaderActions(): array
     {
         return [
+            Actions\DeleteAction::make('Delete')
+                ->successRedirectUrl(route('filament.admin.resources.servers.index'))
+                ->color('danger')
+                ->after(fn (Server $server) => resolve(ServerDeletionService::class)->handle($server))
+                ->requiresConfirmation(),
             Actions\DeleteAction::make('Force Delete')
                 ->label('Force Delete')
                 ->successRedirectUrl(route('filament.admin.resources.servers.index'))
                 ->color('danger')
                 ->after(fn (Server $server) => resolve(ServerDeletionService::class)->withForce()->handle($server))
                 ->requiresConfirmation(),
-            Actions\DeleteAction::make('Delete')
-                ->successRedirectUrl(route('filament.admin.resources.servers.index'))
-                ->color('danger')
-                ->after(fn (Server $server) => resolve(ServerDeletionService::class)->handle($server))
-                ->requiresConfirmation(),
+            Actions\Action::make('console')
+                ->label('Console')
+                ->icon('tabler-terminal')
+                ->url(fn (Server $server) => "/server/$server->uuid_short"),
+            $this->getSaveFormAction()->formId('form'),
         ];
+
     }
+        protected function getFormActions(): array
+        {
+            return [];
+        }
 
     protected function mutateFormDataBeforeSave(array $data): array
     {
