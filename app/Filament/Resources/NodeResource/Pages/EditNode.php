@@ -8,7 +8,6 @@ use Filament\Actions;
 use Filament\Forms;
 use Filament\Forms\Components\Tabs;
 use Filament\Resources\Pages\EditRecord;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\HtmlString;
 use Webbingbrasil\FilamentCopyActions\Forms\Actions\CopyAction;
 

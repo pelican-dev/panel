@@ -2,17 +2,13 @@
 
 namespace App\Filament\Resources\NodeResource\RelationManagers;
 
-use App\Filament\Resources\NodeResource;
 use App\Models\Allocation;
-use App\Models\Egg;
-use App\Models\Node;
 use App\Services\Allocations\AssignmentService;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\HtmlString;
 
 class AllocationsRelationManager extends RelationManager
