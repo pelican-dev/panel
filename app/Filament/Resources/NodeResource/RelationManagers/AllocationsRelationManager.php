@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\NodeResource\RelationManagers;
 
 use App\Models\Allocation;
+use App\Models\Server;
 use App\Services\Allocations\AssignmentService;
 use Filament\Forms;
 use Filament\Forms\Form;
@@ -37,12 +38,19 @@ class AllocationsRelationManager extends RelationManager
 
             // All assigned allocations
             ->checkIfRecordIsSelectableUsing(fn (Allocation $allocation) => $allocation->server_id === null)
-
+            ->searchable()
             ->columns([
-                Tables\Columns\TextColumn::make('server.name')->label('Server')->icon('tabler-brand-docker'),
-                Tables\Columns\TextColumn::make('ip_alias')->label('Alias'),
-                Tables\Columns\TextColumn::make('ip')->label('IP'),
-                Tables\Columns\TextColumn::make('port')->label('Port'),
+                Tables\Columns\TextColumn::make('server.name')
+                    ->label('Server')
+                    ->icon('tabler-brand-docker')
+                    ->url(fn (Allocation $allocation): string => $allocation->server ? route('filament.admin.resources.servers.edit', ['record' => $allocation->server]) : ''),
+                Tables\Columns\TextColumn::make('ip_alias')
+                    ->label('Alias'),
+                Tables\Columns\TextColumn::make('ip')
+                    ->label('IP'),
+                Tables\Columns\TextColumn::make('port')
+                    ->searchable()
+                    ->label('Port'),
             ])
             ->filters([
                 //
@@ -59,7 +67,6 @@ class AllocationsRelationManager extends RelationManager
                             ->inlineLabel()
                             ->ipv4()
                             ->helperText("Usually your machine's public IP unless you are port forwarding.")
-                            // ->selectablePlaceholder(false)
                             ->required(),
                         Forms\Components\TextInput::make('allocation_alias')
                             ->label('Alias')
