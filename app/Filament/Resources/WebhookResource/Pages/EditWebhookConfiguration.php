@@ -2,13 +2,13 @@
 
 namespace App\Filament\Resources\WebhookConfigurationResource\Pages;
 
-use App\Filament\Resources\WebhookConfigurationResource;
+use App\Filament\Resources\WebhookResource;
 use Filament\Actions;
 use Filament\Resources\Pages\EditRecord;
 
 class EditWebhookConfiguration extends EditRecord
 {
-    protected static string $resource = WebhookConfigurationResource::class;
+    protected static string $resource = WebhookResource::class;
 
     protected function getHeaderActions(): array
     {

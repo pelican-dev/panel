@@ -17,7 +17,7 @@ class DispatchWebhookForConfiguration implements ShouldQueue
 
     public function __construct(private WebhookConfiguration $configuration, private ShouldDispatchWebhooks $event)
     {
-        
+
     }
 
     public function handle(): void

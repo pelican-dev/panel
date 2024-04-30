@@ -4,7 +4,8 @@ namespace App\Services\Webhooks;
 
 use App\Events\ShouldDispatchWebhooks;
 use Illuminate\Support\Collection;
-use Spatie\StructureDiscoverer\Discover;
+use Illuminate\Support\Facades\File;
+use ReflectionClass;
 
 class DiscoverWebhookEventsService
 {
@@ -17,11 +18,39 @@ class DiscoverWebhookEventsService
         })->toArray();
     }
 
-    public static function discover(): Collection
+    private static function discover(): Collection
     {
-        return collect(Discover::in(app_path('Events'))
-            ->classes()
-            ->implementing(ShouldDispatchWebhooks::class)->get());
+        $events = collect();
+        $eventsPath = app_path('Events');
+
+        if (!File::isDirectory($eventsPath)) {
+            return $events;
+        }
+
+        $files = File::allFiles($eventsPath);
+
+        foreach ($files as $file) {
+            $class = app()->getNamespace() . str_replace(
+                ['/', '.php'],
+                ['\\', ''],
+                str_after($file->getPathname(), realpath(app_path()) . DIRECTORY_SEPARATOR)
+            );
+
+            if (!class_exists($class)) {
+                continue;
+            }
+
+            $reflection = new ReflectionClass($class);
+            if ($reflection->isAbstract()) {
+                continue;
+            }
+
+            if ($reflection->implementsInterface(ShouldDispatchWebhooks::class)) {
+                $events->push($class);
+            }
+        }
+
+        return $events;
     }
 
 }

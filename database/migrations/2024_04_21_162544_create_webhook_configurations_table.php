@@ -14,9 +14,8 @@ return new class extends Migration
         Schema::create('webhook_configurations', function (Blueprint $table) {
             $table->id();
             $table->string('endpoint');
-            $table->string('secret');
             $table->string('description');
-            $table->json('events');
+            $table->json('events')->index();
             $table->timestamps();
         });
     }

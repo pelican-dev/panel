@@ -33,7 +33,6 @@
         "s1lentium/iptools": "~1.2.0",
         "spatie/laravel-fractal": "^6.1",
         "spatie/laravel-query-builder": "^5.8",
-        "spatie/php-structure-discoverer": "^2.1",
         "symfony/mailgun-mailer": "^7.0",
         "symfony/postmark-mailer": "^7.0",
         "symfony/yaml": "^7.0",

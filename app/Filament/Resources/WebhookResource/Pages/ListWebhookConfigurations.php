@@ -1,12 +1,12 @@
 <?php
 
-namespace App\Filament\Resources\WebhookResource\Pages;
+namespace App\Filament\Resources\WebhookConfigurationResource\Pages;
 
 use App\Filament\Resources\WebhookResource;
 use Filament\Actions;
 use Filament\Resources\Pages\ListRecords;
 
-class ListWebhooks extends ListRecords
+class ListWebhookConfigurations extends ListRecords
 {
     protected static string $resource = WebhookResource::class;
 
