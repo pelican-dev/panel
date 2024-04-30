@@ -21,10 +21,10 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node-version }}
-          cache: "yarn"
+          cache: "pnpm"
 
       - name: Install dependencies
-        run: yarn install --frozen-lockfile
+        run: pnpm i --frozen-lockfile
 
       - name: Build
-        run: yarn build:production
+        run: pnpm build:production
