@@ -13,9 +13,9 @@ return [
         'hint' => 'นี่คือผู้ดูแลระบบรูทคนสุดท้าย!',
         'helper_text' => 'คุณต้องมีผู้ดูแลระบบรูทอย่างน้อยหนึ่งคนในระบบของคุณ',
     ],
-    'root_admin' => 'ผู้ดูแลระบบ (รูท)',
+    'root_admin' => 'ผู้ดูแลระบบ (Root)',
     'language' => [
-        'helper_text1' => 'Your language (:state) has not been translated yet!\nBut never fear, you can help fix that by',
-        'helper_text2' => 'contributing directly here',
+        'helper_text1' => 'ภาษาของคุณ (:state) ยังไม่ได้แปลภาษา!\nแต่อย่ากลัวเลย คุณสามารถช่วยแก้ไขได้โดย',
+        'helper_text2' => 'มีส่วนร่วมโดยตรงนี้',
     ],
 ];
