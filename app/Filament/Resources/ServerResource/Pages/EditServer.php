@@ -446,29 +446,29 @@ class EditServer extends EditRecord
     protected function getHeaderActions(): array
     {
         return [
-            $this->getSaveFormAction(),
-            Actions\Action::make('console')
-                ->label('Console')
-                ->icon('tabler-terminal')
-                ->url(fn (Server $server) => "/server/$server->uuid_short"),
+            Actions\DeleteAction::make('Delete')
+                ->successRedirectUrl(route('filament.admin.resources.servers.index'))
+                ->color('danger')
+                ->after(fn (Server $server) => resolve(ServerDeletionService::class)->handle($server))
+                ->requiresConfirmation(),
             Actions\DeleteAction::make('Force Delete')
                 ->label('Force Delete')
                 ->successRedirectUrl(route('filament.admin.resources.servers.index'))
                 ->color('danger')
                 ->after(fn (Server $server) => resolve(ServerDeletionService::class)->withForce()->handle($server))
                 ->requiresConfirmation(),
-            Actions\DeleteAction::make('Delete')
-                ->successRedirectUrl(route('filament.admin.resources.servers.index'))
-                ->color('danger')
-                ->after(fn (Server $server) => resolve(ServerDeletionService::class)->handle($server))
-                ->requiresConfirmation(),
+            Actions\Action::make('console')
+                ->label('Console')
+                ->icon('tabler-terminal')
+                ->url(fn (Server $server) => "/server/$server->uuid_short"),
+            $this->getSaveFormAction()->formId('form'),
         ];
 
     }
-    //    protected function getFormActions(): array
-    //    {
-    //        return [];
-    //    }
+        protected function getFormActions(): array
+        {
+            return [];
+        }
 
     protected function mutateFormDataBeforeSave(array $data): array
     {
