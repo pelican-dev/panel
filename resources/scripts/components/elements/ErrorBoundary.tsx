@@ -28,7 +28,10 @@ class ErrorBoundary extends React.Component<{}, State> {
                 <div css={tw`flex items-center bg-neutral-900 rounded p-3 text-red-500`}>
                     <Icon icon={faExclamationTriangle} css={tw`h-4 w-auto mr-2`} />
                     <p css={tw`text-sm text-neutral-100`}>
-                        <Trans i18nKey="error_rendering_view" defaults="An error was encountered by the application while rendering this view. Try refreshing the page." />
+                        <Trans
+                            i18nKey='error_rendering_view'
+                            defaults='An error was encountered by the application while rendering this view. Try refreshing the page.'
+                        />
                     </p>
                 </div>
             </div>
