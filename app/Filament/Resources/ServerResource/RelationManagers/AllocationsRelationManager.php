@@ -57,7 +57,7 @@ class AllocationsRelationManager extends RelationManager
             ])
             ->headerActions([
                 Tables\Actions\CreateAction::make()->label('Create Allocation'),
-                Tables\Actions\AssociateAction::make()->label('Add Allocation'),
+                //Tables\Actions\AssociateAction::make()->label('Add Allocation'),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
