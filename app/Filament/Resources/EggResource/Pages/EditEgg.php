@@ -58,7 +58,7 @@ class EditEgg extends EditRecord
                                 ->helperText("Forces all outgoing network traffic to have its Source IP NATed to the IP of the server's primary allocation IP.
                                     Required for certain games to work properly when the Node has multiple public IP addresses.
                                     Enabling this option will disable internal networking for any servers using this egg, causing them to be unable to internally access other servers on the same node."),
-                            Forms\Components\Toggle::make('script_is_privileged')
+                            Forms\Components\Hidden::make('script_is_privileged')
                                 ->helperText('The docker images available to servers using this egg.'),
                             Forms\Components\TextInput::make('update_url')
                                 ->disabled()
