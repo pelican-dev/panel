@@ -395,8 +395,16 @@ class Server extends Model
         }
     }
 
-    public function retrieveStatus()
+    public function retrieveStatus(): string
     {
-        return $this->node->serverStatuses();
+        $status = cache()->get("servers.$this->uuid.container.status");
+
+        if ($status) {
+            return $status;
+        }
+
+        $this->node->serverStatuses();
+
+        return cache()->get("servers.$this->uuid.container.status") ?? 'missing';
     }
 }

@@ -90,11 +90,7 @@ export default ({ ...props }: Props) => {
             {({ isSubmitting }) => (
                 <Modal {...props}>
                     <Form>
-                        <FormikFieldWrapper
-                            name={'term'}
-                            label={t('term.label')}
-                            description={t('term.description')}
-                        >
+                        <FormikFieldWrapper name={'term'} label={t('term.label')} description={t('term.description')}>
                             <SearchWatcher />
                             <InputSpinner visible={isSubmitting}>
                                 <Field as={InputWithRef} name={'term'} />

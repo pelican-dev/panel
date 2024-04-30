@@ -11,6 +11,8 @@ class NodesRelationManager extends RelationManager
 {
     protected static string $relationship = 'servers';
 
+    protected static ?string $icon = 'tabler-brand-docker';
+
     public function table(Table $table): Table
     {
         return $table

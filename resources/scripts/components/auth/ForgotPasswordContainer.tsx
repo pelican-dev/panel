@@ -79,9 +79,7 @@ export default () => {
                     <Field
                         light
                         label={'Email'}
-                        description={
-                            t('forgot_password.label_help')
-                        }
+                        description={t('forgot_password.label_help')}
                         name={'email'}
                         type={'email'}
                     />
