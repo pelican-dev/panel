@@ -60,6 +60,10 @@ class EditEgg extends EditRecord
                                     Enabling this option will disable internal networking for any servers using this egg, causing them to be unable to internally access other servers on the same node."),
                             Forms\Components\Hidden::make('script_is_privileged')
                                 ->helperText('The docker images available to servers using this egg.'),
+                            Forms\Components\TagsInput::make('tags')
+                                ->placeholder('Add Tags')
+                                ->helperText('')
+                                ->columnSpan(['default' => 1, 'sm' => 1, 'md' => 2, 'lg' => 2]),
                             Forms\Components\TextInput::make('update_url')
                                 ->disabled()
                                 ->helperText('Not implemented.')
