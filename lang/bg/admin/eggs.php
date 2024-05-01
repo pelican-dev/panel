@@ -2,7 +2,7 @@
 
 return [
     'notices' => [
-        'imported' => 'Successfully imported this Egg and its associated variables.',
+        'imported' => 'Успешно импортира този egg и неговите променливи.',
         'updated_via_import' => 'Този egg бе актуализиран с предоставения файл.',
         'deleted' => 'Успешно изтри този egg от панела.',
         'updated' => 'Конфигурацията на този egg бе успешно актуализирана.',
@@ -11,18 +11,18 @@ return [
     ],
     'variables' => [
         'notices' => [
-            'variable_deleted' => 'The variable ":variable" has been deleted and will no longer be available to servers once rebuilt.',
-            'variable_updated' => 'The variable ":variable" has been updated. You will need to rebuild any servers using this variable in order to apply changes.',
-            'variable_created' => 'New variable has successfully been created and assigned to this egg.',
+            'variable_deleted' => 'Променливото ":variable" бе изтрито и няма да е налично на сървъри след преинсталиране.',
+            'variable_updated' => 'Променливото ":variable" бе актуализирано. Ще трябва да преинсталираш всички сървър които ползват това промеливо за да приложиш промените.',
+            'variable_created' => 'Ново променливо успешно бе създадено и присвоено на този egg.',
         ],
     ],
     'descriptions' => [
         'name' => 'Просто име което да се използва като идентификатор на този egg.',
-        'description' => 'A description of this Egg that will be displayed throughout the Panel as needed.',
-        'uuid' => 'This is the globally unique identifier for this Egg which Wings uses as an identifier.',
-        'author' => 'The author of this version of the Egg. Uploading a new Egg configuration from a different author will change this.',
-        'force_outgoing_ip' => "Forces all outgoing network traffic to have its Source IP NATed to the IP of the server's primary allocation IP.\nRequired for certain games to work properly when the Node has multiple public IP addresses.\nEnabling this option will disable internal networking for any servers using this egg, causing them to be unable to internally access other servers on the same node.",
-        'startup' => 'The default startup command that should be used for new servers using this Egg.',
-        'docker_images' => 'The docker images available to servers using this egg.',
+        'description' => 'Описание на този egg който ще се показва в панела когато е нужно',
+        'uuid' => 'Това е глобален уникален идентикатор за този egg който Wings ползва за идентификатор.',
+        'author' => 'Автора на тази версия на egg-а. Kaчването на нова конфигурация за този egg от друг автор ще смени това.',
+        'force_outgoing_ip' => "Принуждава целия изходящ мрежов трафик да има своя изходен IP да е NATed до IP към главния IP адрес на сървъра. \nИзисква се за определени игри да работят правилно когато node-a има няколко публични IP адреси.\nВключването на тази опция ще изключи вътрешната мрежа за сървърите които ползват този egg, карайки ги да не могат да имат достъп вътрешно до други сървъри на същия node.",
+        'startup' => 'Командата по подразбиране която трябва да бъде ползвана за нови сървъри използващи този egg.',
+        'docker_images' => 'Наличните docker image-ове на сървъри използващи този egg.',
     ],
 ];
