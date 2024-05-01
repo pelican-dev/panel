@@ -8,8 +8,8 @@ return [
     'notices' => [
         'allocations_added' => 'Алокации успешно бе добавени на този node.',
         'node_deleted' => 'Този node успешно бе премахнат от панела.',
-        'node_created' => 'Successfully created new node. You can automatically configure the daemon on this machine by visiting the \'Configuration\' tab. <strong>Before you can add any servers you must first allocate at least one IP address and port.</strong>',
-        'node_updated' => 'Node information has been updated. If any daemon settings were changed you will need to reboot it for those changes to take effect.',
-        'unallocated_deleted' => 'Deleted all un-allocated ports for <code>:ip</code>.',
+        'node_created' => 'Успешно създаде нов node. Можеш автоматично да конфигурираш daemon-а на тази машина, като посетиш раздела \'Конфигурация\'. <strong>Преди да добавиш сървъри трябва да алокираш поне един IP адрес и порт.</strong>',
+        'node_updated' => 'Информацията за този node бе актуализирана. Ако daemon настройки са променени, ще трябва да го рестартираш за да се приложат.',
+        'unallocated_deleted' => 'Изтри всички не-алокирани портове за <code>:ip</code>',
     ],
 ];
