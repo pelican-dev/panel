@@ -2,20 +2,20 @@
 
 return [
     'exceptions' => [
-        'user_has_servers' => 'Cannot delete a user with active servers attached to their account. Please delete their servers before continuing.',
-        'user_is_self' => 'Cannot delete your own user account.',
+        'user_has_servers' => 'Не можеш да изтриеш потребител с активни сървъри свързани с неговия акаунт. Моля изтрии сървърите му преди да продължиш.',
+        'user_is_self' => 'Не можеш да изтриеш собстения си потребителски акаунт.',
     ],
     'notices' => [
-        'account_created' => 'Account has been created successfully.',
-        'account_updated' => 'Account has been successfully updated.',
+        'account_created' => 'Акаунтът бе създаден успешно.',
+        'account_updated' => 'Акаунтът успешно бе актуализиран.',
     ],
     'last_admin' => [
-        'hint' => 'This is the last root administrator!',
-        'helper_text' => 'You must have at least one root administrator in your system.',
+        'hint' => 'Това е последният root администратор!',
+        'helper_text' => 'Трябва да имаш поне един root администратор в системата ти.',
     ],
-    'root_admin' => 'Administrator (Root)',
+    'root_admin' => 'Администратор (Root)',
     'language' => [
-        'helper_text1' => 'Your language (:state) has not been translated yet!\nBut never fear, you can help fix that by',
-        'helper_text2' => 'contributing directly here',
+        'helper_text1' => 'Твоят език (:state) не е преведен още!\nНо не се страхувай, можеш да помогнеш да оправиш това',
+        'helper_text2' => 'като допринасяш директно тук',
     ],
 ];
