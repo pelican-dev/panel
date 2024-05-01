@@ -11,9 +11,9 @@ return [
     | has failed, such as for an invalid token or invalid new password.
     |
     */
-    'password' => 'Passwords must be at least six characters and match the confirmation.',
-    'reset' => 'Your password has been reset!',
-    'sent' => 'We have e-mailed your password reset link!',
-    'token' => 'This password reset token is invalid.',
-    'user' => 'We can\'t find a user with that e-mail address.',
+    'password' => 'Паролите трябва да са поне 6 знака дълги и да съотвестват на потвърждението.',
+    'reset' => 'Твоята парола бе нулирана!',
+    'sent' => 'Изпратихме имейл с линк за нулиране на паролата ти!',
+    'token' => 'Този токен за нулиране на паролата е невалиден.',
+    'user' => 'Не можахме да намерим потребител с този имейл адрес.',
 ];
