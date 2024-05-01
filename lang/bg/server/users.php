@@ -2,12 +2,12 @@
 
 return [
     'permissions' => [
-        'websocket_*' => 'Allows access to the websocket for this server.',
-        'control_console' => 'Allows the user to send data to the server console.',
-        'control_start' => 'Allows the user to start the server instance.',
-        'control_stop' => 'Allows the user to stop the server instance.',
-        'control_restart' => 'Allows the user to restart the server instance.',
-        'control_kill' => 'Allows the user to kill the server instance.',
+        'websocket_*' => 'Предоставя достъп до websocket-а за този сървър.',
+        'control_console' => 'Позволява потребителя да изпраща данни до конзолата на сървъра.',
+        'control_start' => 'Позволява на потребителя да стартира сървъра.',
+        'control_stop' => 'Позволява на потребителя да спре сървъра.',
+        'control_restart' => 'Позволява на потребителят да рестартира сървъра.',
+        'control_kill' => 'Позволява на потребителя да убие сървъра.',
         'user_create' => 'Allows the user to create new user accounts for the server.',
         'user_read' => 'Allows the user permission to view users associated with this server.',
         'user_update' => 'Allows the user to modify other users associated with this server.',
