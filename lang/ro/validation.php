@@ -2,105 +2,102 @@
 
 return [
     /*
-    |--------------------------------------------------------------------------
-    | Validation Language Lines
-    |--------------------------------------------------------------------------
-    |
-    | The following language lines contain the default error messages used by
-    | the validator class. Some of these rules have multiple versions such
-    | as the size rules. Feel free to tweak each of these messages here.
-    |
-    */
-
-    'accepted' => 'The :attribute must be accepted.',
-    'active_url' => 'The :attribute is not a valid URL.',
-    'after' => 'The :attribute must be a date after :date.',
-    'after_or_equal' => 'The :attribute must be a date after or equal to :date.',
-    'alpha' => 'The :attribute may only contain letters.',
-    'alpha_dash' => 'The :attribute may only contain letters, numbers, and dashes.',
-    'alpha_num' => 'The :attribute may only contain letters and numbers.',
-    'array' => 'The :attribute must be an array.',
-    'before' => 'The :attribute must be a date before :date.',
-    'before_or_equal' => 'The :attribute must be a date before or equal to :date.',
+     * |--------------------------------------------------------------------------
+     * | Validation Language Lines
+     * |--------------------------------------------------------------------------
+     * |
+     * | The following language lines contain the default error messages used by
+     * | the validator class. Some of these rules have multiple versions such
+     * | as the size rules. Feel free to tweak each of these messages here.
+     * |
+     */
+    'accepted' => ':attribute trebuie să fie acceptat.',
+    'active_url' => ':attribute nu este un URL valid.',
+    'after' => ':attribute trebuie să fie o dată după :date.',
+    'after_or_equal' => ':attribute trebuie să fie o dată după sau egală cu :date.',
+    'alpha' => ':attribute poate conține doar litere.',
+    'alpha_dash' => ':attribute poate conține doar litere, numere și cratime.',
+    'alpha_num' => ':attribute poate conține doar litere și numere.',
+    'array' => ':attribute trebuie să fie un array.',
+    'before' => ':attribute trebuie să fie o dată înainte de :date.',
+    'before_or_equal' => ':attribute trebuie să fie o dată înainte de sau egală cu :date.',
     'between' => [
-        'numeric' => 'The :attribute must be between :min and :max.',
-        'file' => 'The :attribute must be between :min and :max kilobytes.',
-        'string' => 'The :attribute must be between :min and :max characters.',
-        'array' => 'The :attribute must have between :min and :max items.',
+        'numeric' => ':attribute trebuie să fie între :min și :max.',
+        'file' => ':attribute trebuie să fie între :min și :max kilobytes.',
+        'string' => ':attribute trebuie să fie între :min și :max caractere.',
+        'array' => ':attribute trebuie să aibă între :min și :max items.',
     ],
-    'boolean' => 'The :attribute field must be true or false.',
-    'confirmed' => 'The :attribute confirmation does not match.',
-    'date' => 'The :attribute is not a valid date.',
-    'date_format' => 'The :attribute does not match the format :format.',
-    'different' => 'The :attribute and :other must be different.',
-    'digits' => 'The :attribute must be :digits digits.',
-    'digits_between' => 'The :attribute must be between :min and :max digits.',
-    'dimensions' => 'The :attribute has invalid image dimensions.',
-    'distinct' => 'The :attribute field has a duplicate value.',
-    'email' => 'The :attribute must be a valid email address.',
-    'exists' => 'The selected :attribute is invalid.',
-    'file' => 'The :attribute must be a file.',
-    'filled' => 'The :attribute field is required.',
-    'image' => 'The :attribute must be an image.',
-    'in' => 'The selected :attribute is invalid.',
-    'in_array' => 'The :attribute field does not exist in :other.',
-    'integer' => 'The :attribute must be an integer.',
-    'ip' => 'The :attribute must be a valid IP address.',
-    'json' => 'The :attribute must be a valid JSON string.',
+    'boolean' => ':attribute câmpul trebuie să fie adevărat sau fals.',
+    'confirmed' => ':attribute confirmarea nu se potrivește.',
+    'date' => ':attribute nu este o dată validă.',
+    'date_format' => ':attribute nu se potrivește cu formatul :format.',
+    'different' => ':attribute și :other trebuie să fie diferite.',
+    'digits' => ':attribute trebuie să aibă :digits cifre.',
+    'digits_between' => ':attribute trebuie să aibă între :min și :max cifre.',
+    'dimensions' => ':attribute are dimensiuni de imagine nevalide.',
+    'distinct' => ':attribute câmpul are o valoare duplicat.',
+    'email' => ':attribute trebuie să fie o adresă de e-mail validă.',
+    'exists' => ':attribute selectat este invalid.',
+    'file' => ':attribute trebuie să fie un fișier.',
+    'filled' => ':attribute câmpul este obligatoriu.',
+    'image' => ':attribute trebuie să fie o imagine.',
+    'in' => ':attribute selectat este invalid.',
+    'in_array' => ':attribute câmpul nu există în :other.',
+    'integer' => ':attribute trebuie să fie un număr întreg.',
+    'ip' => ':attribute trebuie să fie o adresă IP validă.',
+    'json' => ':attribute trebuie să fie un șir JSON valid.',
     'max' => [
-        'numeric' => 'The :attribute may not be greater than :max.',
-        'file' => 'The :attribute may not be greater than :max kilobytes.',
-        'string' => 'The :attribute may not be greater than :max characters.',
-        'array' => 'The :attribute may not have more than :max items.',
+        'numeric' => ':attribute nu poate fi mai mare de :max.',
+        'file' => ':attribute nu poate fi mai mare de :max kilobytes.',
+        'string' => ':attribute nu poate fi mai mare de :max caractere.',
+        'array' => ':attribute nu poate avea mai mult de :max items.',
     ],
-    'mimes' => 'The :attribute must be a file of type: :values.',
-    'mimetypes' => 'The :attribute must be a file of type: :values.',
+    'mimes' => ':attribute trebuie să fie un fișier de tip: :values.',
+    'mimetypes' => ':attribute trebuie să fie un fișier de tip: :values.',
     'min' => [
-        'numeric' => 'The :attribute must be at least :min.',
-        'file' => 'The :attribute must be at least :min kilobytes.',
-        'string' => 'The :attribute must be at least :min characters.',
-        'array' => 'The :attribute must have at least :min items.',
+        'numeric' => ':attribute trebuie să fie cel puțin :min.',
+        'file' => ':attribute trebuie să aibă cel puțin :min kilobytes.',
+        'string' => ':attribute trebuie să aibă cel puțin :min caractere.',
+        'array' => ':attribute trebuie să aibă cel puțin :min items.',
     ],
-    'not_in' => 'The selected :attribute is invalid.',
-    'numeric' => 'The :attribute must be a number.',
-    'present' => 'The :attribute field must be present.',
-    'regex' => 'The :attribute format is invalid.',
-    'required' => 'The :attribute field is required.',
-    'required_if' => 'The :attribute field is required when :other is :value.',
-    'required_unless' => 'The :attribute field is required unless :other is in :values.',
-    'required_with' => 'The :attribute field is required when :values is present.',
-    'required_with_all' => 'The :attribute field is required when :values is present.',
-    'required_without' => 'The :attribute field is required when :values is not present.',
-    'required_without_all' => 'The :attribute field is required when none of :values are present.',
-    'same' => 'The :attribute and :other must match.',
+    'not_in' => ':attribute selectat este invalid.',
+    'numeric' => ':attribute trebuie să fie un număr.',
+    'present' => ':attribute câmpul trebuie să fie prezent.',
+    'regex' => 'Formatul :attribute este invalid.',
+    'required' => ':attribute câmpul este obligatoriu.',
+    'required_if' => ':attribute câmpul este obligatoriu când :other este :value.',
+    'required_unless' => ':attribute câmpul este obligatoriu cu excepția cazului în care :other este în :values.',
+    'required_with' => ':attribute câmpul este obligatoriu când :values este prezent.',
+    'required_with_all' => ':attribute câmpul este obligatoriu când :values este prezent.',
+    'required_without' => ':attribute câmpul este obligatoriu când :values nu este prezent.',
+    'required_without_all' => ':attribute câmpul este obligatoriu când niciunul dintre :values nu este prezent.',
+    'same' => ':attribute și :other trebuie să se potrivească.',
     'size' => [
-        'numeric' => 'The :attribute must be :size.',
-        'file' => 'The :attribute must be :size kilobytes.',
-        'string' => 'The :attribute must be :size characters.',
-        'array' => 'The :attribute must contain :size items.',
+        'numeric' => ':attribute trebuie să fie :size.',
+        'file' => ':attribute trebuie să fie :size kilobytes.',
+        'string' => ':attribute trebuie să fie :size caractere.',
+        'array' => ':attribute trebuie să conțină :size items.',
     ],
-    'string' => 'The :attribute must be a string.',
-    'timezone' => 'The :attribute must be a valid zone.',
-    'unique' => 'The :attribute has already been taken.',
-    'uploaded' => 'The :attribute failed to upload.',
-    'url' => 'The :attribute format is invalid.',
+    'string' => ':attribute trebuie să fie un șir.',
+    'timezone' => ':attribute trebuie să fie un fus orar valid.',
+    'unique' => ':attribute a fost deja luat.',
+    'uploaded' => ':attribute nu a reușit să încarce.',
+    'url' => 'Formatul :attribute este invalid.',
 
     /*
-    |--------------------------------------------------------------------------
-    | Custom Validation Attributes
-    |--------------------------------------------------------------------------
-    |
-    | The following language lines are used to swap attribute place-holders
-    | with something more reader friendly such as E-Mail Address instead
-    | of "email". This simply helps us make messages a little cleaner.
-    |
-    */
-
+     * |--------------------------------------------------------------------------
+     * | Custom Validation Attributes
+     * |--------------------------------------------------------------------------
+     * |
+     * | The following language lines are used to swap attribute place-holders
+     * | with something more reader friendly such as E-Mail Address instead
+     * | of "email". This simply helps us make messages a little cleaner.
+     * |
+     */
     'attributes' => [],
-
     // Internal validation logic for Panel
     'internal' => [
-        'variable_value' => ':env variable',
-        'invalid_password' => 'The password provided was invalid for this account.',
+        'variable_value' => ':env variabilă',
+        'invalid_password' => 'Parola furnizată a fost invalidă pentru acest cont.',
     ],
 ];
