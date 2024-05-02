@@ -1,20 +1,20 @@
 <?php
 
 return [
-    'daemon_connection_failed' => 'There was an exception while attempting to communicate with the daemon resulting in a HTTP/:code response code. This exception has been logged.',
+    'daemon_connection_failed' => 'Имаше изключение при опит за комуникация с daemon-а с код HTTP/:code. Това изключение бе записано.',
     'node' => [
-        'servers_attached' => 'A node must have no servers linked to it in order to be deleted.',
-        'daemon_off_config_updated' => 'The daemon configuration <strong>has been updated</strong>, however there was an error encountered while attempting to automatically update the configuration file on the Daemon. You will need to manually update the configuration file (config.yml) for the daemon to apply these changes.',
+        'servers_attached' => 'Този node не трябва да има сървъри на него за да се изтрие.',
+        'daemon_off_config_updated' => 'Конфигурацията на daemon-а <strong>бе актуализирана</strong>, обаче възникна проблем при опит за автоматично актуализиране на конфигурационния файл на daemon-а. Ще трябва ръчно да актуализираш конфигорационния файл (config.yml) за да може daemon-а да приложи тези промени.',
     ],
     'allocations' => [
-        'server_using' => 'A server is currently assigned to this allocation. An allocation can only be deleted if no server is currently assigned.',
-        'too_many_ports' => 'Adding more than 1000 ports in a single range at once is not supported.',
+        'server_using' => 'В момента е назначен сървър към тази алокация. Алокацията може да се изтрие само когато не е назначен сървър към нея.',
+        'too_many_ports' => 'Добавяне на над 1000 порта в единствен диапазон не се поддържа.',
         'invalid_mapping' => 'The mapping provided for :port was invalid and could not be processed.',
-        'cidr_out_of_range' => 'CIDR notation only allows masks between /25 and /32.',
-        'port_out_of_range' => 'Ports in an allocation must be greater than 1024 and less than or equal to 65535.',
+        'cidr_out_of_range' => 'CIDR нотацията позволява само маски между /25 и /32',
+        'port_out_of_range' => 'Порт в алокация трябва да е по голям от 1024 и по малък или равен на 65535.',
     ],
     'egg' => [
-        'delete_has_servers' => 'An Egg with active servers attached to it cannot be deleted from the Panel.',
+        'delete_has_servers' => 'Egg с назначени активни сървъри към него не може да се изтрие от панела.',
         'invalid_copy_id' => 'The Egg selected for copying a script from either does not exist, or is copying a script itself.',
         'has_children' => 'This Egg is a parent to one or more other Eggs. Please delete those Eggs before deleting this Egg.',
     ],
