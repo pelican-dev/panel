@@ -1,55 +1,55 @@
 <?php
 
 return [
-    'daemon_connection_failed' => 'There was an exception while attempting to communicate with the daemon resulting in a HTTP/:code response code. This exception has been logged.',
+    'daemon_connection_failed' => 'S-a produs o eroare în timpul încercării de a comunica cu demonul, rezultând un cod de răspuns HTTP/:code. Această excepție a fost înregistrată.',
     'node' => [
-        'servers_attached' => 'A node must have no servers linked to it in order to be deleted.',
-        'daemon_off_config_updated' => 'The daemon configuration <strong>has been updated</strong>, however there was an error encountered while attempting to automatically update the configuration file on the Daemon. You will need to manually update the configuration file (config.yml) for the daemon to apply these changes.',
+        'servers_attached' => 'Un nod nu trebuie să aibă servere legate de el pentru a putea fi șters.',
+        'daemon_off_config_updated' => 'Configurația demonului <strong>a fost actualizată</strong>, cu toate acestea a fost întâmpinată o eroare în timpul încercării de a actualiza automat fișierul de configurare pe demon. Va trebui să actualizați manual fișierul de configurare (config.yml) pentru demon pentru a aplica aceste modificări.',
     ],
     'allocations' => [
-        'server_using' => 'A server is currently assigned to this allocation. An allocation can only be deleted if no server is currently assigned.',
-        'too_many_ports' => 'Adding more than 1000 ports in a single range at once is not supported.',
-        'invalid_mapping' => 'The mapping provided for :port was invalid and could not be processed.',
-        'cidr_out_of_range' => 'CIDR notation only allows masks between /25 and /32.',
-        'port_out_of_range' => 'Ports in an allocation must be greater than 1024 and less than or equal to 65535.',
+        'server_using' => 'Un server este atribuit în prezent acestei alocări. O alocare poate fi ștearsă doar dacă nu este atribuit niciun server în prezent.',
+        'too_many_ports' => 'Adăugarea a mai mult de 1000 de porturi într-un singur interval odată nu este suportată.',
+        'invalid_mapping' => 'Maparea furnizată pentru :port a fost invalidă și nu a putut fi procesată.',
+        'cidr_out_of_range' => 'Notația CIDR permite doar măști între /25 și /32.',
+        'port_out_of_range' => 'Porturile dintr-o alocare trebuie să fie mai mari de 1024 și mai mici sau egale cu 65535.',
     ],
     'egg' => [
-        'delete_has_servers' => 'An Egg with active servers attached to it cannot be deleted from the Panel.',
-        'invalid_copy_id' => 'The Egg selected for copying a script from either does not exist, or is copying a script itself.',
-        'has_children' => 'This Egg is a parent to one or more other Eggs. Please delete those Eggs before deleting this Egg.',
+        'delete_has_servers' => 'Un Egg cu servere active legate de el nu poate fi șters din Panou.',
+        'invalid_copy_id' => 'Egg-ul selectat pentru copierea unui script fie nu există, fie copiază un script în sine.',
+        'has_children' => 'Acest Egg este părintele unuia sau mai multor alte Egg-uri. Vă rugăm să ștergeți acele Egg-uri înainte de a șterge acest Egg.',
     ],
     'variables' => [
-        'env_not_unique' => 'The environment variable :name must be unique to this Egg.',
-        'reserved_name' => 'The environment variable :name is protected and cannot be assigned to a variable.',
-        'bad_validation_rule' => 'The validation rule ":rule" is not a valid rule for this application.',
+        'env_not_unique' => 'Variabila de mediu :name trebuie să fie unică pentru acest Egg.',
+        'reserved_name' => 'Variabila de mediu :name este protejată și nu poate fi atribuită unei variabile.',
+        'bad_validation_rule' => 'Regula de validare ":rule" nu este o regulă validă pentru această aplicație.',
     ],
     'importer' => [
-        'json_error' => 'There was an error while attempting to parse the JSON file: :error.',
-        'file_error' => 'The JSON file provided was not valid.',
-        'invalid_json_provided' => 'The JSON file provided is not in a format that can be recognized.',
+        'json_error' => 'A fost o eroare în timpul încercării de a analiza fișierul JSON: :error.',
+        'file_error' => 'Fișierul JSON furnizat nu a fost valid.',
+        'invalid_json_provided' => 'Fișierul JSON furnizat nu este într-un format care poate fi recunoscut.',
     ],
     'subusers' => [
-        'editing_self' => 'Editing your own subuser account is not permitted.',
-        'user_is_owner' => 'You cannot add the server owner as a subuser for this server.',
-        'subuser_exists' => 'A user with that email address is already assigned as a subuser for this server.',
+        'editing_self' => 'Editarea propriului cont de subutilizator nu este permisă.',
+        'user_is_owner' => 'Nu poți adăuga proprietarul serverului ca subutilizator pentru acest server.',
+        'subuser_exists' => 'Un utilizator cu acea adresă de e-mail este deja atribuit ca subutilizator pentru acest server.',
     ],
     'databases' => [
-        'delete_has_databases' => 'Cannot delete a database host server that has active databases linked to it.',
+        'delete_has_databases' => 'Nu se poate șterge un server gazdă de baze de date care are baze de date active legate de el.',
     ],
     'tasks' => [
-        'chain_interval_too_long' => 'The maximum interval time for a chained task is 15 minutes.',
+        'chain_interval_too_long' => 'Timpul maxim de interval pentru o sarcină în lanț este de 15 minute.',
     ],
     'locations' => [
-        'has_nodes' => 'Cannot delete a location that has active nodes attached to it.',
+        'has_nodes' => 'Nu se poate șterge o locație care are noduri active legate de ea.',
     ],
     'users' => [
-        'node_revocation_failed' => 'Failed to revoke keys on <a href=":link">Node #:node</a>. :error',
+        'node_revocation_failed' => 'Revocarea cheilor pe <a href=":link">Nodul #:node</a> a eșuat. :error',
     ],
     'deployment' => [
-        'no_viable_nodes' => 'No nodes satisfying the requirements specified for automatic deployment could be found.',
-        'no_viable_allocations' => 'No allocations satisfying the requirements for automatic deployment were found.',
+        'no_viable_nodes' => 'Nu s-au găsit noduri care să satisfacă cerințele specificate pentru implementarea automată.',
+        'no_viable_allocations' => 'Nu s-au găsit alocări care să satisfacă cerințele pentru implementarea automată.',
     ],
     'api' => [
-        'resource_not_found' => 'The requested resource does not exist on this server.',
+        'resource_not_found' => 'Resursa solicitată nu există pe acest server.',
     ],
 ];
