@@ -6,7 +6,6 @@ use App\Models\Allocation;
 use App\Exceptions\DisplayException;
 use App\Services\Allocations\AssignmentService;
 use App\Exceptions\Service\Deployment\NoViableAllocationException;
-use Illuminate\Support\Facades\DB;
 
 class AllocationSelectionService
 {
@@ -122,17 +121,7 @@ class AllocationSelectionService
             $discard = $this->getDiscardableDedicatedAllocations($nodes);
 
             if (!empty($discard)) {
-                if (DB::getDriverName() === 'sqlite') {
-                    $query->whereNotIn(
-                        Allocation::query()->raw('node_id || "-" || ip'),
-                        $discard
-                    );
-                } else {
-                    $query->whereNotIn(
-                        Allocation::query()->raw('CONCAT_WS("-", node_id, ip)'),
-                        $discard
-                    );
-                }
+                $query->whereNotIn('ip', $discard);
             }
         }
 
@@ -140,7 +129,7 @@ class AllocationSelectionService
     }
 
     /**
-     * Return a concatenated result set of node ips that already have at least one
+     * Return a result set of node ips that already have at least one
      * server assigned to that IP. This allows for filtering out sets for
      * dedicated allocation IPs.
      *
@@ -149,30 +138,15 @@ class AllocationSelectionService
      */
     private function getDiscardableDedicatedAllocations(array $nodes = []): array
     {
-        if (DB::getDriverName() === 'sqlite') {
-            $query = Allocation::query()->selectRaw('(node_id || "-" || ip) as result');
-
-            if (!empty($nodes)) {
-                $query->whereIn('node_id', $nodes);
-            }
-
-            return $query->whereNotNull('server_id')
-                ->groupByRaw('node_id || ip')
-                ->get()
-                ->pluck('result')
-                ->toArray();
-        }
-
-        $query = Allocation::query()->selectRaw('CONCAT_WS("-", node_id, ip) as result');
+        $query = Allocation::query()->whereNotNull('server_id');
 
         if (!empty($nodes)) {
             $query->whereIn('node_id', $nodes);
         }
 
-        return $query->whereNotNull('server_id')
-            ->groupByRaw('CONCAT(node_id, ip)')
+        return $query->groupBy('ip')
             ->get()
-            ->pluck('result')
+            ->pluck('ip')
             ->toArray();
     }
 }

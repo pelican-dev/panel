@@ -69,7 +69,6 @@ jobs:
 
       - name: Unit tests
         run: vendor/bin/phpunit tests/Unit
-        if: ${{ always() }}
         env:
           DB_HOST: UNIT_NO_DB
           SKIP_MIGRATIONS: true
@@ -134,7 +133,6 @@ jobs:
 
       - name: Unit tests
         run: vendor/bin/phpunit tests/Unit
-        if: ${{ always() }}
         env:
           DB_HOST: UNIT_NO_DB
           SKIP_MIGRATIONS: true
