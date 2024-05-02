@@ -52,7 +52,7 @@ return [
             'ask_postmark_username' => 'Postmark API ключ',
             'ask_driver' => 'Which driver should be used for sending emails?',
             'ask_mail_from' => 'Имейл адрес, от който трябва да произхождат имейлите',
-            'ask_mail_name' => 'Name that emails should appear from',
+            'ask_mail_name' => 'Име от което имейлите произлизат',
             'ask_encryption' => 'Метод за използване на криптиране',
         ],
     ],
