@@ -4,7 +4,7 @@ return [
     'exceptions' => [
         'no_new_default_allocation' => 'Опитваш се да изтриеш алокацията по подразбиране за този сървър но няма резервна алокация да се използва.',
         'marked_as_failed' => 'This server was marked as having failed a previous installation. Current status cannot be toggled in this state.',
-        'bad_variable' => 'There was a validation error with the :name variable.',
+        'bad_variable' => 'Възникна проблем с валидацията на променливото :name',
         'daemon_exception' => 'Имаше изключение при опит на комуникация с daemon-a, което доведе до код HTTP/:code. Това изключение бе записано. (request id: :request_id)',
         'default_allocation_not_found' => 'Поисканата алокация по подразбиране не бе намерена в алокациите на този сървър.',
     ],
