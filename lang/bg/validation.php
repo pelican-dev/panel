@@ -100,7 +100,7 @@ return [
 
     // Internal validation logic for Panel
     'internal' => [
-        'variable_value' => ':env variable',
+        'variable_value' => ':env променливо',
         'invalid_password' => 'Зададената парола е невалидна за този акаунт.',
     ],
 ];
