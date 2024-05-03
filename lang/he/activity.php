@@ -8,8 +8,8 @@
  */
 return [
     'auth' => [
-        'fail' => 'Failed log in',
-        'success' => 'Logged in',
+        'fail' => 'ההתחברות נכשלה',
+        'success' => 'מחובר',
         'password-reset' => 'Password reset',
         'reset-password' => 'Requested password reset',
         'checkpoint' => 'Two-factor authentication requested',
