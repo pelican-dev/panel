@@ -4,9 +4,9 @@ return [
     'permissions' => [
         'websocket_*' => 'Allows access to the websocket for this server.',
         'control_console' => 'Allows the user to send data to the server console.',
-        'control_start' => 'Allows the user to start the server instance.',
-        'control_stop' => 'Allows the user to stop the server instance.',
-        'control_restart' => 'Allows the user to restart the server instance.',
+        'control_start' => 'מאפשר למשתמש להפעיל את מופע השרת.',
+        'control_stop' => 'מאפשר למשתמש לכבות את מופע השרת.',
+        'control_restart' => 'מאפשר למשתמש להפעיל מחדש את מופע השרת.',
         'control_kill' => 'Allows the user to kill the server instance.',
         'user_create' => 'Allows the user to create new user accounts for the server.',
         'user_read' => 'Allows the user permission to view users associated with this server.',
