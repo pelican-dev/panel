@@ -19,10 +19,10 @@ return [
     'descriptions' => [
         'name' => 'Et simpelt, menneskeligt navn der skal bruges som identifikation for dette Egg.',
         'description' => 'En beskrivelse af dette Egg, der vises i panelet efter behov.',
-        'uuid' => 'This is the globally unique identifier for this Egg which Wings uses as an identifier.',
+        'uuid' => 'Dette er den globale unikke identifikator for dette Egg, som Wings bruger som identifikation.',
         'author' => 'The author of this version of the Egg. Uploading a new Egg configuration from a different author will change this.',
         'force_outgoing_ip' => "Forces all outgoing network traffic to have its Source IP NATed to the IP of the server's primary allocation IP.\nRequired for certain games to work properly when the Node has multiple public IP addresses.\nEnabling this option will disable internal networking for any servers using this egg, causing them to be unable to internally access other servers on the same node.",
-        'startup' => 'The default startup command that should be used for new servers using this Egg.',
-        'docker_images' => 'The docker images available to servers using this egg.',
+        'startup' => 'Standard opstartskommando, som skal bruges til nye servere der gør brug af dette Egg.',
+        'docker_images' => 'Docker-billeder tilgængelige for servere, der bruger dette egg.',
     ],
 ];
