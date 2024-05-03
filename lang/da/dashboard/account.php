@@ -14,19 +14,19 @@ return [
         'validation' => [
             'account_password' => 'Du skal angive adgangskoden til din konto.',
             'current_password' => 'Du skal angive din nuværende adgangskode.',
-            'password_confirmation' => 'Password confirmation does not match the password you entered.',
+            'password_confirmation' => 'Adgangskodebekræftelse matcher ikke den adgangskode, du indtastede.',
         ],
         'updated' => 'Din adgangskode er blevet opdateret.',
     ],
     'two_factor' => [
-        'title' => 'Two-Step Verification',
+        'title' => 'To-trins Bekræftelse',
         'button' => 'Konfigurer 2-Faktor godkendelse',
         'disabled' => '2-faktor godkendelse er blevet deaktiveret på din konto. Du vil ikke længere blive bedt om at angive en token ved login.',
         'enabled' => '2-faktor godkendelse er blevet aktiveret på din konto! Fra nu af, når du logger ind, vil du blive bedt om at angive koden genereret af din enhed.',
         'invalid' => 'Den angivne nøgle var ugyldig.',
         'enable' => [
-            'help' => 'You do not currently have two-step verification enabled on your account. Click the button below to begin configuring it.',
-            'button' => 'Enable Two-Step',
+            'help' => 'Du har i øjeblikket ikke to-trins-bekræftelse aktiveret på din konto. Klik på knappen nedenfor for at begynde at konfigurere det.',
+            'button' => 'Aktivér To-Trin',
         ],
         'disable' => [
             'help' => 'Two-step verification is currently enabled on your account.',
