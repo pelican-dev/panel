@@ -25,13 +25,13 @@ return [
     ],
     'importer' => [
         'json_error' => 'There was an error while attempting to parse the JSON file: :error.',
-        'file_error' => 'The JSON file provided was not valid.',
-        'invalid_json_provided' => 'The JSON file provided is not in a format that can be recognized.',
+        'file_error' => 'Даденият JSON файл не е валиден.',
+        'invalid_json_provided' => 'Даденият JSON файл не е в разпознаем формат.',
     ],
     'subusers' => [
-        'editing_self' => 'Editing your own subuser account is not permitted.',
-        'user_is_owner' => 'You cannot add the server owner as a subuser for this server.',
-        'subuser_exists' => 'A user with that email address is already assigned as a subuser for this server.',
+        'editing_self' => 'Редактирането на своя подпотребителски акаунт не е позволено.',
+        'user_is_owner' => 'Не можеш да добавиш собственика на сървъра като подпотребител на този сървър.',
+        'subuser_exists' => 'Потребител с този имейл адрес е вече подпотребител за този сървър.',
     ],
     'databases' => [
         'delete_has_databases' => 'Cannot delete a database host server that has active databases linked to it.',
@@ -40,7 +40,7 @@ return [
         'chain_interval_too_long' => 'The maximum interval time for a chained task is 15 minutes.',
     ],
     'locations' => [
-        'has_nodes' => 'Cannot delete a location that has active nodes attached to it.',
+        'has_nodes' => 'Не можеш да изтриеш локация с активни node-ове свързани към нея.',
     ],
     'users' => [
         'node_revocation_failed' => 'Failed to revoke keys on <a href=":link">Node #:node</a>. :error',
@@ -50,6 +50,6 @@ return [
         'no_viable_allocations' => 'No allocations satisfying the requirements for automatic deployment were found.',
     ],
     'api' => [
-        'resource_not_found' => 'The requested resource does not exist on this server.',
+        'resource_not_found' => 'Поисканият ресурс не съществува на този сървър.',
     ],
 ];
