@@ -15,7 +15,7 @@ return [
     ],
     'root_admin' => 'Administrator (Root)',
     'language' => [
-        'helper_text1' => 'Your language (:state) has not been translated yet!\nBut never fear, you can help fix that by',
-        'helper_text2' => 'contributing directly here',
+        'helper_text1' => 'Dit sprog (:state) er ikke blevet oversat endnu!\nDu kan hjælpe ved at',
+        'helper_text2' => 'bidrage direkte her',
     ],
 ];
