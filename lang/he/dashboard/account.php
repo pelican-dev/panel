@@ -1,48 +1,48 @@
 <?php
 
 return [
-    'title' => 'Account Overview',
+    'title' => 'סקירה כללית של החשבון',
     'email' => [
-        'title' => 'Update Email Address',
-        'button' => 'Update Email',
-        'updated' => 'Your primary email has been updated.',
+        'title' => 'עדכן דוא"ל',
+        'button' => 'עדכן דוא"ל',
+        'updated' => 'הדוא"ל הראשי התעדכן.',
     ],
     'password' => [
-        'title' => 'Update Password',
-        'button' => 'Update Password',
-        'requirements' => 'Your new password should be at least 8 characters in length and unique to this website.',
+        'title' => 'עדכן סיסמה',
+        'button' => 'עדכן סיסמה',
+        'requirements' => 'הסיסמה החדשה שלך צריכה להיות באורך של לפחות 8 תווים וייחודית לאתר זה.',
         'validation' => [
-            'account_password' => 'You must provide your account password.',
-            'current_password' => 'You must provide your current password.',
-            'password_confirmation' => 'Password confirmation does not match the password you entered.',
+            'account_password' => 'עליך לספק את סיסמת החשבון שלך.',
+            'current_password' => 'עליך לספק את הסיסמה הנוכחית שלך.',
+            'password_confirmation' => 'אישור הסיסמה אינו תואם לסיסמה שהזנת.',
         ],
         'updated' => 'הסיסמא שלך עודכנה.',
     ],
     'two_factor' => [
-        'title' => 'Two-Step Verification',
+        'title' => 'אימות דו-שלבי',
         'button' => 'הגדר אימות דו-שלבי',
         'disabled' => 'אימות דו-שלבי הושבת בחשבונך. לא תתבקש יותר לספק אסימון בעת הכניסה.',
         'enabled' => 'אימות דו-שלבי הופעל בחשבון שלך! מעתה, בעת הכניסה, תידרש לספק את הקוד שנוצר על ידי המכשיר שלך.',
         'invalid' => 'הטוקן שסופק היה לא חוקי.',
         'enable' => [
-            'help' => 'You do not currently have two-step verification enabled on your account. Click the button below to begin configuring it.',
-            'button' => 'Enable Two-Step',
+            'help' => 'כרגע לא מופעל בחשבון שלך אימות דו-שלבי. לחץ על הכפתור למטה כדי להתחיל להגדיר אותו.',
+            'button' => 'הפעל אימות דו-שלבי',
         ],
         'disable' => [
-            'help' => 'Two-step verification is currently enabled on your account.',
+            'help' => 'אימות דו-שלבי כרגע מופעל בחשבון שלך.',
             'title' => 'השבת אימות דו-שלבי',
             'field' => 'הזן טוקן',
-            'button' => 'Disable Two-Step',
+            'button' => 'בטל אימות דו-שלבי',
         ],
         'setup' => [
-            'title' => 'Enable Two-Step Verification',
-            'subtitle' => "Help protect your account from unauthorized access. You'll be prompted for a verification code each time you sign in.",
-            'help' => 'Scan the QR code above using the two-step authentication app of your choice. Then, enter the 6-digit code generated into the field below.',
+            'title' => 'הפעל אימות דו-שלבי',
+            'subtitle' => "עזור להגן על החשבון שלך מפני גישה לא מורשית. תתבקש לבצע קוד אימות בכל פעם שתיכנס.",
+            'help' => 'סרוק את הברקוד באמצעות אפליקציית האימות הדו-שלבי לבחירתך. לאחר מכן הזינו את הקוד בן 6 הספרות שנוצר בשדה למטה.',
         ],
 
         'required' => [
-            'title' => '2-Factor Required',
-            'description' => 'Your account must have two-factor authentication enabled in order to continue.',
+            'title' => 'נדרש אימות דו-שלבי',
+            'description' => 'אימות דו-שלבי חייב להיות מופעל בחשבון שלך כדי להמשיך.',
         ],
     ],
 ];
