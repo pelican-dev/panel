@@ -1,19 +1,19 @@
 <?php
 
 return [
-    'title' => 'Account Overview',
+    'title' => 'Konto Oversigt',
     'email' => [
-        'title' => 'Update Email Address',
-        'button' => 'Update Email',
-        'updated' => 'Your primary email has been updated.',
+        'title' => 'Opdater Email Adresse',
+        'button' => 'Opdater Email',
+        'updated' => 'Din primære email er blevet opdateret',
     ],
     'password' => [
-        'title' => 'Update Password',
-        'button' => 'Update Password',
-        'requirements' => 'Your new password should be at least 8 characters in length and unique to this website.',
+        'title' => 'Opdater Adgangskode',
+        'button' => 'Opdater Adgangskode',
+        'requirements' => 'Din nye adgangskode skal være mindst 8 tegn langt og unikt for dette websted.',
         'validation' => [
-            'account_password' => 'You must provide your account password.',
-            'current_password' => 'You must provide your current password.',
+            'account_password' => 'Du skal angive adgangskoden til din konto.',
+            'current_password' => 'Du skal angive din nuværende adgangskode.',
             'password_confirmation' => 'Password confirmation does not match the password you entered.',
         ],
         'updated' => 'Din adgangskode er blevet opdateret.',
