@@ -41,19 +41,28 @@ class CreateEgg extends CreateRecord
                                 ->columnSpanFull()
                                 ->required()
                                 ->helperText('The default startup command that should be used for new servers using this Egg.'),
-                            Forms\Components\TagsInput::make('file_denylist')
-                                ->hidden() // latest wings broke it
-                                ->placeholder('denied-file.txt')
-                                ->helperText('A list of files that the end user is not allowed to edit.')
-                                ->columnSpan(['default' => 1, 'sm' => 1, 'md' => 2, 'lg' => 2]),
+                            Forms\Components\KeyValue::make('docker_images')
+                                ->columnSpan(['default' => 1, 'sm' => 1, 'md' => 3, 'lg' => 3])
+                                ->required()
+                                ->addActionLabel('Add Image')
+                                ->keyLabel('Name')
+                                ->valueLabel('Image URI')
+                                ->helperText('The docker images available to servers using this egg.'),
                             Forms\Components\TagsInput::make('features')
                                 ->placeholder('Add Feature')
                                 ->suggestions(['eula', 'java_version', 'pid_limit', 'gsl_token', 'steam_disk_space'])
                                 ->helperText('')
                                 ->splitKeys(['Tab', ' ', ','])
+                                ->columnSpan(['default' => 1, 'sm' => 1, 'md' => 1, 'lg' => 1]),
+
+                            Forms\Components\TagsInput::make('file_denylist')
+                                ->hidden() // latest wings broke it
+                                ->placeholder('denied-file.txt')
+                                ->helperText('A list of files that the end user is not allowed to edit.')
                                 ->columnSpan(['default' => 1, 'sm' => 1, 'md' => 2, 'lg' => 2]),
                             Forms\Components\Hidden::make('force_outgoing_ip')
                                 ->default(false)
+                                ->columnspan(1)
                                 ->helperText("Forces all outgoing network traffic to have its Source IP NATed to the IP of the server's primary allocation IP.
                                     Required for certain games to work properly when the Node has multiple public IP addresses.
                                     Enabling this option will disable internal networking for any servers using this egg, causing them to be unable to internally access other servers on the same node."),
@@ -64,13 +73,6 @@ class CreateEgg extends CreateRecord
                                 ->disabled()
                                 ->helperText('Not implemented.')
                                 ->columnSpan(['default' => 1, 'sm' => 1, 'md' => 2, 'lg' => 2]),
-                            Forms\Components\KeyValue::make('docker_images')
-                                ->columnSpanFull()
-                                ->required()
-                                ->addActionLabel('Add Image')
-                                ->keyLabel('Name')
-                                ->valueLabel('Image URI')
-                                ->helperText('The docker images available to servers using this egg.'),
                         ]),
 
                     Forms\Components\Tabs\Tab::make('Process Management')
