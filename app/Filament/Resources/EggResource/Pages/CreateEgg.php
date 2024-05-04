@@ -48,11 +48,12 @@ class CreateEgg extends CreateRecord
                                 ->keyLabel('Name')
                                 ->valueLabel('Image URI')
                                 ->helperText('The docker images available to servers using this egg.'),
-                            Forms\Components\TagsInput::make('features')
+                            Forms\Components\Select::make('features')
+                                ->multiple()
+                                ->default([])
                                 ->placeholder('Add Feature')
-                                ->suggestions(['eula', 'java_version', 'pid_limit', 'gsl_token', 'steam_disk_space'])
+                                ->options(['eula', 'java_version', 'pid_limit', 'gsl_token', 'steam_disk_space'])
                                 ->helperText('')
-                                ->splitKeys(['Tab', ' ', ','])
                                 ->columnSpan(['default' => 1, 'sm' => 1, 'md' => 1, 'lg' => 1]),
 
                             Forms\Components\TagsInput::make('file_denylist')
