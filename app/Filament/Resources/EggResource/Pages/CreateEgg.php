@@ -26,20 +26,16 @@ class CreateEgg extends CreateRecord
                                 ->maxLength(191)
                                 ->columnSpan(['default' => 1, 'sm' => 1, 'md' => 2, 'lg' => 2])
                                 ->helperText('A simple, human-readable name to use as an identifier for this Egg.'),
-                            Forms\Components\TextInput::make('uuid')
-                                ->disabled()
-                                ->columnSpan(['default' => 1, 'sm' => 1, 'md' => 2, 'lg' => 2])
-                                ->helperText('This is the globally unique identifier for this Egg which Wings uses as an identifier.'),
-                            Forms\Components\Textarea::make('description')
-                                ->rows(3)
-                                ->columnSpan(['default' => 1, 'sm' => 1, 'md' => 2, 'lg' => 2])
-                                ->helperText('A description of this Egg that will be displayed throughout the Panel as needed.'),
                             Forms\Components\TextInput::make('author')
                                 ->required()
+                                ->email()
                                 ->maxLength(191)
-                                ->disabled()
                                 ->columnSpan(['default' => 1, 'sm' => 1, 'md' => 2, 'lg' => 2])
-                                ->helperText('The author of this version of the Egg. Uploading a new Egg configuration from a different author will change this.'),
+                                ->helperText('The author of this version of the Egg.'),
+                            Forms\Components\Textarea::make('description')
+                                ->rows(3)
+                                ->columnSpanFull()
+                                ->helperText('A description of this Egg that will be displayed throughout the Panel as needed.'),
                             Forms\Components\Textarea::make('startup')
                                 ->rows(2)
                                 ->columnSpanFull()
