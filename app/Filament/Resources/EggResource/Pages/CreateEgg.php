@@ -48,7 +48,9 @@ class CreateEgg extends CreateRecord
                                 ->columnSpan(['default' => 1, 'sm' => 1, 'md' => 2, 'lg' => 2]),
                             Forms\Components\TagsInput::make('features')
                                 ->placeholder('Add Feature')
+                                ->suggestions(['eula', 'java_version', 'pid_limit', 'gsl_token', 'steam_disk_space'])
                                 ->helperText('')
+                                ->splitKeys(['Tab', ' ', ','])
                                 ->columnSpan(['default' => 1, 'sm' => 1, 'md' => 2, 'lg' => 2]),
                             Forms\Components\Toggle::make('force_outgoing_ip')
                                 ->helperText("Forces all outgoing network traffic to have its Source IP NATed to the IP of the server's primary allocation IP.
