@@ -252,8 +252,8 @@ class CreateServer extends CreateRecord
                     ->searchable()
                     ->preload()
                     ->live()
-                    ->afterStateUpdated(function ($state, Forms\Set $set) {
-                        $egg = Egg::find($state);
+                    ->afterStateUpdated(function ($state, Forms\Set $set, Forms\Get $get, $old) {
+                        $egg = Egg::query()->find($state);
                         $set('startup', $egg->startup);
 
                         $variables = $egg->variables ?? [];
@@ -271,6 +271,11 @@ class CreateServer extends CreateRecord
                         }
 
                         $set('environment', $variables);
+
+                        $previousEgg = Egg::query()->find($old);
+                        if (!$get('name') || $previousEgg?->getKebabName() === $get('name')) {
+                            $set('name', $egg->getKebabName());
+                        }
                     })
                     ->required(),
 

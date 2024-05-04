@@ -307,4 +307,9 @@ class Egg extends Model
     {
         return $this->belongsTo(self::class, 'config_from');
     }
+
+    public function getKebabName(): string
+    {
+        return str($this->name)->kebab()->lower()->trim()->split('/[^\w\-]/')->join('');
+    }
 }
