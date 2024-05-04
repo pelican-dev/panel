@@ -52,7 +52,8 @@ class CreateEgg extends CreateRecord
                                 ->helperText('')
                                 ->splitKeys(['Tab', ' ', ','])
                                 ->columnSpan(['default' => 1, 'sm' => 1, 'md' => 2, 'lg' => 2]),
-                            Forms\Components\Toggle::make('force_outgoing_ip')
+                            Forms\Components\Hidden::make('force_outgoing_ip')
+                                ->default(false)
                                 ->helperText("Forces all outgoing network traffic to have its Source IP NATed to the IP of the server's primary allocation IP.
                                     Required for certain games to work properly when the Node has multiple public IP addresses.
                                     Enabling this option will disable internal networking for any servers using this egg, causing them to be unable to internally access other servers on the same node."),
