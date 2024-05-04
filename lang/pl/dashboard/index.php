@@ -1,8 +1,8 @@
 <?php
 
 return [
-    'title' => 'Dashboard',
-    'showing-your-servers' => 'Showing your servers',
+    'title' => 'Panel sterowania',
+    'showing-your-servers' => 'Wyświetlanie Twoich serwerów',
     'showing-others-servers' => "Showing other's servers",
     'no-other-servers' => 'There are no other servers to display.',
     'no-servers-associated' => 'There are no servers associated with your account.',
