@@ -246,7 +246,7 @@ class CreateServer extends CreateRecord
                         'default' => 2,
                         'sm' => 2,
                         'md' => 2,
-                        'lg' => 6,
+                        'lg' => 5,
                     ])
                     ->relationship('egg', 'name')
                     ->searchable()
@@ -255,6 +255,7 @@ class CreateServer extends CreateRecord
                     ->afterStateUpdated(function ($state, Forms\Set $set, Forms\Get $get, $old) {
                         $egg = Egg::query()->find($state);
                         $set('startup', $egg->startup);
+                        $set('image', '');
 
                         $variables = $egg->variables ?? [];
                         $serverVariables = collect();
@@ -282,6 +283,12 @@ class CreateServer extends CreateRecord
                 Forms\Components\ToggleButtons::make('skip_scripts')
                     ->label('Run Egg Install Script?')
                     ->default(false)
+                    ->columnSpan([
+                        'default' => 1,
+                        'sm' => 1,
+                        'md' => 1,
+                        'lg' => 1,
+                    ])
                     ->options([
                         false => 'Yes',
                         true => 'Skip',
@@ -297,67 +304,54 @@ class CreateServer extends CreateRecord
                     ->inline()
                     ->required(),
 
-                Forms\Components\ToggleButtons::make('custom_image')
+                Forms\Components\Select::make('select_image')
+                    ->label('Docker Image Name')
+                    ->prefixIcon('tabler-brand-docker')
                     ->live()
-                    ->label('Custom Image?')
-                    ->default(false)
-                    ->formatStateUsing(function ($state, Forms\Get $get) {
-                        if ($state !== null) {
-                            return $state;
+                    ->afterStateUpdated(fn (Forms\Set $set, $state) => $set('image', $state))
+                    ->options(function ($state, Forms\Get $get, Forms\Set $set) {
+                        $egg = Egg::query()->find($get('egg_id'));
+                        $images = $egg->docker_images ?? [];
+
+                        $currentImage = $get('image');
+                        if (!$currentImage && $images) {
+                            $defaultImage = collect($images)->first();
+                            $set('image', $defaultImage);
+                            $set('select_image', $defaultImage);
                         }
 
-                        $images = Egg::find($get('egg_id'))->docker_images ?? [];
-
-                        return !in_array($get('image'), $images);
+                        return array_flip($images) + ['ghcr.io/custom-image' => 'Custom Image'];
                     })
-                    ->options([
-                        false => 'No',
-                        true => 'Yes',
-                    ])
-                    ->colors([
-                        false => 'primary',
-                        true => 'danger',
-                    ])
-                    ->icons([
-                        false => 'tabler-settings-cancel',
-                        true => 'tabler-settings-check',
-                    ])
-                    ->inline(),
-
-                Forms\Components\TextInput::make('image')
-                    ->hidden(fn (Forms\Get $get) => !$get('custom_image'))
-                    ->disabled(fn (Forms\Get $get) => !$get('custom_image'))
-                    ->label('Docker Image')
-                    ->placeholder('Enter a custom Image')
-                    ->columnSpan([
-                        'default' => 2,
-                        'sm' => 2,
-                        'md' => 2,
-                        'lg' => 4,
-                    ])
-                    ->required(),
-
-                Forms\Components\Select::make('image')
-                    ->hidden(fn (Forms\Get $get) => $get('custom_image'))
-                    ->disabled(fn (Forms\Get $get) => $get('custom_image'))
-                    ->label('Docker Image')
-                    ->prefixIcon('tabler-brand-docker')
-                    ->options(function (Forms\Get $get, Forms\Set $set) {
-                        $images = Egg::find($get('egg_id'))->docker_images ?? [];
-
-                        $set('image', collect($images)->first());
-
-                        return $images;
-                    })
-                    ->disabled(fn (Forms\Components\Select $component) => empty($component->getOptions()))
                     ->selectablePlaceholder(false)
                     ->columnSpan([
                         'default' => 2,
                         'sm' => 2,
                         'md' => 2,
-                        'lg' => 4,
-                    ])
-                    ->required(),
+                        'lg' => 3,
+                    ]),
+
+                Forms\Components\TextInput::make('image')
+                    ->label('Docker Image')
+                    ->prefixIcon('tabler-brand-docker')
+                    ->live()
+                    ->debounce(500)
+                    ->afterStateUpdated(function ($state, Forms\Get $get, Forms\Set $set) {
+                        $egg = Egg::query()->find($get('egg_id'));
+                        $images = $egg->docker_images ?? [];
+
+                        if (in_array($state, $images)) {
+                            $set('select_image', $state);
+                        } else {
+                            $set('select_image', 'ghcr.io/custom-image');
+                        }
+                    })
+                    ->placeholder('Enter a custom Image')
+                    ->columnSpan([
+                        'default' => 2,
+                        'sm' => 2,
+                        'md' => 2,
+                        'lg' => 3,
+                    ]),
 
                 Forms\Components\Fieldset::make('Application Feature Limits')
                     ->inlineLabel()
