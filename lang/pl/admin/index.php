@@ -1,7 +1,7 @@
 <?php
 
 return [
-    'title' => 'Administration',
+    'title' => 'Administracja',
     'header' => [
         'title' => 'Administrative Overview',
         'subtitle' => 'A quick glance at your system.',
