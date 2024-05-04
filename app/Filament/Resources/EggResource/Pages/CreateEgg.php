@@ -61,7 +61,7 @@ class CreateEgg extends CreateRecord
                             Forms\Components\Hidden::make('script_is_privileged')
                                 ->default(true)
                                 ->helperText('The docker images available to servers using this egg.'),
-                            Forms\Components\TextInput::make('update_url')
+                            Forms\Components\Hidden::make('update_url')
                                 ->disabled()
                                 ->helperText('Not implemented.')
                                 ->columnSpan(['default' => 1, 'sm' => 1, 'md' => 2, 'lg' => 2]),
