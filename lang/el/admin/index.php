@@ -12,7 +12,7 @@ return [
         'not-up-to-date1' => 'Το panel σας <strong>δεν είναι ενημερωμένο!</strong> Η τελευταία έκδοση είναι',
         'not-up-to-date2' => 'και αυτήν τη στιγμή τρέχετε την έκδοση <code>:version</code>.',
         'get-help' => 'Λάβετε βοήθεια <small>(μέσω Discord)</small>',
-        'documentation' => 'Documentation',
+        'documentation' => 'Εγχειρίδιο',
         'github' => 'GitHub',
         'support-the-project' => 'Υποστηρίξτε το Project',
     ],
