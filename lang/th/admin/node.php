@@ -2,14 +2,14 @@
 
 return [
     'validation' => [
-        'fqdn_not_resolvable' => 'The FQDN or IP address provided does not resolve to a valid IP address.',
-        'fqdn_required_for_ssl' => 'A fully qualified domain name that resolves to a public IP address is required in order to use SSL for this node.',
+        'fqdn_not_resolvable' => 'FQDN หรือที่อยู่ IP ที่ระบุไม่สามารถติดต่อได้หรือที่อยู่ IP ที่ถูกต้อง',
+        'fqdn_required_for_ssl' => 'จำเป็นต้องมีชื่อโดเมนที่ระบุอย่างครบถ้วน ซึ่งสามารถแปลเป็นที่อยู่ IP สาธารณะเพื่อที่จะใช้ SSL สำหรับ Node นี้',
     ],
     'notices' => [
-        'allocations_added' => 'Allocations have successfully been added to this node.',
-        'node_deleted' => 'Node has been successfully removed from the panel.',
-        'node_created' => 'Successfully created new node. You can automatically configure the daemon on this machine by visiting the \'Configuration\' tab. <strong>Before you can add any servers you must first allocate at least one IP address and port.</strong>',
-        'node_updated' => 'Node information has been updated. If any daemon settings were changed you will need to reboot it for those changes to take effect.',
-        'unallocated_deleted' => 'Deleted all un-allocated ports for <code>:ip</code>.',
+        'allocations_added' => 'เพิ่มพอร์ตไปยัง Node นี้สำเร็จแล้ว',
+        'node_deleted' => 'Node ถูกลบออกจากแผงเรียบร้อยแล้ว',
+        'node_created' => 'สร้าง Node ใหม่สำเร็จ คุณสามารถกำหนดค่า daemon บนเครื่องนี้โดยอัตโนมัติได้โดยไปที่แท็บ "การกำหนดค่า" <strong>ก่อนที่คุณจะสามารถเพิ่มเซิร์ฟเวอร์ใดๆ คุณต้องจัดที่อยู่ IP และพอร์ตอย่างน้อยหนึ่งรายการก่อน</strong>',
+        'node_updated' => 'ข้อมูล Node ได้รับการอัปเดตแล้ว หากมีการเปลี่ยนแปลงการตั้งค่า daemon คุณจะต้องรีบูตเพื่อให้การเปลี่ยนแปลงมีผล',
+        'unallocated_deleted' => 'ลบพอร์ตที่ไม่ได้จัดสรรทั้งหมดสำหรับ <code>:ip</code>',
     ],
 ];

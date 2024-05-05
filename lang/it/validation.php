@@ -12,9 +12,9 @@ return [
     |
     */
 
-    'accepted' => 'The :attribute must be accepted.',
-    'active_url' => 'The :attribute is not a valid URL.',
-    'after' => 'The :attribute must be a date after :date.',
+    'accepted' => 'Il campo :attribute deve essere accettato',
+    'active_url' => 'Il campo :attribute non è un URL valido',
+    'after' => 'Il campo :attribute deve essere una data dopo il :date',
     'after_or_equal' => 'The :attribute must be a date after or equal to :date.',
     'alpha' => 'The :attribute may only contain letters.',
     'alpha_dash' => 'The :attribute may only contain letters, numbers, and dashes.',

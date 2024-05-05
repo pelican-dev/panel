@@ -8,7 +8,7 @@
  */
 return [
     'auth' => [
-        'fail' => 'Sikertelen bejelenzkezés',
+        'fail' => 'Sikertelen bejelentkezés',
         'success' => 'Bejelentkezve',
         'password-reset' => 'Jelszó helyreállítás',
         'reset-password' => 'Jelszó helyreállítási kérelem',

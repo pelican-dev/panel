@@ -100,7 +100,7 @@ return [
 
     // Internal validation logic for Panel
     'internal' => [
-        'variable_value' => ':env variable',
+        'variable_value' => 'משתנה :env',
         'invalid_password' => 'The password provided was invalid for this account.',
     ],
 ];

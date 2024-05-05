@@ -2,18 +2,27 @@
 
 return [
     'notices' => [
-        'imported' => 'Successfully imported this Egg and its associated variables.',
-        'updated_via_import' => 'This Egg has been updated using the file provided.',
-        'deleted' => 'Successfully deleted the requested egg from the Panel.',
-        'updated' => 'Egg configuration has been updated successfully.',
-        'script_updated' => 'Egg install script has been updated and will run whenever servers are installed.',
-        'egg_created' => 'A new egg was laid successfully. You will need to restart any running daemons to apply this new egg.',
+        'imported' => 'นำเข้า Egg นี้และตัวแปรที่เกี่ยวข้องเรียบร้อยแล้ว',
+        'updated_via_import' => 'Egg นี้ได้รับการอัปเดตโดยใช้ไฟล์ที่นำเข้ามา',
+        'deleted' => 'ลบ Egg ออกจากแผงควบคุมเรียบร้อยแล้ว',
+        'updated' => 'อัปเดตการตั้งค่า Egg สำเร็จแล้ว',
+        'script_updated' => 'สคริปต์การติดตั้ง Egg ได้รับการอัปเดตแล้ว และจะทำงานทุกครั้งที่ติดตั้งเซิร์ฟเวอร์',
+        'egg_created' => 'วาง Egg ใหม่เรียบร้อยแล้ว คุณจะต้องรีสตาร์ทดีมอนที่กำลังวิ่งอยู่เพื่อใช้ Egg ใหม่นี้',
     ],
     'variables' => [
         'notices' => [
-            'variable_deleted' => 'The variable ":variable" has been deleted and will no longer be available to servers once rebuilt.',
-            'variable_updated' => 'The variable ":variable" has been updated. You will need to rebuild any servers using this variable in order to apply changes.',
-            'variable_created' => 'New variable has successfully been created and assigned to this egg.',
+            'variable_deleted' => 'ตัวแปร ":variable" ถูกลบแล้ว และจะไม่สามารถใช้ได้อีกต่อไปสำหรับเซิร์ฟเวอร์เมื่อสร้างใหม่แล้ว',
+            'variable_updated' => 'อัปเดตตัวแปร ":variable" แล้ว คุณจะต้องสร้างเซิร์ฟเวอร์ใหม่โดยใช้ตัวแปรนี้เพื่อใช้การเปลี่ยนแปลง',
+            'variable_created' => 'สร้างตัวแปรใหม่และกำหนดให้กับ Egg นี้สำเร็จแล้ว',
         ],
+    ],
+    'descriptions' => [
+        'name' => 'ชื่อที่เรียบง่ายและมนุษย์สามารถอ่านได้เพื่อใช้เป็นตัวระบุ Egg นี้',
+        'description' => 'คำอธิบายของ Egg นี้ที่จะแสดงทั่วทั้งแผงควบคุมตามความจำเป็น',
+        'uuid' => 'นี่คือตัวระบุสำหรับ Egg นี้ซึ่ง Wings ใช้เป็นตัวระบุ',
+        'author' => 'ผู้เขียน Egg เวอร์ชันนี้ การอัปโหลดการกำหนดค่า Egg ใหม่จากผู้เขียนรายอื่นจะเปลี่ยนผู้เขียน',
+        'force_outgoing_ip' => "บังคับให้การรับส่งข้อมูลเครือข่ายขาออกทั้งหมดมี IP ต้นทาง NATed เป็น IP ของ IP การจัดสรรหลักของเซิร์ฟเวอร์\nจำเป็นสำหรับเกมบางเกมเพื่อให้ทำงานได้อย่างถูกต้องเมื่อโหนดมีที่อยู่ IP สาธารณะหลายรายการ\nการเปิดใช้งานตัวเลือกนี้จะปิดใช้งานเครือข่ายภายในสำหรับเซิร์ฟเวอร์ใดๆ ที่ใช้ Egg นี้ ส่งผลให้ไม่สามารถเข้าถึงเซิร์ฟเวอร์อื่นๆ ภายในบนโหนดเดียวกันได้",
+        'startup' => 'คำสั่งเริ่มต้นที่ควรใช้กับเซิร์ฟเวอร์ใหม่ที่ใช้ Egg นี้',
+        'docker_images' => 'อิมเมจ Docker พร้อมใช้งานสำหรับเซิร์ฟเวอร์ที่ใช้ Egg นี้',
     ],
 ];

@@ -2,18 +2,18 @@
 
 return [
     'user' => [
-        'search_users' => 'Enter a Username, User ID, or Email Address',
-        'select_search_user' => 'ID of user to delete (Enter \'0\' to re-search)',
-        'deleted' => 'User successfully deleted from the Panel.',
-        'confirm_delete' => 'Are you sure you want to delete this user from the Panel?',
+        'search_users' => 'Hãy điền tên người dùng, ID người dùng, hoặc địa chỉ Email',
+        'select_search_user' => 'ID của người dùng cần xóa (Nhập \'0\' để tìm lại)',
+        'deleted' => 'Người dùng được xóa khỏi bảng điều khiển thành công.',
+        'confirm_delete' => 'Bạn có chắc muốn xóa người dùng này khỏi bảng điều khiển?',
         'no_users_found' => 'No users were found for the search term provided.',
         'multiple_found' => 'Multiple accounts were found for the user provided, unable to delete a user because of the --no-interaction flag.',
-        'ask_admin' => 'Is this user an administrator?',
-        'ask_email' => 'Email Address',
-        'ask_username' => 'Username',
-        'ask_name_first' => 'First Name',
-        'ask_name_last' => 'Last Name',
-        'ask_password' => 'Password',
+        'ask_admin' => 'Người dùng này có phải quản trị viên?',
+        'ask_email' => 'Địa chỉ Email',
+        'ask_username' => 'Tên người dùng',
+        'ask_name_first' => 'Tên',
+        'ask_name_last' => 'Họ',
+        'ask_password' => 'Mật khẩu',
         'ask_password_tip' => 'If you would like to create an account with a random password emailed to the user, re-run this command (CTRL+C) and pass the `--no-password` flag.',
         'ask_password_help' => 'Passwords must be at least 8 characters in length and contain at least one capital letter and number.',
         '2fa_help_text' => [

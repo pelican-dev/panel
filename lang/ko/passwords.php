@@ -11,9 +11,9 @@ return [
     | has failed, such as for an invalid token or invalid new password.
     |
     */
-    'password' => 'Passwords must be at least six characters and match the confirmation.',
-    'reset' => 'Your password has been reset!',
-    'sent' => 'We have e-mailed your password reset link!',
-    'token' => 'This password reset token is invalid.',
-    'user' => 'We can\'t find a user with that e-mail address.',
+    'password' => '비밀번호는 최소 6자리 이상이어야 하며 비밀번호 확인과 일치해야 합니다.',
+    'reset' => '비밀번호가 재설정되었습니다!',
+    'sent' => '이메일로 비밀번호 재설정 링크를 보냈습니다!',
+    'token' => '이 비밀번호 재설정 토큰이 유효하지 않습니다.',
+    'user' => '그 이메일 주소를 가진 사용자를 찾을 수 없습니다.',
 ];

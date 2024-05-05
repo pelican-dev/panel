@@ -3,9 +3,9 @@
 return [
     'exceptions' => [
         'no_new_default_allocation' => 'Megpróbáltad törölni az allokációt, de nincs másik alapértelmezett allokáció hozzáadva a szerverhez.',
-        'marked_as_failed' => 'Ezt a kiszolgálót úgy jelölték meg, hogy egy korábbi telepítés sikertelen volt. Az állapot követés nem kapcsolható be ebben az állapotban!',
-        'bad_variable' => 'Érvényesítési hiba történt a :name: váltózóval!',
-        'daemon_exception' => 'There was an exception while attempting to communicate with the daemon resulting in a HTTP/:code response code. This exception has been logged. (request id: :request_id)',
+        'marked_as_failed' => 'Ezt a kiszolgálót úgy jelölték meg, hogy egy korábbi telepítés sikertelen volt. Az állapot monitorozás nem kapcsolható be ebben az állapotban.',
+        'bad_variable' => 'There was a validation error with the :name variable.',
+        'daemon_exception' => 'Probléma lépett fel a daemonnal való kommunikáció során a HTTP/:code válasz kód alatt. Naplózásra került a probléma. (naplózás id száma: :request_id)',
         'default_allocation_not_found' => 'The requested default allocation was not found in this server\'s allocations.',
     ],
     'alerts' => [

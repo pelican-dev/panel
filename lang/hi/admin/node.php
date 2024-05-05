@@ -10,6 +10,6 @@ return [
         'node_deleted' => 'Node has been successfully removed from the panel.',
         'node_created' => 'Successfully created new node. You can automatically configure the daemon on this machine by visiting the \'Configuration\' tab. <strong>Before you can add any servers you must first allocate at least one IP address and port.</strong>',
         'node_updated' => 'Node information has been updated. If any daemon settings were changed you will need to reboot it for those changes to take effect.',
-        'unallocated_deleted' => 'Deleted all un-allocated ports for <code>:ip</code>.',
+        'unallocated_deleted' => '<code>:ip</code> के लिए सभी गैर-आवंटित पोर्ट हटा दिए गए।',
     ],
 ];

@@ -1,55 +1,55 @@
 <?php
 
 return [
-    'daemon_connection_failed' => 'There was an exception while attempting to communicate with the daemon resulting in a HTTP/:code response code. This exception has been logged.',
+    'daemon_connection_failed' => 'Υπήρξε ένα exception κατά την προσπάθεια επικοινωνίας με το daemon ως αποτέλεσμα να υπάρχει κωδικός απόκρισης HTTP/:code. Αυτή η εξαίρεση έχει καταγραφεί.',
     'node' => [
-        'servers_attached' => 'A node must have no servers linked to it in order to be deleted.',
-        'daemon_off_config_updated' => 'The daemon configuration <strong>has been updated</strong>, however there was an error encountered while attempting to automatically update the configuration file on the Daemon. You will need to manually update the configuration file (config.yml) for the daemon to apply these changes.',
+        'servers_attached' => 'Ένας κόμβος δεν πρέπει να έχει διακομιστές συνδεδεμένους με αυτόν για να διαγραφεί.',
+        'daemon_off_config_updated' => 'Η ρύθμιση παραμέτρων daemon <strong>έχει ενημερωθεί</strong>, Ωστόσο, υπήρξε ένα σφάλμα κατά την προσπάθεια αυτόματης ενημέρωσης του αρχείου ρυθμίσεων στο daemon. Θα χρειαστεί να ενημερώσετε χειροκίνητα το αρχείο ρυθμίσεων (config.yml) για το daemon ώστε να εφαρμοστούν αυτές οι αλλαγές.',
     ],
     'allocations' => [
-        'server_using' => 'A server is currently assigned to this allocation. An allocation can only be deleted if no server is currently assigned.',
-        'too_many_ports' => 'Adding more than 1000 ports in a single range at once is not supported.',
-        'invalid_mapping' => 'The mapping provided for :port was invalid and could not be processed.',
-        'cidr_out_of_range' => 'CIDR notation only allows masks between /25 and /32.',
-        'port_out_of_range' => 'Ports in an allocation must be greater than 1024 and less than or equal to 65535.',
+        'server_using' => 'Ένας διακομιστής έχει ανατεθεί σε αυτή την κατανομή. Μια κατανομή μπορεί να διαγραφεί μόνο αν δεν έχει οριστεί κανένας διακομιστής σε αυτό.',
+        'too_many_ports' => 'Η προσθήκη περισσότερων από 1000 θυρών σε ένα εύρος ταυτόχρονα δεν υποστηρίζεται.',
+        'invalid_mapping' => 'Η χαρτογράφηση που παρείχατε για :port ήταν άκυρη και δεν μπόρεσε να υποβληθεί σε επεξεργασία.',
+        'cidr_out_of_range' => 'Η ένδειξη CIDR επιτρέπει μόνο μάσκες μεταξύ /25 και /32.',
+        'port_out_of_range' => 'Οι θύρες σε μια κατανομή πρέπει να είναι μεγαλύτεροι από 1024 και μικρότεροι ή ίσοι με 65535.',
     ],
     'egg' => [
-        'delete_has_servers' => 'An Egg with active servers attached to it cannot be deleted from the Panel.',
-        'invalid_copy_id' => 'The Egg selected for copying a script from either does not exist, or is copying a script itself.',
-        'has_children' => 'This Egg is a parent to one or more other Eggs. Please delete those Eggs before deleting this Egg.',
+        'delete_has_servers' => 'Ένα egg με ενεργούς διακομιστές που είναι συνδεδεμένοι σε αυτό δεν μπορεί να διαγραφτεί από τον πίνακα.',
+        'invalid_copy_id' => 'Το egg που επιλέχθηκε για την αντιγραφή ενός σεναρίου είτε δεν υπάρχει ή αντιγράφει το ίδιο το σενάριο.',
+        'has_children' => 'Αυτό το egg είναι parent σε ένα ή περισσότερα άλλα eggs. Παρακαλώ διαγράψτε αυτά τα eggs πριν διαγράψετε αυτό το κύριο egg.',
     ],
     'variables' => [
-        'env_not_unique' => 'The environment variable :name must be unique to this Egg.',
-        'reserved_name' => 'The environment variable :name is protected and cannot be assigned to a variable.',
-        'bad_validation_rule' => 'The validation rule ":rule" is not a valid rule for this application.',
+        'env_not_unique' => 'Η μεταβλητή περιβάλλοντος :name πρέπει να είναι μοναδική σε αυτό το egg.',
+        'reserved_name' => 'Η μεταβλητή περιβάλλοντος :name προστατεύεται και δεν μπορεί να ανατεθεί σε μια μεταβλητή.',
+        'bad_validation_rule' => 'Ο κανόνας επικύρωσης ":rule" δεν είναι έγκυρος κανόνας για αυτήν την εφαρμογή.',
     ],
     'importer' => [
-        'json_error' => 'There was an error while attempting to parse the JSON file: :error.',
-        'file_error' => 'The JSON file provided was not valid.',
-        'invalid_json_provided' => 'The JSON file provided is not in a format that can be recognized.',
+        'json_error' => 'Παρουσιάστηκε σφάλμα κατά την προσπάθεια ανάλυσης του αρχείου JSON: :error.',
+        'file_error' => 'Το αρχείο JSON που δόθηκε δεν ήταν έγκυρο.',
+        'invalid_json_provided' => 'Το αρχείο JSON που παρείχατε δεν είναι σε μορφή που μπορεί να αναγνωριστεί.',
     ],
     'subusers' => [
-        'editing_self' => 'Editing your own subuser account is not permitted.',
-        'user_is_owner' => 'You cannot add the server owner as a subuser for this server.',
-        'subuser_exists' => 'A user with that email address is already assigned as a subuser for this server.',
+        'editing_self' => 'Η επεξεργασία του δικού σας χρήστη δεν επιτρέπεται.',
+        'user_is_owner' => 'Δεν μπορείτε να προσθέσετε τον ιδιοκτήτη του διακομιστή ως χρήστη σε αυτόν το διακομιστή.',
+        'subuser_exists' => 'Ένας χρήστης με αυτή τη διεύθυνση ηλεκτρονικού ταχυδρομείου έχει ήδη αντιστοιχιστεί ως υποχρήστης για αυτόν τον διακομιστή.',
     ],
     'databases' => [
-        'delete_has_databases' => 'Cannot delete a database host server that has active databases linked to it.',
+        'delete_has_databases' => 'Δεν είναι δυνατή η διαγραφή ενός διακομιστή βάσης δεδομένων που έχει ενεργές βάσεις δεδομένων συνδεδεμένες με αυτόν.',
     ],
     'tasks' => [
-        'chain_interval_too_long' => 'The maximum interval time for a chained task is 15 minutes.',
+        'chain_interval_too_long' => 'Το μέγιστο χρονικό διάστημα για μια αλυσοδεμένη εργασία είναι 15 λεπτά.',
     ],
     'locations' => [
-        'has_nodes' => 'Cannot delete a location that has active nodes attached to it.',
+        'has_nodes' => 'Δεν είναι δυνατή η διαγραφή μιας τοποθεσίας που έχει συνδεδεμένους ενεργού κόμβους.',
     ],
     'users' => [
-        'node_revocation_failed' => 'Failed to revoke keys on <a href=":link">Node #:node</a>. :error',
+        'node_revocation_failed' => 'Αποτυχία ανάκλησης κλειδιών στο node <a href=":link">#:node</a>. :error',
     ],
     'deployment' => [
-        'no_viable_nodes' => 'No nodes satisfying the requirements specified for automatic deployment could be found.',
-        'no_viable_allocations' => 'No allocations satisfying the requirements for automatic deployment were found.',
+        'no_viable_nodes' => 'Δε βρέθηκαν κόμβοι που να ικανοποιούν τις απαιτήσεις που καθορίζονται για την αυτόματη ανάπτυξη.',
+        'no_viable_allocations' => 'Δε βρέθηκαν κατανομές που να ικανοποιούν τις απαιτήσεις για αυτόματη ανάπτυξη.',
     ],
     'api' => [
-        'resource_not_found' => 'The requested resource does not exist on this server.',
+        'resource_not_found' => 'Ο πόρος που ζητήθηκε δεν υπάρχει σε αυτόν το διακομιστή.',
     ],
 ];

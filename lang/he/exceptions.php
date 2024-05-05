@@ -25,7 +25,7 @@ return [
     ],
     'importer' => [
         'json_error' => 'There was an error while attempting to parse the JSON file: :error.',
-        'file_error' => 'The JSON file provided was not valid.',
+        'file_error' => 'קובץ JSON שסופק לא היה חוקי.',
         'invalid_json_provided' => 'The JSON file provided is not in a format that can be recognized.',
     ],
     'subusers' => [

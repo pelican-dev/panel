@@ -2,14 +2,14 @@
 
 return [
     'validation' => [
-        'fqdn_not_resolvable' => 'The FQDN or IP address provided does not resolve to a valid IP address.',
-        'fqdn_required_for_ssl' => 'A fully qualified domain name that resolves to a public IP address is required in order to use SSL for this node.',
+        'fqdn_not_resolvable' => 'FQDN atau alamat IP yang diberikan tidak sesuai dengan alamat IP yang valid.',
+        'fqdn_required_for_ssl' => 'Sebuah nama domain absolut yang tertuju pada suatu alamat IP Publik diperlukan untuk menggunakan SSL pada node ini.',
     ],
     'notices' => [
-        'allocations_added' => 'Allocations have successfully been added to this node.',
-        'node_deleted' => 'Node has been successfully removed from the panel.',
-        'node_created' => 'Successfully created new node. You can automatically configure the daemon on this machine by visiting the \'Configuration\' tab. <strong>Before you can add any servers you must first allocate at least one IP address and port.</strong>',
-        'node_updated' => 'Node information has been updated. If any daemon settings were changed you will need to reboot it for those changes to take effect.',
-        'unallocated_deleted' => 'Deleted all un-allocated ports for <code>:ip</code>.',
+        'allocations_added' => 'Alokasi telah berhasil ditambahkan ke node ini.',
+        'node_deleted' => 'Node telah berhasil dihapus dari panel.',
+        'node_created' => 'Node baru berhasil dibuat. Anda dapat secara otomatis mengonfigurasi daemon pada mesin ini dengan mengunjungi tab \'Konfigurasi\'. <strong>Sebelum Anda dapat menambahkan server, Anda harus terlebih dahulu mengalokasikan setidaknya satu alamat IP dan port.</strong>',
+        'node_updated' => 'Informasi node telah diperbarui. Jika ada pengaturan daemon yang diubah, Anda perlu melakukan reboot agar perubahan tersebut dapat diterapkan.',
+        'unallocated_deleted' => 'Berhasil Menghapus semua port yang tidak dialokasikan untuk <code>:ip</code>.',
     ],
 ];

@@ -1,21 +1,21 @@
 <?php
 
 return [
-    'daemon_connection_failed' => 'There was an exception while attempting to communicate with the daemon resulting in a HTTP/:code response code. This exception has been logged.',
+    'daemon_connection_failed' => 'Probléma lépett fel a daemonnal való kommunikáció során a HTTP/:code válasz kód alatt. Naplózásra került a probléma.',
     'node' => [
-        'servers_attached' => 'A node must have no servers linked to it in order to be deleted.',
-        'daemon_off_config_updated' => 'The daemon configuration <strong>has been updated</strong>, however there was an error encountered while attempting to automatically update the configuration file on the Daemon. You will need to manually update the configuration file (config.yml) for the daemon to apply these changes.',
+        'servers_attached' => 'A node nem tartalmazhat szervereket a törlés végrehajtásához.',
+        'daemon_off_config_updated' => 'A daemon konfiguráció<strong>frissítve</strong>, azonban probléma lépett fel a daemon automatikus konfiguráció frissítése során. Manuálisan kell frissítened a konfigurációs fájlt (config.yml) hogy életbe lépjenek a daemonon végzett módosítások.',
     ],
     'allocations' => [
-        'server_using' => 'A server is currently assigned to this allocation. An allocation can only be deleted if no server is currently assigned.',
-        'too_many_ports' => 'Adding more than 1000 ports in a single range at once is not supported.',
-        'invalid_mapping' => 'The mapping provided for :port was invalid and could not be processed.',
-        'cidr_out_of_range' => 'CIDR notation only allows masks between /25 and /32.',
-        'port_out_of_range' => 'Ports in an allocation must be greater than 1024 and less than or equal to 65535.',
+        'server_using' => 'Ez a szerver társított egy allokációhoz, csak akkor törölhetsz egy allokációt ha ahhoz nincsen szerver társítva.',
+        'too_many_ports' => 'Több mint 1000 port megadása egy megadott tartományban nem támogatott.',
+        'invalid_mapping' => 'A következő porthoz érvénytelen a hozzárendelés és nem sikerült feldolgozni: {port}.',
+        'cidr_out_of_range' => 'A CIDR maszk csak /25 és /32es tartomány között engedélyezett.',
+        'port_out_of_range' => 'A kiosztásban lévő portoknak 1024-nél nagyobbaknak és 65535-nél kisebbnek vagy azzal egyenlőnek kell lenniük.',
     ],
     'egg' => [
-        'delete_has_servers' => 'An Egg with active servers attached to it cannot be deleted from the Panel.',
-        'invalid_copy_id' => 'The Egg selected for copying a script from either does not exist, or is copying a script itself.',
+        'delete_has_servers' => 'Egy aktív szerverhez társított Egg nem törölhető a panelből.',
+        'invalid_copy_id' => 'A script másolására kiválasztott Egg nem létezik, vagy magát a scriptet másolja.',
         'has_children' => 'This Egg is a parent to one or more other Eggs. Please delete those Eggs before deleting this Egg.',
     ],
     'variables' => [

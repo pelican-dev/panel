@@ -9,4 +9,13 @@ return [
         'account_created' => 'Het account is succesvol aangemaakt.',
         'account_updated' => 'Het account is succesvol bijgewerkt.',
     ],
+    'last_admin' => [
+        'hint' => 'Dit is de laatste rootbeheerder!',
+        'helper_text' => 'U moet ten minste één hoofdadministrator hebben in uw systeem.',
+    ],
+    'root_admin' => 'Administrator (Root)',
+    'language' => [
+        'helper_text1' => 'Je taal (:state) is nog niet vertaald!\nMaar wees niet bang, je kunt helpen dat op te lossen door',
+        'helper_text2' => 'rechtstreeks bijdragen',
+    ],
 ];
