@@ -1,16 +1,6 @@
 <?php
 
 return [
-
-    /* Not yet added to the panel
-    "debug" => [
-        "enable" => "Debug mode has been enabled",
-        "disable" => "Debug mode has been disabled",
-        "disable_option" => "Disable Debug mode",
-        "enable_option" => "Disable Debug mode",
-        "cancel_option" => "Cancel the Command",
-    ],
-    */
     'appsettings' => [
         'comment' => [
             'author' => 'Provide the email address that eggs exported by this Panel should be from. This should be a valid email address.',
