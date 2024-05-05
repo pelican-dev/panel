@@ -67,7 +67,7 @@ return [
     'regex' => 'Το :attribute έχει μη έγκυρη μορφή.',
     'required' => 'Tο πεδίο :attribute είναι υποχρεωτικό.',
     'required_if' => 'Το πεδίο :attribute είναι υποχρεωτικό όταν το :other είναι :value',
-    'required_unless' => 'Το πεδίο :attribute είναι υποχρεωτικό εκτός αν το :other είναι στα :values.',
+    'required_unless' => 'Το πεδίο :attribute είναι υποχρεωτικό εκτός αν το :other περιέχεται στα :values.',
     'required_with' => 'Το πεδίο :attribute είναι υποχρεωτικό όταν υπάρχουν τα :values.',
     'required_with_all' => 'Tο :attribute πεδίο είναι υποχρεωτικό όταν υπάρχουν :values.',
     'required_without' => 'To πεδίο :attribute είναι υποχρεωτικό όταν δεν υπάρχουν :values.',
