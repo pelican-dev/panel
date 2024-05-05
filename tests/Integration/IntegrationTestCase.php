@@ -10,13 +10,12 @@ use App\Events\ActivityLogged;
 use App\Tests\Assertions\AssertsActivityLogged;
 use App\Tests\Traits\Integration\CreatesTestModels;
 use App\Transformers\Api\Application\BaseTransformer;
+use Illuminate\Support\Facades\DB;
 
 abstract class IntegrationTestCase extends TestCase
 {
     use AssertsActivityLogged;
     use CreatesTestModels;
-
-    protected array $connectionsToTransact = ['mysql'];
 
     protected $defaultHeaders = [
         'Accept' => 'application/json',
@@ -37,5 +36,15 @@ abstract class IntegrationTestCase extends TestCase
         return CarbonImmutable::createFromFormat(CarbonInterface::DEFAULT_TO_STRING_FORMAT, $timestamp)
             ->setTimezone(BaseTransformer::RESPONSE_TIMEZONE)
             ->toAtomString();
+    }
+
+    /**
+     * The database connections that should have transactions.
+     *
+     * @return array
+     */
+    protected function connectionsToTransact()
+    {
+        return [DB::getDriverName()];
     }
 }

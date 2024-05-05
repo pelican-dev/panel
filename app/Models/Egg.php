@@ -131,6 +131,7 @@ class Egg extends Model
         'config_logs' => null,
         'config_files' => null,
         'update_url' => null,
+        'tags' => '[]',
     ];
 
     protected function casts(): array
