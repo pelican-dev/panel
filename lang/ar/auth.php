@@ -1,35 +1,35 @@
 <?php
 
 return [
-    'return_to_login' => 'Return to Login',
+    'return_to_login' => 'العودة لتسجيل الدخول',
     'failed' => 'لم يتم العثور على حساب يتطابق مع هذه البيانات.',
 
     'login' => [
-        'title' => 'Login to Continue',
-        'button' => 'Log In',
+        'title' => 'تسجيل الدخول للاستمرار',
+        'button' => 'تسجيل الدخول',
         'required' => [
-            'username_or_email' => 'A username or email must be provided.',
-            'password' => 'Please enter your account password.',
+            'username_or_email' => 'يجب توفير اسم المستخدم أو البريد الإلكتروني.',
+            'password' => 'الرجاء إدخال كلمة المرور الخاصة بحسابك.',
         ],
     ],
 
     'forgot_password' => [
-        'title' => 'Request Password Reset',
+        'title' => 'طلب إعادة تعيين كلمة المرور',
         'label' => 'نسيت كلمة المرور؟',
         'label_help' => 'أدخل عنوان بريدك الإلكتروني لتتلقى تعليمات حول إعادة تعيين كلمة المرور.',
-        'button' => 'Send Email',
+        'button' => 'إرسال بريد إلكتروني',
         'required' => [
-            'email' => 'A valid email address must be provided to continue.',
+            'email' => 'يجب توفير عنوان بريد إلكتروني صالح للاستمرار.',
         ],
     ],
 
     'reset_password' => [
-        'title' => 'Reset Password',
-        'button' => 'Reset Password',
-        'new_password' => 'New Password',
-        'confirm_new_password' => 'Confirm New Password',
+        'title' => 'إعادة تعيين كلمة المرور',
+        'button' => 'إعادة تعيين كلمة المرور',
+        'new_password' => 'كلمة المرور الجديدة',
+        'confirm_new_password' => 'تأكيد كلمة المرور الجديدة',
         'requirement' => [
-            'password' => 'Passwords must be at least 8 characters in length.',
+            'password' => 'يجب أن تتكون كلمة المرور من ٨ أحرف على الأقل',
         ],
         'required' => [
             'password' => 'A new password is required.',
