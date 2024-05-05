@@ -8,13 +8,13 @@
  */
 return [
     'auth' => [
-        'fail' => 'Failed log in',
-        'success' => 'Logged in',
-        'password-reset' => 'Password reset',
-        'reset-password' => 'Requested password reset',
-        'checkpoint' => 'Two-factor authentication requested',
-        'recovery-token' => 'Used two-factor recovery token',
-        'token' => 'Solved two-factor challenge',
+        'fail' => 'Nepavyko prisijungti',
+        'success' => 'Prisijungta',
+        'password-reset' => 'Slaptažodžio atkūrimas',
+        'reset-password' => 'Paprašyta pakeisti slaptažodį iš naujo',
+        'checkpoint' => 'Prašyta Dviejų faktorių autentifikacija',
+        'recovery-token' => 'Naudota dviejų faktorių atgavimo tokeną',
+        'token' => 'Įvykdytas dviejų faktorių iššūkis',
         'ip-blocked' => 'Blocked request from unlisted IP address for :identifier',
         'sftp' => [
             'fail' => 'Failed SFTP log in',
