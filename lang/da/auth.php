@@ -48,7 +48,7 @@ return [
         'authentication_code' => 'Godkendelseskode',
         'authentication_code_description' => 'Indtast det 2-faktor token din enhed har genereret.',
         'button' => 'Fortsæt',
-        'lost_device' => 'Jeg har mistet min enhed',
+        'lost_device' => "Jeg har mistet min enhed",
         'have_device' => 'Jeg har min enhed',
     ],
 

@@ -48,7 +48,7 @@ return [
         'authentication_code' => 'Código de Autenticación',
         'authentication_code_description' => 'Introduzca el token de doble factor generado por su dispositivo.',
         'button' => 'Continuar',
-        'lost_device' => 'Perdí mi dispositivo',
+        'lost_device' => "Perdí mi dispositivo",
         'have_device' => 'Tengo mi dispositivo',
     ],
 

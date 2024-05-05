@@ -36,7 +36,7 @@ return [
         ],
         'setup' => [
             'title' => '2 Aşamalı Doğrulamayı Etkinleştir',
-            'subtitle' => 'Hesabınızı izinsiz erişimlerden koruyun. Her giriş yaptığında bir doğrulama kodu istenecek.',
+            'subtitle' => "Hesabınızı izinsiz erişimlerden koruyun. Her giriş yaptığında bir doğrulama kodu istenecek.",
             'help' => 'Yukarıdaki QR kodu herhangi bir kimlik doğrulama uygulaması ile okutun. Ardından, oluşturulan 6 haneli rakamı aşağıdaki alana girin.',
         ],
 

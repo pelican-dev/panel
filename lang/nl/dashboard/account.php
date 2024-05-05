@@ -36,7 +36,7 @@ return [
         ],
         'setup' => [
             'title' => 'Tweestapsverificatie inschakelen',
-            'subtitle' => 'Help je account te beschermen tegen ongeautoriseerde toegang. Je wordt om een verificatiecode gevraagd telkens wanneer je inlogt.',
+            'subtitle' => "Help je account te beschermen tegen ongeautoriseerde toegang. Je wordt om een verificatiecode gevraagd telkens wanneer je inlogt.",
             'help' => 'Scan de QR-code hierboven met behulp van de tweestapsverificatie-app naar jouw keuze. Voer daarna de 6-cijferige code in die wordt gegenereerd in het onderstaande veld.',
         ],
 

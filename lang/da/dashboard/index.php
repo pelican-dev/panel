@@ -3,7 +3,7 @@
 return [
     'title' => 'Dashboard',
     'showing-your-servers' => 'Viser dine servere',
-    'showing-others-servers' => 'Viser andres servere',
+    'showing-others-servers' => "Viser andres servere",
     'no-other-servers' => 'Der er ingen andre servere at vise.',
     'no-servers-associated' => 'Der er ingen servere tilknyttet din konto.',
 
