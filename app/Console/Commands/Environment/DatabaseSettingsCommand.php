@@ -49,7 +49,7 @@ class DatabaseSettingsCommand extends Command
         );
 
         if ($this->variables['DB_CONNECTION'] === 'mysql') {
-            $this->output->note('It is highly recommended to not use "localhost" as your database host as we have seen frequent socket connection issues. If you want to use a local connection you should be using "127.0.0.1".');
+            $this->output->note(__('commands.database_settings.DB_HOST_note'));
             $this->variables['DB_HOST'] = $this->option('host') ?? $this->ask(
                 'Database Host',
                 config('database.connections.mysql.host', '127.0.0.1')
@@ -65,7 +65,7 @@ class DatabaseSettingsCommand extends Command
                 config('database.connections.mysql.database', 'panel')
             );
 
-            $this->output->note('Using the "root" account for MySQL connections is not only highly frowned upon, it is also not allowed by this application. You\'ll need to have created a MySQL user for this software.');
+            $this->output->note(__('commands.database_settings.DB_USERNAME_note'));
             $this->variables['DB_USERNAME'] = $this->option('username') ?? $this->ask(
                 'Database Username',
                 config('database.connections.mysql.username', 'pelican')
@@ -74,7 +74,7 @@ class DatabaseSettingsCommand extends Command
             $askForMySQLPassword = true;
             if (!empty(config('database.connections.mysql.password')) && $this->input->isInteractive()) {
                 $this->variables['DB_PASSWORD'] = config('database.connections.mysql.password');
-                $askForMySQLPassword = $this->confirm('It appears you already have a MySQL connection password defined, would you like to change it?');
+                $askForMySQLPassword = $this->confirm(__('commands.database_settings.DB_PASSWORD_note'));
             }
 
             if ($askForMySQLPassword) {
@@ -85,11 +85,10 @@ class DatabaseSettingsCommand extends Command
                 $this->testMySQLConnection();
             } catch (\PDOException $exception) {
                 $this->output->error(sprintf('Unable to connect to the MySQL server using the provided credentials. The error returned was "%s".', $exception->getMessage()));
-                $this->output->error('Your connection credentials have NOT been saved. You will need to provide valid connection information before proceeding.');
+                $this->output->error(__('commands.database_settings.DB_error_2'));
 
-                if ($this->confirm('Go back and try again?')) {
+                if ($this->confirm(__('commands.database_settings.go_back'))) {
                     $this->database->disconnect('_panel_command_test');
-
                     return $this->handle();
                 }
 

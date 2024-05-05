@@ -18,6 +18,7 @@ return [
         'DB_USERNAME_note' => "Using the root account for MySQL connections is not only highly frowned upon, it is also not allowed by this application. You\'ll need to have created a MySQL user for this software.",
         'DB_PASSWORD_note' => 'It appears you already have a MySQL connection password defined, would you like to change it?',
         'DB_error_2' => 'Your connection credentials have NOT been saved. You will need to provide valid connection information before proceeding.',
+        'go_back' => 'Go back and try again'
     ],
     'make_node' => [
         'name' => 'Enter a short identifier used to distinguish this node from others',
