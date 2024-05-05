@@ -1,19 +1,19 @@
 <?php
 
 return [
-    'title' => 'Administration',
+    'title' => 'الإدارة',
     'header' => [
-        'title' => 'Administrative Overview',
-        'subtitle' => 'A quick glance at your system.',
+        'title' => 'نظرة إدارية',
+        'subtitle' => 'نظرة سريعة على النظام الخاص بك.',
     ],
     'content' => [
-        'title' => 'System Information',
-        'up-to-date' => 'You are running Pelican version <code>:version</code>. Your panel is up-to-date!',
-        'not-up-to-date1' => 'Your panel is <strong>not up-to-date!</strong> The latest version is',
-        'not-up-to-date2' => 'and you are currently running version <code>:version</code>.',
-        'get-help' => 'Get Help <small>(via Discord)</small>',
-        'documentation' => 'Documentation',
+        'title' => 'معلومات النظام',
+        'up-to-date' => 'أنت تقوم بتشغيل نسخة Pelican <code>:version</code>. لوحتك محدثة!',
+        'not-up-to-date1' => 'لوحة التحكم الخاصة بك <strong>غير محدثة!</strong> أحدث إصدار هو',
+        'not-up-to-date2' => 'وأنت تقوم حالياً بتشغيل الإصدار <code>:version</code>.',
+        'get-help' => 'احصل على مساعدة <small>(عبر ديسكورد)</small>',
+        'documentation' => 'الوثائق',
         'github' => 'Github',
-        'support-the-project' => 'Support the Project',
+        'support-the-project' => 'ادعم هذا المشروع',
     ],
 ];
