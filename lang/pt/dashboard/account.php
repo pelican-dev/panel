@@ -3,14 +3,14 @@
 return [
     'title' => 'Account Overview',
     'email' => [
-        'title' => 'Update Email Address',
+        'title' => 'Atualize seu e-mail',
         'button' => 'Update Email',
-        'updated' => 'Your primary email has been updated.',
+        'updated' => 'Seu endereço de e-mail foi atualizado.',
     ],
     'password' => [
-        'title' => 'Update Password',
+        'title' => 'Altere sua senha',
         'button' => 'Update Password',
-        'requirements' => 'Your new password should be at least 8 characters in length and unique to this website.',
+        'requirements' => 'Sua nova senha deve ter pelo menos 8 caracteres de comprimento.',
         'validation' => [
             'account_password' => 'You must provide your account password.',
             'current_password' => 'You must provide your current password.',
@@ -35,9 +35,9 @@ return [
             'button' => 'Disable Two-Step',
         ],
         'setup' => [
-            'title' => 'Enable Two-Step Verification',
+            'title' => 'Configurar autenticação de dois fatores',
             'subtitle' => "Help protect your account from unauthorized access. You'll be prompted for a verification code each time you sign in.",
-            'help' => 'Scan the QR code above using the two-step authentication app of your choice. Then, enter the 6-digit code generated into the field below.',
+            'help' => 'Não pode escanear o código? Insira o código abaixo em seu aplicativo:',
         ],
 
         'required' => [
