@@ -9,11 +9,6 @@ return [
             //"lang" => "Choose a language you want to use on your panel.",
             'settings_ui' => 'Enable UI based settings editor?',
         ],
-        /*
-        "lang" => [
-        "question" => "What language do you want to use?",
-        ],
-        */
         'redis' => [
             'note' => 'You\'ve selected the Redis driver for one or more options, please provide valid connection information below. In most cases you can use the defaults provided unless you have modified your setup.',
             'comment' => 'By default a Redis server instance has no password as it is running locally and inaccessible to the outside world. If this is the case, simply hit enter without entering a value.',
