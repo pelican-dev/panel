@@ -1,48 +1,48 @@
 <?php
 
 return [
-    'title' => 'Account Overview',
+    'title' => 'نظرة عامة على الحساب',
     'email' => [
-        'title' => 'Update Email Address',
-        'button' => 'Update Email',
-        'updated' => 'Your primary email has been updated.',
+        'title' => 'تحديث عنوان البريد الإلكتروني',
+        'button' => 'تحديث البريد الإلكتروني',
+        'updated' => 'تم تحديث بريدك الإلكتروني الأساسي.',
     ],
     'password' => [
-        'title' => 'Update Password',
-        'button' => 'Update Password',
-        'requirements' => 'Your new password should be at least 8 characters in length and unique to this website.',
+        'title' => 'تحديث كلمة المرور',
+        'button' => 'تحديث كلمة المرور',
+        'requirements' => 'يجب أن يكون طول كلمة المرور الجديدة 8 أحرف على الأقل وأن تكون فريدة من نوعها لهذا الموقع.',
         'validation' => [
-            'account_password' => 'You must provide your account password.',
-            'current_password' => 'You must provide your current password.',
-            'password_confirmation' => 'Password confirmation does not match the password you entered.',
+            'account_password' => 'يجب عليك توفير كلمة مرور حسابك.',
+            'current_password' => 'يجب عليك توفير كلمة المرور الحالية.',
+            'password_confirmation' => 'تأكيد كلمة المرور لا يتطابق مع كلمة المرور التي أدخلتها.',
         ],
         'updated' => 'تم تحديث كلمة المرور الخاصة بك.',
     ],
     'two_factor' => [
-        'title' => 'Two-Step Verification',
+        'title' => 'التحقق بخطوتين',
         'button' => 'إعداد التوثيق الثنائي',
         'disabled' => 'تم تعطيل التوثيق الثنائي في حسابك. لن يُطلب منك تقديم رمز عند تسجيل الدخول.',
         'enabled' => 'تم تفعيل التوثيق الثنائي في حسابك! من الآن فصاعدًا، عند تسجيل الدخول، سيُطلب منك تقديم الرمز الذي يُنتجه جهازك.',
         'invalid' => 'الرمز المقدم غير صالح.',
         'enable' => [
-            'help' => 'You do not currently have two-step verification enabled on your account. Click the button below to begin configuring it.',
-            'button' => 'Enable Two-Step',
+            'help' => 'ليس لديك حاليا التحقق من خطوتين مفعّل على حسابك. انقر على الزر أدناه للبدء في إعداده.',
+            'button' => 'تفعيل خطوتين',
         ],
         'disable' => [
-            'help' => 'Two-step verification is currently enabled on your account.',
+            'help' => 'التحقق بخطوتين مفعّل حاليًا على حسابك.',
             'title' => 'تعطيل التوثيق الثنائي',
             'field' => 'أدخل الرمز',
-            'button' => 'Disable Two-Step',
+            'button' => 'تعطيل خطوتين',
         ],
         'setup' => [
-            'title' => 'Enable Two-Step Verification',
-            'subtitle' => "Help protect your account from unauthorized access. You'll be prompted for a verification code each time you sign in.",
-            'help' => 'Scan the QR code above using the two-step authentication app of your choice. Then, enter the 6-digit code generated into the field below.',
+            'title' => 'تفعيل التحقق بخطوتين',
+            'subtitle' => "ساعد في حماية حسابك من الوصول غير المصرح به. سيتم مطالبتك برمز تحقق في كل مرة تقوم بتسجيل الدخول.",
+            'help' => 'قم بمسح رمز QR أعلاه باستخدام تطبيق المصادقة ذي الخطوتين الذي تختاره. ثم أدخل الرمز ذو 6 أرقام الذي تم إنشاؤه في الحقل أدناه.',
         ],
 
         'required' => [
-            'title' => '2-Factor Required',
-            'description' => 'Your account must have two-factor authentication enabled in order to continue.',
+            'title' => 'التحقق بخطوتين مطلوب',
+            'description' => 'يجب تفعيل المصادقة الثنائية في حسابك حتى تتمكن من المتابعة.',
         ],
     ],
 ];
