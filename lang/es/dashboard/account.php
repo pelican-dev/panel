@@ -36,7 +36,7 @@ return [
         ],
         'setup' => [
             'title' => 'Habilitar verificación en dos pasos',
-            'subtitle' => "Ayuda a proteger tu cuenta de acceso no autorizado. Se te pedirá un código de verificación cada vez que inicies sesión.",
+            'subtitle' => 'Ayuda a proteger tu cuenta de acceso no autorizado. Se te pedirá un código de verificación cada vez que inicies sesión.',
             'help' => 'Escanee el código QR de arriba usando la aplicación de autenticación en dos pasos de su elección. Luego, introduzca el código de 6 dígitos generado en el campo de abajo.',
         ],
 
