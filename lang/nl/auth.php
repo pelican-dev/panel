@@ -48,7 +48,7 @@ return [
         'authentication_code' => 'Authenticatie Code',
         'authentication_code_description' => 'Voer het tweestapstoken in dat door uw apparaat gegenereerd is.',
         'button' => 'Volgende',
-        'lost_device' => "Ik heb Mijn Apparaat kwijt",
+        'lost_device' => 'Ik heb Mijn Apparaat kwijt',
         'have_device' => 'Ik heb mijn apparaat',
     ],
 

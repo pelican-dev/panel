@@ -48,7 +48,7 @@ return [
         'authentication_code' => '認証コード',
         'authentication_code_description' => '6桁の二要素認証コードを入力してください。',
         'button' => '続行',
-        'lost_device' => "回復コードを使用",
+        'lost_device' => '回復コードを使用',
         'have_device' => '認証コードを使用',
     ],
 

@@ -36,7 +36,7 @@ return [
         ],
         'setup' => [
             'title' => 'Ota kaksivaiheinen todennus käyttöön',
-            'subtitle' => "Auta suojaamaan tilisi luvattomalta käytöltä. Sinulta pyydetään vahvistuskoodia joka kerta, kun kirjaudut sisään.",
+            'subtitle' => 'Auta suojaamaan tilisi luvattomalta käytöltä. Sinulta pyydetään vahvistuskoodia joka kerta, kun kirjaudut sisään.',
             'help' => 'Skannaa yllä oleva QR-koodi valitsemasi kaksivaiheisen todennuksen sovelluksella. Sitten syötä 6-numeroinen koodi alla olevaan kenttään.',
         ],
 

@@ -21,7 +21,7 @@ return [
         'description' => 'Una descripción de este Egg que se mostrará en el Panel según sea necesario.',
         'uuid' => 'Esto es el identificador único global para este Egg que Wings utiliza como identificador.',
         'author' => 'El autor de esta versión del Egg. Subir una nueva configuración del Egg de un autor diferente cambiará esto.',
-        'force_outgoing_ip' => "Fuerza que todo el tráfico de red saliente tenga su IP de origen traducida a la IP de asignación primaria del servidor. Es necesario para que algunos juegos funcionen correctamente cuando el nodo tiene múltiples direcciones IP públicas. Habilitar esta opción desactivará la red interna para cualquier servidor que utilice este Egg, lo que hará que no puedan acceder internamente a otros servidores en el mismo nodo.",
+        'force_outgoing_ip' => 'Fuerza que todo el tráfico de red saliente tenga su IP de origen traducida a la IP de asignación primaria del servidor. Es necesario para que algunos juegos funcionen correctamente cuando el nodo tiene múltiples direcciones IP públicas. Habilitar esta opción desactivará la red interna para cualquier servidor que utilice este Egg, lo que hará que no puedan acceder internamente a otros servidores en el mismo nodo.',
         'startup' => 'El comando de inicio predeterminado que debe ser usado para servidores nuevos usando este Egg.',
         'docker_images' => 'Las imágenes de docker disponibles para los servidores usando este Egg.',
     ],
