@@ -17,7 +17,7 @@ return [
         'title' => 'Passwort-Reset anfordern',
         'label' => 'Passwort vergessen?',
         'label_help' => 'Geben Sie Ihre E-Mail Adresse ein, um Anweisungen zum Zurücksetzen Ihres Passworts zu erhalten.',
-        'button' => 'E-Mail senden',
+        'button' => 'Konto wiederherstellen',
         'required' => [
             'email' => 'Eine gültige E-Mail-Adresse muss angegeben werden, um fortzufahren.',
         ],
@@ -25,7 +25,7 @@ return [
 
     'reset_password' => [
         'title' => 'Passwort zurücksetzen',
-        'button' => 'Passwort zurücksetzen',
+        'button' => 'Zurücksetzen und Anmelden',
         'new_password' => 'Neues Passwort',
         'confirm_new_password' => 'Neues Passwort bestätigen',
         'requirement' => [
