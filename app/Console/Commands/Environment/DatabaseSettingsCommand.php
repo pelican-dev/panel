@@ -89,6 +89,7 @@ class DatabaseSettingsCommand extends Command
 
                 if ($this->confirm(__('commands.database_settings.go_back'))) {
                     $this->database->disconnect('_panel_command_test');
+
                     return $this->handle();
                 }
 
