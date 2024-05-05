@@ -2,11 +2,11 @@
 
 return [
     'notices' => [
-        'imported' => 'Successfully imported this Egg and its associated variables.',
-        'updated_via_import' => 'This Egg has been updated using the file provided.',
-        'deleted' => 'Successfully deleted the requested egg from the Panel.',
-        'updated' => 'Egg configuration has been updated successfully.',
-        'script_updated' => 'Egg install script has been updated and will run whenever servers are installed.',
+        'imported' => '이 Egg 및 관련 변수를 성공적으로 불러왔습니다.',
+        'updated_via_import' => '이 Egg가 제공된 파일을 통해 업데이트되었습니다.',
+        'deleted' => '요청한 egg을 패널에서 성공적으로 삭제했습니다.',
+        'updated' => 'Egg 설정이 성공적으로 업데이트되었습니다.',
+        'script_updated' => 'Egg 설치 스크립트가 업데이트되었으며 서버가 설치될 때 실행됩니다.',
         'egg_created' => 'A new egg was laid successfully. You will need to restart any running daemons to apply this new egg.',
     ],
     'variables' => [
