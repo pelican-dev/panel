@@ -45,7 +45,7 @@ return [
     'expires' => 'Lejárat',
     'public_key' => 'Token',
     'api_access' => 'Api hozzáférés',
-    'never' => 'Never',
+    'never' => 'soha',
     'sign_out' => 'Kijelentkezés',
     'admin_control' => 'Admin felület',
     'required' => 'Required',
