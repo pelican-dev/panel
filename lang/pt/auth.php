@@ -17,7 +17,7 @@ return [
         'title' => 'Request Password Reset',
         'label' => 'Esqueceu a senha?',
         'label_help' => 'Digite o endereço de e-mail da sua conta para receber instruções sobre como redefinir sua senha.',
-        'button' => 'Send Email',
+        'button' => 'Recuperar Conta',
         'required' => [
             'email' => 'A valid email address must be provided to continue.',
         ],
@@ -25,7 +25,7 @@ return [
 
     'reset_password' => [
         'title' => 'Reset Password',
-        'button' => 'Reset Password',
+        'button' => 'Redefinir e Entrar',
         'new_password' => 'New Password',
         'confirm_new_password' => 'Confirm New Password',
         'requirement' => [
