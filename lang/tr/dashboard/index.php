@@ -3,7 +3,7 @@
 return [
     'title' => 'Kontrol Paneli',
     'showing-your-servers' => 'Kendi sunucuların gösteriliyor',
-    'showing-others-servers' => 'Başkalarının sunucuları gösteriliyor',
+    'showing-others-servers' => "Başkalarının sunucuları gösteriliyor",
     'no-other-servers' => 'Gösterilecek sunucu bulunamadı.',
     'no-servers-associated' => 'Bu hesap ile ilişkilendirilmiş herhangi bir sunucu bulunamadı.',
 
@@ -21,7 +21,7 @@ return [
         ],
         'intro-first-node' => [
             'heading' => 'Sunucu Bulunamadı',
-            'content' => 'Görünüşe göre daha bir Sunucu eklemediniz, ama üzülmeyin çünkü düğmeye basarak ilkini oluşturabilirsiniz!',
+            'content' => "Görünüşe göre daha bir Sunucu eklemediniz, ama üzülmeyin çünkü düğmeye basarak ilkini oluşturabilirsiniz!",
             'extra_note' => 'Eğer sorunlara rastlarsanız, lütfen GitHub üzerinden belirtin.',
             'button_label' => 'Pelican\'da ilk Sunucuyu oluştur',
         ],

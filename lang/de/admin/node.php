@@ -10,6 +10,6 @@ return [
         'node_deleted' => 'Node wurde erfolgreich aus dem Panel entfernt.',
         'node_created' => 'Neue Node erfolgreich erstellt. Du kannst den Daemon auf dieser Maschine automatisch konfigurieren, indem du die Registerkarte "Konfiguration" aufrufst. <strong>Bevor du Server hinzufügen kannst, musst du zuerst mindestens eine IP-Adresse und einen Port zuweisen.</strong>',
         'node_updated' => 'Nodeinformationen wurden aktualisiert. Wenn irgendwelche Daemon-Einstellungen geändert wurden, musst du den Node neu starten, damit diese Änderungen wirksam werden.',
-        'unallocated_deleted' => 'Alle nicht zugewiesenen Ports für <code>:ip</code> gelöscht.',
+        'unallocated_deleted' => 'Alle nicht zugewiesenen Ports für <code>:ip</code> wurden gelöscht.',
     ],
 ];

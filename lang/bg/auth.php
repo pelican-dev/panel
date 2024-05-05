@@ -48,7 +48,7 @@ return [
         'authentication_code' => 'Код за удостоверяване',
         'authentication_code_description' => 'Въведи дву-факторния токен създаден от устройството ти.',
         'button' => 'Продължи',
-        'lost_device' => 'Загубих устройството ми',
+        'lost_device' => "Загубих устройството ми",
         'have_device' => 'Имам устройството ми',
     ],
 

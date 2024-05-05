@@ -3,7 +3,7 @@
 return [
     'title' => 'Tableau de bord',
     'showing-your-servers' => 'Affichage de vos serveurs',
-    'showing-others-servers' => 'Affichage des serveurs des autres',
+    'showing-others-servers' => "Affichage des serveurs des autres",
     'no-other-servers' => 'Il n\'y a aucun autre serveur à afficher.',
     'no-servers-associated' => 'Il n\'y a aucun serveur associé à votre compte.',
 

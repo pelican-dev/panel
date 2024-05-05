@@ -36,7 +36,7 @@ return [
         ],
         'setup' => [
             'title' => 'Activer la vérification en deux étapes',
-            'subtitle' => 'Aidez à protéger votre compte contre les accès non autorisés. Un code de vérification vous sera demandé chaque fois que vous vous connecterez.',
+            'subtitle' => "Aidez à protéger votre compte contre les accès non autorisés. Un code de vérification vous sera demandé chaque fois que vous vous connecterez.",
             'help' => 'Scannez le code QR ci-dessus avec l\'application d\'authentification à deux facteurs de votre choix. Ensuite, entrez le code à 6 chiffres généré dans le champ ci-dessous.',
         ],
 

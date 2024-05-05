@@ -48,7 +48,7 @@ return [
         'authentication_code' => '인증 코드',
         'authentication_code_description' => '기기에 생성된 2단계 인증 토큰을 입력해주세요.',
         'button' => '계속',
-        'lost_device' => '기기를 잃어버렸어요',
+        'lost_device' => "기기를 잃어버렸어요",
         'have_device' => '기기를 갖고있어요',
     ],
 

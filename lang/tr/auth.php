@@ -48,7 +48,7 @@ return [
         'authentication_code' => 'Doğrulama Kodu',
         'authentication_code_description' => 'Cihazınız tarafından oluşturulan 2 Aşamalı Doğrulama kodunu girin.',
         'button' => 'Devam et',
-        'lost_device' => 'Cihazımı Kaybettim',
+        'lost_device' => "Cihazımı Kaybettim",
         'have_device' => 'Cihazıma Sahibim',
     ],
 

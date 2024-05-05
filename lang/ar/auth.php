@@ -48,7 +48,7 @@ return [
         'authentication_code' => 'رمز التحقق',
         'authentication_code_description' => 'أدخل الرمز الثنائي الذي أنشأه جهازك.',
         'button' => 'استمر',
-        'lost_device' => 'لقد فقدت جهازي',
+        'lost_device' => "لقد فقدت جهازي",
         'have_device' => 'لدي جهازي',
     ],
 

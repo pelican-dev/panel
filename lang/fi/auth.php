@@ -48,7 +48,7 @@ return [
         'authentication_code' => 'Vahvistuskoodi',
         'authentication_code_description' => 'Syötä laitteesi tuottama kaksivaiheinen tunniste.',
         'button' => 'Jatka',
-        'lost_device' => 'Olen Kadonnut Laitteen',
+        'lost_device' => "Olen Kadonnut Laitteen",
         'have_device' => 'Minulla On Laitteeni',
     ],
 

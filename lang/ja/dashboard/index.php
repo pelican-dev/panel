@@ -3,7 +3,7 @@
 return [
     'title' => 'ダッシュボード',
     'showing-your-servers' => 'あなたのサーバーを表示',
-    'showing-others-servers' => '他人のサーバーを表示',
+    'showing-others-servers' => "他人のサーバーを表示",
     'no-other-servers' => '表示する他人のサーバーがありません。',
     'no-servers-associated' => 'あなたのアカウントに関連付けられているサーバーがありません。',
 
@@ -21,7 +21,7 @@ return [
         ],
         'intro-first-node' => [
             'heading' => 'Nodeが見つかりません。',
-            'content' => 'Nodeがまだ設定されていないようです。最初のNodeを作成するにはボタンを押してください。',
+            'content' => "Nodeがまだ設定されていないようです。最初のNodeを作成するにはボタンを押してください。",
             'extra_note' => '問題が発生した場合は、GitHub で報告ください。',
             'button_label' => 'Pelicanで最初のNodeを作成',
         ],

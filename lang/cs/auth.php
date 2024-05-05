@@ -48,7 +48,7 @@ return [
         'authentication_code' => 'Ověřovací kód',
         'authentication_code_description' => 'Zadejte dvoufázový token vygenerovaný vaším zařízením.',
         'button' => 'Pokračovat',
-        'lost_device' => 'Ztratil jsem své zařízení',
+        'lost_device' => "Ztratil jsem své zařízení",
         'have_device' => 'Mám své zařízení',
     ],
 
