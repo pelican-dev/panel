@@ -9,4 +9,13 @@ return [
         'account_created' => 'La cuenta se ha creado correctamente.',
         'account_updated' => 'La cuenta se ha actualizado correctamente.',
     ],
+    'last_admin' => [
+        'hint' => '¡Este es el último administrador root!',
+        'helper_text' => 'Debes tener al menos un administrador root en tu sistema.',
+    ],
+    'root_admin' => 'Administrador (Root)',
+    'language' => [
+        'helper_text1' => '¡Tu idioma (:state) no ha sido traducido todavía!\nPero no te preocupes, puedes ayudar a arreglarlo con',
+        'helper_text2' => 'contribuyendo directamente aquí',
+    ],
 ];

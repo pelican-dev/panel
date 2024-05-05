@@ -5,6 +5,7 @@ import LoginFormContainer from '@/components/auth/LoginFormContainer';
 import { useStoreState } from 'easy-peasy';
 import { Formik, FormikHelpers } from 'formik';
 import { object, string } from 'yup';
+import { useTranslation } from 'react-i18next';
 import Field from '@/components/elements/Field';
 import tw from 'twin.macro';
 import Button from '@/components/elements/Button';
@@ -17,6 +18,8 @@ interface Values {
 }
 
 const LoginContainer = ({ history }: RouteComponentProps) => {
+    const { t } = useTranslation(['auth', 'strings']);
+
     const ref = useRef<Reaptcha>(null);
     const [token, setToken] = useState('');
 
@@ -69,19 +72,31 @@ const LoginContainer = ({ history }: RouteComponentProps) => {
             onSubmit={onSubmit}
             initialValues={{ username: '', password: '' }}
             validationSchema={object().shape({
-                username: string().required('A username or email must be provided.'),
-                password: string().required('Please enter your account password.'),
+                username: string().required(t('login.required.username_or_email')),
+                password: string().required(t('login.required.password')),
             })}
         >
             {({ isSubmitting, setSubmitting, submitForm }) => (
-                <LoginFormContainer title={'Login to Continue'} css={tw`w-full flex`}>
-                    <Field light type={'text'} label={'Username or Email'} name={'username'} disabled={isSubmitting} />
+                <LoginFormContainer title={t('login.title')} css={tw`w-full flex`}>
+                    <Field
+                        light
+                        type={'text'}
+                        label={t('user_identifier', { ns: 'strings' })}
+                        name={'username'}
+                        disabled={isSubmitting}
+                    />
                     <div css={tw`mt-6`}>
-                        <Field light type={'password'} label={'Password'} name={'password'} disabled={isSubmitting} />
+                        <Field
+                            light
+                            type={'password'}
+                            label={t('password', { ns: 'strings' })}
+                            name={'password'}
+                            disabled={isSubmitting}
+                        />
                     </div>
                     <div css={tw`mt-6`}>
                         <Button type={'submit'} size={'xlarge'} isLoading={isSubmitting} disabled={isSubmitting}>
-                            Login
+                            {t('login.button')}
                         </Button>
                     </div>
                     {recaptchaEnabled && (
@@ -104,7 +119,7 @@ const LoginContainer = ({ history }: RouteComponentProps) => {
                             to={'/auth/password'}
                             css={tw`text-xs text-neutral-500 tracking-wide no-underline uppercase hover:text-neutral-600`}
                         >
-                            Forgot password?
+                            {t('forgot_password.label')}
                         </Link>
                     </div>
                 </LoginFormContainer>

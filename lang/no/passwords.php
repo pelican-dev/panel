@@ -11,7 +11,7 @@ return [
     | has failed, such as for an invalid token or invalid new password.
     |
     */
-    'password' => 'Passwords must be at least six characters and match the confirmation.',
+    'password' => 'Passordet må være på minst seks tegn, og samsvare med bekreftelsen.',
     'reset' => 'Ditt passord har blitt tilbakestilt!',
     'sent' => 'Vi har sendt deg en e-post med en tilbakestillingslink for ditt passord!',
     'token' => 'Koden for å nullstille passordet er ugyldig.',

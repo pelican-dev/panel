@@ -9,4 +9,13 @@ return [
         'account_created' => 'Учетная запись успешно создана!',
         'account_updated' => 'Аккаунт был успешно изменен.',
     ],
+    'last_admin' => [
+        'hint' => 'Это последний root администратор!',
+        'helper_text' => 'В вашей системе должен быть хотя бы один root администратор.',
+    ],
+    'root_admin' => 'Администратор (Root)',
+    'language' => [
+        'helper_text1' => 'Your language (:state) has not been translated yet!\nBut never fear, you can help fix that by',
+        'helper_text2' => 'contributing directly here',
+    ],
 ];

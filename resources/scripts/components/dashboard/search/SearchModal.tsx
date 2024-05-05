@@ -3,6 +3,7 @@ import Modal, { RequiredModalProps } from '@/components/elements/Modal';
 import { Field, Form, Formik, FormikHelpers, useFormikContext } from 'formik';
 import { Actions, useStoreActions, useStoreState } from 'easy-peasy';
 import { object, string } from 'yup';
+import { useTranslation } from 'react-i18next';
 import debounce from 'debounce';
 import FormikFieldWrapper from '@/components/elements/FormikFieldWrapper';
 import InputSpinner from '@/components/elements/InputSpinner';
@@ -46,6 +47,8 @@ const SearchWatcher = () => {
 };
 
 export default ({ ...props }: Props) => {
+    const { t } = useTranslation('search');
+
     const ref = useRef<HTMLInputElement>(null);
     const isAdmin = useStoreState((state) => state.user.data!.rootAdmin);
     const [servers, setServers] = useState<Server[]>([]);
@@ -80,18 +83,14 @@ export default ({ ...props }: Props) => {
         <Formik
             onSubmit={search}
             validationSchema={object().shape({
-                term: string().min(3, 'Please enter at least three characters to begin searching.'),
+                term: string().min(3, t('validation')),
             })}
             initialValues={{ term: '' } as Values}
         >
             {({ isSubmitting }) => (
                 <Modal {...props}>
                     <Form>
-                        <FormikFieldWrapper
-                            name={'term'}
-                            label={'Search term'}
-                            description={'Enter a server name, uuid, or allocation to begin searching.'}
-                        >
+                        <FormikFieldWrapper name={'term'} label={t('term.label')} description={t('term.description')}>
                             <SearchWatcher />
                             <InputSpinner visible={isSubmitting}>
                                 <Field as={InputWithRef} name={'term'} />

@@ -1,18 +1,55 @@
 <?php
 
 return [
-    'sign_in' => 'Se connecter',
-    'go_to_login' => 'Aller à la connexion',
+    'return_to_login' => 'Revenir à la page de connexion',
     'failed' => 'Aucun compte correspondant à ces identifiants n\'a été trouvé.',
 
+    'login' => [
+        'title' => 'Connectez-vous pour continuer',
+        'button' => 'Connexion',
+        'required' => [
+            'username_or_email' => 'Un nom d\'utilisateur ou une adresse e-mail doit être fourni.',
+            'password' => 'Veuillez entrer le mot de passe de votre compte.',
+        ],
+    ],
+
     'forgot_password' => [
+        'title' => 'Demande de réinitialisation du mot de passe',
         'label' => 'Mot de passe oublié ?',
         'label_help' => 'Entrez votre adresse e-mail pour recevoir des instructions sur la réinitialisation de votre mot de passe.',
-        'button' => 'Récupérer un compte',
+        'button' => 'Envoyer l\'e-mail',
+        'required' => [
+            'email' => 'Une adresse e-mail valide doit être fournie pour continuer.',
+        ],
     ],
 
     'reset_password' => [
-        'button' => 'Réinitialiser et se connecter',
+        'title' => 'Réinitialiser le mot de passe',
+        'button' => 'Réinitialiser le mot de passe',
+        'new_password' => 'Nouveau mot de passe',
+        'confirm_new_password' => 'Confirmer le nouveau mot de passe',
+        'requirement' => [
+            'password' => 'Les mots de passe doivent comporter au moins 8 caractères.',
+        ],
+        'required' => [
+            'password' => 'Un nouveau mot de passe est requis.',
+            'password_confirmation' => 'Votre nouveau mot de passe ne correspond pas.',
+        ],
+        'validation' => [
+            'password' => 'Votre nouveau mot de passe doit comporter au moins 8 caractères.',
+            'password_confirmation' => 'Votre nouveau mot de passe ne correspond pas.',
+        ],
+    ],
+
+    'checkpoint' => [
+        'title' => 'Point de contrôle de l\'appareil',
+        'recovery_code' => 'Code de récupération',
+        'recovery_code_description' => 'Saisissez l\'un des codes de récupération générés lorsque vous avez configuré l\'authentification à deux facteurs sur ce compte pour continuer.',
+        'authentication_code' => 'Code d\'authentification',
+        'authentication_code_description' => 'Saisissez le jeton d\'authentification à deux facteurs généré par votre appareil.',
+        'button' => 'Continuer',
+        'lost_device' => "J'ai perdu mon appareil",
+        'have_device' => 'J\'ai mon appareil',
     ],
 
     'two_factor' => [

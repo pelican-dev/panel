@@ -2,7 +2,7 @@
 
 return [
     'validation' => [
-        'fqdn_not_resolvable' => 'The FQDN or IP address provided does not resolve to a valid IP address.',
+        'fqdn_not_resolvable' => '입력한 도메인 또는 IP 주소가 올바른 IP 주소가 아닙니다.',
         'fqdn_required_for_ssl' => 'A fully qualified domain name that resolves to a public IP address is required in order to use SSL for this node.',
     ],
     'notices' => [

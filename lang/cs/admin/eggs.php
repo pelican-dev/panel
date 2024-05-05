@@ -16,4 +16,13 @@ return [
             'variable_created' => 'Nová proměnná byla úspěšně vytvořena a přiřazena k tomuto vejci.',
         ],
     ],
+    'descriptions' => [
+        'name' => 'Jednoduchý, člověkem čitelný název pro toto vejce.',
+        'description' => 'Popis tohoto vejce, který se zobrazí v panelu podle potřeby.',
+        'uuid' => 'Toto je celosvětově jedinečný identifikátor pro tento Egg, který Wings používá jako identifikátor.',
+        'author' => 'Autor této verze Egg. Nahrání nové konfigurace Egg od jiného autora to změní.',
+        'force_outgoing_ip' => "Forces all outgoing network traffic to have its Source IP NATed to the IP of the server's primary allocation IP.\nRequired for certain games to work properly when the Node has multiple public IP addresses.\nEnabling this option will disable internal networking for any servers using this egg, causing them to be unable to internally access other servers on the same node.",
+        'startup' => 'The default startup command that should be used for new servers using this Egg.',
+        'docker_images' => 'The docker images available to servers using this egg.',
+    ],
 ];

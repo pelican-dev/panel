@@ -2,18 +2,18 @@
 
 return [
     'user' => [
-        'search_users' => 'Enter a Username, User ID, or Email Address',
+        'search_users' => '이름, 아이디 또는 이메일 주소를 입력해주세요.',
         'select_search_user' => 'ID of user to delete (Enter \'0\' to re-search)',
-        'deleted' => 'User successfully deleted from the Panel.',
-        'confirm_delete' => 'Are you sure you want to delete this user from the Panel?',
-        'no_users_found' => 'No users were found for the search term provided.',
+        'deleted' => '유저가 패널에서 성공적으로 삭제되었습니다.',
+        'confirm_delete' => '정말로 이 유저를 패널에서 삭제하시겠습니까?',
+        'no_users_found' => '입력한 검색어에 맞는 유저를 찾을 수 없습니다.',
         'multiple_found' => 'Multiple accounts were found for the user provided, unable to delete a user because of the --no-interaction flag.',
         'ask_admin' => 'Is this user an administrator?',
-        'ask_email' => 'Email Address',
-        'ask_username' => 'Username',
-        'ask_name_first' => 'First Name',
-        'ask_name_last' => 'Last Name',
-        'ask_password' => 'Password',
+        'ask_email' => '이메일 주소',
+        'ask_username' => '사용자명',
+        'ask_name_first' => '이름',
+        'ask_name_last' => '성',
+        'ask_password' => '비밀번호',
         'ask_password_tip' => 'If you would like to create an account with a random password emailed to the user, re-run this command (CTRL+C) and pass the `--no-password` flag.',
         'ask_password_help' => 'Passwords must be at least 8 characters in length and contain at least one capital letter and number.',
         '2fa_help_text' => [

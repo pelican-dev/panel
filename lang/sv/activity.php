@@ -8,29 +8,29 @@
  */
 return [
     'auth' => [
-        'fail' => 'Failed log in',
-        'success' => 'Logged in',
-        'password-reset' => 'Password reset',
-        'reset-password' => 'Requested password reset',
-        'checkpoint' => 'Two-factor authentication requested',
-        'recovery-token' => 'Used two-factor recovery token',
-        'token' => 'Solved two-factor challenge',
-        'ip-blocked' => 'Blocked request from unlisted IP address for :identifier',
+        'fail' => 'Kunde inte logga in',
+        'success' => 'Inloggad',
+        'password-reset' => 'Återställ lösenord',
+        'reset-password' => 'Begär att nollställa lösenord',
+        'checkpoint' => 'Tvåfaktorsautentisering begärd',
+        'recovery-token' => 'Använd tvåfaktorsåterställningstoken',
+        'token' => 'Löst tvåfaktorsutmaning',
+        'ip-blocked' => 'Blockerad förfrågan från onoterad IP-adress för :identifier',
         'sftp' => [
-            'fail' => 'Failed SFTP log in',
+            'fail' => 'Misslyckad SFTP-inloggning',
         ],
     ],
     'user' => [
         'account' => [
-            'email-changed' => 'Changed email from :old to :new',
-            'password-changed' => 'Changed password',
+            'email-changed' => 'Ändrade e-post från :old till :new',
+            'password-changed' => 'Ändrat lösenord',
         ],
         'api-key' => [
-            'create' => 'Created new API key :identifier',
-            'delete' => 'Deleted API key :identifier',
+            'create' => 'Skapade ny API-nyckel :identifier',
+            'delete' => 'Raderad API-nyckel :identifier',
         ],
         'ssh-key' => [
-            'create' => 'Added SSH key :fingerprint to account',
+            'create' => 'Lade till SSH-nyckeln :fingerprint to account',
             'delete' => 'Removed SSH key :fingerprint from account',
         ],
         'two-factor' => [

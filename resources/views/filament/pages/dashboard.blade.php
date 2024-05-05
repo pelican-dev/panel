@@ -1,7 +1,7 @@
 <x-filament-panels::page>
 
     <x-filament::tabs disabled>
-        <x-filament::tabs.item disabled>Overview: </x-filament::tabs.item>
+        <x-filament::tabs.item disabled>{{ trans('dashboard/index.overview') }} </x-filament::tabs.item>
 
         <x-filament::tabs.item
             icon="tabler-server-2"
@@ -35,11 +35,11 @@
     <x-filament-panels::header
         :actions="$this->getCachedHeaderActions()"
         :breadcrumbs="filament()->hasBreadcrumbs() ? $this->getBreadcrumbs() : []"
-        :heading="'Welcome to Pelican!'"
-        :subheading="'Version: ' . config('app.version')"
+        :heading=" trans('dashboard/index.heading')"
+        :subheading="trans('strings.version', ['version' => config('app.version')])"
     ></x-filament-panels::header>
 
-    <p>You can expand the following sections:</p>
+    <p>{{ trans('dashboard/index.expand_sections') }}</p>
 
     @if ($inDevelopment)
         <x-filament::section
@@ -51,13 +51,13 @@
             collapsed
            :header-actions="$devActions"
         >
-            <x-slot name="heading">Information for Developers</x-slot>
+            <x-slot name="heading">{{ trans('dashboard/index.sections.intro-developers.heading') }}</x-slot>
 
-            <p>Thank you for trying out the development version!</p>
+            <p>{{  trans('dashboard/index.sections.intro-developers.content') }}</p>
 
             <p><br /></p>
 
-            <p>If you run into any issues, please report them on GitHub.</p>
+            <p>{{  trans('dashboard/index.sections.intro-developers.extra_note') }}</p>
 
         </x-filament::section>
     @endif
@@ -72,9 +72,9 @@
             persist-collapsed
             :header-actions="$nodeActions"
         >
-            <x-slot name="heading">No Nodes Detected</x-slot>
+            <x-slot name="heading">{{ trans('dashboard/index.sections.intro-first-node.heading') }}</x-slot>
 
-            <p>It looks like you don't have any Nodes set up yet, but don't worry because you click the action button to create your first one!</p>
+            <p>{{  trans('dashboard/index.sections.intro-first-node.content') }}</p>
 
         </x-filament::section>
     @endif
@@ -90,13 +90,13 @@
         persist-collapsed
         :header-actions="$supportActions"
     >
-        <x-slot name="heading">Support Pelican</x-slot>
+        <x-slot name="heading">{{ trans('dashboard/index.sections.intro-support.heading') }}</x-slot>
 
-        <p>Thank you for using Pelican, this could only be achieved through the support of you, our contributors, and the rest of our supporters!</p>
+        <p>{{  trans('dashboard/index.sections.intro-support.content') }}</p>
 
         <p><br /></p>
 
-        <p>We appreciate any and all support from anybody.</p>
+        <p>{{  trans('dashboard/index.sections.intro-support.extra_note') }}</p>
 
     </x-filament::section>
 
@@ -110,9 +110,9 @@
         persist-collapsed
         :header-actions="$helpActions"
     >
-        <x-slot name="heading">Need Help?</x-slot>
+        <x-slot name="heading">{{ trans('dashboard/index.sections.intro-help.heading') }}</x-slot>
 
-        <p>Check out the documentation first! If you still need assistance then, fly onto our Discord server!</p>
+        <p>{{  trans('dashboard/index.sections.intro-help.content') }}</p>
 
     </x-filament::section>
 

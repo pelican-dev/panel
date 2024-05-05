@@ -34,7 +34,7 @@ return [
     'disks' => [
         // There is no configuration for the local disk for Daemon. That configuration
         // is determined by the Daemon configuration, and not the Panel.
-        'daemon' => [
+        'wings' => [
             'adapter' => Backup::ADAPTER_DAEMON,
         ],
 

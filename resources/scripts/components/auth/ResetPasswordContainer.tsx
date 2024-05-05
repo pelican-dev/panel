@@ -8,6 +8,7 @@ import { Actions, useStoreActions } from 'easy-peasy';
 import { ApplicationStore } from '@/state';
 import { Formik, FormikHelpers } from 'formik';
 import { object, ref, string } from 'yup';
+import { useTranslation } from 'react-i18next';
 import Field from '@/components/elements/Field';
 import Input from '@/components/elements/Input';
 import tw from 'twin.macro';
@@ -19,6 +20,8 @@ interface Values {
 }
 
 export default ({ match, location }: RouteComponentProps<{ token: string }>) => {
+    const { t } = useTranslation('auth');
+
     const [email, setEmail] = useState('');
 
     const { clearFlashes, addFlash } = useStoreActions((actions: Actions<ApplicationStore>) => actions.flashes);
@@ -52,35 +55,40 @@ export default ({ match, location }: RouteComponentProps<{ token: string }>) => 
             }}
             validationSchema={object().shape({
                 password: string()
-                    .required('A new password is required.')
-                    .min(8, 'Your new password should be at least 8 characters in length.'),
+                    .required(t('reset_password.required.password'))
+                    .min(8, t('reset_password.validation.password')),
                 passwordConfirmation: string()
-                    .required('Your new password does not match.')
+                    .required(t('reset_password.required.password_confirmation'))
                     // @ts-expect-error this is valid
-                    .oneOf([ref('password'), null], 'Your new password does not match.'),
+                    .oneOf([ref('password'), null], t('reset_password.validation.password_confirmation')),
             })}
         >
             {({ isSubmitting }) => (
-                <LoginFormContainer title={'Reset Password'} css={tw`w-full flex`}>
+                <LoginFormContainer title={t('reset_password.title')} css={tw`w-full flex`}>
                     <div>
-                        <label>Email</label>
+                        <label>{t('email')}</label>
                         <Input value={email} isLight disabled />
                     </div>
                     <div css={tw`mt-6`}>
                         <Field
                             light
-                            label={'New Password'}
+                            label={t('reset_password.new_password')}
                             name={'password'}
                             type={'password'}
-                            description={'Passwords must be at least 8 characters in length.'}
+                            description={t('reset_password.requirement.password')}
                         />
                     </div>
                     <div css={tw`mt-6`}>
-                        <Field light label={'Confirm New Password'} name={'passwordConfirmation'} type={'password'} />
+                        <Field
+                            light
+                            label={t('reset_password.confirm_new_password')}
+                            name={'passwordConfirmation'}
+                            type={'password'}
+                        />
                     </div>
                     <div css={tw`mt-6`}>
                         <Button size={'xlarge'} type={'submit'} disabled={isSubmitting} isLoading={isSubmitting}>
-                            Reset Password
+                            {t('reset_password.button')}
                         </Button>
                     </div>
                     <div css={tw`mt-6 text-center`}>
@@ -88,7 +96,7 @@ export default ({ match, location }: RouteComponentProps<{ token: string }>) => 
                             to={'/auth/login'}
                             css={tw`text-xs text-neutral-500 tracking-wide no-underline uppercase hover:text-neutral-600`}
                         >
-                            Return to Login
+                            {t('return_to_login')}
                         </Link>
                     </div>
                 </LoginFormContainer>

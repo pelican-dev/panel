@@ -11,9 +11,9 @@ return [
     | has failed, such as for an invalid token or invalid new password.
     |
     */
-    'password' => 'Passwords must be at least six characters and match the confirmation.',
-    'reset' => 'Your password has been reset!',
-    'sent' => 'We have e-mailed your password reset link!',
-    'token' => 'This password reset token is invalid.',
-    'user' => 'We can\'t find a user with that e-mail address.',
+    'password' => 'Parolele trebuie să aibă cel puţin şase caractere şi să coincidă.',
+    'reset' => 'Parola dumneavoastră a fost resetată!',
+    'sent' => 'Ți-am trimis prin e-mail link-ul de resetare a parolei!',
+    'token' => 'Acest token de resetare a parolei este invalid.',
+    'user' => 'Nu putem găsi un utilizator cu acea adresă de e-mail.',
 ];

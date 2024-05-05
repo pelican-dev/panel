@@ -236,7 +236,7 @@ class Server extends Model
      */
     public function allocations(): HasMany
     {
-        return $this->hasMany(Allocation::class, 'server_id');
+        return $this->hasMany(Allocation::class);
     }
 
     /**
@@ -395,8 +395,16 @@ class Server extends Model
         }
     }
 
-    public function retrieveStatus()
+    public function retrieveStatus(): string
     {
-        return $this->node->serverStatuses();
+        $status = cache()->get("servers.$this->uuid.container.status");
+
+        if ($status) {
+            return $status;
+        }
+
+        $this->node->serverStatuses();
+
+        return cache()->get("servers.$this->uuid.container.status") ?? 'missing';
     }
 }

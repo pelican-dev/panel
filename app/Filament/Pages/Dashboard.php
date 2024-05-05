@@ -18,7 +18,10 @@ class Dashboard extends Page
 
     protected ?string $heading = '';
 
-    protected static ?string $title = 'Dashboard';
+    public function getTitle(): string
+    {
+        return trans('strings.dashboard');
+    }
 
     protected static ?string $slug = '/';
 
@@ -36,46 +39,42 @@ class Dashboard extends Page
 
             'devActions' => [
                 CreateAction::make()
-                    ->label('Create Issue')
+                    ->label(trans('dashboard/index.sections.intro-developers.button_issues'))
                     ->icon('tabler-brand-github')
                     ->url('https://github.com/pelican-dev/panel/issues/new/choose', true)
                     ->color('warning'),
                 CreateAction::make()
-                    ->label('Discuss Features')
+                    ->label(trans('dashboard/index.sections.intro-developers.button_features'))
                     ->icon('tabler-brand-github')
-                    ->url('https://github.com/pelican-dev/panel/discussions', true)
-                    ->color('primary'),
+                    ->url('https://github.com/pelican-dev/panel/discussions', true),
             ],
             'nodeActions' => [
                 CreateAction::make()
-                    ->label('Create first Node in Pelican')
+                    ->label(trans('dashboard/index.sections.intro-first-node.button_label'))
                     ->icon('tabler-server-2')
-                    ->url(route('filament.admin.resources.nodes.create'))
-                    ->color('primary'),
+                    ->url(route('filament.admin.resources.nodes.create')),
             ],
             'supportActions' => [
                 CreateAction::make()
-                    ->label('Help Translate')
+                    ->label(trans('dashboard/index.sections.intro-support.button_translate'))
                     ->icon('tabler-language')
-                    ->url('https://crowdin.com/project/pelican-dev', true)
-                    ->color('info'),
+                    ->url('https://crowdin.com/project/pelican-dev', true),
                 CreateAction::make()
-                    ->label('Donate Directly')
+                    ->label(trans('dashboard/index.sections.intro-support.button_donate'))
                     ->icon('tabler-cash')
                     ->url('https://pelican.dev/donate', true)
                     ->color('success'),
             ],
             'helpActions' => [
                 CreateAction::make()
-                    ->label('Read Documentation')
+                    ->label(trans('dashboard/index.sections.intro-help.button_docs'))
                     ->icon('tabler-speedboat')
-                    ->url('https://pelican.dev/docs', true)
-                    ->color('info'),
+                    ->url('https://pelican.dev/docs', true),
                 CreateAction::make()
-                    ->label('Get Help in Discord')
+                    ->label(trans('dashboard/index.sections.intro-help.button_discord'))
                     ->icon('tabler-brand-discord')
                     ->url('https://discord.gg/pelican-panel', true)
-                    ->color('primary'),
+                    ->color('blurple'),
             ],
         ];
     }

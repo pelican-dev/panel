@@ -1,18 +1,55 @@
 <?php
 
 return [
-    'sign_in' => 'Přihlásit se',
-    'go_to_login' => 'Přejít na přihlášení',
+    'return_to_login' => 'Návrat na přihlášení',
     'failed' => 'Nebyl nalezen žádný účet odpovídající těmto přihlašovacím údajům.',
 
+    'login' => [
+        'title' => 'Přihlaste se pro pokračování',
+        'button' => 'Přihlásit se',
+        'required' => [
+            'username_or_email' => 'Musíte zadat uživatelské jméno nebo email.',
+            'password' => 'Zadejte prosím heslo k účtu.',
+        ],
+    ],
+
     'forgot_password' => [
+        'title' => 'Žádost o obnovení hesla',
         'label' => 'Zapomněli jste heslo?',
         'label_help' => 'Zadejte e-mailovou adresu vašeho účtu pro příjem pokynů k obnovení hesla.',
-        'button' => 'Obnovit účet',
+        'button' => 'Odeslat email',
+        'required' => [
+            'email' => 'Pro pokračování musí být uvedena platná emailová adresa.',
+        ],
     ],
 
     'reset_password' => [
-        'button' => 'Obnovit a přihlásit se',
+        'title' => 'Obnovení hesla',
+        'button' => 'Obnovit heslo',
+        'new_password' => 'Nové heslo',
+        'confirm_new_password' => 'Potvrďte nové heslo',
+        'requirement' => [
+            'password' => 'Heslo musí být dlouhé alespoň 8 znaků',
+        ],
+        'required' => [
+            'password' => 'Vyžadováno nové heslo.',
+            'password_confirmation' => 'Nová hesla se neshodují.',
+        ],
+        'validation' => [
+            'password' => 'Nové heslo by mělo být dlouhé alespoň 8 znaků.',
+            'password_confirmation' => 'Nová hesla se neshodují.',
+        ],
+    ],
+
+    'checkpoint' => [
+        'title' => 'Kontrolní bod zařízení',
+        'recovery_code' => 'Kódy pro obnovení',
+        'recovery_code_description' => 'Zadejte jeden z obnovovacích kódů vytvořených při nastavování dvoufázového ověření na tomto účtu pro pokračování.',
+        'authentication_code' => 'Ověřovací kód',
+        'authentication_code_description' => 'Zadejte dvoufázový token vygenerovaný vaším zařízením.',
+        'button' => 'Pokračovat',
+        'lost_device' => "Ztratil jsem své zařízení",
+        'have_device' => 'Mám své zařízení',
     ],
 
     'two_factor' => [

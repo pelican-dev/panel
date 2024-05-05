@@ -10,12 +10,15 @@ import FlashMessageRender from '@/components/FlashMessageRender';
 import { format } from 'date-fns';
 import PageContentBlock from '@/components/elements/PageContentBlock';
 import tw from 'twin.macro';
+import { useTranslation } from 'react-i18next';
 import GreyRowBox from '@/components/elements/GreyRowBox';
 import { Dialog } from '@/components/elements/dialog';
 import { useFlashKey } from '@/plugins/useFlash';
 import Code from '@/components/elements/Code';
 
 export default () => {
+    const { t } = useTranslation(['dashboard/account', 'strings']);
+
     const [deleteIdentifier, setDeleteIdentifier] = useState('');
     const [keys, setKeys] = useState<ApiKey[]>([]);
     const [loading, setLoading] = useState(true);
@@ -61,7 +64,7 @@ export default () => {
                     </Dialog.Confirm>
                     {keys.length === 0 ? (
                         <p css={tw`text-center text-sm`}>
-                            {loading ? 'Loading...' : 'No API keys exist for this account.'}
+                            {loading ? t('loading', { ns: 'strings' }) : 'No API keys exist for this account.'}
                         </p>
                     ) : (
                         keys.map((key, index) => (
@@ -73,8 +76,10 @@ export default () => {
                                 <div css={tw`ml-4 flex-1 overflow-hidden`}>
                                     <p css={tw`text-sm break-words`}>{key.description}</p>
                                     <p css={tw`text-2xs text-neutral-300 uppercase`}>
-                                        Last used:&nbsp;
-                                        {key.lastUsedAt ? format(key.lastUsedAt, 'MMM do, yyyy HH:mm') : 'Never'}
+                                        {t('last_used', { ns: 'strings' })}:&nbsp;
+                                        {key.lastUsedAt
+                                            ? format(key.lastUsedAt, 'MMM do, yyyy HH:mm')
+                                            : t('never', { ns: 'strings' })}
                                     </p>
                                 </div>
                                 <p css={tw`text-sm ml-4 hidden md:block`}>

@@ -27,11 +27,11 @@ enum ServerState: string
     {
         return match ($this) {
             self::Normal => 'primary',
-            self::Installing => 'info',
+            self::Installing => 'primary',
             self::InstallFailed => 'danger',
             self::ReinstallFailed => 'danger',
-            self::Suspended => 'danger',
-            self::RestoringBackup => 'info',
+            self::Suspended => 'warning',
+            self::RestoringBackup => 'primary',
         };
     }
 }

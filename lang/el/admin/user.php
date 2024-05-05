@@ -2,11 +2,20 @@
 
 return [
     'exceptions' => [
-        'user_has_servers' => 'Cannot delete a user with active servers attached to their account. Please delete their servers before continuing.',
-        'user_is_self' => 'Cannot delete your own user account.',
+        'user_has_servers' => 'Δεν είναι δυνατή η διαγραφή ενός χρήστη με ενεργούς διακομιστές συνδεδεμένους στον λογαριασμό του. Παρακαλούμε διαγράψτε τους διακομιστές του πριν συνεχίσετε.',
+        'user_is_self' => 'Δεν μπορείτε να διαγράψετε το δικό σας λογαριασμό χρήστη.',
     ],
     'notices' => [
-        'account_created' => 'Account has been created successfully.',
-        'account_updated' => 'Account has been successfully updated.',
+        'account_created' => 'Ο λογαριασμός δημιουργηθήκε με επιτυχία.',
+        'account_updated' => 'Ο λογαριασμός ενημερώθηκε με επιτυχία.',
+    ],
+    'last_admin' => [
+        'hint' => 'Αυτός είναι ο τελευταίος root administrator!',
+        'helper_text' => 'Πρέπει να έχετε τουλάχιστον έναν root administrator στο σύστημά σας.',
+    ],
+    'root_admin' => 'Διαχειριστής (Root)',
+    'language' => [
+        'helper_text1' => 'Η γλώσσα σας (:state) δεν έχει μεταφραστεί ακόμα!\nΑλλά μην ανησυχείτε, μπορείτε να βοηθήσετε να το διορθώσετε αυτό',
+        'helper_text2' => 'συνεισφέροντας άμεσα εδώ',
     ],
 ];

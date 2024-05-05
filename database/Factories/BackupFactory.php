@@ -28,6 +28,7 @@ class BackupFactory extends Factory
             'is_successful' => true,
             'created_at' => CarbonImmutable::now(),
             'completed_at' => CarbonImmutable::now(),
+            'ignored_files' => [],
         ];
     }
 }

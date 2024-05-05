@@ -20,7 +20,7 @@ return [
             'Denne kommando vil deaktivere 2-faktor godkendelse for en brugers konto, hvis det er aktiveret. Dette bør kun bruges som en konto recovery kommando, hvis brugeren er låst ude af deres konto.',
             'Hvis dette ikke er det du ønskede at gøre, tryk CTRL+C for at afslutte denne proces.',
         ],
-        '2fa_disabled' => '2-Factor godkendelse er blevet deaktiveret for :email.',
+        '2fa_disabled' => '2-Faktor godkendelse er blevet deaktiveret for :email.',
     ],
     'schedule' => [
         'output_line' => 'Udsender job for første opgave i `:schedule` (:hash).',
