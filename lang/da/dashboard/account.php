@@ -3,14 +3,14 @@
 return [
     'title' => 'Konto Oversigt',
     'email' => [
-        'title' => 'Opdater Email Adresse',
+        'title' => 'Opdater din e-mail',
         'button' => 'Opdater Email',
-        'updated' => 'Din primære email er blevet opdateret',
+        'updated' => 'Din e-mailadresse er blevet opdateret.',
     ],
     'password' => [
-        'title' => 'Opdater Adgangskode',
+        'title' => 'Skift din adgangskode',
         'button' => 'Opdater Adgangskode',
-        'requirements' => 'Din nye adgangskode skal være mindst 8 tegn langt og unikt for dette websted.',
+        'requirements' => 'Din nye adgangskode skal være mindst 8 tegn lang.',
         'validation' => [
             'account_password' => 'Du skal angive adgangskoden til din konto.',
             'current_password' => 'Du skal angive din nuværende adgangskode.',
@@ -35,9 +35,9 @@ return [
             'button' => 'Disable Two-Step',
         ],
         'setup' => [
-            'title' => 'Enable Two-Step Verification',
+            'title' => 'Opsætning af 2-faktor godkendelse',
             'subtitle' => "Help protect your account from unauthorized access. You'll be prompted for a verification code each time you sign in.",
-            'help' => 'Scan the QR code above using the two-step authentication app of your choice. Then, enter the 6-digit code generated into the field below.',
+            'help' => 'Kan ikke scanne koden? Indtast koden nedenfor i din applikation:',
         ],
 
         'required' => [
