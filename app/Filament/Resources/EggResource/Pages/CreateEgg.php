@@ -175,8 +175,8 @@ class CreateEgg extends CreateRecord
                         ->schema([
 
                             Forms\Components\Hidden::make('copy_script_from'),
-                                //->placeholder('None')
-                                //->relationship('scriptFrom', 'name', ignoreRecord: true),
+                            //->placeholder('None')
+                            //->relationship('scriptFrom', 'name', ignoreRecord: true),
 
                             Forms\Components\TextInput::make('script_container')
                                 ->required()
