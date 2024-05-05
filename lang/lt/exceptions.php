@@ -1,36 +1,36 @@
 <?php
 
 return [
-    'daemon_connection_failed' => 'There was an exception while attempting to communicate with the daemon resulting in a HTTP/:code response code. This exception has been logged.',
+    'daemon_connection_failed' => 'Bandant palaikyti ryšį su daemon įvyko išimtis, dėl kurios buvo gautas HTTP/:code atsakymo kodas. Ši išimtis buvo užregistruota.',
     'node' => [
-        'servers_attached' => 'A node must have no servers linked to it in order to be deleted.',
-        'daemon_off_config_updated' => 'The daemon configuration <strong>has been updated</strong>, however there was an error encountered while attempting to automatically update the configuration file on the Daemon. You will need to manually update the configuration file (config.yml) for the daemon to apply these changes.',
+        'servers_attached' => 'Node neturi turėti nė vieno serverio, kad būtų galima ją ištrinti.',
+        'daemon_off_config_updated' => 'Daemon konfiguracija <strong>buvo atnaujinta</strong>, bet įvyko klaida kol bandėme automatiškai atnaujinti konfiguracijos failą Daemon. Jum reikės rankiniu atnaujini konfiguracijos failą(config.yml) Daemon\'ui, kad išsaugoti šiuos pakeitimus.',
     ],
     'allocations' => [
-        'server_using' => 'A server is currently assigned to this allocation. An allocation can only be deleted if no server is currently assigned.',
-        'too_many_ports' => 'Adding more than 1000 ports in a single range at once is not supported.',
-        'invalid_mapping' => 'The mapping provided for :port was invalid and could not be processed.',
-        'cidr_out_of_range' => 'CIDR notation only allows masks between /25 and /32.',
-        'port_out_of_range' => 'Ports in an allocation must be greater than 1024 and less than or equal to 65535.',
+        'server_using' => 'Šiuo metu šiai alokacijai yra priskirtas serveris. Alokaciją galima ištrinti tik tuo atveju, jei šiuo metu jai nėra priskirtas joks serveris.',
+        'too_many_ports' => 'Pridėti daugiau nei 1000 prievadų vienu diapazonu yra nepalaikoma.',
+        'invalid_mapping' => 'Pateiktas :port atvaizdavimas buvo negaliojantis ir negalėjo būti apdorotas.',
+        'cidr_out_of_range' => 'CIDR žymėjimas leidžia naudoti tik kaukes tarp /25 ir /32.',
+        'port_out_of_range' => 'Prievadai alokacijoje turi būti didesni nei 1024 ir mažesni arba lygus 65535.',
     ],
     'egg' => [
-        'delete_has_servers' => 'An Egg with active servers attached to it cannot be deleted from the Panel.',
-        'invalid_copy_id' => 'The Egg selected for copying a script from either does not exist, or is copying a script itself.',
-        'has_children' => 'This Egg is a parent to one or more other Eggs. Please delete those Eggs before deleting this Egg.',
+        'delete_has_servers' => 'Egg su aktyviais, prijungtais serveriais, negali būti ištrintas iš Panel.',
+        'invalid_copy_id' => 'Pasirinktas Egg skripto kopijavimui neegzistuoja arba kopijuoja skriptą pats.',
+        'has_children' => 'Šis Egg yra tėvas vienam ar daugiau kitems Eggs. Prašau ištrinti tuos Eggs prieš šio Egg ištrinimą.',
     ],
     'variables' => [
-        'env_not_unique' => 'The environment variable :name must be unique to this Egg.',
-        'reserved_name' => 'The environment variable :name is protected and cannot be assigned to a variable.',
-        'bad_validation_rule' => 'The validation rule ":rule" is not a valid rule for this application.',
+        'env_not_unique' => 'Aplinkos kintamasis :name turi būti unikalus šiam Egg.',
+        'reserved_name' => 'Aplinkos kintamasis :name yra apsaugotas ir negali būti paskirtas kintamajam.',
+        'bad_validation_rule' => 'Validacijos taisyklė ":rule" nėra galiojanti taisyklė šiai aplikacijai.',
     ],
     'importer' => [
-        'json_error' => 'There was an error while attempting to parse the JSON file: :error.',
-        'file_error' => 'The JSON file provided was not valid.',
-        'invalid_json_provided' => 'The JSON file provided is not in a format that can be recognized.',
+        'json_error' => 'Buvo klaida bandant analizuojant JSON failą: :error.',
+        'file_error' => 'Nurodytas JSON failas yra negaliojantis.',
+        'invalid_json_provided' => 'Nurodytas JSON failas nėra formatavime, kuris gali būti atpažintas.',
     ],
     'subusers' => [
-        'editing_self' => 'Editing your own subuser account is not permitted.',
-        'user_is_owner' => 'You cannot add the server owner as a subuser for this server.',
+        'editing_self' => 'Redaguoti savo subnaudotojo paskyrą neleidžiama.',
+        'user_is_owner' => 'Jūs negalite pridėti serverio savininko kaip subnaudotojas šiam serveriui.',
         'subuser_exists' => 'A user with that email address is already assigned as a subuser for this server.',
     ],
     'databases' => [
