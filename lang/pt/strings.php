@@ -45,7 +45,7 @@ return [
     'expires' => 'Expira',
     'public_key' => 'Chave pública',
     'api_access' => 'Acesso à API',
-    'never' => 'Never',
+    'never' => 'nunca',
     'sign_out' => 'Sair',
     'admin_control' => 'Controle de Admin',
     'required' => 'Obrigatório',

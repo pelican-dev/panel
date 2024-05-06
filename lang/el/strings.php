@@ -45,7 +45,7 @@ return [
     'expires' => 'Λήγει',
     'public_key' => 'Διακριτικό',
     'api_access' => 'Πρόσβαση Api',
-    'never' => 'Ποτέ',
+    'never' => 'ποτέ',
     'sign_out' => 'Αποσύνδεση',
     'admin_control' => 'Εργαλεία ελέγχου διαχειριστή',
     'required' => 'Απαιτείται',

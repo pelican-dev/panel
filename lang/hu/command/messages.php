@@ -2,11 +2,11 @@
 
 return [
     'user' => [
-        'search_users' => 'Kérlek írd ide a Discord felhasználóneved, ID számod, vagy E-mail címed.',
+        'search_users' => 'Kérlek írd ide a Discord felhasználóneved, ID számod, vagy E-mail címed!',
         'select_search_user' => 'A törölni kívánt felhasználó ID száma (Nyomj a \'0\' -ra az újra kereséshez)',
-        'deleted' => 'A felhasználó törölve a Panelből.',
-        'confirm_delete' => 'Biztos vagy benne hogy törlöd a felhasználót a Panelből?',
-        'no_users_found' => 'Nem találtam ilyen felhasználót a megadott keresési adatokkal.',
+        'deleted' => 'A felhasználó törölve a panel adatbázisából.',
+        'confirm_delete' => 'Biztos vagy benne hogy törlöd a felhasználót a panel adatbázisából?',
+        'no_users_found' => 'Nem találtam ilyen felhasználót a panel adatbázisában.',
         'multiple_found' => 'Több felhasználói fiók is található a megadott felhasználói azonosító alatt.',
         'ask_admin' => 'Ez a felhasználó adminisztrátori jogosultsággal rendelkezik?',
         'ask_email' => 'E-mail cím',
