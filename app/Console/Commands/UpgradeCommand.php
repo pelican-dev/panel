@@ -34,29 +34,30 @@ class UpgradeCommand extends Command
     {
         $skipDownload = $this->option('skip-download');
         if (!$skipDownload) {
-            $this->output->warning('This command does not verify the integrity of downloaded assets. Please ensure that you trust the download source before continuing. If you do not wish to download an archive, please indicate that using the --skip-download flag, or answering "no" to the question below.');
-            $this->output->comment('Download Source (set with --url=):');
+            $this->output->warning(__('commands.upgrade.integrity'));
+            $this->output->comment(__('commands.upgrade.source_url'));
             $this->line($this->getUrl());
         }
 
         if (version_compare(PHP_VERSION, '7.4.0') < 0) {
-            $this->error('Cannot execute self-upgrade process. The minimum required PHP version required is 7.4.0, you have [' . PHP_VERSION . '].');
+            $this->error(__('commands.upgrade.php_version') . ' [' . PHP_VERSION . '].');
         }
 
         $user = 'www-data';
         $group = 'www-data';
         if ($this->input->isInteractive()) {
             if (!$skipDownload) {
-                $skipDownload = !$this->confirm('Would you like to download and unpack the archive files for the latest version?', true);
+                $skipDownload = !$this->confirm(__('commands.upgrade.skipDownload'), true);
             }
 
             if (is_null($this->option('user'))) {
                 $userDetails = function_exists('posix_getpwuid') ? posix_getpwuid(fileowner('public')) : [];
                 $user = $userDetails['name'] ?? 'www-data';
 
-                if (!$this->confirm("Your webserver user has been detected as <fg=blue>[{$user}]:</> is this correct?", true)) {
+                $message = __('commands.upgrade.webserver_user', ['user' => $user]);
+                if (!$this->confirm($message, true)) {
                     $user = $this->anticipate(
-                        'Please enter the name of the user running your webserver process. This varies from system to system, but is generally "www-data", "nginx", or "apache".',
+                        __('commands.upgrade.name_webserver'),
                         [
                             'www-data',
                             'nginx',
@@ -70,9 +71,10 @@ class UpgradeCommand extends Command
                 $groupDetails = function_exists('posix_getgrgid') ? posix_getgrgid(filegroup('public')) : [];
                 $group = $groupDetails['name'] ?? 'www-data';
 
-                if (!$this->confirm("Your webserver group has been detected as <fg=blue>[{$group}]:</> is this correct?", true)) {
+                $message = __('commands.upgrade.group_webserver', ['group' => $user]);
+                if (!$this->confirm($message, true)) {
                     $group = $this->anticipate(
-                        'Please enter the name of the group running your webserver process. Normally this is the same as your user.',
+                        __('commands.upgrade.group_webserver_question'),
                         [
                             'www-data',
                             'nginx',
@@ -82,8 +84,8 @@ class UpgradeCommand extends Command
                 }
             }
 
-            if (!$this->confirm('Are you sure you want to run the upgrade process for your Panel?')) {
-                $this->warn('Upgrade process terminated by user.');
+            if (!$this->confirm(__('commands.upgrade.are_your_sure'))) {
+                $this->warn(__('commands.upgrade.terminated'));
 
                 return;
             }
@@ -173,7 +175,7 @@ class UpgradeCommand extends Command
         });
 
         $this->newLine(2);
-        $this->info('Panel has been successfully upgraded. Please ensure you also update any Daemon instances');
+        $this->info(__('commands.upgrade.success'));
     }
 
     protected function withProgress(ProgressBar $bar, \Closure $callback)
