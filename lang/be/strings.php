@@ -45,7 +45,7 @@ return [
     'expires' => 'Истекает',
     'public_key' => 'Токен',
     'api_access' => 'Api Доступ',
-    'never' => 'Never',
+    'never' => 'никогда',
     'sign_out' => 'Выйти',
     'admin_control' => 'Панель администратора',
     'required' => 'Обязательно',
