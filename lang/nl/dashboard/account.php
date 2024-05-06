@@ -3,14 +3,14 @@
 return [
     'title' => 'Accountoverzicht',
     'email' => [
-        'title' => 'E-mailadres Bijwerken',
+        'title' => 'E-mailadres wijzigen',
         'button' => 'E-mail bijwerken',
-        'updated' => 'Het primaire e-mailadres is bijgewerkt.',
+        'updated' => 'Het e-mailadres is succesvol gewijzigd.',
     ],
     'password' => [
-        'title' => 'Wachtwoord Bijwerken',
+        'title' => 'Wachtwoord wijzigen',
         'button' => 'Wachtwoord Bijwerken',
-        'requirements' => 'Je nieuwe wachtwoord moet minstens 8 tekens lang zijn en uniek voor deze website.',
+        'requirements' => 'Je nieuwe wachtwoord moet minstens 8 tekens bevatten.',
         'validation' => [
             'account_password' => 'Je moet jouw accountwachtwoord opgeven.',
             'current_password' => 'Vul je huidige wachtwoord in.',
@@ -35,9 +35,9 @@ return [
             'button' => 'Tweestapsverificatie uitschakelen',
         ],
         'setup' => [
-            'title' => 'Tweestapsverificatie inschakelen',
-            'subtitle' => 'Help je account te beschermen tegen ongeautoriseerde toegang. Je wordt om een verificatiecode gevraagd telkens wanneer je inlogt.',
-            'help' => 'Scan de QR-code hierboven met behulp van de tweestapsverificatie-app naar jouw keuze. Voer daarna de 6-cijferige code in die wordt gegenereerd in het onderstaande veld.',
+            'title' => 'Tweestapsverificatie instellen',
+            'subtitle' => "Help je account te beschermen tegen ongeautoriseerde toegang. Je wordt om een verificatiecode gevraagd telkens wanneer je inlogt.",
+            'help' => 'Kan de code niet worden gescand? Voer de onderstaande code in je applicatie:',
         ],
 
         'required' => [
