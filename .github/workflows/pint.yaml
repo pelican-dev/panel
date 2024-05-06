@@ -38,4 +38,4 @@ jobs:
         with:
           commit_message: Pint Fixes
           commit_user_name: Pint
-          repository: ${{ github.repository }}
+          repository: ${{ github.action.repository }}
