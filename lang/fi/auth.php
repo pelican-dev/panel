@@ -17,7 +17,7 @@ return [
         'title' => 'Pyydä Salasanan Palautusta',
         'label' => 'Unohtuiko salasana?',
         'label_help' => 'Syötä tilisi sähköpostiosoite saadaksesi ohjeet salasanan vaihtamista varten.',
-        'button' => 'Lähetä Sähköposti',
+        'button' => 'Palauta Tili',
         'required' => [
             'email' => 'Voimassa oleva sähköpostiosoite on annettava jatkaaksesi.',
         ],
@@ -25,7 +25,7 @@ return [
 
     'reset_password' => [
         'title' => 'Palauta Salasana',
-        'button' => 'Palauta Salasana',
+        'button' => 'Palauta ja kirjaudu sisään',
         'new_password' => 'Uusi Salasana',
         'confirm_new_password' => 'Vahvista Uusi Salasana',
         'requirement' => [
@@ -48,7 +48,7 @@ return [
         'authentication_code' => 'Vahvistuskoodi',
         'authentication_code_description' => 'Syötä laitteesi tuottama kaksivaiheinen tunniste.',
         'button' => 'Jatka',
-        'lost_device' => 'Olen Kadonnut Laitteen',
+        'lost_device' => "Olen Kadonnut Laitteen",
         'have_device' => 'Minulla On Laitteeni',
     ],
 
