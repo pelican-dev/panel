@@ -31,11 +31,14 @@ class ListUsers extends ListRecords
                     ->hidden()
                     ->searchable(),
                 Tables\Columns\TextColumn::make('username')
+                    ->label(trans('strings.username'))
                     ->searchable(),
                 Tables\Columns\TextColumn::make('email')
+                    ->label(trans('strings.email'))
                     ->searchable()
                     ->icon('tabler-mail'),
                 Tables\Columns\IconColumn::make('root_admin')
+                    ->label(trans('strings.admin'))
                     ->visibleFrom('md')
                     ->label('Admin')
                     ->boolean()
@@ -52,7 +55,7 @@ class ListUsers extends ListRecords
                     ->label('Servers'),
                 Tables\Columns\TextColumn::make('subusers_count')
                     ->visibleFrom('sm')
-                    ->label('Subusers')
+                    ->label(trans('strings.subusers'))
                     ->counts('subusers')
                     ->icon('tabler-users'),
                 // ->formatStateUsing(fn (string $state, $record): string => (string) ($record->servers_count + $record->subusers_count))
@@ -74,7 +77,7 @@ class ListUsers extends ListRecords
     {
         return [
             Actions\CreateAction::make()
-                ->label('Create User'),
+                ->label(trans('strings.create_user')),
         ];
     }
 }
