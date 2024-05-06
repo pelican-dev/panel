@@ -1,17 +1,33 @@
-name: PHP Linting
-on: pull_request
+name: Pint
+
+on:
+  pull_request:
+    branches:
+      - '**'
+
 jobs:
-  phplint:
+  lint:
+    name: Pint
     runs-on: ubuntu-latest
     steps:
-        - uses: actions/checkout@v1
-        - name: "pint"
-          uses: aglipanci/laravel-pint-action@2.0.0
-          with:
-            preset: laravel
-            verboseMode: true
-            testMode: true
-            configPath: "vendor/pelican/coding-style/pint.json"
-            pintVersion: 1.8.0
-            onlyDirty: true
-        - uses: stefanzweifel/git-auto-commit-action@v5
+      - name: Code Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: "8.2"
+          extensions: bcmath, curl, gd, mbstring, mysql, openssl, pdo, tokenizer, xml, zip
+          tools: composer:v2
+          coverage: none
+
+      - name: Setup .env
+        run: cp .env.example .env
+
+      - name: Install dependencies
+        run: composer install --no-interaction --no-progress --prefer-dist
+
+      - name: Pint
+        run: vendor/bin/pint 
+        
+      - uses: stefanzweifel/git-auto-commit-action@v5
