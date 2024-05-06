@@ -3,14 +3,14 @@
 return [
     'title' => 'Tilin yleiskatsaus',
     'email' => [
-        'title' => 'Päivitä sähköpostiosoite',
+        'title' => 'Päivitä sähköpostiosoitteesi',
         'button' => 'Päivitä Sähköposti',
-        'updated' => 'Sinun ensisijainen sähköpostisi on päivitetty',
+        'updated' => 'Sähköpostiosoite on päivitetty.',
     ],
     'password' => [
-        'title' => 'Päivitä salasana',
+        'title' => 'Vaihda salasanasi',
         'button' => 'Päivitä salasana',
-        'requirements' => 'Uuden salasanasi tulisi olla vähintään 8 merkkiä pitkä ja uniikki tälle verkkosivustolle.',
+        'requirements' => 'Uuden salasanan on oltava vähintään 8 merkkiä pitkä',
         'validation' => [
             'account_password' => 'Sinun on annettava tilisi salasana.',
             'current_password' => 'Syötä nykyinen salasana',
@@ -35,9 +35,9 @@ return [
             'button' => 'Poista Kaksivaiheinen todennus käytöstä',
         ],
         'setup' => [
-            'title' => 'Ota kaksivaiheinen todennus käyttöön',
-            'subtitle' => 'Auta suojaamaan tilisi luvattomalta käytöltä. Sinulta pyydetään vahvistuskoodia joka kerta, kun kirjaudut sisään.',
-            'help' => 'Skannaa yllä oleva QR-koodi valitsemasi kaksivaiheisen todennuksen sovelluksella. Sitten syötä 6-numeroinen koodi alla olevaan kenttään.',
+            'title' => 'Aseta kaksivaiheinen todennus',
+            'subtitle' => "Auta suojaamaan tilisi luvattomalta käytöltä. Sinulta pyydetään vahvistuskoodia joka kerta, kun kirjaudut sisään.",
+            'help' => 'Koodia ei voi skannata? Syötä alla oleva koodi sovelluksesi:',
         ],
 
         'required' => [
