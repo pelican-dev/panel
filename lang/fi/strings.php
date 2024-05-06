@@ -45,7 +45,7 @@ return [
     'expires' => 'Vanhenee',
     'public_key' => 'Tunniste',
     'api_access' => 'Apin käyttöoikeus',
-    'never' => 'Ei koskaan',
+    'never' => 'ei koskaan',
     'sign_out' => 'Kirjaudu ulos',
     'admin_control' => 'Ylläpitäjän työkalut',
     'required' => 'Pakollinen',
