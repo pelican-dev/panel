@@ -17,7 +17,7 @@ return [
         'title' => 'Passwort-Reset anfordern',
         'label' => 'Passwort vergessen?',
         'label_help' => 'Geben Sie Ihre E-Mail Adresse ein, um Anweisungen zum Zurücksetzen Ihres Passworts zu erhalten.',
-        'button' => 'Konto wiederherstellen',
+        'button' => 'Recover Account',
         'required' => [
             'email' => 'Eine gültige E-Mail-Adresse muss angegeben werden, um fortzufahren.',
         ],
@@ -25,7 +25,7 @@ return [
 
     'reset_password' => [
         'title' => 'Passwort zurücksetzen',
-        'button' => 'Zurücksetzen und Anmelden',
+        'button' => 'Reset and Sign In',
         'new_password' => 'Neues Passwort',
         'confirm_new_password' => 'Neues Passwort bestätigen',
         'requirement' => [
@@ -48,7 +48,7 @@ return [
         'authentication_code' => 'Authentifizierungscode',
         'authentication_code_description' => 'Geben Sie den von Ihrem Gerät generierten Zwei-Faktor-Token ein.',
         'button' => 'Weiter',
-        'lost_device' => 'Ich habe mein Gerät verloren',
+        'lost_device' => "Ich habe mein Gerät verloren",
         'have_device' => 'Ich habe mein Gerät',
     ],
 
