@@ -36,7 +36,7 @@ return [
         ],
         'setup' => [
             'title' => 'Zweistufige Verifizierung aktivieren',
-            'subtitle' => "Helfen Sie mit, Ihr Konto vor unbefugtem Zugriff zu schützen. Jedes Mal, wenn Sie sich anmelden, werden Sie nach einem Bestätigungscode gefragt.",
+            'subtitle' => 'Helfen Sie mit, Ihr Konto vor unbefugtem Zugriff zu schützen. Jedes Mal, wenn Sie sich anmelden, werden Sie nach einem Bestätigungscode gefragt.',
             'help' => 'Scannen Sie den obigen QR-Code mit der 2-Faktor-Authentifizierungsapp Ihrer Wahl. Geben Sie danach den 6-stelligen Code in das Feld unten ein.',
         ],
 

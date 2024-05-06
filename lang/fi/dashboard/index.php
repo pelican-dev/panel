@@ -3,7 +3,7 @@
 return [
     'title' => 'Hallintasivu',
     'showing-your-servers' => 'Näytetään palvelimesi',
-    'showing-others-servers' => "Näytetään muiden palvelimet",
+    'showing-others-servers' => 'Näytetään muiden palvelimet',
     'no-other-servers' => 'Ei ole muita palvelimia näytettäväksi.',
     'no-servers-associated' => 'Tiliisi ei ole liitetty palvelimia.',
 
