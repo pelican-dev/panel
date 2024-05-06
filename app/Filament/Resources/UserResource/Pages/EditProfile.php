@@ -27,7 +27,6 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\HtmlString;
 use Illuminate\Validation\Rules\Password;
 
-
 class EditProfile extends \Filament\Pages\Auth\EditProfile
 {
     protected function getForms(): array
@@ -92,8 +91,7 @@ class EditProfile extends \Filament\Pages\Auth\EditProfile
                                             ")
                                             )
                                             ->options(fn (User $user) => $user->getAvailableLanguages()),
-                                        ]),
-
+                                    ]),
 
                                 Tab::make('2FA')
                                     ->icon('tabler-shield-lock')

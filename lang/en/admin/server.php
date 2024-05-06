@@ -32,8 +32,11 @@ return [
         These are the ports that users can connect to this Server through.
         <br />
         You would have to port forward these on your home network.',
-        
-
-
-    ]
+        'skip_scripts' => 'Run Egg Install Script?',
+        'startup' => 'Startup Command',
+        'swap_helpertext' => '0 disables swap and -1 allows unlimited swap',
+    ],
+    'list' => [
+        'empty_desc' => 'Currently there are no servers listed. You can create one by clicking on the button below',
+    ],
 ];

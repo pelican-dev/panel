@@ -211,7 +211,7 @@ class CreateServer extends CreateRecord
                             ->preload()
                             ->disableOptionsWhenSelectedInSiblingRepeaterItems()
                             ->prefixIcon('tabler-network')
-                            ->label('Additional Allocations')
+                            ->label(trans('strings.add_allocations'))
                             ->columnSpan(2)
                             ->disabled(fn (Forms\Get $get) => $get('../../node_id') === null)
                             ->searchable(['ip', 'port', 'ip_alias'])
@@ -239,6 +239,7 @@ class CreateServer extends CreateRecord
 
                 Forms\Components\Select::make('egg_id')
                     ->disabledOn('edit')
+                    ->label('Egg')
                     ->prefixIcon('tabler-egg')
                     ->columnSpan([
                         'default' => 2,
@@ -279,7 +280,7 @@ class CreateServer extends CreateRecord
                     ->required(),
 
                 Forms\Components\ToggleButtons::make('skip_scripts')
-                    ->label('Run Egg Install Script?')
+                    ->label(trans('admin/server.create.skip_scripts'))
                     ->default(false)
                     ->columnSpan([
                         'default' => 1,
@@ -288,8 +289,8 @@ class CreateServer extends CreateRecord
                         'lg' => 1,
                     ])
                     ->options([
-                        false => 'Yes',
-                        true => 'Skip',
+                        false => trans('strings.yes'),
+                        true => trans('strings.skip'),
                     ])
                     ->colors([
                         false => 'primary',
@@ -386,7 +387,7 @@ class CreateServer extends CreateRecord
 
                 Forms\Components\Textarea::make('startup')
                     ->hintIcon('tabler-code')
-                    ->label('Startup Command')
+                    ->label(trans('admin/server.create.startup'))
                     ->required()
                     ->live()
                     ->columnSpan([
@@ -502,7 +503,7 @@ class CreateServer extends CreateRecord
                             ->default(0)
                             ->label('Swap Memory')
                             ->suffix('MB')
-                            ->helperText('0 disables swap and -1 allows unlimited swap')
+                            ->helperText(trans('admin/server.create.swap_helpertext'))
                             ->minValue(-1)
                             ->required()
                             ->numeric(),
@@ -544,8 +545,8 @@ class CreateServer extends CreateRecord
                             ->inline()
                             ->default(false)
                             ->options([
-                                false => 'Disabled',
-                                true => 'Enabled',
+                                false => trans('strings.disabled'),
+                                true => trans('strings.enabled'),
                             ])
                             ->colors([
                                 false => 'success',

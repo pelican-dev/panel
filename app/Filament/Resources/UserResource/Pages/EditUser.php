@@ -31,7 +31,7 @@ class EditUser extends EditRecord
                         ->required(fn (string $operation): bool => $operation === 'create')
                         ->password(),
 
-                        Forms\Components\ToggleButtons::make('root_admin')
+                    Forms\Components\ToggleButtons::make('root_admin')
                         ->label(trans('admin/user.root_admin'))
                         ->options([
                             false => trans('strings.no'),
