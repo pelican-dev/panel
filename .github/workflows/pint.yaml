@@ -14,3 +14,4 @@ jobs:
             configPath: "vendor/pelican/coding-style/pint.json"
             pintVersion: 1.8.0
             onlyDirty: true
+        - uses: stefanzweifel/git-auto-commit-action@v5
