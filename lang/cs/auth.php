@@ -17,7 +17,7 @@ return [
         'title' => 'Žádost o obnovení hesla',
         'label' => 'Zapomněli jste heslo?',
         'label_help' => 'Zadejte e-mailovou adresu vašeho účtu pro příjem pokynů k obnovení hesla.',
-        'button' => 'Odeslat email',
+        'button' => 'Obnovit účet',
         'required' => [
             'email' => 'Pro pokračování musí být uvedena platná emailová adresa.',
         ],
@@ -25,7 +25,7 @@ return [
 
     'reset_password' => [
         'title' => 'Obnovení hesla',
-        'button' => 'Obnovit heslo',
+        'button' => 'Obnovit a přihlásit se',
         'new_password' => 'Nové heslo',
         'confirm_new_password' => 'Potvrďte nové heslo',
         'requirement' => [
@@ -48,7 +48,7 @@ return [
         'authentication_code' => 'Ověřovací kód',
         'authentication_code_description' => 'Zadejte dvoufázový token vygenerovaný vaším zařízením.',
         'button' => 'Pokračovat',
-        'lost_device' => 'Ztratil jsem své zařízení',
+        'lost_device' => "Ztratil jsem své zařízení",
         'have_device' => 'Mám své zařízení',
     ],
 
