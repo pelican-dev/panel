@@ -17,7 +17,7 @@ return [
         'title' => 'パスワードの再設定',
         'label' => 'パスワードを忘れた場合',
         'label_help' => 'パスワードを再設定する手順を受け取るには、アカウントのメールアドレスを入力してください。',
-        'button' => 'メールを送信',
+        'button' => 'アカウントの回復',
         'required' => [
             'email' => 'メールアドレスを入力してください。',
         ],
@@ -25,7 +25,7 @@ return [
 
     'reset_password' => [
         'title' => 'パスワードの再設定',
-        'button' => 'パスワードの再設定',
+        'button' => '再設定しログイン',
         'new_password' => '新しいパスワード',
         'confirm_new_password' => '新しいパスワードの確認',
         'requirement' => [
@@ -48,7 +48,7 @@ return [
         'authentication_code' => '認証コード',
         'authentication_code_description' => '6桁の二要素認証コードを入力してください。',
         'button' => '続行',
-        'lost_device' => '回復コードを使用',
+        'lost_device' => "回復コードを使用",
         'have_device' => '認証コードを使用',
     ],
 
