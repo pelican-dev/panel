@@ -1,0 +1,16 @@
+name: PHP Linting
+on: pull_request
+jobs:
+  phplint:
+    runs-on: ubuntu-latest
+    steps:
+        - uses: actions/checkout@v1
+        - name: "pint"
+          uses: aglipanci/laravel-pint-action@2.0.0
+          with:
+            preset: laravel
+            verboseMode: true
+            testMode: true
+            configPath: "vendor/pelican/coding-style/pint.json"
+            pintVersion: 1.8.0
+            onlyDirty: true
