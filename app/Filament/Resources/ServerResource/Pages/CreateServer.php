@@ -462,7 +462,7 @@ class CreateServer extends CreateRecord
                                 /** @var Forms\Components\Component $component */
                                 foreach ($components as &$component) {
                                     $component = $component
-                                        ->live()
+                                        ->live(onBlur: true)
                                         ->hintIcon('tabler-code')
                                         ->label(fn (Forms\Get $get) => $get('name'))
                                         ->hintIconTooltip(fn (Forms\Get $get) => $get('rules'))
