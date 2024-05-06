@@ -17,7 +17,7 @@ return [
         'title' => 'Demande de réinitialisation du mot de passe',
         'label' => 'Mot de passe oublié ?',
         'label_help' => 'Entrez votre adresse e-mail pour recevoir des instructions sur la réinitialisation de votre mot de passe.',
-        'button' => 'Envoyer l\'e-mail',
+        'button' => 'Récupérer un compte',
         'required' => [
             'email' => 'Une adresse e-mail valide doit être fournie pour continuer.',
         ],
@@ -25,7 +25,7 @@ return [
 
     'reset_password' => [
         'title' => 'Réinitialiser le mot de passe',
-        'button' => 'Réinitialiser le mot de passe',
+        'button' => 'Réinitialiser et se connecter',
         'new_password' => 'Nouveau mot de passe',
         'confirm_new_password' => 'Confirmer le nouveau mot de passe',
         'requirement' => [
