@@ -144,8 +144,6 @@ class Egg extends Model
             'features' => 'array',
             'docker_images' => 'array',
             'file_denylist' => 'array',
-            'config_startup' => 'array',
-            'config_logs' => 'array',
             'tags' => 'array',
         ];
     }
