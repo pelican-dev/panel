@@ -3,14 +3,14 @@
 return [
     'title' => 'Επισκόπηση Λογαριασμού',
     'email' => [
-        'title' => 'Ενημερώστε το email σας',
+        'title' => 'Update your email',
         'button' => 'Ενημέρωση Email',
-        'updated' => 'Η διεύθυνση email σας ενημερώθηκε.',
+        'updated' => 'Your email address has been updated.',
     ],
     'password' => [
-        'title' => 'Αλλάξτε τον κωδικό πρόσβασής σας',
+        'title' => 'Change your password',
         'button' => 'Ενημέρωση κωδικού πρόσβασης',
-        'requirements' => 'Ο νέος κωδικός πρόσβασης πρέπει να έχει μήκος τουλάχιστον 8 χαρακτήρων.',
+        'requirements' => 'Your new password should be at least 8 characters in length.',
         'validation' => [
             'account_password' => 'Πρέπει να συμπληρώσετε τον κωδικό πρόσβασης του λογαριασμού σας.',
             'current_password' => 'Πρέπει να συμπληρώσετε τον τρέχοντα κωδικό πρόσβασής σας.',
@@ -35,9 +35,9 @@ return [
             'button' => 'Απενεργοποίηση Επαλήθευσης Δύο Βημάτων',
         ],
         'setup' => [
-            'title' => 'Ρύθμιση ελέγχου ταυτότητας δύο παραγόντων',
-            'subtitle' => 'Βοηθήστε στην προστασία του λογαριασμού σας από μη εξουσιοδοτημένη πρόσβαση. Θα σας ζητείται ένας κωδικός επαλήθευσης κάθε φορά που συνδέεστε.',
-            'help' => 'Δεν είναι δυνατή η σάρωση του κωδικού; Εισάγετε τον παρακάτω κωδικό στην εφαρμογή σας:',
+            'title' => 'Setup two-factor authentication',
+            'subtitle' => "Βοηθήστε στην προστασία του λογαριασμού σας από μη εξουσιοδοτημένη πρόσβαση. Θα σας ζητείται ένας κωδικός επαλήθευσης κάθε φορά που συνδέεστε.",
+            'help' => 'Can\'t scan the code? Enter the code below into your application:',
         ],
 
         'required' => [
