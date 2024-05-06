@@ -17,7 +17,7 @@ return [
         'title' => 'Request Password Reset',
         'label' => 'Zaboravio lozinku?',
         'label_help' => 'Napiši svoju email adresu računa kako bi dobio instrukcije da promjeniš lozinku.',
-        'button' => 'Send Email',
+        'button' => 'Oporavi račun',
         'required' => [
             'email' => 'A valid email address must be provided to continue.',
         ],
@@ -25,7 +25,7 @@ return [
 
     'reset_password' => [
         'title' => 'Reset Password',
-        'button' => 'Reset Password',
+        'button' => 'Promjeni i prijavi se',
         'new_password' => 'New Password',
         'confirm_new_password' => 'Confirm New Password',
         'requirement' => [
