@@ -2,6 +2,7 @@ name: Pint
 
 on:
   pull_request:
+  push:
     branches:
       - '**'
 
