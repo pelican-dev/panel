@@ -45,7 +45,7 @@ return [
     'expires' => 'Vyprší',
     'public_key' => 'Token',
     'api_access' => 'Api prístup',
-    'never' => 'Never',
+    'never' => 'nikdy',
     'sign_out' => 'Odhlásiť sa',
     'admin_control' => 'Správcovská Kontrola',
     'required' => 'Požadovaný',
