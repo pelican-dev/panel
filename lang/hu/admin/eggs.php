@@ -6,7 +6,7 @@ return [
         'updated_via_import' => 'Ez az Egg frissítve lett a megadott fájl segítségével.',
         'deleted' => 'Sikeresen törölted a kívánt Egg-et a panelből.',
         'updated' => 'Az Egg konfigurációja sikeresen frissítve lett.',
-        'script_updated' => 'Az Egg telepítési scriptje frissítve lett, és a szerver telepítésekor lefut.',
+        'script_updated' => 'Az Egg telepítési scriptje frissítve lett, és szerver telepítésekor lefut!',
         'egg_created' => 'Sikeresen hozzá adtál egy új egg-et. Újra kell indítanod minden futó daemon-t az Egg alkalmazásához.',
     ],
     'variables' => [
