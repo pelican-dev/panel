@@ -45,7 +45,7 @@ return [
     'expires' => 'Gültig bis',
     'public_key' => 'Token',
     'api_access' => 'Api-Zugriff',
-    'never' => 'nie',
+    'never' => 'niemals',
     'sign_out' => 'Abmelden',
     'admin_control' => 'Admin Verwaltung',
     'required' => 'Erforderlich',
