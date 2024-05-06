@@ -9,7 +9,7 @@ return [
         'button' => 'Log ind',
         'required' => [
             'username_or_email' => 'Et brugernavn eller e-mail skal angives.',
-            'password' => 'Indtast venligst din nuværende adgangskode.'
+            'password' => 'Indtast venligst din nuværende adgangskode.',
         ],
     ],
 
@@ -19,7 +19,7 @@ return [
         'label_help' => 'Indtast din kontos e-mailadresse for at modtage instruktioner om nulstilling af din adgangskode.',
         'button' => 'Send Email',
         'required' => [
-            'email' => 'En gyldig e-mailadresse skal angives for at fortsætte.'
+            'email' => 'En gyldig e-mailadresse skal angives for at fortsætte.',
         ],
     ],
 
@@ -33,7 +33,7 @@ return [
         ],
         'required' => [
             'password' => 'En ny adgangskode er påkrævet.',
-            'password_confirmation' => 'Din nye adgangskode er ikke ens.'
+            'password_confirmation' => 'Din nye adgangskode er ikke ens.',
         ],
         'validation' => [
             'password' => 'Din nye adgangskode skal være mindst 8 tegn lang.',
