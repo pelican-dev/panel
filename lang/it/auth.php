@@ -17,7 +17,7 @@ return [
         'title' => 'Request Password Reset',
         'label' => 'Password Dimenticata?',
         'label_help' => 'Inserisci l\'indirizzo email del tuo account per ricevere le istruzioni per reimpostare la password.',
-        'button' => 'Send Email',
+        'button' => 'Recupera Account',
         'required' => [
             'email' => 'A valid email address must be provided to continue.',
         ],
@@ -25,7 +25,7 @@ return [
 
     'reset_password' => [
         'title' => 'Reset Password',
-        'button' => 'Reset Password',
+        'button' => 'Reimposta e Accedi',
         'new_password' => 'New Password',
         'confirm_new_password' => 'Confirm New Password',
         'requirement' => [
