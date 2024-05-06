@@ -45,7 +45,7 @@ return [
     'expires' => 'Expire le',
     'public_key' => 'Jeton',
     'api_access' => 'Accès API',
-    'never' => 'Jamais',
+    'never' => 'jamais',
     'sign_out' => 'Déconnexion',
     'admin_control' => 'Panneau d\'administration',
     'required' => 'Requis',
