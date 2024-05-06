@@ -9,7 +9,7 @@ return [
         'button' => 'Anmelden',
         'required' => [
             'username_or_email' => 'Es muss ein Benutzername oder eine E-Mail angegeben werden.',
-            'password' => "Bitte gebe dein Account-Passwort ein."
+            'password' => 'Bitte gebe dein Account-Passwort ein.',
         ],
     ],
 
@@ -19,7 +19,7 @@ return [
         'label_help' => 'Geben Sie Ihre E-Mail Adresse ein, um Anweisungen zum Zurücksetzen Ihres Passworts zu erhalten.',
         'button' => 'Konto wiederherstellen',
         'required' => [
-            'email' => 'Eine gültige E-Mail-Adresse muss angegeben werden, um fortzufahren.'
+            'email' => 'Eine gültige E-Mail-Adresse muss angegeben werden, um fortzufahren.',
         ],
     ],
 
