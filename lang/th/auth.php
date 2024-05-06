@@ -17,7 +17,7 @@ return [
         'title' => 'Request Password Reset',
         'label' => 'ลืมรหัสผ่านใช่หรือไม่',
         'label_help' => 'โปรดใส่อีเมลของคุณเพื่อรับวิธีการตั้งรหัสผ่านใหม่',
-        'button' => 'กู้คืนบัญชี',
+        'button' => 'Recover Account',
         'required' => [
             'email' => 'A valid email address must be provided to continue.',
         ],
@@ -25,7 +25,7 @@ return [
 
     'reset_password' => [
         'title' => 'Reset Password',
-        'button' => 'รีเซ็ตรหัสผ่านและเข้าสู่ระบบ',
+        'button' => 'Reset and Sign In',
         'new_password' => 'New Password',
         'confirm_new_password' => 'Confirm New Password',
         'requirement' => [
