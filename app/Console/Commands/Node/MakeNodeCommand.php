@@ -42,27 +42,28 @@ class MakeNodeCommand extends Command
      */
     public function handle(): void
     {
-        $data['name'] = $this->option('name') ?? $this->ask('Enter a short identifier used to distinguish this node from others');
-        $data['description'] = $this->option('description') ?? $this->ask('Enter a description to identify the node');
+        $data['name'] = $this->option('name') ?? $this->ask(__('commands.make_node.name'));
+        $data['description'] = $this->option('description') ?? $this->ask(__('commands.make_node.description'));
         $data['scheme'] = $this->option('scheme') ?? $this->anticipate(
-            'Please either enter https for SSL or http for a non-ssl connection',
+            __('commands.make_node.scheme'),
             ['https', 'http'],
             'https'
         );
-        $data['fqdn'] = $this->option('fqdn') ?? $this->ask('Enter a domain name (e.g node.example.com) to be used for connecting to the daemon. An IP address may only be used if you are not using SSL for this node');
-        $data['public'] = $this->option('public') ?? $this->confirm('Should this node be public? As a note, setting a node to private you will be denying the ability to auto-deploy to this node.', true);
-        $data['behind_proxy'] = $this->option('proxy') ?? $this->confirm('Is your FQDN behind a proxy?');
-        $data['maintenance_mode'] = $this->option('maintenance') ?? $this->confirm('Should maintenance mode be enabled?');
-        $data['memory'] = $this->option('maxMemory') ?? $this->ask('Enter the maximum amount of memory');
-        $data['memory_overallocate'] = $this->option('overallocateMemory') ?? $this->ask('Enter the amount of memory to over allocate by, -1 will disable checking and 0 will prevent creating new servers');
-        $data['disk'] = $this->option('maxDisk') ?? $this->ask('Enter the maximum amount of disk space');
-        $data['disk_overallocate'] = $this->option('overallocateDisk') ?? $this->ask('Enter the amount of memory to over allocate by, -1 will disable checking and 0 will prevent creating new server');
-        $data['upload_size'] = $this->option('uploadSize') ?? $this->ask('Enter the maximum filesize upload', '100');
-        $data['daemon_listen'] = $this->option('daemonListeningPort') ?? $this->ask('Enter the daemon listening port', '8080');
-        $data['daemon_sftp'] = $this->option('daemonSFTPPort') ?? $this->ask('Enter the daemon SFTP listening port', '2022');
-        $data['daemon_base'] = $this->option('daemonBase') ?? $this->ask('Enter the base folder', '/var/lib/pelican/volumes');
+
+        $data['fqdn'] = $this->option('fqdn') ?? $this->ask(__('commands.make_node.fqdn'));
+        $data['public'] = $this->option('public') ?? $this->confirm(__('commands.make_node.public'), true);
+        $data['behind_proxy'] = $this->option('proxy') ?? $this->confirm(__('commands.make_node.behind_proxy'));
+        $data['maintenance_mode'] = $this->option('maintenance') ?? $this->confirm(__('commands.make_node.maintenance_mode'));
+        $data['memory'] = $this->option('maxMemory') ?? $this->ask(__('commands.make_node.memory'));
+        $data['memory_overallocate'] = $this->option('overallocateMemory') ?? $this->ask(__('commands.make_node.memory_overallocate'));
+        $data['disk'] = $this->option('maxDisk') ?? $this->ask(__('commands.make_node.disk'));
+        $data['disk_overallocate'] = $this->option('overallocateDisk') ?? $this->ask(__('commands.make_node.disk_overallocate'));
+        $data['upload_size'] = $this->option('uploadSize') ?? $this->ask(__('commands.make_node.upload_size'), '100');
+        $data['daemon_listen'] = $this->option('daemonListeningPort') ?? $this->ask(__('commands.make_node.daemonListen'), '8080');
+        $data['daemon_sftp'] = $this->option('daemonSFTPPort') ?? $this->ask(__('commands.make_node.daemonSFTP'), '2022');
+        $data['daemon_base'] = $this->option('daemonBase') ?? $this->ask(__('commands.make_node.daemonBase'), '/var/lib/pelican/volumes');
 
         $node = $this->creationService->handle($data);
-        $this->line('Successfully created a new node with the name ' . $data['name'] . ' and has an id of ' . $node->id . '.');
+        $this->line(__('commands.make_node.succes1') . $data['name'] . __('commands.make_node.succes2')  . $node->id . '.');
     }
 }
