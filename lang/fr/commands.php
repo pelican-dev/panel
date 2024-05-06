@@ -1,13 +1,29 @@
 <?php
 
 return [
+
+    /* Not yet added to the panel
+    "debug" => [
+        "enable" => "Debug mode has been enabled",
+        "disable" => "Debug mode has been disabled",
+        "disable_option" => "Disable Debug mode",
+        "enable_option" => "Disable Debug mode",
+        "cancel_option" => "Cancel the Command",
+    ],
+    */
     'appsettings' => [
         'comment' => [
             'author' => 'Indiquez l\'adresse e-mail à partir de laquelle les œufs exportés par ce panneau devraient provenir. L\'adresse e-mail doit être valide.',
             'url' => 'L\'URL de l\'application DOIT commencer par https:// ou http:// selon que vous utilisiez SSL ou non. Si vous n\'incluez pas ce schéma, vos e-mails et autres contenus seront liés à un mauvais emplacement.',
             'timezone' => "Le fuseau horaire doit correspondre à l'un des fuseaux horaires pris en charge par PHP. Si vous n\\'êtes pas sûr, veuillez consulter https://php.net/manual/en/timezones.php.",
+            //"lang" => "Choose a language you want to use on your panel.",
             'settings_ui' => 'Activer l\'éditeur de paramètres de l\'interface utilisateur ?',
         ],
+        /*
+        "lang" => [
+        "question" => "What language do you want to use?",
+        ],
+        */
         'redis' => [
             'note' => 'Vous avez sélectionné le pilote Redis pour une ou plusieurs options, veuillez fournir des informations de connexion valides ci-dessous. Dans la plupart des cas, vous pouvez utiliser les valeurs par défaut fournies sauf si vous avez modifié votre configuration.',
             'comment' => 'Par défaut, une instance de serveur Redis n\'a pas de mot de passe car elle fonctionne localement et n\'est pas accessible depuis l\'extérieur. Si c\'est le cas, appuyez simplement sur Entrée sans entrer une valeur.',
@@ -18,7 +34,6 @@ return [
         'DB_USERNAME_note' => "L\\'utilisation du compte racine pour les connexions MySQL est non seulement fortement déconseillée, mais elle n'est pas non plus autorisée par cette application. Vous devrez avoir créé un utilisateur MySQL pour ce logiciel.",
         'DB_PASSWORD_note' => 'Il semble que vous ayez déjà un mot de passe de connexion MySQL, voulez-vous le changer ?',
         'DB_error_2' => 'Vos identifiants de connexion n\'ont PAS été enregistrés. Vous devrez fournir des informations de connexion valides avant de continuer.',
-        'go_back' => 'Revenir en arrière et réessayer',
     ],
     'make_node' => [
         'name' => 'Entrez un identifiant court utilisé pour distinguer ce nœud des autres',
