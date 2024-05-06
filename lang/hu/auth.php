@@ -17,7 +17,7 @@ return [
         'title' => 'Request Password Reset',
         'label' => 'Elfelejtetted a jelszavad?',
         'label_help' => 'Add meg az email címed a jelszavad visszaállításához.',
-        'button' => 'Send Email',
+        'button' => 'Fiók visszaállítása',
         'required' => [
             'email' => 'A valid email address must be provided to continue.',
         ],
@@ -25,7 +25,7 @@ return [
 
     'reset_password' => [
         'title' => 'Reset Password',
-        'button' => 'Reset Password',
+        'button' => 'Visszaállítás és bejelentkezés',
         'new_password' => 'New Password',
         'confirm_new_password' => 'Confirm New Password',
         'requirement' => [
