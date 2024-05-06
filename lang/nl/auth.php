@@ -17,7 +17,7 @@ return [
         'title' => 'Wachtwoord reset aanvragen',
         'label' => 'Wachtwoord Vergeten?',
         'label_help' => 'Voer het e-mailadres van uw account in om instructies te ontvangen over het opnieuw instellen van uw wachtwoord.',
-        'button' => 'Verstuur e-mail',
+        'button' => 'Account herstellen',
         'required' => [
             'email' => 'Een geldig e-mailadres moet worden opgegeven om door te gaan.',
         ],
@@ -25,7 +25,7 @@ return [
 
     'reset_password' => [
         'title' => 'Wachtwoord opnieuw instellen',
-        'button' => 'Wachtwoord opnieuw instellen',
+        'button' => 'Herstel en log in',
         'new_password' => 'Nieuw Wachtwoord',
         'confirm_new_password' => 'Bevestig nieuw wachtwoord',
         'requirement' => [
@@ -48,7 +48,7 @@ return [
         'authentication_code' => 'Authenticatie Code',
         'authentication_code_description' => 'Voer het tweestapstoken in dat door uw apparaat gegenereerd is.',
         'button' => 'Volgende',
-        'lost_device' => 'Ik heb Mijn Apparaat kwijt',
+        'lost_device' => "Ik heb Mijn Apparaat kwijt",
         'have_device' => 'Ik heb mijn apparaat',
     ],
 
