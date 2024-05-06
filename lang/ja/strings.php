@@ -45,7 +45,7 @@ return [
     'expires' => '期限',
     'public_key' => 'トークン',
     'api_access' => 'APIアクセス',
-    'never' => '絶対に',
+    'never' => 'しない',
     'sign_out' => 'ログアウト',
     'admin_control' => '管理者コントロール',
     'required' => '必須',
