@@ -26,9 +26,9 @@ return [
         'numeric' => ':attribute skal være mellem :min og :max.',
         'file' => ':attribute skal være mellem :min og :max kilobytes.',
         'string' => ':attribute skal være mellem :min og :max tegn.',
-        'array' => ':attribute skal have mellem :min og :max elementer.'
+        'array' => ':attribute skal have mellem :min og :max elementer.',
     ],
-    'boolean' => ":attribute skal være sandt eller falsk.",
+    'boolean' => ':attribute skal være sandt eller falsk.',
     'confirmed' => ':attribute bekræftelse stemmer ikke overens.',
     'date' => ':attribute er ikke en gyldig dato.',
     'date_format' => ':attribute stemmer ikke overens med formatet :format.',
