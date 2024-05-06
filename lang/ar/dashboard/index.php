@@ -3,7 +3,7 @@
 return [
     'title' => 'لوحة التحكم',
     'showing-your-servers' => 'عرض الخوادم الخاصة بك',
-    'showing-others-servers' => "عرض خوادم الآخرين",
+    'showing-others-servers' => 'عرض خوادم الآخرين',
     'no-other-servers' => 'لا توجد خوادم أخرى لعرضها.',
     'no-servers-associated' => 'لا توجد خوادم مرتبطة بحسابك.',
 

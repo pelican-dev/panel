@@ -3,7 +3,7 @@
 return [
     'title' => 'Dashboard',
     'showing-your-servers' => 'Laat je servers zien',
-    'showing-others-servers' => "Laat andermans servers zien",
+    'showing-others-servers' => 'Laat andermans servers zien',
     'no-other-servers' => 'Er zijn geen andere servers om weer te geven.',
     'no-servers-associated' => 'Er zijn geen servers gekoppeld aan uw account.',
 
@@ -21,7 +21,7 @@ return [
         ],
         'intro-first-node' => [
             'heading' => 'Geen Nodes Gedetecteerd',
-            'content' => "Het lijkt erop dat je nog geen Nodes hebt ingesteld, maar maak je geen zorgen, door op de actieknop te klikken kan je jouw eerste Node maken!",
+            'content' => 'Het lijkt erop dat je nog geen Nodes hebt ingesteld, maar maak je geen zorgen, door op de actieknop te klikken kan je jouw eerste Node maken!',
             'extra_note' => 'Als je problemen ondervindt, rapporteer deze dan op GitHub.',
             'button_label' => 'Eerste Node maken in Pelican',
         ],

@@ -48,7 +48,7 @@ return [
         'authentication_code' => 'Authentifizierungscode',
         'authentication_code_description' => 'Geben Sie den von Ihrem Gerät generierten Zwei-Faktor-Token ein.',
         'button' => 'Weiter',
-        'lost_device' => "Ich habe mein Gerät verloren",
+        'lost_device' => 'Ich habe mein Gerät verloren',
         'have_device' => 'Ich habe mein Gerät',
     ],
 
