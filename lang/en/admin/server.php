@@ -24,4 +24,16 @@ return [
         'transfer_started' => 'Server transfer has been started.',
         'transfer_not_viable' => 'The node you selected does not have the required disk space or memory available to accommodate this server.',
     ],
+    'create' => [
+        'helper_allocation_ip' => "Usually your machine's public IP unless you are port forwarding.",
+        'helper_allocation_alias' => 'Optional display name to help you remember what these are.',
+        'placeholder_allocation_ports' => 'Examples: 27015, 27017-27019',
+        'html_helper_allocation_ports' => '
+        These are the ports that users can connect to this Server through.
+        <br />
+        You would have to port forward these on your home network.',
+        
+
+
+    ]
 ];
