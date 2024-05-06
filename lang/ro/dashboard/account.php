@@ -3,14 +3,14 @@
 return [
     'title' => 'Account Overview',
     'email' => [
-        'title' => 'Update Email Address',
+        'title' => 'Actualizează emailul',
         'button' => 'Update Email',
-        'updated' => 'Your primary email has been updated.',
+        'updated' => 'Adresa ta de email a fost actualizată.',
     ],
     'password' => [
-        'title' => 'Update Password',
+        'title' => 'Schimbă-ți parola',
         'button' => 'Update Password',
-        'requirements' => 'Your new password should be at least 8 characters in length and unique to this website.',
+        'requirements' => 'Noua ta parolă ar trebui să aibă cel puțin 8 caractere.',
         'validation' => [
             'account_password' => 'You must provide your account password.',
             'current_password' => 'You must provide your current password.',
@@ -35,9 +35,9 @@ return [
             'button' => 'Disable Two-Step',
         ],
         'setup' => [
-            'title' => 'Enable Two-Step Verification',
+            'title' => 'Setează autentificarea cu doi factori',
             'subtitle' => "Help protect your account from unauthorized access. You'll be prompted for a verification code each time you sign in.",
-            'help' => 'Scan the QR code above using the two-step authentication app of your choice. Then, enter the 6-digit code generated into the field below.',
+            'help' => 'Nu poți scana codul? Introdu codul de mai jos din aplicație:',
         ],
 
         'required' => [
