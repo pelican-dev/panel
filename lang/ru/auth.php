@@ -17,7 +17,7 @@ return [
         'title' => 'Request Password Reset',
         'label' => 'Забыл пароль?',
         'label_help' => 'Введите свой адрес электронной почты для получения инструкций по сбросу пароля.',
-        'button' => 'Send Email',
+        'button' => 'Восстановить пароль',
         'required' => [
             'email' => 'Для продолжения должен быть указан действительный адрес электронной почты.',
         ],
@@ -25,7 +25,7 @@ return [
 
     'reset_password' => [
         'title' => 'Reset Password',
-        'button' => 'Reset Password',
+        'button' => 'Сбросить и войти',
         'new_password' => 'New Password',
         'confirm_new_password' => 'Confirm New Password',
         'requirement' => [
