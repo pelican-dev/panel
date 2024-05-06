@@ -6,9 +6,11 @@ on:
       - '**'
 
 jobs:
-  lint:
+  pint:
     name: Pint
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     steps:
       - name: Code Checkout
         uses: actions/checkout@v4
@@ -34,3 +36,4 @@ jobs:
         uses: stefanzweifel/git-auto-commit-action@v5
         with:
           commit_message: Pint Fixes
+          commit_user_name: Pint
