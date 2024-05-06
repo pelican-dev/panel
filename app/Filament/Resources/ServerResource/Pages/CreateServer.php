@@ -38,7 +38,7 @@ class CreateServer extends CreateRecord
 
                 Forms\Components\TextInput::make('name')
                     ->prefixIcon('tabler-server')
-                    ->label('Display Name')
+                    ->label(trans('strings.dis_name'))
                     ->suffixAction(Forms\Components\Actions\Action::make('random')
                         ->icon('tabler-dice-' . random_int(1, 6))
                         ->action(function (Forms\Set $set, Forms\Get $get) {
@@ -54,12 +54,13 @@ class CreateServer extends CreateRecord
                         'lg' => 3,
                     ])
                     ->required()
+                    ->placeholder('Unnamed Server')
                     ->maxLength(191),
 
                 Forms\Components\Select::make('owner_id')
                     ->prefixIcon('tabler-user')
                     ->default(auth()->user()->id)
-                    ->label('Owner')
+                    ->label(trans('strings.owner'))
                     ->columnSpan([
                         'default' => 2,
                         'sm' => 4,
@@ -72,6 +73,7 @@ class CreateServer extends CreateRecord
                     ->required(),
 
                 Forms\Components\Select::make('node_id')
+                    ->label('Node')
                     ->disabledOn('edit')
                     ->prefixIcon('tabler-server-2')
                     ->default(fn () => Node::query()->latest()->first()?->id)
@@ -118,30 +120,26 @@ class CreateServer extends CreateRecord
                     ->createOptionForm(fn (Forms\Get $get) => [
                         Forms\Components\TextInput::make('allocation_ip')
                             ->datalist(Node::find($get('node_id'))?->ipAddresses() ?? [])
-                            ->label('IP Address')
+                            ->label(trans('strings.ip'))
                             ->inlineLabel()
                             ->ipv4()
-                            ->helperText("Usually your machine's public IP unless you are port forwarding.")
+                            ->helperText(trans('admin/server.create.helper_allocation_ip'))
                             // ->selectablePlaceholder(false)
                             ->required(),
                         Forms\Components\TextInput::make('allocation_alias')
-                            ->label('Alias')
+                            ->label(trans('strings.alias'))
                             ->inlineLabel()
                             ->default(null)
                             ->datalist([
                                 $get('name'),
                                 Egg::find($get('egg_id'))?->name,
                             ])
-                            ->helperText('Optional display name to help you remember what these are.')
+                            ->helperText(trans('admin/server.create.helper_allocation_alias'))
                             ->required(false),
                         Forms\Components\TagsInput::make('allocation_ports')
-                            ->placeholder('Examples: 27015, 27017-27019')
-                            ->helperText(new HtmlString('
-                                These are the ports that users can connect to this Server through.
-                                <br />
-                                You would have to port forward these on your home network.
-                            '))
-                            ->label('Ports')
+                            ->placeholder(trans('admin/server.create.placeholder_allocation_ports'))
+                            ->helperText(new HtmlString(trans('admin/server.create.html_helper_allocation_ports')))
+                            ->label(trans('strings.ports'))
                             ->inlineLabel()
                             ->live()
                             ->afterStateUpdated(function ($state, Forms\Set $set) {
@@ -201,7 +199,7 @@ class CreateServer extends CreateRecord
                     ->required(),
 
                 Forms\Components\Repeater::make('allocation_additional')
-                    ->label('Additional Allocations')
+                    ->label(trans('strings.add_allocations'))
                     ->columnSpan(2)
                     ->addActionLabel('Add Allocation')
                     ->disabled(fn (Forms\Get $get) => $get('allocation_id') === null)

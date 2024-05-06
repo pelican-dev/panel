@@ -27,6 +27,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\HtmlString;
 use Illuminate\Validation\Rules\Password;
 
+
 class EditProfile extends \Filament\Pages\Auth\EditProfile
 {
     protected function getForms(): array
@@ -91,7 +92,8 @@ class EditProfile extends \Filament\Pages\Auth\EditProfile
                                             ")
                                             )
                                             ->options(fn (User $user) => $user->getAvailableLanguages()),
-                                    ]),
+                                        ]),
+
 
                                 Tab::make('2FA')
                                     ->icon('tabler-shield-lock')
@@ -145,7 +147,7 @@ class EditProfile extends \Filament\Pages\Auth\EditProfile
 
                                         return [
                                             Placeholder::make('qr')
-                                                ->label('Scan QR Code')
+                                                ->label(trans('strings.scan_qr'))
                                                 ->content(fn () => new HtmlString("
                                                 <div style='width: 300px'>$image</div>
                                             "))
@@ -210,7 +212,7 @@ class EditProfile extends \Filament\Pages\Auth\EditProfile
                                 Tab::make('SSH Keys')
                                     ->icon('tabler-lock-code')
                                     ->schema([
-                                        Placeholder::make('Coming soon!'),
+                                        Placeholder::make(trans('strings.coming_soon')),
                                     ]),
 
                                 Tab::make('Activity')

@@ -21,20 +21,21 @@ class CreateUser extends CreateRecord
         return $form
             ->schema([
                 Section::make()->schema([
-                    Forms\Components\TextInput::make('username')->required()->maxLength(191),
-                    Forms\Components\TextInput::make('email')->email()->required()->maxLength(191),
+                    Forms\Components\TextInput::make('username')->required()->maxLength(191)->label(trans('strings.username')),
+                    Forms\Components\TextInput::make('email')->email()->required()->maxLength(191)->label(trans('strings.email')),
 
                     Forms\Components\TextInput::make('password')
+                        ->label(trans('strings.password'))
                         ->dehydrateStateUsing(fn (string $state): string => Hash::make($state))
                         ->dehydrated(fn (?string $state): bool => filled($state))
                         ->required(fn (string $operation): bool => $operation === 'create')
                         ->password(),
 
                     Forms\Components\ToggleButtons::make('root_admin')
-                        ->label('Administrator (Root)')
+                        ->label(trans('admin/user.root_admin'))
                         ->options([
-                            false => 'No',
-                            true => 'Admin',
+                            false => trans('strings.no'),
+                            true => trans('strings.admin'),
                         ])
                         ->colors([
                             false => 'primary',
@@ -47,8 +48,8 @@ class CreateUser extends CreateRecord
 
                             return $user->isLastRootAdmin();
                         })
-                        ->hint(fn (User $user) => $user->isLastRootAdmin() ? 'This is the last root administrator!' : '')
-                        ->helperText(fn (User $user) => $user->isLastRootAdmin() ? 'You must have at least one root administrator in your system.' : '')
+                        ->hint(fn (User $user) => $user->isLastRootAdmin() ? trans('admin/user.last_admin.hint') : '')
+                        ->helperText(fn (User $user) => $user->isLastRootAdmin() ? trans('admin/user.last_admin.helperText') : '')
                         ->hintColor('warning')
                         ->inline()
                         ->required()
