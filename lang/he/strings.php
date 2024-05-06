@@ -45,7 +45,7 @@ return [
     'expires' => 'פג תקפו',
     'public_key' => 'אסימון',
     'api_access' => 'גישה ל- API',
-    'never' => 'אף פעם',
+    'never' => 'never',
     'sign_out' => 'יציאה מהמערכת',
     'admin_control' => 'בקרת מנהל מערכת',
     'required' => 'נדרש',
