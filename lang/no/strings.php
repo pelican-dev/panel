@@ -45,7 +45,7 @@ return [
     'expires' => 'Utløper',
     'public_key' => 'Kode',
     'api_access' => 'Api-tilgang',
-    'never' => 'Never',
+    'never' => 'aldri',
     'sign_out' => 'Logg av',
     'admin_control' => 'Administratorkontroll',
     'required' => 'Obligatorisk',
