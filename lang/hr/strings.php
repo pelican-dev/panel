@@ -45,7 +45,7 @@ return [
     'expires' => 'Istječe',
     'public_key' => 'Token',
     'api_access' => 'Api pristup',
-    'never' => 'Never',
+    'never' => 'nikad',
     'sign_out' => 'Odjava',
     'admin_control' => 'Administrator Kontrola',
     'required' => 'Potrebno',
