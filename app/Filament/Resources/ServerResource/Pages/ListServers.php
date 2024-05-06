@@ -52,6 +52,7 @@ class ListServers extends ListRecords
                     ->label('UUID')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('name')
+                    ->label(trans('strings.name'))
                     ->icon('tabler-brand-docker')
                     ->searchable()
                     ->sortable(),
@@ -65,7 +66,7 @@ class ListServers extends ListRecords
                     ->sortable(),
                 Tables\Columns\TextColumn::make('user.username')
                     ->icon('tabler-user')
-                    ->label('Owner')
+                    ->label(trans('strings.owner'))
                     ->url(fn (Server $server): string => route('filament.admin.resources.users.edit', ['record' => $server->user]))
                     ->sortable(),
                 Tables\Columns\SelectColumn::make('allocation_id')
@@ -78,7 +79,7 @@ class ListServers extends ListRecords
                 Tables\Columns\TextColumn::make('image')->hidden(),
                 Tables\Columns\TextColumn::make('backups_count')
                     ->counts('backups')
-                    ->label('Backups')
+                    ->label(trans('strings.backups'))
                     ->icon('tabler-file-download')
                     ->numeric()
                     ->sortable(),
@@ -95,11 +96,11 @@ class ListServers extends ListRecords
                 ]),
             ])
             ->emptyStateIcon('tabler-brand-docker')
-            ->emptyStateDescription('')
+            ->emptyStateDescription(trans('admin/server.list.empty_desc'))
             ->emptyStateHeading('No Servers')
             ->emptyStateActions([
                 CreateAction::make('create')
-                    ->label('Create Server')
+                    ->label(trans('strings.create_server'))
                     ->button(),
             ]);
     }
@@ -107,7 +108,7 @@ class ListServers extends ListRecords
     {
         return [
             Actions\CreateAction::make()
-                ->label('Create Server')
+                ->label(trans('strings.create_server'))
                 ->hidden(fn () => Server::count() <= 0),
         ];
     }

@@ -64,7 +64,7 @@ class EditServer extends EditRecord
 
                 Forms\Components\ToggleButtons::make('status')
                     ->label('Server State')
-                    ->helperText('')
+                    ->helperText('The state in which this server currently is')
                     ->inlineLabel()
                     ->formatStateUsing(fn ($state) => $state ?? ServerState::Normal)
                     ->options(fn ($state) => collect(ServerState::cases())->filter(fn ($serverState) => $serverState->value === $state)->mapWithKeys(
@@ -90,7 +90,7 @@ class EditServer extends EditRecord
 
                 Forms\Components\TextInput::make('name')
                     ->prefixIcon('tabler-server')
-                    ->label('Display Name')
+                    ->label(trans('strings.dis_name'))
                     ->suffixAction(Forms\Components\Actions\Action::make('random')
                         ->icon('tabler-dice-' . random_int(1, 6))
                         ->action(function (Forms\Set $set, Forms\Get $get) {
@@ -110,7 +110,7 @@ class EditServer extends EditRecord
 
                 Forms\Components\Select::make('owner_id')
                     ->prefixIcon('tabler-user')
-                    ->label('Owner')
+                    ->label(trans('strings.owner'))
                     ->columnSpan([
                         'default' => 2,
                         'sm' => 4,
@@ -142,10 +142,10 @@ class EditServer extends EditRecord
                     ->required(),
 
                 Forms\Components\ToggleButtons::make('skip_scripts')
-                    ->label('Run Egg Install Script?')
+                    ->label(trans('admin/server.create.skip_scripts'))
                     ->options([
-                        false => 'Yes',
-                        true => 'Skip',
+                        false => trans('strings.yes'),
+                        true => trans('strings.skip'),
                     ])
                     ->colors([
                         false => 'primary',
@@ -171,8 +171,8 @@ class EditServer extends EditRecord
                         return !in_array($get('image'), $images);
                     })
                     ->options([
-                        false => 'No',
-                        true => 'Yes',
+                        false => trans('strings.no'),
+                        true => trans('strings.yes'),
                     ])
                     ->colors([
                         false => 'primary',
@@ -319,14 +319,14 @@ class EditServer extends EditRecord
                     ])
                     ->schema([
                         Forms\Components\ToggleButtons::make('unlimited_mem')
-                            ->label('Memory')
+                            ->label(trans('strings.memory'))
                             ->afterStateUpdated(fn (Forms\Set $set) => $set('memory', 0))
                             ->inlineLabel()->inline()
                             ->live()
                             ->formatStateUsing(fn (Forms\Get $get) => $get('memory') <= 0)
                             ->options([
-                                true => 'Unlimited',
-                                false => 'Limited',
+                                true => trans('strings.unlimited'),
+                                false => trans('strings.limited'),
                             ])
                             ->colors([
                                 true => 'primary',
@@ -336,7 +336,7 @@ class EditServer extends EditRecord
 
                         Forms\Components\TextInput::make('memory')
                             ->disabled(fn (Forms\Get $get) => $get('unlimited_mem'))
-                            ->label('Memory Limit')
+                            ->label(trans('strings.memory_limit'))
                             ->suffix('MB')
                             ->required()
                             ->inlineLabel()
@@ -344,14 +344,14 @@ class EditServer extends EditRecord
                             ->numeric(),
 
                         Forms\Components\ToggleButtons::make('unlimited_disk')
-                            ->label('Disk Space')
+                            ->label(trans('strings.disk_space'))
                             ->inlineLabel()->inline()
                             ->live()
                             ->afterStateUpdated(fn (Forms\Set $set) => $set('disk', 0))
                             ->formatStateUsing(fn (Forms\Get $get) => $get('disk') <= 0)
                             ->options([
-                                true => 'Unlimited',
-                                false => 'Limited',
+                                true => (trans('strings.unlimited')),
+                                false => (trans('strings.limited')),
                             ])
                             ->colors([
                                 true => 'primary',
@@ -361,7 +361,7 @@ class EditServer extends EditRecord
 
                         Forms\Components\TextInput::make('disk')
                             ->disabled(fn (Forms\Get $get) => $get('unlimited_disk'))
-                            ->label('Disk Space Limit')
+                            ->label(trans('strings.disk_space_limit'))
                             ->suffix('MB')
                             ->required()
                             ->inlineLabel()
@@ -369,14 +369,14 @@ class EditServer extends EditRecord
                             ->numeric(),
 
                         Forms\Components\ToggleButtons::make('unlimited_cpu')
-                            ->label('CPU')
+                            ->label(trans('strings.cpu'))
                             ->inlineLabel()->inline()
                             ->afterStateUpdated(fn (Forms\Set $set) => $set('cpu', 0))
                             ->live()
                             ->formatStateUsing(fn (Forms\Get $get) => $get('cpu') <= 0)
                             ->options([
-                                true => 'Unlimited',
-                                false => 'Limited',
+                                true => (trans('strings.unlimited')),
+                                false => (trans('strings.limited')),
                             ])
                             ->colors([
                                 true => 'primary',
@@ -386,7 +386,7 @@ class EditServer extends EditRecord
 
                         Forms\Components\TextInput::make('cpu')
                             ->disabled(fn (Forms\Get $get) => $get('unlimited_cpu'))
-                            ->label('CPU Limit')
+                            ->label(trans('strings.cpu_limit'))
                             ->suffix('%')
                             ->required()
                             ->inlineLabel()
@@ -397,10 +397,10 @@ class EditServer extends EditRecord
                             ->helperText('The IO performance relative to other running containers')
                             ->label('Block IO Proportion')
                             ->required(),
-                        //                            ->numeric()
-                        //                            ->minValue(0)
-                        //                            ->maxValue(1000)
-                        //                            ->step(10)
+                        //  ->numeric()
+                        //  ->minValue(0)
+                        //  ->maxValue(1000)
+                        //  ->step(10)
 
                         Forms\Components\ToggleButtons::make('swap_support')
                             ->label('Enable Swap Memory')
@@ -408,9 +408,9 @@ class EditServer extends EditRecord
                             ->inlineLabel()->inline()
                             ->formatStateUsing(fn (Forms\Get $get) => $get('swap') <= 0)
                             ->options([
-                                'unlimited' => 'Unlimited',
-                                'limited' => 'Limited',
-                                'disabled' => 'Disabled',
+                                'unlimited' => (trans('strings.unlimited')),
+                                'limited' => (trans('strings.limited')),
+                                'disabled' => (trans('strings.disabled')),
                             ])
                             ->colors([
                                 'unlimited' => 'primary',
@@ -433,8 +433,8 @@ class EditServer extends EditRecord
                             ->inline()
                             ->columnSpan(2)
                             ->options([
-                                false => 'Disabled',
-                                true => 'Enabled',
+                                false => (trans('strings.disabled')),
+                                true => (trans('strings.enabled')),
                             ])
                             ->colors([
                                 false => 'success',
@@ -452,13 +452,13 @@ class EditServer extends EditRecord
                 ->after(fn (Server $server) => resolve(ServerDeletionService::class)->handle($server))
                 ->requiresConfirmation(),
             Actions\DeleteAction::make('Force Delete')
-                ->label('Force Delete')
+                ->label(trans('strings.force_delete'))
                 ->successRedirectUrl(route('filament.admin.resources.servers.index'))
                 ->color('danger')
                 ->after(fn (Server $server) => resolve(ServerDeletionService::class)->withForce()->handle($server))
                 ->requiresConfirmation(),
             Actions\Action::make('console')
-                ->label('Console')
+                ->label(trans('strings.console'))
                 ->icon('tabler-terminal')
                 ->url(fn (Server $server) => "/server/$server->uuid_short"),
             $this->getSaveFormAction()->formId('form'),
