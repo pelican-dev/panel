@@ -45,7 +45,7 @@ return [
     'expires' => 'Vervalt',
     'public_key' => 'Token',
     'api_access' => 'Api toegang',
-    'never' => 'Nooit',
+    'never' => 'nooit',
     'sign_out' => 'Afmelden',
     'admin_control' => 'Admin Beheer',
     'required' => 'Vereist',
