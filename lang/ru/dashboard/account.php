@@ -3,14 +3,14 @@
 return [
     'title' => 'Account Overview',
     'email' => [
-        'title' => 'Update Email Address',
+        'title' => 'Изменить эл. почту',
         'button' => 'Update Email',
-        'updated' => 'Your primary email has been updated.',
+        'updated' => 'Ваш адрес эл. почты успешно изменен.',
     ],
     'password' => [
-        'title' => 'Update Password',
+        'title' => 'Изменить пароль',
         'button' => 'Update Password',
-        'requirements' => 'Your new password should be at least 8 characters in length and unique to this website.',
+        'requirements' => 'Длина вашего нового пароля должна быть не менее 8 символов.',
         'validation' => [
             'account_password' => 'You must provide your account password.',
             'current_password' => 'You must provide your current password.',
@@ -35,9 +35,9 @@ return [
             'button' => 'Disable Two-Step',
         ],
         'setup' => [
-            'title' => 'Enable Two-Step Verification',
+            'title' => 'Настройка двухфакторной авторизации',
             'subtitle' => "Help protect your account from unauthorized access. You'll be prompted for a verification code each time you sign in.",
-            'help' => 'Scan the QR code above using the two-step authentication app of your choice. Then, enter the 6-digit code generated into the field below.',
+            'help' => 'Не удается просканировать код? Введите код ниже в приложение:',
         ],
 
         'required' => [
