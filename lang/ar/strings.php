@@ -45,7 +45,7 @@ return [
     'expires' => 'تنتهي',
     'public_key' => 'مفتاح عام',
     'api_access' => 'وصول API',
-    'never' => 'أبداً',
+    'never' => 'never',
     'sign_out' => 'تسجيل الخروج',
     'admin_control' => 'التحكم الإداري',
     'required' => 'مطلوب',
