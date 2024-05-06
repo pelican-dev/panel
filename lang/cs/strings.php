@@ -45,7 +45,7 @@ return [
     'expires' => 'Expirace',
     'public_key' => 'Token',
     'api_access' => 'Api Přístup',
-    'never' => 'Nikdy',
+    'never' => 'nikdy',
     'sign_out' => 'Odhlásit se',
     'admin_control' => 'Administrace',
     'required' => 'Povinné pole',
