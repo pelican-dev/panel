@@ -3,14 +3,14 @@
 return [
     'title' => 'Kontoübersicht',
     'email' => [
-        'title' => 'E-Mail-Adresse aktualisieren',
+        'title' => 'Aktualisiere deine E-Mail',
         'button' => 'E-Mail aktualisieren',
-        'updated' => 'Deine primäre E-Mail wurde aktualisiert.',
+        'updated' => 'Deine E-Mail-Adresse wurde aktualisiert.',
     ],
     'password' => [
-        'title' => 'Passwort ändern',
+        'title' => 'Ändere dein Passwort',
         'button' => 'Passwort ändern',
-        'requirements' => 'Dein neues Passwort sollte mindestens 8 Zeichen lang und einzigartig für diese Website sein.',
+        'requirements' => 'Dein neues Passwort sollte mindestens 8 Zeichen lang sein.',
         'validation' => [
             'account_password' => 'Du musst dein Konto Passwort angeben.',
             'current_password' => 'Du musst dein aktuelles Passwort angeben.',
@@ -35,9 +35,9 @@ return [
             'button' => 'Zweistufige (2-Faktor) Verifizierung deaktivieren',
         ],
         'setup' => [
-            'title' => 'Zweistufige Verifizierung aktivieren',
-            'subtitle' => 'Helfen Sie mit, Ihr Konto vor unbefugtem Zugriff zu schützen. Jedes Mal, wenn Sie sich anmelden, werden Sie nach einem Bestätigungscode gefragt.',
-            'help' => 'Scannen Sie den obigen QR-Code mit der 2-Faktor-Authentifizierungsapp Ihrer Wahl. Geben Sie danach den 6-stelligen Code in das Feld unten ein.',
+            'title' => 'Zwei-Faktor-Authentifizierung einrichten',
+            'subtitle' => "Helfen Sie mit, Ihr Konto vor unbefugtem Zugriff zu schützen. Jedes Mal, wenn Sie sich anmelden, werden Sie nach einem Bestätigungscode gefragt.",
+            'help' => 'Code kann nicht gescannt werden? Gebe den unteren Code in deine Anwendung ein:',
         ],
 
         'required' => [
