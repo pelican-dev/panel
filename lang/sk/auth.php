@@ -17,7 +17,7 @@ return [
         'title' => 'Request Password Reset',
         'label' => 'Zabudnuté heslo?',
         'label_help' => 'Zadajte emailovú adresu svojho účtu, aby ste dostali pokyny na reset hesla.',
-        'button' => 'Send Email',
+        'button' => 'Obnoviť účet',
         'required' => [
             'email' => 'A valid email address must be provided to continue.',
         ],
@@ -25,7 +25,7 @@ return [
 
     'reset_password' => [
         'title' => 'Reset Password',
-        'button' => 'Reset Password',
+        'button' => 'Resetovať a prihlásiť sa',
         'new_password' => 'New Password',
         'confirm_new_password' => 'Confirm New Password',
         'requirement' => [
