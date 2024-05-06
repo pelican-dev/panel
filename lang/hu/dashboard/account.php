@@ -3,14 +3,14 @@
 return [
     'title' => 'Account Overview',
     'email' => [
-        'title' => 'Email címed frissítése',
+        'title' => 'Update your email',
         'button' => 'Update Email',
-        'updated' => 'Az email címed frissítve lett.',
+        'updated' => 'Your email address has been updated.',
     ],
     'password' => [
-        'title' => 'Jelszavad megváltoztatása',
+        'title' => 'Jelszóváltoztatás',
         'button' => 'Update Password',
-        'requirements' => 'Az új jelszavadnak legalább 8 karakter hosszúnak kell lennie.',
+        'requirements' => 'Your new password should be at least 8 characters in length.',
         'validation' => [
             'account_password' => 'You must provide your account password.',
             'current_password' => 'You must provide your current password.',
@@ -35,9 +35,9 @@ return [
             'button' => 'Disable Two-Step',
         ],
         'setup' => [
-            'title' => 'Két-faktoros hitelesítés beállítása',
+            'title' => 'Setup two-factor authentication',
             'subtitle' => "Help protect your account from unauthorized access. You'll be prompted for a verification code each time you sign in.",
-            'help' => 'Nem tudod bescannelni a kódot? Írd be az alábbi kulcsot az alkalmazásba:',
+            'help' => 'Can\'t scan the code? Enter the code below into your application:',
         ],
 
         'required' => [
