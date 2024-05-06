@@ -17,7 +17,7 @@ return [
         'title' => 'Request Password Reset',
         'label' => 'Glemt passord?',
         'label_help' => 'Skriv inn din epostadresse for å motta instuksjoner for å resette passordet ditt.',
-        'button' => 'Send Email',
+        'button' => 'Gjenopprett konto',
         'required' => [
             'email' => 'A valid email address must be provided to continue.',
         ],
@@ -25,7 +25,7 @@ return [
 
     'reset_password' => [
         'title' => 'Reset Password',
-        'button' => 'Reset Password',
+        'button' => 'Tilbakestill og logg inn',
         'new_password' => 'New Password',
         'confirm_new_password' => 'Confirm New Password',
         'requirement' => [
