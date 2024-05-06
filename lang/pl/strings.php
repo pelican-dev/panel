@@ -45,7 +45,7 @@ return [
     'expires' => 'Wygasa',
     'public_key' => 'Token',
     'api_access' => 'Dostęp do API',
-    'never' => 'Never',
+    'never' => 'nigdy',
     'sign_out' => 'Wyloguj się',
     'admin_control' => 'Ustawienia administratora',
     'required' => 'Wymagane',
