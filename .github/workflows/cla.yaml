@@ -1,4 +1,4 @@
-name: "CLA Assistant"
+name: "CLA Assistant test"
 on:
   issue_comment:
     types: [created]
