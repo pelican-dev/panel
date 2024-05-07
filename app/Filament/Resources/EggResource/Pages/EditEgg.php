@@ -69,6 +69,7 @@ class EditEgg extends EditRecord
                                 ->helperText('Not implemented.')
                                 ->columnSpan(['default' => 1, 'sm' => 1, 'md' => 2, 'lg' => 2]),
                             Forms\Components\KeyValue::make('docker_images')
+                                ->live()
                                 ->columnSpanFull()
                                 ->required()
                                 ->addActionLabel('Add Image')
@@ -141,10 +142,13 @@ class EditEgg extends EditRecord
                                     Forms\Components\TextInput::make('env_variable')
                                         ->label('Environment Variable')
                                         ->maxLength(191)
-                                        ->hint(fn ($state) => "{{{$state}}}")
+                                        ->prefix('{{')
+                                        ->suffix('}}')
+                                        ->hintIcon('tabler-code')
+                                        ->hintIconTooltip(fn ($state) => "{{{$state}}}")
                                         ->required(),
                                     Forms\Components\TextInput::make('default_value')->maxLength(191),
-                                    Forms\Components\Textarea::make('rules')->rows(3)->columnSpanFull(),
+                                    Forms\Components\TextInput::make('rules')->columnSpanFull(),
                                 ]),
                         ]),
                     Forms\Components\Tabs\Tab::make('Install Script')

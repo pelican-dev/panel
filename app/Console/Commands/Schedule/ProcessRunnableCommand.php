@@ -6,6 +6,7 @@ use Illuminate\Console\Command;
 use App\Models\Schedule;
 use Illuminate\Database\Eloquent\Builder;
 use App\Services\Schedules\ProcessScheduleService;
+use Carbon\Carbon;
 
 class ProcessRunnableCommand extends Command
 {
@@ -23,11 +24,11 @@ class ProcessRunnableCommand extends Command
             ->whereRelation('server', fn (Builder $builder) => $builder->whereNull('status'))
             ->where('is_active', true)
             ->where('is_processing', false)
-            ->whereRaw('next_run_at <= NOW()')
+            ->whereDate('next_run_at', '<=', Carbon::now()->toDateString())
             ->get();
 
         if ($schedules->count() < 1) {
-            $this->line('There are no scheduled tasks for servers that need to be run.');
+            $this->line(__('commands.schedule.process.no_tasks'));
 
             return 0;
         }
@@ -66,7 +67,7 @@ class ProcessRunnableCommand extends Command
         } catch (\Throwable|\Exception $exception) {
             logger()->error($exception, ['schedule_id' => $schedule->id]);
 
-            $this->error("An error was encountered while processing Schedule #$schedule->id: " . $exception->getMessage());
+            $this->error(__('commands.schedule.process.no_tasks') . " #$schedule->id: " . $exception->getMessage());
         }
     }
 }

@@ -6,6 +6,7 @@ use App\Exceptions\Service\Egg\HasChildrenException;
 use App\Exceptions\Service\HasActiveServersException;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Support\Str;
 
 /**
  * @property int $id
@@ -80,7 +81,9 @@ class Egg extends Model
      * Fields that are not mass assignable.
      */
     protected $fillable = [
+        'uuid',
         'name',
+        'author',
         'description',
         'features',
         'docker_images',
@@ -128,6 +131,7 @@ class Egg extends Model
         'config_logs' => null,
         'config_files' => null,
         'update_url' => null,
+        'tags' => '[]',
     ];
 
     protected function casts(): array
@@ -146,6 +150,12 @@ class Egg extends Model
 
     protected static function booted(): void
     {
+        static::creating(function (self $egg) {
+            $egg->uuid ??= Str::uuid()->toString();
+
+            return true;
+        });
+
         static::deleting(function (self $egg) {
             throw_if($egg->servers()->count(), new HasActiveServersException(trans('exceptions.egg.delete_has_servers')));
 
@@ -306,5 +316,10 @@ class Egg extends Model
     public function configFrom(): BelongsTo
     {
         return $this->belongsTo(self::class, 'config_from');
+    }
+
+    public function getKebabName(): string
+    {
+        return str($this->name)->kebab()->lower()->trim()->split('/[^\w\-]/')->join('');
     }
 }
