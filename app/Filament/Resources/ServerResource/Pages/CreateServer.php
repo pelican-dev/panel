@@ -495,7 +495,6 @@ class CreateServer extends CreateRecord
                             ->label('Memory')
                             ->afterStateUpdated(fn (Forms\Set $set) => $set('memory', 0))
                             ->inlineLabel()->inline()
-                            ->live()
                             ->formatStateUsing(fn (Forms\Get $get) => $get('memory') <= 0)
                             ->options([
                                 true => 'Unlimited',
@@ -520,7 +519,6 @@ class CreateServer extends CreateRecord
                         Forms\Components\ToggleButtons::make('unlimited_disk')
                             ->label('Disk Space')
                             ->inlineLabel()->inline()
-                            ->live()
                             ->afterStateUpdated(fn (Forms\Set $set) => $set('disk', 0))
                             ->formatStateUsing(fn (Forms\Get $get) => $get('disk') <= 0)
                             ->options([
@@ -547,7 +545,6 @@ class CreateServer extends CreateRecord
                             ->label('CPU')
                             ->inlineLabel()->inline()
                             ->afterStateUpdated(fn (Forms\Set $set) => $set('cpu', 0))
-                            ->live()
                             ->formatStateUsing(fn (Forms\Get $get) => $get('cpu') <= 0)
                             ->options([
                                 true => 'Unlimited',
