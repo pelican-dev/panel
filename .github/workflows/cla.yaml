@@ -7,7 +7,7 @@ on:
 
 permissions:
   actions: write
-  contents: write
+  contents: read
   pull-requests: write
   statuses: write
 
@@ -17,13 +17,13 @@ jobs:
     steps:
       - name: "CLA Assistant"
         if: (github.event.comment.body == 'recheck' || github.event.comment.body == 'I have read the CLA Document and I hereby sign the CLA') || github.event_name == 'pull_request_target'
-        uses: contributor-assistant/github-action@v2.3.0
+        uses: contributor-assistant/github-action@v2.4.0
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          PERSONAL_ACCESS_TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
+          PERSONAL_ACCESS_TOKEN: ${{ secrets.CLA_PERSONAL_ACCESS_TOKEN }}
         with:
           path-to-signatures: 'version1/cla.json'
-          path-to-document: 'https://github.com/pelican-dev/panel/blob/3.x/contributor_license_agreement.md'
+          path-to-document: 'https://github.com/pelican-dev/panel/blob/main/contributor_license_agreement.md'
           branch: 'main'
           allowlist: dependabot[bot]
           remote-organization-name: pelican-dev
