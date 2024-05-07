@@ -9,7 +9,6 @@ use App\Traits\Commands\EnvironmentWriterTrait;
 class AppSettingsCommand extends Command
 {
     use EnvironmentWriterTrait;
-
     public const CACHE_DRIVERS = [
         'redis' => 'Redis',
         'memcached' => 'Memcached',
@@ -62,11 +61,12 @@ class AppSettingsCommand extends Command
      */
     public function handle(): int
     {
+
         if (empty(config('hashids.salt')) || $this->option('new-salt')) {
             $this->variables['HASHIDS_SALT'] = str_random(20);
         }
 
-        $this->output->comment('Provide the email address that eggs exported by this Panel should be from. This should be a valid email address.');
+        $this->output->comment(__('commands.appsettings.comment.author'));
         $this->variables['APP_SERVICE_AUTHOR'] = $this->option('author') ?? $this->ask(
             'Egg Author Email',
             config('panel.service.author', 'unknown@unknown.com')
@@ -78,13 +78,13 @@ class AppSettingsCommand extends Command
             return 1;
         }
 
-        $this->output->comment('The application URL MUST begin with https:// or http:// depending on if you are using SSL or not. If you do not include the scheme your emails and other content will link to the wrong location.');
+        $this->output->comment(__('commands.appsettings.comment.url'));
         $this->variables['APP_URL'] = $this->option('url') ?? $this->ask(
             'Application URL',
             config('app.url', 'https://example.com')
         );
 
-        $this->output->comment('The timezone should match one of PHP\'s supported timezones. If you are unsure, please reference https://php.net/manual/en/timezones.php.');
+        $this->output->comment(__('commands.appsettings.comment.timezone'));
         $this->variables['APP_TIMEZONE'] = $this->option('timezone') ?? $this->anticipate(
             'Application Timezone',
             \DateTimeZone::listIdentifiers(),
@@ -115,7 +115,7 @@ class AppSettingsCommand extends Command
         if (!is_null($this->option('settings-ui'))) {
             $this->variables['APP_ENVIRONMENT_ONLY'] = $this->option('settings-ui') == 'true' ? 'false' : 'true';
         } else {
-            $this->variables['APP_ENVIRONMENT_ONLY'] = $this->confirm('Enable UI based settings editor?', true) ? 'false' : 'true';
+            $this->variables['APP_ENVIRONMENT_ONLY'] = $this->confirm(__('commands.appsettings.comment.settings_ui'), true) ? 'false' : 'true';
         }
 
         // Make sure session cookies are set as "secure" when using HTTPS
@@ -145,7 +145,7 @@ class AppSettingsCommand extends Command
             return;
         }
 
-        $this->output->note('You\'ve selected the Redis driver for one or more options, please provide valid connection information below. In most cases you can use the defaults provided unless you have modified your setup.');
+        $this->output->note(__('commands.appsettings.redis.note'));
         $this->variables['REDIS_HOST'] = $this->option('redis-host') ?? $this->ask(
             'Redis Host',
             config('database.redis.default.host')
@@ -158,7 +158,7 @@ class AppSettingsCommand extends Command
         }
 
         if ($askForRedisPassword) {
-            $this->output->comment('By default a Redis server instance has no password as it is running locally and inaccessible to the outside world. If this is the case, simply hit enter without entering a value.');
+            $this->output->comment(__('commands.appsettings.redis.comment'));
             $this->variables['REDIS_PASSWORD'] = $this->option('redis-pass') ?? $this->output->askHidden(
                 'Redis Password'
             );

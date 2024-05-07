@@ -121,10 +121,7 @@ class AllocationSelectionService
             $discard = $this->getDiscardableDedicatedAllocations($nodes);
 
             if (!empty($discard)) {
-                $query->whereNotIn(
-                    Allocation::query()->raw('CONCAT_WS("-", node_id, ip)'),
-                    $discard
-                );
+                $query->whereNotIn('ip', $discard);
             }
         }
 
@@ -132,7 +129,7 @@ class AllocationSelectionService
     }
 
     /**
-     * Return a concatenated result set of node ips that already have at least one
+     * Return a result set of node ips that already have at least one
      * server assigned to that IP. This allows for filtering out sets for
      * dedicated allocation IPs.
      *
@@ -141,16 +138,15 @@ class AllocationSelectionService
      */
     private function getDiscardableDedicatedAllocations(array $nodes = []): array
     {
-        $query = Allocation::query()->selectRaw('CONCAT_WS("-", node_id, ip) as result');
+        $query = Allocation::query()->whereNotNull('server_id');
 
         if (!empty($nodes)) {
             $query->whereIn('node_id', $nodes);
         }
 
-        return $query->whereNotNull('server_id')
-            ->groupByRaw('CONCAT(node_id, ip)')
+        return $query->groupBy('ip')
             ->get()
-            ->pluck('result')
+            ->pluck('ip')
             ->toArray();
     }
 }
