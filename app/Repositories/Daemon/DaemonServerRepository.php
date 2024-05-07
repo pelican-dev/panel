@@ -31,7 +31,7 @@ class DaemonServerRepository extends DaemonRepository
             return ['state' => ContainerStatus::Missing->value];
         }
 
-        return $response->json();
+        return $response?->json() ?? ['state' => ContainerStatus::Missing->value];
     }
 
     /**
