@@ -69,6 +69,7 @@ class EditEgg extends EditRecord
                                 ->helperText('Not implemented.')
                                 ->columnSpan(['default' => 1, 'sm' => 1, 'md' => 2, 'lg' => 2]),
                             Forms\Components\KeyValue::make('docker_images')
+                                ->live()
                                 ->columnSpanFull()
                                 ->required()
                                 ->addActionLabel('Add Image')
