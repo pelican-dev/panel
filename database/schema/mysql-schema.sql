@@ -844,3 +844,4 @@ INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (197,'2024_03_12_15
 INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (198,'2024_03_14_055537_remove_locations_table',2);
 INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (201,'2024_04_20_214441_add_egg_var_sort',3);
 INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (203,'2024_04_14_002250_update_column_names',4);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (204,'2024_05_08_094823_rename_oom_disabled_column_to_oom_killer',1);
