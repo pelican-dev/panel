@@ -24,6 +24,9 @@ use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
 use Illuminate\Contracts\Auth\Access\Authorizable as AuthorizableContract;
 use Illuminate\Contracts\Auth\CanResetPassword as CanResetPasswordContract;
 use App\Notifications\SendPasswordReset as ResetPasswordNotification;
+use Spatie\Permission\Traits\HasRoles;
+use BezhanSalleh\FilamentShield\Traits\HasPanelShield;
+use BezhanSalleh\FilamentShield\Support\Utils;
 
 /**
  * App\Models\User.
@@ -90,6 +93,8 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
     use AvailableLanguages;
     use CanResetPassword;
     use HasAccessTokens;
+    use HasPanelShield;
+    use HasRoles;
     use Notifiable;
 
     public const USER_LEVEL_USER = 0;
@@ -336,16 +341,18 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
         return $this->canned($abilities, $arguments);
     }
 
+    /*
     public function isLastRootAdmin(): bool
     {
         $rootAdmins = User::query()->where('root_admin', true)->limit(2)->get();
 
         return once(fn () => $rootAdmins->count() === 1 && $rootAdmins->first()->is($this));
     }
+    */
 
     public function canAccessPanel(Panel $panel): bool
     {
-        return $this->root_admin;
+        return $this->hasRole(Utils::getPanelUserRoleName()) || $this->hasRole(Utils::getSuperAdminName()); // TODO make sure that when a user has no roles or only the Panel User role that they cannot access /panel/roles because currently they can.
     }
 
     public function getFilamentName(): string

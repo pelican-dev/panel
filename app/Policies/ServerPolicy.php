@@ -4,41 +4,105 @@ namespace App\Policies;
 
 use App\Models\User;
 use App\Models\Server;
+use Illuminate\Auth\Access\HandlesAuthorization;
 
 class ServerPolicy
 {
-    /**
-     * Checks if the user has the given permission on/for the server.
-     */
-    protected function checkPermission(User $user, Server $server, string $permission): bool
-    {
-        $subuser = $server->subusers->where('user_id', $user->id)->first();
-        if (!$subuser || empty($permission)) {
-            return false;
-        }
+    use HandlesAuthorization;
 
-        return in_array($permission, $subuser->permissions);
+    /**
+     * Determine whether the user can view any models.
+     */
+    public function viewAny(User $user): bool
+    {
+        return $user->can('view_any_server');
     }
 
     /**
-     * Runs before any of the functions are called. Used to determine if user is root admin, if so, ignore permissions.
+     * Determine whether the user can view the model.
      */
-    public function before(User $user, string $ability, Server $server): bool
+    public function view(User $user, Server $server): bool
     {
-        if ($user->root_admin || $server->owner_id === $user->id) {
-            return true;
-        }
-
-        return $this->checkPermission($user, $server, $ability);
+        return $user->can('view_server');
     }
 
     /**
-     * This is a horrendous hack to avoid Laravel's "smart" behavior that does
-     * not call the before() function if there isn't a function matching the
-     * policy permission.
+     * Determine whether the user can create models.
      */
-    public function __call(string $name, mixed $arguments)
+    public function create(User $user): bool
     {
-        // do nothing
+        return $user->can('create_server');
+    }
+
+    /**
+     * Determine whether the user can update the model.
+     */
+    public function update(User $user, Server $server): bool
+    {
+        return $user->can('update_server');
+    }
+
+    /**
+     * Determine whether the user can delete the model.
+     */
+    public function delete(User $user, Server $server): bool
+    {
+        return $user->can('delete_server');
+    }
+
+    /**
+     * Determine whether the user can bulk delete.
+     */
+    public function deleteAny(User $user): bool
+    {
+        return $user->can('delete_any_server');
+    }
+
+    /**
+     * Determine whether the user can permanently delete.
+     */
+    public function forceDelete(User $user, Server $server): bool
+    {
+        return $user->can('force_delete_server');
+    }
+
+    /**
+     * Determine whether the user can permanently bulk delete.
+     */
+    public function forceDeleteAny(User $user): bool
+    {
+        return $user->can('force_delete_any_server');
+    }
+
+    /**
+     * Determine whether the user can restore.
+     */
+    public function restore(User $user, Server $server): bool
+    {
+        return $user->can('restore_server');
+    }
+
+    /**
+     * Determine whether the user can bulk restore.
+     */
+    public function restoreAny(User $user): bool
+    {
+        return $user->can('restore_any_server');
+    }
+
+    /**
+     * Determine whether the user can replicate.
+     */
+    public function replicate(User $user, Server $server): bool
+    {
+        return $user->can('replicate_server');
+    }
+
+    /**
+     * Determine whether the user can reorder.
+     */
+    public function reorder(User $user): bool
+    {
+        return $user->can('reorder_server');
     }
 }

@@ -30,6 +30,13 @@ class EditUser extends EditRecord
                         ->required(fn (string $operation): bool => $operation === 'create')
                         ->password(),
 
+                    Forms\Components\CheckboxList::make('roles')
+                        ->relationship('roles', 'name')
+                        ->searchable(false)
+                        ->columns(2)
+                        ->bulkToggleable(false),
+
+                    /*
                     Forms\Components\ToggleButtons::make('root_admin')
                         ->label('Administrator (Root)')
                         ->options([
@@ -53,6 +60,7 @@ class EditUser extends EditRecord
                         ->inline()
                         ->required()
                         ->default(false),
+                    */
 
                     Forms\Components\Hidden::make('skipValidation')->default(true),
 
