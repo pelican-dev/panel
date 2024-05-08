@@ -61,7 +61,6 @@ class AppSettingsCommand extends Command
      */
     public function handle(): int
     {
-
         if (empty(config('hashids.salt')) || $this->option('new-salt')) {
             $this->variables['HASHIDS_SALT'] = str_random(20);
         }
@@ -124,6 +123,12 @@ class AppSettingsCommand extends Command
         }
 
         $this->checkForRedis();
+
+        $path = base_path('.env');
+        if (!file_exists($path)) {
+            copy($path . '.example', $path);
+        }
+
         $this->writeToEnvironment($this->variables);
 
         $this->info($this->console->output());
