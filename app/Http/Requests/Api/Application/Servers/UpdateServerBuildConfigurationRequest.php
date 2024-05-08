@@ -16,7 +16,7 @@ class UpdateServerBuildConfigurationRequest extends ServerWriteRequest
 
         return [
             'allocation' => $rules['allocation_id'],
-            'oom_disabled' => $rules['oom_disabled'],
+            'oom_killer' => $rules['oom_killer'],
 
             'limits' => 'sometimes|array',
             'limits.memory' => $this->requiredToOptional('memory', $rules['memory'], true),

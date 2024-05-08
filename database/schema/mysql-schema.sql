@@ -495,7 +495,7 @@ CREATE TABLE `servers` (
                            `io` int unsigned NOT NULL,
                            `cpu` int unsigned NOT NULL,
                            `threads` varchar(191) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-                           `oom_disabled` tinyint unsigned NOT NULL DEFAULT '0',
+                           `oom_killer` tinyint unsigned NOT NULL DEFAULT '0',
                            `allocation_id` int unsigned NOT NULL,
                            `egg_id` int unsigned NOT NULL,
                            `startup` text COLLATE utf8mb4_unicode_ci NOT NULL,

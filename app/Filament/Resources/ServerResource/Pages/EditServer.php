@@ -432,7 +432,7 @@ class EditServer extends EditRecord
                             ->columns(4)
                             ->columnSpanFull()
                             ->schema([
-                                Forms\Components\ToggleButtons::make('oom_disabled')
+                                Forms\Components\ToggleButtons::make('oom_killer')
                                     ->label('OOM Killer')->inlineLabel()->inline()
                                     ->columnSpan(2)
                                     ->options([
