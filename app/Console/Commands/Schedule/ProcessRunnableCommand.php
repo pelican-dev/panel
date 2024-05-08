@@ -6,6 +6,7 @@ use Illuminate\Console\Command;
 use App\Models\Schedule;
 use Illuminate\Database\Eloquent\Builder;
 use App\Services\Schedules\ProcessScheduleService;
+use Carbon\Carbon;
 
 class ProcessRunnableCommand extends Command
 {
@@ -23,7 +24,7 @@ class ProcessRunnableCommand extends Command
             ->whereRelation('server', fn (Builder $builder) => $builder->whereNull('status'))
             ->where('is_active', true)
             ->where('is_processing', false)
-            ->whereRaw('next_run_at <= NOW()')
+            ->whereDate('next_run_at', '<=', Carbon::now()->toDateString())
             ->get();
 
         if ($schedules->count() < 1) {
