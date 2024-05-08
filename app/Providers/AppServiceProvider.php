@@ -9,7 +9,6 @@ use App\Models\Node;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Facades\Broadcast;
-use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\URL;
@@ -89,7 +88,7 @@ class AppServiceProvider extends ServiceProvider
      */
     protected function versionData(): array
     {
-        return Cache::remember('git-version', 5, function () {
+        return cache()->remember('git-version', 5, function () {
             if (file_exists(base_path('.git/HEAD'))) {
                 $head = explode(' ', file_get_contents(base_path('.git/HEAD')));
 

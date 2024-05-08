@@ -70,9 +70,7 @@
         "cs:fix": "php-cs-fixer fix",
         "cs:check": "php-cs-fixer fix --dry-run --diff --verbose",
         "post-autoload-dump": [
-            "Illuminate\\Foundation\\ComposerScripts::postAutoloadDump",
-            "@php artisan package:discover --ansi || true",
-            "@php artisan filament:upgrade"
+            "Illuminate\\Foundation\\ComposerScripts::postAutoloadDump"
         ],
         "post-root-package-install": [
             "@php -r \"file_exists('.env') || copy('.env.example', '.env');\""

@@ -29,7 +29,6 @@ class InfoCommand extends Command
             ['Panel Version', config('app.version')],
             ['Latest Version', $this->versionService->getPanel()],
             ['Up-to-Date', $this->versionService->isLatestPanel() ? 'Yes' : $this->formatText('No', 'bg=red')],
-            ['Unique Identifier', config('panel.service.author')],
         ], 'compact');
 
         $this->output->title('Application Configuration');
@@ -38,7 +37,6 @@ class InfoCommand extends Command
             ['Debug Mode', $this->formatText(config('app.debug') ? 'Yes' : 'No', !config('app.debug') ?: 'bg=red')],
             ['Installation URL', config('app.url')],
             ['Installation Directory', base_path()],
-            ['Timezone', config('app.timezone')],
             ['Cache Driver', config('cache.default')],
             ['Queue Driver', config('queue.default')],
             ['Session Driver', config('session.driver')],

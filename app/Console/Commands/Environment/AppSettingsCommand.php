@@ -35,7 +35,6 @@ class AppSettingsCommand extends Command
                             {--new-salt : Whether or not to generate a new salt for Hashids.}
                             {--author= : The email that services created on this instance should be linked to.}
                             {--url= : The URL that this Panel is running on.}
-                            {--timezone= : The timezone to use for Panel times.}
                             {--cache= : The cache driver backend to use.}
                             {--session= : The session driver backend to use.}
                             {--queue= : The queue driver backend to use.}
@@ -61,34 +60,16 @@ class AppSettingsCommand extends Command
      */
     public function handle(): int
     {
+        $this->variables['APP_TIMEZONE'] = 'UTC';
 
         if (empty(config('hashids.salt')) || $this->option('new-salt')) {
             $this->variables['HASHIDS_SALT'] = str_random(20);
-        }
-
-        $this->output->comment(__('commands.appsettings.comment.author'));
-        $this->variables['APP_SERVICE_AUTHOR'] = $this->option('author') ?? $this->ask(
-            'Egg Author Email',
-            config('panel.service.author', 'unknown@unknown.com')
-        );
-
-        if (!filter_var($this->variables['APP_SERVICE_AUTHOR'], FILTER_VALIDATE_EMAIL)) {
-            $this->output->error('The service author email provided is invalid.');
-
-            return 1;
         }
 
         $this->output->comment(__('commands.appsettings.comment.url'));
         $this->variables['APP_URL'] = $this->option('url') ?? $this->ask(
             'Application URL',
             config('app.url', 'https://example.com')
-        );
-
-        $this->output->comment(__('commands.appsettings.comment.timezone'));
-        $this->variables['APP_TIMEZONE'] = $this->option('timezone') ?? $this->anticipate(
-            'Application Timezone',
-            \DateTimeZone::listIdentifiers(),
-            config('app.timezone')
         );
 
         $selected = config('cache.default', 'file');
@@ -124,6 +105,12 @@ class AppSettingsCommand extends Command
         }
 
         $this->checkForRedis();
+
+        $path = base_path('.env');
+        if (!file_exists($path)) {
+            copy($path . '.example', $path);
+        }
+
         $this->writeToEnvironment($this->variables);
 
         $this->info($this->console->output());
