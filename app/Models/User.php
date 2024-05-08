@@ -41,7 +41,6 @@ use BezhanSalleh\FilamentShield\Support\Utils;
  * @property string $password
  * @property string|null $remember_token
  * @property string $language
- * @property bool $root_admin
  * @property bool $use_totp
  * @property string|null $totp_secret
  * @property \Illuminate\Support\Carbon|null $totp_authenticated_at
@@ -131,7 +130,6 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
         'totp_secret',
         'totp_authenticated_at',
         'gravatar',
-        'root_admin',
     ];
 
     /**
@@ -144,7 +142,6 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
      */
     protected $attributes = [
         'external_id' => null,
-        'root_admin' => false,
         'language' => 'en',
         'use_totp' => false,
         'totp_secret' => null,
@@ -163,7 +160,6 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
         'name_first' => 'nullable|string|between:0,191',
         'name_last' => 'nullable|string|between:0,191',
         'password' => 'sometimes|nullable|string',
-        'root_admin' => 'boolean',
         'language' => 'string',
         'use_totp' => 'boolean',
         'totp_secret' => 'nullable|string',
@@ -172,7 +168,6 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
     protected function casts(): array
     {
         return [
-            'root_admin' => 'boolean',
             'use_totp' => 'boolean',
             'gravatar' => 'boolean',
             'totp_authenticated_at' => 'datetime',
