@@ -352,7 +352,7 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
 
     public function canAccessPanel(Panel $panel): bool
     {
-        return $this->hasRole(Utils::getPanelUserRoleName()) || $this->hasRole(Utils::getSuperAdminName()); // TODO make sure that when a user has no roles or only the Panel User role that they cannot access /panel/roles because currently they can.
+        return $this->hasRole(Utils::getPanelUserRoleName()) || $this->hasRole(Utils::getSuperAdminName());
     }
 
     public function getFilamentName(): string
