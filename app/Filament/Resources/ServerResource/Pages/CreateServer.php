@@ -481,130 +481,70 @@ class CreateServer extends CreateRecord
                     ]),
 
                 Forms\Components\Section::make('Resource Management')
+                    // ->hiddenOn('create')
                     ->collapsed()
                     ->icon('tabler-server-cog')
                     ->iconColor('primary')
-                    ->columns([
+                    ->columns(2)
+                    ->columnSpan(([
                         'default' => 2,
                         'sm' => 4,
                         'md' => 4,
-                        'lg' => 4,
-                    ])
+                        'lg' => 6,
+                    ]))
                     ->schema([
-                        Forms\Components\ToggleButtons::make('unlimited_mem')
-                            ->label('Memory')
-                            ->afterStateUpdated(fn (Forms\Set $set) => $set('memory', 0))
-                            ->inlineLabel()->inline()
-                            ->live()
-                            ->formatStateUsing(fn (Forms\Get $get) => $get('memory') <= 0)
-                            ->options([
-                                true => 'Unlimited',
-                                false => 'Limited',
-                            ])
-                            ->colors([
-                                true => 'primary',
-                                false => 'warning',
-                            ])
-                            ->columnSpan(2),
-
                         Forms\Components\TextInput::make('memory')
-                            ->disabled(fn (Forms\Get $get) => $get('unlimited_mem'))
-                            ->label('Memory Limit')
+                            ->default(0)
+                            ->label('Allocated Memory')
                             ->suffix('MB')
                             ->required()
-                            ->inlineLabel()
-                            ->columnSpan(2)
                             ->numeric(),
 
-                        Forms\Components\ToggleButtons::make('unlimited_disk')
-                            ->label('Disk Space')
-                            ->inlineLabel()->inline()
-                            ->live()
-                            ->afterStateUpdated(fn (Forms\Set $set) => $set('disk', 0))
-                            ->formatStateUsing(fn (Forms\Get $get) => $get('disk') <= 0)
-                            ->options([
-                                true => 'Unlimited',
-                                false => 'Limited',
-                            ])
-                            ->colors([
-                                true => 'primary',
-                                false => 'warning',
-                            ])
-                            ->columnSpan(2),
+                        Forms\Components\TextInput::make('swap')
+                            ->default(0)
+                            ->label('Swap Memory')
+                            ->suffix('MB')
+                            ->helperText('0 disables swap and -1 allows unlimited swap')
+                            ->minValue(-1)
+                            ->required()
+                            ->numeric(),
 
                         Forms\Components\TextInput::make('disk')
-                            ->disabled(fn (Forms\Get $get) => $get('unlimited_disk'))
+                            ->default(0)
                             ->label('Disk Space Limit')
                             ->suffix('MB')
                             ->required()
-                            ->inlineLabel()
-                            ->columnSpan(2)
                             ->numeric(),
 
-                        Forms\Components\ToggleButtons::make('unlimited_cpu')
-                            ->label('CPU')
-                            ->inlineLabel()->inline()
-                            ->afterStateUpdated(fn (Forms\Set $set) => $set('cpu', 0))
-                            ->live()
-                            ->formatStateUsing(fn (Forms\Get $get) => $get('cpu') <= 0)
-                            ->options([
-                                true => 'Unlimited',
-                                false => 'Limited',
-                            ])
-                            ->colors([
-                                true => 'primary',
-                                false => 'warning',
-                            ])
-                            ->columnSpan(2),
-
                         Forms\Components\TextInput::make('cpu')
-                            ->disabled(fn (Forms\Get $get) => $get('unlimited_cpu'))
+                            ->default(0)
                             ->label('CPU Limit')
                             ->suffix('%')
                             ->required()
-                            ->inlineLabel()
-                            ->columnSpan(2)
                             ->numeric(),
 
-                        Forms\Components\Hidden::make('io')
+                        Forms\Components\TextInput::make('threads')
+                            ->hint('Advanced')
+                            ->hintColor('danger')
+                            ->helperText('Examples: 0, 0-1,3, or 0,1,3,4')
+                            ->label('CPU Pinning')
+                            ->suffixIcon('tabler-cpu')
+                            ->maxLength(191),
+
+                        Forms\Components\TextInput::make('io')
                             ->helperText('The IO performance relative to other running containers')
                             ->label('Block IO Proportion')
-                            ->required(),
-                        //                            ->numeric()
-                        //                            ->minValue(0)
-                        //                            ->maxValue(1000)
-                        //                            ->step(10)
-
-                        Forms\Components\ToggleButtons::make('swap_support')
-                            ->label('Enable Swap Memory')
-                            ->columnSpan(2)
-                            ->inlineLabel()->inline()
-                            ->formatStateUsing(fn (Forms\Get $get) => $get('swap') <= 0)
-                            ->options([
-                                'unlimited' => 'Unlimited',
-                                'limited' => 'Limited',
-                                'disabled' => 'Disabled',
-                            ])
-                            ->colors([
-                                'unlimited' => 'primary',
-                                'limited' => 'warning',
-                                'disabled' => 'danger',
-                            ]),
-
-                        Forms\Components\TextInput::make('swap')
-                            ->disabled(fn (Forms\Get $get) => $get('swap_support'))
-                            ->label('Swap Memory')
-                            ->suffix('MB')
-                            ->minValue(-1)
-                            ->columnSpan(2)
-                            ->inlineLabel()
                             ->required()
+                            ->minValue(0)
+                            ->maxValue(1000)
+                            ->step(10)
+                            ->default(0)
                             ->numeric(),
 
                         Forms\Components\ToggleButtons::make('oom_disabled')
                             ->label('OOM Killer')
                             ->inline()
-                            ->columnSpan(2)
+                            ->default(false)
                             ->options([
                                 false => 'Disabled',
                                 true => 'Enabled',
@@ -612,7 +552,12 @@ class CreateServer extends CreateRecord
                             ->colors([
                                 false => 'success',
                                 true => 'danger',
-                            ]),
+                            ])
+                            ->icons([
+                                false => 'tabler-sword-off',
+                                true => 'tabler-sword',
+                            ])
+                            ->required(),
                     ]),
             ]);
     }
