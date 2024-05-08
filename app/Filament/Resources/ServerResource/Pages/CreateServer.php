@@ -496,32 +496,31 @@ class CreateServer extends CreateRecord
                             ->columns(4)
                             ->columnSpanFull()
                             ->schema([
-                            Forms\Components\ToggleButtons::make('unlimited_mem')
-                                ->label('Memory')->inlineLabel()->inline()
-                                ->default(true)
-                                ->afterStateUpdated(fn (Forms\Set $set) => $set('memory', 0))
-                                ->live()
-                                ->options([
-                                    true => 'Unlimited',
-                                    false => 'Limited',
-                                ])
-                                ->colors([
-                                    true => 'primary',
-                                    false => 'warning',
-                                ])
-                                ->columnSpan(2),
+                                Forms\Components\ToggleButtons::make('unlimited_mem')
+                                    ->label('Memory')->inlineLabel()->inline()
+                                    ->default(true)
+                                    ->afterStateUpdated(fn (Forms\Set $set) => $set('memory', 0))
+                                    ->live()
+                                    ->options([
+                                        true => 'Unlimited',
+                                        false => 'Limited',
+                                    ])
+                                    ->colors([
+                                        true => 'primary',
+                                        false => 'warning',
+                                    ])
+                                    ->columnSpan(2),
 
-                            Forms\Components\TextInput::make('memory')
-                                ->dehydratedWhenHidden()
-                                ->hidden(fn (Forms\Get $get) => $get('unlimited_mem'))
-                                ->label('Memory Limit')->inlineLabel()
-                                ->suffix('MB')
-                                ->default(0)
-                                ->required()
-                                ->columnSpan(2)
-                                ->numeric(),
-                        ]),
-
+                                Forms\Components\TextInput::make('memory')
+                                    ->dehydratedWhenHidden()
+                                    ->hidden(fn (Forms\Get $get) => $get('unlimited_mem'))
+                                    ->label('Memory Limit')->inlineLabel()
+                                    ->suffix('MB')
+                                    ->default(0)
+                                    ->required()
+                                    ->columnSpan(2)
+                                    ->numeric(),
+                            ]),
 
                         Forms\Components\Grid::make()
                             ->columns(4)
@@ -552,7 +551,6 @@ class CreateServer extends CreateRecord
                                     ->columnSpan(2)
                                     ->numeric(),
                             ]),
-
 
                         Forms\Components\Grid::make()
                             ->columns(4)
