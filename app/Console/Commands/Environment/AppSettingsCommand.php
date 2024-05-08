@@ -61,21 +61,9 @@ class AppSettingsCommand extends Command
     public function handle(): int
     {
         $this->variables['APP_TIMEZONE'] = 'UTC';
-        
+
         if (empty(config('hashids.salt')) || $this->option('new-salt')) {
             $this->variables['HASHIDS_SALT'] = str_random(20);
-        }
-
-        $this->output->comment(__('commands.appsettings.comment.author'));
-        $this->variables['APP_SERVICE_AUTHOR'] = $this->option('author') ?? $this->ask(
-            'Egg Author Email',
-            config('panel.service.author', 'unknown@unknown.com')
-        );
-
-        if (!filter_var($this->variables['APP_SERVICE_AUTHOR'], FILTER_VALIDATE_EMAIL)) {
-            $this->output->error('The service author email provided is invalid.');
-
-            return 1;
         }
 
         $this->output->comment(__('commands.appsettings.comment.url'));
@@ -83,7 +71,6 @@ class AppSettingsCommand extends Command
             'Application URL',
             config('app.url', 'https://example.com')
         );
-
 
         $selected = config('cache.default', 'file');
         $this->variables['CACHE_STORE'] = $this->option('cache') ?? $this->choice(
