@@ -39,7 +39,7 @@ class Dashboard extends Page
             'serversCount' => Server::query()->count(),
             'usersCount' => User::query()->count(),
             'databaseCount' => Database::query()->count(),
-            'databasehostsCount' =>DatabaseHost::query()->count(),
+            'databasehostsCount' => DatabaseHost::query()->count(),
 
             'devActions' => [
                 CreateAction::make()
