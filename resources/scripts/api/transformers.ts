@@ -41,7 +41,6 @@ export const rawDataToFileObject = (data: FractalResponseData): FileObject => ({
                 'application/x-7z-compressed', // .7z
                 'application/zstd', // .tar.zst, .zst
                 'application/zip', // .zip
-                'application/x-7z-compressed', // .7z
             ].indexOf(this.mimetype) >= 0
         );
     },
