@@ -3,33 +3,60 @@
     <x-filament::tabs disabled>
         <x-filament::tabs.item disabled>{{ trans('dashboard/index.overview') }} </x-filament::tabs.item>
 
-        <x-filament::tabs.item
+        <x-filament::button
+            href="panel/nodes"
+            tag="a"
             icon="tabler-server-2"
         >
             Nodes
             <x-slot name="badge">{{ $nodesCount }}</x-slot>
-        </x-filament::tabs.item>
+        </x-filament::button>
 
-        <x-filament::tabs.item
-            icon="tabler-brand-docker"
+        <x-filament::button
+            href="panel/servers"
+            tag="a"
+            icon="tabler-server"
         >
             Servers
             <x-slot name="badge">{{ $serversCount }}</x-slot>
-        </x-filament::tabs.item>
+        </x-filament::button>
 
-        <x-filament::tabs.item
+        <x-filament::button
+            href="panel/eggs"
+            tag="a"
             icon="tabler-eggs"
         >
             Eggs
             <x-slot name="badge">{{ $eggsCount }}</x-slot>
-        </x-filament::tabs.item>
+        </x-filament::button>
 
-        <x-filament::tabs.item
+        <x-filament::button
+            href="panel/users"
+            tag="a"
             icon="tabler-users"
         >
             Users
             <x-slot name="badge">{{ $usersCount }}</x-slot>
-        </x-filament::tabs.item>
+        </x-filament::button>
+
+        <x-filament::button
+            href="panel/database-hosts"
+            tag="a"
+            icon="tabler-database"
+        >
+            Databases
+            <x-slot name="badge">{{ $databaseCount }}</x-slot>
+        </x-filament::button>
+
+        <x-filament::button
+            href="panel/database-hosts"
+            tag="a"
+            icon="tabler-database"
+        >
+            Database hosts
+            <x-slot name="badge">{{ $databasehostsCount }}</x-slot>
+        </x-filament::button>
+
     </x-filament::tabs>
 
     <x-filament-panels::header

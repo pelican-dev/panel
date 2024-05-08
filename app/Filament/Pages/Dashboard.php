@@ -7,6 +7,8 @@ use App\Models\Egg;
 use App\Models\Node;
 use App\Models\Server;
 use App\Models\User;
+use App\Models\Database;
+use App\Models\DatabaseHost;
 use Filament\Actions\CreateAction;
 use Filament\Pages\Page;
 
@@ -36,6 +38,8 @@ class Dashboard extends Page
             'nodesCount' => Node::query()->count(),
             'serversCount' => Server::query()->count(),
             'usersCount' => User::query()->count(),
+            'databaseCount' => Database::query()->count(),
+            'databasehostsCount' =>DatabaseHost::query()->count(),
 
             'devActions' => [
                 CreateAction::make()
