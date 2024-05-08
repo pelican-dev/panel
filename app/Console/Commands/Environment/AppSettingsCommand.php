@@ -35,7 +35,6 @@ class AppSettingsCommand extends Command
                             {--new-salt : Whether or not to generate a new salt for Hashids.}
                             {--author= : The email that services created on this instance should be linked to.}
                             {--url= : The URL that this Panel is running on.}
-                            {--timezone= : The timezone to use for Panel times.}
                             {--cache= : The cache driver backend to use.}
                             {--session= : The session driver backend to use.}
                             {--queue= : The queue driver backend to use.}
@@ -61,6 +60,8 @@ class AppSettingsCommand extends Command
      */
     public function handle(): int
     {
+        $this->variables['APP_TIMEZONE'] = 'UTC';
+        
         if (empty(config('hashids.salt')) || $this->option('new-salt')) {
             $this->variables['HASHIDS_SALT'] = str_random(20);
         }
@@ -83,12 +84,6 @@ class AppSettingsCommand extends Command
             config('app.url', 'https://example.com')
         );
 
-        $this->output->comment(__('commands.appsettings.comment.timezone'));
-        $this->variables['APP_TIMEZONE'] = $this->option('timezone') ?? $this->anticipate(
-            'Application Timezone',
-            \DateTimeZone::listIdentifiers(),
-            config('app.timezone')
-        );
 
         $selected = config('cache.default', 'file');
         $this->variables['CACHE_STORE'] = $this->option('cache') ?? $this->choice(

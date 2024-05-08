@@ -38,7 +38,6 @@ class InfoCommand extends Command
             ['Debug Mode', $this->formatText(config('app.debug') ? 'Yes' : 'No', !config('app.debug') ?: 'bg=red')],
             ['Installation URL', config('app.url')],
             ['Installation Directory', base_path()],
-            ['Timezone', config('app.timezone')],
             ['Cache Driver', config('cache.default')],
             ['Queue Driver', config('queue.default')],
             ['Session Driver', config('session.driver')],
