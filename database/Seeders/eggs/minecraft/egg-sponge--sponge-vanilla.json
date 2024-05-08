@@ -4,7 +4,7 @@
         "version": "PTDL_v2",
         "update_url": null
     },
-    "exported_at": "2022-06-17T08:11:42+03:00",
+    "exported_at": "2024-05-08T11:49:03+02:00",
     "name": "Sponge (SpongeVanilla)",
     "author": "panel@example.com",
     "description": "SpongeVanilla is the SpongeAPI implementation for Vanilla Minecraft.",
@@ -14,9 +14,11 @@
         "pid_limit"
     ],
     "docker_images": {
-        "Java 16": "ghcr.io\/pterodactyl\/yolks:java_16",
-        "Java 11": "ghcr.io\/pterodactyl\/yolks:java_11",
-        "Java 8": "ghcr.io\/pterodactyl\/yolks:java_8"
+        "Java 21": "ghcr.io\/parkervcp\/yolks:java_21",
+        "Java 17": "ghcr.io\/parkervcp\/yolks:java_17",
+        "Java 16": "ghcr.io\/parkervcp\/yolks:java_16",
+        "Java 11": "ghcr.io\/parkervcp\/yolks:java_11",
+        "Java 8": "ghcr.io\/parkervcp\/yolks:java_8"
     },
     "file_denylist": [],
     "startup": "java -Xms128M -XX:MaxRAMPercentage=95.0 -jar {{SERVER_JARFILE}}",
@@ -29,7 +31,7 @@
     "scripts": {
         "installation": {
             "script": "#!\/bin\/ash\r\n# Sponge Installation Script\r\n#\r\n# Server Files: \/mnt\/server\r\n\r\ncd \/mnt\/server\r\n\r\ncurl -sSL \"https:\/\/repo.spongepowered.org\/maven\/org\/spongepowered\/spongevanilla\/${SPONGE_VERSION}\/spongevanilla-${SPONGE_VERSION}.jar\" -o ${SERVER_JARFILE}",
-            "container": "ghcr.io\/pterodactyl\/installers:alpine",
+            "container": "ghcr.io\/parkervcp\/installers:alpine",
             "entrypoint": "ash"
         }
     },
