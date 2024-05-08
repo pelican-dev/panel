@@ -47,6 +47,10 @@ class ServerCreationService
      */
     public function handle(array $data, DeploymentObject $deployment = null): Server
     {
+        if(!isset($data['oom_killer']) && isset($data['oom_disabled'])) {
+            $data['oom_killer'] = !$data['oom_disabled'];
+        }
+
         // If a deployment object has been passed we need to get the allocation
         // that the server should use, and assign the node from that allocation.
         if ($deployment instanceof DeploymentObject) {

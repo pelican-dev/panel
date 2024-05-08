@@ -40,6 +40,10 @@ class BuildModificationService
                 throw_unless($existingAllocation, new DisplayException('The requested default allocation is not currently assigned to this server.'));
             }
 
+            if(!isset($data['oom_killer']) && isset($data['oom_disabled'])) {
+                $data['oom_killer'] = !$data['oom_disabled'];
+            }
+
             // If any of these values are passed through in the data array go ahead and set them correctly on the server model.
             $merge = Arr::only($data, ['oom_killer', 'memory', 'swap', 'io', 'cpu', 'threads', 'disk', 'allocation_id']);
 
