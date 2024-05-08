@@ -9,6 +9,7 @@ use App\Models\Server;
 use App\Models\User;
 use Filament\Actions\CreateAction;
 use Filament\Pages\Page;
+use BezhanSalleh\FilamentShield\Resources\RoleResource;
 
 class Dashboard extends Page
 {
@@ -36,6 +37,7 @@ class Dashboard extends Page
             'nodesCount' => Node::query()->count(),
             'serversCount' => Server::query()->count(),
             'usersCount' => User::query()->count(),
+            'rolesCount' => $this->getRolecount(),
 
             'devActions' => [
                 CreateAction::make()
@@ -77,5 +79,12 @@ class Dashboard extends Page
                     ->color('blurple'),
             ],
         ];
+    }
+    public static function getRolecount(): int
+    {
+        $roleModel = RoleResource::getModel();
+        $count = $roleModel::query()->count();
+
+        return $count;
     }
 }

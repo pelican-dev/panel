@@ -30,6 +30,14 @@
             Users
             <x-slot name="badge">{{ $usersCount }}</x-slot>
         </x-filament::tabs.item>
+        <x-filament::button
+            href="panel/roles"
+            tag="a"
+            icon="heroicon-s-shield-check"
+        >
+            Roles
+            <x-slot name="badge">{{ $rolesCount }}</x-slot>
+        </x-filament::button>
     </x-filament::tabs>
 
     <x-filament-panels::header

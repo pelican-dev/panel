@@ -5,7 +5,7 @@ return [
         'should_register_navigation' => true,
         'slug' => 'roles',
         'navigation_sort' => -1,
-        'navigation_badge' => true,
+        'navigation_badge' => false,
         'navigation_group' => false,
         'is_globally_searchable' => false,
         'show_model_path' => true,
