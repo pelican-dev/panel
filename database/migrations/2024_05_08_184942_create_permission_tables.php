@@ -113,6 +113,10 @@ return new class extends Migration
             $table->primary([$pivotPermission, $pivotRole], 'role_has_permissions_permission_id_role_id_primary');
         });
 
+        Schema::table('users', function (Blueprint $table) {
+            $table->dropColumn('root_admin');
+        });
+
         app('cache')
             ->store(config('permission.cache.store') != 'default' ? config('permission.cache.store') : null)
             ->forget(config('permission.cache.key'));
@@ -134,5 +138,8 @@ return new class extends Migration
         Schema::drop($tableNames['model_has_permissions']);
         Schema::drop($tableNames['roles']);
         Schema::drop($tableNames['permissions']);
+        Schema::table('users', function (Blueprint $table) {
+            $table->tinyInteger('root_admin')->unsigned()->default(0);
+        });
     }
 };

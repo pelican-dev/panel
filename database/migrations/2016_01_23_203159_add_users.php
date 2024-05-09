@@ -17,6 +17,7 @@ return new class extends Migration
             $table->text('password');
             $table->string('remember_token')->nullable();
             $table->char('language', 5)->default('en');
+            $table->tinyInteger('root_admin')->unsigned()->default(0);
             $table->tinyInteger('use_totp')->unsigned();
             $table->char('totp_secret', 16)->nullable();
             $table->timestamps();

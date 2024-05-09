@@ -35,13 +35,6 @@ class ListUsers extends ListRecords
                 Tables\Columns\TextColumn::make('email')
                     ->searchable()
                     ->icon('tabler-mail'),
-                Tables\Columns\IconColumn::make('root_admin')
-                    ->visibleFrom('md')
-                    ->label('Admin')
-                    ->boolean()
-                    ->trueIcon('tabler-star-filled')
-                    ->falseIcon('tabler-star-off')
-                    ->sortable(),
                 Tables\Columns\IconColumn::make('use_totp')->label('2FA')
                     ->visibleFrom('lg')
                     ->icon(fn (User $user) => $user->use_totp ? 'tabler-lock' : 'tabler-lock-open-off')

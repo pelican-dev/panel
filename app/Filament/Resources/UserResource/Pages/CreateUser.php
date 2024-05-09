@@ -30,29 +30,11 @@ class CreateUser extends CreateRecord
                         ->required(fn (string $operation): bool => $operation === 'create')
                         ->password(),
 
-                    Forms\Components\ToggleButtons::make('root_admin')
-                        ->label('Administrator (Root)')
-                        ->options([
-                            false => 'No',
-                            true => 'Admin',
-                        ])
-                        ->colors([
-                            false => 'primary',
-                            true => 'danger',
-                        ])
-                        ->disableOptionWhen(function (string $operation, $value, User $user) {
-                            if ($operation !== 'edit' || $value) {
-                                return false;
-                            }
-
-                            return $user->isLastRootAdmin();
-                        })
-                        ->hint(fn (User $user) => $user->isLastRootAdmin() ? 'This is the last root administrator!' : '')
-                        ->helperText(fn (User $user) => $user->isLastRootAdmin() ? 'You must have at least one root administrator in your system.' : '')
-                        ->hintColor('warning')
-                        ->inline()
-                        ->required()
-                        ->default(false),
+                    Forms\Components\CheckboxList::make('roles')
+                        ->relationship('roles', 'name')
+                        ->searchable(false)
+                        ->columns(2)
+                        ->bulkToggleable(false),
 
                     Forms\Components\Hidden::make('skipValidation')->default(true),
                     Forms\Components\Select::make('language')

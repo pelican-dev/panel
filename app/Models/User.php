@@ -302,7 +302,7 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
 
     protected function checkPermission(Server $server, string $permission = ''): bool
     {
-        if ($this->root_admin || $server->owner_id === $this->id) {
+        if ($this->hasRole(Utils::getSuperAdminName()) || $server->owner_id === $this->id) {
             return true;
         }
 
