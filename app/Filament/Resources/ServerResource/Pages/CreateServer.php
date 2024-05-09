@@ -353,39 +353,6 @@ class CreateServer extends CreateRecord
                         'lg' => 3,
                     ]),
 
-                Forms\Components\Fieldset::make('Application Feature Limits')
-                    ->inlineLabel()
-                    ->hiddenOn('create')
-                    ->columnSpan([
-                        'default' => 2,
-                        'sm' => 4,
-                        'md' => 4,
-                        'lg' => 6,
-                    ])
-                    ->columns([
-                        'default' => 1,
-                        'sm' => 2,
-                        'md' => 3,
-                        'lg' => 3,
-                    ])
-                    ->schema([
-                        Forms\Components\TextInput::make('allocation_limit')
-                            ->suffixIcon('tabler-network')
-                            ->required()
-                            ->numeric()
-                            ->default(0),
-                        Forms\Components\TextInput::make('database_limit')
-                            ->suffixIcon('tabler-database')
-                            ->required()
-                            ->numeric()
-                            ->default(0),
-                        Forms\Components\TextInput::make('backup_limit')
-                            ->suffixIcon('tabler-copy-check')
-                            ->required()
-                            ->numeric()
-                            ->default(0),
-                    ]),
-
                 Forms\Components\Textarea::make('startup')
                     ->hintIcon('tabler-code')
                     ->label('Startup Command')
@@ -634,18 +601,58 @@ class CreateServer extends CreateRecord
                             ->label('Block IO Proportion')
                             ->default(500),
 
-                        Forms\Components\ToggleButtons::make('oom_disabled')
-                            ->label('OOM Killer')
-                            ->inlineLabel()->inline()
-                            ->default(false)
-                            ->columnSpan(2)
-                            ->options([
-                                false => 'Disabled',
-                                true => 'Enabled',
+                        Forms\Components\Grid::make()
+                            ->columns(4)
+                            ->columnSpanFull()
+                            ->schema([
+                                Forms\Components\ToggleButtons::make('oom_disabled')
+                                    ->label('OOM Killer')
+                                    ->inlineLabel()->inline()
+                                    ->default(false)
+                                    ->columnSpan(2)
+                                    ->options([
+                                        false => 'Disabled',
+                                        true => 'Enabled',
+                                    ])
+                                    ->colors([
+                                        false => 'success',
+                                        true => 'danger',
+                                    ]),
+
+                                Forms\Components\TextInput::make('oom_disabled_hidden')
+                                    ->hidden(),
+                            ]),
+
+                        Forms\Components\Fieldset::make('Application Feature Limits')
+                            ->inlineLabel()
+                            ->columnSpan([
+                                'default' => 2,
+                                'sm' => 4,
+                                'md' => 4,
+                                'lg' => 6,
                             ])
-                            ->colors([
-                                false => 'success',
-                                true => 'danger',
+                            ->columns([
+                                'default' => 1,
+                                'sm' => 2,
+                                'md' => 3,
+                                'lg' => 3,
+                            ])
+                            ->schema([
+                                Forms\Components\TextInput::make('allocation_limit')
+                                    ->suffixIcon('tabler-network')
+                                    ->required()
+                                    ->numeric()
+                                    ->default(0),
+                                Forms\Components\TextInput::make('database_limit')
+                                    ->suffixIcon('tabler-database')
+                                    ->required()
+                                    ->numeric()
+                                    ->default(0),
+                                Forms\Components\TextInput::make('backup_limit')
+                                    ->suffixIcon('tabler-copy-check')
+                                    ->required()
+                                    ->numeric()
+                                    ->default(0),
                             ]),
                     ]),
             ]);
