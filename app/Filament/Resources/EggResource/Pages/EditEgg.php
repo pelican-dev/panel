@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\EggResource\Pages;
 
 use App\Filament\Resources\EggResource;
+use App\Models\Egg;
 use Filament\Actions;
 use Filament\Resources\Pages\EditRecord;
 use AbdelhamidErrahmouni\FilamentMonacoEditor\MonacoEditor;
@@ -55,7 +56,8 @@ class EditEgg extends EditRecord
                                 ->helperText('')
                                 ->columnSpan(['default' => 1, 'sm' => 1, 'md' => 2, 'lg' => 2]),
                             Forms\Components\Toggle::make('force_outgoing_ip')
-                                ->helperText("Forces all outgoing network traffic to have its Source IP NATed to the IP of the server's primary allocation IP.
+                                ->hintIcon('tabler-question-mark')
+                                ->hintIconTooltip("Forces all outgoing network traffic to have its Source IP NATed to the IP of the server's primary allocation IP.
                                     Required for certain games to work properly when the Node has multiple public IP addresses.
                                     Enabling this option will disable internal networking for any servers using this egg, causing them to be unable to internally access other servers on the same node."),
                             Forms\Components\Hidden::make('script_is_privileged')
@@ -102,23 +104,22 @@ class EditEgg extends EditRecord
                         ]),
                     Forms\Components\Tabs\Tab::make('Egg Variables')
                         ->columnSpanFull()
-                        ->columns(2)
                         ->schema([
                             Forms\Components\Repeater::make('variables')
-                                ->grid()
+                                ->label('')
+                                ->grid(2)
                                 ->relationship('variables')
                                 ->name('name')
-                                ->columns(2)
                                 ->reorderable()
-                                ->collapsible()
-                                ->collapsed()
+                                ->collapsible()->collapsed()
                                 ->orderColumn()
-                                ->columnSpan(2)
                                 ->itemLabel(fn (array $state) => $state['name'])
                                 ->mutateRelationshipDataBeforeCreateUsing(function (array $data): array {
                                     $data['default_value'] ??= '';
                                     $data['description'] ??= '';
                                     $data['rules'] ??= '';
+                                    $data['user_viewable'] ??= '';
+                                    $data['user_editable'] ??= '';
 
                                     return $data;
                                 })
@@ -126,6 +127,8 @@ class EditEgg extends EditRecord
                                     $data['default_value'] ??= '';
                                     $data['description'] ??= '';
                                     $data['rules'] ??= '';
+                                    $data['user_viewable'] ??= '';
+                                    $data['user_editable'] ??= '';
 
                                     return $data;
                                 })
@@ -148,6 +151,11 @@ class EditEgg extends EditRecord
                                         ->hintIconTooltip(fn ($state) => "{{{$state}}}")
                                         ->required(),
                                     Forms\Components\TextInput::make('default_value')->maxLength(191),
+                                    Forms\Components\Fieldset::make('User Permissions')
+                                        ->schema([
+                                            Forms\Components\Checkbox::make('user_viewable')->label('Viewable'),
+                                            Forms\Components\Checkbox::make('user_editable')->label('Editable'),
+                                        ]),
                                     Forms\Components\TextInput::make('rules')->columnSpanFull(),
                                 ]),
                         ]),
@@ -184,7 +192,15 @@ class EditEgg extends EditRecord
     protected function getHeaderActions(): array
     {
         return [
-            Actions\DeleteAction::make(),
+            Actions\DeleteAction::make()
+                ->disabled(fn (Egg $egg): bool => $egg->servers_count <= 0)
+                ->label(fn (Egg $egg): string => $egg->servers_count <= 0 ? 'Egg In Use' : 'Delete Egg'),
+            Actions\ExportAction::make()
+                ->icon('tabler-download')
+                ->label('Export Egg')
+                ->color('primary')
+                // TODO uses old admin panel export service
+                ->url(fn (Egg $egg): string => route('admin.eggs.export', ['egg' => $egg['id']])),
         ];
     }
 }
