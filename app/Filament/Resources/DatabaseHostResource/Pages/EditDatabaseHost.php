@@ -65,4 +65,13 @@ class EditDatabaseHost extends EditRecord
             Actions\DeleteAction::make(),
         ];
     }
+
+    protected function mutateFormDataBeforeSave(array $data): array
+    {
+        if (isset($data['password'])) {
+            $data['password'] = encrypt($data['password']);
+        }
+
+        return $data;
+    }
 }
