@@ -34,7 +34,6 @@ class AppSettingsCommand extends Command
 
     protected $signature = 'p:environment:setup
                             {--new-salt : Whether or not to generate a new salt for Hashids.}
-                            {--author= : The email that services created on this instance should be linked to.}
                             {--url= : The URL that this Panel is running on.}
                             {--cache= : The cache driver backend to use.}
                             {--session= : The session driver backend to use.}

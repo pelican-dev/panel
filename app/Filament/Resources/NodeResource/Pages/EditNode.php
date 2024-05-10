@@ -31,11 +31,11 @@ class EditNode extends EditRecord
                     Tabs\Tab::make('Basic Settings')
                         ->icon('tabler-server')
                         ->schema((new CreateNode())->form($form)->getComponents()),
-                    Tabs\Tab::make('Advanced Settings')
-                        ->icon('tabler-server-cog')
-                        ->schema([
-                            Forms\Components\Placeholder::make('Coming soon!'),
-                        ]),
+                    //                    Tabs\Tab::make('Advanced Settings')
+                    //                        ->icon('tabler-server-cog')
+                    //                        ->schema([
+                    //                            Forms\Components\Placeholder::make('Coming soon!'),
+                    //                        ]),
                     Tabs\Tab::make('Configuration')
                         ->icon('tabler-code')
                         ->schema([
@@ -73,7 +73,9 @@ class EditNode extends EditRecord
     protected function getHeaderActions(): array
     {
         return [
-            Actions\DeleteAction::make(),
+            Actions\DeleteAction::make()
+                ->disabled(fn (Node $node) => $node->servers()->count() > 0)
+                ->label(fn (Node $node) => $node->servers()->count() > 0 ? 'Node Has Servers' : 'Delete'),
         ];
     }
 }

@@ -21,8 +21,8 @@ class ListApiKeys extends ListRecords
             ->searchable(false)
             ->columns([
                 Tables\Columns\TextColumn::make('user.username')
-                    ->searchable()
                     ->hidden()
+                    ->searchable()
                     ->sortable(),
 
                 Tables\Columns\TextColumn::make('key')
@@ -53,12 +53,8 @@ class ListApiKeys extends ListRecords
                 //
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
-            ])
-            ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
-                ]),
+                Tables\Actions\DeleteAction::make(),
+                //Tables\Actions\EditAction::make()
             ]);
     }
 
