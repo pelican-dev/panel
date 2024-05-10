@@ -32,8 +32,7 @@ class EditServer extends EditRecord
             ])
             ->schema([
                 Forms\Components\ToggleButtons::make('docker')
-                    ->label('Container Status')
-                    ->inlineLabel()
+                    ->label('Container Status')->inline()->inlineLabel()
                     ->formatStateUsing(function ($state, Server $server) {
                         if ($server->node_id === null) {
                             return 'unknown';
@@ -59,13 +58,12 @@ class EditServer extends EditRecord
                         'sm' => 2,
                         'md' => 2,
                         'lg' => 3,
-                    ])
-                    ->inline(),
+                    ]),
 
                 Forms\Components\ToggleButtons::make('status')
-                    ->label('Server State')
+                    ->label('Server State')->inline()->inlineLabel()
                     ->helperText('')
-                    ->inlineLabel()
+
                     ->formatStateUsing(fn ($state) => $state ?? ServerState::Normal)
                     ->options(fn ($state) => collect(ServerState::cases())->filter(fn ($serverState) => $serverState->value === $state)->mapWithKeys(
                         fn (ServerState $state) => [$state->value => str($state->value)->replace('_', ' ')->ucwords()]
@@ -81,8 +79,7 @@ class EditServer extends EditRecord
                         'sm' => 2,
                         'md' => 2,
                         'lg' => 3,
-                    ])
-                    ->inline(),
+                    ]),
 
                 Forms\Components\TextInput::make('external_id')
                     ->maxLength(191)
@@ -142,7 +139,7 @@ class EditServer extends EditRecord
                     ->required(),
 
                 Forms\Components\ToggleButtons::make('skip_scripts')
-                    ->label('Run Egg Install Script?')
+                    ->label('Run Egg Install Script?')->inline()
                     ->options([
                         false => 'Yes',
                         true => 'Skip',
@@ -155,12 +152,11 @@ class EditServer extends EditRecord
                         false => 'tabler-code',
                         true => 'tabler-code-off',
                     ])
-                    ->inline()
                     ->required(),
 
                 Forms\Components\ToggleButtons::make('custom_image')
                     ->live()
-                    ->label('Custom Image?')
+                    ->label('Custom Image?')->inline()
                     ->formatStateUsing(function ($state, Forms\Get $get) {
                         if ($state !== null) {
                             return $state;
@@ -181,8 +177,7 @@ class EditServer extends EditRecord
                     ->icons([
                         false => 'tabler-settings-cancel',
                         true => 'tabler-settings-check',
-                    ])
-                    ->inline(),
+                    ]),
 
                 Forms\Components\TextInput::make('image')
                     ->hidden(fn (Forms\Get $get) => !$get('custom_image'))
@@ -212,35 +207,6 @@ class EditServer extends EditRecord
                         'lg' => 4,
                     ])
                     ->required(),
-
-                Forms\Components\Fieldset::make('Application Feature Limits')
-                    ->inlineLabel()
-                    ->columnSpan([
-                        'default' => 2,
-                        'sm' => 4,
-                        'md' => 4,
-                        'lg' => 6,
-                    ])
-                    ->columns([
-                        'default' => 1,
-                        'sm' => 2,
-                        'md' => 3,
-                        'lg' => 3,
-                    ])
-                    ->schema([
-                        Forms\Components\TextInput::make('allocation_limit')
-                            ->suffixIcon('tabler-network')
-                            ->required()
-                            ->numeric(),
-                        Forms\Components\TextInput::make('database_limit')
-                            ->suffixIcon('tabler-database')
-                            ->required()
-                            ->numeric(),
-                        Forms\Components\TextInput::make('backup_limit')
-                            ->suffixIcon('tabler-copy-check')
-                            ->required()
-                            ->numeric(),
-                    ]),
 
                 Forms\Components\Textarea::make('startup')
                     ->hintIcon('tabler-code')
@@ -459,16 +425,53 @@ class EditServer extends EditRecord
                             ->helperText('The IO performance relative to other running containers')
                             ->label('Block IO Proportion'),
 
-                        Forms\Components\ToggleButtons::make('oom_disabled')
-                            ->label('OOM Killer')->inlineLabel()->inline()
-                            ->columnSpan(2)
-                            ->options([
-                                false => 'Disabled',
-                                true => 'Enabled',
+                        Forms\Components\Grid::make()
+                            ->columns(4)
+                            ->columnSpanFull()
+                            ->schema([
+                                Forms\Components\ToggleButtons::make('oom_disabled')
+                                    ->label('OOM Killer')->inlineLabel()->inline()
+                                    ->columnSpan(2)
+                                    ->options([
+                                        false => 'Disabled',
+                                        true => 'Enabled',
+                                    ])
+                                    ->colors([
+                                        false => 'success',
+                                        true => 'danger',
+                                    ]),
+
+                                Forms\Components\TextInput::make('oom_disabled_hidden')
+                                    ->hidden(),
+                            ]),
+
+                        Forms\Components\Fieldset::make('Application Feature Limits')
+                            ->inlineLabel()
+                            ->columnSpan([
+                                'default' => 2,
+                                'sm' => 4,
+                                'md' => 4,
+                                'lg' => 6,
                             ])
-                            ->colors([
-                                false => 'success',
-                                true => 'danger',
+                            ->columns([
+                                'default' => 1,
+                                'sm' => 2,
+                                'md' => 3,
+                                'lg' => 3,
+                            ])
+                            ->schema([
+                                Forms\Components\TextInput::make('allocation_limit')
+                                    ->suffixIcon('tabler-network')
+                                    ->required()
+                                    ->numeric(),
+                                Forms\Components\TextInput::make('database_limit')
+                                    ->suffixIcon('tabler-database')
+                                    ->required()
+                                    ->numeric(),
+                                Forms\Components\TextInput::make('backup_limit')
+                                    ->suffixIcon('tabler-copy-check')
+                                    ->required()
+                                    ->numeric(),
                             ]),
                     ]),
             ]);
