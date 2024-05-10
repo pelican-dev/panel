@@ -73,7 +73,9 @@ class EditNode extends EditRecord
     protected function getHeaderActions(): array
     {
         return [
-            Actions\DeleteAction::make(),
+            Actions\DeleteAction::make()
+                ->disabled(fn (Node $node) => $node->servers()->count() > 0)
+                ->label(fn (Node $node) => $node->servers()->count() > 0 ? 'Node Has Servers' : 'Delete'),
         ];
     }
 }
