@@ -47,16 +47,9 @@ jobs:
           rm -rf node_modules tests CODE_OF_CONDUCT.md CONTRIBUTING.md flake.lock flake.nix phpunit.xml shell.nix
           tar -czf panel.tar.gz * .editorconfig .env.example .eslintignore .eslintrc.js .gitignore .prettierrc.json
 
-      - name: Extract changelog
-        env:
-          REF: ${{ github.ref }}
-        run: |
-          sed -n "/^## ${REF:10}/,/^## /{/^## /b;p}" CHANGELOG.md > ./RELEASE_CHANGELOG
-
-      - name: Create checksum and add to changelog
+      - name: Create checksum
         run: |
           SUM=`sha256sum panel.tar.gz`
-          echo -e "\n#### SHA256 Checksum\n\n\`\`\`\n$SUM\n\`\`\`\n" >> ./RELEASE_CHANGELOG
           echo $SUM > checksum.txt
 
       - name: Create release
@@ -67,7 +60,6 @@ jobs:
         with:
           draft: true
           prerelease: ${{ contains(github.ref, 'rc') || contains(github.ref, 'beta') || contains(github.ref, 'alpha') }}
-          body_path: ./RELEASE_CHANGELOG
 
       - name: Upload release archive
         id: upload-release-archive
