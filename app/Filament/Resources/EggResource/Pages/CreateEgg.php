@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\EggResource\Pages;
 
 use App\Filament\Resources\EggResource;
+use App\Models\User;
 use Filament\Resources\Pages\CreateRecord;
 use AbdelhamidErrahmouni\FilamentMonacoEditor\MonacoEditor;
 use Filament\Forms;
@@ -29,9 +30,8 @@ class CreateEgg extends CreateRecord
                                 ->columnSpan(['default' => 1, 'sm' => 1, 'md' => 2, 'lg' => 2])
                                 ->helperText('A simple, human-readable name to use as an identifier for this Egg.'),
                             Forms\Components\TextInput::make('author')
-                                ->required()
-                                ->email()
                                 ->maxLength(191)
+                                ->required()
                                 ->columnSpan(['default' => 1, 'sm' => 1, 'md' => 2, 'lg' => 2])
                                 ->helperText('The author of this version of the Egg.'),
                             Forms\Components\Textarea::make('description')
@@ -44,43 +44,37 @@ class CreateEgg extends CreateRecord
                                 ->required()
                                 ->placeholder(implode("\n", [
                                     'java -Xms128M -XX:MaxRAMPercentage=95.0 -jar {{SERVER_JARFILE}}',
-                                    './srcds_run -game steamgamename -console -port {{SERVER_PORT}} +ip 0.0.0.0 -strictportbind -norestart +sv_setsteamaccount {{STEAM_ACC}}',
-                                    './Application -flag',
                                 ]))
                                 ->helperText('The default startup command that should be used for new servers using this Egg.'),
-                            Forms\Components\KeyValue::make('docker_images')
-                                ->columnSpan(['default' => 1, 'sm' => 1, 'md' => 3, 'lg' => 3])
-                                ->required()
-                                ->addActionLabel('Add Image')
-                                ->keyLabel('Name')
-                                ->valueLabel('Image URI')
-                                ->helperText('The docker images available to servers using this egg.'),
-                            Forms\Components\Select::make('features')
-                                ->multiple()
-                                ->default([])
+                            Forms\Components\TagsInput::make('features')
                                 ->placeholder('Add Feature')
-                                ->options(['eula', 'java_version', 'pid_limit', 'gsl_token', 'steam_disk_space'])
                                 ->helperText('')
-                                ->columnSpan(['default' => 1, 'sm' => 1, 'md' => 1, 'lg' => 1]),
-
-                            Forms\Components\TagsInput::make('file_denylist')
-                                ->hidden() // latest wings broke it
-                                ->placeholder('denied-file.txt')
-                                ->helperText('A list of files that the end user is not allowed to edit.')
                                 ->columnSpan(['default' => 1, 'sm' => 1, 'md' => 2, 'lg' => 2]),
-                            Forms\Components\Hidden::make('force_outgoing_ip')
-                                ->default(false)
-                                ->columnspan(1)
-                                ->helperText("Forces all outgoing network traffic to have its Source IP NATed to the IP of the server's primary allocation IP.
+                            Forms\Components\Toggle::make('force_outgoing_ip')
+                                ->hintIcon('tabler-question-mark')
+                                ->hintIconTooltip("Forces all outgoing network traffic to have its Source IP NATed to the IP of the server's primary allocation IP.
                                     Required for certain games to work properly when the Node has multiple public IP addresses.
                                     Enabling this option will disable internal networking for any servers using this egg, causing them to be unable to internally access other servers on the same node."),
                             Forms\Components\Hidden::make('script_is_privileged')
-                                ->default(true)
                                 ->helperText('The docker images available to servers using this egg.'),
-                            Forms\Components\Hidden::make('update_url')
+                            Forms\Components\TagsInput::make('tags')
+                                ->placeholder('Add Tags')
+                                ->helperText('')
+                                ->columnSpan(['default' => 1, 'sm' => 1, 'md' => 2, 'lg' => 2]),
+                            Forms\Components\TextInput::make('update_url')
                                 ->disabled()
                                 ->helperText('Not implemented.')
                                 ->columnSpan(['default' => 1, 'sm' => 1, 'md' => 2, 'lg' => 2]),
+                            Forms\Components\KeyValue::make('docker_images')
+                                ->live()
+                                ->columnSpanFull()
+                                ->required()
+                                ->addActionLabel('Add Image')
+                                ->keyLabel('Name')
+                                ->keyPlaceholder('Java 21')
+                                ->valueLabel('Image URI')
+                                ->valuePlaceholder('ghcr.io/parkervcp/yolks:java_21')
+                                ->helperText('The docker images available to servers using this egg.'),
                         ]),
 
                     Forms\Components\Tabs\Tab::make('Process Management')
@@ -92,36 +86,26 @@ class CreateEgg extends CreateRecord
                                 // ->placeholder('None')
                                 // ->relationship('configFrom', 'name', ignoreRecord: true)
                                 ->helperText('If you would like to default to settings from another Egg select it from the menu above.'),
-
                             Forms\Components\TextInput::make('config_stop')
-                                ->maxLength(191)
                                 ->required()
-                                ->datalist(['stop', 'quit', '^C', 'quit'])
+                                ->maxLength(191)
                                 ->label('Stop Command')
                                 ->helperText('The command that should be sent to server processes to stop them gracefully. If you need to send a SIGINT you should enter ^C here.'),
-                            Forms\Components\Textarea::make('config_files')
-                                ->rows(5)
-                                ->json()
-                                ->required()
-                                ->label('Configuration Files')
-                                ->placeholder("{\n    'server.properties': {\n        'parser': 'properties',\n        'find': {\n            'server-ip': '0.0.0.0',\n            'server-port': '{{server.build.default.port}}',\n            'query.port': '{{server.build.default.port}}'\n        }\n    }\n}")
-                                ->helperText('This should be a JSON representation of configuration files to modify and what parts should be changed.'),
-
-                            Forms\Components\KeyValue::make('config_startup')
-                                ->required()
+                            Forms\Components\Textarea::make('config_startup')->rows(10)->json()
                                 ->label('Start Configuration')
-                                ->keyPlaceholder('done')
-                                ->valuePlaceholder('listening on')
+                                ->default('{}')
                                 ->helperText('List of values the daemon should be looking for when booting a server to determine completion.'),
-                            Forms\Components\KeyValue::make('config_logs')
+                            Forms\Components\Textarea::make('config_files')->rows(10)->json()
+                                ->label('Configuration Files')
+                                ->default('{}')
+                                ->helperText('This should be a JSON representation of configuration files to modify and what parts should be changed.'),
+                            Forms\Components\Textarea::make('config_logs')->rows(10)->json()
                                 ->label('Log Configuration')
-                                ->keyPlaceholder('location')
-                                ->valuePlaceholder('logs/application.log')
-                                ->helperText('This should be how the log files are stored, and whether or not the daemon should be creating custom logs.'),
+                                ->default('{}')
+                                ->helperText('This should be a JSON representation of where log files are stored, and whether or not the daemon should be creating custom logs.'),
                         ]),
                     Forms\Components\Tabs\Tab::make('Egg Variables')
                         ->columnSpanFull()
-                        ->columns(2)
                         ->schema([
                             Forms\Components\Repeater::make('variables')
                                 ->label('')
@@ -129,11 +113,8 @@ class CreateEgg extends CreateRecord
                                 ->grid()
                                 ->relationship('variables')
                                 ->name('name')
-                                ->columns(2)
-                                ->reorderable()
-                                ->collapsible()
-                                ->collapsed()
-                                ->orderColumn()
+                                ->reorderable()->orderColumn()
+                                ->collapsible()->collapsed()
                                 ->columnSpan(2)
                                 ->defaultItems(0)
                                 ->itemLabel(fn (array $state) => $state['name'])
@@ -141,6 +122,8 @@ class CreateEgg extends CreateRecord
                                     $data['default_value'] ??= '';
                                     $data['description'] ??= '';
                                     $data['rules'] ??= '';
+                                    $data['user_viewable'] ??= '';
+                                    $data['user_editable'] ??= '';
 
                                     return $data;
                                 })
@@ -148,6 +131,8 @@ class CreateEgg extends CreateRecord
                                     $data['default_value'] ??= '';
                                     $data['description'] ??= '';
                                     $data['rules'] ??= '';
+                                    $data['user_viewable'] ??= '';
+                                    $data['user_editable'] ??= '';
 
                                     return $data;
                                 })
@@ -164,10 +149,18 @@ class CreateEgg extends CreateRecord
                                     Forms\Components\TextInput::make('env_variable')
                                         ->label('Environment Variable')
                                         ->maxLength(191)
-                                        ->hint(fn ($state) => "{{{$state}}}")
+                                        ->prefix('{{')
+                                        ->suffix('}}')
+                                        ->hintIcon('tabler-code')
+                                        ->hintIconTooltip(fn ($state) => "{{{$state}}}")
                                         ->required(),
                                     Forms\Components\TextInput::make('default_value')->maxLength(191),
-                                    Forms\Components\Textarea::make('rules')->rows(3)->columnSpanFull(),
+                                    Forms\Components\Fieldset::make('User Permissions')
+                                        ->schema([
+                                            Forms\Components\Checkbox::make('user_viewable')->label('Viewable'),
+                                            Forms\Components\Checkbox::make('user_editable')->label('Editable'),
+                                        ]),
+                                    Forms\Components\Textarea::make('rules')->columnSpanFull(),
                                 ]),
                         ]),
                     Forms\Components\Tabs\Tab::make('Install Script')
@@ -193,6 +186,7 @@ class CreateEgg extends CreateRecord
                                 ->columnSpanFull()
                                 ->fontSize('16px')
                                 ->language('shell')
+                                ->lazy()
                                 ->view('filament.plugins.monaco-editor'),
                         ]),
 

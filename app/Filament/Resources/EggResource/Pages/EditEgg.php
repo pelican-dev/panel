@@ -107,7 +107,7 @@ class EditEgg extends EditRecord
                         ->schema([
                             Forms\Components\Repeater::make('variables')
                                 ->label('')
-                                ->grid(2)
+                                ->grid()
                                 ->relationship('variables')
                                 ->name('name')
                                 ->reorderable()
