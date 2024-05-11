@@ -5,8 +5,8 @@
 FROM --platform=$TARGETOS/$TARGETARCH node:20-alpine
 WORKDIR /app
 COPY . ./
-RUN npm install --frozen-lockfile \
-    && npm run build:production
+RUN yarn install --frozen-lockfile \
+    && yarn run build:production
 
 # Stage 1:
 # Build the actual container with all of the needed PHP dependencies that will run the application.
