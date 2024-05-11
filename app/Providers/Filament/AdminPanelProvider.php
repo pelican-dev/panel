@@ -34,7 +34,7 @@ class AdminPanelProvider extends PanelProvider
         return $panel
             ->default()
             ->id('admin')
-            ->path('panel')
+            ->path('new-admin')
             ->login()
             ->brandName('Pelican')
             ->homeUrl('/')
