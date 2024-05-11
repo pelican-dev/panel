@@ -7,6 +7,7 @@ use App\Models\Allocation;
 use App\Models\Egg;
 use App\Models\Node;
 use App\Services\Allocations\AssignmentService;
+use App\Services\Servers\RandomWordService;
 use App\Services\Servers\ServerCreationService;
 use Filament\Forms\Form;
 use Filament\Resources\Pages\CreateRecord;
@@ -45,7 +46,9 @@ class CreateServer extends CreateRecord
                             $egg = Egg::find($get('egg_id'));
                             $prefix = $egg ? str($egg->name)->lower()->kebab() . '-' : '';
 
-                            $set('name', $prefix . fake()->domainWord);
+                            $word = (new RandomWordService())->word();
+
+                            $set('name', $prefix . $word);
                         }))
                     ->columnSpan([
                         'default' => 2,
