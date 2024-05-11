@@ -193,8 +193,8 @@ class EditEgg extends EditRecord
     {
         return [
             Actions\DeleteAction::make()
-                ->disabled(fn (Egg $egg): bool => $egg->servers_count <= 0)
-                ->label(fn (Egg $egg): string => $egg->servers_count <= 0 ? 'Egg In Use' : 'Delete Egg'),
+                ->disabled(fn (Egg $egg): bool => $egg->servers()->count() > 0)
+                ->label(fn (Egg $egg): string => $egg->servers()->count() <= 0 ? 'Delete Egg' : 'Egg In Use'),
             Actions\ExportAction::make()
                 ->icon('tabler-download')
                 ->label('Export Egg')
