@@ -311,21 +311,28 @@ class Node extends Model
 
     public function statistics()
     {
-        return Http::daemon($this)->connectTimeout(1)->timeout(1)->get('/api/system/utilization')->json() ?? [];
-
-        /** Example
-        $stats = [
-            'memory_total' => 8221675520,
-            'memory_used' => 1670275072,
-            'swap_total' => 1073737728,
+        $default = [
+            'memory_total' => 0,
+            'memory_used' => 0,
+            'swap_total' => 0,
             'swap_used' => 0,
-            'load_average1' => 0.67,
-            'load_average5' => 0.64,
-            'load_average15' => 0.7,
-            'cpu_percent' => 0.84361590728896,
-            'disk_total' => 62671097856,
-            'disk_used' => 33444728832,
-        ]; // */
+            'load_average1' => 0.00,
+            'load_average5' => 0.00,
+            'load_average15' => 0.00,
+            'cpu_percent' => 0.00,
+            'disk_total' => 0,
+            'disk_used' => 0,
+        ];
+
+        try {
+            return Http::daemon($this)
+                ->connectTimeout(1)
+                ->timeout(1)
+                ->get('/api/system/utilization')
+                ->json() ?? $default;
+        } catch (Exception) {
+            return $default;
+        }
     }
 
     public function ipAddresses(): array
