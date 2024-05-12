@@ -38,6 +38,7 @@ class EditEgg extends EditRecord
                             Forms\Components\TextInput::make('author')
                                 ->required()
                                 ->maxLength(191)
+                                ->email()
                                 ->disabled()
                                 ->columnSpan(['default' => 1, 'sm' => 1, 'md' => 2, 'lg' => 2])
                                 ->helperText('The author of this version of the Egg. Uploading a new Egg configuration from a different author will change this.'),
