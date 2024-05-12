@@ -71,7 +71,7 @@ export default () => {
                     </Tooltip>
                     {rootAdmin && (
                         <Tooltip placement={'bottom'} content={t<string>('admin')}>
-                            <a href={'/new-admin'} rel={'noreferrer'}>
+                            <a href={'/admin'} rel={'noreferrer'}>
                                 <FontAwesomeIcon icon={faCogs} />
                             </a>
                         </Tooltip>
