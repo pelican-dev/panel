@@ -33,12 +33,130 @@ class EditNode extends EditRecord
                     Tabs\Tab::make('Basic Settings')
                         ->icon('tabler-server')
                         ->schema((new CreateNode())->form($form)->getComponents()),
-                    //                    Tabs\Tab::make('Advanced Settings')
-                    //                        ->icon('tabler-server-cog')
-                    //                        ->schema([
-                    //                            Forms\Components\Placeholder::make('Coming soon!'),
-                    //                        ]),
-                    Tabs\Tab::make('Configuration')
+                    Tabs\Tab::make('Advanced Settings')
+                        ->icon('tabler-server-cog')
+                        ->schema([
+                            Forms\Components\TextInput::make('id')
+                                ->label('Node ID')
+                                ->disabled(),
+                            Forms\Components\TextInput::make('uuid')
+                                ->label('Node UUID')
+                                ->hintAction(CopyAction::make())
+                                ->columnSpan(2)
+                                ->disabled(),
+                            Forms\Components\TextInput::make('upload_size')
+                                ->label('Upload Limit')
+                                ->hintIcon('tabler-question-mark')
+                                ->hintIconTooltip('Enter the maximum size of files that can be uploaded through the web-based file manager.')
+                                ->columnSpan(1)
+                                ->numeric()->required()
+                                ->minValue(1)
+                                ->maxValue(1024)
+                                ->suffix('MiB'),
+                            Forms\Components\ToggleButtons::make('public')
+                                ->label('Allow Automatic Allocation')->inline()
+                                ->columnSpan(1)
+                                ->options([
+                                    true => 'Yes',
+                                    false => 'No',
+                                ])
+                                ->colors([
+                                    true => 'success',
+                                    false => 'danger',
+                                ]),
+                            Forms\Components\ToggleButtons::make('maintenance_mode')
+                                ->label('Maintenance Mode')->inline()
+                                ->columnSpan(1)
+                                ->hinticon('tabler-question-mark')
+                                ->hintIconTooltip("If the node is marked 'Under Maintenance' users won't be able to access servers that are on this node.")
+                                ->options([
+                                    true => 'Enable',
+                                    false => 'Disable',
+                                ])
+                                ->colors([
+                                    true => 'danger',
+                                    false => 'success',
+                                ]),
+                            Forms\Components\Grid::make()
+                                ->columns(6)
+                                ->columnSpanFull()
+                                ->schema([
+                                    Forms\Components\ToggleButtons::make('unlimited_mem')
+                                        ->label('Memory')->inlineLabel()->inline()
+                                        ->afterStateUpdated(fn (Forms\Set $set) => $set('memory', 0))
+                                        ->afterStateUpdated(fn (Forms\Set $set) => $set('memory_overallocate', -1))
+                                        ->formatStateUsing(fn (Forms\Get $get) => $get('memory') == 0)
+                                        ->live()
+                                        ->options([
+                                            true => 'Unlimited',
+                                            false => 'Limited',
+                                        ])
+                                        ->colors([
+                                            true => 'primary',
+                                            false => 'warning',
+                                        ])
+                                        ->columnSpan(2),
+                                    Forms\Components\TextInput::make('memory')
+                                        ->dehydratedWhenHidden()
+                                        ->hidden(fn (Forms\Get $get) => $get('unlimited_mem'))
+                                        ->label('Memory Limit')->inlineLabel()
+                                        ->suffix('MiB')
+                                        ->required()
+                                        ->columnSpan(2)
+                                        ->numeric(),
+                                    Forms\Components\TextInput::make('memory_overallocate')
+                                        ->dehydratedWhenHidden()
+                                        ->label('Overallocate')->inlineLabel()
+                                        ->required()
+                                        ->hidden(fn (Forms\Get $get) => $get('unlimited_mem'))
+                                        ->hintIcon('tabler-question-mark')
+                                        ->hintIconTooltip('The % allowable to go over the set limit.')
+                                        ->columnSpan(2)
+                                        ->numeric()
+                                        ->maxValue(100)
+                                        ->suffix('%'),
+                                ]),
+                            Forms\Components\Grid::make()
+                                ->columns(6)
+                                ->columnSpanFull()
+                                ->schema([
+                                    Forms\Components\ToggleButtons::make('unlimited_disk')
+                                        ->label('Disk')->inlineLabel()->inline()
+                                        ->live()
+                                        ->afterStateUpdated(fn (Forms\Set $set) => $set('disk', 0))
+                                        ->afterStateUpdated(fn (Forms\Set $set) => $set('disk_overallocate', -1))
+                                        ->formatStateUsing(fn (Forms\Get $get) => $get('disk') == 0)
+                                        ->options([
+                                            true => 'Unlimited',
+                                            false => 'Limited',
+                                        ])
+                                        ->colors([
+                                            true => 'primary',
+                                            false => 'warning',
+                                        ])
+                                        ->columnSpan(2),
+                                    Forms\Components\TextInput::make('disk')
+                                        ->dehydratedWhenHidden()
+                                        ->hidden(fn (Forms\Get $get) => $get('unlimited_disk'))
+                                        ->label('Disk Limit')->inlineLabel()
+                                        ->suffix('MB')
+                                        ->required()
+                                        ->columnSpan(2)
+                                        ->numeric(),
+                                    Forms\Components\TextInput::make('disk_overallocate')
+                                        ->dehydratedWhenHidden()
+                                        ->hidden(fn (Forms\Get $get) => $get('unlimited_disk'))
+                                        ->label('Overallocate')->inlineLabel()
+                                        ->hintIcon('tabler-question-mark')
+                                        ->hintIconTooltip('The % allowable to go over the set limit.')
+                                        ->columnSpan(2)
+                                        ->required()
+                                        ->numeric()
+                                        ->maxValue(100)
+                                        ->suffix('%'),
+                                ]),
+                        ]),
+                    Tabs\Tab::make('Configuration File')
                         ->icon('tabler-code')
                         ->schema([
                             Forms\Components\Placeholder::make('instructions')
