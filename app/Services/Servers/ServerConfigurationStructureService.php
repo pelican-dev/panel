@@ -61,7 +61,7 @@ class ServerConfigurationStructureService
                 'disk_space' => $server->disk,
                 // This field is deprecated — use "oom_killer".
                 'oom_disabled' => !$server->oom_killer,
-                'oom_killer' => !$server->oom_killer,
+                'oom_killer' => $server->oom_killer,
             ],
             'container' => [
                 'image' => $server->image,
