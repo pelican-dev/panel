@@ -1,5 +1,6 @@
 <?php
 
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
@@ -12,24 +13,30 @@ return new class extends Migration
     {
         Schema::disableForeignKeyConstraints();
 
-        Schema::table('service_options', function (Blueprint $table) {
-            $table->dropForeign(['config_from']);
-            $table->dropForeign(['copy_script_from']);
-        });
+        if (Schema::getConnection()->getDriverName() !== 'sqlite') {
+            Schema::table('service_options', function (Blueprint $table) {
+                $table->dropForeign(['config_from']);
+                $table->dropForeign(['copy_script_from']);
+            });
+        }
 
         Schema::rename('service_options', 'eggs');
 
         Schema::table('packs', function (Blueprint $table) {
-            $table->dropForeign(['option_id']);
-            $table->renameColumn('option_id', 'egg_id');
+            if (Schema::getConnection()->getDriverName() !== 'sqlite') {
+                $table->dropForeign(['option_id']);
+            }
 
+            $table->renameColumn('option_id', 'egg_id');
             $table->foreign('egg_id')->references('id')->on('eggs')->onDelete('CASCADE');
         });
 
         Schema::table('servers', function (Blueprint $table) {
-            $table->dropForeign(['option_id']);
-            $table->renameColumn('option_id', 'egg_id');
+            if (Schema::getConnection()->getDriverName() !== 'sqlite') {
+                $table->dropForeign(['option_id']);
+            }
 
+            $table->renameColumn('option_id', 'egg_id');
             $table->foreign('egg_id')->references('id')->on('eggs');
         });
 
@@ -39,7 +46,10 @@ return new class extends Migration
         });
 
         Schema::table('service_variables', function (Blueprint $table) {
-            $table->dropForeign(['option_id']);
+            if (Schema::getConnection()->getDriverName() !== 'sqlite') {
+                $table->dropForeign(['option_id']);
+            }
+
             $table->renameColumn('option_id', 'egg_id');
 
             $table->foreign('egg_id')->references('id')->on('eggs')->onDelete('CASCADE');
@@ -55,24 +65,30 @@ return new class extends Migration
     {
         Schema::disableForeignKeyConstraints();
 
-        Schema::table('eggs', function (Blueprint $table) {
-            $table->dropForeign(['config_from']);
-            $table->dropForeign(['copy_script_from']);
-        });
+        if (Schema::getConnection()->getDriverName() !== 'sqlite') {
+            Schema::table('eggs', function (Blueprint $table) {
+                $table->dropForeign(['config_from']);
+                $table->dropForeign(['copy_script_from']);
+            });
+        }
 
         Schema::rename('eggs', 'service_options');
 
         Schema::table('packs', function (Blueprint $table) {
-            $table->dropForeign(['egg_id']);
-            $table->renameColumn('egg_id', 'option_id');
+            if (Schema::getConnection()->getDriverName() !== 'sqlite') {
+                $table->dropForeign(['egg_id']);
+            }
 
+            $table->renameColumn('egg_id', 'option_id');
             $table->foreign('option_id')->references('id')->on('service_options')->onDelete('CASCADE');
         });
 
         Schema::table('servers', function (Blueprint $table) {
-            $table->dropForeign(['egg_id']);
-            $table->renameColumn('egg_id', 'option_id');
+            if (Schema::getConnection()->getDriverName() !== 'sqlite') {
+                $table->dropForeign(['egg_id']);
+            }
 
+            $table->renameColumn('egg_id', 'option_id');
             $table->foreign('option_id')->references('id')->on('service_options');
         });
 
@@ -82,9 +98,11 @@ return new class extends Migration
         });
 
         Schema::table('service_variables', function (Blueprint $table) {
-            $table->dropForeign(['egg_id']);
-            $table->renameColumn('egg_id', 'option_id');
+            if (Schema::getConnection()->getDriverName() !== 'sqlite') {
+                $table->dropForeign(['egg_id']);
+            }
 
+            $table->renameColumn('egg_id', 'option_id');
             $table->foreign('option_id')->references('id')->on('options')->onDelete('CASCADE');
         });
 

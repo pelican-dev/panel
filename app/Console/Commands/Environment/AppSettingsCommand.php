@@ -5,6 +5,7 @@ namespace App\Console\Commands\Environment;
 use Illuminate\Console\Command;
 use Illuminate\Contracts\Console\Kernel;
 use App\Traits\Commands\EnvironmentWriterTrait;
+use Illuminate\Support\Facades\Artisan;
 
 class AppSettingsCommand extends Command
 {
@@ -111,6 +112,10 @@ class AppSettingsCommand extends Command
         }
 
         $this->writeToEnvironment($this->variables);
+
+        if (!config('app.key')) {
+            Artisan::call('key:generate');
+        }
 
         $this->info($this->console->output());
 

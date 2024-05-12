@@ -59,7 +59,8 @@ class ListEggs extends ListRecords
                 Tables\Actions\ExportAction::make()
                     ->icon('tabler-download')
                     ->label('Export')
-                    // uses old admin panel export service
+                    ->color('primary')
+                    // TODO uses old admin panel export service
                     ->url(fn (Egg $egg): string => route('admin.eggs.export', ['egg' => $egg])),
             ])
             ->headerActions([

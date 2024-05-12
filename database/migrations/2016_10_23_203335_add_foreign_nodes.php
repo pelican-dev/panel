@@ -11,7 +11,9 @@ return new class extends Migration
      */
     public function up(): void
     {
-        DB::statement('ALTER TABLE nodes MODIFY location INT(10) UNSIGNED NOT NULL');
+        Schema::table('nodes', function (Blueprint $table) {
+            $table->unsignedInteger('location')->change();
+        });
 
         Schema::table('nodes', function (Blueprint $table) {
             $table->foreign('location')->references('id')->on('locations');
@@ -28,6 +30,8 @@ return new class extends Migration
             $table->dropIndex('nodes_location_foreign');
         });
 
-        DB::statement('ALTER TABLE nodes MODIFY location MEDIUMINT(10) UNSIGNED NOT NULL');
+        Schema::table('nodes', function (Blueprint $table) {
+            $table->unsignedMediumInteger('location')->change();
+        });
     }
 };

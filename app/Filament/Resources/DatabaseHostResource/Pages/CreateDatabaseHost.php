@@ -62,5 +62,15 @@ class CreateDatabaseHost extends CreateRecord
                     'lg' => 2,
                 ]),
             ]);
+
+    }
+
+    protected function mutateFormDataBeforeSave(array $data): array
+    {
+        if (isset($data['password'])) {
+            $data['password'] = encrypt($data['password']);
+        }
+
+        return $data;
     }
 }

@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\ServerResource\Pages;
 
 use App\Filament\Resources\ServerResource;
+use App\Services\Servers\RandomWordService;
 use Filament\Actions;
 use Filament\Forms;
 use App\Enums\ContainerStatus;
@@ -94,7 +95,9 @@ class EditServer extends EditRecord
                             $egg = Egg::find($get('egg_id'));
                             $prefix = $egg ? str($egg->name)->lower()->kebab() . '-' : '';
 
-                            $set('name', $prefix . fake()->domainWord);
+                            $word = (new RandomWordService())->word();
+
+                            $set('name', $prefix . $word);
                         }))
                     ->columnSpan([
                         'default' => 2,
@@ -249,13 +252,13 @@ class EditServer extends EditRecord
                             ->schema([
                                 Forms\Components\TextInput::make('variable_value')
                                     ->rules([
-                                        fn (ServerVariable $variable): Closure => function (string $attribute, $value, Closure $fail) use ($variable) {
+                                        fn (Forms\Get $get): Closure => function (string $attribute, $value, Closure $fail) use ($get) {
                                             $validator = Validator::make(['validatorkey' => $value], [
-                                                'validatorkey' => $variable->variable->rules,
+                                                'validatorkey' => $get('rules'),
                                             ]);
 
                                             if ($validator->fails()) {
-                                                $message = str($validator->errors()->first())->replace('validatorkey', $variable->variable->name);
+                                                $message = str($validator->errors()->first())->replace('validatorkey', $get('name'));
 
                                                 $fail($message);
                                             }

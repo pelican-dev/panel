@@ -13,6 +13,7 @@
         "aws/aws-sdk-php": "~3.288.1",
         "bezhansalleh/filament-shield": "^3.2",
         "chillerlan/php-qrcode": "^5.0",
+        "dedoc/scramble": "^0.9.0",
         "doctrine/dbal": "~3.6.0",
         "filament/filament": "^3.2",
         "guzzlehttp/guzzle": "^7.5",

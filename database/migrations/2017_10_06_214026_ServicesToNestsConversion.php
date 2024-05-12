@@ -1,5 +1,6 @@
 <?php
 
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
@@ -15,14 +16,18 @@ return new class extends Migration
         Schema::rename('services', 'nests');
 
         Schema::table('servers', function (Blueprint $table) {
-            $table->dropForeign(['service_id']);
+            if (Schema::getConnection()->getDriverName() !== 'sqlite') {
+                $table->dropForeign(['service_id']);
+            }
             $table->renameColumn('service_id', 'nest_id');
 
             $table->foreign('nest_id')->references('id')->on('nests');
         });
 
         Schema::table('service_options', function (Blueprint $table) {
-            $table->dropForeign(['service_id']);
+            if (Schema::getConnection()->getDriverName() !== 'sqlite') {
+                $table->dropForeign(['service_id']);
+            }
             $table->renameColumn('service_id', 'nest_id');
 
             $table->foreign('nest_id')->references('id')->on('nests')->onDelete('CASCADE');
@@ -41,14 +46,18 @@ return new class extends Migration
         Schema::rename('nests', 'services');
 
         Schema::table('servers', function (Blueprint $table) {
-            $table->dropForeign(['nest_id']);
+            if (Schema::getConnection()->getDriverName() !== 'sqlite') {
+                $table->dropForeign(['nest_id']);
+            }
             $table->renameColumn('nest_id', 'service_id');
 
             $table->foreign('service_id')->references('id')->on('services');
         });
 
         Schema::table('service_options', function (Blueprint $table) {
-            $table->dropForeign(['nest_id']);
+            if (Schema::getConnection()->getDriverName() !== 'sqlite') {
+                $table->dropForeign(['nest_id']);
+            }
             $table->renameColumn('nest_id', 'service_id');
 
             $table->foreign('service_id')->references('id')->on('services')->onDelete('CASCADE');

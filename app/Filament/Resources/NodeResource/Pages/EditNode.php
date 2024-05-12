@@ -3,6 +3,8 @@
 namespace App\Filament\Resources\NodeResource\Pages;
 
 use App\Filament\Resources\NodeResource;
+use App\Filament\Resources\NodeResource\Widgets\NodeMemoryChart;
+use App\Filament\Resources\NodeResource\Widgets\NodeStorageChart;
 use App\Models\Node;
 use Filament\Actions;
 use Filament\Forms;
@@ -73,7 +75,17 @@ class EditNode extends EditRecord
     protected function getHeaderActions(): array
     {
         return [
-            Actions\DeleteAction::make(),
+            Actions\DeleteAction::make()
+                ->disabled(fn (Node $node) => $node->servers()->count() > 0)
+                ->label(fn (Node $node) => $node->servers()->count() > 0 ? 'Node Has Servers' : 'Delete'),
+        ];
+    }
+
+    protected function getFooterWidgets(): array
+    {
+        return [
+            NodeStorageChart::class,
+            NodeMemoryChart::class,
         ];
     }
 }
