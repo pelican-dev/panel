@@ -6,7 +6,7 @@ return [
 
     'name' => 'Pelican',
 
-    'version' => 'canary',
+    'version' => '1.0.0-beta1',
 
     'exceptions' => [
         'report_all' => env('APP_REPORT_ALL_EXCEPTIONS', false),
