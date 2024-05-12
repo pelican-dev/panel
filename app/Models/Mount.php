@@ -34,7 +34,7 @@ class Mount extends Model
     /**
      * Fields that are not mass assignable.
      */
-    protected $guarded = ['id', 'uuid'];
+    protected $guarded = ['id'];
 
     /**
      * Rules verifying that the data being stored matches the expectations of the database.
