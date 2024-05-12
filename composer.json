@@ -17,6 +17,7 @@
         "filament/filament": "^3.2",
         "guzzlehttp/guzzle": "^7.5",
         "hashids/hashids": "~5.0.0",
+        "hasnayeen/themes": "^3.0",
         "laracasts/utilities": "~3.2.2",
         "laravel/framework": "^11.0",
         "laravel/helpers": "^1.7",

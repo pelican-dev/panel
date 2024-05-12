@@ -19,6 +19,7 @@ use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\AuthenticateSession;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
+use Hasnayeen\Themes\ThemesPlugin;
 
 class AdminPanelProvider extends PanelProvider
 {
@@ -71,7 +72,16 @@ class AdminPanelProvider extends PanelProvider
                 DisableBladeIconComponents::class,
                 DispatchServingFilamentEvent::class,
                 LanguageMiddleware::class,
+                \Hasnayeen\Themes\Http\Middleware\SetTheme::class
             ])
+            ->tenantMiddleware([
+                \Hasnayeen\Themes\Http\Middleware\SetTheme::class
+                
+            ])
+            ->plugin(
+                ThemesPlugin::make()
+                ->canViewThemesPage(fn () => auth()->user()?->root_admin)
+            )
             ->authMiddleware([
                 Authenticate::class,
             ]);
