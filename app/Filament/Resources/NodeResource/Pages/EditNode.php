@@ -44,17 +44,15 @@ class EditNode extends EditRecord
                                 ->hintAction(CopyAction::make())
                                 ->columnSpan(2)
                                 ->disabled(),
-                            Forms\Components\TextInput::make('upload_size')
-                                ->label('Upload Limit')
+                            Forms\Components\TagsInput::make('tags')
+                                ->label('Tags')
+                                ->disabled()
+                                ->placeholder('Not Implemented')
                                 ->hintIcon('tabler-question-mark')
-                                ->hintIconTooltip('Enter the maximum size of files that can be uploaded through the web-based file manager.')
-                                ->columnSpan(1)
-                                ->numeric()->required()
-                                ->minValue(1)
-                                ->maxValue(1024)
-                                ->suffix('MiB'),
+                                ->hintIconTooltip('Not Implemented')
+                                ->columnSpan(1),
                             Forms\Components\ToggleButtons::make('public')
-                                ->label('Allow Automatic Allocation')->inline()
+                                ->label('Automatic Allocation')->inline()
                                 ->columnSpan(1)
                                 ->options([
                                     true => 'Yes',
@@ -77,6 +75,15 @@ class EditNode extends EditRecord
                                     true => 'danger',
                                     false => 'success',
                                 ]),
+                            Forms\Components\TextInput::make('upload_size')
+                                ->label('Upload Limit')
+                                ->hintIcon('tabler-question-mark')
+                                ->hintIconTooltip('Enter the maximum size of files that can be uploaded through the web-based file manager.')
+                                ->columnStart(4)->columnSpan(1)
+                                ->numeric()->required()
+                                ->minValue(1)
+                                ->maxValue(1024)
+                                ->suffix('MiB'),
                             Forms\Components\Grid::make()
                                 ->columns(6)
                                 ->columnSpanFull()
