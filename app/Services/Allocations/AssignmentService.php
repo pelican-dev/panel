@@ -101,7 +101,10 @@ class AssignmentService
                     ];
                 }
 
-                $ids[] = Allocation::query()->insertOrIgnore($insertData);
+                foreach ($insertData as $insert) {
+                    $allocation = Allocation::query()->create($insert);
+                    $ids[] = $allocation->id;
+                }
             }
         }
 
