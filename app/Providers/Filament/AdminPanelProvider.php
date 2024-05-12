@@ -72,15 +72,15 @@ class AdminPanelProvider extends PanelProvider
                 DisableBladeIconComponents::class,
                 DispatchServingFilamentEvent::class,
                 LanguageMiddleware::class,
-                \Hasnayeen\Themes\Http\Middleware\SetTheme::class
+                \Hasnayeen\Themes\Http\Middleware\SetTheme::class,
             ])
             ->tenantMiddleware([
-                \Hasnayeen\Themes\Http\Middleware\SetTheme::class
-                
+                \Hasnayeen\Themes\Http\Middleware\SetTheme::class,
+
             ])
             ->plugin(
                 ThemesPlugin::make()
-                ->canViewThemesPage(fn () => auth()->user()?->root_admin)
+                    ->canViewThemesPage(fn () => auth()->user()?->root_admin)
             )
             ->authMiddleware([
                 Authenticate::class,
