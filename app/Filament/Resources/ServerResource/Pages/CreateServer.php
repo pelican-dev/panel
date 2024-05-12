@@ -158,7 +158,7 @@ class CreateServer extends CreateRecord
                                             continue;
                                         }
 
-                                        // Do not add non numerical ports
+                                        // Do not add non-numerical ports
                                         $update = true;
 
                                         continue;
@@ -188,6 +188,8 @@ class CreateServer extends CreateRecord
                                     $update = true;
                                     $ports = $sortedPorts;
                                 }
+
+                                $ports = $ports->filter(fn ($port) => $port > 1024 && $port < 65535)->values();
 
                                 if ($update) {
                                     $set('allocation_ports', $ports->all());
