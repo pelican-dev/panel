@@ -40,7 +40,7 @@ class BuildModificationService
                 throw_unless($existingAllocation, new DisplayException('The requested default allocation is not currently assigned to this server.'));
             }
 
-            if(!isset($data['oom_killer']) && isset($data['oom_disabled'])) {
+            if (!isset($data['oom_killer']) && isset($data['oom_disabled'])) {
                 $data['oom_killer'] = !$data['oom_disabled'];
             }
 

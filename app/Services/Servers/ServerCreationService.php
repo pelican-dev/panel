@@ -47,7 +47,7 @@ class ServerCreationService
      */
     public function handle(array $data, DeploymentObject $deployment = null): Server
     {
-        if(!isset($data['oom_killer']) && isset($data['oom_disabled'])) {
+        if (!isset($data['oom_killer']) && isset($data['oom_disabled'])) {
             $data['oom_killer'] = !$data['oom_disabled'];
         }
 
