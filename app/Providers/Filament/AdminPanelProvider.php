@@ -80,7 +80,7 @@ class AdminPanelProvider extends PanelProvider
             ])
             ->plugin(
                 ThemesPlugin::make()
-                    //->canViewThemesPage(fn () => auth()->user()?->root_admin)
+                //->canViewThemesPage(fn () => auth()->user()?->root_admin)
             )
             ->authMiddleware([
                 Authenticate::class,
