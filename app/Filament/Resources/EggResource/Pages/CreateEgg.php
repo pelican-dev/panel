@@ -3,7 +3,6 @@
 namespace App\Filament\Resources\EggResource\Pages;
 
 use App\Filament\Resources\EggResource;
-use App\Models\User;
 use Filament\Resources\Pages\CreateRecord;
 use AbdelhamidErrahmouni\FilamentMonacoEditor\MonacoEditor;
 use Filament\Forms;

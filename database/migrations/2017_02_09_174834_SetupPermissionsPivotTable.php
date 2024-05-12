@@ -26,10 +26,12 @@ return new class extends Migration
         });
 
         Schema::table('permissions', function (Blueprint $table) {
-            $table->dropForeign('permissions_server_id_foreign');
-            $table->dropIndex('permissions_server_id_foreign');
-            $table->dropForeign('permissions_user_id_foreign');
-            $table->dropIndex('permissions_user_id_foreign');
+            if (Schema::getConnection()->getDriverName() !== 'sqlite') {
+                $table->dropForeign('permissions_server_id_foreign');
+                $table->dropIndex('permissions_server_id_foreign');
+                $table->dropForeign('permissions_user_id_foreign');
+                $table->dropIndex('permissions_user_id_foreign');
+            }
 
             $table->dropColumn('server_id');
             $table->dropColumn('user_id');
@@ -60,8 +62,10 @@ return new class extends Migration
         });
 
         Schema::table('permissions', function (Blueprint $table) {
-            $table->dropForeign('permissions_subuser_id_foreign');
-            $table->dropIndex('permissions_subuser_id_foreign');
+            if (Schema::getConnection()->getDriverName() !== 'sqlite') {
+                $table->dropForeign('permissions_subuser_id_foreign');
+                $table->dropIndex('permissions_subuser_id_foreign');
+            }
             $table->dropColumn('subuser_id');
 
             $table->foreign('server_id')->references('id')->on('servers');

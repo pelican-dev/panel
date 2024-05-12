@@ -11,10 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        DB::statement('ALTER TABLE allocations
-             MODIFY COLUMN assigned_to INT(10) UNSIGNED NULL,
-             MODIFY COLUMN node INT(10) UNSIGNED NOT NULL
-         ');
+        Schema::table('allocations', function (Blueprint $table) {
+            $table->unsignedInteger('assigned_to')->change();
+            $table->unsignedInteger('node')->change();
+        });
 
         Schema::table('allocations', function (Blueprint $table) {
             $table->foreign('assigned_to')->references('id')->on('servers');
@@ -35,9 +35,9 @@ return new class extends Migration
             $table->dropIndex('allocations_node_foreign');
         });
 
-        DB::statement('ALTER TABLE allocations
-             MODIFY COLUMN assigned_to MEDIUMINT(8) UNSIGNED NULL,
-             MODIFY COLUMN node MEDIUMINT(8) UNSIGNED NOT NULL
-         ');
+        Schema::table('allocations', function (Blueprint $table) {
+            $table->unsignedMediumInteger('assigned_to')->change();
+            $table->unsignedMediumInteger('node')->change();
+        });
     }
 };
