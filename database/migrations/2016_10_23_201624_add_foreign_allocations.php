@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('allocations', function (Blueprint $table) {
-            $table->unsignedInteger('assigned_to')->change();
+            $table->unsignedInteger('assigned_to')->nullable()->change();
             $table->unsignedInteger('node')->change();
         });
 
