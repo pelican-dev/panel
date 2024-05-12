@@ -167,7 +167,7 @@ class EditProfile extends \Filament\Pages\Auth\EditProfile
                                                     ->columnSpanFull(),
                                             ])->headerActions([
                                                 Action::make('Create')
-                                                    ->successRedirectUrl('/panel/profile?tab=-api-keys-tab')
+                                                    ->successRedirectUrl(route('filament.admin.auth.profile', ['tab' => '-api-keys-tab']))
                                                     ->action(function (Get $get, Action $action) {
                                                         $token = auth()->user()->createToken(
                                                             $get('description'),
