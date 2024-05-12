@@ -113,6 +113,7 @@ class EditEgg extends EditRecord
                                 ->reorderable()
                                 ->collapsible()->collapsed()
                                 ->orderColumn()
+                                ->addActionLabel('New Variable')
                                 ->itemLabel(fn (array $state) => $state['name'])
                                 ->mutateRelationshipDataBeforeCreateUsing(function (array $data): array {
                                     $data['default_value'] ??= '';
