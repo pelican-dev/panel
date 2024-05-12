@@ -31,7 +31,7 @@ class AllocationsRelationManager extends RelationManager
             // ->actions
             // ->groups
             ->columns([
-                Tables\Columns\TextColumn::make('ip_alias')->label('Alias'),
+                Tables\Columns\TextInputColumn::make('ip_alias')->label('Alias'),
                 Tables\Columns\TextColumn::make('ip')->label('IP'),
                 Tables\Columns\TextColumn::make('port')->label('Port'),
                 Tables\Columns\IconColumn::make('primary')
@@ -56,8 +56,8 @@ class AllocationsRelationManager extends RelationManager
                     ->label(fn (Allocation $allocation) => $allocation->id === $this->getOwnerRecord()->allocation_id ? '' : 'Make Primary'),
             ])
             ->headerActions([
-                Tables\Actions\CreateAction::make()->label('Create Allocation'),
-                //Tables\Actions\AssociateAction::make()->label('Add Allocation'),
+                //TODO Tables\Actions\CreateAction::make()->label('Create Allocation'),
+                //TODO Tables\Actions\AssociateAction::make()->label('Add Allocation'),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
