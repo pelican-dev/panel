@@ -25,7 +25,6 @@ use Illuminate\Contracts\Auth\Access\Authorizable as AuthorizableContract;
 use Illuminate\Contracts\Auth\CanResetPassword as CanResetPasswordContract;
 use App\Notifications\SendPasswordReset as ResetPasswordNotification;
 use Spatie\Permission\Traits\HasRoles;
-use BezhanSalleh\FilamentShield\Traits\HasPanelShield;
 use BezhanSalleh\FilamentShield\Support\Utils;
 
 /**
@@ -92,7 +91,6 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
     use AvailableLanguages;
     use CanResetPassword;
     use HasAccessTokens;
-    use HasPanelShield;
     use HasRoles;
     use Notifiable;
 

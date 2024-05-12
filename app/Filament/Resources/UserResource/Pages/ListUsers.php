@@ -16,7 +16,7 @@ class ListUsers extends ListRecords
     public function table(Table $table): Table
     {
         return $table
-            ->searchable(false)
+            ->searchable(true) // Thought that this was usefull to have on the user page
             ->columns([
                 Tables\Columns\ImageColumn::make('picture')
                     ->visibleFrom('lg')
@@ -31,8 +31,10 @@ class ListUsers extends ListRecords
                     ->hidden()
                     ->searchable(),
                 Tables\Columns\TextColumn::make('username')
-                    ->searchable(),
+                    ->searchable()
+                    ->sortable(),
                 Tables\Columns\TextColumn::make('email')
+                    ->sortable()
                     ->searchable()
                     ->icon('tabler-mail'),
                 Tables\Columns\IconColumn::make('use_totp')->label('2FA')
