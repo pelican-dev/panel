@@ -41,7 +41,7 @@ class EmailSettingsCommand extends Command
                 'mandrill' => 'Mandrill',
                 'postmark' => 'Postmark',
             ],
-            'smtp',
+            env('MAIL_MAILER', env('MAIL_DRIVER', 'smtp')),
         );
 
         $method = 'setup' . studly_case($this->variables['MAIL_MAILER']) . 'DriverVariables';
