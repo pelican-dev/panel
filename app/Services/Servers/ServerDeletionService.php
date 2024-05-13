@@ -77,6 +77,8 @@ class ServerDeletionService
                 }
             }
 
+            $server->allocations()->update(['server_id' => null]);
+
             $server->delete();
         });
     }

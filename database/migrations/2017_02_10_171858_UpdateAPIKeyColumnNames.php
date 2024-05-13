@@ -12,7 +12,10 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('api_keys', function (Blueprint $table) {
-            $table->dropForeign('api_keys_user_foreign')->dropIndex('api_keys_user_foreign');
+            if (Schema::getConnection()->getDriverName() !== 'sqlite') {
+                $table->dropForeign('api_keys_user_foreign');
+                $table->dropIndex('api_keys_user_foreign');
+            }
 
             $table->renameColumn('user', 'user_id');
             $table->foreign('user_id')->references('id')->on('users');
@@ -25,7 +28,10 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('api_keys', function (Blueprint $table) {
-            $table->dropForeign('api_keys_user_id_foreign')->dropIndex('api_keys_user_id_foreign');
+            if (Schema::getConnection()->getDriverName() !== 'sqlite') {
+                $table->dropForeign('api_keys_user_id_foreign');
+                $table->dropIndex('api_keys_user_id_foreign');
+            }
 
             $table->renameColumn('user_id', 'user');
             $table->foreign('user')->references('id')->on('users');

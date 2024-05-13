@@ -11,9 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('service_packs', function (Blueprint $table) {
-            $table->dropForeign(['option_id']);
-        });
+        if (Schema::getConnection()->getDriverName() !== 'sqlite') {
+            Schema::table('service_packs', function (Blueprint $table) {
+                $table->dropForeign(['option_id']);
+            });
+        }
 
         Schema::rename('service_packs', 'packs');
 
@@ -27,9 +29,11 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('packs', function (Blueprint $table) {
-            $table->dropForeign(['option_id']);
-        });
+        if (Schema::getConnection()->getDriverName() !== 'sqlite') {
+            Schema::table('packs', function (Blueprint $table) {
+                $table->dropForeign(['option_id']);
+            });
+        }
 
         Schema::rename('packs', 'service_packs');
 

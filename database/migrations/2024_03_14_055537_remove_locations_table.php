@@ -27,7 +27,10 @@ return new class extends Migration
         }
 
         Schema::table('nodes', function (Blueprint $table) {
-            $table->dropForeign('nodes_location_id_foreign');
+            if (Schema::getConnection()->getDriverName() !== 'sqlite') {
+                $table->dropForeign('nodes_location_id_foreign');
+            }
+
             $table->dropColumn('location_id');
         });
 

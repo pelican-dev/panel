@@ -12,8 +12,10 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('nodes', function (Blueprint $table) {
-            $table->dropForeign('nodes_location_foreign');
-            $table->dropIndex('nodes_location_foreign');
+            if (Schema::getConnection()->getDriverName() !== 'sqlite') {
+                $table->dropForeign('nodes_location_foreign');
+                $table->dropIndex('nodes_location_foreign');
+            }
 
             $table->renameColumn('location', 'location_id');
             $table->foreign('location_id')->references('id')->on('locations');
@@ -26,8 +28,10 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('nodes', function (Blueprint $table) {
-            $table->dropForeign('nodes_location_id_foreign');
-            $table->dropIndex('nodes_location_id_foreign');
+            if (Schema::getConnection()->getDriverName() !== 'sqlite') {
+                $table->dropForeign('nodes_location_id_foreign');
+                $table->dropIndex('nodes_location_id_foreign');
+            }
 
             $table->renameColumn('location_id', 'location');
             $table->foreign('location')->references('id')->on('locations');

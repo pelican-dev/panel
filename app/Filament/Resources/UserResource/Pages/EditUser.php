@@ -2,9 +2,7 @@
 
 namespace App\Filament\Resources\UserResource\Pages;
 
-use App\Enums\ServerState;
 use App\Filament\Resources\UserResource;
-use App\Services\Servers\SuspensionService;
 use Filament\Actions;
 use Filament\Resources\Pages\EditRecord;
 use App\Models\User;
@@ -69,26 +67,6 @@ class EditUser extends EditRecord
     {
         return [
             Actions\DeleteAction::make(),
-
-            Actions\Action::make('toggleSuspend')
-                ->hidden(fn (User $user) => $user->servers()->whereNot('status', ServerState::Suspended)->count() === 0)
-                ->label('Suspend Servers')
-                ->color('warning')
-                ->action(function (User $user) {
-                    foreach ($user->servers()->whereNot('status', ServerState::Suspended)->get() as $server) {
-                        resolve(SuspensionService::class)->toggle($server);
-                    }
-                }),
-
-            Actions\Action::make('toggleUnsuspend')
-                ->hidden(fn (User $user) => $user->servers()->where('status', ServerState::Suspended)->count() === 0)
-                ->label('Unsuspend Servers')
-                ->color('success')
-                ->action(function (User $user) {
-                    foreach ($user->servers()->where('status', ServerState::Suspended)->get() as $server) {
-                        resolve(SuspensionService::class)->toggle($server, SuspensionService::ACTION_UNSUSPEND);
-                    }
-                }),
         ];
     }
 }

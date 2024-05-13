@@ -1,5 +1,5 @@
 {
-    "name": "lancepioch/panel",
+    "name": "pelican-dev/panel",
     "description": "The free, open-source game management panel. Supporting Minecraft, Spigot, BungeeCord, and SRCDS servers.",
     "require": {
         "php": "^8.2 || ^8.3",
@@ -12,6 +12,7 @@
         "abdelhamiderrahmouni/filament-monaco-editor": "^0.2.0",
         "aws/aws-sdk-php": "~3.288.1",
         "chillerlan/php-qrcode": "^5.0",
+        "dedoc/scramble": "^0.9.0",
         "doctrine/dbal": "~3.6.0",
         "filament/filament": "^3.2",
         "guzzlehttp/guzzle": "^7.5",
