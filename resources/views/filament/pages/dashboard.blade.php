@@ -4,7 +4,7 @@
         <x-filament::tabs.item disabled>{{ trans('dashboard/index.overview') }} </x-filament::tabs.item>
 
         <x-filament::button
-            href="panel/nodes"
+            href="admin/nodes"
             tag="a"
             icon="tabler-server-2"
         >
@@ -13,7 +13,7 @@
         </x-filament::button>
 
         <x-filament::button
-            href="panel/servers"
+            href="admin/servers"
             tag="a"
             icon="tabler-server"
         >
@@ -22,7 +22,7 @@
         </x-filament::button>
 
         <x-filament::button
-            href="panel/eggs"
+            href="admin/eggs"
             tag="a"
             icon="tabler-eggs"
         >
@@ -31,7 +31,7 @@
         </x-filament::button>
 
         <x-filament::button
-            href="panel/users"
+            href="admin/users"
             tag="a"
             icon="tabler-users"
         >
@@ -40,7 +40,7 @@
         </x-filament::button>
 
         <x-filament::button
-            href="panel/database-hosts"
+            href="admin/database-hosts"
             tag="a"
             icon="tabler-database"
         >
@@ -49,7 +49,7 @@
         </x-filament::button>
 
         <x-filament::button
-            href="panel/database-hosts"
+            href="admin/database-hosts"
             tag="a"
             icon="tabler-database"
         >
