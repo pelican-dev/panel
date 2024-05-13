@@ -31,7 +31,7 @@ class EmailSettingsCommand extends Command
      */
     public function handle(): void
     {
-        $this->variables['MAIL_DRIVER'] = $this->option('driver') ?? $this->choice(
+        $this->variables['MAIL_MAILER'] = $this->option('driver') ?? $this->choice(
             trans('command/messages.environment.mail.ask_driver'),
             [
                 'log' => 'Log',
@@ -44,7 +44,7 @@ class EmailSettingsCommand extends Command
             'smtp',
         );
 
-        $method = 'setup' . studly_case($this->variables['MAIL_DRIVER']) . 'DriverVariables';
+        $method = 'setup' . studly_case($this->variables['MAIL_MAILER']) . 'DriverVariables';
         if (method_exists($this, $method)) {
             $this->{$method}();
         }
