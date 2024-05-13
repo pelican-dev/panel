@@ -63,6 +63,7 @@ class EditDatabaseHost extends EditRecord
     {
         return [
             Actions\DeleteAction::make(),
+            $this->getSaveFormAction()->formId('form'),
         ];
     }
 
@@ -73,5 +74,10 @@ class EditDatabaseHost extends EditRecord
         }
 
         return $data;
+    }
+
+    protected function getFormActions(): array
+    {
+        return [];
     }
 }

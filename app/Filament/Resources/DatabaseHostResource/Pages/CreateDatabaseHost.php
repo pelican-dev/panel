@@ -65,7 +65,7 @@ class CreateDatabaseHost extends CreateRecord
 
     }
 
-    protected function mutateFormDataBeforeSave(array $data): array
+    protected function mutateFormDataBeforeCreate(array $data): array
     {
         if (isset($data['password'])) {
             $data['password'] = encrypt($data['password']);
@@ -73,4 +73,17 @@ class CreateDatabaseHost extends CreateRecord
 
         return $data;
     }
+
+    protected function getHeaderActions(): array
+    {
+        return [
+            $this->getCreateFormAction()->formId('form'),
+        ];
+
+    }
+    protected function getFormActions(): array
+    {
+        return [];
+    }
+
 }
