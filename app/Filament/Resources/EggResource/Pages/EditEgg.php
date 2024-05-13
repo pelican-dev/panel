@@ -208,4 +208,11 @@ class EditEgg extends EditRecord
                 ->url(fn (Egg $egg): string => route('admin.eggs.export', ['egg' => $egg['id']])),
         ];
     }
+
+    public function getRelationManagers(): array
+    {
+        return [
+            EggResource\RelationManagers\ServersRelationManager::class,
+        ];
+    }
 }
