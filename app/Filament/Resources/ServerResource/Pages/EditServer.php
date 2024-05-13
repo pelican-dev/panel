@@ -246,6 +246,15 @@ class EditServer extends EditRecord
                         Forms\Components\Repeater::make('server_variables')
                             ->relationship('serverVariables')
                             ->grid()
+                            ->mutateRelationshipDataBeforeSaveUsing(function (array &$data): array {
+                                foreach ($data as $key => $value) {
+                                    if (!isset($data['variable_value'])) {
+                                        $data['variable_value'] = '';
+                                    }
+                                }
+
+                                return $data;
+                            })
                             ->reorderable(false)->addable(false)->deletable(false)
                             ->schema(function () {
 
