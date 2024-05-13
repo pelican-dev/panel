@@ -98,6 +98,12 @@ class EditMount extends EditRecord
     {
         return [
             Actions\DeleteAction::make(),
+            $this->getSaveFormAction()->formId('form'),
         ];
+    }
+
+    protected function getFormActions(): array
+    {
+        return [];
     }
 }

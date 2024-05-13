@@ -2,7 +2,6 @@
 
 namespace App\Filament\Resources\EggResource\RelationManagers;
 
-use App\Filament\Resources\EggResource;
 use App\Models\Server;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables;

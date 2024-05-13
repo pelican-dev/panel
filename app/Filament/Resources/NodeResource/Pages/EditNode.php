@@ -191,18 +191,17 @@ class EditNode extends EditRecord
         return $data;
     }
 
-    protected function getSteps(): array
+    protected function getFormActions(): array
     {
-        return [
-        ];
+        return [];
     }
-
     protected function getHeaderActions(): array
     {
         return [
             Actions\DeleteAction::make()
                 ->disabled(fn (Node $node) => $node->servers()->count() > 0)
                 ->label(fn (Node $node) => $node->servers()->count() > 0 ? 'Node Has Servers' : 'Delete'),
+            $this->getSaveFormAction()->formId('form'),
         ];
     }
 
