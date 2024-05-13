@@ -610,7 +610,7 @@ class CreateServer extends CreateRecord
                             ->columns(4)
                             ->columnSpanFull()
                             ->schema([
-                                Forms\Components\ToggleButtons::make('oom_disabled')
+                                Forms\Components\ToggleButtons::make('oom_killer')
                                     ->label('OOM Killer')
                                     ->inlineLabel()->inline()
                                     ->default(false)

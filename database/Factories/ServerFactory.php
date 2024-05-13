@@ -35,7 +35,7 @@ class ServerFactory extends Factory
             'io' => 500,
             'cpu' => 0,
             'threads' => null,
-            'oom_disabled' => 0,
+            'oom_killer' => false,
             'startup' => '/bin/bash echo "hello world"',
             'image' => 'foo/bar:latest',
             'allocation_limit' => null,
