@@ -129,6 +129,8 @@ class AllocationsRelationManager extends RelationManager
                                     $ports = $sortedPorts;
                                 }
 
+                                $ports = $ports->filter(fn ($port) => $port > 1024 && $port < 65535)->values();
+
                                 if ($update) {
                                     $set('allocation_ports', $ports->all());
                                 }
