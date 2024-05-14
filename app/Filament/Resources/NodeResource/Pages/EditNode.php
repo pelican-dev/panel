@@ -91,7 +91,7 @@ class EditNode extends EditRecord
                                     Forms\Components\ToggleButtons::make('unlimited_mem')
                                         ->label('Memory')->inlineLabel()->inline()
                                         ->afterStateUpdated(fn (Forms\Set $set) => $set('memory', 0))
-                                        ->afterStateUpdated(fn (Forms\Set $set) => $set('memory_overallocate', -1))
+                                        ->afterStateUpdated(fn (Forms\Set $set) => $set('memory_overallocate', 0))
                                         ->formatStateUsing(fn (Forms\Get $get) => $get('memory') == 0)
                                         ->live()
                                         ->options([
@@ -110,7 +110,8 @@ class EditNode extends EditRecord
                                         ->suffix('MiB')
                                         ->required()
                                         ->columnSpan(2)
-                                        ->numeric(),
+                                        ->numeric()
+                                        ->minValue(0),
                                     Forms\Components\TextInput::make('memory_overallocate')
                                         ->dehydratedWhenHidden()
                                         ->label('Overallocate')->inlineLabel()
@@ -120,6 +121,7 @@ class EditNode extends EditRecord
                                         ->hintIconTooltip('The % allowable to go over the set limit.')
                                         ->columnSpan(2)
                                         ->numeric()
+                                        ->minValue(-1)
                                         ->maxValue(100)
                                         ->suffix('%'),
                                 ]),
@@ -131,7 +133,7 @@ class EditNode extends EditRecord
                                         ->label('Disk')->inlineLabel()->inline()
                                         ->live()
                                         ->afterStateUpdated(fn (Forms\Set $set) => $set('disk', 0))
-                                        ->afterStateUpdated(fn (Forms\Set $set) => $set('disk_overallocate', -1))
+                                        ->afterStateUpdated(fn (Forms\Set $set) => $set('disk_overallocate', 0))
                                         ->formatStateUsing(fn (Forms\Get $get) => $get('disk') == 0)
                                         ->options([
                                             true => 'Unlimited',
@@ -146,10 +148,11 @@ class EditNode extends EditRecord
                                         ->dehydratedWhenHidden()
                                         ->hidden(fn (Forms\Get $get) => $get('unlimited_disk'))
                                         ->label('Disk Limit')->inlineLabel()
-                                        ->suffix('MB')
+                                        ->suffix('MiB')
                                         ->required()
                                         ->columnSpan(2)
-                                        ->numeric(),
+                                        ->numeric()
+                                        ->minValue(0),
                                     Forms\Components\TextInput::make('disk_overallocate')
                                         ->dehydratedWhenHidden()
                                         ->hidden(fn (Forms\Get $get) => $get('unlimited_disk'))
@@ -159,6 +162,7 @@ class EditNode extends EditRecord
                                         ->columnSpan(2)
                                         ->required()
                                         ->numeric()
+                                        ->minValue(-1)
                                         ->maxValue(100)
                                         ->suffix('%'),
                                 ]),

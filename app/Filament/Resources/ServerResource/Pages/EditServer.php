@@ -333,10 +333,11 @@ class EditServer extends EditRecord
                                     ->dehydratedWhenHidden()
                                     ->hidden(fn (Forms\Get $get) => $get('unlimited_mem'))
                                     ->label('Memory Limit')->inlineLabel()
-                                    ->suffix('MB')
+                                    ->suffix('MiB')
                                     ->required()
                                     ->columnSpan(2)
-                                    ->numeric(),
+                                    ->numeric()
+                                    ->minValue(0),
                             ]),
 
                         Forms\Components\Grid::make()
@@ -362,10 +363,11 @@ class EditServer extends EditRecord
                                     ->dehydratedWhenHidden()
                                     ->hidden(fn (Forms\Get $get) => $get('unlimited_disk'))
                                     ->label('Disk Space Limit')->inlineLabel()
-                                    ->suffix('MB')
+                                    ->suffix('MiB')
                                     ->required()
                                     ->columnSpan(2)
-                                    ->numeric(),
+                                    ->numeric()
+                                    ->minValue(0),
                             ]),
 
                         Forms\Components\Grid::make()
@@ -394,7 +396,8 @@ class EditServer extends EditRecord
                                     ->suffix('%')
                                     ->required()
                                     ->columnSpan(2)
-                                    ->numeric(),
+                                    ->numeric()
+                                    ->minValue(0),
                             ]),
 
                         Forms\Components\Grid::make()
@@ -439,7 +442,7 @@ class EditServer extends EditRecord
                                         'limited', false => false,
                                     })
                                     ->label('Swap Memory')->inlineLabel()
-                                    ->suffix('MB')
+                                    ->suffix('MiB')
                                     ->minValue(-1)
                                     ->columnSpan(2)
                                     ->required()
