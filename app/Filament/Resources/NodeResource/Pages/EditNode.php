@@ -91,7 +91,7 @@ class EditNode extends EditRecord
                                     Forms\Components\ToggleButtons::make('unlimited_mem')
                                         ->label('Memory')->inlineLabel()->inline()
                                         ->afterStateUpdated(fn (Forms\Set $set) => $set('memory', 0))
-                                        ->afterStateUpdated(fn (Forms\Set $set) => $set('memory_overallocate', -1))
+                                        ->afterStateUpdated(fn (Forms\Set $set) => $set('memory_overallocate', 0))
                                         ->formatStateUsing(fn (Forms\Get $get) => $get('memory') == 0)
                                         ->live()
                                         ->options([
@@ -133,7 +133,7 @@ class EditNode extends EditRecord
                                         ->label('Disk')->inlineLabel()->inline()
                                         ->live()
                                         ->afterStateUpdated(fn (Forms\Set $set) => $set('disk', 0))
-                                        ->afterStateUpdated(fn (Forms\Set $set) => $set('disk_overallocate', -1))
+                                        ->afterStateUpdated(fn (Forms\Set $set) => $set('disk_overallocate', 0))
                                         ->formatStateUsing(fn (Forms\Get $get) => $get('disk') == 0)
                                         ->options([
                                             true => 'Unlimited',
