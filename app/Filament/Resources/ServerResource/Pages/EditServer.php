@@ -333,7 +333,7 @@ class EditServer extends EditRecord
                                     ->dehydratedWhenHidden()
                                     ->hidden(fn (Forms\Get $get) => $get('unlimited_mem'))
                                     ->label('Memory Limit')->inlineLabel()
-                                    ->suffix('MB')
+                                    ->suffix('MiB')
                                     ->required()
                                     ->columnSpan(2)
                                     ->numeric(),
@@ -362,7 +362,7 @@ class EditServer extends EditRecord
                                     ->dehydratedWhenHidden()
                                     ->hidden(fn (Forms\Get $get) => $get('unlimited_disk'))
                                     ->label('Disk Space Limit')->inlineLabel()
-                                    ->suffix('MB')
+                                    ->suffix('MiB')
                                     ->required()
                                     ->columnSpan(2)
                                     ->numeric(),
@@ -439,7 +439,7 @@ class EditServer extends EditRecord
                                         'limited', false => false,
                                     })
                                     ->label('Swap Memory')->inlineLabel()
-                                    ->suffix('MB')
+                                    ->suffix('MiB')
                                     ->minValue(-1)
                                     ->columnSpan(2)
                                     ->required()

@@ -146,7 +146,7 @@ class EditNode extends EditRecord
                                         ->dehydratedWhenHidden()
                                         ->hidden(fn (Forms\Get $get) => $get('unlimited_disk'))
                                         ->label('Disk Limit')->inlineLabel()
-                                        ->suffix('MB')
+                                        ->suffix('MiB')
                                         ->required()
                                         ->columnSpan(2)
                                         ->numeric(),
