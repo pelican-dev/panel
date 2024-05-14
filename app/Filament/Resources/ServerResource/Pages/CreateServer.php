@@ -554,7 +554,8 @@ class CreateServer extends CreateRecord
                                     ->required()
                                     ->columnSpan(2)
                                     ->numeric()
-                                    ->minValue(0),
+                                    ->minValue(0)
+                                    ->helperText('100% equals one logical thread'),
                             ]),
 
                         Forms\Components\Grid::make()
