@@ -491,7 +491,8 @@ class CreateServer extends CreateRecord
                                     ->default(0)
                                     ->required()
                                     ->columnSpan(2)
-                                    ->numeric(),
+                                    ->numeric()
+                                    ->minValue(0),
                             ]),
 
                         Forms\Components\Grid::make()
@@ -521,7 +522,8 @@ class CreateServer extends CreateRecord
                                     ->default(0)
                                     ->required()
                                     ->columnSpan(2)
-                                    ->numeric(),
+                                    ->numeric()
+                                    ->minValue(0),
                             ]),
 
                         Forms\Components\Grid::make()
@@ -551,7 +553,8 @@ class CreateServer extends CreateRecord
                                     ->default(0)
                                     ->required()
                                     ->columnSpan(2)
-                                    ->numeric(),
+                                    ->numeric()
+                                    ->minValue(0),
                             ]),
 
                         Forms\Components\Grid::make()

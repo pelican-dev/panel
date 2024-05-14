@@ -336,7 +336,8 @@ class EditServer extends EditRecord
                                     ->suffix('MiB')
                                     ->required()
                                     ->columnSpan(2)
-                                    ->numeric(),
+                                    ->numeric()
+                                    ->minValue(0),
                             ]),
 
                         Forms\Components\Grid::make()
@@ -365,7 +366,8 @@ class EditServer extends EditRecord
                                     ->suffix('MiB')
                                     ->required()
                                     ->columnSpan(2)
-                                    ->numeric(),
+                                    ->numeric()
+                                    ->minValue(0),
                             ]),
 
                         Forms\Components\Grid::make()
@@ -394,7 +396,8 @@ class EditServer extends EditRecord
                                     ->suffix('%')
                                     ->required()
                                     ->columnSpan(2)
-                                    ->numeric(),
+                                    ->numeric()
+                                    ->minValue(0),
                             ]),
 
                         Forms\Components\Grid::make()

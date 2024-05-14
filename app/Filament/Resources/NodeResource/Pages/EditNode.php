@@ -110,7 +110,8 @@ class EditNode extends EditRecord
                                         ->suffix('MiB')
                                         ->required()
                                         ->columnSpan(2)
-                                        ->numeric(),
+                                        ->numeric()
+                                        ->minValue(0),
                                     Forms\Components\TextInput::make('memory_overallocate')
                                         ->dehydratedWhenHidden()
                                         ->label('Overallocate')->inlineLabel()
@@ -120,6 +121,7 @@ class EditNode extends EditRecord
                                         ->hintIconTooltip('The % allowable to go over the set limit.')
                                         ->columnSpan(2)
                                         ->numeric()
+                                        ->minValue(-1)
                                         ->maxValue(100)
                                         ->suffix('%'),
                                 ]),
@@ -149,7 +151,8 @@ class EditNode extends EditRecord
                                         ->suffix('MiB')
                                         ->required()
                                         ->columnSpan(2)
-                                        ->numeric(),
+                                        ->numeric()
+                                        ->minValue(0),
                                     Forms\Components\TextInput::make('disk_overallocate')
                                         ->dehydratedWhenHidden()
                                         ->hidden(fn (Forms\Get $get) => $get('unlimited_disk'))
@@ -159,6 +162,7 @@ class EditNode extends EditRecord
                                         ->columnSpan(2)
                                         ->required()
                                         ->numeric()
+                                        ->minValue(-1)
                                         ->maxValue(100)
                                         ->suffix('%'),
                                 ]),
