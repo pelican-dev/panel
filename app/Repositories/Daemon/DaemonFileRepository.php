@@ -80,7 +80,7 @@ class DaemonFileRepository extends DaemonRepository
             throw new DaemonConnectionException($exception);
         }
 
-        return $response->json();
+        return $response->json() ?? [];
     }
 
     /**
@@ -195,7 +195,7 @@ class DaemonFileRepository extends DaemonRepository
             throw new DaemonConnectionException($exception);
         }
 
-        return $response->json();
+        return $response->json() ?? [];
     }
 
     /**
