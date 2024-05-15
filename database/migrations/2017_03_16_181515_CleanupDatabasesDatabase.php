@@ -12,7 +12,9 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('databases', function (Blueprint $table) {
-            $table->dropForeign(['db_server']);
+            if (Schema::getConnection()->getDriverName() !== 'sqlite') {
+                $table->dropForeign(['db_server']);
+            }
 
             $table->renameColumn('db_server', 'database_host_id');
 
@@ -26,7 +28,9 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('databases', function (Blueprint $table) {
-            $table->dropForeign(['database_host_id']);
+            if (Schema::getConnection()->getDriverName() !== 'sqlite') {
+                $table->dropForeign(['database_host_id']);
+            }
 
             $table->renameColumn('database_host_id', 'db_server');
 

@@ -56,7 +56,9 @@ class ServerTransformer extends BaseClientTransformer
                 'io' => $server->io,
                 'cpu' => $server->cpu,
                 'threads' => $server->threads,
-                'oom_disabled' => $server->oom_disabled,
+                // This field is deprecated, please use "oom_killer".
+                'oom_disabled' => !$server->oom_killer,
+                'oom_killer' => $server->oom_killer,
             ],
             'invocation' => $service->handle($server, !$user->can(Permission::ACTION_STARTUP_READ, $server)),
             'docker_image' => $server->image,

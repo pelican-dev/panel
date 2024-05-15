@@ -12,10 +12,12 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('allocations', function (Blueprint $table) {
-            $table->dropForeign('allocations_node_foreign');
-            $table->dropForeign('allocations_assigned_to_foreign');
-            $table->dropIndex('allocations_node_foreign');
-            $table->dropIndex('allocations_assigned_to_foreign');
+            if (Schema::getConnection()->getDriverName() !== 'sqlite') {
+                $table->dropForeign('allocations_node_foreign');
+                $table->dropForeign('allocations_assigned_to_foreign');
+                $table->dropIndex('allocations_node_foreign');
+                $table->dropIndex('allocations_assigned_to_foreign');
+            }
 
             $table->renameColumn('node', 'node_id');
             $table->renameColumn('assigned_to', 'server_id');
@@ -30,10 +32,12 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('allocations', function (Blueprint $table) {
-            $table->dropForeign('allocations_node_id_foreign');
-            $table->dropForeign('allocations_server_id_foreign');
-            $table->dropIndex('allocations_node_id_foreign');
-            $table->dropIndex('allocations_server_id_foreign');
+            if (Schema::getConnection()->getDriverName() !== 'sqlite') {
+                $table->dropForeign('allocations_node_id_foreign');
+                $table->dropForeign('allocations_server_id_foreign');
+                $table->dropIndex('allocations_node_id_foreign');
+                $table->dropIndex('allocations_server_id_foreign');
+            }
 
             $table->renameColumn('node_id', 'node');
             $table->renameColumn('server_id', 'assigned_to');

@@ -5,37 +5,33 @@ namespace App\Console\Commands\Environment;
 use Illuminate\Console\Command;
 use Illuminate\Contracts\Console\Kernel;
 use App\Traits\Commands\EnvironmentWriterTrait;
+use Illuminate\Support\Facades\Artisan;
 
 class AppSettingsCommand extends Command
 {
     use EnvironmentWriterTrait;
     public const CACHE_DRIVERS = [
-        'redis' => 'Redis',
-        'memcached' => 'Memcached',
         'file' => 'Filesystem (recommended)',
+        'redis' => 'Redis',
     ];
 
     public const SESSION_DRIVERS = [
-        'redis' => 'Redis',
-        'memcached' => 'Memcached',
-        'database' => 'MySQL Database',
         'file' => 'Filesystem (recommended)',
+        'redis' => 'Redis',
+        'database' => 'MySQL Database',
         'cookie' => 'Cookie',
     ];
 
     public const QUEUE_DRIVERS = [
+        'database' => 'MySQL Database (recommended)',
         'redis' => 'Redis',
-        'database' => 'MySQL Database',
-        'sync' => 'Sync (recommended)',
     ];
 
     protected $description = 'Configure basic environment settings for the Panel.';
 
     protected $signature = 'p:environment:setup
                             {--new-salt : Whether or not to generate a new salt for Hashids.}
-                            {--author= : The email that services created on this instance should be linked to.}
                             {--url= : The URL that this Panel is running on.}
-                            {--timezone= : The timezone to use for Panel times.}
                             {--cache= : The cache driver backend to use.}
                             {--session= : The session driver backend to use.}
                             {--queue= : The queue driver backend to use.}
@@ -61,34 +57,16 @@ class AppSettingsCommand extends Command
      */
     public function handle(): int
     {
+        $this->variables['APP_TIMEZONE'] = 'UTC';
 
         if (empty(config('hashids.salt')) || $this->option('new-salt')) {
             $this->variables['HASHIDS_SALT'] = str_random(20);
-        }
-
-        $this->output->comment(__('commands.appsettings.comment.author'));
-        $this->variables['APP_SERVICE_AUTHOR'] = $this->option('author') ?? $this->ask(
-            'Egg Author Email',
-            config('panel.service.author', 'unknown@unknown.com')
-        );
-
-        if (!filter_var($this->variables['APP_SERVICE_AUTHOR'], FILTER_VALIDATE_EMAIL)) {
-            $this->output->error('The service author email provided is invalid.');
-
-            return 1;
         }
 
         $this->output->comment(__('commands.appsettings.comment.url'));
         $this->variables['APP_URL'] = $this->option('url') ?? $this->ask(
             'Application URL',
             config('app.url', 'https://example.com')
-        );
-
-        $this->output->comment(__('commands.appsettings.comment.timezone'));
-        $this->variables['APP_TIMEZONE'] = $this->option('timezone') ?? $this->anticipate(
-            'Application Timezone',
-            \DateTimeZone::listIdentifiers(),
-            config('app.timezone')
         );
 
         $selected = config('cache.default', 'file');
@@ -105,7 +83,7 @@ class AppSettingsCommand extends Command
             array_key_exists($selected, self::SESSION_DRIVERS) ? $selected : null
         );
 
-        $selected = config('queue.default', 'sync');
+        $selected = config('queue.default', 'database');
         $this->variables['QUEUE_CONNECTION'] = $this->option('queue') ?? $this->choice(
             'Queue Driver',
             self::QUEUE_DRIVERS,
@@ -124,7 +102,17 @@ class AppSettingsCommand extends Command
         }
 
         $this->checkForRedis();
+
+        $path = base_path('.env');
+        if (!file_exists($path)) {
+            copy($path . '.example', $path);
+        }
+
         $this->writeToEnvironment($this->variables);
+
+        if (!config('app.key')) {
+            Artisan::call('key:generate');
+        }
 
         $this->info($this->console->output());
 

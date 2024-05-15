@@ -37,12 +37,12 @@
                                 <td>{{ $key->memo }}</td>
                                 <td>
                                     @if(!is_null($key->last_used_at))
-                                        @datetimeHuman($key->last_used_at)
+                                    {{ $key->last_used_at }}
                                     @else
                                         &mdash;
                                     @endif
                                 </td>
-                                <td>@datetimeHuman($key->created_at)</td>
+                                <td>{{ $key->created_at }}</td>
                                 <td>
                                     <a href="#" data-action="revoke-key" data-attr="{{ $key->identifier }}">
                                         <i class="fa fa-trash-o text-danger"></i>

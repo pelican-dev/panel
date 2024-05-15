@@ -113,7 +113,7 @@ class Database extends Model
      */
     private function run(string $statement): bool
     {
-        return DB::connection($this->connection)->statement($statement);
+        return DB::connection(self::DEFAULT_CONNECTION_NAME)->statement($statement);
     }
 
     /**

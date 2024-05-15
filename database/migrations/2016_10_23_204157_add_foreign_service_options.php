@@ -11,7 +11,9 @@ return new class extends Migration
      */
     public function up(): void
     {
-        DB::statement('ALTER TABLE service_options MODIFY parent_service INT(10) UNSIGNED NOT NULL');
+        Schema::table('service_options', function (Blueprint $table) {
+            $table->unsignedInteger('parent_service')->change();
+        });
 
         Schema::table('service_options', function (Blueprint $table) {
             $table->foreign('parent_service')->references('id')->on('services');
@@ -28,6 +30,8 @@ return new class extends Migration
             $table->dropIndex('service_options_parent_service_foreign');
         });
 
-        DB::statement('ALTER TABLE service_options MODIFY parent_service MEDIUMINT(8) UNSIGNED NOT NULL');
+        Schema::table('service_options', function (Blueprint $table) {
+            $table->unsignedMediumInteger('parent_service')->change();
+        });
     }
 };

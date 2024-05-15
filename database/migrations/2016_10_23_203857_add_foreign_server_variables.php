@@ -11,10 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        DB::statement('ALTER TABLE server_variables
-            MODIFY COLUMN server_id INT(10) UNSIGNED NULL,
-            MODIFY COLUMN variable_id INT(10) UNSIGNED NOT NULL
-        ');
+        Schema::table('server_variables', function (Blueprint $table) {
+            $table->unsignedInteger('server_id')->change();
+            $table->unsignedInteger('variable_id')->change();
+        });
 
         Schema::table('server_variables', function (Blueprint $table) {
             $table->foreign('server_id')->references('id')->on('servers');
@@ -32,9 +32,10 @@ return new class extends Migration
             $table->dropForeign(['variable_id']);
         });
 
-        DB::statement('ALTER TABLE server_variables
-              MODIFY COLUMN server_id MEDIUMINT(8) UNSIGNED NULL,
-              MODIFY COLUMN variable_id MEDIUMINT(8) UNSIGNED NOT NULL
-          ');
+        Schema::table('server_variables', function (Blueprint $table) {
+            $table->unsignedMediumInteger('server_id')->change();
+            $table->unsignedMediumInteger('variable_id')->change();
+        });
+
     }
 };
