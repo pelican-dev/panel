@@ -89,4 +89,11 @@ class EditDatabaseHost extends EditRecord
     {
         return [];
     }
+
+    public function getRelationManagers(): array
+    {
+        return [
+            DatabaseHostResource\RelationManagers\DatabasesRelationManager::class,
+        ];
+    }
 }
