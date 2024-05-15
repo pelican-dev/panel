@@ -24,7 +24,6 @@ class EggCreationService
 
         return Egg::query()->create(array_merge($data, [
             'uuid' => Uuid::uuid4()->toString(),
-            'author' => config('panel.service.author'),
         ]));
     }
 }

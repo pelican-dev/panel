@@ -56,6 +56,7 @@ class EggController extends Controller
     {
         $data = $request->validated();
         $data['docker_images'] = $this->normalizeDockerImages($data['docker_images'] ?? null);
+        $data['author'] = $request->user()->email;
 
         $egg = $this->creationService->handle($data);
         $this->alert->success(trans('admin/eggs.notices.egg_created'))->flash();

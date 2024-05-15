@@ -3,12 +3,11 @@
 namespace App\Exceptions;
 
 use Exception;
+use Filament\Notifications\Notification;
 use Illuminate\Http\Request;
 use Psr\Log\LoggerInterface;
 use Illuminate\Http\Response;
-use Illuminate\Http\JsonResponse;
 use Illuminate\Container\Container;
-use Illuminate\Http\RedirectResponse;
 use Prologue\Alerts\AlertsMessageBag;
 use Symfony\Component\HttpKernel\Exception\HttpExceptionInterface;
 
@@ -47,8 +46,18 @@ class DisplayException extends PanelException implements HttpExceptionInterface
      * and then redirecting them back to the page that they came from. If the
      * request originated from an API hit, return the error in JSONAPI spec format.
      */
-    public function render(Request $request): JsonResponse|RedirectResponse
+    public function render(Request $request)
     {
+        if (str($request->url())->contains('livewire')) {
+            Notification::make()
+                ->title(static::class)
+                ->body($this->getMessage())
+                ->danger()
+                ->send();
+
+            return;
+        }
+
         if ($request->expectsJson()) {
             return response()->json(Handler::toArray($this), $this->getStatusCode(), $this->getHeaders());
         }

@@ -11,7 +11,9 @@ return new class extends Migration
      */
     public function up(): void
     {
-        DB::statement('ALTER TABLE api_permissions MODIFY key_id INT(10) UNSIGNED NOT NULL');
+        Schema::table('api_permissions', function (Blueprint $table) {
+            $table->unsignedInteger('key_id')->change();
+        });
 
         Schema::table('api_permissions', function (Blueprint $table) {
             $table->foreign('key_id')->references('id')->on('api_keys');
@@ -28,6 +30,8 @@ return new class extends Migration
             $table->dropIndex('api_permissions_key_id_foreign');
         });
 
-        DB::statement('ALTER TABLE api_permissions MODIFY key_id MEDIUMINT(8) UNSIGNED NOT NULL');
+        Schema::table('api_permissions', function (Blueprint $table) {
+            $table->unsignedMediumInteger('key_id')->change();
+        });
     }
 };

@@ -3,7 +3,10 @@
 namespace App\Repositories\Daemon;
 
 use App\Enums\ContainerStatus;
+use App\Enums\HttpStatusCode;
 use Exception;
+use Filament\Notifications\Notification;
+use Illuminate\Http\Client\RequestException;
 use Webmozart\Assert\Assert;
 use App\Models\Server;
 use GuzzleHttp\Exception\GuzzleException;
@@ -24,14 +27,28 @@ class DaemonServerRepository extends DaemonRepository
         try {
             $response = $this->getHttpClient()->get(
                 sprintf('/api/servers/%s', $this->server->uuid)
-            );
-        } catch (TransferException $exception) {
-            throw new DaemonConnectionException($exception, false);
-        } catch (Exception) {
-            return ['state' => ContainerStatus::Missing->value];
+            )->throw();
+        } catch (RequestException $exception) {
+            $cfId = $exception->response->header('Cf-Ray');
+            $cfCache = $exception->response->header('Cf-Cache-Status');
+            $code = HttpStatusCode::tryFrom($exception->getCode());
+
+            $requestFromCloudflare = !empty($cfId);
+            $requestCachedFromCloudflare = !empty($cfCache);
+            $requestBadGateway = $code === HttpStatusCode::BadGateway;
+
+            if ($requestBadGateway && $requestFromCloudflare && !$requestCachedFromCloudflare) {
+                Notification::make()
+                    ->title('Cloudflare Issue')
+                    ->body('Your Node is not accessible by Cloudflare')
+                    ->danger()
+                    ->send();
+            }
+        } catch (Exception $exception) {
+            report($exception);
         }
 
-        return $response->json();
+        return $response?->json() ?? ['state' => ContainerStatus::Missing->value];
     }
 
     /**

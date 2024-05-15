@@ -21,29 +21,25 @@ class CreateApiKey extends CreateRecord
                 Forms\Components\Hidden::make('identifier')->default(ApiKey::generateTokenIdentifier(ApiKey::TYPE_APPLICATION)),
                 Forms\Components\Hidden::make('token')->default(encrypt(str_random(ApiKey::KEY_LENGTH))),
 
-                Forms\Components\Select::make('user_id')
-                    ->hidden()
-                    ->searchable()
-                    ->preload()
-                    ->relationship('user', 'username')
+                Forms\Components\Hidden::make('user_id')
                     ->default(auth()->user()->id)
                     ->required(),
 
                 Forms\Components\Select::make('key_type')
+                    ->inlineLabel()
                     ->options(function (ApiKey $apiKey) {
                         $originalOptions = [
-                            ApiKey::TYPE_NONE => 'None',
+                            //ApiKey::TYPE_NONE => 'None',
                             ApiKey::TYPE_ACCOUNT => 'Account',
                             ApiKey::TYPE_APPLICATION => 'Application',
-                            ApiKey::TYPE_DAEMON_USER => 'Daemon User',
-                            ApiKey::TYPE_DAEMON_APPLICATION => 'Daemon Application',
+                            //ApiKey::TYPE_DAEMON_USER => 'Daemon User',
+                            //ApiKey::TYPE_DAEMON_APPLICATION => 'Daemon Application',
                         ];
 
                         return collect($originalOptions)
                             ->filter(fn ($value, $key) => $key <= ApiKey::TYPE_APPLICATION || $apiKey->key_type === $key)
                             ->all();
                     })
-                    ->hidden()
                     ->selectablePlaceholder(false)
                     ->required()
                     ->default(ApiKey::TYPE_APPLICATION),
@@ -56,7 +52,7 @@ class CreateApiKey extends CreateRecord
                     ])
                     ->schema(
                         collect(ApiKey::RESOURCES)->map(fn ($resource) => Forms\Components\ToggleButtons::make("r_$resource")
-                            ->label(str($resource)->replace('_', ' ')->title())
+                            ->label(str($resource)->replace('_', ' ')->title())->inline()
                             ->options([
                                 0 => 'None',
                                 1 => 'Read',
@@ -75,9 +71,7 @@ class CreateApiKey extends CreateRecord
                                 2 => 'danger',
                                 3 => 'danger',
                             ])
-                            ->inline()
                             ->required()
-                            ->disabledOn('edit')
                             ->columnSpan([
                                 'default' => 1,
                                 'sm' => 1,

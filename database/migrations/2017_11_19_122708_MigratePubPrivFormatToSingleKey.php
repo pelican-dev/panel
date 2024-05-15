@@ -28,12 +28,19 @@ return new class extends Migration
             });
         });
 
-        Schema::table('api_keys', function (Blueprint $table) {
-            $table->dropColumn('public');
-            $table->string('secret', 32)->change();
-        });
+        if (Schema::getConnection()->getDriverName() === 'sqlite') {
+            Schema::table('api_keys', function (Blueprint $table) {
+                $table->dropColumn('public');
+                $table->char('secret', 32)->change();
+                $table->renameColumn('secret', 'token');
+                $table->string('token', 32)->unique()->change();
+            });
+        }
 
-        DB::statement('ALTER TABLE `api_keys` CHANGE `secret` `token` CHAR(32) NOT NULL, ADD UNIQUE INDEX `api_keys_token_unique` (`token`(32))');
+        if (Schema::getConnection()->getDriverName() !== 'sqlite') {
+            DB::statement('ALTER TABLE `api_keys` CHANGE `secret` `token` CHAR(32) NOT NULL, ADD UNIQUE INDEX `api_keys_token_unique` (`token`(32))');
+        }
+
     }
 
     /**

@@ -309,6 +309,32 @@ class Node extends Model
         return $statuses;
     }
 
+    public function statistics()
+    {
+        $default = [
+            'memory_total' => 0,
+            'memory_used' => 0,
+            'swap_total' => 0,
+            'swap_used' => 0,
+            'load_average1' => 0.00,
+            'load_average5' => 0.00,
+            'load_average15' => 0.00,
+            'cpu_percent' => 0.00,
+            'disk_total' => 0,
+            'disk_used' => 0,
+        ];
+
+        try {
+            return Http::daemon($this)
+                ->connectTimeout(1)
+                ->timeout(1)
+                ->get('/api/system/utilization')
+                ->json() ?? $default;
+        } catch (Exception) {
+            return $default;
+        }
+    }
+
     public function ipAddresses(): array
     {
         return cache()->remember("nodes.$this->id.ips", now()->addHour(), function () {

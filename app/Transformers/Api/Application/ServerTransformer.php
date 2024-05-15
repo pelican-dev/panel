@@ -65,7 +65,9 @@ class ServerTransformer extends BaseTransformer
                 'io' => $server->io,
                 'cpu' => $server->cpu,
                 'threads' => $server->threads,
-                'oom_disabled' => $server->oom_disabled,
+                // This field is deprecated, please use "oom_killer".
+                'oom_disabled' => !$server->oom_killer,
+                'oom_killer' => $server->oom_killer,
             ],
             'feature_limits' => [
                 'databases' => $server->database_limit,

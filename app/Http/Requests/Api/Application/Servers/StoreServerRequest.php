@@ -32,7 +32,7 @@ class StoreServerRequest extends ApplicationApiRequest
             'startup' => $rules['startup'],
             'environment' => 'present|array',
             'skip_scripts' => 'sometimes|boolean',
-            'oom_disabled' => 'sometimes|boolean',
+            'oom_killer' => 'sometimes|boolean',
 
             // Resource limitations
             'limits' => 'required|array',
@@ -94,7 +94,7 @@ class StoreServerRequest extends ApplicationApiRequest
             'database_limit' => array_get($data, 'feature_limits.databases'),
             'allocation_limit' => array_get($data, 'feature_limits.allocations'),
             'backup_limit' => array_get($data, 'feature_limits.backups'),
-            'oom_disabled' => array_get($data, 'oom_disabled'),
+            'oom_killer' => array_get($data, 'oom_killer'),
         ];
     }
 

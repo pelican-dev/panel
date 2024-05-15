@@ -11,7 +11,9 @@ return new class extends Migration
      */
     public function up(): void
     {
-        DB::statement('ALTER TABLE service_variables MODIFY option_id INT(10) UNSIGNED NOT NULL');
+        Schema::table('service_variables', function (Blueprint $table) {
+            $table->unsignedInteger('option_id')->change();
+        });
 
         Schema::table('service_variables', function (Blueprint $table) {
             $table->foreign('option_id')->references('id')->on('service_options');
@@ -28,6 +30,8 @@ return new class extends Migration
             $table->dropIndex('service_variables_option_id_foreign');
         });
 
-        DB::statement('ALTER TABLE service_variables MODIFY option_id MEDIUMINT(8) UNSIGNED NOT NULL');
+        Schema::table('service_variables', function (Blueprint $table) {
+            $table->unsignedMediumInteger('option_id')->change();
+        });
     }
 };

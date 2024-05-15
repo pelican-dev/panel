@@ -4,6 +4,7 @@ namespace App\Enums;
 
 enum ContainerStatus: string
 {
+    // Docker Based
     case Created = 'created';
     case Running = 'running';
     case Restarting = 'restarting';
@@ -11,6 +12,8 @@ enum ContainerStatus: string
     case Paused = 'paused';
     case Dead = 'dead';
     case Removing = 'removing';
+
+    // HTTP Based
     case Missing = 'missing';
 
     public function icon(): string
