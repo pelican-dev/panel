@@ -1,4 +1,4 @@
-![image](https://raw.githubusercontent.com/pelican-dev/panel/main/public/pelican.svg)
+<img width="20%" src="https://raw.githubusercontent.com/pelican-dev/panel/main/public/pelican.svg" alt="logo">
 
 # Pelican Panel
 
