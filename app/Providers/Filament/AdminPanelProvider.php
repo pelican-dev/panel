@@ -78,17 +78,18 @@ class AdminPanelProvider extends PanelProvider
                 \Hasnayeen\Themes\Http\Middleware\SetTheme::class,
 
             ])
-            ->plugin
             ->authMiddleware([
                 Authenticate::class,
             ])
-            ->plugin([
+            ->plugin(
                 FilamentLaravelLogPlugin::make()
                     ->navigationLabel('Logs')
                     ->navigationIcon('tabler-file-info')
                     ->slug('logs')
-                    ->authorize(fn () => auth()->user()->root_admin),
-                ThemesPlugin::make(),
-            ]);
+                    ->authorize(fn () => auth()->user()->root_admin)
+            )
+            ->plugin(
+                ThemesPlugin::make()
+            );            
     }
 }
