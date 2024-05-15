@@ -74,11 +74,11 @@
                         <label for="cpu" class="control-label">OOM Killer</label>
                         <div>
                             <div class="radio radio-danger radio-inline">
-                                <input type="radio" id="pOomKillerEnabled" value="0" name="oom_disabled" @if(!$server->oom_disabled)checked @endif>
+                                <input type="radio" id="pOomKillerEnabled" value="1" name="oom_killer" @if(!$server->oom_killer)checked @endif>
                                 <label for="pOomKillerEnabled">Enabled</label>
                             </div>
                             <div class="radio radio-success radio-inline">
-                                <input type="radio" id="pOomKillerDisabled" value="1" name="oom_disabled" @if($server->oom_disabled)checked @endif>
+                                <input type="radio" id="pOomKillerDisabled" value="0" name="oom_killer" @if($server->oom_killer)checked @endif>
                                 <label for="pOomKillerDisabled">Disabled</label>
                             </div>
                             <p class="text-muted small">

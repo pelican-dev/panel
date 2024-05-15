@@ -246,6 +246,15 @@ class EditServer extends EditRecord
                         Forms\Components\Repeater::make('server_variables')
                             ->relationship('serverVariables')
                             ->grid()
+                            ->mutateRelationshipDataBeforeSaveUsing(function (array &$data): array {
+                                foreach ($data as $key => $value) {
+                                    if (!isset($data['variable_value'])) {
+                                        $data['variable_value'] = '';
+                                    }
+                                }
+
+                                return $data;
+                            })
                             ->reorderable(false)->addable(false)->deletable(false)
                             ->schema(function () {
 
@@ -324,10 +333,11 @@ class EditServer extends EditRecord
                                     ->dehydratedWhenHidden()
                                     ->hidden(fn (Forms\Get $get) => $get('unlimited_mem'))
                                     ->label('Memory Limit')->inlineLabel()
-                                    ->suffix('MB')
+                                    ->suffix('MiB')
                                     ->required()
                                     ->columnSpan(2)
-                                    ->numeric(),
+                                    ->numeric()
+                                    ->minValue(0),
                             ]),
 
                         Forms\Components\Grid::make()
@@ -353,10 +363,11 @@ class EditServer extends EditRecord
                                     ->dehydratedWhenHidden()
                                     ->hidden(fn (Forms\Get $get) => $get('unlimited_disk'))
                                     ->label('Disk Space Limit')->inlineLabel()
-                                    ->suffix('MB')
+                                    ->suffix('MiB')
                                     ->required()
                                     ->columnSpan(2)
-                                    ->numeric(),
+                                    ->numeric()
+                                    ->minValue(0),
                             ]),
 
                         Forms\Components\Grid::make()
@@ -385,7 +396,8 @@ class EditServer extends EditRecord
                                     ->suffix('%')
                                     ->required()
                                     ->columnSpan(2)
-                                    ->numeric(),
+                                    ->numeric()
+                                    ->minValue(0),
                             ]),
 
                         Forms\Components\Grid::make()
@@ -430,7 +442,7 @@ class EditServer extends EditRecord
                                         'limited', false => false,
                                     })
                                     ->label('Swap Memory')->inlineLabel()
-                                    ->suffix('MB')
+                                    ->suffix('MiB')
                                     ->minValue(-1)
                                     ->columnSpan(2)
                                     ->required()
@@ -445,7 +457,7 @@ class EditServer extends EditRecord
                             ->columns(4)
                             ->columnSpanFull()
                             ->schema([
-                                Forms\Components\ToggleButtons::make('oom_disabled')
+                                Forms\Components\ToggleButtons::make('oom_killer')
                                     ->label('OOM Killer')->inlineLabel()->inline()
                                     ->columnSpan(2)
                                     ->options([

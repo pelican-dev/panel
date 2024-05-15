@@ -206,6 +206,19 @@ class EditEgg extends EditRecord
                 ->color('primary')
                 // TODO uses old admin panel export service
                 ->url(fn (Egg $egg): string => route('admin.eggs.export', ['egg' => $egg['id']])),
+            $this->getSaveFormAction()->formId('form'),
+        ];
+    }
+
+    protected function getFormActions(): array
+    {
+        return [];
+    }
+
+    public function getRelationManagers(): array
+    {
+        return [
+            EggResource\RelationManagers\ServersRelationManager::class,
         ];
     }
 }
