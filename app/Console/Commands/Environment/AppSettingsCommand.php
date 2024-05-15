@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Artisan;
 class AppSettingsCommand extends Command
 {
     use EnvironmentWriterTrait;
+
     public const CACHE_DRIVERS = [
         'file' => 'Filesystem (recommended)',
         'redis' => 'Redis',
@@ -18,12 +19,13 @@ class AppSettingsCommand extends Command
     public const SESSION_DRIVERS = [
         'file' => 'Filesystem (recommended)',
         'redis' => 'Redis',
-        'database' => 'MySQL Database',
+        'database' => 'Database',
         'cookie' => 'Cookie',
     ];
 
     public const QUEUE_DRIVERS = [
-        'database' => 'MySQL Database (recommended)',
+        'sync' => 'Synchronous (recommended)',
+        'database' => 'Database',
         'redis' => 'Redis',
     ];
 
