@@ -37,6 +37,7 @@ class AdminPanelProvider extends PanelProvider
             ->default()
             ->id('admin')
             ->path('admin')
+            ->topNavigation(true)
             ->login()
             ->homeUrl('/')
             ->favicon('/pelican.ico')
