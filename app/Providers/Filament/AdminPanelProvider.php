@@ -90,6 +90,6 @@ class AdminPanelProvider extends PanelProvider
             )
             ->plugin(
                 ThemesPlugin::make()
-            );            
+            );
     }
 }
