@@ -46,6 +46,8 @@ return [
     ],
 
     'redis' => [
+        'client' => env('REDIS_CLIENT', 'predis'),
+
         'default' => [
             'scheme' => env('REDIS_SCHEME', 'tcp'),
             'path' => env('REDIS_PATH', '/run/redis/redis.sock'),

@@ -12,6 +12,8 @@ class ListDatabaseHosts extends ListRecords
 {
     protected static string $resource = DatabaseHostResource::class;
 
+    protected ?string $heading = 'Database Hosts';
+
     public function table(Table $table): Table
     {
         return $table
@@ -48,7 +50,7 @@ class ListDatabaseHosts extends ListRecords
     protected function getHeaderActions(): array
     {
         return [
-            Actions\CreateAction::make(),
+            Actions\CreateAction::make('create')->label('New Database Host'),
         ];
     }
 }

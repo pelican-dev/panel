@@ -10,6 +10,11 @@ class DatabaseResource extends Resource
 {
     protected static ?string $model = Database::class;
 
+    public static function getNavigationBadge(): ?string
+    {
+        return static::getModel()::count();
+    }
+
     protected static ?string $navigationIcon = 'tabler-database';
 
     protected static bool $shouldRegisterNavigation = false;

@@ -11,23 +11,20 @@ class AppSettingsCommand extends Command
 {
     use EnvironmentWriterTrait;
     public const CACHE_DRIVERS = [
-        'redis' => 'Redis',
-        'memcached' => 'Memcached',
         'file' => 'Filesystem (recommended)',
+        'redis' => 'Redis',
     ];
 
     public const SESSION_DRIVERS = [
-        'redis' => 'Redis',
-        'memcached' => 'Memcached',
-        'database' => 'MySQL Database',
         'file' => 'Filesystem (recommended)',
+        'redis' => 'Redis',
+        'database' => 'MySQL Database',
         'cookie' => 'Cookie',
     ];
 
     public const QUEUE_DRIVERS = [
+        'database' => 'MySQL Database (recommended)',
         'redis' => 'Redis',
-        'database' => 'MySQL Database',
-        'sync' => 'Sync (recommended)',
     ];
 
     protected $description = 'Configure basic environment settings for the Panel.';
@@ -86,7 +83,7 @@ class AppSettingsCommand extends Command
             array_key_exists($selected, self::SESSION_DRIVERS) ? $selected : null
         );
 
-        $selected = config('queue.default', 'sync');
+        $selected = config('queue.default', 'database');
         $this->variables['QUEUE_CONNECTION'] = $this->option('queue') ?? $this->choice(
             'Queue Driver',
             self::QUEUE_DRIVERS,

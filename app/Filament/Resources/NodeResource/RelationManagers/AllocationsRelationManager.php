@@ -43,10 +43,13 @@ class AllocationsRelationManager extends RelationManager
                 Tables\Columns\TextColumn::make('server.name')
                     ->label('Server')
                     ->icon('tabler-brand-docker')
+                    ->searchable()
                     ->url(fn (Allocation $allocation): string => $allocation->server ? route('filament.admin.resources.servers.edit', ['record' => $allocation->server]) : ''),
-                Tables\Columns\TextColumn::make('ip_alias')
+                Tables\Columns\TextInputColumn::make('ip_alias')
+                    ->searchable()
                     ->label('Alias'),
-                Tables\Columns\TextColumn::make('ip')
+                Tables\Columns\TextInputColumn::make('ip')
+                    ->searchable()
                     ->label('IP'),
                 Tables\Columns\TextColumn::make('port')
                     ->searchable()
@@ -125,6 +128,8 @@ class AllocationsRelationManager extends RelationManager
                                     $update = true;
                                     $ports = $sortedPorts;
                                 }
+
+                                $ports = $ports->filter(fn ($port) => $port > 1024 && $port < 65535)->values();
 
                                 if ($update) {
                                     $set('allocation_ports', $ports->all());

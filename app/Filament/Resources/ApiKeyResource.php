@@ -13,6 +13,10 @@ class ApiKeyResource extends Resource
     protected static ?string $model = ApiKey::class;
     protected static ?string $label = 'API Key';
 
+    public static function getNavigationBadge(): ?string
+    {
+        return static::getModel()::count();
+    }
     protected static ?string $navigationIcon = 'tabler-key';
 
     public static function canEdit($record): bool

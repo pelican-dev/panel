@@ -40,8 +40,8 @@ class NodeStorageChart extends ChartWidget
         /** @var Node $node */
         $node = $this->record;
 
-        $total = $node->statistics()['disk_total'] ?? 0;
-        $used = $node->statistics()['disk_used'] ?? 0;
+        $total = ($node->statistics()['disk_total'] ?? 0) / 1024 / 1024 / 1024;
+        $used = ($node->statistics()['disk_used'] ?? 0) / 1024 / 1024 / 1024;
         $unused = $total - $used;
 
         return [

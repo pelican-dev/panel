@@ -25,12 +25,16 @@ class EditEgg extends EditRecord
                             Forms\Components\TextInput::make('name')
                                 ->required()
                                 ->maxLength(191)
-                                ->columnSpan(['default' => 1, 'sm' => 1, 'md' => 2, 'lg' => 2])
+                                ->columnSpan(['default' => 1, 'sm' => 1, 'md' => 1, 'lg' => 1])
                                 ->helperText('A simple, human-readable name to use as an identifier for this Egg.'),
                             Forms\Components\TextInput::make('uuid')
+                                ->label('Egg UUID')
                                 ->disabled()
                                 ->columnSpan(['default' => 1, 'sm' => 1, 'md' => 2, 'lg' => 2])
                                 ->helperText('This is the globally unique identifier for this Egg which Wings uses as an identifier.'),
+                            Forms\Components\TextInput::make('id')
+                                ->label('Egg ID')
+                                ->disabled(),
                             Forms\Components\Textarea::make('description')
                                 ->rows(3)
                                 ->columnSpan(['default' => 1, 'sm' => 1, 'md' => 2, 'lg' => 2])
@@ -203,6 +207,19 @@ class EditEgg extends EditRecord
                 ->color('primary')
                 // TODO uses old admin panel export service
                 ->url(fn (Egg $egg): string => route('admin.eggs.export', ['egg' => $egg['id']])),
+            $this->getSaveFormAction()->formId('form'),
+        ];
+    }
+
+    protected function getFormActions(): array
+    {
+        return [];
+    }
+
+    public function getRelationManagers(): array
+    {
+        return [
+            EggResource\RelationManagers\ServersRelationManager::class,
         ];
     }
 }
