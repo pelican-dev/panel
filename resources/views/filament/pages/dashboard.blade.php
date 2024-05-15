@@ -1,37 +1,5 @@
 <x-filament-panels::page>
 
-    <x-filament::tabs disabled>
-        <x-filament::tabs.item disabled>{{ trans('dashboard/index.overview') }} </x-filament::tabs.item>
-
-        <x-filament::tabs.item
-            icon="tabler-server-2"
-        >
-            Nodes
-            <x-slot name="badge">{{ $nodesCount }}</x-slot>
-        </x-filament::tabs.item>
-
-        <x-filament::tabs.item
-            icon="tabler-brand-docker"
-        >
-            Servers
-            <x-slot name="badge">{{ $serversCount }}</x-slot>
-        </x-filament::tabs.item>
-
-        <x-filament::tabs.item
-            icon="tabler-eggs"
-        >
-            Eggs
-            <x-slot name="badge">{{ $eggsCount }}</x-slot>
-        </x-filament::tabs.item>
-
-        <x-filament::tabs.item
-            icon="tabler-users"
-        >
-            Users
-            <x-slot name="badge">{{ $usersCount }}</x-slot>
-        </x-filament::tabs.item>
-    </x-filament::tabs>
-
     <x-filament-panels::header
         :actions="$this->getCachedHeaderActions()"
         :breadcrumbs="filament()->hasBreadcrumbs() ? $this->getBreadcrumbs() : []"
