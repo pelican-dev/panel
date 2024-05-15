@@ -9,12 +9,15 @@ use Filament\Forms\Components\Select;
 use Filament\Forms\Form;
 use Filament\Resources\Pages\CreateRecord;
 use Filament\Forms;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Str;
 
 class CreateMount extends CreateRecord
 {
     protected static string $resource = MountResource::class;
 
     protected static bool $canCreateAnother = false;
+
     public function form(Form $form): Form
     {
         return $form
@@ -71,6 +74,7 @@ class CreateMount extends CreateRecord
                     Forms\Components\Textarea::make('description')
                         ->helperText('A longer description for this mount.')
                         ->columnSpanFull(),
+                    Forms\Components\Hidden::make('user_mountable')->default(1),
                 ])->columnSpan(1)->columns([
                     'default' => 1,
                     'lg' => 2,
@@ -93,5 +97,12 @@ class CreateMount extends CreateRecord
                 'default' => 1,
                 'lg' => 2,
             ]);
+    }
+
+    protected function handleRecordCreation(array $data): Model
+    {
+        $data['uuid'] ??= Str::uuid()->toString();
+
+        return parent::handleRecordCreation($data);
     }
 }

@@ -19,6 +19,7 @@ use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\AuthenticateSession;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
+use Saade\FilamentLaravelLog\FilamentLaravelLogPlugin;
 
 class AdminPanelProvider extends PanelProvider
 {
@@ -34,9 +35,8 @@ class AdminPanelProvider extends PanelProvider
         return $panel
             ->default()
             ->id('admin')
-            ->path('panel')
+            ->path('admin')
             ->login()
-            ->brandName('Pelican')
             ->homeUrl('/')
             ->favicon('/pelican.ico')
             ->profile(EditProfile::class, false)
@@ -51,6 +51,7 @@ class AdminPanelProvider extends PanelProvider
             ])
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\\Filament\\Resources')
             ->discoverPages(in: app_path('Filament/Pages'), for: 'App\\Filament\\Pages')
+            ->discoverClusters(in: app_path('Filament/Clusters'), for: 'App\\Filament\\Clusters')
             ->pages([
                 // Pages\Dashboard::class,
             ])
@@ -73,6 +74,13 @@ class AdminPanelProvider extends PanelProvider
             ])
             ->authMiddleware([
                 Authenticate::class,
-            ]);
+            ])
+            ->plugin(
+                FilamentLaravelLogPlugin::make()
+                    ->navigationLabel('Logs')
+                    ->navigationIcon('tabler-file-info')
+                    ->slug('logs')
+                    ->authorize(fn () => auth()->user()->root_admin)
+            );
     }
 }

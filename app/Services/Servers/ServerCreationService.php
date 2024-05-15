@@ -47,6 +47,10 @@ class ServerCreationService
      */
     public function handle(array $data, DeploymentObject $deployment = null): Server
     {
+        if (!isset($data['oom_killer']) && isset($data['oom_disabled'])) {
+            $data['oom_killer'] = !$data['oom_disabled'];
+        }
+
         // If a deployment object has been passed we need to get the allocation
         // that the server should use, and assign the node from that allocation.
         if ($deployment instanceof DeploymentObject) {
@@ -142,7 +146,7 @@ class ServerCreationService
             'io' => Arr::get($data, 'io'),
             'cpu' => Arr::get($data, 'cpu'),
             'threads' => Arr::get($data, 'threads'),
-            'oom_disabled' => Arr::get($data, 'oom_disabled') ?? true,
+            'oom_killer' => Arr::get($data, 'oom_killer') ?? false,
             'allocation_id' => Arr::get($data, 'allocation_id'),
             'egg_id' => Arr::get($data, 'egg_id'),
             'startup' => Arr::get($data, 'startup'),

@@ -12,19 +12,21 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('servers', function (Blueprint $table) {
-            $table->dropForeign('servers_node_foreign');
-            $table->dropForeign('servers_owner_foreign');
-            $table->dropForeign('servers_allocation_foreign');
-            $table->dropForeign('servers_service_foreign');
-            $table->dropForeign('servers_option_foreign');
-            $table->dropForeign('servers_pack_foreign');
+            if (Schema::getConnection()->getDriverName() !== 'sqlite') {
+                $table->dropForeign('servers_node_foreign');
+                $table->dropForeign('servers_owner_foreign');
+                $table->dropForeign('servers_allocation_foreign');
+                $table->dropForeign('servers_service_foreign');
+                $table->dropForeign('servers_option_foreign');
+                $table->dropForeign('servers_pack_foreign');
 
-            $table->dropIndex('servers_node_foreign');
-            $table->dropIndex('servers_owner_foreign');
-            $table->dropIndex('servers_allocation_foreign');
-            $table->dropIndex('servers_service_foreign');
-            $table->dropIndex('servers_option_foreign');
-            $table->dropIndex('servers_pack_foreign');
+                $table->dropIndex('servers_node_foreign');
+                $table->dropIndex('servers_owner_foreign');
+                $table->dropIndex('servers_allocation_foreign');
+                $table->dropIndex('servers_service_foreign');
+                $table->dropIndex('servers_option_foreign');
+                $table->dropIndex('servers_pack_foreign');
+            }
 
             $table->renameColumn('node', 'node_id');
             $table->renameColumn('owner', 'owner_id');
@@ -50,11 +52,13 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('servers', function (Blueprint $table) {
-            $table->dropForeign(['node_id']);
-            $table->dropForeign(['owner_id']);
-            $table->dropForeign(['allocation_id']);
-            $table->dropForeign(['service_id']);
-            $table->dropForeign(['option_id']);
+            if (Schema::getConnection()->getDriverName() !== 'sqlite') {
+                $table->dropForeign(['node_id']);
+                $table->dropForeign(['owner_id']);
+                $table->dropForeign(['allocation_id']);
+                $table->dropForeign(['service_id']);
+                $table->dropForeign(['option_id']);
+            }
 
             $table->renameColumn('node_id', 'node');
             $table->renameColumn('owner_id', 'owner');

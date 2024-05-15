@@ -45,6 +45,7 @@ return new class extends Migration
             DB::table('tasks_old')->delete($task->id);
             DB::commit();
         });
+        DB::commit();
 
         Schema::dropIfExists('tasks_old');
     }

@@ -87,12 +87,10 @@ class ListServers extends ListRecords
                 //
             ])
             ->actions([
+                Tables\Actions\Action::make('View')
+                    ->icon('tabler-terminal')
+                    ->url(fn (Server $server) => "/server/$server->uuid_short"),
                 Tables\Actions\EditAction::make(),
-            ])
-            ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    // Tables\Actions\DeleteBulkAction::make(),
-                ]),
             ])
             ->emptyStateIcon('tabler-brand-docker')
             ->emptyStateDescription('')
