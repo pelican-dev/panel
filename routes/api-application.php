@@ -97,3 +97,22 @@ Route::prefix('/eggs')->group(function () {
     Route::get('/', [Application\Eggs\EggController::class, 'index'])->name('api.application.eggs.eggs');
     Route::get('/{egg:id}', [Application\Eggs\EggController::class, 'view'])->name('api.application.eggs.eggs.view');
 });
+
+/*
+|--------------------------------------------------------------------------
+| Database Host Controller Routes
+|--------------------------------------------------------------------------
+|
+| Endpoint: /api/application/database-hosts
+|
+*/
+Route::group(['prefix' => '/database-hosts'], function () {
+    Route::get('/', [Application\DatabaseHosts\DatabaseHostController::class, 'index'])->name('api.application.databasehosts');
+    Route::get('/{database_host:id}', [Application\DatabaseHosts\DatabaseHostController::class, 'view'])->name('api.application.databasehosts.view');
+
+    Route::post('/', [Application\DatabaseHosts\DatabaseHostController::class, 'store']);
+
+    Route::patch('/{database_host:id}', [Application\DatabaseHosts\DatabaseHostController::class, 'update']);
+
+    Route::delete('/{database_host:id}', [Application\DatabaseHosts\DatabaseHostController::class, 'delete']);
+});
