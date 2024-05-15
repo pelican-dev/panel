@@ -10,6 +10,11 @@ class ServerResource extends Resource
 {
     protected static ?string $model = Server::class;
 
+    public static function getNavigationBadge(): ?string
+    {
+        return static::getModel()::count();
+    }
+
     protected static ?string $navigationIcon = 'tabler-brand-docker';
 
     protected static ?string $recordTitleAttribute = 'name';
