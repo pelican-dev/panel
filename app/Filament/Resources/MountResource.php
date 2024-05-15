@@ -10,12 +10,12 @@ class MountResource extends Resource
 {
     protected static ?string $model = Mount::class;
 
+    protected static ?string $navigationIcon = 'tabler-layers-linked';
+
     public static function getNavigationBadge(): ?string
     {
-        return static::getModel()::count();
+        return static::getModel()::count() ?: null;
     }
-
-    protected static ?string $navigationIcon = 'tabler-layers-linked';
 
     public static function getRelations(): array
     {

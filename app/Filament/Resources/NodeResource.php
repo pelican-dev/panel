@@ -11,14 +11,14 @@ class NodeResource extends Resource
 {
     protected static ?string $model = Node::class;
 
-    public static function getNavigationBadge(): ?string
-    {
-        return static::getModel()::count();
-    }
-
     protected static ?string $navigationIcon = 'tabler-server-2';
 
     protected static ?string $recordTitleAttribute = 'name';
+
+    public static function getNavigationBadge(): ?string
+    {
+        return static::getModel()::count() ?: null;
+    }
 
     public static function getRelations(): array
     {

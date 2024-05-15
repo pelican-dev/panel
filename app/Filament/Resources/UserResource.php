@@ -11,13 +11,14 @@ class UserResource extends Resource
 {
     protected static ?string $model = User::class;
 
-    public static function getNavigationBadge(): ?string
-    {
-        return static::getModel()::count();
-    }
     protected static ?string $navigationIcon = 'tabler-users';
 
     protected static ?string $recordTitleAttribute = 'username';
+
+    public static function getNavigationBadge(): ?string
+    {
+        return static::getModel()::count() ?: null;
+    }
 
     public static function getRelations(): array
     {
