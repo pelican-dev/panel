@@ -8,16 +8,16 @@
     "packages": [
         {
             "name": "abdelhamiderrahmouni/filament-monaco-editor",
-            "version": "v0.2.3",
+            "version": "v0.2.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/abdelhamiderrahmouni/filament-monaco-editor.git",
-                "reference": "9968be3a59a6532e46f6332a990921c4af527c8a"
+                "reference": "a12da680ed137b5234c9acdab83b490247d0ea45"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/abdelhamiderrahmouni/filament-monaco-editor/zipball/9968be3a59a6532e46f6332a990921c4af527c8a",
-                "reference": "9968be3a59a6532e46f6332a990921c4af527c8a",
+                "url": "https://api.github.com/repos/abdelhamiderrahmouni/filament-monaco-editor/zipball/a12da680ed137b5234c9acdab83b490247d0ea45",
+                "reference": "a12da680ed137b5234c9acdab83b490247d0ea45",
                 "shasum": ""
             },
             "require": {
@@ -88,7 +88,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2024-04-20T02:45:00+00:00"
+            "time": "2024-05-15T21:10:47+00:00"
         },
         {
             "name": "anourvalar/eloquent-serialize",
@@ -13137,5 +13137,5 @@
         "ext-zip": "*"
     },
     "platform-dev": [],
-    "plugin-api-version": "2.6.0"
+    "plugin-api-version": "2.3.0"
 }
