@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Facade;
 
 return [
 
-    'name' => 'Pelican',
+    'name' => env('APP_NAME', 'Pelican'),
 
     'version' => 'canary',
 

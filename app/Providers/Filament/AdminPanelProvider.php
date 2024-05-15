@@ -20,6 +20,7 @@ use Illuminate\Session\Middleware\AuthenticateSession;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
 use Hasnayeen\Themes\ThemesPlugin;
+use Saade\FilamentLaravelLog\FilamentLaravelLogPlugin;
 
 class AdminPanelProvider extends PanelProvider
 {
@@ -37,7 +38,6 @@ class AdminPanelProvider extends PanelProvider
             ->id('admin')
             ->path('admin')
             ->login()
-            ->brandName('Pelican')
             ->homeUrl('/')
             ->favicon('/pelican.ico')
             ->profile(EditProfile::class, false)
@@ -78,12 +78,17 @@ class AdminPanelProvider extends PanelProvider
                 \Hasnayeen\Themes\Http\Middleware\SetTheme::class,
 
             ])
-            ->plugin(
-                ThemesPlugin::make()
-                //->canViewThemesPage(fn () => auth()->user()?->root_admin)
-            )
+            ->plugin
             ->authMiddleware([
                 Authenticate::class,
+            ])
+            ->plugin([
+                FilamentLaravelLogPlugin::make()
+                    ->navigationLabel('Logs')
+                    ->navigationIcon('tabler-file-info')
+                    ->slug('logs')
+                    ->authorize(fn () => auth()->user()->root_admin),
+                ThemesPlugin::make(),
             ]);
     }
 }

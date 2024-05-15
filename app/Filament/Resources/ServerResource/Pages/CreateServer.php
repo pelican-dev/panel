@@ -487,11 +487,12 @@ class CreateServer extends CreateRecord
                                     ->dehydratedWhenHidden()
                                     ->hidden(fn (Forms\Get $get) => $get('unlimited_mem'))
                                     ->label('Memory Limit')->inlineLabel()
-                                    ->suffix('MB')
+                                    ->suffix('MiB')
                                     ->default(0)
                                     ->required()
                                     ->columnSpan(2)
-                                    ->numeric(),
+                                    ->numeric()
+                                    ->minValue(0),
                             ]),
 
                         Forms\Components\Grid::make()
@@ -517,11 +518,12 @@ class CreateServer extends CreateRecord
                                     ->dehydratedWhenHidden()
                                     ->hidden(fn (Forms\Get $get) => $get('unlimited_disk'))
                                     ->label('Disk Space Limit')->inlineLabel()
-                                    ->suffix('MB')
+                                    ->suffix('MiB')
                                     ->default(0)
                                     ->required()
                                     ->columnSpan(2)
-                                    ->numeric(),
+                                    ->numeric()
+                                    ->minValue(0),
                             ]),
 
                         Forms\Components\Grid::make()
@@ -551,7 +553,9 @@ class CreateServer extends CreateRecord
                                     ->default(0)
                                     ->required()
                                     ->columnSpan(2)
-                                    ->numeric(),
+                                    ->numeric()
+                                    ->minValue(0)
+                                    ->helperText('100% equals one logical thread'),
                             ]),
 
                         Forms\Components\Grid::make()
@@ -593,7 +597,7 @@ class CreateServer extends CreateRecord
                                     })
                                     ->label('Swap Memory')
                                     ->default(0)
-                                    ->suffix('MB')
+                                    ->suffix('MiB')
                                     ->minValue(-1)
                                     ->columnSpan(2)
                                     ->inlineLabel()
@@ -610,7 +614,7 @@ class CreateServer extends CreateRecord
                             ->columns(4)
                             ->columnSpanFull()
                             ->schema([
-                                Forms\Components\ToggleButtons::make('oom_disabled')
+                                Forms\Components\ToggleButtons::make('oom_killer')
                                     ->label('OOM Killer')
                                     ->inlineLabel()->inline()
                                     ->default(false)

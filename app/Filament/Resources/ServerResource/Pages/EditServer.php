@@ -244,35 +244,57 @@ class EditServer extends EditRecord
                     ]))
                     ->schema([
                         Forms\Components\Repeater::make('server_variables')
-                            ->label('')
                             ->relationship('serverVariables')
                             ->grid()
-                            ->deletable(false)
-                            ->addable(false)
-                            ->schema([
-                                Forms\Components\TextInput::make('variable_value')
+                            ->mutateRelationshipDataBeforeSaveUsing(function (array &$data): array {
+                                foreach ($data as $key => $value) {
+                                    if (!isset($data['variable_value'])) {
+                                        $data['variable_value'] = '';
+                                    }
+                                }
+
+                                return $data;
+                            })
+                            ->reorderable(false)->addable(false)->deletable(false)
+                            ->schema(function () {
+
+                                $text = Forms\Components\TextInput::make('variable_value')
+                                    ->hidden($this->shouldHideComponent(...))
+                                    ->maxLength(191)
                                     ->rules([
-                                        fn (Forms\Get $get): Closure => function (string $attribute, $value, Closure $fail) use ($get) {
+                                        fn (ServerVariable $serverVariable): Closure => function (string $attribute, $value, Closure $fail) use ($serverVariable) {
                                             $validator = Validator::make(['validatorkey' => $value], [
-                                                'validatorkey' => $get('rules'),
+                                                'validatorkey' => $serverVariable->variable->rules,
                                             ]);
 
                                             if ($validator->fails()) {
-                                                $message = str($validator->errors()->first())->replace('validatorkey', $get('name'));
+                                                $message = str($validator->errors()->first())->replace('validatorkey', $serverVariable->variable->name);
 
                                                 $fail($message);
                                             }
                                         },
-                                    ])
-                                    ->label(fn (ServerVariable $variable) => $variable->variable->name)
-                                    ->hintIcon('tabler-code')
-                                    ->hintIconTooltip(fn (ServerVariable $variable) => $variable->variable->rules)
-                                    ->prefix(fn (ServerVariable $variable) => '{{' . $variable->variable->env_variable . '}}')
-                                    ->helperText(fn (ServerVariable $variable) => $variable->variable->description ?: '—')
-                                    ->maxLength(191),
+                                    ]);
 
-                                Forms\Components\Hidden::make('variable_id'),
-                            ])
+                                $select = Forms\Components\Select::make('variable_value')
+                                    ->hidden($this->shouldHideComponent(...))
+                                    ->options($this->getSelectOptionsFromRules(...))
+                                    ->selectablePlaceholder(false);
+
+                                $components = [$text, $select];
+
+                                /** @var Forms\Components\Component $component */
+                                foreach ($components as &$component) {
+                                    $component = $component
+                                        ->live(onBlur: true)
+                                        ->hintIcon('tabler-code')
+                                        ->label(fn (ServerVariable $serverVariable) => $serverVariable->variable->name)
+                                        ->hintIconTooltip(fn (ServerVariable $serverVariable) => $serverVariable->variable->rules)
+                                        ->prefix(fn (ServerVariable $serverVariable) => '{{' . $serverVariable->variable->env_variable . '}}')
+                                        ->helperText(fn (ServerVariable $serverVariable) => empty($serverVariable->variable->description) ? '—' : $serverVariable->variable->description);
+                                }
+
+                                return $components;
+                            })
                             ->columnSpan(2),
                     ]),
 
@@ -311,10 +333,11 @@ class EditServer extends EditRecord
                                     ->dehydratedWhenHidden()
                                     ->hidden(fn (Forms\Get $get) => $get('unlimited_mem'))
                                     ->label('Memory Limit')->inlineLabel()
-                                    ->suffix('MB')
+                                    ->suffix('MiB')
                                     ->required()
                                     ->columnSpan(2)
-                                    ->numeric(),
+                                    ->numeric()
+                                    ->minValue(0),
                             ]),
 
                         Forms\Components\Grid::make()
@@ -340,10 +363,11 @@ class EditServer extends EditRecord
                                     ->dehydratedWhenHidden()
                                     ->hidden(fn (Forms\Get $get) => $get('unlimited_disk'))
                                     ->label('Disk Space Limit')->inlineLabel()
-                                    ->suffix('MB')
+                                    ->suffix('MiB')
                                     ->required()
                                     ->columnSpan(2)
-                                    ->numeric(),
+                                    ->numeric()
+                                    ->minValue(0),
                             ]),
 
                         Forms\Components\Grid::make()
@@ -372,7 +396,8 @@ class EditServer extends EditRecord
                                     ->suffix('%')
                                     ->required()
                                     ->columnSpan(2)
-                                    ->numeric(),
+                                    ->numeric()
+                                    ->minValue(0),
                             ]),
 
                         Forms\Components\Grid::make()
@@ -417,7 +442,7 @@ class EditServer extends EditRecord
                                         'limited', false => false,
                                     })
                                     ->label('Swap Memory')->inlineLabel()
-                                    ->suffix('MB')
+                                    ->suffix('MiB')
                                     ->minValue(-1)
                                     ->columnSpan(2)
                                     ->required()
@@ -432,7 +457,7 @@ class EditServer extends EditRecord
                             ->columns(4)
                             ->columnSpanFull()
                             ->schema([
-                                Forms\Components\ToggleButtons::make('oom_disabled')
+                                Forms\Components\ToggleButtons::make('oom_killer')
                                     ->label('OOM Killer')->inlineLabel()->inline()
                                     ->columnSpan(2)
                                     ->options([
@@ -487,13 +512,6 @@ class EditServer extends EditRecord
                 ->color('danger')
                 ->after(fn (Server $server) => resolve(ServerDeletionService::class)->handle($server))
                 ->requiresConfirmation(),
-            Actions\DeleteAction::make('Force Delete')
-                ->label('Force Delete')
-                ->hidden()
-                ->successRedirectUrl(route('filament.admin.resources.servers.index'))
-                ->color('danger')
-                ->after(fn (Server $server) => resolve(ServerDeletionService::class)->withForce()->handle($server))
-                ->requiresConfirmation(),
             Actions\Action::make('console')
                 ->label('Console')
                 ->icon('tabler-terminal')
@@ -519,5 +537,36 @@ class EditServer extends EditRecord
         return [
             ServerResource\RelationManagers\AllocationsRelationManager::class,
         ];
+    }
+
+    private function shouldHideComponent(Forms\Get $get, Forms\Components\Component $component): bool
+    {
+        $containsRuleIn = str($get('rules'))->explode('|')->reduce(
+            fn ($result, $value) => $result === true && !str($value)->startsWith('in:'), true
+        );
+
+        if ($component instanceof Forms\Components\Select) {
+            return $containsRuleIn;
+        }
+
+        if ($component instanceof Forms\Components\TextInput) {
+            return !$containsRuleIn;
+        }
+
+        throw new \Exception('Component type not supported: ' . $component::class);
+    }
+
+    private function getSelectOptionsFromRules(Forms\Get $get): array
+    {
+        $inRule = str($get('rules'))->explode('|')->reduce(
+            fn ($result, $value) => str($value)->startsWith('in:') ? $value : $result, ''
+        );
+
+        return str($inRule)
+            ->after('in:')
+            ->explode(',')
+            ->each(fn ($value) => str($value)->trim())
+            ->mapWithKeys(fn ($value) => [$value => $value])
+            ->all();
     }
 }

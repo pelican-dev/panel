@@ -40,8 +40,8 @@ class NodeMemoryChart extends ChartWidget
         /** @var Node $node */
         $node = $this->record;
 
-        $total = $node->statistics()['memory_total'] ?? 0;
-        $used = $node->statistics()['memory_used'] ?? 0;
+        $total = ($node->statistics()['memory_total'] ?? 0) / 1024 / 1024 / 1024;
+        $used = ($node->statistics()['memory_used'] ?? 0) / 1024 / 1024 / 1024;
         $unused = $total - $used;
 
         return [
