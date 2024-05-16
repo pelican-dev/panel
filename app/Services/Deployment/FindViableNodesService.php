@@ -10,8 +10,20 @@ use App\Exceptions\Service\Deployment\NoViableNodeException;
 
 class FindViableNodesService
 {
-    protected ?int $disk = null;
     protected ?int $memory = null;
+    protected ?int $disk = null;
+    protected ?int $cpu = null;
+
+    /**
+     * Set the amount of memory that this server will be using. As with disk space, nodes that
+     * do not have enough free memory will be filtered out.
+     */
+    public function setMemory(int $memory): self
+    {
+        $this->memory = $memory;
+
+        return $this;
+    }
 
     /**
      * Set the amount of disk that will be used by the server being created. Nodes will be
@@ -26,12 +38,13 @@ class FindViableNodesService
     }
 
     /**
-     * Set the amount of memory that this server will be using. As with disk space, nodes that
-     * do not have enough free memory will be filtered out.
+     * Set the amount of cpu that will be used by the server being created. Nodes will be
+     * filtered out if they do not have enough available free cpu for this server
+     * to be placed on.
      */
-    public function setMemory(int $memory): self
+    public function setCpu(int $cpu): self
     {
-        $this->memory = $memory;
+        $this->cpu = $cpu;
 
         return $this;
     }
@@ -41,8 +54,8 @@ class FindViableNodesService
      * be passed to the AllocationSelectionService to return a single allocation.
      *
      * This functionality is used for automatic deployments of servers and will
-     * attempt to find all nodes in the defined locations that meet the disk and
-     * memory availability requirements. Any nodes not meeting those requirements
+     * attempt to find all nodes in the defined locations that meet the memory, disk
+     * and cpu availability requirements. Any nodes not meeting those requirements
      * are tossed out, as are any nodes marked as non-public, meaning automatic
      * deployments should not be done against them.
      *
@@ -61,12 +74,14 @@ class FindViableNodesService
         $query = Node::query()->select('nodes.*')
             ->selectRaw('IFNULL(SUM(servers.memory), 0) as sum_memory')
             ->selectRaw('IFNULL(SUM(servers.disk), 0) as sum_disk')
+            ->selectRaw('IFNULL(SUM(servers.cpu), 0) as sum_cpu')
             ->leftJoin('servers', 'servers.node_id', '=', 'nodes.id')
             ->where('nodes.public', 1);
 
         $results = $query->groupBy('nodes.id')
             ->havingRaw('(IFNULL(SUM(servers.memory), 0) + ?) <= (nodes.memory * (1 + (nodes.memory_overallocate / 100)))', [$this->memory])
-            ->havingRaw('(IFNULL(SUM(servers.disk), 0) + ?) <= (nodes.disk * (1 + (nodes.disk_overallocate / 100)))', [$this->disk]);
+            ->havingRaw('(IFNULL(SUM(servers.disk), 0) + ?) <= (nodes.disk * (1 + (nodes.disk_overallocate / 100)))', [$this->disk])
+            ->havingRaw('(IFNULL(SUM(servers.cpu), 0) + ?) <= (nodes.cpu * (1 + (nodes.cpu_overallocate / 100)))', [$this->cpu]);
 
         if (!is_null($page)) {
             $results = $results->paginate($perPage ?? 50, ['*'], 'page', $page);
