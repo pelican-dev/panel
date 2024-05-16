@@ -847,4 +847,4 @@ INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (198,'2024_03_14_05
 INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (201,'2024_04_20_214441_add_egg_var_sort',3);
 INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (203,'2024_04_14_002250_update_column_names',4);
 INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (204,'2024_05_08_094823_rename_oom_disabled_column_to_oom_killer',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (205,'2024_05_16_091207_add_cpu_columns_to_nodes_table.php',1);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (205,'2024_05_16_091207_add_cpu_columns_to_nodes_table',1);
