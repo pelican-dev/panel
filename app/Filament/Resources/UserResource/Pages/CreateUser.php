@@ -21,7 +21,10 @@ class CreateUser extends CreateRecord
         return $form
             ->schema([
                 Section::make()->schema([
-                    Forms\Components\TextInput::make('username')->required()->maxLength(191),
+                    Forms\Components\TextInput::make('username')
+                        ->alphaNum()
+                        ->required()
+                        ->maxLength(191),
                     Forms\Components\TextInput::make('email')->email()->required()->maxLength(191),
 
                     Forms\Components\TextInput::make('password')

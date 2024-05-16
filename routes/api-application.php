@@ -69,6 +69,8 @@ Route::prefix('/servers')->group(function () {
     Route::post('/{server:id}/suspend', [Application\Servers\ServerManagementController::class, 'suspend'])->name('api.application.servers.suspend');
     Route::post('/{server:id}/unsuspend', [Application\Servers\ServerManagementController::class, 'unsuspend'])->name('api.application.servers.unsuspend');
     Route::post('/{server:id}/reinstall', [Application\Servers\ServerManagementController::class, 'reinstall'])->name('api.application.servers.reinstall');
+    Route::post('/{server:id}/transfer', [Application\Servers\ServerManagementController::class, 'startTransfer'])->name('api.application.servers.transfer');
+    Route::post('/{server:id}/transfer/cancel', [Application\Servers\ServerManagementController::class, 'cancelTransfer'])->name('api.application.servers.transfer.cancel');
 
     Route::delete('/{server:id}', [Application\Servers\ServerController::class, 'delete']);
     Route::delete('/{server:id}/{force?}', [Application\Servers\ServerController::class, 'delete']);
@@ -96,6 +98,25 @@ Route::prefix('/servers')->group(function () {
 Route::prefix('/eggs')->group(function () {
     Route::get('/', [Application\Eggs\EggController::class, 'index'])->name('api.application.eggs.eggs');
     Route::get('/{egg:id}', [Application\Eggs\EggController::class, 'view'])->name('api.application.eggs.eggs.view');
+});
+
+/*
+|--------------------------------------------------------------------------
+| Database Host Controller Routes
+|--------------------------------------------------------------------------
+|
+| Endpoint: /api/application/database-hosts
+|
+*/
+Route::group(['prefix' => '/database-hosts'], function () {
+    Route::get('/', [Application\DatabaseHosts\DatabaseHostController::class, 'index'])->name('api.application.databasehosts');
+    Route::get('/{database_host:id}', [Application\DatabaseHosts\DatabaseHostController::class, 'view'])->name('api.application.databasehosts.view');
+
+    Route::post('/', [Application\DatabaseHosts\DatabaseHostController::class, 'store']);
+
+    Route::patch('/{database_host:id}', [Application\DatabaseHosts\DatabaseHostController::class, 'update']);
+
+    Route::delete('/{database_host:id}', [Application\DatabaseHosts\DatabaseHostController::class, 'delete']);
 });
 
 /*

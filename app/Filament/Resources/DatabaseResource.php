@@ -14,6 +14,11 @@ class DatabaseResource extends Resource
 
     protected static bool $shouldRegisterNavigation = false;
 
+    public static function getNavigationBadge(): ?string
+    {
+        return static::getModel()::count() ?: null;
+    }
+
     public static function getRelations(): array
     {
         return [

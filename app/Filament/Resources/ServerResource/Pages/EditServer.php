@@ -134,7 +134,7 @@ class EditServer extends EditRecord
                         'default' => 2,
                         'sm' => 2,
                         'md' => 2,
-                        'lg' => 6,
+                        'lg' => 5,
                     ])
                     ->relationship('egg', 'name')
                     ->searchable()
@@ -157,59 +157,48 @@ class EditServer extends EditRecord
                     ])
                     ->required(),
 
-                Forms\Components\ToggleButtons::make('custom_image')
-                    ->live()
-                    ->label('Custom Image?')->inline()
-                    ->formatStateUsing(function ($state, Forms\Get $get) {
-                        if ($state !== null) {
-                            return $state;
-                        }
-
-                        $images = Egg::find($get('egg_id'))->docker_images;
-
-                        return !in_array($get('image'), $images);
-                    })
-                    ->options([
-                        false => 'No',
-                        true => 'Yes',
-                    ])
-                    ->colors([
-                        false => 'primary',
-                        true => 'danger',
-                    ])
-                    ->icons([
-                        false => 'tabler-settings-cancel',
-                        true => 'tabler-settings-check',
-                    ]),
-
-                Forms\Components\TextInput::make('image')
-                    ->hidden(fn (Forms\Get $get) => !$get('custom_image'))
-                    ->disabled(fn (Forms\Get $get) => !$get('custom_image'))
-                    ->label('Docker Image')
-                    ->placeholder('Enter a custom Image')
-                    ->columnSpan([
-                        'default' => 2,
-                        'sm' => 2,
-                        'md' => 2,
-                        'lg' => 4,
-                    ])
-                    ->required(),
-
-                Forms\Components\Select::make('image')
-                    ->hidden(fn (Forms\Get $get) => $get('custom_image'))
-                    ->disabled(fn (Forms\Get $get) => $get('custom_image'))
-                    ->label('Docker Image')
+                Forms\Components\Select::make('select_image')
+                    ->label('Docker Image Name')
                     ->prefixIcon('tabler-brand-docker')
-                    ->options(fn (Forms\Get $get) => Egg::find($get('egg_id'))->docker_images)
-                    ->disabled(fn (Forms\Components\Select $component) => empty($component->getOptions()))
+                    ->live()
+                    ->afterStateUpdated(fn (Forms\Set $set, $state) => $set('image', $state))
+                    ->formatStateUsing(fn (Forms\Get $get) => $get('image'))
+                    ->options(function ($state, Forms\Get $get) {
+                        $egg = Egg::query()->find($get('egg_id'));
+                        $images = $egg->docker_images ?? [];
+
+                        return ['ghcr.io/custom-image' => 'Custom Image'] + array_flip($images);
+                    })
                     ->selectablePlaceholder(false)
                     ->columnSpan([
                         'default' => 2,
                         'sm' => 2,
                         'md' => 2,
-                        'lg' => 4,
-                    ])
-                    ->required(),
+                        'lg' => 3,
+                    ]),
+
+                Forms\Components\TextInput::make('image')
+                    ->label('Docker Image')
+                    ->prefixIcon('tabler-brand-docker')
+                    ->live()
+                    ->debounce(500)
+                    ->afterStateUpdated(function ($state, Forms\Get $get, Forms\Set $set) {
+                        $egg = Egg::query()->find($get('egg_id'));
+                        $images = $egg->docker_images ?? [];
+
+                        if (in_array($state, $images)) {
+                            $set('select_image', $state);
+                        } else {
+                            $set('select_image', 'ghcr.io/custom-image');
+                        }
+                    })
+                    ->placeholder('Enter a custom Image')
+                    ->columnSpan([
+                        'default' => 2,
+                        'sm' => 2,
+                        'md' => 2,
+                        'lg' => 3,
+                    ]),
 
                 Forms\Components\Textarea::make('startup')
                     ->hintIcon('tabler-code')

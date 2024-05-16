@@ -14,6 +14,11 @@ class DatabaseHostResource extends Resource
 
     protected static ?string $navigationIcon = 'tabler-database';
 
+    public static function getNavigationBadge(): ?string
+    {
+        return static::getModel()::count() ?: null;
+    }
+
     public static function getRelations(): array
     {
         return [

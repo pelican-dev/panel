@@ -6,6 +6,9 @@ use App\Extensions\Themes\Theme;
 use App\Models;
 use App\Models\ApiKey;
 use App\Models\Node;
+use Dedoc\Scramble\Scramble;
+use Dedoc\Scramble\Support\Generator\OpenApi;
+use Dedoc\Scramble\Support\Generator\SecurityScheme;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Facades\Broadcast;
@@ -66,6 +69,10 @@ class AppServiceProvider extends ServiceProvider
 
         $this->bootAuth();
         $this->bootBroadcast();
+
+        Scramble::registerApi('application', ['api_path' => 'api/application', 'info' => ['version' => '1.0']]);
+        Scramble::registerApi('client', ['api_path' => 'api/client', 'info' => ['version' => '1.0']]);
+        Scramble::registerApi('remote', ['api_path' => 'api/remote', 'info' => ['version' => '1.0']]);
     }
 
     /**
@@ -81,6 +88,9 @@ class AppServiceProvider extends ServiceProvider
         $this->app->singleton('extensions.themes', function () {
             return new Theme();
         });
+
+        Scramble::extendOpenApi(fn (OpenApi $openApi) => $openApi->secure(SecurityScheme::http('bearer')));
+        Scramble::ignoreDefaultRoutes();
     }
 
     /**
