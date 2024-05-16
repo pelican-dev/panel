@@ -4,20 +4,20 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "0b864c9d70ba4b0ee467ef915d36d92f",
+    "content-hash": "b42081b535003bee230744894b97bc31",
     "packages": [
         {
             "name": "abdelhamiderrahmouni/filament-monaco-editor",
-            "version": "v0.2.4",
+            "version": "v0.2.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/abdelhamiderrahmouni/filament-monaco-editor.git",
-                "reference": "a12da680ed137b5234c9acdab83b490247d0ea45"
+                "reference": "3a74de11f74bee5b782df74c998c071c64a17ac0"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/abdelhamiderrahmouni/filament-monaco-editor/zipball/a12da680ed137b5234c9acdab83b490247d0ea45",
-                "reference": "a12da680ed137b5234c9acdab83b490247d0ea45",
+                "url": "https://api.github.com/repos/abdelhamiderrahmouni/filament-monaco-editor/zipball/3a74de11f74bee5b782df74c998c071c64a17ac0",
+                "reference": "3a74de11f74bee5b782df74c998c071c64a17ac0",
                 "shasum": ""
             },
             "require": {
@@ -88,7 +88,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2024-05-15T21:10:47+00:00"
+            "time": "2024-04-20T01:01:49+00:00"
         },
         {
             "name": "anourvalar/eloquent-serialize",
