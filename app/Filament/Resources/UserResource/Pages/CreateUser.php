@@ -76,6 +76,7 @@ class CreateUser extends CreateRecord
                 ->action(function () {
                     resolve(UserCreationService::class)->handle($this->data);
                     Notification::make()->title('User Created!')->success()->send();
+
                     return redirect()->route('filament.admin.resources.users.index');
                 }),
         ];
