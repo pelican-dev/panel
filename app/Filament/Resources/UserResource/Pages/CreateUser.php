@@ -3,9 +3,12 @@
 namespace App\Filament\Resources\UserResource\Pages;
 
 use App\Filament\Resources\UserResource;
+use App\Services\Users\UserCreationService;
+use Filament\Notifications\Notification;
 use Filament\Resources\Pages\CreateRecord;
 use App\Models\User;
 use Filament\Forms;
+use Filament\Actions;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Form;
 use Illuminate\Support\Facades\Hash;
@@ -30,7 +33,6 @@ class CreateUser extends CreateRecord
                     Forms\Components\TextInput::make('password')
                         ->dehydrateStateUsing(fn (string $state): string => Hash::make($state))
                         ->dehydrated(fn (?string $state): bool => filled($state))
-                        ->required(fn (string $operation): bool => $operation === 'create')
                         ->password(),
 
                     Forms\Components\ToggleButtons::make('root_admin')
@@ -57,7 +59,6 @@ class CreateUser extends CreateRecord
                         ->required()
                         ->default(false),
 
-                    Forms\Components\Hidden::make('skipValidation')->default(true),
                     Forms\Components\Select::make('language')
                         ->required()
                         ->hidden()
@@ -66,4 +67,22 @@ class CreateUser extends CreateRecord
                 ])->columns(2),
             ]);
     }
+    protected function getHeaderActions(): array
+    {
+        return [
+            Actions\Action::make('create')
+                ->label('Create User')
+                ->successRedirectUrl(route('filament.admin.resources.users.index'))
+                ->action(function () {
+                    resolve(UserCreationService::class)->handle($this->data);
+                    Notification::make()->title('User Created!')->success()->send();
+                    return redirect()->route('filament.admin.resources.users.index');
+                }),
+        ];
+    }
+    protected function getFormActions(): array
+    {
+        return [];
+    }
+
 }
