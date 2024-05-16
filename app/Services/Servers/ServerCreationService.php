@@ -111,7 +111,7 @@ class ServerCreationService
     {
         /** @var \Illuminate\Support\Collection $nodes */
         $nodes = $this->findViableNodesService
-        ->setMemory(Arr::get($data, 'memory'))
+            ->setMemory(Arr::get($data, 'memory'))
             ->setDisk(Arr::get($data, 'disk'))
             ->setCpu(Arr::get($data, 'cpu'))
             ->handle();
