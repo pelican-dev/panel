@@ -68,8 +68,9 @@ class FindViableNodesService
      */
     public function handle(int $perPage = null, int $page = null): LengthAwarePaginator|Collection
     {
-        Assert::integer($this->disk, 'Disk space must be an int, got %s');
         Assert::integer($this->memory, 'Memory usage must be an int, got %s');
+        Assert::integer($this->disk, 'Disk space must be an int, got %s');
+        Assert::integer($this->cpu, 'CPU must be an int, got %s');
 
         $query = Node::query()->select('nodes.*')
             ->selectRaw('IFNULL(SUM(servers.memory), 0) as sum_memory')

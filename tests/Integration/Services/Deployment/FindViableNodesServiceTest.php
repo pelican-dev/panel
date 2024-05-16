@@ -38,7 +38,7 @@ class FindViableNodesServiceTest extends IntegrationTestCase
     public function testExceptionIsThrownIfNoCpuHasBeenSet(): void
     {
         $this->expectException(\InvalidArgumentException::class);
-        $this->expectExceptionMessage('Cpu must be an int, got NULL');
+        $this->expectExceptionMessage('CPU must be an int, got NULL');
 
         $this->getService()->setMemory(10)->setDisk(10)->handle();
     }
