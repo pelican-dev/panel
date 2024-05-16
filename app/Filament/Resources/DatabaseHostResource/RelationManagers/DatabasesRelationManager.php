@@ -3,7 +3,6 @@
 namespace App\Filament\Resources\DatabaseHostResource\RelationManagers;
 
 use App\Models\Database;
-use App\Models\DatabaseHost;
 use App\Services\Databases\DatabasePasswordService;
 use Filament\Forms;
 use Filament\Forms\Components\Actions\Action;
@@ -16,7 +15,7 @@ class DatabasesRelationManager extends RelationManager
 {
     protected static string $relationship = 'databases';
 
-    protected $listeners = ['refresh'=>'refreshForm'];
+    protected $listeners = ['refresh' => 'refreshForm'];
 
     public function form(Form $form): Form
     {
