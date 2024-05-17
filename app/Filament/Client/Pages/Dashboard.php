@@ -33,13 +33,13 @@ class Dashboard extends Page
             'heading' => 'Welcome to ' . config('app.name'),
             'subheading' => 'Welcome back ' . $user->name_first . ' ' . $user->name_last,
             'ServersCount' => $servers->count(),
-            "development" => [
+            'development' => [
                 CreateAction::make()
-                ->label(trans('dashboard/index.sections.intro-developers.button_issues'))
-                ->icon('tabler-brand-github')
-                ->url('https://github.com/pelican-dev/panel/issues/new/choose', true)
-                ->color('warning'),
-            ]
+                    ->label(trans('dashboard/index.sections.intro-developers.button_issues'))
+                    ->icon('tabler-brand-github')
+                    ->url('https://github.com/pelican-dev/panel/issues/new/choose', true)
+                    ->color('warning'),
+            ],
         ];
     }
 }
