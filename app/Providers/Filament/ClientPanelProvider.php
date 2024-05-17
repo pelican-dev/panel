@@ -64,6 +64,7 @@ class ClientPanelProvider extends PanelProvider
             )
             ->discoverResources(in: app_path('Filament/Client/Resources'), for: 'App\\Filament\\Client\\Resources')
             ->discoverPages(in: app_path('Filament/Client/Pages'), for: 'App\\Filament\\Client\\Pages')
+            ->discoverClusters(in: app_path('Filament/Client/Clusters'), for: 'App\\Filament\\Client\\Clusters')
             ->discoverWidgets(in: app_path('Filament/Client/Widgets'), for: 'App\\Filament\\Client\\Widgets')
             ->widgets([
                 Widgets\AccountWidget::class,
