@@ -46,7 +46,7 @@ class ClientPanelProvider extends PanelProvider
                 NavigationItem::make('admin')
                     ->label('Admin')
                     ->url('/admin')
-                    ->icon('tabler-ad') // I could not find a better icon 
+                    ->icon('tabler-ad') // I could not find a better icon
                     ->sort(5)
                     ->visible(fn (): bool => auth()->user()->root_admin),
             ])
