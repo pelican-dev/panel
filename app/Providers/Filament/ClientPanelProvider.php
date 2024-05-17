@@ -23,21 +23,6 @@ use Filament\Navigation\NavigationItem;
 
 class ClientPanelProvider extends PanelProvider
 {
-    /* TODO FIX: right now this only appears in the admin side and not the client side.
-    public function boot()
-    {
-        Filament::serving(function () {
-            Filament::registerNavigationItems([
-                NavigationItem::make('Admin')
-                    ->url('/admin', shouldOpenInNewTab: true)
-                    ->icon('heroicon-o-presentation-chart-line')
-                    ->visible(auth()->user()->root_admin)
-                    ->sort(3),
-            ]);
-        });
-
-    }
-    */
     public function panel(Panel $panel): Panel
     {
         return $panel
@@ -57,6 +42,14 @@ class ClientPanelProvider extends PanelProvider
                 'success' => Color::Green,
                 'warning' => Color::Amber,
                 'blurple' => Color::hex('#5865F2'),
+            ])
+            ->navigationItems([
+                NavigationItem::make('admin')
+                    ->label('Admin')
+                    ->url('/admin')
+                    ->icon('tabler-ad')
+                    ->sort(5)
+                    ->visible(fn(): bool => auth()->user()->root_admin),
             ])
             ->renderHook(
                 'panels::sidebar.footer',
