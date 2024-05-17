@@ -2,7 +2,7 @@
     <div class="flex items-center">
         <img src="{{ asset('pelican.ico') }}" alt="Pelican Logo" class="w-6 h-6" style="margin-right: 8px;">
         <span class="text-sm text-gray-500 sm:text-center dark:text-gray-400">© 2024 - <?php echo date('Y'); ?>
-            <a href="https://github.com/pelican-dev/panel" class="hover:underline">Pelican</a>
+            <a href="https://pelican.dev" class="hover:underline">Pelican</a>
         </span>
     </div>
 </footer>
