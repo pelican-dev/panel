@@ -14,7 +14,7 @@ class Dashboard extends Page
 {
     protected static ?string $navigationIcon = 'tabler-layout-dashboard';
 
-    protected static string $view = 'filament.pages.dashboard';
+    protected static string $view = 'filament.admin.pages.dashboard';
 
     protected ?string $heading = '';
 
