@@ -18,7 +18,6 @@ use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\AuthenticateSession;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
-use Filament\Facades\Filament;
 use Filament\Navigation\NavigationItem;
 
 class ClientPanelProvider extends PanelProvider
@@ -49,7 +48,7 @@ class ClientPanelProvider extends PanelProvider
                     ->url('/admin')
                     ->icon('tabler-ad')
                     ->sort(5)
-                    ->visible(fn(): bool => auth()->user()->root_admin),
+                    ->visible(fn (): bool => auth()->user()->root_admin),
             ])
             ->renderHook(
                 'panels::sidebar.footer',

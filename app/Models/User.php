@@ -345,7 +345,13 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
 
     public function canAccessPanel(Panel $panel): bool
     {
-        return $this->root_admin;
+        if ($panel->getId() === 'admin') {
+            return $this->root_admin;
+        } elseif ($panel->getId() === 'client') {
+            return true;
+        }
+
+        return false;
     }
 
     public function getFilamentName(): string
