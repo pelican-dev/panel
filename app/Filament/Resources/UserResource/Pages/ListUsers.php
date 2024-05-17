@@ -4,10 +4,14 @@ namespace App\Filament\Resources\UserResource\Pages;
 
 use App\Filament\Resources\UserResource;
 use App\Models\User;
+use App\Services\Users\UserCreationService;
 use Filament\Actions;
+use Filament\Notifications\Notification;
 use Filament\Resources\Pages\ListRecords;
 use Filament\Tables\Table;
 use Filament\Tables;
+use Filament\Forms;
+use Illuminate\Support\Facades\Hash;
 
 class ListUsers extends ListRecords
 {
@@ -73,8 +77,57 @@ class ListUsers extends ListRecords
     protected function getHeaderActions(): array
     {
         return [
-            Actions\CreateAction::make()
-                ->label('Create User'),
+            Actions\CreateAction::make('create')
+                ->label('Create User')
+                ->createAnother(false)
+                ->form([
+                    Forms\Components\Grid::make()
+                        ->schema([
+                            Forms\Components\TextInput::make('username')
+                                ->alphaNum()
+                                ->required()
+                                ->maxLength(191),
+                            Forms\Components\TextInput::make('email')->email()->required()->maxLength(191),
+
+                            Forms\Components\TextInput::make('password')
+                                ->hintIcon('tabler-question-mark')
+                                ->hintIconTooltip('Providing a user password is optional. New user email will prompt users to create a password the first time they login.')
+                                ->dehydrateStateUsing(fn (string $state): string => Hash::make($state))
+                                ->dehydrated(fn (?string $state): bool => filled($state))
+                                ->password(),
+
+                            Forms\Components\ToggleButtons::make('root_admin')
+                                ->label('Administrator (Root)')
+                                ->options([
+                                    false => 'No',
+                                    true => 'Admin',
+                                ])
+                                ->colors([
+                                    false => 'primary',
+                                    true => 'danger',
+                                ])
+                                ->disableOptionWhen(function (string $operation, $value, User $user) {
+                                    if ($operation !== 'edit' || $value) {
+                                        return false;
+                                    }
+
+                                    return $user->isLastRootAdmin();
+                                })
+                                ->hint(fn (User $user) => $user->isLastRootAdmin() ? 'This is the last root administrator!' : '')
+                                ->helperText(fn (User $user) => $user->isLastRootAdmin() ? 'You must have at least one root administrator in your system.' : '')
+                                ->hintColor('warning')
+                                ->inline()
+                                ->required()
+                                ->default(false),
+                        ]),
+                ])
+                ->successRedirectUrl(route('filament.admin.resources.users.index'))
+                ->action(function (array $data) {
+                    resolve(UserCreationService::class)->handle($data);
+                    Notification::make()->title('User Created!')->success()->send();
+
+                    return redirect()->route('filament.admin.resources.users.index');
+                }),
         ];
     }
 }
