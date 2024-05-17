@@ -27,7 +27,7 @@ class Dashboard extends Page
 
         return [
             'heading' => 'Welcome to ' . config('app.name'),
-            'subheading' => 'Welcome back ' . $user->username,
+            'subheading' => 'Welcome back ' . $user->name_first . " " . $user->name_last,
         ];
     }
 
