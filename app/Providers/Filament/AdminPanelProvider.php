@@ -20,7 +20,6 @@ use Illuminate\Session\Middleware\AuthenticateSession;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
 use Filament\Navigation\NavigationItem;
-use Filament\Navigation\MenuItem;
 
 class AdminPanelProvider extends PanelProvider
 {
@@ -58,7 +57,7 @@ class AdminPanelProvider extends PanelProvider
                     ->label('Return to client')
                     ->url('/')
                     ->icon('tabler-arrow-back')
-                    ->sort(12)
+                    ->sort(12),
             ])
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\\Filament\\Resources')
             ->discoverPages(in: app_path('Filament/Pages'), for: 'App\\Filament\\Pages')
@@ -68,7 +67,7 @@ class AdminPanelProvider extends PanelProvider
                 Widgets\AccountWidget::class,
                 Widgets\FilamentInfoWidget::class,
             ])
-                        ->pages([
+            ->pages([
                 // Pages\Dashboard::class,
             ])
             ->middleware([
