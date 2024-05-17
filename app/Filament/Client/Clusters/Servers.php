@@ -6,5 +6,5 @@ use Filament\Clusters\Cluster;
 
 class Servers extends Cluster
 {
-    protected static ?string $navigationIcon = 'tabler-server2';
+    protected static ?string $navigationIcon = 'tabler-server-2';
 }
