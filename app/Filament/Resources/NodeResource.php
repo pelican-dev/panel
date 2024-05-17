@@ -11,7 +11,7 @@ class NodeResource extends Resource
 {
     protected static ?string $model = Node::class;
 
-    protected static ?string $navigationIcon = 'tabler-server';
+    protected static ?string $navigationIcon = 'tabler-server-2';
 
     protected static ?string $recordTitleAttribute = 'name';
 
