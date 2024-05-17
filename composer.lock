@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "dc1c1e5ee766f2e31e84c50670fa0c98",
+    "content-hash": "e64dbcb63869dd49ee02c78915ffcca6",
     "packages": [
         {
             "name": "abdelhamiderrahmouni/filament-monaco-editor",
@@ -304,6 +304,55 @@
                 "source": "https://github.com/aws/aws-sdk-php/tree/3.288.1"
             },
             "time": "2023-11-22T19:35:38+00:00"
+        },
+        {
+            "name": "aymanalhattami/filament-page-with-sidebar",
+            "version": "2.5.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/aymanalhattami/filament-page-with-sidebar.git",
+                "reference": "90469a3a1563918d7fb06d56663590efe17f25b8"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/aymanalhattami/filament-page-with-sidebar/zipball/90469a3a1563918d7fb06d56663590efe17f25b8",
+                "reference": "90469a3a1563918d7fb06d56663590efe17f25b8",
+                "shasum": ""
+            },
+            "require": {
+                "filament/filament": "^3.0",
+                "laravel/framework": "^10.0|^11.0",
+                "spatie/laravel-package-tools": "^1.0"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "AymanAlhattami\\FilamentPageWithSidebar\\FilamentPageWithSidebarServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "AymanAlhattami\\FilamentPageWithSidebar\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Ayman Alhattami",
+                    "email": "ayman.m.alhattami@gmail.com"
+                }
+            ],
+            "description": "Organize resource pages in sidebar instead of putting all the buttons and links elsewhere in order to make navigation between pages more comfortable.",
+            "support": {
+                "issues": "https://github.com/aymanalhattami/filament-page-with-sidebar/issues",
+                "source": "https://github.com/aymanalhattami/filament-page-with-sidebar/tree/2.5.0"
+            },
+            "time": "2024-04-05T11:17:57+00:00"
         },
         {
             "name": "blade-ui-kit/blade-heroicons",

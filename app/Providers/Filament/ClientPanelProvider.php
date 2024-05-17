@@ -31,7 +31,6 @@ class ClientPanelProvider extends PanelProvider
             ->topNavigation(config('panel.filament.top-navigation', false))
             ->login()
             ->favicon('/pelican.ico')
-            ->brandName('Pelican')
             ->profile(EditProfile::class, false)
             ->colors([
                 'danger' => Color::Red,
