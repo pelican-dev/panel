@@ -16,4 +16,22 @@
         </x-filament::tabs.item>
     </x-filament::tabs>
     
+    @if ($inDevelopment)
+        <x-filament::section
+            icon="tabler-code"
+            icon-color="primary"
+            id="intro-developers"
+           :header-actions="$development"
+        >
+            <x-slot name="heading">{{ trans('dashboard/index.sections.intro-developers.heading') }}</x-slot>
+
+            <p>This side is still in development and bugs or issues may occur</p>
+
+            <p><br /></p>
+
+            <p>{{  trans('dashboard/index.sections.intro-developers.extra_note') }}</p>
+
+        </x-filament::section>
+    @endif
+    
 </x-filament-panels::page>
