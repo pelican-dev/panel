@@ -29,7 +29,7 @@ class CreateApiKey extends CreateRecord
                     ->inlineLabel()
                     ->options(function (ApiKey $apiKey) {
                         $originalOptions = [
-                                //ApiKey::TYPE_NONE => 'None',
+                            //ApiKey::TYPE_NONE => 'None',
                             ApiKey::TYPE_ACCOUNT => 'Account',
                             ApiKey::TYPE_APPLICATION => 'Application',
                             //ApiKey::TYPE_DAEMON_USER => 'Daemon User',
@@ -37,7 +37,7 @@ class CreateApiKey extends CreateRecord
                         ];
 
                         return collect($originalOptions)
-                            ->filter(fn($value, $key) => $key <= ApiKey::TYPE_APPLICATION || $apiKey->key_type === $key)
+                            ->filter(fn ($value, $key) => $key <= ApiKey::TYPE_APPLICATION || $apiKey->key_type === $key)
                             ->all();
                     })
                     ->selectablePlaceholder(false)
@@ -52,7 +52,7 @@ class CreateApiKey extends CreateRecord
                     ])
                     ->schema(
                         collect(ApiKey::RESOURCES)->map(
-                            fn($resource) => Forms\Components\ToggleButtons::make("r_$resource")
+                            fn ($resource) => Forms\Components\ToggleButtons::make("r_$resource")
                                 ->label(str($resource)->replace('_', ' ')->title())->inline()
                                 ->options([
                                     0 => 'None',

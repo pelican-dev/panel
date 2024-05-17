@@ -37,9 +37,9 @@ class CreateNode extends CreateRecord
                                 ->required()
                                 ->autofocus()
                                 ->live(debounce: 1500)
-                                ->rule('prohibited', fn($state) => is_ip($state) && request()->isSecure())
-                                ->label(fn($state) => is_ip($state) ? 'IP Address' : 'Domain Name')
-                                ->placeholder(fn($state) => is_ip($state) ? '192.168.1.1' : 'node.example.com')
+                                ->rule('prohibited', fn ($state) => is_ip($state) && request()->isSecure())
+                                ->label(fn ($state) => is_ip($state) ? 'IP Address' : 'Domain Name')
+                                ->placeholder(fn ($state) => is_ip($state) ? '192.168.1.1' : 'node.example.com')
                                 ->helperText(function ($state) {
                                     if (is_ip($state)) {
                                         if (request()->isSecure()) {
@@ -103,7 +103,7 @@ class CreateNode extends CreateRecord
                                 ->disabled()
                                 ->inline()
                                 ->default(null)
-                                ->hint(fn(Forms\Get $get) => $get('ip'))
+                                ->hint(fn (Forms\Get $get) => $get('ip'))
                                 ->hintColor('success')
                                 ->options([
                                     true => 'Valid',
@@ -169,7 +169,7 @@ class CreateNode extends CreateRecord
 
                                     return '';
                                 })
-                                ->disableOptionWhen(fn(string $value): bool => $value === 'http' && request()->isSecure())
+                                ->disableOptionWhen(fn (string $value): bool => $value === 'http' && request()->isSecure())
                                 ->options([
                                     'http' => 'HTTP',
                                     'https' => 'HTTPS (SSL)',
@@ -182,7 +182,7 @@ class CreateNode extends CreateRecord
                                     'http' => 'tabler-lock-open-off',
                                     'https' => 'tabler-lock',
                                 ])
-                                ->default(fn() => request()->isSecure() ? 'https' : 'http'),
+                                ->default(fn () => request()->isSecure() ? 'https' : 'http'),
                         ]),
                     Tabs\Tab::make('Advanced Settings')
                         ->icon('tabler-server-cog')
@@ -235,9 +235,9 @@ class CreateNode extends CreateRecord
                                 ->schema([
                                     Forms\Components\ToggleButtons::make('unlimited_mem')
                                         ->label('Memory')->inlineLabel()->inline()
-                                        ->afterStateUpdated(fn(Forms\Set $set) => $set('memory', 0))
-                                        ->afterStateUpdated(fn(Forms\Set $set) => $set('memory_overallocate', 0))
-                                        ->formatStateUsing(fn(Forms\Get $get) => $get('memory') == 0)
+                                        ->afterStateUpdated(fn (Forms\Set $set) => $set('memory', 0))
+                                        ->afterStateUpdated(fn (Forms\Set $set) => $set('memory_overallocate', 0))
+                                        ->formatStateUsing(fn (Forms\Get $get) => $get('memory') == 0)
                                         ->live()
                                         ->options([
                                             true => 'Unlimited',
@@ -250,7 +250,7 @@ class CreateNode extends CreateRecord
                                         ->columnSpan(2),
                                     Forms\Components\TextInput::make('memory')
                                         ->dehydratedWhenHidden()
-                                        ->hidden(fn(Forms\Get $get) => $get('unlimited_mem'))
+                                        ->hidden(fn (Forms\Get $get) => $get('unlimited_mem'))
                                         ->label('Memory Limit')->inlineLabel()
                                         ->suffix('MiB')
                                         ->columnSpan(2)
@@ -260,7 +260,7 @@ class CreateNode extends CreateRecord
                                     Forms\Components\TextInput::make('memory_overallocate')
                                         ->dehydratedWhenHidden()
                                         ->label('Overallocate')->inlineLabel()
-                                        ->hidden(fn(Forms\Get $get) => $get('unlimited_mem'))
+                                        ->hidden(fn (Forms\Get $get) => $get('unlimited_mem'))
                                         ->hintIcon('tabler-question-mark')
                                         ->hintIconTooltip('The % allowable to go over the set limit.')
                                         ->columnSpan(2)
@@ -277,9 +277,9 @@ class CreateNode extends CreateRecord
                                     Forms\Components\ToggleButtons::make('unlimited_disk')
                                         ->label('Disk')->inlineLabel()->inline()
                                         ->live()
-                                        ->afterStateUpdated(fn(Forms\Set $set) => $set('disk', 0))
-                                        ->afterStateUpdated(fn(Forms\Set $set) => $set('disk_overallocate', 0))
-                                        ->formatStateUsing(fn(Forms\Get $get) => $get('disk') == 0)
+                                        ->afterStateUpdated(fn (Forms\Set $set) => $set('disk', 0))
+                                        ->afterStateUpdated(fn (Forms\Set $set) => $set('disk_overallocate', 0))
+                                        ->formatStateUsing(fn (Forms\Get $get) => $get('disk') == 0)
                                         ->options([
                                             true => 'Unlimited',
                                             false => 'Limited',
@@ -291,7 +291,7 @@ class CreateNode extends CreateRecord
                                         ->columnSpan(2),
                                     Forms\Components\TextInput::make('disk')
                                         ->dehydratedWhenHidden()
-                                        ->hidden(fn(Forms\Get $get) => $get('unlimited_disk'))
+                                        ->hidden(fn (Forms\Get $get) => $get('unlimited_disk'))
                                         ->label('Disk Limit')->inlineLabel()
                                         ->suffix('MiB')
                                         ->columnSpan(2)
@@ -300,7 +300,7 @@ class CreateNode extends CreateRecord
                                         ->default(0),
                                     Forms\Components\TextInput::make('disk_overallocate')
                                         ->dehydratedWhenHidden()
-                                        ->hidden(fn(Forms\Get $get) => $get('unlimited_disk'))
+                                        ->hidden(fn (Forms\Get $get) => $get('unlimited_disk'))
                                         ->label('Overallocate')->inlineLabel()
                                         ->hintIcon('tabler-question-mark')
                                         ->hintIconTooltip('The % allowable to go over the set limit.')

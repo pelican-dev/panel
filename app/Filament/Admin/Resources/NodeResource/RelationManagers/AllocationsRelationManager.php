@@ -37,14 +37,14 @@ class AllocationsRelationManager extends RelationManager
             // ->checkIfRecordIsSelectableUsing(fn (Allocation $allocation) => $allocation->id !== $allocation->server?->allocation_id)
 
             // All assigned allocations
-            ->checkIfRecordIsSelectableUsing(fn(Allocation $allocation) => $allocation->server_id === null)
+            ->checkIfRecordIsSelectableUsing(fn (Allocation $allocation) => $allocation->server_id === null)
             ->searchable()
             ->columns([
                 Tables\Columns\TextColumn::make('server.name')
                     ->label('Server')
                     ->icon('tabler-brand-docker')
                     ->searchable()
-                    ->url(fn(Allocation $allocation): string => $allocation->server ? route('filament.admin.resources.servers.edit', ['record' => $allocation->server]) : ''),
+                    ->url(fn (Allocation $allocation): string => $allocation->server ? route('filament.admin.resources.servers.edit', ['record' => $allocation->server]) : ''),
                 Tables\Columns\TextInputColumn::make('ip_alias')
                     ->searchable()
                     ->label('Alias'),
@@ -63,7 +63,7 @@ class AllocationsRelationManager extends RelationManager
             ])
             ->headerActions([
                 Tables\Actions\Action::make('create new allocation')->label('Create Allocations')
-                    ->form(fn() => [
+                    ->form(fn () => [
                         Forms\Components\TextInput::make('allocation_ip')
                             ->datalist($this->getOwnerRecord()->ipAddresses() ?? [])
                             ->label('IP Address')
@@ -129,7 +129,7 @@ class AllocationsRelationManager extends RelationManager
                                     $ports = $sortedPorts;
                                 }
 
-                                $ports = $ports->filter(fn($port) => $port > 1024 && $port < 65535)->values();
+                                $ports = $ports->filter(fn ($port) => $port > 1024 && $port < 65535)->values();
 
                                 if ($update) {
                                     $set('allocation_ports', $ports->all());
@@ -138,7 +138,7 @@ class AllocationsRelationManager extends RelationManager
                             ->splitKeys(['Tab', ' ', ','])
                             ->required(),
                     ])
-                    ->action(fn(array $data) => resolve(AssignmentService::class)->handle($this->getOwnerRecord(), $data)),
+                    ->action(fn (array $data) => resolve(AssignmentService::class)->handle($this->getOwnerRecord(), $data)),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([

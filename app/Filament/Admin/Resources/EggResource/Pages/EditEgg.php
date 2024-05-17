@@ -119,7 +119,7 @@ class EditEgg extends EditRecord
                                 ->collapsible()->collapsed()
                                 ->orderColumn()
                                 ->addActionLabel('New Variable')
-                                ->itemLabel(fn(array $state) => $state['name'])
+                                ->itemLabel(fn (array $state) => $state['name'])
                                 ->mutateRelationshipDataBeforeCreateUsing(function (array $data): array {
                                     $data['default_value'] ??= '';
                                     $data['description'] ??= '';
@@ -145,7 +145,7 @@ class EditEgg extends EditRecord
                                         ->maxLength(191)
                                         ->columnSpanFull()
                                         ->afterStateUpdated(
-                                            fn(Forms\Set $set, $state) => $set('env_variable', str($state)->trim()->snake()->upper()->toString())
+                                            fn (Forms\Set $set, $state) => $set('env_variable', str($state)->trim()->snake()->upper()->toString())
                                         )
                                         ->required(),
                                     Forms\Components\Textarea::make('description')->columnSpanFull(),
@@ -155,7 +155,7 @@ class EditEgg extends EditRecord
                                         ->prefix('{{')
                                         ->suffix('}}')
                                         ->hintIcon('tabler-code')
-                                        ->hintIconTooltip(fn($state) => "{{{$state}}}")
+                                        ->hintIconTooltip(fn ($state) => "{{{$state}}}")
                                         ->required(),
                                     Forms\Components\TextInput::make('default_value')->maxLength(191),
                                     Forms\Components\Fieldset::make('User Permissions')
@@ -200,14 +200,14 @@ class EditEgg extends EditRecord
     {
         return [
             Actions\DeleteAction::make()
-                ->disabled(fn(Egg $egg): bool => $egg->servers()->count() > 0)
-                ->label(fn(Egg $egg): string => $egg->servers()->count() <= 0 ? 'Delete Egg' : 'Egg In Use'),
+                ->disabled(fn (Egg $egg): bool => $egg->servers()->count() > 0)
+                ->label(fn (Egg $egg): string => $egg->servers()->count() <= 0 ? 'Delete Egg' : 'Egg In Use'),
             Actions\ExportAction::make()
                 ->icon('tabler-download')
                 ->label('Export Egg')
                 ->color('primary')
                 // TODO uses old admin panel export service
-                ->url(fn(Egg $egg): string => route('admin.eggs.export', ['egg' => $egg['id']])),
+                ->url(fn (Egg $egg): string => route('admin.eggs.export', ['egg' => $egg['id']])),
             $this->getSaveFormAction()->formId('form'),
         ];
     }

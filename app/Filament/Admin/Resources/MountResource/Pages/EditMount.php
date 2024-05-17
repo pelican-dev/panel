@@ -72,9 +72,9 @@ class EditMount extends EditRecord
                         ->helperText('A longer description for this mount.')
                         ->columnSpanFull(),
                 ])->columnSpan(1)->columns([
-                            'default' => 1,
-                            'lg' => 2,
-                        ]),
+                    'default' => 1,
+                    'lg' => 2,
+                ]),
                 Group::make()->schema([
                     Section::make()->schema([
                         Select::make('eggs')->multiple()
@@ -86,13 +86,13 @@ class EditMount extends EditRecord
                             ->preload(),
                     ]),
                 ])->columns([
-                            'default' => 1,
-                            'lg' => 2,
-                        ]),
-            ])->columns([
                     'default' => 1,
                     'lg' => 2,
-                ]);
+                ]),
+            ])->columns([
+                'default' => 1,
+                'lg' => 2,
+            ]);
     }
     protected function getHeaderActions(): array
     {

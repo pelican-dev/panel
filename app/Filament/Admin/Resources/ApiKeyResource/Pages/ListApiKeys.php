@@ -28,7 +28,7 @@ class ListApiKeys extends ListRecords
                 Tables\Columns\TextColumn::make('key')
                     ->copyable()
                     ->icon('tabler-clipboard-text')
-                    ->state(fn(ApiKey $key) => $key->identifier . decrypt($key->token)),
+                    ->state(fn (ApiKey $key) => $key->identifier . decrypt($key->token)),
 
                 Tables\Columns\TextColumn::make('memo')
                     ->label('Description')
@@ -71,11 +71,11 @@ class ListApiKeys extends ListRecords
             'all' => Tab::make('All Keys'),
             'application' => Tab::make('Application Keys')
                 ->modifyQueryUsing(
-                    fn(Builder $query) => $query->where('key_type', ApiKey::TYPE_APPLICATION)
+                    fn (Builder $query) => $query->where('key_type', ApiKey::TYPE_APPLICATION)
                 ),
             'account' => Tab::make('Account Keys')
                 ->modifyQueryUsing(
-                    fn(Builder $query) => $query->where('key_type', ApiKey::TYPE_ACCOUNT)
+                    fn (Builder $query) => $query->where('key_type', ApiKey::TYPE_ACCOUNT)
                 ),
         ];
     }

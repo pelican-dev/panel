@@ -25,7 +25,7 @@ class ServersRelationManager extends RelationManager
             ->headerActions([
                 Actions\Action::make('toggleSuspend')
                     ->hidden(
-                        fn() => $user->servers()
+                        fn () => $user->servers()
                             ->whereNot('status', ServerState::Suspended)
                             ->orWhereNull('status')
                             ->count() === 0
@@ -39,7 +39,7 @@ class ServersRelationManager extends RelationManager
                     }),
 
                 Actions\Action::make('toggleUnsuspend')
-                    ->hidden(fn() => $user->servers()->where('status', ServerState::Suspended)->count() === 0)
+                    ->hidden(fn () => $user->servers()->where('status', ServerState::Suspended)->count() === 0)
                     ->label('Unsuspend All Servers')
                     ->color('primary')
                     ->action(function () use ($user) {
@@ -56,20 +56,20 @@ class ServersRelationManager extends RelationManager
                 Tables\Columns\TextColumn::make('name')
                     ->icon('tabler-brand-docker')
                     ->label(trans('strings.name'))
-                    ->url(fn(Server $server): string => route('filament.admin.resources.servers.edit', ['record' => $server]))
+                    ->url(fn (Server $server): string => route('filament.admin.resources.servers.edit', ['record' => $server]))
                     ->searchable()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('node.name')
                     ->icon('tabler-server-2')
-                    ->url(fn(Server $server): string => route('filament.admin.resources.nodes.edit', ['record' => $server->node]))
+                    ->url(fn (Server $server): string => route('filament.admin.resources.nodes.edit', ['record' => $server->node]))
                     ->sortable(),
                 Tables\Columns\TextColumn::make('egg.name')
                     ->icon('tabler-egg')
-                    ->url(fn(Server $server): string => route('filament.admin.resources.eggs.edit', ['record' => $server->egg]))
+                    ->url(fn (Server $server): string => route('filament.admin.resources.eggs.edit', ['record' => $server->egg]))
                     ->sortable(),
                 Tables\Columns\SelectColumn::make('allocation.id')
                     ->label('Primary Allocation')
-                    ->options(fn($state, Server $server) => [$server->allocation->id => $server->allocation->address])
+                    ->options(fn ($state, Server $server) => [$server->allocation->id => $server->allocation->address])
                     ->selectablePlaceholder(false)
                     ->sortable(),
                 Tables\Columns\TextColumn::make('image')->hidden(),

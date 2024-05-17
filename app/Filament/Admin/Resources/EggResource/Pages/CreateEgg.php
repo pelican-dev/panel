@@ -117,7 +117,7 @@ class CreateEgg extends CreateRecord
                                 ->collapsible()->collapsed()
                                 ->columnSpan(2)
                                 ->defaultItems(0)
-                                ->itemLabel(fn(array $state) => $state['name'])
+                                ->itemLabel(fn (array $state) => $state['name'])
                                 ->mutateRelationshipDataBeforeCreateUsing(function (array $data): array {
                                     $data['default_value'] ??= '';
                                     $data['description'] ??= '';
@@ -143,7 +143,7 @@ class CreateEgg extends CreateRecord
                                         ->maxLength(191)
                                         ->columnSpanFull()
                                         ->afterStateUpdated(
-                                            fn(Forms\Set $set, $state) => $set('env_variable', str($state)->trim()->snake()->upper()->toString())
+                                            fn (Forms\Set $set, $state) => $set('env_variable', str($state)->trim()->snake()->upper()->toString())
                                         )
                                         ->required(),
                                     Forms\Components\Textarea::make('description')->columnSpanFull(),
@@ -153,7 +153,7 @@ class CreateEgg extends CreateRecord
                                         ->prefix('{{')
                                         ->suffix('}}')
                                         ->hintIcon('tabler-code')
-                                        ->hintIconTooltip(fn($state) => "{{{$state}}}")
+                                        ->hintIconTooltip(fn ($state) => "{{{$state}}}")
                                         ->required(),
                                     Forms\Components\TextInput::make('default_value')->maxLength(191),
                                     Forms\Components\Fieldset::make('User Permissions')

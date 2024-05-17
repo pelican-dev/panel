@@ -77,13 +77,13 @@ class CreateServer extends CreateRecord
                 Forms\Components\Select::make('node_id')
                     ->disabledOn('edit')
                     ->prefixIcon('tabler-server-2')
-                    ->default(fn() => Node::query()->latest()->first()?->id)
+                    ->default(fn () => Node::query()->latest()->first()?->id)
                     ->columnSpan(2)
                     ->live()
                     ->relationship('node', 'name')
                     ->searchable()
                     ->preload()
-                    ->afterStateUpdated(fn(Forms\Set $set) => $set('allocation_id', null))
+                    ->afterStateUpdated(fn (Forms\Set $set) => $set('allocation_id', null))
                     ->required(),
 
                 Forms\Components\Select::make('allocation_id')
@@ -92,14 +92,14 @@ class CreateServer extends CreateRecord
                     ->prefixIcon('tabler-network')
                     ->label('Primary Allocation')
                     ->columnSpan(2)
-                    ->disabled(fn(Forms\Get $get) => $get('node_id') === null)
+                    ->disabled(fn (Forms\Get $get) => $get('node_id') === null)
                     ->searchable(['ip', 'port', 'ip_alias'])
                     ->afterStateUpdated(function (Forms\Set $set) {
                         $set('allocation_additional', null);
                         $set('allocation_additional.needstobeastringhere.extra_allocations', null);
                     })
                     ->getOptionLabelFromRecordUsing(
-                        fn(Allocation $allocation) => "$allocation->ip:$allocation->port" .
+                        fn (Allocation $allocation) => "$allocation->ip:$allocation->port" .
                         ($allocation->ip_alias ? " ($allocation->ip_alias)" : '')
                     )
                     ->placeholder(function (Forms\Get $get) {
@@ -114,11 +114,11 @@ class CreateServer extends CreateRecord
                     ->relationship(
                         'allocation',
                         'ip',
-                        fn(Builder $query, Forms\Get $get) => $query
+                        fn (Builder $query, Forms\Get $get) => $query
                             ->where('node_id', $get('node_id'))
                             ->whereNull('server_id'),
                     )
-                    ->createOptionForm(fn(Forms\Get $get) => [
+                    ->createOptionForm(fn (Forms\Get $get) => [
                         Forms\Components\TextInput::make('allocation_ip')
                             ->datalist(Node::find($get('node_id'))?->ipAddresses() ?? [])
                             ->label('IP Address')
@@ -189,7 +189,7 @@ class CreateServer extends CreateRecord
                                     $ports = $sortedPorts;
                                 }
 
-                                $ports = $ports->filter(fn($port) => $port > 1024 && $port < 65535)->values();
+                                $ports = $ports->filter(fn ($port) => $port > 1024 && $port < 65535)->values();
 
                                 if ($update) {
                                     $set('allocation_ports', $ports->all());
@@ -209,7 +209,7 @@ class CreateServer extends CreateRecord
                     ->label('Additional Allocations')
                     ->columnSpan(2)
                     ->addActionLabel('Add Allocation')
-                    ->disabled(fn(Forms\Get $get) => $get('allocation_id') === null)
+                    ->disabled(fn (Forms\Get $get) => $get('allocation_id') === null)
                     // ->addable() TODO disable when all allocations are taken
                     // ->addable() TODO disable until first additional allocation is selected
                     ->simple(
@@ -220,10 +220,10 @@ class CreateServer extends CreateRecord
                             ->prefixIcon('tabler-network')
                             ->label('Additional Allocations')
                             ->columnSpan(2)
-                            ->disabled(fn(Forms\Get $get) => $get('../../node_id') === null)
+                            ->disabled(fn (Forms\Get $get) => $get('../../node_id') === null)
                             ->searchable(['ip', 'port', 'ip_alias'])
                             ->getOptionLabelFromRecordUsing(
-                                fn(Allocation $allocation) => "$allocation->ip:$allocation->port" .
+                                fn (Allocation $allocation) => "$allocation->ip:$allocation->port" .
                                 ($allocation->ip_alias ? " ($allocation->ip_alias)" : '')
                             )
                             ->placeholder('Select additional Allocations')
@@ -231,7 +231,7 @@ class CreateServer extends CreateRecord
                             ->relationship(
                                 'allocations',
                                 'ip',
-                                fn(Builder $query, Forms\Get $get, Forms\Components\Select $component, $state) => $query
+                                fn (Builder $query, Forms\Get $get, Forms\Components\Select $component, $state) => $query
                                     ->where('node_id', $get('../../node_id'))
                                     ->whereNot('id', $get('../../allocation_id'))
                                     ->whereNull('server_id'),
@@ -313,7 +313,7 @@ class CreateServer extends CreateRecord
                     ->label('Docker Image Name')
                     ->prefixIcon('tabler-brand-docker')
                     ->live()
-                    ->afterStateUpdated(fn(Forms\Set $set, $state) => $set('image', $state))
+                    ->afterStateUpdated(fn (Forms\Set $set, $state) => $set('image', $state))
                     ->options(function ($state, Forms\Get $get, Forms\Set $set) {
                         $egg = Egg::query()->find($get('egg_id'));
                         $images = $egg->docker_images ?? [];
@@ -371,7 +371,7 @@ class CreateServer extends CreateRecord
                     ])
                     ->rows(function ($state) {
                         return str($state)->explode("\n")->reduce(
-                            fn(int $carry, $line) => $carry + floor(strlen($line) / 125),
+                            fn (int $carry, $line) => $carry + floor(strlen($line) / 125),
                             0
                         );
                     }),
@@ -393,7 +393,7 @@ class CreateServer extends CreateRecord
                     ]))
                     ->schema([
                         Forms\Components\Placeholder::make('Select an egg first to show its variables!')
-                            ->hidden(fn(Forms\Get $get) => !empty ($get('server_variables'))),
+                            ->hidden(fn (Forms\Get $get) => !empty($get('server_variables'))),
 
                         Forms\Components\Repeater::make('server_variables')
                             ->relationship('serverVariables')
@@ -404,14 +404,14 @@ class CreateServer extends CreateRecord
                             ->addable(false)
                             ->deletable(false)
                             ->default([])
-                            ->hidden(fn($state) => empty ($state))
+                            ->hidden(fn ($state) => empty($state))
                             ->schema(function () {
 
                                 $text = Forms\Components\TextInput::make('variable_value')
                                     ->hidden($this->shouldHideComponent(...))
                                     ->maxLength(191)
                                     ->rules([
-                                        fn(Forms\Get $get): Closure => function (string $attribute, $value, Closure $fail) use ($get) {
+                                        fn (Forms\Get $get): Closure => function (string $attribute, $value, Closure $fail) use ($get) {
                                             $validator = Validator::make(['validatorkey' => $value], [
                                                 'validatorkey' => $get('rules'),
                                             ]);
@@ -436,10 +436,10 @@ class CreateServer extends CreateRecord
                                     $component = $component
                                         ->live(onBlur: true)
                                         ->hintIcon('tabler-code')
-                                        ->label(fn(Forms\Get $get) => $get('name'))
-                                        ->hintIconTooltip(fn(Forms\Get $get) => $get('rules'))
-                                        ->prefix(fn(Forms\Get $get) => '{{' . $get('env_variable') . '}}')
-                                        ->helperText(fn(Forms\Get $get) => empty ($get('description')) ? '—' : $get('description'))
+                                        ->label(fn (Forms\Get $get) => $get('name'))
+                                        ->hintIconTooltip(fn (Forms\Get $get) => $get('rules'))
+                                        ->prefix(fn (Forms\Get $get) => '{{' . $get('env_variable') . '}}')
+                                        ->helperText(fn (Forms\Get $get) => empty($get('description')) ? '—' : $get('description'))
                                         ->afterStateUpdated(function (Forms\Set $set, Forms\Get $get, $state) {
                                             $environment = $get($envPath = '../../environment');
                                             $environment[$get('env_variable')] = $state;
@@ -471,7 +471,7 @@ class CreateServer extends CreateRecord
                                 Forms\Components\ToggleButtons::make('unlimited_mem')
                                     ->label('Memory')->inlineLabel()->inline()
                                     ->default(true)
-                                    ->afterStateUpdated(fn(Forms\Set $set) => $set('memory', 0))
+                                    ->afterStateUpdated(fn (Forms\Set $set) => $set('memory', 0))
                                     ->live()
                                     ->options([
                                         true => 'Unlimited',
@@ -485,7 +485,7 @@ class CreateServer extends CreateRecord
 
                                 Forms\Components\TextInput::make('memory')
                                     ->dehydratedWhenHidden()
-                                    ->hidden(fn(Forms\Get $get) => $get('unlimited_mem'))
+                                    ->hidden(fn (Forms\Get $get) => $get('unlimited_mem'))
                                     ->label('Memory Limit')->inlineLabel()
                                     ->suffix('MiB')
                                     ->default(0)
@@ -503,7 +503,7 @@ class CreateServer extends CreateRecord
                                     ->label('Disk Space')->inlineLabel()->inline()
                                     ->default(true)
                                     ->live()
-                                    ->afterStateUpdated(fn(Forms\Set $set) => $set('disk', 0))
+                                    ->afterStateUpdated(fn (Forms\Set $set) => $set('disk', 0))
                                     ->options([
                                         true => 'Unlimited',
                                         false => 'Limited',
@@ -516,7 +516,7 @@ class CreateServer extends CreateRecord
 
                                 Forms\Components\TextInput::make('disk')
                                     ->dehydratedWhenHidden()
-                                    ->hidden(fn(Forms\Get $get) => $get('unlimited_disk'))
+                                    ->hidden(fn (Forms\Get $get) => $get('unlimited_disk'))
                                     ->label('Disk Space Limit')->inlineLabel()
                                     ->suffix('MiB')
                                     ->default(0)
@@ -533,7 +533,7 @@ class CreateServer extends CreateRecord
                                 Forms\Components\ToggleButtons::make('unlimited_cpu')
                                     ->label('CPU')->inlineLabel()->inline()
                                     ->default(true)
-                                    ->afterStateUpdated(fn(Forms\Set $set) => $set('cpu', 0))
+                                    ->afterStateUpdated(fn (Forms\Set $set) => $set('cpu', 0))
                                     ->live()
                                     ->options([
                                         true => 'Unlimited',
@@ -547,7 +547,7 @@ class CreateServer extends CreateRecord
 
                                 Forms\Components\TextInput::make('cpu')
                                     ->dehydratedWhenHidden()
-                                    ->hidden(fn(Forms\Get $get) => $get('unlimited_cpu'))
+                                    ->hidden(fn (Forms\Get $get) => $get('unlimited_cpu'))
                                     ->label('CPU Limit')->inlineLabel()
                                     ->suffix('%')
                                     ->default(0)
@@ -591,7 +591,7 @@ class CreateServer extends CreateRecord
 
                                 Forms\Components\TextInput::make('swap')
                                     ->dehydratedWhenHidden()
-                                    ->hidden(fn(Forms\Get $get) => match ($get('swap_support')) {
+                                    ->hidden(fn (Forms\Get $get) => match ($get('swap_support')) {
                                         'disabled', 'unlimited' => true,
                                         'limited' => false,
                                     })
@@ -680,7 +680,7 @@ class CreateServer extends CreateRecord
     private function shouldHideComponent(Forms\Get $get, Forms\Components\Component $component): bool
     {
         $containsRuleIn = str($get('rules'))->explode('|')->reduce(
-            fn($result, $value) => $result === true && !str($value)->startsWith('in:'),
+            fn ($result, $value) => $result === true && !str($value)->startsWith('in:'),
             true
         );
 
@@ -698,15 +698,15 @@ class CreateServer extends CreateRecord
     private function getSelectOptionsFromRules(Forms\Get $get): array
     {
         $inRule = str($get('rules'))->explode('|')->reduce(
-            fn($result, $value) => str($value)->startsWith('in:') ? $value : $result,
+            fn ($result, $value) => str($value)->startsWith('in:') ? $value : $result,
             ''
         );
 
         return str($inRule)
             ->after('in:')
             ->explode(',')
-            ->each(fn($value) => str($value)->trim())
-            ->mapWithKeys(fn($value) => [$value => $value])
+            ->each(fn ($value) => str($value)->trim())
+            ->mapWithKeys(fn ($value) => [$value => $value])
             ->all();
     }
 }

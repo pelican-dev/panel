@@ -3,7 +3,6 @@
 namespace App\Filament\Client\Pages;
 
 use Filament\Pages\Page;
-use App\Models\User;
 
 class Dashboard extends Page
 {
@@ -25,11 +24,11 @@ class Dashboard extends Page
     public function getViewData(): array
     {
         $user = auth()->user();
-        
+
         return [
-            "heading" => "Welcome to " . config('app.name'),
-            "subheading" => "Welcome back " . $user->username,
+            'heading' => 'Welcome to ' . config('app.name'),
+            'subheading' => 'Welcome back ' . $user->username,
         ];
     }
-    
+
 }

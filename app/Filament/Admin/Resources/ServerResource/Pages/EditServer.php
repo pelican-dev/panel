@@ -46,18 +46,18 @@ class EditServer extends EditRecord
                         return $details['state'] ?? 'unknown';
                     })
                     ->options(
-                        fn($state) => collect(ContainerStatus::cases())->filter(fn($containerStatus) => $containerStatus->value === $state)->mapWithKeys(
-                            fn(ContainerStatus $state) => [$state->value => str($state->value)->replace('_', ' ')->ucwords()]
+                        fn ($state) => collect(ContainerStatus::cases())->filter(fn ($containerStatus) => $containerStatus->value === $state)->mapWithKeys(
+                            fn (ContainerStatus $state) => [$state->value => str($state->value)->replace('_', ' ')->ucwords()]
                         )
                     )
                     ->colors(
                         collect(ContainerStatus::cases())->mapWithKeys(
-                            fn(ContainerStatus $status) => [$status->value => $status->color()]
+                            fn (ContainerStatus $status) => [$status->value => $status->color()]
                         )
                     )
                     ->icons(
                         collect(ContainerStatus::cases())->mapWithKeys(
-                            fn(ContainerStatus $status) => [$status->value => $status->icon()]
+                            fn (ContainerStatus $status) => [$status->value => $status->icon()]
                         )
                     )
                     ->columnSpan([
@@ -71,20 +71,20 @@ class EditServer extends EditRecord
                     ->label('Server State')->inline()->inlineLabel()
                     ->helperText('')
 
-                    ->formatStateUsing(fn($state) => $state ?? ServerState::Normal)
+                    ->formatStateUsing(fn ($state) => $state ?? ServerState::Normal)
                     ->options(
-                        fn($state) => collect(ServerState::cases())->filter(fn($serverState) => $serverState->value === $state)->mapWithKeys(
-                            fn(ServerState $state) => [$state->value => str($state->value)->replace('_', ' ')->ucwords()]
+                        fn ($state) => collect(ServerState::cases())->filter(fn ($serverState) => $serverState->value === $state)->mapWithKeys(
+                            fn (ServerState $state) => [$state->value => str($state->value)->replace('_', ' ')->ucwords()]
                         )
                     )
                     ->colors(
                         collect(ServerState::cases())->mapWithKeys(
-                            fn(ServerState $state) => [$state->value => $state->color()]
+                            fn (ServerState $state) => [$state->value => $state->color()]
                         )
                     )
                     ->icons(
                         collect(ServerState::cases())->mapWithKeys(
-                            fn(ServerState $state) => [$state->value => $state->icon()]
+                            fn (ServerState $state) => [$state->value => $state->icon()]
                         )
                     )
                     ->columnSpan([
@@ -173,8 +173,8 @@ class EditServer extends EditRecord
                     ->label('Docker Image Name')
                     ->prefixIcon('tabler-brand-docker')
                     ->live()
-                    ->afterStateUpdated(fn(Forms\Set $set, $state) => $set('image', $state))
-                    ->formatStateUsing(fn(Forms\Get $get) => $get('image'))
+                    ->afterStateUpdated(fn (Forms\Set $set, $state) => $set('image', $state))
+                    ->formatStateUsing(fn (Forms\Get $get) => $get('image'))
                     ->options(function ($state, Forms\Get $get) {
                         $egg = Egg::query()->find($get('egg_id'));
                         $images = $egg->docker_images ?? [];
@@ -225,7 +225,7 @@ class EditServer extends EditRecord
                     ])
                     ->rows(function ($state) {
                         return str($state)->explode("\n")->reduce(
-                            fn(int $carry, $line) => $carry + floor(strlen($line) / 125),
+                            fn (int $carry, $line) => $carry + floor(strlen($line) / 125),
                             0
                         );
                     }),
@@ -249,7 +249,7 @@ class EditServer extends EditRecord
                             ->grid()
                             ->mutateRelationshipDataBeforeSaveUsing(function (array &$data): array {
                                 foreach ($data as $key => $value) {
-                                    if (!isset ($data['variable_value'])) {
+                                    if (!isset($data['variable_value'])) {
                                         $data['variable_value'] = '';
                                     }
                                 }
@@ -263,7 +263,7 @@ class EditServer extends EditRecord
                                     ->hidden($this->shouldHideComponent(...))
                                     ->maxLength(191)
                                     ->rules([
-                                        fn(ServerVariable $serverVariable): Closure => function (string $attribute, $value, Closure $fail) use ($serverVariable) {
+                                        fn (ServerVariable $serverVariable): Closure => function (string $attribute, $value, Closure $fail) use ($serverVariable) {
                                             $validator = Validator::make(['validatorkey' => $value], [
                                                 'validatorkey' => $serverVariable->variable->rules,
                                             ]);
@@ -288,10 +288,10 @@ class EditServer extends EditRecord
                                     $component = $component
                                         ->live(onBlur: true)
                                         ->hintIcon('tabler-code')
-                                        ->label(fn(ServerVariable $serverVariable) => $serverVariable->variable->name)
-                                        ->hintIconTooltip(fn(ServerVariable $serverVariable) => $serverVariable->variable->rules)
-                                        ->prefix(fn(ServerVariable $serverVariable) => '{{' . $serverVariable->variable->env_variable . '}}')
-                                        ->helperText(fn(ServerVariable $serverVariable) => empty ($serverVariable->variable->description) ? '—' : $serverVariable->variable->description);
+                                        ->label(fn (ServerVariable $serverVariable) => $serverVariable->variable->name)
+                                        ->hintIconTooltip(fn (ServerVariable $serverVariable) => $serverVariable->variable->rules)
+                                        ->prefix(fn (ServerVariable $serverVariable) => '{{' . $serverVariable->variable->env_variable . '}}')
+                                        ->helperText(fn (ServerVariable $serverVariable) => empty($serverVariable->variable->description) ? '—' : $serverVariable->variable->description);
                                 }
 
                                 return $components;
@@ -317,8 +317,8 @@ class EditServer extends EditRecord
                             ->schema([
                                 Forms\Components\ToggleButtons::make('unlimited_mem')
                                     ->label('Memory')->inlineLabel()->inline()
-                                    ->afterStateUpdated(fn(Forms\Set $set) => $set('memory', 0))
-                                    ->formatStateUsing(fn(Forms\Get $get) => $get('memory') == 0)
+                                    ->afterStateUpdated(fn (Forms\Set $set) => $set('memory', 0))
+                                    ->formatStateUsing(fn (Forms\Get $get) => $get('memory') == 0)
                                     ->live()
                                     ->options([
                                         true => 'Unlimited',
@@ -332,7 +332,7 @@ class EditServer extends EditRecord
 
                                 Forms\Components\TextInput::make('memory')
                                     ->dehydratedWhenHidden()
-                                    ->hidden(fn(Forms\Get $get) => $get('unlimited_mem'))
+                                    ->hidden(fn (Forms\Get $get) => $get('unlimited_mem'))
                                     ->label('Memory Limit')->inlineLabel()
                                     ->suffix('MiB')
                                     ->required()
@@ -348,8 +348,8 @@ class EditServer extends EditRecord
                                 Forms\Components\ToggleButtons::make('unlimited_disk')
                                     ->label('Disk Space')->inlineLabel()->inline()
                                     ->live()
-                                    ->afterStateUpdated(fn(Forms\Set $set) => $set('disk', 0))
-                                    ->formatStateUsing(fn(Forms\Get $get) => $get('disk') == 0)
+                                    ->afterStateUpdated(fn (Forms\Set $set) => $set('disk', 0))
+                                    ->formatStateUsing(fn (Forms\Get $get) => $get('disk') == 0)
                                     ->options([
                                         true => 'Unlimited',
                                         false => 'Limited',
@@ -362,7 +362,7 @@ class EditServer extends EditRecord
 
                                 Forms\Components\TextInput::make('disk')
                                     ->dehydratedWhenHidden()
-                                    ->hidden(fn(Forms\Get $get) => $get('unlimited_disk'))
+                                    ->hidden(fn (Forms\Get $get) => $get('unlimited_disk'))
                                     ->label('Disk Space Limit')->inlineLabel()
                                     ->suffix('MiB')
                                     ->required()
@@ -377,8 +377,8 @@ class EditServer extends EditRecord
                             ->schema([
                                 Forms\Components\ToggleButtons::make('unlimited_cpu')
                                     ->label('CPU')->inlineLabel()->inline()
-                                    ->afterStateUpdated(fn(Forms\Set $set) => $set('cpu', 0))
-                                    ->formatStateUsing(fn(Forms\Get $get) => $get('cpu') == 0)
+                                    ->afterStateUpdated(fn (Forms\Set $set) => $set('cpu', 0))
+                                    ->formatStateUsing(fn (Forms\Get $get) => $get('cpu') == 0)
                                     ->live()
                                     ->options([
                                         true => 'Unlimited',
@@ -392,7 +392,7 @@ class EditServer extends EditRecord
 
                                 Forms\Components\TextInput::make('cpu')
                                     ->dehydratedWhenHidden()
-                                    ->hidden(fn(Forms\Get $get) => $get('unlimited_cpu'))
+                                    ->hidden(fn (Forms\Get $get) => $get('unlimited_cpu'))
                                     ->label('CPU Limit')->inlineLabel()
                                     ->suffix('%')
                                     ->required()
@@ -438,7 +438,7 @@ class EditServer extends EditRecord
 
                                 Forms\Components\TextInput::make('swap')
                                     ->dehydratedWhenHidden()
-                                    ->hidden(fn(Forms\Get $get) => match ($get('swap_support')) {
+                                    ->hidden(fn (Forms\Get $get) => match ($get('swap_support')) {
                                         'disabled', 'unlimited', true => true,
                                         'limited', false => false,
                                     })
@@ -511,12 +511,12 @@ class EditServer extends EditRecord
             Actions\DeleteAction::make('Delete')
                 ->successRedirectUrl(route('filament.admin.resources.servers.index'))
                 ->color('danger')
-                ->after(fn(Server $server) => resolve(ServerDeletionService::class)->handle($server))
+                ->after(fn (Server $server) => resolve(ServerDeletionService::class)->handle($server))
                 ->requiresConfirmation(),
             Actions\Action::make('console')
                 ->label('Console')
                 ->icon('tabler-terminal')
-                ->url(fn(Server $server) => "/server/$server->uuid_short"),
+                ->url(fn (Server $server) => "/server/$server->uuid_short"),
             $this->getSaveFormAction()->formId('form'),
         ];
 
@@ -543,7 +543,7 @@ class EditServer extends EditRecord
     private function shouldHideComponent(Forms\Get $get, Forms\Components\Component $component): bool
     {
         $containsRuleIn = str($get('rules'))->explode('|')->reduce(
-            fn($result, $value) => $result === true && !str($value)->startsWith('in:'),
+            fn ($result, $value) => $result === true && !str($value)->startsWith('in:'),
             true
         );
 
@@ -561,15 +561,15 @@ class EditServer extends EditRecord
     private function getSelectOptionsFromRules(Forms\Get $get): array
     {
         $inRule = str($get('rules'))->explode('|')->reduce(
-            fn($result, $value) => str($value)->startsWith('in:') ? $value : $result,
+            fn ($result, $value) => str($value)->startsWith('in:') ? $value : $result,
             ''
         );
 
         return str($inRule)
             ->after('in:')
             ->explode(',')
-            ->each(fn($value) => str($value)->trim())
-            ->mapWithKeys(fn($value) => [$value => $value])
+            ->each(fn ($value) => str($value)->trim())
+            ->mapWithKeys(fn ($value) => [$value => $value])
             ->all();
     }
 }

@@ -29,7 +29,7 @@ class ApiKeyResource extends Resource
         return [
             'all' => Tab::make('All Keys'),
             'application' => Tab::make('Application Keys')
-                ->modifyQueryUsing(fn(Builder $query) => $query->where('key_type', ApiKey::TYPE_APPLICATION)),
+                ->modifyQueryUsing(fn (Builder $query) => $query->where('key_type', ApiKey::TYPE_APPLICATION)),
         ];
     }
 

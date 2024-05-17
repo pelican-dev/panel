@@ -25,13 +25,13 @@ class ListMounts extends ListRecords
                 Tables\Columns\TextColumn::make('target')
                     ->searchable(),
                 Tables\Columns\IconColumn::make('read_only')
-                    ->icon(fn(bool $state) => $state ? 'tabler-circle-check-filled' : 'tabler-circle-x-filled')
-                    ->color(fn(bool $state) => $state ? 'success' : 'danger')
+                    ->icon(fn (bool $state) => $state ? 'tabler-circle-check-filled' : 'tabler-circle-x-filled')
+                    ->color(fn (bool $state) => $state ? 'success' : 'danger')
                     ->sortable(),
                 Tables\Columns\IconColumn::make('user_mountable')
                     ->hidden()
-                    ->icon(fn(bool $state) => $state ? 'tabler-circle-check-filled' : 'tabler-circle-x-filled')
-                    ->color(fn(bool $state) => $state ? 'success' : 'danger')
+                    ->icon(fn (bool $state) => $state ? 'tabler-circle-check-filled' : 'tabler-circle-x-filled')
+                    ->color(fn (bool $state) => $state ? 'success' : 'danger')
                     ->sortable(),
             ])
             ->filters([
@@ -59,7 +59,7 @@ class ListMounts extends ListRecords
         return [
             Actions\CreateAction::make()
                 ->label('Create Mount')
-                ->hidden(fn() => Mount::count() <= 0),
+                ->hidden(fn () => Mount::count() <= 0),
         ];
     }
 }

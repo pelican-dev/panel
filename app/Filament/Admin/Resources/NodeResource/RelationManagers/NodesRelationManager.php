@@ -21,20 +21,20 @@ class NodesRelationManager extends RelationManager
                 Tables\Columns\TextColumn::make('user.username')
                     ->label('Owner')
                     ->icon('tabler-user')
-                    ->url(fn(Server $server): string => route('filament.admin.resources.users.edit', ['record' => $server->user]))
+                    ->url(fn (Server $server): string => route('filament.admin.resources.users.edit', ['record' => $server->user]))
                     ->searchable(),
                 Tables\Columns\TextColumn::make('name')
                     ->icon('tabler-brand-docker')
-                    ->url(fn(Server $server): string => route('filament.admin.resources.servers.edit', ['record' => $server]))
+                    ->url(fn (Server $server): string => route('filament.admin.resources.servers.edit', ['record' => $server]))
                     ->searchable()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('egg.name')
                     ->icon('tabler-egg')
-                    ->url(fn(Server $server): string => route('filament.admin.resources.eggs.edit', ['record' => $server->user]))
+                    ->url(fn (Server $server): string => route('filament.admin.resources.eggs.edit', ['record' => $server->user]))
                     ->sortable(),
                 Tables\Columns\SelectColumn::make('allocation.id')
                     ->label('Primary Allocation')
-                    ->options(fn($state, Server $server) => [$server->allocation->id => $server->allocation->address])
+                    ->options(fn ($state, Server $server) => [$server->allocation->id => $server->allocation->address])
                     ->selectablePlaceholder(false)
                     ->sortable(),
                 Tables\Columns\TextColumn::make('memory')->icon('tabler-device-desktop-analytics'),
