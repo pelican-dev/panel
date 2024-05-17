@@ -87,13 +87,15 @@ class ListUsers extends ListRecords
                                 ->alphaNum()
                                 ->required()
                                 ->maxLength(191),
-                            Forms\Components\TextInput::make('email')->email()->required()->maxLength(191),
+                            Forms\Components\TextInput::make('email')
+                                ->email()
+                                ->required()
+                                ->unique()
+                                ->maxLength(191),
 
                             Forms\Components\TextInput::make('password')
                                 ->hintIcon('tabler-question-mark')
                                 ->hintIconTooltip('Providing a user password is optional. New user email will prompt users to create a password the first time they login.')
-                                ->dehydrateStateUsing(fn (string $state): string => Hash::make($state))
-                                ->dehydrated(fn (?string $state): bool => filled($state))
                                 ->password(),
 
                             Forms\Components\ToggleButtons::make('root_admin')
@@ -106,13 +108,6 @@ class ListUsers extends ListRecords
                                     false => 'primary',
                                     true => 'danger',
                                 ])
-                                ->disableOptionWhen(function (string $operation, $value, User $user) {
-                                    if ($operation !== 'edit' || $value) {
-                                        return false;
-                                    }
-
-                                    return $user->isLastRootAdmin();
-                                })
                                 ->hint(fn (User $user) => $user->isLastRootAdmin() ? 'This is the last root administrator!' : '')
                                 ->helperText(fn (User $user) => $user->isLastRootAdmin() ? 'You must have at least one root administrator in your system.' : '')
                                 ->hintColor('warning')
