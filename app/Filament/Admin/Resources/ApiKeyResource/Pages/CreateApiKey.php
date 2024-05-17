@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Filament\Resources\ApiKeyResource\Pages;
+namespace App\Filament\Resources\Admin\ApiKeyResource\Pages;
 
 use App\Filament\Resources\ApiKeyResource;
 use App\Models\ApiKey;

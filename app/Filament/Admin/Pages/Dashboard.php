@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Filament\Pages;
+namespace App\Filament\Admin\Pages;
 
 use App\Filament\Resources\NodeResource\Pages\ListNodes;
 use App\Models\Egg;
