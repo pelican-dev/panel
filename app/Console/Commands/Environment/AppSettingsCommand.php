@@ -103,7 +103,13 @@ class AppSettingsCommand extends Command
             $this->variables['SESSION_SECURE_COOKIE'] = 'true';
         }
 
-        $this->checkForRedis();
+        $redisUsed = count(collect($this->variables)->filter(function ($item) {
+            return $item === 'redis';
+        })) !== 0;
+
+        if ($redisUsed) {
+            $this->requestRedisSettings();
+        }
 
         $path = base_path('.env');
         if (!file_exists($path)) {
@@ -116,25 +122,18 @@ class AppSettingsCommand extends Command
             Artisan::call('key:generate');
         }
 
+        Artisan::call('p:environment:queue-service', $redisUsed ? ['--use-redis'] : []);
+
         $this->info($this->console->output());
 
         return 0;
     }
 
     /**
-     * Check if redis is selected, if so, request connection details and verify them.
+     * Request connection details and verify them.
      */
-    private function checkForRedis()
+    private function requestRedisSettings(): void
     {
-        $items = collect($this->variables)->filter(function ($item) {
-            return $item === 'redis';
-        });
-
-        // Redis was not selected, no need to continue.
-        if (count($items) === 0) {
-            return;
-        }
-
         $this->output->note(__('commands.appsettings.redis.note'));
         $this->variables['REDIS_HOST'] = $this->option('redis-host') ?? $this->ask(
             'Redis Host',
