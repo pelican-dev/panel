@@ -255,7 +255,8 @@ class CreateNode extends CreateRecord
                                         ->suffix('MiB')
                                         ->columnSpan(2)
                                         ->numeric()
-                                        ->minValue(0),
+                                        ->minValue(0)
+                                        ->default(0),
                                     Forms\Components\TextInput::make('memory_overallocate')
                                         ->dehydratedWhenHidden()
                                         ->label('Overallocate')->inlineLabel()
@@ -266,6 +267,7 @@ class CreateNode extends CreateRecord
                                         ->numeric()
                                         ->minValue(-1)
                                         ->maxValue(100)
+                                        ->default(0)
                                         ->suffix('%'),
                                 ]),
                             Forms\Components\Grid::make()
@@ -294,7 +296,8 @@ class CreateNode extends CreateRecord
                                         ->suffix('MiB')
                                         ->columnSpan(2)
                                         ->numeric()
-                                        ->minValue(0),
+                                        ->minValue(0)
+                                        ->default(0),
                                     Forms\Components\TextInput::make('disk_overallocate')
                                         ->dehydratedWhenHidden()
                                         ->hidden(fn (Forms\Get $get) => $get('unlimited_disk'))
@@ -305,6 +308,7 @@ class CreateNode extends CreateRecord
                                         ->numeric()
                                         ->minValue(-1)
                                         ->maxValue(100)
+                                        ->default(0)
                                         ->suffix('%'),
                                 ]),
                         ]),
