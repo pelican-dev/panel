@@ -19,7 +19,7 @@ use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\AuthenticateSession;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
-use Saade\FilamentLaravelLog\FilamentLaravelLogPlugin;
+use Filament\Navigation\NavigationItem;
 
 class AdminPanelProvider extends PanelProvider
 {
@@ -51,12 +51,21 @@ class AdminPanelProvider extends PanelProvider
                 'warning' => Color::Amber,
                 'blurple' => Color::hex('#5865F2'),
             ])
+            ->renderHook(
+                'panels::sidebar.footer',
+                fn () => view('filament.Footer'),
+            )
+            ->navigationItems([
+                NavigationItem::make('client')
+                    ->label('Return to client')
+                    ->url('/') // TODO once the Filament client side is done this can be changed to /client
+                    ->icon('tabler-arrow-back')
+                    ->sort(12)
+                    ->visible(fn (): bool => auth()->user()->root_admin),
+            ])
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\\Filament\\Resources')
             ->discoverPages(in: app_path('Filament/Pages'), for: 'App\\Filament\\Pages')
             ->discoverClusters(in: app_path('Filament/Clusters'), for: 'App\\Filament\\Clusters')
-            ->pages([
-                // Pages\Dashboard::class,
-            ])
             ->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\\Filament\\Widgets')
             ->widgets([
                 Widgets\AccountWidget::class,
@@ -76,13 +85,6 @@ class AdminPanelProvider extends PanelProvider
             ])
             ->authMiddleware([
                 Authenticate::class,
-            ])
-            ->plugin(
-                FilamentLaravelLogPlugin::make()
-                    ->navigationLabel('Logs')
-                    ->navigationIcon('tabler-file-info')
-                    ->slug('logs')
-                    ->authorize(fn () => auth()->user()->root_admin)
-            );
+            ]);
     }
 }
