@@ -59,7 +59,7 @@ class ClientPanelProvider extends PanelProvider
                 'blurple' => Color::hex('#5865F2'),
             ])
             ->renderHook(
-                'panels::body.end',
+                'panels::sidebar.footer',
                 fn () => view('filament.Footer'),
             )
             ->discoverResources(in: app_path('Filament/Client/Resources'), for: 'App\\Filament\\Client\\Resources')
