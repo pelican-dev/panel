@@ -24,9 +24,9 @@ class AppSettingsCommand extends Command
     ];
 
     public const QUEUE_DRIVERS = [
-        'sync' => 'Synchronous (recommended)',
-        'database' => 'Database',
+        'database' => 'Database (recommended)',
         'redis' => 'Redis',
+        'sync' => 'Synchronous',
     ];
 
     protected $description = 'Configure basic environment settings for the Panel.';
