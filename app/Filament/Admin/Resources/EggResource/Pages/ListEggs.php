@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Filament\Resources\EggResource\Pages;
+namespace App\Filament\Admin\Resources\EggResource\Pages;
 
-use App\Filament\Resources\EggResource;
+use App\Filament\Admin\Resources\EggResource;
 use App\Models\Egg;
 use App\Services\Eggs\Sharing\EggImporterService;
 use Exception;
@@ -23,7 +23,7 @@ class ListEggs extends ListRecords
         return $table
             ->searchable(false)
             ->defaultPaginationPageOption(25)
-            ->checkIfRecordIsSelectableUsing(fn (Egg $egg) => $egg->servers_count <= 0)
+            ->checkIfRecordIsSelectableUsing(fn(Egg $egg) => $egg->servers_count <= 0)
             ->columns([
                 Tables\Columns\TextColumn::make('id')
                     ->label('Id')
@@ -31,7 +31,7 @@ class ListEggs extends ListRecords
                     ->searchable(),
                 Tables\Columns\TextColumn::make('name')
                     ->icon('tabler-egg')
-                    ->description(fn ($record): ?string => $record->description)
+                    ->description(fn($record): ?string => $record->description)
                     ->wrap()
                     ->searchable(),
                 Tables\Columns\TextColumn::make('author')
@@ -61,7 +61,7 @@ class ListEggs extends ListRecords
                     ->label('Export')
                     ->color('primary')
                     // TODO uses old admin panel export service
-                    ->url(fn (Egg $egg): string => route('admin.eggs.export', ['egg' => $egg])),
+                    ->url(fn(Egg $egg): string => route('admin.eggs.export', ['egg' => $egg])),
             ])
             ->headerActions([
                 //

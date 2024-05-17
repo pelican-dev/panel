@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Filament\Resources\NodeResource\Widgets;
+namespace App\Filament\Admin\Resources\NodeResource\Widgets;
 
 use App\Models\Node;
 use Filament\Widgets\ChartWidget;

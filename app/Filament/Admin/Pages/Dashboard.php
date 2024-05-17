@@ -2,7 +2,7 @@
 
 namespace App\Filament\Admin\Pages;
 
-use App\Filament\Resources\NodeResource\Pages\ListNodes;
+use App\Filament\Admin\Resources\NodeResource\Pages\ListNodes;
 use App\Models\Egg;
 use App\Models\Node;
 use App\Models\Server;

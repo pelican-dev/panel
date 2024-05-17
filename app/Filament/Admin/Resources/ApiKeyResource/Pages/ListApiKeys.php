@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Filament\Resources\Admin\ApiKeyResource\Pages;
+namespace App\Filament\Admin\Resources\ApiKeyResource\Pages;
 
-use App\Filament\Resources\ApiKeyResource;
+use App\Filament\Admin\Resources\ApiKeyResource;
 use App\Models\ApiKey;
 use Filament\Actions;
 use Filament\Resources\Components\Tab;
@@ -28,7 +28,7 @@ class ListApiKeys extends ListRecords
                 Tables\Columns\TextColumn::make('key')
                     ->copyable()
                     ->icon('tabler-clipboard-text')
-                    ->state(fn (ApiKey $key) => $key->identifier . decrypt($key->token)),
+                    ->state(fn(ApiKey $key) => $key->identifier . decrypt($key->token)),
 
                 Tables\Columns\TextColumn::make('memo')
                     ->label('Description')
@@ -70,10 +70,12 @@ class ListApiKeys extends ListRecords
         return [
             'all' => Tab::make('All Keys'),
             'application' => Tab::make('Application Keys')
-                ->modifyQueryUsing(fn (Builder $query) => $query->where('key_type', ApiKey::TYPE_APPLICATION)
+                ->modifyQueryUsing(
+                    fn(Builder $query) => $query->where('key_type', ApiKey::TYPE_APPLICATION)
                 ),
             'account' => Tab::make('Account Keys')
-                ->modifyQueryUsing(fn (Builder $query) => $query->where('key_type', ApiKey::TYPE_ACCOUNT)
+                ->modifyQueryUsing(
+                    fn(Builder $query) => $query->where('key_type', ApiKey::TYPE_ACCOUNT)
                 ),
         ];
     }

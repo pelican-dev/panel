@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Filament\Resources\UserResource\Pages;
+namespace App\Filament\Admin\Resources\UserResource\Pages;
 
-use App\Filament\Resources\UserResource;
+use App\Filament\Admin\Resources\UserResource;
 use Filament\Resources\Pages\CreateRecord;
 use App\Models\User;
 use Filament\Forms;
@@ -28,9 +28,9 @@ class CreateUser extends CreateRecord
                     Forms\Components\TextInput::make('email')->email()->required()->maxLength(191),
 
                     Forms\Components\TextInput::make('password')
-                        ->dehydrateStateUsing(fn (string $state): string => Hash::make($state))
-                        ->dehydrated(fn (?string $state): bool => filled($state))
-                        ->required(fn (string $operation): bool => $operation === 'create')
+                        ->dehydrateStateUsing(fn(string $state): string => Hash::make($state))
+                        ->dehydrated(fn(?string $state): bool => filled($state))
+                        ->required(fn(string $operation): bool => $operation === 'create')
                         ->password(),
 
                     Forms\Components\ToggleButtons::make('root_admin')
@@ -50,8 +50,8 @@ class CreateUser extends CreateRecord
 
                             return $user->isLastRootAdmin();
                         })
-                        ->hint(fn (User $user) => $user->isLastRootAdmin() ? 'This is the last root administrator!' : '')
-                        ->helperText(fn (User $user) => $user->isLastRootAdmin() ? 'You must have at least one root administrator in your system.' : '')
+                        ->hint(fn(User $user) => $user->isLastRootAdmin() ? 'This is the last root administrator!' : '')
+                        ->helperText(fn(User $user) => $user->isLastRootAdmin() ? 'You must have at least one root administrator in your system.' : '')
                         ->hintColor('warning')
                         ->inline()
                         ->required()
@@ -62,7 +62,7 @@ class CreateUser extends CreateRecord
                         ->required()
                         ->hidden()
                         ->default('en')
-                        ->options(fn (User $user) => $user->getAvailableLanguages()),
+                        ->options(fn(User $user) => $user->getAvailableLanguages()),
                 ])->columns(2),
             ]);
     }

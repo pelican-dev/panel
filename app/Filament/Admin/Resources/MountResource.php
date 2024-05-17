@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Filament\Resources;
+namespace App\Filament\Admin\Resources;
 
-use App\Filament\Resources\MountResource\Pages;
+use App\Filament\Admin\Resources\MountResource\Pages;
 use App\Models\Mount;
 use Filament\Resources\Resource;
 

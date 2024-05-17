@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Filament\Resources\NodeResource\Pages;
+namespace App\Filament\Admin\Resources\NodeResource\Pages;
 
-use App\Filament\Resources\NodeResource;
-use App\Filament\Resources\NodeResource\Widgets\NodeMemoryChart;
-use App\Filament\Resources\NodeResource\Widgets\NodeStorageChart;
+use App\Filament\Admin\Resources\NodeResource;
+use App\Filament\Admin\Resources\NodeResource\Widgets\NodeMemoryChart;
+use App\Filament\Admin\Resources\NodeResource\Widgets\NodeStorageChart;
 use App\Models\Node;
 use Filament\Actions;
 use Filament\Forms;
@@ -38,9 +38,9 @@ class EditNode extends EditRecord
                                 ->required()
                                 ->autofocus()
                                 ->live(debounce: 1500)
-                                ->rule('prohibited', fn ($state) => is_ip($state) && request()->isSecure())
-                                ->label(fn ($state) => is_ip($state) ? 'IP Address' : 'Domain Name')
-                                ->placeholder(fn ($state) => is_ip($state) ? '192.168.1.1' : 'node.example.com')
+                                ->rule('prohibited', fn($state) => is_ip($state) && request()->isSecure())
+                                ->label(fn($state) => is_ip($state) ? 'IP Address' : 'Domain Name')
+                                ->placeholder(fn($state) => is_ip($state) ? '192.168.1.1' : 'node.example.com')
                                 ->helperText(function ($state) {
                                     if (is_ip($state)) {
                                         if (request()->isSecure()) {
@@ -104,7 +104,7 @@ class EditNode extends EditRecord
                                 ->disabled()
                                 ->inline()
                                 ->default(null)
-                                ->hint(fn (Forms\Get $get) => $get('ip'))
+                                ->hint(fn(Forms\Get $get) => $get('ip'))
                                 ->hintColor('success')
                                 ->options([
                                     true => 'Valid',
@@ -170,7 +170,7 @@ class EditNode extends EditRecord
 
                                     return '';
                                 })
-                                ->disableOptionWhen(fn (string $value): bool => $value === 'http' && request()->isSecure())
+                                ->disableOptionWhen(fn(string $value): bool => $value === 'http' && request()->isSecure())
                                 ->options([
                                     'http' => 'HTTP',
                                     'https' => 'HTTPS (SSL)',
@@ -183,7 +183,8 @@ class EditNode extends EditRecord
                                     'http' => 'tabler-lock-open-off',
                                     'https' => 'tabler-lock',
                                 ])
-                                ->default(fn () => request()->isSecure() ? 'https' : 'http'), ]),
+                                ->default(fn() => request()->isSecure() ? 'https' : 'http'),
+                        ]),
                     Tabs\Tab::make('Advanced Settings')
                         ->icon('tabler-server-cog')
                         ->schema([
@@ -241,9 +242,9 @@ class EditNode extends EditRecord
                                 ->schema([
                                     Forms\Components\ToggleButtons::make('unlimited_mem')
                                         ->label('Memory')->inlineLabel()->inline()
-                                        ->afterStateUpdated(fn (Forms\Set $set) => $set('memory', 0))
-                                        ->afterStateUpdated(fn (Forms\Set $set) => $set('memory_overallocate', 0))
-                                        ->formatStateUsing(fn (Forms\Get $get) => $get('memory') == 0)
+                                        ->afterStateUpdated(fn(Forms\Set $set) => $set('memory', 0))
+                                        ->afterStateUpdated(fn(Forms\Set $set) => $set('memory_overallocate', 0))
+                                        ->formatStateUsing(fn(Forms\Get $get) => $get('memory') == 0)
                                         ->live()
                                         ->options([
                                             true => 'Unlimited',
@@ -256,7 +257,7 @@ class EditNode extends EditRecord
                                         ->columnSpan(2),
                                     Forms\Components\TextInput::make('memory')
                                         ->dehydratedWhenHidden()
-                                        ->hidden(fn (Forms\Get $get) => $get('unlimited_mem'))
+                                        ->hidden(fn(Forms\Get $get) => $get('unlimited_mem'))
                                         ->label('Memory Limit')->inlineLabel()
                                         ->suffix('MiB')
                                         ->required()
@@ -267,7 +268,7 @@ class EditNode extends EditRecord
                                         ->dehydratedWhenHidden()
                                         ->label('Overallocate')->inlineLabel()
                                         ->required()
-                                        ->hidden(fn (Forms\Get $get) => $get('unlimited_mem'))
+                                        ->hidden(fn(Forms\Get $get) => $get('unlimited_mem'))
                                         ->hintIcon('tabler-question-mark')
                                         ->hintIconTooltip('The % allowable to go over the set limit.')
                                         ->columnSpan(2)
@@ -283,9 +284,9 @@ class EditNode extends EditRecord
                                     Forms\Components\ToggleButtons::make('unlimited_disk')
                                         ->label('Disk')->inlineLabel()->inline()
                                         ->live()
-                                        ->afterStateUpdated(fn (Forms\Set $set) => $set('disk', 0))
-                                        ->afterStateUpdated(fn (Forms\Set $set) => $set('disk_overallocate', 0))
-                                        ->formatStateUsing(fn (Forms\Get $get) => $get('disk') == 0)
+                                        ->afterStateUpdated(fn(Forms\Set $set) => $set('disk', 0))
+                                        ->afterStateUpdated(fn(Forms\Set $set) => $set('disk_overallocate', 0))
+                                        ->formatStateUsing(fn(Forms\Get $get) => $get('disk') == 0)
                                         ->options([
                                             true => 'Unlimited',
                                             false => 'Limited',
@@ -297,7 +298,7 @@ class EditNode extends EditRecord
                                         ->columnSpan(2),
                                     Forms\Components\TextInput::make('disk')
                                         ->dehydratedWhenHidden()
-                                        ->hidden(fn (Forms\Get $get) => $get('unlimited_disk'))
+                                        ->hidden(fn(Forms\Get $get) => $get('unlimited_disk'))
                                         ->label('Disk Limit')->inlineLabel()
                                         ->suffix('MiB')
                                         ->required()
@@ -306,7 +307,7 @@ class EditNode extends EditRecord
                                         ->minValue(0),
                                     Forms\Components\TextInput::make('disk_overallocate')
                                         ->dehydratedWhenHidden()
-                                        ->hidden(fn (Forms\Get $get) => $get('unlimited_disk'))
+                                        ->hidden(fn(Forms\Get $get) => $get('unlimited_disk'))
                                         ->label('Overallocate')->inlineLabel()
                                         ->hintIcon('tabler-question-mark')
                                         ->hintIconTooltip('The % allowable to go over the set limit.')
@@ -354,8 +355,8 @@ class EditNode extends EditRecord
     {
         return [
             Actions\DeleteAction::make()
-                ->disabled(fn (Node $node) => $node->servers()->count() > 0)
-                ->label(fn (Node $node) => $node->servers()->count() > 0 ? 'Node Has Servers' : 'Delete'),
+                ->disabled(fn(Node $node) => $node->servers()->count() > 0)
+                ->label(fn(Node $node) => $node->servers()->count() > 0 ? 'Node Has Servers' : 'Delete'),
             $this->getSaveFormAction()->formId('form'),
         ];
     }

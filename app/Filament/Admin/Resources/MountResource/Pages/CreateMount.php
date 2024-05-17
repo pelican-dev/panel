@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Filament\Resources\MountResource\Pages;
+namespace App\Filament\Admin\Resources\MountResource\Pages;
 
-use App\Filament\Resources\MountResource;
+use App\Filament\Admin\Resources\MountResource;
 use Filament\Forms\Components\Group;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
@@ -76,9 +76,9 @@ class CreateMount extends CreateRecord
                         ->columnSpanFull(),
                     Forms\Components\Hidden::make('user_mountable')->default(1),
                 ])->columnSpan(1)->columns([
-                    'default' => 1,
-                    'lg' => 2,
-                ]),
+                            'default' => 1,
+                            'lg' => 2,
+                        ]),
                 Group::make()->schema([
                     Section::make()->schema([
                         Select::make('eggs')->multiple()
@@ -90,13 +90,13 @@ class CreateMount extends CreateRecord
                             ->preload(),
                     ]),
                 ])->columns([
+                            'default' => 1,
+                            'lg' => 2,
+                        ]),
+            ])->columns([
                     'default' => 1,
                     'lg' => 2,
-                ]),
-            ])->columns([
-                'default' => 1,
-                'lg' => 2,
-            ]);
+                ]);
     }
 
     protected function handleRecordCreation(array $data): Model

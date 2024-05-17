@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Filament\Resources\UserResource\Pages;
+namespace App\Filament\Admin\Resources\UserResource\Pages;
 
 use App\Facades\Activity;
 use App\Models\ActivityLog;
@@ -64,8 +64,8 @@ class EditProfile extends \Filament\Pages\Auth\EditProfile
                                             ->revealable(filament()->arePasswordsRevealable())
                                             ->rule(Password::default())
                                             ->autocomplete('new-password')
-                                            ->dehydrated(fn ($state): bool => filled($state))
-                                            ->dehydrateStateUsing(fn ($state): string => Hash::make($state))
+                                            ->dehydrated(fn($state): bool => filled($state))
+                                            ->dehydrateStateUsing(fn($state): string => Hash::make($state))
                                             ->live(debounce: 500)
                                             ->same('passwordConfirmation'),
 
@@ -75,7 +75,7 @@ class EditProfile extends \Filament\Pages\Auth\EditProfile
                                             ->prefixIcon('tabler-password-fingerprint')
                                             ->revealable(filament()->arePasswordsRevealable())
                                             ->required()
-                                            ->visible(fn (Get $get): bool => filled($get('password')))
+                                            ->visible(fn(Get $get): bool => filled($get('password')))
                                             ->dehydrated(false),
 
                                         Select::make('language')
@@ -84,13 +84,14 @@ class EditProfile extends \Filament\Pages\Auth\EditProfile
                                             ->prefixIcon('tabler-flag')
                                             ->live()
                                             ->default('en')
-                                            ->helperText(fn (User $user, $state) => new HtmlString($user->isLanguageTranslated($state) ? '' : "
+                                            ->helperText(
+                                                fn(User $user, $state) => new HtmlString($user->isLanguageTranslated($state) ? '' : "
                                                 Your language ($state) has not been translated yet!
                                                 But never fear, you can help fix that by
                                                 <a style='color: rgb(56, 189, 248)' href='https://crowdin.com/project/pelican-dev'>contributing directly here</a>.
                                             ")
                                             )
-                                            ->options(fn (User $user) => $user->getAvailableLanguages()),
+                                            ->options(fn(User $user) => $user->getAvailableLanguages()),
                                     ]),
 
                                 Tab::make('2FA')
@@ -114,12 +115,12 @@ class EditProfile extends \Filament\Pages\Auth\EditProfile
                                         ]);
 
                                         // https://github.com/chillerlan/php-qrcode/blob/main/examples/svgWithLogo.php
-
+                            
                                         // SVG logo options (see extended class)
                                         $options->svgLogo = public_path('pelican.svg'); // logo from: https://github.com/simple-icons/simple-icons
                                         $options->svgLogoScale = 0.05;
                                         // $options->svgLogoCssClass     = 'dark';
-
+                            
                                         // QROptions
                                         $options->version = Version::AUTO;
                                         // $options->outputInterface     = QRSvgWithLogo::class;
@@ -130,7 +131,7 @@ class EditProfile extends \Filament\Pages\Auth\EditProfile
                                         $options->connectPaths = true;
                                         $options->drawCircularModules = true;
                                         // $options->circleRadius        = 0.45;
-
+                            
                                         $options->svgDefs = '<linearGradient id="gradient" x1="100%" y2="100%">
                                             <stop stop-color="#7dd4fc" offset="0"/>
                                             <stop stop-color="#38bdf8" offset="0.5"/>
@@ -146,7 +147,7 @@ class EditProfile extends \Filament\Pages\Auth\EditProfile
                                         return [
                                             Placeholder::make('qr')
                                                 ->label('Scan QR Code')
-                                                ->content(fn () => new HtmlString("
+                                                ->content(fn() => new HtmlString("
                                                 <div style='width: 300px'>$image</div>
                                             "))
                                                 ->default('asdfasdf'),
@@ -166,42 +167,42 @@ class EditProfile extends \Filament\Pages\Auth\EditProfile
                                                     ->helperText('Press enter to add a new IP address or leave blank to allow any IP address')
                                                     ->columnSpanFull(),
                                             ])->headerActions([
-                                                Action::make('Create')
-                                                    ->successRedirectUrl(route('filament.admin.auth.profile', ['tab' => '-api-keys-tab']))
-                                                    ->action(function (Get $get, Action $action) {
-                                                        $token = auth()->user()->createToken(
-                                                            $get('description'),
-                                                            $get('allowed_ips'),
-                                                        );
+                                                        Action::make('Create')
+                                                            ->successRedirectUrl(route('filament.admin.auth.profile', ['tab' => '-api-keys-tab']))
+                                                            ->action(function (Get $get, Action $action) {
+                                                                $token = auth()->user()->createToken(
+                                                                    $get('description'),
+                                                                    $get('allowed_ips'),
+                                                                );
 
-                                                        Activity::event('user:api-key.create')
-                                                            ->subject($token->accessToken)
-                                                            ->property('identifier', $token->accessToken->identifier)
-                                                            ->log();
+                                                                Activity::event('user:api-key.create')
+                                                                    ->subject($token->accessToken)
+                                                                    ->property('identifier', $token->accessToken->identifier)
+                                                                    ->log();
 
-                                                        $action->success();
-                                                    }),
-                                            ]),
+                                                                $action->success();
+                                                            }),
+                                                    ]),
                                             Section::make('API Keys')->columnSpan(2)->schema([
                                                 Repeater::make('keys')
                                                     ->relationship('apiKeys')
                                                     ->addable(false)
-                                                    ->itemLabel(fn ($state) => $state['identifier'])
+                                                    ->itemLabel(fn($state) => $state['identifier'])
                                                     ->deleteAction(function (Action $action) {
                                                         $action->requiresConfirmation()->action(function (array $arguments, Repeater $component) {
                                                             $items = $component->getState();
                                                             $key = $items[$arguments['item']];
                                                             ApiKey::find($key['id'] ?? null)?->delete();
 
-                                                            unset($items[$arguments['item']]);
+                                                            unset ($items[$arguments['item']]);
 
                                                             $component->state($items);
 
                                                             $component->callAfterStateUpdated();
                                                         });
                                                     })
-                                                    ->schema(fn () => [
-                                                        Placeholder::make('adf')->label(fn (ApiKey $key) => $key->memo),
+                                                    ->schema(fn() => [
+                                                        Placeholder::make('adf')->label(fn(ApiKey $key) => $key->memo),
                                                     ]),
                                             ]),
                                         ]),
@@ -223,7 +224,7 @@ class EditProfile extends \Filament\Pages\Auth\EditProfile
                                                 $query->orderBy('timestamp', 'desc');
                                             })
                                             ->schema([
-                                                Placeholder::make('activity!')->label('')->content(fn (ActivityLog $log) => new HtmlString($log->htmlable())),
+                                                Placeholder::make('activity!')->label('')->content(fn(ActivityLog $log) => new HtmlString($log->htmlable())),
                                             ]),
                                     ]),
                             ]),

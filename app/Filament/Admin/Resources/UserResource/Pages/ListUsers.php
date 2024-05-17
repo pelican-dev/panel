@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Filament\Resources\UserResource\Pages;
+namespace App\Filament\Admin\Resources\UserResource\Pages;
 
-use App\Filament\Resources\UserResource;
+use App\Filament\Admin\Resources\UserResource;
 use App\Models\User;
 use Filament\Actions;
 use Filament\Resources\Pages\ListRecords;
@@ -22,7 +22,7 @@ class ListUsers extends ListRecords
                     ->visibleFrom('lg')
                     ->label('')
                     ->extraImgAttributes(['class' => 'rounded-full'])
-                    ->defaultImageUrl(fn (User $user) => 'https://gravatar.com/avatar/' . md5(strtolower($user->email))),
+                    ->defaultImageUrl(fn(User $user) => 'https://gravatar.com/avatar/' . md5(strtolower($user->email))),
                 Tables\Columns\TextColumn::make('external_id')
                     ->searchable()
                     ->hidden(),
@@ -44,7 +44,7 @@ class ListUsers extends ListRecords
                     ->sortable(),
                 Tables\Columns\IconColumn::make('use_totp')->label('2FA')
                     ->visibleFrom('lg')
-                    ->icon(fn (User $user) => $user->use_totp ? 'tabler-lock' : 'tabler-lock-open-off')
+                    ->icon(fn(User $user) => $user->use_totp ? 'tabler-lock' : 'tabler-lock-open-off')
                     ->boolean()->sortable(),
                 Tables\Columns\TextColumn::make('servers_count')
                     ->counts('servers')
@@ -63,7 +63,7 @@ class ListUsers extends ListRecords
             ->actions([
                 Tables\Actions\EditAction::make(),
             ])
-            ->checkIfRecordIsSelectableUsing(fn (User $user) => !$user->servers_count)
+            ->checkIfRecordIsSelectableUsing(fn(User $user) => !$user->servers_count)
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),

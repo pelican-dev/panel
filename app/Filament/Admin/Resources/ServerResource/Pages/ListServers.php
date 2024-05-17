@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Filament\Resources\ServerResource\Pages;
+namespace App\Filament\Admin\Resources\ServerResource\Pages;
 
-use App\Filament\Resources\ServerResource;
+use App\Filament\Admin\Resources\ServerResource;
 use App\Models\Server;
 use Filament\Actions;
 use Filament\Resources\Pages\ListRecords;
@@ -29,7 +29,7 @@ class ListServers extends ListRecords
 
                         return $server->retrieveStatus() ?? 'node_fail';
                     })
-                    ->icon(fn ($state) => match ($state) {
+                    ->icon(fn($state) => match ($state) {
                         'node_fail' => 'tabler-server-off',
                         'running' => 'tabler-heartbeat',
                         'removing' => 'tabler-heart-x',
@@ -39,7 +39,7 @@ class ListServers extends ListRecords
                         'suspended' => 'tabler-heart-cancel',
                         default => 'tabler-heart-question',
                     })
-                    ->color(fn ($state): string => match ($state) {
+                    ->color(fn($state): string => match ($state) {
                         'running' => 'success',
                         'installing', 'restarting' => 'primary',
                         'paused', 'removing' => 'warning',
@@ -57,21 +57,23 @@ class ListServers extends ListRecords
                     ->sortable(),
                 Tables\Columns\TextColumn::make('node.name')
                     ->icon('tabler-server-2')
-                    ->url(fn (Server $server): string => route('filament.admin.resources.nodes.edit', ['record' => $server->node]))
+                    ->url(fn(Server $server): string => route('filament.admin.resources.nodes.edit', ['record' => $server->node]))
                     ->sortable(),
                 Tables\Columns\TextColumn::make('egg.name')
                     ->icon('tabler-egg')
-                    ->url(fn (Server $server): string => route('filament.admin.resources.eggs.edit', ['record' => $server->egg]))
+                    ->url(fn(Server $server): string => route('filament.admin.resources.eggs.edit', ['record' => $server->egg]))
                     ->sortable(),
                 Tables\Columns\TextColumn::make('user.username')
                     ->icon('tabler-user')
                     ->label('Owner')
-                    ->url(fn (Server $server): string => route('filament.admin.resources.users.edit', ['record' => $server->user]))
+                    ->url(fn(Server $server): string => route('filament.admin.resources.users.edit', ['record' => $server->user]))
                     ->sortable(),
                 Tables\Columns\SelectColumn::make('allocation_id')
                     ->label('Primary Allocation')
-                    ->options(fn ($state, Server $server) => $server->allocations->mapWithKeys(
-                        fn ($allocation) => [$allocation->id => $allocation->address])
+                    ->options(
+                        fn($state, Server $server) => $server->allocations->mapWithKeys(
+                            fn($allocation) => [$allocation->id => $allocation->address]
+                        )
                     )
                     ->selectablePlaceholder(false)
                     ->sortable(),
@@ -89,7 +91,7 @@ class ListServers extends ListRecords
             ->actions([
                 Tables\Actions\Action::make('View')
                     ->icon('tabler-terminal')
-                    ->url(fn (Server $server) => "/server/$server->uuid_short"),
+                    ->url(fn(Server $server) => "/server/$server->uuid_short"),
                 Tables\Actions\EditAction::make(),
             ])
             ->emptyStateIcon('tabler-brand-docker')
@@ -106,7 +108,7 @@ class ListServers extends ListRecords
         return [
             Actions\CreateAction::make()
                 ->label('Create Server')
-                ->hidden(fn () => Server::count() <= 0),
+                ->hidden(fn() => Server::count() <= 0),
         ];
     }
 }

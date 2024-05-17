@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Filament\Resources;
+namespace App\Filament\Admin\Resources;
 
-use App\Filament\Resources\DatabaseResource\Pages;
+use App\Filament\Admin\Resources\DatabaseResource\Pages;
 use App\Models\Database;
 use Filament\Resources\Resource;
 

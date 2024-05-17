@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Filament\Resources\DatabaseHostResource\RelationManagers;
+namespace App\Filament\Admin\Resources\DatabaseHostResource\RelationManagers;
 
 use App\Models\Database;
 use App\Services\Databases\DatabasePasswordService;

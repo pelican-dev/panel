@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Filament\Resources\DatabaseHostResource\Pages;
+namespace App\Filament\Admin\Resources\DatabaseHostResource\Pages;
 
-use App\Filament\Resources\DatabaseHostResource;
+use App\Filament\Admin\Resources\DatabaseHostResource;
 use Filament\Actions;
 use Filament\Resources\Pages\EditRecord;
 use Filament\Forms;
@@ -30,7 +30,7 @@ class EditDatabaseHost extends EditRecord
                             ->helperText('The IP address or Domain name that should be used when attempting to connect to this MySQL host from this Panel to create new databases.')
                             ->required()
                             ->live(onBlur: true)
-                            ->afterStateUpdated(fn ($state, Forms\Set $set) => $set('name', $state))
+                            ->afterStateUpdated(fn($state, Forms\Set $set) => $set('name', $state))
                             ->maxLength(191),
                         Forms\Components\TextInput::make('port')
                             ->columnSpan(1)

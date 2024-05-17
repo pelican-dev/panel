@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Filament\Resources\Admin\ApiKeyResource\Pages;
+namespace App\Filament\Admin\Resources\ApiKeyResource\Pages;
 
-use App\Filament\Resources\ApiKeyResource;
+use App\Filament\Admin\Resources\ApiKeyResource;
 use App\Models\ApiKey;
 use Filament\Forms\Form;
 use Filament\Resources\Pages\CreateRecord;
@@ -29,7 +29,7 @@ class CreateApiKey extends CreateRecord
                     ->inlineLabel()
                     ->options(function (ApiKey $apiKey) {
                         $originalOptions = [
-                            //ApiKey::TYPE_NONE => 'None',
+                                //ApiKey::TYPE_NONE => 'None',
                             ApiKey::TYPE_ACCOUNT => 'Account',
                             ApiKey::TYPE_APPLICATION => 'Application',
                             //ApiKey::TYPE_DAEMON_USER => 'Daemon User',
@@ -37,7 +37,7 @@ class CreateApiKey extends CreateRecord
                         ];
 
                         return collect($originalOptions)
-                            ->filter(fn ($value, $key) => $key <= ApiKey::TYPE_APPLICATION || $apiKey->key_type === $key)
+                            ->filter(fn($value, $key) => $key <= ApiKey::TYPE_APPLICATION || $apiKey->key_type === $key)
                             ->all();
                     })
                     ->selectablePlaceholder(false)
@@ -51,33 +51,34 @@ class CreateApiKey extends CreateRecord
                         'md' => 2,
                     ])
                     ->schema(
-                        collect(ApiKey::RESOURCES)->map(fn ($resource) => Forms\Components\ToggleButtons::make("r_$resource")
-                            ->label(str($resource)->replace('_', ' ')->title())->inline()
-                            ->options([
-                                0 => 'None',
-                                1 => 'Read',
-                                // 2 => 'Write',
-                                3 => 'Read & Write',
-                            ])
-                            ->icons([
-                                0 => 'tabler-book-off',
-                                1 => 'tabler-book',
-                                2 => 'tabler-writing',
-                                3 => 'tabler-writing',
-                            ])
-                            ->colors([
-                                0 => 'success',
-                                1 => 'warning',
-                                2 => 'danger',
-                                3 => 'danger',
-                            ])
-                            ->required()
-                            ->columnSpan([
-                                'default' => 1,
-                                'sm' => 1,
-                                'md' => 1,
-                            ])
-                            ->default(0),
+                        collect(ApiKey::RESOURCES)->map(
+                            fn($resource) => Forms\Components\ToggleButtons::make("r_$resource")
+                                ->label(str($resource)->replace('_', ' ')->title())->inline()
+                                ->options([
+                                    0 => 'None',
+                                    1 => 'Read',
+                                    // 2 => 'Write',
+                                    3 => 'Read & Write',
+                                ])
+                                ->icons([
+                                    0 => 'tabler-book-off',
+                                    1 => 'tabler-book',
+                                    2 => 'tabler-writing',
+                                    3 => 'tabler-writing',
+                                ])
+                                ->colors([
+                                    0 => 'success',
+                                    1 => 'warning',
+                                    2 => 'danger',
+                                    3 => 'danger',
+                                ])
+                                ->required()
+                                ->columnSpan([
+                                    'default' => 1,
+                                    'sm' => 1,
+                                    'md' => 1,
+                                ])
+                                ->default(0),
                         )->all(),
                     ),
 

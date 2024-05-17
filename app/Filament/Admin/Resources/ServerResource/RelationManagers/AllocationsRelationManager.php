@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Filament\Resources\ServerResource\RelationManagers;
+namespace App\Filament\Admin\Resources\ServerResource\RelationManagers;
 
 use App\Models\Allocation;
 use Filament\Forms;
@@ -27,7 +27,7 @@ class AllocationsRelationManager extends RelationManager
     {
         return $table
             ->recordTitleAttribute('ip')
-            ->checkIfRecordIsSelectableUsing(fn (Allocation $record) => $record->id !== $this->getOwnerRecord()->allocation_id)
+            ->checkIfRecordIsSelectableUsing(fn(Allocation $record) => $record->id !== $this->getOwnerRecord()->allocation_id)
             // ->actions
             // ->groups
             ->columns([
@@ -35,16 +35,16 @@ class AllocationsRelationManager extends RelationManager
                 Tables\Columns\TextColumn::make('ip')->label('IP'),
                 Tables\Columns\TextColumn::make('port')->label('Port'),
                 Tables\Columns\IconColumn::make('primary')
-                    ->icon(fn ($state) => match ($state) {
+                    ->icon(fn($state) => match ($state) {
                         false => 'tabler-star',
                         true => 'tabler-star-filled',
                     })
-                    ->color(fn ($state) => match ($state) {
+                    ->color(fn($state) => match ($state) {
                         false => 'gray',
                         true => 'warning',
                     })
-                    ->action(fn (Allocation $allocation) => $this->getOwnerRecord()->update(['allocation_id' => $allocation->id]))
-                    ->default(fn (Allocation $allocation) => $allocation->id === $this->getOwnerRecord()->allocation_id)
+                    ->action(fn(Allocation $allocation) => $this->getOwnerRecord()->update(['allocation_id' => $allocation->id]))
+                    ->default(fn(Allocation $allocation) => $allocation->id === $this->getOwnerRecord()->allocation_id)
                     ->label('Primary'),
             ])
             ->filters([
@@ -52,8 +52,8 @@ class AllocationsRelationManager extends RelationManager
             ])
             ->actions([
                 Tables\Actions\Action::make('make-primary')
-                    ->action(fn (Allocation $allocation) => $this->getOwnerRecord()->update(['allocation_id' => $allocation->id]))
-                    ->label(fn (Allocation $allocation) => $allocation->id === $this->getOwnerRecord()->allocation_id ? '' : 'Make Primary'),
+                    ->action(fn(Allocation $allocation) => $this->getOwnerRecord()->update(['allocation_id' => $allocation->id]))
+                    ->label(fn(Allocation $allocation) => $allocation->id === $this->getOwnerRecord()->allocation_id ? '' : 'Make Primary'),
             ])
             ->headerActions([
                 //TODO Tables\Actions\CreateAction::make()->label('Create Allocation'),

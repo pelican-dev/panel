@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Filament\Resources\DatabaseHostResource\Pages;
+namespace App\Filament\Admin\Resources\DatabaseHostResource\Pages;
 
-use App\Filament\Resources\DatabaseHostResource;
+use App\Filament\Admin\Resources\DatabaseHostResource;
 use Filament\Actions;
 use Filament\Resources\Pages\ListRecords;
 use Filament\Tables;

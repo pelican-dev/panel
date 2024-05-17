@@ -1,9 +1,9 @@
 <?php
 
-namespace App\Filament\Resources;
+namespace App\Filament\Admin\Resources;
 
-use App\Filament\Resources\NodeResource\Pages;
-use App\Filament\Resources\NodeResource\RelationManagers;
+use App\Filament\Admin\Resources\NodeResource\Pages;
+use App\Filament\Admin\Resources\NodeResource\RelationManagers;
 use App\Models\Node;
 use Filament\Resources\Resource;
 

@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Filament\Resources;
+namespace App\Filament\Admin\Resources;
 
-use App\Filament\Resources\ApiKeyResource\Pages;
+use App\Filament\Admin\Resources\ApiKeyResource\Pages;
 use App\Models\ApiKey;
 use Filament\Resources\Components\Tab;
 use Filament\Resources\Resource;
@@ -29,7 +29,7 @@ class ApiKeyResource extends Resource
         return [
             'all' => Tab::make('All Keys'),
             'application' => Tab::make('Application Keys')
-                ->modifyQueryUsing(fn (Builder $query) => $query->where('key_type', ApiKey::TYPE_APPLICATION)),
+                ->modifyQueryUsing(fn(Builder $query) => $query->where('key_type', ApiKey::TYPE_APPLICATION)),
         ];
     }
 

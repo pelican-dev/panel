@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Filament\Resources\EggResource\RelationManagers;
+namespace App\Filament\Admin\Resources\EggResource\RelationManagers;
 
 use App\Models\Server;
 use Filament\Resources\RelationManagers\RelationManager;
