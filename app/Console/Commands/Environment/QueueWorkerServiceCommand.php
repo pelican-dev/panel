@@ -46,8 +46,6 @@ class QueueWorkerServiceCommand extends Command
 Description=Pelican Queue Service$afterRedis
 
 [Service]
-# On some systems the user and group might be different.
-# Some systems use `apache` or `nginx` as the user and group.
 User=$user
 Group=$group
 Restart=always
