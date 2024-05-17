@@ -108,9 +108,6 @@ class ListUsers extends ListRecords
                                     false => 'primary',
                                     true => 'danger',
                                 ])
-                                ->hint(fn (User $user) => $user->isLastRootAdmin() ? 'This is the last root administrator!' : '')
-                                ->helperText(fn (User $user) => $user->isLastRootAdmin() ? 'You must have at least one root administrator in your system.' : '')
-                                ->hintColor('warning')
                                 ->inline()
                                 ->required()
                                 ->default(false),
