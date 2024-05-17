@@ -19,6 +19,7 @@ use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\AuthenticateSession;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
+use Filament\Navigation\NavigationItem;
 
 class AdminPanelProvider extends PanelProvider
 {
@@ -54,6 +55,14 @@ class AdminPanelProvider extends PanelProvider
                 'panels::sidebar.footer',
                 fn () => view('filament.Footer'),
             )
+            ->navigationItems([
+                NavigationItem::make('client')
+                    ->label('Return to client')
+                    ->url('/') // TODO once the Filament client side is done this can be changed to /client
+                    ->icon('tabler-arrow-back')
+                    ->sort(12)
+                    ->visible(fn (): bool => auth()->user()->root_admin),
+            ])
             ->discoverResources(in: app_path('Filament/Admin/Resources'), for: 'App\\Filament\\Admin\\Resources')
             ->discoverPages(in: app_path('Filament/Admin/Pages'), for: 'App\\Filament\\Admin\\Pages')
             ->discoverClusters(in: app_path('Filament/Admin/Clusters'), for: 'App\\Filament\\Admin\\Clusters')
