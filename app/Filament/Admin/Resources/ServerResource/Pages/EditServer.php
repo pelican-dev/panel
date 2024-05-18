@@ -48,15 +48,15 @@ class EditServer extends EditRecord
                     ->options(
                         fn ($state) => collect(ContainerStatus::cases())->filter(fn ($containerStatus) => $containerStatus->value === $state)->mapWithKeys(
                             fn (ContainerStatus $state) => [$state->value => str($state->value)->replace('_', ' ')->ucwords()]
-                        ))
+                    ))
                     ->colors(
                         collect(ContainerStatus::cases())->mapWithKeys(
                             fn (ContainerStatus $status) => [$status->value => $status->color()]
-                        ))
+                    ))
                     ->icons(
                         collect(ContainerStatus::cases())->mapWithKeys(
                             fn (ContainerStatus $status) => [$status->value => $status->icon()]
-                        ))
+                    ))
                     ->columnSpan([
                         'default' => 1,
                         'sm' => 2,
@@ -72,15 +72,15 @@ class EditServer extends EditRecord
                     ->options(
                         fn ($state) => collect(ServerState::cases())->filter(fn ($serverState) => $serverState->value === $state)->mapWithKeys(
                             fn (ServerState $state) => [$state->value => str($state->value)->replace('_', ' ')->ucwords()]
-                        ))
+                    ))
                     ->colors(
                         collect(ServerState::cases())->mapWithKeys(
                             fn (ServerState $state) => [$state->value => $state->color()]
-                        ))
+                    ))
                     ->icons(
                         collect(ServerState::cases())->mapWithKeys(
                             fn (ServerState $state) => [$state->value => $state->icon()]
-                        ))
+                    ))
                     ->columnSpan([
                         'default' => 1,
                         'sm' => 2,
