@@ -185,26 +185,37 @@ class EditNode extends EditRecord
                                 ])
                                 ->default(fn () => request()->isSecure() ? 'https' : 'http'), ]),
                     Tabs\Tab::make('Advanced Settings')
+                        ->columns(['default' => 1, 'sm' => 1, 'md' => 4, 'lg' => 6])
                         ->icon('tabler-server-cog')
                         ->schema([
                             Forms\Components\TextInput::make('id')
                                 ->label('Node ID')
+                                ->columnSpan(['default' => 1, 'sm' => 1, 'md' => 2, 'lg' => 1])
                                 ->disabled(),
                             Forms\Components\TextInput::make('uuid')
+                                ->columnSpan(['default' => 1, 'sm' => 1, 'md' => 2, 'lg' => 2])
                                 ->label('Node UUID')
                                 ->hintAction(CopyAction::make())
-                                ->columnSpan(2)
                                 ->disabled(),
                             Forms\Components\TagsInput::make('tags')
+                                ->columnSpan(['default' => 1, 'sm' => 1, 'md' => 2, 'lg' => 2])
                                 ->label('Tags')
                                 ->disabled()
                                 ->placeholder('Not Implemented')
                                 ->hintIcon('tabler-question-mark')
-                                ->hintIconTooltip('Not Implemented')
-                                ->columnSpan(1),
+                                ->hintIconTooltip('Not Implemented'),
+                            Forms\Components\TextInput::make('upload_size')
+                                ->columnSpan(['default' => 1, 'sm' => 1, 'md' => 2, 'lg' => 1])
+                                ->label('Upload Limit')
+                                ->hintIcon('tabler-question-mark')
+                                ->hintIconTooltip('Enter the maximum size of files that can be uploaded through the web-based file manager.')
+                                ->numeric()->required()
+                                ->minValue(1)
+                                ->maxValue(1024)
+                                ->suffix('MiB'),
                             Forms\Components\ToggleButtons::make('public')
+                                ->columnSpan(['default' => 1, 'sm' => 1, 'md' => 1, 'lg' => 3])
                                 ->label('Automatic Allocation')->inline()
-                                ->columnSpan(1)
                                 ->options([
                                     true => 'Yes',
                                     false => 'No',
@@ -214,29 +225,20 @@ class EditNode extends EditRecord
                                     false => 'danger',
                                 ]),
                             Forms\Components\ToggleButtons::make('maintenance_mode')
+                                ->columnSpan(['default' => 1, 'sm' => 1, 'md' => 1, 'lg' => 3])
                                 ->label('Maintenance Mode')->inline()
-                                ->columnSpan(1)
                                 ->hinticon('tabler-question-mark')
                                 ->hintIconTooltip("If the node is marked 'Under Maintenance' users won't be able to access servers that are on this node.")
                                 ->options([
-                                    true => 'Enable',
                                     false => 'Disable',
+                                    true => 'Enable',
                                 ])
                                 ->colors([
-                                    true => 'danger',
                                     false => 'success',
+                                    true => 'danger',
                                 ]),
-                            Forms\Components\TextInput::make('upload_size')
-                                ->label('Upload Limit')
-                                ->hintIcon('tabler-question-mark')
-                                ->hintIconTooltip('Enter the maximum size of files that can be uploaded through the web-based file manager.')
-                                ->columnStart(4)->columnSpan(1)
-                                ->numeric()->required()
-                                ->minValue(1)
-                                ->maxValue(1024)
-                                ->suffix('MiB'),
                             Forms\Components\Grid::make()
-                                ->columns(6)
+                                ->columns(['default' => 1, 'sm' => 1, 'md' => 3, 'lg' => 6])
                                 ->columnSpanFull()
                                 ->schema([
                                     Forms\Components\ToggleButtons::make('unlimited_mem')
@@ -253,14 +255,14 @@ class EditNode extends EditRecord
                                             true => 'primary',
                                             false => 'warning',
                                         ])
-                                        ->columnSpan(2),
+                                        ->columnSpan(['default' => 1, 'sm' => 1, 'md' => 1, 'lg' => 2]),
                                     Forms\Components\TextInput::make('memory')
                                         ->dehydratedWhenHidden()
                                         ->hidden(fn (Forms\Get $get) => $get('unlimited_mem'))
                                         ->label('Memory Limit')->inlineLabel()
                                         ->suffix('MiB')
                                         ->required()
-                                        ->columnSpan(2)
+                                        ->columnSpan(['default' => 1, 'sm' => 1, 'md' => 1, 'lg' => 2])
                                         ->numeric()
                                         ->minValue(0),
                                     Forms\Components\TextInput::make('memory_overallocate')
@@ -270,15 +272,14 @@ class EditNode extends EditRecord
                                         ->hidden(fn (Forms\Get $get) => $get('unlimited_mem'))
                                         ->hintIcon('tabler-question-mark')
                                         ->hintIconTooltip('The % allowable to go over the set limit.')
-                                        ->columnSpan(2)
+                                        ->columnSpan(['default' => 1, 'sm' => 1, 'md' => 1, 'lg' => 2])
                                         ->numeric()
                                         ->minValue(-1)
                                         ->maxValue(100)
                                         ->suffix('%'),
                                 ]),
                             Forms\Components\Grid::make()
-                                ->columns(6)
-                                ->columnSpanFull()
+                                ->columns(['default' => 1, 'sm' => 1, 'md' => 3, 'lg' => 6])
                                 ->schema([
                                     Forms\Components\ToggleButtons::make('unlimited_disk')
                                         ->label('Disk')->inlineLabel()->inline()
@@ -294,14 +295,14 @@ class EditNode extends EditRecord
                                             true => 'primary',
                                             false => 'warning',
                                         ])
-                                        ->columnSpan(2),
+                                        ->columnSpan(['default' => 1, 'sm' => 1, 'md' => 1, 'lg' => 2]),
                                     Forms\Components\TextInput::make('disk')
                                         ->dehydratedWhenHidden()
                                         ->hidden(fn (Forms\Get $get) => $get('unlimited_disk'))
                                         ->label('Disk Limit')->inlineLabel()
                                         ->suffix('MiB')
                                         ->required()
-                                        ->columnSpan(2)
+                                        ->columnSpan(['default' => 1, 'sm' => 1, 'md' => 1, 'lg' => 2])
                                         ->numeric()
                                         ->minValue(0),
                                     Forms\Components\TextInput::make('disk_overallocate')
@@ -310,7 +311,7 @@ class EditNode extends EditRecord
                                         ->label('Overallocate')->inlineLabel()
                                         ->hintIcon('tabler-question-mark')
                                         ->hintIconTooltip('The % allowable to go over the set limit.')
-                                        ->columnSpan(2)
+                                        ->columnSpan(['default' => 1, 'sm' => 1, 'md' => 1, 'lg' => 2])
                                         ->required()
                                         ->numeric()
                                         ->minValue(-1)
