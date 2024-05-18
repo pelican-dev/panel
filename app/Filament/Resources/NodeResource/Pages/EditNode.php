@@ -368,4 +368,9 @@ class EditNode extends EditRecord
             NodeMemoryChart::class,
         ];
     }
+
+    protected function afterSave(): void
+    {
+        $this->fillForm();
+    }
 }
