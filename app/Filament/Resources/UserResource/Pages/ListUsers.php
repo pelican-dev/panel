@@ -11,7 +11,6 @@ use Filament\Resources\Pages\ListRecords;
 use Filament\Tables\Table;
 use Filament\Tables;
 use Filament\Forms;
-use Illuminate\Support\Facades\Hash;
 
 class ListUsers extends ListRecords
 {
