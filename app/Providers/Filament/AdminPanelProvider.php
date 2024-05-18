@@ -54,7 +54,7 @@ class AdminPanelProvider extends PanelProvider
             ->renderHook('panels::sidebar.footer', fn () => view('filament.Footer'))
             ->navigationItems([
                 NavigationItem::make('client')
-                    ->label('Return to client')
+                    ->label('Exit Admin')
                     ->url('/')
                     ->icon('tabler-arrow-back')
                     ->sort(12),
