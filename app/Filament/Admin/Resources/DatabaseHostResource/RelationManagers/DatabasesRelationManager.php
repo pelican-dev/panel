@@ -28,7 +28,7 @@ class DatabasesRelationManager extends RelationManager
                         Action::make('rotate')
                             ->icon('tabler-refresh')
                             ->requiresConfirmation()
-                            ->action(fn (DatabasePasswordService $service, Database $db) => $service->handle($db))
+                            ->action(fn (DatabasePasswordService $service, Database $database) => $service->handle($database))
                     )
                     ->formatStateUsing(fn (Database $database) => decrypt($database->password)),
                 Forms\Components\TextInput::make('remote')->label('Connections From'),
@@ -37,8 +37,6 @@ class DatabasesRelationManager extends RelationManager
                     ->label('JDBC Connection String')
                     ->columnSpanFull()
                     ->formatStateUsing(fn (Forms\Get $get, Database $database) => 'jdbc:mysql://' . $get('username') . ':' . urlencode(decrypt($database->password)) . '@' . $database->host->host . ':' . $database->host->port . '/' . $get('database')),
-                Forms\Components\TextInput::make('created_at'),
-                Forms\Components\TextInput::make('updated_at'),
             ]);
     }
     public function table(Table $table): Table
@@ -46,18 +44,19 @@ class DatabasesRelationManager extends RelationManager
         return $table
             ->recordTitleAttribute('servers')
             ->columns([
-                Tables\Columns\TextColumn::make('database'),
-                Tables\Columns\TextColumn::make('username'),
+                Tables\Columns\TextColumn::make('database')->icon('tabler-database'),
+                Tables\Columns\TextColumn::make('username')->icon('tabler-user'),
                 //Tables\Columns\TextColumn::make('password'),
                 Tables\Columns\TextColumn::make('remote'),
-                Tables\Columns\TextColumn::make('server.name'),
-                // TODO ->url(route('filament.admin.resources.servers.edit', ['record', ''])),
+                Tables\Columns\TextColumn::make('server.name')
+                    ->icon('tabler-brand-docker')
+                    ->url(fn (Database $database) => route('filament.admin.resources.servers.edit', ['record' => $database->server_id])),
                 Tables\Columns\TextColumn::make('max_connections'),
-                Tables\Columns\TextColumn::make('created_at'),
+                Tables\Columns\TextColumn::make('created_at')->dateTime(),
             ])
             ->actions([
                 Tables\Actions\DeleteAction::make(),
-                Tables\Actions\ViewAction::make(),
+                Tables\Actions\ViewAction::make()->color('primary'),
                 //Tables\Actions\EditAction::make(),
             ]);
     }
