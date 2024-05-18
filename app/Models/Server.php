@@ -326,6 +326,11 @@ class Server extends Model
         return $this->morphToMany(ActivityLog::class, 'subject', 'activity_log_subjects');
     }
 
+    public function getRouteKeyName(): string
+    {
+        return 'id';
+    }
+
     public function resolveRouteBinding($value, $field = null): ?self
     {
         return match ($field) {
