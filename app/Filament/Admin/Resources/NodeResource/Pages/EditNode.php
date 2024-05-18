@@ -183,8 +183,8 @@ class EditNode extends EditRecord
                                     'http' => 'tabler-lock-open-off',
                                     'https' => 'tabler-lock',
                                 ])
-                                ->default(fn () => request()->isSecure() ? 'https' : 'http'),
-                        ]),
+                                ->default(fn () => request()->isSecure() ? 'https' : 'http'), ]),
+
                     Tabs\Tab::make('Advanced Settings')
                         ->icon('tabler-server-cog')
                         ->schema([

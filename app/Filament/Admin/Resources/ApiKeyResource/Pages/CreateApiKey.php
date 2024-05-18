@@ -52,32 +52,32 @@ class CreateApiKey extends CreateRecord
                     ])
                     ->schema(
                         collect(ApiKey::RESOURCES)->map(fn ($resource) => Forms\Components\ToggleButtons::make("r_$resource")
-                                ->label(str($resource)->replace('_', ' ')->title())->inline()
-                                ->options([
-                                    0 => 'None',
-                                    1 => 'Read',
-                                    // 2 => 'Write',
-                                    3 => 'Read & Write',
-                                ])
-                                ->icons([
-                                    0 => 'tabler-book-off',
-                                    1 => 'tabler-book',
-                                    2 => 'tabler-writing',
-                                    3 => 'tabler-writing',
-                                ])
-                                ->colors([
-                                    0 => 'success',
-                                    1 => 'warning',
-                                    2 => 'danger',
-                                    3 => 'danger',
-                                ])
-                                ->required()
-                                ->columnSpan([
-                                    'default' => 1,
-                                    'sm' => 1,
-                                    'md' => 1,
-                                ])
-                                ->default(0),
+                            ->label(str($resource)->replace('_', ' ')->title())->inline()
+                            ->options([
+                                0 => 'None',
+                                1 => 'Read',
+                                // 2 => 'Write',
+                                3 => 'Read & Write',
+                            ])
+                            ->icons([
+                                0 => 'tabler-book-off',
+                                1 => 'tabler-book',
+                                2 => 'tabler-writing',
+                                3 => 'tabler-writing',
+                            ])
+                            ->colors([
+                                0 => 'success',
+                                1 => 'warning',
+                                2 => 'danger',
+                                3 => 'danger',
+                            ])
+                            ->required()
+                            ->columnSpan([
+                                'default' => 1,
+                                'sm' => 1,
+                                'md' => 1,
+                            ])
+                            ->default(0),
                         )->all(),
                     ),
 

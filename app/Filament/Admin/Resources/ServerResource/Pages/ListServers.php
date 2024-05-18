@@ -72,8 +72,7 @@ class ListServers extends ListRecords
                     ->label('Primary Allocation')
                     ->options(
                         fn ($state, Server $server) => $server->allocations->mapWithKeys(
-                            fn ($allocation) => [$allocation->id => $allocation->address]
-                        )
+                            fn ($allocation) => [$allocation->id => $allocation->address])
                     )
                     ->selectablePlaceholder(false)
                     ->sortable(),

@@ -84,8 +84,7 @@ class EditProfile extends \Filament\Pages\Auth\EditProfile
                                             ->prefixIcon('tabler-flag')
                                             ->live()
                                             ->default('en')
-                                            ->helperText(
-                                                fn (User $user, $state) => new HtmlString($user->isLanguageTranslated($state) ? '' : "
+                                            ->helperText(fn (User $user, $state) => new HtmlString($user->isLanguageTranslated($state) ? '' : "
                                                 Your language ($state) has not been translated yet!
                                                 But never fear, you can help fix that by
                                                 <a style='color: rgb(56, 189, 248)' href='https://crowdin.com/project/pelican-dev'>contributing directly here</a>.

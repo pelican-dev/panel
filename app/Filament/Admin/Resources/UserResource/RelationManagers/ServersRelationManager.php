@@ -24,11 +24,10 @@ class ServersRelationManager extends RelationManager
             ->searchable(false)
             ->headerActions([
                 Actions\Action::make('toggleSuspend')
-                    ->hidden(
-                        fn () => $user->servers()
-                            ->whereNot('status', ServerState::Suspended)
-                            ->orWhereNull('status')
-                            ->count() === 0
+                    ->hidden(fn () => $user->servers()
+                        ->whereNot('status', ServerState::Suspended)
+                        ->orWhereNull('status')
+                        ->count() === 0
                     )
                     ->label('Suspend All Servers')
                     ->color('warning')

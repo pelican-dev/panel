@@ -48,18 +48,15 @@ class EditServer extends EditRecord
                     ->options(
                         fn ($state) => collect(ContainerStatus::cases())->filter(fn ($containerStatus) => $containerStatus->value === $state)->mapWithKeys(
                             fn (ContainerStatus $state) => [$state->value => str($state->value)->replace('_', ' ')->ucwords()]
-                        )
-                    )
+                        ))
                     ->colors(
                         collect(ContainerStatus::cases())->mapWithKeys(
                             fn (ContainerStatus $status) => [$status->value => $status->color()]
-                        )
-                    )
+                        ))
                     ->icons(
                         collect(ContainerStatus::cases())->mapWithKeys(
                             fn (ContainerStatus $status) => [$status->value => $status->icon()]
-                        )
-                    )
+                        ))
                     ->columnSpan([
                         'default' => 1,
                         'sm' => 2,
@@ -75,18 +72,15 @@ class EditServer extends EditRecord
                     ->options(
                         fn ($state) => collect(ServerState::cases())->filter(fn ($serverState) => $serverState->value === $state)->mapWithKeys(
                             fn (ServerState $state) => [$state->value => str($state->value)->replace('_', ' ')->ucwords()]
-                        )
-                    )
+                        ))
                     ->colors(
                         collect(ServerState::cases())->mapWithKeys(
                             fn (ServerState $state) => [$state->value => $state->color()]
-                        )
-                    )
+                        ))
                     ->icons(
                         collect(ServerState::cases())->mapWithKeys(
                             fn (ServerState $state) => [$state->value => $state->icon()]
-                        )
-                    )
+                        ))
                     ->columnSpan([
                         'default' => 1,
                         'sm' => 2,
@@ -543,8 +537,7 @@ class EditServer extends EditRecord
     private function shouldHideComponent(Forms\Get $get, Forms\Components\Component $component): bool
     {
         $containsRuleIn = str($get('rules'))->explode('|')->reduce(
-            fn ($result, $value) => $result === true && !str($value)->startsWith('in:'),
-            true
+            fn ($result, $value) => $result === true && !str($value)->startsWith('in:'), true
         );
 
         if ($component instanceof Forms\Components\Select) {
@@ -561,8 +554,7 @@ class EditServer extends EditRecord
     private function getSelectOptionsFromRules(Forms\Get $get): array
     {
         $inRule = str($get('rules'))->explode('|')->reduce(
-            fn ($result, $value) => str($value)->startsWith('in:') ? $value : $result,
-            ''
+            fn ($result, $value) => str($value)->startsWith('in:') ? $value : $result, ''
         );
 
         return str($inRule)
