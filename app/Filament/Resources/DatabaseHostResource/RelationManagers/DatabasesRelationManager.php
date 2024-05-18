@@ -26,7 +26,7 @@ class DatabasesRelationManager extends RelationManager
                         Action::make('rotate')
                             ->icon('tabler-refresh')
                             ->requiresConfirmation()
-                            ->action(fn (DatabasePasswordService $service, Database $database, $set) => $this->rotatePassword($service, $database, $set))
+                            ->action(fn (DatabasePasswordService $service, Database $database, $set, $get) => $this->rotatePassword($service, $database, $set, $get))
                     )
                     ->formatStateUsing(fn (Database $database) => decrypt($database->password)),
                 Forms\Components\TextInput::make('remote')->label('Connections From'),
@@ -59,9 +59,12 @@ class DatabasesRelationManager extends RelationManager
             ]);
     }
 
-    protected function rotatePassword(DatabasePasswordService $service, Database $database, $set): void
+    protected function rotatePassword(DatabasePasswordService $service, Database $database, $set, $get): void
     {
         $newPassword = $service->handle($database);
+        $jdbcString = 'jdbc:mysql://' . $get('username') . ':' . urlencode($newPassword) . '@' . $database->host->host . ':' . $database->host->port . '/' . $get('database');
+
         $set('password', $newPassword);
+        $set('JDBC', $jdbcString);
     }
 }
