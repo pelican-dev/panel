@@ -51,8 +51,7 @@ class CreateApiKey extends CreateRecord
                         'md' => 2,
                     ])
                     ->schema(
-                        collect(ApiKey::RESOURCES)->map(
-                            fn ($resource) => Forms\Components\ToggleButtons::make("r_$resource")
+                        collect(ApiKey::RESOURCES)->map(fn ($resource) => Forms\Components\ToggleButtons::make("r_$resource")
                                 ->label(str($resource)->replace('_', ' ')->title())->inline()
                                 ->options([
                                     0 => 'None',
