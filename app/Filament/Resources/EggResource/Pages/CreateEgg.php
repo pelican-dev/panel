@@ -31,6 +31,7 @@ class CreateEgg extends CreateRecord
                             Forms\Components\TextInput::make('author')
                                 ->maxLength(191)
                                 ->required()
+                                ->email()
                                 ->columnSpan(['default' => 1, 'sm' => 1, 'md' => 2, 'lg' => 2])
                                 ->helperText('The author of this version of the Egg.'),
                             Forms\Components\Textarea::make('description')

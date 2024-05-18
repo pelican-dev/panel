@@ -16,6 +16,11 @@ class EggResource extends Resource
 
     protected static ?string $recordRouteKeyName = 'id';
 
+    public static function getNavigationBadge(): ?string
+    {
+        return static::getModel()::count() ?: null;
+    }
+
     public static function getRelations(): array
     {
         return [

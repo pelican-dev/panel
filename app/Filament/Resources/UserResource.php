@@ -15,6 +15,11 @@ class UserResource extends Resource
 
     protected static ?string $recordTitleAttribute = 'username';
 
+    public static function getNavigationBadge(): ?string
+    {
+        return static::getModel()::count() ?: null;
+    }
+
     public static function getRelations(): array
     {
         return [
@@ -26,7 +31,6 @@ class UserResource extends Resource
     {
         return [
             'index' => Pages\ListUsers::route('/'),
-            'create' => Pages\CreateUser::route('/create'),
             'edit' => Pages\EditUser::route('/{record}/edit'),
         ];
     }

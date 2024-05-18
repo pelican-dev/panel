@@ -163,4 +163,16 @@ return [
         // Should an email be sent to a server owner whenever their server is reinstalled?
         'send_reinstall_notification' => env('PANEL_SEND_REINSTALL_NOTIFICATION', true),
     ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | FilamentPHP Settings
+    |--------------------------------------------------------------------------
+    |
+    | This section controls Filament configurations
+    */
+
+    'filament' => [
+        'top-navigation' => env('FILAMENT_TOP_NAVIGATION', false),
+    ],
 ];
