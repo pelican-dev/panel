@@ -15,8 +15,6 @@ class DatabasesRelationManager extends RelationManager
 {
     protected static string $relationship = 'databases';
 
-    protected $listeners = ['refresh' => 'refreshForm'];
-
     public function form(Form $form): Form
     {
         return $form
@@ -28,7 +26,7 @@ class DatabasesRelationManager extends RelationManager
                         Action::make('rotate')
                             ->icon('tabler-refresh')
                             ->requiresConfirmation()
-                            ->action(fn (DatabasePasswordService $service, Database $database) => $service->handle($database))
+                            ->action(fn (DatabasePasswordService $service, Database $database, $set) => $this->rotatePassword($service, $database, $set))
                     )
                     ->formatStateUsing(fn (Database $database) => decrypt($database->password)),
                 Forms\Components\TextInput::make('remote')->label('Connections From'),
@@ -59,5 +57,11 @@ class DatabasesRelationManager extends RelationManager
                 Tables\Actions\ViewAction::make()->color('primary'),
                 //Tables\Actions\EditAction::make(),
             ]);
+    }
+
+    protected function rotatePassword(DatabasePasswordService $service, Database $database, $set): void
+    {
+        $newPassword = $service->handle($database);
+        $set('password', $newPassword);
     }
 }
