@@ -93,7 +93,7 @@ export default () => {
                                     )}
                                 {rootAdmin && (
                                     // eslint-disable-next-line react/jsx-no-target-blank
-                                    <a href={`/admin/servers/view/${serverId}`} target={'_blank'}>
+                                    <a href={`/admin/servers/${serverId}/edit`} target={'_blank'}>
                                         <FontAwesomeIcon icon={faExternalLinkAlt} />
                                     </a>
                                 )}
