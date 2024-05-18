@@ -11,6 +11,7 @@ use App\Extensions\Backups\BackupManager;
 use App\Extensions\Filesystem\S3Filesystem;
 use Symfony\Component\HttpKernel\Exception\ConflictHttpException;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
+use App\Exceptions\Http\HttpForbiddenException;
 
 class BackupRemoteUploadController extends Controller
 {
@@ -32,18 +33,32 @@ class BackupRemoteUploadController extends Controller
      */
     public function __invoke(Request $request, string $backup): JsonResponse
     {
+        // Get the node associated with the request.
+        /** @var \App\Models\Node $node */
+        $node = $request->attributes->get('node');
+
         // Get the size query parameter.
         $size = (int) $request->query('size');
         if (empty($size)) {
             throw new BadRequestHttpException('A non-empty "size" query parameter must be provided.');
         }
 
-        /** @var \App\Models\Backup $backup */
-        $backup = Backup::query()->where('uuid', $backup)->firstOrFail();
+        /** @var \App\Models\Backup $model */
+        $model = Backup::query()
+            ->where('uuid', $backup)
+            ->firstOrFail();
+
+        // Check that the backup is "owned" by the node making the request. This avoids other nodes
+        // from messing with backups that they don't own.
+        /** @var \App\Models\Server $server */
+        $server = $model->server;
+        if ($server->node_id !== $node->id) {
+            throw new HttpForbiddenException('You do not have permission to access that backup.');
+        }
 
         // Prevent backups that have already been completed from trying to
         // be uploaded again.
-        if (!is_null($backup->completed_at)) {
+        if (!is_null($model->completed_at)) {
             throw new ConflictHttpException('This backup is already in a completed state.');
         }
 
@@ -54,7 +69,7 @@ class BackupRemoteUploadController extends Controller
         }
 
         // The path where backup will be uploaded to
-        $path = sprintf('%s/%s.tar.gz', $backup->server->uuid, $backup->uuid);
+        $path = sprintf('%s/%s.tar.gz', $model->server->uuid, $model->uuid);
 
         // Get the S3 client
         $client = $adapter->getClient();
@@ -92,7 +107,7 @@ class BackupRemoteUploadController extends Controller
         }
 
         // Set the upload_id on the backup in the database.
-        $backup->update(['upload_id' => $params['UploadId']]);
+        $model->update(['upload_id' => $params['UploadId']]);
 
         return new JsonResponse([
             'parts' => $parts,

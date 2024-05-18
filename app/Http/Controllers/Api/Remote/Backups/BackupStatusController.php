@@ -13,6 +13,7 @@ use App\Extensions\Backups\BackupManager;
 use App\Extensions\Filesystem\S3Filesystem;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use App\Http\Requests\Api\Remote\ReportBackupCompleteRequest;
+use App\Exceptions\Http\HttpForbiddenException;
 
 class BackupStatusController extends Controller
 {
@@ -30,8 +31,22 @@ class BackupStatusController extends Controller
      */
     public function index(ReportBackupCompleteRequest $request, string $backup): JsonResponse
     {
+        // Get the node associated with the request.
+        /** @var \App\Models\Node $node */
+        $node = $request->attributes->get('node');
+
         /** @var \App\Models\Backup $model */
-        $model = Backup::query()->where('uuid', $backup)->firstOrFail();
+        $model = Backup::query()
+            ->where('uuid', $backup)
+            ->firstOrFail();
+
+        // Check that the backup is "owned" by the node making the request. This avoids other nodes
+        // from messing with backups that they don't own.
+        /** @var \App\Models\Server $server */
+        $server = $model->server;
+        if ($server->node_id !== $node->id) {
+            throw new HttpForbiddenException('You do not have permission to access that backup.');
+        }
 
         if ($model->is_successful) {
             throw new BadRequestHttpException('Cannot update the status of a backup that is already marked as completed.');
