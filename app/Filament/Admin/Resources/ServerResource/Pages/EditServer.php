@@ -48,21 +48,21 @@ class EditServer extends EditRecord
                     ->options(
                         fn ($state) => collect(ContainerStatus::cases())->filter(fn ($containerStatus) => $containerStatus->value === $state)->mapWithKeys(
                             fn (ContainerStatus $state) => [$state->value => str($state->value)->replace('_', ' ')->ucwords()]
-                    ))
+                        ))
                     ->colors(
                         collect(ContainerStatus::cases())->mapWithKeys(
                             fn (ContainerStatus $status) => [$status->value => $status->color()]
-                    ))
+                        ))
                     ->icons(
                         collect(ContainerStatus::cases())->mapWithKeys(
                             fn (ContainerStatus $status) => [$status->value => $status->icon()]
-                    ))
+                        ))
                     ->columnSpan([
-                        'default' => 1,
-                        'sm' => 2,
-                        'md' => 2,
-                        'lg' => 3,
-                    ]),
+                            'default' => 1,
+                            'sm' => 2,
+                            'md' => 2,
+                            'lg' => 3,
+                        ]),
 
                 Forms\Components\ToggleButtons::make('status')
                     ->label('Server State')->inline()->inlineLabel()
@@ -72,21 +72,21 @@ class EditServer extends EditRecord
                     ->options(
                         fn ($state) => collect(ServerState::cases())->filter(fn ($serverState) => $serverState->value === $state)->mapWithKeys(
                             fn (ServerState $state) => [$state->value => str($state->value)->replace('_', ' ')->ucwords()]
-                    ))
+                        ))
                     ->colors(
                         collect(ServerState::cases())->mapWithKeys(
                             fn (ServerState $state) => [$state->value => $state->color()]
-                    ))
+                        ))
                     ->icons(
                         collect(ServerState::cases())->mapWithKeys(
                             fn (ServerState $state) => [$state->value => $state->icon()]
-                    ))
+                        ))
                     ->columnSpan([
-                        'default' => 1,
-                        'sm' => 2,
-                        'md' => 2,
-                        'lg' => 3,
-                    ]),
+                            'default' => 1,
+                            'sm' => 2,
+                            'md' => 2,
+                            'lg' => 3,
+                        ]),
 
                 Forms\Components\TextInput::make('external_id')
                     ->maxLength(191)
@@ -96,20 +96,20 @@ class EditServer extends EditRecord
                     ->prefixIcon('tabler-server')
                     ->label('Display Name')
                     ->suffixAction(Forms\Components\Actions\Action::make('random')
-                        ->icon('tabler-dice-' . random_int(1, 6))
-                        ->action(function (Forms\Set $set, Forms\Get $get) {
-                            $egg = Egg::find($get('egg_id'));
-                            $prefix = $egg ? str($egg->name)->lower()->kebab() . '-' : '';
+                            ->icon('tabler-dice-' . random_int(1, 6))
+                            ->action(function (Forms\Set $set, Forms\Get $get) {
+                                $egg = Egg::find($get('egg_id'));
+                                $prefix = $egg ? str($egg->name)->lower()->kebab() . '-' : '';
 
-                            $word = (new RandomWordService())->word();
+                                $word = (new RandomWordService())->word();
 
-                            $set('name', $prefix . $word);
-                        }))
+                                $set('name', $prefix . $word);
+                            }))
                     ->columnSpan([
-                        'default' => 2,
-                        'sm' => 4,
-                        'md' => 2,
-                        'lg' => 3,
+                            'default' => 2,
+                            'sm' => 4,
+                            'md' => 2,
+                            'lg' => 3,
                     ])
                     ->required()
                     ->maxLength(191),
@@ -118,10 +118,10 @@ class EditServer extends EditRecord
                     ->prefixIcon('tabler-user')
                     ->label('Owner')
                     ->columnSpan([
-                        'default' => 2,
-                        'sm' => 4,
-                        'md' => 2,
-                        'lg' => 3,
+                            'default' => 2,
+                            'sm' => 4,
+                            'md' => 2,
+                            'lg' => 3,
                     ])
                     ->relationship('user', 'username')
                     ->searchable()
@@ -137,10 +137,10 @@ class EditServer extends EditRecord
                     ->disabledOn('edit')
                     ->prefixIcon('tabler-egg')
                     ->columnSpan([
-                        'default' => 2,
-                        'sm' => 2,
-                        'md' => 2,
-                        'lg' => 5,
+                            'default' => 2,
+                            'sm' => 2,
+                            'md' => 2,
+                            'lg' => 5,
                     ])
                     ->relationship('egg', 'name')
                     ->searchable()
@@ -150,16 +150,16 @@ class EditServer extends EditRecord
                 Forms\Components\ToggleButtons::make('skip_scripts')
                     ->label('Run Egg Install Script?')->inline()
                     ->options([
-                        false => 'Yes',
-                        true => 'Skip',
+                            false => 'Yes',
+                            true => 'Skip',
                     ])
                     ->colors([
-                        false => 'primary',
-                        true => 'danger',
+                            false => 'primary',
+                            true => 'danger',
                     ])
                     ->icons([
-                        false => 'tabler-code',
-                        true => 'tabler-code-off',
+                            false => 'tabler-code',
+                            true => 'tabler-code-off',
                     ])
                     ->required(),
 
