@@ -53,15 +53,14 @@ class AdminPanelProvider extends PanelProvider
             ])
             ->renderHook(
                 'panels::sidebar.footer',
-                fn () => view('filament.Footer'),
+                fn () => view('filament.footer'),
             )
             ->navigationItems([
                 NavigationItem::make('client')
                     ->label('Return to client')
                     ->url('/') // TODO once the Filament client side is done this can be changed to /client
                     ->icon('tabler-arrow-back')
-                    ->sort(12)
-                    ->visible(fn (): bool => auth()->user()->root_admin),
+                    ->sort(12),
             ])
             ->discoverResources(in: app_path('Filament/Admin/Resources'), for: 'App\\Filament\\Admin\\Resources')
             ->discoverPages(in: app_path('Filament/Admin/Pages'), for: 'App\\Filament\\Admin\\Pages')
@@ -70,6 +69,9 @@ class AdminPanelProvider extends PanelProvider
             ->widgets([
                 Widgets\AccountWidget::class,
                 Widgets\FilamentInfoWidget::class,
+            ])
+            ->pages([
+                // Pages\Dashboard::class,
             ])
             ->middleware([
                 EncryptCookies::class,

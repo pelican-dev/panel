@@ -45,13 +45,13 @@ class ClientPanelProvider extends PanelProvider
                 NavigationItem::make('admin')
                     ->label('Admin')
                     ->url('/admin')
-                    ->icon('tabler-ad') // I could not find a better icon
+                    ->icon('tabler-arrow-forward')
                     ->sort(5)
                     ->visible(fn (): bool => auth()->user()->root_admin),
             ])
             ->renderHook(
                 'panels::sidebar.footer',
-                fn () => view('filament.Footer'),
+                fn () => view('filament.footer'),
             )
             ->discoverResources(in: app_path('Filament/Client/Resources'), for: 'App\\Filament\\Client\\Resources')
             ->discoverPages(in: app_path('Filament/Client/Pages'), for: 'App\\Filament\\Client\\Pages')
@@ -60,6 +60,9 @@ class ClientPanelProvider extends PanelProvider
             ->widgets([
                 Widgets\AccountWidget::class,
                 Widgets\FilamentInfoWidget::class,
+            ])
+            ->pages([
+                // Pages\Dashboard::class,
             ])
             ->middleware([
                 EncryptCookies::class,
