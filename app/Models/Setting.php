@@ -2,84 +2,34 @@
 
 namespace App\Models;
 
-/**
- * App\Models\Setting.
- *
- * @property int $id
- * @property string $key
- * @property string $value
- */
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Cache;
+
 class Setting extends Model
 {
-    /**
-     * The table associated with the model.
-     */
-    protected $table = 'settings';
+    protected $primaryKey = 'key';
 
-    public $timestamps = false;
+    public $incrementing = false;
 
-    protected $fillable = ['key', 'value'];
+    protected $fillable = ['key', 'label', 'value', 'type', 'attributes'];
 
-    public static array $validationRules = [
-        'key' => 'required|string|between:1,191',
-        'value' => 'string',
-    ];
+    protected $casts = ['attributes' => 'array'];
 
-    private static array $cache = [];
-
-    private static array $databaseMiss = [];
-
-    /**
-     * Store a new persistent setting in the database.
-     */
-    public static function set(string $key, string $value = null): void
+    public static function getValue($key)
     {
-        // Clear item from the cache.
-        self::clearCache($key);
+        $setting = static::where('key', $key)->first();
 
-        self::query()->updateOrCreate(['key' => $key], ['value' => $value ?? '']);
-
-        self::$cache[$key] = $value;
+        return $setting ? $setting->value : null;
     }
 
-    /**
-     * Retrieve a persistent setting from the database.
-     */
-    public static function get(string $key, mixed $default = null): mixed
+    protected static function booted()
     {
-        // If item has already been requested return it from the cache. If
-        // we already know it is missing, immediately return the default value.
-        if (array_key_exists($key, self::$cache)) {
-            return self::$cache[$key];
-        } elseif (array_key_exists($key, self::$databaseMiss)) {
-            return value($default);
-        }
+        static::saved(function ($setting) {
+            Cache::forget('settings');
+        });
 
-        $instance = self::query()->where('key', $key)->first();
-        if (is_null($instance)) {
-            self::$databaseMiss[$key] = true;
-
-            return value($default);
-        }
-
-        return self::$cache[$key] = $instance->value;
-    }
-
-    /**
-     * Remove a key from the database cache.
-     */
-    public static function forget(string $key)
-    {
-        self::clearCache($key);
-
-        return self::query()->where('key', $key)->delete();
-    }
-
-    /**
-     * Remove a key from the cache.
-     */
-    private static function clearCache(string $key): void
-    {
-        unset(self::$cache[$key], self::$databaseMiss[$key]);
+        static::deleted(function ($setting) {
+            Cache::forget('settings');
+        });
     }
 }

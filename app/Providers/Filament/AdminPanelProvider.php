@@ -39,7 +39,7 @@ class AdminPanelProvider extends PanelProvider
             ->login()
             ->homeUrl('/')
             ->favicon('/pelican.ico')
-            ->brandName('Pelican')
+            ->brandName(config('app.name'))
             ->profile(EditProfile::class, false)
             ->colors([
                 'danger' => Color::Red,
