@@ -8,6 +8,7 @@ use Filament\Actions\Action;
 use Illuminate\Database\QueryException;
 use App\Models\Setting;
 use Illuminate\Support\Facades\Config;
+use Illuminate\Support\Facades\Cache;
 
 class ManageSettings extends ManageRecords
 {
@@ -36,6 +37,7 @@ class ManageSettings extends ManageRecords
 
         foreach ($settings as $key => $value) {
             Config::set($key, $value);
+            Cache::flush();
         }
     }
 }
