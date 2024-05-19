@@ -31,28 +31,13 @@ class ListEggs extends ListRecords
                     ->searchable(),
                 Tables\Columns\TextColumn::make('name')
                     ->icon('tabler-egg')
-                    ->description(fn ($record): ?string => $record->description)
+                    ->description(fn ($record): ?string => (strlen($record->description) > 120) ? substr($record->description, 0, 120).'...' : $record->description)
                     ->wrap()
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('author')
-                    ->hidden()
                     ->searchable(),
                 Tables\Columns\TextColumn::make('servers_count')
                     ->counts('servers')
                     ->icon('tabler-server')
                     ->label('Servers'),
-                Tables\Columns\TextColumn::make('script_container')
-                    ->searchable()
-                    ->hidden(),
-                Tables\Columns\TextColumn::make('copyFrom.name')
-                    ->hidden()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('script_entry')
-                    ->hidden()
-                    ->searchable(),
-            ])
-            ->filters([
-                //
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
@@ -62,9 +47,6 @@ class ListEggs extends ListRecords
                     ->color('primary')
                     // TODO uses old admin panel export service
                     ->url(fn (Egg $egg): string => route('admin.eggs.export', ['egg' => $egg])),
-            ])
-            ->headerActions([
-                //
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
