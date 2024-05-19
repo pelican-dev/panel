@@ -11,12 +11,13 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Select;
+use Illuminate\Support\Facades\Cache;
 
 class SettingResource extends Resource
 {
     protected static ?string $model = Setting::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationIcon = 'tabler-settings';
 
     protected static ?string $cluster = Settings::class;
 
@@ -30,7 +31,16 @@ class SettingResource extends Resource
         return $form
             ->schema([
                 //
-            ]);
+            ])
+            ->context(static function ($record) {
+                return [
+                    'setting' => $record,
+                ];
+            })
+            ->onSave(static function ($form, $record) {
+                $record->save();
+                Cache::forget('settings');
+            });
     }
 
     public static function table(Table $table): Table
@@ -68,6 +78,7 @@ class SettingResource extends Resource
                     }),
             ]);
     }
+
     public static function getPages(): array
     {
         return [
