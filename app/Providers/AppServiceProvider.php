@@ -12,6 +12,7 @@ use Dedoc\Scramble\Support\Generator\SecurityScheme;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Facades\Broadcast;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\URL;
@@ -73,6 +74,10 @@ class AppServiceProvider extends ServiceProvider
         Scramble::registerApi('application', ['api_path' => 'api/application', 'info' => ['version' => '1.0']]);
         Scramble::registerApi('client', ['api_path' => 'api/client', 'info' => ['version' => '1.0']]);
         Scramble::registerApi('remote', ['api_path' => 'api/remote', 'info' => ['version' => '1.0']]);
+
+        Gate::define('viewApiDocs', function (Models\User $user) {
+            return true;
+        });
     }
 
     /**
