@@ -32,7 +32,7 @@ class AdminPanelProvider extends PanelProvider
 
     public function panel(Panel $panel): Panel
     {
-        return $panel
+        $panel = $panel
             ->default()
             ->id('admin')
             ->path('admin')
@@ -51,7 +51,6 @@ class AdminPanelProvider extends PanelProvider
                 'warning' => Color::Amber,
                 'blurple' => Color::hex('#5865F2'),
             ])
-            ->renderHook('panels::body.end', fn () => view('filament.footer'))
             ->navigationItems([
                 NavigationItem::make('client')
                     ->label('Exit Admin')
@@ -85,5 +84,13 @@ class AdminPanelProvider extends PanelProvider
             ->authMiddleware([
                 Authenticate::class,
             ]);
+
+        if (config('panel.filament.top-navigation') === false) {
+            $panel->renderHook('panels::sidebar.footer', fn () => view('filament.footer'));
+        } else {
+            //$panel->renderHook('panels::topbar.after', fn () => view('filament.footer')); TODO find a fix for the footer if topbar is enabled
+        }
+
+        return $panel;
     }
 }
