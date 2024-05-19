@@ -13,7 +13,7 @@ footer {
     margin: 0;
     height: auto;
     background: none;
-    bottom: 4px; /* Toegevoegd */
+    bottom: 8px;
 }
 
 footer .flex {

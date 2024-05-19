@@ -174,5 +174,6 @@ return [
 
     'filament' => [
         'top-navigation' => env('FILAMENT_TOP_NAVIGATION', false),
+        'sidebar-collapsible' => env('FILAMENT_SIDEBAR-COLLAPSIBLE', true),
     ],
 ];
