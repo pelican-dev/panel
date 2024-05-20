@@ -3,7 +3,6 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Facades\Cache;
 
 class Setting extends Model
 {
@@ -20,16 +19,5 @@ class Setting extends Model
         $setting = static::where('key', $key)->first();
 
         return $setting ? $setting->value : null;
-    }
-
-    protected static function booted()
-    {
-        static::saved(function ($setting) {
-            Cache::forget('settings');
-        });
-
-        static::deleted(function ($setting) {
-            Cache::forget('settings');
-        });
     }
 }

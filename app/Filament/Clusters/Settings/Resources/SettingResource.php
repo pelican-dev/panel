@@ -11,7 +11,6 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Select;
-use Illuminate\Support\Facades\Cache;
 
 class SettingResource extends Resource
 {
@@ -31,16 +30,7 @@ class SettingResource extends Resource
         return $form
             ->schema([
                 //
-            ])
-            ->context(static function ($record) {
-                return [
-                    'setting' => $record,
-                ];
-            })
-            ->onSave(static function ($form, $record) {
-                $record->save();
-                Cache::forget('settings');
-            });
+            ]);
     }
 
     public static function table(Table $table): Table
