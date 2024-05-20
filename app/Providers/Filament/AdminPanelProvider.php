@@ -51,7 +51,7 @@ class AdminPanelProvider extends PanelProvider
                 'warning' => Color::Amber,
                 'blurple' => Color::hex('#5865F2'),
             ])
-            ->renderHook('panels::sidebar.footer', fn () => view('filament.footer'))
+            ->renderHook('panels::sidebar.footer', fn () => view('filament.footer')) // TODO make the footer also work with topNavigation
             ->navigationItems([
                 NavigationItem::make('client')
                     ->label('Exit Admin')
