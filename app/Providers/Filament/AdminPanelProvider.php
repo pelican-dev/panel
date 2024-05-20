@@ -89,7 +89,7 @@ class AdminPanelProvider extends PanelProvider
         if (config('panel.filament.top-navigation') === false) {
             $panel->renderHook('panels::sidebar.footer', fn () => view('filament.footer'));
         } else {
-            $panel->renderHook('panels::topbar.start', fn () => view('filament.footer')); // TODO find a fix for the footer if topbar is enabled
+            //$panel->renderHook('panels::topbar.start', fn () => view('filament.footer')); // TODO find a fix for the footer if topbar is enabled
         }
 
         return $panel;
