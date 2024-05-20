@@ -7,7 +7,6 @@ use App\Models;
 use App\Models\ApiKey;
 use App\Models\Node;
 use Dedoc\Scramble\Scramble;
-use Dedoc\Scramble\Support\Generator\InfoObject;
 use Dedoc\Scramble\Support\Generator\OpenApi;
 use Dedoc\Scramble\Support\Generator\SecurityScheme;
 use Illuminate\Database\Eloquent\Relations\Relation;
