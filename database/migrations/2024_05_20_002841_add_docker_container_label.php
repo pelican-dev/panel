@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('servers', function (Blueprint $table) {
-            $table->text('docker_labels')->default('[]');
+            $table->text('docker_labels')->nullable();
         });
     }
 
