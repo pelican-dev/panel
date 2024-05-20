@@ -51,12 +51,13 @@ class AdminPanelProvider extends PanelProvider
                 'warning' => Color::Amber,
                 'blurple' => Color::hex('#5865F2'),
             ])
+            ->renderHook('panels::sidebar.footer', fn () => view('filament.footer'))
             ->navigationItems([
                 NavigationItem::make('client')
                     ->label('Exit Admin')
                     ->url('/')
                     ->icon('tabler-arrow-back')
-                    ->sort(20),
+                    ->sort(12),
             ])
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\\Filament\\Resources')
             ->discoverPages(in: app_path('Filament/Pages'), for: 'App\\Filament\\Pages')
@@ -84,11 +85,5 @@ class AdminPanelProvider extends PanelProvider
             ->authMiddleware([
                 Authenticate::class,
             ]);
-
-        if (config('panel.filament.top-navigation') === false) {
-            $panel->renderHook('panels::sidebar.footer', fn () => view('filament.footer'));
-        } else {
-            //$panel->renderHook('panels::topbar.start', fn () => view('filament.footer')); // TODO find a fix for the footer if topbar is enabled
-        }
     }
 }
