@@ -184,6 +184,7 @@ class Server extends Model
             self::UPDATED_AT => 'datetime',
             'deleted_at' => 'datetime',
             'installed_at' => 'datetime',
+            'docker_labels' => 'array',
         ];
     }
 

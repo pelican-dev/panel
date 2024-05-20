@@ -309,55 +309,6 @@ class CreateServer extends CreateRecord
                     ->inline()
                     ->required(),
 
-                Forms\Components\Select::make('select_image')
-                    ->label('Docker Image Name')
-                    ->prefixIcon('tabler-brand-docker')
-                    ->live()
-                    ->afterStateUpdated(fn (Forms\Set $set, $state) => $set('image', $state))
-                    ->options(function ($state, Forms\Get $get, Forms\Set $set) {
-                        $egg = Egg::query()->find($get('egg_id'));
-                        $images = $egg->docker_images ?? [];
-
-                        $currentImage = $get('image');
-                        if (!$currentImage && $images) {
-                            $defaultImage = collect($images)->first();
-                            $set('image', $defaultImage);
-                            $set('select_image', $defaultImage);
-                        }
-
-                        return array_flip($images) + ['ghcr.io/custom-image' => 'Custom Image'];
-                    })
-                    ->selectablePlaceholder(false)
-                    ->columnSpan([
-                        'default' => 2,
-                        'sm' => 2,
-                        'md' => 2,
-                        'lg' => 3,
-                    ]),
-
-                Forms\Components\TextInput::make('image')
-                    ->label('Docker Image')
-                    ->prefixIcon('tabler-brand-docker')
-                    ->live()
-                    ->debounce(500)
-                    ->afterStateUpdated(function ($state, Forms\Get $get, Forms\Set $set) {
-                        $egg = Egg::query()->find($get('egg_id'));
-                        $images = $egg->docker_images ?? [];
-
-                        if (in_array($state, $images)) {
-                            $set('select_image', $state);
-                        } else {
-                            $set('select_image', 'ghcr.io/custom-image');
-                        }
-                    })
-                    ->placeholder('Enter a custom Image')
-                    ->columnSpan([
-                        'default' => 2,
-                        'sm' => 2,
-                        'md' => 2,
-                        'lg' => 3,
-                    ]),
-
                 Forms\Components\Textarea::make('startup')
                     ->hintIcon('tabler-code')
                     ->label('Startup Command')
@@ -452,7 +403,7 @@ class CreateServer extends CreateRecord
                             ->columnSpan(2),
                     ]),
 
-                Forms\Components\Section::make('Resource Management')
+                Forms\Components\Section::make('Environment Management')
                     ->collapsed()
                     ->icon('tabler-server-cog')
                     ->iconColor('primary')
@@ -464,175 +415,190 @@ class CreateServer extends CreateRecord
                     ])
                     ->columnSpanFull()
                     ->schema([
-                        Forms\Components\Grid::make()
-                            ->columns(4)
-                            ->columnSpanFull()
+                        Forms\Components\Fieldset::make('Resource Limits')
+                            ->columnSpan([
+                                'default' => 2,
+                                'sm' => 4,
+                                'md' => 4,
+                                'lg' => 6,
+                            ])
+                            ->columns([
+                                'default' => 1,
+                                'sm' => 2,
+                                'md' => 3,
+                                'lg' => 3,
+                            ])
                             ->schema([
-                                Forms\Components\ToggleButtons::make('unlimited_mem')
-                                    ->label('Memory')->inlineLabel()->inline()
-                                    ->default(true)
-                                    ->afterStateUpdated(fn (Forms\Set $set) => $set('memory', 0))
-                                    ->live()
-                                    ->options([
-                                        true => 'Unlimited',
-                                        false => 'Limited',
-                                    ])
-                                    ->colors([
-                                        true => 'primary',
-                                        false => 'warning',
-                                    ])
-                                    ->columnSpan(2),
+                                Forms\Components\Grid::make()
+                                    ->columns(4)
+                                    ->columnSpanFull()
+                                    ->schema([
+                                        Forms\Components\ToggleButtons::make('unlimited_mem')
+                                            ->label('Memory')->inlineLabel()->inline()
+                                            ->default(true)
+                                            ->afterStateUpdated(fn (Forms\Set $set) => $set('memory', 0))
+                                            ->live()
+                                            ->options([
+                                                true => 'Unlimited',
+                                                false => 'Limited',
+                                            ])
+                                            ->colors([
+                                                true => 'primary',
+                                                false => 'warning',
+                                            ])
+                                            ->columnSpan(2),
 
-                                Forms\Components\TextInput::make('memory')
-                                    ->dehydratedWhenHidden()
-                                    ->hidden(fn (Forms\Get $get) => $get('unlimited_mem'))
-                                    ->label('Memory Limit')->inlineLabel()
-                                    ->suffix('MiB')
-                                    ->default(0)
-                                    ->required()
-                                    ->columnSpan(2)
-                                    ->numeric()
-                                    ->minValue(0),
-                            ]),
-
-                        Forms\Components\Grid::make()
-                            ->columns(4)
-                            ->columnSpanFull()
-                            ->schema([
-                                Forms\Components\ToggleButtons::make('unlimited_disk')
-                                    ->label('Disk Space')->inlineLabel()->inline()
-                                    ->default(true)
-                                    ->live()
-                                    ->afterStateUpdated(fn (Forms\Set $set) => $set('disk', 0))
-                                    ->options([
-                                        true => 'Unlimited',
-                                        false => 'Limited',
-                                    ])
-                                    ->colors([
-                                        true => 'primary',
-                                        false => 'warning',
-                                    ])
-                                    ->columnSpan(2),
-
-                                Forms\Components\TextInput::make('disk')
-                                    ->dehydratedWhenHidden()
-                                    ->hidden(fn (Forms\Get $get) => $get('unlimited_disk'))
-                                    ->label('Disk Space Limit')->inlineLabel()
-                                    ->suffix('MiB')
-                                    ->default(0)
-                                    ->required()
-                                    ->columnSpan(2)
-                                    ->numeric()
-                                    ->minValue(0),
-                            ]),
-
-                        Forms\Components\Grid::make()
-                            ->columns(4)
-                            ->columnSpanFull()
-                            ->schema([
-                                Forms\Components\ToggleButtons::make('unlimited_cpu')
-                                    ->label('CPU')->inlineLabel()->inline()
-                                    ->default(true)
-                                    ->afterStateUpdated(fn (Forms\Set $set) => $set('cpu', 0))
-                                    ->live()
-                                    ->options([
-                                        true => 'Unlimited',
-                                        false => 'Limited',
-                                    ])
-                                    ->colors([
-                                        true => 'primary',
-                                        false => 'warning',
-                                    ])
-                                    ->columnSpan(2),
-
-                                Forms\Components\TextInput::make('cpu')
-                                    ->dehydratedWhenHidden()
-                                    ->hidden(fn (Forms\Get $get) => $get('unlimited_cpu'))
-                                    ->label('CPU Limit')->inlineLabel()
-                                    ->suffix('%')
-                                    ->default(0)
-                                    ->required()
-                                    ->columnSpan(2)
-                                    ->numeric()
-                                    ->minValue(0)
-                                    ->helperText('100% equals one logical thread'),
-                            ]),
-
-                        Forms\Components\Grid::make()
-                            ->columns(4)
-                            ->columnSpanFull()
-                            ->schema([
-                                Forms\Components\ToggleButtons::make('swap_support')
-                                    ->live()
-                                    ->label('Enable Swap Memory')
-                                    ->inlineLabel()
-                                    ->inline()
-                                    ->columnSpan(2)
-                                    ->default('disabled')
-                                    ->afterStateUpdated(function ($state, Forms\Set $set) {
-                                        $value = match ($state) {
-                                            'unlimited' => -1,
-                                            'disabled' => 0,
-                                            'limited' => 128,
-                                        };
-
-                                        $set('swap', $value);
-                                    })
-                                    ->options([
-                                        'unlimited' => 'Unlimited',
-                                        'limited' => 'Limited',
-                                        'disabled' => 'Disabled',
-                                    ])
-                                    ->colors([
-                                        'unlimited' => 'primary',
-                                        'limited' => 'warning',
-                                        'disabled' => 'danger',
+                                        Forms\Components\TextInput::make('memory')
+                                            ->dehydratedWhenHidden()
+                                            ->hidden(fn (Forms\Get $get) => $get('unlimited_mem'))
+                                            ->label('Memory Limit')->inlineLabel()
+                                            ->suffix('MiB')
+                                            ->default(0)
+                                            ->required()
+                                            ->columnSpan(2)
+                                            ->numeric()
+                                            ->minValue(0),
                                     ]),
 
-                                Forms\Components\TextInput::make('swap')
-                                    ->dehydratedWhenHidden()
-                                    ->hidden(fn (Forms\Get $get) => match ($get('swap_support')) {
-                                        'disabled', 'unlimited' => true,
-                                        'limited' => false,
-                                    })
-                                    ->label('Swap Memory')
-                                    ->default(0)
-                                    ->suffix('MiB')
-                                    ->minValue(-1)
-                                    ->columnSpan(2)
-                                    ->inlineLabel()
-                                    ->required()
-                                    ->integer(),
-                            ]),
+                                Forms\Components\Grid::make()
+                                    ->columns(4)
+                                    ->columnSpanFull()
+                                    ->schema([
+                                        Forms\Components\ToggleButtons::make('unlimited_disk')
+                                            ->label('Disk Space')->inlineLabel()->inline()
+                                            ->default(true)
+                                            ->live()
+                                            ->afterStateUpdated(fn (Forms\Set $set) => $set('disk', 0))
+                                            ->options([
+                                                true => 'Unlimited',
+                                                false => 'Limited',
+                                            ])
+                                            ->colors([
+                                                true => 'primary',
+                                                false => 'warning',
+                                            ])
+                                            ->columnSpan(2),
 
-                        Forms\Components\Hidden::make('io')
-                            ->helperText('The IO performance relative to other running containers')
-                            ->label('Block IO Proportion')
-                            ->default(500),
-
-                        Forms\Components\Grid::make()
-                            ->columns(4)
-                            ->columnSpanFull()
-                            ->schema([
-                                Forms\Components\ToggleButtons::make('oom_killer')
-                                    ->label('OOM Killer')
-                                    ->inlineLabel()->inline()
-                                    ->default(false)
-                                    ->columnSpan(2)
-                                    ->options([
-                                        false => 'Disabled',
-                                        true => 'Enabled',
-                                    ])
-                                    ->colors([
-                                        false => 'success',
-                                        true => 'danger',
+                                        Forms\Components\TextInput::make('disk')
+                                            ->dehydratedWhenHidden()
+                                            ->hidden(fn (Forms\Get $get) => $get('unlimited_disk'))
+                                            ->label('Disk Space Limit')->inlineLabel()
+                                            ->suffix('MiB')
+                                            ->default(0)
+                                            ->required()
+                                            ->columnSpan(2)
+                                            ->numeric()
+                                            ->minValue(0),
                                     ]),
 
-                                Forms\Components\TextInput::make('oom_disabled_hidden')
-                                    ->hidden(),
+                                Forms\Components\Grid::make()
+                                    ->columns(4)
+                                    ->columnSpanFull()
+                                    ->schema([
+                                        Forms\Components\ToggleButtons::make('unlimited_cpu')
+                                            ->label('CPU')->inlineLabel()->inline()
+                                            ->default(true)
+                                            ->afterStateUpdated(fn (Forms\Set $set) => $set('cpu', 0))
+                                            ->live()
+                                            ->options([
+                                                true => 'Unlimited',
+                                                false => 'Limited',
+                                            ])
+                                            ->colors([
+                                                true => 'primary',
+                                                false => 'warning',
+                                            ])
+                                            ->columnSpan(2),
+
+                                        Forms\Components\TextInput::make('cpu')
+                                            ->dehydratedWhenHidden()
+                                            ->hidden(fn (Forms\Get $get) => $get('unlimited_cpu'))
+                                            ->label('CPU Limit')->inlineLabel()
+                                            ->suffix('%')
+                                            ->default(0)
+                                            ->required()
+                                            ->columnSpan(2)
+                                            ->numeric()
+                                            ->minValue(0)
+                                            ->helperText('100% equals one CPU core.'),
+                                    ]),
+
+                                Forms\Components\Grid::make()
+                                    ->columns(4)
+                                    ->columnSpanFull()
+                                    ->schema([
+                                        Forms\Components\ToggleButtons::make('swap_support')
+                                            ->live()
+                                            ->label('Enable Swap Memory')
+                                            ->inlineLabel()
+                                            ->inline()
+                                            ->columnSpan(2)
+                                            ->default('disabled')
+                                            ->afterStateUpdated(function ($state, Forms\Set $set) {
+                                                $value = match ($state) {
+                                                    'unlimited' => -1,
+                                                    'disabled' => 0,
+                                                    'limited' => 128,
+                                                };
+
+                                                $set('swap', $value);
+                                            })
+                                            ->options([
+                                                'unlimited' => 'Unlimited',
+                                                'limited' => 'Limited',
+                                                'disabled' => 'Disabled',
+                                            ])
+                                            ->colors([
+                                                'unlimited' => 'primary',
+                                                'limited' => 'warning',
+                                                'disabled' => 'danger',
+                                            ]),
+
+                                        Forms\Components\TextInput::make('swap')
+                                            ->dehydratedWhenHidden()
+                                            ->hidden(fn (Forms\Get $get) => match ($get('swap_support')) {
+                                                'disabled', 'unlimited' => true,
+                                                'limited' => false,
+                                            })
+                                            ->label('Swap Memory')
+                                            ->default(0)
+                                            ->suffix('MiB')
+                                            ->minValue(-1)
+                                            ->columnSpan(2)
+                                            ->inlineLabel()
+                                            ->required()
+                                            ->integer(),
+                                    ]),
+
+                                Forms\Components\Hidden::make('io')
+                                    ->helperText('The IO performance relative to other running containers')
+                                    ->label('Block IO Proportion')
+                                    ->default(500),
+
+                                Forms\Components\Grid::make()
+                                    ->columns(4)
+                                    ->columnSpanFull()
+                                    ->schema([
+                                        Forms\Components\ToggleButtons::make('oom_killer')
+                                            ->label('OOM Killer')
+                                            ->inlineLabel()->inline()
+                                            ->default(false)
+                                            ->columnSpan(2)
+                                            ->options([
+                                                false => 'Disabled',
+                                                true => 'Enabled',
+                                            ])
+                                            ->colors([
+                                                false => 'success',
+                                                true => 'danger',
+                                            ]),
+
+                                        Forms\Components\TextInput::make('oom_disabled_hidden')
+                                            ->hidden(),
+                                    ]),
                             ]),
 
-                        Forms\Components\Fieldset::make('Application Feature Limits')
+                        Forms\Components\Fieldset::make('Feature Limits')
                             ->inlineLabel()
                             ->columnSpan([
                                 'default' => 2,
@@ -662,6 +628,60 @@ class CreateServer extends CreateRecord
                                     ->required()
                                     ->numeric()
                                     ->default(0),
+                            ]),
+                        Forms\Components\Fieldset::make('Docker Settings')
+                            ->columnSpan([
+                                'default' => 2,
+                                'sm' => 4,
+                                'md' => 4,
+                                'lg' => 6,
+                            ])
+                            ->columns([
+                                'default' => 1,
+                                'sm' => 2,
+                                'md' => 3,
+                                'lg' => 3,
+                            ])
+                            ->schema([
+                                Forms\Components\Select::make('select_image')
+                                    ->label('Image Name')
+                                    ->afterStateUpdated(fn (Forms\Set $set, $state) => $set('image', $state))
+                                    ->options(function ($state, Forms\Get $get, Forms\Set $set) {
+                                        $egg = Egg::query()->find($get('egg_id'));
+                                        $images = $egg->docker_images ?? [];
+
+                                        $currentImage = $get('image');
+                                        if (!$currentImage && $images) {
+                                            $defaultImage = collect($images)->first();
+                                            $set('image', $defaultImage);
+                                            $set('select_image', $defaultImage);
+                                        }
+
+                                        return array_flip($images) + ['ghcr.io/custom-image' => 'Custom Image'];
+                                    })
+                                    ->selectablePlaceholder(false)
+                                    ->columnSpan(1),
+
+                                Forms\Components\TextInput::make('image')
+                                    ->label('Image')
+                                    ->debounce(500)
+                                    ->afterStateUpdated(function ($state, Forms\Get $get, Forms\Set $set) {
+                                        $egg = Egg::query()->find($get('egg_id'));
+                                        $images = $egg->docker_images ?? [];
+
+                                        if (in_array($state, $images)) {
+                                            $set('select_image', $state);
+                                        } else {
+                                            $set('select_image', 'ghcr.io/custom-image');
+                                        }
+                                    })
+                                    ->placeholder('Enter a custom Image')
+                                    ->columnSpan(1),
+
+                                Forms\Components\TagsInput::make('docker_labels')
+                                    ->label('Labels')
+                                    ->placeholder('Enter custom Docker container labels')
+                                    ->columnSpan(1),
                             ]),
                     ]),
             ]);
