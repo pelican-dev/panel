@@ -171,10 +171,10 @@ class EditServer extends EditRecord
                     })
                     ->selectablePlaceholder(false)
                     ->columnSpan([
-                        'default' => 2,
-                        'sm' => 2,
-                        'md' => 2,
-                        'lg' => 3,
+                        'default' => 1,
+                        'sm' => 1,
+                        'md' => 1,
+                        'lg' => 2,
                     ]),
 
                 Forms\Components\TextInput::make('image')
@@ -194,10 +194,21 @@ class EditServer extends EditRecord
                     })
                     ->placeholder('Enter a custom Image')
                     ->columnSpan([
-                        'default' => 2,
-                        'sm' => 2,
-                        'md' => 2,
-                        'lg' => 3,
+                        'default' => 1,
+                        'sm' => 1,
+                        'md' => 1,
+                        'lg' => 2,
+                    ]),
+
+                Forms\Components\TagsInput::make('docker_labels')
+                    ->label('Docker Labels')
+                    ->live()
+                    ->placeholder('Enter custom Docker container labels')
+                    ->columnSpan([
+                        'default' => 1,
+                        'sm' => 1,
+                        'md' => 1,
+                        'lg' => 2,
                     ]),
 
                 Forms\Components\Textarea::make('startup')
