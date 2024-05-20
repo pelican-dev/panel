@@ -28,6 +28,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property int $r_eggs
  * @property int $r_database_hosts
  * @property int $r_server_databases
+ * @property int $r_mounts
  * @property \App\Models\User $tokenable
  * @property \App\Models\User $user
  *
@@ -83,7 +84,7 @@ class ApiKey extends Model
      */
     public const KEY_LENGTH = 32;
 
-    public const RESOURCES = ['servers', 'nodes', 'allocations', 'users', 'eggs', 'database_hosts', 'server_databases'];
+    public const RESOURCES = ['servers', 'nodes', 'allocations', 'users', 'eggs', 'database_hosts', 'server_databases', 'mounts'];
 
     /**
      * The table associated with the model.
@@ -109,6 +110,7 @@ class ApiKey extends Model
         'r_' . AdminAcl::RESOURCE_EGGS,
         'r_' . AdminAcl::RESOURCE_NODES,
         'r_' . AdminAcl::RESOURCE_SERVERS,
+        'r_' . AdminAcl::RESOURCE_MOUNTS,
     ];
 
     /**
@@ -137,6 +139,7 @@ class ApiKey extends Model
         'r_' . AdminAcl::RESOURCE_EGGS => 'integer|min:0|max:3',
         'r_' . AdminAcl::RESOURCE_NODES => 'integer|min:0|max:3',
         'r_' . AdminAcl::RESOURCE_SERVERS => 'integer|min:0|max:3',
+        'r_' . AdminAcl::RESOURCE_MOUNTS => 'integer|min:0|max:3',
     ];
 
     protected function casts(): array
@@ -155,6 +158,7 @@ class ApiKey extends Model
             'r_' . AdminAcl::RESOURCE_EGGS => 'int',
             'r_' . AdminAcl::RESOURCE_NODES => 'int',
             'r_' . AdminAcl::RESOURCE_SERVERS => 'int',
+            'r_' . AdminAcl::RESOURCE_MOUNTS => 'int',
         ];
     }
 
