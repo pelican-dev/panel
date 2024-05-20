@@ -38,7 +38,6 @@ class AdminPanelProvider extends PanelProvider
             ->path('admin')
             ->topNavigation(config('panel.filament.top-navigation', false))
             ->login()
-            ->sidebarCollapsibleOnDesktop(config('panel.filament.sidebar-collapsible', true))
             ->homeUrl('/')
             ->favicon('/pelican.ico')
             ->brandName('Pelican')
@@ -62,13 +61,13 @@ class AdminPanelProvider extends PanelProvider
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\\Filament\\Resources')
             ->discoverPages(in: app_path('Filament/Pages'), for: 'App\\Filament\\Pages')
             ->discoverClusters(in: app_path('Filament/Clusters'), for: 'App\\Filament\\Clusters')
+            ->pages([
+                // Pages\Dashboard::class,
+            ])
             ->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\\Filament\\Widgets')
             ->widgets([
                 Widgets\AccountWidget::class,
                 Widgets\FilamentInfoWidget::class,
-            ])
-            ->pages([
-                // Pages\Dashboard::class,
             ])
             ->middleware([
                 EncryptCookies::class,
@@ -91,7 +90,5 @@ class AdminPanelProvider extends PanelProvider
         } else {
             //$panel->renderHook('panels::topbar.start', fn () => view('filament.footer')); // TODO find a fix for the footer if topbar is enabled
         }
-
-        return $panel;
     }
 }
