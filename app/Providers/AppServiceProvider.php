@@ -7,11 +7,13 @@ use App\Models;
 use App\Models\ApiKey;
 use App\Models\Node;
 use Dedoc\Scramble\Scramble;
+use Dedoc\Scramble\Support\Generator\InfoObject;
 use Dedoc\Scramble\Support\Generator\OpenApi;
 use Dedoc\Scramble\Support\Generator\SecurityScheme;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Facades\Broadcast;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\URL;
@@ -70,9 +72,11 @@ class AppServiceProvider extends ServiceProvider
         $this->bootAuth();
         $this->bootBroadcast();
 
+        $bearerTokens = fn (OpenApi $openApi) => $openApi->secure(SecurityScheme::http('bearer'));
+        Gate::define('viewApiDocs', fn () => true);
         Scramble::registerApi('application', ['api_path' => 'api/application', 'info' => ['version' => '1.0']]);
-        Scramble::registerApi('client', ['api_path' => 'api/client', 'info' => ['version' => '1.0']]);
-        Scramble::registerApi('remote', ['api_path' => 'api/remote', 'info' => ['version' => '1.0']]);
+        Scramble::registerApi('client', ['api_path' => 'api/client', 'info' => ['version' => '1.0']])->afterOpenApiGenerated($bearerTokens);
+        Scramble::registerApi('remote', ['api_path' => 'api/remote', 'info' => ['version' => '1.0']])->afterOpenApiGenerated($bearerTokens);
     }
 
     /**
