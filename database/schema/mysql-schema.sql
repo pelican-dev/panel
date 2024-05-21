@@ -359,7 +359,7 @@ CREATE TABLE `nodes` (
                          `memory_overallocate` int NOT NULL DEFAULT '0',
                          `disk` int unsigned NOT NULL,
                          `disk_overallocate` int NOT NULL DEFAULT '0',
-                         `cpu` int unsigned NOT NULL,
+                         `cpu` int unsigned NOT NULL DEFAULT '0',
                          `cpu_overallocate` int NOT NULL DEFAULT '0',
                          `upload_size` int unsigned NOT NULL DEFAULT '100',
                          `daemon_token_id` char(16) COLLATE utf8mb4_unicode_ci NOT NULL,
