@@ -3,37 +3,10 @@
 namespace App\Services\Deployment;
 
 use App\Models\Node;
-use Webmozart\Assert\Assert;
 use Illuminate\Support\Collection;
 
 class FindViableNodesService
 {
-    protected ?int $disk = null;
-    protected ?int $memory = null;
-
-    /**
-     * Set the amount of disk that will be used by the server being created. Nodes will be
-     * filtered out if they do not have enough available free disk space for this server
-     * to be placed on.
-     */
-    public function setDisk(int $disk): self
-    {
-        $this->disk = $disk;
-
-        return $this;
-    }
-
-    /**
-     * Set the amount of memory that this server will be using. As with disk space, nodes that
-     * do not have enough free memory will be filtered out.
-     */
-    public function setMemory(int $memory): self
-    {
-        $this->memory = $memory;
-
-        return $this;
-    }
-
     /**
      * Returns a collection of nodes that meet the provided requirements and can then
      * be passed to the AllocationSelectionService to return a single allocation.
@@ -44,21 +17,20 @@ class FindViableNodesService
      * are tossed out, as are any nodes marked as non-public, meaning automatic
      * deployments should not be done against them.
      */
-    public function handle(int $disk = null, int $memory = null, int $cpu = null): Collection
+    public function handle(int $disk = 0, int $memory = 0, int $cpu = 0, $tags = []): Collection
     {
-        Assert::integer($this->disk, 'Disk space must be an int, got %s');
-        Assert::integer($this->memory, 'Memory usage must be an int, got %s');
+        $nodes = Node::query()
+            ->withSum('servers', 'disk')
+            ->withSum('servers', 'memory')
+            ->withSum('servers', 'cpu')
+            ->where('public', true)
+            ->get();
 
-        $query = Node::query()->select('nodes.*')
-            ->selectRaw('IFNULL(SUM(servers.memory), 0) as sum_memory')
-            ->selectRaw('IFNULL(SUM(servers.disk), 0) as sum_disk')
-            ->leftJoin('servers', 'servers.node_id', '=', 'nodes.id')
-            ->where('nodes.public', 1);
-
-        $results = $query->groupBy('nodes.id')
-            ->havingRaw('(IFNULL(SUM(servers.memory), 0) + ?) <= (nodes.memory * (1 + (nodes.memory_overallocate / 100)))', [$this->memory])
-            ->havingRaw('(IFNULL(SUM(servers.disk), 0) + ?) <= (nodes.disk * (1 + (nodes.disk_overallocate / 100)))', [$this->disk]);
-
-        return $results->get();
+        return $nodes
+            ->filter(fn (Node $node) => !$tags || collect($node->tags)->intersect($tags))
+            ->filter(fn (Node $node) => $node->servers_sum_disk + $disk <= $node->disk * (1 + $node->disk_overallocate / 100))
+            ->filter(fn (Node $node) => $node->servers_sum_memory + $memory <= $node->memory * (1 + $node->memory_overallocate / 100))
+            ->filter(fn (Node $node) => $node->servers_sum_cpu + $cpu <= $node->cpu * (1 + $node->cpu_overallocate / 100))
+        ;
     }
 }

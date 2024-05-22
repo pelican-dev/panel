@@ -107,11 +107,13 @@ class ServerCreationService
      */
     private function configureDeployment(array $data, DeploymentObject $deployment): Allocation
     {
-        /** @var \Illuminate\Support\Collection $nodes */
-        $nodes = $this->findViableNodesService
-            ->setDisk(Arr::get($data, 'disk'))
-            ->setMemory(Arr::get($data, 'memory'))
-            ->handle();
+        /** @var Collection<\App\Models\Node> $nodes */
+        $nodes = $this->findViableNodesService->handle(
+            Arr::get($data, 'disk', 0),
+            Arr::get($data, 'memory', 0),
+            Arr::get($data, 'cpu', 0),
+            Arr::get($data, 'tags', []),
+        );
 
         return $this->allocationSelectionService->setDedicated($deployment->isDedicated())
             ->setNodes($nodes->pluck('id')->toArray())

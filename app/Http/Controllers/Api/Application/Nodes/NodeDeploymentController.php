@@ -9,9 +9,6 @@ use App\Http\Requests\Api\Application\Nodes\GetDeployableNodesRequest;
 
 class NodeDeploymentController extends ApplicationApiController
 {
-    /**
-     * NodeDeploymentController constructor.
-     */
     public function __construct(private FindViableNodesService $viableNodesService)
     {
         parent::__construct();
@@ -25,10 +22,13 @@ class NodeDeploymentController extends ApplicationApiController
     public function __invoke(GetDeployableNodesRequest $request): array
     {
         $data = $request->validated();
-        $nodes = $this->viableNodesService
-            ->setMemory($data['memory'])
-            ->setDisk($data['disk'])
-            ->handle((int) $request->query('per_page'), (int) $request->query('page'));
+
+        $nodes = $this->viableNodesService->handle(
+            $data['disk'] ?? 0,
+            $data['memory'] ?? 0,
+            $data['cpu'] ?? 0,
+            $data['location_ids'] ?? $data['tags'] ?? [],
+        );
 
         return $this->fractal->collection($nodes)
             ->transformWith($this->getTransformer(NodeTransformer::class))
