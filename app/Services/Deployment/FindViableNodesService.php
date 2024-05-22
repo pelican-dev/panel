@@ -30,7 +30,6 @@ class FindViableNodesService
             ->filter(fn (Node $node) => !$tags || collect($node->tags)->intersect($tags))
             ->filter(fn (Node $node) => $node->servers_sum_disk + $disk <= $node->disk * (1 + $node->disk_overallocate / 100))
             ->filter(fn (Node $node) => $node->servers_sum_memory + $memory <= $node->memory * (1 + $node->memory_overallocate / 100))
-            ->filter(fn (Node $node) => $node->servers_sum_cpu + $cpu <= $node->cpu * (1 + $node->cpu_overallocate / 100))
-        ;
+            ->filter(fn (Node $node) => $node->servers_sum_cpu + $cpu <= $node->cpu * (1 + $node->cpu_overallocate / 100));
     }
 }
