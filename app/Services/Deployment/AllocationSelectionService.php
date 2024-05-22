@@ -90,11 +90,10 @@ class AllocationSelectionService
      */
     private function getRandomAllocation(array $nodes = [], array $ports = [], bool $dedicated = false): ?Allocation
     {
-        $query = Allocation::query()->whereNull('server_id');
-
-        if (!empty($nodes)) {
-            $query->whereIn('node_id', $nodes);
-        }
+        $query = Allocation::query()
+            ->whereNull('server_id')
+            ->whereIn('node_id', $nodes)
+        ;
 
         if (!empty($ports)) {
             $query->where(function ($inner) use ($ports) {
