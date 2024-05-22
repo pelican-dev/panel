@@ -5,8 +5,6 @@ namespace App\Services\Deployment;
 use App\Models\Node;
 use Webmozart\Assert\Assert;
 use Illuminate\Support\Collection;
-use Illuminate\Contracts\Pagination\LengthAwarePaginator;
-use App\Exceptions\Service\Deployment\NoViableNodeException;
 
 class FindViableNodesService
 {
@@ -37,7 +35,7 @@ class FindViableNodesService
     }
 
     /**
-     * Returns an array of nodes that meet the provided requirements and can then
+     * Returns a collection of nodes that meet the provided requirements and can then
      * be passed to the AllocationSelectionService to return a single allocation.
      *
      * This functionality is used for automatic deployments of servers and will
@@ -45,15 +43,8 @@ class FindViableNodesService
      * memory availability requirements. Any nodes not meeting those requirements
      * are tossed out, as are any nodes marked as non-public, meaning automatic
      * deployments should not be done against them.
-     *
-     * @param int|null $page If provided the results will be paginated by returning
-     *                       up to 50 nodes at a time starting at the provided page.
-     *                       If "null" is provided as the value no pagination will
-     *                       be used.
-     *
-     * @throws \App\Exceptions\Service\Deployment\NoViableNodeException
      */
-    public function handle(int $perPage = null, int $page = null): LengthAwarePaginator|Collection
+    public function handle(int $disk = null, int $memory = null, int $cpu = null): Collection
     {
         Assert::integer($this->disk, 'Disk space must be an int, got %s');
         Assert::integer($this->memory, 'Memory usage must be an int, got %s');
@@ -68,16 +59,6 @@ class FindViableNodesService
             ->havingRaw('(IFNULL(SUM(servers.memory), 0) + ?) <= (nodes.memory * (1 + (nodes.memory_overallocate / 100)))', [$this->memory])
             ->havingRaw('(IFNULL(SUM(servers.disk), 0) + ?) <= (nodes.disk * (1 + (nodes.disk_overallocate / 100)))', [$this->disk]);
 
-        if (!is_null($page)) {
-            $results = $results->paginate($perPage ?? 50, ['*'], 'page', $page);
-        } else {
-            $results = $results->get()->toBase();
-        }
-
-        if ($results->isEmpty()) {
-            throw new NoViableNodeException(trans('exceptions.deployment.no_viable_nodes'));
-        }
-
-        return $results;
+        return $results->get();
     }
 }
