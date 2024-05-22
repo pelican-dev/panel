@@ -39,3 +39,4 @@ docker-compose.yaml
 public/css/filament-monaco-editor/
 
 public/js/filament-monaco-editor/
+/database/testing
