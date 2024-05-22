@@ -28,6 +28,8 @@ class StoreNodeRequest extends ApplicationApiRequest
             'memory_overallocate',
             'disk',
             'disk_overallocate',
+            'cpu',
+            'cpu_overallocate',
             'upload_size',
             'daemon_listen',
             'daemon_sftp',

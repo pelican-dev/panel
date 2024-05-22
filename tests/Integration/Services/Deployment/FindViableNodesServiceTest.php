@@ -19,20 +19,28 @@ class FindViableNodesServiceTest extends IntegrationTestCase
         Node::query()->delete();
     }
 
-    public function testExceptionIsThrownIfNoDiskSpaceHasBeenSet(): void
-    {
-        $this->expectException(\InvalidArgumentException::class);
-        $this->expectExceptionMessage('Disk space must be an int, got NULL');
-
-        $this->getService()->handle();
-    }
-
     public function testExceptionIsThrownIfNoMemoryHasBeenSet(): void
     {
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('Memory usage must be an int, got NULL');
 
-        $this->getService()->setDisk(10)->handle();
+        $this->getService()->setDisk(10)->setCpu(10)->handle();
+    }
+
+    public function testExceptionIsThrownIfNoDiskSpaceHasBeenSet(): void
+    {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Disk space must be an int, got NULL');
+
+        $this->getService()->setMemory(10)->setCpu(10)->handle();
+    }
+
+    public function testExceptionIsThrownIfNoCpuHasBeenSet(): void
+    {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('CPU must be an int, got NULL');
+
+        $this->getService()->setMemory(10)->setDisk(10)->handle();
     }
 
     private function getService(): FindViableNodesService

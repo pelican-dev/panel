@@ -30,6 +30,7 @@ class NodeDeploymentController extends ApplicationApiController
         $nodes = $this->viableNodesService
             ->setMemory($data['memory'])
             ->setDisk($data['disk'])
+            ->setCpu($data['cpu'] ?? 0)
             ->handle((int) $request->query('per_page'), (int) $request->query('page'));
 
         return $this->fractal->collection($nodes)

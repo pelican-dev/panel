@@ -111,8 +111,9 @@ class ServerCreationService
     {
         /** @var \Illuminate\Support\Collection $nodes */
         $nodes = $this->findViableNodesService
-            ->setDisk(Arr::get($data, 'disk'))
             ->setMemory(Arr::get($data, 'memory'))
+            ->setDisk(Arr::get($data, 'disk'))
+            ->setCpu(Arr::get($data, 'cpu'))
             ->handle();
 
         return $this->allocationSelectionService->setDedicated($deployment->isDedicated())
