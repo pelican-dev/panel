@@ -52,6 +52,12 @@ class ListNodes extends ListRecords
                     ->suffix(' GiB')
                     ->formatStateUsing(fn ($state) => number_format($state / 1024, 2))
                     ->sortable(),
+                Tables\Columns\TextColumn::make('cpu')
+                    ->visibleFrom('sm')
+                    ->icon('tabler-file')
+                    ->numeric()
+                    ->suffix(' %')
+                    ->sortable(),
                 Tables\Columns\IconColumn::make('scheme')
                     ->visibleFrom('xl')
                     ->label('SSL')

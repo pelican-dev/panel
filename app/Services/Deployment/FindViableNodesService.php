@@ -12,8 +12,8 @@ class FindViableNodesService
      * be passed to the AllocationSelectionService to return a single allocation.
      *
      * This functionality is used for automatic deployments of servers and will
-     * attempt to find all nodes in the defined locations that meet the disk and
-     * memory availability requirements. Any nodes not meeting those requirements
+     * attempt to find all nodes in the defined locations that meet the memory, disk
+     * and cpu availability requirements. Any nodes not meeting those requirements
      * are tossed out, as are any nodes marked as non-public, meaning automatic
      * deployments should not be done against them.
      */

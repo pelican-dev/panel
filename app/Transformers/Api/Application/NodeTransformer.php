@@ -23,27 +23,23 @@ class NodeTransformer extends BaseTransformer
     }
 
     /**
-     * Return a node transformed into a format that can be consumed by the
-     * external administrative API.
+     * Return a node transformed into a format that can be consumed by the external administrative API.
      */
     public function transform(Node $node): array
     {
-        $response = collect($node->toArray())->mapWithKeys(function ($value, $key) {
-            // I messed up early in 2016 when I named this column as poorly
-            // as I did. This is the tragic result of my mistakes.
-            $key = ($key === 'daemon_sftp') ? 'daemon_sftp' : $key;
-
-            return [snake_case($key) => $value];
-        })->toArray();
+        $response = collect($node->toArray())
+            ->mapWithKeys(fn ($value, $key) => [snake_case($key) => $value])
+            ->toArray();
 
         $response[$node->getUpdatedAtColumn()] = $this->formatTimestamp($node->updated_at);
         $response[$node->getCreatedAtColumn()] = $this->formatTimestamp($node->created_at);
 
-        $resources = $node->servers()->select(['memory', 'disk'])->get();
+        $resources = $node->servers()->select(['memory', 'disk', 'cpu'])->get();
 
         $response['allocated_resources'] = [
             'memory' => $resources->sum('memory'),
             'disk' => $resources->sum('disk'),
+            'cpu' => $resources->sum('cpu'),
         ];
 
         return $response;
