@@ -92,8 +92,7 @@ class AllocationSelectionService
     {
         $query = Allocation::query()
             ->whereNull('server_id')
-            ->whereIn('node_id', $nodes)
-        ;
+            ->whereIn('node_id', $nodes);
 
         if (!empty($ports)) {
             $query->where(function ($inner) use ($ports) {
