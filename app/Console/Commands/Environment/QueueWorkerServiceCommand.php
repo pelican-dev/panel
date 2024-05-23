@@ -23,7 +23,8 @@ class QueueWorkerServiceCommand extends Command
         $path = '/etc/systemd/system/' . $serviceName  . '.service';
 
         if (file_exists($path) && !$this->option('overwrite') && !$this->confirm('The service file already exists. Do you want to overwrite it?')) {
-            $this->line("Creation of queue worker service file aborted.");
+            $this->line('Creation of queue worker service file aborted.');
+
             return;
         }
 
