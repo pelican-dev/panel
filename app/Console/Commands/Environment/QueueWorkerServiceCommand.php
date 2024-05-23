@@ -14,28 +14,23 @@ class QueueWorkerServiceCommand extends Command
         {--service-name= : Name of the queue worker service.}
         {--user= : The user that PHP runs under.}
         {--group= : The group that PHP runs under.}
-        {--use-redis : Whether redis is used.}';
+        {--use-redis : Whether redis is used.}
+        {--overwrite : Force overwrite if the service file already exists.}';
 
     public function handle(): void
     {
         $serviceName = $this->option('service-name') ?? $this->ask('Service name', 'pelican-queue');
         $path = '/etc/systemd/system/' . $serviceName  . '.service';
 
-        if ($this->input->isInteractive()) {
-            if (file_exists($path) && !$this->confirm('The service file already exists. Do you want to overwrite it?')) {
-                return;
-            }
-
-            $user = $this->option('user') ?? $this->ask('User', 'www-data');
-            $group = $this->option('group') ?? $this->ask('Group', 'www-data');
-
-            $afterRedis = $this->option('use-redis') ? '\nAfter=redis-server.service' : '';
-        } else {
-            $user = 'www-data';
-            $group = 'www-data';
-
-            $afterRedis = '';
+        if (file_exists($path) && !$this->option('overwrite') && !$this->confirm('The service file already exists. Do you want to overwrite it?')) {
+            $this->line("Creation of queue worker service file aborted.");
+            return;
         }
+
+        $user = $this->option('user') ?? $this->ask('User', 'www-data');
+        $group = $this->option('group') ?? $this->ask('Group', 'www-data');
+
+        $afterRedis = $this->option('use-redis') ? '\nAfter=redis-server.service' : '';
 
         $basePath = base_path();
 
