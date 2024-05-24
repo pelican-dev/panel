@@ -3,54 +3,12 @@
 namespace App\Services\Deployment;
 
 use App\Models\Node;
-use Webmozart\Assert\Assert;
 use Illuminate\Support\Collection;
-use Illuminate\Contracts\Pagination\LengthAwarePaginator;
-use App\Exceptions\Service\Deployment\NoViableNodeException;
 
 class FindViableNodesService
 {
-    protected ?int $memory = null;
-    protected ?int $disk = null;
-    protected ?int $cpu = null;
-
     /**
-     * Set the amount of memory that this server will be using. As with disk space, nodes that
-     * do not have enough free memory will be filtered out.
-     */
-    public function setMemory(int $memory): self
-    {
-        $this->memory = $memory;
-
-        return $this;
-    }
-
-    /**
-     * Set the amount of disk that will be used by the server being created. Nodes will be
-     * filtered out if they do not have enough available free disk space for this server
-     * to be placed on.
-     */
-    public function setDisk(int $disk): self
-    {
-        $this->disk = $disk;
-
-        return $this;
-    }
-
-    /**
-     * Set the amount of cpu that will be used by the server being created. Nodes will be
-     * filtered out if they do not have enough available free cpu for this server
-     * to be placed on.
-     */
-    public function setCpu(int $cpu): self
-    {
-        $this->cpu = $cpu;
-
-        return $this;
-    }
-
-    /**
-     * Returns an array of nodes that meet the provided requirements and can then
+     * Returns a collection of nodes that meet the provided requirements and can then
      * be passed to the AllocationSelectionService to return a single allocation.
      *
      * This functionality is used for automatic deployments of servers and will
@@ -58,42 +16,20 @@ class FindViableNodesService
      * and cpu availability requirements. Any nodes not meeting those requirements
      * are tossed out, as are any nodes marked as non-public, meaning automatic
      * deployments should not be done against them.
-     *
-     * @param int|null $page If provided the results will be paginated by returning
-     *                       up to 50 nodes at a time starting at the provided page.
-     *                       If "null" is provided as the value no pagination will
-     *                       be used.
-     *
-     * @throws \App\Exceptions\Service\Deployment\NoViableNodeException
      */
-    public function handle(int $perPage = null, int $page = null): LengthAwarePaginator|Collection
+    public function handle(int $disk = 0, int $memory = 0, int $cpu = 0, $tags = []): Collection
     {
-        Assert::integer($this->memory, 'Memory usage must be an int, got %s');
-        Assert::integer($this->disk, 'Disk space must be an int, got %s');
-        Assert::integer($this->cpu, 'CPU must be an int, got %s');
+        $nodes = Node::query()
+            ->withSum('servers', 'disk')
+            ->withSum('servers', 'memory')
+            ->withSum('servers', 'cpu')
+            ->where('public', true)
+            ->get();
 
-        $query = Node::query()->select('nodes.*')
-            ->selectRaw('IFNULL(SUM(servers.memory), 0) as sum_memory')
-            ->selectRaw('IFNULL(SUM(servers.disk), 0) as sum_disk')
-            ->selectRaw('IFNULL(SUM(servers.cpu), 0) as sum_cpu')
-            ->leftJoin('servers', 'servers.node_id', '=', 'nodes.id')
-            ->where('nodes.public', 1);
-
-        $results = $query->groupBy('nodes.id')
-            ->havingRaw('(IFNULL(SUM(servers.memory), 0) + ?) <= (nodes.memory * (1 + (nodes.memory_overallocate / 100)))', [$this->memory])
-            ->havingRaw('(IFNULL(SUM(servers.disk), 0) + ?) <= (nodes.disk * (1 + (nodes.disk_overallocate / 100)))', [$this->disk])
-            ->havingRaw('(IFNULL(SUM(servers.cpu), 0) + ?) <= (nodes.cpu * (1 + (nodes.cpu_overallocate / 100)))', [$this->cpu]);
-
-        if (!is_null($page)) {
-            $results = $results->paginate($perPage ?? 50, ['*'], 'page', $page);
-        } else {
-            $results = $results->get()->toBase();
-        }
-
-        if ($results->isEmpty()) {
-            throw new NoViableNodeException(trans('exceptions.deployment.no_viable_nodes'));
-        }
-
-        return $results;
+        return $nodes
+            ->filter(fn (Node $node) => !$tags || collect($node->tags)->intersect($tags))
+            ->filter(fn (Node $node) => $node->servers_sum_disk + $disk <= $node->disk * (1 + $node->disk_overallocate / 100))
+            ->filter(fn (Node $node) => $node->servers_sum_memory + $memory <= $node->memory * (1 + $node->memory_overallocate / 100))
+            ->filter(fn (Node $node) => $node->servers_sum_cpu + $cpu <= $node->cpu * (1 + $node->cpu_overallocate / 100));
     }
 }

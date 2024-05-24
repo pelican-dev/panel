@@ -11,6 +11,10 @@ class GetDeployableNodesRequest extends GetNodesRequest
             'memory' => 'required|integer|min:0',
             'disk' => 'required|integer|min:0',
             'cpu' => 'sometimes|integer|min:0',
+            'tags' => 'sometimes|array',
+
+            /** @deprecated use tags instead */
+            'location_ids' => 'sometimes|array',
         ];
     }
 }
