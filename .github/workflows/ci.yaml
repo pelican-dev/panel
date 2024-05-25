@@ -99,7 +99,7 @@ jobs:
       QUEUE_CONNECTION: sync
       HASHIDS_SALT: alittlebitofsalt1234
       DB_CONNECTION: sqlite
-      DB_DATABASE: ${{ github.workspace }}/database/testing.sqlite
+      DB_DATABASE: testing.sqlite
     steps:
       - name: Code Checkout
         uses: actions/checkout@v4
