@@ -9,9 +9,6 @@ use App\Http\Requests\Api\Application\Nodes\GetDeployableNodesRequest;
 
 class NodeDeploymentController extends ApplicationApiController
 {
-    /**
-     * NodeDeploymentController constructor.
-     */
     public function __construct(private FindViableNodesService $viableNodesService)
     {
         parent::__construct();
@@ -21,17 +18,17 @@ class NodeDeploymentController extends ApplicationApiController
      * Finds any nodes that are available using the given deployment criteria. This works
      * similarly to the server creation process, but allows you to pass the deployment object
      * to this endpoint and get back a list of all Nodes satisfying the requirements.
-     *
-     * @throws \App\Exceptions\Service\Deployment\NoViableNodeException
      */
     public function __invoke(GetDeployableNodesRequest $request): array
     {
         $data = $request->validated();
-        $nodes = $this->viableNodesService
-            ->setMemory($data['memory'])
-            ->setDisk($data['disk'])
-            ->setCpu($data['cpu'] ?? 0)
-            ->handle((int) $request->query('per_page'), (int) $request->query('page'));
+
+        $nodes = $this->viableNodesService->handle(
+            $data['disk'] ?? 0,
+            $data['memory'] ?? 0,
+            $data['cpu'] ?? 0,
+            $data['tags'] ?? $data['location_ids'] ?? [],
+        );
 
         return $this->fractal->collection($nodes)
             ->transformWith($this->getTransformer(NodeTransformer::class))

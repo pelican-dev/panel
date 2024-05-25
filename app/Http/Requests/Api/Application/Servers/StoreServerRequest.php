@@ -123,6 +123,15 @@ class StoreServerRequest extends ApplicationApiRequest
             return !$input->deploy;
         });
 
+        /** @deprecated use tags instead */
+        $validator->sometimes('deploy.locations', 'present', function ($input) {
+            return $input->deploy;
+        });
+
+        $validator->sometimes('deploy.tags', 'present', function ($input) {
+            return $input->deploy;
+        });
+
         $validator->sometimes('deploy.port_range', 'present', function ($input) {
             return $input->deploy;
         });
@@ -139,6 +148,7 @@ class StoreServerRequest extends ApplicationApiRequest
 
         $object = new DeploymentObject();
         $object->setDedicated($this->input('deploy.dedicated_ip', false));
+        $object->setTags($this->input('deploy.tags', $this->input('deploy.locations', [])));
         $object->setPorts($this->input('deploy.port_range', []));
 
         return $object;
