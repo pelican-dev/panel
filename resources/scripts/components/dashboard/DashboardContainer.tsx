@@ -202,7 +202,7 @@ export default () => {
                                                     ref={provided.innerRef}
                                                     {...provided.draggableProps}
                                                     {...provided.dragHandleProps}
-                                                    css={tw`mt-2 p-4 border border-neutral-600 rounded-lg text-white`} // Verwijder bg-neutral-800 en voeg rounded-lg toe
+                                                    css={tw`mt-2 p-4 border border-neutral-600 rounded-lg text-white`}
                                                 >
                                                     <ServerRow server={server} />
                                                     <div css={tw`mt-2 flex justify-end`}>
