@@ -7,6 +7,9 @@ return [
     'no-other-servers' => 'There are no other servers to display.',
     'no-servers-associated' => 'There are no servers associated with your account.',
 
+    'sorting_disabled' => 'Sorting mode disabled',
+    'sorting_enabled' => 'Sorting mode enabled',
+
     'content_tabs' => 'Content tabs',
     'overview' => 'Overview',
     'heading' => 'Welcome to Pelican!',
