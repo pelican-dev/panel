@@ -9,6 +9,10 @@ return [
 
     'sorting_disabled' => 'Sorting mode disabled',
     'sorting_enabled' => 'Sorting mode enabled',
+    'new_group_name' => 'New Group Name',
+    'add_group' => 'Add Group',
+    'delete_group' => 'Delete Current Group',
+    'move_server' => 'Move Server',
 
     'content_tabs' => 'Content tabs',
     'overview' => 'Overview',

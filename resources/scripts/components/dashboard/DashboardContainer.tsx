@@ -16,150 +16,234 @@ import { useTranslation } from 'react-i18next';
 import { DragDropContext, Droppable, Draggable, DropResult } from 'react-beautiful-dnd';
 
 export default () => {
-  const [allowDragDrop, setAllowDragDrop] = useState(true);
-  const { t } = useTranslation('dashboard/index');
-  const { search } = useLocation();
-  const defaultPage = Number(new URLSearchParams(search).get('page') || '1');
+    const [allowDragDrop, setAllowDragDrop] = useState(true);
+    const { t } = useTranslation('dashboard/index');
+    const { search } = useLocation();
+    const defaultPage = Number(new URLSearchParams(search).get('page') || '1');
 
-  const [page, setPage] = useState(!isNaN(defaultPage) && defaultPage > 0 ? defaultPage : 1);
-  const { clearFlashes, clearAndAddHttpError } = useFlash();
-  const uuid = useStoreState((state) => state.user.data!.uuid);
-  const rootAdmin = useStoreState((state) => state.user.data!.rootAdmin);
-  const [showOnlyAdmin, setShowOnlyAdmin] = usePersistedState(`${uuid}:show_all_servers`, false);
+    const [page, setPage] = useState(!isNaN(defaultPage) && defaultPage > 0 ? defaultPage : 1);
+    const { clearFlashes, clearAndAddHttpError } = useFlash();
+    const uuid = useStoreState((state) => state.user.data!.uuid);
+    const rootAdmin = useStoreState((state) => state.user.data!.rootAdmin);
+    const [showOnlyAdmin, setShowOnlyAdmin] = usePersistedState(`${uuid}:show_all_servers`, false);
 
-  const { data: servers, error } = useSWR<PaginatedResult<Server>>(
-    ['/api/client/servers', showOnlyAdmin && rootAdmin, page],
-    () => getServers({ page, type: showOnlyAdmin && rootAdmin ? 'admin' : undefined })
-  );
+    const { data: servers, error } = useSWR<PaginatedResult<Server>>(
+        ['/api/client/servers', showOnlyAdmin && rootAdmin, page],
+        () => getServers({ page, type: showOnlyAdmin && rootAdmin ? 'admin' : undefined })
+    );
 
-  useEffect(() => {
-    if (!servers) return;
-    if (servers.pagination.currentPage > 1 && !servers.items.length) {
-      setPage(1);
-    }
-  }, [servers?.pagination.currentPage]);
+    const [groups, setGroups] = useState<{ [key: string]: string[] }>({ default: [] });
+    const [currentGroup, setCurrentGroup] = useState('default');
+    const [newGroupName, setNewGroupName] = useState('');
+    const [showMoveOptions, setShowMoveOptions] = useState<{ [key: string]: boolean }>({});
 
-  useEffect(() => {
-    window.history.replaceState(null, document.title, `/${page <= 1 ? '' : `?page=${page}`}`);
-  }, [page]);
+    useEffect(() => {
+        if (servers) {
+            const allServers = servers.items.map((server) => server.uuid);
+            setGroups((prevGroups) => {
+                if (!prevGroups['default'].length) {
+                    return { ...prevGroups, default: allServers };
+                }
+                return prevGroups;
+            });
+        }
+    }, [servers]);
 
-  useEffect(() => {
-    if (error) clearAndAddHttpError({ key: 'dashboard', error });
-    if (!error) clearFlashes('dashboard');
-  }, [error]);
+    useEffect(() => {
+        if (servers?.pagination?.currentPage && servers.pagination.currentPage > 1 && servers.items?.length === 0) {
+            setPage(1);
+        }
+    }, [servers?.pagination?.currentPage]);
 
-  const [adminServersOrder, setAdminServersOrder] = useState<string[]>([]);
-  const [nonAdminServersOrder, setNonAdminServersOrder] = useState<string[]>([]);
+    useEffect(() => {
+        window.history.replaceState(null, document.title, `/${page <= 1 ? '' : `?page=${page}`}`);
+    }, [page]);
 
+    useEffect(() => {
+        if (error) clearAndAddHttpError({ key: 'dashboard', error });
+        if (!error) clearFlashes('dashboard');
+    }, [error]);
 
-  useEffect(() => {
-    const adminSavedOrder = localStorage.getItem(`admin:serversOrder:${uuid}`);
-    const nonAdminSavedOrder = localStorage.getItem(`nonadmin:serversOrder:${uuid}`);
-    setAdminServersOrder(adminSavedOrder ? JSON.parse(adminSavedOrder) : []);
-    setNonAdminServersOrder(nonAdminSavedOrder ? JSON.parse(nonAdminSavedOrder) : []);
-  }, [uuid]);
+    useEffect(() => {
+        const savedGroups = localStorage.getItem(`groups:${uuid}`);
+        if (savedGroups) {
+            setGroups(JSON.parse(savedGroups));
+        }
+    }, [uuid]);
 
+    useEffect(() => {
+        localStorage.setItem(`groups:${uuid}`, JSON.stringify(groups));
+    }, [groups]);
 
-  useEffect(() => {
-    if (!servers) return;
-    const newOrder = servers.items.map((server) => server.uuid);
+    const addGroup = () => {
+        if (newGroupName && !groups[newGroupName]) {
+            setGroups({ ...groups, [newGroupName]: [] });
+            setNewGroupName('');
+        }
+    };
 
-    if (showOnlyAdmin) {
-      if (!localStorage.getItem(`admin:serversOrder:${uuid}`) || newOrder.length !== adminServersOrder.length) {
-        setAdminServersOrder(newOrder);
-        localStorage.setItem(`admin:serversOrder:${uuid}`, JSON.stringify(newOrder));
-      }
-    } else {
-      if (!localStorage.getItem(`nonadmin:serversOrder:${uuid}`) || newOrder.length !== nonAdminServersOrder.length) {
-        setNonAdminServersOrder(newOrder);
-        localStorage.setItem(`nonadmin:serversOrder:${uuid}`, JSON.stringify(newOrder));
-      }
-    }
-  }, [servers, uuid, showOnlyAdmin]);
+    const deleteGroup = (group: string) => {
+        const updatedGroups = { ...groups };
+        delete updatedGroups[group];
+        setGroups(updatedGroups);
+        if (currentGroup === group) {
+            setCurrentGroup('default');
+        }
+    };
 
+    const moveServerToGroup = (serverUuid: string, targetGroup: string) => {
+        if (!groups[targetGroup]) {
+            console.warn(`Group ${targetGroup} does not exist`);
+            return;
+        }
 
-  useEffect(() => {
-    localStorage.setItem(`admin:serversOrder:${uuid}`, JSON.stringify(adminServersOrder));
-    localStorage.setItem(`nonadmin:serversOrder:${uuid}`, JSON.stringify(nonAdminServersOrder));
-  }, [adminServersOrder, nonAdminServersOrder]);
+        const updatedGroups = { ...groups };
+        const currentGroup = Object.keys(updatedGroups).find((group) => updatedGroups[group].includes(serverUuid));
+        if (currentGroup) {
+            updatedGroups[currentGroup] = updatedGroups[currentGroup].filter((uuid) => uuid !== serverUuid);
+        }
+        updatedGroups[targetGroup].push(serverUuid);
+        setGroups(updatedGroups);
+        setShowMoveOptions((prevState) => ({ ...prevState, [serverUuid]: false }));
+    };
 
+    const onDragEnd = (result: DropResult) => {
+        const { source, destination } = result;
 
-  const onDragEnd = (result: DropResult) => {
-    const { source, destination } = result;
+        if (!destination) {
+            return;
+        }
 
-    if (!destination) {
-      return;
-    }
+        const newOrder = Array.from(groups[currentGroup]);
+        newOrder.splice(source.index, 1);
+        newOrder.splice(destination.index, 0, groups[currentGroup][source.index]);
 
-    const newOrder = Array.from(showOnlyAdmin ? adminServersOrder : nonAdminServersOrder);
-    newOrder.splice(source.index, 1);
-    newOrder.splice(destination.index, 0, (showOnlyAdmin ? adminServersOrder : nonAdminServersOrder)[source.index]);
+        setGroups({ ...groups, [currentGroup]: newOrder });
+    };
 
-    if (showOnlyAdmin) {
-      setAdminServersOrder(newOrder);
-      localStorage.setItem(`admin:serversOrder:${uuid}`, JSON.stringify(newOrder));
-    } else {
-      setNonAdminServersOrder(newOrder);
-      localStorage.setItem(`nonadmin:serversOrder:${uuid}`, JSON.stringify(newOrder));
-    }
-  };
+    const serversOrder = groups[currentGroup];
 
-
-  const serversOrder = showOnlyAdmin ? adminServersOrder : nonAdminServersOrder;
-
-  return (
-    <PageContentBlock title={'Dashboard'} showFlashKey={'dashboard'}>
-      {rootAdmin && (
-        <div css={tw`mb-2 flex justify-end items-center`}>
-          <p css={tw`uppercase text-xs text-neutral-400 mr-2`}>
-            {showOnlyAdmin ? t('showing-others-servers') : t('showing-your-servers')}
-          </p>
-          <Switch name={'show_all_servers'} defaultChecked={showOnlyAdmin} onChange={() => setShowOnlyAdmin(s => !s)} />
-        </div>
-      )}
-      <div css={tw`mb-2 flex justify-end items-center`}>
-        <p css={tw`uppercase text-xs text-neutral-400 mr-2`}>
-          {allowDragDrop ? t('sorting_disabled') : t('sorting_enabled')}
-        </p>
-        <Switch
-          name={'allow_drag_drop'}
-          defaultChecked={!allowDragDrop}
-          onChange={() => setAllowDragDrop(!allowDragDrop)}
-        />
-      </div>
-      {!servers ? (
-        <Spinner centered size={'large'} />
-      ) : (
-        <DragDropContext onDragEnd={onDragEnd}>
-          <Droppable droppableId='servers'>
-            {(provided) => (
-              <div {...provided.droppableProps} ref={provided.innerRef}>
-                {serversOrder.map((serverUuid, index) => {
-                  const server = servers.items.find((s) => s.uuid === serverUuid);
-                  if (!server) {
-                    console.warn(`Server with uuid ${serverUuid} not found`);
-                    return null;
-                  }
-                  return (
-                    <Draggable key={server.uuid} draggableId={server.uuid} index={index} isDragDisabled={allowDragDrop}>
-                      {(provided) => (
-                        <div
-                          ref={provided.innerRef}
-                          {...provided.draggableProps}
-                          {...provided.dragHandleProps}
-                        >
-                          <ServerRow server={server} css={index > 0 ? tw`mt-2` : undefined} />
-                        </div>
-                      )}
-                    </Draggable>
-                  );
-                })}
-                {provided.placeholder}
-              </div>
+    return (
+        <PageContentBlock title={'Dashboard'} showFlashKey={'dashboard'}>
+            {rootAdmin && (
+                <div css={tw`mb-4 flex justify-end items-center`}>
+                    <p css={tw`uppercase text-xs text-neutral-400 mr-2`}>
+                        {showOnlyAdmin ? t('showing-others-servers') : t('showing-your-servers')}
+                    </p>
+                    <Switch
+                        name={'show_all_servers'}
+                        defaultChecked={showOnlyAdmin}
+                        onChange={() => setShowOnlyAdmin((s) => !s)}
+                    />
+                </div>
             )}
-          </Droppable>
-        </DragDropContext>
-      )}
-    </PageContentBlock>
-  );
+            <div css={tw`mb-4 flex justify-end items-center`}>
+                <p css={tw`uppercase text-xs text-neutral-400 mr-2`}>
+                    {allowDragDrop ? t('sorting_disabled') : t('sorting_enabled')}
+                </p>
+                <Switch
+                    name={'allow_drag_drop'}
+                    defaultChecked={!allowDragDrop}
+                    onChange={() => setAllowDragDrop(!allowDragDrop)}
+                />
+            </div>
+            <div css={tw`mb-4 flex justify-between items-center`}>
+                <div css={tw`flex items-center`}>
+                    <select
+                        css={tw`p-2 border border-neutral-600 rounded bg-neutral-700 text-white`}
+                        value={currentGroup}
+                        onChange={(e) => setCurrentGroup(e.target.value)}
+                    >
+                        {Object.keys(groups).map((group) => (
+                            <option key={group} value={group}>
+                                {group}
+                            </option>
+                        ))}
+                    </select>
+                    <input
+                        css={tw`ml-2 p-2 border border-neutral-600 rounded bg-neutral-700 text-white`}
+                        type='text'
+                        value={newGroupName}
+                        onChange={(e) => setNewGroupName(e.target.value)}
+                        placeholder={t('new_group_name')}
+                    />
+                    <button css={tw`ml-2 p-2 bg-blue-600 text-white rounded`} onClick={addGroup}>
+                        {t('add_group')}
+                    </button>
+                </div>
+                {currentGroup !== 'default' && (
+                    <button css={tw`p-2 bg-red-600 text-white rounded`} onClick={() => deleteGroup(currentGroup)}>
+                        {t('delete_group')}
+                    </button>
+                )}
+            </div>
+            {!servers ? (
+                <Spinner centered size={'large'} />
+            ) : (
+                <DragDropContext onDragEnd={onDragEnd}>
+                    <Droppable droppableId='servers'>
+                        {(provided) => (
+                            <div {...provided.droppableProps} ref={provided.innerRef}>
+                                {serversOrder.map((serverUuid, index) => {
+                                    const server = servers.items.find((s) => s.uuid === serverUuid);
+                                    if (!server) {
+                                        console.warn(`Server with uuid ${serverUuid} not found`);
+                                        return null;
+                                    }
+                                    return (
+                                        <Draggable
+                                            key={server.uuid}
+                                            draggableId={server.uuid}
+                                            index={index}
+                                            isDragDisabled={allowDragDrop}
+                                        >
+                                            {(provided) => (
+                                                <div
+                                                    ref={provided.innerRef}
+                                                    {...provided.draggableProps}
+                                                    {...provided.dragHandleProps}
+                                                    css={tw`mt-2 p-4 border border-neutral-600 rounded-lg text-white`} // Verwijder bg-neutral-800 en voeg rounded-lg toe
+                                                >
+                                                    <ServerRow server={server} />
+                                                    <div css={tw`mt-2 flex justify-end`}>
+                                                        <button
+                                                            css={tw`p-2 bg-blue-600 text-white rounded`}
+                                                            onClick={() =>
+                                                                setShowMoveOptions((prevState) => ({
+                                                                    ...prevState,
+                                                                    [server.uuid]: !prevState[server.uuid],
+                                                                }))
+                                                            }
+                                                        >
+                                                            {t('move_server')}
+                                                        </button>
+                                                        {showMoveOptions[server.uuid] && (
+                                                            <select
+                                                                css={tw`ml-2 p-2 border border-neutral-600 rounded bg-neutral-700 text-white`}
+                                                                value={currentGroup}
+                                                                onChange={(e) =>
+                                                                    moveServerToGroup(server.uuid, e.target.value)
+                                                                }
+                                                            >
+                                                                {Object.keys(groups).map((group) => (
+                                                                    <option key={group} value={group}>
+                                                                        {group}
+                                                                    </option>
+                                                                ))}
+                                                            </select>
+                                                        )}
+                                                    </div>
+                                                </div>
+                                            )}
+                                        </Draggable>
+                                    );
+                                })}
+                                {provided.placeholder}
+                            </div>
+                        )}
+                    </Droppable>
+                </DragDropContext>
+            )}
+        </PageContentBlock>
+    );
 };
