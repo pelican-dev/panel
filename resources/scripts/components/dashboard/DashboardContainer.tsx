@@ -124,29 +124,31 @@ export default () => {
     const serversOrder = groups[currentGroup];
 
     return (
-        <PageContentBlock title={'Dashboard'} showFlashKey={'dashboard'}>
+        <PageContentBlock title={t('title')} showFlashKey={'dashboard'}>
             {rootAdmin && (
-                <div css={tw`mb-4 flex justify-end items-center`}>
-                    <p css={tw`uppercase text-xs text-neutral-400 mr-2`}>
-                        {showOnlyAdmin ? t('showing-others-servers') : t('showing-your-servers')}
-                    </p>
-                    <Switch
-                        name={'show_all_servers'}
-                        defaultChecked={showOnlyAdmin}
-                        onChange={() => setShowOnlyAdmin((s) => !s)}
-                    />
+                <div css={tw`mb-4 flex justify-between items-center`}>
+                    <div css={tw`flex items-center`}>
+                        <p css={tw`uppercase text-xs text-neutral-400 mr-2`}>
+                            {allowDragDrop ? t('sorting_disabled') : t('sorting_enabled')}
+                        </p>
+                        <Switch
+                            name={'allow_drag_drop'}
+                            defaultChecked={!allowDragDrop}
+                            onChange={() => setAllowDragDrop(!allowDragDrop)}
+                        />
+                    </div>
+                    <div css={tw`flex items-center`}>
+                        <p css={tw`uppercase text-xs text-neutral-400 mr-2`}>
+                            {showOnlyAdmin ? t('showing-others-servers') : t('showing-your-servers')}
+                        </p>
+                        <Switch
+                            name={'show_all_servers'}
+                            defaultChecked={showOnlyAdmin}
+                            onChange={() => setShowOnlyAdmin((s) => !s)}
+                        />
+                    </div>
                 </div>
             )}
-            <div css={tw`mb-4 flex justify-end items-center`}>
-                <p css={tw`uppercase text-xs text-neutral-400 mr-2`}>
-                    {allowDragDrop ? t('sorting_disabled') : t('sorting_enabled')}
-                </p>
-                <Switch
-                    name={'allow_drag_drop'}
-                    defaultChecked={!allowDragDrop}
-                    onChange={() => setAllowDragDrop(!allowDragDrop)}
-                />
-            </div>
             <div css={tw`mb-4 flex justify-between items-center`}>
                 <div css={tw`flex items-center`}>
                     <select
@@ -202,7 +204,7 @@ export default () => {
                                                     ref={provided.innerRef}
                                                     {...provided.draggableProps}
                                                     {...provided.dragHandleProps}
-                                                    css={tw`mt-2 p-4 border border-neutral-600 rounded-lg text-white`}
+                                                    css={tw`mb-2 p-4 text-white`}
                                                 >
                                                     <ServerRow server={server} />
                                                     <div css={tw`mt-2 flex justify-end`}>
