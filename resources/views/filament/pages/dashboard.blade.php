@@ -80,7 +80,11 @@
     >
         <x-slot name="heading">{{ trans('dashboard/index.sections.intro-help.heading') }}</x-slot>
 
-        <p>{{  trans('dashboard/index.sections.intro-help.content') }}</p>
+        <p>
+            Check out the documentation first!
+            If you still need assistance then, fly onto our
+            <a class="underline" href="https://discord.gg/pelican-panel">Discord server</a>!
+        </p>
 
     </x-filament::section>
 

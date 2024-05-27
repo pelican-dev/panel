@@ -36,7 +36,7 @@ class NodeController extends ApplicationApiController
     {
         $nodes = QueryBuilder::for(Node::query())
             ->allowedFilters(['uuid', 'name', 'fqdn', 'daemon_token_id'])
-            ->allowedSorts(['id', 'uuid', 'memory', 'disk'])
+            ->allowedSorts(['id', 'uuid', 'memory', 'disk', 'cpu'])
             ->paginate($request->query('per_page') ?? 50);
 
         return $this->fractal->collection($nodes)

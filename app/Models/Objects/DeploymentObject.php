@@ -6,6 +6,8 @@ class DeploymentObject
 {
     private bool $dedicated = false;
 
+    private array $tags = [];
+
     private array $ports = [];
 
     public function isDedicated(): bool
@@ -31,4 +33,17 @@ class DeploymentObject
 
         return $this;
     }
+
+    public function getTags(): array
+    {
+        return $this->tags;
+    }
+
+    public function setTags(array $tags): self
+    {
+        $this->tags = $tags;
+
+        return $this;
+    }
+
 }

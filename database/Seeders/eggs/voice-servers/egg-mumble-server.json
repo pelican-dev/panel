@@ -4,7 +4,7 @@
         "version": "PTDL_v2",
         "update_url": null
     },
-    "exported_at": "2024-05-08T11:52:53+02:00",
+    "exported_at": "2024-05-21T21:40:24-04:00",
     "name": "Mumble Server",
     "author": "panel@example.com",
     "description": "Mumble is an open source, low-latency, high quality voice chat software primarily intended for use while gaming.",
@@ -15,7 +15,7 @@
     "file_denylist": [],
     "startup": "mumble-server -fg -ini murmur.ini",
     "config": {
-        "files": "{\r\n    \"murmur.ini\": {\r\n        \"parser\": \"ini\",\r\n        \"find\": {\r\n            \"database\": \"\/home\/container\/murmur.sqlite\",\r\n            \"logfile\": \"\/home\/container\/murmur.log\",\r\n            \"port\": \"{{server.build.default.port}}\",\r\n            \"host\": \"0.0.0.0\",\r\n            \"users\": \"{{server.build.env.MAX_USERS}}\"\r\n        }\r\n    }\r\n}",
+        "files": "{\r\n    \"murmur.ini\": {\r\n        \"parser\": \"ini\",\r\n        \"find\": {\r\n            \"database\": \"\/home\/container\/murmur.sqlite\",\r\n            \"logfile\": \"\/home\/container\/murmur.log\",\r\n            \"port\": \"{{server.build.default.port}}\",\r\n            \"host\": \"\",\r\n            \"users\": \"{{server.build.env.MAX_USERS}}\"\r\n        }\r\n    }\r\n}",
         "startup": "{\r\n    \"done\": \"Server listening on\"\r\n}",
         "logs": "{}",
         "stop": "^C"

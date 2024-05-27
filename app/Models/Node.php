@@ -26,6 +26,8 @@ use Illuminate\Database\Eloquent\Relations\HasManyThrough;
  * @property int $memory_overallocate
  * @property int $disk
  * @property int $disk_overallocate
+ * @property int $cpu
+ * @property int $cpu_overallocate
  * @property int $upload_size
  * @property string $daemon_token_id
  * @property string $daemon_token
@@ -63,6 +65,7 @@ class Node extends Model
 
     public int $sum_memory;
     public int $sum_disk;
+    public int $sum_cpu;
 
     /**
      * Fields that are mass assignable.
@@ -71,7 +74,8 @@ class Node extends Model
         'public', 'name',
         'fqdn', 'scheme', 'behind_proxy',
         'memory', 'memory_overallocate', 'disk',
-        'disk_overallocate', 'upload_size', 'daemon_base',
+        'disk_overallocate', 'cpu', 'cpu_overallocate',
+        'upload_size', 'daemon_base',
         'daemon_sftp', 'daemon_listen',
         'description', 'maintenance_mode',
     ];
@@ -87,6 +91,8 @@ class Node extends Model
         'memory_overallocate' => 'required|numeric|min:-1',
         'disk' => 'required|numeric|min:0',
         'disk_overallocate' => 'required|numeric|min:-1',
+        'cpu' => 'required|numeric|min:0',
+        'cpu_overallocate' => 'required|numeric|min:-1',
         'daemon_base' => 'sometimes|required|regex:/^([\/][\d\w.\-\/]+)$/',
         'daemon_sftp' => 'required|numeric|between:1,65535',
         'daemon_listen' => 'required|numeric|between:1,65535',
@@ -104,6 +110,8 @@ class Node extends Model
         'memory_overallocate' => 0,
         'disk' => 0,
         'disk_overallocate' => 0,
+        'cpu' => 0,
+        'cpu_overallocate' => 0,
         'daemon_base' => '/var/lib/pelican/volumes',
         'daemon_sftp' => 2022,
         'daemon_listen' => 8080,
@@ -116,6 +124,7 @@ class Node extends Model
         return [
             'memory' => 'integer',
             'disk' => 'integer',
+            'cpu' => 'integer',
             'daemon_listen' => 'integer',
             'daemon_sftp' => 'integer',
             'behind_proxy' => 'boolean',
@@ -239,12 +248,13 @@ class Node extends Model
     /**
      * Returns a boolean if the node is viable for an additional server to be placed on it.
      */
-    public function isViable(int $memory, int $disk): bool
+    public function isViable(int $memory, int $disk, int $cpu): bool
     {
         $memoryLimit = $this->memory * (1 + ($this->memory_overallocate / 100));
         $diskLimit = $this->disk * (1 + ($this->disk_overallocate / 100));
+        $cpuLimit = $this->cpu * (1 + ($this->cpu_overallocate / 100));
 
-        return ($this->sum_memory + $memory) <= $memoryLimit && ($this->sum_disk + $disk) <= $diskLimit;
+        return ($this->sum_memory + $memory) <= $memoryLimit && ($this->sum_disk + $disk) <= $diskLimit && ($this->sum_cpu + $cpu) <= $cpuLimit;
     }
 
     public static function getForServerCreation()

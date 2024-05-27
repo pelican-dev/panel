@@ -11,7 +11,7 @@
   <php>
     <env name="APP_ENV" value="testing"/>
     <env name="BCRYPT_ROUNDS" value="4"/>
-    <env name="DB_DATABASE" value="testing"/>
+    <env name="DB_DATABASE" value="testing.sqlite"/>
     <env name="CACHE_STORE" value="array"/>
     <env name="GUZZLE_CONNECT_TIMEOUT" value="1"/>
     <env name="MAIL_MAILER" value="array"/>

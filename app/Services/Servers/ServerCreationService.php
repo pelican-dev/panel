@@ -42,7 +42,6 @@ class ServerCreationService
      * @throws \Throwable
      * @throws \App\Exceptions\DisplayException
      * @throws \Illuminate\Validation\ValidationException
-     * @throws \App\Exceptions\Service\Deployment\NoViableNodeException
      * @throws \App\Exceptions\Service\Deployment\NoViableAllocationException
      */
     public function handle(array $data, DeploymentObject $deployment = null): Server
@@ -105,15 +104,16 @@ class ServerCreationService
      *
      * @throws \App\Exceptions\DisplayException
      * @throws \App\Exceptions\Service\Deployment\NoViableAllocationException
-     * @throws \App\Exceptions\Service\Deployment\NoViableNodeException
      */
     private function configureDeployment(array $data, DeploymentObject $deployment): Allocation
     {
-        /** @var \Illuminate\Support\Collection $nodes */
-        $nodes = $this->findViableNodesService
-            ->setDisk(Arr::get($data, 'disk'))
-            ->setMemory(Arr::get($data, 'memory'))
-            ->handle();
+        /** @var Collection<\App\Models\Node> $nodes */
+        $nodes = $this->findViableNodesService->handle(
+            Arr::get($data, 'disk', 0),
+            Arr::get($data, 'memory', 0),
+            Arr::get($data, 'cpu', 0),
+            Arr::get($data, 'tags', []),
+        );
 
         return $this->allocationSelectionService->setDedicated($deployment->isDedicated())
             ->setNodes($nodes->pluck('id')->toArray())
