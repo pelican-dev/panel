@@ -1,5 +1,3 @@
-<!-- resources/views/filament/footer.blade.php -->
-
 <footer class="fixed bottom-4 left-0 z-20 w-full dark:border-gray-600" style="padding: 0; background: none; height: auto;">
     <div class="flex items-center justify-center w-full py-1">
         <img src="{{ asset('pelican.ico') }}" alt="Pelican Logo" class="w-6 h-6 mr-2">
