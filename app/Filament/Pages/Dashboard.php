@@ -39,12 +39,7 @@ class Dashboard extends Page
 
             'devActions' => [
                 CreateAction::make()
-                    ->label(trans('dashboard/index.sections.intro-developers.button_issues'))
-                    ->icon('tabler-brand-github')
-                    ->url('https://github.com/pelican-dev/panel/issues/new/choose', true)
-                    ->color('warning'),
-                CreateAction::make()
-                    ->label(trans('dashboard/index.sections.intro-developers.button_features'))
+                    ->label('Bugs & Features')
                     ->icon('tabler-brand-github')
                     ->url('https://github.com/pelican-dev/panel/discussions', true),
             ],
@@ -56,10 +51,6 @@ class Dashboard extends Page
             ],
             'supportActions' => [
                 CreateAction::make()
-                    ->label(trans('dashboard/index.sections.intro-support.button_translate'))
-                    ->icon('tabler-language')
-                    ->url('https://crowdin.com/project/pelican-dev', true),
-                CreateAction::make()
                     ->label(trans('dashboard/index.sections.intro-support.button_donate'))
                     ->icon('tabler-cash')
                     ->url('https://pelican.dev/donate', true)
@@ -70,11 +61,6 @@ class Dashboard extends Page
                     ->label(trans('dashboard/index.sections.intro-help.button_docs'))
                     ->icon('tabler-speedboat')
                     ->url('https://pelican.dev/docs', true),
-                CreateAction::make()
-                    ->label(trans('dashboard/index.sections.intro-help.button_discord'))
-                    ->icon('tabler-brand-discord')
-                    ->url('https://discord.gg/pelican-panel', true)
-                    ->color('blurple'),
             ],
         ];
     }

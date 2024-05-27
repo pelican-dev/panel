@@ -50,7 +50,6 @@ class ServerController extends ApplicationApiController
      * @throws \App\Exceptions\DisplayException
      * @throws \App\Exceptions\Model\DataValidationException
      * @throws \App\Exceptions\Service\Deployment\NoViableAllocationException
-     * @throws \App\Exceptions\Service\Deployment\NoViableNodeException
      */
     public function store(StoreServerRequest $request): JsonResponse
     {
