@@ -17,6 +17,7 @@ use App\Repositories\Daemon\DaemonServerRepository;
 use App\Services\Servers\ServerDeletionService;
 use Filament\Forms\Components\Tabs;
 use Filament\Forms\Form;
+use Filament\Notifications\Notification;
 use Filament\Resources\Pages\EditRecord;
 use Illuminate\Support\Facades\Validator;
 use Closure;
@@ -29,6 +30,12 @@ class EditServer extends EditRecord
     public function form(Form $form): Form
     {
         return $form
+            ->columns([
+                'default' => 1,
+                'sm' => 2,
+                'md' => 2,
+                'lg' => 4,
+            ])
             ->schema([
                 Forms\Components\ToggleButtons::make('docker')
                     ->label('Container Status')->inline()->inlineLabel()
@@ -56,13 +63,12 @@ class EditServer extends EditRecord
                         'default' => 1,
                         'sm' => 2,
                         'md' => 2,
-                        'lg' => 3,
+                        'lg' => 2,
                     ]),
 
                 Forms\Components\ToggleButtons::make('status')
                     ->label('Server State')->inline()->inlineLabel()
                     ->helperText('')
-
                     ->formatStateUsing(fn ($state) => $state ?? ServerState::Normal)
                     ->options(fn ($state) => collect(ServerState::cases())->filter(fn ($serverState) => $serverState->value === $state)->mapWithKeys(
                         fn (ServerState $state) => [$state->value => str($state->value)->replace('_', ' ')->ucwords()]
@@ -77,7 +83,7 @@ class EditServer extends EditRecord
                         'default' => 1,
                         'sm' => 2,
                         'md' => 2,
-                        'lg' => 3,
+                        'lg' => 2,
                     ]),
 
                 Tabs::make('Tabs')
@@ -577,7 +583,12 @@ class EditServer extends EditRecord
                                                 Forms\Components\Actions::make([
                                                     Forms\Components\Actions\Action::make('toggleInstall')
                                                         ->label('Toggle Status')
-                                                        ->action(fn (ServersController $serversController, Server $server) => $serversController->toggleInstall($server)),
+                                                        ->disabled(fn (Server $server) => $server->isSuspended())
+                                                        ->action(function (ServersController $serversController, Server $server) {
+                                                            $serversController->toggleInstall($server);
+
+                                                            return $this->refreshFormData(['status', 'docker']);
+                                                        }),
                                                 ])->fullWidth(),
                                                 Forms\Components\ToggleButtons::make('')
                                                     ->hint('If you need to change the install status from uninstalled to installed, or vice versa, you may do so with this button.'),
@@ -590,12 +601,22 @@ class EditServer extends EditRecord
                                                         ->label('Suspend')
                                                         ->color('warning')
                                                         ->hidden(fn (Server $server) => $server->isSuspended())
-                                                        ->action(fn (SuspensionService $suspensionService, Server $server) => $suspensionService->toggle($server, 'suspend')),
+                                                        ->action(function (SuspensionService $suspensionService, Server $server) {
+                                                            $suspensionService->toggle($server, 'suspend');
+                                                            Notification::make()->success()->title('Server Suspended!')->send();
+
+                                                            return $this->refreshFormData(['status', 'docker']);
+                                                        }),
                                                     Forms\Components\Actions\Action::make('toggleUnsuspend')
                                                         ->label('Unsuspend')
                                                         ->color('success')
                                                         ->hidden(fn (Server $server) => !$server->isSuspended())
-                                                        ->action(fn (SuspensionService $suspensionService, Server $server) => $suspensionService->toggle($server, 'unsuspend')),
+                                                        ->action(function (SuspensionService $suspensionService, Server $server) {
+                                                            $suspensionService->toggle($server, 'unsuspend');
+                                                            Notification::make()->success()->title('Server Unsuspended!')->send();
+
+                                                            return $this->refreshFormData(['status', 'docker']);
+                                                        }),
                                                 ])->fullWidth(),
                                                 Forms\Components\ToggleButtons::make('')
                                                     ->hidden(fn (Server $server) => $server->isSuspended())
@@ -609,6 +630,7 @@ class EditServer extends EditRecord
                                             ->schema([
                                                 Forms\Components\Actions::make([
                                                     Forms\Components\Actions\Action::make('transfer')
+                                                        ->disabled(fn (Server $server) => $server->isSuspended())
                                                         ->label('Transfer'),
                                                 ])->fullWidth(),
                                                 Forms\Components\ToggleButtons::make('')
@@ -622,6 +644,7 @@ class EditServer extends EditRecord
                                                         ->label('Reinstall')
                                                         ->color('danger')
                                                         ->requiresConfirmation()
+                                                        ->disabled(fn (Server $server) => $server->isSuspended())
                                                         ->action(fn (ServersController $serversController, Server $server) => $serversController->reinstallServer($server)),
                                                 ])->fullWidth(),
                                                 Forms\Components\ToggleButtons::make('')
