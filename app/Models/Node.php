@@ -127,6 +127,7 @@ class Node extends Model
             'cpu' => 'integer',
             'daemon_listen' => 'integer',
             'daemon_sftp' => 'integer',
+            'daemon_token' => 'encrypted',
             'behind_proxy' => 'boolean',
             'public' => 'boolean',
             'maintenance_mode' => 'boolean',
@@ -143,7 +144,7 @@ class Node extends Model
     {
         static::creating(function (self $node) {
             $node->uuid = Str::uuid();
-            $node->daemon_token = encrypt(Str::random(self::DAEMON_TOKEN_LENGTH));
+            $node->daemon_token = Str::random(self::DAEMON_TOKEN_LENGTH);
             $node->daemon_token_id = Str::random(self::DAEMON_TOKEN_ID_LENGTH);
 
             return true;
@@ -171,7 +172,7 @@ class Node extends Model
             'debug' => false,
             'uuid' => $this->uuid,
             'token_id' => $this->daemon_token_id,
-            'token' => decrypt($this->daemon_token),
+            'token' => $this->daemon_token,
             'api' => [
                 'host' => '0.0.0.0',
                 'port' => $this->daemon_listen,
@@ -207,16 +208,6 @@ class Node extends Model
     public function getJsonConfiguration(bool $pretty = false): string
     {
         return json_encode($this->getConfiguration(), $pretty ? JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT : JSON_UNESCAPED_SLASHES);
-    }
-
-    /**
-     * Helper function to return the decrypted key for a node.
-     */
-    public function getDecryptedKey(): string
-    {
-        return (string) decrypt(
-            $this->daemon_token
-        );
     }
 
     public function isUnderMaintenance(): bool

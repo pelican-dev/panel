@@ -85,8 +85,7 @@ class TwoFactorControllerTest extends ClientApiIntegrationTestCase
         /** @var \PragmaRX\Google2FA\Google2FA $service */
         $service = $this->app->make(Google2FA::class);
 
-        $secret = decrypt($user->totp_secret);
-        $token = $service->getCurrentOtp($secret);
+        $token = $service->getCurrentOtp($user->totp_secret);
 
         $response = $this->actingAs($user)->postJson('/api/client/account/two-factor', [
             'code' => $token,

@@ -31,7 +31,7 @@ class KeyCreationService
         $data = array_merge($data, [
             'key_type' => $this->keyType,
             'identifier' => ApiKey::generateTokenIdentifier($this->keyType),
-            'token' => encrypt(str_random(ApiKey::KEY_LENGTH)),
+            'token' => str_random(ApiKey::KEY_LENGTH),
         ]);
 
         if ($this->keyType === ApiKey::TYPE_APPLICATION) {

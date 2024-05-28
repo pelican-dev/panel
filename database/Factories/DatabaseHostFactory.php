@@ -3,7 +3,6 @@
 namespace Database\Factories;
 
 use App\Models\DatabaseHost;
-use Illuminate\Support\Facades\Crypt;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class DatabaseHostFactory extends Factory
@@ -25,7 +24,7 @@ class DatabaseHostFactory extends Factory
             'host' => $this->faker->unique()->ipv4(),
             'port' => 3306,
             'username' => $this->faker->colorName(),
-            'password' => Crypt::encrypt($this->faker->word()),
+            'password' => $this->faker->word(),
         ];
     }
 }

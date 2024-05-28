@@ -26,9 +26,7 @@ class HostUpdateService
      */
     public function handle(int $hostId, array $data): DatabaseHost
     {
-        if (!empty(array_get($data, 'password'))) {
-            $data['password'] = encrypt($data['password']);
-        } else {
+        if (empty(array_get($data, 'password'))) {
             unset($data['password']);
         }
 

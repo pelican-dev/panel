@@ -28,7 +28,7 @@ class ListApiKeys extends ListRecords
                 Tables\Columns\TextColumn::make('key')
                     ->copyable()
                     ->icon('tabler-clipboard-text')
-                    ->state(fn (ApiKey $key) => $key->identifier . decrypt($key->token)),
+                    ->state(fn (ApiKey $key) => $key->identifier . $key->token),
 
                 Tables\Columns\TextColumn::make('memo')
                     ->label('Description')

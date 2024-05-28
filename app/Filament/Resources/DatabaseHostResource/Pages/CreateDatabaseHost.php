@@ -74,15 +74,6 @@ class CreateDatabaseHost extends CreateRecord
             ]);
     }
 
-    protected function mutateFormDataBeforeCreate(array $data): array
-    {
-        if (isset($data['password'])) {
-            $data['password'] = encrypt($data['password']);
-        }
-
-        return $data;
-    }
-
     protected function getHeaderActions(): array
     {
         return [

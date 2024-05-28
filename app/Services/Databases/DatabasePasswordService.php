@@ -33,7 +33,7 @@ class DatabasePasswordService
             $this->dynamic->set('dynamic', $database->database_host_id);
 
             $database->update([
-                'password' => encrypt($password),
+                'password' => $password,
             ]);
 
             $database->dropUser($database->username, $database->remote);

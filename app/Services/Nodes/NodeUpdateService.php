@@ -28,7 +28,7 @@ class NodeUpdateService
     public function handle(Node $node, array $data, bool $resetToken = false): Node
     {
         if ($resetToken) {
-            $data['daemon_token'] = encrypt(Str::random(Node::DAEMON_TOKEN_LENGTH));
+            $data['daemon_token'] = Str::random(Node::DAEMON_TOKEN_LENGTH);
             $data['daemon_token_id'] = Str::random(Node::DAEMON_TOKEN_ID_LENGTH);
         }
 
