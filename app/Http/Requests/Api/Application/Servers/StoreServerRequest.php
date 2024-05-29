@@ -60,7 +60,7 @@ class StoreServerRequest extends ApplicationApiRequest
             'deploy.dedicated_ip' => 'required_with:deploy,boolean',
             'deploy.port_range' => 'array',
             'deploy.port_range.*' => 'string',
-            'start_on_completion' => 'sometimes|boolean'
+            'start_on_completion' => 'sometimes|boolean',
         ];
     }
 
