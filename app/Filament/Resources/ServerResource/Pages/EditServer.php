@@ -6,6 +6,7 @@ use App\Filament\Resources\ServerResource;
 use App\Http\Controllers\Admin\ServersController;
 use App\Services\Servers\RandomWordService;
 use App\Services\Servers\SuspensionService;
+use App\Services\Servers\TransferServerService;
 use Filament\Actions;
 use Filament\Forms;
 use App\Enums\ContainerStatus;
@@ -582,7 +583,7 @@ class EditServer extends EditRecord
                                             ->schema([
                                                 Forms\Components\Actions::make([
                                                     Forms\Components\Actions\Action::make('toggleInstall')
-                                                        ->label('Toggle Status')
+                                                        ->label('Toggle Install Status')
                                                         ->disabled(fn (Server $server) => $server->isSuspended())
                                                         ->action(function (ServersController $serversController, Server $server) {
                                                             $serversController->toggleInstall($server);
@@ -630,8 +631,31 @@ class EditServer extends EditRecord
                                             ->schema([
                                                 Forms\Components\Actions::make([
                                                     Forms\Components\Actions\Action::make('transfer')
-                                                        ->disabled(fn (Server $server) => $server->isSuspended())
-                                                        ->label('Transfer'),
+                                                        ->label('Transfer')
+                                                        ->action(fn (TransferServerService $transfer, Server $server) => $transfer->handle($server, $data))
+                                                        ->form([
+                                                            Forms\Components\Select::make('newNode')
+                                                                ->label('New Node')
+                                                                ->required()
+                                                                ->options([
+                                                                    true => 'on',
+                                                                    false => 'off',
+                                                                ]),
+                                                            Forms\Components\Select::make('newMainAllocation')
+                                                                ->label('New Main Allocation')
+                                                                ->required()
+                                                                ->options([
+                                                                    true => 'on',
+                                                                    false => 'off',
+                                                                ]),
+                                                            Forms\Components\Select::make('newAdditionalAllocation')
+                                                                ->label('New Additional Allocations')
+                                                                ->options([
+                                                                    true => 'on',
+                                                                    false => 'off',
+                                                                ]),
+                                                        ])
+                                                        ->modalHeading('Transfer'),
                                                 ])->fullWidth(),
                                                 Forms\Components\ToggleButtons::make('')
                                                     ->hint('Transfer this server to another node connected to this panel. Warning! This feature has not been fully tested and may have bugs.'),
@@ -644,16 +668,31 @@ class EditServer extends EditRecord
                                                         ->label('Reinstall')
                                                         ->color('danger')
                                                         ->requiresConfirmation()
+                                                        ->modalHeading('Are you sure you want to reinstall this server?')
+                                                        ->modalDescription('!! This can result in unrecoverable data loss !!')
                                                         ->disabled(fn (Server $server) => $server->isSuspended())
                                                         ->action(fn (ServersController $serversController, Server $server) => $serversController->reinstallServer($server)),
                                                 ])->fullWidth(),
                                                 Forms\Components\ToggleButtons::make('')
-                                                    ->hint('This will reinstall the server with the assigned egg scripts. Danger! This could overwrite server data.'),
+                                                    ->hint('This will reinstall the server with the assigned egg install script.'),
                                             ]),
                                     ]),
                             ]),
                     ]),
             ]);
+    }
+
+    protected function transferServer(Form $form): Form
+    {
+        return $form
+            ->columns(2)
+            ->schema([
+                Forms\Components\Select::make('toNode')
+                    ->label('New Node'),
+                Forms\Components\TextInput::make('newAllocation')
+                    ->label('Allocation'),
+            ]);
+
     }
     protected function getHeaderActions(): array
     {
