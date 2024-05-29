@@ -63,10 +63,6 @@ class Node extends Model
      */
     protected $hidden = ['daemon_token_id', 'daemon_token'];
 
-    public int $sum_memory;
-    public int $sum_disk;
-    public int $sum_cpu;
-
     /**
      * Fields that are mass assignable.
      */
@@ -250,11 +246,28 @@ class Node extends Model
      */
     public function isViable(int $memory, int $disk, int $cpu): bool
     {
-        $memoryLimit = $this->memory * (1 + ($this->memory_overallocate / 100));
-        $diskLimit = $this->disk * (1 + ($this->disk_overallocate / 100));
-        $cpuLimit = $this->cpu * (1 + ($this->cpu_overallocate / 100));
+        if ($this->memory_overallocate >= 0) {
+            $memoryLimit = $this->memory * (1 + ($this->memory_overallocate / 100));
+            if ($this->servers_sum_memory + $memory > $memoryLimit) {
+                return false;
+            }
+        }
 
-        return ($this->sum_memory + $memory) <= $memoryLimit && ($this->sum_disk + $disk) <= $diskLimit && ($this->sum_cpu + $cpu) <= $cpuLimit;
+        if ($this->disk_overallocate >= 0) {
+            $diskLimit = $this->disk * (1 + ($this->disk_overallocate / 100));
+            if ($this->servers_sum_disk + $disk > $diskLimit) {
+                return false;
+            }
+        }
+
+        if ($this->cpu_overallocate >= 0) {
+            $cpuLimit = $this->cpu * (1 + ($this->cpu_overallocate / 100));
+            if ($this->servers_sum_cpu + $cpu > $cpuLimit) {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     public static function getForServerCreation()
