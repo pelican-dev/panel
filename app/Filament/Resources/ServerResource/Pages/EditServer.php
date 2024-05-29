@@ -566,8 +566,16 @@ class EditServer extends EditRecord
                                     })
                                     ->columnSpan(6),
                             ]),
-                        Tabs\Tab::make('Mounts'),
-                        Tabs\Tab::make('Databases'),
+                        Tabs\Tab::make('Mounts')
+                            ->schema([
+                                Forms\Components\Placeholder::make('soon')
+                                    ->label('Soon™'),
+                            ]),
+                        Tabs\Tab::make('Databases')
+                            ->schema([
+                                Forms\Components\Placeholder::make('soon')
+                                    ->label('Soon™'),
+                            ]),
                         Tabs\Tab::make('Actions')
                             ->schema([
                                 Forms\Components\Fieldset::make('Server Actions')
@@ -631,9 +639,10 @@ class EditServer extends EditRecord
                                             ->schema([
                                                 Forms\Components\Actions::make([
                                                     Forms\Components\Actions\Action::make('transfer')
-                                                        ->label('Transfer')
+                                                        ->label('Transfer Soon™')
                                                         ->action(fn (TransferServerService $transfer, Server $server) => $transfer->handle($server, $data))
-                                                        ->form([
+                                                        ->disabled() //TODO!
+                                                        ->form([ //TODO!
                                                             Forms\Components\Select::make('newNode')
                                                                 ->label('New Node')
                                                                 ->required()

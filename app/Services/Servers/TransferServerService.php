@@ -53,7 +53,7 @@ class TransferServerService
     {
         $node_id = $data['node_id'];
         $allocation_id = intval($data['allocation_id']);
-        $additional_allocations = array_map('intval', $data['allocation_additional'] ?? []);
+        $additional_allocations = array_map(intval(...), $data['allocation_additional'] ?? []);
 
         // Check if the node is viable for the transfer.
         $node = Node::query()
