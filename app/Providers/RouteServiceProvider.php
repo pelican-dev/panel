@@ -3,7 +3,6 @@
 namespace App\Providers;
 
 use Illuminate\Http\Request;
-use App\Models\Database;
 use Illuminate\Foundation\Http\Middleware\TrimStrings;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Cache\RateLimiting\Limit;
@@ -28,11 +27,6 @@ class RouteServiceProvider extends ServiceProvider
         TrimStrings::skipWhen(function (Request $request) {
             return preg_match(self::FILE_PATH_REGEX, $request->getPathInfo()) === 1;
         });
-
-        // This is needed to make use of the "resolveRouteBinding" functionality in the
-        // model. Without it you'll never trigger that logic flow thus resulting in a 404
-        // error because we request databases with a HashID, and not with a normal ID.
-        Route::model('database', Database::class);
 
         $this->routes(function () {
             Route::middleware('web')->group(function () {

@@ -32,7 +32,6 @@ class AppSettingsCommand extends Command
     protected $description = 'Configure basic environment settings for the Panel.';
 
     protected $signature = 'p:environment:setup
-                            {--new-salt : Whether or not to generate a new salt for Hashids.}
                             {--url= : The URL that this Panel is running on.}
                             {--cache= : The cache driver backend to use.}
                             {--session= : The session driver backend to use.}
@@ -60,10 +59,6 @@ class AppSettingsCommand extends Command
     public function handle(): int
     {
         $this->variables['APP_TIMEZONE'] = 'UTC';
-
-        if (empty(config('hashids.salt')) || $this->option('new-salt')) {
-            $this->variables['HASHIDS_SALT'] = str_random(20);
-        }
 
         $this->output->comment(__('commands.appsettings.comment.url'));
         $this->variables['APP_URL'] = $this->option('url') ?? $this->ask(

@@ -16,7 +16,6 @@
         "doctrine/dbal": "~3.6.0",
         "filament/filament": "^3.2",
         "guzzlehttp/guzzle": "^7.8.1",
-        "hashids/hashids": "~5.0.0",
         "laracasts/utilities": "~3.2.2",
         "laravel/framework": "^11.7",
         "laravel/helpers": "^1.7",
