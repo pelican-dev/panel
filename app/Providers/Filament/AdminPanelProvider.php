@@ -20,6 +20,7 @@ use Illuminate\Session\Middleware\AuthenticateSession;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
 use Filament\Navigation\NavigationItem;
+use Filament\View\PanelsRenderHook;
 
 class AdminPanelProvider extends PanelProvider
 {
@@ -51,7 +52,7 @@ class AdminPanelProvider extends PanelProvider
                 'warning' => Color::Amber,
                 'blurple' => Color::hex('#5865F2'),
             ])
-            ->renderHook('panels::sidebar.footer', fn () => view('filament.footer')) // TODO make the footer also work with topNavigation
+            ->renderHook(PanelsRenderHook::SIDEBAR_FOOTER, fn () => view('filament.footer')) // TODO make the footer also work with topNavigation
             ->navigationItems([
                 NavigationItem::make('client')
                     ->label('Exit Admin')
