@@ -511,10 +511,11 @@ class EditServer extends EditRecord
                                     ->placeholder('Enter a custom Image')
                                     ->columnSpan(1),
 
-                                Forms\Components\TagsInput::make('docker_labels')
-                                    ->label('Labels')
-                                    ->placeholder('Enter custom Docker container labels')
-                                    ->columnSpan(1),
+                                Forms\Components\KeyValue::make('docker_labels')
+                                    ->label('Container Labels')
+                                    ->keyLabel('Label Name')
+                                    ->valueLabel('Label Description')
+                                    ->columnSpanFull(),
                             ]),
                     ]),
             ]);
