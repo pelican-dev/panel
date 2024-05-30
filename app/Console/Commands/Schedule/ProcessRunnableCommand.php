@@ -62,7 +62,7 @@ class ProcessRunnableCommand extends Command
 
             $this->line(trans('command/messages.schedule.output_line', [
                 'schedule' => $schedule->name,
-                'hash' => $schedule->hashid,
+                'id' => $schedule->id,
             ]));
         } catch (\Throwable|\Exception $exception) {
             logger()->error($exception, ['schedule_id' => $schedule->id]);

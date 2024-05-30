@@ -329,6 +329,7 @@ class CreateNode extends CreateRecord
                                             true => 'primary',
                                             false => 'warning',
                                         ])
+                                        ->default(0)
                                         ->columnSpan(2),
                                     Forms\Components\TextInput::make('cpu')
                                         ->dehydratedWhenHidden()
@@ -346,6 +347,7 @@ class CreateNode extends CreateRecord
                                         ->hintIconTooltip('The % allowable to go over the set limit.')
                                         ->columnSpan(2)
                                         ->numeric()
+                                        ->default(0)
                                         ->minValue(-1)
                                         ->maxValue(100)
                                         ->suffix('%'),

@@ -109,8 +109,8 @@ class ServerCreationService
     {
         /** @var Collection<\App\Models\Node> $nodes */
         $nodes = $this->findViableNodesService->handle(
-            Arr::get($data, 'disk', 0),
             Arr::get($data, 'memory', 0),
+            Arr::get($data, 'disk', 0),
             Arr::get($data, 'cpu', 0),
             Arr::get($data, 'tags', []),
         );
