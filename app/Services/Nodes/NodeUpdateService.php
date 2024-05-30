@@ -34,7 +34,7 @@ class NodeUpdateService
 
         [$updated, $exception] = $this->connection->transaction(function () use ($data, $node) {
             /** @var \App\Models\Node $updated */
-            $updated = clone $node;
+            $updated = $node->replicate();
             $updated->forceFill($data)->save();
             try {
                 // If we're changing the FQDN for the node, use the newly provided FQDN for the connection
