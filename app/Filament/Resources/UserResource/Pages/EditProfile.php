@@ -164,11 +164,13 @@ class EditProfile extends \Filament\Pages\Auth\EditProfile
                                                 ->content(fn () => new HtmlString("
                                                 <div style='width: 300px'>$image</div>
                                             "))
-                                                ->helperText($secret),
+                                                ->helperText('Setup Key: '. $secret),
                                             TextInput::make('2facode')
+                                                ->label('Code')
                                                 ->requiredWith('2fapassword')
                                                 ->helperText('Scan the QR code above using your two-step authentication app, then enter the code generated.'),
                                             TextInput::make('2fapassword')
+                                                ->label('Current Password')
                                                 ->requiredWith('2facode')
                                                 ->currentPassword()
                                                 ->password()
