@@ -2,10 +2,12 @@
 
 namespace App\Filament\Resources\UserResource\Pages;
 
+use App\Exceptions\Service\User\TwoFactorAuthenticationTokenInvalid;
 use App\Facades\Activity;
 use App\Models\ActivityLog;
 use App\Models\ApiKey;
 use App\Models\User;
+use App\Services\Users\ToggleTwoFactorService;
 use App\Services\Users\TwoFactorSetupService;
 use chillerlan\QRCode\Common\EccLevel;
 use chillerlan\QRCode\Common\Version;
@@ -22,6 +24,7 @@ use Filament\Forms\Components\TagsInput;
 use Filament\Forms\Components\Tabs\Tab;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Get;
+use Filament\Notifications\Notification;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\HtmlString;
@@ -99,12 +102,20 @@ class EditProfile extends \Filament\Pages\Auth\EditProfile
 
                                         if ($this->getUser()->use_totp) {
                                             return [
-                                                Placeholder::make('2FA already enabled!'),
+                                                Placeholder::make('2fa-already-enabled')
+                                                    ->label('Two Factor Authentication is currently enabled!'),
+                                                TextInput::make('2fa-disable-code')
+                                                    ->label('Disable 2FA')
+                                                    ->helperText('Enter your current 2FA code to disable Two Factor Authentication'),
                                             ];
                                         }
                                         $setupService = app(TwoFactorSetupService::class);
 
-                                        ['image_url_data' => $url] = $setupService->handle($this->getUser());
+                                        ['image_url_data' => $url, 'secret' => $secret] = cache()->remember(
+                                            'current-two-factor-state',
+                                            now()->addMinutes(5), fn () =>
+                                            $setupService->handle($this->getUser())
+                                        );
 
                                         $options = new QROptions([
                                             'svgLogo' => public_path('pelican.svg'),
@@ -149,7 +160,15 @@ class EditProfile extends \Filament\Pages\Auth\EditProfile
                                                 ->content(fn () => new HtmlString("
                                                 <div style='width: 300px'>$image</div>
                                             "))
-                                                ->default('asdfasdf'),
+                                                ->helperText($secret),
+                                            TextInput::make('2facode')
+                                                ->requiredWith('2fapassword')
+                                                ->helperText('Scan the QR code above using your two-step authentication app, then enter the code generated.'),
+                                            TextInput::make('2fapassword')
+                                                ->requiredWith('2facode')
+                                                ->currentPassword()
+                                                ->password()
+                                                ->helperText('Enter your current password to verify.'),
                                         ];
                                     }),
 
@@ -234,5 +253,41 @@ class EditProfile extends \Filament\Pages\Auth\EditProfile
                     ->inlineLabel(!static::isSimple()),
             ),
         ];
+    }
+
+    protected function handleRecordUpdate($record, $data): \Illuminate\Database\Eloquent\Model
+    {
+        if ($token = $data['2facode'] ?? null) {
+            /** @var ToggleTwoFactorService $service */
+            $service = resolve(ToggleTwoFactorService::class);
+
+            $service->handle($record, $token, true);
+        }
+
+        if ($token = $data['2fa-disable-code'] ?? null) {
+            /** @var ToggleTwoFactorService $service */
+            $service = resolve(ToggleTwoFactorService::class);
+
+            $service->handle($record, $token, false);
+
+            cache()->forget('current-two-factor-state');
+        }
+
+        return parent::handleRecordUpdate($record, $data);
+    }
+
+    public function exception($e, $stopPropagation): void
+    {
+        if ($e instanceof TwoFactorAuthenticationTokenInvalid) {
+            Notification::make()
+                ->title('Invalid 2FA Code')
+                ->body($e->getMessage())
+                ->color('danger')
+                ->icon('tabler-2fa')
+                ->danger()
+                ->send();
+
+            $stopPropagation();
+        }
     }
 }
