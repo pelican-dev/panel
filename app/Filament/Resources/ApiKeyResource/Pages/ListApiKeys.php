@@ -19,11 +19,6 @@ class ListApiKeys extends ListRecords
             ->searchable(false)
             ->modifyQueryUsing(fn ($query) => $query->where('key_type', ApiKey::TYPE_APPLICATION))
             ->columns([
-                Tables\Columns\TextColumn::make('user.username')
-                    ->hidden()
-                    ->searchable()
-                    ->sortable(),
-
                 Tables\Columns\TextColumn::make('key')
                     ->copyable()
                     ->icon('tabler-clipboard-text')
@@ -40,6 +35,7 @@ class ListApiKeys extends ListRecords
 
                 Tables\Columns\TextColumn::make('last_used_at')
                     ->label('Last Used')
+                    ->placeholder('Not Used')
                     ->dateTime()
                     ->sortable(),
 
@@ -47,13 +43,13 @@ class ListApiKeys extends ListRecords
                     ->label('Created')
                     ->dateTime()
                     ->sortable(),
-            ])
-            ->filters([
-                //
+
+                Tables\Columns\TextColumn::make('user.username')
+                    ->label('Created By')
+                    ->url(fn (ApiKey $apiKey): string => route('filament.admin.resources.users.edit', ['record' => $apiKey->user])),
             ])
             ->actions([
                 Tables\Actions\DeleteAction::make(),
-                //Tables\Actions\EditAction::make()
             ]);
     }
 

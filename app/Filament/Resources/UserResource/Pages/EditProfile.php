@@ -158,7 +158,7 @@ class EditProfile extends \Filament\Pages\Auth\EditProfile
                                     ->schema([
                                         Grid::make('asdf')->columns(5)->schema([
                                             Section::make('Create API Key')->columnSpan(3)->schema([
-                                                TextInput::make('description'),
+                                                TextInput::make('description')->required(),
                                                 TagsInput::make('allowed_ips')
                                                     ->splitKeys([',', ' ', 'Tab'])
                                                     ->placeholder('Example: 127.0.0.1 or 192.168.1.1')
@@ -182,8 +182,9 @@ class EditProfile extends \Filament\Pages\Auth\EditProfile
                                                         $action->success();
                                                     }),
                                             ]),
-                                            Section::make('API Keys')->columnSpan(2)->schema([
+                                            Section::make('Keys')->columnSpan(2)->schema([
                                                 Repeater::make('keys')
+                                                    ->label('')
                                                     ->relationship('apiKeys')
                                                     ->addable(false)
                                                     ->itemLabel(fn ($state) => $state['identifier'])
