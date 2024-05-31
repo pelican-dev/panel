@@ -34,7 +34,6 @@ jobs:
       MAIL_MAILER: array
       SESSION_DRIVER: array
       QUEUE_CONNECTION: sync
-      HASHIDS_SALT: alittlebitofsalt1234
       DB_CONNECTION: mysql
       DB_HOST: 127.0.0.1
       DB_DATABASE: testing
@@ -97,7 +96,6 @@ jobs:
       MAIL_MAILER: array
       SESSION_DRIVER: array
       QUEUE_CONNECTION: sync
-      HASHIDS_SALT: alittlebitofsalt1234
       DB_CONNECTION: sqlite
       DB_DATABASE: testing.sqlite
     steps:

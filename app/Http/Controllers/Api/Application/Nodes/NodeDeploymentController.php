@@ -24,8 +24,8 @@ class NodeDeploymentController extends ApplicationApiController
         $data = $request->validated();
 
         $nodes = $this->viableNodesService->handle(
-            $data['disk'] ?? 0,
             $data['memory'] ?? 0,
+            $data['disk'] ?? 0,
             $data['cpu'] ?? 0,
             $data['tags'] ?? $data['location_ids'] ?? [],
         );

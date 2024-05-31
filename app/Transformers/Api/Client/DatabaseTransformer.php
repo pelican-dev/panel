@@ -6,21 +6,10 @@ use App\Models\Database;
 use League\Fractal\Resource\Item;
 use App\Models\Permission;
 use League\Fractal\Resource\NullResource;
-use App\Contracts\Extensions\HashidsInterface;
 
 class DatabaseTransformer extends BaseClientTransformer
 {
     protected array $availableIncludes = ['password'];
-
-    private HashidsInterface $hashids;
-
-    /**
-     * Handle dependency injection.
-     */
-    public function handle(HashidsInterface $hashids)
-    {
-        $this->hashids = $hashids;
-    }
 
     public function getResourceName(): string
     {
@@ -32,7 +21,7 @@ class DatabaseTransformer extends BaseClientTransformer
         $model->loadMissing('host');
 
         return [
-            'id' => $this->hashids->encode($model->id),
+            'id' => $model->id,
             'host' => [
                 'address' => $model->getRelation('host')->host,
                 'port' => $model->getRelation('host')->port,

@@ -6,9 +6,11 @@ use App\Filament\Resources\NodeResource;
 use App\Filament\Resources\NodeResource\Widgets\NodeMemoryChart;
 use App\Filament\Resources\NodeResource\Widgets\NodeStorageChart;
 use App\Models\Node;
+use App\Services\Nodes\NodeUpdateService;
 use Filament\Actions;
 use Filament\Forms;
 use Filament\Forms\Components\Tabs;
+use Filament\Notifications\Notification;
 use Filament\Resources\Pages\EditRecord;
 use Illuminate\Support\HtmlString;
 use Webbingbrasil\FilamentCopyActions\Forms\Actions\CopyAction;
@@ -374,6 +376,18 @@ class EditNode extends EditRecord
                                 ->rows(19)
                                 ->hintAction(CopyAction::make())
                                 ->columnSpanFull(),
+                            Forms\Components\Actions::make([
+                                Forms\Components\Actions\Action::make('resetKey')
+                                    ->label('Reset Daemon Token')
+                                    ->color('danger')
+                                    ->requiresConfirmation()
+                                    ->modalHeading('Reset Daemon Token?')
+                                    ->modalDescription('Resetting the daemon token will void any request coming from the old token. This token is used for all sensitive operations on the daemon including server creation and deletion. We suggest changing this token regularly for security.')
+                                    ->action(fn (NodeUpdateService $nodeUpdateService, Node $node) => $nodeUpdateService->handle($node, [], true)
+                                        && Notification::make()->success()->title('Daemon Key Reset')->send()
+                                        && $this->fillForm()
+                                    ),
+                            ]),
                         ]),
                 ]),
         ]);
