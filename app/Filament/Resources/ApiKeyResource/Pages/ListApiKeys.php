@@ -19,6 +19,7 @@ class ListApiKeys extends ListRecords
     {
         return $table
             ->searchable(false)
+            ->modifyQueryUsing(fn ($query) => $query->where('key_type', ApiKey::TYPE_APPLICATION))
             ->columns([
                 Tables\Columns\TextColumn::make('user.username')
                     ->hidden()
@@ -63,23 +64,5 @@ class ListApiKeys extends ListRecords
         return [
             Actions\CreateAction::make(),
         ];
-    }
-
-    public function getTabs(): array
-    {
-        return [
-            'all' => Tab::make('All Keys'),
-            'application' => Tab::make('Application Keys')
-                ->modifyQueryUsing(fn (Builder $query) => $query->where('key_type', ApiKey::TYPE_APPLICATION)
-                ),
-            'account' => Tab::make('Account Keys')
-                ->modifyQueryUsing(fn (Builder $query) => $query->where('key_type', ApiKey::TYPE_ACCOUNT)
-                ),
-        ];
-    }
-
-    public function getDefaultActiveTab(): string|int|null
-    {
-        return 'application';
     }
 }
