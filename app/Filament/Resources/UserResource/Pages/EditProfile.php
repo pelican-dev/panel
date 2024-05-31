@@ -108,7 +108,7 @@ class EditProfile extends \Filament\Pages\Auth\EditProfile
                                                     ->hidden(fn () => !cache()->get("users.{$this->getUser()->id}.2fa.tokens"))
                                                     ->helperText(cache()->get("users.{$this->getUser()->id}.2fa.tokens") .
                                                         ' - these will not be shown again!')
-                                                    ->label("Backup Tokens:"),
+                                                    ->label('Backup Tokens:'),
                                                 TextInput::make('2fa-disable-code')
                                                     ->label('Disable 2FA')
                                                     ->helperText('Enter your current 2FA code to disable Two Factor Authentication'),
@@ -118,8 +118,7 @@ class EditProfile extends \Filament\Pages\Auth\EditProfile
 
                                         ['image_url_data' => $url, 'secret' => $secret] = cache()->remember(
                                             "users.{$this->getUser()->id}.2fa.state",
-                                            now()->addMinutes(5), fn () =>
-                                            $setupService->handle($this->getUser())
+                                            now()->addMinutes(5), fn () => $setupService->handle($this->getUser())
                                         );
 
                                         $options = new QROptions([
