@@ -5,10 +5,8 @@ namespace App\Filament\Resources\ApiKeyResource\Pages;
 use App\Filament\Resources\ApiKeyResource;
 use App\Models\ApiKey;
 use Filament\Actions;
-use Filament\Resources\Components\Tab;
 use Filament\Resources\Pages\ListRecords;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
 use Filament\Tables;
 
 class ListApiKeys extends ListRecords
