@@ -33,7 +33,7 @@
                         </tr>
                         @foreach($keys as $key)
                             <tr>
-                                <td><code>{{ $key->identifier }}{{ decrypt($key->token) }}</code></td>
+                                <td><code>{{ $key->identifier }}{{ $key->token }}</code></td>
                                 <td>{{ $key->memo }}</td>
                                 <td>
                                     @if(!is_null($key->last_used_at))

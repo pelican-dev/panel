@@ -63,7 +63,7 @@ class NodeJWTService
     public function handle(Node $node, ?string $identifiedBy, string $algo = 'md5'): Plain
     {
         $identifier = hash($algo, $identifiedBy);
-        $config = Configuration::forSymmetricSigner(new Sha256(), InMemory::plainText($node->getDecryptedKey()));
+        $config = Configuration::forSymmetricSigner(new Sha256(), InMemory::plainText($node->daemon_token));
 
         $builder = $config->builder(new TimestampDates())
             ->issuedBy(config('app.url'))

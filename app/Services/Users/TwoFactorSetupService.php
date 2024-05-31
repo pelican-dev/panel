@@ -26,7 +26,7 @@ class TwoFactorSetupService
             throw new \RuntimeException($exception->getMessage(), 0, $exception);
         }
 
-        $user->totp_secret = encrypt($secret);
+        $user->totp_secret = $secret;
         $user->save();
 
         $company = urlencode(preg_replace('/\s/', '', config('app.name')));

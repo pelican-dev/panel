@@ -76,15 +76,6 @@ class EditDatabaseHost extends EditRecord
         ];
     }
 
-    protected function mutateFormDataBeforeSave(array $data): array
-    {
-        if (isset($data['password'])) {
-            $data['password'] = encrypt($data['password']);
-        }
-
-        return $data;
-    }
-
     protected function getFormActions(): array
     {
         return [];

@@ -62,7 +62,7 @@ class WebsocketControllerTest extends ClientApiIntegrationTestCase
         $this->assertStringStartsWith('wss://', $connection, 'Failed asserting that websocket connection address has expected "wss://" prefix.');
         $this->assertStringEndsWith("/api/servers/$server->uuid/ws", $connection, 'Failed asserting that websocket connection address uses expected Daemon endpoint.');
 
-        $config = Configuration::forSymmetricSigner(new Sha256(), $key = InMemory::plainText($server->node->getDecryptedKey()));
+        $config = Configuration::forSymmetricSigner(new Sha256(), $key = InMemory::plainText($server->node->daemon_token));
         $config->setValidationConstraints(new SignedWith(new Sha256(), $key));
         /** @var \Lcobucci\JWT\Token\Plain $token */
         $token = $config->parser()->parse($response->json('data.token'));
@@ -107,7 +107,7 @@ class WebsocketControllerTest extends ClientApiIntegrationTestCase
         $response->assertOk();
         $response->assertJsonStructure(['data' => ['token', 'socket']]);
 
-        $config = Configuration::forSymmetricSigner(new Sha256(), $key = InMemory::plainText($server->node->getDecryptedKey()));
+        $config = Configuration::forSymmetricSigner(new Sha256(), $key = InMemory::plainText($server->node->daemon_token));
         $config->setValidationConstraints(new SignedWith(new Sha256(), $key));
         /** @var \Lcobucci\JWT\Token\Plain $token */
         $token = $config->parser()->parse($response->json('data.token'));

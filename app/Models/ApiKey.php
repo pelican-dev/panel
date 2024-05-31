@@ -149,6 +149,7 @@ class ApiKey extends Model
             'user_id' => 'int',
             'last_used_at' => 'datetime',
             'expires_at' => 'datetime',
+            'token' => 'encrypted',
             self::CREATED_AT => 'datetime',
             self::UPDATED_AT => 'datetime',
             'r_' . AdminAcl::RESOURCE_USERS => 'int',
@@ -188,7 +189,7 @@ class ApiKey extends Model
         $identifier = substr($token, 0, self::IDENTIFIER_LENGTH);
 
         $model = static::where('identifier', $identifier)->first();
-        if (!is_null($model) && decrypt($model->token) === substr($token, strlen($identifier))) {
+        if (!is_null($model) && $model->token === substr($token, strlen($identifier))) {
             return $model;
         }
 

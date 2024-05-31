@@ -25,7 +25,7 @@ class DynamicDatabaseConnection
             'port' => $host->port,
             'database' => $database,
             'username' => $host->username,
-            'password' => decrypt($host->password),
+            'password' => $host->password,
             'charset' => self::DB_CHARSET,
             'collation' => self::DB_COLLATION,
         ]);

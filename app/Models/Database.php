@@ -62,6 +62,7 @@ class Database extends Model
             'server_id' => 'integer',
             'database_host_id' => 'integer',
             'max_connections' => 'integer',
+            'password' => 'encrypted',
         ];
     }
 
