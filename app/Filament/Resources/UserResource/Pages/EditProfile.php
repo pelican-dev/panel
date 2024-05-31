@@ -104,6 +104,11 @@ class EditProfile extends \Filament\Pages\Auth\EditProfile
                                             return [
                                                 Placeholder::make('2fa-already-enabled')
                                                     ->label('Two Factor Authentication is currently enabled!'),
+                                                Placeholder::make('backup-tokens')
+                                                    ->hidden(fn () => !cache()->get("users.{$this->getUser()->id}.2fa.tokens"))
+                                                    ->helperText(cache()->get("users.{$this->getUser()->id}.2fa.tokens") .
+                                                        ' - these will not be shown again!')
+                                                    ->label("Backup Tokens:"),
                                                 TextInput::make('2fa-disable-code')
                                                     ->label('Disable 2FA')
                                                     ->helperText('Enter your current 2FA code to disable Two Factor Authentication'),
@@ -112,7 +117,7 @@ class EditProfile extends \Filament\Pages\Auth\EditProfile
                                         $setupService = app(TwoFactorSetupService::class);
 
                                         ['image_url_data' => $url, 'secret' => $secret] = cache()->remember(
-                                            'current-two-factor-state',
+                                            "users.{$this->getUser()->id}.2fa.state",
                                             now()->addMinutes(5), fn () =>
                                             $setupService->handle($this->getUser())
                                         );
@@ -261,7 +266,8 @@ class EditProfile extends \Filament\Pages\Auth\EditProfile
             /** @var ToggleTwoFactorService $service */
             $service = resolve(ToggleTwoFactorService::class);
 
-            $service->handle($record, $token, true);
+            $tokens = $service->handle($record, $token, true);
+            cache()->set("users.$record->id.2fa.tokens", implode("\n", $tokens), now()->addSeconds(15));
         }
 
         if ($token = $data['2fa-disable-code'] ?? null) {
@@ -270,7 +276,7 @@ class EditProfile extends \Filament\Pages\Auth\EditProfile
 
             $service->handle($record, $token, false);
 
-            cache()->forget('current-two-factor-state');
+            cache()->forget("users.$record->id.2fa.state");
         }
 
         return parent::handleRecordUpdate($record, $data);
