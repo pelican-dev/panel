@@ -1,8 +1,6 @@
 <?php
 
 use Illuminate\Database\Migrations\Migration;
-use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
@@ -17,8 +15,7 @@ return new class extends Migration
                 $reEncrypted = encrypt(decrypt($key->token), false);
                 DB::table('api_keys')
                     ->where('id', $key->id)
-                    ->update(['token' => $reEncrypted])
-                ;
+                    ->update(['token' => $reEncrypted]);
             } catch (Exception $exception) {
                 logger()->error($exception->getMessage());
             }
@@ -30,8 +27,7 @@ return new class extends Migration
                 $reEncrypted = encrypt(decrypt($database->password), false);
                 DB::table('databases')
                     ->where('id', $database->id)
-                    ->update(['password' => $reEncrypted])
-                ;
+                    ->update(['password' => $reEncrypted]);
             } catch (Exception $exception) {
                 logger()->error($exception->getMessage());
             }
@@ -43,8 +39,7 @@ return new class extends Migration
                 $reEncrypted = encrypt(decrypt($host->password), false);
                 DB::table('database_hosts')
                     ->where('id', $host->id)
-                    ->update(['password' => $reEncrypted])
-                ;
+                    ->update(['password' => $reEncrypted]);
             } catch (Exception $exception) {
                 logger()->error($exception->getMessage());
             }
@@ -56,8 +51,7 @@ return new class extends Migration
                 $reEncrypted = encrypt(decrypt($node->daemon_token), false);
                 DB::table('nodes')
                     ->where('id', $node->id)
-                    ->update(['daemon_token' => $reEncrypted])
-                ;
+                    ->update(['daemon_token' => $reEncrypted]);
             } catch (Exception $exception) {
                 logger()->error($exception->getMessage());
             }
@@ -69,8 +63,7 @@ return new class extends Migration
                 $reEncrypted = encrypt(decrypt($user->totp_secret), false);
                 DB::table('users')
                     ->where('id', $user->id)
-                    ->update(['totp_secret' => $reEncrypted])
-                ;
+                    ->update(['totp_secret' => $reEncrypted]);
             } catch (Exception $exception) {
                 logger()->error($exception->getMessage());
             }
