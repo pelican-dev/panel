@@ -5,10 +5,8 @@ namespace App\Filament\Resources\ApiKeyResource\Pages;
 use App\Filament\Resources\ApiKeyResource;
 use App\Models\ApiKey;
 use Filament\Actions;
-use Filament\Resources\Components\Tab;
 use Filament\Resources\Pages\ListRecords;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
 use Filament\Tables;
 
 class ListApiKeys extends ListRecords
@@ -19,12 +17,8 @@ class ListApiKeys extends ListRecords
     {
         return $table
             ->searchable(false)
+            ->modifyQueryUsing(fn ($query) => $query->where('key_type', ApiKey::TYPE_APPLICATION))
             ->columns([
-                Tables\Columns\TextColumn::make('user.username')
-                    ->hidden()
-                    ->searchable()
-                    ->sortable(),
-
                 Tables\Columns\TextColumn::make('key')
                     ->copyable()
                     ->icon('tabler-clipboard-text')
@@ -41,6 +35,7 @@ class ListApiKeys extends ListRecords
 
                 Tables\Columns\TextColumn::make('last_used_at')
                     ->label('Last Used')
+                    ->placeholder('Not Used')
                     ->dateTime()
                     ->sortable(),
 
@@ -48,13 +43,13 @@ class ListApiKeys extends ListRecords
                     ->label('Created')
                     ->dateTime()
                     ->sortable(),
-            ])
-            ->filters([
-                //
+
+                Tables\Columns\TextColumn::make('user.username')
+                    ->label('Created By')
+                    ->url(fn (ApiKey $apiKey): string => route('filament.admin.resources.users.edit', ['record' => $apiKey->user])),
             ])
             ->actions([
                 Tables\Actions\DeleteAction::make(),
-                //Tables\Actions\EditAction::make()
             ]);
     }
 
@@ -63,23 +58,5 @@ class ListApiKeys extends ListRecords
         return [
             Actions\CreateAction::make(),
         ];
-    }
-
-    public function getTabs(): array
-    {
-        return [
-            'all' => Tab::make('All Keys'),
-            'application' => Tab::make('Application Keys')
-                ->modifyQueryUsing(fn (Builder $query) => $query->where('key_type', ApiKey::TYPE_APPLICATION)
-                ),
-            'account' => Tab::make('Account Keys')
-                ->modifyQueryUsing(fn (Builder $query) => $query->where('key_type', ApiKey::TYPE_ACCOUNT)
-                ),
-        ];
-    }
-
-    public function getDefaultActiveTab(): string|int|null
-    {
-        return 'application';
     }
 }
