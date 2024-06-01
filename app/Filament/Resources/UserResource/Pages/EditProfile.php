@@ -272,6 +272,8 @@ class EditProfile extends \Filament\Pages\Auth\EditProfile
 
             $tokens = $service->handle($record, $token, true);
             cache()->set("users.$record->id.2fa.tokens", implode("\n", $tokens), now()->addSeconds(15));
+
+            $this->redirectRoute('filament.admin.auth.profile', ['tab' => '-2fa-tab']);
         }
 
         if ($token = $data['2fa-disable-code'] ?? null) {
