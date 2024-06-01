@@ -85,5 +85,4 @@ Some of our popular eggs include but are not limited to:
 * [Storage](https://github.com/pelican-eggs/storage)
 * [Monitoring](https://github.com/pelican-eggs/monitoring)
 
-
 Copyright Pelican® 2024
