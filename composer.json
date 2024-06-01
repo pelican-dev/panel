@@ -43,7 +43,6 @@
     "require-dev": {
         "barryvdh/laravel-ide-helper": "^3.0",
         "fakerphp/faker": "^1.23.1",
-        "itsgoingd/clockwork": "~5.1.12",
         "larastan/larastan": "^2.9.6",
         "laravel/pint": "^1.15.3",
         "laravel/sail": "^1.29.1",
