@@ -22,6 +22,7 @@ use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Tabs;
 use Filament\Forms\Components\TagsInput;
 use Filament\Forms\Components\Tabs\Tab;
+use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Get;
 use Filament\Notifications\Notification;
@@ -104,10 +105,12 @@ class EditProfile extends \Filament\Pages\Auth\EditProfile
                                             return [
                                                 Placeholder::make('2fa-already-enabled')
                                                     ->label('Two Factor Authentication is currently enabled!'),
-                                                Placeholder::make('backup-tokens')
+                                                Textarea::make('backup-tokens')
                                                     ->hidden(fn () => !cache()->get("users.{$this->getUser()->id}.2fa.tokens"))
-                                                    ->helperText(cache()->get("users.{$this->getUser()->id}.2fa.tokens") .
-                                                        ' - these will not be shown again!')
+                                                    ->rows(10)
+                                                    ->readOnly()
+                                                    ->formatStateUsing(fn () => cache()->get("users.{$this->getUser()->id}.2fa.tokens"))
+                                                    ->helperText('These will not be shown again!')
                                                     ->label('Backup Tokens:'),
                                                 TextInput::make('2fa-disable-code')
                                                     ->label('Disable 2FA')
