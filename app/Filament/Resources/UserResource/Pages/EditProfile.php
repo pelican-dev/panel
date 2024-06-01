@@ -162,7 +162,7 @@ class EditProfile extends \Filament\Pages\Auth\EditProfile
                                             Placeholder::make('qr')
                                                 ->label('Scan QR Code')
                                                 ->content(fn () => new HtmlString("
-                                                <div style='width: 300px'>$image</div>
+                                                <div style='width: 300px; background-color: rgb(24, 24, 27);'>$image</div>
                                             "))
                                                 ->helperText('Setup Key: '. $secret),
                                             TextInput::make('2facode')
