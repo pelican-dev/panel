@@ -229,6 +229,6 @@ class SftpAuthenticationControllerTest extends IntegrationTestCase
     {
         $node = $node ?? $this->server->node;
 
-        $this->withHeader('Authorization', 'Bearer ' . $node->daemon_token_id . '.' . decrypt($node->daemon_token));
+        $this->withHeader('Authorization', 'Bearer ' . $node->daemon_token_id . '.' . $node->daemon_token);
     }
 }

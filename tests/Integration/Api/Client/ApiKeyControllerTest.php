@@ -71,7 +71,7 @@ class ApiKeyControllerTest extends ClientApiIntegrationTestCase
         $key = ApiKey::query()->where('identifier', $response->json('attributes.identifier'))->firstOrFail();
 
         $this->assertJsonTransformedWith($response->json('attributes'), $key);
-        $response->assertJsonPath('meta.secret_token', decrypt($key->token));
+        $response->assertJsonPath('meta.secret_token', $key->token);
 
         $this->assertActivityFor('user:api-key.create', $user, [$key, $user]);
     }

@@ -60,6 +60,7 @@ class DatabaseHost extends Model
             'id' => 'integer',
             'max_databases' => 'integer',
             'node_id' => 'integer',
+            'password' => 'encrypted',
             'created_at' => 'immutable_datetime',
             'updated_at' => 'immutable_datetime',
         ];

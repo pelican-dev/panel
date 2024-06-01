@@ -48,7 +48,7 @@ class DisplayException extends PanelException implements HttpExceptionInterface
      */
     public function render(Request $request)
     {
-        if (str($request->url())->contains('livewire')) {
+        if ($request->is('livewire/update')) {
             Notification::make()
                 ->title(static::class)
                 ->body($this->getMessage())

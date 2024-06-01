@@ -687,7 +687,7 @@ class CreateServer extends CreateRecord
                                     ->label('Container Labels')
                                     ->keyLabel('Title')
                                     ->valueLabel('Description')
-                                    ->columnSpan(1),
+                                    ->columnSpan(3),
                             ]),
                     ]),
             ]);

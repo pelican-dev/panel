@@ -60,7 +60,7 @@ class AppServiceProvider extends ServiceProvider
             'daemon',
             fn (Node $node, array $headers = []) => Http::acceptJson()
                 ->asJson()
-                ->withToken($node->getDecryptedKey())
+                ->withToken($node->daemon_token)
                 ->withHeaders($headers)
                 ->withOptions(['verify' => (bool) app()->environment('production')])
                 ->timeout(config('panel.guzzle.timeout'))

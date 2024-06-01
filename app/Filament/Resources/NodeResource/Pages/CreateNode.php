@@ -337,6 +337,7 @@ class CreateNode extends CreateRecord
                                         ->suffix('%')
                                         ->columnSpan(2)
                                         ->numeric()
+                                        ->default(0)
                                         ->minValue(0),
                                     Forms\Components\TextInput::make('cpu_overallocate')
                                         ->dehydratedWhenHidden()
@@ -346,6 +347,7 @@ class CreateNode extends CreateRecord
                                         ->hintIconTooltip('The % allowable to go over the set limit.')
                                         ->columnSpan(2)
                                         ->numeric()
+                                        ->default(0)
                                         ->minValue(-1)
                                         ->maxValue(100)
                                         ->suffix('%'),

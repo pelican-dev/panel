@@ -109,8 +109,8 @@ class ServerCreationService
     {
         /** @var Collection<\App\Models\Node> $nodes */
         $nodes = $this->findViableNodesService->handle(
-            Arr::get($data, 'disk', 0),
             Arr::get($data, 'memory', 0),
+            Arr::get($data, 'disk', 0),
             Arr::get($data, 'cpu', 0),
             Arr::get($data, 'tags', []),
         );
@@ -154,6 +154,7 @@ class ServerCreationService
             'database_limit' => Arr::get($data, 'database_limit') ?? 0,
             'allocation_limit' => Arr::get($data, 'allocation_limit') ?? 0,
             'backup_limit' => Arr::get($data, 'backup_limit') ?? 0,
+            'docker_labels' => Arr::get($data, 'docker_labels'),
         ]);
     }
 
