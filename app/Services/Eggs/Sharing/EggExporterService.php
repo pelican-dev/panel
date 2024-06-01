@@ -25,6 +25,7 @@ class EggExporterService
             'exported_at' => Carbon::now()->toAtomString(),
             'name' => $egg->name,
             'author' => $egg->author,
+            'uuid' => $egg->uuid,
             'description' => $egg->description,
             'features' => $egg->features,
             'docker_images' => $egg->docker_images,

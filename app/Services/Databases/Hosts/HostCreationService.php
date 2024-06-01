@@ -28,7 +28,7 @@ class HostCreationService
     {
         return $this->connection->transaction(function () use ($data) {
             $host = DatabaseHost::query()->create([
-                'password' => encrypt(array_get($data, 'password')),
+                'password' => array_get($data, 'password'),
                 'name' => array_get($data, 'name'),
                 'host' => array_get($data, 'host'),
                 'port' => array_get($data, 'port'),

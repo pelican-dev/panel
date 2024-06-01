@@ -63,10 +63,6 @@ class Node extends Model
      */
     protected $hidden = ['daemon_token_id', 'daemon_token'];
 
-    public int $sum_memory;
-    public int $sum_disk;
-    public int $sum_cpu;
-
     /**
      * Fields that are mass assignable.
      */
@@ -127,6 +123,7 @@ class Node extends Model
             'cpu' => 'integer',
             'daemon_listen' => 'integer',
             'daemon_sftp' => 'integer',
+            'daemon_token' => 'encrypted',
             'behind_proxy' => 'boolean',
             'public' => 'boolean',
             'maintenance_mode' => 'boolean',
@@ -143,7 +140,7 @@ class Node extends Model
     {
         static::creating(function (self $node) {
             $node->uuid = Str::uuid();
-            $node->daemon_token = encrypt(Str::random(self::DAEMON_TOKEN_LENGTH));
+            $node->daemon_token = Str::random(self::DAEMON_TOKEN_LENGTH);
             $node->daemon_token_id = Str::random(self::DAEMON_TOKEN_ID_LENGTH);
 
             return true;
@@ -171,7 +168,7 @@ class Node extends Model
             'debug' => false,
             'uuid' => $this->uuid,
             'token_id' => $this->daemon_token_id,
-            'token' => decrypt($this->daemon_token),
+            'token' => $this->daemon_token,
             'api' => [
                 'host' => '0.0.0.0',
                 'port' => $this->daemon_listen,
@@ -209,16 +206,6 @@ class Node extends Model
         return json_encode($this->getConfiguration(), $pretty ? JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT : JSON_UNESCAPED_SLASHES);
     }
 
-    /**
-     * Helper function to return the decrypted key for a node.
-     */
-    public function getDecryptedKey(): string
-    {
-        return (string) decrypt(
-            $this->daemon_token
-        );
-    }
-
     public function isUnderMaintenance(): bool
     {
         return $this->maintenance_mode;
@@ -250,11 +237,28 @@ class Node extends Model
      */
     public function isViable(int $memory, int $disk, int $cpu): bool
     {
-        $memoryLimit = $this->memory * (1 + ($this->memory_overallocate / 100));
-        $diskLimit = $this->disk * (1 + ($this->disk_overallocate / 100));
-        $cpuLimit = $this->cpu * (1 + ($this->cpu_overallocate / 100));
+        if ($this->memory_overallocate >= 0) {
+            $memoryLimit = $this->memory * (1 + ($this->memory_overallocate / 100));
+            if ($this->servers_sum_memory + $memory > $memoryLimit) {
+                return false;
+            }
+        }
 
-        return ($this->sum_memory + $memory) <= $memoryLimit && ($this->sum_disk + $disk) <= $diskLimit && ($this->sum_cpu + $cpu) <= $cpuLimit;
+        if ($this->disk_overallocate >= 0) {
+            $diskLimit = $this->disk * (1 + ($this->disk_overallocate / 100));
+            if ($this->servers_sum_disk + $disk > $diskLimit) {
+                return false;
+            }
+        }
+
+        if ($this->cpu_overallocate >= 0) {
+            $cpuLimit = $this->cpu * (1 + ($this->cpu_overallocate / 100));
+            if ($this->servers_sum_cpu + $cpu > $cpuLimit) {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     public static function getForServerCreation()

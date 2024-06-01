@@ -26,8 +26,11 @@ class EggImporterService
         $parsed = $this->parser->handle($file);
 
         return $this->connection->transaction(function () use ($parsed) {
-            $egg = (new Egg())->forceFill([
-                'uuid' => Uuid::uuid4()->toString(),
+            $uuid = $parsed['uuid'] ?? Uuid::uuid4()->toString();
+            $egg = Egg::where('uuid', $uuid)->first() ?? new Egg();
+
+            $egg = $egg->forceFill([
+                'uuid' => $uuid,
                 'author' => Arr::get($parsed, 'author'),
                 'copy_script_from' => null,
             ]);

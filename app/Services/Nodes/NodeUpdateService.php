@@ -28,14 +28,14 @@ class NodeUpdateService
     public function handle(Node $node, array $data, bool $resetToken = false): Node
     {
         if ($resetToken) {
-            $data['daemon_token'] = encrypt(Str::random(Node::DAEMON_TOKEN_LENGTH));
+            $data['daemon_token'] = Str::random(Node::DAEMON_TOKEN_LENGTH);
             $data['daemon_token_id'] = Str::random(Node::DAEMON_TOKEN_ID_LENGTH);
         }
 
         [$updated, $exception] = $this->connection->transaction(function () use ($data, $node) {
             /** @var \App\Models\Node $updated */
-            $updated = $node->replicate()->forceFill($data)->save();
-
+            $updated = $node->replicate();
+            $updated->forceFill($data)->save();
             try {
                 // If we're changing the FQDN for the node, use the newly provided FQDN for the connection
                 // address. This should alleviate issues where the node gets pointed to a "valid" FQDN that

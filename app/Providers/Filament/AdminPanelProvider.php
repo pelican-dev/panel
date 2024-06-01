@@ -37,11 +37,13 @@ class AdminPanelProvider extends PanelProvider
             ->default()
             ->id('admin')
             ->path('admin')
-            ->topNavigation(config('panel.filament.top-navigation', false))
+            ->topNavigation(config('panel.filament.top-navigation', true))
             ->login()
             ->homeUrl('/')
-            ->favicon('/pelican.ico')
-            ->brandName('Pelican')
+            ->favicon(config('app.favicon', '/pelican.ico'))
+            ->brandName(config('app.name', 'Pelican'))
+            ->brandLogo(config('app.logo'))
+            ->brandLogoHeight('2rem')
             ->profile(EditProfile::class, false)
             ->colors([
                 'danger' => Color::Red,
