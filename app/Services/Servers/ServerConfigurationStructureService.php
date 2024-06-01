@@ -50,6 +50,7 @@ class ServerConfigurationStructureService
             'environment' => $this->environment->handle($server),
             'invocation' => $server->startup,
             'skip_egg_scripts' => $server->skip_scripts,
+            'labels' => $server->docker_labels,
             'build' => [
                 'memory_limit' => $server->memory,
                 'swap' => $server->swap,
@@ -62,7 +63,6 @@ class ServerConfigurationStructureService
             'container' => [
                 'image' => $server->image,
                 'requires_rebuild' => false,
-                'labels' => $server->docker_labels,
             ],
             'allocations' => [
                 'force_outgoing_ip' => $server->egg->force_outgoing_ip,
