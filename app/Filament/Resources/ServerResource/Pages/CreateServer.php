@@ -286,6 +286,7 @@ class CreateServer extends CreateRecord
                     ->label('Startup Command')
                     ->required()
                     ->live()
+                    ->disabled(fn (Forms\Get $get) => $this->egg === null)
                     ->columnSpan([
                         'default' => 2,
                         'sm' => 4,
