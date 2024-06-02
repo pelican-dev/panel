@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Enums\ServerState;
+use Filament\Notifications\Notification;
 use Illuminate\Http\Request;
 use App\Models\User;
 use Illuminate\Http\Response;
@@ -69,7 +70,7 @@ class ServersController extends Controller
      * @throws \App\Exceptions\DisplayException
      * @throws \App\Exceptions\Model\DataValidationException
      */
-    public function toggleInstall(Server $server): RedirectResponse
+    public function toggleInstall(Server $server)
     {
         if ($server->status === ServerState::InstallFailed) {
             throw new DisplayException(trans('admin/server.exceptions.marked_as_failed'));
@@ -78,9 +79,13 @@ class ServersController extends Controller
         $server->status = $server->isInstalled() ? ServerState::Installing : null;
         $server->save();
 
-        $this->alert->success(trans('admin/server.alerts.install_toggled'))->flash();
+        Notification::make()
+            ->title('Success!')
+            ->body(trans('admin/server.alerts.install_toggled'))
+            ->success()
+            ->send();
 
-        return redirect()->route('admin.servers.view.manage', $server->id);
+        return null;
     }
 
     /**
@@ -89,12 +94,15 @@ class ServersController extends Controller
      * @throws \App\Exceptions\DisplayException
      * @throws \App\Exceptions\Model\DataValidationException
      */
-    public function reinstallServer(Server $server): RedirectResponse
+    public function reinstallServer(Server $server)
     {
         $this->reinstallService->handle($server);
-        $this->alert->success(trans('admin/server.alerts.server_reinstalled'))->flash();
 
-        return redirect()->route('admin.servers.view.manage', $server->id);
+        Notification::make()
+            ->title('Success!')
+            ->body(trans('admin/server.alerts.server_reinstalled'))
+            ->success()
+            ->send();
     }
 
     /**
