@@ -33,6 +33,47 @@ class CreateServer extends CreateRecord
                 'lg' => 6,
             ])
             ->schema([
+                Forms\Components\Select::make('egg_id')
+                    ->disabledOn('edit')
+                    ->prefixIcon('tabler-egg')
+                    ->columnSpan([
+                        'default' => 2,
+                        'sm' => 2,
+                        'md' => 2,
+                        'lg' => 3,
+                    ])
+                    ->relationship('egg', 'name')
+                    ->searchable()
+                    ->preload()
+                    ->live()
+                    ->afterStateUpdated(function ($state, Forms\Set $set, Forms\Get $get, $old) {
+                        $egg = Egg::query()->find($state);
+                        $set('startup', $egg->startup);
+                        $set('image', '');
+
+                        $variables = $egg->variables ?? [];
+                        $serverVariables = collect();
+                        foreach ($variables as $variable) {
+                            $serverVariables->add($variable->toArray());
+                        }
+
+                        $variables = [];
+                        $set($path = 'server_variables', $serverVariables->sortBy(['sort'])->all());
+                        for ($i = 0; $i < $serverVariables->count(); $i++) {
+                            $set("$path.$i.variable_value", $serverVariables[$i]['default_value']);
+                            $set("$path.$i.variable_id", $serverVariables[$i]['id']);
+                            $variables[$serverVariables[$i]['env_variable']] = $serverVariables[$i]['default_value'];
+                        }
+
+                        $set('environment', $variables);
+
+                        $previousEgg = Egg::query()->find($old);
+                        if (!$get('name') || $previousEgg?->getKebabName() === $get('name')) {
+                            $set('name', $egg->getKebabName());
+                        }
+                    })
+                    ->required(),
+
 
                 Forms\Components\TextInput::make('name')
                     ->prefixIcon('tabler-server')
@@ -56,6 +97,18 @@ class CreateServer extends CreateRecord
                     ->required()
                     ->maxLength(191),
 
+                Forms\Components\Select::make('node_id')
+                    ->disabledOn('edit')
+                    ->prefixIcon('tabler-server-2')
+                    ->default(fn () => Node::query()->latest()->first()?->id)
+                    ->columnSpan(3)
+                    ->live()
+                    ->relationship('node', 'name')
+                    ->searchable()
+                    ->preload()
+                    ->afterStateUpdated(fn (Forms\Set $set) => $set('allocation_id', null))
+                    ->required(),
+
                 Forms\Components\Select::make('owner_id')
                     ->prefixIcon('tabler-user')
                     ->default(auth()->user()->id)
@@ -71,17 +124,11 @@ class CreateServer extends CreateRecord
                     ->preload()
                     ->required(),
 
-                Forms\Components\Select::make('node_id')
-                    ->disabledOn('edit')
-                    ->prefixIcon('tabler-server-2')
-                    ->default(fn () => Node::query()->latest()->first()?->id)
-                    ->columnSpan(2)
-                    ->live()
-                    ->relationship('node', 'name')
-                    ->searchable()
-                    ->preload()
-                    ->afterStateUpdated(fn (Forms\Set $set) => $set('allocation_id', null))
-                    ->required(),
+                Forms\Components\Textarea::make('description')
+                    ->hidden()
+                    ->default('')
+                    ->required()
+                    ->columnSpanFull(),
 
                 Forms\Components\Select::make('allocation_id')
                     ->preload()
@@ -234,54 +281,6 @@ class CreateServer extends CreateRecord
                                     ->whereNull('server_id'),
                             ),
                     ),
-
-                Forms\Components\Textarea::make('description')
-                    ->hidden()
-                    ->default('')
-                    ->required()
-                    ->columnSpanFull(),
-
-                Forms\Components\Select::make('egg_id')
-                    ->disabledOn('edit')
-                    ->prefixIcon('tabler-egg')
-                    ->columnSpan([
-                        'default' => 2,
-                        'sm' => 2,
-                        'md' => 2,
-                        'lg' => 5,
-                    ])
-                    ->relationship('egg', 'name')
-                    ->searchable()
-                    ->preload()
-                    ->live()
-                    ->afterStateUpdated(function ($state, Forms\Set $set, Forms\Get $get, $old) {
-                        $egg = Egg::query()->find($state);
-                        $set('startup', $egg->startup);
-                        $set('image', '');
-
-                        $variables = $egg->variables ?? [];
-                        $serverVariables = collect();
-                        foreach ($variables as $variable) {
-                            $serverVariables->add($variable->toArray());
-                        }
-
-                        $variables = [];
-                        $set($path = 'server_variables', $serverVariables->sortBy(['sort'])->all());
-                        for ($i = 0; $i < $serverVariables->count(); $i++) {
-                            $set("$path.$i.variable_value", $serverVariables[$i]['default_value']);
-                            $set("$path.$i.variable_id", $serverVariables[$i]['id']);
-                            $variables[$serverVariables[$i]['env_variable']] = $serverVariables[$i]['default_value'];
-                        }
-
-                        $set('environment', $variables);
-
-                        $previousEgg = Egg::query()->find($old);
-                        if (!$get('name') || $previousEgg?->getKebabName() === $get('name')) {
-                            $set('name', $egg->getKebabName());
-                        }
-                    })
-                    ->required(),
-
 
                 Forms\Components\Textarea::make('startup')
                     ->hintIcon('tabler-code')
