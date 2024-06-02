@@ -75,7 +75,6 @@ class CreateServer extends CreateRecord
                     })
                     ->required(),
 
-
                 Forms\Components\TextInput::make('name')
                     ->prefixIcon('tabler-server')
                     ->label('Display Name')
