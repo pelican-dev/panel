@@ -33,9 +33,6 @@ class CreateServer extends CreateRecord
                 'lg' => 6,
             ])
             ->schema([
-                Forms\Components\TextInput::make('external_id')
-                    ->maxLength(191)
-                    ->hidden(),
 
                 Forms\Components\TextInput::make('name')
                     ->prefixIcon('tabler-server')
