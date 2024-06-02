@@ -129,157 +129,97 @@ class CreateServer extends CreateRecord
                     ->required()
                     ->columnSpanFull(),
 
-                Forms\Components\Select::make('allocation_id')
-                    ->preload()
-                    ->live()
-                    ->prefixIcon('tabler-network')
-                    ->label('Primary Allocation')
-                    ->columnSpan(2)
-                    ->disabled(fn (Forms\Get $get) => $get('node_id') === null)
-                    ->searchable(['ip', 'port', 'ip_alias'])
-                    ->afterStateUpdated(function (Forms\Set $set) {
-                        $set('allocation_additional', null);
-                        $set('allocation_additional.needstobeastringhere.extra_allocations', null);
-                    })
-                    ->getOptionLabelFromRecordUsing(
-                        fn (Allocation $allocation) => "$allocation->ip:$allocation->port" .
-                            ($allocation->ip_alias ? " ($allocation->ip_alias)" : '')
-                    )
-                    ->placeholder(function (Forms\Get $get) {
-                        $node = Node::find($get('node_id'));
-
-                        if ($node?->allocations) {
-                            return 'Select an Allocation';
-                        }
-
-                        return 'Create a New Allocation';
-                    })
-                    ->relationship(
-                        'allocation',
-                        'ip',
-                        fn (Builder $query, Forms\Get $get) => $query
-                            ->where('node_id', $get('node_id'))
-                            ->whereNull('server_id'),
-                    )
-                    ->createOptionForm(fn (Forms\Get $get) => [
-                        Forms\Components\TextInput::make('allocation_ip')
-                            ->datalist(Node::find($get('node_id'))?->ipAddresses() ?? [])
-                            ->label('IP Address')
-                            ->inlineLabel()
-                            ->ipv4()
-                            ->helperText("Usually your machine's public IP unless you are port forwarding.")
-                            // ->selectablePlaceholder(false)
-                            ->required(),
-                        Forms\Components\TextInput::make('allocation_alias')
-                            ->label('Alias')
-                            ->inlineLabel()
-                            ->default(null)
-                            ->datalist([
-                                $get('name'),
-                                $this->egg?->name,
-                            ])
-                            ->helperText('Optional display name to help you remember what these are.')
-                            ->required(false),
-                        Forms\Components\TagsInput::make('allocation_ports')
-                            ->placeholder('Examples: 27015, 27017-27019')
-                            ->helperText(new HtmlString('
+                Forms\Components\TagsInput::make('ports')
+                    ->columnSpan(3)
+                    ->placeholder('Example: 25565, 8080, 1337-1340')
+                    ->reorderable()
+                    ->splitKeys(['Tab', ' ', ','])
+                    ->helperText(new HtmlString('
                                 These are the ports that users can connect to this Server through.
                                 <br />
-                                You would have to port forward these on your home network.
+                                You would typically port forward these on your home network.
                             '))
-                            ->label('Ports')
-                            ->inlineLabel()
-                            ->live()
-                            ->afterStateUpdated(function ($state, Forms\Set $set) {
-                                $ports = collect();
-                                $update = false;
-                                foreach ($state as $portEntry) {
-                                    if (!str_contains($portEntry, '-')) {
-                                        if (is_numeric($portEntry)) {
-                                            $ports->push((int) $portEntry);
+                    ->label('Ports')
+                    ->afterStateUpdated(function ($state, Forms\Set $set) {
+                        $ports = collect();
+                        $update = false;
+                        foreach ($state as $portEntry) {
+                            if (!str_contains($portEntry, '-')) {
+                                if (is_numeric($portEntry)) {
+                                    $ports->push((int) $portEntry);
 
-                                            continue;
-                                        }
-
-                                        // Do not add non-numerical ports
-                                        $update = true;
-
-                                        continue;
-                                    }
-
-                                    $update = true;
-                                    [$start, $end] = explode('-', $portEntry);
-                                    if (!is_numeric($start) || !is_numeric($end)) {
-                                        continue;
-                                    }
-
-                                    $start = max((int) $start, 0);
-                                    $end = min((int) $end, 2 ** 16 - 1);
-                                    for ($i = $start; $i <= $end; $i++) {
-                                        $ports->push($i);
-                                    }
+                                    continue;
                                 }
 
-                                $uniquePorts = $ports->unique()->values();
-                                if ($ports->count() > $uniquePorts->count()) {
-                                    $update = true;
-                                    $ports = $uniquePorts;
-                                }
+                                // Do not add non-numerical ports
+                                $update = true;
 
-                                $sortedPorts = $ports->sort()->values();
-                                if ($sortedPorts->all() !== $ports->all()) {
-                                    $update = true;
-                                    $ports = $sortedPorts;
-                                }
+                                continue;
+                            }
 
-                                $ports = $ports->filter(fn ($port) => $port > 1024 && $port < 65535)->values();
+                            $update = true;
+                            [$start, $end] = explode('-', $portEntry);
+                            if (!is_numeric($start) || !is_numeric($end)) {
+                                continue;
+                            }
 
-                                if ($update) {
-                                    $set('allocation_ports', $ports->all());
-                                }
-                            })
-                            ->splitKeys(['Tab', ' ', ','])
-                            ->required(),
-                    ])
-                    ->createOptionUsing(function (array $data, Forms\Get $get): int {
-                        return collect(
-                            resolve(AssignmentService::class)->handle(Node::find($get('node_id')), $data)
-                        )->first();
+                            $start = max((int) $start, 0);
+                            $end = min((int) $end, 2 ** 16 - 1);
+                            for ($i = $start; $i <= $end; $i++) {
+                                $ports->push($i);
+                            }
+                        }
+
+                        $uniquePorts = $ports->unique()->values();
+                        if ($ports->count() > $uniquePorts->count()) {
+                            $update = true;
+                            $ports = $uniquePorts;
+                        }
+
+                        $sortedPorts = $ports->sort()->values();
+                        if ($sortedPorts->all() !== $ports->all()) {
+                            $update = true;
+                            $ports = $sortedPorts;
+                        }
+
+                        $ports = $ports->filter(fn ($port) => $port > 1024 && $port < 65535)->values();
+
+                        if ($update) {
+                            $set('allocation_ports', $ports->all());
+                        }
                     })
-                    ->required(),
+                    ->live(),
 
-                Forms\Components\Repeater::make('allocation_additional')
-                    ->label('Additional Allocations')
-                    ->columnSpan(2)
-                    ->addActionLabel('Add Allocation')
-                    ->disabled(fn (Forms\Get $get) => $get('allocation_id') === null)
-                    // ->addable() TODO disable when all allocations are taken
-                    // ->addable() TODO disable until first additional allocation is selected
-                    ->simple(
-                        Forms\Components\Select::make('extra_allocations')
-                            ->live()
-                            ->preload()
-                            ->disableOptionsWhenSelectedInSiblingRepeaterItems()
-                            ->prefixIcon('tabler-network')
-                            ->label('Additional Allocations')
-                            ->columnSpan(2)
-                            ->disabled(fn (Forms\Get $get) => $get('../../node_id') === null)
-                            ->searchable(['ip', 'port', 'ip_alias'])
-                            ->getOptionLabelFromRecordUsing(
-                                fn (Allocation $allocation) => "$allocation->ip:$allocation->port" .
-                                    ($allocation->ip_alias ? " ($allocation->ip_alias)" : '')
-                            )
-                            ->placeholder('Select additional Allocations')
-                            ->disableOptionsWhenSelectedInSiblingRepeaterItems()
-                            ->relationship(
-                                'allocations',
-                                'ip',
-                                fn (Builder $query, Forms\Get $get, Forms\Components\Select $component, $state) => $query
-                                    ->where('node_id', $get('../../node_id'))
-                                    ->whereNot('id', $get('../../allocation_id'))
-                                    ->whereNull('server_id'),
-                            ),
-                    ),
+                Forms\Components\Select::make('primary_port')
+                    ->live()
+                    ->helperText(fn (Forms\Get $get) => match (true) {
+                        !str_contains($get('startup'), '{{SERVER_PORT}}') => 'This is disabled because there is no primary server port in the startup command.',
+                        empty($get('ports')) => 'This is disabled because you haven\'t entered any ports yet.',
+                        true => 'This port will take the place of {{SERVER_PORT}} in your startup command.',
+                    })
+                    ->columnSpan(3)
+                    ->selectablePlaceholder(false)
+                    ->disabled(fn (Forms\Get $get) => empty($get('ports')) || !str_contains($get('startup'), '{{SERVER_PORT}}'))
+                    ->options(fn (Forms\Get $get) => $get('ports'))
+                    ->label('Primary Port'),
+
+                Forms\Components\KeyValue::make('pts')
+                    // ->deletable(fn ($state) => empty($state) || dd('SERVER_PORT', array_keys($state), $state) || !in_array('SERVER_PORT', array_keys($state)))
+                    // ->addable(false)
+                    // ->editableKeys(false)
+                    ->columnSpan(3)
+                    ->keyLabel('Name')
+                    ->valueLabel('Port')
+                    ->label('Ports')
+                    ->live(),
+
+                Forms\Components\Placeholder::make('instructions')
+                    ->label(new HtmlString('Port Instructions:<br><br>
+                        These are the ports that users can connect to this Server through.
+                        <br>
+                        You would typically port forward these on your home network.
+                    '))
+                    ->columnSpan(3),
 
                 Forms\Components\Textarea::make('startup')
                     ->hintIcon('tabler-code')
