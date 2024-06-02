@@ -320,9 +320,7 @@ class CreateServer extends CreateRecord
                             ->hidden(fn (Forms\Get $get) => $this->egg),
 
                         Forms\Components\Placeholder::make('The selected egg has no variables!')
-                            ->hidden(fn (Forms\Get $get) => !$this->egg ||
-                                $this->egg->variables()?->count()
-                            ),
+                            ->hidden(fn (Forms\Get $get) => $this->egg?->variables()?->count() !== 0),
 
                         Forms\Components\Repeater::make('server_variables')
                             ->relationship('serverVariables')
