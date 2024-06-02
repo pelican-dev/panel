@@ -516,6 +516,13 @@ class EditServer extends EditRecord
                                     ->keyLabel('Label Name')
                                     ->valueLabel('Label Description')
                                     ->columnSpanFull(),
+
+                                Forms\Components\CheckboxList::make('mounts')
+                                    ->relationship('mounts')
+                                    ->options(fn (Server $server) => $server->node->mounts->mapWithKeys(fn ($mount) => [$mount->id => $mount->name]))
+                                    ->descriptions(fn (Server $server) => $server->node->mounts->mapWithKeys(fn ($mount) => [$mount->id => "$mount->source -> $mount->target"]))
+                                    ->label('Mounts')
+                                    ->columnSpanFull(),
                             ]),
                     ]),
             ]);
