@@ -4,6 +4,7 @@
 /public/hot
 /public/storage
 /storage/*.key
+/storage/clockwork/*.json
 /vendor
 *.DS_Store*
 .env
