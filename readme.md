@@ -14,7 +14,9 @@ Fly High, Game On: Pelican's pledge for unrivaled game servers.
 
 ## Links
 
-* [Official Discord](https://discord.gg/pelican-panel)
+* [Website](https://pelican.dev)
+* [Docs](https://pelican.dev/docs)
+* [Discord](https://discord.gg/pelican-panel)
 * [Wings](https://github.com/pelican-dev/wings)
 
 ### Supported Games and Servers

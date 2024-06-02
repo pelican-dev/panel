@@ -10,7 +10,6 @@ use Illuminate\Http\Response;
 use App\Models\Mount;
 use App\Models\Server;
 use App\Models\Database;
-use App\Models\MountServer;
 use Illuminate\Http\RedirectResponse;
 use Prologue\Alerts\AlertsMessageBag;
 use App\Exceptions\DisplayException;
@@ -236,12 +235,7 @@ class ServersController extends Controller
      */
     public function addMount(Request $request, Server $server): RedirectResponse
     {
-        $mountServer = (new MountServer())->forceFill([
-            'mount_id' => $request->input('mount_id'),
-            'server_id' => $server->id,
-        ]);
-
-        $mountServer->saveOrFail();
+        $server->mounts()->attach($request->input('mount_id'));
 
         $this->alert->success('Mount was added successfully.')->flash();
 
@@ -253,7 +247,7 @@ class ServersController extends Controller
      */
     public function deleteMount(Server $server, Mount $mount): RedirectResponse
     {
-        MountServer::where('mount_id', $mount->id)->where('server_id', $server->id)->delete();
+        $server->mounts()->detach($mount);
 
         $this->alert->success('Mount was removed successfully.')->flash();
 

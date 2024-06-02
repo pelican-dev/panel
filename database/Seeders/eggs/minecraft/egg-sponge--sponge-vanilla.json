@@ -4,9 +4,10 @@
         "version": "PTDL_v2",
         "update_url": null
     },
-    "exported_at": "2024-05-08T11:49:03+02:00",
+    "exported_at": "2024-06-02T20:42:03+00:00",
     "name": "Sponge (SpongeVanilla)",
     "author": "panel@example.com",
+    "uuid": "f0d2f88f-1ff3-42a0-b03f-ac44c5571e6d",
     "description": "SpongeVanilla is the SpongeAPI implementation for Vanilla Minecraft.",
     "features": [
         "eula",
@@ -44,6 +45,7 @@
             "user_viewable": true,
             "user_editable": true,
             "rules": "required|regex:\/^([a-zA-Z0-9.\\-_]+)$\/",
+            "sort": null,
             "field_type": "text"
         },
         {
@@ -54,6 +56,7 @@
             "user_viewable": true,
             "user_editable": true,
             "rules": "required|regex:\/^([\\w\\d._-]+)(\\.jar)$\/",
+            "sort": null,
             "field_type": "text"
         }
     ]
