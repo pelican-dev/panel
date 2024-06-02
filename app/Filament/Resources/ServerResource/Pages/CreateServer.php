@@ -285,29 +285,6 @@ class CreateServer extends CreateRecord
                     })
                     ->required(),
 
-                Forms\Components\ToggleButtons::make('skip_scripts')
-                    ->label('Run Egg Install Script?')
-                    ->default(false)
-                    ->columnSpan([
-                        'default' => 1,
-                        'sm' => 1,
-                        'md' => 1,
-                        'lg' => 1,
-                    ])
-                    ->options([
-                        false => 'Yes',
-                        true => 'Skip',
-                    ])
-                    ->colors([
-                        false => 'primary',
-                        true => 'danger',
-                    ])
-                    ->icons([
-                        false => 'tabler-code',
-                        true => 'tabler-code-off',
-                    ])
-                    ->inline()
-                    ->required(),
 
                 Forms\Components\Textarea::make('startup')
                     ->hintIcon('tabler-code')
