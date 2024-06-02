@@ -98,6 +98,7 @@ class EditServer extends EditRecord
                     ])
                     ->tabs([
                         Tabs\Tab::make('Information')
+                            ->icon('tabler-info-circle')
                             ->schema([
                                 Forms\Components\TextInput::make('name')
                                     ->prefixIcon('tabler-server')
@@ -179,6 +180,7 @@ class EditServer extends EditRecord
                                     ->disabled(),
                             ]),
                         Tabs\Tab::make('Environment')
+                            ->icon('tabler-brand-docker')
                             ->schema([
                                 Forms\Components\Fieldset::make('Resource Limits')
                                     ->columnSpan([
@@ -443,6 +445,7 @@ class EditServer extends EditRecord
                                     ]),
                             ]),
                         Tabs\Tab::make('Egg')
+                            ->icon('tabler-egg')
                             ->columns([
                                 'default' => 1,
                                 'sm' => 3,
@@ -567,16 +570,23 @@ class EditServer extends EditRecord
                                     ->columnSpan(6),
                             ]),
                         Tabs\Tab::make('Mounts')
+                            ->icon('tabler-layers-linked')
                             ->schema([
-                                Forms\Components\Placeholder::make('soon')
-                                    ->label('Soon™'),
+                                Forms\Components\CheckboxList::make('mounts')
+                                    ->relationship('mounts')
+                                    ->options(fn (Server $server) => $server->node->mounts->mapWithKeys(fn ($mount) => [$mount->id => $mount->name]))
+                                    ->descriptions(fn (Server $server) => $server->node->mounts->mapWithKeys(fn ($mount) => [$mount->id => "$mount->source -> $mount->target"]))
+                                    ->label('Mounts')
+                                    ->columnSpanFull(),
                             ]),
                         Tabs\Tab::make('Databases')
+                            ->icon('tabler-database')
                             ->schema([
                                 Forms\Components\Placeholder::make('soon')
                                     ->label('Soon™'),
                             ]),
                         Tabs\Tab::make('Actions')
+                            ->icon('tabler-settings')
                             ->schema([
                                 Forms\Components\Fieldset::make('Server Actions')
                                     ->columns([
