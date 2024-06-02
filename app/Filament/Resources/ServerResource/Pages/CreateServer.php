@@ -23,6 +23,8 @@ class CreateServer extends CreateRecord
     protected static string $resource = ServerResource::class;
     protected static bool $canCreateAnother = false;
 
+    public ?Node $node = null;
+
     public function form(Form $form): Form
     {
         return $form
@@ -77,13 +79,16 @@ class CreateServer extends CreateRecord
                 Forms\Components\Select::make('node_id')
                     ->disabledOn('edit')
                     ->prefixIcon('tabler-server-2')
-                    ->default(fn () => Node::query()->latest()->first()?->id)
+                    ->default(fn () => ($this->node = Node::query()->latest()->first())?->id)
                     ->columnSpan(2)
                     ->live()
                     ->relationship('node', 'name')
                     ->searchable()
                     ->preload()
-                    ->afterStateUpdated(fn (Forms\Set $set) => $set('allocation_id', null))
+                    ->afterStateUpdated(function (Forms\Set $set, $state) {
+                        $set('allocation_id', null);
+                        $this->node = Node::find($state);
+                    })
                     ->required(),
 
                 Forms\Components\Select::make('allocation_id')
