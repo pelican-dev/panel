@@ -22,6 +22,7 @@ class CreateServer extends CreateRecord
 {
     protected static string $resource = ServerResource::class;
     protected static bool $canCreateAnother = false;
+    public ?Egg $egg = null;
 
     public function form(Form $form): Form
     {
@@ -47,11 +48,11 @@ class CreateServer extends CreateRecord
                     ->preload()
                     ->live()
                     ->afterStateUpdated(function ($state, Forms\Set $set, Forms\Get $get, $old) {
-                        $egg = Egg::query()->find($state);
-                        $set('startup', $egg->startup);
+                        $this->egg = Egg::query()->find($state);
+                        $set('startup', $this->egg->startup);
                         $set('image', '');
 
-                        $variables = $egg->variables ?? [];
+                        $variables = $this->egg->variables ?? [];
                         $serverVariables = collect();
                         foreach ($variables as $variable) {
                             $serverVariables->add($variable->toArray());
@@ -69,7 +70,7 @@ class CreateServer extends CreateRecord
 
                         $previousEgg = Egg::query()->find($old);
                         if (!$get('name') || $previousEgg?->getKebabName() === $get('name')) {
-                            $set('name', $egg->getKebabName());
+                            $set('name', $this->egg->getKebabName());
                         }
                     })
                     ->required(),
@@ -81,8 +82,7 @@ class CreateServer extends CreateRecord
                     ->suffixAction(Forms\Components\Actions\Action::make('random')
                         ->icon('tabler-dice-' . random_int(1, 6))
                         ->action(function (Forms\Set $set, Forms\Get $get) {
-                            $egg = Egg::find($get('egg_id'));
-                            $prefix = $egg ? str($egg->name)->lower()->kebab() . '-' : '';
+                            $prefix = $this->egg ? str($this->egg->name)->lower()->kebab() . '-' : '';
 
                             $word = (new RandomWordService())->word();
 
@@ -177,7 +177,7 @@ class CreateServer extends CreateRecord
                             ->default(null)
                             ->datalist([
                                 $get('name'),
-                                Egg::find($get('egg_id'))?->name,
+                                $this->egg?->name,
                             ])
                             ->helperText('Optional display name to help you remember what these are.')
                             ->required(false),
@@ -317,11 +317,11 @@ class CreateServer extends CreateRecord
                     ]))
                     ->schema([
                         Forms\Components\Placeholder::make('Select an egg first to show its variables!')
-                            ->hidden(fn (Forms\Get $get) => $get('egg_id')),
+                            ->hidden(fn (Forms\Get $get) => $this->egg),
 
                         Forms\Components\Placeholder::make('The selected egg has no variables!')
-                            ->hidden(fn (Forms\Get $get) => !$get('egg_id') ||
-                                Egg::query()->find($get('egg_id'))?->variables()?->count()
+                            ->hidden(fn (Forms\Get $get) => !$this->egg ||
+                                $this->egg->variables()?->count()
                             ),
 
                         Forms\Components\Repeater::make('server_variables')
@@ -625,8 +625,7 @@ class CreateServer extends CreateRecord
                                     ->label('Image Name')
                                     ->afterStateUpdated(fn (Forms\Set $set, $state) => $set('image', $state))
                                     ->options(function ($state, Forms\Get $get, Forms\Set $set) {
-                                        $egg = Egg::query()->find($get('egg_id'));
-                                        $images = $egg->docker_images ?? [];
+                                        $images = $this->egg->docker_images ?? [];
 
                                         $currentImage = $get('image');
                                         if (!$currentImage && $images) {
@@ -644,8 +643,7 @@ class CreateServer extends CreateRecord
                                     ->label('Image')
                                     ->debounce(500)
                                     ->afterStateUpdated(function ($state, Forms\Get $get, Forms\Set $set) {
-                                        $egg = Egg::query()->find($get('egg_id'));
-                                        $images = $egg->docker_images ?? [];
+                                        $images = $this->egg->docker_images ?? [];
 
                                         if (in_array($state, $images)) {
                                             $set('select_image', $state);
