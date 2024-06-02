@@ -7,55 +7,6 @@ use Webmozart\Assert\Assert;
 use App\Services\Acl\Api\AdminAcl;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-/**
- * App\Models\ApiKey.
- *
- * @property int $id
- * @property int $user_id
- * @property int $key_type
- * @property string $identifier
- * @property string $token
- * @property array|null $allowed_ips
- * @property string|null $memo
- * @property \Illuminate\Support\Carbon|null $last_used_at
- * @property \Illuminate\Support\Carbon|null $expires_at
- * @property \Illuminate\Support\Carbon|null $created_at
- * @property \Illuminate\Support\Carbon|null $updated_at
- * @property int $r_servers
- * @property int $r_nodes
- * @property int $r_allocations
- * @property int $r_users
- * @property int $r_eggs
- * @property int $r_database_hosts
- * @property int $r_server_databases
- * @property int $r_mounts
- * @property \App\Models\User $tokenable
- * @property \App\Models\User $user
- *
- * @method static \Database\Factories\ApiKeyFactory factory(...$parameters)
- * @method static \Illuminate\Database\Eloquent\Builder|ApiKey newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|ApiKey newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|ApiKey query()
- * @method static \Illuminate\Database\Eloquent\Builder|ApiKey whereAllowedIps($value)
- * @method static \Illuminate\Database\Eloquent\Builder|ApiKey whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|ApiKey whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|ApiKey whereIdentifier($value)
- * @method static \Illuminate\Database\Eloquent\Builder|ApiKey whereKeyType($value)
- * @method static \Illuminate\Database\Eloquent\Builder|ApiKey whereLastUsedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|ApiKey whereMemo($value)
- * @method static \Illuminate\Database\Eloquent\Builder|ApiKey whereRAllocations($value)
- * @method static \Illuminate\Database\Eloquent\Builder|ApiKey whereRDatabaseHosts($value)
- * @method static \Illuminate\Database\Eloquent\Builder|ApiKey whereREggs($value)
- * @method static \Illuminate\Database\Eloquent\Builder|ApiKey whereRNodes($value)
- * @method static \Illuminate\Database\Eloquent\Builder|ApiKey whereRServerDatabases($value)
- * @method static \Illuminate\Database\Eloquent\Builder|ApiKey whereRServers($value)
- * @method static \Illuminate\Database\Eloquent\Builder|ApiKey whereRUsers($value)
- * @method static \Illuminate\Database\Eloquent\Builder|ApiKey whereToken($value)
- * @method static \Illuminate\Database\Eloquent\Builder|ApiKey whereUpdatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|ApiKey whereUserId($value)
- *
- * @mixin \Eloquent
- */
 class ApiKey extends Model
 {
     /**

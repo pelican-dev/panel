@@ -2,13 +2,6 @@
 
 namespace App\Models;
 
-/**
- * App\Models\Setting.
- *
- * @property int $id
- * @property string $key
- * @property string $value
- */
 class Setting extends Model
 {
     /**

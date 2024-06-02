@@ -6,39 +6,6 @@ use App\Exceptions\Service\Allocation\ServerUsingAllocationException;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-/**
- * App\Models\Allocation.
- *
- * @property int $id
- * @property int $node_id
- * @property string $ip
- * @property string|null $ip_alias
- * @property int $port
- * @property int|null $server_id
- * @property string|null $notes
- * @property \Carbon\Carbon|null $created_at
- * @property \Carbon\Carbon|null $updated_at
- * @property string $alias
- * @property bool $has_alias
- * @property \App\Models\Server|null $server
- * @property \App\Models\Node $node
- *
- * @method static \Database\Factories\AllocationFactory factory(...$parameters)
- * @method static \Illuminate\Database\Eloquent\Builder|Allocation newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|Allocation newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|Allocation query()
- * @method static \Illuminate\Database\Eloquent\Builder|Allocation whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Allocation whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Allocation whereIp($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Allocation whereIpAlias($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Allocation whereNodeId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Allocation whereNotes($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Allocation wherePort($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Allocation whereServerId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Allocation whereUpdatedAt($value)
- *
- * @mixin \Eloquent
- */
 class Allocation extends Model
 {
     /**

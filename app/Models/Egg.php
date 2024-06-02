@@ -8,45 +8,6 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Str;
 
-/**
- * @property int $id
- * @property string $uuid
- * @property string $author
- * @property string $name
- * @property string|null $description
- * @property array|null $features
- * @property string $docker_image -- deprecated, use $docker_images
- * @property array<string, string> $docker_images
- * @property string $update_url
- * @property bool $force_outgoing_ip
- * @property array|null $file_denylist
- * @property string|null $config_files
- * @property string|null $config_startup
- * @property string|null $config_logs
- * @property string|null $config_stop
- * @property int|null $config_from
- * @property string|null $startup
- * @property bool $script_is_privileged
- * @property string|null $script_install
- * @property string $script_entry
- * @property string $script_container
- * @property int|null $copy_script_from
- * @property \Carbon\Carbon $created_at
- * @property \Carbon\Carbon $updated_at
- * @property string|null $copy_script_install
- * @property string $copy_script_entry
- * @property string $copy_script_container
- * @property string|null $inherit_config_files
- * @property string|null $inherit_config_startup
- * @property string|null $inherit_config_logs
- * @property string|null $inherit_config_stop
- * @property string $inherit_file_denylist
- * @property array|null $inherit_features
- * @property \Illuminate\Database\Eloquent\Collection|\App\Models\Server[] $servers
- * @property \Illuminate\Database\Eloquent\Collection|\App\Models\EggVariable[] $variables
- * @property \App\Models\Egg|null $scriptFrom
- * @property \App\Models\Egg|null $configFrom
- */
 class Egg extends Model
 {
     /**

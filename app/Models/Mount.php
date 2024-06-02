@@ -5,19 +5,6 @@ namespace App\Models;
 use Illuminate\Validation\Rules\NotIn;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
-/**
- * @property int $id
- * @property string $uuid
- * @property string $name
- * @property string $description
- * @property string $source
- * @property string $target
- * @property bool $read_only
- * @property bool $user_mountable
- * @property \App\Models\Egg[]|\Illuminate\Database\Eloquent\Collection $eggs
- * @property \App\Models\Node[]|\Illuminate\Database\Eloquent\Collection $nodes
- * @property \App\Models\Server[]|\Illuminate\Database\Eloquent\Collection $servers
- */
 class Mount extends Model
 {
     /**

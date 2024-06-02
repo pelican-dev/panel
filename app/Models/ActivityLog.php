@@ -12,42 +12,6 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\Model as IlluminateModel;
 
-/**
- * \App\Models\ActivityLog.
- *
- * @property int $id
- * @property string|null $batch
- * @property string $event
- * @property string $ip
- * @property string|null $description
- * @property string|null $actor_type
- * @property int|null $actor_id
- * @property int|null $api_key_id
- * @property \Illuminate\Support\Collection|null $properties
- * @property \Carbon\Carbon $timestamp
- * @property IlluminateModel|\Eloquent $actor
- * @property \Illuminate\Database\Eloquent\Collection|\App\Models\ActivityLogSubject[] $subjects
- * @property int|null $subjects_count
- * @property \App\Models\ApiKey|null $apiKey
- *
- * @method static Builder|ActivityLog forActor(\Illuminate\Database\Eloquent\Model $actor)
- * @method static Builder|ActivityLog forEvent(string $action)
- * @method static Builder|ActivityLog newModelQuery()
- * @method static Builder|ActivityLog newQuery()
- * @method static Builder|ActivityLog query()
- * @method static Builder|ActivityLog whereActorId($value)
- * @method static Builder|ActivityLog whereActorType($value)
- * @method static Builder|ActivityLog whereApiKeyId($value)
- * @method static Builder|ActivityLog whereBatch($value)
- * @method static Builder|ActivityLog whereDescription($value)
- * @method static Builder|ActivityLog whereEvent($value)
- * @method static Builder|ActivityLog whereId($value)
- * @method static Builder|ActivityLog whereIp($value)
- * @method static Builder|ActivityLog whereProperties($value)
- * @method static Builder|ActivityLog whereTimestamp($value)
- *
- * @mixin \Eloquent
- */
 class ActivityLog extends Model
 {
     use MassPrunable;

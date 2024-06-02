@@ -5,20 +5,6 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Relations\HasOneThrough;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-/**
- * @property int $id
- * @property int $schedule_id
- * @property int $sequence_id
- * @property string $action
- * @property string $payload
- * @property int $time_offset
- * @property bool $is_queued
- * @property bool $continue_on_failure
- * @property \Carbon\Carbon $created_at
- * @property \Carbon\Carbon $updated_at
- * @property \App\Models\Schedule $schedule
- * @property \App\Models\Server $server
- */
 class Task extends Model
 {
     /**

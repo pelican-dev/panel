@@ -5,20 +5,6 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Facades\DB;
 
-/**
- * @property int $id
- * @property int $server_id
- * @property int $database_host_id
- * @property string $database
- * @property string $username
- * @property string $remote
- * @property string $password
- * @property int $max_connections
- * @property \Carbon\Carbon $created_at
- * @property \Carbon\Carbon $updated_at
- * @property \App\Models\Server $server
- * @property \App\Models\DatabaseHost $host
- */
 class Database extends Model
 {
     /**

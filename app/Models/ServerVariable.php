@@ -4,16 +4,6 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-/**
- * @property int $id
- * @property int $server_id
- * @property int $variable_id
- * @property string $variable_value
- * @property \Carbon\CarbonImmutable|null $created_at
- * @property \Carbon\CarbonImmutable|null $updated_at
- * @property \App\Models\EggVariable $variable
- * @property \App\Models\Server $server
- */
 class ServerVariable extends Model
 {
     /**
