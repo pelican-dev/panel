@@ -693,6 +693,15 @@ class CreateServer extends CreateRecord
                                     ->keyLabel('Title')
                                     ->valueLabel('Description')
                                     ->columnSpan(3),
+
+                                Forms\Components\CheckboxList::make('mounts')
+                                    ->live()
+                                    ->relationship('mounts')
+                                    ->options(fn () => $this->node?->mounts->mapWithKeys(fn ($mount) => [$mount->id => $mount->name]) ?? [])
+                                    ->descriptions(fn () => $this->node?->mounts->mapWithKeys(fn ($mount) => [$mount->id => "$mount->source -> $mount->target"]) ?? [])
+                                    ->label('Mounts')
+                                    ->helperText(fn () => $this->node?->mounts->isNotEmpty() ? '' : 'No Mounts exist for this Node')
+                                    ->columnSpanFull(),
                             ]),
                     ]),
             ]);
