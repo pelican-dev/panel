@@ -66,7 +66,9 @@ class EditUser extends EditRecord
     protected function getHeaderActions(): array
     {
         return [
-            Actions\DeleteAction::make(),
+            Actions\DeleteAction::make()
+                ->label(fn (User $user) => auth()->user()->id === $user->id ? 'Can\'t Delete Yourself' : 'Delete')
+                ->disabled(fn (User $user) => auth()->user()->id === $user->id),
             $this->getSaveFormAction()->formId('form'),
         ];
     }
