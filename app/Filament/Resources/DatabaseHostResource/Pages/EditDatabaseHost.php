@@ -73,7 +73,7 @@ class EditDatabaseHost extends EditRecord
     {
         return [
             Actions\DeleteAction::make()
-                ->label(fn (DatabaseHost $dbh) => $dbh->databases()->count() > 0 ? 'Database Host Has Databases' : 'Delete'),
+                ->label(fn (DatabaseHost $dbh) => $dbh->databases()->count() > 0 ? 'Database Host Has Databases' : 'Delete')
                 ->disabled(fn (DatabaseHost $dbh) => $dbh->databases()->count() > 0),
             $this->getSaveFormAction()->formId('form'),
         ];
