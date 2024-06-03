@@ -13554,7 +13554,6 @@
         "ext-json": "*",
         "ext-mbstring": "*",
         "ext-pdo": "*",
-        "ext-pdo_mysql": "*",
         "ext-zip": "*"
     },
     "platform-dev": [],
