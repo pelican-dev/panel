@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\DatabaseHostResource\Pages;
 
 use App\Filament\Resources\DatabaseHostResource;
+use App\Models\DatabaseHost;
 use Filament\Actions;
 use Filament\Resources\Pages\EditRecord;
 use Filament\Forms;
@@ -71,7 +72,9 @@ class EditDatabaseHost extends EditRecord
     protected function getHeaderActions(): array
     {
         return [
-            Actions\DeleteAction::make(),
+            Actions\DeleteAction::make()
+                ->label(fn (DatabaseHost $dbh) => $dbh->databases()->count() > 0 ? 'Database Host Has Databases' : 'Delete'),
+                ->disabled(fn (DatabaseHost $dbh) => $dbh->databases()->count() > 0),
             $this->getSaveFormAction()->formId('form'),
         ];
     }
