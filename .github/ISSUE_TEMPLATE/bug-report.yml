@@ -29,7 +29,7 @@ body:
     required: true
 
 - type: dropdown
-  id: panel-version
+  name: panel-version
   attributes:
     label: Panel Version
     description: Version number of your Panel
@@ -43,7 +43,7 @@ body:
     required: true
 
 - type: dropdown
-  id: wings-version
+  name: wings-version
   attributes:
     label: Wings Version
     description: Version number of your Wings
