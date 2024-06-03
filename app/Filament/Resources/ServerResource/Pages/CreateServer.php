@@ -140,86 +140,35 @@ class CreateServer extends CreateRecord
                                 You would typically port forward these on your home network.
                             '))
                     ->label('Ports')
-                    ->afterStateUpdated(function ($state, Forms\Set $set) {
-                        $ports = collect();
-                        $update = false;
-                        foreach ($state as $portEntry) {
-                            if (!str_contains($portEntry, '-')) {
-                                if (is_numeric($portEntry)) {
-                                    $ports->push((int) $portEntry);
-
-                                    continue;
-                                }
-
-                                // Do not add non-numerical ports
-                                $update = true;
-
-                                continue;
-                            }
-
-                            $update = true;
-                            [$start, $end] = explode('-', $portEntry);
-                            if (!is_numeric($start) || !is_numeric($end)) {
-                                continue;
-                            }
-
-                            $start = max((int) $start, 0);
-                            $end = min((int) $end, 2 ** 16 - 1);
-                            for ($i = $start; $i <= $end; $i++) {
-                                $ports->push($i);
-                            }
-                        }
-
-                        $uniquePorts = $ports->unique()->values();
-                        if ($ports->count() > $uniquePorts->count()) {
-                            $update = true;
-                            $ports = $uniquePorts;
-                        }
-
-                        $sortedPorts = $ports->sort()->values();
-                        if ($sortedPorts->all() !== $ports->all()) {
-                            $update = true;
-                            $ports = $sortedPorts;
-                        }
-
-                        $ports = $ports->filter(fn ($port) => $port > 1024 && $port < 65535)->values();
-
-                        if ($update) {
-                            $set('allocation_ports', $ports->all());
-                        }
-                    })
+                    ->afterStateUpdated(self::ports(...))
                     ->live(),
 
-                Forms\Components\Select::make('primary_port')
+                Forms\Components\Repeater::make('assignments')
+                    ->columnSpan(3)
+                    ->label('Port Assignments')
                     ->live()
-                    ->helperText(fn (Forms\Get $get) => match (true) {
-                        !str_contains($get('startup'), '{{SERVER_PORT}}') => 'This is disabled because there is no primary server port in the startup command.',
-                        empty($get('ports')) => 'This is disabled because you haven\'t entered any ports yet.',
-                        true => 'This port will take the place of {{SERVER_PORT}} in your startup command.',
+                    ->default(function () {
+                        $ports = ['SERVER_PORT' => null];
+
+                        if (!$this->egg) {
+                            return $ports;
+                        }
+
+                        return $ports;
                     })
-                    ->columnSpan(3)
-                    ->selectablePlaceholder(false)
-                    ->disabled(fn (Forms\Get $get) => empty($get('ports')) || !str_contains($get('startup'), '{{SERVER_PORT}}'))
-                    ->options(fn (Forms\Get $get) => $get('ports'))
-                    ->label('Primary Port'),
-
-                Forms\Components\KeyValue::make('pts')
-                    // ->deletable(fn ($state) => empty($state) || dd('SERVER_PORT', array_keys($state), $state) || !in_array('SERVER_PORT', array_keys($state)))
-                    // ->addable(false)
-                    // ->editableKeys(false)
-                    ->columnSpan(3)
-                    ->keyLabel('Name')
-                    ->valueLabel('Port')
-                    ->label('Ports')
-                    ->live(),
-
-                Forms\Components\Placeholder::make('instructions')
-                    ->label(new HtmlString('Port Instructions:<br><br>
-                        These are the ports that users can connect to this Server through.
-                        <br>
-                        You would typically port forward these on your home network.
-                    '))
-                    ->columnSpan(3),
+                    ->addable(false)
+                    ->deletable(false)
+                    ->simple(
+                        Forms\Components\Select::make('port')
+                            ->live()
+                            // ->selectablePlaceholder(false)
+                            // ->disabled(fn (Forms\Get $get) => empty($get('ports')))
+                            ->prefix('SERVER_PORT')
+                            // ->email()
+                            ->disableOptionsWhenSelectedInSiblingRepeaterItems()
+                            ->options(fn (Forms\Get $get) => $get('../../ports'))
+                            ->required(),
+                    ),
 
                 Forms\Components\Textarea::make('startup')
                     ->hintIcon('tabler-code')
@@ -641,5 +590,54 @@ class CreateServer extends CreateRecord
             ->each(fn ($value) => str($value)->trim())
             ->mapWithKeys(fn ($value) => [$value => $value])
             ->all();
+    }
+
+    public static function ports ($state, Forms\Set $set) {
+        $ports = collect();
+        $update = false;
+        foreach ($state as $portEntry) {
+            if (!str_contains($portEntry, '-')) {
+                if (is_numeric($portEntry)) {
+                    $ports->push((int) $portEntry);
+
+                    continue;
+                }
+
+                // Do not add non-numerical ports
+                $update = true;
+
+                continue;
+            }
+
+            $update = true;
+            [$start, $end] = explode('-', $portEntry);
+            if (!is_numeric($start) || !is_numeric($end)) {
+                continue;
+            }
+
+            $start = max((int) $start, 0);
+            $end = min((int) $end, 2 ** 16 - 1);
+            for ($i = $start; $i <= $end; $i++) {
+                $ports->push($i);
+            }
+        }
+
+        $uniquePorts = $ports->unique()->values();
+        if ($ports->count() > $uniquePorts->count()) {
+            $update = true;
+            $ports = $uniquePorts;
+        }
+
+        $sortedPorts = $ports->sort()->values();
+        if ($sortedPorts->all() !== $ports->all()) {
+            $update = true;
+            $ports = $sortedPorts;
+        }
+
+        $ports = $ports->filter(fn ($port) => $port > 1024 && $port < 65535)->values();
+
+        if ($update) {
+            $set('ports', $ports->all());
+        }
     }
 }
