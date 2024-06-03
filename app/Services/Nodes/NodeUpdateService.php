@@ -32,21 +32,10 @@ class NodeUpdateService
             $data['daemon_token_id'] = Str::random(Node::DAEMON_TOKEN_ID_LENGTH);
         }
 
-        [$updated, $exception] = $this->connection->transaction(function () use ($data, $node) {
-            /** @var \App\Models\Node $updated */
-            $updated = $node->replicate();
-            $updated->forceFill($data)->save();
+        [$node, $exception] = $this->connection->transaction(function () use ($data, $node) {
+            $node->forceFill($data)->save();
             try {
-                // If we're changing the FQDN for the node, use the newly provided FQDN for the connection
-                // address. This should alleviate issues where the node gets pointed to a "valid" FQDN that
-                // isn't actually running the daemon software, and therefore you can't actually change it
-                // back.
-                //
-                // This makes more sense anyways, because only the Panel uses the FQDN for connecting, the
-                // node doesn't actually care about this.
-                $node->fqdn = $updated->fqdn;
-
-                $this->configurationRepository->setNode($node)->update($updated);
+                $this->configurationRepository->setNode($node)->update($node);
             } catch (DaemonConnectionException $exception) {
                 logger()->warning($exception, ['node_id' => $node->id]);
 
@@ -56,16 +45,16 @@ class NodeUpdateService
                 //
                 // This avoids issues with proxies such as Cloudflare which will see daemon as offline and then
                 // inject their own response pages, causing this logic to get fucked up.
-                return [$updated, true];
+                return [$node, true];
             }
 
-            return [$updated, false];
+            return [$node, false];
         });
 
         if ($exception) {
             throw new ConfigurationNotPersistedException(trans('exceptions.node.daemon_off_config_updated'));
         }
 
-        return $updated;
+        return $node;
     }
 }
