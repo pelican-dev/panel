@@ -113,11 +113,9 @@ class AllocationsRelationManager extends RelationManager
 
                                     $start = max((int) $start, 0);
                                     $end = min((int) $end, 2 ** 16 - 1);
-                                    $range = range($start, $end);
-                                    foreach ($range as $i) {
+                                    foreach (range($start, $end) as $i) {
                                         $ports->push($i);
                                     }
-
                                 }
 
                                 $uniquePorts = $ports->unique()->values();
