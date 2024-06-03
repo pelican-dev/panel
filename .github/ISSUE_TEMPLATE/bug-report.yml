@@ -38,7 +38,7 @@ body:
         - v1.0.0-beta2
         - v1.0.0-beta1
         - v1.0.0-canary (main)
-      default: 0
+    default: 0
   validations:
     required: true
 
@@ -52,7 +52,7 @@ body:
         - v1.0.0-beta2
         - v1.0.0-beta1
         - v1.0.0-canary (main)
-      default: 0
+    default: 0
   validations:
     required: true
 
