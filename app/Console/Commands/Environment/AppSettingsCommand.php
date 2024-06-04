@@ -118,7 +118,7 @@ class AppSettingsCommand extends Command
         }
 
         if ($this->variables['QUEUE_CONNECTION'] !== 'sync') {
-            Artisan::call('p:environment:queue-service', [
+            $this->call('p:environment:queue-service', [
                 '--use-redis' => $redisUsed,
             ]);
         }
