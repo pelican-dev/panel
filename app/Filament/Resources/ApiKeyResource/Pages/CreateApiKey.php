@@ -72,8 +72,7 @@ class CreateApiKey extends CreateRecord
                     ->label('Whitelisted IPv4 Addresses')
                     ->helperText('Press enter to add a new IP address or leave blank to allow any IP address')
                     ->columnSpanFull()
-                    ->hidden()
-                    ->default(null),
+                    ->hidden(),
 
                 Forms\Components\Textarea::make('memo')
                     ->required()
