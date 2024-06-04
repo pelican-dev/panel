@@ -50,6 +50,8 @@ class CreateServer extends CreateRecord
                         $this->egg = Egg::query()->find($state);
                         $set('startup', $this->egg->startup);
                         $set('image', '');
+                        // $set('assignments', null);
+                        $this->eggDefaultPorts = [];
 
                         $variables = $this->egg->variables ?? [];
                         $serverVariables = collect();
@@ -58,16 +60,10 @@ class CreateServer extends CreateRecord
                         foreach ($variables as $variable) {
                             $serverVariables->add($variable->toArray());
                             if (str_contains($variable->rules, 'port')) {
-                                $path = 'assignments';
                                 $this->eggDefaultPorts[$variable->default_value] = $variable->env_variable;
                                 $this->ports[] = (int) $variable->default_value;
 
-                                $set("$path.$i", ['port' => $i]);
-
-                                // $set("$path.$i", (int) $variable->default_value);
-                                // $set("$path.$i.port", (int) $variable->default_value);
-                                $i++;
-                                // $variables[$serverVariables[$i]['env_variable']] = $serverVariables[$i]['default_value'];
+                                $set("assignments.$i", ['port' => $i++]);
                             }
                         }
 
