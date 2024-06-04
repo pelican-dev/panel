@@ -46,7 +46,7 @@ Description=Pelican Queue Service$afterRedis
 User=$user
 Group=$group
 Restart=always
-ExecStart=/usr/bin/php $basePath/artisan queue:work --queue=high,standard,low --tries=3
+ExecStart=/usr/bin/php $basePath/artisan queue:work --tries=3
 StartLimitInterval=180
 StartLimitBurst=30
 RestartSec=5s
