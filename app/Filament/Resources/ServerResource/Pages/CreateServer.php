@@ -3,15 +3,12 @@
 namespace App\Filament\Resources\ServerResource\Pages;
 
 use App\Filament\Resources\ServerResource;
-use App\Models\Allocation;
 use App\Models\Egg;
 use App\Models\Node;
-use App\Services\Allocations\AssignmentService;
 use App\Services\Servers\RandomWordService;
 use App\Services\Servers\ServerCreationService;
 use Filament\Forms\Form;
 use Filament\Resources\Pages\CreateRecord;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Validator;
 use Closure;
@@ -23,6 +20,8 @@ class CreateServer extends CreateRecord
     protected static string $resource = ServerResource::class;
     protected static bool $canCreateAnother = false;
     public ?Egg $egg = null;
+    public array $ports = [];
+    public array $eggDefaultPorts = [];
 
     public function form(Form $form): Form
     {
@@ -54,9 +53,25 @@ class CreateServer extends CreateRecord
 
                         $variables = $this->egg->variables ?? [];
                         $serverVariables = collect();
+                        $i = 0;
+                        $this->ports = [];
                         foreach ($variables as $variable) {
                             $serverVariables->add($variable->toArray());
+                            if (str_contains($variable->rules, 'port')) {
+                                $path = 'assignments';
+                                $this->eggDefaultPorts[$variable->default_value] = $variable->env_variable;
+                                $this->ports[] = (int) $variable->default_value;
+
+                                $set("$path.$i", ['port' => $i]);
+
+                                // $set("$path.$i", (int) $variable->default_value);
+                                // $set("$path.$i.port", (int) $variable->default_value);
+                                $i++;
+                                // $variables[$serverVariables[$i]['env_variable']] = $serverVariables[$i]['default_value'];
+                            }
                         }
+
+                        $set('ports', array_keys($this->eggDefaultPorts));
 
                         $variables = [];
                         $set($path = 'server_variables', $serverVariables->sortBy(['sort'])->all());
@@ -145,28 +160,25 @@ class CreateServer extends CreateRecord
 
                 Forms\Components\Repeater::make('assignments')
                     ->columnSpan(3)
+                    ->defaultItems(fn () => count($this->eggDefaultPorts))
                     ->label('Port Assignments')
+                    ->helperText(fn (Forms\Get $get) => empty($get('ports')) ? 'You must add ports to assign them!' : '')
                     ->live()
-                    ->default(function () {
-                        $ports = ['SERVER_PORT' => null];
-
-                        if (!$this->egg) {
-                            return $ports;
-                        }
-
-                        return $ports;
-                    })
                     ->addable(false)
                     ->deletable(false)
+                    ->reorderable(false)
                     ->simple(
                         Forms\Components\Select::make('port')
                             ->live()
-                            // ->selectablePlaceholder(false)
-                            // ->disabled(fn (Forms\Get $get) => empty($get('ports')))
-                            ->prefix('SERVER_PORT')
-                            // ->email()
+                            ->disabled(fn (Forms\Get $get) => empty($get('../../ports')) || empty($get('../../assignments')))
+                            ->prefix(function (Forms\Components\Component $component) {
+                                $key = str($component->getStatePath())->beforeLast('.')->afterLast('.')->toString();
+                                $defaultPort = array_keys($this->eggDefaultPorts)[$key] ?? null;
+
+                                return $this->eggDefaultPorts[$defaultPort] ?? '';
+                            })
                             ->disableOptionsWhenSelectedInSiblingRepeaterItems()
-                            ->options(fn (Forms\Get $get) => $get('../../ports'))
+                            ->options(fn (Forms\Get $get) => $this->ports)
                             ->required(),
                     ),
 
@@ -592,7 +604,7 @@ class CreateServer extends CreateRecord
             ->all();
     }
 
-    public static function ports ($state, Forms\Set $set) {
+    public function ports ($state, Forms\Set $set) {
         $ports = collect();
         $update = false;
         foreach ($state as $portEntry) {
@@ -603,13 +615,9 @@ class CreateServer extends CreateRecord
                     continue;
                 }
 
-                // Do not add non-numerical ports
-                $update = true;
-
                 continue;
             }
 
-            $update = true;
             [$start, $end] = explode('-', $portEntry);
             if (!is_numeric($start) || !is_numeric($end)) {
                 continue;
@@ -624,20 +632,12 @@ class CreateServer extends CreateRecord
 
         $uniquePorts = $ports->unique()->values();
         if ($ports->count() > $uniquePorts->count()) {
-            $update = true;
             $ports = $uniquePorts;
-        }
-
-        $sortedPorts = $ports->sort()->values();
-        if ($sortedPorts->all() !== $ports->all()) {
-            $update = true;
-            $ports = $sortedPorts;
         }
 
         $ports = $ports->filter(fn ($port) => $port > 1024 && $port < 65535)->values();
 
-        if ($update) {
-            $set('ports', $ports->all());
-        }
+        $set('ports', $ports->all());
+        $this->ports = $ports->all();
     }
 }
