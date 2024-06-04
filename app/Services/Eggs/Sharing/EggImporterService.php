@@ -23,10 +23,8 @@ class EggImporterService
      */
     public function handle(UploadedFile $file): Egg
     {
-        // Read the file content
         $fileContent = $file->get();
 
-        // Define the string replacements
         $replacements = [
             // Update ips
             'server.build.env.SERVER_IP' => 'server.allocations.default.ip',
@@ -41,10 +39,9 @@ class EggImporterService
             'server.build.env' => 'server.build.environment',
         ];
 
-        // Replace old strings with the new strings in the file content
+        // Replace variables
         $fileContent = str_replace(array_keys($replacements), array_values($replacements), $fileContent);
 
-        // Decode the modified content back to an array
         $parsed = json_decode($fileContent, true);
 
         if (json_last_error() !== JSON_ERROR_NONE) {
