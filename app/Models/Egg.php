@@ -281,6 +281,12 @@ class Egg extends Model
 
     public function getKebabName(): string
     {
-        return str($this->name)->kebab()->lower()->trim()->split('/[^\w\-]/')->join('');
+        return str($this->name)
+            ->kebab()
+            ->replace('--', '-')
+            ->lower()
+            ->trim()
+            ->split('/[^\w\-]/')
+            ->join('');
     }
 }
