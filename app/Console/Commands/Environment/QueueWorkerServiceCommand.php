@@ -19,7 +19,7 @@ class QueueWorkerServiceCommand extends Command
 
     public function handle(): void
     {
-        $serviceName = $this->option('service-name') ?? $this->ask('Service name', 'pelican-queue');
+        $serviceName = $this->option('service-name') ?? $this->ask('Queue worker Service name', 'pelican-queue');
         $path = '/etc/systemd/system/' . $serviceName  . '.service';
 
         if (file_exists($path) && !$this->option('overwrite') && !$this->confirm('The service file already exists. Do you want to overwrite it?')) {
@@ -28,8 +28,8 @@ class QueueWorkerServiceCommand extends Command
             return;
         }
 
-        $user = $this->option('user') ?? $this->ask('User', 'www-data');
-        $group = $this->option('group') ?? $this->ask('Group', 'www-data');
+        $user = $this->option('user') ?? $this->ask('Webserver User', 'www-data');
+        $group = $this->option('group') ?? $this->ask('Webserver Group', 'www-data');
 
         $afterRedis = $this->option('use-redis') ? '\nAfter=redis-server.service' : '';
 
