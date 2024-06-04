@@ -23,7 +23,33 @@ class EggImporterService
      */
     public function handle(UploadedFile $file): Egg
     {
-        $parsed = $this->parser->handle($file);
+        // Read the file content
+        $fileContent = $file->get();
+
+        // Define the string replacements
+        $replacements = [
+            // Update ips
+            'server.build.env.SERVER_IP' => 'server.allocations.default.ip',
+            'server.build.default.ip' => 'server.allocations.default.ip',
+            // Update ports
+            'server.build.env.SERVER_PORT' => 'server.allocations.default.port',
+            'server.build.default.port' => 'server.allocations.default.port',
+            // Update memory limits
+            'server.build.env.SERVER_MEMORY' => 'server.build.memory_limit',
+            'server.build.memory' => 'server.build.memory_limit',
+            // Update env variables
+            'server.build.env' => 'server.build.environment',
+        ];
+
+        // Replace old strings with the new strings in the file content
+        $fileContent = str_replace(array_keys($replacements), array_values($replacements), $fileContent);
+
+        // Decode the modified content back to an array
+        $parsed = json_decode($fileContent, true);
+
+        if (json_last_error() !== JSON_ERROR_NONE) {
+            throw new \App\Exceptions\Service\InvalidFileUploadException('The uploaded file is not a valid JSON file.');
+        }
 
         return $this->connection->transaction(function () use ($parsed) {
             $uuid = $parsed['uuid'] ?? Uuid::uuid4()->toString();

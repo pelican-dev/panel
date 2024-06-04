@@ -124,38 +124,6 @@ class EggConfigurationService
         return $response;
     }
 
-    /**
-     * Replaces the legacy modifies from eggs with their new counterpart. The legacy Daemon would
-     * set SERVER_MEMORY, SERVER_IP, and SERVER_PORT with their respective values on the Daemon
-     * side. Ensure that anything referencing those properly replaces them with the matching config
-     * value.
-     */
-    protected function replaceLegacyModifiers(string $key, string $value): string
-    {
-        switch ($key) {
-            case 'config.docker.interface':
-                $replace = 'config.docker.network.interface';
-                break;
-            case 'server.build.env.SERVER_MEMORY':
-            case 'env.SERVER_MEMORY':
-                $replace = 'server.build.memory';
-                break;
-            case 'server.build.env.SERVER_IP':
-            case 'env.SERVER_IP':
-                $replace = 'server.build.default.ip';
-                break;
-            case 'server.build.env.SERVER_PORT':
-            case 'env.SERVER_PORT':
-                $replace = 'server.build.default.port';
-                break;
-            default:
-                // By default, we don't need to change anything, only if we ended up matching a specific legacy item.
-                $replace = $key;
-        }
-
-        return str_replace("{{{$key}}}", "{{{$replace}}}", $value);
-    }
-
     protected function matchAndReplaceKeys(mixed $value, array $structure): mixed
     {
         preg_match_all('/{{(?<key>[\w.-]*)}}/', $value, $matches);
@@ -174,8 +142,6 @@ class EggConfigurationService
             if (!is_string($value)) {
                 continue;
             }
-
-            $value = $this->replaceLegacyModifiers($key, $value);
 
             // We don't want to do anything with config keys since the Daemon will need to handle
             // that. For example, the Spigot egg uses "config.docker.interface" to identify the Docker
