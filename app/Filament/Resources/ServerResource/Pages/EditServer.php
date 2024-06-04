@@ -532,7 +532,6 @@ class EditServer extends EditRecord
 
                                         $text = Forms\Components\TextInput::make('variable_value')
                                             ->hidden($this->shouldHideComponent(...))
-                                            ->maxLength(191)
                                             ->rules([
                                                 fn (ServerVariable $serverVariable): Closure => function (string $attribute, $value, Closure $fail) use ($serverVariable) {
                                                     $validator = Validator::make(['validatorkey' => $value], [
