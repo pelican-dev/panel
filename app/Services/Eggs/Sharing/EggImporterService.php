@@ -8,7 +8,6 @@ use App\Models\Egg;
 use Illuminate\Http\UploadedFile;
 use App\Models\EggVariable;
 use Illuminate\Database\ConnectionInterface;
-use Illuminate\Support\Str;
 use App\Services\Eggs\EggParserService;
 
 class EggImporterService
@@ -36,7 +35,7 @@ class EggImporterService
             'server.build.env' => 'server.build.environment',
         ];
 
-        $parsed = $this->recursiveStringReplace($parsed, $replacements);
+        $parsed = collect($replacements)->reduce(fn ($result, $value, $key) => str_replace($key, $value, $result), $parsed);
 
         return $this->connection->transaction(function () use ($parsed) {
             $uuid = $parsed['uuid'] ?? Uuid::uuid4()->toString();
@@ -59,16 +58,4 @@ class EggImporterService
         });
     }
 
-    protected function recursiveStringReplace(array $data, array $replacements): array
-    {
-        return array_map(function ($value) use ($replacements) {
-            if (is_array($value)) {
-                return $this->recursiveStringReplace($value, $replacements);
-            } elseif (is_string($value)) {
-                return Str::replace(array_keys($replacements), array_values($replacements), $value);
-            }
-
-            return $value;
-        }, $data);
-    }
 }
