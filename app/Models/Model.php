@@ -69,7 +69,8 @@ abstract class Model extends IlluminateModel
         return 'uuid';
     }
 
-    protected function asDateTime($value) {
+    protected function asDateTime($value)
+    {
         $timezone = auth()->user()?->timezone ?? config('app.timezone', 'UTC');
 
         if ($value instanceof CarbonInterface) {
