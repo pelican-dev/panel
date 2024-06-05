@@ -30,7 +30,7 @@ class MakeUserCommand extends Command
     public function handle(): int
     {
         try {
-            DB::select('select 1 where 1');
+            DB::connection()->getPdo();
         } catch (Exception $exception) {
             $this->error($exception->getMessage());
 
