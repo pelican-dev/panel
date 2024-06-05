@@ -8,6 +8,7 @@ use App\Models\Egg;
 use Illuminate\Http\UploadedFile;
 use App\Models\EggVariable;
 use Illuminate\Database\ConnectionInterface;
+use Illuminate\Support\Str;
 use App\Services\Eggs\EggParserService;
 
 class EggImporterService
@@ -23,30 +24,19 @@ class EggImporterService
      */
     public function handle(UploadedFile $file): Egg
     {
-        $fileContent = $file->get();
+        $parsed = $this->parser->handle($file);
 
         $replacements = [
-            // Update ips
             'server.build.env.SERVER_IP' => 'server.allocations.default.ip',
             'server.build.default.ip' => 'server.allocations.default.ip',
-            // Update ports
             'server.build.env.SERVER_PORT' => 'server.allocations.default.port',
             'server.build.default.port' => 'server.allocations.default.port',
-            // Update memory limits
             'server.build.env.SERVER_MEMORY' => 'server.build.memory_limit',
             'server.build.memory' => 'server.build.memory_limit',
-            // Update env variables
             'server.build.env' => 'server.build.environment',
         ];
 
-        // Replace variables
-        $fileContent = str_replace(array_keys($replacements), array_values($replacements), $fileContent);
-
-        $parsed = json_decode($fileContent, true);
-
-        if (json_last_error() !== JSON_ERROR_NONE) {
-            throw new \App\Exceptions\Service\InvalidFileUploadException('The uploaded file is not a valid JSON file.');
-        }
+        $parsed = $this->recursiveStringReplace($parsed, $replacements);
 
         return $this->connection->transaction(function () use ($parsed) {
             $uuid = $parsed['uuid'] ?? Uuid::uuid4()->toString();
@@ -67,5 +57,18 @@ class EggImporterService
 
             return $egg;
         });
+    }
+
+    protected function recursiveStringReplace(array $data, array $replacements): array
+    {
+        return array_map(function ($value) use ($replacements) {
+            if (is_array($value)) {
+                return $this->recursiveStringReplace($value, $replacements);
+            } elseif (is_string($value)) {
+                return Str::replace(array_keys($replacements), array_values($replacements), $value);
+            }
+
+            return $value;
+        }, $data);
     }
 }
