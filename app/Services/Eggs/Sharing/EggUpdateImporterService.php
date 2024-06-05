@@ -68,6 +68,7 @@ class EggUpdateImporterService
             } elseif (is_string($value)) {
                 return Str::replace(array_keys($replacements), array_values($replacements), $value);
             }
+
             return $value;
         }, $data);
     }
