@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('nodes', function (Blueprint $table) {
-            $table->text('daemon_sftp_alias')->nullable()->after('daemon_sftp');
+            $table->string('daemon_sftp_alias')->nullable()->after('daemon_sftp');
         });
     }
 
