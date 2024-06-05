@@ -37,7 +37,11 @@ class EggUpdateImporterService
             'server.build.env' => 'server.build.environment',
         ];
 
-        $parsed = collect($replacements)->reduce(fn ($result, $value, $key) => str_replace($key, $value, $result), $parsed);
+        array_walk_recursive($parsed, function (&$item) use ($replacements) {
+            if (is_string($item)) {
+                $item = str_replace(array_keys($replacements), array_values($replacements), $item);
+            }
+        });
 
         return $this->connection->transaction(function () use ($egg, $parsed) {
             $egg = $this->parser->fillFromParsed($egg, $parsed);
