@@ -68,7 +68,7 @@ class ListEggs extends ListRecords
                         ->multiple(),
                 ])
                 ->action(function (array $data): void {
-                    /** @var TemporaryUploadedFile $eggFile */
+                    /** @var TemporaryUploadedFile[] $eggFile */
                     $eggFile = $data['egg'];
 
                     /** @var EggImporterService $eggImportService */

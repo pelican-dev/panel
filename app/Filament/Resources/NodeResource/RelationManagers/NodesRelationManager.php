@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\NodeResource\RelationManagers;
 
+use App\Models\Node;
 use App\Models\Server;
 use Filament\Tables;
 use Filament\Tables\Table;

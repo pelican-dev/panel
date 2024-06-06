@@ -75,11 +75,11 @@ class ServerManagementController extends ApplicationApiController
 
         if ($this->transferServerService->handle($server, $validatedData)) {
             // Transfer started
-            $this->returnNoContent();
-        } else {
-            // Node was not viable
-            return new Response('', Response::HTTP_NOT_ACCEPTABLE);
+            return $this->returnNoContent();
         }
+
+        // Node was not viable
+        return new Response('', Response::HTTP_NOT_ACCEPTABLE);
     }
 
     /**
