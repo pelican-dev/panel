@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Server } from '@/api/server/getServer';
 import getServers from '@/api/getServers';
 import ServerRow from '@/components/dashboard/ServerRow';
@@ -37,7 +37,7 @@ export default () => {
     const [newGroupName, setNewGroupName] = useState('');
     const [showMoveOptions, setShowMoveOptions] = useState<{ [key: string]: boolean }>({});
 
-    useMemo(() => {
+    useEffect(() => {
         if (servers) {
             const allServers = servers.items.map((server) => server.uuid);
             setGroups((prevGroups) => {
@@ -49,29 +49,29 @@ export default () => {
         }
     }, [servers]);
 
-    useMemo(() => {
+    useEffect(() => {
         if (servers?.pagination?.currentPage && servers.pagination.currentPage > 1 && servers.items?.length === 0) {
             setPage(1);
         }
     }, [servers?.pagination?.currentPage]);
 
-    useMemo(() => {
+    useEffect(() => {
         window.history.replaceState(null, document.title, `/${page <= 1 ? '' : `?page=${page}`}`);
     }, [page]);
 
-    useMemo(() => {
+    useEffect(() => {
         if (error) clearAndAddHttpError({ key: 'dashboard', error });
         if (!error) clearFlashes('dashboard');
     }, [error]);
 
-    useMemo(() => {
+    useEffect(() => {
         const savedGroups = localStorage.getItem(`groups:${uuid}`);
         if (savedGroups) {
             setGroups(JSON.parse(savedGroups));
         }
     }, [uuid]);
 
-    useMemo(() => {
+    useEffect(() => {
         localStorage.setItem(`groups:${uuid}`, JSON.stringify(groups));
     }, [groups]);
 
