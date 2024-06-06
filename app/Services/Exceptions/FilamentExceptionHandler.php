@@ -7,7 +7,7 @@ use Filament\Notifications\Notification;
 
 class FilamentExceptionHandler
 {
-    public function handle(Exception $exception, Callable $stopPropagation): void
+    public function handle(Exception $exception, callable $stopPropagation): void
     {
         Notification::make()
             ->title($exception->title ?? null)
