@@ -53,12 +53,14 @@ class TransferServerService
     {
         $node_id = $data['node_id'];
         $allocation_id = intval($data['allocation_id']);
-        $additional_allocations = array_map('intval', $data['allocation_additional'] ?? []);
+        $additional_allocations = array_map(intval(...), $data['allocation_additional'] ?? []);
 
         // Check if the node is viable for the transfer.
         $node = Node::query()
             ->select(['nodes.id', 'nodes.fqdn', 'nodes.scheme', 'nodes.daemon_token', 'nodes.daemon_listen', 'nodes.memory', 'nodes.disk', 'nodes.cpu', 'nodes.memory_overallocate', 'nodes.disk_overallocate', 'nodes.cpu_overallocate'])
-            ->selectRaw('IFNULL(SUM(servers.memory), 0) as sum_memory, IFNULL(SUM(servers.disk), 0) as sum_disk, IFNULL(SUM(servers.cpu), 0) as sum_cpu')
+            ->withSum('servers', 'disk')
+            ->withSum('servers', 'memory')
+            ->withSum('servers', 'cpu')
             ->leftJoin('servers', 'servers.node_id', '=', 'nodes.id')
             ->where('nodes.id', $node_id)
             ->first();

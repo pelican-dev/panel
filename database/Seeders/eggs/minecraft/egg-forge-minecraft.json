@@ -4,9 +4,10 @@
         "version": "PTDL_v2",
         "update_url": null
     },
-    "exported_at": "2024-05-08T11:47:58+02:00",
+    "exported_at": "2024-06-02T20:42:02+00:00",
     "name": "Forge Minecraft",
     "author": "panel@example.com",
+    "uuid": "ed072427-f209-4603-875c-f540c6dd5a65",
     "description": "Minecraft Forge Server. Minecraft Forge is a modding API (Application Programming Interface), which makes it easier to create mods, and also make sure mods are compatible with each other.",
     "features": [
         "eula",
@@ -44,6 +45,7 @@
             "user_viewable": true,
             "user_editable": true,
             "rules": "required|regex:\/^([\\w\\d._-]+)(\\.jar)$\/",
+            "sort": null,
             "field_type": "text"
         },
         {
@@ -54,6 +56,7 @@
             "user_viewable": true,
             "user_editable": true,
             "rules": "required|string|max:9",
+            "sort": null,
             "field_type": "text"
         },
         {
@@ -64,6 +67,7 @@
             "user_viewable": true,
             "user_editable": true,
             "rules": "required|string|in:recommended,latest",
+            "sort": null,
             "field_type": "text"
         },
         {
@@ -74,6 +78,7 @@
             "user_viewable": true,
             "user_editable": true,
             "rules": "nullable|regex:\/^[0-9\\.\\-]+$\/",
+            "sort": null,
             "field_type": "text"
         }
     ]

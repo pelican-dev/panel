@@ -53,14 +53,6 @@ class Subuser extends Model
     }
 
     /**
-     * Return a hashid encoded string to represent the ID of the subuser.
-     */
-    public function getHashidAttribute(): string
-    {
-        return app()->make('hashids')->encode($this->id);
-    }
-
-    /**
      * Gets the server associated with a subuser.
      */
     public function server(): BelongsTo

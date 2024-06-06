@@ -22,7 +22,6 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property bool $has_alias
  * @property \App\Models\Server|null $server
  * @property \App\Models\Node $node
- * @property string $hashid
  *
  * @method static \Database\Factories\AllocationFactory factory(...$parameters)
  * @method static \Illuminate\Database\Eloquent\Builder|Allocation newModelQuery()
@@ -86,14 +85,6 @@ class Allocation extends Model
     public function getRouteKeyName(): string
     {
         return $this->getKeyName();
-    }
-
-    /**
-     * Return a hashid encoded string to represent the ID of the allocation.
-     */
-    public function getHashidAttribute(): string
-    {
-        return app()->make('hashids')->encode($this->id);
     }
 
     /**

@@ -2,9 +2,7 @@
 
 namespace App\Models;
 
-use Illuminate\Container\Container;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use App\Contracts\Extensions\HashidsInterface;
 use Illuminate\Support\Facades\DB;
 
 /**
@@ -64,32 +62,13 @@ class Database extends Model
             'server_id' => 'integer',
             'database_host_id' => 'integer',
             'max_connections' => 'integer',
+            'password' => 'encrypted',
         ];
     }
 
     public function getRouteKeyName(): string
     {
         return $this->getKeyName();
-    }
-
-    /**
-     * Resolves the database using the ID by checking if the value provided is a HashID
-     * string value, or just the ID to the database itself.
-     *
-     * @param mixed $value
-     * @param string|null $field
-     *
-     * @throws \Illuminate\Contracts\Container\BindingResolutionException
-     */
-    public function resolveRouteBinding($value, $field = null): ?\Illuminate\Database\Eloquent\Model
-    {
-        if (is_scalar($value) && ($field ?? $this->getRouteKeyName()) === 'id') {
-            $value = ctype_digit((string) $value)
-                ? $value
-                : Container::getInstance()->make(HashidsInterface::class)->decodeFirst($value);
-        }
-
-        return $this->where($field ?? $this->getRouteKeyName(), $value)->firstOrFail();
     }
 
     /**

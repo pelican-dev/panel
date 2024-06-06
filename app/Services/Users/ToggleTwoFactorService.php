@@ -32,9 +32,7 @@ class ToggleTwoFactorService
      */
     public function handle(User $user, string $token, bool $toggleState = null): array
     {
-        $secret = decrypt($user->totp_secret);
-
-        $isValidToken = $this->google2FA->verifyKey($secret, $token, config()->get('panel.auth.2fa.window'));
+        $isValidToken = $this->google2FA->verifyKey($user->totp_secret, $token, config()->get('panel.auth.2fa.window'));
 
         if (!$isValidToken) {
             throw new TwoFactorAuthenticationTokenInvalid();

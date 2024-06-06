@@ -23,6 +23,8 @@ class CreateServer extends CreateRecord
     protected static string $resource = ServerResource::class;
     protected static bool $canCreateAnother = false;
 
+    public ?Node $node = null;
+
     public function form(Form $form): Form
     {
         return $form
@@ -77,13 +79,16 @@ class CreateServer extends CreateRecord
                 Forms\Components\Select::make('node_id')
                     ->disabledOn('edit')
                     ->prefixIcon('tabler-server-2')
-                    ->default(fn () => Node::query()->latest()->first()?->id)
+                    ->default(fn () => ($this->node = Node::query()->latest()->first())?->id)
                     ->columnSpan(2)
                     ->live()
                     ->relationship('node', 'name')
                     ->searchable()
                     ->preload()
-                    ->afterStateUpdated(fn (Forms\Set $set) => $set('allocation_id', null))
+                    ->afterStateUpdated(function (Forms\Set $set, $state) {
+                        $set('allocation_id', null);
+                        $this->node = Node::find($state);
+                    })
                     ->required(),
 
                 Forms\Components\Select::make('allocation_id')
@@ -578,7 +583,7 @@ class CreateServer extends CreateRecord
                                 Forms\Components\Hidden::make('io')
                                     ->helperText('The IO performance relative to other running containers')
                                     ->label('Block IO Proportion')
-                                    ->default(500),
+                                    ->default(0),
 
                                 Forms\Components\Grid::make()
                                     ->columns(4)
@@ -683,10 +688,20 @@ class CreateServer extends CreateRecord
                                     ->placeholder('Enter a custom Image')
                                     ->columnSpan(1),
 
-                                Forms\Components\TagsInput::make('docker_labels')
-                                    ->label('Labels')
-                                    ->placeholder('Enter custom Docker container labels')
-                                    ->columnSpan(1),
+                                Forms\Components\KeyValue::make('docker_labels')
+                                    ->label('Container Labels')
+                                    ->keyLabel('Title')
+                                    ->valueLabel('Description')
+                                    ->columnSpan(3),
+
+                                Forms\Components\CheckboxList::make('mounts')
+                                    ->live()
+                                    ->relationship('mounts')
+                                    ->options(fn () => $this->node?->mounts->mapWithKeys(fn ($mount) => [$mount->id => $mount->name]) ?? [])
+                                    ->descriptions(fn () => $this->node?->mounts->mapWithKeys(fn ($mount) => [$mount->id => "$mount->source -> $mount->target"]) ?? [])
+                                    ->label('Mounts')
+                                    ->helperText(fn () => $this->node?->mounts->isNotEmpty() ? '' : 'No Mounts exist for this Node')
+                                    ->columnSpanFull(),
                             ]),
                     ]),
             ]);

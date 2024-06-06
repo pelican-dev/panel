@@ -4,9 +4,10 @@
         "version": "PTDL_v2",
         "update_url": null
     },
-    "exported_at": "2024-05-21T21:40:24-04:00",
+    "exported_at": "2024-06-02T20:42:08+00:00",
     "name": "Mumble Server",
     "author": "panel@example.com",
+    "uuid": "727ee758-7fb2-4979-972b-d3eba4e1e9f0",
     "description": "Mumble is an open source, low-latency, high quality voice chat software primarily intended for use while gaming.",
     "features": null,
     "docker_images": {
@@ -36,6 +37,7 @@
             "user_viewable": true,
             "user_editable": false,
             "rules": "required|numeric|digits_between:1,5",
+            "sort": null,
             "field_type": "text"
         }
     ]
