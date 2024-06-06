@@ -43,3 +43,4 @@ Some of our popular eggs include but are not limited to:
 | [Monitoring](https://github.com/pelican-eggs/monitoring)             | Prometheus      | Loki          |                    |                |
 
 *Copyright Pelican® 2024*
+Just Trying to accept CLA
