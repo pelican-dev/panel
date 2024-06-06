@@ -58,13 +58,16 @@ class CreateServer extends CreateRecord
                         $i = 0;
                         $this->ports = [];
                         foreach ($variables as $variable) {
-                            $serverVariables->add($variable->toArray());
                             if (str_contains($variable->rules, 'port')) {
                                 $this->eggDefaultPorts[$variable->default_value] = $variable->env_variable;
                                 $this->ports[] = (int) $variable->default_value;
 
                                 $set("assignments.$i", ['port' => $i++]);
+
+                                continue;
                             }
+
+                            $serverVariables->add($variable->toArray());
                         }
 
                         $set('ports', array_keys($this->eggDefaultPorts));
