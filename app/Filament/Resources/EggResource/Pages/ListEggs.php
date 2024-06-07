@@ -87,7 +87,9 @@ class ListEggs extends ListRecords
                     /** @var EggImporterService $eggImportService */
                     $eggImportService = resolve(EggImporterService::class);
 
-                    if (isset($data['egg'])) {
+                    logger()->info('import egg', $data);
+
+                    if (!empty($data['egg'])) {
                         /** @var TemporaryUploadedFile $eggFile */
                         $eggFile = $data['egg'];
 
@@ -105,7 +107,7 @@ class ListEggs extends ListRecords
                                 return;
                             }
                         }
-                    } elseif (isset($data['url'])) {
+                    } elseif (!empty($data['url'])) {
                         try {
                             $eggImportService->fromUrl($data['url']);
                         } catch (Exception $exception) {
