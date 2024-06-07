@@ -33,7 +33,7 @@
     @if (!$isLatest)
         <x-filament::section
             icon="tabler-info-circle"
-            icon-color="primary"
+            icon-color="warning"
             id="intro-update"
             collapsible
             persist-collapsed

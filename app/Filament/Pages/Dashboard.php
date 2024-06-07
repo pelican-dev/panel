@@ -54,7 +54,8 @@ class Dashboard extends Page
                 CreateAction::make()
                     ->label('Read Documentation')
                     ->icon('tabler-clipboard-text')
-                    ->url('https://pelican.dev/docs/panel/update', true),
+                    ->url('https://pelican.dev/docs/panel/update', true)
+                    ->color('warning'),
             ],
             'nodeActions' => [
                 CreateAction::make()
