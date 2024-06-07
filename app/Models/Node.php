@@ -33,6 +33,7 @@ use Illuminate\Database\Eloquent\Relations\HasManyThrough;
  * @property string $daemon_token
  * @property int $daemon_listen
  * @property int $daemon_sftp
+ * @property string|null $daemon_sftp_alias
  * @property string $daemon_base
  * @property \Carbon\Carbon $created_at
  * @property \Carbon\Carbon $updated_at
@@ -72,7 +73,7 @@ class Node extends Model
         'memory', 'memory_overallocate', 'disk',
         'disk_overallocate', 'cpu', 'cpu_overallocate',
         'upload_size', 'daemon_base',
-        'daemon_sftp', 'daemon_listen',
+        'daemon_sftp', 'daemon_sftp_alias', 'daemon_listen',
         'description', 'maintenance_mode',
     ];
 
@@ -91,6 +92,7 @@ class Node extends Model
         'cpu_overallocate' => 'required|numeric|min:-1',
         'daemon_base' => 'sometimes|required|regex:/^([\/][\d\w.\-\/]+)$/',
         'daemon_sftp' => 'required|numeric|between:1,65535',
+        'daemon_sftp_alias' => 'nullable|string',
         'daemon_listen' => 'required|numeric|between:1,65535',
         'maintenance_mode' => 'boolean',
         'upload_size' => 'int|between:1,1024',

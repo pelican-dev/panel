@@ -21,6 +21,7 @@ export interface Server {
     status: ServerStatus;
     sftpDetails: {
         ip: string;
+        alias: string;
         port: number;
     };
     invocation: string;
@@ -57,6 +58,7 @@ export const rawDataToServerObject = ({ attributes: data }: FractalResponseData)
     dockerImage: data.docker_image,
     sftpDetails: {
         ip: data.sftp_details.ip,
+        alias: data.sftp_details.alias,
         port: data.sftp_details.port,
     },
     description: data.description ? (data.description.length > 0 ? data.description : null) : null,
