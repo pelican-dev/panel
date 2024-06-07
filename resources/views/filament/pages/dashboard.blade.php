@@ -4,7 +4,7 @@
         :actions="$this->getCachedHeaderActions()"
         :breadcrumbs="filament()->hasBreadcrumbs() ? $this->getBreadcrumbs() : []"
         :heading=" trans('dashboard/index.heading')"
-        :subheading="trans('strings.version', ['version' => config('app.version')])"
+        :subheading="trans('strings.version', ['version' => $version])"
     ></x-filament-panels::header>
 
     <p>{{ trans('dashboard/index.expand_sections') }}</p>
@@ -26,6 +26,22 @@
             <p><br /></p>
 
             <p>{{  trans('dashboard/index.sections.intro-developers.extra_note') }}</p>
+
+        </x-filament::section>
+    @endif
+
+    @if (!$isLatest)
+        <x-filament::section
+            icon="tabler-info-circle"
+            icon-color="primary"
+            id="intro-update"
+            collapsible
+            persist-collapsed
+            :header-actions="$updateActions"
+        >
+            <x-slot name="heading">{{ trans('dashboard/index.sections.intro-update.heading') }}</x-slot>
+
+            <p>{{  trans('dashboard/index.sections.intro-update.content', ['latestVersion' => $latestVersion]) }}</p>
 
         </x-filament::section>
     @endif
