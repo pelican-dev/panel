@@ -77,7 +77,7 @@ class ListEggs extends ListRecords
 
                     foreach ($eggFile as $file) {
                         try {
-                            $eggImportService->handle($file);
+                            $eggImportService->fromFile($file);
                         } catch (Exception $exception) {
                             Notification::make()
                                 ->title('Import Failed')
@@ -103,20 +103,11 @@ class ListEggs extends ListRecords
                         ->url(),
                 ])
                 ->action(function (array $data): void {
-                    $url = $data['url'];
-
                     /** @var EggImporterService $eggImportService */
                     $eggImportService = resolve(EggImporterService::class);
 
                     try {
-                        $info = pathinfo($url);
-                        $filePath = '/tmp/' . $info['basename'];
-
-                        file_put_contents($filePath, file_get_contents($url));
-
-                        $file = new UploadedFile($filePath, $info['basename'], 'application/json');
-
-                        $eggImportService->handle($file);
+                        $eggImportService->fromUrl($data['url']);
                     } catch (Exception $exception) {
                         Notification::make()
                             ->title('Import Failed')

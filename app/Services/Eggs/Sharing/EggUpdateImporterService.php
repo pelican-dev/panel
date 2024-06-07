@@ -23,7 +23,7 @@ class EggUpdateImporterService
      *
      * @throws \App\Exceptions\Service\InvalidFileUploadException|\Throwable
      */
-    public function handle(Egg $egg, UploadedFile $file): Egg
+    public function fromFile(Egg $egg, UploadedFile $file): Egg
     {
         $parsed = $this->parser->handle($file);
 
@@ -46,5 +46,20 @@ class EggUpdateImporterService
 
             return $egg->refresh();
         });
+    }
+
+    /**
+     * Update an existing Egg using an url.
+     *
+     * @throws \App\Exceptions\Service\InvalidFileUploadException|\Throwable
+     */
+    public function fromUrl(Egg $egg, string $url): Egg
+    {
+        $info = pathinfo($url);
+        $filePath = '/tmp/' . $info['basename'];
+
+        file_put_contents($filePath, file_get_contents($url));
+
+        return $this->fromFile($egg, new UploadedFile($filePath, $info['basename'], 'application/json'));
     }
 }
