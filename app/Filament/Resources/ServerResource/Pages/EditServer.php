@@ -576,6 +576,7 @@ class EditServer extends EditRecord
                                     ->options(fn (Server $server) => $server->node->mounts->mapWithKeys(fn ($mount) => [$mount->id => $mount->name]))
                                     ->descriptions(fn (Server $server) => $server->node->mounts->mapWithKeys(fn ($mount) => [$mount->id => "$mount->source -> $mount->target"]))
                                     ->label('Mounts')
+                                    ->helperText(fn (Server $server) => $server->node->mounts->isNotEmpty() ? '' : 'No Mounts exist for this Node')
                                     ->columnSpanFull(),
                             ]),
                         Tabs\Tab::make('Databases')
