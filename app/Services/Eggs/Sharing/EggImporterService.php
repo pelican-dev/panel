@@ -9,7 +9,7 @@ use Illuminate\Http\UploadedFile;
 use App\Models\EggVariable;
 use Illuminate\Database\ConnectionInterface;
 use App\Services\Eggs\EggParserService;
-use GuzzleHttp\Client;
+use Spatie\TemporaryDirectory\TemporaryDirectory;
 
 class EggImporterService
 {
@@ -46,7 +46,7 @@ class EggImporterService
             return $egg;
         });
     }
-  
+
     /**
      * Take an url and parse it into a new egg.
      *
@@ -54,26 +54,12 @@ class EggImporterService
      */
     public function fromUrl(string $url): Egg
     {
-        $parsed = json_decode((new Client())->get($url)->getBody()->getContents(), true);
+        $info = pathinfo($url);
+        $tmpDir = TemporaryDirectory::make()->deleteWhenDestroyed();
+        $tmpPath = $tmpDir->path($info['basename']);
 
-        return $this->connection->transaction(function () use ($parsed) {
-            $uuid = $parsed['uuid'] ?? Uuid::uuid4()->toString();
-            $egg = Egg::where('uuid', $uuid)->first() ?? new Egg();
+        file_put_contents($tmpPath, file_get_contents($url));
 
-            $egg = $egg->forceFill([
-                'uuid' => $uuid,
-                'author' => Arr::get($parsed, 'author'),
-                'copy_script_from' => null,
-            ]);
-
-            $egg = $this->parser->fillFromParsed($egg, $parsed);
-            $egg->save();
-
-            foreach ($parsed['variables'] ?? [] as $variable) {
-                EggVariable::query()->forceCreate(array_merge($variable, ['egg_id' => $egg->id]));
-            }
-
-            return $egg;
-        });
+        return $this->fromFile(new UploadedFile($tmpPath, $info['basename'], 'application/json'));
     }
 }

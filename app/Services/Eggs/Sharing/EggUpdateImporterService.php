@@ -8,6 +8,7 @@ use Illuminate\Support\Collection;
 use App\Models\EggVariable;
 use Illuminate\Database\ConnectionInterface;
 use App\Services\Eggs\EggParserService;
+use Spatie\TemporaryDirectory\TemporaryDirectory;
 
 class EggUpdateImporterService
 {
@@ -56,10 +57,11 @@ class EggUpdateImporterService
     public function fromUrl(Egg $egg, string $url): Egg
     {
         $info = pathinfo($url);
-        $filePath = '/tmp/' . $info['basename'];
+        $tmpDir = TemporaryDirectory::make()->deleteWhenDestroyed();
+        $tmpPath = $tmpDir->path($info['basename']);
 
-        file_put_contents($filePath, file_get_contents($url));
+        file_put_contents($tmpPath, file_get_contents($url));
 
-        return $this->fromFile($egg, new UploadedFile($filePath, $info['basename'], 'application/json'));
+        return $this->fromFile($egg, new UploadedFile($tmpPath, $info['basename'], 'application/json'));
     }
 }
