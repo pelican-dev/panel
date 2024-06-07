@@ -9,6 +9,7 @@ use Illuminate\Http\UploadedFile;
 use App\Models\EggVariable;
 use Illuminate\Database\ConnectionInterface;
 use App\Services\Eggs\EggParserService;
+use GuzzleHttp\Client;
 
 class EggImporterService
 {
@@ -53,11 +54,26 @@ class EggImporterService
      */
     public function fromUrl(string $url): Egg
     {
-        $info = pathinfo($url);
-        $filePath = '/tmp/' . $info['basename'];
+        $parsed = json_decode((new Client())->get($url)->getBody()->getContents(), true);
 
-        file_put_contents($filePath, file_get_contents($url));
+        return $this->connection->transaction(function () use ($parsed) {
+            $uuid = $parsed['uuid'] ?? Uuid::uuid4()->toString();
+            $egg = Egg::where('uuid', $uuid)->first() ?? new Egg();
 
-        return $this->fromFile(new UploadedFile($filePath, $info['basename'], 'application/json'));
+            $egg = $egg->forceFill([
+                'uuid' => $uuid,
+                'author' => Arr::get($parsed, 'author'),
+                'copy_script_from' => null,
+            ]);
+
+            $egg = $this->parser->fillFromParsed($egg, $parsed);
+            $egg->save();
+
+            foreach ($parsed['variables'] ?? [] as $variable) {
+                EggVariable::query()->forceCreate(array_merge($variable, ['egg_id' => $egg->id]));
+            }
+
+            return $egg;
+        });
     }
 }

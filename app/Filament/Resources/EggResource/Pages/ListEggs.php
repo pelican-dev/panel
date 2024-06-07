@@ -69,6 +69,8 @@ class ListEggs extends ListRecords
                                 ->icon('tabler-file-upload')
                                 ->schema([
                                     Forms\Components\FileUpload::make('egg')
+                                        ->label('Egg')
+                                        ->hint('This should be the json file ( egg-minecraft.json )')
                                         ->acceptedFileTypes(['application/json'])
                                         ->storeFiles(false)
                                         ->multiple(),
@@ -77,6 +79,8 @@ class ListEggs extends ListRecords
                                 ->icon('tabler-world-upload')
                                 ->schema([
                                     Forms\Components\TextInput::make('url')
+                                        ->label('URL')
+                                        ->hint('This URL should point to a single json file')
                                         ->url(),
                                 ]),
                         ])
