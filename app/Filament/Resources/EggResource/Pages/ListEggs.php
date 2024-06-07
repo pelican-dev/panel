@@ -8,6 +8,7 @@ use App\Services\Eggs\Sharing\EggImporterService;
 use Exception;
 use Filament\Actions;
 use Filament\Forms;
+use Filament\Forms\Components\Tabs;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\ListRecords;
 use Filament\Tables\Table;
@@ -59,24 +60,54 @@ class ListEggs extends ListRecords
         return [
             Actions\CreateAction::make('create')->label('Create Egg'),
 
-            Actions\Action::make('import_file')
-                ->label('Import File')
+            Actions\Action::make('import')
+                ->label('Import')
                 ->form([
-                    Forms\Components\FileUpload::make('egg')
-                        ->acceptedFileTypes(['application/json'])
-                        ->storeFiles(false)
-                        ->multiple(),
+                    Tabs::make('Tabs')
+                        ->tabs([
+                            Tabs\Tab::make('From File')
+                                ->icon('tabler-file-upload')
+                                ->schema([
+                                    Forms\Components\FileUpload::make('egg')
+                                        ->acceptedFileTypes(['application/json'])
+                                        ->storeFiles(false)
+                                        ->multiple(),
+                                ]),
+                            Tabs\Tab::make('From URL')
+                                ->icon('tabler-world-upload')
+                                ->schema([
+                                    Forms\Components\TextInput::make('url')
+                                        ->url(),
+                                ]),
+                        ]),
+
                 ])
                 ->action(function (array $data): void {
-                    /** @var TemporaryUploadedFile $eggFile */
-                    $eggFile = $data['egg'];
 
                     /** @var EggImporterService $eggImportService */
                     $eggImportService = resolve(EggImporterService::class);
 
-                    foreach ($eggFile as $file) {
+                    if (isset($data['egg'])) {
+                        /** @var TemporaryUploadedFile $eggFile */
+                        $eggFile = $data['egg'];
+
+                        foreach ($eggFile as $file) {
+                            try {
+                                $eggImportService->fromFile($file);
+                            } catch (Exception $exception) {
+                                Notification::make()
+                                    ->title('Import Failed')
+                                    ->danger()
+                                    ->send();
+
+                                report($exception);
+
+                                return;
+                            }
+                        }
+                    } elseif (isset($data['url'])) {
                         try {
-                            $eggImportService->fromFile($file);
+                            $eggImportService->fromUrl($data['url']);
                         } catch (Exception $exception) {
                             Notification::make()
                                 ->title('Import Failed')
@@ -87,35 +118,6 @@ class ListEggs extends ListRecords
 
                             return;
                         }
-                    }
-
-                    Notification::make()
-                        ->title('Import Success')
-                        ->success()
-                        ->send();
-                }),
-
-            Actions\Action::make('import_url')
-                ->label('Import from URL')
-                ->form([
-                    Forms\Components\TextInput::make('url')
-                        ->url(),
-                ])
-                ->action(function (array $data): void {
-                    /** @var EggImporterService $eggImportService */
-                    $eggImportService = resolve(EggImporterService::class);
-
-                    try {
-                        $eggImportService->fromUrl($data['url']);
-                    } catch (Exception $exception) {
-                        Notification::make()
-                            ->title('Import Failed')
-                            ->danger()
-                            ->send();
-
-                        report($exception);
-
-                        return;
                     }
 
                     Notification::make()
