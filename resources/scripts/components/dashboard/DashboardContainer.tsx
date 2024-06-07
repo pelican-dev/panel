@@ -65,6 +65,15 @@ export default () => {
     }, [error]);
 
     useEffect(() => {
+        const storedCurrentGroup = localStorage.getItem(`currentGroup:${uuid}`);
+        if (storedCurrentGroup && groups[storedCurrentGroup]) {
+            setCurrentGroup(storedCurrentGroup);
+        } else {
+            setCurrentGroup('default');
+        }
+    }, [uuid, groups]);
+
+    useEffect(() => {
         const savedGroups = localStorage.getItem(`groups:${uuid}`);
         if (savedGroups) {
             setGroups(JSON.parse(savedGroups));
@@ -72,8 +81,8 @@ export default () => {
     }, [uuid]);
 
     useEffect(() => {
-        localStorage.setItem(`groups:${uuid}`, JSON.stringify(groups));
-    }, [groups]);
+        localStorage.setItem(`currentGroup:${uuid}`, currentGroup);
+    }, [uuid, currentGroup]);
 
     const addGroup = () => {
         if (newGroupName && !groups[newGroupName]) {
@@ -102,7 +111,11 @@ export default () => {
         if (currentGroup) {
             updatedGroups[currentGroup] = updatedGroups[currentGroup].filter((uuid) => uuid !== serverUuid);
         }
-        updatedGroups[targetGroup].push(serverUuid);
+        if (!updatedGroups[targetGroup].includes(serverUuid)) {
+            if (currentGroup !== targetGroup) {
+                updatedGroups[targetGroup].push(serverUuid);
+            }
+        }
         setGroups(updatedGroups);
         setShowMoveOptions((prevState) => ({ ...prevState, [serverUuid]: false }));
     };
@@ -158,7 +171,7 @@ export default () => {
                     >
                         {Object.keys(groups).map((group) => (
                             <option key={group} value={group}>
-                                {group}
+                                {group === 'default' ? t('all_servers') : group}
                             </option>
                         ))}
                     </select>
@@ -229,7 +242,7 @@ export default () => {
                                                             >
                                                                 {Object.keys(groups).map((group) => (
                                                                     <option key={group} value={group}>
-                                                                        {group}
+                                                                        {group === 'default' ? t('all_servers') : group}
                                                                     </option>
                                                                 ))}
                                                             </select>

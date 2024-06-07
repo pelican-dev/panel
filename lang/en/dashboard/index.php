@@ -13,6 +13,7 @@ return [
     'add_group' => 'Add Group',
     'delete_group' => 'Delete Current Group',
     'move_server' => 'Move Server',
+    'all_servers' => "All Servers",
 
     'content_tabs' => 'Content tabs',
     'overview' => 'Overview',
