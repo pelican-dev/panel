@@ -132,9 +132,9 @@ class Node extends Model
         ];
     }
 
-    public int $servers_sum_memory;
-    public int $servers_sum_disk;
-    public int $servers_sum_cpu;
+    public int $servers_sum_memory = 0;
+    public int $servers_sum_disk = 0;
+    public int $servers_sum_cpu = 0;
 
     public function getRouteKeyName(): string
     {
