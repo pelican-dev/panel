@@ -6,8 +6,8 @@ on:
       - '**'
 
 jobs:
-  lint:
-    name: Lint
+  pint:
+    name: Pint
     runs-on: ubuntu-latest
     steps:
       - name: Code Checkout
