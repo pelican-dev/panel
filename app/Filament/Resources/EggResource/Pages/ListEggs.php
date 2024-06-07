@@ -13,6 +13,7 @@ use Filament\Resources\Pages\ListRecords;
 use Filament\Tables\Table;
 use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 use Filament\Tables;
+use Illuminate\Http\UploadedFile;
 
 class ListEggs extends ListRecords
 {
@@ -59,8 +60,8 @@ class ListEggs extends ListRecords
         return [
             Actions\CreateAction::make('create')->label('Create Egg'),
 
-            Actions\Action::make('import')
-                ->label('Import')
+            Actions\Action::make('import_file')
+                ->label('Import File')
                 ->form([
                     Forms\Components\FileUpload::make('egg')
                         ->acceptedFileTypes(['application/json'])
@@ -87,6 +88,44 @@ class ListEggs extends ListRecords
 
                             return;
                         }
+                    }
+
+                    Notification::make()
+                        ->title('Import Success')
+                        ->success()
+                        ->send();
+                }),
+
+            Actions\Action::make('import_url')
+                ->label('Import from URL')
+                ->form([
+                    Forms\Components\TextInput::make('url')
+                        ->url(),
+                ])
+                ->action(function (array $data): void {
+                    $url = $data['url'];
+
+                    /** @var EggImporterService $eggImportService */
+                    $eggImportService = resolve(EggImporterService::class);
+
+                    try {
+                        $info = pathinfo($url);
+                        $filePath = '/tmp/' . $info['basename'];
+
+                        file_put_contents($filePath, file_get_contents($url));
+
+                        $file = new UploadedFile($filePath, $info['basename'], 'application/json');
+
+                        $eggImportService->handle($file);
+                    } catch (Exception $exception) {
+                        Notification::make()
+                            ->title('Import Failed')
+                            ->danger()
+                            ->send();
+
+                        report($exception);
+
+                        return;
                     }
 
                     Notification::make()
