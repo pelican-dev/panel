@@ -46,7 +46,7 @@ class EggImporterService
             return $egg;
         });
     }
-
+  
     /**
      * Take an url and parse it into a new egg.
      *
