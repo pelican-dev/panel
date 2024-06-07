@@ -65,15 +65,6 @@ export default () => {
     }, [error]);
 
     useEffect(() => {
-        const storedCurrentGroup = localStorage.getItem(`currentGroup:${uuid}`);
-        if (storedCurrentGroup && groups[storedCurrentGroup]) {
-            setCurrentGroup(storedCurrentGroup);
-        } else {
-            setCurrentGroup('default');
-        }
-    }, [uuid, groups]);
-
-    useEffect(() => {
         const savedGroups = localStorage.getItem(`groups:${uuid}`);
         if (savedGroups) {
             setGroups(JSON.parse(savedGroups));
@@ -81,8 +72,8 @@ export default () => {
     }, [uuid]);
 
     useEffect(() => {
-        localStorage.setItem(`currentGroup:${uuid}`, currentGroup);
-    }, [uuid, currentGroup]);
+        localStorage.setItem(`groups:${uuid}`, JSON.stringify(groups));
+    }, [groups]);
 
     const addGroup = () => {
         if (newGroupName && !groups[newGroupName]) {
@@ -111,11 +102,7 @@ export default () => {
         if (currentGroup) {
             updatedGroups[currentGroup] = updatedGroups[currentGroup].filter((uuid) => uuid !== serverUuid);
         }
-        if (!updatedGroups[targetGroup].includes(serverUuid)) {
-            if (currentGroup !== targetGroup) {
-                updatedGroups[targetGroup].push(serverUuid);
-            }
-        }
+        updatedGroups[targetGroup].push(serverUuid);
         setGroups(updatedGroups);
         setShowMoveOptions((prevState) => ({ ...prevState, [serverUuid]: false }));
     };
