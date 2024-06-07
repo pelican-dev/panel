@@ -25,22 +25,6 @@ class EggImporterService
     {
         $parsed = $this->parser->handle($file);
 
-        $replacements = [
-            'server.build.env.SERVER_IP' => 'server.allocations.default.ip',
-            'server.build.default.ip' => 'server.allocations.default.ip',
-            'server.build.env.SERVER_PORT' => 'server.allocations.default.port',
-            'server.build.default.port' => 'server.allocations.default.port',
-            'server.build.env.SERVER_MEMORY' => 'server.build.memory_limit',
-            'server.build.memory' => 'server.build.memory_limit',
-            'server.build.env' => 'server.build.environment',
-        ];
-
-        array_walk_recursive($parsed, function (&$item) use ($replacements) {
-            if (is_string($item)) {
-                $item = str_replace(array_keys($replacements), array_values($replacements), $item);
-            }
-        });
-
         return $this->connection->transaction(function () use ($parsed) {
             $uuid = $parsed['uuid'] ?? Uuid::uuid4()->toString();
             $egg = Egg::where('uuid', $uuid)->first() ?? new Egg();
