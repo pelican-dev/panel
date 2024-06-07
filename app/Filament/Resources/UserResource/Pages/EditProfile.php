@@ -101,15 +101,18 @@ class EditProfile extends \Filament\Pages\Auth\EditProfile
                                     ->icon('tabler-shield-lock')
                                     ->schema(function () {
 
-                                        if ($this->getUser()->use_totp) {
+                                        /** @var User */
+                                        $user = auth()->user();
+
+                                        if (auth()->user()->use_totp) {
                                             return [
                                                 Placeholder::make('2fa-already-enabled')
                                                     ->label('Two Factor Authentication is currently enabled!'),
                                                 Textarea::make('backup-tokens')
-                                                    ->hidden(fn () => !cache()->get("users.{$this->getUser()->id}.2fa.tokens"))
+                                                    ->hidden(fn () => !cache()->get("users.{$user->id}.2fa.tokens"))
                                                     ->rows(10)
                                                     ->readOnly()
-                                                    ->formatStateUsing(fn () => cache()->get("users.{$this->getUser()->id}.2fa.tokens"))
+                                                    ->formatStateUsing(fn () => cache()->get("users.{$user->id}.2fa.tokens"))
                                                     ->helperText('These will not be shown again!')
                                                     ->label('Backup Tokens:'),
                                                 TextInput::make('2fa-disable-code')
@@ -117,15 +120,17 @@ class EditProfile extends \Filament\Pages\Auth\EditProfile
                                                     ->helperText('Enter your current 2FA code to disable Two Factor Authentication'),
                                             ];
                                         }
+                                        /** @var TwoFactorSetupService */
                                         $setupService = app(TwoFactorSetupService::class);
 
                                         ['image_url_data' => $url, 'secret' => $secret] = cache()->remember(
-                                            "users.{$this->getUser()->id}.2fa.state",
-                                            now()->addMinutes(5), fn () => $setupService->handle($this->getUser())
+                                            "users.{$user->id}.2fa.state",
+                                            now()->addMinutes(5), fn () => $setupService->handle(auth()->user())
                                         );
 
                                         $options = new QROptions([
                                             'svgLogo' => public_path('pelican.svg'),
+                                            'svgLogoScale' => 0.05,
                                             'addLogoSpace' => true,
                                             'logoSpaceWidth' => 13,
                                             'logoSpaceHeight' => 13,
@@ -133,22 +138,24 @@ class EditProfile extends \Filament\Pages\Auth\EditProfile
 
                                         // https://github.com/chillerlan/php-qrcode/blob/main/examples/svgWithLogo.php
 
-                                        // SVG logo options (see extended class)
-                                        $options->svgLogo = public_path('pelican.svg'); // logo from: https://github.com/simple-icons/simple-icons
-                                        $options->svgLogoScale = 0.05;
-                                        // $options->svgLogoCssClass     = 'dark';
-
                                         // QROptions
+                                        // @phpstan-ignore property.protected
                                         $options->version = Version::AUTO;
                                         // $options->outputInterface     = QRSvgWithLogo::class;
+                                        // @phpstan-ignore property.protected
                                         $options->outputBase64 = false;
+                                        // @phpstan-ignore property.protected
                                         $options->eccLevel = EccLevel::H; // ECC level H is necessary when using logos
+                                        // @phpstan-ignore property.protected
                                         $options->addQuietzone = true;
                                         // $options->drawLightModules    = true;
+                                        // @phpstan-ignore property.protected
                                         $options->connectPaths = true;
+                                        // @phpstan-ignore property.protected
                                         $options->drawCircularModules = true;
                                         // $options->circleRadius        = 0.45;
 
+                                        // @phpstan-ignore property.protected
                                         $options->svgDefs = '<linearGradient id="gradient" x1="100%" y2="100%">
                                             <stop stop-color="#7dd4fc" offset="0"/>
                                             <stop stop-color="#38bdf8" offset="0.5"/>
@@ -196,8 +203,8 @@ class EditProfile extends \Filament\Pages\Auth\EditProfile
                                             ])->headerActions([
                                                 Action::make('Create')
                                                     ->successRedirectUrl(route('filament.admin.auth.profile', ['tab' => '-api-keys-tab']))
-                                                    ->action(function (Get $get, Action $action) {
-                                                        $token = auth()->user()->createToken(
+                                                    ->action(function (Get $get, Action $action, $user) {
+                                                        $token = $user->createToken(
                                                             $get('description'),
                                                             $get('allowed_ips'),
                                                         );
@@ -258,7 +265,7 @@ class EditProfile extends \Filament\Pages\Auth\EditProfile
                             ]),
                     ])
                     ->operation('edit')
-                    ->model($this->getUser())
+                    ->model(auth()->user())
                     ->statePath('data')
                     ->inlineLabel(!static::isSimple()),
             ),
