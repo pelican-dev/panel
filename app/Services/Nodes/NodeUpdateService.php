@@ -27,15 +27,22 @@ class NodeUpdateService
      */
     public function handle(Node $node, array $data, bool $resetToken = false): Node
     {
+        $data['id'] = $node->id;
+
         if ($resetToken) {
             $data['daemon_token'] = Str::random(Node::DAEMON_TOKEN_LENGTH);
             $data['daemon_token_id'] = Str::random(Node::DAEMON_TOKEN_ID_LENGTH);
         }
 
-        [$node, $exception] = $this->connection->transaction(function () use ($data, $node) {
-            $node->forceFill($data)->save();
+        [$updated, $exception] = $this->connection->transaction(function () use ($data, $node) {
+            /** @var \App\Models\Node $updated */
+            $updated = $node->replicate();
+            $updated->exists = true;
+            $updated->forceFill($data)->save();
             try {
-                $this->configurationRepository->setNode($node)->update($node);
+                $node->fqdn = $updated->fqdn;
+
+                $this->configurationRepository->setNode($node)->update($updated);
             } catch (DaemonConnectionException $exception) {
                 logger()->warning($exception, ['node_id' => $node->id]);
 
@@ -45,16 +52,16 @@ class NodeUpdateService
                 //
                 // This avoids issues with proxies such as Cloudflare which will see daemon as offline and then
                 // inject their own response pages, causing this logic to get fucked up.
-                return [$node, true];
+                return [$updated, true];
             }
 
-            return [$node, false];
+            return [$updated, false];
         });
 
         if ($exception) {
             throw new ConfigurationNotPersistedException(trans('exceptions.node.daemon_off_config_updated'));
         }
 
-        return $node;
+        return $updated;
     }
 }
