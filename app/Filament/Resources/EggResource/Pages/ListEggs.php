@@ -13,7 +13,6 @@ use Filament\Resources\Pages\ListRecords;
 use Filament\Tables\Table;
 use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 use Filament\Tables;
-use Illuminate\Http\UploadedFile;
 
 class ListEggs extends ListRecords
 {
