@@ -84,6 +84,7 @@ class EditProfile extends \Filament\Pages\Auth\EditProfile
                                             ->dehydrated(false),
 
                                         Select::make('timezone')
+                                            ->required()
                                             ->prefixIcon('tabler-clock-pin')
                                             ->options(fn () => collect(DateTimeZone::listIdentifiers())->mapWithKeys(fn ($tz) => [$tz => $tz]))
                                             ->searchable(),
