@@ -31,6 +31,9 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\HtmlString;
 use Illuminate\Validation\Rules\Password;
 
+/**
+ * @method User getUser()
+ */
 class EditProfile extends \Filament\Pages\Auth\EditProfile
 {
     protected function getForms(): array
@@ -101,18 +104,15 @@ class EditProfile extends \Filament\Pages\Auth\EditProfile
                                     ->icon('tabler-shield-lock')
                                     ->schema(function () {
 
-                                        /** @var User */
-                                        $user = auth()->user();
-
-                                        if (auth()->user()->use_totp) {
+                                        if ($this->getUser()->use_totp) {
                                             return [
                                                 Placeholder::make('2fa-already-enabled')
                                                     ->label('Two Factor Authentication is currently enabled!'),
                                                 Textarea::make('backup-tokens')
-                                                    ->hidden(fn () => !cache()->get("users.{$user->id}.2fa.tokens"))
+                                                    ->hidden(fn () => !cache()->get("users.{$this->getUser()->id}.2fa.tokens"))
                                                     ->rows(10)
                                                     ->readOnly()
-                                                    ->formatStateUsing(fn () => cache()->get("users.{$user->id}.2fa.tokens"))
+                                                    ->formatStateUsing(fn () => cache()->get("users.{$this->getUser()->id}.2fa.tokens"))
                                                     ->helperText('These will not be shown again!')
                                                     ->label('Backup Tokens:'),
                                                 TextInput::make('2fa-disable-code')
@@ -124,8 +124,8 @@ class EditProfile extends \Filament\Pages\Auth\EditProfile
                                         $setupService = app(TwoFactorSetupService::class);
 
                                         ['image_url_data' => $url, 'secret' => $secret] = cache()->remember(
-                                            "users.{$user->id}.2fa.state",
-                                            now()->addMinutes(5), fn () => $setupService->handle(auth()->user())
+                                            "users.{$this->getUser()->id}.2fa.state",
+                                            now()->addMinutes(5), fn () => $setupService->handle($this->getUser())
                                         );
 
                                         $options = new QROptions([
@@ -265,7 +265,7 @@ class EditProfile extends \Filament\Pages\Auth\EditProfile
                             ]),
                     ])
                     ->operation('edit')
-                    ->model(auth()->user())
+                    ->model($this->getUser())
                     ->statePath('data')
                     ->inlineLabel(!static::isSimple()),
             ),
