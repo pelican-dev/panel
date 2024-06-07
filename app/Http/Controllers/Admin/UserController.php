@@ -37,7 +37,7 @@ class UserController extends Controller
     /**
      * Display user index page.
      */
-    public function index(Request $request): View
+    public function index(): View
     {
         $users = QueryBuilder::for(
             User::query()->select('users.*')
