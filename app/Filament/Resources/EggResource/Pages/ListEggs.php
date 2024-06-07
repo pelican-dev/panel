@@ -79,7 +79,8 @@ class ListEggs extends ListRecords
                                     Forms\Components\TextInput::make('url')
                                         ->url(),
                                 ]),
-                        ]),
+                        ])
+                        ->contained(false),
 
                 ])
                 ->action(function (array $data): void {
