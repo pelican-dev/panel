@@ -50,37 +50,8 @@ class CreateServer extends CreateRecord
                         $this->egg = Egg::query()->find($state);
                         $set('startup', $this->egg->startup);
                         $set('image', '');
-                        // $set('assignments', null);
-                        $this->eggDefaultPorts = [];
 
-                        $variables = $this->egg->variables ?? [];
-                        $serverVariables = collect();
-                        $i = 0;
-                        $this->ports = [];
-                        foreach ($variables as $variable) {
-                            if (str_contains($variable->rules, 'port')) {
-                                $this->eggDefaultPorts[$variable->default_value] = $variable->env_variable;
-                                $this->ports[] = (int) $variable->default_value;
-
-                                $set("assignments.$i", ['port' => $i++]);
-
-                                continue;
-                            }
-
-                            $serverVariables->add($variable->toArray());
-                        }
-
-                        $set('ports', array_keys($this->eggDefaultPorts));
-
-                        $variables = [];
-                        $set($path = 'server_variables', $serverVariables->sortBy(['sort'])->all());
-                        for ($i = 0; $i < $serverVariables->count(); $i++) {
-                            $set("$path.$i.variable_value", $serverVariables[$i]['default_value']);
-                            $set("$path.$i.variable_id", $serverVariables[$i]['id']);
-                            $variables[$serverVariables[$i]['env_variable']] = $serverVariables[$i]['default_value'];
-                        }
-
-                        $set('environment', $variables);
+                        $this->resetEggVariables($set, $get);
 
                         $previousEgg = Egg::query()->find($old);
                         if (!$get('name') || $previousEgg?->getKebabName() === $get('name')) {
@@ -146,7 +117,6 @@ class CreateServer extends CreateRecord
                 Forms\Components\TagsInput::make('ports')
                     ->columnSpan(3)
                     ->placeholder('Example: 25565, 8080, 1337-1340')
-                    ->reorderable()
                     ->splitKeys(['Tab', ' ', ','])
                     ->helperText(new HtmlString('
                                 These are the ports that users can connect to this Server through.
@@ -172,9 +142,8 @@ class CreateServer extends CreateRecord
                             ->disabled(fn (Forms\Get $get) => empty($get('../../ports')) || empty($get('../../assignments')))
                             ->prefix(function (Forms\Components\Component $component) {
                                 $key = str($component->getStatePath())->beforeLast('.')->afterLast('.')->toString();
-                                $defaultPort = array_keys($this->eggDefaultPorts)[$key] ?? null;
 
-                                return $this->eggDefaultPorts[$defaultPort] ?? '';
+                                return $key;
                             })
                             ->disableOptionsWhenSelectedInSiblingRepeaterItems()
                             ->options(fn (Forms\Get $get) => $this->ports)
@@ -187,6 +156,7 @@ class CreateServer extends CreateRecord
                     ->required()
                     ->live()
                     ->disabled(fn (Forms\Get $get) => $this->egg === null)
+                    ->afterStateUpdated($this->resetEggVariables(...))
                     ->columnSpan([
                         'default' => 2,
                         'sm' => 4,
@@ -603,7 +573,7 @@ class CreateServer extends CreateRecord
             ->all();
     }
 
-    public function ports ($state, Forms\Set $set) {
+    public function ports($state, Forms\Set $set) {
         $ports = collect();
         $update = false;
         foreach ($state as $portEntry) {
@@ -638,5 +608,46 @@ class CreateServer extends CreateRecord
 
         $set('ports', $ports->all());
         $this->ports = $ports->all();
+    }
+
+    public function resetEggVariables(Forms\Set $set, Forms\Get $get)
+    {
+        $set('assignments', []);
+
+        $i = 0;
+        $this->eggDefaultPorts = [];
+        if (str_contains($get('startup'), '{{SERVER_PORT}}')) {
+            $this->eggDefaultPorts['SERVER_PORT'] = null;
+            $set('assignments.SERVER_PORT', ['port' => null]);
+        }
+
+        $variables = $this->egg->variables ?? [];
+        $serverVariables = collect();
+        $this->ports = [];
+        foreach ($variables as $variable) {
+            if (str_contains($variable->rules, 'port')) {
+                $this->eggDefaultPorts[$variable->env_variable] = $variable->default_value;
+                $this->ports[] = (int) $variable->default_value;
+
+                // $set("assignments.$i", ['port' => $i++]);
+                $set("assignments.$variable->env_variable", ['port' => $i++]);
+
+                continue;
+            }
+
+            $serverVariables->add($variable->toArray());
+        }
+
+        $set('ports', $this->ports);
+
+        $variables = [];
+        $set($path = 'server_variables', $serverVariables->sortBy(['sort'])->all());
+        for ($i = 0; $i < $serverVariables->count(); $i++) {
+            $set("$path.$i.variable_value", $serverVariables[$i]['default_value']);
+            $set("$path.$i.variable_id", $serverVariables[$i]['id']);
+            $variables[$serverVariables[$i]['env_variable']] = $serverVariables[$i]['default_value'];
+        }
+
+        $set('environment', $variables);
     }
 }
