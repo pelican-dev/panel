@@ -9,7 +9,6 @@ use Illuminate\Database\QueryException;
 use App\Models\Setting;
 use App\Traits\Commands\EnvironmentWriterTrait;
 use Illuminate\Support\Facades\Artisan;
-use Illuminate\Support\Facades\Cache;
 
 class ManageSettings extends ManageRecords
 {
