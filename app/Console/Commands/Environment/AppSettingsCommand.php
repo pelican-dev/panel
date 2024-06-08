@@ -118,7 +118,9 @@ class AppSettingsCommand extends Command
         }
 
         if ($this->variables['QUEUE_CONNECTION'] !== 'sync') {
-            Artisan::call('p:environment:queue-service', $redisUsed ? ['--use-redis'] : []);
+            $this->call('p:environment:queue-service', [
+                '--use-redis' => $redisUsed,
+            ]);
         }
 
         $this->info($this->console->output());
@@ -127,7 +129,7 @@ class AppSettingsCommand extends Command
     }
 
     /**
-     * Request connection details and verify them.
+     * Request redis connection details and verify them.
      */
     private function requestRedisSettings(): void
     {

@@ -4,9 +4,10 @@
         "version": "PTDL_v2",
         "update_url": null
     },
-    "exported_at": "2024-05-08T12:02:26+02:00",
+    "exported_at": "2024-06-02T20:42:05+00:00",
     "name": "Garrys Mod",
     "author": "panel@example.com",
+    "uuid": "60ef81d4-30a2-4d98-ab64-f59c69e2f915",
     "description": "Garrys Mod, is a sandbox physics game created by Garry Newman, and developed by his company, Facepunch Studios.",
     "features": [
         "gsl_token",
@@ -39,6 +40,7 @@
             "user_viewable": true,
             "user_editable": true,
             "rules": "required|string|alpha_dash",
+            "sort": null,
             "field_type": "text"
         },
         {
@@ -49,6 +51,7 @@
             "user_viewable": true,
             "user_editable": true,
             "rules": "nullable|string|alpha_num|size:32",
+            "sort": null,
             "field_type": "text"
         },
         {
@@ -59,6 +62,7 @@
             "user_viewable": false,
             "user_editable": false,
             "rules": "required|string|max:20",
+            "sort": null,
             "field_type": "text"
         },
         {
@@ -69,6 +73,7 @@
             "user_viewable": true,
             "user_editable": true,
             "rules": "nullable|integer",
+            "sort": null,
             "field_type": "text"
         },
         {
@@ -79,6 +84,7 @@
             "user_viewable": true,
             "user_editable": true,
             "rules": "required|string",
+            "sort": null,
             "field_type": "text"
         },
         {
@@ -89,6 +95,7 @@
             "user_viewable": true,
             "user_editable": true,
             "rules": "required|integer|max:128",
+            "sort": null,
             "field_type": "text"
         },
         {
@@ -99,6 +106,7 @@
             "user_viewable": true,
             "user_editable": true,
             "rules": "required|integer|max:100",
+            "sort": null,
             "field_type": "text"
         },
         {
@@ -109,6 +117,7 @@
             "user_viewable": true,
             "user_editable": true,
             "rules": "required|boolean",
+            "sort": null,
             "field_type": "text"
         }
     ]

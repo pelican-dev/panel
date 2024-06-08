@@ -2,10 +2,12 @@
 
 namespace App\Filament\Resources\UserResource\Pages;
 
+use App\Exceptions\Service\User\TwoFactorAuthenticationTokenInvalid;
 use App\Facades\Activity;
 use App\Models\ActivityLog;
 use App\Models\ApiKey;
 use App\Models\User;
+use App\Services\Users\ToggleTwoFactorService;
 use App\Services\Users\TwoFactorSetupService;
 use chillerlan\QRCode\Common\EccLevel;
 use chillerlan\QRCode\Common\Version;
@@ -20,8 +22,10 @@ use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Tabs;
 use Filament\Forms\Components\TagsInput;
 use Filament\Forms\Components\Tabs\Tab;
+use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Get;
+use Filament\Notifications\Notification;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\HtmlString;
@@ -99,12 +103,26 @@ class EditProfile extends \Filament\Pages\Auth\EditProfile
 
                                         if ($this->getUser()->use_totp) {
                                             return [
-                                                Placeholder::make('2FA already enabled!'),
+                                                Placeholder::make('2fa-already-enabled')
+                                                    ->label('Two Factor Authentication is currently enabled!'),
+                                                Textarea::make('backup-tokens')
+                                                    ->hidden(fn () => !cache()->get("users.{$this->getUser()->id}.2fa.tokens"))
+                                                    ->rows(10)
+                                                    ->readOnly()
+                                                    ->formatStateUsing(fn () => cache()->get("users.{$this->getUser()->id}.2fa.tokens"))
+                                                    ->helperText('These will not be shown again!')
+                                                    ->label('Backup Tokens:'),
+                                                TextInput::make('2fa-disable-code')
+                                                    ->label('Disable 2FA')
+                                                    ->helperText('Enter your current 2FA code to disable Two Factor Authentication'),
                                             ];
                                         }
                                         $setupService = app(TwoFactorSetupService::class);
 
-                                        ['image_url_data' => $url] = $setupService->handle($this->getUser());
+                                        ['image_url_data' => $url, 'secret' => $secret] = cache()->remember(
+                                            "users.{$this->getUser()->id}.2fa.state",
+                                            now()->addMinutes(5), fn () => $setupService->handle($this->getUser())
+                                        );
 
                                         $options = new QROptions([
                                             'svgLogo' => public_path('pelican.svg'),
@@ -147,9 +165,19 @@ class EditProfile extends \Filament\Pages\Auth\EditProfile
                                             Placeholder::make('qr')
                                                 ->label('Scan QR Code')
                                                 ->content(fn () => new HtmlString("
-                                                <div style='width: 300px'>$image</div>
+                                                <div style='width: 300px; background-color: rgb(24, 24, 27);'>$image</div>
                                             "))
-                                                ->default('asdfasdf'),
+                                                ->helperText('Setup Key: '. $secret),
+                                            TextInput::make('2facode')
+                                                ->label('Code')
+                                                ->requiredWith('2fapassword')
+                                                ->helperText('Scan the QR code above using your two-step authentication app, then enter the code generated.'),
+                                            TextInput::make('2fapassword')
+                                                ->label('Current Password')
+                                                ->requiredWith('2facode')
+                                                ->currentPassword()
+                                                ->password()
+                                                ->helperText('Enter your current password to verify.'),
                                         ];
                                     }),
 
@@ -235,5 +263,44 @@ class EditProfile extends \Filament\Pages\Auth\EditProfile
                     ->inlineLabel(!static::isSimple()),
             ),
         ];
+    }
+
+    protected function handleRecordUpdate($record, $data): \Illuminate\Database\Eloquent\Model
+    {
+        if ($token = $data['2facode'] ?? null) {
+            /** @var ToggleTwoFactorService $service */
+            $service = resolve(ToggleTwoFactorService::class);
+
+            $tokens = $service->handle($record, $token, true);
+            cache()->set("users.$record->id.2fa.tokens", implode("\n", $tokens), now()->addSeconds(15));
+
+            $this->redirectRoute('filament.admin.auth.profile', ['tab' => '-2fa-tab']);
+        }
+
+        if ($token = $data['2fa-disable-code'] ?? null) {
+            /** @var ToggleTwoFactorService $service */
+            $service = resolve(ToggleTwoFactorService::class);
+
+            $service->handle($record, $token, false);
+
+            cache()->forget("users.$record->id.2fa.state");
+        }
+
+        return parent::handleRecordUpdate($record, $data);
+    }
+
+    public function exception($e, $stopPropagation): void
+    {
+        if ($e instanceof TwoFactorAuthenticationTokenInvalid) {
+            Notification::make()
+                ->title('Invalid 2FA Code')
+                ->body($e->getMessage())
+                ->color('danger')
+                ->icon('tabler-2fa')
+                ->danger()
+                ->send();
+
+            $stopPropagation();
+        }
     }
 }

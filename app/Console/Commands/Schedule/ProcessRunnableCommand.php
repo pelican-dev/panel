@@ -24,7 +24,7 @@ class ProcessRunnableCommand extends Command
             ->whereRelation('server', fn (Builder $builder) => $builder->whereNull('status'))
             ->where('is_active', true)
             ->where('is_processing', false)
-            ->whereDate('next_run_at', '<=', Carbon::now()->toDateString())
+            ->whereDate('next_run_at', '<=', Carbon::now()->toDateTimeString())
             ->get();
 
         if ($schedules->count() < 1) {

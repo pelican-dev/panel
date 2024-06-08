@@ -25,6 +25,7 @@ class MakeNodeCommand extends Command
                             {--uploadSize= : Enter the maximum upload filesize.}
                             {--daemonListeningPort= : Enter the daemon listening port.}
                             {--daemonSFTPPort= : Enter the daemon SFTP listening port.}
+                            {--daemonSFTPAlias= : Enter the daemon SFTP alias.}
                             {--daemonBase= : Enter the base folder.}';
 
     protected $description = 'Creates a new node on the system via the CLI.';
@@ -65,6 +66,7 @@ class MakeNodeCommand extends Command
         $data['upload_size'] = $this->option('uploadSize') ?? $this->ask(__('commands.make_node.upload_size'), '100');
         $data['daemon_listen'] = $this->option('daemonListeningPort') ?? $this->ask(__('commands.make_node.daemonListen'), '8080');
         $data['daemon_sftp'] = $this->option('daemonSFTPPort') ?? $this->ask(__('commands.make_node.daemonSFTP'), '2022');
+        $data['daemon_sftp_alias'] = $this->option('daemonSFTPAlias') ?? $this->ask(__('commands.make_node.daemonSFTPAlias'), '');
         $data['daemon_base'] = $this->option('daemonBase') ?? $this->ask(__('commands.make_node.daemonBase'), '/var/lib/pelican/volumes');
 
         $node = $this->creationService->handle($data);

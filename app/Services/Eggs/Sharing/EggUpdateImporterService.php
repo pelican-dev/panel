@@ -8,6 +8,7 @@ use Illuminate\Support\Collection;
 use App\Models\EggVariable;
 use Illuminate\Database\ConnectionInterface;
 use App\Services\Eggs\EggParserService;
+use Spatie\TemporaryDirectory\TemporaryDirectory;
 
 class EggUpdateImporterService
 {
@@ -23,7 +24,7 @@ class EggUpdateImporterService
      *
      * @throws \App\Exceptions\Service\InvalidFileUploadException|\Throwable
      */
-    public function handle(Egg $egg, UploadedFile $file): Egg
+    public function fromFile(Egg $egg, UploadedFile $file): Egg
     {
         $parsed = $this->parser->handle($file);
 
@@ -46,5 +47,21 @@ class EggUpdateImporterService
 
             return $egg->refresh();
         });
+    }
+
+    /**
+     * Update an existing Egg using an url.
+     *
+     * @throws \App\Exceptions\Service\InvalidFileUploadException|\Throwable
+     */
+    public function fromUrl(Egg $egg, string $url): Egg
+    {
+        $info = pathinfo($url);
+        $tmpDir = TemporaryDirectory::make()->deleteWhenDestroyed();
+        $tmpPath = $tmpDir->path($info['basename']);
+
+        file_put_contents($tmpPath, file_get_contents($url));
+
+        return $this->fromFile($egg, new UploadedFile($tmpPath, $info['basename'], 'application/json'));
     }
 }
