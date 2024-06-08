@@ -7,11 +7,17 @@ use Filament\Resources\Pages\ManageRecords;
 use Filament\Actions\Action;
 use Illuminate\Database\QueryException;
 use App\Models\Setting;
+use App\Traits\Commands\EnvironmentWriterTrait;
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Cache;
 
 class ManageSettings extends ManageRecords
 {
+    use EnvironmentWriterTrait;
+
     protected static string $resource = SettingResource::class;
+
+    protected array $variables = [];
 
     protected function getHeaderActions(): array
     {
@@ -32,8 +38,11 @@ class ManageSettings extends ManageRecords
         }
 
         foreach ($settings as $key => $value) {
-            config()->set($key, $value);
-            Cache::put('key', 'value');
+            $this->variables[$key] = $value;
         }
+
+        $this->writeToEnvironment($this->variables);
+        Artisan::call('config:cache'); // When this is called the page expires, but it is the only way to make it work
     }
+
 }

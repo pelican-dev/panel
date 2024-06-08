@@ -25,8 +25,8 @@ return new class extends Migration
         });
 
         Setting::create([
-            'key' => 'app.name',
-            'label' => 'App Name',
+            'key' => 'APP_NAME',
+            'label' => 'Panel Name',
             'value' => 'Pelican',
             'type' => 'text',
         ]);

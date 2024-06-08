@@ -173,6 +173,6 @@ return [
     */
 
     'filament' => [
-        'top-navigation' => false,
+        'top-navigation' => env('FILAMENT_TOP_NAVIGATION', false),
     ],
 ];
