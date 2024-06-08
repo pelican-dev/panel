@@ -20,7 +20,6 @@ return new class extends Migration
             $table->text('value')->nullable();
             $table->json('attributes')->nullable();
             $table->string('type');
-
             $table->timestamps();
         });
 
@@ -38,5 +37,12 @@ return new class extends Migration
     public function down(): void
     {
         Schema::dropIfExists('settings');
+
+        Schema::create('settings', function (Blueprint $table) {
+            $table->id();
+            $table->string('key')->unique();
+            $table->text('value');
+            $table->timestamps();
+        });
     }
 };
