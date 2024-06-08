@@ -4,8 +4,10 @@ namespace App\Filament\Resources\NodeResource\Pages;
 
 use App\Filament\Resources\NodeResource;
 use Filament\Forms;
-use Filament\Forms\Components\Tabs;
+use Filament\Forms\Components\Actions\Action;
+use Filament\Forms\Components\Wizard;
 use Filament\Resources\Pages\CreateRecord;
+use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\HtmlString;
 
 class CreateNode extends CreateRecord
@@ -18,19 +20,19 @@ class CreateNode extends CreateRecord
 
     public function form(Forms\Form $form): Forms\Form
     {
-        return $form->schema([
-            Tabs::make('Tabs')
-                ->columns([
-                    'default' => 2,
-                    'sm' => 3,
-                    'md' => 3,
-                    'lg' => 4,
-                ])
-                ->persistTabInQueryString()
-                ->columnSpanFull()
-                ->tabs([
-                    Tabs\Tab::make('Basic Settings')
+        return $form
+            ->schema([
+                Wizard::make([
+                    Wizard\Step::make('basic')
+                        ->label('Basic Settings')
                         ->icon('tabler-server')
+                        ->columnSpanFull()
+                        ->columns([
+                            'default' => 2,
+                            'sm' => 3,
+                            'md' => 3,
+                            'lg' => 4,
+                        ])
                         ->schema([
                             Forms\Components\TextInput::make('fqdn')
                                 ->columnSpan(2)
@@ -55,7 +57,7 @@ class CreateNode extends CreateRecord
                                     return "
                             This is the domain name that points to your node's IP Address.
                             If you've already set up this, you can verify it by checking the next field!
-                        ";
+                            ";
                                 })
                                 ->hintColor('danger')
                                 ->hint(function ($state) {
@@ -184,18 +186,17 @@ class CreateNode extends CreateRecord
                                 ])
                                 ->default(fn () => request()->isSecure() ? 'https' : 'http'),
                         ]),
-                    Tabs\Tab::make('Advanced Settings')
+                    Wizard\Step::make('advanced')
+                        ->label('Advanced Settings')
                         ->icon('tabler-server-cog')
+                        ->columnSpanFull()
+                        ->columns([
+                            'default' => 2,
+                            'sm' => 3,
+                            'md' => 3,
+                            'lg' => 4,
+                        ])
                         ->schema([
-                            Forms\Components\TextInput::make('upload_size')
-                                ->label('Upload Limit')
-                                ->helperText('Enter the maximum size of files that can be uploaded through the web-based file manager.')
-                                ->columnSpan(1)
-                                ->numeric()->required()
-                                ->default(256)
-                                ->minValue(1)
-                                ->maxValue(1024)
-                                ->suffix('MiB'),
                             Forms\Components\ToggleButtons::make('public')
                                 ->label('Automatic Allocation')->inline()
                                 ->default(true)
@@ -222,6 +223,17 @@ class CreateNode extends CreateRecord
                                     true => 'danger',
                                     false => 'success',
                                 ]),
+                            Forms\Components\ToggleButtons::make('public')
+                                ->columnSpan(1)
+                                ->label('Automatic Allocation')->inline()
+                                ->options([
+                                    true => 'Yes',
+                                    false => 'No',
+                                ])
+                                ->colors([
+                                    true => 'success',
+                                    false => 'danger',
+                                ]),
                             Forms\Components\TagsInput::make('tags')
                                 ->label('Tags')
                                 ->disabled()
@@ -229,6 +241,28 @@ class CreateNode extends CreateRecord
                                 ->hintIcon('tabler-question-mark')
                                 ->hintIconTooltip('Not Implemented')
                                 ->columnSpan(1),
+
+                            Forms\Components\TextInput::make('upload_size')
+                                ->label('Upload Limit')
+                                ->helperText('Enter the maximum size of files that can be uploaded through the web-based file manager.')
+                                ->columnSpan(1)
+                                ->numeric()->required()
+                                ->default(256)
+                                ->minValue(1)
+                                ->maxValue(1024)
+                                ->suffix('MiB'),
+                            Forms\Components\TextInput::make('daemon_sftp')
+                                ->columnSpan(1)
+                                ->label('SFTP Port')
+                                ->minValue(0)
+                                ->maxValue(65536)
+                                ->default(2022)
+                                ->required()
+                                ->integer(),
+                            Forms\Components\TextInput::make('daemon_sftp_alias')
+                                ->columnSpan(2)
+                                ->label('SFTP Alias')
+                                ->helperText('Display alias for the SFTP address. Leave empty to use the Node FQDN.'),
                             Forms\Components\Grid::make()
                                 ->columns(6)
                                 ->columnSpanFull()
@@ -353,8 +387,17 @@ class CreateNode extends CreateRecord
                                         ->suffix('%'),
                                 ]),
                         ]),
-                ]),
-        ]);
+                ])->columnSpanFull()
+                    ->nextAction(fn (Action $action) => $action->label('Next Step'))
+                    ->submitAction(new HtmlString(Blade::render(<<<'BLADE'
+                                        <x-filament::button
+                                                type="submit"
+                                                size="sm"
+                                            >
+                                                Create Node
+                                            </x-filament::button>
+                                        BLADE))),
+            ]);
     }
 
     protected function getRedirectUrlParameters(): array
@@ -362,5 +405,10 @@ class CreateNode extends CreateRecord
         return [
             'tab' => '-configuration-tab',
         ];
+    }
+
+    protected function getFormActions(): array
+    {
+        return [];
     }
 }

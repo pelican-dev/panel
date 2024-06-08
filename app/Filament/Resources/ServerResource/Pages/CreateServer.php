@@ -742,7 +742,7 @@ class CreateServer extends CreateRecord
                                                 type="submit"
                                                 size="sm"
                                             >
-                                                Submit
+                                                Create Server
                                             </x-filament::button>
                                         BLADE))),
             ]);
