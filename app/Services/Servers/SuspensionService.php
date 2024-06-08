@@ -3,6 +3,7 @@
 namespace App\Services\Servers;
 
 use App\Enums\ServerState;
+use Filament\Notifications\Notification;
 use Webmozart\Assert\Assert;
 use App\Models\Server;
 use App\Repositories\Daemon\DaemonServerRepository;
@@ -26,7 +27,7 @@ class SuspensionService
      *
      * @throws \Throwable
      */
-    public function toggle(Server $server, string $action = self::ACTION_SUSPEND): void
+    public function toggle(Server $server, string $action = self::ACTION_SUSPEND)
     {
         Assert::oneOf($action, [self::ACTION_SUSPEND, self::ACTION_UNSUSPEND]);
 
@@ -35,11 +36,12 @@ class SuspensionService
         // suspended in the database. Additionally, nothing needs to happen if the server
         // is not suspended, and we try to un-suspend the instance.
         if ($isSuspending === $server->isSuspended()) {
-            return;
+            return Notification::make()->danger()->title('Failed!')->body('Server is already suspended!')->send();
         }
 
         // Check if the server is currently being transferred.
         if (!is_null($server->transfer)) {
+            Notification::make()->danger()->title('Failed!')->body('Server is currently being transferred.')->send();
             throw new ConflictHttpException('Cannot toggle suspension status on a server that is currently being transferred.');
         }
 

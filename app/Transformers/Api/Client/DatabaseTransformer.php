@@ -44,7 +44,7 @@ class DatabaseTransformer extends BaseClientTransformer
 
         return $this->item($database, function (Database $model) {
             return [
-                'password' => decrypt($model->password),
+                'password' => $model->password,
             ];
         }, 'database_password');
     }

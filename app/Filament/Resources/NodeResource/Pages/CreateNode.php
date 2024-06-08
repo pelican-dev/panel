@@ -329,7 +329,6 @@ class CreateNode extends CreateRecord
                                             true => 'primary',
                                             false => 'warning',
                                         ])
-                                        ->default(0)
                                         ->columnSpan(2),
                                     Forms\Components\TextInput::make('cpu')
                                         ->dehydratedWhenHidden()
@@ -338,6 +337,7 @@ class CreateNode extends CreateRecord
                                         ->suffix('%')
                                         ->columnSpan(2)
                                         ->numeric()
+                                        ->default(0)
                                         ->minValue(0),
                                     Forms\Components\TextInput::make('cpu_overallocate')
                                         ->dehydratedWhenHidden()

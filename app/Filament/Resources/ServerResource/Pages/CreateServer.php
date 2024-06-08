@@ -23,6 +23,8 @@ class CreateServer extends CreateRecord
     protected static string $resource = ServerResource::class;
     protected static bool $canCreateAnother = false;
 
+    public ?Node $node = null;
+
     public function form(Form $form): Form
     {
         return $form
@@ -77,13 +79,16 @@ class CreateServer extends CreateRecord
                 Forms\Components\Select::make('node_id')
                     ->disabledOn('edit')
                     ->prefixIcon('tabler-server-2')
-                    ->default(fn () => Node::query()->latest()->first()?->id)
+                    ->default(fn () => ($this->node = Node::query()->latest()->first())?->id)
                     ->columnSpan(2)
                     ->live()
                     ->relationship('node', 'name')
                     ->searchable()
                     ->preload()
-                    ->afterStateUpdated(fn (Forms\Set $set) => $set('allocation_id', null))
+                    ->afterStateUpdated(function (Forms\Set $set, $state) {
+                        $set('allocation_id', null);
+                        $this->node = Node::find($state);
+                    })
                     ->required(),
 
                 Forms\Components\Select::make('allocation_id')
@@ -366,19 +371,20 @@ class CreateServer extends CreateRecord
                                 $text = Forms\Components\TextInput::make('variable_value')
                                     ->hidden($this->shouldHideComponent(...))
                                     ->maxLength(191)
-                                    ->rules([
+                                    ->required(fn (Forms\Get $get) => in_array('required', explode('|', $get('rules'))))
+                                    ->rules(
                                         fn (Forms\Get $get): Closure => function (string $attribute, $value, Closure $fail) use ($get) {
                                             $validator = Validator::make(['validatorkey' => $value], [
                                                 'validatorkey' => $get('rules'),
                                             ]);
 
                                             if ($validator->fails()) {
-                                                $message = str($validator->errors()->first())->replace('validatorkey', $get('name'));
+                                                $message = str($validator->errors()->first())->replace('validatorkey', $get('name'))->toString();
 
                                                 $fail($message);
                                             }
                                         },
-                                    ]);
+                                    );
 
                                 $select = Forms\Components\Select::make('variable_value')
                                     ->hidden($this->shouldHideComponent(...))
@@ -687,7 +693,16 @@ class CreateServer extends CreateRecord
                                     ->label('Container Labels')
                                     ->keyLabel('Title')
                                     ->valueLabel('Description')
-                                    ->columnSpan(1),
+                                    ->columnSpan(3),
+
+                                Forms\Components\CheckboxList::make('mounts')
+                                    ->live()
+                                    ->relationship('mounts')
+                                    ->options(fn () => $this->node?->mounts->mapWithKeys(fn ($mount) => [$mount->id => $mount->name]) ?? [])
+                                    ->descriptions(fn () => $this->node?->mounts->mapWithKeys(fn ($mount) => [$mount->id => "$mount->source -> $mount->target"]) ?? [])
+                                    ->label('Mounts')
+                                    ->helperText(fn () => $this->node?->mounts->isNotEmpty() ? '' : 'No Mounts exist for this Node')
+                                    ->columnSpanFull(),
                             ]),
                     ]),
             ]);

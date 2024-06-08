@@ -27,23 +27,19 @@ class NodeUpdateService
      */
     public function handle(Node $node, array $data, bool $resetToken = false): Node
     {
+        $data['id'] = $node->id;
+
         if ($resetToken) {
-            $data['daemon_token'] = encrypt(Str::random(Node::DAEMON_TOKEN_LENGTH));
+            $data['daemon_token'] = Str::random(Node::DAEMON_TOKEN_LENGTH);
             $data['daemon_token_id'] = Str::random(Node::DAEMON_TOKEN_ID_LENGTH);
         }
 
         [$updated, $exception] = $this->connection->transaction(function () use ($data, $node) {
             /** @var \App\Models\Node $updated */
             $updated = $node->replicate();
+            $updated->exists = true;
             $updated->forceFill($data)->save();
             try {
-                // If we're changing the FQDN for the node, use the newly provided FQDN for the connection
-                // address. This should alleviate issues where the node gets pointed to a "valid" FQDN that
-                // isn't actually running the daemon software, and therefore you can't actually change it
-                // back.
-                //
-                // This makes more sense anyways, because only the Panel uses the FQDN for connecting, the
-                // node doesn't actually care about this.
                 $node->fqdn = $updated->fqdn;
 
                 $this->configurationRepository->setNode($node)->update($updated);
