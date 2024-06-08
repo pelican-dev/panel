@@ -24,7 +24,7 @@ class SettingResource extends Resource
     {
         return false;
     }
-
+    
     public static function form(Form $form): Form
     {
         return $form
@@ -63,7 +63,7 @@ class SettingResource extends Resource
                             default => [
                                 TextInput::make('value')
                                     ->label($record->label),
-                            ]
+                            ],
                         };
                     }),
             ]);

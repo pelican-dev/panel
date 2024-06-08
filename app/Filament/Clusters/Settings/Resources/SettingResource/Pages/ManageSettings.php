@@ -7,7 +7,6 @@ use Filament\Resources\Pages\ManageRecords;
 use Filament\Actions\Action;
 use Illuminate\Database\QueryException;
 use App\Models\Setting;
-use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Cache;
 
 class ManageSettings extends ManageRecords
@@ -28,16 +27,13 @@ class ManageSettings extends ManageRecords
     {
         try {
             $settings = Setting::pluck('value', 'key')->toArray();
-            \Log::info('Settings retrieved from database:', $settings);
         } catch (QueryException $exception) {
-            \Log::error('Error retrieving settings from the database: ' . $exception->getMessage());
-
             return;
         }
 
         foreach ($settings as $key => $value) {
-            Config::set($key, $value);
-            Cache::flush();
+            config()->set($key, $value);
+            Cache::put('key', 'value');
         }
     }
 }
