@@ -197,18 +197,6 @@ class CreateNode extends CreateRecord
                             'lg' => 4,
                         ])
                         ->schema([
-                            Forms\Components\ToggleButtons::make('public')
-                                ->label('Automatic Allocation')->inline()
-                                ->default(true)
-                                ->columnSpan(1)
-                                ->options([
-                                    true => 'Yes',
-                                    false => 'No',
-                                ])
-                                ->colors([
-                                    true => 'success',
-                                    false => 'danger',
-                                ]),
                             Forms\Components\ToggleButtons::make('maintenance_mode')
                                 ->label('Maintenance Mode')->inline()
                                 ->columnSpan(1)
@@ -240,7 +228,7 @@ class CreateNode extends CreateRecord
                                 ->placeholder('Not Implemented')
                                 ->hintIcon('tabler-question-mark')
                                 ->hintIconTooltip('Not Implemented')
-                                ->columnSpan(1),
+                                ->columnSpan(2),
 
                             Forms\Components\TextInput::make('upload_size')
                                 ->label('Upload Limit')
