@@ -17,8 +17,8 @@ class EggParserService
         'server.build.default.port' => 'server.allocations.default.port',
         'server.build.env.SERVER_MEMORY' => 'server.build.memory_limit',
         'server.build.memory' => 'server.build.memory_limit',
-        'server.build.env' => 'server.environment',
-        'server.build.environment' => 'server.environment',
+        'server.build.env.' => 'server.environment.',
+        'server.build.environment.' => 'server.environment.',
     ];
 
     /**
