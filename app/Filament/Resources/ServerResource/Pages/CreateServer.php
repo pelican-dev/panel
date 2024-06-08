@@ -371,19 +371,20 @@ class CreateServer extends CreateRecord
                                 $text = Forms\Components\TextInput::make('variable_value')
                                     ->hidden($this->shouldHideComponent(...))
                                     ->maxLength(191)
-                                    ->rules([
+                                    ->required(fn (Forms\Get $get) => in_array('required', explode('|', $get('rules'))))
+                                    ->rules(
                                         fn (Forms\Get $get): Closure => function (string $attribute, $value, Closure $fail) use ($get) {
                                             $validator = Validator::make(['validatorkey' => $value], [
                                                 'validatorkey' => $get('rules'),
                                             ]);
 
                                             if ($validator->fails()) {
-                                                $message = str($validator->errors()->first())->replace('validatorkey', $get('name'));
+                                                $message = str($validator->errors()->first())->replace('validatorkey', $get('name'))->toString();
 
                                                 $fail($message);
                                             }
                                         },
-                                    ]);
+                                    );
 
                                 $select = Forms\Components\Select::make('variable_value')
                                     ->hidden($this->shouldHideComponent(...))

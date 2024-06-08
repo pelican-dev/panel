@@ -27,6 +27,10 @@ return [
             'button_issues' => 'Create Issue',
             'button_features' => 'Discuss Features',
         ],
+        'intro-update' => [
+            'heading' => 'Update available',
+            'content' => ':latestVersion is available! Read our documentation to update your Panel.',
+        ],
         'intro-first-node' => [
             'heading' => 'No Nodes Detected',
             'content' => "It looks like you don't have any Nodes set up yet, but don't worry because you click the action button to create your first one!",

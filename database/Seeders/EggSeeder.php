@@ -75,10 +75,10 @@ class EggSeeder extends Seeder
                 ->first();
 
             if ($egg instanceof Egg) {
-                $this->updateImporterService->handle($egg, $file);
+                $this->updateImporterService->fromFile($egg, $file);
                 $this->command->info('Updated ' . $decoded['name']);
             } else {
-                $this->importerService->handle($file);
+                $this->importerService->fromFile($file);
                 $this->command->comment('Created ' . $decoded['name']);
             }
         }
