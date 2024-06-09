@@ -33,6 +33,41 @@ class CreateServer extends CreateRecord
                 'lg' => 6,
             ])
             ->schema([
+                Forms\Components\TextInput::make('name')
+                    ->prefixIcon('tabler-server')
+                    ->label('Display Name')
+                    ->placeholder('Display name for your new Server')
+                    ->suffixAction(Forms\Components\Actions\Action::make('random')
+                        ->icon('tabler-dice-' . random_int(1, 6))
+                        ->action(function (Forms\Set $set) {
+                            $prefix = $this->egg ? str($this->egg->name)->lower()->kebab() . '-' : '';
+
+                            $set('name', $prefix . (new RandomWordService())->word());
+                        }))
+                    ->columnSpan([
+                        'default' => 2,
+                        'sm' => 4,
+                        'md' => 2,
+                        'lg' => 3,
+                    ])
+                    ->required()
+                    ->maxLength(191),
+
+                Forms\Components\Select::make('owner_id')
+                    ->prefixIcon('tabler-user')
+                    ->default(auth()->user()->id)
+                    ->label('Owner')
+                    ->columnSpan([
+                        'default' => 2,
+                        'sm' => 4,
+                        'md' => 2,
+                        'lg' => 3,
+                    ])
+                    ->relationship('user', 'username')
+                    ->searchable()
+                    ->preload()
+                    ->required(),
+
                 Forms\Components\Select::make('egg_id')
                     ->disabledOn('edit')
                     ->prefixIcon('tabler-egg')
@@ -60,27 +95,6 @@ class CreateServer extends CreateRecord
                     })
                     ->required(),
 
-                Forms\Components\TextInput::make('name')
-                    ->prefixIcon('tabler-server')
-                    ->label('Display Name')
-                    ->suffixAction(Forms\Components\Actions\Action::make('random')
-                        ->icon('tabler-dice-' . random_int(1, 6))
-                        ->action(function (Forms\Set $set, Forms\Get $get) {
-                            $prefix = $this->egg ? str($this->egg->name)->lower()->kebab() . '-' : '';
-
-                            $word = (new RandomWordService())->word();
-
-                            $set('name', $prefix . $word);
-                        }))
-                    ->columnSpan([
-                        'default' => 2,
-                        'sm' => 4,
-                        'md' => 2,
-                        'lg' => 3,
-                    ])
-                    ->required()
-                    ->maxLength(191),
-
                 Forms\Components\Select::make('node_id')
                     ->disabledOn('edit')
                     ->prefixIcon('tabler-server-2')
@@ -91,21 +105,6 @@ class CreateServer extends CreateRecord
                     ->searchable()
                     ->preload()
                     ->afterStateUpdated(fn (Forms\Set $set) => $set('allocation_id', null))
-                    ->required(),
-
-                Forms\Components\Select::make('owner_id')
-                    ->prefixIcon('tabler-user')
-                    ->default(auth()->user()->id)
-                    ->label('Owner')
-                    ->columnSpan([
-                        'default' => 2,
-                        'sm' => 4,
-                        'md' => 2,
-                        'lg' => 3,
-                    ])
-                    ->relationship('user', 'username')
-                    ->searchable()
-                    ->preload()
                     ->required(),
 
                 Forms\Components\Textarea::make('description')
