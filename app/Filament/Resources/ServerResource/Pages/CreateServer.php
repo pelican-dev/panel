@@ -46,7 +46,7 @@ class CreateServer extends CreateRecord
                         ->schema([
                             Forms\Components\TextInput::make('name')
                                 ->prefixIcon('tabler-server')
-                                ->label('Server Name')
+                                ->label('Name')
                                 ->suffixAction(Forms\Components\Actions\Action::make('random')
                                     ->icon('tabler-dice-' . random_int(1, 6))
                                     ->action(function (Forms\Set $set, Forms\Get $get) {
@@ -80,21 +80,7 @@ class CreateServer extends CreateRecord
                                 ->searchable()
                                 ->preload()
                                 ->required(),
-                            Forms\Components\Textarea::make('description')
-                                ->label('Description')
-                                ->columnSpanFull(),
-                        ]),
-                    Wizard\Step::make('')
-                        ->label('Node & Allocations')
-                        ->icon('tabler-server-2')
-                        ->completedIcon('tabler-check')
-                        ->columns([
-                            'default' => 1,
-                            'sm' => 2,
-                            'md' => 2,
-                            'lg' => 4,
-                        ])
-                        ->schema([
+
                             Forms\Components\Select::make('node_id')
                                 ->disabledOn('edit')
                                 ->prefixIcon('tabler-server-2')
@@ -103,7 +89,7 @@ class CreateServer extends CreateRecord
                                     'default' => 1,
                                     'sm' => 2,
                                     'md' => 2,
-                                    'lg' => 4,
+                                    'lg' => 2,
                                 ])
                                 ->live()
                                 ->relationship('node', 'name')
@@ -114,6 +100,7 @@ class CreateServer extends CreateRecord
                                     $this->node = Node::find($state);
                                 })
                                 ->required(),
+
 
                             Forms\Components\Select::make('allocation_id')
                                 ->preload()
@@ -276,7 +263,18 @@ class CreateServer extends CreateRecord
                                                 ->whereNull('server_id'),
                                         ),
                                 ),
+
+                            Forms\Components\TextInput::make('description')
+                                ->placeholder('Description')
+                                ->columnSpan([
+                                    'default' => 1,
+                                    'sm' => 2,
+                                    'md' => 2,
+                                    'lg' => 6,
+                                ])
+                                ->label('Notes'),
                         ]),
+
                     Wizard\Step::make('Egg Configuration')
                         ->label('Egg Configuration')
                         ->icon('tabler-egg')
@@ -380,7 +378,6 @@ class CreateServer extends CreateRecord
                                 ->iconColor('primary')
                                 ->hidden(fn (Forms\Get $get) => $get('egg_id') === null)
                                 ->collapsible()
-                                ->collapsed()
                                 ->columnSpanFull()
                                 ->schema([
                                     Forms\Components\Placeholder::make('Select an egg first to show its variables!')
@@ -654,16 +651,19 @@ class CreateServer extends CreateRecord
                                 ])
                                 ->schema([
                                     Forms\Components\TextInput::make('allocation_limit')
+                                        ->label('Allocations')
                                         ->suffixIcon('tabler-network')
                                         ->required()
                                         ->numeric()
                                         ->default(0),
                                     Forms\Components\TextInput::make('database_limit')
+                                        ->label('Databases')
                                         ->suffixIcon('tabler-database')
                                         ->required()
                                         ->numeric()
                                         ->default(0),
                                     Forms\Components\TextInput::make('backup_limit')
+                                        ->label('Backups')
                                         ->suffixIcon('tabler-copy-check')
                                         ->required()
                                         ->numeric()
