@@ -20,6 +20,10 @@ return new class extends Migration
         Schema::table('servers', function (Blueprint $table) {
             $table->dropColumn(['allocation_id', 'allocation_limit']);
         });
+
+        Schema::table('nodes', function (Blueprint $table) {
+            $table->boolean('strict_ports')->default(true);
+        });
     }
 
     /**
@@ -27,6 +31,10 @@ return new class extends Migration
      */
     public function down(): void
     {
+        Schema::table('nodes', function (Blueprint $table) {
+            $table->dropColumn('strict_ports');
+        });
+
         Schema::create('allocations', function (Blueprint $table) {
             $table->id();
             $table->unsignedInteger('node_id');
