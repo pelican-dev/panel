@@ -351,7 +351,7 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
     {
         if ($panel->getId() === 'admin') {
             return $this->root_admin;
-        } elseif ($panel->getId() === 'client') {
+        } elseif ($panel->getId() === 'app') {
             return true;
         }
 
