@@ -19,17 +19,18 @@ class QueueWorkerServiceCommand extends Command
 
     public function handle(): void
     {
-        $serviceName = $this->option('service-name') ?? $this->ask('Service name', 'pelican-queue');
+        $serviceName = $this->option('service-name') ?? $this->ask('Queue worker service name', 'pelican-queue');
         $path = '/etc/systemd/system/' . $serviceName  . '.service';
 
-        if (file_exists($path) && !$this->option('overwrite') && !$this->confirm('The service file already exists. Do you want to overwrite it?')) {
-            $this->line('Creation of queue worker service file aborted.');
+        $fileExists = file_exists($path);
+        if ($fileExists && !$this->option('overwrite') && !$this->confirm('The service file already exists. Do you want to overwrite it?')) {
+            $this->line('Creation of queue worker service file aborted because serive file already exists.');
 
             return;
         }
 
-        $user = $this->option('user') ?? $this->ask('User', 'www-data');
-        $group = $this->option('group') ?? $this->ask('Group', 'www-data');
+        $user = $this->option('user') ?? $this->ask('Webserver User', 'www-data');
+        $group = $this->option('group') ?? $this->ask('Webserver Group', 'www-data');
 
         $afterRedis = $this->option('use-redis') ? '\nAfter=redis-server.service' : '';
 
@@ -45,7 +46,7 @@ Description=Pelican Queue Service$afterRedis
 User=$user
 Group=$group
 Restart=always
-ExecStart=/usr/bin/php $basePath/artisan queue:work --queue=high,standard,low --tries=3
+ExecStart=/usr/bin/php $basePath/artisan queue:work --tries=3
 StartLimitInterval=180
 StartLimitBurst=30
 RestartSec=5s
@@ -60,13 +61,24 @@ WantedBy=multi-user.target
             return;
         }
 
-        $result = Process::run("systemctl enable --now $serviceName.service");
-        if ($result->failed()) {
-            $this->error('Error enabling service: ' . $result->errorOutput());
+        if ($fileExists) {
+            $result = Process::run("systemctl restart $serviceName.service");
+            if ($result->failed()) {
+                $this->error('Error restarting service: ' . $result->errorOutput());
 
-            return;
+                return;
+            }
+
+            $this->line('Queue worker service file updated successfully.');
+        } else {
+            $result = Process::run("systemctl enable --now $serviceName.service");
+            if ($result->failed()) {
+                $this->error('Error enabling service: ' . $result->errorOutput());
+
+                return;
+            }
+
+            $this->line('Queue worker service file created successfully.');
         }
-
-        $this->line('Queue worker service file created successfully.');
     }
 }

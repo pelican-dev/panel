@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Enums\ServerState;
 use App\Exceptions\Http\Connection\DaemonConnectionException;
 use GuzzleHttp\Exception\GuzzleException;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Query\JoinClause;
 use Illuminate\Support\Facades\Http;
@@ -13,7 +14,6 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
-use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use App\Exceptions\Http\Server\ServerStateConflictException;
 
 class Server extends Model
@@ -224,12 +224,9 @@ class Server extends Model
         return $this->hasMany(Backup::class);
     }
 
-    /**
-     * Returns all mounts that have this server has mounted.
-     */
-    public function mounts(): HasManyThrough
+    public function mounts(): BelongsToMany
     {
-        return $this->hasManyThrough(Mount::class, MountServer::class, 'server_id', 'id', 'id', 'mount_id');
+        return $this->belongsToMany(Mount::class);
     }
 
     /**

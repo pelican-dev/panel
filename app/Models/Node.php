@@ -44,7 +44,7 @@ class Node extends Model
         'memory', 'memory_overallocate', 'disk',
         'disk_overallocate', 'cpu', 'cpu_overallocate',
         'upload_size', 'daemon_base',
-        'daemon_sftp', 'daemon_listen',
+        'daemon_sftp', 'daemon_sftp_alias', 'daemon_listen',
         'description', 'maintenance_mode',
     ];
 
@@ -63,6 +63,7 @@ class Node extends Model
         'cpu_overallocate' => 'required|numeric|min:-1',
         'daemon_base' => 'sometimes|required|regex:/^([\/][\d\w.\-\/]+)$/',
         'daemon_sftp' => 'required|numeric|between:1,65535',
+        'daemon_sftp_alias' => 'nullable|string',
         'daemon_listen' => 'required|numeric|between:1,65535',
         'maintenance_mode' => 'boolean',
         'upload_size' => 'int|between:1,1024',
@@ -102,6 +103,10 @@ class Node extends Model
             'tags' => 'array',
         ];
     }
+
+    public int $servers_sum_memory = 0;
+    public int $servers_sum_disk = 0;
+    public int $servers_sum_cpu = 0;
 
     public function getRouteKeyName(): string
     {

@@ -40,7 +40,7 @@ class ServerConfigurationStructureService
      */
     protected function returnFormat(Server $server): array
     {
-        return [
+        $response = [
             'uuid' => $server->uuid,
             'meta' => [
                 'name' => $server->name,
@@ -50,7 +50,6 @@ class ServerConfigurationStructureService
             'environment' => $this->environment->handle($server),
             'invocation' => $server->startup,
             'skip_egg_scripts' => $server->skip_scripts,
-            'labels' => $server->docker_labels,
             'build' => [
                 'memory_limit' => $server->memory,
                 'swap' => $server->swap,
@@ -72,17 +71,27 @@ class ServerConfigurationStructureService
                 ],
                 'mappings' => $server->getAllocationMappings(),
             ],
-            'mounts' => $server->mounts->map(function (Mount $mount) {
-                return [
-                    'source' => $mount->source,
-                    'target' => $mount->target,
-                    'read_only' => $mount->read_only,
-                ];
-            }),
             'egg' => [
                 'id' => $server->egg->uuid,
                 'file_denylist' => $server->egg->inherit_file_denylist,
             ],
         ];
+
+        if (!empty($server->docker_labels)) {
+            $response['labels'] = $server->docker_labels;
+        }
+
+        if ($server->mounts->isNotEmpty()) {
+            $response['mounts'] = $server->mounts->map(function (Mount $mount) {
+                return [
+                    'source' => $mount->source,
+                    'target' => $mount->target,
+                    'read_only' => $mount->read_only,
+                ];
+            })->toArray();
+        }
+
+        return $response;
     }
+
 }
