@@ -2,7 +2,7 @@
 
 namespace App\Filament\Admin\Resources\DatabaseHostResource\Pages;
 
-use App\Filament\Resources\DatabaseHostResource;
+use App\Filament\Admin\Resources\DatabaseHostResource;
 use App\Models\DatabaseHost;
 use Filament\Actions;
 use Filament\Resources\Pages\EditRecord;

@@ -2,7 +2,7 @@
 
 namespace App\Filament\Admin\Resources\ServerResource\Pages;
 
-use App\Filament\Resources\ServerResource;
+use App\Filament\Admin\Resources\ServerResource;
 use App\Http\Controllers\Admin\ServersController;
 use App\Services\Servers\RandomWordService;
 use App\Services\Servers\SuspensionService;

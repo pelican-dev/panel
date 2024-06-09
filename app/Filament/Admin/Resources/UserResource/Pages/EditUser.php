@@ -2,7 +2,7 @@
 
 namespace App\Filament\Admin\Resources\UserResource\Pages;
 
-use App\Filament\Resources\UserResource;
+use App\Filament\Admin\Resources\UserResource;
 use App\Services\Exceptions\FilamentExceptionHandler;
 use Filament\Actions;
 use Filament\Resources\Pages\EditRecord;

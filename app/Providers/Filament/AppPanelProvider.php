@@ -19,6 +19,7 @@ use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\AuthenticateSession;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
+use Filament\Navigation\NavigationItem;
 
 class AppPanelProvider extends PanelProvider
 {
@@ -46,6 +47,14 @@ class AppPanelProvider extends PanelProvider
             ->widgets([
                 Widgets\AccountWidget::class,
                 Widgets\FilamentInfoWidget::class,
+            ])
+            ->navigationItems([
+                NavigationItem::make('admin')
+                    ->label('Access Admin')
+                    ->url('/admin')
+                    ->icon('tabler-arrow-forward')
+                    ->sort(5)
+                    ->visible(fn (): bool => auth()->user()->root_admin),
             ])
             ->middleware([
                 EncryptCookies::class,
