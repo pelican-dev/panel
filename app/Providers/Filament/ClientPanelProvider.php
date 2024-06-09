@@ -49,10 +49,6 @@ class ClientPanelProvider extends PanelProvider
                     ->sort(5)
                     ->visible(fn (): bool => auth()->user()->root_admin),
             ])
-            ->renderHook(
-                'panels::sidebar.footer',
-                fn () => view('filament.footer'),
-            )
             ->discoverResources(in: app_path('Filament/Client/Resources'), for: 'App\\Filament\\Client\\Resources')
             ->discoverPages(in: app_path('Filament/Client/Pages'), for: 'App\\Filament\\Client\\Pages')
             ->discoverClusters(in: app_path('Filament/Client/Clusters'), for: 'App\\Filament\\Client\\Clusters')
