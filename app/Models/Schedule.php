@@ -4,10 +4,8 @@ namespace App\Models;
 
 use Cron\CronExpression;
 use Carbon\CarbonImmutable;
-use Illuminate\Container\Container;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use App\Contracts\Extensions\HashidsInterface;
 
 /**
  * @property int $id
@@ -25,7 +23,6 @@ use App\Contracts\Extensions\HashidsInterface;
  * @property \Carbon\Carbon|null $next_run_at
  * @property \Carbon\Carbon $created_at
  * @property \Carbon\Carbon $updated_at
- * @property string $hashid
  * @property \App\Models\Server $server
  * @property \App\Models\Task[]|\Illuminate\Support\Collection $tasks
  */
@@ -122,14 +119,6 @@ class Schedule extends Model
         return CarbonImmutable::createFromTimestamp(
             (new CronExpression($formatted))->getNextRunDate()->getTimestamp()
         );
-    }
-
-    /**
-     * Return a hashid encoded string to represent the ID of the schedule.
-     */
-    public function getHashidAttribute(): string
-    {
-        return Container::getInstance()->make(HashidsInterface::class)->encode($this->id);
     }
 
     /**

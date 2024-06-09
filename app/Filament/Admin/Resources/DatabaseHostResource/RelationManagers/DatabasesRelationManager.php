@@ -28,13 +28,13 @@ class DatabasesRelationManager extends RelationManager
                             ->requiresConfirmation()
                             ->action(fn (DatabasePasswordService $service, Database $database, $set, $get) => $this->rotatePassword($service, $database, $set, $get))
                     )
-                    ->formatStateUsing(fn (Database $database) => decrypt($database->password)),
+                    ->formatStateUsing(fn (Database $database) => $database->password),
                 Forms\Components\TextInput::make('remote')->label('Connections From'),
                 Forms\Components\TextInput::make('max_connections'),
                 Forms\Components\TextInput::make('JDBC')
                     ->label('JDBC Connection String')
                     ->columnSpanFull()
-                    ->formatStateUsing(fn (Forms\Get $get, Database $database) => 'jdbc:mysql://' . $get('username') . ':' . urlencode(decrypt($database->password)) . '@' . $database->host->host . ':' . $database->host->port . '/' . $get('database')),
+                    ->formatStateUsing(fn (Forms\Get $get, Database $database) => 'jdbc:mysql://' . $get('username') . ':' . urlencode($database->password) . '@' . $database->host->host . ':' . $database->host->port . '/' . $get('database')),
             ]);
     }
     public function table(Table $table): Table

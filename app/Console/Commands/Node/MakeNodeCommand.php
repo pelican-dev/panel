@@ -20,9 +20,12 @@ class MakeNodeCommand extends Command
                             {--overallocateMemory= : Enter the amount of ram to overallocate (% or -1 to overallocate the maximum).}
                             {--maxDisk= : Set the max disk amount.}
                             {--overallocateDisk= : Enter the amount of disk to overallocate (% or -1 to overallocate the maximum).}
+                            {--maxCpu= : Set the max cpu amount.}
+                            {--overallocateCpu= : Enter the amount of cpu to overallocate (% or -1 to overallocate the maximum).}
                             {--uploadSize= : Enter the maximum upload filesize.}
                             {--daemonListeningPort= : Enter the daemon listening port.}
                             {--daemonSFTPPort= : Enter the daemon SFTP listening port.}
+                            {--daemonSFTPAlias= : Enter the daemon SFTP alias.}
                             {--daemonBase= : Enter the base folder.}';
 
     protected $description = 'Creates a new node on the system via the CLI.';
@@ -58,9 +61,12 @@ class MakeNodeCommand extends Command
         $data['memory_overallocate'] = $this->option('overallocateMemory') ?? $this->ask(__('commands.make_node.memory_overallocate'));
         $data['disk'] = $this->option('maxDisk') ?? $this->ask(__('commands.make_node.disk'));
         $data['disk_overallocate'] = $this->option('overallocateDisk') ?? $this->ask(__('commands.make_node.disk_overallocate'));
+        $data['cpu'] = $this->option('maxCpu') ?? $this->ask(__('commands.make_node.cpu'));
+        $data['cpu_overallocate'] = $this->option('overallocateCpu') ?? $this->ask(__('commands.make_node.cpu_overallocate'));
         $data['upload_size'] = $this->option('uploadSize') ?? $this->ask(__('commands.make_node.upload_size'), '100');
         $data['daemon_listen'] = $this->option('daemonListeningPort') ?? $this->ask(__('commands.make_node.daemonListen'), '8080');
         $data['daemon_sftp'] = $this->option('daemonSFTPPort') ?? $this->ask(__('commands.make_node.daemonSFTP'), '2022');
+        $data['daemon_sftp_alias'] = $this->option('daemonSFTPAlias') ?? $this->ask(__('commands.make_node.daemonSFTPAlias'), '');
         $data['daemon_base'] = $this->option('daemonBase') ?? $this->ask(__('commands.make_node.daemonBase'), '/var/lib/pelican/volumes');
 
         $node = $this->creationService->handle($data);

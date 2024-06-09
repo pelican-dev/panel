@@ -40,6 +40,10 @@ class AllocationsRelationManager extends RelationManager
             ->checkIfRecordIsSelectableUsing(fn (Allocation $allocation) => $allocation->server_id === null)
             ->searchable()
             ->columns([
+                Tables\Columns\TextColumn::make('id'),
+                Tables\Columns\TextColumn::make('port')
+                    ->searchable()
+                    ->label('Port'),
                 Tables\Columns\TextColumn::make('server.name')
                     ->label('Server')
                     ->icon('tabler-brand-docker')
@@ -51,9 +55,6 @@ class AllocationsRelationManager extends RelationManager
                 Tables\Columns\TextInputColumn::make('ip')
                     ->searchable()
                     ->label('IP'),
-                Tables\Columns\TextColumn::make('port')
-                    ->searchable()
-                    ->label('Port'),
             ])
             ->filters([
                 //
@@ -112,7 +113,7 @@ class AllocationsRelationManager extends RelationManager
 
                                     $start = max((int) $start, 0);
                                     $end = min((int) $end, 2 ** 16 - 1);
-                                    for ($i = $start; $i <= $end; $i++) {
+                                    foreach (range($start, $end) as $i) {
                                         $ports->push($i);
                                     }
                                 }

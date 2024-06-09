@@ -7,6 +7,7 @@ use App\Models\Egg;
 use App\Models\Node;
 use App\Models\Server;
 use App\Models\User;
+use App\Services\Helpers\SoftwareVersionService;
 use Filament\Actions\CreateAction;
 use Filament\Pages\Page;
 
@@ -29,8 +30,14 @@ class Dashboard extends Page
 
     public function getViewData(): array
     {
+        /** @var SoftwareVersionService $softwareVersionService */
+        $softwareVersionService = app(SoftwareVersionService::class);
+
         return [
             'inDevelopment' => config('app.version') === 'canary',
+            'version' => $softwareVersionService->versionData()['version'],
+            'latestVersion' => $softwareVersionService->getPanel(),
+            'isLatest' => $softwareVersionService->isLatestPanel(),
             'eggsCount' => Egg::query()->count(),
             'nodesList' => ListNodes::getUrl(),
             'nodesCount' => Node::query()->count(),
@@ -39,14 +46,16 @@ class Dashboard extends Page
 
             'devActions' => [
                 CreateAction::make()
-                    ->label(trans('dashboard/index.sections.intro-developers.button_issues'))
-                    ->icon('tabler-brand-github')
-                    ->url('https://github.com/pelican-dev/panel/issues/new/choose', true)
-                    ->color('warning'),
-                CreateAction::make()
-                    ->label(trans('dashboard/index.sections.intro-developers.button_features'))
+                    ->label('Bugs & Features')
                     ->icon('tabler-brand-github')
                     ->url('https://github.com/pelican-dev/panel/discussions', true),
+            ],
+            'updateActions' => [
+                CreateAction::make()
+                    ->label('Read Documentation')
+                    ->icon('tabler-clipboard-text')
+                    ->url('https://pelican.dev/docs/panel/update', true)
+                    ->color('warning'),
             ],
             'nodeActions' => [
                 CreateAction::make()
@@ -56,13 +65,9 @@ class Dashboard extends Page
             ],
             'supportActions' => [
                 CreateAction::make()
-                    ->label(trans('dashboard/index.sections.intro-support.button_translate'))
-                    ->icon('tabler-language')
-                    ->url('https://crowdin.com/project/pelican-dev', true),
-                CreateAction::make()
                     ->label(trans('dashboard/index.sections.intro-support.button_donate'))
                     ->icon('tabler-cash')
-                    ->url('https://pelican.dev/donate', true)
+                    ->url($softwareVersionService->getDonations(), true)
                     ->color('success'),
             ],
             'helpActions' => [
@@ -70,11 +75,6 @@ class Dashboard extends Page
                     ->label(trans('dashboard/index.sections.intro-help.button_docs'))
                     ->icon('tabler-speedboat')
                     ->url('https://pelican.dev/docs', true),
-                CreateAction::make()
-                    ->label(trans('dashboard/index.sections.intro-help.button_discord'))
-                    ->icon('tabler-brand-discord')
-                    ->url('https://discord.gg/pelican-panel', true)
-                    ->color('blurple'),
             ],
         ];
     }

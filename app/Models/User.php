@@ -171,6 +171,7 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
             'use_totp' => 'boolean',
             'gravatar' => 'boolean',
             'totp_authenticated_at' => 'datetime',
+            'totp_secret' => 'encrypted',
         ];
     }
 

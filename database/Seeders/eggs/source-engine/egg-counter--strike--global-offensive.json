@@ -4,9 +4,10 @@
         "version": "PTDL_v2",
         "update_url": null
     },
-    "exported_at": "2024-05-08T12:03:19+02:00",
+    "exported_at": "2024-06-02T20:42:04+00:00",
     "name": "Counter-Strike: Global Offensive",
     "author": "panel@example.com",
+    "uuid": "437c367d-06be-498f-a604-fdad135504d7",
     "description": "Counter-Strike: Global Offensive is a multiplayer first-person shooter video game developed by Hidden Path Entertainment and Valve Corporation.",
     "features": [
         "gsl_token",
@@ -39,6 +40,7 @@
             "user_viewable": true,
             "user_editable": true,
             "rules": "required|string|alpha_dash",
+            "sort": null,
             "field_type": "text"
         },
         {
@@ -49,6 +51,7 @@
             "user_viewable": true,
             "user_editable": true,
             "rules": "required|string|alpha_num|size:32",
+            "sort": null,
             "field_type": "text"
         },
         {
@@ -59,6 +62,7 @@
             "user_viewable": false,
             "user_editable": false,
             "rules": "required|string|max:20",
+            "sort": null,
             "field_type": "text"
         }
     ]

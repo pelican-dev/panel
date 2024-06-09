@@ -19,30 +19,16 @@ class CreateApiKey extends CreateRecord
         return $form
             ->schema([
                 Forms\Components\Hidden::make('identifier')->default(ApiKey::generateTokenIdentifier(ApiKey::TYPE_APPLICATION)),
-                Forms\Components\Hidden::make('token')->default(encrypt(str_random(ApiKey::KEY_LENGTH))),
+                Forms\Components\Hidden::make('token')->default(str_random(ApiKey::KEY_LENGTH)),
 
                 Forms\Components\Hidden::make('user_id')
                     ->default(auth()->user()->id)
                     ->required(),
 
-                Forms\Components\Select::make('key_type')
+                Forms\Components\Hidden::make('key_type')
                     ->inlineLabel()
-                    ->options(function (ApiKey $apiKey) {
-                        $originalOptions = [
-                            //ApiKey::TYPE_NONE => 'None',
-                            ApiKey::TYPE_ACCOUNT => 'Account',
-                            ApiKey::TYPE_APPLICATION => 'Application',
-                            //ApiKey::TYPE_DAEMON_USER => 'Daemon User',
-                            //ApiKey::TYPE_DAEMON_APPLICATION => 'Daemon Application',
-                        ];
-
-                        return collect($originalOptions)
-                            ->filter(fn ($value, $key) => $key <= ApiKey::TYPE_APPLICATION || $apiKey->key_type === $key)
-                            ->all();
-                    })
-                    ->selectablePlaceholder(false)
-                    ->required()
-                    ->default(ApiKey::TYPE_APPLICATION),
+                    ->default(ApiKey::TYPE_APPLICATION)
+                    ->required(),
 
                 Forms\Components\Fieldset::make('Permissions')
                     ->columns([

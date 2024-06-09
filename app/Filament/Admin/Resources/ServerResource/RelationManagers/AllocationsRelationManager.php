@@ -27,13 +27,15 @@ class AllocationsRelationManager extends RelationManager
     {
         return $table
             ->recordTitleAttribute('ip')
+            ->recordTitle(fn (Allocation $allocation) => "$allocation->ip:$allocation->port")
             ->checkIfRecordIsSelectableUsing(fn (Allocation $record) => $record->id !== $this->getOwnerRecord()->allocation_id)
             // ->actions
             // ->groups
+            ->inverseRelationship('server')
             ->columns([
-                Tables\Columns\TextInputColumn::make('ip_alias')->label('Alias'),
                 Tables\Columns\TextColumn::make('ip')->label('IP'),
                 Tables\Columns\TextColumn::make('port')->label('Port'),
+                Tables\Columns\TextInputColumn::make('ip_alias')->label('Alias'),
                 Tables\Columns\IconColumn::make('primary')
                     ->icon(fn ($state) => match ($state) {
                         false => 'tabler-star',
@@ -57,7 +59,11 @@ class AllocationsRelationManager extends RelationManager
             ])
             ->headerActions([
                 //TODO Tables\Actions\CreateAction::make()->label('Create Allocation'),
-                //TODO Tables\Actions\AssociateAction::make()->label('Add Allocation'),
+                Tables\Actions\AssociateAction::make()
+                    ->multiple()
+                    ->preloadRecordSelect()
+                    ->recordSelectOptionsQuery(fn ($query) => $query->whereBelongsTo($this->getOwnerRecord()->node))
+                    ->label('Add Allocation'),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([

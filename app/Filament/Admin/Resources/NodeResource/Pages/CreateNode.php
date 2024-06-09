@@ -311,6 +311,47 @@ class CreateNode extends CreateRecord
                                         ->default(0)
                                         ->suffix('%'),
                                 ]),
+                            Forms\Components\Grid::make()
+                                ->columns(6)
+                                ->columnSpanFull()
+                                ->schema([
+                                    Forms\Components\ToggleButtons::make('unlimited_cpu')
+                                        ->label('CPU')->inlineLabel()->inline()
+                                        ->live()
+                                        ->afterStateUpdated(fn (Forms\Set $set) => $set('cpu', 0))
+                                        ->afterStateUpdated(fn (Forms\Set $set) => $set('cpu_overallocate', 0))
+                                        ->formatStateUsing(fn (Forms\Get $get) => $get('cpu') == 0)
+                                        ->options([
+                                            true => 'Unlimited',
+                                            false => 'Limited',
+                                        ])
+                                        ->colors([
+                                            true => 'primary',
+                                            false => 'warning',
+                                        ])
+                                        ->columnSpan(2),
+                                    Forms\Components\TextInput::make('cpu')
+                                        ->dehydratedWhenHidden()
+                                        ->hidden(fn (Forms\Get $get) => $get('unlimited_cpu'))
+                                        ->label('CPU Limit')->inlineLabel()
+                                        ->suffix('%')
+                                        ->columnSpan(2)
+                                        ->numeric()
+                                        ->default(0)
+                                        ->minValue(0),
+                                    Forms\Components\TextInput::make('cpu_overallocate')
+                                        ->dehydratedWhenHidden()
+                                        ->hidden(fn (Forms\Get $get) => $get('unlimited_cpu'))
+                                        ->label('Overallocate')->inlineLabel()
+                                        ->hintIcon('tabler-question-mark')
+                                        ->hintIconTooltip('The % allowable to go over the set limit.')
+                                        ->columnSpan(2)
+                                        ->numeric()
+                                        ->default(0)
+                                        ->minValue(-1)
+                                        ->maxValue(100)
+                                        ->suffix('%'),
+                                ]),
                         ]),
                 ]),
         ]);

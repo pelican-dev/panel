@@ -6,9 +6,11 @@ use App\Filament\Admin\Resources\NodeResource;
 use App\Filament\Admin\Resources\NodeResource\Widgets\NodeMemoryChart;
 use App\Filament\Admin\Resources\NodeResource\Widgets\NodeStorageChart;
 use App\Models\Node;
+use App\Services\Nodes\NodeUpdateService;
 use Filament\Actions;
 use Filament\Forms;
 use Filament\Forms\Components\Tabs;
+use Filament\Notifications\Notification;
 use Filament\Resources\Pages\EditRecord;
 use Illuminate\Support\HtmlString;
 use Webbingbrasil\FilamentCopyActions\Forms\Actions\CopyAction;
@@ -214,6 +216,18 @@ class EditNode extends EditRecord
                                 ->minValue(1)
                                 ->maxValue(1024)
                                 ->suffix('MiB'),
+                            Forms\Components\TextInput::make('daemon_sftp')
+                                ->columnSpan(['default' => 1, 'sm' => 1, 'md' => 1, 'lg' => 3])
+                                ->label('SFTP Port')
+                                ->minValue(0)
+                                ->maxValue(65536)
+                                ->default(2022)
+                                ->required()
+                                ->integer(),
+                            Forms\Components\TextInput::make('daemon_sftp_alias')
+                                ->columnSpan(['default' => 1, 'sm' => 1, 'md' => 1, 'lg' => 3])
+                                ->label('SFTP Alias')
+                                ->helperText('Display alias for the SFTP address. Leave empty to use the Node FQDN.'),
                             Forms\Components\ToggleButtons::make('public')
                                 ->columnSpan(['default' => 1, 'sm' => 1, 'md' => 1, 'lg' => 3])
                                 ->label('Automatic Allocation')->inline()
@@ -319,6 +333,47 @@ class EditNode extends EditRecord
                                         ->maxValue(100)
                                         ->suffix('%'),
                                 ]),
+                            Forms\Components\Grid::make()
+                                ->columns(6)
+                                ->columnSpanFull()
+                                ->schema([
+                                    Forms\Components\ToggleButtons::make('unlimited_cpu')
+                                        ->label('CPU')->inlineLabel()->inline()
+                                        ->live()
+                                        ->afterStateUpdated(fn (Forms\Set $set) => $set('cpu', 0))
+                                        ->afterStateUpdated(fn (Forms\Set $set) => $set('cpu_overallocate', 0))
+                                        ->formatStateUsing(fn (Forms\Get $get) => $get('cpu') == 0)
+                                        ->options([
+                                            true => 'Unlimited',
+                                            false => 'Limited',
+                                        ])
+                                        ->colors([
+                                            true => 'primary',
+                                            false => 'warning',
+                                        ])
+                                        ->columnSpan(2),
+                                    Forms\Components\TextInput::make('cpu')
+                                        ->dehydratedWhenHidden()
+                                        ->hidden(fn (Forms\Get $get) => $get('unlimited_cpu'))
+                                        ->label('CPU Limit')->inlineLabel()
+                                        ->suffix('%')
+                                        ->required()
+                                        ->columnSpan(2)
+                                        ->numeric()
+                                        ->minValue(0),
+                                    Forms\Components\TextInput::make('cpu_overallocate')
+                                        ->dehydratedWhenHidden()
+                                        ->hidden(fn (Forms\Get $get) => $get('unlimited_cpu'))
+                                        ->label('Overallocate')->inlineLabel()
+                                        ->hintIcon('tabler-question-mark')
+                                        ->hintIconTooltip('The % allowable to go over the set limit.')
+                                        ->columnSpan(2)
+                                        ->required()
+                                        ->numeric()
+                                        ->minValue(-1)
+                                        ->maxValue(100)
+                                        ->suffix('%'),
+                                ]),
                         ]),
                     Tabs\Tab::make('Configuration File')
                         ->icon('tabler-code')
@@ -334,6 +389,18 @@ class EditNode extends EditRecord
                                 ->rows(19)
                                 ->hintAction(CopyAction::make())
                                 ->columnSpanFull(),
+                            Forms\Components\Actions::make([
+                                Forms\Components\Actions\Action::make('resetKey')
+                                    ->label('Reset Daemon Token')
+                                    ->color('danger')
+                                    ->requiresConfirmation()
+                                    ->modalHeading('Reset Daemon Token?')
+                                    ->modalDescription('Resetting the daemon token will void any request coming from the old token. This token is used for all sensitive operations on the daemon including server creation and deletion. We suggest changing this token regularly for security.')
+                                    ->action(fn (NodeUpdateService $nodeUpdateService, Node $node) => $nodeUpdateService->handle($node, [], true)
+                                        && Notification::make()->success()->title('Daemon Key Reset')->send()
+                                        && $this->fillForm()
+                                    ),
+                            ]),
                         ]),
                 ]),
         ]);
