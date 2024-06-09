@@ -8,7 +8,10 @@ use App\Facades\Activity;
 use Filament\Models\Contracts\FilamentUser;
 use Filament\Models\Contracts\HasAvatar;
 use Filament\Models\Contracts\HasName;
+use Filament\Models\Contracts\HasTenants;
 use Filament\Panel;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rules\In;
 use Illuminate\Auth\Authenticatable;
@@ -84,7 +87,7 @@ use App\Notifications\SendPasswordReset as ResetPasswordNotification;
  *
  * @mixin \Eloquent
  */
-class User extends Model implements AuthenticatableContract, AuthorizableContract, CanResetPasswordContract, FilamentUser, HasAvatar, HasName
+class User extends Model implements AuthenticatableContract, AuthorizableContract, CanResetPasswordContract, FilamentUser, HasAvatar, HasName, HasTenants
 {
     use Authenticatable;
     use Authorizable {can as protected canned; }
@@ -362,5 +365,22 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
     public function getFilamentAvatarUrl(): ?string
     {
         return 'https://gravatar.com/avatar/' . md5(strtolower($this->email));
+    }
+
+    public function getTenants(Panel $panel): array|Collection
+    {
+        return $this->servers;
+    }
+
+    public function subServers(): BelongsToMany
+    {
+        return $this->belongsToMany(Server::class, 'subusers');
+    }
+
+    public function canAccessTenant(\Illuminate\Database\Eloquent\Model $tenant): bool
+    {
+        return true;
+
+        return $this->servers()->whereKey($tenant)->exists();
     }
 }
