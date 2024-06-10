@@ -29,13 +29,13 @@ class ListEggs extends ListRecords
                 Tables\Columns\TextColumn::make('id')
                     ->label('Id')
                     ->searchable()
-					->sortable(),
+                    ->sortable(),
                 Tables\Columns\TextColumn::make('name')
                     ->icon('tabler-egg')
                     ->description(fn ($record): ?string => (strlen($record->description) > 120) ? substr($record->description, 0, 120).'...' : $record->description)
                     ->wrap()
                     ->searchable()
-					->sortable(),
+                    ->sortable(),
                 Tables\Columns\TextColumn::make('servers_count')
                     ->counts('servers')
                     ->icon('tabler-server')
