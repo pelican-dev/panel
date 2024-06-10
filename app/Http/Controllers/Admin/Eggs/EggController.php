@@ -103,7 +103,7 @@ class EggController extends Controller
         throw_unless($copiedFromEgg, new NoParentConfigurationFoundException(trans('exceptions.egg.invalid_copy_id')));
 
         $egg->update($data);
-        
+
         $this->alert->success(trans('admin/eggs.notices.updated'))->flash();
 
         return redirect()->route('admin.eggs.view', $egg->id);

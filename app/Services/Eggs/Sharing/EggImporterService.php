@@ -9,7 +9,6 @@ use App\Models\Egg;
 use Illuminate\Http\UploadedFile;
 use App\Models\EggVariable;
 use Illuminate\Database\ConnectionInterface;
-use App\Services\Eggs\EggParserService;
 use Illuminate\Support\Collection;
 use Spatie\TemporaryDirectory\TemporaryDirectory;
 
