@@ -98,6 +98,13 @@ class ApiKey extends Model
     ];
 
     /**
+     * Default attributes when creating a new model.
+     */
+    protected $attributes = [
+        'permissions' => '[]',
+    ];
+
+    /**
      * Fields that should not be included when calling toArray() or toJson()
      * on this model.
      */
