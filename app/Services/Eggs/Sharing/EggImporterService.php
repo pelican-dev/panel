@@ -9,6 +9,7 @@ use Illuminate\Http\UploadedFile;
 use App\Models\EggVariable;
 use Illuminate\Database\ConnectionInterface;
 use App\Services\Eggs\EggParserService;
+use Illuminate\Support\Collection;
 use Spatie\TemporaryDirectory\TemporaryDirectory;
 
 class EggImporterService
@@ -22,13 +23,13 @@ class EggImporterService
      *
      * @throws \App\Exceptions\Service\InvalidFileUploadException|\Throwable
      */
-    public function fromFile(UploadedFile $file): Egg
+    public function fromFile(UploadedFile $file, Egg $egg = null): Egg
     {
         $parsed = $this->parser->handle($file);
 
-        return $this->connection->transaction(function () use ($parsed) {
+        return $this->connection->transaction(function () use ($egg, $parsed) {
             $uuid = $parsed['uuid'] ?? Uuid::uuid4()->toString();
-            $egg = Egg::where('uuid', $uuid)->first() ?? new Egg();
+            $egg = $egg ?? Egg::where('uuid', $uuid)->first() ?? new Egg();
 
             $egg = $egg->forceFill([
                 'uuid' => $uuid,
@@ -39,20 +40,29 @@ class EggImporterService
             $egg = $this->parser->fillFromParsed($egg, $parsed);
             $egg->save();
 
+            // Update existing variables or create new ones.
             foreach ($parsed['variables'] ?? [] as $variable) {
-                EggVariable::query()->forceCreate(array_merge($variable, ['egg_id' => $egg->id]));
+                EggVariable::unguarded(function () use ($egg, $variable) {
+                    $egg->variables()->updateOrCreate([
+                        'env_variable' => $variable['env_variable'],
+                    ], Collection::make($variable)->except(['egg_id', 'env_variable'])->toArray());
+                });
             }
 
-            return $egg;
+            $imported = array_map(fn ($value) => $value['env_variable'], $parsed['variables'] ?? []);
+
+            $egg->variables()->whereNotIn('env_variable', $imported)->delete();
+
+            return $egg->refresh();
         });
     }
 
     /**
-     * Take an url and parse it into a new egg.
+     * Take an url and parse it into a new egg or update an existing one.
      *
      * @throws \App\Exceptions\Service\InvalidFileUploadException|\Throwable
      */
-    public function fromUrl(string $url): Egg
+    public function fromUrl(string $url, Egg $egg = null): Egg
     {
         $info = pathinfo($url);
         $tmpDir = TemporaryDirectory::make()->deleteWhenDestroyed();
@@ -60,6 +70,6 @@ class EggImporterService
 
         file_put_contents($tmpPath, file_get_contents($url));
 
-        return $this->fromFile(new UploadedFile($tmpPath, $info['basename'], 'application/json'));
+        return $this->fromFile(new UploadedFile($tmpPath, $info['basename'], 'application/json'), $egg);
     }
 }

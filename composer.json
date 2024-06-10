@@ -83,7 +83,8 @@
     "config": {
         "optimize-autoloader": true,
         "preferred-install": "dist",
-        "sort-packages": true
+        "sort-packages": true,
+        "disable-tls": false
     },
     "minimum-stability": "stable",
     "prefer-stable": true

@@ -10,7 +10,6 @@ use Symfony\Component\HttpFoundation\Response;
 use App\Services\Eggs\Sharing\EggExporterService;
 use App\Services\Eggs\Sharing\EggImporterService;
 use App\Http\Requests\Admin\Egg\EggImportFormRequest;
-use App\Services\Eggs\Sharing\EggUpdateImporterService;
 
 class EggShareController extends Controller
 {
@@ -21,7 +20,6 @@ class EggShareController extends Controller
         protected AlertsMessageBag $alert,
         protected EggExporterService $exporterService,
         protected EggImporterService $importerService,
-        protected EggUpdateImporterService $updateImporterService
     ) {
     }
 
@@ -61,7 +59,7 @@ class EggShareController extends Controller
      */
     public function update(EggImportFormRequest $request, Egg $egg): RedirectResponse
     {
-        $this->updateImporterService->fromFile($egg, $request->file('import_file'));
+        $this->importerService->fromFile($request->file('import_file'), $egg);
         $this->alert->success(trans('admin/eggs.notices.updated_via_import'))->flash();
 
         return redirect()->route('admin.eggs.view', ['egg' => $egg]);
