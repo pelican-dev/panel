@@ -100,8 +100,6 @@ class CreateApiKey extends CreateRecord
 
         $data['permissions'] = $permissions;
 
-        logger()->info('new api key', $data);
-
         return parent::handleRecordCreation($data);
     }
 }
