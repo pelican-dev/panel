@@ -8,7 +8,7 @@ use App\Http\Requests\Api\Application\ApplicationApiRequest;
 
 class StoreNodeRequest extends ApplicationApiRequest
 {
-    protected ?string $resource = AdminAcl::RESOURCE_NODES;
+    protected ?string $resource = Node::RESOURCE_NAME;
 
     protected int $permission = AdminAcl::WRITE;
 

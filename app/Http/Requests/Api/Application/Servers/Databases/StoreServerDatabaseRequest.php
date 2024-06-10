@@ -9,10 +9,11 @@ use Illuminate\Database\Query\Builder;
 use App\Services\Acl\Api\AdminAcl;
 use App\Services\Databases\DatabaseManagementService;
 use App\Http\Requests\Api\Application\ApplicationApiRequest;
+use App\Models\Database;
 
 class StoreServerDatabaseRequest extends ApplicationApiRequest
 {
-    protected ?string $resource = AdminAcl::RESOURCE_SERVER_DATABASES;
+    protected ?string $resource = Database::RESOURCE_NAME;
 
     protected int $permission = AdminAcl::WRITE;
 
