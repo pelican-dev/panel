@@ -7,6 +7,7 @@ use App\Models\ApiKey;
 use Filament\Forms\Form;
 use Filament\Resources\Pages\CreateRecord;
 use Filament\Forms;
+use Illuminate\Database\Eloquent\Model;
 
 class CreateApiKey extends CreateRecord
 {
@@ -37,7 +38,7 @@ class CreateApiKey extends CreateRecord
                         'md' => 2,
                     ])
                     ->schema(
-                        collect(ApiKey::RESOURCES)->map(fn ($resource) => Forms\Components\ToggleButtons::make("r_$resource")
+                        collect(ApiKey::getPermissionList())->map(fn ($resource) => Forms\Components\ToggleButtons::make('permissions_' . $resource)
                             ->label(str($resource)->replace('_', ' ')->title())->inline()
                             ->options([
                                 0 => 'None',
@@ -84,5 +85,23 @@ class CreateApiKey extends CreateRecord
                     ')
                     ->columnSpanFull(),
             ]);
+    }
+
+    protected function handleRecordCreation(array $data): Model
+    {
+        $permissions = [];
+
+        foreach (ApiKey::getPermissionList() as $permission) {
+            if (isset($data['permissions_' . $permission])) {
+                $permissions[$permission] = intval($data['permissions_' . $permission]);
+                unset($data['permissions_' . $permission]);
+            }
+        }
+
+        $data['permissions'] = $permissions;
+
+        logger()->info('new api key', $data);
+
+        return parent::handleRecordCreation($data);
     }
 }
