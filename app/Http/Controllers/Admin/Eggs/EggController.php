@@ -2,15 +2,15 @@
 
 namespace App\Http\Controllers\Admin\Eggs;
 
+use App\Exceptions\Service\Egg\NoParentConfigurationFoundException;
 use Illuminate\View\View;
 use App\Models\Egg;
 use Illuminate\Http\RedirectResponse;
 use Prologue\Alerts\AlertsMessageBag;
 use Illuminate\View\Factory as ViewFactory;
 use App\Http\Controllers\Controller;
-use App\Services\Eggs\EggUpdateService;
-use App\Services\Eggs\EggCreationService;
 use App\Http\Requests\Admin\Egg\EggFormRequest;
+use Ramsey\Uuid\Uuid;
 
 class EggController extends Controller
 {
@@ -19,8 +19,6 @@ class EggController extends Controller
      */
     public function __construct(
         protected AlertsMessageBag $alert,
-        protected EggCreationService $creationService,
-        protected EggUpdateService $updateService,
         protected ViewFactory $view
     ) {
     }
@@ -58,7 +56,16 @@ class EggController extends Controller
         $data['docker_images'] = $this->normalizeDockerImages($data['docker_images'] ?? null);
         $data['author'] = $request->user()->email;
 
-        $egg = $this->creationService->handle($data);
+        $data['config_from'] = array_get($data, 'config_from');
+        if (!is_null($data['config_from'])) {
+            $parentEgg = Egg::query()->find(array_get($data, 'config_from'));
+            throw_unless($parentEgg, new NoParentConfigurationFoundException(trans('exceptions.egg.invalid_copy_id')));
+        }
+
+        $egg = Egg::query()->create(array_merge($data, [
+            'uuid' => Uuid::uuid4()->toString(),
+        ]));
+
         $this->alert->success(trans('admin/eggs.notices.egg_created'))->flash();
 
         return redirect()->route('admin.eggs.view', $egg->id);
@@ -90,7 +97,13 @@ class EggController extends Controller
         $data = $request->validated();
         $data['docker_images'] = $this->normalizeDockerImages($data['docker_images'] ?? null);
 
-        $this->updateService->handle($egg, $data);
+        $eggId = array_get($data, 'config_from');
+        $copiedFromEgg = Egg::query()->find($eggId);
+
+        throw_unless($copiedFromEgg, new NoParentConfigurationFoundException(trans('exceptions.egg.invalid_copy_id')));
+
+        $egg->update($data);
+        
         $this->alert->success(trans('admin/eggs.notices.updated'))->flash();
 
         return redirect()->route('admin.eggs.view', $egg->id);
