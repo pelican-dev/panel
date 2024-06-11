@@ -10,6 +10,17 @@ use App\Exceptions\Service\InvalidFileUploadException;
 
 class EggParserService
 {
+    public const UPGRADE_VARIABLES = [
+        'server.build.env.SERVER_IP' => 'server.allocations.default.ip',
+        'server.build.default.ip' => 'server.allocations.default.ip',
+        'server.build.env.SERVER_PORT' => 'server.allocations.default.port',
+        'server.build.default.port' => 'server.allocations.default.port',
+        'server.build.env.SERVER_MEMORY' => 'server.build.memory_limit',
+        'server.build.memory' => 'server.build.memory_limit',
+        'server.build.env.' => 'server.environment.',
+        'server.build.environment.' => 'server.environment.',
+    ];
+
     /**
      * Takes an uploaded file and parses out the egg configuration from within.
      *
@@ -26,11 +37,20 @@ class EggParserService
 
         $version = $parsed['meta']['version'] ?? '';
 
-        return match ($version) {
+        $parsed = match ($version) {
             'PTDL_v1' => $this->convertToV2($parsed),
             'PTDL_v2' => $parsed,
             default => throw new InvalidFileUploadException('The JSON file provided is not in a format that can be recognized.')
         };
+
+        // Make sure we only use recent variable format from now on
+        $parsed['config']['files'] = str_replace(
+            array_keys(self::UPGRADE_VARIABLES),
+            array_values(self::UPGRADE_VARIABLES),
+            $parsed['config']['files'] ?? '',
+        );
+
+        return $parsed;
     }
 
     /**

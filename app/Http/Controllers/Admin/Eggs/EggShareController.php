@@ -46,7 +46,7 @@ class EggShareController extends Controller
      */
     public function import(EggImportFormRequest $request): RedirectResponse
     {
-        $egg = $this->importerService->handle($request->file('import_file'));
+        $egg = $this->importerService->fromFile($request->file('import_file'));
         $this->alert->success(trans('admin/eggs.notices.imported'))->flash();
 
         return redirect()->route('admin.eggs.view', ['egg' => $egg->id]);
@@ -61,7 +61,7 @@ class EggShareController extends Controller
      */
     public function update(EggImportFormRequest $request, Egg $egg): RedirectResponse
     {
-        $this->updateImporterService->handle($egg, $request->file('import_file'));
+        $this->updateImporterService->fromFile($egg, $request->file('import_file'));
         $this->alert->success(trans('admin/eggs.notices.updated_via_import'))->flash();
 
         return redirect()->route('admin.eggs.view', ['egg' => $egg]);

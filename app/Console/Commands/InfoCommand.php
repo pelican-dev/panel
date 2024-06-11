@@ -26,7 +26,7 @@ class InfoCommand extends Command
     {
         $this->output->title('Version Information');
         $this->table([], [
-            ['Panel Version', config('app.version')],
+            ['Panel Version', $this->versionService->versionData()['version']],
             ['Latest Version', $this->versionService->getPanel()],
             ['Up-to-Date', $this->versionService->isLatestPanel() ? 'Yes' : $this->formatText('No', 'bg=red')],
         ], 'compact');
