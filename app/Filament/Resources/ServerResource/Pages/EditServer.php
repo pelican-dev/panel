@@ -745,13 +745,6 @@ class EditServer extends EditRecord
         return $data;
     }
 
-    public function getRelationManagers(): array
-    {
-        return [
-            ServerResource\RelationManagers\AllocationsRelationManager::class,
-        ];
-    }
-
     private function shouldHideComponent(Forms\Get $get, Forms\Components\Component $component): bool
     {
         $containsRuleIn = str($get('rules'))->explode('|')->reduce(
