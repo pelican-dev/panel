@@ -1,0 +1,54 @@
+x-common:
+  panel:
+    &panel-environment
+    APP_URL: "https://localhost"
+    # A list of valid timezones can be found here: http://php.net/manual/en/timezones.php
+    APP_TIMEZONE: "UTC"
+    APP_SERVICE_AUTHOR: "pelican@example.com"
+    # Uncomment the line below and set to a non-empty value if you want to use Let's Encrypt
+    # to generate an SSL certificate for the Panel.
+    ADMIN_EMAIL: "pelican@example.com"
+  mail:
+    &mail-environment
+    MAIL_DRIVER: "log"
+    # MAIL_HOST: ""
+    # MAIL_PORT: ""
+    # MAIL_FROM: ""
+    # MAIL_USERNAME: ""
+    # MAIL_PASSWORD: ""
+    # MAIL_ENCRYPTION: ""
+
+#
+# ------------------------------------------------------------------------------------------
+# DANGER ZONE BELOW
+#
+# The remainder of this file likely does not need to be changed. Please only make modifications
+# below if you understand what you are doing.
+#
+
+services:
+  panel:
+    image: panel
+    restart: always
+    ports:
+      - "80:2019"
+      - "443:443"
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    volumes:
+      - pelican-data:/pelican-data
+    environment:
+      <<: [*panel-environment, *mail-environment]
+#      APP_ENV: "production"
+#      APP_DEBUG: "false"
+#      APP_ENVIRONMENT_ONLY: "false"
+#      SESSION_DRIVER: "file"
+
+volumes:
+  pelican-data:
+
+networks:
+  default:
+    ipam:
+      config:
+        - subnet: 172.20.0.0/16
