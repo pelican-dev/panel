@@ -40,6 +40,6 @@ class ManageSettings extends ManageRecords
         }
 
         $this->writeToEnvironment($this->variables);
-        Artisan::call('config:cache'); // When this is called the page freezes, but it is the only way to make it work that i can find
+        //Artisan::call('config:cache'); // When this is called the page freezes, but it is the only way to make it work that i can find
     }
 }
