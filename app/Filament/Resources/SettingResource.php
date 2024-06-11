@@ -31,11 +31,9 @@ class SettingResource extends Resource
             ->paginated(false)
             ->groups([
                 Group::make('group')
-
                     ->collapsible(),
             ])
-            ->groupingSettingsHidden()
-            ->defaultGroup('Basic')
+            ->groupingSettingsHidden(false)
             ->columns([
                 Tables\Columns\TextColumn::make('label')
                     ->label('Setting')
