@@ -32,6 +32,9 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\HtmlString;
 use Illuminate\Validation\Rules\Password;
 
+/**
+ * @method User getUser()
+ */
 class EditProfile extends \Filament\Pages\Auth\EditProfile
 {
     protected function getForms(): array
@@ -124,6 +127,7 @@ class EditProfile extends \Filament\Pages\Auth\EditProfile
                                                     ->helperText('Enter your current 2FA code to disable Two Factor Authentication'),
                                             ];
                                         }
+                                        /** @var TwoFactorSetupService */
                                         $setupService = app(TwoFactorSetupService::class);
 
                                         ['image_url_data' => $url, 'secret' => $secret] = cache()->remember(
@@ -133,6 +137,7 @@ class EditProfile extends \Filament\Pages\Auth\EditProfile
 
                                         $options = new QROptions([
                                             'svgLogo' => public_path('pelican.svg'),
+                                            'svgLogoScale' => 0.05,
                                             'addLogoSpace' => true,
                                             'logoSpaceWidth' => 13,
                                             'logoSpaceHeight' => 13,
@@ -140,22 +145,24 @@ class EditProfile extends \Filament\Pages\Auth\EditProfile
 
                                         // https://github.com/chillerlan/php-qrcode/blob/main/examples/svgWithLogo.php
 
-                                        // SVG logo options (see extended class)
-                                        $options->svgLogo = public_path('pelican.svg'); // logo from: https://github.com/simple-icons/simple-icons
-                                        $options->svgLogoScale = 0.05;
-                                        // $options->svgLogoCssClass     = 'dark';
-
                                         // QROptions
+                                        // @phpstan-ignore property.protected
                                         $options->version = Version::AUTO;
                                         // $options->outputInterface     = QRSvgWithLogo::class;
+                                        // @phpstan-ignore property.protected
                                         $options->outputBase64 = false;
+                                        // @phpstan-ignore property.protected
                                         $options->eccLevel = EccLevel::H; // ECC level H is necessary when using logos
+                                        // @phpstan-ignore property.protected
                                         $options->addQuietzone = true;
                                         // $options->drawLightModules    = true;
+                                        // @phpstan-ignore property.protected
                                         $options->connectPaths = true;
+                                        // @phpstan-ignore property.protected
                                         $options->drawCircularModules = true;
                                         // $options->circleRadius        = 0.45;
 
+                                        // @phpstan-ignore property.protected
                                         $options->svgDefs = '<linearGradient id="gradient" x1="100%" y2="100%">
                                             <stop stop-color="#7dd4fc" offset="0"/>
                                             <stop stop-color="#38bdf8" offset="0.5"/>
@@ -193,8 +200,12 @@ class EditProfile extends \Filament\Pages\Auth\EditProfile
                                     ->schema([
                                         Grid::make('asdf')->columns(5)->schema([
                                             Section::make('Create API Key')->columnSpan(3)->schema([
-                                                TextInput::make('description'),
+
+                                                TextInput::make('description')
+                                                    ->live(),
+                                              
                                                 TagsInput::make('allowed_ips')
+                                                    ->live()
                                                     ->splitKeys([',', ' ', 'Tab'])
                                                     ->placeholder('Example: 127.0.0.1 or 192.168.1.1')
                                                     ->label('Whitelisted IP\'s')
@@ -202,9 +213,10 @@ class EditProfile extends \Filament\Pages\Auth\EditProfile
                                                     ->columnSpanFull(),
                                             ])->headerActions([
                                                 Action::make('Create')
+                                                    ->disabled(fn (Get $get) => $get('description') === null)
                                                     ->successRedirectUrl(route('filament.admin.auth.profile', ['tab' => '-api-keys-tab']))
-                                                    ->action(function (Get $get, Action $action) {
-                                                        $token = auth()->user()->createToken(
+                                                    ->action(function (Get $get, Action $action, $user) {
+                                                        $token = $user->createToken(
                                                             $get('description'),
                                                             $get('allowed_ips'),
                                                         );

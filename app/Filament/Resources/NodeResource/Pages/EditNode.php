@@ -215,6 +215,18 @@ class EditNode extends EditRecord
                                 ->minValue(1)
                                 ->maxValue(1024)
                                 ->suffix('MiB'),
+                            Forms\Components\TextInput::make('daemon_sftp')
+                                ->columnSpan(['default' => 1, 'sm' => 1, 'md' => 1, 'lg' => 3])
+                                ->label('SFTP Port')
+                                ->minValue(0)
+                                ->maxValue(65536)
+                                ->default(2022)
+                                ->required()
+                                ->integer(),
+                            Forms\Components\TextInput::make('daemon_sftp_alias')
+                                ->columnSpan(['default' => 1, 'sm' => 1, 'md' => 1, 'lg' => 3])
+                                ->label('SFTP Alias')
+                                ->helperText('Display alias for the SFTP address. Leave empty to use the Node FQDN.'),
                             Forms\Components\ToggleButtons::make('public')
                                 ->columnSpan(['default' => 1, 'sm' => 1, 'md' => 1, 'lg' => 3])
                                 ->label('Automatic Allocation')->inline()
@@ -383,10 +395,11 @@ class EditNode extends EditRecord
                                     ->requiresConfirmation()
                                     ->modalHeading('Reset Daemon Token?')
                                     ->modalDescription('Resetting the daemon token will void any request coming from the old token. This token is used for all sensitive operations on the daemon including server creation and deletion. We suggest changing this token regularly for security.')
-                                    ->action(fn (NodeUpdateService $nodeUpdateService, Node $node) => $nodeUpdateService->handle($node, [], true)
-                                        && Notification::make()->success()->title('Daemon Key Reset')->send()
-                                        && $this->fillForm()
-                                    ),
+                                    ->action(function (NodeUpdateService $nodeUpdateService, Node $node) {
+                                        $nodeUpdateService->handle($node, [], true);
+                                        Notification::make()->success()->title('Daemon Key Reset')->send();
+                                        $this->fillForm();
+                                    }),
                             ]),
                         ]),
                 ]),

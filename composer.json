@@ -33,6 +33,7 @@
         "s1lentium/iptools": "~1.2.0",
         "spatie/laravel-fractal": "^6.2",
         "spatie/laravel-query-builder": "^5.8.1",
+        "spatie/temporary-directory": "^2.2",
         "symfony/http-client": "^7.1",
         "symfony/mailgun-mailer": "^7.1",
         "symfony/postmark-mailer": "^7.0.7",
@@ -69,6 +70,7 @@
     "scripts": {
         "cs:fix": "php-cs-fixer fix",
         "cs:check": "php-cs-fixer fix --dry-run --diff --verbose",
+        "phpstan": "phpstan --memory-limit=-1",
         "post-autoload-dump": [
             "Illuminate\\Foundation\\ComposerScripts::postAutoloadDump"
         ],
