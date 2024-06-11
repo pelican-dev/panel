@@ -193,7 +193,7 @@ class EditProfile extends \Filament\Pages\Auth\EditProfile
                                     ->schema([
                                         Grid::make('asdf')->columns(5)->schema([
                                             Section::make('Create API Key')->columnSpan(3)->schema([
-                                                TextInput::make('description')->required(),
+                                                TextInput::make('description'),
                                                 TagsInput::make('allowed_ips')
                                                     ->splitKeys([',', ' ', 'Tab'])
                                                     ->placeholder('Example: 127.0.0.1 or 192.168.1.1')
@@ -202,6 +202,7 @@ class EditProfile extends \Filament\Pages\Auth\EditProfile
                                                     ->columnSpanFull(),
                                             ])->headerActions([
                                                 Action::make('Create')
+                                                    ->disabled(fn (Get $get) => $get('description') == null)
                                                     ->successRedirectUrl(route('filament.admin.auth.profile', ['tab' => '-api-keys-tab']))
                                                     ->action(function (Get $get, Action $action, $user) {
                                                         $token = $user->createToken(
