@@ -70,7 +70,7 @@ class ListServers extends ListRecords
                     ->sortable(),
                 Tables\Columns\SelectColumn::make('allocation_id')
                     ->label('Primary Allocation')
-                    ->options(fn ($state, Server $server) => $server->allocations->mapWithKeys(
+                    ->options(fn (Server $server) => $server->allocations->mapWithKeys(
                         fn ($allocation) => [$allocation->id => $allocation->address])
                     )
                     ->selectablePlaceholder(false)
