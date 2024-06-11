@@ -9,6 +9,7 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Select;
+use Schmeits\FilamentCharacterCounter\Forms\Components\TextInput as LimitInput;
 
 class SettingResource extends Resource
 {
@@ -58,6 +59,13 @@ class SettingResource extends Resource
                                     ->label($record->label)
                                     ->placeholder($record->description)
                                     ->type('number'),
+                            ],
+                            'limit' => [
+                                LimitInput::make('value')
+                                    ->label($record->label)
+                                    ->maxLength($record->limit)
+                                    ->showInsideControl(false)
+                                    ->placeholder($record->description),
                             ],
                             default => [
                                 TextInput::make('value')

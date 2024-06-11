@@ -10,14 +10,10 @@ class Setting extends Model
 
     public $incrementing = false;
 
-    protected $fillable = ['key', 'label', 'value', 'type', 'attributes', 'description'];
+    protected $fillable = ['key', 'label', 'value', 'type', 'attributes', 'description', 'limit'];
 
-    protected $casts = ['attributes' => 'array'];
-
-    public static function getValue($key)
-    {
-        $setting = static::where('key', $key)->first();
-
-        return $setting ? $setting->value : null;
-    }
+    protected $casts = [
+    'attributes' => 'array',
+    'limit' => 'integer',
+    ];
 }

@@ -20,7 +20,8 @@ return new class extends Migration
             $table->text('value')->nullable();
             $table->json('attributes')->nullable();
             $table->string('type');
-            $table->longText('description');
+            $table->longText('description')->nullable();
+            $table->integer('limit')->nullable();
             $table->timestamps();
         });
 
@@ -28,7 +29,8 @@ return new class extends Migration
             'key' => 'APP_NAME',
             'label' => 'Panel Name',
             'value' => 'Pelican',
-            'type' => 'text',
+            'type' => 'limit',
+            'limit' => 18,
             'description' => 'This is the name that is used throughout the panel and in emails sent to clients.',
         ]);
 

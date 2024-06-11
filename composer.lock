@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "bf44faee3aae2b1d4c1b57893c1aba98",
+    "content-hash": "83530d4270840e00bb42035ffebe7473",
     "packages": [
         {
             "name": "abdelhamiderrahmouni/filament-monaco-editor",
@@ -6580,6 +6580,88 @@
             "time": "2022-08-17T14:28:59+00:00"
         },
         {
+            "name": "schmeits/filament-character-counter",
+            "version": "1.2.3",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/schmeits/filament-character-counter.git",
+                "reference": "5810340bac36b5cd493115e40fb9e6f693ff59de"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/schmeits/filament-character-counter/zipball/5810340bac36b5cd493115e40fb9e6f693ff59de",
+                "reference": "5810340bac36b5cd493115e40fb9e6f693ff59de",
+                "shasum": ""
+            },
+            "require": {
+                "filament/filament": "^3.2",
+                "filament/forms": "^3.2",
+                "php": "^8.1",
+                "spatie/laravel-package-tools": "^1.16.0"
+            },
+            "require-dev": {
+                "laravel/pint": "^1.0",
+                "nunomaduro/collision": "^7.10",
+                "nunomaduro/larastan": "^2.9",
+                "orchestra/testbench": "^v8.22",
+                "pestphp/pest": "^2.34",
+                "pestphp/pest-plugin-arch": "^2.7",
+                "pestphp/pest-plugin-laravel": "^2.3",
+                "phpstan/extension-installer": "^1.1",
+                "phpstan/phpstan-deprecation-rules": "^1.0",
+                "phpstan/phpstan-phpunit": "^1.0",
+                "spatie/laravel-ray": "^1.36"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Schmeits\\FilamentCharacterCounter\\FilamentCharacterCounterServiceProvider"
+                    ],
+                    "aliases": {
+                        "FilamentCharacterCounter": "Schmeits\\FilamentCharacterCounter\\Facades\\FilamentCharacterCounter"
+                    }
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Schmeits\\FilamentCharacterCounter\\": "src/",
+                    "Schmeits\\FilamentCharacterCounter\\Database\\Factories\\": "database/factories/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Tally Schmeits",
+                    "email": "tally@schmeits.com",
+                    "role": "Developer"
+                }
+            ],
+            "description": "This is a Filament character counter TextField and Textarea form field for Filament v3.2",
+            "homepage": "https://github.com/schmeits/filament-character-counter",
+            "keywords": [
+                "filament",
+                "filament-character-counter",
+                "filament-plugin",
+                "laravel",
+                "schmeits"
+            ],
+            "support": {
+                "issues": "https://github.com/schmeits/filament-character-counter/issues",
+                "source": "https://github.com/schmeits/filament-character-counter"
+            },
+            "funding": [
+                {
+                    "url": "https://github.com/schmeits",
+                    "type": "github"
+                }
+            ],
+            "time": "2024-05-29T07:52:57+00:00"
+        },
+        {
             "name": "spatie/color",
             "version": "1.5.3",
             "source": {
@@ -13141,5 +13223,5 @@
         "ext-zip": "*"
     },
     "platform-dev": [],
-    "plugin-api-version": "2.3.0"
+    "plugin-api-version": "2.6.0"
 }
