@@ -51,4 +51,4 @@ jobs:
         run: composer install --no-interaction --no-progress --prefer-dist
 
       - name: PHPStan
-        run: vendor/bin/phpstan --memory-limit=1G
+        run: vendor/bin/phpstan --memory-limit=-1
