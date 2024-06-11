@@ -1,7 +1,5 @@
 <?php
 
-use App\Helpers\Time;
-
 return [
 
     'default' => env('DB_CONNECTION', 'sqlite'),
