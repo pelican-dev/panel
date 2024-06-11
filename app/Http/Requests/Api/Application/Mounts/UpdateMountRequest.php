@@ -7,14 +7,13 @@ use App\Models\Mount;
 class UpdateMountRequest extends StoreMountRequest
 {
     /**
-     * Apply validation rules to this request. Uses the parent class rules()
-     * function but passes in the rules for updating rather than creating.
+     * Apply validation rules to this request.
      */
     public function rules(array $rules = null): array
     {
         /** @var Mount $mount */
         $mount = $this->route()->parameter('mount');
 
-        return parent::rules(Mount::getRulesForUpdate($mount->id));
+        return Mount::getRulesForUpdate($mount->id);
     }
 }

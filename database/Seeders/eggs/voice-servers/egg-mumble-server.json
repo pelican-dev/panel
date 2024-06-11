@@ -4,7 +4,7 @@
         "version": "PTDL_v2",
         "update_url": null
     },
-    "exported_at": "2024-06-02T20:42:08+00:00",
+    "exported_at": "2024-06-04T22:53:03+00:00",
     "name": "Mumble Server",
     "author": "panel@example.com",
     "uuid": "727ee758-7fb2-4979-972b-d3eba4e1e9f0",
@@ -16,7 +16,7 @@
     "file_denylist": [],
     "startup": "mumble-server -fg -ini murmur.ini",
     "config": {
-        "files": "{\r\n    \"murmur.ini\": {\r\n        \"parser\": \"ini\",\r\n        \"find\": {\r\n            \"database\": \"\/home\/container\/murmur.sqlite\",\r\n            \"logfile\": \"\/home\/container\/murmur.log\",\r\n            \"port\": \"{{server.build.default.port}}\",\r\n            \"host\": \"\",\r\n            \"users\": \"{{server.build.env.MAX_USERS}}\"\r\n        }\r\n    }\r\n}",
+        "files": "{\r\n    \"murmur.ini\": {\r\n        \"parser\": \"ini\",\r\n        \"find\": {\r\n            \"database\": \"\/home\/container\/murmur.sqlite\",\r\n            \"logfile\": \"\/home\/container\/murmur.log\",\r\n            \"port\": \"{{server.allocations.default.port}}\",\r\n            \"host\": \"\",\r\n            \"users\": \"{{server.environment.MAX_USERS}}\"\r\n        }\r\n    }\r\n}",
         "startup": "{\r\n    \"done\": \"Server listening on\"\r\n}",
         "logs": "{}",
         "stop": "^C"

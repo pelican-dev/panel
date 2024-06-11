@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\ServerResource\Pages;
 
+use LogicException;
 use App\Filament\Resources\ServerResource;
 use App\Http\Controllers\Admin\ServersController;
 use App\Services\Servers\RandomWordService;
@@ -299,6 +300,7 @@ class EditServer extends EditRecord
                                                             'unlimited' => -1,
                                                             'disabled' => 0,
                                                             'limited' => 128,
+                                                            default => throw new LogicException('Invalid state')
                                                         };
 
                                                         $set('swap', $value);
@@ -308,6 +310,7 @@ class EditServer extends EditRecord
                                                             $get('swap') > 0 => 'limited',
                                                             $get('swap') == 0 => 'disabled',
                                                             $get('swap') < 0 => 'unlimited',
+                                                            default => throw new LogicException('Invalid state')
                                                         };
                                                     })
                                                     ->options([
@@ -325,7 +328,7 @@ class EditServer extends EditRecord
                                                     ->dehydratedWhenHidden()
                                                     ->hidden(fn (Forms\Get $get) => match ($get('swap_support')) {
                                                         'disabled', 'unlimited', true => true,
-                                                        'limited', false => false,
+                                                        default => false,
                                                     })
                                                     ->label('Swap Memory')->inlineLabel()
                                                     ->suffix('MiB')
@@ -532,7 +535,6 @@ class EditServer extends EditRecord
 
                                         $text = Forms\Components\TextInput::make('variable_value')
                                             ->hidden($this->shouldHideComponent(...))
-                                            ->maxLength(191)
                                             ->rules([
                                                 fn (ServerVariable $serverVariable): Closure => function (string $attribute, $value, Closure $fail) use ($serverVariable) {
                                                     $validator = Validator::make(['validatorkey' => $value], [
@@ -554,7 +556,6 @@ class EditServer extends EditRecord
 
                                         $components = [$text, $select];
 
-                                        /** @var Forms\Components\Component $component */
                                         foreach ($components as &$component) {
                                             $component = $component
                                                 ->live(onBlur: true)
@@ -577,6 +578,7 @@ class EditServer extends EditRecord
                                     ->options(fn (Server $server) => $server->node->mounts->mapWithKeys(fn ($mount) => [$mount->id => $mount->name]))
                                     ->descriptions(fn (Server $server) => $server->node->mounts->mapWithKeys(fn ($mount) => [$mount->id => "$mount->source -> $mount->target"]))
                                     ->label('Mounts')
+                                    ->helperText(fn (Server $server) => $server->node->mounts->isNotEmpty() ? '' : 'No Mounts exist for this Node')
                                     ->columnSpanFull(),
                             ]),
                         Tabs\Tab::make('Databases')
@@ -606,7 +608,7 @@ class EditServer extends EditRecord
                                                         ->action(function (ServersController $serversController, Server $server) {
                                                             $serversController->toggleInstall($server);
 
-                                                            return $this->refreshFormData(['status', 'docker']);
+                                                            $this->refreshFormData(['status', 'docker']);
                                                         }),
                                                 ])->fullWidth(),
                                                 Forms\Components\ToggleButtons::make('')
@@ -624,7 +626,7 @@ class EditServer extends EditRecord
                                                             $suspensionService->toggle($server, 'suspend');
                                                             Notification::make()->success()->title('Server Suspended!')->send();
 
-                                                            return $this->refreshFormData(['status', 'docker']);
+                                                            $this->refreshFormData(['status', 'docker']);
                                                         }),
                                                     Forms\Components\Actions\Action::make('toggleUnsuspend')
                                                         ->label('Unsuspend')
@@ -634,7 +636,7 @@ class EditServer extends EditRecord
                                                             $suspensionService->toggle($server, 'unsuspend');
                                                             Notification::make()->success()->title('Server Unsuspended!')->send();
 
-                                                            return $this->refreshFormData(['status', 'docker']);
+                                                            $this->refreshFormData(['status', 'docker']);
                                                         }),
                                                 ])->fullWidth(),
                                                 Forms\Components\ToggleButtons::make('')
@@ -650,7 +652,7 @@ class EditServer extends EditRecord
                                                 Forms\Components\Actions::make([
                                                     Forms\Components\Actions\Action::make('transfer')
                                                         ->label('Transfer Soon™')
-                                                        ->action(fn (TransferServerService $transfer, Server $server) => $transfer->handle($server, $data))
+                                                        ->action(fn (TransferServerService $transfer, Server $server) => $transfer->handle($server, []))
                                                         ->disabled() //TODO!
                                                         ->form([ //TODO!
                                                             Forms\Components\Select::make('newNode')

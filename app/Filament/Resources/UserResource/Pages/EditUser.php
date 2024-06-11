@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\UserResource\Pages;
 
 use App\Filament\Resources\UserResource;
+use App\Services\Exceptions\FilamentExceptionHandler;
 use Filament\Actions;
 use Filament\Resources\Pages\EditRecord;
 use App\Models\User;
@@ -76,5 +77,10 @@ class EditUser extends EditRecord
     protected function getFormActions(): array
     {
         return [];
+    }
+
+    public function exception($exception, $stopPropagation): void
+    {
+        (new FilamentExceptionHandler())->handle($exception, $stopPropagation);
     }
 }

@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\Admin\Servers;
 
 use Illuminate\View\View;
-use Illuminate\Http\Request;
 use App\Models\Server;
 use Spatie\QueryBuilder\QueryBuilder;
 use Spatie\QueryBuilder\AllowedFilter;
@@ -16,7 +15,7 @@ class ServerController extends Controller
      * Returns all the servers that exist on the system using a paginated result set. If
      * a query is passed along in the request it is also passed to the repository function.
      */
-    public function index(Request $request): View
+    public function index(): View
     {
         $servers = QueryBuilder::for(Server::query()->with('node', 'user', 'allocation'))
             ->allowedFilters([
