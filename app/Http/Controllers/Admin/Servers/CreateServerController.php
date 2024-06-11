@@ -36,11 +36,6 @@ class CreateServerController extends Controller
 
         $eggs = Egg::with('variables')->get();
 
-        \JavaScript::put([
-            'nodeData' => Node::getForServerCreation(),
-            'eggs' => $eggs->keyBy('id'),
-        ]);
-
         return view('admin.servers.new', [
             'eggs' => $eggs,
             'nodes' => Node::all(),

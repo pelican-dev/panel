@@ -23,12 +23,12 @@ class Port implements ValidationRule
             $fail('The :attribute must be an integer.');
         }
 
-        if ($value < 0) {
-            $fail('The :attribute must be greater or equal to 0.');
+        if ($value <= 1024) {
+            $fail('The :attribute must be greater than 1024.');
         }
 
         if ($value > 65535) {
-            $fail('The :attribute must be less or equal to 65535.');
+            $fail('The :attribute must be less than 65535.');
         }
     }
 }

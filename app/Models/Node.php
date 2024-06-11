@@ -202,14 +202,6 @@ class Node extends Model
     }
 
     /**
-     * Gets the allocations associated with a node.
-     */
-    public function allocations(): HasMany
-    {
-        return $this->hasMany(Allocation::class);
-    }
-
-    /**
      * Returns a boolean if the node is viable for an additional server to be placed on it.
      */
     public function isViable(int $memory, int $disk, int $cpu): bool
@@ -236,28 +228,6 @@ class Node extends Model
         }
 
         return true;
-    }
-
-    public static function getForServerCreation()
-    {
-        return self::with('allocations')->get()->map(function (Node $item) {
-            $filtered = $item->getRelation('allocations')->where('server_id', null)->map(function ($map) {
-                return collect($map)->only(['id', 'ip', 'port']);
-            });
-
-            $ports = $filtered->map(function ($map) {
-                return [
-                    'id' => $map['id'],
-                    'text' => sprintf('%s:%s', $map['ip'], $map['port']),
-                ];
-            })->values();
-
-            return [
-                'id' => $item->id,
-                'text' => $item->name,
-                'allocations' => $ports,
-            ];
-        })->values();
     }
 
     public function systemInformation(): array

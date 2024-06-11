@@ -32,11 +32,6 @@ class NodesRelationManager extends RelationManager
                     ->icon('tabler-egg')
                     ->url(fn (Server $server): string => route('filament.admin.resources.eggs.edit', ['record' => $server->user]))
                     ->sortable(),
-                Tables\Columns\SelectColumn::make('allocation.id')
-                    ->label('Primary Allocation')
-                    ->options(fn ($state, Server $server) => [$server->allocation->id => $server->allocation->address])
-                    ->selectablePlaceholder(false)
-                    ->sortable(),
                 Tables\Columns\TextColumn::make('memory')->icon('tabler-device-desktop-analytics'),
                 Tables\Columns\TextColumn::make('cpu')->icon('tabler-cpu'),
                 Tables\Columns\TextColumn::make('databases_count')

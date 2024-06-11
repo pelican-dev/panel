@@ -11,9 +11,7 @@ use App\Models\Server;
 use App\Models\Database;
 use App\Models\Schedule;
 use Illuminate\Support\Collection;
-use App\Models\Allocation;
 use App\Models\DatabaseHost;
-use App\Tests\Integration\TestResponse;
 use App\Tests\Integration\IntegrationTestCase;
 use Illuminate\Database\Eloquent\Model as EloquentModel;
 use App\Transformers\Api\Client\BaseClientTransformer;
@@ -58,9 +56,6 @@ abstract class ClientApiIntegrationTestCase extends IntegrationTestCase
                 break;
             case Task::class:
                 $link = "/api/client/servers/{$model->schedule->server->uuid}/schedules/{$model->schedule->id}/tasks/$model->id";
-                break;
-            case Allocation::class:
-                $link = "/api/client/servers/{$model->server->uuid}/network/allocations/$model->id";
                 break;
             case Backup::class:
                 $link = "/api/client/servers/{$model->server->uuid}/backups/$model->uuid";

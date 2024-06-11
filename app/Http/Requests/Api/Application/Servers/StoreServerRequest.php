@@ -3,7 +3,6 @@
 namespace App\Http\Requests\Api\Application\Servers;
 
 use App\Models\Server;
-use Illuminate\Validation\Rule;
 use Illuminate\Validation\Validator;
 use App\Services\Acl\Api\AdminAcl;
 use App\Models\Objects\DeploymentObject;
@@ -49,10 +48,6 @@ class StoreServerRequest extends ApplicationApiRequest
             'feature_limits.allocations' => $rules['allocation_limit'],
             'feature_limits.backups' => $rules['backup_limit'],
 
-            // Placeholders for rules added in withValidator() function.
-            'allocation.default' => '',
-            'allocation.additional.*' => '',
-
             // Automatic deployment rules
             'deploy' => 'sometimes|required|array',
             'deploy.locations' => 'array',
@@ -87,8 +82,7 @@ class StoreServerRequest extends ApplicationApiRequest
             'cpu' => array_get($data, 'limits.cpu'),
             'threads' => array_get($data, 'limits.threads'),
             'skip_scripts' => array_get($data, 'skip_scripts', false),
-            'allocation_id' => array_get($data, 'allocation.default'),
-            'allocation_additional' => array_get($data, 'allocation.additional'),
+            'ports' => array_get($data, 'ports'),
             'start_on_completion' => array_get($data, 'start_on_completion', false),
             'database_limit' => array_get($data, 'feature_limits.databases'),
             'allocation_limit' => array_get($data, 'feature_limits.allocations'),
@@ -104,24 +98,6 @@ class StoreServerRequest extends ApplicationApiRequest
      */
     public function withValidator(Validator $validator): void
     {
-        $validator->sometimes('allocation.default', [
-            'required', 'integer', 'bail',
-            Rule::exists('allocations', 'id')->where(function ($query) {
-                $query->whereNull('server_id');
-            }),
-        ], function ($input) {
-            return !$input->deploy;
-        });
-
-        $validator->sometimes('allocation.additional.*', [
-            'integer',
-            Rule::exists('allocations', 'id')->where(function ($query) {
-                $query->whereNull('server_id');
-            }),
-        ], function ($input) {
-            return !$input->deploy;
-        });
-
         /** @deprecated use tags instead */
         $validator->sometimes('deploy.locations', 'present', function ($input) {
             return $input->deploy;

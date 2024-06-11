@@ -66,11 +66,6 @@ class ServersRelationManager extends RelationManager
                     ->icon('tabler-egg')
                     ->url(fn (Server $server): string => route('filament.admin.resources.eggs.edit', ['record' => $server->egg]))
                     ->sortable(),
-                Tables\Columns\SelectColumn::make('allocation.id')
-                    ->label('Primary Allocation')
-                    ->options(fn ($state, Server $server) => [$server->allocation->id => $server->allocation->address])
-                    ->selectablePlaceholder(false)
-                    ->sortable(),
                 Tables\Columns\TextColumn::make('image')->hidden(),
                 Tables\Columns\TextColumn::make('databases_count')
                     ->counts('databases')

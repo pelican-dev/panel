@@ -32,11 +32,6 @@ class ServersRelationManager extends RelationManager
                     ->url(fn (Server $server): string => route('filament.admin.resources.nodes.edit', ['record' => $server->node])),
                 Tables\Columns\TextColumn::make('image')
                     ->label('Docker Image'),
-                Tables\Columns\SelectColumn::make('allocation.id')
-                    ->label('Primary Allocation')
-                    ->options(fn ($state, Server $server) => [$server->allocation->id => $server->allocation->address])
-                    ->selectablePlaceholder(false)
-                    ->sortable(),
             ]);
     }
 }

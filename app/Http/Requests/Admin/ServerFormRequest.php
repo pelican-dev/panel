@@ -3,7 +3,6 @@
 namespace App\Http\Requests\Admin;
 
 use App\Models\Server;
-use Illuminate\Validation\Rule;
 use Illuminate\Validation\Validator;
 
 class ServerFormRequest extends AdminFormRequest
@@ -25,32 +24,8 @@ class ServerFormRequest extends AdminFormRequest
      */
     public function withValidator(Validator $validator): void
     {
-        $validator->after(function ($validator) {
+        $validator->after(function (Validator $validator) {
             $validator->sometimes('node_id', 'required|numeric|bail|exists:nodes,id', function ($input) {
-                return !$input->auto_deploy;
-            });
-
-            $validator->sometimes('allocation_id', [
-                'required',
-                'numeric',
-                'bail',
-                Rule::exists('allocations', 'id')->where(function ($query) {
-                    $query->where('node_id', $this->input('node_id'));
-                    $query->whereNull('server_id');
-                }),
-            ], function ($input) {
-                return !$input->auto_deploy;
-            });
-
-            $validator->sometimes('allocation_additional.*', [
-                'sometimes',
-                'required',
-                'numeric',
-                Rule::exists('allocations', 'id')->where(function ($query) {
-                    $query->where('node_id', $this->input('node_id'));
-                    $query->whereNull('server_id');
-                }),
-            ], function ($input) {
                 return !$input->auto_deploy;
             });
         });

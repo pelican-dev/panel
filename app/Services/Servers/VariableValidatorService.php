@@ -25,7 +25,7 @@ class VariableValidatorService
      *
      * @throws \Illuminate\Validation\ValidationException
      */
-    public function handle(int $egg, array $fields = []): Collection
+    public function handle(int $egg, array $fields = [], $validate = false): Collection
     {
         $query = EggVariable::query()->where('egg_id', $egg);
         if (!$this->isUserLevel(User::USER_LEVEL_ADMIN)) {
@@ -44,9 +44,11 @@ class VariableValidatorService
             $customAttributes['environment.' . $variable->env_variable] = trans('validation.internal.variable_value', ['env' => $variable->name]);
         }
 
-        $validator = $this->validator->make($data, $rules, [], $customAttributes);
-        if ($validator->fails()) {
-            throw new ValidationException($validator);
+        if ($validate) {
+            $validator = $this->validator->make($data, $rules, [], $customAttributes);
+            if ($validator->fails()) {
+                throw new ValidationException($validator);
+            }
         }
 
         return Collection::make($variables)->map(function ($item) use ($fields) {

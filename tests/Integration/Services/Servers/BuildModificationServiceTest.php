@@ -6,9 +6,7 @@ use Mockery\MockInterface;
 use GuzzleHttp\Psr7\Request;
 use GuzzleHttp\Psr7\Response;
 use App\Models\Server;
-use App\Models\Allocation;
 use GuzzleHttp\Exception\RequestException;
-use App\Exceptions\DisplayException;
 use App\Tests\Integration\IntegrationTestCase;
 use App\Repositories\Daemon\DaemonServerRepository;
 use App\Services\Servers\BuildModificationService;
@@ -26,76 +24,6 @@ class BuildModificationServiceTest extends IntegrationTestCase
         parent::setUp();
 
         $this->daemonServerRepository = $this->mock(DaemonServerRepository::class);
-    }
-
-    /**
-     * Test that allocations can be added and removed from a server. Only the allocations on the
-     * current node and belonging to this server should be modified.
-     */
-    public function testAllocationsCanBeModifiedForTheServer(): void
-    {
-        $server = $this->createServerModel();
-        $server2 = $this->createServerModel();
-
-        /** @var \App\Models\Allocation[] $allocations */
-        $allocations = Allocation::factory()->times(4)->create(['node_id' => $server->node_id, 'notes' => 'Random notes']);
-
-        $initialAllocationId = $server->allocation_id;
-        $allocations[0]->update(['server_id' => $server->id, 'notes' => 'Test notes']);
-
-        // Some additional test allocations for the other server, not the server we are attempting
-        // to modify.
-        $allocations[2]->update(['server_id' => $server2->id]);
-        $allocations[3]->update(['server_id' => $server2->id]);
-
-        $this->daemonServerRepository->expects('setServer->sync')->andReturnUndefined();
-
-        $response = $this->getService()->handle($server, [
-            // Attempt to add one new allocation, and an allocation assigned to another server. The
-            // other server allocation should be ignored, and only the allocation for this server should
-            // be used.
-            'add_allocations' => [$allocations[2]->id, $allocations[1]->id],
-            // Remove the default server allocation, ensuring that the new allocation passed through
-            // in the data becomes the default allocation.
-            'remove_allocations' => [$server->allocation_id, $allocations[0]->id, $allocations[3]->id],
-        ]);
-
-        $this->assertInstanceOf(Server::class, $response);
-
-        // Only one allocation should exist for this server now.
-        $this->assertCount(1, $response->allocations);
-        $this->assertSame($allocations[1]->id, $response->allocation_id);
-        $this->assertNull($response->allocation->notes);
-
-        // These two allocations should not have been touched.
-        $this->assertDatabaseHas('allocations', ['id' => $allocations[2]->id, 'server_id' => $server2->id]);
-        $this->assertDatabaseHas('allocations', ['id' => $allocations[3]->id, 'server_id' => $server2->id]);
-
-        // Both of these allocations should have been removed from the server, and have had their
-        // notes properly reset.
-        $this->assertDatabaseHas('allocations', ['id' => $initialAllocationId, 'server_id' => null, 'notes' => null]);
-        $this->assertDatabaseHas('allocations', ['id' => $allocations[0]->id, 'server_id' => null, 'notes' => null]);
-    }
-
-    /**
-     * Test that an exception is thrown if removing the default allocation without also assigning
-     * new allocations to the server.
-     */
-    public function testExceptionIsThrownIfRemovingTheDefaultAllocation(): void
-    {
-        $server = $this->createServerModel();
-        /** @var \App\Models\Allocation[] $allocations */
-        $allocations = Allocation::factory()->times(4)->create(['node_id' => $server->node_id]);
-
-        $allocations[0]->update(['server_id' => $server->id]);
-
-        $this->expectException(DisplayException::class);
-        $this->expectExceptionMessage('You are attempting to delete the default allocation for this server but there is no fallback allocation to use.');
-
-        $this->getService()->handle($server, [
-            'add_allocations' => [],
-            'remove_allocations' => [$server->allocation_id, $allocations[0]->id],
-        ]);
     }
 
     /**
@@ -162,91 +90,6 @@ class BuildModificationServiceTest extends IntegrationTestCase
         $this->assertSame(10240, $response->disk);
 
         $this->assertDatabaseHas('servers', ['id' => $response->id, 'memory' => 256, 'disk' => 10240]);
-    }
-
-    /**
-     * Test that no exception is thrown if we are only removing an allocation.
-     */
-    public function testNoExceptionIsThrownIfOnlyRemovingAllocation(): void
-    {
-        $server = $this->createServerModel();
-        /** @var \App\Models\Allocation $allocation */
-        $allocation = Allocation::factory()->create(['node_id' => $server->node_id, 'server_id' => $server->id]);
-
-        $this->daemonServerRepository->expects('setServer->sync')->andReturnUndefined();
-
-        $this->getService()->handle($server, [
-            'remove_allocations' => [$allocation->id],
-        ]);
-
-        $this->assertDatabaseHas('allocations', ['id' => $allocation->id, 'server_id' => null]);
-    }
-
-    /**
-     * Test that allocations in both the add and remove arrays are only added, and not removed.
-     * This scenario wouldn't really happen in the UI, but it is possible to perform via the API,
-     * so we want to make sure that the logic being used doesn't break if the allocation exists
-     * in both arrays.
-     *
-     * We'll default to adding the allocation in this case.
-     */
-    public function testAllocationInBothAddAndRemoveIsAdded(): void
-    {
-        $server = $this->createServerModel();
-        /** @var \App\Models\Allocation $allocation */
-        $allocation = Allocation::factory()->create(['node_id' => $server->node_id]);
-
-        $this->daemonServerRepository->expects('setServer->sync')->andReturnUndefined();
-
-        $this->getService()->handle($server, [
-            'add_allocations' => [$allocation->id],
-            'remove_allocations' => [$allocation->id],
-        ]);
-
-        $this->assertDatabaseHas('allocations', ['id' => $allocation->id, 'server_id' => $server->id]);
-    }
-
-    /**
-     * Test that using the same allocation ID multiple times in the array does not cause an error.
-     */
-    public function testUsingSameAllocationIdMultipleTimesDoesNotError(): void
-    {
-        $server = $this->createServerModel();
-        /** @var \App\Models\Allocation $allocation */
-        $allocation = Allocation::factory()->create(['node_id' => $server->node_id, 'server_id' => $server->id]);
-        /** @var \App\Models\Allocation $allocation2 */
-        $allocation2 = Allocation::factory()->create(['node_id' => $server->node_id]);
-
-        $this->daemonServerRepository->expects('setServer->sync')->andReturnUndefined();
-
-        $this->getService()->handle($server, [
-            'add_allocations' => [$allocation2->id, $allocation2->id],
-            'remove_allocations' => [$allocation->id, $allocation->id],
-        ]);
-
-        $this->assertDatabaseHas('allocations', ['id' => $allocation->id, 'server_id' => null]);
-        $this->assertDatabaseHas('allocations', ['id' => $allocation2->id, 'server_id' => $server->id]);
-    }
-
-    /**
-     * Test that any changes we made to the server or allocations are rolled back if there is an
-     * exception while performing any action. This is different from the connection exception
-     * test which should properly ignore connection issues. We want any other type of exception
-     * to properly be thrown back to the caller.
-     */
-    public function testThatUpdatesAreRolledBackIfExceptionIsEncountered(): void
-    {
-        $server = $this->createServerModel();
-        /** @var \App\Models\Allocation $allocation */
-        $allocation = Allocation::factory()->create(['node_id' => $server->node_id]);
-
-        $this->daemonServerRepository->expects('setServer->sync')->andThrows(new DisplayException('Test'));
-
-        $this->expectException(DisplayException::class);
-
-        $this->getService()->handle($server, ['add_allocations' => [$allocation->id]]);
-
-        $this->assertDatabaseHas('allocations', ['id' => $allocation->id, 'server_id' => null]);
     }
 
     private function getService(): BuildModificationService

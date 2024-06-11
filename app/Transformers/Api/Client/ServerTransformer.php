@@ -6,7 +6,6 @@ use App\Models\Egg;
 use App\Models\Server;
 use App\Models\Subuser;
 use League\Fractal\Resource\Item;
-use App\Models\Allocation;
 use App\Models\Permission;
 use Illuminate\Container\Container;
 use App\Models\EggVariable;
@@ -16,7 +15,7 @@ use App\Services\Servers\StartupCommandService;
 
 class ServerTransformer extends BaseClientTransformer
 {
-    protected array $defaultIncludes = ['allocations', 'variables'];
+    protected array $defaultIncludes = ['variables'];
 
     protected array $availableIncludes = ['egg', 'subusers'];
 
@@ -76,33 +75,6 @@ class ServerTransformer extends BaseClientTransformer
             'is_installing' => !$server->isInstalled(),
             'is_transferring' => !is_null($server->transfer),
         ];
-    }
-
-    /**
-     * Returns the allocations associated with this server.
-     *
-     * @throws \App\Exceptions\Transformer\InvalidTransformerLevelException
-     */
-    public function includeAllocations(Server $server): Collection
-    {
-        $transformer = $this->makeTransformer(AllocationTransformer::class);
-
-        $user = $this->request->user();
-        // While we include this permission, we do need to actually handle it slightly different here
-        // for the purpose of keeping things functionally working. If the user doesn't have read permissions
-        // for the allocations we'll only return the primary server allocation, and any notes associated
-        // with it will be hidden.
-        //
-        // This allows us to avoid too much permission regression, without also hiding information that
-        // is generally needed for the frontend to make sense when browsing or searching results.
-        if (!$user->can(Permission::ACTION_ALLOCATION_READ, $server)) {
-            $primary = clone $server->allocation;
-            $primary->notes = null;
-
-            return $this->collection([$primary], $transformer, Allocation::RESOURCE_NAME);
-        }
-
-        return $this->collection($server->allocations, $transformer, Allocation::RESOURCE_NAME);
     }
 
     /**

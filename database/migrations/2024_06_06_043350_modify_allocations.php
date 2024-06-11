@@ -11,14 +11,37 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('servers', function (Blueprint $table) {
-            $table->json('ports');
+        Schema::table('server_transfers', function (Blueprint $table) {
+            $table->dropColumn(['old_allocation', 'new_allocation', 'old_additional_allocations', 'new_additional_allocations']);
         });
+
+        Schema::table('servers', function (Blueprint $table) {
+            $table->json('ports')->nullable();
+        });
+
+        DB::table('servers')->update(['ports' => '[]']);
+
+        Schema::table('servers', function (Blueprint $table) {
+            $table->json('ports')->change();
+        });
+
+        dd('works?');
+
+        $portMappings = [];
+        foreach (DB::table('allocations')->get() as $allocation) {
+            $portMappings[$allocation->server_id][] = "$allocation->ip:$allocation->port";
+        }
+
+        foreach ($portMappings as $serverId => $ports) {
+            DB::table('servers')
+                ->where('id', $serverId)
+                ->update(['ports' => json_encode($ports)]);
+        }
 
         Schema::dropIfExists('allocations');
 
         Schema::table('servers', function (Blueprint $table) {
-            $table->dropColumn(['allocation_id', 'allocation_limit']);
+            $table->dropColumn(['allocation_id']);
         });
 
         Schema::table('nodes', function (Blueprint $table) {
@@ -46,6 +69,13 @@ return new class extends Migration
             $table->timestamps();
 
             $table->unique(['node_id', 'ip', 'port']);
+        });
+
+        Schema::table('server_transfers', function (Blueprint $table) {
+            $table->integer('old_node');
+            $table->integer('new_node');
+            $table->json('old_additional_allocations')->nullable();
+            $table->json('new_additional_allocations')->nullable();
         });
     }
 };

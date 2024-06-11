@@ -121,10 +121,6 @@ class ServerViewController extends Controller
             $canTransfer = true;
         }
 
-        \JavaScript::put([
-            'nodeData' => Node::getForServerCreation(),
-        ]);
-
         return view('admin.servers.view.manage', [
             'nodes' => Node::all(),
             'server' => $server,

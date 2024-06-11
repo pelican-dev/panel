@@ -45,7 +45,6 @@ class AppServiceProvider extends ServiceProvider
         }
 
         Relation::enforceMorphMap([
-            'allocation' => Models\Allocation::class,
             'api_key' => Models\ApiKey::class,
             'backup' => Models\Backup::class,
             'database' => Models\Database::class,

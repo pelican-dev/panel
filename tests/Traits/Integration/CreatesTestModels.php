@@ -8,7 +8,6 @@ use App\Models\Node;
 use App\Models\User;
 use App\Models\Server;
 use App\Models\Subuser;
-use App\Models\Allocation;
 
 trait CreatesTestModels
 {
@@ -37,12 +36,6 @@ trait CreatesTestModels
             $attributes['node_id'] = $node->id;
         }
 
-        if (!isset($attributes['allocation_id'])) {
-            /** @var \App\Models\Allocation $allocation */
-            $allocation = Allocation::factory()->create(['node_id' => $attributes['node_id']]);
-            $attributes['allocation_id'] = $allocation->id;
-        }
-
         if (empty($attributes['egg_id'])) {
             $egg = $this->getBungeecordEgg();
 
@@ -54,10 +47,8 @@ trait CreatesTestModels
         /** @var \App\Models\Server $server */
         $server = Server::factory()->create($attributes);
 
-        Allocation::query()->where('id', $server->allocation_id)->update(['server_id' => $server->id]);
-
         return $server->fresh([
-            'user', 'node', 'allocation', 'egg',
+            'user', 'node', 'egg',
         ]);
     }
 
