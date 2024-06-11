@@ -6,7 +6,7 @@ return [
         'servers_attached' => 'Un nœud ne doit avoir aucun serveur lié à lui pour être supprimé.',
         'daemon_off_config_updated' => 'La configuration du daemon <strong>a été mis à jour</strong>, cependant, une erreur s\'est produite lors de la tentative de mise à jour automatique du fichier de configuration sur le daemon. Vous devrez mettre à jour manuellement le fichier de configuration (core.json) pour qu\'il puisse appliquer ces modifications.',
     ],
-    'allocations' => [
+    'ports' => [
         'server_using' => 'Un serveur est actuellement affecté à cette allocation. Une allocation ne peut être supprimée que si aucun serveur n\'utilise cette dernière.',
         'too_many_ports' => 'L\'ajout de plus de 1000 ports dans une seule plage à la fois n\'est pas supporté.',
         'invalid_mapping' => 'Le mappage fourni pour :port est invalide et n\'a pas pu être traitée.',

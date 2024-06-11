@@ -6,7 +6,7 @@ return [
         'servers_attached' => 'Un nodo no debe tener servidores vinculados a él para poder ser eliminado.',
         'daemon_off_config_updated' => 'La configuración del daemon <strong>se ha actualizado</strong>, sin embargo, se encontró un error al intentar actualizar automáticamente el archivo de configuración en el daemon. Deberás actualizar manualmente el archivo de configuración (config.yml) para que el daemon aplique estos cambios.',
     ],
-    'allocations' => [
+    'ports' => [
         'server_using' => 'Actualmente hay un servidor asignado a esta asignación. Una asignación solo puede ser eliminada si ningún servidor está asignado actualmente.',
         'too_many_ports' => 'Agregar más de 1000 puertos en un solo rango a la vez no está soportado.',
         'invalid_mapping' => 'El mapeo proporcionado para el puerto :port era inválido y no pudo ser procesado.',

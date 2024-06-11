@@ -6,7 +6,7 @@ return [
         'servers_attached' => 'Bir node\'un silinebilmesi için kendisine bağlı hiçbir sunucunun olmaması gerekir.',
         'daemon_off_config_updated' => 'Daemon yapılandırması <strong>güncellendi</strong>, ancak Daemon\'daki yapılandırma dosyası otomatik olarak güncellenmeye çalışılırken bir hatayla karşılaşıldı. Bu değişiklikleri uygulamak için arka plan programının yapılandırma dosyasını (config.yml) manuel olarak güncellemeniz gerekecektir.',
     ],
-    'allocations' => [
+    'ports' => [
         'server_using' => 'Şu anda bu lokasyon bir sunucu atanmış. Bir lokasyon yalnızca şu anda hiçbir sunucu atanmamışsa silinebilir.',
         'too_many_ports' => 'Tek bir aralığa 1000\'den fazla port (Bağlantı noktası) aynı anda eklenmesi desteklenmez.',
         'invalid_mapping' => ':port için sağlanan eşleme geçersizdi ve uyhulanmadı.',

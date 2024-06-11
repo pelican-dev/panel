@@ -6,7 +6,7 @@ return [
         'servers_attached' => 'Uzol nemôže mať priradené žiadne servery aby mohol byť vymazaný.',
         'daemon_off_config_updated' => 'Konfigurácia daemonu <strong>bola aktualizovaná</strong>, no pri pokuse o automatickú aktualizáciu konfigurácie na daemonovi sa vyskytla chyba. Budete musieť manuálne aktualizovať konfiguračný súbor (config.yml) aby sa táto zmena aplikovala na daemon.',
     ],
-    'allocations' => [
+    'ports' => [
         'server_using' => 'Server je momentálne priradený k tejto alokácii. Alokácia môže byť zmazaná, len ak k nej nieje priradený žiadny server.',
         'too_many_ports' => 'Pridanie viac ako 1000 portov v jednom rozsahu nieje podporované.',
         'invalid_mapping' => 'Mapovanie poskytnuté pre port :port nieje správne a nemohlo byť spracované.',

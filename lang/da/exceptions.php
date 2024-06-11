@@ -6,7 +6,7 @@ return [
         'servers_attached' => 'En node må ikke have nogen servere tilknyttet for at kunne slettes.',
         'daemon_off_config_updated' => 'Daemon konfiguration <strong>er blevet opdateret</strong>, men der opstod en fejl under forsøget på automatisk at opdatere konfigurationsfilen på daemonen. Du skal manuelt opdatere konfigurationsfilen (config.yml) for at daemonen kan anvende disse ændringer.',
     ],
-    'allocations' => [
+    'ports' => [
         'server_using' => 'En server er i øjeblikket tildelt denne tildeling. En tildeling kan kun slettes, hvis ingen server i øjeblikket er tildelt.',
         'too_many_ports' => 'Tilføjede af flere end 1000 porte i en enkelt række ad gangen understøttes ikke.',
         'invalid_mapping' => 'Den angivne kortlægning for :port var ugyldig og kunne ikke behandles.',
