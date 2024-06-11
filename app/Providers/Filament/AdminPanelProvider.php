@@ -81,7 +81,7 @@ class AdminPanelProvider extends PanelProvider
                 Authenticate::class,
             ]);
 
-        if (config("panel.filament.exit-admin")) {
+        if (config('panel.filament.exit-admin')) {
             $panel->userMenuItems([
                 MenuItem::make()
                     ->label('Exit Admin')

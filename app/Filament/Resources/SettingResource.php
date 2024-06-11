@@ -38,7 +38,8 @@ class SettingResource extends Resource
             ->columns([
                 Tables\Columns\TextColumn::make('label')
                     ->sortable()
-                    ->searchable(),
+                    ->searchable()
+                    ->description(fn ($record) => $record->description),
 
                 Tables\Columns\TextColumn::make('value')
                     ->formatStateUsing(fn ($state) => $state === null ? 'Empty' : $state)
@@ -57,11 +58,13 @@ class SettingResource extends Resource
                             'number' => [
                                 TextInput::make('value')
                                     ->label($record->label)
+                                    ->placeholder($record->description)
                                     ->type('number'),
                             ],
                             default => [
                                 TextInput::make('value')
-                                    ->label($record->label),
+                                    ->label($record->label)
+                                    ->placeholder($record->description),
                             ],
                         };
                     }),

@@ -15,7 +15,6 @@ class ManageSettings extends ManageRecords
     use EnvironmentWriterTrait;
 
     protected static string $resource = SettingResource::class;
-
     protected array $variables = [];
 
     protected function getHeaderActions(): array
@@ -41,7 +40,6 @@ class ManageSettings extends ManageRecords
         }
 
         $this->writeToEnvironment($this->variables);
-        //Artisan::call('config:cache'); // When this is called the page expires, but it is the only way to make it work
+        Artisan::call('config:cache'); // When this is called the page freezes, but it is the only way to make it work that i can find
     }
-
 }

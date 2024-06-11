@@ -20,6 +20,7 @@ return new class extends Migration
             $table->text('value')->nullable();
             $table->json('attributes')->nullable();
             $table->string('type');
+            $table->longText('description');
             $table->timestamps();
         });
 
@@ -28,6 +29,20 @@ return new class extends Migration
             'label' => 'Panel Name',
             'value' => 'Pelican',
             'type' => 'text',
+            'description' => 'This is the name that is used throughout the panel and in emails sent to clients.',
+        ]);
+
+        Setting::create([
+            'key' => 'FILAMENT_TOP_NAVIGATION',
+            'label' => 'Topbar',
+            'value' => 'false',
+            'type' => 'select',
+            'attributes' => [
+                'options' => [
+                    'false' => 'False',
+                    'true' => 'True',
+                ],
+            ],
         ]);
     }
 

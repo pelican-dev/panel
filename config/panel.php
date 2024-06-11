@@ -174,6 +174,6 @@ return [
 
     'filament' => [
         'top-navigation' => env('FILAMENT_TOP_NAVIGATION', false),
-        "exit-admin" => env('FILAMENT_EXIT_ADMIN', false),
+        'exit-admin' => env('FILAMENT_EXIT_ADMIN', false),
     ],
 ];
