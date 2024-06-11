@@ -192,7 +192,8 @@ class CreateServer extends CreateRecord
 
                                                 $start = max((int) $start, 0);
                                                 $end = min((int) $end, 2 ** 16 - 1);
-                                                for ($i = $start; $i <= $end; $i++) {
+                                                $range = $start <= $end ? range($start, $end) : range($end, $start);
+                                                foreach ($range as $i) {
                                                     $ports->push($i);
                                                 }
                                             }
