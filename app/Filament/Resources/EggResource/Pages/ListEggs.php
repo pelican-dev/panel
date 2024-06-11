@@ -89,7 +89,6 @@ class ListEggs extends ListRecords
 
                 ])
                 ->action(function (array $data): void {
-
                     /** @var EggImporterService $eggImportService */
                     $eggImportService = resolve(EggImporterService::class);
 

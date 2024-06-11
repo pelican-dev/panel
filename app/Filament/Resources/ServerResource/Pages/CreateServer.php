@@ -426,7 +426,6 @@ class CreateServer extends CreateRecord
 
                                             $components = [$text, $select];
 
-                                            /** @var Forms\Components\Component $component */
                                             foreach ($components as &$component) {
                                                 $component = $component
                                                     ->live(onBlur: true)
@@ -576,6 +575,7 @@ class CreateServer extends CreateRecord
                                                         'unlimited' => -1,
                                                         'disabled' => 0,
                                                         'limited' => 128,
+                                                        default => throw new \LogicException('Invalid state'),
                                                     };
 
                                                     $set('swap', $value);
@@ -595,7 +595,7 @@ class CreateServer extends CreateRecord
                                                 ->dehydratedWhenHidden()
                                                 ->hidden(fn (Forms\Get $get) => match ($get('swap_support')) {
                                                     'disabled', 'unlimited' => true,
-                                                    'limited' => false,
+                                                    default => false,
                                                 })
                                                 ->label('Swap Memory')
                                                 ->default(0)
