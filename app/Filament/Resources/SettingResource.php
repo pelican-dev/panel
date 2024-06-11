@@ -37,14 +37,20 @@ class SettingResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('label')
+                    ->label('Setting')
                     ->sortable()
                     ->searchable()
-                    ->description(fn ($record) => $record->description),
+                    ->tooltip(fn ($record) => $record->description),
 
                 Tables\Columns\TextColumn::make('value')
+                    ->label('Value')
                     ->formatStateUsing(fn ($state) => $state === null ? 'Empty' : $state)
                     ->sortable()
                     ->searchable(),
+
+                Tables\Columns\TextColumn::make('updated_at')
+                    ->label('Last update on')
+                    ->sortable(),
             ])
             ->actions([
                 Tables\Actions\EditAction::make()
