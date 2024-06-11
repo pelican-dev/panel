@@ -426,19 +426,19 @@ class CreateServer extends CreateRecord
                                             $components = [$text, $select];
 
                                             foreach ($components as &$component) {
-                                    $component = $component
-                                        ->live(onBlur: true)
-                                        ->hintIcon('tabler-code')
-                                        ->label(fn (Forms\Get $get) => $get('name'))
-                                        ->hintIconTooltip(fn (Forms\Get $get) => $get('rules'))
-                                        ->prefix(fn (Forms\Get $get) => '{{' . $get('env_variable') . '}}')
-                                        ->helperText(fn (Forms\Get $get) => empty($get('description')) ? '—' : $get('description'))
-                                        ->afterStateUpdated(function (Forms\Set $set, Forms\Get $get, $state) {
-                                            $environment = $get($envPath = '../../environment');
-                                            $environment[$get('env_variable')] = $state;
-                                            $set($envPath, $environment);
-                                        });
-                                }
+                                                $component = $component
+                                                    ->live(onBlur: true)
+                                                    ->hintIcon('tabler-code')
+                                                    ->label(fn (Forms\Get $get) => $get('name'))
+                                                    ->hintIconTooltip(fn (Forms\Get $get) => $get('rules'))
+                                                    ->prefix(fn (Forms\Get $get) => '{{' . $get('env_variable') . '}}')
+                                                    ->helperText(fn (Forms\Get $get) => empty($get('description')) ? '—' : $get('description'))
+                                                    ->afterStateUpdated(function (Forms\Set $set, Forms\Get $get, $state) {
+                                                        $environment = $get($envPath = '../../environment');
+                                                        $environment[$get('env_variable')] = $state;
+                                                        $set($envPath, $environment);
+                                                    });
+                                            }
 
                                             return $components;
                                         })
@@ -558,24 +558,24 @@ class CreateServer extends CreateRecord
                                                 ->helperText('100% equals one CPU core.'),
                                         ]),
 
-                                Forms\Components\Grid::make()
-                                    ->columns(4)
-                                    ->columnSpanFull()
-                                    ->schema([
-                                        Forms\Components\ToggleButtons::make('swap_support')
-                                            ->live()
-                                            ->label('Enable Swap Memory')
-                                            ->inlineLabel()
-                                            ->inline()
-                                            ->columnSpan(2)
-                                            ->default('disabled')
-                                            ->afterStateUpdated(function ($state, Forms\Set $set) {
-                                                $value = match ($state) {
-                                                    'unlimited' => -1,
-                                                    'disabled' => 0,
-                                                    'limited' => 128,
-                                                    default => throw new \LogicException('Invalid state'),
-                                                };
+                                    Forms\Components\Grid::make()
+                                        ->columns(4)
+                                        ->columnSpanFull()
+                                        ->schema([
+                                            Forms\Components\ToggleButtons::make('swap_support')
+                                                ->live()
+                                                ->label('Enable Swap Memory')
+                                                ->inlineLabel()
+                                                ->inline()
+                                                ->columnSpan(2)
+                                                ->default('disabled')
+                                                ->afterStateUpdated(function ($state, Forms\Set $set) {
+                                                    $value = match ($state) {
+                                                        'unlimited' => -1,
+                                                        'disabled' => 0,
+                                                        'limited' => 128,
+                                                        default => throw new \LogicException('Invalid state'),
+                                                    };
 
                                                     $set('swap', $value);
                                                 })
