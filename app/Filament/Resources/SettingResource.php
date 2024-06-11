@@ -7,6 +7,7 @@ use App\Models\Setting;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
+use Filament\Tables\Grouping\Group;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Select;
 use Schmeits\FilamentCharacterCounter\Forms\Components\TextInput as LimitInput;
@@ -28,6 +29,13 @@ class SettingResource extends Resource
     {
         return $table
             ->paginated(false)
+            ->groups([
+                Group::make('group')
+
+                    ->collapsible(),
+            ])
+            ->groupingSettingsHidden()
+            ->defaultGroup('Basic')
             ->columns([
                 Tables\Columns\TextColumn::make('label')
                     ->label('Setting')

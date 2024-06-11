@@ -18,6 +18,7 @@ return new class extends Migration
             $table->string('key')->primary();
             $table->string('label');
             $table->text('value')->nullable();
+            $table->text('group');
             $table->json('attributes')->nullable();
             $table->string('type');
             $table->longText('description')->nullable();
@@ -29,6 +30,7 @@ return new class extends Migration
             'key' => 'APP_NAME',
             'label' => 'Panel Name',
             'value' => 'Pelican',
+            'group' => 'Basic',
             'type' => 'limit',
             'limit' => 18,
             'description' => 'This is the name that is used throughout the panel and in emails sent to clients.',
@@ -37,6 +39,7 @@ return new class extends Migration
         Setting::create([
             'key' => 'FILAMENT_TOP_NAVIGATION',
             'label' => 'Topbar or Sidebar',
+            'group' => 'Panel',
             'value' => 'false',
             'type' => 'select',
             'description' => 'Setting this to true switches the sidebar to a topbar and vice versa',
@@ -51,6 +54,7 @@ return new class extends Migration
         Setting::create([
             'key' => 'FILAMENT_EXIT_ADMIN',
             'label' => 'Exit Admin',
+            'group' => 'Panel',
             'value' => 'false',
             'type' => 'select',
             'description' => 'Setting this to true switches the Exit Admin button from the side/topbar to the profile-menu',

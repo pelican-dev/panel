@@ -10,10 +10,10 @@ class Setting extends Model
 
     public $incrementing = false;
 
-    protected $fillable = ['key', 'label', 'value', 'type', 'attributes', 'description', 'limit'];
+    protected $fillable = ['key', 'label', 'value', 'type', 'attributes', 'description', 'limit', 'group'];
 
     protected $casts = [
-    'attributes' => 'array',
-    'limit' => 'integer',
+        'attributes' => 'array',
+        'limit' => 'integer',
     ];
 }
