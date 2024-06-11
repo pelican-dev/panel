@@ -212,7 +212,7 @@ class CreateNode extends CreateRecord
                                     false => 'success',
                                 ]),
                             Forms\Components\ToggleButtons::make('public')
-                                ->default(false)
+                                ->default(config('panel.client_features.allocations.enabled', false))
                                 ->columnSpan(1)
                                 ->label('Automatic Allocation')->inline()
                                 ->options([
