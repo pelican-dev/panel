@@ -3,16 +3,13 @@
 namespace App\Filament\Resources\ServerResource\Pages;
 
 use App\Filament\Resources\ServerResource;
-use App\Models\Allocation;
 use App\Models\Egg;
 use App\Models\Node;
-use App\Services\Allocations\AssignmentService;
 use App\Services\Servers\RandomWordService;
 use App\Services\Servers\ServerCreationService;
 use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Form;
 use Filament\Resources\Pages\CreateRecord;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Filament\Forms;
 use Filament\Forms\Components\Wizard;
@@ -27,6 +24,9 @@ class CreateServer extends CreateRecord
     protected static bool $canCreateAnother = false;
 
     public ?Node $node = null;
+    public ?Egg $egg = null;
+    public array $ports = [];
+    public array $eggDefaultPorts = [];
 
     public function form(Form $form): Form
     {
@@ -89,179 +89,16 @@ class CreateServer extends CreateRecord
                                     'default' => 1,
                                     'sm' => 2,
                                     'md' => 2,
-                                    'lg' => 2,
+                                    'lg' => 3,
                                 ])
                                 ->live()
                                 ->relationship('node', 'name')
                                 ->searchable()
                                 ->preload()
                                 ->afterStateUpdated(function (Forms\Set $set, $state) {
-                                    $set('allocation_id', null);
                                     $this->node = Node::find($state);
                                 })
                                 ->required(),
-
-                            Forms\Components\Select::make('allocation_id')
-                                ->preload()
-                                ->live()
-                                ->prefixIcon('tabler-network')
-                                ->label('Primary Allocation')
-                                ->columnSpan([
-                                    'default' => 1,
-                                    'sm' => 2,
-                                    'md' => 1,
-                                    'lg' => 2,
-                                ])
-                                ->disabled(fn (Forms\Get $get) => $get('node_id') === null)
-                                ->searchable(['ip', 'port', 'ip_alias'])
-                                ->afterStateUpdated(function (Forms\Set $set) {
-                                    $set('allocation_additional', null);
-                                    $set('allocation_additional.needstobeastringhere.extra_allocations', null);
-                                })
-                                ->getOptionLabelFromRecordUsing(
-                                    fn (Allocation $allocation) => "$allocation->ip:$allocation->port" .
-                                        ($allocation->ip_alias ? " ($allocation->ip_alias)" : '')
-                                )
-                                ->placeholder(function (Forms\Get $get) {
-                                    $node = Node::find($get('node_id'));
-
-                                    if ($node?->allocations) {
-                                        return 'Select an Allocation';
-                                    }
-
-                                    return 'Create a New Allocation';
-                                })
-                                ->relationship(
-                                    'allocation',
-                                    'ip',
-                                    fn (Builder $query, Forms\Get $get) => $query
-                                        ->where('node_id', $get('node_id'))
-                                        ->whereNull('server_id'),
-                                )
-                                ->createOptionForm(fn (Forms\Get $get) => [
-                                    Forms\Components\TextInput::make('allocation_ip')
-                                        ->datalist(Node::find($get('node_id'))?->ipAddresses() ?? [])
-                                        ->label('IP Address')
-                                        ->inlineLabel()
-                                        ->ipv4()
-                                        ->helperText("Usually your machine's public IP unless you are port forwarding.")
-                                        // ->selectablePlaceholder(false)
-                                        ->required(),
-                                    Forms\Components\TextInput::make('allocation_alias')
-                                        ->label('Alias')
-                                        ->inlineLabel()
-                                        ->default(null)
-                                        ->datalist([
-                                            $get('name'),
-                                            Egg::find($get('egg_id'))?->name,
-                                        ])
-                                        ->helperText('Optional display name to help you remember what these are.')
-                                        ->required(false),
-                                    Forms\Components\TagsInput::make('allocation_ports')
-                                        ->placeholder('Examples: 27015, 27017-27019')
-                                        ->helperText(new HtmlString('
-                                These are the ports that users can connect to this Server through.
-                                <br />
-                                You would have to port forward these on your home network.
-                            '))
-                                        ->label('Ports')
-                                        ->inlineLabel()
-                                        ->live()
-                                        ->afterStateUpdated(function ($state, Forms\Set $set) {
-                                            $ports = collect();
-                                            $update = false;
-                                            foreach ($state as $portEntry) {
-                                                if (!str_contains($portEntry, '-')) {
-                                                    if (is_numeric($portEntry)) {
-                                                        $ports->push((int) $portEntry);
-
-                                                        continue;
-                                                    }
-
-                                                    // Do not add non-numerical ports
-                                                    $update = true;
-
-                                                    continue;
-                                                }
-
-                                                $update = true;
-                                                [$start, $end] = explode('-', $portEntry);
-                                                if (!is_numeric($start) || !is_numeric($end)) {
-                                                    continue;
-                                                }
-
-                                                $start = max((int) $start, 0);
-                                                $end = min((int) $end, 2 ** 16 - 1);
-                                                for ($i = $start; $i <= $end; $i++) {
-                                                    $ports->push($i);
-                                                }
-                                            }
-
-                                            $uniquePorts = $ports->unique()->values();
-                                            if ($ports->count() > $uniquePorts->count()) {
-                                                $update = true;
-                                                $ports = $uniquePorts;
-                                            }
-
-                                            $sortedPorts = $ports->sort()->values();
-                                            if ($sortedPorts->all() !== $ports->all()) {
-                                                $update = true;
-                                                $ports = $sortedPorts;
-                                            }
-
-                                            $ports = $ports->filter(fn ($port) => $port > 1024 && $port < 65535)->values();
-
-                                            if ($update) {
-                                                $set('allocation_ports', $ports->all());
-                                            }
-                                        })
-                                        ->splitKeys(['Tab', ' ', ','])
-                                        ->required(),
-                                ])
-                                ->createOptionUsing(function (array $data, Forms\Get $get): int {
-                                    return collect(
-                                        resolve(AssignmentService::class)->handle(Node::find($get('node_id')), $data)
-                                    )->first();
-                                })
-                                ->required(),
-
-                            Forms\Components\Repeater::make('allocation_additional')
-                                ->label('Additional Allocations')
-                                ->columnSpan([
-                                    'default' => 1,
-                                    'sm' => 2,
-                                    'md' => 1,
-                                    'lg' => 2,
-                                ])
-                                ->addActionLabel('Add Allocation')
-                                ->disabled(fn (Forms\Get $get) => $get('allocation_id') === null)
-                                // ->addable() TODO disable when all allocations are taken
-                                // ->addable() TODO disable until first additional allocation is selected
-                                ->simple(
-                                    Forms\Components\Select::make('extra_allocations')
-                                        ->live()
-                                        ->preload()
-                                        ->disableOptionsWhenSelectedInSiblingRepeaterItems()
-                                        ->prefixIcon('tabler-network')
-                                        ->label('Additional Allocations')
-                                        ->columnSpan(2)
-                                        ->disabled(fn (Forms\Get $get) => $get('../../node_id') === null)
-                                        ->searchable(['ip', 'port', 'ip_alias'])
-                                        ->getOptionLabelFromRecordUsing(
-                                            fn (Allocation $allocation) => "$allocation->ip:$allocation->port" .
-                                                ($allocation->ip_alias ? " ($allocation->ip_alias)" : '')
-                                        )
-                                        ->placeholder('Select additional Allocations')
-                                        ->disableOptionsWhenSelectedInSiblingRepeaterItems()
-                                        ->relationship(
-                                            'allocations',
-                                            'ip',
-                                            fn (Builder $query, Forms\Get $get, Forms\Components\Select $component, $state) => $query
-                                                ->where('node_id', $get('../../node_id'))
-                                                ->whereNot('id', $get('../../allocation_id'))
-                                                ->whereNull('server_id'),
-                                        ),
-                                ),
 
                             Forms\Components\TextInput::make('description')
                                 ->placeholder('Description')
@@ -269,7 +106,7 @@ class CreateServer extends CreateRecord
                                     'default' => 1,
                                     'sm' => 2,
                                     'md' => 2,
-                                    'lg' => 6,
+                                    'lg' => 3,
                                 ])
                                 ->label('Notes'),
                         ]),
@@ -285,42 +122,30 @@ class CreateServer extends CreateRecord
                             'lg' => 4,
                         ])
                         ->schema([
+
                             Forms\Components\Select::make('egg_id')
+                                ->disabledOn('edit')
                                 ->prefixIcon('tabler-egg')
-                                ->relationship('egg', 'name')
                                 ->columnSpan([
-                                    'default' => 1,
+                                    'default' => 2,
                                     'sm' => 2,
                                     'md' => 2,
                                     'lg' => 3,
                                 ])
+                                ->relationship('egg', 'name')
                                 ->searchable()
                                 ->preload()
                                 ->live()
                                 ->afterStateUpdated(function ($state, Forms\Set $set, Forms\Get $get, $old) {
-                                    $egg = Egg::query()->find($state);
-                                    $set('startup', $egg->startup);
+                                    $this->egg = Egg::query()->find($state);
+                                    $set('startup', $this->egg?->startup);
                                     $set('image', '');
 
-                                    $variables = $egg->variables ?? [];
-                                    $serverVariables = collect();
-                                    foreach ($variables as $variable) {
-                                        $serverVariables->add($variable->toArray());
-                                    }
-
-                                    $variables = [];
-                                    $set($path = 'server_variables', $serverVariables->sortBy(['sort'])->all());
-                                    for ($i = 0; $i < $serverVariables->count(); $i++) {
-                                        $set("$path.$i.variable_value", $serverVariables[$i]['default_value']);
-                                        $set("$path.$i.variable_id", $serverVariables[$i]['id']);
-                                        $variables[$serverVariables[$i]['env_variable']] = $serverVariables[$i]['default_value'];
-                                    }
-
-                                    $set('environment', $variables);
+                                    $this->resetEggVariables($set, $get);
 
                                     $previousEgg = Egg::query()->find($old);
                                     if (!$get('name') || $previousEgg?->getKebabName() === $get('name')) {
-                                        $set('name', $egg->getKebabName());
+                                        $set('name', $this->egg->getKebabName());
                                     }
                                 })
                                 ->required(),
@@ -349,12 +174,52 @@ class CreateServer extends CreateRecord
                                 ->inline()
                                 ->required(),
 
+                            Forms\Components\TagsInput::make('ports')
+                                ->columnSpan(2)
+                                ->placeholder('Example: 25565, 8080, 1337-1340')
+                                ->splitKeys(['Tab', ' ', ','])
+                                ->hidden(fn () => !$this->egg)
+                                ->helperText(new HtmlString('
+                                These are the ports that users can connect to this Server through.
+                                <br />
+                                You would typically port forward these on your home network.
+                            '))
+                                ->label('Ports')
+                                ->afterStateUpdated(self::ports(...))
+                                ->live(),
+
+                            Forms\Components\Repeater::make('assignments')
+                                ->columnSpan(2)
+                                ->defaultItems(fn () => count($this->eggDefaultPorts))
+                                ->label('Port Assignments')
+                                ->helperText(fn (Forms\Get $get) => empty($get('ports')) ? 'You must add ports to assign them!' : '')
+                                ->live()
+                                ->addable(false)
+                                ->deletable(false)
+                                ->reorderable(false)
+                                ->hidden(fn () => !$this->egg)
+                                ->simple(
+                                    Forms\Components\Select::make('port')
+                                        ->live()
+                                        ->disabled(fn (Forms\Get $get) => empty($get('../../ports')) || empty($get('../../assignments')))
+                                        ->prefix(function (Forms\Components\Component $component) {
+                                            $key = str($component->getStatePath())->beforeLast('.')->afterLast('.')->toString();
+
+                                            return $key;
+                                        })
+                                        ->disableOptionsWhenSelectedInSiblingRepeaterItems()
+                                        ->options(fn (Forms\Get $get) => $this->ports)
+                                        ->required(),
+                                ),
+
                             Forms\Components\Textarea::make('startup')
+                                ->hidden(fn () => !$this->egg)
                                 ->hintIcon('tabler-code')
                                 ->label('Startup Command')
-                                ->hidden(fn (Forms\Get $get) => $get('egg_id') === null)
                                 ->required()
                                 ->live()
+                                ->disabled(fn (Forms\Get $get) => $this->egg === null)
+                                ->afterStateUpdated($this->resetEggVariables(...))
                                 ->columnSpan([
                                     'default' => 1,
                                     'sm' => 2,
@@ -364,7 +229,7 @@ class CreateServer extends CreateRecord
                                 ->rows(function ($state) {
                                     return str($state)->explode("\n")->reduce(
                                         fn (int $carry, $line) => $carry + floor(strlen($line) / 125),
-                                        1
+                                        0
                                     );
                                 }),
 
@@ -446,6 +311,7 @@ class CreateServer extends CreateRecord
                                         ->columnSpan(2),
                                 ]),
                         ]),
+
                     Wizard\Step::make('Environment Configuration')
                         ->label('Environment Configuration')
                         ->icon('tabler-brand-docker')
@@ -754,12 +620,14 @@ class CreateServer extends CreateRecord
 
     protected function handleRecordCreation(array $data): Model
     {
-        $data['allocation_additional'] = collect($data['allocation_additional'])->filter()->all();
+        foreach (array_keys($this->eggDefaultPorts) as $i => $env) {
+            $data['environment'][$env] = $data['ports'][$data['assignments'][$i]];
+        }
 
         /** @var ServerCreationService $service */
         $service = resolve(ServerCreationService::class);
 
-        return $service->handle($data);
+        return $service->handle($data, validateVariables: false);
     }
 
     private function shouldHideComponent(Forms\Get $get, Forms\Components\Component $component): bool
@@ -791,5 +659,83 @@ class CreateServer extends CreateRecord
             ->each(fn ($value) => str($value)->trim())
             ->mapWithKeys(fn ($value) => [$value => $value])
             ->all();
+    }
+
+    public function ports($state, Forms\Set $set)
+    {
+        $ports = collect();
+        $update = false;
+        foreach ($state as $portEntry) {
+            if (!str_contains($portEntry, '-')) {
+                if (is_numeric($portEntry)) {
+                    $ports->push((int) $portEntry);
+
+                    continue;
+                }
+
+                continue;
+            }
+
+            [$start, $end] = explode('-', $portEntry);
+            if (!is_numeric($start) || !is_numeric($end)) {
+                continue;
+            }
+
+            $start = max((int) $start, 0);
+            $end = min((int) $end, 2 ** 16 - 1);
+            for ($i = $start; $i <= $end; $i++) {
+                $ports->push($i);
+            }
+        }
+
+        $uniquePorts = $ports->unique()->values();
+        if ($ports->count() > $uniquePorts->count()) {
+            $ports = $uniquePorts;
+        }
+
+        $ports = $ports->filter(fn ($port) => $port > 1024 && $port < 65535)->values();
+
+        $set('ports', $ports->all());
+        $this->ports = $ports->all();
+    }
+
+    public function resetEggVariables(Forms\Set $set, Forms\Get $get)
+    {
+        $set('assignments', []);
+
+        $i = 0;
+        $this->eggDefaultPorts = [];
+        if (str_contains($get('startup'), '{{SERVER_PORT}}')) {
+            $this->eggDefaultPorts['SERVER_PORT'] = null;
+            $set('assignments.SERVER_PORT', ['port' => null]);
+        }
+
+        $variables = $this->egg->variables ?? [];
+        $serverVariables = collect();
+        $this->ports = [];
+        foreach ($variables as $variable) {
+            if (str_contains($variable->rules, 'port')) {
+                $this->eggDefaultPorts[$variable->env_variable] = $variable->default_value;
+                $this->ports[] = (int) $variable->default_value;
+
+                $set("assignments.$i", ['port' => $i++]);
+
+                continue;
+            }
+
+            $serverVariables->add($variable->toArray());
+        }
+
+        $set('ports', $this->ports);
+
+        $variables = [];
+        $set($path = 'server_variables', $serverVariables->sortBy(['sort'])->all());
+        for ($i = 0; $i < $serverVariables->count(); $i++) {
+            $set("$path.$i.variable_value", $serverVariables[$i]['default_value']);
+            $set("$path.$i.variable_id", $serverVariables[$i]['id']);
+            $variables[$serverVariables[$i]['env_variable']] = $serverVariables[$i]['default_value'];
+        }
+
+        $set('environment', $variables);
     }
 }

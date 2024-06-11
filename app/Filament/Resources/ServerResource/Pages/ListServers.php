@@ -68,13 +68,7 @@ class ListServers extends ListRecords
                     ->label('Owner')
                     ->url(fn (Server $server): string => route('filament.admin.resources.users.edit', ['record' => $server->user]))
                     ->sortable(),
-                Tables\Columns\SelectColumn::make('allocation_id')
-                    ->label('Primary Allocation')
-                    ->options(fn ($state, Server $server) => $server->allocations->mapWithKeys(
-                        fn ($allocation) => [$allocation->id => $allocation->address])
-                    )
-                    ->selectablePlaceholder(false)
-                    ->sortable(),
+                Tables\Columns\TextColumn::make('ports'),
                 Tables\Columns\TextColumn::make('image')->hidden(),
                 Tables\Columns\TextColumn::make('backups_count')
                     ->counts('backups')
