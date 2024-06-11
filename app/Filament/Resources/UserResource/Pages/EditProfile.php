@@ -193,8 +193,10 @@ class EditProfile extends \Filament\Pages\Auth\EditProfile
                                     ->schema([
                                         Grid::make('asdf')->columns(5)->schema([
                                             Section::make('Create API Key')->columnSpan(3)->schema([
-                                                TextInput::make('description'),
+                                                TextInput::make('description')
+                                                    ->live(),
                                                 TagsInput::make('allowed_ips')
+                                                    ->live()
                                                     ->splitKeys([',', ' ', 'Tab'])
                                                     ->placeholder('Example: 127.0.0.1 or 192.168.1.1')
                                                     ->label('Whitelisted IP\'s')
