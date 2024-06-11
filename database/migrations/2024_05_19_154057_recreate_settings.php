@@ -34,13 +34,28 @@ return new class extends Migration
 
         Setting::create([
             'key' => 'FILAMENT_TOP_NAVIGATION',
-            'label' => 'Topbar',
+            'label' => 'Topbar or Sidebar',
             'value' => 'false',
             'type' => 'select',
+            'description' => 'Setting this to true switches the sidebar to a topbar and vice versa',
             'attributes' => [
                 'options' => [
-                    'false' => 'False',
-                    'true' => 'True',
+                    'false' => 'false',
+                    'true' => 'true',
+                ],
+            ],
+        ]);
+
+        Setting::create([
+            'key' => 'FILAMENT_EXIT_ADMIN',
+            'label' => 'Exit Admin',
+            'value' => 'false',
+            'type' => 'select',
+            'description' => 'Setting this to true switches the Exit Admin button from the side/topbar to the profile-menu',
+            'attributes' => [
+                'options' => [
+                    'false' => 'false',
+                    'true' => 'true',
                 ],
             ],
         ]);
