@@ -27,6 +27,7 @@ class AssetComposer
                 'enabled' => config('recaptcha.enabled', false),
                 'siteKey' => config('recaptcha.website_key') ?? '',
             ],
+            'usesSyncDriver' => config('queue.default') === 'sync',
         ]);
     }
 }
