@@ -215,7 +215,7 @@ class Handler extends ExceptionHandler
                         ->map(fn ($trace) => Arr::except($trace, ['args']))
                         ->all(),
                     'previous' => Collection::make($this->extractPrevious($e))
-                        ->map(fn ($exception) => $e->getTrace())
+                        ->map(fn () => $e->getTrace())
                         ->map(fn ($trace) => Arr::except($trace, ['args']))
                         ->all(),
                 ],
