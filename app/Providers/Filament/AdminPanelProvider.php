@@ -19,6 +19,8 @@ use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\AuthenticateSession;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
+use Filament\Navigation\MenuItem;
+use Filament\Navigation\NavigationItem;
 
 class AdminPanelProvider extends PanelProvider
 {
@@ -31,7 +33,7 @@ class AdminPanelProvider extends PanelProvider
 
     public function panel(Panel $panel): Panel
     {
-        return $panel
+        $panel = $panel
             ->default()
             ->id('admin')
             ->path('admin')
@@ -78,5 +80,25 @@ class AdminPanelProvider extends PanelProvider
             ->authMiddleware([
                 Authenticate::class,
             ]);
+
+        if (config("panel.filament.exit-admin")) {
+            $panel->userMenuItems([
+                MenuItem::make()
+                    ->label('Exit Admin')
+                    ->url('/')
+                    ->icon('tabler-arrow-back')
+                    ->sort(24),
+            ]);
+        } else {
+            $panel->navigationItems([
+                NavigationItem::make('app')
+                    ->label('Exit Admin')
+                    ->url('/')
+                    ->icon('tabler-arrow-back')
+                    ->sort(24),
+            ]);
+        }
+
+        return $panel;
     }
 }

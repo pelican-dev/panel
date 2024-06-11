@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Filament\Clusters\Settings\Resources\SettingResource\Pages;
+namespace App\Filament\Resources\SettingResource\Pages;
 
-use App\Filament\Clusters\Settings\Resources\SettingResource;
+use App\Filament\Resources\SettingResource;
 use Filament\Resources\Pages\ManageRecords;
 use Filament\Actions\Action;
 use Illuminate\Database\QueryException;
@@ -41,7 +41,7 @@ class ManageSettings extends ManageRecords
         }
 
         $this->writeToEnvironment($this->variables);
-        Artisan::call('config:cache'); // When this is called the page expires, but it is the only way to make it work
+        //Artisan::call('config:cache'); // When this is called the page expires, but it is the only way to make it work
     }
 
 }

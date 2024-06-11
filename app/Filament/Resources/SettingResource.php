@@ -1,9 +1,8 @@
 <?php
 
-namespace App\Filament\Clusters\Settings\Resources;
+namespace App\Filament\Resources;
 
-use App\Filament\Clusters\Settings;
-use App\Filament\Clusters\Settings\Resources\SettingResource\Pages;
+use App\Filament\Resources\SettingResource\Pages;
 use App\Models\Setting;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
@@ -18,7 +17,7 @@ class SettingResource extends Resource
 
     protected static ?string $navigationIcon = 'tabler-settings';
 
-    protected static ?string $cluster = Settings::class;
+    protected static ?int $navigationSort = 23;
 
     public static function canCreate(): bool
     {
