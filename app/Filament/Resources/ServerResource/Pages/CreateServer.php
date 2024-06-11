@@ -718,7 +718,7 @@ class CreateServer extends CreateRecord
                 $this->eggDefaultPorts[$variable->env_variable] = $variable->default_value;
                 $this->ports[] = (int) $variable->default_value;
 
-                $set("assignments.$i", ['port' => $i++]);
+                $set("assignments.$variable->env_variable", ['port' => $i++]);
 
                 continue;
             }
