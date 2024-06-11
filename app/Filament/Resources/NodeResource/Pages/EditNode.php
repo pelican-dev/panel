@@ -214,7 +214,7 @@ class EditNode extends EditRecord
                                 ->numeric()->required()
                                 ->minValue(1)
                                 ->maxValue(1024)
-                                ->suffix('MiB'),
+                                ->suffix(config('panel.use_binary_prefix') ? 'MiB' : 'MB'),
                             Forms\Components\TextInput::make('daemon_sftp')
                                 ->columnSpan(['default' => 1, 'sm' => 1, 'md' => 1, 'lg' => 3])
                                 ->label('SFTP Port')
@@ -274,7 +274,7 @@ class EditNode extends EditRecord
                                         ->dehydratedWhenHidden()
                                         ->hidden(fn (Forms\Get $get) => $get('unlimited_mem'))
                                         ->label('Memory Limit')->inlineLabel()
-                                        ->suffix('MiB')
+                                        ->suffix(config('panel.use_binary_prefix') ? 'MiB' : 'MB')
                                         ->required()
                                         ->columnSpan(['default' => 1, 'sm' => 1, 'md' => 1, 'lg' => 2])
                                         ->numeric()
@@ -314,7 +314,7 @@ class EditNode extends EditRecord
                                         ->dehydratedWhenHidden()
                                         ->hidden(fn (Forms\Get $get) => $get('unlimited_disk'))
                                         ->label('Disk Limit')->inlineLabel()
-                                        ->suffix('MiB')
+                                        ->suffix(config('panel.use_binary_prefix') ? 'MiB' : 'MB')
                                         ->required()
                                         ->columnSpan(['default' => 1, 'sm' => 1, 'md' => 1, 'lg' => 2])
                                         ->numeric()

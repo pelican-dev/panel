@@ -238,7 +238,7 @@ class CreateNode extends CreateRecord
                                 ->default(256)
                                 ->minValue(1)
                                 ->maxValue(1024)
-                                ->suffix('MiB'),
+                                ->suffix(config('panel.use_binary_prefix') ? 'MiB' : 'MB'),
                             Forms\Components\TextInput::make('daemon_sftp')
                                 ->columnSpan(1)
                                 ->label('SFTP Port')
@@ -274,7 +274,7 @@ class CreateNode extends CreateRecord
                                         ->dehydratedWhenHidden()
                                         ->hidden(fn (Forms\Get $get) => $get('unlimited_mem'))
                                         ->label('Memory Limit')->inlineLabel()
-                                        ->suffix('MiB')
+                                        ->suffix(config('panel.use_binary_prefix') ? 'MiB' : 'MB')
                                         ->columnSpan(2)
                                         ->numeric()
                                         ->minValue(0)
@@ -315,7 +315,7 @@ class CreateNode extends CreateRecord
                                         ->dehydratedWhenHidden()
                                         ->hidden(fn (Forms\Get $get) => $get('unlimited_disk'))
                                         ->label('Disk Limit')->inlineLabel()
-                                        ->suffix('MiB')
+                                        ->suffix(config('panel.use_binary_prefix') ? 'MiB' : 'MB')
                                         ->columnSpan(2)
                                         ->numeric()
                                         ->minValue(0)
