@@ -117,7 +117,7 @@ class ApiKey extends Model
      * Default attributes when creating a new model.
      */
     protected $attributes = [
-        'allowed_ips' => [],
+        'allowed_ips' => '[]',
     ];
 
     /**
