@@ -121,7 +121,7 @@ class EditServer extends EditRecord
                                         'lg' => 3,
                                     ])
                                     ->required()
-                                    ->maxLength(191),
+                                    ->maxLength(255),
 
                                 Forms\Components\Select::make('owner_id')
                                     ->prefixIcon('tabler-user')
@@ -168,7 +168,7 @@ class EditServer extends EditRecord
                                         'md' => 2,
                                         'lg' => 3,
                                     ])
-                                    ->maxLength(191),
+                                    ->maxLength(255),
                                 Forms\Components\Select::make('node_id')
                                     ->label('Node')
                                     ->relationship('node', 'name')

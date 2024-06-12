@@ -29,7 +29,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        Schema::defaultStringLength(191);
+        Schema::defaultStringLength(255);
 
         $versionData = app(SoftwareVersionService::class)->versionData();
         View::share('appVersion', $versionData['version'] ?? 'undefined');

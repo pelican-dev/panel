@@ -52,7 +52,7 @@ class EditProfile extends \Filament\Pages\Auth\EditProfile
                                             ->label(trans('strings.username'))
                                             ->disabled()
                                             ->readOnly()
-                                            ->maxLength(191)
+                                            ->maxLength(255)
                                             ->unique(ignoreRecord: true)
                                             ->autofocus(),
 
@@ -61,7 +61,7 @@ class EditProfile extends \Filament\Pages\Auth\EditProfile
                                             ->label(trans('strings.email'))
                                             ->email()
                                             ->required()
-                                            ->maxLength(191)
+                                            ->maxLength(255)
                                             ->unique(ignoreRecord: true),
 
                                         TextInput::make('password')

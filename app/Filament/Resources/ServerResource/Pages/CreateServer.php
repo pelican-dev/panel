@@ -64,7 +64,7 @@ class CreateServer extends CreateRecord
                                     'lg' => 3,
                                 ])
                                 ->required()
-                                ->maxLength(191),
+                                ->maxLength(255),
 
                             Forms\Components\Select::make('owner_id')
                                 ->prefixIcon('tabler-user')
@@ -403,7 +403,7 @@ class CreateServer extends CreateRecord
 
                                             $text = Forms\Components\TextInput::make('variable_value')
                                                 ->hidden($this->shouldHideComponent(...))
-                                                ->maxLength(191)
+                                                ->maxLength(255)
                                                 ->required(fn (Forms\Get $get) => in_array('required', explode('|', $get('rules'))))
                                                 ->rules(
                                                     fn (Forms\Get $get): Closure => function (string $attribute, $value, Closure $fail) use ($get) {

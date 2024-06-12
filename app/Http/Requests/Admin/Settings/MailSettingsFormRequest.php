@@ -16,10 +16,10 @@ class MailSettingsFormRequest extends AdminFormRequest
             'mail:mailers:smtp:host' => 'required|string',
             'mail:mailers:smtp:port' => 'required|integer|between:1,65535',
             'mail:mailers:smtp:encryption' => ['present', Rule::in([null, 'tls', 'ssl'])],
-            'mail:mailers:smtp:username' => 'nullable|string|max:191',
-            'mail:mailers:smtp:password' => 'nullable|string|max:191',
+            'mail:mailers:smtp:username' => 'nullable|string|max:255',
+            'mail:mailers:smtp:password' => 'nullable|string|max:255',
             'mail:from:address' => 'required|string|email',
-            'mail:from:name' => 'nullable|string|max:191',
+            'mail:from:name' => 'nullable|string|max:255',
         ];
     }
 

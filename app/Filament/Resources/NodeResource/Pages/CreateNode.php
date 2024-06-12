@@ -93,7 +93,7 @@ class CreateNode extends CreateRecord
 
                                     $set('dns', false);
                                 })
-                                ->maxLength(191),
+                                ->maxLength(255),
 
                             Forms\Components\TextInput::make('ip')
                                 ->disabled()
