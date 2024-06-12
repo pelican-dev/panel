@@ -51,7 +51,7 @@ class EditServer extends EditRecord
                         $details = $service->setServer($server)->getDetails();
 
                         return $details['state'] ?? 'unknown';
-		    })
+                    })
                     ->hidden(fn (string $state) => $state === null)
                     ->options(fn ($state) => collect(ContainerStatus::cases())->filter(fn ($containerStatus) => $containerStatus->value === $state)->mapWithKeys(
                         fn (ContainerStatus $state) => [$state->value => str($state->value)->replace('_', ' ')->ucwords()]
@@ -72,8 +72,8 @@ class EditServer extends EditRecord
                 Forms\Components\ToggleButtons::make('status')
                     ->label('Server State')->inline()->inlineLabel()
                     ->helperText('')
-	                ->hidden(fn (Server $server) => $server->status === null)
-		            ->formatStateUsing(fn ($state) => $state ?? ServerState::Normal)
+                    ->hidden(fn (Server $server) => $server->status === null)
+                    ->formatStateUsing(fn ($state) => $state ?? ServerState::Normal)
                     ->options(fn ($state) => collect(ServerState::cases())->filter(fn ($serverState) => $serverState->value === $state)->mapWithKeys(
                         fn (ServerState $state) => [$state->value => str($state->value)->replace('_', ' ')->ucwords()]
                     ))
@@ -144,7 +144,7 @@ class EditServer extends EditRecord
                                     ->columnSpanFull(),
 
                                 Forms\Components\TextInput::make('uuid')
-                                    ->label("UUID")
+                                    ->label('UUID')
                                     ->hintAction(CopyAction::make())
                                     ->columnSpan([
                                         'default' => 2,
