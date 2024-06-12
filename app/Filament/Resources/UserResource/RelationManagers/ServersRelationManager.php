@@ -68,7 +68,7 @@ class ServersRelationManager extends RelationManager
                     ->sortable(),
                 Tables\Columns\SelectColumn::make('allocation.id')
                     ->label('Primary Allocation')
-                    ->options(fn ($state, Server $server) => [$server->allocation->id => $server->allocation->address])
+                    ->options(fn (Server $server) => [$server->allocation->id => $server->allocation->address])
                     ->selectablePlaceholder(false)
                     ->sortable(),
                 Tables\Columns\TextColumn::make('image')->hidden(),

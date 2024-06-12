@@ -22,13 +22,7 @@ class ListServers extends ListRecords
                 Tables\Columns\TextColumn::make('status')
                     ->default('unknown')
                     ->badge()
-                    ->default(function (Server $server) {
-                        if ($server->status !== null) {
-                            return $server->status;
-                        }
-
-                        return $server->retrieveStatus() ?? 'node_fail';
-                    })
+                    ->default(fn (Server $server) => $server->status ?? $server->retrieveStatus())
                     ->icon(fn ($state) => match ($state) {
                         'node_fail' => 'tabler-server-off',
                         'running' => 'tabler-heartbeat',
@@ -70,7 +64,7 @@ class ListServers extends ListRecords
                     ->sortable(),
                 Tables\Columns\SelectColumn::make('allocation_id')
                     ->label('Primary Allocation')
-                    ->options(fn ($state, Server $server) => $server->allocations->mapWithKeys(
+                    ->options(fn (Server $server) => $server->allocations->mapWithKeys(
                         fn ($allocation) => [$allocation->id => $allocation->address])
                     )
                     ->selectablePlaceholder(false)

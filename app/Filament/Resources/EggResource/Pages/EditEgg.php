@@ -7,6 +7,7 @@ use App\Models\Egg;
 use Filament\Actions;
 use Filament\Resources\Pages\EditRecord;
 use AbdelhamidErrahmouni\FilamentMonacoEditor\MonacoEditor;
+use App\Services\Eggs\Sharing\EggExporterService;
 use Filament\Forms;
 use Filament\Forms\Form;
 
@@ -205,8 +206,7 @@ class EditEgg extends EditRecord
                 ->icon('tabler-download')
                 ->label('Export Egg')
                 ->color('primary')
-                // TODO uses old admin panel export service
-                ->url(fn (Egg $egg): string => route('admin.eggs.export', ['egg' => $egg['id']])),
+                ->url(fn (EggExporterService $service, Egg $egg) => $service->handle($egg->id)),
             $this->getSaveFormAction()->formId('form'),
         ];
     }

@@ -22,19 +22,20 @@ class ListEggs extends ListRecords
     public function table(Table $table): Table
     {
         return $table
-            ->searchable(false)
+            ->searchable(true)
             ->defaultPaginationPageOption(25)
             ->checkIfRecordIsSelectableUsing(fn (Egg $egg) => $egg->servers_count <= 0)
             ->columns([
                 Tables\Columns\TextColumn::make('id')
                     ->label('Id')
-                    ->hidden()
-                    ->searchable(),
+                    ->searchable()
+                    ->sortable(),
                 Tables\Columns\TextColumn::make('name')
                     ->icon('tabler-egg')
                     ->description(fn ($record): ?string => (strlen($record->description) > 120) ? substr($record->description, 0, 120).'...' : $record->description)
                     ->wrap()
-                    ->searchable(),
+                    ->searchable()
+                    ->sortable(),
                 Tables\Columns\TextColumn::make('servers_count')
                     ->counts('servers')
                     ->icon('tabler-server')
@@ -88,7 +89,6 @@ class ListEggs extends ListRecords
 
                 ])
                 ->action(function (array $data): void {
-
                     /** @var EggImporterService $eggImportService */
                     $eggImportService = resolve(EggImporterService::class);
 

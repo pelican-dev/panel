@@ -3,12 +3,16 @@
 namespace App\Filament\Resources\ServerResource\RelationManagers;
 
 use App\Models\Allocation;
+use App\Models\Server;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables;
 use Filament\Tables\Table;
 
+/**
+ * @method Server getOwnerRecord()
+ */
 class AllocationsRelationManager extends RelationManager
 {
     protected static string $relationship = 'allocations';
@@ -38,12 +42,12 @@ class AllocationsRelationManager extends RelationManager
                 Tables\Columns\TextInputColumn::make('ip_alias')->label('Alias'),
                 Tables\Columns\IconColumn::make('primary')
                     ->icon(fn ($state) => match ($state) {
-                        false => 'tabler-star',
                         true => 'tabler-star-filled',
+                        default => 'tabler-star',
                     })
                     ->color(fn ($state) => match ($state) {
-                        false => 'gray',
                         true => 'warning',
+                        default => 'gray',
                     })
                     ->action(fn (Allocation $allocation) => $this->getOwnerRecord()->update(['allocation_id' => $allocation->id]))
                     ->default(fn (Allocation $allocation) => $allocation->id === $this->getOwnerRecord()->allocation_id)
@@ -68,7 +72,6 @@ class AllocationsRelationManager extends RelationManager
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DissociateBulkAction::make(),
-                    Tables\Actions\DeleteBulkAction::make(),
                 ]),
             ]);
     }
