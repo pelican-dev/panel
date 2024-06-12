@@ -33,7 +33,7 @@ class AdminPanelProvider extends PanelProvider
 
     public function panel(Panel $panel): Panel
     {
-        $panel = $panel
+        return $panel
             ->default()
             ->id('admin')
             ->path('admin')
@@ -65,6 +65,20 @@ class AdminPanelProvider extends PanelProvider
                 Widgets\AccountWidget::class,
                 Widgets\FilamentInfoWidget::class,
             ])
+            ->navigationItems([
+                NavigationItem::make('app')
+                    ->label('Exit Admin')
+                    ->url('/')
+                    ->icon('tabler-arrow-back')
+                    ->sort(24),
+            ])
+            ->userMenuItems([
+                MenuItem::make()
+                    ->label('Exit Admin')
+                    ->url('/')
+                    ->icon('tabler-arrow-back')
+                    ->sort(24),
+            ])
             ->middleware([
                 EncryptCookies::class,
                 AddQueuedCookiesToResponse::class,
@@ -80,25 +94,5 @@ class AdminPanelProvider extends PanelProvider
             ->authMiddleware([
                 Authenticate::class,
             ]);
-
-        if (config('panel.filament.exit-admin')) {
-            $panel->userMenuItems([
-                MenuItem::make()
-                    ->label('Exit Admin')
-                    ->url('/')
-                    ->icon('tabler-arrow-back')
-                    ->sort(24),
-            ]);
-        } else {
-            $panel->navigationItems([
-                NavigationItem::make('app')
-                    ->label('Exit Admin')
-                    ->url('/')
-                    ->icon('tabler-arrow-back')
-                    ->sort(24),
-            ]);
-        }
-
-        return $panel;
     }
 }
