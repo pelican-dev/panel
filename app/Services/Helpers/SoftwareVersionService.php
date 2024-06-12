@@ -2,12 +2,10 @@
 
 namespace App\Services\Helpers;
 
-use Exception;
 use GuzzleHttp\Client;
 use Carbon\CarbonImmutable;
 use Illuminate\Support\Arr;
 use Illuminate\Contracts\Cache\Repository as CacheRepository;
-use App\Exceptions\Service\Helper\CdnVersionFetchingException;
 
 class SoftwareVersionService
 {
@@ -87,17 +85,24 @@ class SoftwareVersionService
     protected function cacheVersionData(): array
     {
         return $this->cache->remember(self::VERSION_CACHE_KEY, CarbonImmutable::now()->addMinutes(config('panel.cdn.cache_time', 60)), function () {
-            try {
-                $response = $this->client->request('GET', config('panel.cdn.url'));
+            $versionData = [];
 
-                if ($response->getStatusCode() === 200) {
-                    return json_decode($response->getBody(), true);
-                }
-
-                throw new CdnVersionFetchingException();
-            } catch (Exception) {
-                return [];
+            $response = $this->client->request('GET', 'https://api.github.com/repos/pelican-dev/panel/releases/latest');
+            if ($response->getStatusCode() === 200) {
+                $panelData = json_decode($response->getBody(), true);
+                $versionData['panel'] = trim($panelData['tag_name'], 'v');
             }
+
+            $response = $this->client->request('GET', 'https://api.github.com/repos/pelican-dev/wings/releases/latest');
+            if ($response->getStatusCode() === 200) {
+                $wingsData = json_decode($response->getBody(), true);
+                $versionData['daemon'] = trim($wingsData['tag_name'], 'v');
+            }
+
+            $versionData['discord'] = 'https://pelican.dev/discord';
+            $versionData['donate'] = 'https://pelican.dev/donate';
+
+            return $versionData;
         });
     }
 
