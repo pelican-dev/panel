@@ -80,7 +80,7 @@ class CreateServerSubuserTest extends ClientApiIntegrationTestCase
     {
         [$user, $server] = $this->generateTestAccount();
 
-        $email = str_repeat(Str::random(20), 9) . '1@gmail.com'; // 191 is the hard limit for the column in MySQL.
+        $email = str_repeat(Str::random(20), 9) . '1@gmail.com'; // 255 is the hard limit for the column in MySQL.
 
         $response = $this->actingAs($user)->postJson($this->link($server) . '/users', [
             'email' => $email,
@@ -99,7 +99,7 @@ class CreateServerSubuserTest extends ClientApiIntegrationTestCase
         ]);
 
         $response->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY);
-        $response->assertJsonPath('errors.0.detail', 'The email must be between 1 and 191 characters.');
+        $response->assertJsonPath('errors.0.detail', 'The email must be between 1 and 255 characters.');
         $response->assertJsonPath('errors.0.meta.source_field', 'email');
     }
 
