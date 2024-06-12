@@ -202,11 +202,13 @@ class EditEgg extends EditRecord
             Actions\DeleteAction::make()
                 ->disabled(fn (Egg $egg): bool => $egg->servers()->count() > 0)
                 ->label(fn (Egg $egg): string => $egg->servers()->count() <= 0 ? 'Delete Egg' : 'Egg In Use'),
-            Actions\ExportAction::make()
+            Actions\Action::make('export')
                 ->icon('tabler-download')
                 ->label('Export Egg')
                 ->color('primary')
-                ->url(fn (EggExporterService $service, Egg $egg) => $service->handle($egg->id)),
+                ->action(fn (EggExporterService $service, Egg $egg) => response()->streamDownload(function () use ($service, $egg) {
+                    echo $service->handle($egg->id);
+                }, 'egg-' . $egg->getKebabName() . '.json')),
             $this->getSaveFormAction()->formId('form'),
         ];
     }
