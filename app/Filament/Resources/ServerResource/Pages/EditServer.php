@@ -52,7 +52,7 @@ class EditServer extends EditRecord
 
                         return $details['state'] ?? 'unknown';
                     })
-                    ->hidden(fn (string $state) => $state === null)
+                    ->hidden(fn ($state) => $state === null)
                     ->options(fn ($state) => collect(ContainerStatus::cases())->filter(fn ($containerStatus) => $containerStatus->value === $state)->mapWithKeys(
                         fn (ContainerStatus $state) => [$state->value => str($state->value)->replace('_', ' ')->ucwords()]
                     ))
