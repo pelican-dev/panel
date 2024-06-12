@@ -80,7 +80,7 @@ class CreateServerSubuserTest extends ClientApiIntegrationTestCase
     {
         [$user, $server] = $this->generateTestAccount();
 
-        $email = str_repeat(Str::random(35), 7) . '1@gmail.com'; // 255 is the hard limit for the column in MySQL.
+        $email = str_repeat(Str::random(35), 7) . '@gmail.com'; // 255 is the hard limit for the column in MySQL.
 
         $response = $this->actingAs($user)->postJson($this->link($server) . '/users', [
             'email' => $email,
