@@ -31,7 +31,6 @@
         "prologue/alerts": "^1.2",
         "ryangjchandler/blade-tabler-icons": "^2.3",
         "s1lentium/iptools": "~1.2.0",
-        "schmeits/filament-character-counter": "^1.2",
         "spatie/laravel-fractal": "^6.2",
         "spatie/laravel-query-builder": "^5.8.1",
         "spatie/temporary-directory": "^2.2",

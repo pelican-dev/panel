@@ -68,10 +68,9 @@ class SettingResource extends Resource
                                     ->type('number'),
                             ],
                             'limit' => [
-                                LimitInput::make('value')
+                                TextInput::make('value')
                                     ->label($record->label)
-                                    ->maxLength($record->limit)
-                                    ->showInsideControl(false)
+                                    ->maxLength($record->limit ?? null)
                                     ->placeholder($record->description),
                             ],
                             'toggle-buttons' => [
