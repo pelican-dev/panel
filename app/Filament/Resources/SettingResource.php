@@ -4,6 +4,7 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\SettingResource\Pages;
 use App\Models\Setting;
+use Filament\Forms\Components\ToggleButtons;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
@@ -72,6 +73,12 @@ class SettingResource extends Resource
                                     ->maxLength($record->limit)
                                     ->showInsideControl(false)
                                     ->placeholder($record->description),
+                            ],
+                            'toggle-buttons' => [
+                                ToggleButtons::make('value')
+                                    ->inline()
+                                    ->label($record->label)
+                                    ->options($record->attributes['options']),
                             ],
                             default => [
                                 TextInput::make('value')
