@@ -40,7 +40,7 @@ class OAuthController extends Controller
 
         // User is already logged in and wants to link a new OAuth Provider
         if ($request->user() != null) {
-            $oauth = json_decode($request->user()->oauth, true);
+            $oauth = $request->user()->oauth;
             $oauth[$driver] = $oauthUser->getId();
 
             $this->updateService->handle($request->user(), ['oauth' => json_encode($oauth)]);
@@ -56,7 +56,7 @@ class OAuthController extends Controller
             // No user found - redirect to normal login
             return redirect()->route('auth.login');
         }
-        
+
         return redirect('/');
     }
 }

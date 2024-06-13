@@ -165,7 +165,7 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
         'language' => 'string',
         'use_totp' => 'boolean',
         'totp_secret' => 'nullable|string',
-        'oauth' => 'required|string',
+        'oauth' => 'array',
     ];
 
     protected function casts(): array
@@ -176,6 +176,7 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
             'gravatar' => 'boolean',
             'totp_authenticated_at' => 'datetime',
             'totp_secret' => 'encrypted',
+            'oauth' => 'array',
         ];
     }
 

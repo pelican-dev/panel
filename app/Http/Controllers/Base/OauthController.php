@@ -34,7 +34,7 @@ class OAuthController extends Controller
      */
     protected function unlink(Request $request): Response
     {
-        $oauth = json_decode($request->user()->oauth, true);
+        $oauth = $request->user()->oauth;
         unset($oauth[$request->get('driver')]);
 
         $this->updateService->handle($request->user(), ['oauth' => json_encode($oauth)]);
