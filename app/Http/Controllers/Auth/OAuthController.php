@@ -50,13 +50,13 @@ class OAuthController extends Controller
 
         try {
             $user = User::query()->whereJsonContains('oauth->'. $driver, $oauthUser->getId())->firstOrFail();
+
+            $this->auth->guard()->login($user, true);
         } catch (\Exception $e) {
             // No user found - redirect to normal login
             return redirect()->route('auth.login');
         }
-
-        $this->auth->guard()->login($user, true);
-
+        
         return redirect('/');
     }
 }
