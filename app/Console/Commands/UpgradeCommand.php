@@ -24,9 +24,6 @@ class UpgradeCommand extends Command
 
     protected $description = 'Downloads a new archive from GitHub and then executes the normal upgrade commands.';
 
-    /**
-     * @var ProgressBar
-     */
     protected ProgressBar $progressBar;
 
     public function handle(): void
@@ -49,7 +46,7 @@ class UpgradeCommand extends Command
                 $this->createBackup();
             }
 
-            list($user, $group) = $this->askForUserAndGroup();
+            [$user, $group] = $this->askForUserAndGroup();
 
             $this->enterMaintenanceMode();
             $this->setProgressBar($skipDownload ? 9 : 10);
@@ -141,7 +138,7 @@ class UpgradeCommand extends Command
             '--password=' . $password,
             '--host=' . $host,
             $database,
-            '--result-file=' . $backupFile
+            '--result-file=' . $backupFile,
         ]);
         $process->run();
         if (!$process->isSuccessful()) {
