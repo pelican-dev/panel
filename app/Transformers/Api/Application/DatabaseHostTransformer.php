@@ -64,7 +64,7 @@ class DatabaseHostTransformer extends BaseTransformer
      */
     public function includeNode(DatabaseHost $model): Item|NullResource
     {
-        if (!$this->authorize(AdminAcl::RESOURCE_NODES)) {
+        if (!$this->authorize(Node::RESOURCE_NAME)) {
             return $this->null();
         }
 
