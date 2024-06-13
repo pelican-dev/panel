@@ -12,19 +12,13 @@ return [
     'github' => [
         'client_id' => env('OAUTH_GITHUB_CLIENT_ID'),
         'client_secret' => env('OAUTH_GITHUB_CLIENT_SECRET'),
-        'redirect' => [
-            'url' => 'auth.oauth.callback',
-            'parameter' => 'github',
-        ],
+        'redirect' => '/auth/oauth/callback/github',
     ],
 
     'discord' => [
         'client_id' => env('OAUTH_DISCORD_CLIENT_ID'),
         'client_secret' => env('OAUTH_DISCORD_CLIENT_SECRET'),
-        'redirect' => [
-            'url' => 'auth.oauth.callback',
-            'parameter' => 'discord',
-        ],
+        'redirect' => '/auth/oauth/callback/discord',
     ],
 
 ];

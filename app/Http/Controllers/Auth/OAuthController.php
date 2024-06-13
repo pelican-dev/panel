@@ -24,8 +24,10 @@ class OAuthController extends Controller
     /**
      * Redirect user to the OAuth provider
      */
-    protected function redirect(string $driver): RedirectResponse
+    protected function redirect(Request $request): RedirectResponse
     {
+        $driver = $request->get('driver');
+
         return Socialite::with($driver)->redirect();
     }
 
