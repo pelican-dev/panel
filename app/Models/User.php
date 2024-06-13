@@ -42,6 +42,7 @@ use App\Notifications\SendPasswordReset as ResetPasswordNotification;
  * @property bool $use_totp
  * @property string|null $totp_secret
  * @property \Illuminate\Support\Carbon|null $totp_authenticated_at
+ * @property array $oauth
  * @property bool $gravatar
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
@@ -127,12 +128,13 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
         'totp_authenticated_at',
         'gravatar',
         'root_admin',
+        'oauth',
     ];
 
     /**
      * The attributes excluded from the model's JSON form.
      */
-    protected $hidden = ['password', 'remember_token', 'totp_secret', 'totp_authenticated_at'];
+    protected $hidden = ['password', 'remember_token', 'totp_secret', 'totp_authenticated_at', 'oauth'];
 
     /**
      * Default values for specific fields in the database.
@@ -145,6 +147,7 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
         'totp_secret' => null,
         'name_first' => '',
         'name_last' => '',
+        'oauth' => '[]',
     ];
 
     /**
@@ -162,6 +165,7 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
         'language' => 'string',
         'use_totp' => 'boolean',
         'totp_secret' => 'nullable|string',
+        'oauth' => 'required|string',
     ];
 
     protected function casts(): array
