@@ -20,6 +20,7 @@ import { ServerContext } from '@/state/server';
 import tw from 'twin.macro';
 import ConfirmationModal from '@/components/elements/ConfirmationModal';
 import Icon from '@/components/elements/Icon';
+import { useStoreState } from 'easy-peasy';
 
 interface Props {
     schedule: Schedule;
@@ -46,6 +47,7 @@ export default ({ schedule, task }: Props) => {
     const [isLoading, setIsLoading] = useState(false);
     const [isEditing, setIsEditing] = useState(false);
     const appendSchedule = ServerContext.useStoreActions((actions) => actions.schedules.appendSchedule);
+    const usesSyncDriver = useStoreState((state) => state.settings.data!.usesSyncDriver);
 
     const onConfirmDeletion = () => {
         setIsLoading(true);
@@ -109,7 +111,7 @@ export default ({ schedule, task }: Props) => {
                         </div>
                     </div>
                 )}
-                {task.sequenceId > 1 && task.timeOffset > 0 && (
+                {!usesSyncDriver && task.sequenceId > 1 && task.timeOffset > 0 && (
                     <div css={tw`mr-6`}>
                         <div css={tw`flex items-center px-2 py-1 bg-neutral-500 text-sm rounded-full`}>
                             <Icon icon={faClock} css={tw`w-3 h-3 mr-2`} />
