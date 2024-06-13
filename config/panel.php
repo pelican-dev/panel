@@ -175,4 +175,6 @@ return [
     'filament' => [
         'top-navigation' => env('FILAMENT_TOP_NAVIGATION', false),
     ],
+
+    'use_binary_prefix' => env('PANEL_USE_BINARY_PREFIX', true),
 ];
