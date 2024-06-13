@@ -7,13 +7,10 @@ use Exception;
 use Illuminate\Database\Seeder;
 use Illuminate\Http\UploadedFile;
 use App\Services\Eggs\Sharing\EggImporterService;
-use App\Services\Eggs\Sharing\EggUpdateImporterService;
 
 class EggSeeder extends Seeder
 {
     protected EggImporterService $importerService;
-
-    protected EggUpdateImporterService $updateImporterService;
 
     /**
      * @var string[]
@@ -29,11 +26,9 @@ class EggSeeder extends Seeder
      * EggSeeder constructor.
      */
     public function __construct(
-        EggImporterService $importerService,
-        EggUpdateImporterService $updateImporterService
+        EggImporterService $importerService
     ) {
         $this->importerService = $importerService;
-        $this->updateImporterService = $updateImporterService;
     }
 
     /**
@@ -75,7 +70,7 @@ class EggSeeder extends Seeder
                 ->first();
 
             if ($egg instanceof Egg) {
-                $this->updateImporterService->fromFile($egg, $file);
+                $this->importerService->fromFile($file, $egg);
                 $this->command->info('Updated ' . $decoded['name']);
             } else {
                 $this->importerService->fromFile($file);

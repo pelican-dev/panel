@@ -16,7 +16,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property string $identifier
  * @property string $token
  * @property array $permissions
- * @property array|null $allowed_ips
+ * @property array $allowed_ips
  * @property string|null $memo
  * @property \Illuminate\Support\Carbon|null $last_used_at
  * @property \Illuminate\Support\Carbon|null $expires_at
@@ -101,6 +101,7 @@ class ApiKey extends Model
      * Default attributes when creating a new model.
      */
     protected $attributes = [
+        'allowed_ips' => '[]',
         'permissions' => '[]',
     ];
 
@@ -121,7 +122,7 @@ class ApiKey extends Model
         'permissions' => 'array',
         'permissions.*' => 'integer|min:0|max:3',
         'memo' => 'required|nullable|string|max:500',
-        'allowed_ips' => 'nullable|array',
+        'allowed_ips' => 'array',
         'allowed_ips.*' => 'string',
         'last_used_at' => 'nullable|date',
         'expires_at' => 'nullable|date',

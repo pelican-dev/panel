@@ -4,6 +4,7 @@ namespace App\Filament\Resources\EggResource\Pages;
 
 use App\Filament\Resources\EggResource;
 use App\Models\Egg;
+use App\Services\Eggs\Sharing\EggExporterService;
 use App\Services\Eggs\Sharing\EggImporterService;
 use Exception;
 use Filament\Actions;
@@ -43,12 +44,13 @@ class ListEggs extends ListRecords
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
-                Tables\Actions\ExportAction::make()
+                Tables\Actions\Action::make('export')
                     ->icon('tabler-download')
                     ->label('Export')
                     ->color('primary')
-                    // TODO uses old admin panel export service
-                    ->url(fn (Egg $egg): string => route('admin.eggs.export', ['egg' => $egg])),
+                    ->action(fn (EggExporterService $service, Egg $egg) => response()->streamDownload(function () use ($service, $egg) {
+                        echo $service->handle($egg->id);
+                    }, 'egg-' . $egg->getKebabName() . '.json')),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
@@ -89,7 +91,6 @@ class ListEggs extends ListRecords
 
                 ])
                 ->action(function (array $data): void {
-
                     /** @var EggImporterService $eggImportService */
                     $eggImportService = resolve(EggImporterService::class);
 

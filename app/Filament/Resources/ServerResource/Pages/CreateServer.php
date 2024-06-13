@@ -192,7 +192,8 @@ class CreateServer extends CreateRecord
 
                                                 $start = max((int) $start, 0);
                                                 $end = min((int) $end, 2 ** 16 - 1);
-                                                for ($i = $start; $i <= $end; $i++) {
+                                                $range = $start <= $end ? range($start, $end) : range($end, $start);
+                                                foreach ($range as $i) {
                                                     $ports->push($i);
                                                 }
                                             }
@@ -425,7 +426,6 @@ class CreateServer extends CreateRecord
 
                                             $components = [$text, $select];
 
-                                            /** @var Forms\Components\Component $component */
                                             foreach ($components as &$component) {
                                                 $component = $component
                                                     ->live(onBlur: true)
@@ -488,7 +488,7 @@ class CreateServer extends CreateRecord
                                                 ->dehydratedWhenHidden()
                                                 ->hidden(fn (Forms\Get $get) => $get('unlimited_mem'))
                                                 ->label('Memory Limit')->inlineLabel()
-                                                ->suffix('MiB')
+                                                ->suffix(config('panel.use_binary_prefix') ? 'MiB' : 'MB')
                                                 ->default(0)
                                                 ->required()
                                                 ->columnSpan(2)
@@ -519,7 +519,7 @@ class CreateServer extends CreateRecord
                                                 ->dehydratedWhenHidden()
                                                 ->hidden(fn (Forms\Get $get) => $get('unlimited_disk'))
                                                 ->label('Disk Space Limit')->inlineLabel()
-                                                ->suffix('MiB')
+                                                ->suffix(config('panel.use_binary_prefix') ? 'MiB' : 'MB')
                                                 ->default(0)
                                                 ->required()
                                                 ->columnSpan(2)
@@ -575,6 +575,7 @@ class CreateServer extends CreateRecord
                                                         'unlimited' => -1,
                                                         'disabled' => 0,
                                                         'limited' => 128,
+                                                        default => throw new \LogicException('Invalid state'),
                                                     };
 
                                                     $set('swap', $value);
@@ -594,11 +595,11 @@ class CreateServer extends CreateRecord
                                                 ->dehydratedWhenHidden()
                                                 ->hidden(fn (Forms\Get $get) => match ($get('swap_support')) {
                                                     'disabled', 'unlimited' => true,
-                                                    'limited' => false,
+                                                    default => false,
                                                 })
                                                 ->label('Swap Memory')
                                                 ->default(0)
-                                                ->suffix('MiB')
+                                                ->suffix(config('panel.use_binary_prefix') ? 'MiB' : 'MB')
                                                 ->minValue(-1)
                                                 ->columnSpan(2)
                                                 ->inlineLabel()

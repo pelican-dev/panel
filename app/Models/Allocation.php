@@ -103,7 +103,8 @@ class Allocation extends Model
         return !is_null($this->ip_alias);
     }
 
-    public function address(): Attribute
+    /** @return Attribute<string, never> */
+    protected function address(): Attribute
     {
         return Attribute::make(
             get: fn () => "$this->ip:$this->port",
