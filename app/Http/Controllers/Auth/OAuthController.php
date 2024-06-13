@@ -8,6 +8,7 @@ use Laravel\Socialite\Facades\Socialite;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use App\Services\Users\UserUpdateService;
+use Exception;
 use Illuminate\Http\Request;
 
 class OAuthController extends Controller
@@ -24,10 +25,8 @@ class OAuthController extends Controller
     /**
      * Redirect user to the OAuth provider
      */
-    protected function redirect(Request $request): RedirectResponse
+    protected function redirect(string $driver): RedirectResponse
     {
-        $driver = $request->get('driver');
-
         return Socialite::with($driver)->redirect();
     }
 
@@ -39,7 +38,7 @@ class OAuthController extends Controller
         $oauthUser = Socialite::driver($driver)->user();
 
         // User is already logged in and wants to link a new OAuth Provider
-        if ($request->user() != null) {
+        if ($request->user()) {
             $oauth = $request->user()->oauth;
             $oauth[$driver] = $oauthUser->getId();
 
@@ -52,7 +51,7 @@ class OAuthController extends Controller
             $user = User::query()->whereJsonContains('oauth->'. $driver, $oauthUser->getId())->firstOrFail();
 
             $this->auth->guard()->login($user, true);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             // No user found - redirect to normal login
             return redirect()->route('auth.login');
         }
