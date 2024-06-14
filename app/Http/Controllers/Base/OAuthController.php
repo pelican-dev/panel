@@ -37,7 +37,7 @@ class OAuthController extends Controller
         $oauth = $request->user()->oauth;
         unset($oauth[$request->get('driver')]);
 
-        $this->updateService->handle($request->user(), ['oauth' => json_encode($oauth)]);
+        $this->updateService->handle($request->user(), ['oauth' => $oauth]);
 
         return new Response('', Response::HTTP_NO_CONTENT);
     }
