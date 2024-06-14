@@ -26,13 +26,21 @@ class Setting extends Model
             'description' => 'Setting this to true switches the sidebar to a topbar and vice versa',
         ],
         [
-            'key' => 'APP_NAME',
-            'label' => 'Panel Name',
-            'value' => 'Pelican',
+            'key' => 'FILAMENT_TOP_NAVIGATION',
+            'label' => 'Topbar or Sidebar',
+            'group' => 'Panel',
+            'value' => 'false',
+            'type' => 'text',
+            'description' => 'Setting this to true switches the sidebar to a topbar and vice versa',
+        ],
+        [
+            'key' => 'MAIL_HOST',
+            'label' => 'Mail Host',
+            'value' => 'smtp.example.com',
             'group' => 'Basic',
             'type' => 'text',
             //'limit' => 18,
-            'description' => 'This is the name that is used throughout the panel and in emails sent to clients.',
+            'description' => 'Enter the SMTP server address that mail should be sent through.',
         ],
     ];
 }
