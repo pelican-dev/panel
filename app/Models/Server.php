@@ -308,4 +308,10 @@ class Server extends Model
 
         return cache()->get("servers.$this->uuid.container.status") ?? 'missing';
     }
+
+    public function getPrimaryEndpoint()
+    {
+        dd($this->ports);
+        dd($this->variables);
+    }
 }

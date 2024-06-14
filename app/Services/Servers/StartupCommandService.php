@@ -11,6 +11,9 @@ class StartupCommandService
      */
     public function handle(Server $server, bool $hideAllValues = false): string
     {
+        $endpoint = $server->getPrimaryEndpoint();
+
+
         $find = ['{{SERVER_MEMORY}}', '{{SERVER_IP}}', '{{SERVER_PORT}}'];
         $replace = [$server->memory, $server->allocation->ip, $server->allocation->port];
 
