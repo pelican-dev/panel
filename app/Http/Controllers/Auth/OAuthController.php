@@ -42,7 +42,7 @@ class OAuthController extends Controller
             $oauth = $request->user()->oauth;
             $oauth[$driver] = $oauthUser->getId();
 
-            $this->updateService->handle($request->user(), ['oauth' => json_encode($oauth)]);
+            $this->updateService->handle($request->user(), ['oauth' => $oauth]);
 
             return redirect()->route('account');
         }
