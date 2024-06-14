@@ -66,6 +66,7 @@ CREATE TABLE `api_keys` (
   `user_id` int(10) unsigned NOT NULL,
   `key_type` tinyint(3) unsigned NOT NULL DEFAULT 0,
   `identifier` char(16) DEFAULT NULL,
+  `public` char(16) NOT NULL,
   `token` text NOT NULL,
   `allowed_ips` text DEFAULT NULL,
   `memo` text DEFAULT NULL,
@@ -134,8 +135,8 @@ CREATE TABLE `backups` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `server_id` int(10) unsigned NOT NULL,
   `uuid` char(36) NOT NULL,
-  `upload_id` text DEFAULT NULL,
   `is_successful` tinyint(1) NOT NULL DEFAULT 0,
+  `upload_id` text DEFAULT NULL,
   `is_locked` tinyint(3) unsigned NOT NULL DEFAULT 0,
   `name` varchar(255) NOT NULL,
   `ignored_files` text NOT NULL,
@@ -218,7 +219,7 @@ CREATE TABLE `egg_variables` (
   `default_value` text NOT NULL,
   `user_viewable` tinyint(3) unsigned NOT NULL,
   `user_editable` tinyint(3) unsigned NOT NULL,
-  `rules` text DEFAULT NULL,
+  `rules` text NOT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`),
@@ -468,7 +469,7 @@ DROP TABLE IF EXISTS `server_variables`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `server_variables` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `server_id` int(10) unsigned DEFAULT NULL,
+  `server_id` int(10) unsigned NOT NULL,
   `variable_id` int(10) unsigned NOT NULL,
   `variable_value` text NOT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
@@ -546,8 +547,7 @@ CREATE TABLE `settings` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `key` varchar(255) NOT NULL,
   `value` text NOT NULL,
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `settings_key_unique` (`key`)
+  PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 DROP TABLE IF EXISTS `subusers`;
@@ -709,155 +709,153 @@ INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (53,'2016_10_23_204
 INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (54,'2016_10_23_204321_add_foreign_service_variables',1);
 INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (55,'2016_10_23_204454_add_foreign_subusers',1);
 INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (56,'2016_10_23_204610_add_foreign_tasks',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (57,'2016_11_04_000949_add_ark_service_option_fixed',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (58,'2016_11_11_220649_add_pack_support',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (59,'2016_11_11_231731_set_service_name_unique',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (60,'2016_11_27_142519_add_pack_column',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (61,'2016_12_01_173018_add_configurable_upload_limit',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (62,'2016_12_02_185206_correct_service_variables',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (63,'2017_01_03_150436_fix_misnamed_option_tag',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (64,'2017_01_07_154228_create_node_configuration_tokens_table',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (65,'2017_01_12_135449_add_more_user_data',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (66,'2017_02_02_175548_UpdateColumnNames',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (67,'2017_02_03_140948_UpdateNodesTable',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (68,'2017_02_03_155554_RenameColumns',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (69,'2017_02_05_164123_AdjustColumnNames',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (70,'2017_02_05_164516_AdjustColumnNamesForServicePacks',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (71,'2017_02_09_174834_SetupPermissionsPivotTable',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (72,'2017_02_10_171858_UpdateAPIKeyColumnNames',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (73,'2017_03_03_224254_UpdateNodeConfigTokensColumns',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (74,'2017_03_05_212803_DeleteServiceExecutableOption',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (75,'2017_03_10_162934_AddNewServiceOptionsColumns',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (76,'2017_03_10_173607_MigrateToNewServiceSystem',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (77,'2017_03_11_215455_ChangeServiceVariablesValidationRules',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (78,'2017_03_12_150648_MoveFunctionsFromFileToDatabase',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (79,'2017_03_14_175631_RenameServicePacksToSingluarPacks',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (80,'2017_03_14_200326_AddLockedStatusToTable',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (81,'2017_03_16_181109_ReOrganizeDatabaseServersToDatabaseHost',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (82,'2017_03_16_181515_CleanupDatabasesDatabase',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (83,'2017_03_18_204953_AddForeignKeyToPacks',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (84,'2017_03_31_221948_AddServerDescriptionColumn',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (85,'2017_04_02_163232_DropDeletedAtColumnFromServers',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (86,'2017_04_15_125021_UpgradeTaskSystem',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (87,'2017_04_20_171943_AddScriptsToServiceOptions',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (88,'2017_04_21_151432_AddServiceScriptTrackingToServers',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (89,'2017_04_27_145300_AddCopyScriptFromColumn',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (90,'2017_04_27_223629_AddAbilityToDefineConnectionOverSSLWithDaemonBehindProxy',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (91,'2017_05_01_141528_DeleteDownloadTable',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (92,'2017_05_01_141559_DeleteNodeConfigurationTable',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (93,'2017_06_10_152951_add_external_id_to_users',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (94,'2017_06_25_133923_ChangeForeignKeyToBeOnCascadeDelete',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (95,'2017_07_08_152806_ChangeUserPermissionsToDeleteOnUserDeletion',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (96,'2017_07_08_154416_SetAllocationToReferenceNullOnServerDelete',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (97,'2017_07_08_154650_CascadeDeletionWhenAServerOrVariableIsDeleted',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (98,'2017_07_24_194433_DeleteTaskWhenParentServerIsDeleted',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (99,'2017_08_05_115800_CascadeNullValuesForDatabaseHostWhenNodeIsDeleted',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (100,'2017_08_05_144104_AllowNegativeValuesForOverallocation',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (101,'2017_08_05_174811_SetAllocationUnqiueUsingMultipleFields',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (102,'2017_08_15_214555_CascadeDeletionWhenAParentServiceIsDeleted',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (103,'2017_08_18_215428_RemovePackWhenParentServiceOptionIsDeleted',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (104,'2017_09_10_225749_RenameTasksTableForStructureRefactor',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (105,'2017_09_10_225941_CreateSchedulesTable',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (106,'2017_09_10_230309_CreateNewTasksTableForSchedules',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (107,'2017_09_11_002938_TransferOldTasksToNewScheduler',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (108,'2017_09_13_211810_UpdateOldPermissionsToPointToNewScheduleSystem',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (109,'2017_09_23_170933_CreateDaemonKeysTable',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (110,'2017_09_23_173628_RemoveDaemonSecretFromServersTable',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (111,'2017_09_23_185022_RemoveDaemonSecretFromSubusersTable',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (112,'2017_10_02_202000_ChangeServicesToUseAMoreUniqueIdentifier',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (113,'2017_10_02_202007_ChangeToABetterUniqueServiceConfiguration',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (114,'2017_10_03_233202_CascadeDeletionWhenServiceOptionIsDeleted',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (115,'2017_10_06_214026_ServicesToNestsConversion',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (116,'2017_10_06_214053_ServiceOptionsToEggsConversion',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (117,'2017_10_06_215741_ServiceVariablesToEggVariablesConversion',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (118,'2017_10_24_222238_RemoveLegacySFTPInformation',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (119,'2017_11_11_161922_Add2FaLastAuthorizationTimeColumn',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (120,'2017_11_19_122708_MigratePubPrivFormatToSingleKey',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (121,'2017_12_04_184012_DropAllocationsWhenNodeIsDeleted',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (122,'2017_12_12_220426_MigrateSettingsTableToNewFormat',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (123,'2018_01_01_122821_AllowNegativeValuesForServerSwap',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (124,'2018_01_11_213943_AddApiKeyPermissionColumns',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (125,'2018_01_13_142012_SetupTableForKeyEncryption',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (126,'2018_01_13_145209_AddLastUsedAtColumn',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (127,'2018_02_04_145617_AllowTextInUserExternalId',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (128,'2018_02_10_151150_remove_unique_index_on_external_id_column',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (129,'2018_02_17_134254_ensure_unique_allocation_id_on_servers_table',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (130,'2018_02_24_112356_add_external_id_column_to_servers_table',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (131,'2018_02_25_160152_remove_default_null_value_on_table',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (132,'2018_02_25_160604_define_unique_index_on_users_external_id',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (133,'2018_03_01_192831_add_database_and_port_limit_columns_to_servers_table',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (134,'2018_03_15_124536_add_description_to_nodes',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (135,'2018_05_04_123826_add_maintenance_to_nodes',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (136,'2018_09_03_143756_allow_egg_variables_to_have_longer_values',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (137,'2018_09_03_144005_allow_server_variables_to_have_longer_values',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (138,'2019_03_02_142328_set_allocation_limit_default_null',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (139,'2019_03_02_151321_fix_unique_index_to_account_for_host',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (140,'2020_03_22_163911_merge_permissions_table_into_subusers',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (141,'2020_03_22_164814_drop_permissions_table',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (142,'2020_04_03_203624_add_threads_column_to_servers_table',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (143,'2020_04_03_230614_create_backups_table',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (144,'2020_04_04_131016_add_table_server_transfers',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (145,'2020_04_10_141024_store_node_tokens_as_encrypted_value',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (146,'2020_04_17_203438_allow_nullable_descriptions',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (147,'2020_04_22_055500_add_max_connections_column',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (148,'2020_04_26_111208_add_backup_limit_to_servers',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (149,'2020_05_20_234655_add_mounts_table',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (150,'2020_05_21_192756_add_mount_server_table',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (151,'2020_07_02_213612_create_user_recovery_tokens_table',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (152,'2020_07_09_201845_add_notes_column_for_allocations',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (153,'2020_08_20_205533_add_backup_state_column_to_backups',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (154,'2020_08_22_132500_update_bytes_to_unsigned_bigint',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (155,'2020_08_23_175331_modify_checksums_column_for_backups',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (156,'2020_09_13_110007_drop_packs_from_servers',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (157,'2020_09_13_110021_drop_packs_from_api_key_permissions',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (158,'2020_09_13_110047_drop_packs_table',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (159,'2020_09_13_113503_drop_daemon_key_table',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (160,'2020_10_10_165437_change_unique_database_name_to_account_for_server',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (161,'2020_10_26_194904_remove_nullable_from_schedule_name_field',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (162,'2020_11_02_201014_add_features_column_to_eggs',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (163,'2020_12_12_102435_support_multiple_docker_images_and_updates',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (164,'2020_12_14_013707_make_successful_nullable_in_server_transfers',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (165,'2020_12_17_014330_add_archived_field_to_server_transfers_table',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (166,'2020_12_24_092449_make_allocation_fields_json',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (167,'2020_12_26_184914_add_upload_id_column_to_backups_table',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (168,'2021_01_10_153937_add_file_denylist_to_egg_configs',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (169,'2021_01_13_013420_add_cron_month',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (170,'2021_01_17_102401_create_audit_logs_table',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (171,'2021_01_17_152623_add_generic_server_status_column',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (172,'2021_01_26_210502_update_file_denylist_to_json',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (173,'2021_02_23_205021_add_index_for_server_and_action',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (174,'2021_02_23_212657_make_sftp_port_unsigned_int',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (175,'2021_03_21_104718_force_cron_month_field_to_have_value_if_missing',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (176,'2021_05_01_092457_add_continue_on_failure_option_to_tasks',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (177,'2021_05_01_092523_add_only_run_when_server_online_option_to_schedules',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (178,'2021_05_03_201016_add_support_for_locking_a_backup',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (179,'2021_07_12_013420_remove_userinteraction',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (180,'2021_07_17_211512_create_user_ssh_keys_table',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (181,'2021_08_03_210600_change_successful_field_to_default_to_false_on_backups_table',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (182,'2021_08_21_175111_add_foreign_keys_to_mount_node_table',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (183,'2021_08_21_175118_add_foreign_keys_to_mount_server_table',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (184,'2021_08_21_180921_add_foreign_keys_to_egg_mount_table',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (185,'2022_01_25_030847_drop_google_analytics',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (186,'2022_05_07_165334_migrate_egg_images_array_to_new_format',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (187,'2022_05_28_135717_create_activity_logs_table',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (188,'2022_05_29_140349_create_activity_log_actors_table',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (189,'2022_06_18_112822_track_api_key_usage_for_activity_events',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (190,'2022_08_16_214400_add_force_outgoing_ip_column_to_eggs_table',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (191,'2022_08_16_230204_add_installed_at_column_to_servers_table',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (192,'2022_12_12_213937_update_mail_settings_to_new_format',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (193,'2023_01_24_210051_add_uuid_column_to_failed_jobs_table',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (194,'2023_02_23_191004_add_expires_at_column_to_api_keys_table',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (197,'2024_03_12_154408_remove_nests_table',2);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (198,'2024_03_14_055537_remove_locations_table',2);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (201,'2024_04_20_214441_add_egg_var_sort',3);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (203,'2024_04_14_002250_update_column_names',4);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (204,'2024_05_08_094823_rename_oom_disabled_column_to_oom_killer',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (205,'2024_05_16_091207_add_cpu_columns_to_nodes_table',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (206,'2024_04_28_184102_add_mounts_to_api_keys',5);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (207,'2024_05_20_002841_add_docker_container_label',5);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (208,'2024_05_31_204646_fix_old_encrypted_values',5);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (209,'2024_06_02_205622_update_stock_egg_uuid',5);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (210,'2024_06_04_085042_add_daemon_sftp_alias_column_to_nodes',5);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (211,'2024_06_05_220135_update_egg_config_variables',5);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (212,'2024_06_08_020904_refix_egg_variables',5);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (213,'2024_06_11_220722_update_field_length',5);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (57,'2016_11_11_220649_add_pack_support',1);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (58,'2016_11_11_231731_set_service_name_unique',1);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (59,'2016_11_27_142519_add_pack_column',1);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (60,'2016_12_01_173018_add_configurable_upload_limit',1);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (61,'2016_12_02_185206_correct_service_variables',1);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (62,'2017_01_07_154228_create_node_configuration_tokens_table',1);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (63,'2017_01_12_135449_add_more_user_data',1);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (64,'2017_02_02_175548_UpdateColumnNames',1);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (65,'2017_02_03_140948_UpdateNodesTable',1);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (66,'2017_02_03_155554_RenameColumns',1);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (67,'2017_02_05_164123_AdjustColumnNames',1);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (68,'2017_02_05_164516_AdjustColumnNamesForServicePacks',1);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (69,'2017_02_09_174834_SetupPermissionsPivotTable',1);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (70,'2017_02_10_171858_UpdateAPIKeyColumnNames',1);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (71,'2017_03_03_224254_UpdateNodeConfigTokensColumns',1);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (72,'2017_03_05_212803_DeleteServiceExecutableOption',1);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (73,'2017_03_10_162934_AddNewServiceOptionsColumns',1);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (74,'2017_03_10_173607_MigrateToNewServiceSystem',1);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (75,'2017_03_11_215455_ChangeServiceVariablesValidationRules',1);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (76,'2017_03_12_150648_MoveFunctionsFromFileToDatabase',1);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (77,'2017_03_14_175631_RenameServicePacksToSingluarPacks',1);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (78,'2017_03_14_200326_AddLockedStatusToTable',1);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (79,'2017_03_16_181109_ReOrganizeDatabaseServersToDatabaseHost',1);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (80,'2017_03_16_181515_CleanupDatabasesDatabase',1);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (81,'2017_03_18_204953_AddForeignKeyToPacks',1);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (82,'2017_03_31_221948_AddServerDescriptionColumn',1);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (83,'2017_04_02_163232_DropDeletedAtColumnFromServers',1);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (84,'2017_04_15_125021_UpgradeTaskSystem',1);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (85,'2017_04_20_171943_AddScriptsToServiceOptions',1);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (86,'2017_04_21_151432_AddServiceScriptTrackingToServers',1);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (87,'2017_04_27_145300_AddCopyScriptFromColumn',1);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (88,'2017_04_27_223629_AddAbilityToDefineConnectionOverSSLWithDaemonBehindProxy',1);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (89,'2017_05_01_141528_DeleteDownloadTable',1);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (90,'2017_05_01_141559_DeleteNodeConfigurationTable',1);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (91,'2017_06_10_152951_add_external_id_to_users',1);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (92,'2017_06_25_133923_ChangeForeignKeyToBeOnCascadeDelete',1);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (93,'2017_07_08_152806_ChangeUserPermissionsToDeleteOnUserDeletion',1);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (94,'2017_07_08_154416_SetAllocationToReferenceNullOnServerDelete',1);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (95,'2017_07_08_154650_CascadeDeletionWhenAServerOrVariableIsDeleted',1);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (96,'2017_07_24_194433_DeleteTaskWhenParentServerIsDeleted',1);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (97,'2017_08_05_115800_CascadeNullValuesForDatabaseHostWhenNodeIsDeleted',1);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (98,'2017_08_05_144104_AllowNegativeValuesForOverallocation',1);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (99,'2017_08_05_174811_SetAllocationUnqiueUsingMultipleFields',1);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (100,'2017_08_15_214555_CascadeDeletionWhenAParentServiceIsDeleted',1);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (101,'2017_08_18_215428_RemovePackWhenParentServiceOptionIsDeleted',1);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (102,'2017_09_10_225749_RenameTasksTableForStructureRefactor',1);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (103,'2017_09_10_225941_CreateSchedulesTable',1);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (104,'2017_09_10_230309_CreateNewTasksTableForSchedules',1);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (105,'2017_09_11_002938_TransferOldTasksToNewScheduler',1);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (106,'2017_09_13_211810_UpdateOldPermissionsToPointToNewScheduleSystem',1);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (107,'2017_09_23_170933_CreateDaemonKeysTable',1);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (108,'2017_09_23_173628_RemoveDaemonSecretFromServersTable',1);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (109,'2017_09_23_185022_RemoveDaemonSecretFromSubusersTable',1);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (110,'2017_10_02_202000_ChangeServicesToUseAMoreUniqueIdentifier',1);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (111,'2017_10_02_202007_ChangeToABetterUniqueServiceConfiguration',1);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (112,'2017_10_03_233202_CascadeDeletionWhenServiceOptionIsDeleted',1);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (113,'2017_10_06_214026_ServicesToNestsConversion',1);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (114,'2017_10_06_214053_ServiceOptionsToEggsConversion',1);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (115,'2017_10_06_215741_ServiceVariablesToEggVariablesConversion',1);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (116,'2017_10_24_222238_RemoveLegacySFTPInformation',1);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (117,'2017_11_11_161922_Add2FaLastAuthorizationTimeColumn',1);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (118,'2017_11_19_122708_MigratePubPrivFormatToSingleKey',1);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (119,'2017_12_04_184012_DropAllocationsWhenNodeIsDeleted',1);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (120,'2017_12_12_220426_MigrateSettingsTableToNewFormat',1);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (121,'2018_01_01_122821_AllowNegativeValuesForServerSwap',1);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (122,'2018_01_11_213943_AddApiKeyPermissionColumns',1);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (123,'2018_01_13_142012_SetupTableForKeyEncryption',1);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (124,'2018_01_13_145209_AddLastUsedAtColumn',1);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (125,'2018_02_04_145617_AllowTextInUserExternalId',1);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (126,'2018_02_10_151150_remove_unique_index_on_external_id_column',1);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (127,'2018_02_17_134254_ensure_unique_allocation_id_on_servers_table',1);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (128,'2018_02_24_112356_add_external_id_column_to_servers_table',1);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (129,'2018_02_25_160152_remove_default_null_value_on_table',1);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (130,'2018_02_25_160604_define_unique_index_on_users_external_id',1);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (131,'2018_03_01_192831_add_database_and_port_limit_columns_to_servers_table',1);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (132,'2018_03_15_124536_add_description_to_nodes',1);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (133,'2018_05_04_123826_add_maintenance_to_nodes',1);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (134,'2018_09_03_143756_allow_egg_variables_to_have_longer_values',1);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (135,'2018_09_03_144005_allow_server_variables_to_have_longer_values',1);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (136,'2019_03_02_142328_set_allocation_limit_default_null',1);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (137,'2019_03_02_151321_fix_unique_index_to_account_for_host',1);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (138,'2020_03_22_163911_merge_permissions_table_into_subusers',1);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (139,'2020_03_22_164814_drop_permissions_table',1);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (140,'2020_04_03_203624_add_threads_column_to_servers_table',1);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (141,'2020_04_03_230614_create_backups_table',1);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (142,'2020_04_04_131016_add_table_server_transfers',1);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (143,'2020_04_10_141024_store_node_tokens_as_encrypted_value',1);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (144,'2020_04_17_203438_allow_nullable_descriptions',1);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (145,'2020_04_22_055500_add_max_connections_column',1);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (146,'2020_04_26_111208_add_backup_limit_to_servers',1);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (147,'2020_05_20_234655_add_mounts_table',1);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (148,'2020_05_21_192756_add_mount_server_table',1);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (149,'2020_07_02_213612_create_user_recovery_tokens_table',1);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (150,'2020_07_09_201845_add_notes_column_for_allocations',1);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (151,'2020_08_20_205533_add_backup_state_column_to_backups',1);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (152,'2020_08_22_132500_update_bytes_to_unsigned_bigint',1);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (153,'2020_08_23_175331_modify_checksums_column_for_backups',1);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (154,'2020_09_13_110007_drop_packs_from_servers',1);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (155,'2020_09_13_110021_drop_packs_from_api_key_permissions',1);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (156,'2020_09_13_110047_drop_packs_table',1);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (157,'2020_09_13_113503_drop_daemon_key_table',1);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (158,'2020_10_10_165437_change_unique_database_name_to_account_for_server',1);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (159,'2020_10_26_194904_remove_nullable_from_schedule_name_field',1);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (160,'2020_11_02_201014_add_features_column_to_eggs',1);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (161,'2020_12_12_102435_support_multiple_docker_images_and_updates',1);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (162,'2020_12_14_013707_make_successful_nullable_in_server_transfers',1);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (163,'2020_12_17_014330_add_archived_field_to_server_transfers_table',1);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (164,'2020_12_24_092449_make_allocation_fields_json',1);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (165,'2020_12_26_184914_add_upload_id_column_to_backups_table',1);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (166,'2021_01_10_153937_add_file_denylist_to_egg_configs',1);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (167,'2021_01_13_013420_add_cron_month',1);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (168,'2021_01_17_102401_create_audit_logs_table',1);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (169,'2021_01_17_152623_add_generic_server_status_column',1);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (170,'2021_01_26_210502_update_file_denylist_to_json',1);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (171,'2021_02_23_205021_add_index_for_server_and_action',1);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (172,'2021_02_23_212657_make_sftp_port_unsigned_int',1);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (173,'2021_03_21_104718_force_cron_month_field_to_have_value_if_missing',1);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (174,'2021_05_01_092457_add_continue_on_failure_option_to_tasks',1);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (175,'2021_05_01_092523_add_only_run_when_server_online_option_to_schedules',1);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (176,'2021_05_03_201016_add_support_for_locking_a_backup',1);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (177,'2021_07_12_013420_remove_userinteraction',1);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (178,'2021_07_17_211512_create_user_ssh_keys_table',1);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (179,'2021_08_03_210600_change_successful_field_to_default_to_false_on_backups_table',1);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (180,'2021_08_21_175111_add_foreign_keys_to_mount_node_table',1);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (181,'2021_08_21_175118_add_foreign_keys_to_mount_server_table',1);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (182,'2021_08_21_180921_add_foreign_keys_to_egg_mount_table',1);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (183,'2022_01_25_030847_drop_google_analytics',1);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (184,'2022_05_07_165334_migrate_egg_images_array_to_new_format',1);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (185,'2022_05_28_135717_create_activity_logs_table',1);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (186,'2022_05_29_140349_create_activity_log_actors_table',1);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (187,'2022_06_18_112822_track_api_key_usage_for_activity_events',1);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (188,'2022_08_16_214400_add_force_outgoing_ip_column_to_eggs_table',1);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (189,'2022_08_16_230204_add_installed_at_column_to_servers_table',1);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (190,'2022_12_12_213937_update_mail_settings_to_new_format',1);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (191,'2023_01_24_210051_add_uuid_column_to_failed_jobs_table',1);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (192,'2023_02_23_191004_add_expires_at_column_to_api_keys_table',1);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (193,'2024_03_12_154408_remove_nests_table',1);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (194,'2024_03_14_055537_remove_locations_table',1);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (195,'2024_04_14_002250_update_column_names',1);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (196,'2024_04_20_214441_add_egg_var_sort',1);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (197,'2024_04_28_184102_add_mounts_to_api_keys',1);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (198,'2024_05_08_094823_rename_oom_disabled_column_to_oom_killer',1);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (199,'2024_05_16_091207_add_cpu_columns_to_nodes_table',1);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (200,'2024_05_20_002841_add_docker_container_label',1);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (201,'2024_05_31_204646_fix_old_encrypted_values',1);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (202,'2024_06_02_205622_update_stock_egg_uuid',1);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (203,'2024_06_04_085042_add_daemon_sftp_alias_column_to_nodes',1);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (204,'2024_06_05_220135_update_egg_config_variables',1);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (205,'2024_06_08_020904_refix_egg_variables',1);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (207,'2024_06_11_220722_update_field_length',2);
