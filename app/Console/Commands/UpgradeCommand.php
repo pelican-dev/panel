@@ -37,12 +37,6 @@ class UpgradeCommand extends Command
             $createBackup = $this->option('backup');
 
             if ($createBackup) {
-                if (!$this->confirm('Do you want to create a backup before upgrading?', true)) {
-                    $createBackup = false;
-                }
-            }
-
-            if ($createBackup) {
                 $this->createBackup();
             }
 
@@ -84,11 +78,7 @@ class UpgradeCommand extends Command
             '3' => 'Rocky Linux Apache (apache:apache)',
         ];
 
-        $choice = $this->choice(
-            'What webserver are you using?',
-            $choices,
-            '1'
-        );
+        $choice = $this->choice('What webserver are you using?', $choices, '1');
 
         switch ($choice) {
             case '1':
