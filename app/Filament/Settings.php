@@ -6,6 +6,8 @@ use Filament\Pages\Page;
 use Filament\Actions\Action;
 use App\Models\Setting;
 use App\Traits\Commands\EnvironmentWriterTrait;
+use Illuminate\Support\Facades\Log;
+use SQLite3;
 use Illuminate\Support\Facades\Artisan;
 
 class Settings extends Page
@@ -31,23 +33,37 @@ class Settings extends Page
             Action::make('apply')
                 ->label('Apply Settings')
                 ->requiresConfirmation()
-                ->action(fn () => $this->setConfigFromDatabase()),
+                ->action(fn () => $this->setSettingsToEnv()),
         ];
     }
 
-    protected function setConfigFromDatabase(): void
+    protected function setSettingsToEnv(): void
     {
-        $settings = new Setting();
-        $rows = $settings->getRows();
+        try {
+            $sqliteFile = storage_path('framework/cache/sushi-app-models-setting.sqlite');
 
-        $variables = [];
+            $sqlite = new SQLite3($sqliteFile);
 
-        foreach ($rows as $setting) {
-            $variables[$setting['key']] = $setting['value'];
+            $query = "SELECT * FROM `settings`";
+
+            $result = $sqlite->query($query);
+
+            $variables = [];
+
+            while ($row = $result->fetchArray(SQLITE3_ASSOC)) {
+                $variables[$row['key']] = $row['value'];
+
+                Log::info('Setting applied to .env file: ' . $row['key'] . ' => ' . $row['value']);
+            }
+
+            $sqlite->close();
+
+            $this->writeToEnvironment($variables);
+            Artisan::call('config:cache');
+
+            Log::info('All settings applied successfully to .env file.');
+        } catch (\Exception $e) {
+            Log::error('Error applying settings to .env file: ' . $e->getMessage());
         }
-
-        $this->writeToEnvironment($variables);
-        //Artisan::call('config:cache');
     }
-
 }

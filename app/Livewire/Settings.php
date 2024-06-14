@@ -15,10 +15,11 @@ class Settings extends Component implements \Filament\Forms\Contracts\HasForms, 
 {
     use \Filament\Forms\Concerns\InteractsWithForms;
     use \Filament\Tables\Concerns\InteractsWithTable;
+
     public function table(Table $table): Table
     {
         return $table
-            ->heading('Settings')
+            ->paginated(false)
             ->query(Setting::query())
             ->columns([
                 TextColumn::make('label')
