@@ -1,5 +1,4 @@
 <x-filament-panels::page>
-
     <x-filament-panels::header
         :actions="$this->getCachedHeaderActions()"
         :breadcrumbs="filament()->hasBreadcrumbs() ? $this->getBreadcrumbs() : []"
@@ -8,6 +7,33 @@
     ></x-filament-panels::header>
 
     <p>{{ trans('dashboard/index.expand_sections') }}</p>
+
+    @if (!$isLatest)
+        <x-filament::section
+            icon="tabler-info-circle"
+            icon-color="warning"
+            id="intro-update-not-ready"
+            :header-actions="$updateActions"
+        >
+            <x-slot name="heading">{{ trans('dashboard/index.sections.intro-update-need.heading') }}</x-slot>
+
+            <p>{{ trans('dashboard/index.sections.intro-update-need.content', ['latestVersion' => $latestVersion]) }}</p>
+
+        </x-filament::section>
+    @endif
+
+    @if ($isLatest)
+        <x-filament::section
+            icon="tabler-checkbox"
+            icon-color="success"
+            id="intro-update-ready"
+        >
+            <x-slot name="heading">{{ trans('dashboard/index.sections.intro-update-done.heading') }}</x-slot>
+
+            <p>{{ trans('dashboard/index.sections.intro-update-done.content', ['latestVersion' => $latestVersion]) }}</p>
+
+        </x-filament::section>
+    @endif
 
     @if ($inDevelopment)
         <x-filament::section
@@ -21,27 +47,11 @@
         >
             <x-slot name="heading">{{ trans('dashboard/index.sections.intro-developers.heading') }}</x-slot>
 
-            <p>{{  trans('dashboard/index.sections.intro-developers.content') }}</p>
+            <p>{{ trans('dashboard/index.sections.intro-developers.content') }}</p>
 
             <p><br /></p>
 
-            <p>{{  trans('dashboard/index.sections.intro-developers.extra_note') }}</p>
-
-        </x-filament::section>
-    @endif
-
-    @if (!$isLatest)
-        <x-filament::section
-            icon="tabler-info-circle"
-            icon-color="warning"
-            id="intro-update"
-            collapsible
-            persist-collapsed
-            :header-actions="$updateActions"
-        >
-            <x-slot name="heading">{{ trans('dashboard/index.sections.intro-update.heading') }}</x-slot>
-
-            <p>{{  trans('dashboard/index.sections.intro-update.content', ['latestVersion' => $latestVersion]) }}</p>
+            <p>{{ trans('dashboard/index.sections.intro-developers.extra_note') }}</p>
 
         </x-filament::section>
     @endif
@@ -58,13 +68,12 @@
         >
             <x-slot name="heading">{{ trans('dashboard/index.sections.intro-first-node.heading') }}</x-slot>
 
-            <p>{{  trans('dashboard/index.sections.intro-first-node.content') }}</p>
+            <p>{{ trans('dashboard/index.sections.intro-first-node.content') }}</p>
 
         </x-filament::section>
     @endif
 
     {{-- No Nodes Active --}}
-
 
     <x-filament::section
         icon="tabler-heart-filled"
@@ -76,15 +85,13 @@
     >
         <x-slot name="heading">{{ trans('dashboard/index.sections.intro-support.heading') }}</x-slot>
 
-        <p>{{  trans('dashboard/index.sections.intro-support.content') }}</p>
+        <p>{{ trans('dashboard/index.sections.intro-support.content') }}</p>
 
         <p><br /></p>
 
-        <p>{{  trans('dashboard/index.sections.intro-support.extra_note') }}</p>
+        <p>{{ trans('dashboard/index.sections.intro-support.extra_note') }}</p>
 
     </x-filament::section>
-
-
 
     <x-filament::section
         icon="tabler-question-mark"
@@ -103,7 +110,4 @@
         </p>
 
     </x-filament::section>
-
-    <div>
-    </div>
 </x-filament-panels::page>
