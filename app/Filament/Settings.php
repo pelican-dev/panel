@@ -4,7 +4,6 @@ namespace App\Filament;
 
 use Filament\Pages\Page;
 use Filament\Actions\Action;
-use App\Models\Setting;
 use App\Traits\Commands\EnvironmentWriterTrait;
 use Illuminate\Support\Facades\Log;
 use SQLite3;
@@ -44,7 +43,7 @@ class Settings extends Page
 
             $sqlite = new SQLite3($sqliteFile);
 
-            $query = "SELECT * FROM `settings`";
+            $query = 'SELECT * FROM `settings`';
 
             $result = $sqlite->query($query);
 
