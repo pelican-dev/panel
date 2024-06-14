@@ -52,16 +52,19 @@ class ListServers extends ListRecords
                 Tables\Columns\TextColumn::make('node.name')
                     ->icon('tabler-server-2')
                     ->url(fn (Server $server): string => route('filament.admin.resources.nodes.edit', ['record' => $server->node]))
-                    ->sortable(),
+                    ->sortable()
+                    ->searchable(),
                 Tables\Columns\TextColumn::make('egg.name')
                     ->icon('tabler-egg')
                     ->url(fn (Server $server): string => route('filament.admin.resources.eggs.edit', ['record' => $server->egg]))
-                    ->sortable(),
+                    ->sortable()
+                    ->searchable(),
                 Tables\Columns\TextColumn::make('user.username')
                     ->icon('tabler-user')
                     ->label('Owner')
                     ->url(fn (Server $server): string => route('filament.admin.resources.users.edit', ['record' => $server->user]))
-                    ->sortable(),
+                    ->sortable()
+                    ->searchable(),
                 Tables\Columns\SelectColumn::make('allocation_id')
                     ->label('Primary Allocation')
                     ->options(fn (Server $server) => $server->allocations->mapWithKeys(
@@ -77,9 +80,6 @@ class ListServers extends ListRecords
                     ->numeric()
                     ->sortable(),
             ])
-            ->filters([
-                //
-            ])
             ->actions([
                 Tables\Actions\Action::make('View')
                     ->icon('tabler-terminal')
@@ -87,6 +87,7 @@ class ListServers extends ListRecords
                 Tables\Actions\EditAction::make(),
             ])
             ->emptyStateIcon('tabler-brand-docker')
+            ->searchable()
             ->emptyStateDescription('')
             ->emptyStateHeading('No Servers')
             ->emptyStateActions([
