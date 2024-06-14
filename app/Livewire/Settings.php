@@ -6,6 +6,7 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Livewire\Component;
 use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Select;
 use Filament\Forms\Components\ToggleButtons;
 use Filament\Tables\Actions\EditAction;
 use App\Models\Setting;
@@ -14,13 +15,6 @@ class Settings extends Component implements \Filament\Forms\Contracts\HasForms, 
 {
     use \Filament\Forms\Concerns\InteractsWithForms;
     use \Filament\Tables\Concerns\InteractsWithTable;
-
-    public function mount()
-    {
-        $settings = Setting::all();
-        info('Settings in mount: ', $settings->toArray());
-    }
-
     public function table(Table $table): Table
     {
         return $table
@@ -46,6 +40,11 @@ class Settings extends Component implements \Filament\Forms\Contracts\HasForms, 
                         $setting = collect($settings->getRows())->firstWhere('key', $record->key);
 
                         return match ($setting['type']) {
+                            'select' => [
+                                Select::make('value')
+                                    ->label($setting['label'])
+                                    ->options($setting['attributes']['options']),
+                            ],
                             'number' => [
                                 TextInput::make('value')
                                     ->label($setting['label'])
