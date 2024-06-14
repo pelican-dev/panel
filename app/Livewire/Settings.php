@@ -10,6 +10,7 @@ use Filament\Forms\Components\Select;
 use Filament\Forms\Components\ToggleButtons;
 use Filament\Tables\Actions\EditAction;
 use App\Models\Setting;
+use Filament\Forms\Components\Tabs; // TODO 5 PR #259
 
 class Settings extends Component implements \Filament\Forms\Contracts\HasForms, \Filament\Tables\Contracts\HasTable
 {
@@ -21,6 +22,8 @@ class Settings extends Component implements \Filament\Forms\Contracts\HasForms, 
         return $table
             ->paginated(false)
             ->query(Setting::query())
+            //->recordUrl(fn (Setting $record): string => route('settings.edit', ['setting' => $record->id]))
+            ->openRecordUrlInNewTab(false)
             ->columns([
                 TextColumn::make('label')
                     ->label('Setting')
@@ -44,7 +47,7 @@ class Settings extends Component implements \Filament\Forms\Contracts\HasForms, 
                             'select' => [
                                 Select::make('value')
                                     ->label($setting['label'])
-                                    ->options($setting['attributes']['options']),
+                                    ->options($setting['options']),
                             ],
                             'number' => [
                                 TextInput::make('value')
@@ -62,7 +65,7 @@ class Settings extends Component implements \Filament\Forms\Contracts\HasForms, 
                                 ToggleButtons::make('value')
                                     ->inline()
                                     ->label($setting['label'])
-                                    ->options($setting['attributes']['options']),
+                                    ->options($setting['options']),
                             ],
                             default => [
                                 TextInput::make('value')
