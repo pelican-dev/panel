@@ -24,7 +24,7 @@ return [
             'content' => ':latestVersion is available! Read our documentation to update your Panel.',
         ],
         'intro-update-done' => [
-            'heading' => "Your Panel is up to date",
+            'heading' => 'Your Panel is up to date',
             'content' => 'You are currently using :latestVersion. No update is available',
         ],
         'intro-first-node' => [
