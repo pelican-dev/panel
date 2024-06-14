@@ -19,13 +19,13 @@ return [
             'button_issues' => 'Create Issue',
             'button_features' => 'Discuss Features',
         ],
-        'intro-update-need' => [
+        'intro-update-available' => [
             'heading' => 'Update available',
-            'content' => ':latestVersion is available! Read our documentation to update your Panel.',
+            'content' => ':latestVersion is now available! Read our documentation to update your Panel.',
         ],
-        'intro-update-done' => [
+        'intro-no-update' => [
             'heading' => 'Your Panel is up to date',
-            'content' => 'You are currently using :latestVersion. No update is available',
+            'content' => 'You are currently using :version. Your panel is up-to-date!',
         ],
         'intro-first-node' => [
             'heading' => 'No Nodes Detected',

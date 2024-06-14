@@ -12,28 +12,26 @@
         <x-filament::section
             icon="tabler-info-circle"
             icon-color="warning"
-            id="intro-update-not-ready"
+            id="intro-update-available"
             :header-actions="$updateActions"
         >
-            <x-slot name="heading">{{ trans('dashboard/index.sections.intro-update-need.heading') }}</x-slot>
+            <x-slot name="heading">{{ trans('dashboard/index.sections.intro-update-available.heading') }}</x-slot>
 
-            <p>{{ trans('dashboard/index.sections.intro-update-need.content', ['latestVersion' => $latestVersion]) }}</p>
+            <p>{{ trans('dashboard/index.sections.intro-update-available.content', ['latestVersion' => $latestVersion]) }}</p>
 
         </x-filament::section>
-    @endif
-
-    @if ($isLatest)
+    @else
         <x-filament::section
             icon="tabler-checkbox"
             icon-color="success"
-            id="intro-update-ready"
+            id="intro-no-update"
         >
-            <x-slot name="heading">{{ trans('dashboard/index.sections.intro-update-done.heading') }}</x-slot>
+            <x-slot name="heading">{{ trans('dashboard/index.sections.intro-no-update.heading') }}</x-slot>
 
-            <p>{{ trans('dashboard/index.sections.intro-update-done.content', ['latestVersion' => $latestVersion]) }}</p>
-
+            <p>{{ trans('dashboard/index.sections.intro-no-update.content', ['version' => $version]) }}</p>
         </x-filament::section>
     @endif
+
 
     @if ($inDevelopment)
         <x-filament::section
