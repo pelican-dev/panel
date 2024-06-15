@@ -22,14 +22,13 @@ class Settings extends Component implements \Filament\Forms\Contracts\HasForms, 
         return $table
             ->paginated(false)
             ->query(Setting::query())
-            //->recordUrl(fn (Setting $record): string => route('settings.edit', ['setting' => $record->id]))
-            ->openRecordUrlInNewTab(false)
             ->columns([
                 TextColumn::make('label')
                     ->label('Setting')
                     ->sortable()
                     ->searchable()
-                    ->tooltip(fn ($record) => $record->description),
+                    ->tooltip(fn ($record) => $record->description)
+                    ->action(fn ($record) => $this->editSetting($record->id)),
 
                 TextColumn::make('value')
                     ->label('Value')
@@ -63,9 +62,16 @@ class Settings extends Component implements \Filament\Forms\Contracts\HasForms, 
                             ],
                             'toggle-buttons' => [
                                 ToggleButtons::make('value')
-                                    ->inline()
+                                    ->inline(false)
                                     ->label($setting['label'])
-                                    ->options($setting['options']),
+                                    ->options([
+                                        'true' => 'True',
+                                        'false' => 'False',
+                                    ])
+                                    ->colors([
+                                        'false' => 'danger',
+                                        'true' => 'success',
+                                    ]),
                             ],
                             default => [
                                 TextInput::make('value')
@@ -75,6 +81,11 @@ class Settings extends Component implements \Filament\Forms\Contracts\HasForms, 
                         };
                     }),
             ]);
+    }
+
+    public function editSetting($id)
+    {
+        $this->dispatchFormEvent('trigger-edit', ['id' => $id]);
     }
 
     public function render()

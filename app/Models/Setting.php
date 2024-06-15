@@ -21,7 +21,7 @@ class Setting extends Model
             'key' => 'FILAMENT_TOP_NAVIGATION',
             'label' => 'Topbar or Sidebar',
             'value' => 'false',
-            'type' => 'text',
+            'type' => 'toggle-buttons',
             'tabs' => 'Basic',
             'description' => 'Setting this to true switches the sidebar to a topbar and vice versa',
             //'options' => ['false' => 'False', 'true' => 'True'], TODO fix it so this is saved properly to storage/framework/cache/sushi-app-models-setting.sqlite
