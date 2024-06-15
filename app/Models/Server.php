@@ -2,8 +2,10 @@
 
 namespace App\Models;
 
+use App\Casts\EndpointCollection;
 use App\Enums\ServerState;
 use App\Exceptions\Http\Connection\DaemonConnectionException;
+use App\Models\Objects\Endpoint;
 use GuzzleHttp\Exception\GuzzleException;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Notifications\Notifiable;
@@ -129,11 +131,6 @@ class Server extends Model
     ];
 
     /**
-     * The default relationships to load for all server models.
-     */
-    protected $with = ['allocation'];
-
-    /**
      * Fields that are not mass assignable.
      */
     protected $guarded = ['id', self::CREATED_AT, self::UPDATED_AT, 'deleted_at', 'installed_at'];
@@ -152,7 +149,6 @@ class Server extends Model
         'threads' => 'nullable|regex:/^[0-9-,]+$/',
         'oom_killer' => 'sometimes|boolean',
         'disk' => 'required|numeric|min:0',
-        'allocation_id' => 'required|bail|unique:servers|exists:allocations,id',
         'egg_id' => 'required|exists:eggs,id',
         'startup' => 'required|string',
         'skip_scripts' => 'sometimes|boolean',
@@ -175,27 +171,33 @@ class Server extends Model
             'io' => 'integer',
             'cpu' => 'integer',
             'oom_killer' => 'boolean',
-            'allocation_id' => 'integer',
             'egg_id' => 'integer',
             'database_limit' => 'integer',
             'allocation_limit' => 'integer',
             'backup_limit' => 'integer',
-            self::CREATED_AT => 'datetime',
-            self::UPDATED_AT => 'datetime',
             'deleted_at' => 'datetime',
             'installed_at' => 'datetime',
             'docker_labels' => 'array',
+            'ports' => EndpointCollection::class,
         ];
     }
 
     /**
      * Returns the format for server allocations when communicating with the Daemon.
      */
-    public function getAllocationMappings(): array
+    public function getPortMappings(): array
     {
-        return $this->allocations->where('node_id', $this->node_id)->groupBy('ip')->map(function ($item) {
-            return $item->pluck('port');
-        })->toArray();
+        $defaultIp = '0.0.0.0';
+
+        $ports = collect($this->ports)
+            ->map(fn ($port) => str_contains($port, ':') ? $port : "$defaultIp:$port")
+            ->mapToGroups(function ($port) {
+                [$ip, $port] = explode(':', $port);
+
+                return [$ip => (int) $port];
+            });
+
+        return $ports->all();
     }
 
     public function isInstalled(): bool
@@ -393,5 +395,18 @@ class Server extends Model
         $this->node->serverStatuses();
 
         return cache()->get("servers.$this->uuid.container.status") ?? 'missing';
+    }
+
+    public function getPrimaryEndpoint(): ?Endpoint
+    {
+        $endpoint = $this->ports->first();
+
+        $portEggVariable = $this->variables->firstWhere('env_variable', 'SERVER_PORT');
+        if ($portEggVariable) {
+            $portServerVariable = $this->serverVariables->firstWhere('variable_id', $portEggVariable->id);
+            $endpoint = new Endpoint($portServerVariable->variable_value);
+        }
+
+        return $endpoint;
     }
 }
