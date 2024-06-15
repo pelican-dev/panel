@@ -12,6 +12,36 @@ use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 
+/**
+ * @property int $id
+ * @property string $uuid
+ * @property bool $public
+ * @property string $name
+ * @property string|null $description
+ * @property string $fqdn
+ * @property string $scheme
+ * @property bool $behind_proxy
+ * @property bool $maintenance_mode
+ * @property int $memory
+ * @property int $memory_overallocate
+ * @property int $disk
+ * @property int $disk_overallocate
+ * @property int $cpu
+ * @property int $cpu_overallocate
+ * @property int $upload_size
+ * @property string $daemon_token_id
+ * @property string $daemon_token
+ * @property int $daemon_listen
+ * @property int $daemon_sftp
+ * @property string|null $daemon_sftp_alias
+ * @property string $daemon_base
+ * @property array $tags
+ * @property \Carbon\Carbon $created_at
+ * @property \Carbon\Carbon $updated_at
+ * @property \App\Models\Mount[]|\Illuminate\Database\Eloquent\Collection $mounts
+ * @property \App\Models\Server[]|\Illuminate\Database\Eloquent\Collection $servers
+ * @property \App\Models\Allocation[]|\Illuminate\Database\Eloquent\Collection $allocations
+ */
 class Node extends Model
 {
     use Notifiable;

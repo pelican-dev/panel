@@ -6,6 +6,16 @@ use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
+/**
+ * @property int $id
+ * @property int $user_id
+ * @property int $server_id
+ * @property array $permissions
+ * @property \Carbon\Carbon $created_at
+ * @property \Carbon\Carbon $updated_at
+ * @property \App\Models\User $user
+ * @property \App\Models\Server $server
+ */
 class Subuser extends Model
 {
     use Notifiable;

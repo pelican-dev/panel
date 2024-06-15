@@ -6,6 +6,25 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
+/**
+ * @property int $id
+ * @property int $server_id
+ * @property string $uuid
+ * @property bool $is_successful
+ * @property bool $is_locked
+ * @property string $name
+ * @property string[] $ignored_files
+ * @property string $disk
+ * @property string|null $checksum
+ * @property int $bytes
+ * @property string|null $upload_id
+ * @property \Carbon\CarbonImmutable|null $completed_at
+ * @property \Carbon\CarbonImmutable $created_at
+ * @property \Carbon\CarbonImmutable $updated_at
+ * @property \Carbon\CarbonImmutable|null $deleted_at
+ * @property \App\Models\Server $server
+ * @property \App\Models\AuditLog[] $audits
+ */
 class Backup extends Model
 {
     use SoftDeletes;
