@@ -2,6 +2,8 @@
 
 namespace App\Services\Allocations;
 
+use App\Models\Objects\Endpoint;
+use Illuminate\Support\Collection;
 use Webmozart\Assert\Assert;
 use App\Models\Server;
 use App\Exceptions\Service\Allocation\AutoAllocationNotEnabledException;
@@ -45,11 +47,10 @@ class FindAssignableAllocationService
         Assert::integerish($start);
         Assert::integerish($end);
 
-        // Get all the currently allocated ports for the node so that we can figure out which port might be available.
-        $ports = $server->node->allocations()
-            ->where('ip', $server->allocation->ip)
-            ->whereBetween('port', [$start, $end])
-            ->pluck('port');
+        $ports = $server->node->servers
+            ->reduce(fn (Collection $result, $value) => $result->merge($value), collect())
+            ->map(fn (Endpoint $endpoint) => $endpoint->port)
+            ->filter(fn (int $port): bool => $port >= $start && $port <= $end);
 
         // Compute the difference of the range and the currently created ports, finding
         // any port that does not already exist in the database. We will then use this
@@ -57,7 +58,6 @@ class FindAssignableAllocationService
         $available = array_diff(range($start, $end), $ports->toArray());
 
         // Pick a random port out of the remaining available ports.
-        /** @var int $port */
         return $available[array_rand($available)];
     }
 }

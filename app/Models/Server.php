@@ -10,6 +10,7 @@ use GuzzleHttp\Exception\GuzzleException;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Query\JoinClause;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Http;
 use Psr\Http\Message\ResponseInterface;
 use Illuminate\Database\Eloquent\Relations\HasOne;
@@ -103,6 +104,16 @@ use App\Exceptions\Http\Server\ServerStateConflictException;
  * @method static \Illuminate\Database\Eloquent\Builder|Server whereUuid($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Server whereuuid_short($value)
  *
+ * @property array|null $docker_labels
+ * @property Collection<Endpoint>|null $ports
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\EggVariable> $eggVariables
+ * @property-read int|null $egg_variables_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ServerVariable> $serverVariables
+ * @property-read int|null $server_variables_count
+ * @method static \Illuminate\Database\Eloquent\Builder|Server whereDockerLabels($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Server whereInstalledAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Server wherePorts($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Server whereUuidShort($value)
  * @mixin \Eloquent
  */
 class Server extends Model
