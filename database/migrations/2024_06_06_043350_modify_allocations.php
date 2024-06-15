@@ -2,6 +2,7 @@
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
@@ -11,40 +12,42 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('server_transfers', function (Blueprint $table) {
-            $table->dropColumn(['old_allocation', 'new_allocation', 'old_additional_allocations', 'new_additional_allocations']);
-        });
+        DB::transaction(function () {
+            Schema::table('server_transfers', function (Blueprint $table) {
+                $table->dropColumn(['old_allocation', 'new_allocation', 'old_additional_allocations', 'new_additional_allocations']);
+            });
 
-        Schema::table('servers', function (Blueprint $table) {
-            $table->json('ports')->nullable();
-        });
+            Schema::table('servers', function (Blueprint $table) {
+                $table->json('ports')->nullable();
+            });
 
-        DB::table('servers')->update(['ports' => '[]']);
+            DB::table('servers')->update(['ports' => '[]']);
 
-        Schema::table('servers', function (Blueprint $table) {
-            $table->json('ports')->change();
-        });
+            Schema::table('servers', function (Blueprint $table) {
+                $table->json('ports')->change();
+            });
 
-        $portMappings = [];
-        foreach (DB::table('allocations')->get() as $allocation) {
-            $portMappings[$allocation->server_id][] = "$allocation->ip:$allocation->port";
-        }
+            $portMappings = [];
+            foreach (DB::table('allocations')->get() as $allocation) {
+                $portMappings[$allocation->server_id][] = "$allocation->ip:$allocation->port";
+            }
 
-        foreach ($portMappings as $serverId => $ports) {
-            DB::table('servers')
-                ->where('id', $serverId)
-                ->update(['ports' => json_encode($ports)]);
-        }
+            foreach ($portMappings as $serverId => $ports) {
+                DB::table('servers')
+                    ->where('id', $serverId)
+                    ->update(['ports' => json_encode($ports)]);
+            }
 
-        Schema::table('servers', function (Blueprint $table) {
-            $table->dropForeign(['allocation_id']);
-            $table->dropColumn(['allocation_id']);
-        });
+            Schema::table('servers', function (Blueprint $table) {
+                $table->dropUnique(['allocation_id']);
+                $table->dropColumn(['allocation_id']);
+            });
 
-        Schema::dropIfExists('allocations');
+            Schema::dropIfExists('allocations');
 
-        Schema::table('nodes', function (Blueprint $table) {
-            $table->boolean('strict_ports')->default(true);
+            Schema::table('nodes', function (Blueprint $table) {
+                $table->boolean('strict_ports')->default(true);
+            });
         });
     }
 
