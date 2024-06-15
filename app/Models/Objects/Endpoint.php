@@ -17,7 +17,8 @@ class Endpoint
     public int $port;
     public string $ip;
 
-    public function __construct(string|int $port, string $ip = null) {
+    public function __construct(string|int $port, string $ip = null)
+    {
         $this->ip = $ip ?? self::INADDR_ANY;
         $this->port = (int) $port;
 

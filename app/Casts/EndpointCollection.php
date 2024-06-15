@@ -6,8 +6,6 @@ use App\Models\Objects\Endpoint;
 use Illuminate\Contracts\Database\Eloquent\Castable;
 use Illuminate\Contracts\Database\Eloquent\CastsAttributes;
 use Illuminate\Support\Collection;
-use Stringable;
-use TypeError;
 
 class EndpointCollection implements Castable
 {
@@ -17,7 +15,7 @@ class EndpointCollection implements Castable
         {
             public function get($model, $key, $value, $attributes)
             {
-                if (! isset($attributes[$key])) {
+                if (!isset($attributes[$key])) {
                     return new Collection();
                 }
 
