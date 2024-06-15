@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use App\Extensions\Themes\Theme;
+use App\Livewire\EndpointSynth;
 use App\Models;
 use App\Models\ApiKey;
 use App\Models\Node;
@@ -21,6 +22,7 @@ use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Str;
 use Laravel\Sanctum\Sanctum;
+use Livewire\Livewire;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -71,6 +73,8 @@ class AppServiceProvider extends ServiceProvider
 
         $this->bootAuth();
         $this->bootBroadcast();
+
+        Livewire::propertySynthesizer(EndpointSynth::class);
 
         $bearerTokens = fn (OpenApi $openApi) => $openApi->secure(SecurityScheme::http('bearer'));
         Gate::define('viewApiDocs', fn () => true);

@@ -2,8 +2,10 @@
 
 namespace App\Models;
 
+use App\Casts\EndpointCollection;
 use App\Enums\ServerState;
 use App\Exceptions\Http\Connection\DaemonConnectionException;
+use App\Models\Objects\Endpoint;
 use GuzzleHttp\Exception\GuzzleException;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Notifications\Notifiable;
@@ -67,7 +69,6 @@ class Server extends Model
         'database_limit' => 'present|nullable|integer|min:0',
         'allocation_limit' => 'sometimes|nullable|integer|min:0',
         'backup_limit' => 'present|nullable|integer|min:0',
-        'ports' => 'array',
     ];
 
     protected function casts(): array
@@ -90,7 +91,7 @@ class Server extends Model
             'deleted_at' => 'datetime',
             'installed_at' => 'datetime',
             'docker_labels' => 'array',
-            'ports' => 'array',
+            'ports' => EndpointCollection::class,
         ];
     }
 
@@ -309,9 +310,16 @@ class Server extends Model
         return cache()->get("servers.$this->uuid.container.status") ?? 'missing';
     }
 
-    public function getPrimaryEndpoint()
+    public function getPrimaryEndpoint(): ?Endpoint
     {
-        dd($this->ports);
-        dd($this->variables);
+        $endpoint = $this->ports->first();
+
+        $portEggVariable = $this->variables->firstWhere('env_variable', 'SERVER_PORT');
+        if ($portEggVariable) {
+            $portServerVariable = $this->serverVariables->firstWhere('variable_id', $portEggVariable->id);
+            $endpoint = new Endpoint($portServerVariable->variable_value);
+        }
+
+        return $endpoint;
     }
 }

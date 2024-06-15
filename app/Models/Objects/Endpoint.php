@@ -12,28 +12,30 @@ class Endpoint
     public const PORT_CEIL = 65535;
     public const PORT_RANGE_LIMIT = 1000;
     public const PORT_RANGE_REGEX = '/^(\d{4,5})-(\d{4,5})$/';
+    public const INADDR_ANY = '0.0.0.0';
 
     public int $port;
     public string $ip;
 
-    public function __construct(string $address = null, int $port = null) {
-        if ($address === null) {
-            $address = '0.0.0.0';
+    public function __construct(string|int $port, string $ip = null) {
+        $this->ip = $ip ?? self::INADDR_ANY;
+        $this->port = (int) $port;
+
+        if (str_contains($port, ':')) {
+            [$this->ip, $this->port] = explode(':', $port);
         }
 
-        $ip = $address;
-        if (str_contains($address, ':')) {
-            [$ip, $port] = explode(':', $address);
+        throw_unless(filter_var($this->ip, FILTER_VALIDATE_IP) !== false, new InvalidArgumentException("$this->ip is an invalid IP address"));
+        throw_unless($this->port > self::PORT_FLOOR, "Port $this->port must be greater than " . self::PORT_FLOOR);
+        throw_unless($this->port < self::PORT_CEIL, "Port $this->port must be less than " . self::PORT_CEIL);
+    }
 
-            throw_unless(is_numeric($port), new InvalidArgumentException("Port ($port) must be a number"));
-
-            $port = (int) $port;
+    public function __toString()
+    {
+        if ($this->ip === self::INADDR_ANY) {
+            return (string) $this->port;
         }
 
-        throw_unless(is_int($port), new InvalidArgumentException("Port ($port) must be an integer"));
-        throw_unless(filter_var($ip, FILTER_VALIDATE_IP) !== false, new InvalidArgumentException("$ip is an invalid IP address"));
-
-        $this->ip = $ip;
-        $this->port = $port;
+        return "$this->ip:$this->port";
     }
 }
