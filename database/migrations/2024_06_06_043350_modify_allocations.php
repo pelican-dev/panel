@@ -25,8 +25,6 @@ return new class extends Migration
             $table->json('ports')->change();
         });
 
-        dd('works?');
-
         $portMappings = [];
         foreach (DB::table('allocations')->get() as $allocation) {
             $portMappings[$allocation->server_id][] = "$allocation->ip:$allocation->port";
