@@ -36,11 +36,11 @@ return new class extends Migration
                 ->update(['ports' => json_encode($ports)]);
         }
 
-        Schema::dropIfExists('allocations');
-
         Schema::table('servers', function (Blueprint $table) {
             $table->dropColumn(['allocation_id']);
         });
+
+        Schema::dropIfExists('allocations');
 
         Schema::table('nodes', function (Blueprint $table) {
             $table->boolean('strict_ports')->default(true);
