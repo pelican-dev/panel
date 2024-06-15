@@ -38,6 +38,7 @@ class Settings extends Component implements \Filament\Forms\Contracts\HasForms, 
             ->headerActions([
                 Action::make('apply')
                     ->label('Apply Settings')
+                    ->color('success')
                     ->requiresConfirmation()
                     ->action(fn () => $this->setSettingsToEnv()),
                 ActionGroup::make([
@@ -133,8 +134,6 @@ class Settings extends Component implements \Filament\Forms\Contracts\HasForms, 
 
             while ($row = $result->fetchArray(SQLITE3_ASSOC)) {
                 $variables[$row['key']] = $row['value'];
-
-                Log::info('Setting applied to .env file: ' . $row['key'] . ' => ' . $row['value']);
             }
 
             $sqlite->close();
