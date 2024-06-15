@@ -37,7 +37,7 @@ return new class extends Migration
         }
 
         Schema::table('servers', function (Blueprint $table) {
-            $table->dropForeign('servers_allocation_id_foreign');
+            $table->dropForeign(['allocation_id']);
             $table->dropColumn(['allocation_id']);
         });
 
