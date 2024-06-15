@@ -6,7 +6,7 @@ return [
         'servers_attached' => 'Palvelimella ei saa olla siihen linkitettyjä palvelimia, jotta se voitaisiin poistaa.',
         'daemon_off_config_updated' => 'Daemon konfiguraatio <strong>on päivitetty</strong>, mutta virhe ilmeni yritettäessä päivittää konfiguraatiota automaattisesti daemoniin. Sinun tulee päivittää daemonin konfiguraatio (config.yml) manuaalisesti, jotta muutokset voidaan ottaa käyttöön.',
     ],
-    'ports' => [
+    'allocations' => [
         'server_using' => 'Palvelin on tällä hetkellä määritelty tähän varaukseen. Varauksen voi poistaa vain, jos siihen ei ole tällä hetkellä määritettyä palvelinta.',
         'too_many_ports' => 'Yli 1000 portin lisääminen yhteen alueeseen kerralla ei ole tuettua.',
         'invalid_mapping' => ':port:lle annettu määritys oli virheellinen eikä sitä voitu käsitellä.',

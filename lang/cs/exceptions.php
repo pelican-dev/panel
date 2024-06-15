@@ -6,7 +6,7 @@ return [
         'servers_attached' => 'Uzel nesmí mít žádné s ním spojené servery, aby mohl být smazán',
         'daemon_off_config_updated' => 'Konfigurace daemonu <strong>byla aktualizována</strong>, ale byla zde chyba při automatické aktualizaci souborů konfigurace Daemonu. Je třeba soubory konfigurace Daemonu aktualizovat manuálně (config.yml), aby změny damemonu byly aplikovány.',
     ],
-    'ports' => [
+    'allocations' => [
         'server_using' => 'Server již využívá tuhle alokaci. Pro odstranění alokace, nesmí být žádný server spojen s alokací.',
         'too_many_ports' => 'Přidání více než 1000 portů v jednom rozsahu najednou není podporováno.',
         'invalid_mapping' => 'Mapování poskytnuto pro :port bylo nesprávné a nebylo možné ho zpracovat.',

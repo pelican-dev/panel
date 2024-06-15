@@ -6,7 +6,7 @@ return [
         'servers_attached' => 'Ein Node darf keine Server haben, die mit ihm verknüpft sind, um gelöscht zu werden.',
         'daemon_off_config_updated' => 'Die Daemon Konfiguration <strong>wurde aktualisiert</strong>, jedoch gab es einen Fehler bei dem Versuch, die Konfigurationsdatei des Daemon automatisch zu aktualisieren. Du musst die Konfigurationsdatei (config.yml) manuell anpassen, damit die Änderungen übernommen werden.',
     ],
-    'ports' => [
+    'allocations' => [
         'server_using' => 'Derzeit ist ein Server dieser Zuweisung zugewiesen. Eine Zuordnung kann nur gelöscht werden, wenn derzeit kein Server zugewiesen ist.',
         'too_many_ports' => 'Das Hinzufügen von mehr als 1000 Ports in einem einzigen Bereich wird nicht unterstützt.',
         'invalid_mapping' => 'Das für :port angegebene Mapping war ungültig und konnte nicht verarbeitet werden.',

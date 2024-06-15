@@ -6,7 +6,7 @@ return [
         'servers_attached' => 'Een node moet geen actieve servers meer hebben voordat deze kan worden verwijderd.',
         'daemon_off_config_updated' => 'De daemonconfiguratie <strong>is bijgewerkt</strong>, er is echter een fout opgetreden bij het automatisch bijwerken van het configuratiebestand op de Daemon. U moet handmatig het configuratiebestand bijwerken (config.yml) voor de daemon om deze veranderingen toe te passen.',
     ],
-    'ports' => [
+    'allocations' => [
         'server_using' => 'Een server is momenteel toegewezen aan deze toewijzing. Een toewijzing kan alleen worden verwijderd als er momenteel geen server is toegewezen.',
         'too_many_ports' => 'Meer dan 1000 poorten binnen één bereik toevoegen wordt niet ondersteund.',
         'invalid_mapping' => 'De opgegeven toewijzing voor :port was ongeldig en kon niet worden verwerkt.',

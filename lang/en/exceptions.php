@@ -6,7 +6,7 @@ return [
         'servers_attached' => 'A node must have no servers linked to it in order to be deleted.',
         'daemon_off_config_updated' => 'The daemon configuration <strong>has been updated</strong>, however there was an error encountered while attempting to automatically update the configuration file on the Daemon. You will need to manually update the configuration file (config.yml) for the daemon to apply these changes.',
     ],
-    'ports' => [
+    'allocations' => [
         'server_using' => 'A server is currently assigned to this allocation. An allocation can only be deleted if no server is currently assigned.',
         'too_many_ports' => 'Adding more than 1000 ports in a single range at once is not supported.',
         'invalid_mapping' => 'The mapping provided for :port was invalid and could not be processed.',

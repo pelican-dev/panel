@@ -6,7 +6,7 @@ return [
         'servers_attached' => 'Aby usunąć ten węzeł, nie możesz mieć podłączonych do niego serwerów.',
         'daemon_off_config_updated' => 'Konfiguracja deamona <strong>została zaktualizowana</strong>, jednak wystąpił błąd podczas próby automatycznej aktualizacji pliku konfiguracyjnego deamona. Aby zastosować te zmiany, należy ręcznie zaktualizować plik konfiguracyjny (config.yml).',
     ],
-    'ports' => [
+    'allocations' => [
         'server_using' => 'Serwer jest obecnie przypisany do tej alokacji. Alokację można usunąć tylko wtedy, gdy żaden serwer nie jest do niej przypisany.',
         'too_many_ports' => 'Dodawanie więcej niż 1000 portów w jednym zakresie nie jest obsługiwane.',
         'invalid_mapping' => 'Mapowanie podane dla :port było nieprawidłowe i nie mogło zostać przetworzone.',
