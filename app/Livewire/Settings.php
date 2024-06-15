@@ -10,10 +10,19 @@ use Filament\Forms\Components\Select;
 use Filament\Forms\Components\ToggleButtons;
 use Filament\Tables\Actions\EditAction;
 use App\Models\Setting;
-use Filament\Forms\Components\Tabs; // TODO 5 PR #259
+use Filament\Tables\Actions\Action;
+use App\Traits\Commands\EnvironmentWriterTrait;
+use Illuminate\Support\Facades\Log;
+use SQLite3;
+use Illuminate\Support\Facades\Artisan;
+use App\Filament\Exports\SettingExporter;
+use Filament\Tables\Actions\ExportAction;
+
+//use Filament\Forms\Components\Tabs; // TODO 5 PR #259
 
 class Settings extends Component implements \Filament\Forms\Contracts\HasForms, \Filament\Tables\Contracts\HasTable
 {
+    use EnvironmentWriterTrait;
     use \Filament\Forms\Concerns\InteractsWithForms;
     use \Filament\Tables\Concerns\InteractsWithTable;
 
@@ -22,13 +31,22 @@ class Settings extends Component implements \Filament\Forms\Contracts\HasForms, 
         return $table
             ->paginated(false)
             ->query(Setting::query())
+            ->headerActions([
+                ExportAction::make()
+                    ->columnMapping(false)
+                    ->exporter(SettingExporter::class),
+                Action::make('apply')
+                    ->label('Apply Settings')
+                    ->requiresConfirmation()
+                    ->action(fn () => $this->setSettingsToEnv()),
+            ])
             ->columns([
                 TextColumn::make('label')
                     ->label('Setting')
                     ->sortable()
                     ->searchable()
-                    ->tooltip(fn ($record) => $record->description)
-                    ->action(fn ($record) => $this->editSetting($record->id)),
+                    ->tooltip(fn ($record) => $record->description),
+                //->action(), TODO 10
 
                 TextColumn::make('value')
                     ->label('Value')
@@ -83,11 +101,6 @@ class Settings extends Component implements \Filament\Forms\Contracts\HasForms, 
             ]);
     }
 
-    public function editSetting($id)
-    {
-        $this->dispatchFormEvent('trigger-edit', ['id' => $id]);
-    }
-
     public function render()
     {
         return <<<'HTML'
@@ -95,5 +108,35 @@ class Settings extends Component implements \Filament\Forms\Contracts\HasForms, 
             {{ $this->table }}
         </div>
         HTML;
+    }
+
+    protected function setSettingsToEnv(): void
+    {
+        try {
+            $sqliteFile = storage_path('framework/cache/sushi-app-models-setting.sqlite');
+
+            $sqlite = new SQLite3($sqliteFile);
+
+            $query = 'SELECT * FROM `settings`';
+
+            $result = $sqlite->query($query);
+
+            $variables = [];
+
+            while ($row = $result->fetchArray(SQLITE3_ASSOC)) {
+                $variables[$row['key']] = $row['value'];
+
+                Log::info('Setting applied to .env file: ' . $row['key'] . ' => ' . $row['value']);
+            }
+
+            $sqlite->close();
+
+            $this->writeToEnvironment($variables);
+            Artisan::call('config:cache');
+
+            Log::info('All settings applied successfully to .env file.');
+        } catch (\Exception $e) {
+            Log::error('Error applying settings to .env file: ' . $e->getMessage());
+        }
     }
 }
