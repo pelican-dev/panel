@@ -22,7 +22,7 @@ class Setting extends Model
             'label' => 'Topbar or Sidebar',
             'value' => 'false',
             'type' => 'toggle-buttons',
-            'tabs' => 'Basic',
+            'tabs' => 'Panel',
             'description' => 'Setting this to true switches the sidebar to a topbar and vice versa',
             //'options' => ['false' => 'False', 'true' => 'True'], TODO fix it so this is saved properly to storage/framework/cache/sushi-app-models-setting.sqlite
         ],
@@ -30,7 +30,7 @@ class Setting extends Model
             'key' => 'APP_NAME',
             'label' => 'Panel Name',
             'value' => 'Pelican',
-            'tabs' => 'Basic',
+            'tabs' => 'Panel',
             'type' => 'text',
             'description' => 'This is the name that is used throughout the panel and in emails sent to clients.',
             // 'limit' => 18, TODO fix it so this is saved properly to storage/framework/cache/sushi-app-models-setting.sqlite
@@ -70,7 +70,7 @@ class Setting extends Model
         [
             'key' => 'MAIL_ENCRYPTION',
             'label' => 'Encryption',
-            'value' => 'tls', 
+            'value' => 'tls',
             'type' => 'text', // TODO make this select as soon as it works
             'tabs' => 'Mail',
             'description' => 'Select the type of encryption to use when sending mail.',

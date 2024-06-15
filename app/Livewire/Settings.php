@@ -56,7 +56,7 @@ class Settings extends Component implements \Filament\Forms\Contracts\HasForms, 
                     ->sortable()
                     ->searchable()
                     ->tooltip(fn ($record) => $record->description),
-                  //  ->action(), TODO 10
+                //  ->action(), TODO 10
 
                 TextColumn::make('value')
                     ->label('Value')
