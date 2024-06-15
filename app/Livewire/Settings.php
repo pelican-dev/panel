@@ -16,7 +16,10 @@ use Illuminate\Support\Facades\Log;
 use SQLite3;
 use Illuminate\Support\Facades\Artisan;
 use App\Filament\Exports\SettingExporter;
+use App\Filament\Imports\SettingImporter;
 use Filament\Tables\Actions\ExportAction;
+use Filament\Actions\ImportAction;
+use Filament\Tables\Actions\ActionGroup;
 
 //use Filament\Forms\Components\Tabs; // TODO 5 PR #259
 
@@ -31,14 +34,19 @@ class Settings extends Component implements \Filament\Forms\Contracts\HasForms, 
         return $table
             ->paginated(false)
             ->query(Setting::query())
+            //->heading('Settings')
             ->headerActions([
-                ExportAction::make()
-                    ->columnMapping(false)
-                    ->exporter(SettingExporter::class),
                 Action::make('apply')
                     ->label('Apply Settings')
                     ->requiresConfirmation()
                     ->action(fn () => $this->setSettingsToEnv()),
+                ActionGroup::make([
+                    ImportAction::make()
+                        ->importer(SettingImporter::class),
+                    ExportAction::make()
+                        ->columnMapping(false)
+                        ->exporter(SettingExporter::class),
+                ]),
             ])
             ->columns([
                 TextColumn::make('label')
