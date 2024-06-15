@@ -23,7 +23,8 @@ class Endpoint
         $this->port = (int) $port;
 
         if (str_contains($port, ':')) {
-            [$this->ip, $this->port] = explode(':', $port);
+            [$this->ip, $port] = explode(':', $port);
+            $this->port = (int) $port;
         }
 
         throw_unless(filter_var($this->ip, FILTER_VALIDATE_IP) !== false, new InvalidArgumentException("$this->ip is an invalid IP address"));
