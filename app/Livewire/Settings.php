@@ -56,7 +56,7 @@ class Settings extends Component implements \Filament\Forms\Contracts\HasForms, 
                     ->sortable()
                     ->searchable()
                     ->tooltip(fn ($record) => $record->description),
-                //->action(), TODO 10
+                  //  ->action(), TODO 10
 
                 TextColumn::make('value')
                     ->label('Value')
@@ -88,9 +88,16 @@ class Settings extends Component implements \Filament\Forms\Contracts\HasForms, 
                                     ->maxLength($setting['limit'] ?? null)
                                     ->placeholder($setting['description']),
                             ],
+                            'password' => [
+                                TextInput::make('value')
+                                    ->label($setting['label'])
+                                    ->password()
+                                    ->revealable()
+                                    ->placeholder($setting['description']),
+                            ],
                             'toggle-buttons' => [
                                 ToggleButtons::make('value')
-                                    ->inline(false)
+                                    ->inline(true)
                                     ->label($setting['label'])
                                     ->options([
                                         'true' => 'True',
