@@ -655,18 +655,21 @@ class CreateServer extends CreateRecord
                                         ->suffixIcon('tabler-network')
                                         ->required()
                                         ->numeric()
+                                        ->minValue(0)
                                         ->default(0),
                                     Forms\Components\TextInput::make('database_limit')
                                         ->label('Databases')
                                         ->suffixIcon('tabler-database')
                                         ->required()
                                         ->numeric()
+                                        ->minValue(0)
                                         ->default(0),
                                     Forms\Components\TextInput::make('backup_limit')
                                         ->label('Backups')
                                         ->suffixIcon('tabler-copy-check')
                                         ->required()
                                         ->numeric()
+                                        ->minValue(0)
                                         ->default(0),
                                 ]),
                             Forms\Components\Fieldset::make('Docker Settings')
