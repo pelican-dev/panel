@@ -2,10 +2,8 @@
 
 namespace App\Models;
 
-use App\Casts\EndpointCollection;
 use App\Enums\ServerState;
 use App\Exceptions\Http\Connection\DaemonConnectionException;
-use App\Models\Objects\Endpoint;
 use GuzzleHttp\Exception\GuzzleException;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Notifications\Notifiable;
@@ -18,6 +16,93 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
 use App\Exceptions\Http\Server\ServerStateConflictException;
 
+/**
+ * \App\Models\Server.
+ *
+ * @property int $id
+ * @property string|null $external_id
+ * @property string $uuid
+ * @property string $uuid_short
+ * @property int $node_id
+ * @property string $name
+ * @property string $description
+ * @property ServerState|null $status
+ * @property bool $skip_scripts
+ * @property int $owner_id
+ * @property int $memory
+ * @property int $swap
+ * @property int $disk
+ * @property int $io
+ * @property int $cpu
+ * @property string|null $threads
+ * @property bool $oom_killer
+ * @property int $allocation_id
+ * @property int $egg_id
+ * @property string $startup
+ * @property string $image
+ * @property int|null $allocation_limit
+ * @property int|null $database_limit
+ * @property int $backup_limit
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property \Illuminate\Support\Carbon|null $installed_at
+ * @property \Illuminate\Database\Eloquent\Collection|\App\Models\ActivityLog[] $activity
+ * @property int|null $activity_count
+ * @property \App\Models\Allocation|null $allocation
+ * @property \Illuminate\Database\Eloquent\Collection|\App\Models\Allocation[] $allocations
+ * @property int|null $allocations_count
+ * @property \Illuminate\Database\Eloquent\Collection|\App\Models\Backup[] $backups
+ * @property int|null $backups_count
+ * @property \Illuminate\Database\Eloquent\Collection|\App\Models\Database[] $databases
+ * @property int|null $databases_count
+ * @property \App\Models\Egg|null $egg
+ * @property \Illuminate\Database\Eloquent\Collection|\App\Models\Mount[] $mounts
+ * @property int|null $mounts_count
+ * @property \App\Models\Node $node
+ * @property \Illuminate\Notifications\DatabaseNotificationCollection|\Illuminate\Notifications\DatabaseNotification[] $notifications
+ * @property int|null $notifications_count
+ * @property \Illuminate\Database\Eloquent\Collection|\App\Models\Schedule[] $schedules
+ * @property int|null $schedules_count
+ * @property \Illuminate\Database\Eloquent\Collection|\App\Models\Subuser[] $subusers
+ * @property int|null $subusers_count
+ * @property \App\Models\ServerTransfer|null $transfer
+ * @property \App\Models\User $user
+ * @property \Illuminate\Database\Eloquent\Collection|\App\Models\EggVariable[] $variables
+ * @property int|null $variables_count
+ *
+ * @method static \Database\Factories\ServerFactory factory(...$parameters)
+ * @method static \Illuminate\Database\Eloquent\Builder|Server newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|Server newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|Server query()
+ * @method static \Illuminate\Database\Eloquent\Builder|Server whereAllocationId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Server whereAllocationLimit($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Server whereBackupLimit($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Server whereCpu($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Server whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Server whereDatabaseLimit($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Server whereDescription($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Server whereDisk($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Server whereEggId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Server whereExternalId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Server whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Server whereImage($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Server whereIo($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Server whereMemory($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Server whereName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Server whereNodeId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Server whereOomKiller($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Server whereOwnerId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Server whereSkipScripts($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Server whereStartup($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Server whereStatus($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Server whereSwap($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Server whereThreads($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Server whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Server whereUuid($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Server whereuuid_short($value)
+ *
+ * @mixin \Eloquent
+ */
 class Server extends Model
 {
     use Notifiable;
@@ -44,6 +129,11 @@ class Server extends Model
     ];
 
     /**
+     * The default relationships to load for all server models.
+     */
+    protected $with = ['allocation'];
+
+    /**
      * Fields that are not mass assignable.
      */
     protected $guarded = ['id', self::CREATED_AT, self::UPDATED_AT, 'deleted_at', 'installed_at'];
@@ -62,6 +152,7 @@ class Server extends Model
         'threads' => 'nullable|regex:/^[0-9-,]+$/',
         'oom_killer' => 'sometimes|boolean',
         'disk' => 'required|numeric|min:0',
+        'allocation_id' => 'required|bail|unique:servers|exists:allocations,id',
         'egg_id' => 'required|exists:eggs,id',
         'startup' => 'required|string',
         'skip_scripts' => 'sometimes|boolean',
@@ -84,33 +175,27 @@ class Server extends Model
             'io' => 'integer',
             'cpu' => 'integer',
             'oom_killer' => 'boolean',
+            'allocation_id' => 'integer',
             'egg_id' => 'integer',
             'database_limit' => 'integer',
             'allocation_limit' => 'integer',
             'backup_limit' => 'integer',
+            self::CREATED_AT => 'datetime',
+            self::UPDATED_AT => 'datetime',
             'deleted_at' => 'datetime',
             'installed_at' => 'datetime',
             'docker_labels' => 'array',
-            'ports' => EndpointCollection::class,
         ];
     }
 
     /**
      * Returns the format for server allocations when communicating with the Daemon.
      */
-    public function getPortMappings(): array
+    public function getAllocationMappings(): array
     {
-        $defaultIp = '0.0.0.0';
-
-        $ports = collect($this->ports)
-            ->map(fn ($port) => str_contains($port, ':') ? $port : "$defaultIp:$port")
-            ->mapToGroups(function ($port) {
-                [$ip, $port] = explode(':', $port);
-
-                return [$ip => (int) $port];
-            });
-
-        return $ports->all();
+        return $this->allocations->where('node_id', $this->node_id)->groupBy('ip')->map(function ($item) {
+            return $item->pluck('port');
+        })->toArray();
     }
 
     public function isInstalled(): bool
@@ -137,6 +222,22 @@ class Server extends Model
     public function subusers(): HasMany
     {
         return $this->hasMany(Subuser::class, 'server_id', 'id');
+    }
+
+    /**
+     * Gets the default allocation for a server.
+     */
+    public function allocation(): BelongsTo
+    {
+        return $this->belongsTo(Allocation::class);
+    }
+
+    /**
+     * Gets all allocations associated with this server.
+     */
+    public function allocations(): HasMany
+    {
+        return $this->hasMany(Allocation::class);
     }
 
     /**
@@ -308,18 +409,5 @@ class Server extends Model
         $this->node->serverStatuses();
 
         return cache()->get("servers.$this->uuid.container.status") ?? 'missing';
-    }
-
-    public function getPrimaryEndpoint(): ?Endpoint
-    {
-        $endpoint = $this->ports->first();
-
-        $portEggVariable = $this->variables->firstWhere('env_variable', 'SERVER_PORT');
-        if ($portEggVariable) {
-            $portServerVariable = $this->serverVariables->firstWhere('variable_id', $portEggVariable->id);
-            $endpoint = new Endpoint($portServerVariable->variable_value);
-        }
-
-        return $endpoint;
     }
 }

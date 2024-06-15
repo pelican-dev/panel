@@ -6,8 +6,8 @@ on:
       - '**'
 
 jobs:
-  lint:
-    name: Lint
+  pint:
+    name: Pint
     runs-on: ubuntu-latest
     steps:
       - name: Code Checkout
@@ -16,7 +16,7 @@ jobs:
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
-          php-version: "8.2"
+          php-version: "8.3"
           extensions: bcmath, curl, gd, mbstring, mysql, openssl, pdo, tokenizer, xml, zip
           tools: composer:v2
           coverage: none
@@ -29,3 +29,26 @@ jobs:
 
       - name: Pint
         run: vendor/bin/pint --test
+  phpstan:
+    name: PHPStan
+    runs-on: ubuntu-latest
+    steps:
+      - name: Code Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: "8.3"
+          extensions: bcmath, curl, gd, mbstring, mysql, openssl, pdo, tokenizer, xml, zip
+          tools: composer:v2
+          coverage: none
+
+      - name: Setup .env
+        run: cp .env.example .env
+
+      - name: Install dependencies
+        run: composer install --no-interaction --no-progress --prefer-dist
+
+      - name: PHPStan
+        run: vendor/bin/phpstan --memory-limit=-1

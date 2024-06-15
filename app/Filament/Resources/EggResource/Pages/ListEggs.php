@@ -4,6 +4,7 @@ namespace App\Filament\Resources\EggResource\Pages;
 
 use App\Filament\Resources\EggResource;
 use App\Models\Egg;
+use App\Services\Eggs\Sharing\EggExporterService;
 use App\Services\Eggs\Sharing\EggImporterService;
 use Exception;
 use Filament\Actions;
@@ -22,19 +23,20 @@ class ListEggs extends ListRecords
     public function table(Table $table): Table
     {
         return $table
-            ->searchable(false)
+            ->searchable(true)
             ->defaultPaginationPageOption(25)
             ->checkIfRecordIsSelectableUsing(fn (Egg $egg) => $egg->servers_count <= 0)
             ->columns([
                 Tables\Columns\TextColumn::make('id')
                     ->label('Id')
-                    ->hidden()
-                    ->searchable(),
+                    ->searchable()
+                    ->sortable(),
                 Tables\Columns\TextColumn::make('name')
                     ->icon('tabler-egg')
                     ->description(fn ($record): ?string => (strlen($record->description) > 120) ? substr($record->description, 0, 120).'...' : $record->description)
                     ->wrap()
-                    ->searchable(),
+                    ->searchable()
+                    ->sortable(),
                 Tables\Columns\TextColumn::make('servers_count')
                     ->counts('servers')
                     ->icon('tabler-server')
@@ -42,12 +44,13 @@ class ListEggs extends ListRecords
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
-                Tables\Actions\ExportAction::make()
+                Tables\Actions\Action::make('export')
                     ->icon('tabler-download')
                     ->label('Export')
                     ->color('primary')
-                    // TODO uses old admin panel export service
-                    ->url(fn (Egg $egg): string => route('admin.eggs.export', ['egg' => $egg])),
+                    ->action(fn (EggExporterService $service, Egg $egg) => response()->streamDownload(function () use ($service, $egg) {
+                        echo $service->handle($egg->id);
+                    }, 'egg-' . $egg->getKebabName() . '.json')),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
@@ -88,7 +91,6 @@ class ListEggs extends ListRecords
 
                 ])
                 ->action(function (array $data): void {
-
                     /** @var EggImporterService $eggImportService */
                     $eggImportService = resolve(EggImporterService::class);
 

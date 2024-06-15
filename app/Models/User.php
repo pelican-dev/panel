@@ -25,6 +25,65 @@ use Illuminate\Contracts\Auth\Access\Authorizable as AuthorizableContract;
 use Illuminate\Contracts\Auth\CanResetPassword as CanResetPasswordContract;
 use App\Notifications\SendPasswordReset as ResetPasswordNotification;
 
+/**
+ * App\Models\User.
+ *
+ * @property int $id
+ * @property string|null $external_id
+ * @property string $uuid
+ * @property string $username
+ * @property string $email
+ * @property string|null $name_first
+ * @property string|null $name_last
+ * @property string $password
+ * @property string|null $remember_token
+ * @property string $language
+ * @property bool $root_admin
+ * @property bool $use_totp
+ * @property string|null $totp_secret
+ * @property \Illuminate\Support\Carbon|null $totp_authenticated_at
+ * @property array $oauth
+ * @property bool $gravatar
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property \Illuminate\Database\Eloquent\Collection|\App\Models\ApiKey[] $apiKeys
+ * @property int|null $api_keys_count
+ * @property string $name
+ * @property \Illuminate\Notifications\DatabaseNotificationCollection|\Illuminate\Notifications\DatabaseNotification[] $notifications
+ * @property int|null $notifications_count
+ * @property \Illuminate\Database\Eloquent\Collection|\App\Models\RecoveryToken[] $recoveryTokens
+ * @property int|null $recovery_tokens_count
+ * @property \Illuminate\Database\Eloquent\Collection|\App\Models\Server[] $servers
+ * @property int|null $servers_count
+ * @property \Illuminate\Database\Eloquent\Collection|\App\Models\UserSSHKey[] $sshKeys
+ * @property int|null $ssh_keys_count
+ * @property \Illuminate\Database\Eloquent\Collection|\App\Models\ApiKey[] $tokens
+ * @property int|null $tokens_count
+ *
+ * @method static \Database\Factories\UserFactory factory(...$parameters)
+ * @method static Builder|User newModelQuery()
+ * @method static Builder|User newQuery()
+ * @method static Builder|User query()
+ * @method static Builder|User whereCreatedAt($value)
+ * @method static Builder|User whereEmail($value)
+ * @method static Builder|User whereExternalId($value)
+ * @method static Builder|User whereGravatar($value)
+ * @method static Builder|User whereId($value)
+ * @method static Builder|User whereLanguage($value)
+ * @method static Builder|User whereNameFirst($value)
+ * @method static Builder|User whereNameLast($value)
+ * @method static Builder|User wherePassword($value)
+ * @method static Builder|User whereRememberToken($value)
+ * @method static Builder|User whereRootAdmin($value)
+ * @method static Builder|User whereTotpAuthenticatedAt($value)
+ * @method static Builder|User whereTotpSecret($value)
+ * @method static Builder|User whereUpdatedAt($value)
+ * @method static Builder|User whereUseTotp($value)
+ * @method static Builder|User whereUsername($value)
+ * @method static Builder|User whereUuid($value)
+ *
+ * @mixin \Eloquent
+ */
 class User extends Model implements AuthenticatableContract, AuthorizableContract, CanResetPasswordContract, FilamentUser, HasAvatar, HasName
 {
     use Authenticatable;
@@ -69,12 +128,13 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
         'totp_authenticated_at',
         'gravatar',
         'root_admin',
+        'oauth',
     ];
 
     /**
      * The attributes excluded from the model's JSON form.
      */
-    protected $hidden = ['password', 'remember_token', 'totp_secret', 'totp_authenticated_at'];
+    protected $hidden = ['password', 'remember_token', 'totp_secret', 'totp_authenticated_at', 'oauth'];
 
     /**
      * Default values for specific fields in the database.
@@ -87,6 +147,7 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
         'totp_secret' => null,
         'name_first' => '',
         'name_last' => '',
+        'oauth' => '[]',
     ];
 
     /**
@@ -104,6 +165,7 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
         'language' => 'string',
         'use_totp' => 'boolean',
         'totp_secret' => 'nullable|string',
+        'oauth' => 'array',
     ];
 
     protected function casts(): array
@@ -114,6 +176,7 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
             'gravatar' => 'boolean',
             'totp_authenticated_at' => 'datetime',
             'totp_secret' => 'encrypted',
+            'oauth' => 'array',
         ];
     }
 

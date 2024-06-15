@@ -51,12 +51,12 @@ class ServerConfigurationStructureService
             'invocation' => $server->startup,
             'skip_egg_scripts' => $server->skip_scripts,
             'build' => [
-                'memory_limit' => $server->memory,
-                'swap' => $server->swap,
+                'memory_limit' => config('panel.use_binary_prefix') ? $server->memory : $server->memory / 1.048576,
+                'swap' => config('panel.use_binary_prefix') ? $server->swap : $server->swap / 1.048576,
                 'io_weight' => $server->io,
                 'cpu_limit' => $server->cpu,
                 'threads' => $server->threads,
-                'disk_space' => $server->disk,
+                'disk_space' => config('panel.use_binary_prefix') ? $server->disk : $server->disk / 1.048576,
                 'oom_killer' => $server->oom_killer,
             ],
             'container' => [

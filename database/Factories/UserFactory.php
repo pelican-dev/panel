@@ -35,6 +35,7 @@ class UserFactory extends Factory
             'language' => 'en',
             'root_admin' => false,
             'use_totp' => false,
+            'oauth' => [],
             'created_at' => Carbon::now(),
             'updated_at' => Carbon::now(),
         ];

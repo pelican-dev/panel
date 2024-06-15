@@ -14,6 +14,7 @@ use Illuminate\Database\ConnectionInterface;
 use App\Models\Objects\DeploymentObject;
 use App\Repositories\Daemon\DaemonServerRepository;
 use App\Exceptions\Http\Connection\DaemonConnectionException;
+use App\Models\Egg;
 
 class ServerCreationService
 {
@@ -42,6 +43,13 @@ class ServerCreationService
         if (!isset($data['oom_killer']) && isset($data['oom_disabled'])) {
             $data['oom_killer'] = !$data['oom_disabled'];
         }
+
+        /** @var Egg $egg */
+        $egg = Egg::query()->findOrFail($data['egg_id']);
+
+        // Fill missing fields from egg
+        $data['image'] = $data['image'] ?? collect($egg->docker_images)->first();
+        $data['startup'] = $data['startup'] ?? $egg->startup;
 
         // If a deployment object has been passed we need to get the allocation
         // that the server should use, and assign the node from that allocation.

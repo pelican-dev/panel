@@ -20,6 +20,7 @@
         "laravel/framework": "^11.7",
         "laravel/helpers": "^1.7",
         "laravel/sanctum": "^4.0.2",
+        "laravel/socialite": "^5.14",
         "laravel/tinker": "^2.9",
         "laravel/ui": "^4.5.1",
         "lcobucci/jwt": "~4.3.0",
@@ -31,6 +32,7 @@
         "prologue/alerts": "^1.2",
         "ryangjchandler/blade-tabler-icons": "^2.3",
         "s1lentium/iptools": "~1.2.0",
+        "socialiteproviders/discord": "^4.2",
         "spatie/laravel-fractal": "^6.2",
         "spatie/laravel-query-builder": "^5.8.1",
         "spatie/temporary-directory": "^2.2",
@@ -70,6 +72,7 @@
     "scripts": {
         "cs:fix": "php-cs-fixer fix",
         "cs:check": "php-cs-fixer fix --dry-run --diff --verbose",
+        "phpstan": "phpstan --memory-limit=-1",
         "post-autoload-dump": [
             "Illuminate\\Foundation\\ComposerScripts::postAutoloadDump"
         ],

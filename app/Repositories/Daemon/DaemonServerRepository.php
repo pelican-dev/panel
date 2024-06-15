@@ -25,9 +25,9 @@ class DaemonServerRepository extends DaemonRepository
         Assert::isInstanceOf($this->server, Server::class);
 
         try {
-            $response = $this->getHttpClient()->get(
+            return $this->getHttpClient()->get(
                 sprintf('/api/servers/%s', $this->server->uuid)
-            )->throw();
+            )->throw()->json();
         } catch (RequestException $exception) {
             $cfId = $exception->response->header('Cf-Ray');
             $cfCache = $exception->response->header('Cf-Cache-Status');
@@ -48,7 +48,7 @@ class DaemonServerRepository extends DaemonRepository
             report($exception);
         }
 
-        return $response?->json() ?? ['state' => ContainerStatus::Missing->value];
+        return ['state' => ContainerStatus::Missing->value];
     }
 
     /**
