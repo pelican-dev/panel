@@ -225,22 +225,6 @@ class Server extends Model
     }
 
     /**
-     * Gets the default allocation for a server.
-     */
-    public function allocation(): BelongsTo
-    {
-        return $this->belongsTo(Allocation::class);
-    }
-
-    /**
-     * Gets all allocations associated with this server.
-     */
-    public function allocations(): HasMany
-    {
-        return $this->hasMany(Allocation::class);
-    }
-
-    /**
      * Gets information for the egg associated with this server.
      */
     public function egg(): HasOne
