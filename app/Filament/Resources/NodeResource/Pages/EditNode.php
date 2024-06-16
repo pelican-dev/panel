@@ -159,7 +159,6 @@ class EditNode extends EditRecord
                                     'md' => 1,
                                     'lg' => 1,
                                 ])
-                                ->required()
                                 ->inline()
                                 ->helperText(function (Forms\Get $get) {
                                     if (request()->isSecure()) {
