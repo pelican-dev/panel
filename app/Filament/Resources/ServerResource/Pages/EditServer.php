@@ -381,14 +381,17 @@ class EditServer extends EditRecord
                                         Forms\Components\TextInput::make('allocation_limit')
                                             ->suffixIcon('tabler-network')
                                             ->required()
+                                            ->minValue(0)
                                             ->numeric(),
                                         Forms\Components\TextInput::make('database_limit')
                                             ->suffixIcon('tabler-database')
                                             ->required()
+                                            ->minValue(0)
                                             ->numeric(),
                                         Forms\Components\TextInput::make('backup_limit')
                                             ->suffixIcon('tabler-copy-check')
                                             ->required()
+                                            ->minValue(0)
                                             ->numeric(),
                                     ]),
                                 Forms\Components\Fieldset::make('Docker Settings')
