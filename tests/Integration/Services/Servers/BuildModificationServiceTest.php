@@ -31,7 +31,7 @@ class BuildModificationServiceTest extends IntegrationTestCase
      * the server data is updated in realtime. This test also ensures that only certain fields get updated
      * for the server, and not just any arbitrary field.
      */
-    public function testServerBuildDataIsProperlyUpdatedOndaemon(): void
+    public function testServerBuildDataIsProperlyUpdatedOnDaemon(): void
     {
         $server = $this->createServerModel();
 

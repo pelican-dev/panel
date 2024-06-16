@@ -17,8 +17,8 @@ class ServerConfigurationStructureService
     /**
      * Return a configuration array for a specific server when passed a server model.
      *
-     * DO NOT MODIFY THIS FUNCTION. This powers legacy code handling for the new daemon
-     * daemon, if you modify the structure eggs will break unexpectedly.
+     * DO NOT MODIFY THIS FUNCTION. This powers legacy code handling for wings
+     * if you modify the structure eggs will break unexpectedly.
      */
     public function handle(Server $server, array $override = []): array
     {
@@ -66,8 +66,8 @@ class ServerConfigurationStructureService
             'allocations' => [
                 'force_outgoing_ip' => $server->egg->force_outgoing_ip,
                 'default' => [
-                    'ip' => $server->getPrimaryEndpoint()->ip,
-                    'port' => $server->getPrimaryEndpoint()->port,
+                    'ip' => $server->getPrimaryEndpoint()?->ip,
+                    'port' => $server->getPrimaryEndpoint()?->port,
                 ],
                 'mappings' => $server->getPortMappings(),
             ],

@@ -2,6 +2,7 @@
 
 namespace App\Tests\Integration\Api\Client;
 
+use App\Models\Objects\Endpoint;
 use App\Models\User;
 use App\Models\Server;
 use App\Models\Subuser;
@@ -260,13 +261,16 @@ class ClientControllerTest extends ClientApiIntegrationTestCase
     }
 
     /**
-     * Test that a subuser without the allocation.read permission is only able to see the primary
-     * allocation for the server.
+     * Test that a subuser without the allocation.read permission cannot see any ports
      */
-    public function testOnlyPrimaryAllocationIsReturnedToSubuser(): void
+    public function testNoPortsAreReturnedToSubuser(): void
     {
         /** @var \App\Models\Server $server */
         [$user, $server] = $this->generateTestAccount([Permission::ACTION_WEBSOCKET_CONNECT]);
+        $server->ports->add(new Endpoint(1234));
+        $server->ports->add(new Endpoint(2345, '1.2.3.4'));
+        $server->ports->add(new Endpoint(3456));
+        $server->save();
 
         $server->refresh();
         $response = $this->actingAs($user)->getJson('/api/client');
@@ -275,7 +279,7 @@ class ClientControllerTest extends ClientApiIntegrationTestCase
         $response->assertJsonCount(1, 'data');
         $response->assertJsonPath('data.0.attributes.server_owner', false);
         $response->assertJsonPath('data.0.attributes.uuid', $server->uuid);
-        $response->assertJsonCount(1, 'data.0.attributes.relationships.allocations.data');
+        $response->assertJsonCount(0, 'data.0.attributes.ports');
     }
 
     public static function filterTypeDataProvider(): array

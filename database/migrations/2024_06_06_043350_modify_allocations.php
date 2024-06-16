@@ -20,12 +20,6 @@ return new class extends Migration
             $table->json('ports')->nullable();
         });
 
-        DB::table('servers')->update(['ports' => '[]']);
-
-        Schema::table('servers', function (Blueprint $table) {
-            $table->json('ports')->change();
-        });
-
         $portMappings = [];
         foreach (DB::table('allocations')->get() as $allocation) {
             $portMappings[$allocation->server_id][] = "$allocation->ip:$allocation->port";
@@ -37,13 +31,15 @@ return new class extends Migration
                 ->update(['ports' => json_encode($ports)]);
         }
 
-        Schema::table('servers', function (Blueprint $table) {
-            try {
+        try {
+            Schema::table('servers', function (Blueprint $table) {
                 $table->dropForeign(['allocation_id']);
-            } catch (Exception) {
-                // pass
-            }
+            });
+        } catch (Throwable) {
 
+        }
+
+        Schema::table('servers', function (Blueprint $table) {
             $table->dropUnique(['allocation_id']);
             $table->dropColumn(['allocation_id']);
         });

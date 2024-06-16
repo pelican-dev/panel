@@ -2,9 +2,10 @@
 
 namespace App\Models\Objects;
 
+use Illuminate\Contracts\Support\Jsonable;
 use InvalidArgumentException;
 
-class Endpoint
+class Endpoint implements Jsonable
 {
     public const CIDR_MAX_BITS = 27;
     public const CIDR_MIN_BITS = 32;
@@ -32,12 +33,17 @@ class Endpoint
         throw_unless($this->port < self::PORT_CEIL, "Port $this->port must be less than " . self::PORT_CEIL);
     }
 
-    public function __toString()
+    public function __toString(): string
     {
         if ($this->ip === self::INADDR_ANY) {
             return (string) $this->port;
         }
 
         return "$this->ip:$this->port";
+    }
+
+    public function toJson($options = 0): string
+    {
+        return json_encode($this->__toString());
     }
 }

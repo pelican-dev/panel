@@ -3,6 +3,7 @@
 namespace App\Transformers\Api\Client;
 
 use App\Models\Egg;
+use App\Models\Objects\Endpoint;
 use App\Models\Server;
 use App\Models\Subuser;
 use League\Fractal\Resource\Item;
@@ -74,6 +75,7 @@ class ServerTransformer extends BaseClientTransformer
             // This field is deprecated, please use "status".
             'is_installing' => !$server->isInstalled(),
             'is_transferring' => !is_null($server->transfer),
+            'ports' => $user->can(Permission::ACTION_ALLOCATION_READ, $server) ? $server->ports : collect(),
         ];
     }
 

@@ -2,6 +2,7 @@
 
 namespace App\Tests\Integration\Services\Servers;
 
+use App\Models\Objects\Endpoint;
 use Mockery\MockInterface;
 use App\Models\Egg;
 use GuzzleHttp\Psr7\Request;
@@ -82,6 +83,7 @@ class ServerCreationServiceTest extends IntegrationTestCase
             'image' => 'java:8',
             'egg_id' => $egg->id,
             'ports' => [1234, 2345, 3456],
+            'node_id' => $node->id,
             'environment' => [
                 'BUNGEE_VERSION' => '123',
                 'SERVER_JARFILE' => 'server2.jar',
@@ -118,6 +120,12 @@ class ServerCreationServiceTest extends IntegrationTestCase
 
         foreach ($data as $key => $value) {
             if (in_array($key, ['environment', 'start_on_completion'])) {
+                continue;
+            }
+
+            if ($key === 'ports') {
+                $this->assertSame($value, $response->ports->map(fn (Endpoint $endpoint) => $endpoint->port)->all());
+
                 continue;
             }
 

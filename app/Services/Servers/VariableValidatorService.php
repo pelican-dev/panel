@@ -25,7 +25,7 @@ class VariableValidatorService
      *
      * @throws \Illuminate\Validation\ValidationException
      */
-    public function handle(int $egg, array $fields = [], $validate = false): Collection
+    public function handle(int $egg, array $fields = [], $validate = true): Collection
     {
         $query = EggVariable::query()->where('egg_id', $egg);
         if (!$this->isUserLevel(User::USER_LEVEL_ADMIN)) {

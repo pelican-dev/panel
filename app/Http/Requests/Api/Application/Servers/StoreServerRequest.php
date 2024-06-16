@@ -110,6 +110,10 @@ class StoreServerRequest extends ApplicationApiRequest
         $validator->sometimes('deploy.port_range', 'present', function ($input) {
             return $input->deploy;
         });
+
+        $validator->sometimes('deploy.node_id', 'present', function ($input) {
+            return $input->deploy;
+        });
     }
 
     /**
@@ -125,6 +129,7 @@ class StoreServerRequest extends ApplicationApiRequest
         $object->setDedicated($this->input('deploy.dedicated_ip', false));
         $object->setTags($this->input('deploy.tags', $this->input('deploy.locations', [])));
         $object->setPorts($this->input('deploy.port_range', []));
+        $object->setNode($this->input('deploy.node_id'));
 
         return $object;
     }

@@ -51,13 +51,6 @@ class ServerCreationService
         $data['image'] = $data['image'] ?? collect($egg->docker_images)->first();
         $data['startup'] = $data['startup'] ?? $egg->startup;
 
-        // If a deployment object has been passed we need to get the allocation
-        // that the server should use, and assign the node from that allocation.
-        if ($deployment instanceof DeploymentObject) {
-            // Todo: Refactor
-            // $allocation = $this->configureDeployment($data, $deployment);
-        }
-
         Assert::false(empty($data['node_id']));
 
         $eggVariableData = $this->validatorService
@@ -118,7 +111,7 @@ class ServerCreationService
             'cpu' => Arr::get($data, 'cpu'),
             'threads' => Arr::get($data, 'threads'),
             'oom_killer' => Arr::get($data, 'oom_killer') ?? false,
-            'allocation_id' => Arr::get($data, 'allocation_id'),
+            'ports' => Arr::get($data, 'ports') ?? [],
             'egg_id' => Arr::get($data, 'egg_id'),
             'startup' => Arr::get($data, 'startup'),
             'image' => Arr::get($data, 'image'),

@@ -28,8 +28,12 @@ class EndpointCollection implements Castable
 
             public function set($model, $key, $value, $attributes)
             {
-                if (!$value instanceof Collection) {
+                if (!is_array($value) && !$value instanceof Collection) {
                     return new Collection();
+                }
+
+                if (!$value instanceof Collection) {
+                    $value = new Collection($value);
                 }
 
                 return $value->map(fn ($endpoint) => (string) $endpoint);
