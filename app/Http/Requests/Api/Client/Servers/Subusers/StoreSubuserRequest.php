@@ -14,7 +14,7 @@ class StoreSubuserRequest extends SubuserRequest
     public function rules(): array
     {
         return [
-            'email' => 'required|email|between:1,191',
+            'email' => 'required|email|between:1,255',
             'permissions' => 'required|array',
             'permissions.*' => 'string',
         ];

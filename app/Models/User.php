@@ -155,11 +155,11 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
      */
     public static array $validationRules = [
         'uuid' => 'nullable|string|size:36|unique:users,uuid',
-        'email' => 'required|email|between:1,191|unique:users,email',
-        'external_id' => 'sometimes|nullable|string|max:191|unique:users,external_id',
-        'username' => 'required|between:1,191|unique:users,username',
-        'name_first' => 'nullable|string|between:0,191',
-        'name_last' => 'nullable|string|between:0,191',
+        'email' => 'required|email|between:1,255|unique:users,email',
+        'external_id' => 'sometimes|nullable|string|max:255|unique:users,external_id',
+        'username' => 'required|between:1,255|unique:users,username',
+        'name_first' => 'nullable|string|between:0,255',
+        'name_last' => 'nullable|string|between:0,255',
         'password' => 'sometimes|nullable|string',
         'root_admin' => 'boolean',
         'language' => 'string',
