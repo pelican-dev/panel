@@ -38,7 +38,7 @@ class Settings extends Component implements \Filament\Forms\Contracts\HasForms, 
             ->headerActions([
                 Action::make('apply')
                     ->label('Apply Settings')
-                    ->icon('bi-save-fill')
+                    ->icon('tabler-device-floppy')
                     ->color('success')
                     ->requiresConfirmation()
                     ->action(fn () => $this->setSettingsToEnv()),
