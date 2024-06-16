@@ -67,8 +67,7 @@ class Settings extends Component implements \Filament\Forms\Contracts\HasForms, 
             ->actions([
                 EditAction::make()
                     ->form(function ($record) {
-                        $settings = new Setting();
-                        $setting = collect($settings->getRows())->firstWhere('key', $record->key);
+                        $setting = collect(Setting::getRowsFromSQLite())->firstWhere('key', $record->key);
 
                         return match ($setting['type']) {
                             'select' => [

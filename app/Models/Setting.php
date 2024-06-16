@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Sushi\Sushi;
+use SQLite3;
 
 class Setting extends Model
 {
@@ -92,4 +93,22 @@ class Setting extends Model
             'description' => 'The name that emails should appear to come from.',
         ],
     ];
+
+    public static function getRowsFromSQLite()
+    {
+        $sqliteFile = storage_path('framework/cache/sushi-app-models-setting.sqlite');
+        $sqlite = new SQLite3($sqliteFile);
+
+        $query = 'SELECT * FROM settings';
+        $result = $sqlite->query($query);
+
+        $settings = [];
+        while ($row = $result->fetchArray(SQLITE3_ASSOC)) {
+            $settings[] = $row;
+        }
+
+        $sqlite->close();
+
+        return $settings;
+    }
 }
