@@ -2,6 +2,10 @@
 
 namespace App\Filament\Resources\ServerResource\Pages;
 
+use App\Services\Databases\DatabaseManagementService;
+use Filament\Forms\Components\Actions\Action;
+use Filament\Forms\Components\Repeater;
+use Filament\Forms\Components\TextInput;
 use LogicException;
 use App\Filament\Resources\ServerResource;
 use App\Http\Controllers\Admin\ServersController;
@@ -587,9 +591,41 @@ class EditServer extends EditRecord
                         Tabs\Tab::make('Databases')
                             ->icon('tabler-database')
                             ->schema([
-                                Forms\Components\Placeholder::make('soon')
-                                    ->label('Soon™'),
-                            ]),
+                                Repeater::make('databases')
+                                    ->columnSpanFull()
+                                    ->grid()
+                                    ->schema([
+                                        TextInput::make('db_name')
+                                            ->label('Database Name')
+                                            ->hintAction(
+                                                Action::make('Delete')
+                                                    ->color('danger')
+                                                    ->icon('tabler-trash')
+                                                    ->action(fn (DatabaseManagementService $databaseManagementService, $record) => $databaseManagementService->delete($record))
+                                            )
+                                            ->formatStateUsing(fn ($record) => $record->database)
+                                            ->readOnly(),
+                                        TextInput::make('db_username')
+                                            ->label('Username')
+                                            ->inlineLabel()
+                                            ->formatStateUsing(fn ($record) => $record->username)
+                                            ->readOnly(),
+                                        TextInput::make('db_password')
+                                            ->label('Password')
+                                            ->inlineLabel()
+                                            ->formatStateUsing(fn ($record) => $record->password)
+                                            ->readOnly(),
+                                        TextInput::make('db_max_connections')
+                                            ->label('Max Connections')
+                                            ->inlineLabel()
+                                            ->formatStateUsing(fn ($record) => $record->max_connections < 1 ? 'Unlimited' : $record->max_connections)
+                                            ->readOnly(),
+                                    ])
+                                    ->relationship('databases')
+                                    ->deletable(false)
+                                    ->addable(false)
+                                    ->columnSpan(4),
+                            ])->columns(4),
                         Tabs\Tab::make('Actions')
                             ->icon('tabler-settings')
                             ->schema([
@@ -709,7 +745,7 @@ class EditServer extends EditRecord
     protected function transferServer(Form $form): Form
     {
         return $form
-            ->columns(2)
+            ->columns()
             ->schema([
                 Forms\Components\Select::make('toNode')
                     ->label('New Node'),
@@ -724,6 +760,8 @@ class EditServer extends EditRecord
             Actions\DeleteAction::make('Delete')
                 ->successRedirectUrl(route('filament.admin.resources.servers.index'))
                 ->color('danger')
+                ->disabled(fn (Server $server) => $server->databases()->count() > 0)
+                ->label(fn (Server $server) => $server->databases()->count() > 0 ? 'Server has a Database' : 'Delete')
                 ->after(fn (Server $server) => resolve(ServerDeletionService::class)->handle($server))
                 ->requiresConfirmation(),
             Actions\Action::make('console')
