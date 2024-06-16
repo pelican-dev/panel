@@ -39,7 +39,7 @@ class MakeDatabaseHostCommand extends Command
         $data['password'] = $this->option('password') ?? $this->secret(__('commands.make_databasehost.password'));
         $data['max_databases'] = $this->option('maxDatabases') ?? $this->ask(__('commands.make_databasehost.max_databases'));
 
-        $databasehost = $this->creationService->handle($data);
-        $this->line(__('commands.make_databasehost.succes1') . $data['name'] . ' ' . __('commands.make_databasehost.succes2')  . $databasehost->id . '.');
+        $databaseHost = $this->creationService->handle($data);
+        $this->line(__('commands.make_databasehost.succes1') . $data['name'] . ' ' . __('commands.make_databasehost.succes2')  . $databaseHost->id . '.');
     }
 }
