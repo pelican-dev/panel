@@ -13,7 +13,7 @@ class BaseSettingsFormRequest extends AdminFormRequest
     public function rules(): array
     {
         return [
-            'app:name' => 'required|string|max:191',
+            'app:name' => 'required|string|max:255',
             'panel:auth:2fa_required' => 'required|integer|in:0,1,2',
             'app:locale' => ['required', 'string', Rule::in(array_keys($this->getAvailableLanguages()))],
         ];
