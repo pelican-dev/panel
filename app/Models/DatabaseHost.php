@@ -47,7 +47,7 @@ class DatabaseHost extends Model
      * Validation rules to assign to this model.
      */
     public static array $validationRules = [
-        'name' => 'required|string|max:191',
+        'name' => 'required|string|max:255',
         'host' => 'required|string',
         'alias' => 'nullable|string',
         'port' => 'required|numeric|between:1,65535',
