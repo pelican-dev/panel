@@ -1,5 +1,7 @@
 <?php
 
+use App\Models\Objects\Endpoint;
+use App\Models\Server;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\DB;
@@ -26,9 +28,19 @@ return new class extends Migration
         }
 
         foreach ($portMappings as $serverId => $ports) {
-            DB::table('servers')
-                ->where('id', $serverId)
-                ->update(['ports' => json_encode($ports)]);
+            /** @var Server $server */
+            $server = Server::find($serverId);
+            if (!$server) {
+                // Orphaned Allocations
+
+                continue;
+            }
+
+            foreach ($ports as $port) {
+                $server->ports ??= collect();
+                $server->ports->add(new Endpoint($port));
+            }
+            $server->save();
         }
 
         try {
@@ -36,7 +48,7 @@ return new class extends Migration
                 $table->dropForeign(['allocation_id']);
             });
         } catch (Throwable) {
-
+            // pass for databases that don't support this like sqlite
         }
 
         Schema::table('servers', function (Blueprint $table) {
@@ -56,28 +68,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('nodes', function (Blueprint $table) {
-            $table->dropColumn('strict_ports');
-        });
-
-        Schema::create('allocations', function (Blueprint $table) {
-            $table->id();
-            $table->unsignedInteger('node_id');
-            $table->string('ip');
-            $table->text('ip_alias');
-            $table->unsignedMediumInteger('port');
-            $table->unsignedInteger('server_id');
-            $table->string('notes')->default('');
-            $table->timestamps();
-
-            $table->unique(['node_id', 'ip', 'port']);
-        });
-
-        Schema::table('server_transfers', function (Blueprint $table) {
-            $table->integer('old_node');
-            $table->integer('new_node');
-            $table->json('old_additional_allocations')->nullable();
-            $table->json('new_additional_allocations')->nullable();
-        });
+        // Too much time to ensure this works correctly, please take a backup if necessary
     }
 };
