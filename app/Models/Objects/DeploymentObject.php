@@ -58,5 +58,7 @@ class DeploymentObject
     public function setNode(Node $node): self
     {
         $this->node = $node;
+
+        return $this;
     }
 }
