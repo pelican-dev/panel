@@ -3,7 +3,6 @@
 namespace App\Transformers\Api\Client;
 
 use App\Models\Egg;
-use App\Models\Objects\Endpoint;
 use App\Models\Server;
 use App\Models\Subuser;
 use League\Fractal\Resource\Item;
