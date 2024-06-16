@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Console\Commands\Database;
+namespace App\Console\Commands\DatabaseHost;
 
 use App\Models\DatabaseHost;
 use Illuminate\Console\Command;
