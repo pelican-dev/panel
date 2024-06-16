@@ -33,7 +33,7 @@ class Setting extends Model
             'tabs' => 'Panel',
             'type' => 'text',
             'description' => 'This is the name that is used throughout the panel and in emails sent to clients.',
-            // 'limit' => 18, TODO fix it so this is saved properly to storage/framework/cache/sushi-app-models-setting.sqlite
+            //'limit' => 18, TODO fix it so this is saved properly to storage/framework/cache/sushi-app-models-setting.sqlite
         ],
         [
             'key' => 'MAIL_HOST',

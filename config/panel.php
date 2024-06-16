@@ -174,7 +174,6 @@ return [
 
     'filament' => [
         'top-navigation' => env('FILAMENT_TOP_NAVIGATION', false),
-        'exit-admin' => env('FILAMENT_EXIT_ADMIN', false),
     ],
 
     'use_binary_prefix' => env('PANEL_USE_BINARY_PREFIX', true),
