@@ -158,7 +158,6 @@ class CreateNode extends CreateRecord
                                     'md' => 1,
                                     'lg' => 1,
                                 ])
-                                ->required()
                                 ->inline()
                                 ->helperText(function (Forms\Get $get) {
                                     if (request()->isSecure()) {
@@ -279,7 +278,8 @@ class CreateNode extends CreateRecord
                                         ->columnSpan(2)
                                         ->numeric()
                                         ->minValue(0)
-                                        ->default(0),
+                                        ->default(0)
+                                        ->required(),
                                     Forms\Components\TextInput::make('memory_overallocate')
                                         ->dehydratedWhenHidden()
                                         ->label('Overallocate')->inlineLabel()
@@ -291,7 +291,8 @@ class CreateNode extends CreateRecord
                                         ->minValue(-1)
                                         ->maxValue(100)
                                         ->default(0)
-                                        ->suffix('%'),
+                                        ->suffix('%')
+                                        ->required(),
                                 ]),
                             Forms\Components\Grid::make()
                                 ->columns(6)
@@ -320,7 +321,8 @@ class CreateNode extends CreateRecord
                                         ->columnSpan(2)
                                         ->numeric()
                                         ->minValue(0)
-                                        ->default(0),
+                                        ->default(0)
+                                        ->required(),
                                     Forms\Components\TextInput::make('disk_overallocate')
                                         ->dehydratedWhenHidden()
                                         ->hidden(fn (Forms\Get $get) => $get('unlimited_disk'))
@@ -332,7 +334,8 @@ class CreateNode extends CreateRecord
                                         ->minValue(-1)
                                         ->maxValue(100)
                                         ->default(0)
-                                        ->suffix('%'),
+                                        ->suffix('%')
+                                        ->required(),
                                 ]),
                             Forms\Components\Grid::make()
                                 ->columns(6)
@@ -361,7 +364,8 @@ class CreateNode extends CreateRecord
                                         ->columnSpan(2)
                                         ->numeric()
                                         ->default(0)
-                                        ->minValue(0),
+                                        ->minValue(0)
+                                        ->required(),
                                     Forms\Components\TextInput::make('cpu_overallocate')
                                         ->dehydratedWhenHidden()
                                         ->hidden(fn (Forms\Get $get) => $get('unlimited_cpu'))
@@ -373,7 +377,8 @@ class CreateNode extends CreateRecord
                                         ->default(0)
                                         ->minValue(-1)
                                         ->maxValue(100)
-                                        ->suffix('%'),
+                                        ->suffix('%')
+                                        ->required(),
                                 ]),
                         ]),
                 ])->columnSpanFull()
