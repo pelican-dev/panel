@@ -36,7 +36,9 @@ class EndpointCollection implements Castable
                     $value = new Collection($value);
                 }
 
-                return $value->map(fn ($endpoint) => (string) $endpoint);
+                return [
+                    'ports' => $value->toJson(),
+                ];
             }
         };
     }
