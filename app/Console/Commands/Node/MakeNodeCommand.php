@@ -57,19 +57,19 @@ class MakeNodeCommand extends Command
         $data['public'] = $this->option('public') ?? $this->confirm(__('commands.make_node.public'), true);
         $data['behind_proxy'] = $this->option('proxy') ?? $this->confirm(__('commands.make_node.behind_proxy'));
         $data['maintenance_mode'] = $this->option('maintenance') ?? $this->confirm(__('commands.make_node.maintenance_mode'));
-        $data['memory'] = $this->option('maxMemory') ?? $this->ask(__('commands.make_node.memory'));
-        $data['memory_overallocate'] = $this->option('overallocateMemory') ?? $this->ask(__('commands.make_node.memory_overallocate'));
-        $data['disk'] = $this->option('maxDisk') ?? $this->ask(__('commands.make_node.disk'));
-        $data['disk_overallocate'] = $this->option('overallocateDisk') ?? $this->ask(__('commands.make_node.disk_overallocate'));
-        $data['cpu'] = $this->option('maxCpu') ?? $this->ask(__('commands.make_node.cpu'));
-        $data['cpu_overallocate'] = $this->option('overallocateCpu') ?? $this->ask(__('commands.make_node.cpu_overallocate'));
-        $data['upload_size'] = $this->option('uploadSize') ?? $this->ask(__('commands.make_node.upload_size'), '100');
+        $data['memory'] = $this->option('maxMemory') ?? $this->ask(__('commands.make_node.memory'), '0');
+        $data['memory_overallocate'] = $this->option('overallocateMemory') ?? $this->ask(__('commands.make_node.memory_overallocate'), '-1');
+        $data['disk'] = $this->option('maxDisk') ?? $this->ask(__('commands.make_node.disk'), '0');
+        $data['disk_overallocate'] = $this->option('overallocateDisk') ?? $this->ask(__('commands.make_node.disk_overallocate'), '-1');
+        $data['cpu'] = $this->option('maxCpu') ?? $this->ask(__('commands.make_node.cpu'), '0');
+        $data['cpu_overallocate'] = $this->option('overallocateCpu') ?? $this->ask(__('commands.make_node.cpu_overallocate'), '-1');
+        $data['upload_size'] = $this->option('uploadSize') ?? $this->ask(__('commands.make_node.upload_size'), '256');
         $data['daemon_listen'] = $this->option('daemonListeningPort') ?? $this->ask(__('commands.make_node.daemonListen'), '8080');
         $data['daemon_sftp'] = $this->option('daemonSFTPPort') ?? $this->ask(__('commands.make_node.daemonSFTP'), '2022');
         $data['daemon_sftp_alias'] = $this->option('daemonSFTPAlias') ?? $this->ask(__('commands.make_node.daemonSFTPAlias'), '');
         $data['daemon_base'] = $this->option('daemonBase') ?? $this->ask(__('commands.make_node.daemonBase'), '/var/lib/pelican/volumes');
 
         $node = $this->creationService->handle($data);
-        $this->line(__('commands.make_node.succes1') . $data['name'] . __('commands.make_node.succes2')  . $node->id . '.');
+        $this->line(__('commands.make_node.succes', ['name' => $data['name'], 'id' => $node->id]));
     }
 }
