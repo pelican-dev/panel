@@ -2,10 +2,11 @@
 
 namespace App\Filament\Resources\ServerResource\Pages;
 
+use App\Models\Database;
 use App\Services\Databases\DatabaseManagementService;
+use App\Services\Databases\DatabasePasswordService;
 use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\Repeater;
-use Filament\Forms\Components\TextInput;
 use LogicException;
 use App\Filament\Resources\ServerResource;
 use App\Http\Controllers\Admin\ServersController;
@@ -592,34 +593,49 @@ class EditServer extends EditRecord
                             ->icon('tabler-database')
                             ->schema([
                                 Repeater::make('databases')
-                                    ->columnSpanFull()
                                     ->grid()
+                                    ->helperText(fn (Server $server) => $server->databases->isNotEmpty() ? '' : 'No Databases exist for this Server')
+                                    ->columns(2)
                                     ->schema([
-                                        TextInput::make('db_name')
+                                        Forms\Components\TextInput::make('database')
+                                            ->columnSpan(2)
                                             ->label('Database Name')
+                                            ->disabled()
+                                            ->formatStateUsing(fn ($record) => $record->database)
                                             ->hintAction(
                                                 Action::make('Delete')
                                                     ->color('danger')
                                                     ->icon('tabler-trash')
                                                     ->action(fn (DatabaseManagementService $databaseManagementService, $record) => $databaseManagementService->delete($record))
-                                            )
-                                            ->formatStateUsing(fn ($record) => $record->database)
-                                            ->readOnly(),
-                                        TextInput::make('db_username')
-                                            ->label('Username')
-                                            ->inlineLabel()
+                                            ),
+                                        Forms\Components\TextInput::make('username')
+                                            ->disabled()
                                             ->formatStateUsing(fn ($record) => $record->username)
-                                            ->readOnly(),
-                                        TextInput::make('db_password')
-                                            ->label('Password')
-                                            ->inlineLabel()
-                                            ->formatStateUsing(fn ($record) => $record->password)
-                                            ->readOnly(),
-                                        TextInput::make('db_max_connections')
-                                            ->label('Max Connections')
-                                            ->inlineLabel()
-                                            ->formatStateUsing(fn ($record) => $record->max_connections < 1 ? 'Unlimited' : $record->max_connections)
-                                            ->readOnly(),
+                                            ->columnSpan(2),
+                                        Forms\Components\TextInput::make('password')
+                                            ->disabled()
+                                            ->hintAction(
+                                                Action::make('rotate')
+                                                    ->icon('tabler-refresh')
+                                                    ->requiresConfirmation()
+                                                    ->action(fn (DatabasePasswordService $service, $record, $set, $get) => $this->rotatePassword($service, $record, $set, $get))
+                                            )
+                                            ->formatStateUsing(fn (Database $database) => $database->password)
+                                            ->columnSpan(2),
+                                        Forms\Components\TextInput::make('remote')
+                                            ->disabled()
+                                            ->formatStateUsing(fn ($record) => $record->remote)
+                                            ->columnSpan(1)
+                                            ->label('Connections From'),
+                                        Forms\Components\TextInput::make('max_connections')
+                                            ->disabled()
+                                            ->formatStateUsing(fn ($record) => $record->max_connections)
+                                            ->columnSpan(1),
+                                        Forms\Components\TextInput::make('JDBC')
+                                            ->disabled()
+                                            ->label('JDBC Connection String')
+                                            ->columnSpan(2)
+                                            ->formatStateUsing(fn (Forms\Get $get, $record) => 'jdbc:mysql://' . $get('username') . ':' . urlencode($record->password) . '@' . $record->host->host . ':' . $record->host->port . '/' . $get('database')),
                                     ])
                                     ->relationship('databases')
                                     ->deletable(false)
@@ -824,5 +840,14 @@ class EditServer extends EditRecord
             ->each(fn ($value) => str($value)->trim())
             ->mapWithKeys(fn ($value) => [$value => $value])
             ->all();
+    }
+
+    protected function rotatePassword(DatabasePasswordService $service, $record, $set, $get): void
+    {
+        $newPassword = $service->handle($record);
+        $jdbcString = 'jdbc:mysql://' . $get('username') . ':' . urlencode($newPassword) . '@' . $record->host->host . ':' . $record->host->port . '/' . $get('database');
+
+        $set('password', $newPassword);
+        $set('JDBC', $jdbcString);
     }
 }
