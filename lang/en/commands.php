@@ -20,6 +20,16 @@ return [
         'DB_error_2' => 'Your connection credentials have NOT been saved. You will need to provide valid connection information before proceeding.',
         'go_back' => 'Go back and try again',
     ],
+    'make_databasehost' => [
+        'name' => 'Enter a short identifier used to distinguish this database host from others',
+        'host' => 'Enter an ip address to be used for connecting to the mysql host',
+        'port' => 'Enter the database host port',
+        'username' => 'Enter the database host username',
+        'password' => 'Enter the database host password',
+        'max_databases' => 'Enter the database host maximum number of databases',
+        'succes1' => 'Successfully created a new database host with the name: ',
+        'succes2' => 'and has an id of: ',
+    ],
     'make_node' => [
         'name' => 'Enter a short identifier used to distinguish this node from others',
         'description' => 'Enter a description to identify the node',
