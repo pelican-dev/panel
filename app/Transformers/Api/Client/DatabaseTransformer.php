@@ -25,6 +25,7 @@ class DatabaseTransformer extends BaseClientTransformer
             'host' => [
                 'address' => $model->getRelation('host')->host,
                 'port' => $model->getRelation('host')->port,
+                'alias' => $model->getRelation('host')->alias,
             ],
             'name' => $model->database,
             'username' => $model->username,

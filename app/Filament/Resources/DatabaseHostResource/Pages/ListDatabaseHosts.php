@@ -23,6 +23,8 @@ class ListDatabaseHosts extends ListRecords
                     ->searchable(),
                 Tables\Columns\TextColumn::make('host')
                     ->searchable(),
+                Tables\Columns\TextColumn::make('alias')
+                    ->searchable(),
                 Tables\Columns\TextColumn::make('port')
                     ->sortable(),
                 Tables\Columns\TextColumn::make('username')

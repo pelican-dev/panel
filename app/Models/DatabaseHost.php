@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property int $id
  * @property string $name
  * @property string $host
+ * @property string|null $alias
  * @property int $port
  * @property string $username
  * @property string $password
@@ -39,7 +40,7 @@ class DatabaseHost extends Model
      * Fields that are mass assignable.
      */
     protected $fillable = [
-        'name', 'host', 'port', 'username', 'password', 'max_databases', 'node_id',
+        'name', 'host', 'alias', 'port', 'username', 'password', 'max_databases', 'node_id',
     ];
 
     /**
@@ -48,6 +49,7 @@ class DatabaseHost extends Model
     public static array $validationRules = [
         'name' => 'required|string|max:191',
         'host' => 'required|string',
+        'alias' => 'nullable|string',
         'port' => 'required|numeric|between:1,65535',
         'username' => 'required|string|max:32',
         'password' => 'nullable|string',

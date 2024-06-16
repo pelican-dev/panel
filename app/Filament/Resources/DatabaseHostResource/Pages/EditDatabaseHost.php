@@ -28,10 +28,15 @@ class EditDatabaseHost extends EditRecord
                     ->schema([
                         Forms\Components\TextInput::make('host')
                             ->columnSpan(2)
-                            ->helperText('The IP address or Domain name that should be used when attempting to connect to this MySQL host from this Panel to create new databases.')
+                            ->helperText('The IP address that should be used when attempting to connect to this MySQL host from this Panel to create new databases.')
                             ->required()
                             ->live(onBlur: true)
                             ->afterStateUpdated(fn ($state, Forms\Set $set) => $set('name', $state))
+                            ->maxLength(191),
+                        Forms\Components\TextInput::make('alias')
+                            ->columnSpan(2)
+                            ->helperText('Display alias for accessing the database host. Leave empty to use host')
+                            ->live(onBlur: true)
                             ->maxLength(191),
                         Forms\Components\TextInput::make('port')
                             ->columnSpan(1)
