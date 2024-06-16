@@ -7,12 +7,12 @@ use App\Services\Helpers\SoftwareVersionService;
 
 class InfoCommand extends Command
 {
-    protected $description = 'Displays the application, database, and email configurations along with the panel version.';
+    protected $description = 'Displays the application, database, email and backup configurations along with the panel version.';
 
     protected $signature = 'p:info';
 
     /**
-     * VersionCommand constructor.
+     * InfoCommand constructor.
      */
     public function __construct(private SoftwareVersionService $versionService)
     {
@@ -26,45 +26,76 @@ class InfoCommand extends Command
     {
         $this->output->title('Version Information');
         $this->table([], [
-            ['Panel Version', config('app.version')],
+            ['Panel Version', $this->versionService->versionData()['version']],
             ['Latest Version', $this->versionService->getPanel()],
             ['Up-to-Date', $this->versionService->isLatestPanel() ? 'Yes' : $this->formatText('No', 'bg=red')],
         ], 'compact');
 
         $this->output->title('Application Configuration');
         $this->table([], [
-            ['Environment', $this->formatText(config('app.env'), config('app.env') === 'production' ?: 'bg=red')],
-            ['Debug Mode', $this->formatText(config('app.debug') ? 'Yes' : 'No', !config('app.debug') ?: 'bg=red')],
-            ['Installation URL', config('app.url')],
+            ['Environment', config('app.env') === 'production' ? config('app.env') : $this->formatText(config('app.env'), 'bg=red')],
+            ['Debug Mode', config('app.debug') ? $this->formatText('Yes', 'bg=red') : 'No'],
+            ['Application Name', config('app.name')],
+            ['Application URL', config('app.url')],
             ['Installation Directory', base_path()],
             ['Cache Driver', config('cache.default')],
-            ['Queue Driver', config('queue.default')],
+            ['Queue Driver', config('queue.default') === 'sync' ? $this->formatText(config('queue.default'), 'bg=red') : config('queue.default')],
             ['Session Driver', config('session.driver')],
             ['Filesystem Driver', config('filesystems.default')],
-            ['Default Theme', config('themes.active')],
         ], 'compact');
 
         $this->output->title('Database Configuration');
         $driver = config('database.default');
-        $this->table([], [
-            ['Driver', $driver],
-            ['Host', config("database.connections.$driver.host")],
-            ['Port', config("database.connections.$driver.port")],
-            ['Database', config("database.connections.$driver.database")],
-            ['Username', config("database.connections.$driver.username")],
-        ], 'compact');
+        if ($driver === 'sqlite') {
+            $this->table([], [
+                ['Driver', $driver],
+                ['Database', config("database.connections.$driver.database")],
+            ], 'compact');
+        } else {
+            $this->table([], [
+                ['Driver', $driver],
+                ['Host', config("database.connections.$driver.host")],
+                ['Port', config("database.connections.$driver.port")],
+                ['Database', config("database.connections.$driver.database")],
+                ['Username', config("database.connections.$driver.username")],
+            ], 'compact');
+        }
 
-        // TODO: Update this to handle other mail drivers
         $this->output->title('Email Configuration');
-        $this->table([], [
-            ['Driver', config('mail.default')],
-            ['Host', config('mail.mailers.smtp.host')],
-            ['Port', config('mail.mailers.smtp.port')],
-            ['Username', config('mail.mailers.smtp.username')],
-            ['From Address', config('mail.from.address')],
-            ['From Name', config('mail.from.name')],
-            ['Encryption', config('mail.mailers.smtp.encryption')],
-        ], 'compact');
+        $driver = config('mail.default');
+        if ($driver === 'smtp') {
+            $this->table([], [
+                ['Driver', $driver],
+                ['Host', config("mail.mailers.$driver.host")],
+                ['Port', config("mail.mailers.$driver.port")],
+                ['Username', config("mail.mailers.$driver.username")],
+                ['Encryption', config("mail.mailers.$driver.encryption")],
+                ['From Address', config('mail.from.address')],
+                ['From Name', config('mail.from.name')],
+            ], 'compact');
+        } else {
+            $this->table([], [
+                ['Driver', $driver],
+                ['From Address', config('mail.from.address')],
+                ['From Name', config('mail.from.name')],
+            ], 'compact');
+        }
+
+        $this->output->title('Backup Configuration');
+        $driver = config('backups.default');
+        if ($driver === 's3') {
+            $this->table([], [
+                ['Driver', $driver],
+                ['Region', config("backups.disks.$driver.region")],
+                ['Bucket', config("backups.disks.$driver.bucket")],
+                ['Endpoint', config("backups.disks.$driver.endpoint")],
+                ['Use path style endpoint', config("backups.disks.$driver.use_path_style_endpoint") ? 'Yes' : 'No'],
+            ], 'compact');
+        } else {
+            $this->table([], [
+                ['Driver', $driver],
+            ], 'compact');
+        }
     }
 
     /**

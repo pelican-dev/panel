@@ -17,6 +17,7 @@ import Select from '@/components/elements/Select';
 import ModalContext from '@/context/ModalContext';
 import asModal from '@/hoc/asModal';
 import FormikSwitch from '@/components/elements/FormikSwitch';
+import { useStoreState } from 'easy-peasy';
 
 interface Props {
     schedule: Schedule;
@@ -71,6 +72,7 @@ const TaskDetailsModal = ({ schedule, task }: Props) => {
     const uuid = ServerContext.useStoreState((state) => state.server.data!.uuid);
     const appendSchedule = ServerContext.useStoreActions((actions) => actions.schedules.appendSchedule);
     const backupLimit = ServerContext.useStoreState((state) => state.server.data!.featureLimits.backups);
+    const usesSyncDriver = useStoreState((state) => state.settings.data!.usesSyncDriver);
 
     useEffect(() => {
         return () => {
@@ -121,7 +123,7 @@ const TaskDetailsModal = ({ schedule, task }: Props) => {
                     <FlashMessageRender byKey={'schedule:task'} css={tw`mb-4`} />
                     <h2 css={tw`text-2xl mb-6`}>{task ? 'Edit Task' : 'Create Task'}</h2>
                     <div css={tw`flex`}>
-                        <div css={tw`mr-2 w-1/3`}>
+                        <div className={!usesSyncDriver ? 'mr-2 w-1/3' : 'w-full'}>
                             <Label>Action</Label>
                             <ActionListener />
                             <FormikFieldWrapper name={'action'}>
@@ -132,15 +134,17 @@ const TaskDetailsModal = ({ schedule, task }: Props) => {
                                 </FormikField>
                             </FormikFieldWrapper>
                         </div>
-                        <div css={tw`flex-1 ml-6`}>
-                            <Field
-                                name={'timeOffset'}
-                                label={'Time offset (in seconds)'}
-                                description={
-                                    'The amount of time to wait after the previous task executes before running this one. If this is the first task on a schedule this will not be applied.'
-                                }
-                            />
-                        </div>
+                        {!usesSyncDriver && (
+                            <div css={tw`flex-1 ml-6`}>
+                                <Field
+                                    name={'timeOffset'}
+                                    label={'Time offset (in seconds)'}
+                                    description={
+                                        'The amount of time to wait after the previous task executes before running this one. If this is the first task on a schedule this will not be applied.'
+                                    }
+                                />
+                            </div>
+                        )}
                     </div>
                     <div css={tw`mt-6`}>
                         {values.action === 'command' ? (
@@ -168,7 +172,7 @@ const TaskDetailsModal = ({ schedule, task }: Props) => {
                                 <FormikFieldWrapper
                                     name={'payload'}
                                     description={
-                                        'Optional. Include the files and folders to be excluded in this backup. By default, the contents of your .panelignore file will be used. If you have reached your backup limit, the oldest backup will be rotated.'
+                                        'Optional. Include the files and folders to be excluded in this backup. By default, the contents of your .pelicanignore file will be used. If you have reached your backup limit, the oldest backup will be rotated.'
                                     }
                                 >
                                     <FormikField as={Textarea} name={'payload'} rows={6} />

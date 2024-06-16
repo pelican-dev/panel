@@ -3,7 +3,7 @@
 namespace App\Filament\Resources\NodeResource\RelationManagers;
 
 use App\Models\Allocation;
-use App\Models\Server;
+use App\Models\Node;
 use App\Services\Allocations\AssignmentService;
 use Filament\Forms;
 use Filament\Forms\Form;
@@ -12,6 +12,9 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Support\HtmlString;
 
+/**
+ * @method Node getOwnerRecord()
+ */
 class AllocationsRelationManager extends RelationManager
 {
     protected static string $relationship = 'allocations';
@@ -66,7 +69,7 @@ class AllocationsRelationManager extends RelationManager
                 Tables\Actions\Action::make('create new allocation')->label('Create Allocations')
                     ->form(fn () => [
                         Forms\Components\TextInput::make('allocation_ip')
-                            ->datalist($this->getOwnerRecord()->ipAddresses() ?? [])
+                            ->datalist($this->getOwnerRecord()->ipAddresses())
                             ->label('IP Address')
                             ->inlineLabel()
                             ->ipv4()
@@ -113,7 +116,7 @@ class AllocationsRelationManager extends RelationManager
 
                                     $start = max((int) $start, 0);
                                     $end = min((int) $end, 2 ** 16 - 1);
-                                    for ($i = $start; $i <= $end; $i++) {
+                                    foreach (range($start, $end) as $i) {
                                         $ports->push($i);
                                     }
                                 }

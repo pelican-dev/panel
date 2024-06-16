@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\UserResource\Pages;
 
 use App\Filament\Resources\UserResource;
+use App\Services\Exceptions\FilamentExceptionHandler;
 use Filament\Actions;
 use Filament\Resources\Pages\EditRecord;
 use App\Models\User;
@@ -67,8 +68,8 @@ class EditUser extends EditRecord
     {
         return [
             Actions\DeleteAction::make()
-                ->label(fn (User $user) => auth()->user()->id === $user->id ? 'Can\'t Delete Yourself' : 'Delete')
-                ->disabled(fn (User $user) => auth()->user()->id === $user->id),
+                ->label(fn (User $user) => auth()->user()->id === $user->id ? 'Can\'t Delete Yourself' : ($user->servers()->count() > 0 ? 'User Has Servers' : 'Delete'))
+                ->disabled(fn (User $user) => auth()->user()->id === $user->id || $user->servers()->count() > 0),
             $this->getSaveFormAction()->formId('form'),
         ];
     }
@@ -76,5 +77,10 @@ class EditUser extends EditRecord
     protected function getFormActions(): array
     {
         return [];
+    }
+
+    public function exception($exception, $stopPropagation): void
+    {
+        (new FilamentExceptionHandler())->handle($exception, $stopPropagation);
     }
 }

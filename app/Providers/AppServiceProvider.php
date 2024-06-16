@@ -6,12 +6,14 @@ use App\Extensions\Themes\Theme;
 use App\Models;
 use App\Models\ApiKey;
 use App\Models\Node;
+use App\Services\Helpers\SoftwareVersionService;
 use Dedoc\Scramble\Scramble;
 use Dedoc\Scramble\Support\Generator\OpenApi;
 use Dedoc\Scramble\Support\Generator\SecurityScheme;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Facades\Broadcast;
+use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Schema;
@@ -30,8 +32,9 @@ class AppServiceProvider extends ServiceProvider
     {
         Schema::defaultStringLength(191);
 
-        View::share('appVersion', $this->versionData()['version'] ?? 'undefined');
-        View::share('appIsGit', $this->versionData()['is_git'] ?? false);
+        $versionData = app(SoftwareVersionService::class)->versionData();
+        View::share('appVersion', $versionData['version'] ?? 'undefined');
+        View::share('appIsGit', $versionData['is_git'] ?? false);
 
         Paginator::useBootstrap();
 
@@ -76,6 +79,10 @@ class AppServiceProvider extends ServiceProvider
         Scramble::registerApi('application', ['api_path' => 'api/application', 'info' => ['version' => '1.0']]);
         Scramble::registerApi('client', ['api_path' => 'api/client', 'info' => ['version' => '1.0']])->afterOpenApiGenerated($bearerTokens);
         Scramble::registerApi('remote', ['api_path' => 'api/remote', 'info' => ['version' => '1.0']])->afterOpenApiGenerated($bearerTokens);
+
+        Event::listen(function (\SocialiteProviders\Manager\SocialiteWasCalled $event) {
+            $event->extendSocialite('discord', \SocialiteProviders\Discord\Provider::class);
+        });
     }
 
     /**
@@ -94,34 +101,6 @@ class AppServiceProvider extends ServiceProvider
 
         Scramble::extendOpenApi(fn (OpenApi $openApi) => $openApi->secure(SecurityScheme::http('bearer')));
         Scramble::ignoreDefaultRoutes();
-    }
-
-    /**
-     * Return version information for the footer.
-     */
-    protected function versionData(): array
-    {
-        return cache()->remember('git-version', 5, function () {
-            if (file_exists(base_path('.git/HEAD'))) {
-                $head = explode(' ', file_get_contents(base_path('.git/HEAD')));
-
-                if (array_key_exists(1, $head)) {
-                    $path = base_path('.git/' . trim($head[1]));
-                }
-            }
-
-            if (isset($path) && file_exists($path)) {
-                return [
-                    'version' => substr(file_get_contents($path), 0, 8),
-                    'is_git' => true,
-                ];
-            }
-
-            return [
-                'version' => config('app.version'),
-                'is_git' => false,
-            ];
-        });
     }
 
     public function bootAuth(): void
