@@ -38,12 +38,14 @@ services:
       - "host.docker.internal:host-gateway"
     volumes:
       - pelican-data:/pelican-data
+      - pelican-logs:/var/www/html/storage/logs
     environment:
       <<: [*panel-environment, *mail-environment]
       XDG_DATA_HOME: /pelican-data
 
 volumes:
   pelican-data:
+  pelican-logs:
 
 networks:
   default:
