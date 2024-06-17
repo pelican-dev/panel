@@ -10,7 +10,7 @@ Get paid to improve Pelican!
 * get an extra 25% if you redeem your bounty in Donor credit
 * for bounties >=$100, the first PR gets a lock, which times out after a week of no progress
 
-We put up each bounty with the intention that it'll get merged, but occasionally the right resolution is to close the bounty, which only becomes clear once some effort is put in.
+We put up each bounty with the intention that it'll get merged, but occasionally the right resolution is to close the bounty, which only becomes clear once some effort is put in. 
 This is still valuable work, so we'll pay out $50 for getting any bounty closed with a good explanation.
 
 ## Issue bounties
