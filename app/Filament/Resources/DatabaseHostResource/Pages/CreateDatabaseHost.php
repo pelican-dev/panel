@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\DatabaseHostResource\Pages;
 
 use App\Filament\Resources\DatabaseHostResource;
+use App\Models\Objects\Endpoint;
 use Filament\Resources\Pages\CreateRecord;
 use Filament\Forms;
 use Filament\Forms\Components\Section;
@@ -44,7 +45,7 @@ class CreateDatabaseHost extends CreateRecord
                             ->numeric()
                             ->default(3306)
                             ->minValue(0)
-                            ->maxValue(65535),
+                            ->maxValue(Endpoint::PORT_CEIL),
                         Forms\Components\TextInput::make('max_databases')
                             ->label('Max databases')
                             ->helpertext('Blank is unlimited.')

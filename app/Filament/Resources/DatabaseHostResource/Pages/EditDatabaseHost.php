@@ -4,6 +4,7 @@ namespace App\Filament\Resources\DatabaseHostResource\Pages;
 
 use App\Filament\Resources\DatabaseHostResource;
 use App\Models\DatabaseHost;
+use App\Models\Objects\Endpoint;
 use Filament\Actions;
 use Filament\Resources\Pages\EditRecord;
 use Filament\Forms;
@@ -39,7 +40,7 @@ class EditDatabaseHost extends EditRecord
                             ->required()
                             ->numeric()
                             ->minValue(0)
-                            ->maxValue(65535),
+                            ->maxValue(Endpoint::PORT_CEIL),
                         Forms\Components\TextInput::make('max_databases')
                             ->label('Max databases')
                             ->helpertext('Blank is unlimited.')

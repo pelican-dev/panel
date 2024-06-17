@@ -2,6 +2,7 @@
 
 namespace App\Rules;
 
+use App\Models\Objects\Endpoint;
 use Closure;
 use Illuminate\Contracts\Validation\ValidationRule;
 
@@ -23,11 +24,11 @@ class Port implements ValidationRule
             $fail('The :attribute must be an integer.');
         }
 
-        if ($value <= 1024) {
+        if ($value <= Endpoint::PORT_FLOOR) {
             $fail('The :attribute must be greater than 1024.');
         }
 
-        if ($value > 65535) {
+        if ($value > Endpoint::PORT_CEIL) {
             $fail('The :attribute must be less than 65535.');
         }
     }
