@@ -77,7 +77,9 @@ class ListServers extends ListRecords
                     ->url(fn (Server $server): string => route('filament.admin.resources.users.edit', ['record' => $server->user]))
                     ->hidden(fn (Table $table) => $table->getGrouping()->getId() === 'user.username')
                     ->sortable(),
-                Tables\Columns\TextColumn::make('ports'),
+                Tables\Columns\TextColumn::make('ports')
+                    ->badge()
+                    ->separator(),
             ])
             ->actions([
                 Tables\Actions\Action::make('View')
