@@ -476,7 +476,7 @@ class CreateServer extends CreateRecord
                                     Forms\Components\Hidden::make('io')
                                         ->helperText('The IO performance relative to other running containers')
                                         ->label('Block IO Proportion')
-                                        ->default(500),
+                                        ->default(config('panel.default_io_weight')),
 
                                     Forms\Components\Grid::make()
                                         ->columns(4)
