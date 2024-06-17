@@ -62,20 +62,20 @@ class ListServers extends ListRecords
                 Tables\Columns\TextColumn::make('node.name')
                     ->icon('tabler-server-2')
                     ->url(fn (Server $server): string => route('filament.admin.resources.nodes.edit', ['record' => $server->node]))
-                    ->hidden(fn (Table $table) => $table->getGrouping()->getId() === 'node.name')
+                    ->hidden(fn (Table $table) => $table->getGrouping()?->getId() === 'node.name')
                     ->sortable()
                     ->searchable(),
                 Tables\Columns\TextColumn::make('egg.name')
                     ->icon('tabler-egg')
                     ->url(fn (Server $server): string => route('filament.admin.resources.eggs.edit', ['record' => $server->egg]))
-                    ->hidden(fn (Table $table) => $table->getGrouping()->getId() === 'egg.name')
+                    ->hidden(fn (Table $table) => $table->getGrouping()?->getId() === 'egg.name')
                     ->sortable()
                     ->searchable(),
                 Tables\Columns\TextColumn::make('user.username')
                     ->icon('tabler-user')
                     ->label('Owner')
                     ->url(fn (Server $server): string => route('filament.admin.resources.users.edit', ['record' => $server->user]))
-                    ->hidden(fn (Table $table) => $table->getGrouping()->getId() === 'user.username')
+                    ->hidden(fn (Table $table) => $table->getGrouping()?->getId() === 'user.username')
                     ->sortable(),
                 Tables\Columns\TextColumn::make('ports')
                     ->badge()
