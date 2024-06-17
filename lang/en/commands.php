@@ -39,7 +39,7 @@ return [
         'daemonSFTP' => 'Enter the daemon SFTP listening port',
         'daemonSFTPAlias' => 'Enter the daemon SFTP alias (can be empty)',
         'daemonBase' => 'Enter the base folder',
-        'succes' => 'Successfully created a new node with the name :name and has an id of :id',
+        'success' => 'Successfully created a new node with the name :name and has an id of :id',
     ],
     'node_config' => [
         'error_not_exist' => 'The selected node does not exist.',

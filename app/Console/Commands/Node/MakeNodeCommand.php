@@ -70,6 +70,6 @@ class MakeNodeCommand extends Command
         $data['daemon_base'] = $this->option('daemonBase') ?? $this->ask(__('commands.make_node.daemonBase'), '/var/lib/pelican/volumes');
 
         $node = $this->creationService->handle($data);
-        $this->line(__('commands.make_node.succes', ['name' => $data['name'], 'id' => $node->id]));
+        $this->line(__('commands.make_node.success', ['name' => $data['name'], 'id' => $node->id]));
     }
 }
