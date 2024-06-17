@@ -74,7 +74,7 @@ class ServerCreationService
 
         try {
             $this->daemonServerRepository->setServer($server)->create(
-                Arr::get($data, 'start_on_completion', false) ?? false
+                Arr::get($data, 'start_on_completion', true) ?? true,
             );
         } catch (DaemonConnectionException $exception) {
             $this->serverDeletionService->withForce()->handle($server);
