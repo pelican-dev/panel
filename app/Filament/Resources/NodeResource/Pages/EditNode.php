@@ -94,7 +94,7 @@ class EditNode extends EditRecord
 
                                     $set('dns', false);
                                 })
-                                ->maxLength(191),
+                                ->maxLength(255),
 
                             Forms\Components\TextInput::make('ip')
                                 ->disabled()
@@ -159,7 +159,6 @@ class EditNode extends EditRecord
                                     'md' => 1,
                                     'lg' => 1,
                                 ])
-                                ->required()
                                 ->inline()
                                 ->helperText(function (Forms\Get $get) {
                                     if (request()->isSecure()) {

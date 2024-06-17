@@ -13,6 +13,7 @@ class Setting extends Model
     protected $casts = [
         'limit' => 'integer',
         'options' => 'array',
+
     ];
 
     protected $fillable = ['key', 'label', 'value', 'type', 'options', 'description', 'limit', 'tabs'];
