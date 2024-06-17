@@ -3,10 +3,10 @@
 namespace App\Filament\Resources\UserResource\Pages;
 
 use App\Filament\Resources\UserResource;
-use App\Services\Exceptions\FilamentExceptionHandler;
 use Filament\Actions;
 use Filament\Resources\Pages\EditRecord;
 use App\Models\User;
+use App\Traits\Helpers\FilamentExceptionHandler;
 use Filament\Forms;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Form;
@@ -14,6 +14,8 @@ use Illuminate\Support\Facades\Hash;
 
 class EditUser extends EditRecord
 {
+    use FilamentExceptionHandler;
+    
     protected static string $resource = UserResource::class;
     public function form(Form $form): Form
     {
@@ -77,10 +79,5 @@ class EditUser extends EditRecord
     protected function getFormActions(): array
     {
         return [];
-    }
-
-    public function exception($exception, $stopPropagation): void
-    {
-        (new FilamentExceptionHandler())->handle($exception, $stopPropagation);
     }
 }

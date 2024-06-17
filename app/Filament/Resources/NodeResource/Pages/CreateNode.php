@@ -3,7 +3,7 @@
 namespace App\Filament\Resources\NodeResource\Pages;
 
 use App\Filament\Resources\NodeResource;
-use App\Services\Exceptions\FilamentExceptionHandler;
+use App\Traits\Helpers\FilamentExceptionHandler;
 use Filament\Forms;
 use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\Wizard;
@@ -13,6 +13,8 @@ use Illuminate\Support\HtmlString;
 
 class CreateNode extends CreateRecord
 {
+    use FilamentExceptionHandler;
+
     protected static string $resource = NodeResource::class;
 
     protected static bool $canCreateAnother = false;
@@ -405,10 +407,5 @@ class CreateNode extends CreateRecord
     protected function getFormActions(): array
     {
         return [];
-    }
-
-    public function exception($exception, $stopPropagation): void
-    {
-        (new FilamentExceptionHandler())->handle($exception, $stopPropagation);
     }
 }

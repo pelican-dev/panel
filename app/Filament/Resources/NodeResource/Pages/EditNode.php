@@ -6,8 +6,8 @@ use App\Filament\Resources\NodeResource;
 use App\Filament\Resources\NodeResource\Widgets\NodeMemoryChart;
 use App\Filament\Resources\NodeResource\Widgets\NodeStorageChart;
 use App\Models\Node;
-use App\Services\Exceptions\FilamentExceptionHandler;
 use App\Services\Nodes\NodeUpdateService;
+use App\Traits\Helpers\FilamentExceptionHandler;
 use Filament\Actions;
 use Filament\Forms;
 use Filament\Forms\Components\Tabs;
@@ -18,6 +18,8 @@ use Webbingbrasil\FilamentCopyActions\Forms\Actions\CopyAction;
 
 class EditNode extends EditRecord
 {
+    use FilamentExceptionHandler;
+
     protected static string $resource = NodeResource::class;
 
     public function form(Forms\Form $form): Forms\Form
@@ -440,10 +442,5 @@ class EditNode extends EditRecord
     protected function afterSave(): void
     {
         $this->fillForm();
-    }
-
-    public function exception($exception, $stopPropagation): void
-    {
-        (new FilamentExceptionHandler())->handle($exception, $stopPropagation);
     }
 }

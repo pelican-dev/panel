@@ -1,13 +1,12 @@
 <?php
 
-namespace App\Services\Exceptions;
+namespace App\Traits\Helpers;
 
-use Exception;
 use Filament\Notifications\Notification;
 
-class FilamentExceptionHandler
+trait FilamentExceptionHandler
 {
-    public function handle(Exception $exception, callable $stopPropagation): void
+    public function exception($exception, $stopPropagation): void
     {
         Notification::make()
             ->title($exception->title ?? null)

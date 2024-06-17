@@ -21,8 +21,8 @@ use App\Models\Egg;
 use App\Models\Server;
 use App\Models\ServerVariable;
 use App\Repositories\Daemon\DaemonServerRepository;
-use App\Services\Exceptions\FilamentExceptionHandler;
 use App\Services\Servers\ServerDeletionService;
+use App\Traits\Helpers\FilamentExceptionHandler;
 use Filament\Forms\Components\Tabs;
 use Filament\Forms\Form;
 use Filament\Notifications\Notification;
@@ -33,6 +33,8 @@ use Webbingbrasil\FilamentCopyActions\Forms\Actions\CopyAction;
 
 class EditServer extends EditRecord
 {
+    use FilamentExceptionHandler;
+    
     protected static string $resource = ServerResource::class;
 
     public function form(Form $form): Form
@@ -850,10 +852,5 @@ class EditServer extends EditRecord
 
         $set('password', $newPassword);
         $set('JDBC', $jdbcString);
-    }
-
-    public function exception($exception, $stopPropagation): void
-    {
-        (new FilamentExceptionHandler())->handle($exception, $stopPropagation);
     }
 }
