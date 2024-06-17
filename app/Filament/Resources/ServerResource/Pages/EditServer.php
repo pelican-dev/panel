@@ -20,7 +20,6 @@ use App\Enums\ServerState;
 use App\Models\Egg;
 use App\Models\Server;
 use App\Models\ServerVariable;
-use App\Repositories\Daemon\DaemonServerRepository;
 use App\Services\Servers\ServerDeletionService;
 use Filament\Forms\Components\Tabs;
 use Filament\Forms\Form;
@@ -44,47 +43,19 @@ class EditServer extends EditRecord
                 'lg' => 4,
             ])
             ->schema([
-                Forms\Components\ToggleButtons::make('docker')
-                    ->label('Container Status')->inline()->inlineLabel()
-                    ->formatStateUsing(function ($state, Server $server) {
-                        if ($server->node_id === null) {
-                            return 'unknown';
-                        }
-
-                        /** @var DaemonServerRepository $service */
-                        $service = resolve(DaemonServerRepository::class);
-                        $details = $service->setServer($server)->getDetails();
-
-                        return $details['state'] ?? 'unknown';
-                    })
-                    ->options(fn ($state) => collect(ContainerStatus::cases())->filter(fn ($containerStatus) => $containerStatus->value === $state)->mapWithKeys(
-                        fn (ContainerStatus $state) => [$state->value => str($state->value)->replace('_', ' ')->ucwords()]
+                Forms\Components\ToggleButtons::make('condition')
+                    ->label('')
+                    ->inline()
+                    ->formatStateUsing(fn (Server $server) => $server->condition)
+                    ->options(fn ($state) => collect(array_merge(ContainerStatus::cases(), ServerState::cases()))
+                        ->filter(fn ($condition) => $condition->value === $state)
+                        ->mapWithKeys(fn ($state) => [$state->value => str($state->value)->replace('_', ' ')->ucwords()])
+                    )
+                    ->colors(collect(array_merge(ContainerStatus::cases(), ServerState::cases()))->mapWithKeys(
+                        fn ($status) => [$status->value => $status->color()]
                     ))
-                    ->colors(collect(ContainerStatus::cases())->mapWithKeys(
-                        fn (ContainerStatus $status) => [$status->value => $status->color()]
-                    ))
-                    ->icons(collect(ContainerStatus::cases())->mapWithKeys(
-                        fn (ContainerStatus $status) => [$status->value => $status->icon()]
-                    ))
-                    ->columnSpan([
-                        'default' => 1,
-                        'sm' => 2,
-                        'md' => 2,
-                        'lg' => 2,
-                    ]),
-
-                Forms\Components\ToggleButtons::make('status')
-                    ->label('Server State')->inline()->inlineLabel()
-                    ->helperText('')
-                    ->formatStateUsing(fn ($state) => $state ?? ServerState::Normal)
-                    ->options(fn ($state) => collect(ServerState::cases())->filter(fn ($serverState) => $serverState->value === $state)->mapWithKeys(
-                        fn (ServerState $state) => [$state->value => str($state->value)->replace('_', ' ')->ucwords()]
-                    ))
-                    ->colors(collect(ServerState::cases())->mapWithKeys(
-                        fn (ServerState $state) => [$state->value => $state->color()]
-                    ))
-                    ->icons(collect(ServerState::cases())->mapWithKeys(
-                        fn (ServerState $state) => [$state->value => $state->icon()]
+                    ->icons(collect(array_merge(ContainerStatus::cases(), ServerState::cases()))->mapWithKeys(
+                        fn ($status) => [$status->value => $status->icon()]
                     ))
                     ->columnSpan([
                         'default' => 1,
