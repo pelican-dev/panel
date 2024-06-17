@@ -95,7 +95,7 @@ class EditDatabaseHost extends EditRecord
         ];
     }
 
-    protected function handleRecordUpdate(Model $record, array $data): Model
+    protected function handleRecordUpdate($record, array $data): Model
     {
         return resolve(HostUpdateService::class)->handle($record->id, $data);
     }
