@@ -5,6 +5,7 @@ namespace App\Filament\Resources\ServerResource\Pages;
 use App\Filament\Resources\ServerResource;
 use App\Models\Egg;
 use App\Models\Node;
+use App\Models\Objects\Endpoint;
 use App\Services\Servers\RandomWordService;
 use App\Services\Servers\ServerCreationService;
 use Filament\Forms\Components\Actions\Action;
@@ -664,28 +665,25 @@ class CreateServer extends CreateRecord
     public function ports($state, Forms\Set $set)
     {
         $ports = collect();
-        $update = false;
         foreach ($state as $portEntry) {
-            if (!str_contains($portEntry, '-')) {
-                if (is_numeric($portEntry)) {
-                    $ports->push((int) $portEntry);
-
+            if (str_contains($portEntry, '-')) {
+                [$start, $end] = explode('-', $portEntry);
+                if (!is_numeric($start) || !is_numeric($end)) {
                     continue;
                 }
 
+                $start = max((int) $start, Endpoint::PORT_FLOOR);
+                $end = min((int) $end, Endpoint::PORT_CEIL);
+                for ($i = $start; $i <= $end; $i++) {
+                    $ports->push($i);
+                }
+            }
+
+            if (!is_numeric($portEntry)) {
                 continue;
             }
 
-            [$start, $end] = explode('-', $portEntry);
-            if (!is_numeric($start) || !is_numeric($end)) {
-                continue;
-            }
-
-            $start = max((int) $start, 0);
-            $end = min((int) $end, 2 ** 16 - 1);
-            for ($i = $start; $i <= $end; $i++) {
-                $ports->push($i);
-            }
+            $ports->push((int) $portEntry);
         }
 
         $uniquePorts = $ports->unique()->values();
