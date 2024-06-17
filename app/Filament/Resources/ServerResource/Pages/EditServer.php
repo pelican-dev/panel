@@ -529,6 +529,7 @@ class EditServer extends EditRecord
                                 Forms\Components\Repeater::make('server_variables')
                                     ->relationship('serverVariables')
                                     ->grid()
+                                    ->required(fn (ServerVariable $serverVariable) => in_array('required', explode('|', $serverVariable->variable->rules)))
                                     ->mutateRelationshipDataBeforeSaveUsing(function (array &$data): array {
                                         foreach ($data as $key => $value) {
                                             if (!isset($data['variable_value'])) {
