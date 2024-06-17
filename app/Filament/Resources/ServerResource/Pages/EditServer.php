@@ -34,7 +34,7 @@ use Webbingbrasil\FilamentCopyActions\Forms\Actions\CopyAction;
 class EditServer extends EditRecord
 {
     use FilamentExceptionHandler;
-    
+
     protected static string $resource = ServerResource::class;
 
     public function form(Form $form): Form

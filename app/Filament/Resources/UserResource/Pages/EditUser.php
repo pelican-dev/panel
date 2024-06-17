@@ -15,7 +15,7 @@ use Illuminate\Support\Facades\Hash;
 class EditUser extends EditRecord
 {
     use FilamentExceptionHandler;
-    
+
     protected static string $resource = UserResource::class;
     public function form(Form $form): Form
     {
