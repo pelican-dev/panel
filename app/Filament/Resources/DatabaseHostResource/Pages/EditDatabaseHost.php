@@ -4,11 +4,15 @@ namespace App\Filament\Resources\DatabaseHostResource\Pages;
 
 use App\Filament\Resources\DatabaseHostResource;
 use App\Models\DatabaseHost;
+use App\Services\Databases\Hosts\HostUpdateService;
 use Filament\Actions;
 use Filament\Resources\Pages\EditRecord;
 use Filament\Forms;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Form;
+use Filament\Notifications\Notification;
+use Illuminate\Database\Eloquent\Model;
+use PDOException;
 
 class EditDatabaseHost extends EditRecord
 {
@@ -89,5 +93,25 @@ class EditDatabaseHost extends EditRecord
         return [
             DatabaseHostResource\RelationManagers\DatabasesRelationManager::class,
         ];
+    }
+
+    protected function handleRecordUpdate(Model $record, array $data): Model
+    {
+        return resolve(HostUpdateService::class)->handle($record->id, $data);
+    }
+
+    public function exception($e, $stopPropagation): void
+    {
+        if ($e instanceof PDOException) {
+            Notification::make()
+                ->title('Error connecting to database host')
+                ->body($e->getMessage())
+                ->color('danger')
+                ->icon('tabler-database')
+                ->danger()
+                ->send();
+
+            $stopPropagation();
+        }
     }
 }
