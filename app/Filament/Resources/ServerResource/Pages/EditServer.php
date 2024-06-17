@@ -21,6 +21,7 @@ use App\Models\Egg;
 use App\Models\Server;
 use App\Models\ServerVariable;
 use App\Repositories\Daemon\DaemonServerRepository;
+use App\Services\Exceptions\FilamentExceptionHandler;
 use App\Services\Servers\ServerDeletionService;
 use Filament\Forms\Components\Tabs;
 use Filament\Forms\Form;
@@ -849,5 +850,10 @@ class EditServer extends EditRecord
 
         $set('password', $newPassword);
         $set('JDBC', $jdbcString);
+    }
+
+    public function exception($exception, $stopPropagation): void
+    {
+        (new FilamentExceptionHandler())->handle($exception, $stopPropagation);
     }
 }

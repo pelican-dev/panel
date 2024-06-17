@@ -6,6 +6,7 @@ use App\Filament\Resources\NodeResource;
 use App\Filament\Resources\NodeResource\Widgets\NodeMemoryChart;
 use App\Filament\Resources\NodeResource\Widgets\NodeStorageChart;
 use App\Models\Node;
+use App\Services\Exceptions\FilamentExceptionHandler;
 use App\Services\Nodes\NodeUpdateService;
 use Filament\Actions;
 use Filament\Forms;
@@ -439,5 +440,10 @@ class EditNode extends EditRecord
     protected function afterSave(): void
     {
         $this->fillForm();
+    }
+
+    public function exception($exception, $stopPropagation): void
+    {
+        (new FilamentExceptionHandler())->handle($exception, $stopPropagation);
     }
 }

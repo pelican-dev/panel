@@ -7,6 +7,7 @@ use App\Models\Allocation;
 use App\Models\Egg;
 use App\Models\Node;
 use App\Services\Allocations\AssignmentService;
+use App\Services\Exceptions\FilamentExceptionHandler;
 use App\Services\Servers\RandomWordService;
 use App\Services\Servers\ServerCreationService;
 use Filament\Forms\Components\Actions\Action;
@@ -795,5 +796,10 @@ class CreateServer extends CreateRecord
             ->each(fn ($value) => str($value)->trim())
             ->mapWithKeys(fn ($value) => [$value => $value])
             ->all();
+    }
+
+    public function exception($exception, $stopPropagation): void
+    {
+        (new FilamentExceptionHandler())->handle($exception, $stopPropagation);
     }
 }
