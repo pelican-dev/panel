@@ -285,11 +285,10 @@ class Node extends Model
 
     public function serverStatuses(): array
     {
-        $statuses = [];
         try {
-            $statuses = Http::daemon($this)->connectTimeout(1)->timeout(1)->get('/api/servers')->json() ?? [];
-        } catch (Exception $exception) {
-            report($exception);
+            $statuses = Http::daemon($this)->connectTimeout(1)->timeout(1)->throw()->get('/api/servers')->json() ?? [];
+        } catch (Exception) {
+            $statuses = [];
         }
 
         foreach ($statuses as $status) {
