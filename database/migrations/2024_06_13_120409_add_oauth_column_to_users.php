@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('users', function (Blueprint $table) {
-            $table->json('oauth')->after('totp_authenticated_at');
+            $table->json('oauth')->nullable()->after('totp_authenticated_at');
         });
     }
 
