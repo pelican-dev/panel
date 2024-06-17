@@ -14,6 +14,7 @@ class Endpoint implements Jsonable
     public const PORT_RANGE_LIMIT = 1000;
     public const PORT_RANGE_REGEX = '/^(\d{4,5})-(\d{4,5})$/';
     public const INADDR_ANY = '0.0.0.0';
+    public const INADDR_LOOPBACK = '127.0.0.1';
 
     public int $port;
     public string $ip;
@@ -35,11 +36,17 @@ class Endpoint implements Jsonable
 
     public function __toString(): string
     {
-        if ($this->ip === self::INADDR_ANY) {
+        $ip = $this->ip;
+
+        if ($ip === self::INADDR_ANY) {
             return (string) $this->port;
         }
 
-        return "$this->ip:$this->port";
+        if ($ip === self::INADDR_LOOPBACK) {
+            $ip = 'localhost';
+        }
+
+        return "$ip:$this->port";
     }
 
     public function toJson($options = 0): string
