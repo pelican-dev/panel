@@ -3,10 +3,12 @@
 namespace App\Models;
 
 use App\Casts\EndpointCollection;
+use App\Enums\ContainerStatus;
 use App\Enums\ServerState;
 use App\Exceptions\Http\Connection\DaemonConnectionException;
 use App\Models\Objects\Endpoint;
 use GuzzleHttp\Exception\GuzzleException;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Query\JoinClause;
@@ -407,6 +409,35 @@ class Server extends Model
         $this->node->serverStatuses();
 
         return cache()->get("servers.$this->uuid.container.status") ?? 'missing';
+    }
+
+    public function condition(): Attribute
+    {
+        return Attribute::make(
+            get: fn () => $this->status?->value ?? $this->retrieveStatus(),
+        );
+    }
+
+    public function conditionIcon(): string
+    {
+        if ($this->status === null) {
+            $containerStatus = ContainerStatus::from($this->retrieveStatus());
+
+            return $containerStatus->icon();
+        }
+
+        return $this->status->icon();
+    }
+
+    public function conditionColor(): string
+    {
+        if ($this->status === null) {
+            $containerStatus = ContainerStatus::from($this->retrieveStatus());
+
+            return $containerStatus->color();
+        }
+
+        return $this->status->color();
     }
 
     public function getPrimaryEndpoint(): ?Endpoint

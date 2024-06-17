@@ -29,28 +29,11 @@ class ListServers extends ListRecords
                 Group::make('egg.name')->getDescriptionFromRecordUsing(fn (Server $server): string => str($server->egg->description)->limit(150)),
             ])
             ->columns([
-                Tables\Columns\TextColumn::make('status')
+                Tables\Columns\TextColumn::make('condition')
                     ->default('unknown')
                     ->badge()
-                    ->default(fn (Server $server) => $server->status ?? $server->retrieveStatus())
-                    ->icon(fn ($state) => match ($state) {
-                        'node_fail' => 'tabler-server-off',
-                        'running' => 'tabler-heartbeat',
-                        'removing' => 'tabler-heart-x',
-                        'offline' => 'tabler-heart-off',
-                        'paused' => 'tabler-heart-pause',
-                        'installing' => 'tabler-heart-bolt',
-                        'suspended' => 'tabler-heart-cancel',
-                        default => 'tabler-heart-question',
-                    })
-                    ->color(fn ($state): string => match ($state) {
-                        'running' => 'success',
-                        'installing', 'restarting' => 'primary',
-                        'paused', 'removing' => 'warning',
-                        'node_fail', 'install_failed', 'suspended' => 'danger',
-                        default => 'gray',
-                    }),
-
+                    ->icon(fn (Server $server) => $server->conditionIcon())
+                    ->color(fn (Server $server) => $server->conditionColor()),
                 Tables\Columns\TextColumn::make('uuid')
                     ->hidden()
                     ->label('UUID')
