@@ -3,10 +3,14 @@
 namespace App\Filament\Resources\ServerResource\Pages;
 
 use App\Filament\Resources\ServerResource;
+use App\Models\Egg;
+use App\Models\Node;
 use App\Models\Server;
+use App\Models\User;
 use Filament\Actions;
 use Filament\Resources\Pages\ListRecords;
 use Filament\Tables\Actions\CreateAction;
+use Filament\Tables\Grouping\Group;
 use Filament\Tables\Table;
 use Filament\Tables;
 
@@ -18,6 +22,12 @@ class ListServers extends ListRecords
     {
         return $table
             ->searchable(false)
+            ->defaultGroup('node.name')
+            ->groups([
+                Group::make('node.name')->getDescriptionFromRecordUsing(fn (Server $server): string => str($server->node->description)->limit(150)),
+                Group::make('user.username')->getDescriptionFromRecordUsing(fn (Server $server): string => $server->user->email),
+                Group::make('egg.name')->getDescriptionFromRecordUsing(fn (Server $server): string => str($server->egg->description)->limit(150)),
+            ])
             ->columns([
                 Tables\Columns\TextColumn::make('status')
                     ->default('unknown')
@@ -52,17 +62,20 @@ class ListServers extends ListRecords
                 Tables\Columns\TextColumn::make('node.name')
                     ->icon('tabler-server-2')
                     ->url(fn (Server $server): string => route('filament.admin.resources.nodes.edit', ['record' => $server->node]))
+                    ->hidden(fn (Table $table) => $table->getGrouping()->getId() === 'node.name')
                     ->sortable()
                     ->searchable(),
                 Tables\Columns\TextColumn::make('egg.name')
                     ->icon('tabler-egg')
                     ->url(fn (Server $server): string => route('filament.admin.resources.eggs.edit', ['record' => $server->egg]))
+                    ->hidden(fn (Table $table) => $table->getGrouping()->getId() === 'egg.name')
                     ->sortable()
                     ->searchable(),
                 Tables\Columns\TextColumn::make('user.username')
                     ->icon('tabler-user')
                     ->label('Owner')
                     ->url(fn (Server $server): string => route('filament.admin.resources.users.edit', ['record' => $server->user]))
+                    ->hidden(fn (Table $table) => $table->getGrouping()->getId() === 'user.username')
                     ->sortable()
                     ->searchable(),
                 Tables\Columns\SelectColumn::make('allocation_id')
