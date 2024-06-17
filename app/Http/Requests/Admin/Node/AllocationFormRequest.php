@@ -10,7 +10,7 @@ class AllocationFormRequest extends AdminFormRequest
     {
         return [
             'allocation_ip' => 'required|string',
-            'allocation_alias' => 'sometimes|nullable|string|max:191',
+            'allocation_alias' => 'sometimes|nullable|string|max:255',
             'allocation_ports' => 'required|array',
         ];
     }

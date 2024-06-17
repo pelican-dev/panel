@@ -64,7 +64,7 @@ class CreateServer extends CreateRecord
                                     'lg' => 3,
                                 ])
                                 ->required()
-                                ->maxLength(191),
+                                ->maxLength(255),
 
                             Forms\Components\Select::make('owner_id')
                                 ->prefixIcon('tabler-user')
@@ -403,7 +403,7 @@ class CreateServer extends CreateRecord
 
                                             $text = Forms\Components\TextInput::make('variable_value')
                                                 ->hidden($this->shouldHideComponent(...))
-                                                ->maxLength(191)
+                                                ->maxLength(255)
                                                 ->required(fn (Forms\Get $get) => in_array('required', explode('|', $get('rules'))))
                                                 ->rules(
                                                     fn (Forms\Get $get): Closure => function (string $attribute, $value, Closure $fail) use ($get) {
@@ -655,18 +655,21 @@ class CreateServer extends CreateRecord
                                         ->suffixIcon('tabler-network')
                                         ->required()
                                         ->numeric()
+                                        ->minValue(0)
                                         ->default(0),
                                     Forms\Components\TextInput::make('database_limit')
                                         ->label('Databases')
                                         ->suffixIcon('tabler-database')
                                         ->required()
                                         ->numeric()
+                                        ->minValue(0)
                                         ->default(0),
                                     Forms\Components\TextInput::make('backup_limit')
                                         ->label('Backups')
                                         ->suffixIcon('tabler-copy-check')
                                         ->required()
                                         ->numeric()
+                                        ->minValue(0)
                                         ->default(0),
                                 ]),
                             Forms\Components\Fieldset::make('Docker Settings')

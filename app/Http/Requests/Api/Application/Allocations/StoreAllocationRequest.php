@@ -16,7 +16,7 @@ class StoreAllocationRequest extends ApplicationApiRequest
     {
         return [
             'ip' => 'required|string',
-            'alias' => 'sometimes|nullable|string|max:191',
+            'alias' => 'sometimes|nullable|string|max:255',
             'ports' => 'required|array',
             'ports.*' => 'string',
         ];

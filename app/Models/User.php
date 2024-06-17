@@ -42,6 +42,7 @@ use App\Notifications\SendPasswordReset as ResetPasswordNotification;
  * @property bool $use_totp
  * @property string|null $totp_secret
  * @property \Illuminate\Support\Carbon|null $totp_authenticated_at
+ * @property array $oauth
  * @property bool $gravatar
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
@@ -127,12 +128,13 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
         'totp_authenticated_at',
         'gravatar',
         'root_admin',
+        'oauth',
     ];
 
     /**
      * The attributes excluded from the model's JSON form.
      */
-    protected $hidden = ['password', 'remember_token', 'totp_secret', 'totp_authenticated_at'];
+    protected $hidden = ['password', 'remember_token', 'totp_secret', 'totp_authenticated_at', 'oauth'];
 
     /**
      * Default values for specific fields in the database.
@@ -145,6 +147,7 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
         'totp_secret' => null,
         'name_first' => '',
         'name_last' => '',
+        'oauth' => '[]',
     ];
 
     /**
@@ -152,16 +155,17 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
      */
     public static array $validationRules = [
         'uuid' => 'nullable|string|size:36|unique:users,uuid',
-        'email' => 'required|email|between:1,191|unique:users,email',
-        'external_id' => 'sometimes|nullable|string|max:191|unique:users,external_id',
-        'username' => 'required|between:1,191|unique:users,username',
-        'name_first' => 'nullable|string|between:0,191',
-        'name_last' => 'nullable|string|between:0,191',
+        'email' => 'required|email|between:1,255|unique:users,email',
+        'external_id' => 'sometimes|nullable|string|max:255|unique:users,external_id',
+        'username' => 'required|between:1,255|unique:users,username',
+        'name_first' => 'nullable|string|between:0,255',
+        'name_last' => 'nullable|string|between:0,255',
         'password' => 'sometimes|nullable|string',
         'root_admin' => 'boolean',
         'language' => 'string',
         'use_totp' => 'boolean',
         'totp_secret' => 'nullable|string',
+        'oauth' => 'array',
     ];
 
     protected function casts(): array
@@ -172,6 +176,7 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
             'gravatar' => 'boolean',
             'totp_authenticated_at' => 'datetime',
             'totp_secret' => 'encrypted',
+            'oauth' => 'array',
         ];
     }
 

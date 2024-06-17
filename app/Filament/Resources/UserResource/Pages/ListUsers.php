@@ -85,12 +85,12 @@ class ListUsers extends ListRecords
                             Forms\Components\TextInput::make('username')
                                 ->alphaNum()
                                 ->required()
-                                ->maxLength(191),
+                                ->maxLength(255),
                             Forms\Components\TextInput::make('email')
                                 ->email()
                                 ->required()
                                 ->unique()
-                                ->maxLength(191),
+                                ->maxLength(255),
 
                             Forms\Components\TextInput::make('password')
                                 ->hintIcon('tabler-question-mark')

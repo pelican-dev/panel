@@ -20,10 +20,10 @@ class UpdateServerStartupRequest extends ApplicationApiRequest
         $data = Server::getRulesForUpdate($this->parameter('server', Server::class));
 
         return [
-            'startup' => $data['startup'],
+            'startup' => 'sometimes|string',
             'environment' => 'present|array',
             'egg' => $data['egg_id'],
-            'image' => $data['image'],
+            'image' => 'sometimes|string',
             'skip_scripts' => 'present|boolean',
         ];
     }

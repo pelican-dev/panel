@@ -36,7 +36,7 @@ class CreateDatabaseHost extends CreateRecord
                             ->required()
                             ->live(onBlur: true)
                             ->afterStateUpdated(fn ($state, Forms\Set $set) => $set('name', $state))
-                            ->maxLength(191),
+                            ->maxLength(255),
                         Forms\Components\TextInput::make('port')
                             ->columnSpan(1)
                             ->helperText('The port that MySQL is running on for this host.')
@@ -57,12 +57,12 @@ class CreateDatabaseHost extends CreateRecord
                         Forms\Components\TextInput::make('username')
                             ->helperText('The username of an account that has enough permissions to create new users and databases on the system.')
                             ->required()
-                            ->maxLength(191),
+                            ->maxLength(255),
                         Forms\Components\TextInput::make('password')
                             ->helperText('The password for the database user.')
                             ->password()
                             ->revealable()
-                            ->maxLength(191)
+                            ->maxLength(255)
                             ->required(),
                         Forms\Components\Select::make('node_id')
                             ->searchable()

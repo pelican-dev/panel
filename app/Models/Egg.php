@@ -105,7 +105,7 @@ class Egg extends Model
 
     public static array $validationRules = [
         'uuid' => 'required|string|size:36',
-        'name' => 'required|string|max:191',
+        'name' => 'required|string|max:255',
         'description' => 'string|nullable',
         'features' => 'array|nullable',
         'author' => 'required|string|email',
@@ -115,7 +115,7 @@ class Egg extends Model
         'docker_images.*' => 'required|string',
         'startup' => 'required|nullable|string',
         'config_from' => 'sometimes|bail|nullable|numeric|exists:eggs,id',
-        'config_stop' => 'required_without:config_from|nullable|string|max:191',
+        'config_stop' => 'required_without:config_from|nullable|string|max:255',
         'config_startup' => 'required_without:config_from|nullable|json',
         'config_logs' => 'required_without:config_from|nullable|json',
         'config_files' => 'required_without:config_from|nullable|json',
