@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Filament;
+namespace App\Filament\Pages;
 
 use Filament\Pages\Page;
 
@@ -16,6 +16,6 @@ class Settings extends Page
 
     public function getTitle(): string
     {
-        return trans('strings.settings');
+        return __('strings.settings');
     }
 }
