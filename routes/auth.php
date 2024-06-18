@@ -20,7 +20,7 @@ Route::get('/password/reset/{token}', [Auth\LoginController::class, 'index'])->n
 
 // Endpoints for OAuth
 Route::get('/oauth/redirect/{driver}', [Auth\OAuthController::class, 'redirect'])->name('auth.oauth.redirect');
-Route::get('/oauth/callback/{driver}', [Auth\OAuthController::class, 'callback'])->name('auth.oauth.callback');
+Route::get('/oauth/callback/{driver}', [Auth\OAuthController::class, 'callback'])->name('auth.oauth.callback')->withoutMiddleware('guest');
 
 // Apply a throttle to authentication action endpoints, in addition to the
 // recaptcha endpoints to slow down manual attack spammers even more. 🤷‍
