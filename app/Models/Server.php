@@ -447,6 +447,10 @@ class Server extends Model
         $portEggVariable = $this->variables->firstWhere('env_variable', 'SERVER_PORT');
         if ($portEggVariable) {
             $portServerVariable = $this->serverVariables->firstWhere('variable_id', $portEggVariable->id);
+            if (! $portServerVariable) {
+                return null;
+            }
+
             $endpoint = new Endpoint($portServerVariable->variable_value);
         }
 

@@ -21,6 +21,10 @@ class EndpointSynth extends Synth
 
     public function hydrate($value)
     {
+        if (!is_string($value) && !is_int($value)) {
+            return null;
+        }
+
         return new Endpoint($value);
     }
 }
