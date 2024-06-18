@@ -461,6 +461,13 @@ class EditServer extends EditRecord
                                 Forms\Components\Textarea::make('startup')
                                     ->label('Startup Command')
                                     ->required()
+                                    ->hintAction(Forms\Components\Actions\Action::make('startup-restore')
+                                        ->label('Restore Default')
+                                        ->icon('tabler-restore')
+                                        ->action(fn (Forms\Get $get, Forms\Set $set) =>
+                                            $set('startup', Egg::find($get('egg_id'))?->startup ?? '')
+                                        )
+                                    )
                                     ->columnSpan([
                                         'default' => 2,
                                         'sm' => 4,
@@ -473,22 +480,6 @@ class EditServer extends EditRecord
                                             0
                                         );
                                     }),
-
-                                Forms\Components\Textarea::make('defaultStartup')
-                                    ->hintAction(CopyAction::make())
-                                    ->label('Default Startup Command')
-                                    ->disabled()
-                                    ->formatStateUsing(function ($state, Forms\Get $get, Forms\Set $set) {
-                                        $egg = Egg::query()->find($get('egg_id'));
-
-                                        return $egg->startup;
-                                    })
-                                    ->columnSpan([
-                                        'default' => 2,
-                                        'sm' => 4,
-                                        'md' => 4,
-                                        'lg' => 6,
-                                    ]),
 
                                 Forms\Components\Repeater::make('server_variables')
                                     ->relationship('serverVariables')
