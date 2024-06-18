@@ -3,18 +3,18 @@
 namespace App\Filament\Resources\NodeResource\Pages;
 
 use App\Filament\Resources\NodeResource;
-use App\Traits\Helpers\FilamentExceptionHandler;
+use Exception;
 use Filament\Forms;
 use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\Wizard;
+use Filament\Notifications\Notification;
 use Filament\Resources\Pages\CreateRecord;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\HtmlString;
 
 class CreateNode extends CreateRecord
 {
-    use FilamentExceptionHandler;
-
     protected static string $resource = NodeResource::class;
 
     protected static bool $canCreateAnother = false;
@@ -407,5 +407,24 @@ class CreateNode extends CreateRecord
     protected function getFormActions(): array
     {
         return [];
+    }
+
+    protected function handleRecordCreation(array $data): Model
+    {
+        $node = null;
+
+        try {
+            $node = parent::handleRecordCreation($data);
+        } catch (Exception $exception) {
+            Notification::make()
+                ->title('Error')
+                ->body($exception->getMessage())
+                ->color('danger')
+                ->icon('tabler-x')
+                ->danger()
+                ->send();
+        }
+
+        return $node;
     }
 }

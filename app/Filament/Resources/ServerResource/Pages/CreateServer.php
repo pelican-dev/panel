@@ -9,7 +9,6 @@ use App\Models\Node;
 use App\Services\Allocations\AssignmentService;
 use App\Services\Servers\RandomWordService;
 use App\Services\Servers\ServerCreationService;
-use App\Traits\Helpers\FilamentExceptionHandler;
 use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Form;
 use Filament\Resources\Pages\CreateRecord;
@@ -21,11 +20,11 @@ use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\HtmlString;
 use Closure;
+use Exception;
+use Filament\Notifications\Notification;
 
 class CreateServer extends CreateRecord
 {
-    use FilamentExceptionHandler;
-
     protected static string $resource = ServerResource::class;
     protected static bool $canCreateAnother = false;
 
@@ -761,12 +760,25 @@ class CreateServer extends CreateRecord
 
     protected function handleRecordCreation(array $data): Model
     {
-        $data['allocation_additional'] = collect($data['allocation_additional'])->filter()->all();
+        $server = null;
 
-        /** @var ServerCreationService $service */
-        $service = resolve(ServerCreationService::class);
+        try {
+            $data['allocation_additional'] = collect($data['allocation_additional'])->filter()->all();
 
-        return $service->handle($data);
+            /** @var ServerCreationService $service */
+            $service = resolve(ServerCreationService::class);
+            $server = $service->handle($data);
+        } catch (Exception $exception) {
+            Notification::make()
+                ->title('Error')
+                ->body($exception->getMessage())
+                ->color('danger')
+                ->icon('tabler-x')
+                ->danger()
+                ->send();
+        }
+
+        return $server;
     }
 
     private function shouldHideComponent(Forms\Get $get, Forms\Components\Component $component): bool
