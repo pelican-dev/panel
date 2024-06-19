@@ -13,7 +13,6 @@ use App\Models\Setting;
 use Filament\Tables\Actions\Action;
 use App\Traits\Commands\EnvironmentWriterTrait;
 use Illuminate\Support\Facades\Log;
-use SQLite3;
 use Illuminate\Support\Facades\Artisan;
 use App\Filament\Exports\SettingExporter;
 use App\Filament\Imports\SettingImporter;
@@ -29,6 +28,13 @@ class Settings extends Component implements \Filament\Forms\Contracts\HasForms, 
     use \Filament\Forms\Concerns\InteractsWithForms;
     use \Filament\Tables\Concerns\InteractsWithTable;
 
+    private $settings;
+
+    public function __construct()
+    {
+        $this->settings = Settings::all();
+    }
+
     public function table(Table $table): Table
     {
         return $table
@@ -41,7 +47,7 @@ class Settings extends Component implements \Filament\Forms\Contracts\HasForms, 
                     ->icon('tabler-device-floppy')
                     ->color('success')
                     ->requiresConfirmation()
-                    ->action(fn () => $this->setSettingsToEnv()),
+                    ->action(fn() => $this->setSettingsToEnv()),
                 ActionGroup::make([
                     ImportAction::make()
                         ->importer(SettingImporter::class),
@@ -55,19 +61,24 @@ class Settings extends Component implements \Filament\Forms\Contracts\HasForms, 
                     ->label('Setting')
                     ->sortable()
                     ->searchable()
-                    ->tooltip(fn ($record) => $record->description),
+                    ->tooltip(fn($record) => $record->description),
                 //  ->action(), TODO 10
 
                 TextColumn::make('value')
                     ->label('Value')
-                    ->formatStateUsing(fn ($state) => $state === null ? 'Empty' : $state)
+                    ->formatStateUsing(fn($state) => $state === null ? 'Empty' : $state)
                     ->sortable()
                     ->searchable(),
             ])
             ->actions([
                 EditAction::make()
+                    ->using(function (Setting $setting, array $data): Setting {
+                        $setting->writeToEnvironment([$setting->key => $data['value']]);
+                
+                        return $setting;
+                    })
                     ->form(function ($record) {
-                        $setting = collect(Setting::getRowsFromSQLite())->firstWhere('key', $record->key);
+                        $setting = Setting::all()->firstWhere('key', $record->key);
 
                         return match ($setting['type']) {
                             'select' => [
@@ -128,29 +139,8 @@ class Settings extends Component implements \Filament\Forms\Contracts\HasForms, 
 
     protected function setSettingsToEnv(): void
     {
-        try {
-            $sqliteFile = storage_path('framework/cache/sushi-app-models-setting.sqlite');
+        dd($this->settings);
 
-            $sqlite = new SQLite3($sqliteFile);
-
-            $query = 'SELECT * FROM `settings`';
-
-            $result = $sqlite->query($query);
-
-            $variables = [];
-
-            while ($row = $result->fetchArray(SQLITE3_ASSOC)) {
-                $variables[$row['key']] = $row['value'];
-            }
-
-            $sqlite->close();
-
-            $this->writeToEnvironment($variables);
-            Artisan::call('config:cache');
-
-            Log::info('All settings applied successfully to .env file.');
-        } catch (\Exception $e) {
-            Log::error('Error applying settings to .env file: ' . $e->getMessage());
-        }
+        $this->writeToEnvironment($variables);
     }
 }

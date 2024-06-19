@@ -5,20 +5,21 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Sushi\Sushi;
 use SQLite3;
+use App\Traits\Commands\EnvironmentWriterTrait;
 
 class Setting extends Model
 {
     use Sushi;
+    use EnvironmentWriterTrait;
 
     protected $casts = [
         'limit' => 'integer',
         'options' => 'array',
-
     ];
 
     protected $fillable = ['key', 'label', 'value', 'type', 'options', 'description', 'limit', 'tabs'];
 
-    protected $rows = [
+    protected $rowsTest = [
         [
             'key' => 'FILAMENT_TOP_NAVIGATION',
             'label' => 'Topbar or Sidebar',
@@ -95,21 +96,13 @@ class Setting extends Model
         ],
     ];
 
-    public static function getRowsFromSQLite()
+    public function getRows()
     {
-        $sqliteFile = storage_path('framework/cache/sushi-app-models-setting.sqlite');
-        $sqlite = new SQLite3($sqliteFile);
-
-        $query = 'SELECT * FROM settings';
-        $result = $sqlite->query($query);
-
-        $settings = [];
-        while ($row = $result->fetchArray(SQLITE3_ASSOC)) {
-            $settings[] = $row;
+        $rows = $this->rowsTest;
+        foreach ($rows as &$row) {
+            $row['value'] = env($row['key']);
         }
 
-        $sqlite->close();
-
-        return $settings;
+        return $rows;
     }
 }
