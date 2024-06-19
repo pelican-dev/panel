@@ -31,15 +31,7 @@ class Settings extends Component implements \Filament\Forms\Contracts\HasForms, 
         return $table
             ->paginated(false)
             ->query(Setting::query())
-            //->heading('Settings')
-            ->headerActions([
-                Action::make('apply')
-                    ->label('Apply Settings')
-                    ->icon('tabler-device-floppy')
-                    ->color('success')
-                    ->requiresConfirmation()
-                    ->action(fn () => $this->setSettingsToEnv()),
-            ])
+            ->heading('Settings')
             ->columns([
                 TextColumn::make('label')
                     ->label('Setting')
@@ -119,12 +111,5 @@ class Settings extends Component implements \Filament\Forms\Contracts\HasForms, 
             {{ $this->table }}
         </div>
         HTML;
-    }
-
-    protected function setSettingsToEnv(): void
-    {
-        dd($this->settings);
-
-        $this->writeToEnvironment($variables);
     }
 }
