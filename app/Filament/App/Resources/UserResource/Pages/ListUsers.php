@@ -3,9 +3,9 @@
 namespace App\Filament\App\Resources\UserResource\Pages;
 
 use App\Filament\App\Resources\UserResource;
-use App\Models\Server;
 use App\Services\Subusers\SubuserCreationService;
 use Filament\Actions;
+use Filament\Facades\Filament;
 use Filament\Forms\Components\CheckboxList;
 use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\Section;
@@ -42,7 +42,7 @@ class ListUsers extends ListRecords
                                                 ->description(trans('server/users.permissions.control_desc'))
                                                 ->icon('tabler-terminal-2')
                                                 ->schema([
-                                                    CheckboxList::make('console')
+                                                    CheckboxList::make('control')
                                                         ->bulkToggleable()
                                                         ->label('')
                                                         ->columns(2)
@@ -203,14 +203,14 @@ class ListUsers extends ListRecords
                                                             'create' => 'Create',
                                                             'update' => 'Update',
                                                             'delete' => 'Delete',
-                                                            'view-password' => 'View Password',
+                                                            'view_password' => 'View Password',
                                                         ])
                                                         ->descriptions([
                                                             'read' => trans('server/users.permissions.database_read'),
                                                             'create' => trans('server/users.permissions.database_create'),
                                                             'update' => trans('server/users.permissions.database_update'),
                                                             'delete' => trans('server/users.permissions.database_delete'),
-                                                            'view-password' => trans('server/users.permissions.database_view_password'),
+                                                            'view_password' => trans('server/users.permissions.database_view_password'),
                                                         ]),
                                                 ]),
                                         ]),
@@ -265,11 +265,14 @@ class ListUsers extends ListRecords
                         ]),
                 ])
                 ->modalHeading('Invite User')
-                ->action(function (Server $server, array $data) {
-                    resolve(SubuserCreationService::class)->handle($server, $data['email'], []); //TODO: The Logic <3
+                ->action(function (array $data) {
+                    $email = $data['email'];
+                    $permissions = collect($data)->forget('email')->map(fn ($permissions, $key) => collect($permissions)->map(fn ($permission) => "$key.$permission"))->flatten()->all();
+                    $server = Filament::getTenant();
+                    resolve(SubuserCreationService::class)->handle($server, $email, $permissions); // "It's Fine" ~ Lance
                     Notification::make()->title('User Invited!')->success()->send();
 
-                    return redirect()->route('filament.app.resources.users.index');
+                    return redirect()->route('filament.app.resources.users.index', ['tenant' => $server]);
                 }),
         ];
     }
