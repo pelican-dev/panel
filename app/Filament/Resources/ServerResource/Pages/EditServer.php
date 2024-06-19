@@ -529,7 +529,6 @@ class EditServer extends EditRecord
                                 Forms\Components\Repeater::make('server_variables')
                                     ->relationship('serverVariables')
                                     ->grid()
-                                    ->required(fn (ServerVariable $serverVariable) => in_array('required', explode('|', $serverVariable->variable->rules)))
                                     ->mutateRelationshipDataBeforeSaveUsing(function (array &$data): array {
                                         foreach ($data as $key => $value) {
                                             if (!isset($data['variable_value'])) {
@@ -544,6 +543,7 @@ class EditServer extends EditRecord
 
                                         $text = Forms\Components\TextInput::make('variable_value')
                                             ->hidden($this->shouldHideComponent(...))
+                                            ->required(fn (ServerVariable $serverVariable) => in_array('required', explode('|', $serverVariable->variable->rules)))
                                             ->rules([
                                                 fn (ServerVariable $serverVariable): Closure => function (string $attribute, $value, Closure $fail) use ($serverVariable) {
                                                     $validator = Validator::make(['validatorkey' => $value], [
