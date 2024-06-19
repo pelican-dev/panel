@@ -4,8 +4,11 @@ namespace App\Filament\App\Resources;
 
 use App\Filament\App\Resources\UserResource\Pages;
 use App\Models\User;
+use Filament\Tables\Actions\DeleteAction;
 use Filament\Resources\Resource;
-use Filament\Tables;
+use Filament\Tables\Actions\EditAction;
+use Filament\Tables\Columns\ImageColumn;
+use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 
 class UserResource extends Resource
@@ -22,24 +25,24 @@ class UserResource extends Resource
             ->paginated(false)
             ->searchable(false)
             ->columns([
-                Tables\Columns\ImageColumn::make('picture')
+                ImageColumn::make('picture')
                     ->visibleFrom('lg')
                     ->label('')
                     ->extraImgAttributes(['class' => 'rounded-full'])
                     ->defaultImageUrl(fn (User $user) => 'https://gravatar.com/avatar/' . md5(strtolower($user->email))),
-                Tables\Columns\TextColumn::make('username')
+                TextColumn::make('username')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('email')
+                TextColumn::make('email')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('use_totp')
-                    ->numeric()
-                    ->sortable(),
-            ])
-            ->filters([
-                //
+                TextColumn::make('permissions')
+                    ->placeholder('Show # of permissions'),
+
             ])
             ->actions([
-                Tables\Actions\DeleteAction::make(),
+                DeleteAction::make()
+                    ->label('Remove User'),
+                EditAction::make()
+                    ->label('TODO: Edit User'),
             ]);
     }
 
