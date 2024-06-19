@@ -12,15 +12,11 @@ use Filament\Tables\Actions\EditAction;
 use App\Models\Setting;
 use Filament\Tables\Actions\Action;
 use App\Traits\Commands\EnvironmentWriterTrait;
-use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Artisan;
 use App\Filament\Exports\SettingExporter;
 use App\Filament\Imports\SettingImporter;
 use Filament\Tables\Actions\ExportAction;
 use Filament\Actions\ImportAction;
 use Filament\Tables\Actions\ActionGroup;
-
-//use Filament\Forms\Components\Tabs; // TODO 5 PR #259
 
 class Settings extends Component implements \Filament\Forms\Contracts\HasForms, \Filament\Tables\Contracts\HasTable
 {
@@ -47,7 +43,7 @@ class Settings extends Component implements \Filament\Forms\Contracts\HasForms, 
                     ->icon('tabler-device-floppy')
                     ->color('success')
                     ->requiresConfirmation()
-                    ->action(fn() => $this->setSettingsToEnv()),
+                    ->action(fn () => $this->setSettingsToEnv()),
                 ActionGroup::make([
                     ImportAction::make()
                         ->importer(SettingImporter::class),
@@ -61,12 +57,12 @@ class Settings extends Component implements \Filament\Forms\Contracts\HasForms, 
                     ->label('Setting')
                     ->sortable()
                     ->searchable()
-                    ->tooltip(fn($record) => $record->description),
+                    ->tooltip(fn ($record) => $record->description),
                 //  ->action(), TODO 10
 
                 TextColumn::make('value')
                     ->label('Value')
-                    ->formatStateUsing(fn($state) => $state === null ? 'Empty' : $state)
+                    ->formatStateUsing(fn ($state) => $state === null ? 'Empty' : $state)
                     ->sortable()
                     ->searchable(),
             ])
@@ -74,7 +70,7 @@ class Settings extends Component implements \Filament\Forms\Contracts\HasForms, 
                 EditAction::make()
                     ->using(function (Setting $setting, array $data): Setting {
                         $setting->writeToEnvironment([$setting->key => $data['value']]);
-                
+
                         return $setting;
                     })
                     ->form(function ($record) {

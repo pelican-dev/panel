@@ -4,13 +4,12 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Sushi\Sushi;
-use SQLite3;
 use App\Traits\Commands\EnvironmentWriterTrait;
 
 class Setting extends Model
 {
-    use Sushi;
     use EnvironmentWriterTrait;
+    use Sushi;
 
     protected $casts = [
         'limit' => 'integer',
@@ -27,6 +26,7 @@ class Setting extends Model
             'type' => 'toggle-buttons',
             'tabs' => 'Panel',
             'description' => 'Setting this to true switches the sidebar to a topbar and vice versa',
+            'limit' => 255,
             //'options' => ['false' => 'False', 'true' => 'True'], TODO fix it so this is saved properly to storage/framework/cache/sushi-app-models-setting.sqlite
         ],
         [
@@ -34,9 +34,9 @@ class Setting extends Model
             'label' => 'Panel Name',
             'value' => 'Pelican',
             'tabs' => 'Panel',
-            'type' => 'text',
+            'type' => 'limit',
             'description' => 'This is the name that is used throughout the panel and in emails sent to clients.',
-            //'limit' => 18, TODO fix it so this is saved properly to storage/framework/cache/sushi-app-models-setting.sqlite
+            'limit' => 18,
         ],
         [
             'key' => 'MAIL_HOST',
@@ -45,6 +45,7 @@ class Setting extends Model
             'type' => 'text',
             'tabs' => 'Mail',
             'description' => 'Enter the SMTP server address that mail should be sent through.',
+            'limit' => 255,
         ],
         [
             'key' => 'MAIL_PORT',
@@ -53,6 +54,7 @@ class Setting extends Model
             'type' => 'number',
             'tabs' => 'Mail',
             'description' => 'Enter the SMTP server port that mail should be sent through.',
+            'limit' => 255,
         ],
         [
             'key' => 'MAIL_USERNAME',
@@ -61,6 +63,7 @@ class Setting extends Model
             'type' => 'text',
             'tabs' => 'Mail',
             'description' => 'The username to use when connecting to the SMTP server.',
+            'limit' => 255,
         ],
         [
             'key' => 'MAIL_PASSWORD',
@@ -68,6 +71,7 @@ class Setting extends Model
             'value' => '',
             'type' => 'password',
             'tabs' => 'Mail',
+            'limit' => 255,
             'description' => 'The password to use in conjunction with the SMTP username. Leave blank to continue using the existing password. To set the password to an empty value enter !e into the field.',
         ],
         [
@@ -77,6 +81,7 @@ class Setting extends Model
             'type' => 'text', // TODO make this select as soon as it works
             'tabs' => 'Mail',
             'description' => 'Select the type of encryption to use when sending mail.',
+            'limit' => 255,
         ],
         [
             'key' => 'MAIL_FROM_ADDRESS',
@@ -85,6 +90,7 @@ class Setting extends Model
             'type' => 'text',
             'tabs' => 'Mail',
             'description' => 'Enter an email address that all outgoing emails will originate from.',
+            'limit' => 255,
         ],
         [
             'key' => 'MAIL_FROM_NAME',
@@ -93,6 +99,7 @@ class Setting extends Model
             'type' => 'text',
             'tabs' => 'Mail',
             'description' => 'The name that emails should appear to come from.',
+            'limit' => 255,
         ],
     ];
 
