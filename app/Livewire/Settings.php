@@ -12,11 +12,6 @@ use Filament\Tables\Actions\EditAction;
 use App\Models\Setting;
 use Filament\Tables\Actions\Action;
 use App\Traits\Commands\EnvironmentWriterTrait;
-use App\Filament\Exports\SettingExporter;
-use App\Filament\Imports\SettingImporter;
-use Filament\Tables\Actions\ExportAction;
-use Filament\Actions\ImportAction;
-use Filament\Tables\Actions\ActionGroup;
 
 class Settings extends Component implements \Filament\Forms\Contracts\HasForms, \Filament\Tables\Contracts\HasTable
 {
@@ -44,13 +39,6 @@ class Settings extends Component implements \Filament\Forms\Contracts\HasForms, 
                     ->color('success')
                     ->requiresConfirmation()
                     ->action(fn () => $this->setSettingsToEnv()),
-                ActionGroup::make([
-                    ImportAction::make()
-                        ->importer(SettingImporter::class),
-                    ExportAction::make()
-                        ->columnMapping(false)
-                        ->exporter(SettingExporter::class),
-                ]),
             ])
             ->columns([
                 TextColumn::make('label')
