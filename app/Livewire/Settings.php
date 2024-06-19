@@ -53,38 +53,36 @@ class Settings extends Component implements \Filament\Forms\Contracts\HasForms, 
 
                         return $setting;
                     })
-                    ->form(function ($record) {
-                        $setting = Setting::all()->firstWhere('key', $record->key);
-
-                        return match ($setting['type']) {
+                    ->form(function (Setting $setting) {
+                        return match ($setting->type) {
                             'select' => [
                                 Select::make('value')
-                                    ->label($setting['label'])
-                                    ->options($setting['options']),
+                                    ->label($setting->label)
+                                    ->options($setting->options),
                             ],
                             'number' => [
                                 TextInput::make('value')
-                                    ->label($setting['label'])
-                                    ->placeholder($setting['description'])
+                                    ->label($setting->label)
+                                    ->placeholder($setting->description)
                                     ->type('number'),
                             ],
                             'limit' => [
                                 TextInput::make('value')
-                                    ->label($setting['label'])
-                                    ->maxLength($setting['limit'] ?? null)
-                                    ->placeholder($setting['description']),
+                                    ->label($setting->label)
+                                    ->maxLength($setting->limit)
+                                    ->placeholder($setting->description),
                             ],
                             'password' => [
                                 TextInput::make('value')
-                                    ->label($setting['label'])
+                                    ->label($setting->label)
                                     ->password()
                                     ->revealable()
-                                    ->placeholder($setting['description']),
+                                    ->placeholder($setting->description),
                             ],
                             'toggle-buttons' => [
                                 ToggleButtons::make('value')
                                     ->inline(true)
-                                    ->label($setting['label'])
+                                    ->label($setting->label)
                                     ->options([
                                         'true' => 'True',
                                         'false' => 'False',
@@ -96,8 +94,8 @@ class Settings extends Component implements \Filament\Forms\Contracts\HasForms, 
                             ],
                             default => [
                                 TextInput::make('value')
-                                    ->label($setting['label'])
-                                    ->placeholder($setting['description']),
+                                    ->label($setting->label)
+                                    ->placeholder($setting->description),
                             ],
                         };
                     }),
