@@ -18,6 +18,8 @@ class ManageSettings extends ManageRecords
                 ->modifyQueryUsing(fn (Builder $query) => $query->where('tabs', 'Panel')),
             'mail' => Tab::make('Mail Settings')
                 ->modifyQueryUsing(fn (Builder $query) => $query->where('tabs', 'Mail')),
+            'Advanced' => Tab::make('Advanced Settings')
+                ->modifyQueryUsing(fn (Builder $query) => $query->where('tabs', 'Advanced')),
         ];
     }
 

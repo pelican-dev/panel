@@ -101,6 +101,33 @@ class Setting extends Model
             'description' => 'The name that emails should appear to come from.',
             'limit' => 255,
         ],
+        [
+            'key' => 'RECAPTCHA_ENABLED',
+            'label' => 'Status',
+            'value' => 'true',
+            'type' => 'toggle-buttons',
+            'tabs' => 'Advanced',
+            'description' => 'If enabled, login forms and password reset forms will do a silent captcha check and display a visible captcha if needed.',
+            'limit' => 255,
+        ],
+        [
+            'key' => 'RECAPTCHA_WEBSITE_KEY',
+            'label' => 'Site Key',
+            'value' => '6LcJcjwUAAAAAO_Xqjrtj9wWufUpYRnK6BW8lnfn',
+            'type' => 'password',
+            'tabs' => 'Advanced',
+            'description' => '',
+            'limit' => 255,
+        ],
+        [
+            'key' => 'RECAPTCHA_SECRET_KEY',
+            'label' => 'Secret Key',
+            'value' => '6LcJcjwUAAAAALOcDJqAEYKTDhwELCkzUkNDQ0J5',
+            'type' => 'password',
+            'tabs' => 'Advanced',
+            'description' => 'Used for communication between your site and Google. Be sure to keep it a secret.',
+            'limit' => 255,
+        ],
     ];
 
     public function getRows()
