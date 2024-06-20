@@ -1,32 +1,31 @@
 <?php
 
-namespace App\Livewire;
+namespace App\Filament\Resources;
 
-use Filament\Tables\Columns\TextColumn;
+use App\Filament\Resources\SettingResource\Pages;
+use App\Models\Setting;
+use Filament\Resources\Resource;
 use Filament\Tables\Table;
-use Livewire\Component;
+use Filament\Tables\Columns\TextColumn;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\ToggleButtons;
 use Filament\Tables\Actions\EditAction;
-use App\Models\Setting;
-use Filament\Tables\Actions\Action;
-use App\Traits\Commands\EnvironmentWriterTrait;
 
-class Settings extends Component implements \Filament\Forms\Contracts\HasForms, \Filament\Tables\Contracts\HasTable
+class SettingResource extends Resource
 {
-    use EnvironmentWriterTrait;
-    use \Filament\Forms\Concerns\InteractsWithForms;
-    use \Filament\Tables\Concerns\InteractsWithTable;
+    protected static ?string $model = Setting::class;
 
-    private $settings;
+    protected static ?string $navigationIcon = 'tabler-settings';
 
-    public function __construct()
+    public static function canCreate(): bool
     {
-        $this->settings = Settings::all();
+        return false;
     }
 
-    public function table(Table $table): Table
+    protected static ?int $navigationSort = 23;
+
+    public static function table(Table $table): Table
     {
         return $table
             ->paginated(false)
@@ -38,7 +37,6 @@ class Settings extends Component implements \Filament\Forms\Contracts\HasForms, 
                     ->sortable()
                     ->searchable()
                     ->tooltip(fn ($record) => $record->description),
-                //  ->action(), TODO 10
 
                 TextColumn::make('value')
                     ->label('Value')
@@ -102,12 +100,10 @@ class Settings extends Component implements \Filament\Forms\Contracts\HasForms, 
             ]);
     }
 
-    public function render()
+    public static function getPages(): array
     {
-        return <<<'HTML'
-        <div>
-            {{ $this->table }}
-        </div>
-        HTML;
+        return [
+            'index' => Pages\ManageSettings::route('/'),
+        ];
     }
 }
