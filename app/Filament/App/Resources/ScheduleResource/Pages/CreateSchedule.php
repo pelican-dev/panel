@@ -2,6 +2,7 @@
 
 namespace App\Filament\App\Resources\ScheduleResource\Pages;
 
+use App\Models\Server;
 use App\Filament\App\Resources\ScheduleResource;
 use Filament\Facades\Filament;
 use Filament\Forms\Components\Section;
@@ -79,7 +80,7 @@ class CreateSchedule extends CreateRecord
     protected function mutateFormDataBeforeSave(array $data): array
     {
         if (!isset($data['server_id'])) {
-            $data['server_id'] = Filament::getTenant()->id;
+            $data['server_id'] = Filament::getTenant(Server)->id;
         }
 
         return $data;
