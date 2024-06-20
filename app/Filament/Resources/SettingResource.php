@@ -29,8 +29,10 @@ class SettingResource extends Resource
     {
         return $table
             ->paginated(false)
+            ->searchable(false)
             ->query(Setting::query())
-            ->heading('Settings')
+            ->striped(false)
+            //->heading('Settings')
             ->columns([
                 TextColumn::make('label')
                     ->label('Setting')
