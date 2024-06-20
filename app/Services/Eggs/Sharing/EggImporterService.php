@@ -23,6 +23,7 @@ class EggImporterService
         'server.build.memory' => 'server.build.memory_limit',
         'server.build.env.' => 'server.environment.',
         'server.build.environment.' => 'server.environment.',
+        'env.' => 'server.environment.',
     ];
 
     public function __construct(protected ConnectionInterface $connection)
