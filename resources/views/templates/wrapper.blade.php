@@ -17,7 +17,7 @@
         @section('user-data')
             @if(!is_null(Auth::user()))
                 <script>
-                    window.PanelUser = {!! json_encode(Auth::user()->toVueObject()) !!};
+                    window.PanelUser = {!! json_encode(Auth::user()->toReactObject()) !!};
                 </script>
             @endif
             @if(!empty($siteConfiguration))
