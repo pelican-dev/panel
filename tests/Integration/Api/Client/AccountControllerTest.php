@@ -22,13 +22,16 @@ class AccountControllerTest extends ClientApiIntegrationTestCase
         $response->assertOk()->assertJson([
             'object' => 'user',
             'attributes' => [
-                'id' => $user->id,
-                'admin' => false,
+                'uuid' => $user->uuid,
                 'username' => $user->username,
                 'email' => $user->email,
                 'first_name' => $user->name_first,
                 'last_name' => $user->name_last,
-                'language' => $user->language,
+                'language' => 'en',
+                'root_admin' => false,
+                '2fa' => false,
+                'created_at' => $this->formatTimestamp($user->created_at),
+                'updated_at' => $this->formatTimestamp($user->updated_at),
             ],
         ]);
     }
