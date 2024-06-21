@@ -15,10 +15,13 @@ class ManageSettings extends ManageRecords
     {
         return [
             'panel' => Tab::make('Panel Settings')
+                ->icon('tabler-home') // TODO search for a better icon for this
                 ->modifyQueryUsing(fn (Builder $query) => $query->where('tabs', 'Panel')),
             'mail' => Tab::make('Mail Settings')
+                ->icon('tabler-mail')
                 ->modifyQueryUsing(fn (Builder $query) => $query->where('tabs', 'Mail')),
             'Advanced' => Tab::make('Advanced Settings')
+                ->icon('tabler-adjustments-alt')
                 ->modifyQueryUsing(fn (Builder $query) => $query->where('tabs', 'Advanced')),
         ];
     }

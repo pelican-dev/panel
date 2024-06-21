@@ -18,7 +18,7 @@ class Setting extends Model
 
     protected $fillable = ['key', 'label', 'value', 'type', 'options', 'description', 'limit', 'tabs'];
 
-    protected $rowsTest = [
+    protected $DefaultSettings = [
         [
             'key' => 'FILAMENT_TOP_NAVIGATION',
             'label' => 'Topbar or Sidebar',
@@ -103,7 +103,7 @@ class Setting extends Model
         ],
         [
             'key' => 'RECAPTCHA_ENABLED',
-            'label' => 'Status',
+            'label' => 'Recaptcha Status',
             'value' => 'true',
             'type' => 'toggle-buttons',
             'tabs' => 'Advanced',
@@ -112,7 +112,7 @@ class Setting extends Model
         ],
         [
             'key' => 'RECAPTCHA_WEBSITE_KEY',
-            'label' => 'Site Key',
+            'label' => 'Recaptcha Site Key',
             'value' => '6LcJcjwUAAAAAO_Xqjrtj9wWufUpYRnK6BW8lnfn',
             'type' => 'password',
             'tabs' => 'Advanced',
@@ -121,18 +121,45 @@ class Setting extends Model
         ],
         [
             'key' => 'RECAPTCHA_SECRET_KEY',
-            'label' => 'Secret Key',
+            'label' => 'Recaptcha Secret Key',
             'value' => '6LcJcjwUAAAAALOcDJqAEYKTDhwELCkzUkNDQ0J5',
             'type' => 'password',
             'tabs' => 'Advanced',
             'description' => 'Used for communication between your site and Google. Be sure to keep it a secret.',
             'limit' => 255,
         ],
+        [
+            'key' => 'PANEL_CLIENT_ALLOCATIONS_ENABLED',
+            'label' => 'Automatic Allocation Status',
+            'value' => 'false',
+            'type' => 'toggle-buttons',
+            'tabs' => 'Advanced',
+            'description' => 'If enabled users will have the option to automatically create new allocations for their server via the frontend.',
+            'limit' => 255,
+        ],
+        [
+            'key' => 'PANEL_CLIENT_ALLOCATIONS_RANGE_START',
+            'label' => 'Automatic Allocation Starting Port',
+            'value' => '',
+            'type' => 'number',
+            'tabs' => 'Advanced',
+            'description' => 'The starting port in the range that can be automatically allocated.',
+            'limit' => 255,
+        ],
+        [
+            'key' => 'PANEL_CLIENT_ALLOCATIONS_RANGE_END',
+            'label' => 'Automatic Allocation Ending Port',
+            'value' => '',
+            'type' => 'number',
+            'tabs' => 'Advanced',
+            'description' => 'The ending port in the range that can be automatically allocated.',
+            'limit' => 255,
+        ],
     ];
 
     public function getRows()
     {
-        $rows = $this->rowsTest;
+        $rows = $this->DefaultSettings;
         foreach ($rows as &$row) {
             $row['value'] = env($row['key']);
         }
