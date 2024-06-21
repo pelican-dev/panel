@@ -24,7 +24,7 @@ class RunTaskJob extends Job implements ShouldQueue
      */
     public function __construct(public Task $task, public bool $manualRun = false)
     {
-        $this->queue = 'standard';
+
     }
 
     /**

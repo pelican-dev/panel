@@ -164,7 +164,7 @@ class EggConfigurationService
             // variable from the server configuration.
             $plucked = Arr::get(
                 $structure,
-                preg_replace('/^env\./', 'build.environment.', $key),
+                preg_replace('/^env\./', 'server.environment.', $key),
                 ''
             );
 
