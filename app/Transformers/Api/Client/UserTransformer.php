@@ -2,7 +2,6 @@
 
 namespace App\Transformers\Api\Client;
 
-use Illuminate\Support\Str;
 use App\Models\User;
 
 class UserTransformer extends BaseClientTransformer
@@ -19,15 +18,19 @@ class UserTransformer extends BaseClientTransformer
      * Transforms a User model into a representation that can be shown to regular
      * users of the API.
      */
-    public function transform(User $model): array
+    public function transform(User $user): array
     {
         return [
-            'uuid' => $model->uuid,
-            'username' => $model->username,
-            'email' => $model->email,
-            'image' => 'https://gravatar.com/avatar/' . md5(Str::lower($model->email)),
-            '2fa_enabled' => $model->use_totp,
-            'created_at' => $model->created_at->toAtomString(),
+            'uuid' => $user->uuid,
+            'username' => $user->username,
+            'email' => $user->email,
+            'first_name' => $user->name_first,
+            'last_name' => $user->name_last,
+            'language' => $user->language,
+            'root_admin' => (bool) $user->root_admin,
+            '2fa' => (bool) $user->use_totp,
+            'created_at' => $this->formatTimestamp($user->created_at),
+            'updated_at' => $this->formatTimestamp($user->updated_at),
         ];
     }
 }
