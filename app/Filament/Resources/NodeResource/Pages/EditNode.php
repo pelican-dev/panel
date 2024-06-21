@@ -132,8 +132,8 @@ class EditNode extends EditRecord
                                 ])
                                 ->label(trans('strings.port'))
                                 ->helperText('If you are running the daemon behind Cloudflare you should set the daemon port to 8443 to allow websocket proxying over SSL.')
-                                ->minValue(0)
-                                ->maxValue(65536)
+                                ->minValue(1)
+                                ->maxValue(65535)
                                 ->default(8080)
                                 ->required()
                                 ->integer(),
@@ -217,8 +217,8 @@ class EditNode extends EditRecord
                             Forms\Components\TextInput::make('daemon_sftp')
                                 ->columnSpan(['default' => 1, 'sm' => 1, 'md' => 1, 'lg' => 3])
                                 ->label('SFTP Port')
-                                ->minValue(0)
-                                ->maxValue(65536)
+                                ->minValue(1)
+                                ->maxValue(65535)
                                 ->default(2022)
                                 ->required()
                                 ->integer(),
