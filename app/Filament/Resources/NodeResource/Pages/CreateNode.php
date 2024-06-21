@@ -134,8 +134,8 @@ class CreateNode extends CreateRecord
                                 ])
                                 ->label(trans('strings.port'))
                                 ->helperText('If you are running the daemon behind Cloudflare you should set the daemon port to 8443 to allow websocket proxying over SSL.')
-                                ->minValue(0)
-                                ->maxValue(65536)
+                                ->minValue(1)
+                                ->maxValue(65535)
                                 ->default(8080)
                                 ->required()
                                 ->integer(),
@@ -245,8 +245,8 @@ class CreateNode extends CreateRecord
                             Forms\Components\TextInput::make('daemon_sftp')
                                 ->columnSpan(1)
                                 ->label('SFTP Port')
-                                ->minValue(0)
-                                ->maxValue(65536)
+                                ->minValue(1)
+                                ->maxValue(65535)
                                 ->default(2022)
                                 ->required()
                                 ->integer(),

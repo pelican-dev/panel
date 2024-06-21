@@ -310,7 +310,7 @@ class CreateServer extends CreateRecord
                                 ->live()
                                 ->afterStateUpdated(function ($state, Forms\Set $set, Forms\Get $get, $old) {
                                     $egg = Egg::query()->find($state);
-                                    $set('startup', $egg->startup);
+                                    $set('startup', $egg->startup ?? '');
                                     $set('image', '');
 
                                     $variables = $egg->variables ?? [];
