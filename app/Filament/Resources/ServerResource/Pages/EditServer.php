@@ -2,6 +2,9 @@
 
 namespace App\Filament\Resources\ServerResource\Pages;
 
+use App\Models\Node;
+use App\Models\Objects\Endpoint;
+use Illuminate\Support\HtmlString;
 use LogicException;
 use App\Filament\Resources\ServerResource;
 use App\Http\Controllers\Admin\ServersController;
@@ -15,7 +18,6 @@ use App\Enums\ServerState;
 use App\Models\Egg;
 use App\Models\Server;
 use App\Models\ServerVariable;
-use App\Repositories\Daemon\DaemonServerRepository;
 use App\Services\Servers\ServerDeletionService;
 use Filament\Forms\Components\Tabs;
 use Filament\Forms\Form;
@@ -27,6 +29,11 @@ use Webbingbrasil\FilamentCopyActions\Forms\Actions\CopyAction;
 
 class EditServer extends EditRecord
 {
+    public ?Node $node = null;
+    public ?Egg $egg = null;
+    public array $ports = [];
+    public array $eggDefaultPorts = [];
+
     protected static string $resource = ServerResource::class;
 
     public function form(Form $form): Form
@@ -152,7 +159,8 @@ class EditServer extends EditRecord
                                     ])
                                     ->disabled(),
                             ]),
-                        Tabs\Tab::make('Environment')
+                        Tabs\Tab::make('env-tab')
+                            ->label('Environment')
                             ->icon('tabler-brand-docker')
                             ->schema([
                                 Forms\Components\Fieldset::make('Resource Limits')
@@ -437,6 +445,9 @@ class EditServer extends EditRecord
                                         'md' => 3,
                                         'lg' => 5,
                                     ])
+                                    ->afterStateHydrated(function (Forms\Set $set, Forms\Get $get) {
+                                        // $this->resetEggVariables($set, $get);
+                                    })
                                     ->relationship('egg', 'name')
                                     ->searchable()
                                     ->preload()
@@ -458,6 +469,50 @@ class EditServer extends EditRecord
                                     ])
                                     ->required(),
 
+                                Forms\Components\TagsInput::make('ports')
+                                    ->columnSpan(3)
+                                    ->placeholder('Example: 25565, 8080, 1337-1340')
+                                    ->splitKeys(['Tab', ' ', ','])
+                                    ->helperText(new HtmlString('
+                                        These are the ports that users can connect to this Server through.
+                                        <br />
+                                        You would typically port forward these on your home network.
+                                    '))
+                                    ->label('Ports')
+                                    ->formatStateUsing(fn (Server $server) => $server->ports->map(fn ($port) => (string) $port)->all())
+                                    ->afterStateUpdated(self::ports(...))
+                                    ->hintAction(
+                                        Forms\Components\Actions\Action::make('asdf')
+                                            ->action(function (Forms\Get $get, Forms\Set $set) {
+                                                $this->resetEggVariables($set, $get);
+                                            }))
+                                    ->live(),
+
+                                Forms\Components\Repeater::make('assignments')
+                                    ->columnSpan(3)
+                                    ->defaultItems(fn () => count($this->eggDefaultPorts))
+                                    ->label('Port Assignments')
+                                    ->helperText(fn (Forms\Get $get) => empty($get('ports')) ? 'You must add ports to assign them!' : '')
+                                    ->live()
+                                    ->addable(false)
+                                    ->deletable(false)
+                                    ->reorderable(false)
+                                    ->simple(
+                                        Forms\Components\Select::make('port')
+                                            ->live()
+                                            ->disabled(fn (Forms\Get $get) => empty($get('../../ports')) || empty($get('../../assignments')))
+                                            ->prefix(function (Forms\Components\Component $component) {
+                                                $key = str($component->getStatePath())->beforeLast('.')->afterLast('.')->toString();
+
+                                                dump($key);
+
+                                                return $key;
+                                            })
+                                            ->disableOptionsWhenSelectedInSiblingRepeaterItems()
+                                            ->options(fn (Forms\Get $get) => $this->ports)
+                                            ->required(),
+                                    ),
+
                                 Forms\Components\Textarea::make('startup')
                                     ->label('Startup Command')
                                     ->required()
@@ -474,12 +529,11 @@ class EditServer extends EditRecord
                                         'md' => 4,
                                         'lg' => 6,
                                     ])
-                                    ->rows(function ($state) {
-                                        return str($state)->explode("\n")->reduce(
-                                            fn (int $carry, $line) => $carry + floor(strlen($line) / 125),
-                                            0
-                                        );
-                                    }),
+                                    ->rows(fn ($state) => str($state)->explode("\n")->reduce(
+                                        fn (int $carry, $line) => $carry + floor(strlen($line) / 125), 0
+                                    )),
+
+                                Forms\Components\Hidden::make('environment')->default([]),
 
                                 Forms\Components\Repeater::make('server_variables')
                                     ->relationship('serverVariables')
@@ -523,10 +577,10 @@ class EditServer extends EditRecord
                                             $component = $component
                                                 ->live(onBlur: true)
                                                 ->hintIcon('tabler-code')
-                                                ->label(fn (ServerVariable $serverVariable) => $serverVariable->variable->name)
-                                                ->hintIconTooltip(fn (ServerVariable $serverVariable) => $serverVariable->variable->rules)
-                                                ->prefix(fn (ServerVariable $serverVariable) => '{{' . $serverVariable->variable->env_variable . '}}')
-                                                ->helperText(fn (ServerVariable $serverVariable) => empty($serverVariable->variable->description) ? '—' : $serverVariable->variable->description);
+                                                ->label(fn (ServerVariable $serverVariable) => $serverVariable->variable?->name)
+                                                ->hintIconTooltip(fn (ServerVariable $serverVariable) => $serverVariable->variable?->rules)
+                                                ->prefix(fn (ServerVariable $serverVariable) => '{{' . $serverVariable->variable?->env_variable . '}}')
+                                                ->helperText(fn (ServerVariable $serverVariable) => empty($serverVariable->variable?->description) ? '—' : $serverVariable->variable->description);
                                         }
 
                                         return $components;
@@ -739,5 +793,82 @@ class EditServer extends EditRecord
             ->each(fn ($value) => str($value)->trim())
             ->mapWithKeys(fn ($value) => [$value => $value])
             ->all();
+    }
+
+    public function ports($state, Forms\Set $set)
+    {
+        $ports = collect();
+        foreach ($state as $portEntry) {
+            if (str_contains($portEntry, '-')) {
+                [$start, $end] = explode('-', $portEntry);
+                if (!is_numeric($start) || !is_numeric($end)) {
+                    continue;
+                }
+
+                $start = max((int) $start, Endpoint::PORT_FLOOR);
+                $end = min((int) $end, Endpoint::PORT_CEIL);
+                for ($i = $start; $i <= $end; $i++) {
+                    $ports->push($i);
+                }
+            }
+
+            if (!is_numeric($portEntry)) {
+                continue;
+            }
+
+            $ports->push((int) $portEntry);
+        }
+
+        $uniquePorts = $ports->unique()->values();
+        if ($ports->count() > $uniquePorts->count()) {
+            $ports = $uniquePorts;
+        }
+
+        $ports = $ports->filter(fn ($port) => $port > 1024 && $port < 65535)->values();
+
+        $set('ports', $ports->all());
+        $this->ports = $ports->all();
+    }
+
+    public function resetEggVariables(Forms\Set $set, Forms\Get $get)
+    {
+        $set('assignments', []);
+
+        $i = 0;
+        $this->eggDefaultPorts = [];
+        if (str_contains($get('startup'), '{{SERVER_PORT}}')) {
+            $this->eggDefaultPorts['SERVER_PORT'] = null;
+            $set('assignments.SERVER_PORT', ['port' => null]);
+        }
+
+        $variables = $this->getRecord()->egg->variables ?? [];
+        $serverVariables = collect();
+        $this->ports = [];
+        foreach ($variables as $variable) {
+            if (str_contains($variable->rules, 'port')) {
+                $this->eggDefaultPorts[$variable->env_variable] = $variable->default_value;
+                $this->ports[] = (int) $variable->default_value;
+
+                $set("assignments.$variable->env_variable", ['port' => $i++]);
+
+                continue;
+            }
+
+            $serverVariables->add($variable->toArray());
+        }
+
+        $set('ports', $this->ports);
+
+        $variables = [];
+        $set($path = 'server_variables', $serverVariables->sortBy(['sort'])->all());
+        for ($i = 0; $i < $serverVariables->count(); $i++) {
+            $set("$path.$i.variable_value", $serverVariables[$i]['default_value']);
+            $set("$path.$i.variable_id", $serverVariables[$i]['id']);
+            $variables[$serverVariables[$i]['env_variable']] = $serverVariables[$i]['default_value'];
+        }
+
+        $set('environment', $variables);
+
+        // dump($variables, $this->ports, $this->eggDefaultPorts, $get('assignments'));
     }
 }
