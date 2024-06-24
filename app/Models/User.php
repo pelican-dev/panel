@@ -42,7 +42,7 @@ use App\Notifications\SendPasswordReset as ResetPasswordNotification;
  * @property bool $use_totp
  * @property string|null $totp_secret
  * @property \Illuminate\Support\Carbon|null $totp_authenticated_at
- * @property array $oauth
+ * @property array|null $oauth
  * @property bool $gravatar
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
@@ -165,7 +165,7 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
         'language' => 'string',
         'use_totp' => 'boolean',
         'totp_secret' => 'nullable|string',
-        'oauth' => 'array',
+        'oauth' => 'array|nullable',
     ];
 
     protected function casts(): array
@@ -215,9 +215,9 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
     }
 
     /**
-     * Return the user model in a format that can be passed over to Vue templates.
+     * Return the user model in a format that can be passed over to React templates.
      */
-    public function toVueObject(): array
+    public function toReactObject(): array
     {
         return collect($this->toArray())->except(['id', 'external_id'])->toArray();
     }
