@@ -66,7 +66,7 @@ class ListUsers extends ListRecords
             ->actions([
                 Tables\Actions\EditAction::make(),
             ])
-            ->checkIfRecordIsSelectableUsing(fn (User $user) => !auth()->user()->id === $user->id && !$user->isLastRootAdmin() && !$user->servers_count)
+            ->checkIfRecordIsSelectableUsing(fn (User $user) => auth()->user()->id !== $user->id && !$user->isLastRootAdmin() && !$user->servers_count)
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
