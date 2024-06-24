@@ -191,7 +191,7 @@ class EditProfile extends \Filament\Pages\Auth\EditProfile
                                 Tab::make('API Keys')
                                     ->icon('tabler-key')
                                     ->schema([
-                                        Grid::make('asdf')->columns(5)->schema([
+                                        Grid::make(5)->schema([
                                             Section::make('Create API Key')->columnSpan(3)->schema([
                                                 TextInput::make('description')
                                                     ->live(),
