@@ -4,6 +4,7 @@ namespace App\Filament\Resources\ServerResource\Pages;
 
 use App\Models\Node;
 use App\Models\Objects\Endpoint;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\HtmlString;
 use LogicException;
 use App\Filament\Resources\ServerResource;
@@ -445,9 +446,6 @@ class EditServer extends EditRecord
                                         'md' => 3,
                                         'lg' => 5,
                                     ])
-                                    ->afterStateHydrated(function (Forms\Set $set, Forms\Get $get) {
-                                        // $this->resetEggVariables($set, $get);
-                                    })
                                     ->relationship('egg', 'name')
                                     ->searchable()
                                     ->preload()
@@ -481,16 +479,56 @@ class EditServer extends EditRecord
                                     ->label('Ports')
                                     ->formatStateUsing(fn (Server $server) => $server->ports->map(fn ($port) => (string) $port)->all())
                                     ->afterStateUpdated(self::ports(...))
-                                    ->hintAction(
-                                        Forms\Components\Actions\Action::make('asdf')
-                                            ->action(function (Forms\Get $get, Forms\Set $set) {
-                                                $this->resetEggVariables($set, $get);
-                                            }))
                                     ->live(),
+
+                                Forms\Components\Repeater::make('portVariables')
+                                    ->label('Port Assignments (SV)')
+                                    ->columnSpan(3)
+                                    ->addable(false)
+                                    ->deletable(false)
+
+                                    ->mutateRelationshipDataBeforeSaveUsing(function ($data) {
+                                        $portIndex = $data['port'];
+                                        unset($data['port']);
+
+                                        return [
+                                            'variable_value' => (string) $this->ports[$portIndex],
+                                        ];
+                                    })
+
+                                    ->relationship('serverVariables', function (Builder $query) {
+                                        $query->whereHas('variable', function (Builder $query) {
+                                            $query->where('rules', 'like', '%port%');
+                                        });
+                                    })
+
+                                    ->simple(
+                                        Forms\Components\Select::make('port')
+                                            ->live()
+                                            ->disabled(fn (Forms\Get $get) => empty($get('../../ports')) || empty($get('../../assignments')))
+                                            ->prefix(function (Forms\Components\Component $component, ServerVariable $serverVariable) {
+                                                return $serverVariable->variable->env_variable;
+                                            })
+
+                                            ->formatStateUsing(function (ServerVariable $serverVariable, Forms\Get $get) {
+                                                return array_search($serverVariable->variable_value, array_values($get('../../ports')));
+                                            })
+
+                                            ->disableOptionsWhenSelectedInSiblingRepeaterItems()
+                                            ->options(fn (Forms\Get $get) => $this->ports)
+                                            ->required(),
+                                    )
+                                ,
 
                                 Forms\Components\Repeater::make('assignments')
                                     ->columnSpan(3)
-                                    ->defaultItems(fn () => count($this->eggDefaultPorts))
+                                    ->afterStateHydrated(function (Forms\Set $set, Forms\Get $get, Server $server) {
+                                        $this->ports($ports = $get('ports'), $set);
+
+                                        foreach ($this->portOptions($server->egg) as $key => $port) {
+                                            $set("assignments.$key", ['port' => $portIndex = array_search($port, array_values($ports))]);
+                                        }
+                                    })
                                     ->label('Port Assignments')
                                     ->helperText(fn (Forms\Get $get) => empty($get('ports')) ? 'You must add ports to assign them!' : '')
                                     ->live()
@@ -504,7 +542,6 @@ class EditServer extends EditRecord
                                             ->prefix(function (Forms\Components\Component $component) {
                                                 $key = str($component->getStatePath())->beforeLast('.')->afterLast('.')->toString();
 
-                                                dump($key);
 
                                                 return $key;
                                             })
@@ -536,7 +573,11 @@ class EditServer extends EditRecord
                                 Forms\Components\Hidden::make('environment')->default([]),
 
                                 Forms\Components\Repeater::make('server_variables')
-                                    ->relationship('serverVariables')
+                                    ->relationship('serverVariables', function (Builder $query) {
+                                        $query->whereHas('variable', function (Builder $query) {
+                                            $query->whereNot('rules', 'like', '%port%');
+                                        });
+                                    })
                                     ->grid()
                                     ->mutateRelationshipDataBeforeSaveUsing(function (array &$data): array {
                                         foreach ($data as $key => $value) {
@@ -764,11 +805,17 @@ class EditServer extends EditRecord
         return $data;
     }
 
-    private function shouldHideComponent(Forms\Get $get, Forms\Components\Component $component): bool
+    private function shouldHideComponent(ServerVariable $serverVariable, Forms\Components\Component $component): bool
     {
-        $containsRuleIn = str($get('rules'))->explode('|')->reduce(
+        $rules = str($serverVariable->variable->rules)->explode('|');
+
+        $containsRuleIn = $rules->reduce(
             fn ($result, $value) => $result === true && !str($value)->startsWith('in:'), true
         );
+
+        if ($rules->contains('port')) {
+            return true;
+        }
 
         if ($component instanceof Forms\Components\Select) {
             return $containsRuleIn;
@@ -781,9 +828,10 @@ class EditServer extends EditRecord
         throw new \Exception('Component type not supported: ' . $component::class);
     }
 
-    private function getSelectOptionsFromRules(Forms\Get $get): array
+    private function getSelectOptionsFromRules(ServerVariable $serverVariable): array
     {
-        $inRule = str($get('rules'))->explode('|')->reduce(
+        $rules = str($serverVariable->variable->rules)->explode('|');
+        $inRule = $rules->reduce(
             fn ($result, $value) => str($value)->startsWith('in:') ? $value : $result, ''
         );
 
@@ -870,5 +918,40 @@ class EditServer extends EditRecord
         $set('environment', $variables);
 
         // dump($variables, $this->ports, $this->eggDefaultPorts, $get('assignments'));
+    }
+
+    public function portOptions(Egg $egg, string $startup = null): array
+    {
+        if ($egg instanceof Server) {
+            $egg = $egg->egg;
+        }
+
+        $options = [];
+
+        if (empty($startup)) {
+            $startup = $egg->startup;
+        }
+
+        if (str_contains($startup, '{{SERVER_PORT}}')) {
+            $options['SERVER_PORT'] = null;
+        }
+
+        // startup SERVER_PORT
+        // ...
+        // ...
+
+        foreach ($egg->variables as $variable) {
+            if (!in_array('port', explode('|', $variable->rules))) {
+                continue;
+            }
+
+            // dump($variable);
+
+            $options[$variable->env_variable] = $variable->default_value;
+        }
+
+//        dump($options);
+
+        return $options;
     }
 }
