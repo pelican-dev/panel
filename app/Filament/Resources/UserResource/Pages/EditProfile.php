@@ -203,7 +203,7 @@ class EditProfile extends \Filament\Pages\Auth\EditProfile
 
                                                 TextInput::make('description')
                                                     ->live(),
-                                              
+
                                                 TagsInput::make('allowed_ips')
                                                     ->live()
                                                     ->splitKeys([',', ' ', 'Tab'])
