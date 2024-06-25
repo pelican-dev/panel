@@ -14,7 +14,6 @@ use AbdelhamidErrahmouni\FilamentMonacoEditor\MonacoEditor;
 use App\Services\Eggs\Sharing\EggExporterService;
 use Filament\Forms;
 use Filament\Forms\Form;
-use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 
 class EditEgg extends EditRecord
 {
@@ -204,24 +203,22 @@ class EditEgg extends EditRecord
     protected function getHeaderActions(): array
     {
         return [
-            Actions\DeleteAction::make()
-                ->icon('tabler-trash')
+            Actions\DeleteAction::make('deleteEgg')
                 ->disabled(fn (Egg $egg): bool => $egg->servers()->count() > 0)
                 ->label(fn (Egg $egg): string => $egg->servers()->count() <= 0 ? 'Delete' : 'In Use'),
 
-            Actions\Action::make('export')
-                ->icon('tabler-download')
+            Actions\Action::make('exportEgg')
+                ->label('Export')
                 ->color('primary')
                 ->action(fn (EggExporterService $service, Egg $egg) => response()->streamDownload(function () use ($service, $egg) {
                     echo $service->handle($egg->id);
                 }, 'egg-' . $egg->getKebabName() . '.json')),
 
-            Actions\Action::make('import')
+            Actions\Action::make('importEgg')
                 ->label('Import')
-                ->icon('tabler-egg')
                 ->form([
                     Forms\Components\Placeholder::make('warning')
-                        ->label('This will update your current egg to the one you provide, no matter what!'),
+                        ->label('This will overwrite the current egg to the one you upload.'),
                     Tabs::make('Tabs')
                         ->tabs([
                             Tabs\Tab::make('From File')
@@ -255,6 +252,7 @@ class EditEgg extends EditRecord
                         } catch (Exception $exception) {
                             Notification::make()
                                 ->title('Import Failed')
+                                ->body($exception->getMessage())
                                 ->danger()
                                 ->send();
 
@@ -270,6 +268,7 @@ class EditEgg extends EditRecord
                         } catch (Exception $exception) {
                             Notification::make()
                                 ->title('Import Failed')
+                                ->body($exception->getMessage())
                                 ->danger()
                                 ->send();
 
@@ -279,6 +278,7 @@ class EditEgg extends EditRecord
                         }
                     }
 
+                    $this->refreshForm();
                     Notification::make()
                         ->title('Import Success')
                         ->success()
@@ -287,6 +287,11 @@ class EditEgg extends EditRecord
 
             $this->getSaveFormAction()->formId('form'),
         ];
+    }
+
+    public function refreshForm(): void
+    {
+        $this->fillForm();
     }
 
     protected function getFormActions(): array
