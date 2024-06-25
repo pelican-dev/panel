@@ -143,7 +143,7 @@ class CreateServer extends CreateRecord
                                         ->datalist(Node::find($get('node_id'))?->ipAddresses() ?? [])
                                         ->label('IP Address')
                                         ->inlineLabel()
-                                        ->ipv4()
+                                        ->ip()
                                         ->helperText("Usually your machine's public IP unless you are port forwarding.")
                                         // ->selectablePlaceholder(false)
                                         ->required(),
