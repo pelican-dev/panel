@@ -4,7 +4,11 @@ namespace App\Filament\Resources\EggResource\Pages;
 
 use App\Filament\Resources\EggResource;
 use App\Models\Egg;
+use App\Services\Eggs\Sharing\EggImporterService;
+use Exception;
 use Filament\Actions;
+use Filament\Forms\Components\Tabs;
+use Filament\Notifications\Notification;
 use Filament\Resources\Pages\EditRecord;
 use AbdelhamidErrahmouni\FilamentMonacoEditor\MonacoEditor;
 use App\Services\Eggs\Sharing\EggExporterService;
@@ -199,18 +203,95 @@ class EditEgg extends EditRecord
     protected function getHeaderActions(): array
     {
         return [
-            Actions\DeleteAction::make()
+            Actions\DeleteAction::make('deleteEgg')
                 ->disabled(fn (Egg $egg): bool => $egg->servers()->count() > 0)
-                ->label(fn (Egg $egg): string => $egg->servers()->count() <= 0 ? 'Delete Egg' : 'Egg In Use'),
-            Actions\Action::make('export')
-                ->icon('tabler-download')
-                ->label('Export Egg')
+                ->label(fn (Egg $egg): string => $egg->servers()->count() <= 0 ? 'Delete' : 'In Use'),
+
+            Actions\Action::make('exportEgg')
+                ->label('Export')
                 ->color('primary')
                 ->action(fn (EggExporterService $service, Egg $egg) => response()->streamDownload(function () use ($service, $egg) {
                     echo $service->handle($egg->id);
                 }, 'egg-' . $egg->getKebabName() . '.json')),
+
+            Actions\Action::make('importEgg')
+                ->label('Import')
+                ->form([
+                    Forms\Components\Placeholder::make('warning')
+                        ->label('This will overwrite the current egg to the one you upload.'),
+                    Tabs::make('Tabs')
+                        ->tabs([
+                            Tabs\Tab::make('From File')
+                                ->icon('tabler-file-upload')
+                                ->schema([
+                                    Forms\Components\FileUpload::make('egg')
+                                        ->label('Egg')
+                                        ->hint('eg. minecraft.json')
+                                        ->acceptedFileTypes(['application/json'])
+                                        ->storeFiles(false),
+                                ]),
+                            Tabs\Tab::make('From URL')
+                                ->icon('tabler-world-upload')
+                                ->schema([
+                                    Forms\Components\TextInput::make('url')
+                                        ->label('URL')
+                                        ->hint('Link to the egg file (eg. minecraft.json)')
+                                        ->url(),
+                                ]),
+                        ])
+                        ->contained(false),
+
+                ])
+                ->action(function (array $data, Egg $egg): void {
+                    /** @var EggImporterService $eggImportService */
+                    $eggImportService = resolve(EggImporterService::class);
+
+                    if (!empty($data['egg'])) {
+                        try {
+                            $eggImportService->fromFile($data['egg'], $egg);
+                        } catch (Exception $exception) {
+                            Notification::make()
+                                ->title('Import Failed')
+                                ->body($exception->getMessage())
+                                ->danger()
+                                ->send();
+
+                            report($exception);
+
+                            return;
+                        }
+                    }
+
+                    if (!empty($data['url'])) {
+                        try {
+                            $eggImportService->fromUrl($data['url'], $egg);
+                        } catch (Exception $exception) {
+                            Notification::make()
+                                ->title('Import Failed')
+                                ->body($exception->getMessage())
+                                ->danger()
+                                ->send();
+
+                            report($exception);
+
+                            return;
+                        }
+                    }
+
+                    $this->refreshForm();
+                    Notification::make()
+                        ->title('Import Success')
+                        ->success()
+                        ->send();
+                }),
+
             $this->getSaveFormAction()->formId('form'),
         ];
+    }
+
+    public function refreshForm(): void
+    {
+        $this->fillForm();
     }
 
     protected function getFormActions(): array
