@@ -4,12 +4,17 @@ namespace App\Filament\Resources\EggResource\Pages;
 
 use App\Filament\Resources\EggResource;
 use App\Models\Egg;
+use App\Services\Eggs\Sharing\EggImporterService;
+use Exception;
 use Filament\Actions;
+use Filament\Forms\Components\Tabs;
+use Filament\Notifications\Notification;
 use Filament\Resources\Pages\EditRecord;
 use AbdelhamidErrahmouni\FilamentMonacoEditor\MonacoEditor;
 use App\Services\Eggs\Sharing\EggExporterService;
 use Filament\Forms;
 use Filament\Forms\Form;
+use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 
 class EditEgg extends EditRecord
 {
@@ -210,6 +215,81 @@ class EditEgg extends EditRecord
                 ->action(fn (EggExporterService $service, Egg $egg) => response()->streamDownload(function () use ($service, $egg) {
                     echo $service->handle($egg->id);
                 }, 'egg-' . $egg->getKebabName() . '.json')),
+
+            Actions\Action::make('import')
+                ->label('Import')
+                ->icon('tabler-egg')
+                ->form([
+                    Forms\Components\Placeholder::make('warning')
+                        ->label('This will update your current egg to the one you provide, no matter what!'),
+                    Tabs::make('Tabs')
+                        ->tabs([
+                            Tabs\Tab::make('From File')
+                                ->icon('tabler-file-upload')
+                                ->schema([
+                                    Forms\Components\FileUpload::make('egg')
+                                        ->label('Egg')
+                                        ->hint('eg. minecraft.json')
+                                        ->acceptedFileTypes(['application/json'])
+                                        ->storeFiles(false),
+                                ]),
+                            Tabs\Tab::make('From URL')
+                                ->icon('tabler-world-upload')
+                                ->schema([
+                                    Forms\Components\TextInput::make('url')
+                                        ->label('URL')
+                                        ->hint('Link to the egg file (eg. minecraft.json)')
+                                        ->url(),
+                                ]),
+                        ])
+                        ->contained(false),
+
+                ])
+                ->action(function (array $data, Egg $egg): void {
+                    /** @var EggImporterService $eggImportService */
+                    $eggImportService = resolve(EggImporterService::class);
+
+                    if (!empty($data['egg'])) {
+                        /** @var TemporaryUploadedFile[] $eggFile */
+                        $eggFile = $data['egg'];
+
+                        foreach ($eggFile as $file) {
+                            try {
+                                $eggImportService->fromFile($file, $egg);
+                            } catch (Exception $exception) {
+                                Notification::make()
+                                    ->title('Import Failed')
+                                    ->danger()
+                                    ->send();
+
+                                report($exception);
+
+                                return;
+                            }
+                        }
+                    }
+
+                    if (!empty($data['url'])) {
+                        try {
+                            $eggImportService->fromUrl($data['url'], $egg);
+                        } catch (Exception $exception) {
+                            Notification::make()
+                                ->title('Import Failed')
+                                ->danger()
+                                ->send();
+
+                            report($exception);
+
+                            return;
+                        }
+                    }
+
+                    Notification::make()
+                        ->title('Import Success')
+                        ->success()
+                        ->send();
+                }),
+
             $this->getSaveFormAction()->formId('form'),
         ];
     }
