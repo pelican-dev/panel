@@ -200,11 +200,12 @@ class EditEgg extends EditRecord
     {
         return [
             Actions\DeleteAction::make()
+                ->icon('tabler-trash')
                 ->disabled(fn (Egg $egg): bool => $egg->servers()->count() > 0)
-                ->label(fn (Egg $egg): string => $egg->servers()->count() <= 0 ? 'Delete Egg' : 'Egg In Use'),
+                ->label(fn (Egg $egg): string => $egg->servers()->count() <= 0 ? 'Delete' : 'In Use'),
+
             Actions\Action::make('export')
                 ->icon('tabler-download')
-                ->label('Export Egg')
                 ->color('primary')
                 ->action(fn (EggExporterService $service, Egg $egg) => response()->streamDownload(function () use ($service, $egg) {
                     echo $service->handle($egg->id);
