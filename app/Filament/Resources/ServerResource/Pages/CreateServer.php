@@ -169,7 +169,7 @@ class CreateServer extends CreateRecord
                                         ->label('Ports')
                                         ->inlineLabel()
                                         ->live()
-                                        ->afterStateUpdated(function ($state, Forms\Set $set, Forms\Get $get) {
+                                        ->afterStateUpdated(function ($state, Forms\Set $set) {
                                             $ports = collect();
                                             $update = false;
                                             foreach ($state as $portEntry) {
@@ -212,15 +212,7 @@ class CreateServer extends CreateRecord
                                                 $ports = $sortedPorts;
                                             }
 
-                                            $ip = $get('allocation_ip');
-                                            $filterdPorts = $ports
-                                                ->filter(fn ($port) => $port > 1024 && $port < 65535)
-                                                ->filter(fn ($port) => !Allocation::where('ip', $ip)->where('port', $port)->exists())
-                                                ->values();
-                                            if ($ports->count() > $filterdPorts->count()) {
-                                                $update = true;
-                                                $ports = $filterdPorts;
-                                            }
+                                            $ports = $ports->filter(fn ($port) => $port > 1024 && $port < 65535)->values();
 
                                             if ($update) {
                                                 $set('allocation_ports', $ports->all());

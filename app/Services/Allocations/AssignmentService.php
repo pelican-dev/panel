@@ -102,6 +102,10 @@ class AssignmentService
                 }
 
                 foreach ($insertData as $insert) {
+                    if (Allocation::where('ip', $insert['ip'])->where('port', $insert['port'])->exists()) {
+                        continue;
+                    }
+
                     $allocation = Allocation::query()->create($insert);
                     $ids[] = $allocation->id;
                 }
