@@ -250,22 +250,17 @@ class EditEgg extends EditRecord
                     $eggImportService = resolve(EggImporterService::class);
 
                     if (!empty($data['egg'])) {
-                        /** @var TemporaryUploadedFile[] $eggFile */
-                        $eggFile = $data['egg'];
+                        try {
+                            $eggImportService->fromFile($data['egg'], $egg);
+                        } catch (Exception $exception) {
+                            Notification::make()
+                                ->title('Import Failed')
+                                ->danger()
+                                ->send();
 
-                        foreach ($eggFile as $file) {
-                            try {
-                                $eggImportService->fromFile($file, $egg);
-                            } catch (Exception $exception) {
-                                Notification::make()
-                                    ->title('Import Failed')
-                                    ->danger()
-                                    ->send();
+                            report($exception);
 
-                                report($exception);
-
-                                return;
-                            }
+                            return;
                         }
                     }
 
