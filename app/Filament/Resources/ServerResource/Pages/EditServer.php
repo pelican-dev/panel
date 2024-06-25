@@ -43,27 +43,6 @@ class EditServer extends EditRecord
                 'lg' => 4,
             ])
             ->schema([
-                Forms\Components\ToggleButtons::make('condition')
-                    ->label('')
-                    ->inline()
-                    ->formatStateUsing(fn (Server $server) => $server->condition)
-                    ->options(fn ($state) => collect(array_merge(ContainerStatus::cases(), ServerState::cases()))
-                        ->filter(fn ($condition) => $condition->value === $state)
-                        ->mapWithKeys(fn ($state) => [$state->value => str($state->value)->replace('_', ' ')->ucwords()])
-                    )
-                    ->colors(collect(array_merge(ContainerStatus::cases(), ServerState::cases()))->mapWithKeys(
-                        fn ($status) => [$status->value => $status->color()]
-                    ))
-                    ->icons(collect(array_merge(ContainerStatus::cases(), ServerState::cases()))->mapWithKeys(
-                        fn ($status) => [$status->value => $status->icon()]
-                    ))
-                    ->columnSpan([
-                        'default' => 1,
-                        'sm' => 2,
-                        'md' => 2,
-                        'lg' => 2,
-                    ]),
-
                 Tabs::make('Tabs')
                     ->persistTabInQueryString()
                     ->columnSpan(6)
@@ -92,7 +71,7 @@ class EditServer extends EditRecord
                                         }))
                                     ->columnSpan([
                                         'default' => 2,
-                                        'sm' => 2,
+                                        'sm' => 1,
                                         'md' => 2,
                                         'lg' => 3,
                                     ])
@@ -104,14 +83,34 @@ class EditServer extends EditRecord
                                     ->label('Owner')
                                     ->columnSpan([
                                         'default' => 2,
-                                        'sm' => 2,
+                                        'sm' => 1,
                                         'md' => 2,
-                                        'lg' => 3,
+                                        'lg' => 2,
                                     ])
                                     ->relationship('user', 'username')
                                     ->searchable()
                                     ->preload()
                                     ->required(),
+
+                                Forms\Components\ToggleButtons::make('condition')
+                                    ->label('Server Status')
+                                    ->formatStateUsing(fn (Server $server) => $server->condition)
+                                    ->options(fn ($state) => collect(array_merge(ContainerStatus::cases(), ServerState::cases()))
+                                        ->filter(fn ($condition) => $condition->value === $state)
+                                        ->mapWithKeys(fn ($state) => [$state->value => str($state->value)->replace('_', ' ')->ucwords()])
+                                    )
+                                    ->colors(collect(array_merge(ContainerStatus::cases(), ServerState::cases()))->mapWithKeys(
+                                        fn ($status) => [$status->value => $status->color()]
+                                    ))
+                                    ->icons(collect(array_merge(ContainerStatus::cases(), ServerState::cases()))->mapWithKeys(
+                                        fn ($status) => [$status->value => $status->icon()]
+                                    ))
+                                    ->columnSpan([
+                                        'default' => 2,
+                                        'sm' => 1,
+                                        'md' => 1,
+                                        'lg' => 1,
+                                    ]),
 
                                 Forms\Components\Textarea::make('description')
                                     ->label('Description')
@@ -121,7 +120,7 @@ class EditServer extends EditRecord
                                     ->hintAction(CopyAction::make())
                                     ->columnSpan([
                                         'default' => 2,
-                                        'sm' => 2,
+                                        'sm' => 1,
                                         'md' => 2,
                                         'lg' => 3,
                                     ])
@@ -131,7 +130,7 @@ class EditServer extends EditRecord
                                     ->hintAction(CopyAction::make())
                                     ->columnSpan([
                                         'default' => 2,
-                                        'sm' => 2,
+                                        'sm' => 1,
                                         'md' => 2,
                                         'lg' => 3,
                                     ])
@@ -140,7 +139,7 @@ class EditServer extends EditRecord
                                     ->label('External ID')
                                     ->columnSpan([
                                         'default' => 2,
-                                        'sm' => 2,
+                                        'sm' => 1,
                                         'md' => 2,
                                         'lg' => 3,
                                     ])
@@ -150,7 +149,7 @@ class EditServer extends EditRecord
                                     ->relationship('node', 'name')
                                     ->columnSpan([
                                         'default' => 2,
-                                        'sm' => 2,
+                                        'sm' => 1,
                                         'md' => 2,
                                         'lg' => 3,
                                     ])
