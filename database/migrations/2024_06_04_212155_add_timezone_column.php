@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('users', function (Blueprint $table) {
-            $table->json('oauth')->nullable()->after('totp_authenticated_at');
+            $table->string('timezone')->default('UTC')->after('language');
         });
     }
 
@@ -22,7 +22,7 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('users', function (Blueprint $table) {
-            $table->dropColumn('oauth');
+            $table->dropColumn('timezone');
         });
     }
 };
