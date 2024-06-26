@@ -20,11 +20,10 @@ WORKDIR /var/www/html
 RUN apk update && apk add --no-cache \
     libpng-dev libjpeg-turbo-dev freetype-dev libzip-dev icu-dev \
     zip unzip curl \
-    caddy ca-certificates supervisor \
-    && docker-php-ext-install bcmath gd intl zip opcache pcntl posix
+    ca-certificates supervisor
 
-# Copy the Caddyfile to the container
-COPY Caddyfile /etc/caddy/Caddyfile
+# Additional PHP Extensions
+RUN docker-php-ext-install bcmath gd intl zip opcache pcntl posix
 
 # Copy the application code to the container
 COPY . .
@@ -44,13 +43,10 @@ RUN chmod -R 755 /var/www/html/storage \
 HEALTHCHECK --interval=5m --timeout=10s --start-period=5s --retries=3 \
   CMD curl -f http://localhost/up || exit 1
 
-EXPOSE 80:2019
-EXPOSE 443
-
 VOLUME /pelican-data
 
 # Start PHP-FPM
-CMD ["sh", "-c", "php-fpm & caddy run --config /etc/caddy/Caddyfile --adapter caddyfile"]
+CMD ["sh", "-c", "php-fpm"]
 
 ENTRYPOINT [ "/bin/ash", ".github/docker/entrypoint.sh" ]
 # CMD [ "supervisord", "-n", "-c", "/etc/supervisord.conf" ]
