@@ -1,0 +1,33 @@
+{{- if .Values.panel.enabled }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "panel.fullname" . }}-web
+  labels:
+    release: {{ .Release.Name }}
+    chart: {{ .Chart.Name }}-{{ .Chart.Version }}
+    {{- if or (.Values.labels) (.Values.panel.labels) }}
+      {{- mustMerge .Values.panel.labels .Values.labels | toYaml | nindent 4}}
+    {{- end }}
+  {{- with .Values.panel.service.annotations }}
+  annotations: {{- toYaml . | nindent 4 }}
+  {{- end }}
+spec:
+  type: {{ .Values.panel.service.type }}
+  selector:
+    component: panel
+    release: {{.Release.Name }}
+  ports:
+  {{- range .Values.panel.service.ports }}
+   -
+     {{- range $key, $val := . }}
+     {{ $key }}: {{ tpl (toString $val) $ }}
+     {{- end }}
+  {{- end }}
+  {{- if .Values.panel.service.loadBalancerIP }}
+  loadBalancerIP: {{ .Values.panel.service.loadBalancerIP }}
+  {{- end }}
+  {{- if .Values.panel.service.loadBalancerSourceRanges }}
+  loadBalancerSourceRanges: {{- toYaml .Values.panel.service.loadBalancerSourceRanges }}
+  {{- end }}
+{{- end }}

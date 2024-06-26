@@ -1,0 +1,83 @@
+{{/*
+  Create a default name for all services, truncating at 63 because of DNS
+*/}}
+{{- define "panel.fullname" -}}
+  {{- if not .Values.useStandardNaming }}
+    {{- .Release.Name }}
+  {{- else if .Values.fullnameOverride }}
+    {{- .Values.fullnameOverride | trunc 63 | trimSuffix "-" }}
+  {{- else }}
+    {{- $name := default .Chart.Name .Values.nameOverride }}
+    {{- if contains $name .Release.Name }}
+      {{- .Release.Name | trunc 63 | trimSuffix "-" }}
+    {{- else }}
+      {{- printf "%s-%s" .Release.Name $name | trunc 63 | trimSuffix "-" }}
+    {{- end }}
+  {{- end }}
+{{- end }}
+
+{{- define "generic_env_vars" }}
+  {{- range $i, $config := .Values.env }}
+  - name: {{ $config.name }}
+    value: {{ $config.value | quote }}
+  {{- end }}
+{{- end }}
+
+{{- define "panel_env_vars" }}
+  {{- range $i, $config := .Values.panel.env }}
+  - name: {{ $config.name }}
+    value: {{ $config.value | quote }}
+  {{- end }}
+{{- end }}
+
+{{- define "custom_envfrom" }}
+{{- end }}
+
+{{- define "standard_env" }}
+{{- end }}
+
+{{- define "container_extra_envvars" }}
+{{- end }}
+
+{{- define "panel_image" }}
+  {{- $repository := .Values.images.panel.repository | default .Values.defaultPelicanRepository -}}
+  {{- $tag := .Values.images.panel.tag | default .Values.defaultPelicanTag -}}
+  {{- $digest := .Values.images.panel.digest | default .Values.defaultPelicanDigest -}}
+  {{- if $digest }}
+    {{- printf "%s@%s" $repository $digest -}}
+  {{- else }}
+    {{- printf "%s:%s" $repository $tag -}}
+  {{- end }}
+{{- end }}
+
+{{- define "panel_nginx_config_path"}}
+  {{- printf "%s/pelican.conf" .Values.pelicanNginxHome }}
+{{- end }}
+
+{{- define "panel_nginx_config_mount" -}}
+- name: nginx-config
+  mountPath: {{ template "panel_nginx_config_path" . }}
+  subPath: pelican.conf
+  readOnly: True
+{{- end }}
+
+{{- define "panel_nginx_configmap" }}
+  {{- default (printf "%s-nginx-config" .Release.Name) .Values.panel.panelConfigConfigMapName }}
+{{- end }}
+
+{{- define "panel.serviceAccountName" -}}
+  {{ if .Values.fullnameOverride }}
+    {{- .Values.fullnameOverride | trunc 63 | trimSuffix "-" }}
+  {{- else }}
+    {{- $name := default .Chart.Name .Values.nameOverride }}
+    {{- if contains $name .Release.Name }}
+      {{- .Release.Name | trunc 63 | trimSuffix "-" }}
+    {{- else }}
+      {{- printf "%s-%s" .Release.Name $name | trunc 63 | trimSuffix "-" }}
+    {{- end }}
+  {{- end }}
+{{- end }}
+
+{{- define "panel_nginx_config_configmap_name" }}
+  {{- default (printf "%s-nginx-config" .Release.Name) .Values.panel.panelConfigConfigMapName }}
+{{- end }}

@@ -1,0 +1,25 @@
+---
+apiVersion: v2
+name: pelican-panel
+version: 1.14.0
+appVersion: 2.9.2
+description: Pelican Panel is an open-source, web-based application
+  designed for easy management of game servers.
+home: https://airflow.apache.org/
+sources:
+  - https://github.com/pelican-dev/panel
+icon: https://avatars.githubusercontent.com/u/163904900?s=200&v=4
+keywords:
+  - pelican
+  - panel
+  - game
+  - servers
+dependencies:
+  - name: mariadb
+    version: 18.2.2
+    repository: https://charts.bitnami.com/bitnami
+    condition: mariadb.enabled
+maintainers:
+  - email: steven@lutherlabs.com
+    name: Pelican Panel
+type: application

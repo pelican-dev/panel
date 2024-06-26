@@ -1,0 +1,181 @@
+{{/*
+ Licensed to the Apache Software Foundation (ASF) under one
+ or more contributor license agreements.  See the NOTICE file
+ distributed with this work for additional information
+ regarding copyright ownership.  The ASF licenses this file
+ to you under the Apache License, Version 2.0 (the
+ "License"); you may not use this file except in compliance
+ with the License.  You may obtain a copy of the License at
+
+   http://www.apache.org/licenses/LICENSE-2.0
+
+ Unless required by applicable law or agreed to in writing,
+ software distributed under the License is distributed on an
+ "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ KIND, either express or implied.  See the License for the
+ specific language governing permissions and limitations
+ under the License.
+*/}}
+
+################################
+## Pelican Panel Deployment
+#################################
+{{- if .Values.panel.enabled }}
+{{- $nodeSelector := or .Values.panel.nodeSelector .Values.nodeSelector }}
+{{- $affinity := or .Values.panel.affinity .Values.affinity }}
+{{- $tolerations := or .Values.panel.tolerations .Values.tolerations }}
+{{- $topologySpreadConstraints := or .Values.panel.topologySpreadConstraints .Values.topologySpreadConstraints }}
+{{- $revisionHistoryLimit := or .Values.panel.revisionHistoryLimit .Values.revisionHistoryLimit }}
+{{- $containerLifecycleHooks := or .Values.panel.containerLifecycleHooks .Values.containerLifecycleHooks }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "panel.fullname" . }}-panel
+  labels:
+    component: panel
+    release: {{ .Release.Name }}
+    chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
+    heritage: {{ .Release.Service }}
+    {{- with .Values.labels }}
+      {{- toYaml . | nindent 4 }}
+    {{- end }}
+  {{- if .Values.panel.annotations }}
+  annotations: {{- toYaml .Values.panel.annotations | nindent 4 }}
+  {{- end }}
+spec:
+  replicas: {{ .Values.panel.replicas }}
+  {{- if $revisionHistoryLimit }}
+  revisionHistoryLimit: {{ $revisionHistoryLimit }}
+  {{- end }}
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
+  selector:
+    matchLabels:
+      component: panel
+      release: {{ .Release.Name }}
+  template:
+    metadata:
+      labels:
+        component: panel
+        release: {{ .Release.Name }}
+        {{- if or (.Values.labels) (.Values.panel.labels) }}
+          {{- mustMerge .Values.panel.labels .Values.labels | toYaml | nindent 8 }}
+        {{- end }}
+      annotations:
+        checksum/metadata-secret: {{ include (print $.Template.BasePath "/secrets/mariadb-connection-secret.yaml") . | sha256sum }}
+        {{- if .Values.panelPodAnnotations }}
+          {{- toYaml .Values.panelPodAnnotations | nindent 8 }}
+        {{- end }}
+        {{- if .Values.panel.podAnnotations }}
+          {{- toYaml .Values.panel.podAnnotations | nindent 8 }}
+        {{- end }}
+    spec:
+      {{- if .Values.panel.hostAliases }}
+      hostAliases: {{- toYaml .Values.panel.hostAliases | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "panel.serviceAccountName" . }}
+      {{- if .Values.panel.priorityClassName }}
+      priorityClassName: {{ .Values.panel.priorityClassName }}
+      {{- end }}
+      {{- if .Values.schedulerName }}
+      schedulerName: {{ .Values.schedulerName }}
+      {{- end }}
+      nodeSelector: {{- toYaml $nodeSelector | nindent 8 }}
+      affinity:
+        {{- if $affinity }}
+          {{- toYaml $affinity | nindent 8 }}
+        {{- else }}
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - podAffinityTerm:
+              labelSelector:
+                matchLabels:
+                  component: panel
+              topologyKey: kubernetes.io/hostname
+            weight: 100
+        {{- end }}
+      tolerations: {{- toYaml $tolerations | nindent 8 }}
+      topologySpreadConstraints: {{- toYaml $topologySpreadConstraints | nindent 8 }}
+      restartPolicy: Always
+      initContainers:
+        {{- if .Values.panel.extraInitContainers }}
+          {{- tpl (toYaml .Values.panel.extraInitContainers) . | nindent 8 }}
+        {{- end }}
+      containers:
+        - name: panel
+          image: {{ template "panel_image" . }}
+          imagePullPolicy: {{ .Values.images.panel.pullPolicy }}
+          {{- if $containerLifecycleHooks  }}
+          lifecycle: {{- tpl (toYaml $containerLifecycleHooks) . | nindent 12 }}
+          {{- end }}
+          {{- if .Values.panel.command }}
+          command: {{ tpl (toYaml .Values.panel.command) . | nindent 12 }}
+          {{- end }}
+          {{- if .Values.panel.args }}
+          args: {{- tpl (toYaml .Values.panel.args) . | nindent 12 }}
+          {{- end }}
+          resources: {{- toYaml .Values.panel.resources | nindent 12 }}
+          volumeMounts:
+            {{- include "panel_nginx_config_mount" . | nindent 12 }}
+            {{- if or .Values.panel.panelNginxConfig .Values.panel.panelNginxConfigConfigMapName }}
+              {{- include "panel_nginx_config_mount" . | nindent 12 }}
+            {{- end }}
+          ports:
+            - name: panel-ui
+              containerPort: {{ .Values.ports.panel }}
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: {{ .Values.ports.panel }}
+              scheme: {{ .Values.panel.livenessProbe.scheme | default "http" }}
+            initialDelaySeconds: {{ .Values.panel.livenessProbe.initialDelaySeconds }}
+            timeoutSeconds: {{ .Values.panel.livenessProbe.timeoutSeconds }}
+            failureThreshold: {{ .Values.panel.livenessProbe.failureThreshold }}
+            periodSeconds: {{ .Values.panel.livenessProbe.periodSeconds }}
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: {{ .Values.ports.panel }}
+              scheme: {{ .Values.panel.readinessProbe.scheme | default "http" }}
+            initialDelaySeconds: {{ .Values.panel.readinessProbe.initialDelaySeconds }}
+            timeoutSeconds: {{ .Values.panel.readinessProbe.timeoutSeconds }}
+            failureThreshold: {{ .Values.panel.readinessProbe.failureThreshold }}
+            periodSeconds: {{ .Values.panel.readinessProbe.periodSeconds }}
+          startupProbe:
+            httpGet:
+              path: /health
+              port: {{ .Values.ports.panel }}
+              scheme: {{ .Values.panel.startupProbe.scheme | default "http" }}
+            timeoutSeconds: {{ .Values.panel.startupProbe.timeoutSeconds }}
+            failureThreshold: {{ .Values.panel.startupProbe.failureThreshold }}
+            periodSeconds: {{ .Values.panel.startupProbe.periodSeconds }}
+          envFrom: {{- include "custom_envfrom" . | default "\n  []" | indent 10 }}
+          env:
+            {{- include "generic_env_vars" . | indent 10 }}
+            {{- include "panel_env_vars" . | indent 10 }}
+            {{- include "container_extra_envvars" (list . .Values.panel.env) | indent 10 }}
+        {{- if .Values.panel.extraContainers }}
+          {{- tpl (toYaml .Values.panel.extraContainers) . | nindent 8 }}
+        {{- end }}
+      volumes:
+        {{- if or .Values.panel.panelNginxConfig .Values.panel.panelNginxConfigConfigMapName }}
+        # BYO ConfigMap
+        - name: nginx-config
+          configMap:
+            name: {{ template "panel_nginx_config_configmap_name" . }}
+        {{- else }}
+        - name: nginx-config
+          configMap:
+            name: {{ template "panel_nginx_configmap" . }}
+        {{- end }}
+
+        {{- end }}
+        {{- if .Values.volumes }}
+          {{- toYaml .Values.volumes | nindent 8 }}
+        {{- end }}
+        {{- if .Values.panel.extraVolumes }}
+          {{- tpl (toYaml .Values.panel.extraVolumes) . | nindent 8 }}
+        {{- end }}

@@ -21,10 +21,9 @@ RUN apk update && apk add --no-cache \
     libpng-dev libjpeg-turbo-dev freetype-dev libzip-dev icu-dev \
     zip unzip curl \
     caddy ca-certificates supervisor \
+    mysql-client \
     && docker-php-ext-install bcmath gd intl zip opcache pcntl posix
-
-# Copy the Caddyfile to the container
-COPY Caddyfile /etc/caddy/Caddyfile
+RUN docker-php-ext-install mysqli pdo_mysql
 
 # Copy the application code to the container
 COPY . .
@@ -42,15 +41,10 @@ RUN chmod -R 755 /var/www/html/storage \
 #echo "* * * * * /usr/local/bin/php /build/artisan schedule:run >> /dev/null 2>&1" >> /var/spool/cron/crontabs/root
 
 HEALTHCHECK --interval=5m --timeout=10s --start-period=5s --retries=3 \
-  CMD curl -f http://localhost/up || exit 1
-
-EXPOSE 80:2019
-EXPOSE 443
-
-VOLUME /pelican-data
+    CMD curl -f http://localhost/up || exit 1
 
 # Start PHP-FPM
-CMD ["sh", "-c", "php-fpm & caddy run --config /etc/caddy/Caddyfile --adapter caddyfile"]
+CMD ["sh", "-c", "php-fpm"]
 
 ENTRYPOINT [ "/bin/ash", ".github/docker/entrypoint.sh" ]
-# CMD [ "supervisord", "-n", "-c", "/etc/supervisord.conf" ]
+# CMD [ "supervisord", "-n", "-c", "/etc/sup""ervisord.conf" ]

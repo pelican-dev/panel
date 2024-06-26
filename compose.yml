@@ -2,7 +2,7 @@ x-common:
   panel:
     &panel-environment
     APP_URL: "https://localhost"
-    APP_DEBUG: "false"
+    APP_DEBUG: "true"
     ADMIN_EMAIL: "USEYOUROWNEMAILHERE@example.com"
 
     APP_ENVIRONMENT_ONLY: "false"
@@ -19,33 +19,92 @@ x-common:
     # MAIL_PASSWORD: ""
     # MAIL_ENCRYPTION: ""
 
-#
+
 # ------------------------------------------------------------------------------------------
 # DANGER ZONE BELOW
 #
 # The remainder of this file likely does not need to be changed. Please only make modifications
 # below if you understand what you are doing.
-#
 
 services:
-  panel:
-    image: panel
+  caddy:
+    image: caddy:2.8.4-alpine
+    # image: ghcr.io/lutherlabs/panel:latest
+    restart: always
+    volumes:
+      - local-html:/var/www/html/
+      - ./Caddyfile:/etc/caddy/Caddyfile
+      - pelican-logs:/var/www/html/storage/logs
+    ports:
+      - "80:80"
+      - "443:443"
+      - "443:443/udp"
+    env_file:
+      - ./.env.docker
+    environment:
+      <<: [*panel-environment, *mail-environment]
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "1M"
+        max-file: "10"
+    command:
+      - /bin/sh
+      - -c
+      - |
+        caddy run --config /etc/caddy/Caddyfile --adapter caddyfile
+      # The sed replacement is a hack, Caddyfile should be updated to use Docker DNS.
+
+  mariadb:
+    image: mariadb
+    environment:
+      MARIADB_RANDOM_ROOT_PASSWORD: true
+      MARIADB_USER: pelican
+      MARIADB_PASSWORD: pelican
+      MARIADB_DATABASE: pelican
+    healthcheck:
+      interval: 5s
+      test: ["CMD", "healthcheck.sh" ,"--connect", "--innodb_initialized"]
+      retries: 5
+      start_period: 5s
     restart: always
     ports:
-      - "80:2019"
-      - "443:443"
+      - "3306"
+
+  panel: # Panel should only run php-fpm
+    image: ghcr.io/lutherlabs/panel:latest
+    depends_on:
+      mariadb:
+        condition: service_healthy
+    restart: always
     extra_hosts:
       - "host.docker.internal:host-gateway"
     volumes:
-      - pelican-data:/pelican-data
+      - local-html:/var/www/html/
       - pelican-logs:/var/www/html/storage/logs
     environment:
       <<: [*panel-environment, *mail-environment]
-      XDG_DATA_HOME: /pelican-data
+      DB_CONNECTION: mariadb
+      DB_HOST: mariadb
+      DB_PORT: 3306
+      DB_DATABASE: pelican
+      DB_USERNAME: pelican
+      DB_PASSWORD: pelican
+    command:
+      - |
+      - /bin/sh
+      - -c
+      - |
+        composer install --no-dev --optimize-autoloader && php-fpm
 
 volumes:
-  pelican-data:
   pelican-logs:
+  local-html:
+    driver: local
+    driver_opts:
+      device: $PWD
+      type: none
+      o: bind
 
 networks:
   default:

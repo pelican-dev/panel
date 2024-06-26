@@ -1,0 +1,21 @@
+{{- if and .Values.panel.panelConfig (not .Values.panel.pabnelConfigConfigMapName) }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ template "panel_nginx_config_configmap_name" .}}
+  labels:
+    component: panel
+    release: {{ .Release.Name }}
+    chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
+    heritage: {{ .Release.Service }}
+    {{- with .Values.labels }}
+      {{- toYaml . | nindent 4 }}
+    {{- end }}
+  {{- with .Values.panel.configMapAnnotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+data:
+  pelican.conf: |-
+    {{- tpl .Values.panel.panelConfig . | nindent 4 }}
+{{- end }}
