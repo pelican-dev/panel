@@ -123,6 +123,7 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
         'name_last',
         'password',
         'language',
+        'timezone',
         'use_totp',
         'totp_secret',
         'totp_authenticated_at',
