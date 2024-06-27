@@ -518,10 +518,7 @@ class EditServer extends EditRecord
                                             ->options(fn (Forms\Get $get) => $this->ports)
                                             ->required(),
                                     )
-                                ,
 
-                                Forms\Components\Repeater::make('assignments')
-                                    ->columnSpan(3)
                                     ->afterStateHydrated(function (Forms\Set $set, Forms\Get $get, Server $server) {
                                         $this->ports($ports = $get('ports'), $set);
 
@@ -529,27 +526,8 @@ class EditServer extends EditRecord
                                             $set("assignments.$key", ['port' => $portIndex = array_search($port, array_values($ports))]);
                                         }
                                     })
-                                    ->label('Port Assignments')
-                                    ->helperText(fn (Forms\Get $get) => empty($get('ports')) ? 'You must add ports to assign them!' : '')
-                                    ->live()
-                                    ->addable(false)
-                                    ->deletable(false)
-                                    ->reorderable(false)
-                                    ->simple(
-                                        Forms\Components\Select::make('port')
-                                            ->live()
-                                            ->disabled(fn (Forms\Get $get) => empty($get('../../ports')) || empty($get('../../assignments')))
-                                            ->prefix(function (Forms\Components\Component $component) {
-                                                $key = str($component->getStatePath())->beforeLast('.')->afterLast('.')->toString();
-
-
-                                                return $key;
-                                            })
-                                            ->disableOptionsWhenSelectedInSiblingRepeaterItems()
-                                            ->options(fn (Forms\Get $get) => $this->ports)
-                                            ->required(),
-                                    ),
-
+                                ,
+                                
                                 Forms\Components\Textarea::make('startup')
                                     ->label('Startup Command')
                                     ->required()
