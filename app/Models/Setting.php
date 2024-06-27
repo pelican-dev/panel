@@ -25,6 +25,7 @@ class Setting extends Model
         'limit' => 'integer',
         'options' => 'array',
     ];
+
     protected $fillable = ['key', 'label', 'value', 'type', 'options', 'description', 'limit', 'tabs'];
 
     protected $DefaultSettings = [
