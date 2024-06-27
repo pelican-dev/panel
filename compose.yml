@@ -30,47 +30,22 @@ x-common:
 services:
   panel:
     image: panel
-    restart: unless-stopped
+    restart: always
+    ports:
+      - "80:2019"
+      - "443:443"
     extra_hosts:
       - "host.docker.internal:host-gateway"
     volumes:
       - pelican-data:/pelican-data
-      - .:/srv
+      - pelican-logs:/var/www/html/storage/logs
     environment:
       <<: [*panel-environment, *mail-environment]
-    working_dir: /srv
-
-  caddy:
-    image: caddy:2-alpine
-    restart: unless-stopped
-    volumes:
-      - ./Caddyfile:/etc/caddy/Caddyfile
-      - caddy-data:/data
-      - caddy-config:/config
-      - .:/srv
-    ports:
-      - 80:80
-      - 443:443
-    env_file:
-      - ./.env.docker
-    environment:
-      <<: [ *panel-environment, *mail-environment ]
       XDG_DATA_HOME: /pelican-data
-    logging:
-      driver: "json-file"
-      options:
-        max-size: "1M"
-        max-file: "10"
-    command:
-      - /bin/sh
-      - -c
-      - |
-        caddy run --config /etc/caddy/Caddyfile --adapter caddyfile
 
 volumes:
   pelican-data:
-  caddy-data:
-  caddy-config:
+  pelican-logs:
 
 networks:
   default:
