@@ -525,17 +525,15 @@ class EditServer extends EditRecord
                                         foreach ($this->portOptions($server->egg) as $key => $port) {
                                             $set("assignments.$key", ['port' => $portIndex = array_search($port, array_values($ports))]);
                                         }
-                                    })
-                                ,
-                                
+                                    }),
+
                                 Forms\Components\Textarea::make('startup')
                                     ->label('Startup Command')
                                     ->required()
                                     ->hintAction(Forms\Components\Actions\Action::make('startup-restore')
                                         ->label('Restore Default')
                                         ->icon('tabler-restore')
-                                        ->action(fn (Forms\Get $get, Forms\Set $set) =>
-                                            $set('startup', Egg::find($get('egg_id'))?->startup ?? '')
+                                        ->action(fn (Forms\Get $get, Forms\Set $set) => $set('startup', Egg::find($get('egg_id'))?->startup ?? '')
                                         )
                                     )
                                     ->columnSpan([
@@ -894,8 +892,6 @@ class EditServer extends EditRecord
         }
 
         $set('environment', $variables);
-
-        // dump($variables, $this->ports, $this->eggDefaultPorts, $get('assignments'));
     }
 
     public function portOptions(Egg $egg, string $startup = null): array
@@ -914,21 +910,13 @@ class EditServer extends EditRecord
             $options['SERVER_PORT'] = null;
         }
 
-        // startup SERVER_PORT
-        // ...
-        // ...
-
         foreach ($egg->variables as $variable) {
             if (!in_array('port', explode('|', $variable->rules))) {
                 continue;
             }
 
-            // dump($variable);
-
             $options[$variable->env_variable] = $variable->default_value;
         }
-
-//        dump($options);
 
         return $options;
     }
