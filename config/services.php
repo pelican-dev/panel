@@ -21,4 +21,25 @@ return [
         'redirect' => '/auth/oauth/callback/discord',
     ],
 
+    'steam' => [
+        'client_id' => env('OAUTH_STEAM_CLIENT_ID'),
+        'client_secret' => env('OAUTH_STEAM_CLIENT_SECRET'),
+        'redirect' => env('OAUTH_STEAM_REDIRECT_URI'),
+        'force_https' => false,
+        'allowed_hosts' => [
+            env('APP_URL'),
+        ],
+    ],
+
+    'google' => [
+        'client_id' => env('OAUTH_GOOGLE_CLIENT_ID'),
+        'client_secret' => env('OAUTH_GOOGLE_CLIENT_SECRET'),
+        'redirect' => env('OAUTH_GOOGLE_REDIRECT_URI'),
+    ],
+
+    'microsoft' => [
+        'client_id' => env('OAUTH_MICROSOFT_CLIENT_ID'),
+        'client_secret' => env('OAUTH_MICROSOFT_CLIENT_SECRET'),
+        'redirect' => env('OAUTH_MICROSOFT_REDIRECT_URI'),
+    ],
 ];
