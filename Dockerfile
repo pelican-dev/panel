@@ -50,7 +50,7 @@ EXPOSE 443
 VOLUME /pelican-data
 
 # Start PHP-FPM
-CMD ["sh", "-c", "php-fpm & caddy run --config /etc/caddy/Caddyfile --adapter caddyfile"]
+CMD ["sh", "-c", "php-fpm"]
 
 ENTRYPOINT [ "/bin/ash", ".github/docker/entrypoint.sh" ]
 # CMD [ "supervisord", "-n", "-c", "/etc/supervisord.conf" ]

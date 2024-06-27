@@ -1,7 +1,7 @@
 x-common:
   panel:
     &panel-environment
-    APP_URL: "https://localhost"
+    APP_URL: "https://localhost" # can be set to 'http://localhost' to un on port 80 only
     APP_DEBUG: "false"
     ADMIN_EMAIL: "USEYOUROWNEMAILHERE@example.com"
 
@@ -29,19 +29,23 @@ x-common:
 
 services:
   panel:
-    image: panel
+    image: ghcr.io/pelican-dev/panel:latest
     restart: always
+    networks:
+      - default
     ports:
-      - "80:2019"
+      - "80:80"
       - "443:443"
+      # - "9000:9000" # enable when not using caddy to be abel to reach php-fpm
     extra_hosts:
-      - "host.docker.internal:host-gateway"
+      - "host.docker.internal:host-gateway" # shows the panel on te internal docker network as well. usually '172.17.0.1'
     volumes:
       - pelican-data:/pelican-data
       - pelican-logs:/var/www/html/storage/logs
     environment:
       <<: [*panel-environment, *mail-environment]
       XDG_DATA_HOME: /pelican-data
+      # SKIP_CADDY: true # enable when not using caddy.
 
 volumes:
   pelican-data:

@@ -42,6 +42,13 @@ php artisan migrate --force
 echo -e "Starting cron jobs."
 crond -L /var/log/crond -l 5
 
+if [[ -z $SKIP_CADDY ]]; then
+  echo "Starting PHP-FPM and Caddy"
+  caddy run --config /etc/caddy/Caddyfile --adapter caddyfile &
+else
+  echo "Starting PHP-FPM only"
+fi
+
 #chmod -R 755 storage/* bootstrap/cache/
 chown -R www-data:www-data .
 
