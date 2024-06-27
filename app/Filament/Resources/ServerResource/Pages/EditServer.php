@@ -602,9 +602,9 @@ class EditServer extends EditRecord
                                             $component = $component
                                                 ->live(onBlur: true)
                                                 ->hintIcon('tabler-code')
-                                                ->label(fn (ServerVariable $serverVariable) => $serverVariable->variable?->name)
-                                                ->hintIconTooltip(fn (ServerVariable $serverVariable) => $serverVariable->variable?->rules)
-                                                ->prefix(fn (ServerVariable $serverVariable) => '{{' . $serverVariable->variable?->env_variable . '}}')
+                                                ->label(fn (ServerVariable $serverVariable) => $serverVariable->variable->name)
+                                                ->hintIconTooltip(fn (ServerVariable $serverVariable) => $serverVariable->variable->rules)
+                                                ->prefix(fn (ServerVariable $serverVariable) => '{{' . $serverVariable->variable->env_variable . '}}')
                                                 ->helperText(fn (ServerVariable $serverVariable) => empty($serverVariable->variable?->description) ? '—' : $serverVariable->variable->description);
                                         }
 
@@ -953,16 +953,11 @@ class EditServer extends EditRecord
 
     public function portOptions(Egg $egg, string $startup = null): array
     {
-        if ($egg instanceof Server) {
-            $egg = $egg->egg;
-        }
-
-        $options = [];
-
         if (empty($startup)) {
             $startup = $egg->startup;
         }
 
+        $options = [];
         if (str_contains($startup, '{{SERVER_PORT}}')) {
             $options['SERVER_PORT'] = null;
         }
