@@ -64,13 +64,7 @@ class EggConfigurationService
         }
 
         $signal = substr($stop, 1);
-        if (strtoupper($signal) === 'C') {
-            return [
-                'type' => 'signal',
-                'value' => 'SIGTERM',
-            ];
-        }
-
+        
         return [
             'type' => 'signal',
             'value' => strtoupper($signal),
