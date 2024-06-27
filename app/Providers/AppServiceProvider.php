@@ -17,7 +17,6 @@ use Illuminate\Support\Facades\Broadcast;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Http;
-use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
@@ -32,8 +31,6 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        Schema::defaultStringLength(191);
-
         $versionData = app(SoftwareVersionService::class)->versionData();
         View::share('appVersion', $versionData['version'] ?? 'undefined');
         View::share('appIsGit', $versionData['is_git'] ?? false);

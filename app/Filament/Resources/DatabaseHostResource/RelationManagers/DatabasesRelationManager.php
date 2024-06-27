@@ -44,7 +44,6 @@ class DatabasesRelationManager extends RelationManager
             ->columns([
                 Tables\Columns\TextColumn::make('database')->icon('tabler-database'),
                 Tables\Columns\TextColumn::make('username')->icon('tabler-user'),
-                //Tables\Columns\TextColumn::make('password'),
                 Tables\Columns\TextColumn::make('remote'),
                 Tables\Columns\TextColumn::make('server.name')
                     ->icon('tabler-brand-docker')
@@ -55,7 +54,6 @@ class DatabasesRelationManager extends RelationManager
             ->actions([
                 Tables\Actions\DeleteAction::make(),
                 Tables\Actions\ViewAction::make()->color('primary'),
-                //Tables\Actions\EditAction::make(),
             ]);
     }
 

@@ -42,7 +42,7 @@ use App\Notifications\SendPasswordReset as ResetPasswordNotification;
  * @property bool $use_totp
  * @property string|null $totp_secret
  * @property \Illuminate\Support\Carbon|null $totp_authenticated_at
- * @property array $oauth
+ * @property array|null $oauth
  * @property bool $gravatar
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
@@ -123,6 +123,7 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
         'name_last',
         'password',
         'language',
+        'timezone',
         'use_totp',
         'totp_secret',
         'totp_authenticated_at',
@@ -155,17 +156,17 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
      */
     public static array $validationRules = [
         'uuid' => 'nullable|string|size:36|unique:users,uuid',
-        'email' => 'required|email|between:1,191|unique:users,email',
-        'external_id' => 'sometimes|nullable|string|max:191|unique:users,external_id',
-        'username' => 'required|between:1,191|unique:users,username',
-        'name_first' => 'nullable|string|between:0,191',
-        'name_last' => 'nullable|string|between:0,191',
+        'email' => 'required|email|between:1,255|unique:users,email',
+        'external_id' => 'sometimes|nullable|string|max:255|unique:users,external_id',
+        'username' => 'required|between:1,255|unique:users,username',
+        'name_first' => 'nullable|string|between:0,255',
+        'name_last' => 'nullable|string|between:0,255',
         'password' => 'sometimes|nullable|string',
         'root_admin' => 'boolean',
         'language' => 'string',
         'use_totp' => 'boolean',
         'totp_secret' => 'nullable|string',
-        'oauth' => 'array',
+        'oauth' => 'array|nullable',
     ];
 
     protected function casts(): array
@@ -215,9 +216,9 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
     }
 
     /**
-     * Return the user model in a format that can be passed over to Vue templates.
+     * Return the user model in a format that can be passed over to React templates.
      */
-    public function toVueObject(): array
+    public function toReactObject(): array
     {
         return collect($this->toArray())->except(['id', 'external_id'])->toArray();
     }

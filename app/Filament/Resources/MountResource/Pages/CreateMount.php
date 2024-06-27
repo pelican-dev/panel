@@ -48,11 +48,11 @@ class CreateMount extends CreateRecord
                     Forms\Components\TextInput::make('source')
                         ->required()
                         ->helperText('File path on the host system to mount to a container.')
-                        ->maxLength(191),
+                        ->maxLength(255),
                     Forms\Components\TextInput::make('target')
                         ->required()
                         ->helperText('Where the mount will be accessible inside a container.')
-                        ->maxLength(191),
+                        ->maxLength(255),
                     Forms\Components\ToggleButtons::make('user_mountable')
                         ->hidden()
                         ->label('User mountable?')

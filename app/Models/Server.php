@@ -74,7 +74,6 @@ use App\Exceptions\Http\Server\ServerStateConflictException;
  * @property \App\Models\User $user
  * @property \Illuminate\Database\Eloquent\Collection|\App\Models\EggVariable[] $variables
  * @property int|null $variables_count
- *
  * @method static \Database\Factories\ServerFactory factory(...$parameters)
  * @method static \Illuminate\Database\Eloquent\Builder|Server newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Server newQuery()
@@ -105,9 +104,9 @@ use App\Exceptions\Http\Server\ServerStateConflictException;
  * @method static \Illuminate\Database\Eloquent\Builder|Server whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Server whereUuid($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Server whereuuid_short($value)
- *
  * @property array|null $docker_labels
  * @property Collection<Endpoint>|null $ports
+ * @property-read mixed $condition
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\EggVariable> $eggVariables
  * @property-read int|null $egg_variables_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ServerVariable> $serverVariables
@@ -149,9 +148,9 @@ class Server extends Model
     protected $guarded = ['id', self::CREATED_AT, self::UPDATED_AT, 'deleted_at', 'installed_at'];
 
     public static array $validationRules = [
-        'external_id' => 'sometimes|nullable|string|between:1,191|unique:servers',
+        'external_id' => 'sometimes|nullable|string|between:1,255|unique:servers',
         'owner_id' => 'required|integer|exists:users,id',
-        'name' => 'required|string|min:1|max:191',
+        'name' => 'required|string|min:1|max:255',
         'node_id' => 'required|exists:nodes,id',
         'description' => 'string',
         'status' => 'nullable|string',
@@ -165,7 +164,7 @@ class Server extends Model
         'egg_id' => 'required|exists:eggs,id',
         'startup' => 'required|string',
         'skip_scripts' => 'sometimes|boolean',
-        'image' => 'required|string|max:191',
+        'image' => 'required|string|max:255',
         'database_limit' => 'present|nullable|integer|min:0',
         'allocation_limit' => 'sometimes|nullable|integer|min:0',
         'backup_limit' => 'present|nullable|integer|min:0',
@@ -439,7 +438,6 @@ class Server extends Model
 
         return $this->status->color();
     }
-
     public function getPrimaryEndpoint(): ?Endpoint
     {
         $endpoint = $this->ports->first();

@@ -4,7 +4,11 @@ namespace App\Filament\Resources\EggResource\Pages;
 
 use App\Filament\Resources\EggResource;
 use App\Models\Egg;
+use App\Services\Eggs\Sharing\EggImporterService;
+use Exception;
 use Filament\Actions;
+use Filament\Forms\Components\Tabs;
+use Filament\Notifications\Notification;
 use Filament\Resources\Pages\EditRecord;
 use AbdelhamidErrahmouni\FilamentMonacoEditor\MonacoEditor;
 use App\Services\Eggs\Sharing\EggExporterService;
@@ -25,7 +29,7 @@ class EditEgg extends EditRecord
                         ->schema([
                             Forms\Components\TextInput::make('name')
                                 ->required()
-                                ->maxLength(191)
+                                ->maxLength(255)
                                 ->columnSpan(['default' => 1, 'sm' => 1, 'md' => 2, 'lg' => 1])
                                 ->helperText('A simple, human-readable name to use as an identifier for this Egg.'),
                             Forms\Components\TextInput::make('uuid')
@@ -42,7 +46,7 @@ class EditEgg extends EditRecord
                                 ->helperText('A description of this Egg that will be displayed throughout the Panel as needed.'),
                             Forms\Components\TextInput::make('author')
                                 ->required()
-                                ->maxLength(191)
+                                ->maxLength(255)
                                 ->email()
                                 ->disabled()
                                 ->columnSpan(['default' => 1, 'sm' => 1, 'md' => 2, 'lg' => 2])
@@ -95,7 +99,7 @@ class EditEgg extends EditRecord
                                 ->relationship('configFrom', 'name', ignoreRecord: true)
                                 ->helperText('If you would like to default to settings from another Egg select it from the menu above.'),
                             Forms\Components\TextInput::make('config_stop')
-                                ->maxLength(191)
+                                ->maxLength(255)
                                 ->label('Stop Command')
                                 ->helperText('The command that should be sent to server processes to stop them gracefully. If you need to send a SIGINT you should enter ^C here.'),
                             Forms\Components\Textarea::make('config_startup')->rows(10)->json()
@@ -143,7 +147,7 @@ class EditEgg extends EditRecord
                                     Forms\Components\TextInput::make('name')
                                         ->live()
                                         ->debounce(750)
-                                        ->maxLength(191)
+                                        ->maxLength(255)
                                         ->columnSpanFull()
                                         ->afterStateUpdated(fn (Forms\Set $set, $state) => $set('env_variable', str($state)->trim()->snake()->upper()->toString())
                                         )
@@ -151,13 +155,13 @@ class EditEgg extends EditRecord
                                     Forms\Components\Textarea::make('description')->columnSpanFull(),
                                     Forms\Components\TextInput::make('env_variable')
                                         ->label('Environment Variable')
-                                        ->maxLength(191)
+                                        ->maxLength(255)
                                         ->prefix('{{')
                                         ->suffix('}}')
                                         ->hintIcon('tabler-code')
                                         ->hintIconTooltip(fn ($state) => "{{{$state}}}")
                                         ->required(),
-                                    Forms\Components\TextInput::make('default_value')->maxLength(191),
+                                    Forms\Components\TextInput::make('default_value')->maxLength(255),
                                     Forms\Components\Fieldset::make('User Permissions')
                                         ->schema([
                                             Forms\Components\Checkbox::make('user_viewable')->label('Viewable'),
@@ -176,12 +180,12 @@ class EditEgg extends EditRecord
 
                             Forms\Components\TextInput::make('script_container')
                                 ->required()
-                                ->maxLength(191)
+                                ->maxLength(255)
                                 ->default('alpine:3.4'),
 
                             Forms\Components\TextInput::make('script_entry')
                                 ->required()
-                                ->maxLength(191)
+                                ->maxLength(255)
                                 ->default('ash'),
 
                             MonacoEditor::make('script_install')
@@ -199,18 +203,95 @@ class EditEgg extends EditRecord
     protected function getHeaderActions(): array
     {
         return [
-            Actions\DeleteAction::make()
+            Actions\DeleteAction::make('deleteEgg')
                 ->disabled(fn (Egg $egg): bool => $egg->servers()->count() > 0)
-                ->label(fn (Egg $egg): string => $egg->servers()->count() <= 0 ? 'Delete Egg' : 'Egg In Use'),
-            Actions\Action::make('export')
-                ->icon('tabler-download')
-                ->label('Export Egg')
+                ->label(fn (Egg $egg): string => $egg->servers()->count() <= 0 ? 'Delete' : 'In Use'),
+
+            Actions\Action::make('exportEgg')
+                ->label('Export')
                 ->color('primary')
                 ->action(fn (EggExporterService $service, Egg $egg) => response()->streamDownload(function () use ($service, $egg) {
                     echo $service->handle($egg->id);
                 }, 'egg-' . $egg->getKebabName() . '.json')),
+
+            Actions\Action::make('importEgg')
+                ->label('Import')
+                ->form([
+                    Forms\Components\Placeholder::make('warning')
+                        ->label('This will overwrite the current egg to the one you upload.'),
+                    Tabs::make('Tabs')
+                        ->tabs([
+                            Tabs\Tab::make('From File')
+                                ->icon('tabler-file-upload')
+                                ->schema([
+                                    Forms\Components\FileUpload::make('egg')
+                                        ->label('Egg')
+                                        ->hint('eg. minecraft.json')
+                                        ->acceptedFileTypes(['application/json'])
+                                        ->storeFiles(false),
+                                ]),
+                            Tabs\Tab::make('From URL')
+                                ->icon('tabler-world-upload')
+                                ->schema([
+                                    Forms\Components\TextInput::make('url')
+                                        ->label('URL')
+                                        ->hint('Link to the egg file (eg. minecraft.json)')
+                                        ->url(),
+                                ]),
+                        ])
+                        ->contained(false),
+
+                ])
+                ->action(function (array $data, Egg $egg): void {
+                    /** @var EggImporterService $eggImportService */
+                    $eggImportService = resolve(EggImporterService::class);
+
+                    if (!empty($data['egg'])) {
+                        try {
+                            $eggImportService->fromFile($data['egg'], $egg);
+                        } catch (Exception $exception) {
+                            Notification::make()
+                                ->title('Import Failed')
+                                ->body($exception->getMessage())
+                                ->danger()
+                                ->send();
+
+                            report($exception);
+
+                            return;
+                        }
+                    }
+
+                    if (!empty($data['url'])) {
+                        try {
+                            $eggImportService->fromUrl($data['url'], $egg);
+                        } catch (Exception $exception) {
+                            Notification::make()
+                                ->title('Import Failed')
+                                ->body($exception->getMessage())
+                                ->danger()
+                                ->send();
+
+                            report($exception);
+
+                            return;
+                        }
+                    }
+
+                    $this->refreshForm();
+                    Notification::make()
+                        ->title('Import Success')
+                        ->success()
+                        ->send();
+                }),
+
             $this->getSaveFormAction()->formId('form'),
         ];
+    }
+
+    public function refreshForm(): void
+    {
+        $this->fillForm();
     }
 
     protected function getFormActions(): array
