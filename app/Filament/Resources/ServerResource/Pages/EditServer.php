@@ -489,7 +489,7 @@ class EditServer extends EditRecord
                                     ->live(),
 
                                 Forms\Components\Repeater::make('portVariables')
-                                    ->label('Port Assignments (SV)')
+                                    ->label('Port Assignments')
                                     ->columnSpan(3)
                                     ->addable(false)
                                     ->deletable(false)
