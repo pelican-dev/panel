@@ -11,11 +11,20 @@ class Setting extends Model
     use EnvironmentWriterTrait;
     use Sushi;
 
+    public $type;
+
+    public $label;
+
+    public $options;
+
+    public $description;
+
+    public $limit;
+
     protected $casts = [
         'limit' => 'integer',
         'options' => 'array',
     ];
-
     protected $fillable = ['key', 'label', 'value', 'type', 'options', 'description', 'limit', 'tabs'];
 
     protected $DefaultSettings = [
