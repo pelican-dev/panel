@@ -26,7 +26,7 @@ Fly High, Game On: Pelican's pledge for unrivaled game servers.
 Pelican supports a wide variety of games by utilizing Docker containers to isolate each instance.
 This gives you the power to run game servers without bloating machines with a host of additional dependencies.
 
-Some of our popular eggs include but are not limited to:
+Some of our popular eggs include:
 
 | Category                                                             | Eggs            |               |                    |                |
 |----------------------------------------------------------------------|-----------------|---------------|--------------------|----------------|
