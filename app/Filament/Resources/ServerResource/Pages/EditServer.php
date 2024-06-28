@@ -27,6 +27,8 @@ use Filament\Notifications\Notification;
 use Filament\Resources\Pages\EditRecord;
 use Illuminate\Support\Facades\Validator;
 use Closure;
+use Exception;
+use Illuminate\Database\Eloquent\Model;
 use Webbingbrasil\FilamentCopyActions\Forms\Actions\CopyAction;
 
 class EditServer extends EditRecord
@@ -773,6 +775,23 @@ class EditServer extends EditRecord
         unset($data['docker'], $data['status']);
 
         return $data;
+    }
+
+    protected function handleRecordUpdate(Model $record, array $data): Model
+    {
+        try {
+            $record = parent::handleRecordUpdate($record, $data);
+        } catch (Exception $exception) {
+            Notification::make()
+                ->title('Error')
+                ->body($exception->getMessage())
+                ->color('danger')
+                ->icon('tabler-x')
+                ->danger()
+                ->send();
+        }
+
+        return $record;
     }
 
     public function getRelationManagers(): array

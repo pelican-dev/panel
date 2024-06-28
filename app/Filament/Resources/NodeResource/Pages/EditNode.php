@@ -7,11 +7,13 @@ use App\Filament\Resources\NodeResource\Widgets\NodeMemoryChart;
 use App\Filament\Resources\NodeResource\Widgets\NodeStorageChart;
 use App\Models\Node;
 use App\Services\Nodes\NodeUpdateService;
+use Exception;
 use Filament\Actions;
 use Filament\Forms;
 use Filament\Forms\Components\Tabs;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\EditRecord;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\HtmlString;
 use Webbingbrasil\FilamentCopyActions\Forms\Actions\CopyAction;
 
@@ -418,6 +420,24 @@ class EditNode extends EditRecord
     {
         return [];
     }
+
+    protected function handleRecordUpdate(Model $record, array $data): Model
+    {
+        try {
+            $record = parent::handleRecordUpdate($record, $data);
+        } catch (Exception $exception) {
+            Notification::make()
+                ->title('Error')
+                ->body($exception->getMessage())
+                ->color('danger')
+                ->icon('tabler-x')
+                ->danger()
+                ->send();
+        }
+
+        return $record;
+    }
+
     protected function getHeaderActions(): array
     {
         return [
