@@ -8,7 +8,7 @@ use App\Http\Requests\Api\Application\ApplicationApiRequest;
 
 class UpdateServerStartupRequest extends ApplicationApiRequest
 {
-    protected ?string $resource = AdminAcl::RESOURCE_SERVERS;
+    protected ?string $resource = Server::RESOURCE_NAME;
 
     protected int $permission = AdminAcl::WRITE;
 

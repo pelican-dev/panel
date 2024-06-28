@@ -3,6 +3,7 @@
 namespace App\Tests\Integration\Api\Application;
 
 use App\Models\Egg;
+use App\Services\Acl\Api\AdminAcl;
 use App\Transformers\Api\Application\EggTransformer;
 use Illuminate\Http\Response;
 use Illuminate\Support\Arr;
@@ -111,7 +112,7 @@ class EggControllerTest extends ApplicationApiIntegrationTestCase
     public function testErrorReturnedIfNoPermission(): void
     {
         $egg = Egg::query()->findOrFail(1);
-        $this->createNewDefaultApiKey($this->getApiUser(), ['r_eggs' => 0]);
+        $this->createNewDefaultApiKey($this->getApiUser(), [Egg::RESOURCE_NAME => AdminAcl::NONE]);
 
         $response = $this->getJson('/api/application/eggs');
         $this->assertAccessDeniedJson($response);

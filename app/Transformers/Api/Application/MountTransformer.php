@@ -2,10 +2,12 @@
 
 namespace App\Transformers\Api\Application;
 
+use App\Models\Egg;
 use App\Models\Mount;
+use App\Models\Node;
+use App\Models\Server;
 use League\Fractal\Resource\Collection;
 use League\Fractal\Resource\NullResource;
-use App\Services\Acl\Api\AdminAcl;
 
 class MountTransformer extends BaseTransformer
 {
@@ -34,7 +36,7 @@ class MountTransformer extends BaseTransformer
      */
     public function includeEggs(Mount $mount): Collection|NullResource
     {
-        if (!$this->authorize(AdminAcl::RESOURCE_EGGS)) {
+        if (!$this->authorize(Egg::RESOURCE_NAME)) {
             return $this->null();
         }
 
@@ -54,7 +56,7 @@ class MountTransformer extends BaseTransformer
      */
     public function includeNodes(Mount $mount): Collection|NullResource
     {
-        if (!$this->authorize(AdminAcl::RESOURCE_NODES)) {
+        if (!$this->authorize(Node::RESOURCE_NAME)) {
             return $this->null();
         }
 
@@ -74,7 +76,7 @@ class MountTransformer extends BaseTransformer
      */
     public function includeServers(Mount $mount): Collection|NullResource
     {
-        if (!$this->authorize(AdminAcl::RESOURCE_SERVERS)) {
+        if (!$this->authorize(Server::RESOURCE_NAME)) {
             return $this->null();
         }
 
