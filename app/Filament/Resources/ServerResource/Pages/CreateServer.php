@@ -6,6 +6,7 @@ use App\Filament\Resources\ServerResource;
 use App\Models\Allocation;
 use App\Models\Egg;
 use App\Models\Node;
+use App\Models\User;
 use App\Services\Allocations\AssignmentService;
 use App\Services\Servers\RandomWordService;
 use App\Services\Servers\ServerCreationService;
@@ -67,6 +68,7 @@ class CreateServer extends CreateRecord
                                 ->maxLength(255),
 
                             Forms\Components\Select::make('owner_id')
+                                ->preload()
                                 ->prefixIcon('tabler-user')
                                 ->default(auth()->user()->id)
                                 ->label('Owner')
@@ -77,8 +79,40 @@ class CreateServer extends CreateRecord
                                     'lg' => 3,
                                 ])
                                 ->relationship('user', 'username')
-                                ->searchable()
-                                ->preload()
+                                ->searchable(['user', 'username', 'email'])
+                                ->getOptionLabelFromRecordUsing(fn (User $user) => "$user->email | $user->username " . ($user->root_admin ? "(admin)" :""))
+                                ->createOptionForm(fn () => [
+                                    Forms\Components\TextInput::make('username')
+                                        ->alphaNum()
+                                        ->required()
+                                        ->maxLength(255),
+
+                                    Forms\Components\TextInput::make('email')
+                                        ->email()
+                                        ->required()
+                                        ->unique()
+                                        ->maxLength(255),
+        
+                                    Forms\Components\TextInput::make('password')
+                                        ->hintIcon('tabler-question-mark')
+                                        ->hintIconTooltip('Providing a user password is optional. New user email will prompt users to create a password the first time they login.')
+                                        ->password(),
+        
+                                    Forms\Components\ToggleButtons::make('root_admin')
+                                        ->label('Administrator (Root)')
+                                        ->options([
+                                            false => 'No',
+                                            true => 'Admin',
+                                        ])
+                                        ->colors([
+                                            false => 'primary',
+                                            true => 'danger',
+                                        ])
+                                        ->inline()
+                                        ->required()
+                                        ->default(false)
+                                        ->hidden(),
+                                ])
                                 ->required(),
 
                             Forms\Components\Select::make('node_id')
