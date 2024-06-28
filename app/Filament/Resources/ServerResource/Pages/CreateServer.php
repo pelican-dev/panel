@@ -80,7 +80,7 @@ class CreateServer extends CreateRecord
                                 ])
                                 ->relationship('user', 'username')
                                 ->searchable(['user', 'username', 'email'])
-                                ->getOptionLabelFromRecordUsing(fn (User $user) => "$user->email | $user->username " . ($user->root_admin ? "(admin)" :""))
+                                ->getOptionLabelFromRecordUsing(fn (User $user) => "$user->email | $user->username " . ($user->root_admin ? '(admin)' : ''))
                                 ->createOptionForm(fn () => [
                                     Forms\Components\TextInput::make('username')
                                         ->alphaNum()
@@ -92,12 +92,12 @@ class CreateServer extends CreateRecord
                                         ->required()
                                         ->unique()
                                         ->maxLength(255),
-        
+
                                     Forms\Components\TextInput::make('password')
                                         ->hintIcon('tabler-question-mark')
                                         ->hintIconTooltip('Providing a user password is optional. New user email will prompt users to create a password the first time they login.')
                                         ->password(),
-        
+
                                     Forms\Components\ToggleButtons::make('root_admin')
                                         ->label('Administrator (Root)')
                                         ->options([
