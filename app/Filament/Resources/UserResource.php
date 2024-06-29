@@ -3,7 +3,7 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\UserResource\Pages;
-use App\Filament\Resources\UserResource\RelationManagers;
+use App\Filament\Resources\UserResource\RelationManagers\ServersRelationManager;
 use App\Models\User;
 use Filament\Resources\Resource;
 
@@ -23,7 +23,7 @@ class UserResource extends Resource
     public static function getRelations(): array
     {
         return [
-            RelationManagers\ServersRelationManager::class,
+            ServersRelationManager::class,
         ];
     }
 
