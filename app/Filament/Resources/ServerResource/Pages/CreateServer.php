@@ -10,6 +10,7 @@ use App\Models\User;
 use App\Services\Allocations\AssignmentService;
 use App\Services\Servers\RandomWordService;
 use App\Services\Servers\ServerCreationService;
+use App\Services\Users\UserCreationService;
 use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Form;
 use Filament\Resources\Pages\CreateRecord;
@@ -81,7 +82,7 @@ class CreateServer extends CreateRecord
                                 ->relationship('user', 'username')
                                 ->searchable(['user', 'username', 'email'])
                                 ->getOptionLabelFromRecordUsing(fn (User $user) => "$user->email | $user->username " . ($user->root_admin ? '(admin)' : ''))
-                                ->createOptionForm(fn () => [
+                                ->createOptionForm([
                                     Forms\Components\TextInput::make('username')
                                         ->alphaNum()
                                         ->required()
@@ -113,6 +114,10 @@ class CreateServer extends CreateRecord
                                         ->default(false)
                                         ->hidden(),
                                 ])
+                                ->createOptionUsing(function ($data) {
+                                    resolve(UserCreationService::class)->handle($data);
+                                    $this->refreshForm();
+                                })
                                 ->required(),
 
                             Forms\Components\Select::make('node_id')
@@ -783,6 +788,11 @@ class CreateServer extends CreateRecord
                                             </x-filament::button>
                                         BLADE))),
             ]);
+    }
+
+    public function refreshForm(): void
+    {
+        $this->fillForm();
     }
 
     protected function getFormActions(): array
