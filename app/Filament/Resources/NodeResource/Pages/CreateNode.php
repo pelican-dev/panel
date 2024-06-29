@@ -3,8 +3,8 @@
 namespace App\Filament\Resources\NodeResource\Pages;
 
 use App\Filament\Resources\NodeResource;
+use Filament\Forms\Components\Actions\Action;
 use Filament\Forms;
-use Filament\Actions\Action;
 use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\TagsInput;
 use Filament\Forms\Components\TextInput;
