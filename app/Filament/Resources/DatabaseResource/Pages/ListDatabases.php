@@ -4,7 +4,7 @@ namespace App\Filament\Resources\DatabaseResource\Pages;
 
 use App\Filament\Resources\DatabaseResource;
 use Filament\Actions;
-use Filament\Actions\EditAction;
+use Filament\Tables\Actions\EditAction;
 use Filament\Resources\Pages\ListRecords;
 use Filament\Tables\Actions\BulkActionGroup;
 use Filament\Tables\Actions\DeleteBulkAction;
@@ -42,9 +42,6 @@ class ListDatabases extends ListRecords
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
-            ])
-            ->filters([
-                //
             ])
             ->actions([
                 EditAction::make(),
