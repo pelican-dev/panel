@@ -83,7 +83,7 @@ class Node extends Model
         'notes' => 'string|nullable',
         'public' => 'boolean',
         'fqdn' => 'required|string',
-        'scheme' => 'required',
+        'scheme' => 'required|string|in:http,https',
         'behind_proxy' => 'boolean',
         'memory' => 'required|numeric|min:0',
         'memory_overallocate' => 'required|numeric|min:-1',

@@ -4,8 +4,10 @@ namespace App\Filament\Resources\MountResource\Pages;
 
 use App\Filament\Resources\MountResource;
 use Filament\Actions;
+use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\ToggleButtons;
 use Filament\Resources\Pages\EditRecord;
-use Filament\Forms;
 use Filament\Forms\Components\Group;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
@@ -20,11 +22,11 @@ class EditMount extends EditRecord
         return $form
             ->schema([
                 Section::make()->schema([
-                    Forms\Components\TextInput::make('name')
+                    TextInput::make('name')
                         ->required()
                         ->helperText('Unique name used to separate this mount from another.')
                         ->maxLength(64),
-                    Forms\Components\ToggleButtons::make('read_only')
+                    ToggleButtons::make('read_only')
                         ->label('Read only?')
                         ->helperText('Is the mount read only inside the container?')
                         ->options([
@@ -42,15 +44,15 @@ class EditMount extends EditRecord
                         ->inline()
                         ->default(false)
                         ->required(),
-                    Forms\Components\TextInput::make('source')
+                    TextInput::make('source')
                         ->required()
                         ->helperText('File path on the host system to mount to a container.')
-                        ->maxLength(191),
-                    Forms\Components\TextInput::make('target')
+                        ->maxLength(255),
+                    TextInput::make('target')
                         ->required()
                         ->helperText('Where the mount will be accessible inside a container.')
-                        ->maxLength(191),
-                    Forms\Components\ToggleButtons::make('user_mountable')
+                        ->maxLength(255),
+                    ToggleButtons::make('user_mountable')
                         ->hidden()
                         ->label('User mountable?')
                         ->options([
@@ -68,7 +70,7 @@ class EditMount extends EditRecord
                         ->default(false)
                         ->inline()
                         ->required(),
-                    Forms\Components\Textarea::make('description')
+                    Textarea::make('description')
                         ->helperText('A longer description for this mount.')
                         ->columnSpanFull(),
                 ])->columnSpan(1)->columns([

@@ -24,7 +24,7 @@ class QueueWorkerServiceCommand extends Command
 
         $fileExists = file_exists($path);
         if ($fileExists && !$this->option('overwrite') && !$this->confirm('The service file already exists. Do you want to overwrite it?')) {
-            $this->line('Creation of queue worker service file aborted because serive file already exists.');
+            $this->line('Creation of queue worker service file aborted because service file already exists.');
 
             return;
         }
@@ -32,7 +32,8 @@ class QueueWorkerServiceCommand extends Command
         $user = $this->option('user') ?? $this->ask('Webserver User', 'www-data');
         $group = $this->option('group') ?? $this->ask('Webserver Group', 'www-data');
 
-        $afterRedis = $this->option('use-redis') ? '\nAfter=redis-server.service' : '';
+        $afterRedis = $this->option('use-redis') ? '
+After=redis-server.service' : '';
 
         $basePath = base_path();
 

@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Exceptions\DisplayException;
 use App\Rules\Username;
 use App\Facades\Activity;
+use DateTimeZone;
 use Filament\Models\Contracts\FilamentUser;
 use Filament\Models\Contracts\HasAvatar;
 use Filament\Models\Contracts\HasName;
@@ -38,10 +39,12 @@ use App\Notifications\SendPasswordReset as ResetPasswordNotification;
  * @property string $password
  * @property string|null $remember_token
  * @property string $language
+ * @property string $timezone
  * @property bool $root_admin
  * @property bool $use_totp
  * @property string|null $totp_secret
  * @property \Illuminate\Support\Carbon|null $totp_authenticated_at
+ * @property array|null $oauth
  * @property bool $gravatar
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
@@ -69,6 +72,7 @@ use App\Notifications\SendPasswordReset as ResetPasswordNotification;
  * @method static Builder|User whereGravatar($value)
  * @method static Builder|User whereId($value)
  * @method static Builder|User whereLanguage($value)
+ * @method static Builder|User whereTimezone($value)
  * @method static Builder|User whereNameFirst($value)
  * @method static Builder|User whereNameLast($value)
  * @method static Builder|User wherePassword($value)
@@ -122,17 +126,19 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
         'name_last',
         'password',
         'language',
+        'timezone',
         'use_totp',
         'totp_secret',
         'totp_authenticated_at',
         'gravatar',
         'root_admin',
+        'oauth',
     ];
 
     /**
      * The attributes excluded from the model's JSON form.
      */
-    protected $hidden = ['password', 'remember_token', 'totp_secret', 'totp_authenticated_at'];
+    protected $hidden = ['password', 'remember_token', 'totp_secret', 'totp_authenticated_at', 'oauth'];
 
     /**
      * Default values for specific fields in the database.
@@ -141,10 +147,12 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
         'external_id' => null,
         'root_admin' => false,
         'language' => 'en',
+        'timezone' => 'UTC',
         'use_totp' => false,
         'totp_secret' => null,
         'name_first' => '',
         'name_last' => '',
+        'oauth' => '[]',
     ];
 
     /**
@@ -152,16 +160,18 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
      */
     public static array $validationRules = [
         'uuid' => 'nullable|string|size:36|unique:users,uuid',
-        'email' => 'required|email|between:1,191|unique:users,email',
-        'external_id' => 'sometimes|nullable|string|max:191|unique:users,external_id',
-        'username' => 'required|between:1,191|unique:users,username',
-        'name_first' => 'nullable|string|between:0,191',
-        'name_last' => 'nullable|string|between:0,191',
+        'email' => 'required|email|between:1,255|unique:users,email',
+        'external_id' => 'sometimes|nullable|string|max:255|unique:users,external_id',
+        'username' => 'required|between:1,255|unique:users,username',
+        'name_first' => 'nullable|string|between:0,255',
+        'name_last' => 'nullable|string|between:0,255',
         'password' => 'sometimes|nullable|string',
         'root_admin' => 'boolean',
         'language' => 'string',
+        'timezone' => 'string',
         'use_totp' => 'boolean',
         'totp_secret' => 'nullable|string',
+        'oauth' => 'array|nullable',
     ];
 
     protected function casts(): array
@@ -172,6 +182,7 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
             'gravatar' => 'boolean',
             'totp_authenticated_at' => 'datetime',
             'totp_secret' => 'encrypted',
+            'oauth' => 'array',
         ];
     }
 
@@ -204,15 +215,16 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
         $rules = parent::getRules();
 
         $rules['language'][] = new In(array_keys((new self())->getAvailableLanguages()));
+        $rules['timezone'][] = new In(array_values(DateTimeZone::listIdentifiers()));
         $rules['username'][] = new Username();
 
         return $rules;
     }
 
     /**
-     * Return the user model in a format that can be passed over to Vue templates.
+     * Return the user model in a format that can be passed over to React templates.
      */
-    public function toVueObject(): array
+    public function toReactObject(): array
     {
         return collect($this->toArray())->except(['id', 'external_id'])->toArray();
     }

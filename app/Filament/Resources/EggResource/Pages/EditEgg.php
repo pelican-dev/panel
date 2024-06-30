@@ -3,8 +3,26 @@
 namespace App\Filament\Resources\EggResource\Pages;
 
 use App\Filament\Resources\EggResource;
+use App\Filament\Resources\EggResource\RelationManagers\ServersRelationManager;
 use App\Models\Egg;
+use App\Services\Eggs\Sharing\EggImporterService;
+use Exception;
 use Filament\Actions;
+use Filament\Forms\Components\Checkbox;
+use Filament\Forms\Components\Fieldset;
+use Filament\Forms\Components\FileUpload;
+use Filament\Forms\Components\Hidden;
+use Filament\Forms\Components\KeyValue;
+use Filament\Forms\Components\Placeholder;
+use Filament\Forms\Components\Repeater;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Tabs;
+use Filament\Forms\Components\Tabs\Tab;
+use Filament\Forms\Components\TagsInput;
+use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Toggle;
+use Filament\Notifications\Notification;
 use Filament\Resources\Pages\EditRecord;
 use AbdelhamidErrahmouni\FilamentMonacoEditor\MonacoEditor;
 use App\Services\Eggs\Sharing\EggExporterService;
@@ -19,64 +37,64 @@ class EditEgg extends EditRecord
     {
         return $form
             ->schema([
-                Forms\Components\Tabs::make()->tabs([
-                    Forms\Components\Tabs\Tab::make('Configuration')
+                Tabs::make()->tabs([
+                    Tab::make('Configuration')
                         ->columns(['default' => 1, 'sm' => 1, 'md' => 2, 'lg' => 4])
                         ->schema([
-                            Forms\Components\TextInput::make('name')
+                            TextInput::make('name')
                                 ->required()
-                                ->maxLength(191)
+                                ->maxLength(255)
                                 ->columnSpan(['default' => 1, 'sm' => 1, 'md' => 2, 'lg' => 1])
                                 ->helperText('A simple, human-readable name to use as an identifier for this Egg.'),
-                            Forms\Components\TextInput::make('uuid')
+                            TextInput::make('uuid')
                                 ->label('Egg UUID')
                                 ->disabled()
                                 ->columnSpan(['default' => 1, 'sm' => 1, 'md' => 1, 'lg' => 2])
                                 ->helperText('This is the globally unique identifier for this Egg which Wings uses as an identifier.'),
-                            Forms\Components\TextInput::make('id')
+                            TextInput::make('id')
                                 ->label('Egg ID')
                                 ->disabled(),
-                            Forms\Components\Textarea::make('description')
+                            Textarea::make('description')
                                 ->rows(3)
                                 ->columnSpan(['default' => 1, 'sm' => 1, 'md' => 2, 'lg' => 2])
                                 ->helperText('A description of this Egg that will be displayed throughout the Panel as needed.'),
-                            Forms\Components\TextInput::make('author')
+                            TextInput::make('author')
                                 ->required()
-                                ->maxLength(191)
+                                ->maxLength(255)
                                 ->email()
                                 ->disabled()
                                 ->columnSpan(['default' => 1, 'sm' => 1, 'md' => 2, 'lg' => 2])
                                 ->helperText('The author of this version of the Egg. Uploading a new Egg configuration from a different author will change this.'),
-                            Forms\Components\Textarea::make('startup')
+                            Textarea::make('startup')
                                 ->rows(2)
                                 ->columnSpanFull()
                                 ->required()
                                 ->helperText('The default startup command that should be used for new servers using this Egg.'),
-                            Forms\Components\TagsInput::make('file_denylist')
+                            TagsInput::make('file_denylist')
                                 ->hidden() // latest wings breaks it.
                                 ->placeholder('denied-file.txt')
                                 ->helperText('A list of files that the end user is not allowed to edit.')
                                 ->columnSpan(['default' => 1, 'sm' => 1, 'md' => 2, 'lg' => 2]),
-                            Forms\Components\TagsInput::make('features')
+                            TagsInput::make('features')
                                 ->placeholder('Add Feature')
                                 ->helperText('')
                                 ->columnSpan(['default' => 1, 'sm' => 1, 'md' => 2, 'lg' => 2]),
-                            Forms\Components\Toggle::make('force_outgoing_ip')
+                            Toggle::make('force_outgoing_ip')
                                 ->hintIcon('tabler-question-mark')
                                 ->hintIconTooltip("Forces all outgoing network traffic to have its Source IP NATed to the IP of the server's primary allocation IP.
                                     Required for certain games to work properly when the Node has multiple public IP addresses.
                                     Enabling this option will disable internal networking for any servers using this egg, causing them to be unable to internally access other servers on the same node."),
-                            Forms\Components\Hidden::make('script_is_privileged')
+                            Hidden::make('script_is_privileged')
                                 ->helperText('The docker images available to servers using this egg.'),
-                            Forms\Components\TagsInput::make('tags')
+                            TagsInput::make('tags')
                                 ->placeholder('Add Tags')
                                 ->helperText('')
                                 ->columnSpan(['default' => 1, 'sm' => 1, 'md' => 2, 'lg' => 2]),
-                            Forms\Components\TextInput::make('update_url')
+                            TextInput::make('update_url')
                                 ->disabled()
                                 ->helperText('Not implemented.')
                                 ->columnSpan(['default' => 1, 'sm' => 1, 'md' => 2, 'lg' => 2]),
-                            Forms\Components\KeyValue::make('docker_images')
+                            KeyValue::make('docker_images')
                                 ->live()
                                 ->columnSpanFull()
                                 ->required()
@@ -86,32 +104,32 @@ class EditEgg extends EditRecord
                                 ->helperText('The docker images available to servers using this egg.'),
                         ]),
 
-                    Forms\Components\Tabs\Tab::make('Process Management')
+                    Tab::make('Process Management')
                         ->columns()
                         ->schema([
-                            Forms\Components\Select::make('config_from')
+                            Select::make('config_from')
                                 ->label('Copy Settings From')
                                 ->placeholder('None')
                                 ->relationship('configFrom', 'name', ignoreRecord: true)
                                 ->helperText('If you would like to default to settings from another Egg select it from the menu above.'),
-                            Forms\Components\TextInput::make('config_stop')
-                                ->maxLength(191)
+                            TextInput::make('config_stop')
+                                ->maxLength(255)
                                 ->label('Stop Command')
                                 ->helperText('The command that should be sent to server processes to stop them gracefully. If you need to send a SIGINT you should enter ^C here.'),
-                            Forms\Components\Textarea::make('config_startup')->rows(10)->json()
+                            Textarea::make('config_startup')->rows(10)->json()
                                 ->label('Start Configuration')
                                 ->helperText('List of values the daemon should be looking for when booting a server to determine completion.'),
-                            Forms\Components\Textarea::make('config_files')->rows(10)->json()
+                            Textarea::make('config_files')->rows(10)->json()
                                 ->label('Configuration Files')
                                 ->helperText('This should be a JSON representation of configuration files to modify and what parts should be changed.'),
-                            Forms\Components\Textarea::make('config_logs')->rows(10)->json()
+                            Textarea::make('config_logs')->rows(10)->json()
                                 ->label('Log Configuration')
                                 ->helperText('This should be a JSON representation of where log files are stored, and whether or not the daemon should be creating custom logs.'),
                         ]),
-                    Forms\Components\Tabs\Tab::make('Egg Variables')
+                    Tab::make('Egg Variables')
                         ->columnSpanFull()
                         ->schema([
-                            Forms\Components\Repeater::make('variables')
+                            Repeater::make('variables')
                                 ->label('')
                                 ->grid()
                                 ->relationship('variables')
@@ -140,48 +158,48 @@ class EditEgg extends EditRecord
                                     return $data;
                                 })
                                 ->schema([
-                                    Forms\Components\TextInput::make('name')
+                                    TextInput::make('name')
                                         ->live()
                                         ->debounce(750)
-                                        ->maxLength(191)
+                                        ->maxLength(255)
                                         ->columnSpanFull()
                                         ->afterStateUpdated(fn (Forms\Set $set, $state) => $set('env_variable', str($state)->trim()->snake()->upper()->toString())
                                         )
                                         ->required(),
-                                    Forms\Components\Textarea::make('description')->columnSpanFull(),
-                                    Forms\Components\TextInput::make('env_variable')
+                                    Textarea::make('description')->columnSpanFull(),
+                                    TextInput::make('env_variable')
                                         ->label('Environment Variable')
-                                        ->maxLength(191)
+                                        ->maxLength(255)
                                         ->prefix('{{')
                                         ->suffix('}}')
                                         ->hintIcon('tabler-code')
                                         ->hintIconTooltip(fn ($state) => "{{{$state}}}")
                                         ->required(),
-                                    Forms\Components\TextInput::make('default_value')->maxLength(191),
-                                    Forms\Components\Fieldset::make('User Permissions')
+                                    TextInput::make('default_value')->maxLength(255),
+                                    Fieldset::make('User Permissions')
                                         ->schema([
-                                            Forms\Components\Checkbox::make('user_viewable')->label('Viewable'),
-                                            Forms\Components\Checkbox::make('user_editable')->label('Editable'),
+                                            Checkbox::make('user_viewable')->label('Viewable'),
+                                            Checkbox::make('user_editable')->label('Editable'),
                                         ]),
-                                    Forms\Components\TextInput::make('rules')->columnSpanFull(),
+                                    TextInput::make('rules')->columnSpanFull(),
                                 ]),
                         ]),
-                    Forms\Components\Tabs\Tab::make('Install Script')
+                    Tab::make('Install Script')
                         ->columns(3)
                         ->schema([
 
-                            Forms\Components\Select::make('copy_script_from')
+                            Select::make('copy_script_from')
                                 ->placeholder('None')
                                 ->relationship('scriptFrom', 'name', ignoreRecord: true),
 
-                            Forms\Components\TextInput::make('script_container')
+                            TextInput::make('script_container')
                                 ->required()
-                                ->maxLength(191)
+                                ->maxLength(255)
                                 ->default('alpine:3.4'),
 
-                            Forms\Components\TextInput::make('script_entry')
+                            TextInput::make('script_entry')
                                 ->required()
-                                ->maxLength(191)
+                                ->maxLength(255)
                                 ->default('ash'),
 
                             MonacoEditor::make('script_install')
@@ -199,18 +217,95 @@ class EditEgg extends EditRecord
     protected function getHeaderActions(): array
     {
         return [
-            Actions\DeleteAction::make()
+            Actions\DeleteAction::make('deleteEgg')
                 ->disabled(fn (Egg $egg): bool => $egg->servers()->count() > 0)
-                ->label(fn (Egg $egg): string => $egg->servers()->count() <= 0 ? 'Delete Egg' : 'Egg In Use'),
-            Actions\Action::make('export')
-                ->icon('tabler-download')
-                ->label('Export Egg')
+                ->label(fn (Egg $egg): string => $egg->servers()->count() <= 0 ? 'Delete' : 'In Use'),
+
+            Actions\Action::make('exportEgg')
+                ->label('Export')
                 ->color('primary')
                 ->action(fn (EggExporterService $service, Egg $egg) => response()->streamDownload(function () use ($service, $egg) {
                     echo $service->handle($egg->id);
                 }, 'egg-' . $egg->getKebabName() . '.json')),
+
+            Actions\Action::make('importEgg')
+                ->label('Import')
+                ->form([
+                    Placeholder::make('warning')
+                        ->label('This will overwrite the current egg to the one you upload.'),
+                    Tabs::make('Tabs')
+                        ->tabs([
+                            Tab::make('From File')
+                                ->icon('tabler-file-upload')
+                                ->schema([
+                                    FileUpload::make('egg')
+                                        ->label('Egg')
+                                        ->hint('eg. minecraft.json')
+                                        ->acceptedFileTypes(['application/json'])
+                                        ->storeFiles(false),
+                                ]),
+                            Tab::make('From URL')
+                                ->icon('tabler-world-upload')
+                                ->schema([
+                                    TextInput::make('url')
+                                        ->label('URL')
+                                        ->hint('Link to the egg file (eg. minecraft.json)')
+                                        ->url(),
+                                ]),
+                        ])
+                        ->contained(false),
+
+                ])
+                ->action(function (array $data, Egg $egg): void {
+                    /** @var EggImporterService $eggImportService */
+                    $eggImportService = resolve(EggImporterService::class);
+
+                    if (!empty($data['egg'])) {
+                        try {
+                            $eggImportService->fromFile($data['egg'], $egg);
+                        } catch (Exception $exception) {
+                            Notification::make()
+                                ->title('Import Failed')
+                                ->body($exception->getMessage())
+                                ->danger()
+                                ->send();
+
+                            report($exception);
+
+                            return;
+                        }
+                    }
+
+                    if (!empty($data['url'])) {
+                        try {
+                            $eggImportService->fromUrl($data['url'], $egg);
+                        } catch (Exception $exception) {
+                            Notification::make()
+                                ->title('Import Failed')
+                                ->body($exception->getMessage())
+                                ->danger()
+                                ->send();
+
+                            report($exception);
+
+                            return;
+                        }
+                    }
+
+                    $this->refreshForm();
+                    Notification::make()
+                        ->title('Import Success')
+                        ->success()
+                        ->send();
+                }),
+
             $this->getSaveFormAction()->formId('form'),
         ];
+    }
+
+    public function refreshForm(): void
+    {
+        $this->fillForm();
     }
 
     protected function getFormActions(): array
@@ -221,7 +316,7 @@ class EditEgg extends EditRecord
     public function getRelationManagers(): array
     {
         return [
-            EggResource\RelationManagers\ServersRelationManager::class,
+            ServersRelationManager::class,
         ];
     }
 }
