@@ -11,6 +11,11 @@ class ManageSettings extends ManageRecords
 {
     protected static string $resource = SettingResource::class;
 
+    public function getSubheading(): ?string
+    {
+        return '';
+    }
+
     public function getTabs(): array
     {
         return [
