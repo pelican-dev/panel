@@ -6,6 +6,7 @@ enum ContainerStatus: string
 {
     // Docker Based
     case Created = 'created';
+    case Starting = 'starting';
     case Running = 'running';
     case Restarting = 'restarting';
     case Exited = 'exited';
@@ -21,6 +22,7 @@ enum ContainerStatus: string
     {
         return match ($this) {
             self::Created => 'tabler-heart-plus',
+            self::Starting => 'tabler-heart-up',
             self::Running => 'tabler-heartbeat',
             self::Restarting => 'tabler-heart-bolt',
             self::Exited => 'tabler-heart-exclamation',
@@ -36,6 +38,7 @@ enum ContainerStatus: string
     {
         return match ($this) {
             self::Created => 'primary',
+            self::Starting => 'warning',
             self::Running => 'success',
             self::Restarting => 'info',
             self::Exited => 'danger',
