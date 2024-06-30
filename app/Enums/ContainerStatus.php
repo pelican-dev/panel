@@ -22,18 +22,17 @@ enum ContainerStatus: string
     public function icon(): string
     {
         return match ($this) {
+
             self::Created => 'tabler-heart-plus',
             self::Starting => 'tabler-heart-up',
             self::Running => 'tabler-heartbeat',
             self::Restarting => 'tabler-heart-bolt',
             self::Exited => 'tabler-heart-exclamation',
             self::Paused => 'tabler-heart-pause',
-            self::Dead => 'tabler-heart-x',
+            self::Dead, self::Offline => 'tabler-heart-x',
             self::Removing => 'tabler-heart-down',
             self::Missing => 'tabler-heart-search',
             self::Stopping => 'tabler-heart-minus',
-            self::Offline => 'tabler-heart-bolt',
-            default => 'tabler-heart-question',
         };
     }
 
@@ -51,7 +50,6 @@ enum ContainerStatus: string
             self::Missing => 'danger',
             self::Stopping => 'warning',
             self::Offline => 'gray',
-            default => 'danger',
         };
     }
 }
