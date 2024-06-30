@@ -13,6 +13,7 @@ enum ContainerStatus: string
     case Paused = 'paused';
     case Dead = 'dead';
     case Removing = 'removing';
+    case Stopping = 'stopping';
     case Offline = 'offline';
 
     // HTTP Based
@@ -30,6 +31,7 @@ enum ContainerStatus: string
             self::Dead => 'tabler-heart-x',
             self::Removing => 'tabler-heart-down',
             self::Missing => 'tabler-heart-question',
+            self::Stopping => 'tabler-heart-minus',
             self::Offline => 'tabler-heart-bolt',
         };
     }
@@ -46,6 +48,7 @@ enum ContainerStatus: string
             self::Dead => 'danger',
             self::Removing => 'warning',
             self::Missing => 'danger',
+            self::Stopping => 'warning',
             self::Offline => 'gray',
         };
     }
