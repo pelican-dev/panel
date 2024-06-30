@@ -17,9 +17,10 @@ use Illuminate\Database\Eloquent\Relations\HasManyThrough;
  * @property string $uuid
  * @property bool $public
  * @property string $name
- * @property string|null $notes
+ * @property string|null $description
  * @property string $fqdn
  * @property string $scheme
+ * @property string|null $notes
  * @property bool $behind_proxy
  * @property bool $maintenance_mode
  * @property int $memory
@@ -69,21 +70,22 @@ class Node extends Model
      * Fields that are mass assignable.
      */
     protected $fillable = [
-        'public', 'name',
-        'fqdn', 'scheme', 'behind_proxy',
+        'public', 'name', 'fqdn',
+        'description', 'scheme', 'notes', 'behind_proxy',
         'memory', 'memory_overallocate', 'disk',
         'disk_overallocate', 'cpu', 'cpu_overallocate',
         'upload_size', 'daemon_base',
         'daemon_sftp', 'daemon_sftp_alias', 'daemon_listen',
-        'notes', 'maintenance_mode',
+        'maintenance_mode',
     ];
 
     public static array $validationRules = [
         'name' => 'required|regex:/^([\w .-]{1,100})$/',
-        'notes' => 'string|nullable',
+        'description' => 'string|nullable',
         'public' => 'boolean',
         'fqdn' => 'required|string',
         'scheme' => 'required|string|in:http,https',
+        'notes' => 'string|nullable',
         'behind_proxy' => 'boolean',
         'memory' => 'required|numeric|min:0',
         'memory_overallocate' => 'required|numeric|min:-1',
