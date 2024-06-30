@@ -44,10 +44,11 @@ class NodeMemoryChart extends ChartWidget
         $used = ($node->statistics()['memory_used'] ?? 0) / 1024 / 1024 / 1024;
         $unused = $total - $used;
 
+        //        dd($total, $used);
+
         return [
             'datasets' => [
                 [
-                    'label' => 'Data Cool',
                     'data' => [$used, $unused],
                     'backgroundColor' => [
                         'rgb(255, 99, 132)',
@@ -55,7 +56,6 @@ class NodeMemoryChart extends ChartWidget
                         'rgb(255, 205, 86)',
                     ],
                 ],
-                // 'backgroundColor' => [],
             ],
             'labels' => ['Used', 'Unused'],
         ];

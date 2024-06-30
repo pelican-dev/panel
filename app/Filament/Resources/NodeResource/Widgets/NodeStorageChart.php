@@ -47,7 +47,6 @@ class NodeStorageChart extends ChartWidget
         return [
             'datasets' => [
                 [
-                    'label' => 'Data Cool',
                     'data' => [$used, $unused],
                     'backgroundColor' => [
                         'rgb(255, 99, 132)',
@@ -55,7 +54,6 @@ class NodeStorageChart extends ChartWidget
                         'rgb(255, 205, 86)',
                     ],
                 ],
-                // 'backgroundColor' => [],
             ],
             'labels' => ['Used', 'Unused'],
         ];

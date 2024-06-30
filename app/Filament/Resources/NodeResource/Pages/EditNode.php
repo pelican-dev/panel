@@ -3,8 +3,6 @@
 namespace App\Filament\Resources\NodeResource\Pages;
 
 use App\Filament\Resources\NodeResource;
-use App\Filament\Resources\NodeResource\Widgets\NodeMemoryChart;
-use App\Filament\Resources\NodeResource\Widgets\NodeStorageChart;
 use App\Models\Node;
 use App\Services\Nodes\NodeUpdateService;
 use Filament\Actions;
@@ -17,6 +15,7 @@ use Filament\Forms\Components\TagsInput;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\ToggleButtons;
+use Filament\Forms\Components\View;
 use Filament\Forms\Get;
 use Filament\Forms\Set;
 use Filament\Notifications\Notification;
@@ -41,6 +40,15 @@ class EditNode extends EditRecord
                 ->persistTabInQueryString()
                 ->columnSpanFull()
                 ->tabs([
+                    Tab::make('Statistics')
+                        ->label('Statistics')
+                        ->icon('tabler-chart-area-line-filled')
+                        ->columns(6)
+                        ->schema([
+                            View::make('filament.components.node-cpu-chart')->columnSpan(6)->columnStart(0),
+                            View::make('filament.components.node-memory-chart')->columnSpan(3),
+                            View::make('filament.components.node-storage-chart')->columnSpan(3),
+                        ]),
                     Tab::make('Basic Settings')
                         ->icon('tabler-server')
                         ->schema([
@@ -437,16 +445,17 @@ class EditNode extends EditRecord
         ];
     }
 
-    protected function getFooterWidgets(): array
-    {
-        return [
-            NodeStorageChart::class,
-            NodeMemoryChart::class,
-        ];
-    }
-
     protected function afterSave(): void
     {
         $this->fillForm();
+    }
+
+    protected function getColumnSpan()
+    {
+        return null;
+    }
+    protected function getColumnStart()
+    {
+        return null;
     }
 }
