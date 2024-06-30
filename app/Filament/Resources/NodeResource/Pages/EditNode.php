@@ -14,6 +14,7 @@ use Filament\Notifications\Notification;
 use Filament\Resources\Pages\EditRecord;
 use Illuminate\Support\HtmlString;
 use Webbingbrasil\FilamentCopyActions\Forms\Actions\CopyAction;
+use Filament\Forms\Components\Textarea;
 
 class EditNode extends EditRecord
 {
@@ -185,7 +186,15 @@ class EditNode extends EditRecord
                                     'http' => 'tabler-lock-open-off',
                                     'https' => 'tabler-lock',
                                 ])
-                                ->default(fn () => request()->isSecure() ? 'https' : 'http'), ]),
+                                ->default(fn () => request()->isSecure() ? 'https' : 'http'), 
+
+                            Textarea::make('notes')
+                                ->label('Notes')
+                                ->rows(5)
+                                ->cols(10)
+                                ->autosize(),
+                            ]),
+
                     Tabs\Tab::make('Advanced Settings')
                         ->columns(['default' => 1, 'sm' => 1, 'md' => 4, 'lg' => 6])
                         ->icon('tabler-server-cog')

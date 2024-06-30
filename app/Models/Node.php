@@ -17,7 +17,7 @@ use Illuminate\Database\Eloquent\Relations\HasManyThrough;
  * @property string $uuid
  * @property bool $public
  * @property string $name
- * @property string|null $description
+ * @property string|null $notes
  * @property string $fqdn
  * @property string $scheme
  * @property bool $behind_proxy
@@ -75,12 +75,12 @@ class Node extends Model
         'disk_overallocate', 'cpu', 'cpu_overallocate',
         'upload_size', 'daemon_base',
         'daemon_sftp', 'daemon_sftp_alias', 'daemon_listen',
-        'description', 'maintenance_mode',
+        'notes', 'maintenance_mode',
     ];
 
     public static array $validationRules = [
         'name' => 'required|regex:/^([\w .-]{1,100})$/',
-        'description' => 'string|nullable',
+        'notes' => 'string|nullable',
         'public' => 'boolean',
         'fqdn' => 'required|string',
         'scheme' => 'required',
