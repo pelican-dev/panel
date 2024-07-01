@@ -11,6 +11,7 @@ class MountResource extends Resource
     protected static ?string $model = Mount::class;
 
     protected static ?string $navigationIcon = 'tabler-layers-linked';
+    protected static ?string $navigationGroup = 'Advanced';
 
     public static function getNavigationBadge(): ?string
     {

@@ -3,10 +3,13 @@
 namespace App\Filament\Resources\DatabaseHostResource\Pages;
 
 use App\Filament\Resources\DatabaseHostResource;
+use App\Filament\Resources\DatabaseHostResource\RelationManagers\DatabasesRelationManager;
 use App\Models\DatabaseHost;
 use App\Models\Objects\Endpoint;
 use App\Services\Databases\Hosts\HostUpdateService;
 use Filament\Actions;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\TextInput;
 use Filament\Resources\Pages\EditRecord;
 use Filament\Forms;
 use Filament\Forms\Components\Section;
@@ -31,40 +34,40 @@ class EditDatabaseHost extends EditRecord
                         'lg' => 4,
                     ])
                     ->schema([
-                        Forms\Components\TextInput::make('host')
+                        TextInput::make('host')
                             ->columnSpan(2)
                             ->helperText('The IP address or Domain name that should be used when attempting to connect to this MySQL host from this Panel to create new databases.')
                             ->required()
                             ->live(onBlur: true)
                             ->afterStateUpdated(fn ($state, Forms\Set $set) => $set('name', $state))
                             ->maxLength(255),
-                        Forms\Components\TextInput::make('port')
+                        TextInput::make('port')
                             ->columnSpan(1)
                             ->helperText('The port that MySQL is running on for this host.')
                             ->required()
                             ->numeric()
                             ->minValue(0)
                             ->maxValue(Endpoint::PORT_CEIL),
-                        Forms\Components\TextInput::make('max_databases')
+                        TextInput::make('max_databases')
                             ->label('Max databases')
                             ->helpertext('Blank is unlimited.')
                             ->numeric(),
-                        Forms\Components\TextInput::make('name')
+                        TextInput::make('name')
                             ->label('Display Name')
                             ->helperText('A short identifier used to distinguish this location from others. Must be between 1 and 60 characters, for example, us.nyc.lvl3.')
                             ->required()
                             ->maxLength(60),
-                        Forms\Components\TextInput::make('username')
+                        TextInput::make('username')
                             ->helperText('The username of an account that has enough permissions to create new users and databases on the system.')
                             ->required()
                             ->maxLength(255),
-                        Forms\Components\TextInput::make('password')
+                        TextInput::make('password')
                             ->helperText('The password for the database user.')
                             ->password()
                             ->revealable()
                             ->maxLength(255)
                             ->required(),
-                        Forms\Components\Select::make('node_id')
+                        Select::make('node_id')
                             ->searchable()
                             ->preload()
                             ->helperText('This setting only defaults to this database host when adding a database to a server on the selected node.')
@@ -92,7 +95,7 @@ class EditDatabaseHost extends EditRecord
     public function getRelationManagers(): array
     {
         return [
-            DatabaseHostResource\RelationManagers\DatabasesRelationManager::class,
+            DatabasesRelationManager::class,
         ];
     }
 
