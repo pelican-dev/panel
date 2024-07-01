@@ -3,7 +3,6 @@
 namespace App\Filament\Resources\NodeResource\RelationManagers;
 
 use App\Models\Server;
-use Filament\Tables\Columns\SelectColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Filament\Resources\RelationManagers\RelationManager;

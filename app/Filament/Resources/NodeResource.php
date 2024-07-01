@@ -3,7 +3,6 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\NodeResource\Pages;
-use App\Filament\Resources\NodeResource\RelationManagers\AllocationsRelationManager;
 use App\Filament\Resources\NodeResource\RelationManagers\NodesRelationManager;
 use App\Models\Node;
 use Filament\Resources\Resource;
