@@ -64,6 +64,17 @@
             "rules": "required|string|max:20",
             "sort": null,
             "field_type": "text"
+        },
+        {
+            "name": "Server Port",
+            "description": "Main Port",
+            "env_variable": "SERVER_PORT",
+            "default_value": "27015",
+            "user_viewable": true,
+            "user_editable": false,
+            "rules": "required|port",
+            "sort": null,
+            "field_type": "text"
         }
     ]
 }
