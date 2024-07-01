@@ -6,9 +6,13 @@ use App\Filament\Resources\MountResource;
 use App\Models\Mount;
 use Filament\Actions;
 use Filament\Resources\Pages\ListRecords;
+use Filament\Tables\Actions\BulkActionGroup;
 use Filament\Tables\Actions\CreateAction;
+use Filament\Tables\Actions\DeleteBulkAction;
+use Filament\Tables\Actions\EditAction;
+use Filament\Tables\Columns\IconColumn;
+use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
-use Filament\Tables;
 
 class ListMounts extends ListRecords
 {
@@ -24,31 +28,28 @@ class ListMounts extends ListRecords
         return $table
             ->searchable(false)
             ->columns([
-                Tables\Columns\TextColumn::make('name')
+                TextColumn::make('name')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('source')
+                TextColumn::make('source')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('target')
+                TextColumn::make('target')
                     ->searchable(),
-                Tables\Columns\IconColumn::make('read_only')
+                IconColumn::make('read_only')
                     ->icon(fn (bool $state) => $state ? 'tabler-circle-check-filled' : 'tabler-circle-x-filled')
                     ->color(fn (bool $state) => $state ? 'success' : 'danger')
                     ->sortable(),
-                Tables\Columns\IconColumn::make('user_mountable')
+                IconColumn::make('user_mountable')
                     ->hidden()
                     ->icon(fn (bool $state) => $state ? 'tabler-circle-check-filled' : 'tabler-circle-x-filled')
                     ->color(fn (bool $state) => $state ? 'success' : 'danger')
                     ->sortable(),
             ])
-            ->filters([
-                //
-            ])
             ->actions([
-                Tables\Actions\EditAction::make(),
+                EditAction::make(),
             ])
             ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
+                BulkActionGroup::make([
+                    DeleteBulkAction::make(),
                 ]),
             ])
             ->emptyStateIcon('tabler-layers-linked')

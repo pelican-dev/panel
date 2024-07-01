@@ -25,6 +25,7 @@ class StoreUserRequest extends ApplicationApiRequest
             'username',
             'password',
             'language',
+            'timezone',
             'root_admin',
         ])->toArray();
 

@@ -76,6 +76,10 @@ class StartupModificationService
             $server = $server->forceFill([
                 'egg_id' => $egg->id,
             ]);
+
+            // Fill missing fields from egg
+            $data['docker_image'] = $data['docker_image'] ?? collect($egg->docker_images)->first();
+            $data['startup'] = $data['startup'] ?? $egg->startup;
         }
 
         $server->fill([

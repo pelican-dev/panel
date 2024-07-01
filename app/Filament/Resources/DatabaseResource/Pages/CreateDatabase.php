@@ -3,9 +3,10 @@
 namespace App\Filament\Resources\DatabaseResource\Pages;
 
 use App\Filament\Resources\DatabaseResource;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Resources\Pages\CreateRecord;
-use Filament\Forms;
 
 class CreateDatabase extends CreateRecord
 {
@@ -15,29 +16,29 @@ class CreateDatabase extends CreateRecord
     {
         return $form
             ->schema([
-                Forms\Components\Select::make('server_id')
+                Select::make('server_id')
                     ->relationship('server', 'name')
                     ->searchable()
                     ->preload()
                     ->required(),
-                Forms\Components\TextInput::make('database_host_id')
+                TextInput::make('database_host_id')
                     ->required()
                     ->numeric(),
-                Forms\Components\TextInput::make('database')
+                TextInput::make('database')
                     ->required()
-                    ->maxLength(191),
-                Forms\Components\TextInput::make('remote')
+                    ->maxLength(255),
+                TextInput::make('remote')
                     ->required()
-                    ->maxLength(191)
+                    ->maxLength(255)
                     ->default('%'),
-                Forms\Components\TextInput::make('username')
+                TextInput::make('username')
                     ->required()
-                    ->maxLength(191),
-                Forms\Components\TextInput::make('password')
+                    ->maxLength(255),
+                TextInput::make('password')
                     ->password()
                     ->revealable()
                     ->required(),
-                Forms\Components\TextInput::make('max_connections')
+                TextInput::make('max_connections')
                     ->numeric()
                     ->minValue(0)
                     ->default(0),

@@ -8,10 +8,16 @@ use App\Services\Eggs\Sharing\EggExporterService;
 use App\Services\Eggs\Sharing\EggImporterService;
 use Exception;
 use Filament\Actions;
-use Filament\Forms;
+use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Tabs;
+use Filament\Forms\Components\Tabs\Tab;
+use Filament\Forms\Components\TextInput;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\ListRecords;
+use Filament\Tables\Actions\BulkActionGroup;
+use Filament\Tables\Actions\DeleteBulkAction;
+use Filament\Tables\Actions\EditAction;
+use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 use Filament\Tables;
@@ -32,23 +38,22 @@ class ListEggs extends ListRecords
             ->defaultPaginationPageOption(25)
             ->checkIfRecordIsSelectableUsing(fn (Egg $egg) => $egg->servers_count <= 0)
             ->columns([
-                Tables\Columns\TextColumn::make('id')
+                TextColumn::make('id')
                     ->label('Id')
-                    ->searchable()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('name')
+                    ->hidden(),
+                TextColumn::make('name')
                     ->icon('tabler-egg')
                     ->description(fn ($record): ?string => (strlen($record->description) > 120) ? substr($record->description, 0, 120).'...' : $record->description)
                     ->wrap()
                     ->searchable()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('servers_count')
+                TextColumn::make('servers_count')
                     ->counts('servers')
                     ->icon('tabler-server')
                     ->label('Servers'),
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
+                EditAction::make(),
                 Tables\Actions\Action::make('export')
                     ->icon('tabler-download')
                     ->label('Export')
@@ -58,8 +63,8 @@ class ListEggs extends ListRecords
                     }, 'egg-' . $egg->getKebabName() . '.json')),
             ])
             ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
+                BulkActionGroup::make([
+                    DeleteBulkAction::make(),
                 ]),
             ]);
     }
@@ -73,20 +78,20 @@ class ListEggs extends ListRecords
                 ->form([
                     Tabs::make('Tabs')
                         ->tabs([
-                            Tabs\Tab::make('From File')
+                            Tab::make('From File')
                                 ->icon('tabler-file-upload')
                                 ->schema([
-                                    Forms\Components\FileUpload::make('egg')
+                                    FileUpload::make('egg')
                                         ->label('Egg')
                                         ->hint('This should be the json file ( egg-minecraft.json )')
                                         ->acceptedFileTypes(['application/json'])
                                         ->storeFiles(false)
                                         ->multiple(),
                                 ]),
-                            Tabs\Tab::make('From URL')
+                            Tab::make('From URL')
                                 ->icon('tabler-world-upload')
                                 ->schema([
-                                    Forms\Components\TextInput::make('url')
+                                    TextInput::make('url')
                                         ->label('URL')
                                         ->hint('This URL should point to a single json file')
                                         ->url(),
