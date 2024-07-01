@@ -232,7 +232,17 @@ class CreateServer extends CreateRecord
                                 ->columnSpan(2)
                                 ->defaultItems(fn () => count($this->eggDefaultPorts))
                                 ->label('Port Assignments')
-                                ->helperText(fn (Forms\Get $get) => empty($get('ports')) ? 'You must add ports to assign them!' : '')
+                                ->helperText(function (Forms\Get $get) {
+                                    if (empty($this->eggDefaultPorts)) {
+                                        return "This egg doesn't have any ports defined.";
+                                    }
+
+                                    if (empty($get('ports'))) {
+                                        return 'You must add ports to assign them!';
+                                    }
+
+                                    return '';
+                                })
                                 ->live()
                                 ->addable(false)
                                 ->deletable(false)
