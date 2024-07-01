@@ -200,8 +200,8 @@ class CreateNode extends CreateRecord
                                 ->autosize(),
 
                             TextInput::make('description')
+                                ->maxLength(40)
                                 ->label('Description'),
-
                         ]),
                     Step::make('advanced')
                         ->label('Advanced Settings')
