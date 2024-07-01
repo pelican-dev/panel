@@ -2,10 +2,10 @@
 
 namespace App\Tests\Integration\Api\Client;
 
+use App\Models\Objects\Endpoint;
 use App\Models\User;
 use App\Models\Server;
 use App\Models\Subuser;
-use App\Models\Allocation;
 use App\Models\Permission;
 
 class ClientControllerTest extends ClientApiIntegrationTestCase
@@ -93,49 +93,6 @@ class ClientControllerTest extends ClientApiIntegrationTestCase
             ->assertJsonCount(2, 'data')
             ->assertJsonPath('data.0.attributes.identifier', $servers[0]->uuid_short)
             ->assertJsonPath('data.1.attributes.identifier', $servers[2]->uuid_short);
-    }
-
-    /**
-     * Test that using ?filter[*]=:25565 or ?filter[*]=192.168.1.1:25565 returns only those servers
-     * with the same allocation for the given user.
-     */
-    public function testServersAreFilteredUsingAllocationInformation(): void
-    {
-        /** @var \App\Models\User $user */
-        /** @var \App\Models\Server $server */
-        [$user, $server] = $this->generateTestAccount();
-        $server2 = $this->createServerModel(['user_id' => $user->id, 'node_id' => $server->node_id]);
-
-        $allocation = Allocation::factory()->create(['node_id' => $server->node_id, 'server_id' => $server->id, 'ip' => '192.168.1.1', 'port' => 25565]);
-        $allocation2 = Allocation::factory()->create(['node_id' => $server->node_id, 'server_id' => $server2->id, 'ip' => '192.168.1.1', 'port' => 25570]);
-
-        $server->update(['allocation_id' => $allocation->id]);
-        $server2->update(['allocation_id' => $allocation2->id]);
-
-        $server->refresh();
-        $server2->refresh();
-
-        $this->actingAs($user)->getJson('/api/client?filter[*]=192.168.1.1')
-            ->assertOk()
-            ->assertJsonCount(2, 'data')
-            ->assertJsonPath('data.0.attributes.identifier', $server->uuid_short)
-            ->assertJsonPath('data.1.attributes.identifier', $server2->uuid_short);
-
-        $this->actingAs($user)->getJson('/api/client?filter[*]=192.168.1.1:25565')
-            ->assertOk()
-            ->assertJsonCount(1, 'data')
-            ->assertJsonPath('data.0.attributes.identifier', $server->uuid_short);
-
-        $this->actingAs($user)->getJson('/api/client?filter[*]=:25570')
-            ->assertOk()
-            ->assertJsonCount(1, 'data')
-            ->assertJsonPath('data.0.attributes.identifier', $server2->uuid_short);
-
-        $this->actingAs($user)->getJson('/api/client?filter[*]=:255')
-            ->assertOk()
-            ->assertJsonCount(2, 'data')
-            ->assertJsonPath('data.0.attributes.identifier', $server->uuid_short)
-            ->assertJsonPath('data.1.attributes.identifier', $server2->uuid_short);
     }
 
     /**
@@ -304,20 +261,16 @@ class ClientControllerTest extends ClientApiIntegrationTestCase
     }
 
     /**
-     * Test that a subuser without the allocation.read permission is only able to see the primary
-     * allocation for the server.
+     * Test that a subuser without the allocation.read permission cannot see any ports
      */
-    public function testOnlyPrimaryAllocationIsReturnedToSubuser(): void
+    public function testNoPortsAreReturnedToSubuser(): void
     {
         /** @var \App\Models\Server $server */
         [$user, $server] = $this->generateTestAccount([Permission::ACTION_WEBSOCKET_CONNECT]);
-        $server->allocation->notes = 'Test notes';
-        $server->allocation->save();
-
-        Allocation::factory()->times(2)->create([
-            'node_id' => $server->node_id,
-            'server_id' => $server->id,
-        ]);
+        $server->ports->add(new Endpoint(1234));
+        $server->ports->add(new Endpoint(2345, '1.2.3.4'));
+        $server->ports->add(new Endpoint(3456));
+        $server->save();
 
         $server->refresh();
         $response = $this->actingAs($user)->getJson('/api/client');
@@ -326,9 +279,7 @@ class ClientControllerTest extends ClientApiIntegrationTestCase
         $response->assertJsonCount(1, 'data');
         $response->assertJsonPath('data.0.attributes.server_owner', false);
         $response->assertJsonPath('data.0.attributes.uuid', $server->uuid);
-        $response->assertJsonCount(1, 'data.0.attributes.relationships.allocations.data');
-        $response->assertJsonPath('data.0.attributes.relationships.allocations.data.0.attributes.id', $server->allocation->id);
-        $response->assertJsonPath('data.0.attributes.relationships.allocations.data.0.attributes.notes', null);
+        $response->assertJsonCount(0, 'data.0.attributes.ports');
     }
 
     public static function filterTypeDataProvider(): array

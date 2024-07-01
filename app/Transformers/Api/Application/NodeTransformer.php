@@ -12,7 +12,7 @@ class NodeTransformer extends BaseTransformer
     /**
      * List of resources that can be included.
      */
-    protected array $availableIncludes = ['allocations', 'servers'];
+    protected array $availableIncludes = ['servers'];
 
     /**
      * Return the resource name for the JSONAPI output.
@@ -43,26 +43,6 @@ class NodeTransformer extends BaseTransformer
         ];
 
         return $response;
-    }
-
-    /**
-     * Return the nodes associated with this location.
-     *
-     * @throws \App\Exceptions\Transformer\InvalidTransformerLevelException
-     */
-    public function includeAllocations(Node $node): Collection|NullResource
-    {
-        if (!$this->authorize(AdminAcl::RESOURCE_ALLOCATIONS)) {
-            return $this->null();
-        }
-
-        $node->loadMissing('allocations');
-
-        return $this->collection(
-            $node->getRelation('allocations'),
-            $this->makeTransformer(AllocationTransformer::class),
-            'allocation'
-        );
     }
 
     /**

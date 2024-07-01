@@ -5,7 +5,6 @@ namespace App\Http\Controllers\Admin\Nodes;
 use Illuminate\View\View;
 use App\Models\Node;
 use Illuminate\Support\Collection;
-use App\Models\Allocation;
 use App\Http\Controllers\Controller;
 use App\Traits\Controllers\JavascriptInjection;
 use App\Services\Helpers\SoftwareVersionService;
@@ -54,32 +53,6 @@ class NodeViewController extends Controller
     public function configuration(Node $node): View
     {
         return view('admin.nodes.view.configuration', compact('node'));
-    }
-
-    /**
-     * Return the node allocation management page.
-     */
-    public function allocations(Node $node): View
-    {
-        $node->setRelation(
-            'allocations',
-            $node->allocations()
-                ->orderByRaw('server_id IS NOT NULL DESC, server_id IS NULL')
-                ->orderByRaw('INET_ATON(ip) ASC')
-                ->orderBy('port')
-                ->with('server:id,name')
-                ->paginate(50)
-        );
-
-        $this->plainInject(['node' => Collection::wrap($node)->only(['id'])]);
-
-        return view('admin.nodes.view.allocation', [
-            'node' => $node,
-            'allocations' => Allocation::query()->where('node_id', $node->id)
-                ->groupBy('ip')
-                ->orderByRaw('INET_ATON(ip) ASC')
-                ->get(['ip']),
-        ]);
     }
 
     /**

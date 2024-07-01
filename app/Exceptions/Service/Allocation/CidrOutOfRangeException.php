@@ -11,6 +11,6 @@ class CidrOutOfRangeException extends DisplayException
      */
     public function __construct()
     {
-        parent::__construct(trans('exceptions.allocations.cidr_out_of_range'));
+        parent::__construct(trans('exceptions.ports.cidr_out_of_range'));
     }
 }

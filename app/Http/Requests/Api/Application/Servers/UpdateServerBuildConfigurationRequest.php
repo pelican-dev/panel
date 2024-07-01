@@ -15,7 +15,6 @@ class UpdateServerBuildConfigurationRequest extends ServerWriteRequest
         $rules = Server::getRulesForUpdate($this->parameter('server', Server::class));
 
         return [
-            'allocation' => $rules['allocation_id'],
             'oom_killer' => $rules['oom_killer'],
 
             'limits' => 'sometimes|array',
@@ -54,7 +53,6 @@ class UpdateServerBuildConfigurationRequest extends ServerWriteRequest
     {
         $data = parent::validated();
 
-        $data['allocation_id'] = $data['allocation'];
         $data['database_limit'] = $data['feature_limits']['databases'] ?? null;
         $data['allocation_limit'] = $data['feature_limits']['allocations'] ?? null;
         $data['backup_limit'] = $data['feature_limits']['backups'] ?? null;

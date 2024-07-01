@@ -23,7 +23,6 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property \Carbon\CarbonImmutable $updated_at
  * @property \Carbon\CarbonImmutable|null $deleted_at
  * @property \App\Models\Server $server
- * @property \App\Models\AuditLog[] $audits
  */
 class Backup extends Model
 {

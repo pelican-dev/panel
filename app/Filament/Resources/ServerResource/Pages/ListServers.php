@@ -56,22 +56,10 @@ class ListServers extends ListRecords
                     ->label('Owner')
                     ->url(fn (Server $server): string => route('filament.admin.resources.users.edit', ['record' => $server->user]))
                     ->hidden(fn (Table $table) => $table->getGrouping()?->getId() === 'user.username')
-                    ->sortable()
-                    ->searchable(),
-                Tables\Columns\SelectColumn::make('allocation_id')
-                    ->label('Primary Allocation')
-                    ->options(fn (Server $server) => $server->allocations->mapWithKeys(
-                        fn ($allocation) => [$allocation->id => $allocation->address])
-                    )
-                    ->selectablePlaceholder(false)
                     ->sortable(),
-                Tables\Columns\TextColumn::make('image')->hidden(),
-                Tables\Columns\TextColumn::make('backups_count')
-                    ->counts('backups')
-                    ->label('Backups')
-                    ->icon('tabler-file-download')
-                    ->numeric()
-                    ->sortable(),
+                Tables\Columns\TextColumn::make('ports')
+                    ->badge()
+                    ->separator(),
             ])
             ->actions([
                 Tables\Actions\Action::make('View')

@@ -4,7 +4,6 @@ namespace App\Filament\Resources\EggResource\RelationManagers;
 
 use App\Models\Server;
 use Filament\Resources\RelationManagers\RelationManager;
-use Filament\Tables\Columns\SelectColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 
@@ -33,11 +32,6 @@ class ServersRelationManager extends RelationManager
                     ->url(fn (Server $server): string => route('filament.admin.resources.nodes.edit', ['record' => $server->node])),
                 TextColumn::make('image')
                     ->label('Docker Image'),
-                SelectColumn::make('allocation.id')
-                    ->label('Primary Allocation')
-                    ->options(fn (Server $server) => [$server->allocation->id => $server->allocation->address])
-                    ->selectablePlaceholder(false)
-                    ->sortable(),
             ]);
     }
 }

@@ -96,14 +96,6 @@ Route::prefix('/servers/{server:uuid}')->middleware([ServerSubject::class, Authe
         Route::delete('/{schedule}/tasks/{task}', [Client\Servers\ScheduleTaskController::class, 'delete']);
     });
 
-    Route::prefix('/network')->group(function () {
-        Route::get('/allocations', [Client\Servers\NetworkAllocationController::class, 'index']);
-        Route::post('/allocations', [Client\Servers\NetworkAllocationController::class, 'store']);
-        Route::post('/allocations/{allocation}', [Client\Servers\NetworkAllocationController::class, 'update']);
-        Route::post('/allocations/{allocation}/primary', [Client\Servers\NetworkAllocationController::class, 'setPrimary']);
-        Route::delete('/allocations/{allocation}', [Client\Servers\NetworkAllocationController::class, 'delete']);
-    });
-
     Route::prefix('/users')->group(function () {
         Route::get('/', [Client\Servers\SubuserController::class, 'index']);
         Route::post('/', [Client\Servers\SubuserController::class, 'store']);

@@ -3,7 +3,6 @@
 namespace App\Filament\Resources\NodeResource\RelationManagers;
 
 use App\Models\Server;
-use Filament\Tables\Columns\SelectColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Filament\Resources\RelationManagers\RelationManager;
@@ -32,11 +31,6 @@ class NodesRelationManager extends RelationManager
                 TextColumn::make('egg.name')
                     ->icon('tabler-egg')
                     ->url(fn (Server $server): string => route('filament.admin.resources.eggs.edit', ['record' => $server->user]))
-                    ->sortable(),
-                SelectColumn::make('allocation.id')
-                    ->label('Primary Allocation')
-                    ->options(fn (Server $server) => [$server->allocation->id => $server->allocation->address])
-                    ->selectablePlaceholder(false)
                     ->sortable(),
                 TextColumn::make('memory')->icon('tabler-device-desktop-analytics'),
                 TextColumn::make('cpu')->icon('tabler-cpu'),

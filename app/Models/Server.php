@@ -2,14 +2,17 @@
 
 namespace App\Models;
 
+use App\Casts\EndpointCollection;
 use App\Enums\ContainerStatus;
 use App\Enums\ServerState;
 use App\Exceptions\Http\Connection\DaemonConnectionException;
+use App\Models\Objects\Endpoint;
 use GuzzleHttp\Exception\GuzzleException;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Query\JoinClause;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Http;
 use Psr\Http\Message\ResponseInterface;
 use Illuminate\Database\Eloquent\Relations\HasOne;
@@ -102,7 +105,7 @@ use App\Exceptions\Http\Server\ServerStateConflictException;
  * @method static \Illuminate\Database\Eloquent\Builder|Server whereUuid($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Server whereuuid_short($value)
  * @property array|null $docker_labels
- * @property string|null $ports
+ * @property Collection<Endpoint>|null $ports
  * @property-read mixed $condition
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\EggVariable> $eggVariables
  * @property-read int|null $egg_variables_count
@@ -140,11 +143,6 @@ class Server extends Model
     ];
 
     /**
-     * The default relationships to load for all server models.
-     */
-    protected $with = ['allocation'];
-
-    /**
      * Fields that are not mass assignable.
      */
     protected $guarded = ['id', self::CREATED_AT, self::UPDATED_AT, 'deleted_at', 'installed_at'];
@@ -163,7 +161,6 @@ class Server extends Model
         'threads' => 'nullable|regex:/^[0-9-,]+$/',
         'oom_killer' => 'sometimes|boolean',
         'disk' => 'required|numeric|min:0',
-        'allocation_id' => 'required|bail|unique:servers|exists:allocations,id',
         'egg_id' => 'required|exists:eggs,id',
         'startup' => 'required|string',
         'skip_scripts' => 'sometimes|boolean',
@@ -171,6 +168,7 @@ class Server extends Model
         'database_limit' => 'present|nullable|integer|min:0',
         'allocation_limit' => 'sometimes|nullable|integer|min:0',
         'backup_limit' => 'present|nullable|integer|min:0',
+        'ports' => 'nullable|array',
     ];
 
     protected function casts(): array
@@ -186,27 +184,33 @@ class Server extends Model
             'io' => 'integer',
             'cpu' => 'integer',
             'oom_killer' => 'boolean',
-            'allocation_id' => 'integer',
             'egg_id' => 'integer',
             'database_limit' => 'integer',
             'allocation_limit' => 'integer',
             'backup_limit' => 'integer',
-            self::CREATED_AT => 'datetime',
-            self::UPDATED_AT => 'datetime',
             'deleted_at' => 'datetime',
             'installed_at' => 'datetime',
             'docker_labels' => 'array',
+            'ports' => EndpointCollection::class,
         ];
     }
 
     /**
      * Returns the format for server allocations when communicating with the Daemon.
      */
-    public function getAllocationMappings(): array
+    public function getPortMappings(): array
     {
-        return $this->allocations->where('node_id', $this->node_id)->groupBy('ip')->map(function ($item) {
-            return $item->pluck('port');
-        })->toArray();
+        $defaultIp = '0.0.0.0';
+
+        $ports = collect($this->ports)
+            ->map(fn ($port) => str_contains($port, ':') ? $port : "$defaultIp:$port")
+            ->mapToGroups(function ($port) {
+                [$ip, $port] = explode(':', $port);
+
+                return [$ip => (int) $port];
+            });
+
+        return $ports->all();
     }
 
     public function isInstalled(): bool
@@ -233,22 +237,6 @@ class Server extends Model
     public function subusers(): HasMany
     {
         return $this->hasMany(Subuser::class, 'server_id', 'id');
-    }
-
-    /**
-     * Gets the default allocation for a server.
-     */
-    public function allocation(): BelongsTo
-    {
-        return $this->belongsTo(Allocation::class);
-    }
-
-    /**
-     * Gets all allocations associated with this server.
-     */
-    public function allocations(): HasMany
-    {
-        return $this->hasMany(Allocation::class);
     }
 
     /**
@@ -449,5 +437,21 @@ class Server extends Model
         }
 
         return $this->status->color();
+    }
+    public function getPrimaryEndpoint(): ?Endpoint
+    {
+        $endpoint = $this->ports->first();
+
+        $portEggVariable = $this->variables->firstWhere('env_variable', 'SERVER_PORT');
+        if ($portEggVariable) {
+            $portServerVariable = $this->serverVariables->firstWhere('variable_id', $portEggVariable->id);
+            if (!$portServerVariable) {
+                return null;
+            }
+
+            $endpoint = new Endpoint($portServerVariable->variable_value);
+        }
+
+        return $endpoint;
     }
 }

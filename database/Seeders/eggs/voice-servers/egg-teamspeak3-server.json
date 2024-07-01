@@ -47,7 +47,7 @@
             "default_value": "30033",
             "user_viewable": true,
             "user_editable": false,
-            "rules": "required|integer|between:1025,65535",
+            "rules": "required|port",
             "sort": null,
             "field_type": "text"
         },
@@ -58,7 +58,7 @@
             "default_value": "10011",
             "user_viewable": true,
             "user_editable": false,
-            "rules": "required|integer|between:1025,65535",
+            "rules": "required|port",
             "sort": null,
             "field_type": "text"
         },
@@ -80,7 +80,7 @@
             "default_value": "10022",
             "user_viewable": true,
             "user_editable": false,
-            "rules": "required|integer|between:1025,65535",
+            "rules": "required|port",
             "sort": null,
             "field_type": "text"
         },
@@ -91,7 +91,7 @@
             "default_value": "10080",
             "user_viewable": true,
             "user_editable": false,
-            "rules": "required|integer|between:1025,65535",
+            "rules": "required|port",
             "sort": null,
             "field_type": "text"
         }

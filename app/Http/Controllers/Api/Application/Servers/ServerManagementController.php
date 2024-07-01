@@ -69,8 +69,6 @@ class ServerManagementController extends ApplicationApiController
     {
         $validatedData = $request->validate([
             'node_id' => 'required|exists:nodes,id',
-            'allocation_id' => 'required|bail|unique:servers|exists:allocations,id',
-            'allocation_additional' => 'nullable',
         ]);
 
         if ($this->transferServerService->handle($server, $validatedData)) {

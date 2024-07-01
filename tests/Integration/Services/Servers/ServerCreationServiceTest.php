@@ -2,6 +2,7 @@
 
 namespace App\Tests\Integration\Services\Servers;
 
+use App\Models\Objects\Endpoint;
 use Mockery\MockInterface;
 use App\Models\Egg;
 use GuzzleHttp\Psr7\Request;
@@ -9,7 +10,6 @@ use App\Models\Node;
 use App\Models\User;
 use GuzzleHttp\Psr7\Response;
 use App\Models\Server;
-use App\Models\Allocation;
 use Illuminate\Foundation\Testing\WithFaker;
 use GuzzleHttp\Exception\BadResponseException;
 use Illuminate\Validation\ValidationException;
@@ -59,13 +59,8 @@ class ServerCreationServiceTest extends IntegrationTestCase
         /** @var \App\Models\Node $node */
         $node = Node::factory()->create();
 
-        /** @var \App\Models\Allocation[]|\Illuminate\Database\Eloquent\Collection $allocations */
-        $allocations = Allocation::factory()->times(5)->create([
-            'node_id' => $node->id,
-        ]);
-
         $deployment = (new DeploymentObject())->setDedicated(true)->setPorts([
-            $allocations[0]->port,
+            1234,
         ]);
 
         $egg = $this->cloneEggAndVariables($this->bungeecord);
@@ -87,9 +82,8 @@ class ServerCreationServiceTest extends IntegrationTestCase
             'startup' => 'java server2.jar',
             'image' => 'java:8',
             'egg_id' => $egg->id,
-            'allocation_additional' => [
-                $allocations[4]->id,
-            ],
+            'ports' => [1234, 2345, 3456],
+            'node_id' => $node->id,
             'environment' => [
                 'BUNGEE_VERSION' => '123',
                 'SERVER_JARFILE' => 'server2.jar',
@@ -125,17 +119,18 @@ class ServerCreationServiceTest extends IntegrationTestCase
         $this->assertSame('server2.jar', $response->variables[1]->server_value);
 
         foreach ($data as $key => $value) {
-            if (in_array($key, ['allocation_additional', 'environment', 'start_on_completion'])) {
+            if (in_array($key, ['environment', 'start_on_completion'])) {
+                continue;
+            }
+
+            if ($key === 'ports') {
+                $this->assertSame($value, $response->ports->map(fn (Endpoint $endpoint) => $endpoint->port)->all());
+
                 continue;
             }
 
             $this->assertSame($value, $response->{$key}, "Failed asserting equality of '$key' in server response. Got: [{$response->{$key}}] Expected: [$value]");
         }
-
-        $this->assertCount(2, $response->allocations);
-        $this->assertSame($response->allocation_id, $response->allocations[0]->id);
-        $this->assertSame($allocations[0]->id, $response->allocations[0]->id);
-        $this->assertSame($allocations[4]->id, $response->allocations[1]->id);
 
         $this->assertFalse($response->isSuspended());
         $this->assertFalse($response->oom_killer);
@@ -156,17 +151,11 @@ class ServerCreationServiceTest extends IntegrationTestCase
         /** @var \App\Models\Node $node */
         $node = Node::factory()->create();
 
-        /** @var \App\Models\Allocation $allocation */
-        $allocation = Allocation::factory()->create([
-            'node_id' => $node->id,
-        ]);
-
         $data = [
             'name' => $this->faker->name(),
             'description' => $this->faker->sentence(),
             'owner_id' => $user->id,
-            'allocation_id' => $allocation->id,
-            'node_id' => $allocation->node_id,
+            'node_id' => $node->id,
             'memory' => 256,
             'swap' => 128,
             'disk' => 100,

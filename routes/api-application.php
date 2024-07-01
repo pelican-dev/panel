@@ -40,12 +40,6 @@ Route::prefix('/nodes')->group(function () {
     Route::patch('/{node:id}', [Application\Nodes\NodeController::class, 'update']);
 
     Route::delete('/{node:id}', [Application\Nodes\NodeController::class, 'delete']);
-
-    Route::prefix('/{node:id}/allocations')->group(function () {
-        Route::get('/', [Application\Nodes\AllocationController::class, 'index'])->name('api.application.allocations');
-        Route::post('/', [Application\Nodes\AllocationController::class, 'store']);
-        Route::delete('/{allocation:id}', [Application\Nodes\AllocationController::class, 'delete'])->name('api.application.allocations.view');
-    });
 });
 
 /*
@@ -72,7 +66,6 @@ Route::prefix('/servers')->group(function () {
     Route::post('/{server:id}/transfer', [Application\Servers\ServerManagementController::class, 'startTransfer'])->name('api.application.servers.transfer');
     Route::post('/{server:id}/transfer/cancel', [Application\Servers\ServerManagementController::class, 'cancelTransfer'])->name('api.application.servers.transfer.cancel');
 
-    Route::delete('/{server:id}', [Application\Servers\ServerController::class, 'delete']);
     Route::delete('/{server:id}/{force?}', [Application\Servers\ServerController::class, 'delete']);
 
     // Database Management Endpoint

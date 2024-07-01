@@ -10,12 +10,9 @@ use App\Models\User;
 use Webmozart\Assert\Assert;
 use App\Models\Server;
 use Illuminate\Support\Collection;
-use App\Models\Allocation;
 use Illuminate\Database\ConnectionInterface;
 use App\Models\Objects\DeploymentObject;
 use App\Repositories\Daemon\DaemonServerRepository;
-use App\Services\Deployment\FindViableNodesService;
-use App\Services\Deployment\AllocationSelectionService;
 use App\Exceptions\Http\Connection\DaemonConnectionException;
 use App\Models\Egg;
 
@@ -25,27 +22,23 @@ class ServerCreationService
      * ServerCreationService constructor.
      */
     public function __construct(
-        private AllocationSelectionService $allocationSelectionService,
         private ConnectionInterface $connection,
         private DaemonServerRepository $daemonServerRepository,
-        private FindViableNodesService $findViableNodesService,
         private ServerDeletionService $serverDeletionService,
         private VariableValidatorService $validatorService
     ) {
     }
 
     /**
-     * Create a server on the Panel and trigger a request to the Daemon to begin the server
-     * creation process. This function will attempt to set as many additional values
-     * as possible given the input data. For example, if an allocation_id is passed with
-     * no node_id the node_is will be picked from the allocation.
+     * Create a server on the Panel and trigger a request to the Daemon to begin the server creation process.
+     * This function will attempt to set as many additional values as possible given the input data.
      *
      * @throws \Throwable
      * @throws \App\Exceptions\DisplayException
      * @throws \Illuminate\Validation\ValidationException
      * @throws \App\Exceptions\Service\Deployment\NoViableAllocationException
      */
-    public function handle(array $data, DeploymentObject $deployment = null): Server
+    public function handle(array $data, DeploymentObject $deployment = null, $validateVariables = true): Server
     {
         if (!isset($data['oom_killer']) && isset($data['oom_disabled'])) {
             $data['oom_killer'] = !$data['oom_disabled'];
@@ -58,25 +51,11 @@ class ServerCreationService
         $data['image'] = $data['image'] ?? collect($egg->docker_images)->first();
         $data['startup'] = $data['startup'] ?? $egg->startup;
 
-        // If a deployment object has been passed we need to get the allocation
-        // that the server should use, and assign the node from that allocation.
-        if ($deployment instanceof DeploymentObject) {
-            $allocation = $this->configureDeployment($data, $deployment);
-            $data['allocation_id'] = $allocation->id;
-            $data['node_id'] = $allocation->node_id;
-        }
-
-        // Auto-configure the node based on the selected allocation
-        // if no node was defined.
-        if (empty($data['node_id'])) {
-            Assert::false(empty($data['allocation_id']), 'Expected a non-empty allocation_id in server creation data.');
-
-            $data['node_id'] = Allocation::query()->findOrFail($data['allocation_id'])->node_id;
-        }
+        Assert::false(empty($data['node_id']));
 
         $eggVariableData = $this->validatorService
             ->setUserLevel(User::USER_LEVEL_ADMIN)
-            ->handle(Arr::get($data, 'egg_id'), Arr::get($data, 'environment', []));
+            ->handle(Arr::get($data, 'egg_id'), Arr::get($data, 'environment', []), $validateVariables);
 
         // Due to the design of the Daemon, we need to persist this server to the disk
         // before we can actually create it on the Daemon.
@@ -88,7 +67,6 @@ class ServerCreationService
             // Create the server and assign any additional allocations to it.
             $server = $this->createModel($data);
 
-            $this->storeAssignedAllocations($server, $data);
             $this->storeEggVariables($server, $eggVariableData);
 
             return $server;
@@ -96,7 +74,7 @@ class ServerCreationService
 
         try {
             $this->daemonServerRepository->setServer($server)->create(
-                Arr::get($data, 'start_on_completion', false) ?? false
+                Arr::get($data, 'start_on_completion', true) ?? true,
             );
         } catch (DaemonConnectionException $exception) {
             $this->serverDeletionService->withForce()->handle($server);
@@ -105,28 +83,6 @@ class ServerCreationService
         }
 
         return $server;
-    }
-
-    /**
-     * Gets an allocation to use for automatic deployment.
-     *
-     * @throws \App\Exceptions\DisplayException
-     * @throws \App\Exceptions\Service\Deployment\NoViableAllocationException
-     */
-    private function configureDeployment(array $data, DeploymentObject $deployment): Allocation
-    {
-        /** @var Collection<\App\Models\Node> $nodes */
-        $nodes = $this->findViableNodesService->handle(
-            Arr::get($data, 'memory', 0),
-            Arr::get($data, 'disk', 0),
-            Arr::get($data, 'cpu', 0),
-            Arr::get($data, 'tags', []),
-        );
-
-        return $this->allocationSelectionService->setDedicated($deployment->isDedicated())
-            ->setNodes($nodes->pluck('id')->toArray())
-            ->setPorts($deployment->getPorts())
-            ->handle();
     }
 
     /**
@@ -155,7 +111,7 @@ class ServerCreationService
             'cpu' => Arr::get($data, 'cpu'),
             'threads' => Arr::get($data, 'threads'),
             'oom_killer' => Arr::get($data, 'oom_killer') ?? false,
-            'allocation_id' => Arr::get($data, 'allocation_id'),
+            'ports' => Arr::get($data, 'ports') ?? [],
             'egg_id' => Arr::get($data, 'egg_id'),
             'startup' => Arr::get($data, 'startup'),
             'image' => Arr::get($data, 'image'),
@@ -163,21 +119,6 @@ class ServerCreationService
             'allocation_limit' => Arr::get($data, 'allocation_limit') ?? 0,
             'backup_limit' => Arr::get($data, 'backup_limit') ?? 0,
             'docker_labels' => Arr::get($data, 'docker_labels'),
-        ]);
-    }
-
-    /**
-     * Configure the allocations assigned to this server.
-     */
-    private function storeAssignedAllocations(Server $server, array $data): void
-    {
-        $records = [$data['allocation_id']];
-        if (isset($data['allocation_additional']) && is_array($data['allocation_additional'])) {
-            $records = array_merge($records, $data['allocation_additional']);
-        }
-
-        Allocation::query()->whereIn('id', $records)->update([
-            'server_id' => $server->id,
         ]);
     }
 
