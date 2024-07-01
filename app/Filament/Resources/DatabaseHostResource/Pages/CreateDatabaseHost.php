@@ -3,10 +3,16 @@
 namespace App\Filament\Resources\DatabaseHostResource\Pages;
 
 use App\Filament\Resources\DatabaseHostResource;
+use App\Services\Databases\Hosts\HostCreationService;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\TextInput;
 use Filament\Resources\Pages\CreateRecord;
 use Filament\Forms;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Form;
+use Filament\Notifications\Notification;
+use Illuminate\Database\Eloquent\Model;
+use PDOException;
 
 class CreateDatabaseHost extends CreateRecord
 {
@@ -30,19 +36,19 @@ class CreateDatabaseHost extends CreateRecord
                         'lg' => 4,
                     ])
                     ->schema([
-                        Forms\Components\TextInput::make('host')
+                        TextInput::make('host')
                             ->columnSpan(2)
                             ->helperText('The IP address that should be used when attempting to connect to this MySQL host from this Panel to create new databases.')
                             ->required()
                             ->live(onBlur: true)
                             ->afterStateUpdated(fn ($state, Forms\Set $set) => $set('name', $state))
                             ->maxLength(255),
-                        Forms\Components\TextInput::make('alias')
+                        TextInput::make('alias')
                             ->columnSpan(2)
                             ->helperText('Display alias for accessing the database host. Leave empty to use host')
                             ->live(onBlur: true)
                             ->maxLength(255),
-                        Forms\Components\TextInput::make('port')
+                        TextInput::make('port')
                             ->columnSpan(1)
                             ->helperText('The port that MySQL is running on for this host.')
                             ->required()
@@ -50,26 +56,26 @@ class CreateDatabaseHost extends CreateRecord
                             ->default(3306)
                             ->minValue(0)
                             ->maxValue(65535),
-                        Forms\Components\TextInput::make('max_databases')
+                        TextInput::make('max_databases')
                             ->label('Max databases')
                             ->helpertext('Blank is unlimited.')
                             ->numeric(),
-                        Forms\Components\TextInput::make('name')
+                        TextInput::make('name')
                             ->label('Display Name')
                             ->helperText('A short identifier used to distinguish this location from others. Must be between 1 and 60 characters, for example, us.nyc.lvl3.')
                             ->required()
                             ->maxLength(60),
-                        Forms\Components\TextInput::make('username')
+                        TextInput::make('username')
                             ->helperText('The username of an account that has enough permissions to create new users and databases on the system.')
                             ->required()
                             ->maxLength(255),
-                        Forms\Components\TextInput::make('password')
+                        TextInput::make('password')
                             ->helperText('The password for the database user.')
                             ->password()
                             ->revealable()
                             ->maxLength(255)
                             ->required(),
-                        Forms\Components\Select::make('node_id')
+                        Select::make('node_id')
                             ->searchable()
                             ->preload()
                             ->helperText('This setting only defaults to this database host when adding a database to a server on the selected node.')
@@ -84,11 +90,30 @@ class CreateDatabaseHost extends CreateRecord
         return [
             $this->getCreateFormAction()->formId('form'),
         ];
-
     }
+
     protected function getFormActions(): array
     {
         return [];
     }
 
+    protected function handleRecordCreation(array $data): Model
+    {
+        return resolve(HostCreationService::class)->handle($data);
+    }
+
+    public function exception($e, $stopPropagation): void
+    {
+        if ($e instanceof PDOException) {
+            Notification::make()
+                ->title('Error connecting to database host')
+                ->body($e->getMessage())
+                ->color('danger')
+                ->icon('tabler-database')
+                ->danger()
+                ->send();
+
+            $stopPropagation();
+        }
+    }
 }

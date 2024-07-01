@@ -13,6 +13,7 @@ use chillerlan\QRCode\Common\EccLevel;
 use chillerlan\QRCode\Common\Version;
 use chillerlan\QRCode\QRCode;
 use chillerlan\QRCode\QROptions;
+use DateTimeZone;
 use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\Placeholder;
@@ -84,6 +85,12 @@ class EditProfile extends \Filament\Pages\Auth\EditProfile
                                             ->required()
                                             ->visible(fn (Get $get): bool => filled($get('password')))
                                             ->dehydrated(false),
+
+                                        Select::make('timezone')
+                                            ->required()
+                                            ->prefixIcon('tabler-clock-pin')
+                                            ->options(fn () => collect(DateTimeZone::listIdentifiers())->mapWithKeys(fn ($tz) => [$tz => $tz]))
+                                            ->searchable(),
 
                                         Select::make('language')
                                             ->label(trans('strings.language'))
@@ -193,8 +200,10 @@ class EditProfile extends \Filament\Pages\Auth\EditProfile
                                     ->schema([
                                         Grid::make('asdf')->columns(5)->schema([
                                             Section::make('Create API Key')->columnSpan(3)->schema([
+
                                                 TextInput::make('description')
                                                     ->live(),
+
                                                 TagsInput::make('allowed_ips')
                                                     ->live()
                                                     ->splitKeys([',', ' ', 'Tab'])

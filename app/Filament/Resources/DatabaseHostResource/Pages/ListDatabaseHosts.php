@@ -5,7 +5,10 @@ namespace App\Filament\Resources\DatabaseHostResource\Pages;
 use App\Filament\Resources\DatabaseHostResource;
 use Filament\Actions;
 use Filament\Resources\Pages\ListRecords;
-use Filament\Tables;
+use Filament\Tables\Actions\BulkActionGroup;
+use Filament\Tables\Actions\DeleteBulkAction;
+use Filament\Tables\Actions\EditAction;
+use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 
 class ListDatabaseHosts extends ListRecords
@@ -19,32 +22,29 @@ class ListDatabaseHosts extends ListRecords
         return $table
             ->searchable(false)
             ->columns([
-                Tables\Columns\TextColumn::make('name')
+                TextColumn::make('name')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('host')
+                TextColumn::make('host')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('alias')
+                TextColumn::make('alias')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('port')
+                TextColumn::make('port')
                     ->sortable(),
-                Tables\Columns\TextColumn::make('username')
+                TextColumn::make('username')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('max_databases')
+                TextColumn::make('max_databases')
                     ->numeric()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('node.name')
+                TextColumn::make('node.name')
                     ->numeric()
                     ->sortable(),
-            ])
-            ->filters([
-                //
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
+                EditAction::make(),
             ])
             ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
+                BulkActionGroup::make([
+                    DeleteBulkAction::make(),
                 ]),
             ]);
     }

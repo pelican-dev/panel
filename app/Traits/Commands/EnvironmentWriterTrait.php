@@ -33,7 +33,7 @@ trait EnvironmentWriterTrait
         $saveContents = file_get_contents($path);
         collect($values)->each(function ($value, $key) use (&$saveContents) {
             $key = strtoupper($key);
-            $saveValue = sprintf('%s=%s', $key, $this->escapeEnvironmentValue($value));
+            $saveValue = sprintf('%s=%s', $key, $this->escapeEnvironmentValue($value ?? ''));
 
             if (preg_match_all('/^' . $key . '=(.*)$/m', $saveContents) < 1) {
                 $saveContents = $saveContents . PHP_EOL . $saveValue;
