@@ -35,7 +35,7 @@ class AdminPanelProvider extends PanelProvider
             ->default()
             ->id('admin')
             ->path('admin')
-            ->sidebarCollapsibleOnDesktop(config('panel.filament.sidebar-collapsible', false))
+            ->sidebarFullyCollapsibleOnDesktop(config('panel.filament.sidebar-collapsible', false))
             ->topNavigation(config('panel.filament.top-navigation', true))
             ->login()
             ->homeUrl('/')
