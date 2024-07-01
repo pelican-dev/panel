@@ -197,9 +197,12 @@ class EditNode extends EditRecord
 
                             Textarea::make('notes')
                                 ->label('Notes')
-                                ->rows(5)
-                                ->cols(10)
+                                //->rows(5)
+                                //->cols(10)
                                 ->autosize(),
+
+                            TextInput::make('description')
+                                ->label('Description'),
                         ]),
 
                     Tab::make('Advanced Settings')
