@@ -13,6 +13,12 @@ use Filament\Tables;
 class ListMounts extends ListRecords
 {
     protected static string $resource = MountResource::class;
+
+    public function getSubheading(): ?string
+    {
+        return 'Configure and manage additional mount points for servers.';
+    }
+
     public function table(Table $table): Table
     {
         return $table

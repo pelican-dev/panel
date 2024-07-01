@@ -12,6 +12,11 @@ class ListDatabaseHosts extends ListRecords
 {
     protected static string $resource = DatabaseHostResource::class;
 
+    public function getSubheading(): ?string
+    {
+        return 'Database hosts that servers can have databases created on.';
+    }
+
     protected ?string $heading = 'Database Hosts';
 
     public function table(Table $table): Table

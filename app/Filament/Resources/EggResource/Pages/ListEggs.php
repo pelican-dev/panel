@@ -20,6 +20,11 @@ class ListEggs extends ListRecords
 {
     protected static string $resource = EggResource::class;
 
+    public function getSubheading(): ?string
+    {
+        return 'All eggs available on the panel.';
+    }
+
     public function table(Table $table): Table
     {
         return $table

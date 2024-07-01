@@ -14,6 +14,11 @@ class ListServers extends ListRecords
 {
     protected static string $resource = ServerResource::class;
 
+    public function getSubheading(): ?string
+    {
+        return 'All servers available on the Panel.';
+    }
+
     public function table(Table $table): Table
     {
         return $table

@@ -14,6 +14,11 @@ class ListNodes extends ListRecords
 {
     protected static string $resource = NodeResource::class;
 
+    public function getSubheading(): ?string
+    {
+        return 'All nodes available on the Panel.';
+    }
+
     public function table(Table $table): Table
     {
         return $table

@@ -16,6 +16,11 @@ class ListUsers extends ListRecords
 {
     protected static string $resource = UserResource::class;
 
+    public function getSubheading(): ?string
+    {
+        return 'All registered users on the Panel.';
+    }
+
     public function table(Table $table): Table
     {
         return $table

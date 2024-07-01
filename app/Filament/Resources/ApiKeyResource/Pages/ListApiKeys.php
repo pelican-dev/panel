@@ -13,6 +13,11 @@ class ListApiKeys extends ListRecords
 {
     protected static string $resource = ApiKeyResource::class;
 
+    public function getSubheading(): ?string
+    {
+        return 'Control access credentials for managing this Panel via the API.';
+    }
+
     public function table(Table $table): Table
     {
         return $table
