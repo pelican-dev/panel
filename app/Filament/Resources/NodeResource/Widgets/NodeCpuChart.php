@@ -11,7 +11,7 @@ class NodeCpuChart extends ChartWidget
 {
     protected static ?string $heading = 'CPU';
     protected static ?string $pollingInterval = '5s';
-
+    protected static ?string $maxHeight = '300px';
     public ?Model $record = null;
 
     protected static ?array $options = [
@@ -79,7 +79,7 @@ class NodeCpuChart extends ChartWidget
                     ],
                     'tension' => '0.3',
                     'fill' => true,
-                    'label' => 'CPU Average 1',
+                    'label' => 'Load Average - 1m',
                 ],
                 [
                     'data' => array_column($cpu5, 'cpu5'),
@@ -88,7 +88,7 @@ class NodeCpuChart extends ChartWidget
                     ],
                     'tension' => '0.3',
                     'fill' => true,
-                    'label' => 'CPU Average 5',
+                    'label' => 'Load Average - 5m',
                 ],
                 [
                     'data' => array_column($cpu15, 'cpu15'),
@@ -97,7 +97,7 @@ class NodeCpuChart extends ChartWidget
                     ],
                     'tension' => '0.3',
                     'fill' => true,
-                    'label' => 'CPU Average 5',
+                    'label' => 'Load Average - 15m',
                 ],
             ],
             'labels' => array_column($cpu, 'timestamp'),
