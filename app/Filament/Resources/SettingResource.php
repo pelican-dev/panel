@@ -45,6 +45,7 @@ class SettingResource extends Resource
                 TextColumn::make('value')
                     ->label('Value')
                     ->formatStateUsing(fn ($state) => $state === null ? 'Empty' : $state)
+                    ->hidden(false) // TODO hide when the type is password
                     ->sortable()
                     ->searchable(),
             ])

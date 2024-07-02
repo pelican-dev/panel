@@ -27,7 +27,7 @@ class Setting extends Model
             'tabs' => 'Panel',
             'description' => 'Setting this to true switches the sidebar to a topbar and vice versa',
             'limit' => 255,
-            //'options' => ['false' => 'False', 'true' => 'True'], TODO fix it so this is saved properly to storage/framework/cache/sushi-app-models-setting.sqlite
+            //'options' => ['false' => 'False', 'true' => 'True'], TODO fix it so this is saved properly
         ],
         [
             'key' => 'APP_NAME',
@@ -78,7 +78,7 @@ class Setting extends Model
             'key' => 'MAIL_ENCRYPTION',
             'label' => 'Encryption',
             'value' => 'tls',
-            'type' => 'text', // TODO make this select as soon as it works
+            'type' => 'text', // TODO make this select as soon as options work
             'tabs' => 'Mail',
             'description' => 'Select the type of encryption to use when sending mail.',
             'limit' => 255,
