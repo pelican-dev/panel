@@ -1,0 +1,54 @@
+x-common:
+  panel:
+    &panel-environment
+    APP_URL: "https://localhost"
+    APP_DEBUG: "false"
+    ADMIN_EMAIL: "USEYOUROWNEMAILHERE@example.com"
+
+    APP_ENVIRONMENT_ONLY: "false"
+    APP_ENV: "production"
+    SESSION_DRIVER: "file"
+
+  mail:
+    &mail-environment
+    MAIL_DRIVER: "log"
+    # MAIL_HOST: ""
+    # MAIL_PORT: ""
+    # MAIL_FROM: ""
+    # MAIL_USERNAME: ""
+    # MAIL_PASSWORD: ""
+    # MAIL_ENCRYPTION: ""
+
+#
+# ------------------------------------------------------------------------------------------
+# DANGER ZONE BELOW
+#
+# The remainder of this file likely does not need to be changed. Please only make modifications
+# below if you understand what you are doing.
+#
+
+services:
+  panel:
+    image: panel
+    restart: always
+    ports:
+      - "80:2019"
+      - "443:443"
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    volumes:
+      - pelican-data:/pelican-data
+      - pelican-logs:/var/www/html/storage/logs
+    environment:
+      <<: [*panel-environment, *mail-environment]
+      XDG_DATA_HOME: /pelican-data
+
+volumes:
+  pelican-data:
+  pelican-logs:
+
+networks:
+  default:
+    ipam:
+      config:
+        - subnet: 172.20.0.0/16
