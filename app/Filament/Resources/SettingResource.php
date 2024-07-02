@@ -40,7 +40,7 @@ class SettingResource extends Resource
                     ->label('Setting')
                     ->sortable()
                     ->searchable()
-                    ->tooltip(fn ($record) => $record->description),
+                    ->tooltip(fn ($record) => $record->description ?? 'No description available'),
 
                 TextColumn::make('value')
                     ->label('Value')
@@ -52,7 +52,6 @@ class SettingResource extends Resource
                 EditAction::make()
                     ->using(function (Setting $setting, array $data): Setting {
                         $setting->writeToEnvironment([$setting->key => $data['value']]);
-
                         return $setting;
                     })
                     ->form(function (Setting $setting) {
