@@ -141,7 +141,7 @@ class CreateServer extends CreateRecord
                                 ->required(),
 
                             Forms\Components\TextInput::make('description')
-                                ->placeholder('Description')
+                                ->placeholder('Notes')
                                 ->columnSpan([
                                     'default' => 1,
                                     'sm' => 2,
