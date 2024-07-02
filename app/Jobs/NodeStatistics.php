@@ -27,13 +27,20 @@ class NodeStatistics implements ShouldQueue
     public function handle(): void
     {
         foreach (Node::all() as $node) {
-            $key = "nodes.$node->id.cpu";
             $stats = $node->statistics();
-            $data = cache()->get($key, []);
+            $timestamp = now()->getTimestamp();
 
-            $data[now()->getTimestamp()] = $stats['cpu_percent'] ?? 0;
+            foreach ($stats as $key => $value) {
+                $cacheKey = "nodes.{$node->id}.$key";
+                $data = cache()->get($cacheKey, []);
 
-            cache()->put($key, $data, now()->addMinute());
+                // Add current timestamp and value to the data array
+                $data[$timestamp] = $value;
+
+                // Update the cache with the new data, expires in 1 minute
+                cache()->put($cacheKey, $data, now()->addMinute());
+            }
         }
     }
+
 }
