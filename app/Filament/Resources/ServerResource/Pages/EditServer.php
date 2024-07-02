@@ -122,7 +122,7 @@ class EditServer extends EditRecord
                                     ]),
 
                                 Forms\Components\Textarea::make('description')
-                                    ->label('Description')
+                                    ->label('Notes')
                                     ->columnSpanFull(),
 
                                 Forms\Components\TextInput::make('uuid')
