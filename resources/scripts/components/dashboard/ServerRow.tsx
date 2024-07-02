@@ -1,10 +1,10 @@
 import React, { memo, useEffect, useRef, useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faHdd, faMemory, faMicrochip, faServer } from '@fortawesome/free-solid-svg-icons';
+import { faEthernet, faHdd, faMemory, faMicrochip, faServer } from '@fortawesome/free-solid-svg-icons';
 import { Link } from 'react-router-dom';
 import { Server } from '@/api/server/getServer';
 import getServerResourceUsage, { ServerPowerState, ServerStats } from '@/api/server/getServerResourceUsage';
-import { bytesToString, mbToBytes } from '@/lib/formatters';
+import { bytesToString, ip, mbToBytes } from '@/lib/formatters';
 import tw from 'twin.macro';
 import GreyRowBox from '@/components/elements/GreyRowBox';
 import Spinner from '@/components/elements/Spinner';
@@ -90,7 +90,7 @@ export default ({ server, className }: { server: Server; className?: string }) =
 
     return (
         <StatusIndicatorBox as={Link} to={`/server/${server.id}`} className={className} $status={stats?.status}>
-            <div css={tw`flex items-center col-span-12 sm:col-span-5 lg:col-span-8`}>
+            <div css={tw`flex items-center col-span-12 sm:col-span-5 lg:col-span-6`}>
                 <div className={'icon mr-4'}>
                     <FontAwesomeIcon icon={faServer} />
                 </div>
@@ -99,6 +99,20 @@ export default ({ server, className }: { server: Server; className?: string }) =
                     {!!server.description && (
                         <p css={tw`text-sm text-neutral-300 break-words line-clamp-2`}>{server.description}</p>
                     )}
+                </div>
+            </div>
+            <div css={tw`flex-1 ml-4 lg:block lg:col-span-2 hidden`}>
+                <div css={tw`flex justify-center`}>
+                    <FontAwesomeIcon icon={faEthernet} css={tw`text-neutral-500`} />
+                    <p css={tw`text-sm text-neutral-400 ml-2`}>
+                        {server.allocations
+                            .filter((alloc) => alloc.isDefault)
+                            .map((allocation) => (
+                                <React.Fragment key={allocation.ip + allocation.port.toString()}>
+                                    {allocation.alias || ip(allocation.ip)}:{allocation.port}
+                                </React.Fragment>
+                            ))}
+                    </p>
                 </div>
             </div>
             <div css={tw`hidden col-span-7 lg:col-span-4 sm:flex items-baseline justify-center`}>
