@@ -13,7 +13,7 @@ class ManageSettings extends ManageRecords
 
     public function getSubheading(): ?string
     {
-        return '';
+        return 'Configure Pelican to your liking.';
     }
 
     public function getTabs(): array

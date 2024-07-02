@@ -33,16 +33,19 @@ class SettingResource extends Resource
             ->query(Setting::query())
             ->striped(false)
             //->heading('Settings')
+            ->recordUrl(null)
+            ->recordAction(EditAction::class)
             ->columns([
                 TextColumn::make('label')
                     ->label('Setting')
                     ->sortable()
                     ->searchable()
-                    ->tooltip(fn ($record) => $record->description),
+                    ->tooltip(fn ($record) => $record->description ?? 'No description available'),
 
                 TextColumn::make('value')
                     ->label('Value')
                     ->formatStateUsing(fn ($state) => $state === null ? 'Empty' : $state)
+                    ->hidden(false) // TODO hide when the type is password
                     ->sortable()
                     ->searchable(),
             ])

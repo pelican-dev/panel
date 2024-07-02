@@ -12,6 +12,11 @@ parameters:
     ignoreErrors:
         # Prologue\Alerts defines its methods from its configuration file dynamically
         - '#^Call to an undefined method Prologue\\Alerts\\AlertsMessageBag::(danger|success|info|warning)\(\)\.$#'
+        - '/Access to an undefined property App\\Models\\Setting::\$type\./'
+        - '/Access to an undefined property App\\Models\\Setting::\$label\./'
+        - '/Access to an undefined property App\\Models\\Setting::\$options\./'
+        - '/Access to an undefined property App\\Models\\Setting::\$description\./'
+        - '/Access to an undefined property App\\Models\\Setting::\$limit\./'
 
 #    excludePaths:
 #        - ./*/*/FileToBeExcluded.php
