@@ -11,11 +11,6 @@ class ManageSettings extends ManageRecords
 {
     protected static string $resource = SettingResource::class;
 
-    public function getSubheading(): ?string
-    {
-        return 'Configure Pelican to your liking.';
-    }
-
     public function getTabs(): array
     {
         return [

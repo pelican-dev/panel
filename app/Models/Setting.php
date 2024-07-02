@@ -18,7 +18,7 @@ class Setting extends Model
 
     protected $fillable = ['key', 'label', 'value', 'type', 'options', 'description', 'limit', 'tabs'];
 
-    protected $DefaultSettings = [
+    public const DEFAULT = [
         [
             'key' => 'FILAMENT_TOP_NAVIGATION',
             'label' => 'Topbar or Sidebar',
@@ -27,7 +27,6 @@ class Setting extends Model
             'tabs' => 'Panel',
             'description' => 'Setting this to true switches the sidebar to a topbar and vice versa',
             'limit' => 255,
-            //'options' => ['false' => 'False', 'true' => 'True'], TODO fix it so this is saved properly
         ],
         [
             'key' => 'APP_NAME',
@@ -78,7 +77,7 @@ class Setting extends Model
             'key' => 'MAIL_ENCRYPTION',
             'label' => 'Encryption',
             'value' => 'tls',
-            'type' => 'text', // TODO make this select as soon as options work
+            'type' => 'text',
             'tabs' => 'Mail',
             'description' => 'Select the type of encryption to use when sending mail.',
             'limit' => 255,
@@ -159,7 +158,7 @@ class Setting extends Model
 
     public function getRows()
     {
-        $rows = $this->DefaultSettings;
+        $rows = self::DEFAULT;
         foreach ($rows as &$row) {
             $row['value'] = env($row['key']);
         }

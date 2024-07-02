@@ -18,6 +18,8 @@ class SettingResource extends Resource
 
     protected static ?string $navigationIcon = 'tabler-settings';
 
+    protected static ?string $navigationGroup = 'Advanced';
+
     public static function canCreate(): bool
     {
         return false;
@@ -30,9 +32,7 @@ class SettingResource extends Resource
         return $table
             ->paginated(false)
             ->searchable(false)
-            ->query(Setting::query())
             ->striped(false)
-            //->heading('Settings')
             ->recordUrl(null)
             ->recordAction(EditAction::class)
             ->columns([
@@ -44,8 +44,7 @@ class SettingResource extends Resource
 
                 TextColumn::make('value')
                     ->label('Value')
-                    ->formatStateUsing(fn ($state) => $state === null ? 'Empty' : $state)
-                    ->hidden(false) // TODO hide when the type is password
+                    ->formatStateUsing(fn ($state, Setting $setting) => $setting->type == 'password' ? '' : $state )
                     ->sortable()
                     ->searchable(),
             ])

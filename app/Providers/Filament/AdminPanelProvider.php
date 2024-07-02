@@ -20,7 +20,6 @@ use Illuminate\Session\Middleware\AuthenticateSession;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
 use Filament\Navigation\MenuItem;
-use Filament\Navigation\NavigationItem;
 
 class AdminPanelProvider extends PanelProvider
 {
@@ -64,13 +63,6 @@ class AdminPanelProvider extends PanelProvider
             ->widgets([
                 Widgets\AccountWidget::class,
                 Widgets\FilamentInfoWidget::class,
-            ])
-            ->navigationItems([
-                NavigationItem::make('app')
-                    ->label('Exit Admin')
-                    ->url('/')
-                    ->icon('tabler-arrow-back')
-                    ->sort(24),
             ])
             ->userMenuItems([
                 MenuItem::make()
