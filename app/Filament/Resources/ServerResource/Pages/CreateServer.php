@@ -760,7 +760,7 @@ class CreateServer extends CreateRecord
 
         $i = 0;
         $this->eggDefaultPorts = [];
-        if (str_contains($get('startup'), '{{SERVER_PORT}}')) {
+        if (str_contains($get('startup'), '{{SERVER_PORT}}') || str_contains($this->egg->config_files, '{{server.allocations.default.port}}')) {
             $this->eggDefaultPorts['SERVER_PORT'] = null;
             $set('assignments.SERVER_PORT', ['port' => null]);
         }
