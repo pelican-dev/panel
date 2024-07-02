@@ -327,6 +327,8 @@ class Node extends Model
 
     public function ipAddresses(): array
     {
+        cache()->forget("nodes.$this->id.ips"); // TODO REMOVE BEFORE COMMITTING
+
         return cache()->remember("nodes.$this->id.ips", now()->addHour(), function () {
             $ips = collect();
             if (is_ip($this->fqdn)) {
@@ -342,7 +344,10 @@ class Node extends Model
                 // pass
             }
 
-            return $ips->all();
+            return $ips
+                ->filter(fn ($ip) => preg_match('/^((25[0-5]|(2[0-4]|1\d|[1-9]|)\d)\.?\b){4}$/', $ip))
+                ->unique()
+                ->all();
         });
     }
 }

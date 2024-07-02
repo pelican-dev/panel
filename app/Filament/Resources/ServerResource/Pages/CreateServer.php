@@ -151,8 +151,8 @@ class CreateServer extends CreateRecord
                                 ->label('Notes'),
                         ]),
 
-                    Wizard\Step::make('Egg Configuration')
-                        ->label('Egg Configuration')
+                    Wizard\Step::make('Egg')
+                        ->label('Egg')
                         ->icon('tabler-egg')
                         ->completedIcon('tabler-check')
                         ->columns([
@@ -213,54 +213,6 @@ class CreateServer extends CreateRecord
                                 ])
                                 ->inline()
                                 ->required(),
-
-                            Forms\Components\TagsInput::make('ports')
-                                ->columnSpan(2)
-                                ->placeholder('Example: 25565, 8080, 1337-1340')
-                                ->splitKeys(['Tab', ' ', ','])
-                                ->hidden(fn () => !$this->egg)
-                                ->helperText(new HtmlString('
-                                These are the ports that users can connect to this Server through.
-                                <br />
-                                You would typically port forward these on your home network.
-                            '))
-                                ->label('Ports')
-                                ->afterStateUpdated(self::ports(...))
-                                ->live(),
-
-                            Forms\Components\Repeater::make('assignments')
-                                ->columnSpan(2)
-                                ->defaultItems(fn () => count($this->eggDefaultPorts))
-                                ->label('Port Assignments')
-                                ->helperText(function (Forms\Get $get) {
-                                    if (empty($this->eggDefaultPorts)) {
-                                        return "This egg doesn't have any ports defined.";
-                                    }
-
-                                    if (empty($get('ports'))) {
-                                        return 'You must add ports to assign them!';
-                                    }
-
-                                    return '';
-                                })
-                                ->live()
-                                ->addable(false)
-                                ->deletable(false)
-                                ->reorderable(false)
-                                ->hidden(fn () => !$this->egg)
-                                ->simple(
-                                    Forms\Components\Select::make('port')
-                                        ->live()
-                                        ->disabled(fn (Forms\Get $get) => empty($get('../../ports')) || empty($get('../../assignments')))
-                                        ->prefix(function (Forms\Components\Component $component) {
-                                            $key = str($component->getStatePath())->beforeLast('.')->afterLast('.')->toString();
-
-                                            return $key;
-                                        })
-                                        ->disableOptionsWhenSelectedInSiblingRepeaterItems()
-                                        ->options(fn (Forms\Get $get) => $this->ports)
-                                        ->required(),
-                                ),
 
                             Forms\Components\Textarea::make('startup')
                                 ->hidden(fn () => !$this->egg)
@@ -361,8 +313,83 @@ class CreateServer extends CreateRecord
                                 ]),
                         ]),
 
-                    Wizard\Step::make('Environment Configuration')
-                        ->label('Environment Configuration')
+                    Wizard\Step::make('Allocation')
+                        ->label('Allocation')
+                        ->icon('tabler-transfer-in')
+                        ->completedIcon('tabler-check')
+                        ->columns(4)
+                        ->schema([
+                            Forms\Components\TagsInput::make('ports')
+                                ->columnSpanFull()
+                                ->hintIcon('tabler-question-mark')
+                                ->hintIconTooltip('Ports are limited from 1025 to 65535')
+                                ->placeholder('Example: 25565, 8080, 1337-1340')
+                                ->splitKeys(['Tab', ' ', ','])
+                                ->helperText(new HtmlString('
+                                These are the ports that users can connect to this Server through.
+                                You would typically port forward these on your home network.
+                            '))
+                                ->label('Ports')
+                                ->afterStateUpdated(self::ports(...))
+                                ->live(),
+
+                            Forms\Components\Repeater::make('ip')
+                                ->columnSpan(2)
+                                ->defaultItems(5)
+                                ->label('IP Assignments')
+                                ->live()
+                                ->addable(false)
+                                ->deletable(false)
+                                ->reorderable(false)
+                                ->hintIcon('tabler-question-mark')
+                                ->hintIconTooltip('These are the IPs available on the selected Node.')
+                                ->simple(
+                                    Forms\Components\Select::make('port')
+                                        ->live()
+                                        ->placeholder('Select an IP')
+//                                        ->afterStateUpdated()
+                                        ->options(fn () => $this->node?->ipAddresses())
+                                        ->required(),
+                                ),
+
+                            Forms\Components\Repeater::make('assignments')
+                                ->columnSpan(2)
+                                ->defaultItems(fn () => count($this->eggDefaultPorts))
+                                ->label('Port Assignments')
+                                ->helperText(function (Forms\Get $get) {
+                                    if (empty($this->eggDefaultPorts)) {
+                                        return "This egg doesn't have any ports defined.";
+                                    }
+
+                                    if (empty($get('ports'))) {
+                                        return 'You must add ports to assign them!';
+                                    }
+
+                                    return '';
+                                })
+                                ->live()
+                                ->addable(false)
+                                ->deletable(false)
+                                ->reorderable(false)
+                                ->simple(
+                                    Forms\Components\Select::make('port')
+                                        ->live()
+                                        ->placeholder('Select a Port')
+                                        ->disabled(fn (Forms\Get $get) => empty($get('../../ports')) || empty($get('../../assignments')))
+                                        ->prefix(function (Forms\Components\Component $component) {
+                                            $key = str($component->getStatePath())->beforeLast('.')->afterLast('.')->toString();
+
+                                            return $key;
+                                        })
+                                        ->disableOptionsWhenSelectedInSiblingRepeaterItems()
+                                        ->options(fn (Forms\Get $get) => $this->ports)
+                                        ->required(),
+                                ),
+
+                        ]),
+
+                    Wizard\Step::make('Environment')
+                        ->label('Environment')
                         ->icon('tabler-brand-docker')
                         ->completedIcon('tabler-check')
                         ->schema([

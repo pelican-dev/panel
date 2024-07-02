@@ -65,6 +65,25 @@ class EditServer extends EditRecord
                         Tabs\Tab::make('Information')
                             ->icon('tabler-info-circle')
                             ->schema([
+                                Forms\Components\ToggleButtons::make('condition')
+                                    ->label('Status')
+                                    ->formatStateUsing(fn (Server $server) => $server->condition)
+                                    ->options(fn ($state) => collect(array_merge(ContainerStatus::cases(), ServerState::cases()))
+                                        ->filter(fn ($condition) => $condition->value === $state)
+                                        ->mapWithKeys(fn ($state) => [$state->value => str($state->value)->replace('_', ' ')->ucwords()])
+                                    )
+                                    ->colors(collect(array_merge(ContainerStatus::cases(), ServerState::cases()))->mapWithKeys(
+                                        fn ($status) => [$status->value => $status->color()]
+                                    ))
+                                    ->icons(collect(array_merge(ContainerStatus::cases(), ServerState::cases()))->mapWithKeys(
+                                        fn ($status) => [$status->value => $status->icon()]
+                                    ))
+                                    ->columnSpan([
+                                        'default' => 2,
+                                        'sm' => 1,
+                                        'md' => 1,
+                                        'lg' => 1,
+                                    ]),
                                 Forms\Components\TextInput::make('name')
                                     ->prefixIcon('tabler-server')
                                     ->label('Display Name')
@@ -100,26 +119,6 @@ class EditServer extends EditRecord
                                     ->searchable()
                                     ->preload()
                                     ->required(),
-
-                                Forms\Components\ToggleButtons::make('condition')
-                                    ->label('Server Status')
-                                    ->formatStateUsing(fn (Server $server) => $server->condition)
-                                    ->options(fn ($state) => collect(array_merge(ContainerStatus::cases(), ServerState::cases()))
-                                        ->filter(fn ($condition) => $condition->value === $state)
-                                        ->mapWithKeys(fn ($state) => [$state->value => str($state->value)->replace('_', ' ')->ucwords()])
-                                    )
-                                    ->colors(collect(array_merge(ContainerStatus::cases(), ServerState::cases()))->mapWithKeys(
-                                        fn ($status) => [$status->value => $status->color()]
-                                    ))
-                                    ->icons(collect(array_merge(ContainerStatus::cases(), ServerState::cases()))->mapWithKeys(
-                                        fn ($status) => [$status->value => $status->icon()]
-                                    ))
-                                    ->columnSpan([
-                                        'default' => 2,
-                                        'sm' => 1,
-                                        'md' => 1,
-                                        'lg' => 1,
-                                    ]),
 
                                 Forms\Components\Textarea::make('description')
                                     ->label('Notes')
