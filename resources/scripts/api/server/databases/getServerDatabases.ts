@@ -13,7 +13,7 @@ export const rawDataToServerDatabase = (data: any): ServerDatabase => ({
     id: data.id,
     name: data.name,
     username: data.username,
-    connectionString: `${data.host.address}:${data.host.port}`,
+    connectionString: `${data.host.alias ?? data.host.address}:${data.host.port}`,
     allowConnectionsFrom: data.connections_from,
     password: data.relationships.password?.attributes?.password,
 });
