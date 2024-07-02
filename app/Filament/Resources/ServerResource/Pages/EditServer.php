@@ -747,8 +747,7 @@ class EditServer extends EditRecord
             Actions\DeleteAction::make('Delete')
                 ->successRedirectUrl(route('filament.admin.resources.servers.index'))
                 ->color('danger')
-                ->disabled(fn (Server $server) => $server->databases()->count() > 0)
-                ->label(fn (Server $server) => $server->databases()->count() > 0 ? 'Server has a Database' : 'Delete')
+                ->label('Delete')
                 ->after(fn (Server $server) => resolve(ServerDeletionService::class)->handle($server))
                 ->requiresConfirmation(),
             Actions\Action::make('console')
