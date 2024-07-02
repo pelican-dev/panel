@@ -6,9 +6,8 @@ import {
     faHdd,
     faMemory,
     faMicrochip,
-    faWifi,
 } from '@fortawesome/free-solid-svg-icons';
-import { bytesToString, ip, mbToBytes } from '@/lib/formatters';
+import { bytesToString, mbToBytes } from '@/lib/formatters';
 import { ServerContext } from '@/state/server';
 import { SocketEvent, SocketRequest } from '@/components/server/events';
 import UptimeDuration from '@/components/server/UptimeDuration';
@@ -56,12 +55,6 @@ const ServerDetailsBlock = ({ className }: { className?: string }) => {
         [limits]
     );
 
-    const allocation = ServerContext.useStoreState((state) => {
-        const match = state.server.data!.allocations.find((allocation) => allocation.isDefault);
-
-        return !match ? 'n/a' : `${match.alias || ip(match.ip)}:${match.port}`;
-    });
-
     useEffect(() => {
         if (!connected || !instance) {
             return;
@@ -90,9 +83,6 @@ const ServerDetailsBlock = ({ className }: { className?: string }) => {
 
     return (
         <div className={classNames('grid grid-cols-6 gap-2 md:gap-4', className)}>
-            <StatBlock icon={faWifi} title={'Address'} copyOnClick={allocation}>
-                {allocation}
-            </StatBlock>
             <StatBlock
                 icon={faClock}
                 title={'Uptime'}
