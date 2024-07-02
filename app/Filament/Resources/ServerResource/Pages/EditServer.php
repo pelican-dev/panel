@@ -905,7 +905,7 @@ class EditServer extends EditRecord
             $ports = $uniquePorts;
         }
 
-        $ports = $ports->filter(fn ($port) => $port > 1024 && $port < 65535)->values();
+        $ports = $ports->filter(fn ($port) => $port > Endpoint::PORT_FLOOR && $port < Endpoint::PORT_CEIL)->values();
 
         $set('ports', $ports->all());
         $this->ports = $ports->all();
