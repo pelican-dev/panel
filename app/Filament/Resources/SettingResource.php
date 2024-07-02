@@ -33,6 +33,8 @@ class SettingResource extends Resource
             ->query(Setting::query())
             ->striped(false)
             //->heading('Settings')
+            ->recordUrl(null)
+            ->recordAction(EditAction::class)
             ->columns([
                 TextColumn::make('label')
                     ->label('Setting')
