@@ -174,6 +174,7 @@ return [
 
     'filament' => [
         'top-navigation' => env('FILAMENT_TOP_NAVIGATION', false),
+        'sidebar-collapsible' => env('FILAMENT_SIDEBAR_COLLAPSIBLE', false),
     ],
 
     'use_binary_prefix' => env('PANEL_USE_BINARY_PREFIX', true),
