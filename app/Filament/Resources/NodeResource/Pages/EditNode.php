@@ -193,7 +193,18 @@ class EditNode extends EditRecord
                                     'http' => 'tabler-lock-open-off',
                                     'https' => 'tabler-lock',
                                 ])
-                                ->default(fn () => request()->isSecure() ? 'https' : 'http'), ]),
+                                ->default(fn () => request()->isSecure() ? 'https' : 'http'),
+
+                            Textarea::make('notes')
+                                ->label('Notes')
+                                //->rows(5)
+                                //->cols(10)
+                                ->autosize(),
+
+                            TextInput::make('description')
+                                ->maxLength(40)
+                                ->label('Description'),
+                        ]),
                     Tab::make('Advanced Settings')
                         ->columns(['default' => 1, 'sm' => 1, 'md' => 4, 'lg' => 6])
                         ->icon('tabler-server-cog')

@@ -16,6 +16,7 @@ use Filament\Forms\Set;
 use Filament\Resources\Pages\CreateRecord;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\HtmlString;
+use Filament\Forms\Components\Textarea;
 
 class CreateNode extends CreateRecord
 {
@@ -191,6 +192,16 @@ class CreateNode extends CreateRecord
                                     'https' => 'tabler-lock',
                                 ])
                                 ->default(fn () => request()->isSecure() ? 'https' : 'http'),
+
+                            Textarea::make('notes')
+                                ->label('Notes')
+                                //->rows(5)
+                                //->cols(10)
+                                ->autosize(),
+
+                            TextInput::make('description')
+                                ->maxLength(40)
+                                ->label('Description'),
                         ]),
                     Step::make('advanced')
                         ->label('Advanced Settings')

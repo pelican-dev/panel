@@ -34,6 +34,7 @@ class ListNodes extends ListRecords
                     ->view('livewire.columns.version-column'),
                 TextColumn::make('name')
                     ->icon('tabler-server-2')
+                    ->description(fn ($record) => $record->description)
                     ->sortable()
                     ->searchable(),
                 TextColumn::make('fqdn')
