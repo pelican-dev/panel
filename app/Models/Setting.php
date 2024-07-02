@@ -6,6 +6,16 @@ use Illuminate\Database\Eloquent\Model;
 use Sushi\Sushi;
 use App\Traits\Commands\EnvironmentWriterTrait;
 
+/**
+ * @property string $key
+ * @property string $config
+ * @property string $label
+ * @property string $value
+ * @property string $type
+ * @property string $tabs
+ * @property string $description
+ * @property int $limit
+ */
 class Setting extends Model
 {
     use EnvironmentWriterTrait;
@@ -13,14 +23,14 @@ class Setting extends Model
 
     protected $casts = [
         'limit' => 'integer',
-        'options' => 'array',
     ];
 
-    protected $fillable = ['key', 'label', 'value', 'type', 'options', 'description', 'limit', 'tabs'];
+    protected $fillable = ['key', 'label', 'value', 'type', 'description', 'limit', 'tabs'];
 
     public const DEFAULT = [
         [
             'key' => 'FILAMENT_TOP_NAVIGATION',
+            'config' => 'panel.filament.top-navigation',
             'label' => 'Topbar or Sidebar',
             'value' => 'false',
             'type' => 'toggle-buttons',
@@ -30,6 +40,7 @@ class Setting extends Model
         ],
         [
             'key' => 'APP_NAME',
+            'config' => 'app.name',
             'label' => 'Panel Name',
             'value' => 'Pelican',
             'tabs' => 'Panel',
@@ -39,6 +50,7 @@ class Setting extends Model
         ],
         [
             'key' => 'MAIL_HOST',
+            'config' => 'mail.mailers.smtp.host',
             'label' => 'SMTP Host',
             'value' => 'smtp.example.com',
             'type' => 'text',
@@ -48,6 +60,7 @@ class Setting extends Model
         ],
         [
             'key' => 'MAIL_PORT',
+            'config' => 'mail.mailers.smtp.port',
             'label' => 'SMTP Port',
             'value' => '25',
             'type' => 'number',
@@ -57,6 +70,7 @@ class Setting extends Model
         ],
         [
             'key' => 'MAIL_USERNAME',
+            'config' => 'mail.mailers.smtp.username',
             'label' => 'Username',
             'value' => '',
             'type' => 'text',
@@ -66,6 +80,7 @@ class Setting extends Model
         ],
         [
             'key' => 'MAIL_PASSWORD',
+            'config' => 'mail.mailers.smtp.password',
             'label' => 'Password',
             'value' => '',
             'type' => 'password',
@@ -75,6 +90,7 @@ class Setting extends Model
         ],
         [
             'key' => 'MAIL_ENCRYPTION',
+            'config' => 'mail.mailers.smtp.encryption',
             'label' => 'Encryption',
             'value' => 'tls',
             'type' => 'text',
@@ -84,6 +100,7 @@ class Setting extends Model
         ],
         [
             'key' => 'MAIL_FROM_ADDRESS',
+            'config' => 'mail.from.address',
             'label' => 'Mail From',
             'value' => 'no-reply@example.com',
             'type' => 'text',
@@ -93,65 +110,12 @@ class Setting extends Model
         ],
         [
             'key' => 'MAIL_FROM_NAME',
+            'config' => 'mail.from.name',
             'label' => 'Mail From Name',
             'value' => 'Pelican Admin',
             'type' => 'text',
             'tabs' => 'Mail',
             'description' => 'The name that emails should appear to come from.',
-            'limit' => 255,
-        ],
-        [
-            'key' => 'RECAPTCHA_ENABLED',
-            'label' => 'Recaptcha Status',
-            'value' => 'true',
-            'type' => 'toggle-buttons',
-            'tabs' => 'Advanced',
-            'description' => 'If enabled, login forms and password reset forms will do a silent captcha check and display a visible captcha if needed.',
-            'limit' => 255,
-        ],
-        [
-            'key' => 'RECAPTCHA_WEBSITE_KEY',
-            'label' => 'Recaptcha Site Key',
-            'value' => '6LcJcjwUAAAAAO_Xqjrtj9wWufUpYRnK6BW8lnfn',
-            'type' => 'password',
-            'tabs' => 'Advanced',
-            'description' => '',
-            'limit' => 255,
-        ],
-        [
-            'key' => 'RECAPTCHA_SECRET_KEY',
-            'label' => 'Recaptcha Secret Key',
-            'value' => '6LcJcjwUAAAAALOcDJqAEYKTDhwELCkzUkNDQ0J5',
-            'type' => 'password',
-            'tabs' => 'Advanced',
-            'description' => 'Used for communication between your site and Google. Be sure to keep it a secret.',
-            'limit' => 255,
-        ],
-        [
-            'key' => 'PANEL_CLIENT_ALLOCATIONS_ENABLED',
-            'label' => 'Automatic Allocation Status',
-            'value' => 'false',
-            'type' => 'toggle-buttons',
-            'tabs' => 'Advanced',
-            'description' => 'If enabled users will have the option to automatically create new allocations for their server via the frontend.',
-            'limit' => 255,
-        ],
-        [
-            'key' => 'PANEL_CLIENT_ALLOCATIONS_RANGE_START',
-            'label' => 'Automatic Allocation Starting Port',
-            'value' => '',
-            'type' => 'number',
-            'tabs' => 'Advanced',
-            'description' => 'The starting port in the range that can be automatically allocated.',
-            'limit' => 255,
-        ],
-        [
-            'key' => 'PANEL_CLIENT_ALLOCATIONS_RANGE_END',
-            'label' => 'Automatic Allocation Ending Port',
-            'value' => '',
-            'type' => 'number',
-            'tabs' => 'Advanced',
-            'description' => 'The ending port in the range that can be automatically allocated.',
             'limit' => 255,
         ],
     ];

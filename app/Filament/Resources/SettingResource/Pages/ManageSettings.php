@@ -20,9 +20,6 @@ class ManageSettings extends ManageRecords
             'mail' => Tab::make('Mail Settings')
                 ->icon('tabler-mail')
                 ->modifyQueryUsing(fn (Builder $query) => $query->where('tabs', 'Mail')),
-            'Advanced' => Tab::make('Advanced Settings')
-                ->icon('tabler-adjustments-alt')
-                ->modifyQueryUsing(fn (Builder $query) => $query->where('tabs', 'Advanced')),
         ];
     }
 

@@ -8,7 +8,6 @@ use Filament\Resources\Resource;
 use Filament\Tables\Table;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Components\Select;
 use Filament\Forms\Components\ToggleButtons;
 use Filament\Tables\Actions\EditAction;
 
@@ -44,7 +43,7 @@ class SettingResource extends Resource
 
                 TextColumn::make('value')
                     ->label('Value')
-                    ->formatStateUsing(fn ($state, Setting $setting) => $setting->type == 'password' ? '' : $state)
+                    ->default(fn (Setting $setting) => config($setting->config))
                     ->sortable()
                     ->searchable(),
             ])
@@ -57,11 +56,6 @@ class SettingResource extends Resource
                     })
                     ->form(function (Setting $setting) {
                         return match ($setting->type) {
-                            'select' => [
-                                Select::make('value')
-                                    ->label($setting->label)
-                                    ->options($setting->options),
-                            ],
                             'number' => [
                                 TextInput::make('value')
                                     ->label($setting->label)
