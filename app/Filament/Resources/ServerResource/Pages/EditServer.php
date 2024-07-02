@@ -911,46 +911,6 @@ class EditServer extends EditRecord
         $this->ports = $ports->all();
     }
 
-    public function resetEggVariables(Forms\Set $set, Forms\Get $get)
-    {
-        $set('assignments', []);
-
-        $i = 0;
-        $this->eggDefaultPorts = [];
-        if (str_contains($get('startup'), '{{SERVER_PORT}}')) {
-            $this->eggDefaultPorts['SERVER_PORT'] = null;
-            $set('assignments.SERVER_PORT', ['port' => null]);
-        }
-
-        $variables = $this->getRecord()->egg->variables ?? [];
-        $serverVariables = collect();
-        $this->ports = [];
-        foreach ($variables as $variable) {
-            if (str_contains($variable->rules, 'port')) {
-                $this->eggDefaultPorts[$variable->env_variable] = $variable->default_value;
-                $this->ports[] = (int) $variable->default_value;
-
-                $set("assignments.$variable->env_variable", ['port' => $i++]);
-
-                continue;
-            }
-
-            $serverVariables->add($variable->toArray());
-        }
-
-        $set('ports', $this->ports);
-
-        $variables = [];
-        $set($path = 'server_variables', $serverVariables->sortBy(['sort'])->all());
-        for ($i = 0; $i < $serverVariables->count(); $i++) {
-            $set("$path.$i.variable_value", $serverVariables[$i]['default_value']);
-            $set("$path.$i.variable_id", $serverVariables[$i]['id']);
-            $variables[$serverVariables[$i]['env_variable']] = $serverVariables[$i]['default_value'];
-        }
-
-        $set('environment', $variables);
-    }
-
     public function portOptions(Egg $egg, string $startup = null): array
     {
         if (empty($startup)) {
