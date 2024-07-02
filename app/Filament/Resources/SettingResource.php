@@ -44,7 +44,7 @@ class SettingResource extends Resource
 
                 TextColumn::make('value')
                     ->label('Value')
-                    ->formatStateUsing(fn ($state, Setting $setting) => $setting->type == 'password' ? '' : $state )
+                    ->formatStateUsing(fn ($state, Setting $setting) => $setting->type == 'password' ? '' : $state)
                     ->sortable()
                     ->searchable(),
             ])
