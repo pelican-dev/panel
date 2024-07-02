@@ -215,7 +215,7 @@ class EditProfile extends \Filament\Pages\Auth\EditProfile
                                                 Action::make('Create')
                                                     ->disabled(fn (Get $get) => $get('description') === null)
                                                     ->successRedirectUrl(route('filament.admin.auth.profile', ['tab' => '-api-keys-tab']))
-                                                    ->action(function (Get $get, Action $action, $user) {
+                                                    ->action(function (Get $get, Action $action, User $user) {
                                                         $token = $user->createToken(
                                                             $get('description'),
                                                             $get('allowed_ips'),

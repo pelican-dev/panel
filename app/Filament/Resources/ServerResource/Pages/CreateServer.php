@@ -233,7 +233,9 @@ class CreateServer extends CreateRecord
                                                 $end = min((int) $end, 2 ** 16 - 1);
                                                 $range = $start <= $end ? range($start, $end) : range($end, $start);
                                                 foreach ($range as $i) {
-                                                    $ports->push($i);
+                                                    if($i > 1024 && $i <= 65535) {
+                                                        $ports->push($i);
+                                                    }
                                                 }
                                             }
 
@@ -248,8 +250,6 @@ class CreateServer extends CreateRecord
                                                 $update = true;
                                                 $ports = $sortedPorts;
                                             }
-
-                                            $ports = $ports->filter(fn ($port) => $port > 1024 && $port < 65535)->values();
 
                                             if ($update) {
                                                 $set('allocation_ports', $ports->all());
