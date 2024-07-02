@@ -11,16 +11,6 @@ class Setting extends Model
     use EnvironmentWriterTrait;
     use Sushi;
 
-    public $type;
-
-    public $label;
-
-    public $options;
-
-    public $description;
-
-    public $limit;
-
     protected $casts = [
         'limit' => 'integer',
         'options' => 'array',

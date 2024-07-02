@@ -52,6 +52,7 @@ class SettingResource extends Resource
                 EditAction::make()
                     ->using(function (Setting $setting, array $data): Setting {
                         $setting->writeToEnvironment([$setting->key => $data['value']]);
+
                         return $setting;
                     })
                     ->form(function (Setting $setting) {
