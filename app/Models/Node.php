@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Exceptions\Service\HasActiveServersException;
+use App\Models\Objects\Endpoint;
 use App\Repositories\Daemon\DaemonConfigurationRepository;
 use Exception;
 use Illuminate\Support\Facades\Http;
@@ -327,8 +328,6 @@ class Node extends Model
 
     public function ipAddresses(): array
     {
-        cache()->forget("nodes.$this->id.ips"); // TODO REMOVE BEFORE COMMITTING
-
         return cache()->remember("nodes.$this->id.ips", now()->addHour(), function () {
             $ips = collect();
             if (is_ip($this->fqdn)) {
@@ -343,6 +342,8 @@ class Node extends Model
             } catch (Exception) {
                 // pass
             }
+
+            $ips->add(Endpoint::INADDR_ANY);
 
             return $ips
                 ->filter(fn ($ip) => preg_match('/^((25[0-5]|(2[0-4]|1\d|[1-9]|)\d)\.?\b){4}$/', $ip))
