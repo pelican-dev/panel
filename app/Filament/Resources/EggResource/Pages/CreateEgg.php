@@ -74,8 +74,7 @@ class CreateEgg extends CreateRecord
                                 ->helperText('')
                                 ->columnSpan(['default' => 1, 'sm' => 1, 'md' => 2, 'lg' => 2]),
                             TextInput::make('update_url')
-                                ->hintIcon('tabler-question-mark')
-                                ->hintToolTip('URLs must point directly to the raw .json file.')
+                                ->hintIcon('tabler-question-mark', tooltip: 'URLs must point directly to the raw .json file.')
                                 ->columnSpan(['default' => 1, 'sm' => 1, 'md' => 2, 'lg' => 2])
                                 ->url(),
                             KeyValue::make('docker_images')
