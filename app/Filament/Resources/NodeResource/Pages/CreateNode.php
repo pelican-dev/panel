@@ -6,7 +6,14 @@ use App\Filament\Resources\NodeResource;
 use Exception;
 use Filament\Forms;
 use Filament\Forms\Components\Actions\Action;
+use Filament\Forms\Components\Grid;
+use Filament\Forms\Components\TagsInput;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\ToggleButtons;
 use Filament\Forms\Components\Wizard;
+use Filament\Forms\Components\Wizard\Step;
+use Filament\Forms\Get;
+use Filament\Forms\Set;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\CreateRecord;
 use Illuminate\Database\Eloquent\Model;
@@ -26,7 +33,7 @@ class CreateNode extends CreateRecord
         return $form
             ->schema([
                 Wizard::make([
-                    Wizard\Step::make('basic')
+                    Step::make('basic')
                         ->label('Basic Settings')
                         ->icon('tabler-server')
                         ->columnSpanFull()
@@ -37,7 +44,7 @@ class CreateNode extends CreateRecord
                             'lg' => 4,
                         ])
                         ->schema([
-                            Forms\Components\TextInput::make('fqdn')
+                            TextInput::make('fqdn')
                                 ->columnSpan(2)
                                 ->required()
                                 ->autofocus()
@@ -70,7 +77,7 @@ class CreateNode extends CreateRecord
 
                                     return '';
                                 })
-                                ->afterStateUpdated(function (Forms\Set $set, ?string $state) {
+                                ->afterStateUpdated(function (Set $set, ?string $state) {
                                     $set('dns', null);
                                     $set('ip', null);
 
@@ -98,17 +105,17 @@ class CreateNode extends CreateRecord
                                 })
                                 ->maxLength(255),
 
-                            Forms\Components\TextInput::make('ip')
+                            TextInput::make('ip')
                                 ->disabled()
                                 ->hidden(),
 
-                            Forms\Components\ToggleButtons::make('dns')
+                            ToggleButtons::make('dns')
                                 ->label('DNS Record Check')
                                 ->helperText('This lets you know if your DNS record correctly points to an IP Address.')
                                 ->disabled()
                                 ->inline()
                                 ->default(null)
-                                ->hint(fn (Forms\Get $get) => $get('ip'))
+                                ->hint(fn (Get $get) => $get('ip'))
                                 ->hintColor('success')
                                 ->options([
                                     true => 'Valid',
@@ -125,7 +132,7 @@ class CreateNode extends CreateRecord
                                     'lg' => 1,
                                 ]),
 
-                            Forms\Components\TextInput::make('daemon_listen')
+                            TextInput::make('daemon_listen')
                                 ->columnSpan([
                                     'default' => 1,
                                     'sm' => 1,
@@ -140,7 +147,7 @@ class CreateNode extends CreateRecord
                                 ->required()
                                 ->integer(),
 
-                            Forms\Components\TextInput::make('name')
+                            TextInput::make('name')
                                 ->label('Display Name')
                                 ->columnSpan([
                                     'default' => 1,
@@ -153,7 +160,7 @@ class CreateNode extends CreateRecord
                                 ->helperText('This name is for display only and can be changed later.')
                                 ->maxLength(100),
 
-                            Forms\Components\ToggleButtons::make('scheme')
+                            ToggleButtons::make('scheme')
                                 ->label('Communicate over SSL')
                                 ->columnSpan([
                                     'default' => 1,
@@ -162,7 +169,7 @@ class CreateNode extends CreateRecord
                                     'lg' => 1,
                                 ])
                                 ->inline()
-                                ->helperText(function (Forms\Get $get) {
+                                ->helperText(function (Get $get) {
                                     if (request()->isSecure()) {
                                         return new HtmlString('Your Panel is using a secure SSL connection,<br>so your Daemon must too.');
                                     }
@@ -188,7 +195,7 @@ class CreateNode extends CreateRecord
                                 ])
                                 ->default(fn () => request()->isSecure() ? 'https' : 'http'),
                         ]),
-                    Wizard\Step::make('advanced')
+                    Step::make('advanced')
                         ->label('Advanced Settings')
                         ->icon('tabler-server-cog')
                         ->columnSpanFull()
@@ -199,7 +206,7 @@ class CreateNode extends CreateRecord
                             'lg' => 4,
                         ])
                         ->schema([
-                            Forms\Components\ToggleButtons::make('maintenance_mode')
+                            ToggleButtons::make('maintenance_mode')
                                 ->label('Maintenance Mode')->inline()
                                 ->columnSpan(1)
                                 ->default(false)
@@ -213,7 +220,7 @@ class CreateNode extends CreateRecord
                                     true => 'danger',
                                     false => 'success',
                                 ]),
-                            Forms\Components\ToggleButtons::make('public')
+                            ToggleButtons::make('public')
                                 ->default(true)
                                 ->columnSpan(1)
                                 ->label('Automatic Allocation')->inline()
@@ -225,15 +232,14 @@ class CreateNode extends CreateRecord
                                     true => 'success',
                                     false => 'danger',
                                 ]),
-                            Forms\Components\TagsInput::make('tags')
+                            TagsInput::make('tags')
                                 ->label('Tags')
                                 ->disabled()
                                 ->placeholder('Not Implemented')
                                 ->hintIcon('tabler-question-mark')
                                 ->hintIconTooltip('Not Implemented')
                                 ->columnSpan(2),
-
-                            Forms\Components\TextInput::make('upload_size')
+                            TextInput::make('upload_size')
                                 ->label('Upload Limit')
                                 ->helperText('Enter the maximum size of files that can be uploaded through the web-based file manager.')
                                 ->columnSpan(1)
@@ -242,7 +248,7 @@ class CreateNode extends CreateRecord
                                 ->minValue(1)
                                 ->maxValue(1024)
                                 ->suffix(config('panel.use_binary_prefix') ? 'MiB' : 'MB'),
-                            Forms\Components\TextInput::make('daemon_sftp')
+                            TextInput::make('daemon_sftp')
                                 ->columnSpan(1)
                                 ->label('SFTP Port')
                                 ->minValue(1)
@@ -250,19 +256,19 @@ class CreateNode extends CreateRecord
                                 ->default(2022)
                                 ->required()
                                 ->integer(),
-                            Forms\Components\TextInput::make('daemon_sftp_alias')
+                            TextInput::make('daemon_sftp_alias')
                                 ->columnSpan(2)
                                 ->label('SFTP Alias')
                                 ->helperText('Display alias for the SFTP address. Leave empty to use the Node FQDN.'),
-                            Forms\Components\Grid::make()
+                            Grid::make()
                                 ->columns(6)
                                 ->columnSpanFull()
                                 ->schema([
-                                    Forms\Components\ToggleButtons::make('unlimited_mem')
+                                    ToggleButtons::make('unlimited_mem')
                                         ->label('Memory')->inlineLabel()->inline()
-                                        ->afterStateUpdated(fn (Forms\Set $set) => $set('memory', 0))
-                                        ->afterStateUpdated(fn (Forms\Set $set) => $set('memory_overallocate', 0))
-                                        ->formatStateUsing(fn (Forms\Get $get) => $get('memory') == 0)
+                                        ->afterStateUpdated(fn (Set $set) => $set('memory', 0))
+                                        ->afterStateUpdated(fn (Set $set) => $set('memory_overallocate', 0))
+                                        ->formatStateUsing(fn (Get $get) => $get('memory') == 0)
                                         ->live()
                                         ->options([
                                             true => 'Unlimited',
@@ -273,9 +279,9 @@ class CreateNode extends CreateRecord
                                             false => 'warning',
                                         ])
                                         ->columnSpan(2),
-                                    Forms\Components\TextInput::make('memory')
+                                    TextInput::make('memory')
                                         ->dehydratedWhenHidden()
-                                        ->hidden(fn (Forms\Get $get) => $get('unlimited_mem'))
+                                        ->hidden(fn (Get $get) => $get('unlimited_mem'))
                                         ->label('Memory Limit')->inlineLabel()
                                         ->suffix(config('panel.use_binary_prefix') ? 'MiB' : 'MB')
                                         ->columnSpan(2)
@@ -283,10 +289,10 @@ class CreateNode extends CreateRecord
                                         ->minValue(0)
                                         ->default(0)
                                         ->required(),
-                                    Forms\Components\TextInput::make('memory_overallocate')
+                                    TextInput::make('memory_overallocate')
                                         ->dehydratedWhenHidden()
                                         ->label('Overallocate')->inlineLabel()
-                                        ->hidden(fn (Forms\Get $get) => $get('unlimited_mem'))
+                                        ->hidden(fn (Get $get) => $get('unlimited_mem'))
                                         ->hintIcon('tabler-question-mark')
                                         ->hintIconTooltip('The % allowable to go over the set limit.')
                                         ->columnSpan(2)
@@ -297,16 +303,16 @@ class CreateNode extends CreateRecord
                                         ->suffix('%')
                                         ->required(),
                                 ]),
-                            Forms\Components\Grid::make()
+                            Grid::make()
                                 ->columns(6)
                                 ->columnSpanFull()
                                 ->schema([
-                                    Forms\Components\ToggleButtons::make('unlimited_disk')
+                                    ToggleButtons::make('unlimited_disk')
                                         ->label('Disk')->inlineLabel()->inline()
                                         ->live()
-                                        ->afterStateUpdated(fn (Forms\Set $set) => $set('disk', 0))
-                                        ->afterStateUpdated(fn (Forms\Set $set) => $set('disk_overallocate', 0))
-                                        ->formatStateUsing(fn (Forms\Get $get) => $get('disk') == 0)
+                                        ->afterStateUpdated(fn (Set $set) => $set('disk', 0))
+                                        ->afterStateUpdated(fn (Set $set) => $set('disk_overallocate', 0))
+                                        ->formatStateUsing(fn (Get $get) => $get('disk') == 0)
                                         ->options([
                                             true => 'Unlimited',
                                             false => 'Limited',
@@ -316,9 +322,9 @@ class CreateNode extends CreateRecord
                                             false => 'warning',
                                         ])
                                         ->columnSpan(2),
-                                    Forms\Components\TextInput::make('disk')
+                                    TextInput::make('disk')
                                         ->dehydratedWhenHidden()
-                                        ->hidden(fn (Forms\Get $get) => $get('unlimited_disk'))
+                                        ->hidden(fn (Get $get) => $get('unlimited_disk'))
                                         ->label('Disk Limit')->inlineLabel()
                                         ->suffix(config('panel.use_binary_prefix') ? 'MiB' : 'MB')
                                         ->columnSpan(2)
@@ -326,9 +332,9 @@ class CreateNode extends CreateRecord
                                         ->minValue(0)
                                         ->default(0)
                                         ->required(),
-                                    Forms\Components\TextInput::make('disk_overallocate')
+                                    TextInput::make('disk_overallocate')
                                         ->dehydratedWhenHidden()
-                                        ->hidden(fn (Forms\Get $get) => $get('unlimited_disk'))
+                                        ->hidden(fn (Get $get) => $get('unlimited_disk'))
                                         ->label('Overallocate')->inlineLabel()
                                         ->hintIcon('tabler-question-mark')
                                         ->hintIconTooltip('The % allowable to go over the set limit.')
@@ -340,16 +346,16 @@ class CreateNode extends CreateRecord
                                         ->suffix('%')
                                         ->required(),
                                 ]),
-                            Forms\Components\Grid::make()
+                            Grid::make()
                                 ->columns(6)
                                 ->columnSpanFull()
                                 ->schema([
-                                    Forms\Components\ToggleButtons::make('unlimited_cpu')
+                                    ToggleButtons::make('unlimited_cpu')
                                         ->label('CPU')->inlineLabel()->inline()
                                         ->live()
-                                        ->afterStateUpdated(fn (Forms\Set $set) => $set('cpu', 0))
-                                        ->afterStateUpdated(fn (Forms\Set $set) => $set('cpu_overallocate', 0))
-                                        ->formatStateUsing(fn (Forms\Get $get) => $get('cpu') == 0)
+                                        ->afterStateUpdated(fn (Set $set) => $set('cpu', 0))
+                                        ->afterStateUpdated(fn (Set $set) => $set('cpu_overallocate', 0))
+                                        ->formatStateUsing(fn (Get $get) => $get('cpu') == 0)
                                         ->options([
                                             true => 'Unlimited',
                                             false => 'Limited',
@@ -359,9 +365,9 @@ class CreateNode extends CreateRecord
                                             false => 'warning',
                                         ])
                                         ->columnSpan(2),
-                                    Forms\Components\TextInput::make('cpu')
+                                    TextInput::make('cpu')
                                         ->dehydratedWhenHidden()
-                                        ->hidden(fn (Forms\Get $get) => $get('unlimited_cpu'))
+                                        ->hidden(fn (Get $get) => $get('unlimited_cpu'))
                                         ->label('CPU Limit')->inlineLabel()
                                         ->suffix('%')
                                         ->columnSpan(2)
@@ -369,9 +375,9 @@ class CreateNode extends CreateRecord
                                         ->default(0)
                                         ->minValue(0)
                                         ->required(),
-                                    Forms\Components\TextInput::make('cpu_overallocate')
+                                    TextInput::make('cpu_overallocate')
                                         ->dehydratedWhenHidden()
-                                        ->hidden(fn (Forms\Get $get) => $get('unlimited_cpu'))
+                                        ->hidden(fn (Get $get) => $get('unlimited_cpu'))
                                         ->label('Overallocate')->inlineLabel()
                                         ->hintIcon('tabler-question-mark')
                                         ->hintIconTooltip('The % allowable to go over the set limit.')

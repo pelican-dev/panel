@@ -20,7 +20,6 @@ use App\Enums\ServerState;
 use App\Models\Egg;
 use App\Models\Server;
 use App\Models\ServerVariable;
-use App\Repositories\Daemon\DaemonServerRepository;
 use App\Services\Servers\ServerDeletionService;
 use Filament\Forms\Components\Tabs;
 use Filament\Forms\Form;
@@ -46,55 +45,6 @@ class EditServer extends EditRecord
                 'lg' => 4,
             ])
             ->schema([
-                Forms\Components\ToggleButtons::make('docker')
-                    ->label('Container Status')->inline()->inlineLabel()
-                    ->formatStateUsing(function ($state, Server $server) {
-                        if ($server->node_id === null) {
-                            return 'unknown';
-                        }
-
-                        /** @var DaemonServerRepository $service */
-                        $service = resolve(DaemonServerRepository::class);
-                        $details = $service->setServer($server)->getDetails();
-
-                        return $details['state'] ?? 'unknown';
-                    })
-                    ->options(fn ($state) => collect(ContainerStatus::cases())->filter(fn ($containerStatus) => $containerStatus->value === $state)->mapWithKeys(
-                        fn (ContainerStatus $state) => [$state->value => str($state->value)->replace('_', ' ')->ucwords()]
-                    ))
-                    ->colors(collect(ContainerStatus::cases())->mapWithKeys(
-                        fn (ContainerStatus $status) => [$status->value => $status->color()]
-                    ))
-                    ->icons(collect(ContainerStatus::cases())->mapWithKeys(
-                        fn (ContainerStatus $status) => [$status->value => $status->icon()]
-                    ))
-                    ->columnSpan([
-                        'default' => 1,
-                        'sm' => 2,
-                        'md' => 2,
-                        'lg' => 2,
-                    ]),
-
-                Forms\Components\ToggleButtons::make('status')
-                    ->label('Server State')->inline()->inlineLabel()
-                    ->helperText('')
-                    ->formatStateUsing(fn ($state) => $state ?? ServerState::Normal)
-                    ->options(fn ($state) => collect(ServerState::cases())->filter(fn ($serverState) => $serverState->value === $state)->mapWithKeys(
-                        fn (ServerState $state) => [$state->value => str($state->value)->replace('_', ' ')->ucwords()]
-                    ))
-                    ->colors(collect(ServerState::cases())->mapWithKeys(
-                        fn (ServerState $state) => [$state->value => $state->color()]
-                    ))
-                    ->icons(collect(ServerState::cases())->mapWithKeys(
-                        fn (ServerState $state) => [$state->value => $state->icon()]
-                    ))
-                    ->columnSpan([
-                        'default' => 1,
-                        'sm' => 2,
-                        'md' => 2,
-                        'lg' => 2,
-                    ]),
-
                 Tabs::make('Tabs')
                     ->persistTabInQueryString()
                     ->columnSpan(6)
@@ -123,7 +73,7 @@ class EditServer extends EditRecord
                                         }))
                                     ->columnSpan([
                                         'default' => 2,
-                                        'sm' => 2,
+                                        'sm' => 1,
                                         'md' => 2,
                                         'lg' => 3,
                                     ])
@@ -135,14 +85,34 @@ class EditServer extends EditRecord
                                     ->label('Owner')
                                     ->columnSpan([
                                         'default' => 2,
-                                        'sm' => 2,
+                                        'sm' => 1,
                                         'md' => 2,
-                                        'lg' => 3,
+                                        'lg' => 2,
                                     ])
                                     ->relationship('user', 'username')
                                     ->searchable()
                                     ->preload()
                                     ->required(),
+
+                                Forms\Components\ToggleButtons::make('condition')
+                                    ->label('Server Status')
+                                    ->formatStateUsing(fn (Server $server) => $server->condition)
+                                    ->options(fn ($state) => collect(array_merge(ContainerStatus::cases(), ServerState::cases()))
+                                        ->filter(fn ($condition) => $condition->value === $state)
+                                        ->mapWithKeys(fn ($state) => [$state->value => str($state->value)->replace('_', ' ')->ucwords()])
+                                    )
+                                    ->colors(collect(array_merge(ContainerStatus::cases(), ServerState::cases()))->mapWithKeys(
+                                        fn ($status) => [$status->value => $status->color()]
+                                    ))
+                                    ->icons(collect(array_merge(ContainerStatus::cases(), ServerState::cases()))->mapWithKeys(
+                                        fn ($status) => [$status->value => $status->icon()]
+                                    ))
+                                    ->columnSpan([
+                                        'default' => 2,
+                                        'sm' => 1,
+                                        'md' => 1,
+                                        'lg' => 1,
+                                    ]),
 
                                 Forms\Components\Textarea::make('description')
                                     ->label('Description')
@@ -152,7 +122,7 @@ class EditServer extends EditRecord
                                     ->hintAction(CopyAction::make())
                                     ->columnSpan([
                                         'default' => 2,
-                                        'sm' => 2,
+                                        'sm' => 1,
                                         'md' => 2,
                                         'lg' => 3,
                                     ])
@@ -162,7 +132,7 @@ class EditServer extends EditRecord
                                     ->hintAction(CopyAction::make())
                                     ->columnSpan([
                                         'default' => 2,
-                                        'sm' => 2,
+                                        'sm' => 1,
                                         'md' => 2,
                                         'lg' => 3,
                                     ])
@@ -171,7 +141,7 @@ class EditServer extends EditRecord
                                     ->label('External ID')
                                     ->columnSpan([
                                         'default' => 2,
-                                        'sm' => 2,
+                                        'sm' => 1,
                                         'md' => 2,
                                         'lg' => 3,
                                     ])
@@ -181,7 +151,7 @@ class EditServer extends EditRecord
                                     ->relationship('node', 'name')
                                     ->columnSpan([
                                         'default' => 2,
-                                        'sm' => 2,
+                                        'sm' => 1,
                                         'md' => 2,
                                         'lg' => 3,
                                     ])
@@ -545,6 +515,7 @@ class EditServer extends EditRecord
 
                                         $text = Forms\Components\TextInput::make('variable_value')
                                             ->hidden($this->shouldHideComponent(...))
+                                            ->required(fn (ServerVariable $serverVariable) => in_array('required', explode('|', $serverVariable->variable->rules)))
                                             ->rules([
                                                 fn (ServerVariable $serverVariable): Closure => function (string $attribute, $value, Closure $fail) use ($serverVariable) {
                                                     $validator = Validator::make(['validatorkey' => $value], [
@@ -778,8 +749,7 @@ class EditServer extends EditRecord
             Actions\DeleteAction::make('Delete')
                 ->successRedirectUrl(route('filament.admin.resources.servers.index'))
                 ->color('danger')
-                ->disabled(fn (Server $server) => $server->databases()->count() > 0)
-                ->label(fn (Server $server) => $server->databases()->count() > 0 ? 'Server has a Database' : 'Delete')
+                ->label('Delete')
                 ->after(fn (Server $server) => resolve(ServerDeletionService::class)->handle($server))
                 ->requiresConfirmation(),
             Actions\Action::make('console')
