@@ -4,7 +4,7 @@
         "version": "PTDL_v2",
         "update_url": null
     },
-    "exported_at": "2024-06-02T20:42:09+00:00",
+    "exported_at": "2024-07-03T10:30:26+00:00",
     "name": "Rust",
     "author": "panel@example.com",
     "uuid": "bace2dfb-209c-452a-9459-7d6f340b07ae",
@@ -39,7 +39,7 @@
             "user_viewable": true,
             "user_editable": true,
             "rules": "required|string|max:60",
-            "sort": null,
+            "sort": 1,
             "field_type": "text"
         },
         {
@@ -50,7 +50,7 @@
             "user_viewable": true,
             "user_editable": true,
             "rules": "required|in:vanilla,oxide,carbon",
-            "sort": null,
+            "sort": 2,
             "field_type": "text"
         },
         {
@@ -61,7 +61,7 @@
             "user_viewable": true,
             "user_editable": true,
             "rules": "required|string|max:20",
-            "sort": null,
+            "sort": 3,
             "field_type": "text"
         },
         {
@@ -72,7 +72,7 @@
             "user_viewable": true,
             "user_editable": true,
             "rules": "required|string",
-            "sort": null,
+            "sort": 4,
             "field_type": "text"
         },
         {
@@ -83,7 +83,7 @@
             "user_viewable": true,
             "user_editable": true,
             "rules": "nullable|url",
-            "sort": null,
+            "sort": 5,
             "field_type": "text"
         },
         {
@@ -94,7 +94,7 @@
             "user_viewable": true,
             "user_editable": true,
             "rules": "required|integer",
-            "sort": null,
+            "sort": 6,
             "field_type": "text"
         },
         {
@@ -105,7 +105,7 @@
             "user_viewable": true,
             "user_editable": true,
             "rules": "nullable|string",
-            "sort": null,
+            "sort": 7,
             "field_type": "text"
         },
         {
@@ -116,7 +116,7 @@
             "user_viewable": true,
             "user_editable": true,
             "rules": "required|integer",
-            "sort": null,
+            "sort": 8,
             "field_type": "text"
         },
         {
@@ -127,7 +127,7 @@
             "user_viewable": true,
             "user_editable": true,
             "rules": "nullable|url",
-            "sort": null,
+            "sort": 9,
             "field_type": "text"
         },
         {
@@ -138,7 +138,7 @@
             "user_viewable": true,
             "user_editable": false,
             "rules": "required|port",
-            "sort": null,
+            "sort": 10,
             "field_type": "text"
         },
         {
@@ -149,7 +149,7 @@
             "user_viewable": true,
             "user_editable": false,
             "rules": "required|port",
-            "sort": null,
+            "sort": 11,
             "field_type": "text"
         },
         {
@@ -160,7 +160,7 @@
             "user_viewable": true,
             "user_editable": true,
             "rules": "required|regex:\/^[\\w.-]*$\/|max:64",
-            "sort": null,
+            "sort": 12,
             "field_type": "text"
         },
         {
@@ -171,7 +171,7 @@
             "user_viewable": true,
             "user_editable": true,
             "rules": "required|integer",
-            "sort": null,
+            "sort": 13,
             "field_type": "text"
         },
         {
@@ -182,7 +182,7 @@
             "user_viewable": true,
             "user_editable": true,
             "rules": "nullable|string",
-            "sort": null,
+            "sort": 14,
             "field_type": "text"
         },
         {
@@ -193,7 +193,7 @@
             "user_viewable": true,
             "user_editable": false,
             "rules": "required|port",
-            "sort": null,
+            "sort": 15,
             "field_type": "text"
         },
         {
@@ -204,7 +204,7 @@
             "user_viewable": true,
             "user_editable": true,
             "rules": "nullable|url",
-            "sort": null,
+            "sort": 16,
             "field_type": "text"
         },
         {
@@ -215,7 +215,7 @@
             "user_viewable": true,
             "user_editable": true,
             "rules": "nullable|url",
-            "sort": null,
+            "sort": 17,
             "field_type": "text"
         },
         {
@@ -226,7 +226,7 @@
             "user_viewable": false,
             "user_editable": false,
             "rules": "required|string|in:258550",
-            "sort": null,
+            "sort": 18,
             "field_type": "text"
         }
     ]

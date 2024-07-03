@@ -4,7 +4,7 @@
         "version": "PTDL_v2",
         "update_url": null
     },
-    "exported_at": "2024-06-02T20:42:05+00:00",
+    "exported_at": "2024-07-03T10:30:22+00:00",
     "name": "Garrys Mod",
     "author": "panel@example.com",
     "uuid": "60ef81d4-30a2-4d98-ab64-f59c69e2f915",
@@ -40,7 +40,7 @@
             "user_viewable": true,
             "user_editable": true,
             "rules": "required|string|alpha_dash",
-            "sort": null,
+            "sort": 1,
             "field_type": "text"
         },
         {
@@ -51,7 +51,7 @@
             "user_viewable": true,
             "user_editable": true,
             "rules": "nullable|string|alpha_num|size:32",
-            "sort": null,
+            "sort": 2,
             "field_type": "text"
         },
         {
@@ -62,7 +62,7 @@
             "user_viewable": false,
             "user_editable": false,
             "rules": "required|string|max:20",
-            "sort": null,
+            "sort": 3,
             "field_type": "text"
         },
         {
@@ -73,7 +73,7 @@
             "user_viewable": true,
             "user_editable": true,
             "rules": "nullable|integer",
-            "sort": null,
+            "sort": 4,
             "field_type": "text"
         },
         {
@@ -84,7 +84,7 @@
             "user_viewable": true,
             "user_editable": true,
             "rules": "required|string",
-            "sort": null,
+            "sort": 5,
             "field_type": "text"
         },
         {
@@ -95,7 +95,7 @@
             "user_viewable": true,
             "user_editable": true,
             "rules": "required|integer|max:128",
-            "sort": null,
+            "sort": 6,
             "field_type": "text"
         },
         {
@@ -106,7 +106,7 @@
             "user_viewable": true,
             "user_editable": true,
             "rules": "required|integer|max:100",
-            "sort": null,
+            "sort": 7,
             "field_type": "text"
         },
         {
@@ -117,7 +117,18 @@
             "user_viewable": true,
             "user_editable": true,
             "rules": "required|boolean",
-            "sort": null,
+            "sort": 8,
+            "field_type": "text"
+        },
+        {
+            "name": "Server Port",
+            "description": "",
+            "env_variable": "SERVER_PORT",
+            "default_value": "27015",
+            "user_viewable": true,
+            "user_editable": false,
+            "rules": "required|port",
+            "sort": 9,
             "field_type": "text"
         }
     ]
