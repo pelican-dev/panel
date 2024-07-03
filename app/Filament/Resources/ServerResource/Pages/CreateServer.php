@@ -6,9 +6,11 @@ use App\Filament\Resources\ServerResource;
 use App\Models\Allocation;
 use App\Models\Egg;
 use App\Models\Node;
+use App\Models\User;
 use App\Services\Allocations\AssignmentService;
 use App\Services\Servers\RandomWordService;
 use App\Services\Servers\ServerCreationService;
+use App\Services\Users\UserCreationService;
 use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Form;
 use Filament\Resources\Pages\CreateRecord;
@@ -67,6 +69,7 @@ class CreateServer extends CreateRecord
                                 ->maxLength(255),
 
                             Forms\Components\Select::make('owner_id')
+                                ->preload()
                                 ->prefixIcon('tabler-user')
                                 ->default(auth()->user()->id)
                                 ->label('Owner')
@@ -77,8 +80,44 @@ class CreateServer extends CreateRecord
                                     'lg' => 3,
                                 ])
                                 ->relationship('user', 'username')
-                                ->searchable()
-                                ->preload()
+                                ->searchable(['user', 'username', 'email'])
+                                ->getOptionLabelFromRecordUsing(fn (User $user) => "$user->email | $user->username " . ($user->root_admin ? '(admin)' : ''))
+                                ->createOptionForm([
+                                    Forms\Components\TextInput::make('username')
+                                        ->alphaNum()
+                                        ->required()
+                                        ->maxLength(255),
+
+                                    Forms\Components\TextInput::make('email')
+                                        ->email()
+                                        ->required()
+                                        ->unique()
+                                        ->maxLength(255),
+
+                                    Forms\Components\TextInput::make('password')
+                                        ->hintIcon('tabler-question-mark')
+                                        ->hintIconTooltip('Providing a user password is optional. New user email will prompt users to create a password the first time they login.')
+                                        ->password(),
+
+                                    Forms\Components\ToggleButtons::make('root_admin')
+                                        ->label('Administrator (Root)')
+                                        ->options([
+                                            false => 'No',
+                                            true => 'Admin',
+                                        ])
+                                        ->colors([
+                                            false => 'primary',
+                                            true => 'danger',
+                                        ])
+                                        ->inline()
+                                        ->required()
+                                        ->default(false)
+                                        ->hidden(),
+                                ])
+                                ->createOptionUsing(function ($data) {
+                                    resolve(UserCreationService::class)->handle($data);
+                                    $this->refreshForm();
+                                })
                                 ->required(),
 
                             Forms\Components\Select::make('node_id')
@@ -194,7 +233,9 @@ class CreateServer extends CreateRecord
                                                 $end = min((int) $end, 2 ** 16 - 1);
                                                 $range = $start <= $end ? range($start, $end) : range($end, $start);
                                                 foreach ($range as $i) {
-                                                    $ports->push($i);
+                                                    if ($i > 1024 && $i <= 65535) {
+                                                        $ports->push($i);
+                                                    }
                                                 }
                                             }
 
@@ -209,8 +250,6 @@ class CreateServer extends CreateRecord
                                                 $update = true;
                                                 $ports = $sortedPorts;
                                             }
-
-                                            $ports = $ports->filter(fn ($port) => $port > 1024 && $port < 65535)->values();
 
                                             if ($update) {
                                                 $set('allocation_ports', $ports->all());
@@ -749,6 +788,11 @@ class CreateServer extends CreateRecord
                                             </x-filament::button>
                                         BLADE))),
             ]);
+    }
+
+    public function refreshForm(): void
+    {
+        $this->fillForm();
     }
 
     protected function getFormActions(): array
