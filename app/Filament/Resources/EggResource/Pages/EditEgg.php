@@ -91,8 +91,10 @@ class EditEgg extends EditRecord
                                 ->helperText('')
                                 ->columnSpan(['default' => 1, 'sm' => 1, 'md' => 2, 'lg' => 2]),
                             TextInput::make('update_url')
-                                ->disabled()
-                                ->helperText('Not implemented.')
+                                ->label('Update URL')
+                                ->url()
+                                ->hintIcon('tabler-question-mark')
+                                ->hintIconTooltip('URLs must point directly to the raw .json file.')
                                 ->columnSpan(['default' => 1, 'sm' => 1, 'md' => 2, 'lg' => 2]),
                             KeyValue::make('docker_images')
                                 ->live()
@@ -247,8 +249,9 @@ class EditEgg extends EditRecord
                             Tab::make('From URL')
                                 ->icon('tabler-world-upload')
                                 ->schema([
-                                    TextInput::make('url')
+                                    TextInput::make('update_url')
                                         ->label('URL')
+                                        ->formatStateUsing(fn (Egg $egg): string => $egg->update_url)
                                         ->hint('Link to the egg file (eg. minecraft.json)')
                                         ->url(),
                                 ]),
