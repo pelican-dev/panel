@@ -9,7 +9,16 @@ use App\Models\Node;
 use App\Services\Nodes\NodeUpdateService;
 use Filament\Actions;
 use Filament\Forms;
+use Filament\Forms\Components\Grid;
+use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\Tabs;
+use Filament\Forms\Components\Tabs\Tab;
+use Filament\Forms\Components\TagsInput;
+use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\ToggleButtons;
+use Filament\Forms\Get;
+use Filament\Forms\Set;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\EditRecord;
 use Illuminate\Support\HtmlString;
@@ -32,10 +41,10 @@ class EditNode extends EditRecord
                 ->persistTabInQueryString()
                 ->columnSpanFull()
                 ->tabs([
-                    Tabs\Tab::make('Basic Settings')
+                    Tab::make('Basic Settings')
                         ->icon('tabler-server')
                         ->schema([
-                            Forms\Components\TextInput::make('fqdn')
+                            TextInput::make('fqdn')
                                 ->columnSpan(2)
                                 ->required()
                                 ->autofocus()
@@ -68,7 +77,7 @@ class EditNode extends EditRecord
 
                                     return '';
                                 })
-                                ->afterStateUpdated(function (Forms\Set $set, ?string $state) {
+                                ->afterStateUpdated(function (Set $set, ?string $state) {
                                     $set('dns', null);
                                     $set('ip', null);
 
@@ -96,17 +105,17 @@ class EditNode extends EditRecord
                                 })
                                 ->maxLength(255),
 
-                            Forms\Components\TextInput::make('ip')
+                            TextInput::make('ip')
                                 ->disabled()
                                 ->hidden(),
 
-                            Forms\Components\ToggleButtons::make('dns')
+                            ToggleButtons::make('dns')
                                 ->label('DNS Record Check')
                                 ->helperText('This lets you know if your DNS record correctly points to an IP Address.')
                                 ->disabled()
                                 ->inline()
                                 ->default(null)
-                                ->hint(fn (Forms\Get $get) => $get('ip'))
+                                ->hint(fn (Get $get) => $get('ip'))
                                 ->hintColor('success')
                                 ->options([
                                     true => 'Valid',
@@ -123,7 +132,7 @@ class EditNode extends EditRecord
                                     'lg' => 1,
                                 ]),
 
-                            Forms\Components\TextInput::make('daemon_listen')
+                            TextInput::make('daemon_listen')
                                 ->columnSpan([
                                     'default' => 1,
                                     'sm' => 1,
@@ -138,7 +147,7 @@ class EditNode extends EditRecord
                                 ->required()
                                 ->integer(),
 
-                            Forms\Components\TextInput::make('name')
+                            TextInput::make('name')
                                 ->label('Display Name')
                                 ->columnSpan([
                                     'default' => 1,
@@ -151,7 +160,7 @@ class EditNode extends EditRecord
                                 ->helperText('This name is for display only and can be changed later.')
                                 ->maxLength(100),
 
-                            Forms\Components\ToggleButtons::make('scheme')
+                            ToggleButtons::make('scheme')
                                 ->label('Communicate over SSL')
                                 ->columnSpan([
                                     'default' => 1,
@@ -160,7 +169,7 @@ class EditNode extends EditRecord
                                     'lg' => 1,
                                 ])
                                 ->inline()
-                                ->helperText(function (Forms\Get $get) {
+                                ->helperText(function (Get $get) {
                                     if (request()->isSecure()) {
                                         return new HtmlString('Your Panel is using a secure SSL connection,<br>so your Daemon must too.');
                                     }
@@ -185,27 +194,27 @@ class EditNode extends EditRecord
                                     'https' => 'tabler-lock',
                                 ])
                                 ->default(fn () => request()->isSecure() ? 'https' : 'http'), ]),
-                    Tabs\Tab::make('Advanced Settings')
+                    Tab::make('Advanced Settings')
                         ->columns(['default' => 1, 'sm' => 1, 'md' => 4, 'lg' => 6])
                         ->icon('tabler-server-cog')
                         ->schema([
-                            Forms\Components\TextInput::make('id')
+                            TextInput::make('id')
                                 ->label('Node ID')
                                 ->columnSpan(['default' => 1, 'sm' => 1, 'md' => 2, 'lg' => 1])
                                 ->disabled(),
-                            Forms\Components\TextInput::make('uuid')
+                            TextInput::make('uuid')
                                 ->columnSpan(['default' => 1, 'sm' => 1, 'md' => 2, 'lg' => 2])
                                 ->label('Node UUID')
                                 ->hintAction(CopyAction::make())
                                 ->disabled(),
-                            Forms\Components\TagsInput::make('tags')
+                            TagsInput::make('tags')
                                 ->columnSpan(['default' => 1, 'sm' => 1, 'md' => 2, 'lg' => 2])
                                 ->label('Tags')
                                 ->disabled()
                                 ->placeholder('Not Implemented')
                                 ->hintIcon('tabler-question-mark')
                                 ->hintIconTooltip('Not Implemented'),
-                            Forms\Components\TextInput::make('upload_size')
+                            TextInput::make('upload_size')
                                 ->columnSpan(['default' => 1, 'sm' => 1, 'md' => 2, 'lg' => 1])
                                 ->label('Upload Limit')
                                 ->hintIcon('tabler-question-mark')
@@ -214,7 +223,7 @@ class EditNode extends EditRecord
                                 ->minValue(1)
                                 ->maxValue(1024)
                                 ->suffix(config('panel.use_binary_prefix') ? 'MiB' : 'MB'),
-                            Forms\Components\TextInput::make('daemon_sftp')
+                            TextInput::make('daemon_sftp')
                                 ->columnSpan(['default' => 1, 'sm' => 1, 'md' => 1, 'lg' => 3])
                                 ->label('SFTP Port')
                                 ->minValue(1)
@@ -222,11 +231,11 @@ class EditNode extends EditRecord
                                 ->default(2022)
                                 ->required()
                                 ->integer(),
-                            Forms\Components\TextInput::make('daemon_sftp_alias')
+                            TextInput::make('daemon_sftp_alias')
                                 ->columnSpan(['default' => 1, 'sm' => 1, 'md' => 1, 'lg' => 3])
                                 ->label('SFTP Alias')
                                 ->helperText('Display alias for the SFTP address. Leave empty to use the Node FQDN.'),
-                            Forms\Components\ToggleButtons::make('public')
+                            ToggleButtons::make('public')
                                 ->columnSpan(['default' => 1, 'sm' => 1, 'md' => 1, 'lg' => 3])
                                 ->label('Automatic Allocation')->inline()
                                 ->options([
@@ -237,7 +246,7 @@ class EditNode extends EditRecord
                                     true => 'success',
                                     false => 'danger',
                                 ]),
-                            Forms\Components\ToggleButtons::make('maintenance_mode')
+                            ToggleButtons::make('maintenance_mode')
                                 ->columnSpan(['default' => 1, 'sm' => 1, 'md' => 1, 'lg' => 3])
                                 ->label('Maintenance Mode')->inline()
                                 ->hinticon('tabler-question-mark')
@@ -250,15 +259,15 @@ class EditNode extends EditRecord
                                     false => 'success',
                                     true => 'danger',
                                 ]),
-                            Forms\Components\Grid::make()
+                            Grid::make()
                                 ->columns(['default' => 1, 'sm' => 1, 'md' => 3, 'lg' => 6])
                                 ->columnSpanFull()
                                 ->schema([
-                                    Forms\Components\ToggleButtons::make('unlimited_mem')
+                                    ToggleButtons::make('unlimited_mem')
                                         ->label('Memory')->inlineLabel()->inline()
-                                        ->afterStateUpdated(fn (Forms\Set $set) => $set('memory', 0))
-                                        ->afterStateUpdated(fn (Forms\Set $set) => $set('memory_overallocate', 0))
-                                        ->formatStateUsing(fn (Forms\Get $get) => $get('memory') == 0)
+                                        ->afterStateUpdated(fn (Set $set) => $set('memory', 0))
+                                        ->afterStateUpdated(fn (Set $set) => $set('memory_overallocate', 0))
+                                        ->formatStateUsing(fn (Get $get) => $get('memory') == 0)
                                         ->live()
                                         ->options([
                                             true => 'Unlimited',
@@ -269,20 +278,20 @@ class EditNode extends EditRecord
                                             false => 'warning',
                                         ])
                                         ->columnSpan(['default' => 1, 'sm' => 1, 'md' => 1, 'lg' => 2]),
-                                    Forms\Components\TextInput::make('memory')
+                                    TextInput::make('memory')
                                         ->dehydratedWhenHidden()
-                                        ->hidden(fn (Forms\Get $get) => $get('unlimited_mem'))
+                                        ->hidden(fn (Get $get) => $get('unlimited_mem'))
                                         ->label('Memory Limit')->inlineLabel()
                                         ->suffix(config('panel.use_binary_prefix') ? 'MiB' : 'MB')
                                         ->required()
                                         ->columnSpan(['default' => 1, 'sm' => 1, 'md' => 1, 'lg' => 2])
                                         ->numeric()
                                         ->minValue(0),
-                                    Forms\Components\TextInput::make('memory_overallocate')
+                                    TextInput::make('memory_overallocate')
                                         ->dehydratedWhenHidden()
                                         ->label('Overallocate')->inlineLabel()
                                         ->required()
-                                        ->hidden(fn (Forms\Get $get) => $get('unlimited_mem'))
+                                        ->hidden(fn (Get $get) => $get('unlimited_mem'))
                                         ->hintIcon('tabler-question-mark')
                                         ->hintIconTooltip('The % allowable to go over the set limit.')
                                         ->columnSpan(['default' => 1, 'sm' => 1, 'md' => 1, 'lg' => 2])
@@ -291,15 +300,15 @@ class EditNode extends EditRecord
                                         ->maxValue(100)
                                         ->suffix('%'),
                                 ]),
-                            Forms\Components\Grid::make()
+                            Grid::make()
                                 ->columns(['default' => 1, 'sm' => 1, 'md' => 3, 'lg' => 6])
                                 ->schema([
-                                    Forms\Components\ToggleButtons::make('unlimited_disk')
+                                    ToggleButtons::make('unlimited_disk')
                                         ->label('Disk')->inlineLabel()->inline()
                                         ->live()
-                                        ->afterStateUpdated(fn (Forms\Set $set) => $set('disk', 0))
-                                        ->afterStateUpdated(fn (Forms\Set $set) => $set('disk_overallocate', 0))
-                                        ->formatStateUsing(fn (Forms\Get $get) => $get('disk') == 0)
+                                        ->afterStateUpdated(fn (Set $set) => $set('disk', 0))
+                                        ->afterStateUpdated(fn (Set $set) => $set('disk_overallocate', 0))
+                                        ->formatStateUsing(fn (Get $get) => $get('disk') == 0)
                                         ->options([
                                             true => 'Unlimited',
                                             false => 'Limited',
@@ -309,18 +318,18 @@ class EditNode extends EditRecord
                                             false => 'warning',
                                         ])
                                         ->columnSpan(['default' => 1, 'sm' => 1, 'md' => 1, 'lg' => 2]),
-                                    Forms\Components\TextInput::make('disk')
+                                    TextInput::make('disk')
                                         ->dehydratedWhenHidden()
-                                        ->hidden(fn (Forms\Get $get) => $get('unlimited_disk'))
+                                        ->hidden(fn (Get $get) => $get('unlimited_disk'))
                                         ->label('Disk Limit')->inlineLabel()
                                         ->suffix(config('panel.use_binary_prefix') ? 'MiB' : 'MB')
                                         ->required()
                                         ->columnSpan(['default' => 1, 'sm' => 1, 'md' => 1, 'lg' => 2])
                                         ->numeric()
                                         ->minValue(0),
-                                    Forms\Components\TextInput::make('disk_overallocate')
+                                    TextInput::make('disk_overallocate')
                                         ->dehydratedWhenHidden()
-                                        ->hidden(fn (Forms\Get $get) => $get('unlimited_disk'))
+                                        ->hidden(fn (Get $get) => $get('unlimited_disk'))
                                         ->label('Overallocate')->inlineLabel()
                                         ->hintIcon('tabler-question-mark')
                                         ->hintIconTooltip('The % allowable to go over the set limit.')
@@ -331,16 +340,16 @@ class EditNode extends EditRecord
                                         ->maxValue(100)
                                         ->suffix('%'),
                                 ]),
-                            Forms\Components\Grid::make()
+                            Grid::make()
                                 ->columns(6)
                                 ->columnSpanFull()
                                 ->schema([
-                                    Forms\Components\ToggleButtons::make('unlimited_cpu')
+                                    ToggleButtons::make('unlimited_cpu')
                                         ->label('CPU')->inlineLabel()->inline()
                                         ->live()
-                                        ->afterStateUpdated(fn (Forms\Set $set) => $set('cpu', 0))
-                                        ->afterStateUpdated(fn (Forms\Set $set) => $set('cpu_overallocate', 0))
-                                        ->formatStateUsing(fn (Forms\Get $get) => $get('cpu') == 0)
+                                        ->afterStateUpdated(fn (Set $set) => $set('cpu', 0))
+                                        ->afterStateUpdated(fn (Set $set) => $set('cpu_overallocate', 0))
+                                        ->formatStateUsing(fn (Get $get) => $get('cpu') == 0)
                                         ->options([
                                             true => 'Unlimited',
                                             false => 'Limited',
@@ -350,18 +359,18 @@ class EditNode extends EditRecord
                                             false => 'warning',
                                         ])
                                         ->columnSpan(2),
-                                    Forms\Components\TextInput::make('cpu')
+                                    TextInput::make('cpu')
                                         ->dehydratedWhenHidden()
-                                        ->hidden(fn (Forms\Get $get) => $get('unlimited_cpu'))
+                                        ->hidden(fn (Get $get) => $get('unlimited_cpu'))
                                         ->label('CPU Limit')->inlineLabel()
                                         ->suffix('%')
                                         ->required()
                                         ->columnSpan(2)
                                         ->numeric()
                                         ->minValue(0),
-                                    Forms\Components\TextInput::make('cpu_overallocate')
+                                    TextInput::make('cpu_overallocate')
                                         ->dehydratedWhenHidden()
-                                        ->hidden(fn (Forms\Get $get) => $get('unlimited_cpu'))
+                                        ->hidden(fn (Get $get) => $get('unlimited_cpu'))
                                         ->label('Overallocate')->inlineLabel()
                                         ->hintIcon('tabler-question-mark')
                                         ->hintIconTooltip('The % allowable to go over the set limit.')
@@ -373,15 +382,15 @@ class EditNode extends EditRecord
                                         ->suffix('%'),
                                 ]),
                         ]),
-                    Tabs\Tab::make('Configuration File')
+                    Tab::make('Configuration File')
                         ->icon('tabler-code')
                         ->schema([
-                            Forms\Components\Placeholder::make('instructions')
+                            Placeholder::make('instructions')
                                 ->columnSpanFull()
                                 ->content(new HtmlString('
                                   Save this file to your <span title="usually /etc/pelican/">daemon\'s root directory</span>, named <code>config.yml</code>
                             ')),
-                            Forms\Components\Textarea::make('config')
+                            Textarea::make('config')
                                 ->label('/etc/pelican/config.yml')
                                 ->disabled()
                                 ->rows(19)
