@@ -4,7 +4,7 @@
         "version": "PTDL_v2",
         "update_url": null
     },
-    "exported_at": "2024-06-04T22:51:16+00:00",
+    "exported_at": "2024-07-03T10:30:20+00:00",
     "name": "Vanilla Minecraft",
     "author": "panel@example.com",
     "uuid": "9ac39f3d-0c34-4d93-8174-c52ab9e6c57b",
@@ -45,7 +45,7 @@
             "user_viewable": true,
             "user_editable": true,
             "rules": "required|regex:\/^([\\w\\d._-]+)(\\.jar)$\/",
-            "sort": null,
+            "sort": 1,
             "field_type": "text"
         },
         {
@@ -56,7 +56,18 @@
             "user_viewable": true,
             "user_editable": true,
             "rules": "required|string|between:3,15",
-            "sort": null,
+            "sort": 2,
+            "field_type": "text"
+        },
+        {
+            "name": "Server Port",
+            "description": "",
+            "env_variable": "SERVER_PORT",
+            "default_value": "25565",
+            "user_viewable": true,
+            "user_editable": false,
+            "rules": "required|port",
+            "sort": 3,
             "field_type": "text"
         }
     ]

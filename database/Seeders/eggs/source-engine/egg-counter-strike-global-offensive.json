@@ -4,7 +4,7 @@
         "version": "PTDL_v2",
         "update_url": null
     },
-    "exported_at": "2024-06-02T20:42:04+00:00",
+    "exported_at": "2024-07-03T10:30:21+00:00",
     "name": "Counter-Strike: Global Offensive",
     "author": "panel@example.com",
     "uuid": "437c367d-06be-498f-a604-fdad135504d7",
@@ -40,7 +40,7 @@
             "user_viewable": true,
             "user_editable": true,
             "rules": "required|string|alpha_dash",
-            "sort": null,
+            "sort": 1,
             "field_type": "text"
         },
         {
@@ -51,7 +51,7 @@
             "user_viewable": true,
             "user_editable": true,
             "rules": "required|string|alpha_num|size:32",
-            "sort": null,
+            "sort": 2,
             "field_type": "text"
         },
         {
@@ -62,18 +62,18 @@
             "user_viewable": false,
             "user_editable": false,
             "rules": "required|string|max:20",
-            "sort": null,
+            "sort": 3,
             "field_type": "text"
         },
         {
             "name": "Server Port",
-            "description": "Main Port",
+            "description": "",
             "env_variable": "SERVER_PORT",
             "default_value": "27015",
             "user_viewable": true,
             "user_editable": false,
             "rules": "required|port",
-            "sort": null,
+            "sort": 4,
             "field_type": "text"
         }
     ]

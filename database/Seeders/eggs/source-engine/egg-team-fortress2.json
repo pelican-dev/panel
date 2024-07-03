@@ -4,7 +4,7 @@
         "version": "PTDL_v2",
         "update_url": null
     },
-    "exported_at": "2024-06-02T20:42:07+00:00",
+    "exported_at": "2024-07-03T10:30:24+00:00",
     "name": "Team Fortress 2",
     "author": "panel@example.com",
     "uuid": "7f8eb681-b2c8-4bf8-b9f4-d79ff70b6e5d",
@@ -40,7 +40,7 @@
             "user_viewable": true,
             "user_editable": false,
             "rules": "required|in:232250",
-            "sort": null,
+            "sort": 1,
             "field_type": "text"
         },
         {
@@ -51,7 +51,7 @@
             "user_viewable": true,
             "user_editable": true,
             "rules": "required|regex:\/^(\\w{1,20})$\/",
-            "sort": null,
+            "sort": 2,
             "field_type": "text"
         },
         {
@@ -62,7 +62,18 @@
             "user_viewable": true,
             "user_editable": true,
             "rules": "required|string|alpha_num|size:32",
-            "sort": null,
+            "sort": 3,
+            "field_type": "text"
+        },
+        {
+            "name": "Server Port",
+            "description": "",
+            "env_variable": "SERVER_PORT",
+            "default_value": "27015",
+            "user_viewable": true,
+            "user_editable": false,
+            "rules": "required|port",
+            "sort": 4,
             "field_type": "text"
         }
     ]
