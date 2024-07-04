@@ -35,27 +35,11 @@ class NodeMemoryChart extends ChartWidget
         $node = $this->record;
 
         $memUsed = collect(cache()->get("nodes.$node->id.memory_used"))->slice(-10)
-            ->map(function ($value, $key) {
-                $unit = 1024;
-                $decimals = 2;
-
-                if ($value < 1) {
-                    return '0 Bytes';
-                }
-
-                $decimals = floor(max(0, $decimals));
-                $i = floor(log($value, $unit));
-                $result = number_format($value / pow($unit, $i), $decimals, '.', '');
-
-                $units = ['Bytes', 'KiB', 'MiB', 'GiB', 'TiB'];
-                $output = $result . ' ' . $units[$i];
-
-                return [
-                    'memory' => $value / 1024 / 1024 / 1024,
-                    'timestamp' => Carbon::createFromTimestamp($key)->format('H:i:s'),
-                ];
-
-            })
+            ->map(fn ($value, $key) => [
+                'memory' => $value / 1024 / 1024 / 1024,
+                'timestamp' => Carbon::createFromTimestamp($key)->format('H:i:s'),
+            ]
+            )
             ->all();
 
         return [
