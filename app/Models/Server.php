@@ -203,9 +203,6 @@ class Server extends Model
         return $this->ports->mapToGroups(fn (Endpoint $endpoint) =>
             [$endpoint->ip => $endpoint->port]
         )->toArray();
-
-        $ips = $this->ports->map(fn (Endpoint $endpoint) => $endpoint->ip)->unique()->all();
-
     }
 
     public function isInstalled(): bool
