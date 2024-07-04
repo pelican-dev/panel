@@ -200,7 +200,12 @@ class Server extends Model
      */
     public function getPortMappings(): array
     {
-        return $this->ports->map(fn (Endpoint $port) => (string) $port)->all();
+        return $this->ports->mapToGroups(fn (Endpoint $endpoint) =>
+            [$endpoint->ip => $endpoint->port]
+        )->toArray();
+
+        $ips = $this->ports->map(fn (Endpoint $endpoint) => $endpoint->ip)->unique()->all();
+
     }
 
     public function isInstalled(): bool
