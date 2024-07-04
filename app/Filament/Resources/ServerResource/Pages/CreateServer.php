@@ -2,7 +2,6 @@
 
 namespace App\Filament\Resources\ServerResource\Pages;
 
-use App\Filament\Forms\SelectEndpoint;
 use App\Filament\Resources\ServerResource;
 use App\Models\Egg;
 use App\Models\Node;
@@ -321,18 +320,37 @@ class CreateServer extends CreateRecord
                         ->columns(4)
                         ->schema([
                             Forms\Components\TagsInput::make('ports')
-                                ->columnSpan(2)
+                                ->columnSpanFull()
                                 ->hintIcon('tabler-question-mark')
                                 ->hintIconTooltip('Ports are limited from 1025 to 65535')
                                 ->placeholder('Example: 25565, 8080, 1337-1340')
                                 ->splitKeys(['Tab', ' ', ','])
                                 ->helperText(new HtmlString('
-                                    These are the ports that users can connect to this Server through.
-                                    You would typically port forward these on your home network.
-                                '))
+                                These are the ports that users can connect to this Server through.
+                                You would typically port forward these on your home network.
+                            '))
                                 ->label('Ports')
                                 ->afterStateUpdated(self::ports(...))
                                 ->live(),
+
+                            Forms\Components\Repeater::make('ip')
+                                ->columnSpan(2)
+                                ->defaultItems(5)
+                                ->label('IP Assignments')
+                                ->live()
+                                ->addable(false)
+                                ->deletable(false)
+                                ->reorderable(false)
+                                ->hintIcon('tabler-question-mark')
+                                ->hintIconTooltip('These are the IPs available on the selected Node.')
+                                ->simple(
+                                    Forms\Components\Select::make('port')
+                                        ->live()
+                                        ->placeholder('Select an IP')
+//                                        ->afterStateUpdated()
+                                        ->options(fn () => $this->node?->ipAddresses())
+                                        ->required(),
+                                ),
 
                             Forms\Components\Repeater::make('assignments')
                                 ->columnSpan(2)
@@ -354,13 +372,11 @@ class CreateServer extends CreateRecord
                                 ->deletable(false)
                                 ->reorderable(false)
                                 ->simple(
-                                    SelectEndpoint::make('port')
-                                        ->columnSpanFull()
-                                        ->label('')
+                                    Forms\Components\Select::make('port')
                                         ->live()
                                         ->placeholder('Select a Port')
                                         ->disabled(fn (Forms\Get $get) => empty($get('../../ports')) || empty($get('../../assignments')))
-                                        ->suffix(function (Forms\Components\Component $component) {
+                                        ->prefix(function (Forms\Components\Component $component) {
                                             $key = str($component->getStatePath())->beforeLast('.')->afterLast('.')->toString();
 
                                             return $key;
