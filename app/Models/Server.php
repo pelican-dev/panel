@@ -200,17 +200,7 @@ class Server extends Model
      */
     public function getPortMappings(): array
     {
-        $defaultIp = '0.0.0.0';
-
-        $ports = collect($this->ports)
-            ->map(fn ($port) => str_contains($port, ':') ? $port : "$defaultIp:$port")
-            ->mapToGroups(function ($port) {
-                [$ip, $port] = explode(':', $port);
-
-                return [$ip => (int) $port];
-            });
-
-        return $ports->all();
+        return $this->ports->map(fn (Endpoint $port) => (string) $port)->all();
     }
 
     public function isInstalled(): bool

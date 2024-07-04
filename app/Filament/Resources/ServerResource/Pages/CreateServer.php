@@ -319,38 +319,20 @@ class CreateServer extends CreateRecord
                         ->completedIcon('tabler-check')
                         ->columns(4)
                         ->schema([
+
                             Forms\Components\TagsInput::make('ports')
-                                ->columnSpanFull()
+                                ->columnSpan(2)
                                 ->hintIcon('tabler-question-mark')
                                 ->hintIconTooltip('Ports are limited from 1025 to 65535')
                                 ->placeholder('Example: 25565, 8080, 1337-1340')
                                 ->splitKeys(['Tab', ' ', ','])
                                 ->helperText(new HtmlString('
-                                These are the ports that users can connect to this Server through.
-                                You would typically port forward these on your home network.
-                            '))
+                                    These are the ports that users can connect to this Server through.
+                                    You would typically port forward these on your home network.
+                                '))
                                 ->label('Ports')
                                 ->afterStateUpdated(self::ports(...))
                                 ->live(),
-
-                            Forms\Components\Repeater::make('ip')
-                                ->columnSpan(2)
-                                ->defaultItems(5)
-                                ->label('IP Assignments')
-                                ->live()
-                                ->addable(false)
-                                ->deletable(false)
-                                ->reorderable(false)
-                                ->hintIcon('tabler-question-mark')
-                                ->hintIconTooltip('These are the IPs available on the selected Node.')
-                                ->simple(
-                                    Forms\Components\Select::make('port')
-                                        ->live()
-                                        ->placeholder('Select an IP')
-//                                        ->afterStateUpdated()
-                                        ->options(fn () => $this->node?->ipAddresses())
-                                        ->required(),
-                                ),
 
                             Forms\Components\Repeater::make('assignments')
                                 ->columnSpan(2)
@@ -385,6 +367,12 @@ class CreateServer extends CreateRecord
                                         ->options(fn (Forms\Get $get) => $this->ports)
                                         ->required(),
                                 ),
+
+                            Forms\Components\Select::make('ip')
+                                ->label('IP Address')
+                                ->options(fn () => collect($this->node?->ipAddresses())->mapWithKeys(fn ($ip) => [$ip => $ip]))
+                                ->placeholder('Any')
+                                ->columnSpan(1),
 
                         ]),
 
@@ -705,6 +693,11 @@ class CreateServer extends CreateRecord
 
     protected function handleRecordCreation(array $data): Model
     {
+        $ipAddress = $data['ip'] ?? Endpoint::INADDR_ANY;
+        foreach ($data['ports'] ?? [] as $i => $port) {
+            $data['ports'][$i] = (string) new Endpoint($port, $ipAddress);
+        }
+
         foreach (array_keys($this->eggDefaultPorts) as $i => $env) {
             $data['environment'][$env] = $data['ports'][$data['assignments'][$i]];
         }

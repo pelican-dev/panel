@@ -4,6 +4,7 @@ namespace App\Filament\Resources\ServerResource\Pages;
 
 use App\Models\Node;
 use App\Models\Objects\Endpoint;
+use Exception;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\HtmlString;
 use App\Models\Database;
@@ -878,33 +879,48 @@ class EditServer extends EditRecord
     public function ports($state, Forms\Set $set)
     {
         $ports = collect();
+
         foreach ($state as $portEntry) {
             if (str_contains($portEntry, '-')) {
                 [$start, $end] = explode('-', $portEntry);
-                if (!is_numeric($start) || !is_numeric($end)) {
+
+                try {
+                    $startEndpoint = new Endpoint($start);
+                    $endEndpoint = new Endpoint($end);
+                } catch (Exception) {
                     continue;
                 }
 
-                $start = max((int) $start, Endpoint::PORT_FLOOR);
-                $end = min((int) $end, Endpoint::PORT_CEIL);
+                if ($startEndpoint->ip !== $endEndpoint->ip) {
+                    continue;
+                }
+
+                foreach (range($startEndpoint->port, $endEndpoint->port) as $port) {
+                    $ports->push(new Endpoint($port, $startEndpoint->ip));
+                }
+
+
+
                 for ($i = $start; $i <= $end; $i++) {
                     $ports->push($i);
                 }
-            }
 
-            if (!is_numeric($portEntry)) {
                 continue;
             }
 
-            $ports->push((int) $portEntry);
+            try {
+                $ports->push(new Endpoint($portEntry));
+            } catch (Exception) {
+                continue;
+            }
         }
+
+        $ports = $ports->map(fn ($endpoint) => (string) $endpoint);
 
         $uniquePorts = $ports->unique()->values();
         if ($ports->count() > $uniquePorts->count()) {
             $ports = $uniquePorts;
         }
-
-        $ports = $ports->filter(fn ($port) => $port > Endpoint::PORT_FLOOR && $port < Endpoint::PORT_CEIL)->values();
 
         $set('ports', $ports->all());
         $this->ports = $ports->all();
