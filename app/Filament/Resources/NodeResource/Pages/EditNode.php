@@ -7,6 +7,7 @@ use App\Models\Node;
 use App\Services\Nodes\NodeUpdateService;
 use Filament\Actions;
 use Filament\Forms;
+use Filament\Forms\Components\Fieldset;
 use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\Tabs;
@@ -40,14 +41,31 @@ class EditNode extends EditRecord
                 ->persistTabInQueryString()
                 ->columnSpanFull()
                 ->tabs([
-                    Tab::make('Statistics')
-                        ->label('Statistics')
+                    Tab::make('')
+                        ->label('Overview')
                         ->icon('tabler-chart-area-line-filled')
                         ->columns(6)
                         ->schema([
-                            View::make('filament.components.node-cpu-chart')->columnSpan(6)->columnStart(0),
+                            Fieldset::make()
+                                ->label('Node Information')
+                                ->columns(4)
+                                ->schema([
+                                    Placeholder::make('')
+                                        ->label('Wings Version')
+                                        ->content(fn (Node $node) => $node->systemInformation()['version']),
+                                    Placeholder::make('')
+                                        ->label('CPU Threads')
+                                        ->content(fn (Node $node) => $node->systemInformation()['cpu_count']),
+                                    Placeholder::make('')
+                                        ->label('Architecture')
+                                        ->content(fn (Node $node) => $node->systemInformation()['architecture']),
+                                    Placeholder::make('')
+                                        ->label('Kernel')
+                                        ->content(fn (Node $node) => $node->systemInformation()['kernel_version']),
+                                ]),
+                            View::make('filament.components.node-cpu-chart')->columnSpan(3),
                             View::make('filament.components.node-memory-chart')->columnSpan(3),
-                            View::make('filament.components.node-storage-chart')->columnSpan(3),
+                            // TODO: Make purdy View::make('filament.components.node-storage-chart')->columnSpan(3),
                         ]),
                     Tab::make('Basic Settings')
                         ->icon('tabler-server')
