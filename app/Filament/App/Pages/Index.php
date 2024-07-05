@@ -2,6 +2,8 @@
 
 namespace App\Filament\App\Pages;
 
+use Filament\Actions\Action;
+use Filament\Facades\Filament;
 use Filament\Pages\Page;
 
 class Index extends Page
@@ -12,6 +14,31 @@ class Index extends Page
 
     public array $history = [];
     public int $historyIndex = 0;
+
+    protected function getViewData(): array
+    {
+        return [
+            'server' => Filament::getTenant(),
+            'user' => auth()->user(),
+        ];
+    }
+
+    protected function getHeaderActions(): array
+    {
+        return [
+            Action::make('start')
+                ->color('primary')
+                ->action(fn () => $this->dispatch('setServerState', state: 'start')),
+
+            Action::make('restart')
+                ->color('gray')
+                ->action(fn () => $this->dispatch('setServerState', state: 'restart')),
+
+            Action::make('stop')
+                ->color('danger')
+                ->action(fn () => $this->dispatch('setServerState', state: 'stop')),
+        ];
+    }
 
     public function up()
     {
