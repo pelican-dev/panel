@@ -26,14 +26,14 @@ class EditDatabase extends EditRecord
                     ->numeric(),
                 Forms\Components\TextInput::make('database')
                     ->required()
-                    ->maxLength(191),
+                    ->maxLength(255),
                 Forms\Components\TextInput::make('remote')
                     ->required()
-                    ->maxLength(191)
+                    ->maxLength(255)
                     ->default('%'),
                 Forms\Components\TextInput::make('username')
                     ->required()
-                    ->maxLength(191),
+                    ->maxLength(255),
                 Forms\Components\TextInput::make('password')
                     ->password()
                     ->revealable()

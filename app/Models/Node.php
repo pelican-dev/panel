@@ -35,6 +35,7 @@ use Illuminate\Database\Eloquent\Relations\HasManyThrough;
  * @property int $daemon_sftp
  * @property string|null $daemon_sftp_alias
  * @property string $daemon_base
+ * @property array $tags
  * @property \Carbon\Carbon $created_at
  * @property \Carbon\Carbon $updated_at
  * @property \App\Models\Mount[]|\Illuminate\Database\Eloquent\Collection $mounts
@@ -82,7 +83,7 @@ class Node extends Model
         'description' => 'string|nullable',
         'public' => 'boolean',
         'fqdn' => 'required|string',
-        'scheme' => 'required',
+        'scheme' => 'required|string|in:http,https',
         'behind_proxy' => 'boolean',
         'memory' => 'required|numeric|min:0',
         'memory_overallocate' => 'required|numeric|min:-1',
@@ -132,6 +133,10 @@ class Node extends Model
             'tags' => 'array',
         ];
     }
+
+    public int $servers_sum_memory = 0;
+    public int $servers_sum_disk = 0;
+    public int $servers_sum_cpu = 0;
 
     public function getRouteKeyName(): string
     {

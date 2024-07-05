@@ -26,7 +26,7 @@ use App\Exceptions\Http\Server\ServerStateConflictException;
  * @property int $node_id
  * @property string $name
  * @property string $description
- * @property string|null $status
+ * @property ServerState|null $status
  * @property bool $skip_scripts
  * @property int $owner_id
  * @property int $memory
@@ -139,9 +139,9 @@ class Server extends Model
     protected $guarded = ['id', self::CREATED_AT, self::UPDATED_AT, 'deleted_at', 'installed_at'];
 
     public static array $validationRules = [
-        'external_id' => 'sometimes|nullable|string|between:1,191|unique:servers',
+        'external_id' => 'sometimes|nullable|string|between:1,255|unique:servers',
         'owner_id' => 'required|integer|exists:users,id',
-        'name' => 'required|string|min:1|max:191',
+        'name' => 'required|string|min:1|max:255',
         'node_id' => 'required|exists:nodes,id',
         'description' => 'string',
         'status' => 'nullable|string',
@@ -156,7 +156,7 @@ class Server extends Model
         'egg_id' => 'required|exists:eggs,id',
         'startup' => 'required|string',
         'skip_scripts' => 'sometimes|boolean',
-        'image' => 'required|string|max:191',
+        'image' => 'required|string|max:255',
         'database_limit' => 'present|nullable|integer|min:0',
         'allocation_limit' => 'sometimes|nullable|integer|min:0',
         'backup_limit' => 'present|nullable|integer|min:0',

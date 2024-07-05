@@ -25,11 +25,11 @@ class CreateEgg extends CreateRecord
                         ->schema([
                             Forms\Components\TextInput::make('name')
                                 ->required()
-                                ->maxLength(191)
+                                ->maxLength(255)
                                 ->columnSpan(['default' => 1, 'sm' => 1, 'md' => 2, 'lg' => 2])
                                 ->helperText('A simple, human-readable name to use as an identifier for this Egg.'),
                             Forms\Components\TextInput::make('author')
-                                ->maxLength(191)
+                                ->maxLength(255)
                                 ->required()
                                 ->email()
                                 ->columnSpan(['default' => 1, 'sm' => 1, 'md' => 2, 'lg' => 2])
@@ -88,7 +88,7 @@ class CreateEgg extends CreateRecord
                                 ->helperText('If you would like to default to settings from another Egg select it from the menu above.'),
                             Forms\Components\TextInput::make('config_stop')
                                 ->required()
-                                ->maxLength(191)
+                                ->maxLength(255)
                                 ->label('Stop Command')
                                 ->helperText('The command that should be sent to server processes to stop them gracefully. If you need to send a SIGINT you should enter ^C here.'),
                             Forms\Components\Textarea::make('config_startup')->rows(10)->json()
@@ -140,7 +140,7 @@ class CreateEgg extends CreateRecord
                                     Forms\Components\TextInput::make('name')
                                         ->live()
                                         ->debounce(750)
-                                        ->maxLength(191)
+                                        ->maxLength(255)
                                         ->columnSpanFull()
                                         ->afterStateUpdated(fn (Forms\Set $set, $state) => $set('env_variable', str($state)->trim()->snake()->upper()->toString())
                                         )
@@ -148,13 +148,13 @@ class CreateEgg extends CreateRecord
                                     Forms\Components\Textarea::make('description')->columnSpanFull(),
                                     Forms\Components\TextInput::make('env_variable')
                                         ->label('Environment Variable')
-                                        ->maxLength(191)
+                                        ->maxLength(255)
                                         ->prefix('{{')
                                         ->suffix('}}')
                                         ->hintIcon('tabler-code')
                                         ->hintIconTooltip(fn ($state) => "{{{$state}}}")
                                         ->required(),
-                                    Forms\Components\TextInput::make('default_value')->maxLength(191),
+                                    Forms\Components\TextInput::make('default_value')->maxLength(255),
                                     Forms\Components\Fieldset::make('User Permissions')
                                         ->schema([
                                             Forms\Components\Checkbox::make('user_viewable')->label('Viewable'),
@@ -173,7 +173,7 @@ class CreateEgg extends CreateRecord
 
                             Forms\Components\TextInput::make('script_container')
                                 ->required()
-                                ->maxLength(191)
+                                ->maxLength(255)
                                 ->default('alpine:3.4'),
 
                             Forms\Components\Select::make('script_entry')

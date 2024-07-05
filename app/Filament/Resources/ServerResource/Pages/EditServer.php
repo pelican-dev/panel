@@ -2,6 +2,12 @@
 
 namespace App\Filament\Resources\ServerResource\Pages;
 
+use App\Models\Database;
+use App\Services\Databases\DatabaseManagementService;
+use App\Services\Databases\DatabasePasswordService;
+use Filament\Forms\Components\Actions\Action;
+use Filament\Forms\Components\Repeater;
+use LogicException;
 use App\Filament\Resources\ServerResource;
 use App\Http\Controllers\Admin\ServersController;
 use App\Services\Servers\RandomWordService;
@@ -120,7 +126,7 @@ class EditServer extends EditRecord
                                         'lg' => 3,
                                     ])
                                     ->required()
-                                    ->maxLength(191),
+                                    ->maxLength(255),
 
                                 Forms\Components\Select::make('owner_id')
                                     ->prefixIcon('tabler-user')
@@ -167,7 +173,7 @@ class EditServer extends EditRecord
                                         'md' => 2,
                                         'lg' => 3,
                                     ])
-                                    ->maxLength(191),
+                                    ->maxLength(255),
                                 Forms\Components\Select::make('node_id')
                                     ->label('Node')
                                     ->relationship('node', 'name')
@@ -219,7 +225,7 @@ class EditServer extends EditRecord
                                                     ->dehydratedWhenHidden()
                                                     ->hidden(fn (Forms\Get $get) => $get('unlimited_mem'))
                                                     ->label('Memory Limit')->inlineLabel()
-                                                    ->suffix('MiB')
+                                                    ->suffix(config('panel.use_binary_prefix') ? 'MiB' : 'MB')
                                                     ->required()
                                                     ->columnSpan(2)
                                                     ->numeric()
@@ -249,7 +255,7 @@ class EditServer extends EditRecord
                                                     ->dehydratedWhenHidden()
                                                     ->hidden(fn (Forms\Get $get) => $get('unlimited_disk'))
                                                     ->label('Disk Space Limit')->inlineLabel()
-                                                    ->suffix('MiB')
+                                                    ->suffix(config('panel.use_binary_prefix') ? 'MiB' : 'MB')
                                                     ->required()
                                                     ->columnSpan(2)
                                                     ->numeric()
@@ -299,6 +305,7 @@ class EditServer extends EditRecord
                                                             'unlimited' => -1,
                                                             'disabled' => 0,
                                                             'limited' => 128,
+                                                            default => throw new LogicException('Invalid state')
                                                         };
 
                                                         $set('swap', $value);
@@ -308,6 +315,7 @@ class EditServer extends EditRecord
                                                             $get('swap') > 0 => 'limited',
                                                             $get('swap') == 0 => 'disabled',
                                                             $get('swap') < 0 => 'unlimited',
+                                                            default => throw new LogicException('Invalid state')
                                                         };
                                                     })
                                                     ->options([
@@ -325,10 +333,10 @@ class EditServer extends EditRecord
                                                     ->dehydratedWhenHidden()
                                                     ->hidden(fn (Forms\Get $get) => match ($get('swap_support')) {
                                                         'disabled', 'unlimited', true => true,
-                                                        'limited', false => false,
+                                                        default => false,
                                                     })
                                                     ->label('Swap Memory')->inlineLabel()
-                                                    ->suffix('MiB')
+                                                    ->suffix(config('panel.use_binary_prefix') ? 'MiB' : 'MB')
                                                     ->minValue(-1)
                                                     ->columnSpan(2)
                                                     ->required()
@@ -378,14 +386,17 @@ class EditServer extends EditRecord
                                         Forms\Components\TextInput::make('allocation_limit')
                                             ->suffixIcon('tabler-network')
                                             ->required()
+                                            ->minValue(0)
                                             ->numeric(),
                                         Forms\Components\TextInput::make('database_limit')
                                             ->suffixIcon('tabler-database')
                                             ->required()
+                                            ->minValue(0)
                                             ->numeric(),
                                         Forms\Components\TextInput::make('backup_limit')
                                             ->suffixIcon('tabler-copy-check')
                                             ->required()
+                                            ->minValue(0)
                                             ->numeric(),
                                     ]),
                                 Forms\Components\Fieldset::make('Docker Settings')
@@ -553,7 +564,6 @@ class EditServer extends EditRecord
 
                                         $components = [$text, $select];
 
-                                        /** @var Forms\Components\Component $component */
                                         foreach ($components as &$component) {
                                             $component = $component
                                                 ->live(onBlur: true)
@@ -582,9 +592,56 @@ class EditServer extends EditRecord
                         Tabs\Tab::make('Databases')
                             ->icon('tabler-database')
                             ->schema([
-                                Forms\Components\Placeholder::make('soon')
-                                    ->label('Soon™'),
-                            ]),
+                                Repeater::make('databases')
+                                    ->grid()
+                                    ->helperText(fn (Server $server) => $server->databases->isNotEmpty() ? '' : 'No Databases exist for this Server')
+                                    ->columns(2)
+                                    ->schema([
+                                        Forms\Components\TextInput::make('database')
+                                            ->columnSpan(2)
+                                            ->label('Database Name')
+                                            ->disabled()
+                                            ->formatStateUsing(fn ($record) => $record->database)
+                                            ->hintAction(
+                                                Action::make('Delete')
+                                                    ->color('danger')
+                                                    ->icon('tabler-trash')
+                                                    ->action(fn (DatabaseManagementService $databaseManagementService, $record) => $databaseManagementService->delete($record))
+                                            ),
+                                        Forms\Components\TextInput::make('username')
+                                            ->disabled()
+                                            ->formatStateUsing(fn ($record) => $record->username)
+                                            ->columnSpan(2),
+                                        Forms\Components\TextInput::make('password')
+                                            ->disabled()
+                                            ->hintAction(
+                                                Action::make('rotate')
+                                                    ->icon('tabler-refresh')
+                                                    ->requiresConfirmation()
+                                                    ->action(fn (DatabasePasswordService $service, $record, $set, $get) => $this->rotatePassword($service, $record, $set, $get))
+                                            )
+                                            ->formatStateUsing(fn (Database $database) => $database->password)
+                                            ->columnSpan(2),
+                                        Forms\Components\TextInput::make('remote')
+                                            ->disabled()
+                                            ->formatStateUsing(fn ($record) => $record->remote)
+                                            ->columnSpan(1)
+                                            ->label('Connections From'),
+                                        Forms\Components\TextInput::make('max_connections')
+                                            ->disabled()
+                                            ->formatStateUsing(fn ($record) => $record->max_connections)
+                                            ->columnSpan(1),
+                                        Forms\Components\TextInput::make('JDBC')
+                                            ->disabled()
+                                            ->label('JDBC Connection String')
+                                            ->columnSpan(2)
+                                            ->formatStateUsing(fn (Forms\Get $get, $record) => 'jdbc:mysql://' . $get('username') . ':' . urlencode($record->password) . '@' . $record->host->host . ':' . $record->host->port . '/' . $get('database')),
+                                    ])
+                                    ->relationship('databases')
+                                    ->deletable(false)
+                                    ->addable(false)
+                                    ->columnSpan(4),
+                            ])->columns(4),
                         Tabs\Tab::make('Actions')
                             ->icon('tabler-settings')
                             ->schema([
@@ -606,7 +663,7 @@ class EditServer extends EditRecord
                                                         ->action(function (ServersController $serversController, Server $server) {
                                                             $serversController->toggleInstall($server);
 
-                                                            return $this->refreshFormData(['status', 'docker']);
+                                                            $this->refreshFormData(['status', 'docker']);
                                                         }),
                                                 ])->fullWidth(),
                                                 Forms\Components\ToggleButtons::make('')
@@ -624,7 +681,7 @@ class EditServer extends EditRecord
                                                             $suspensionService->toggle($server, 'suspend');
                                                             Notification::make()->success()->title('Server Suspended!')->send();
 
-                                                            return $this->refreshFormData(['status', 'docker']);
+                                                            $this->refreshFormData(['status', 'docker']);
                                                         }),
                                                     Forms\Components\Actions\Action::make('toggleUnsuspend')
                                                         ->label('Unsuspend')
@@ -634,7 +691,7 @@ class EditServer extends EditRecord
                                                             $suspensionService->toggle($server, 'unsuspend');
                                                             Notification::make()->success()->title('Server Unsuspended!')->send();
 
-                                                            return $this->refreshFormData(['status', 'docker']);
+                                                            $this->refreshFormData(['status', 'docker']);
                                                         }),
                                                 ])->fullWidth(),
                                                 Forms\Components\ToggleButtons::make('')
@@ -650,7 +707,7 @@ class EditServer extends EditRecord
                                                 Forms\Components\Actions::make([
                                                     Forms\Components\Actions\Action::make('transfer')
                                                         ->label('Transfer Soon™')
-                                                        ->action(fn (TransferServerService $transfer, Server $server) => $transfer->handle($server, $data))
+                                                        ->action(fn (TransferServerService $transfer, Server $server) => $transfer->handle($server, []))
                                                         ->disabled() //TODO!
                                                         ->form([ //TODO!
                                                             Forms\Components\Select::make('newNode')
@@ -704,7 +761,7 @@ class EditServer extends EditRecord
     protected function transferServer(Form $form): Form
     {
         return $form
-            ->columns(2)
+            ->columns()
             ->schema([
                 Forms\Components\Select::make('toNode')
                     ->label('New Node'),
@@ -719,6 +776,8 @@ class EditServer extends EditRecord
             Actions\DeleteAction::make('Delete')
                 ->successRedirectUrl(route('filament.admin.resources.servers.index'))
                 ->color('danger')
+                ->disabled(fn (Server $server) => $server->databases()->count() > 0)
+                ->label(fn (Server $server) => $server->databases()->count() > 0 ? 'Server has a Database' : 'Delete')
                 ->after(fn (Server $server) => resolve(ServerDeletionService::class)->handle($server))
                 ->requiresConfirmation(),
             Actions\Action::make('console')
@@ -781,5 +840,14 @@ class EditServer extends EditRecord
             ->each(fn ($value) => str($value)->trim())
             ->mapWithKeys(fn ($value) => [$value => $value])
             ->all();
+    }
+
+    protected function rotatePassword(DatabasePasswordService $service, $record, $set, $get): void
+    {
+        $newPassword = $service->handle($record);
+        $jdbcString = 'jdbc:mysql://' . $get('username') . ':' . urlencode($newPassword) . '@' . $record->host->host . ':' . $record->host->port . '/' . $get('database');
+
+        $set('password', $newPassword);
+        $set('JDBC', $jdbcString);
     }
 }

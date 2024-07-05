@@ -9,4 +9,6 @@ return [
     App\Providers\Filament\AppPanelProvider::class,
     App\Providers\RouteServiceProvider::class,
     App\Providers\ViewComposerServiceProvider::class,
+
+    SocialiteProviders\Manager\ServiceProvider::class,
 ];

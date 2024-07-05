@@ -27,7 +27,7 @@ class ApiKeyFactory extends Factory
             'key_type' => ApiKey::TYPE_APPLICATION,
             'identifier' => ApiKey::generateTokenIdentifier(ApiKey::TYPE_APPLICATION),
             'token' => $token ?: $token = Str::random(ApiKey::KEY_LENGTH),
-            'allowed_ips' => null,
+            'allowed_ips' => [],
             'memo' => 'Test Function Key',
             'created_at' => Carbon::now(),
             'updated_at' => Carbon::now(),

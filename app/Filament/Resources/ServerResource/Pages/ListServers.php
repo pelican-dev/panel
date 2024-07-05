@@ -7,6 +7,7 @@ use App\Models\Server;
 use Filament\Actions;
 use Filament\Resources\Pages\ListRecords;
 use Filament\Tables\Actions\CreateAction;
+use Filament\Tables\Grouping\Group;
 use Filament\Tables\Table;
 use Filament\Tables;
 
@@ -18,17 +19,17 @@ class ListServers extends ListRecords
     {
         return $table
             ->searchable(false)
+            ->defaultGroup('node.name')
+            ->groups([
+                Group::make('node.name')->getDescriptionFromRecordUsing(fn (Server $server): string => str($server->node->description)->limit(150)),
+                Group::make('user.username')->getDescriptionFromRecordUsing(fn (Server $server): string => $server->user->email),
+                Group::make('egg.name')->getDescriptionFromRecordUsing(fn (Server $server): string => str($server->egg->description)->limit(150)),
+            ])
             ->columns([
                 Tables\Columns\TextColumn::make('status')
                     ->default('unknown')
                     ->badge()
-                    ->default(function (Server $server) {
-                        if ($server->status !== null) {
-                            return $server->status;
-                        }
-
-                        return $server->retrieveStatus() ?? 'node_fail';
-                    })
+                    ->default(fn (Server $server) => $server->status ?? $server->retrieveStatus())
                     ->icon(fn ($state) => match ($state) {
                         'node_fail' => 'tabler-server-off',
                         'running' => 'tabler-heartbeat',
@@ -58,19 +59,25 @@ class ListServers extends ListRecords
                 Tables\Columns\TextColumn::make('node.name')
                     ->icon('tabler-server-2')
                     ->url(fn (Server $server): string => route('filament.admin.resources.nodes.edit', ['record' => $server->node]))
-                    ->sortable(),
+                    ->hidden(fn (Table $table) => $table->getGrouping()?->getId() === 'node.name')
+                    ->sortable()
+                    ->searchable(),
                 Tables\Columns\TextColumn::make('egg.name')
                     ->icon('tabler-egg')
                     ->url(fn (Server $server): string => route('filament.admin.resources.eggs.edit', ['record' => $server->egg]))
-                    ->sortable(),
+                    ->hidden(fn (Table $table) => $table->getGrouping()?->getId() === 'egg.name')
+                    ->sortable()
+                    ->searchable(),
                 Tables\Columns\TextColumn::make('user.username')
                     ->icon('tabler-user')
                     ->label('Owner')
                     ->url(fn (Server $server): string => route('filament.admin.resources.users.edit', ['record' => $server->user]))
-                    ->sortable(),
+                    ->hidden(fn (Table $table) => $table->getGrouping()?->getId() === 'user.username')
+                    ->sortable()
+                    ->searchable(),
                 Tables\Columns\SelectColumn::make('allocation_id')
                     ->label('Primary Allocation')
-                    ->options(fn ($state, Server $server) => $server->allocations->mapWithKeys(
+                    ->options(fn (Server $server) => $server->allocations->mapWithKeys(
                         fn ($allocation) => [$allocation->id => $allocation->address])
                     )
                     ->selectablePlaceholder(false)
@@ -83,9 +90,6 @@ class ListServers extends ListRecords
                     ->numeric()
                     ->sortable(),
             ])
-            ->filters([
-                //
-            ])
             ->actions([
                 Tables\Actions\Action::make('View')
                     ->icon('tabler-terminal')
@@ -93,6 +97,7 @@ class ListServers extends ListRecords
                 Tables\Actions\EditAction::make(),
             ])
             ->emptyStateIcon('tabler-brand-docker')
+            ->searchable()
             ->emptyStateDescription('')
             ->emptyStateHeading('No Servers')
             ->emptyStateActions([
