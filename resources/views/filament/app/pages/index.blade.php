@@ -36,16 +36,45 @@
     <script>
         window.addEventListener("load", function() {
 
-            // create websocket instance
-            var socket = new WebSocket("wss://example.com:8080/api/servers/ef722e2f-9b9b-4962-97ed-719d656827c9/ws");
-            var token = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiIsImp0aSI6ImI2N2Q5YzY5MmZkZTZmNmZhMzVlNzliNWFiNTM0ZDJkIn0.eyJpc3MiOiJodHRwczovL3BhbmVsLnRlc3QiLCJhdWQiOlsiaHR0cHM6Ly9leGFtcGxlLmNvbTo4MDgwIl0sImp0aSI6ImI2N2Q5YzY5MmZkZTZmNmZhMzVlNzliNWFiNTM0ZDJkIiwiaWF0IjoxNzE4NTY5NzQ5LCJuYmYiOjE3MTg1Njk0NDksImV4cCI6MTcxODU3MDM0OSwic2VydmVyX3V1aWQiOiJlZjcyMmUyZi05YjliLTQ5NjItOTdlZC03MTlkNjU2ODI3YzkiLCJwZXJtaXNzaW9ucyI6WyIqIiwiYWRtaW4ud2Vic29ja2V0LmVycm9ycyIsImFkbWluLndlYnNvY2tldC5pbnN0YWxsIiwiYWRtaW4ud2Vic29ja2V0LnRyYW5zZmVyIl0sInVzZXJfdXVpZCI6IjhhMGEzYzcwLTRhZWMtNDRhOC1iYzc5LTliY2IxNmY0NTc1MSIsInVzZXJfaWQiOjEsInVuaXF1ZV9pZCI6Ik0ycm9CY21iNTZubHdneWMifQ.9F7nwoeK0s08t8fGLzwSyM56M5pclC-dJe5_R5kbeYM';
+            @php
+                /** @var \App\Models\Server $server */
+                $server = \Filament\Facades\Filament::getTenant();
+                $user = auth()->user();
 
-            // add event listener reacting when message is received
+                if ($user->cannot(\App\Models\Permission::ACTION_WEBSOCKET_CONNECT, $server)) {
+                    throw new \App\Exceptions\Http\HttpForbiddenException('You do not have permission to connect to this server\'s websocket.');
+                }
+
+                $permissions = app(\App\Services\Servers\GetUserPermissionsService::class)->handle($server, $user);
+
+                $socket = str_replace(['https://', 'http://'], ['wss://', 'ws://'], $server->node->getConnectionAddress());
+                $socket .= sprintf('/api/servers/%s/ws', $server->uuid);
+
+                $token = app(\App\Services\Nodes\NodeJWTService::class)
+                    ->setExpiresAt(\Carbon\CarbonImmutable::now()->addMinutes(10))
+                    ->setUser($user)
+                    ->setClaims([
+                        'server_uuid' => $server->uuid,
+                        'permissions' => $permissions,
+                    ])
+                    ->handle($server->node, $user->id . $server->uuid);
+            @endphp
+
+            var socket = new WebSocket("{{ $socket }}");
+            var token = '{{ $token->toString() }}';
+
+
             socket.onmessage = function (event) {
                 terminal.write(TERMINAL_PRELUDE + event.data);
             };
 
-            socket.send('auth', token);
+            socket.onopen = (event) => {
+                socket.send(JSON.stringify({
+                    "event": "auth",
+                    "args": [token]
+                }));
+            };
+
 
             // var form = document.getElementsByClassName("foo");
             // var input = document.getElementById("input");
