@@ -42,7 +42,8 @@ class DaemonServerRepository extends DaemonRepository
                     ->title('Cloudflare Issue')
                     ->body('Your Node is not accessible by Cloudflare')
                     ->danger()
-                    ->send();
+                    ->send()
+                    ->sendToDatabase(auth()->user());
             }
         } catch (Exception $exception) {
             report($exception);

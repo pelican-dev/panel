@@ -53,7 +53,8 @@ class DisplayException extends PanelException implements HttpExceptionInterface
                 ->title(static::class)
                 ->body($this->getMessage())
                 ->danger()
-                ->send();
+                ->send()
+                ->sendToDatabase(auth()->user());
 
             return;
         }

@@ -115,7 +115,12 @@ class ListUsers extends ListRecords
                 ->successRedirectUrl(route('filament.admin.resources.users.index'))
                 ->action(function (array $data) {
                     resolve(UserCreationService::class)->handle($data);
-                    Notification::make()->title('User Created!')->success()->send();
+                    Notification::make()
+                        ->title('User Created!')
+                        ->body(fn ($data) => 'New User: '. $data['username'])
+                        ->success()
+                        ->send()
+                        ->sendToDatabase(auth()->user());
 
                     return redirect()->route('filament.admin.resources.users.index');
                 }),

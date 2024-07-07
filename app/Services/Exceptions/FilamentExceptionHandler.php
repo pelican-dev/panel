@@ -15,7 +15,8 @@ class FilamentExceptionHandler
             ->color($exception->color ?? 'danger')
             ->icon($exception->icon ?? 'tabler-x')
             ->danger()
-            ->send();
+            ->send()
+            ->sendToDatabase(auth()->user());
 
         if ($this->stopPropagation ?? true) {
             $stopPropagation();

@@ -111,7 +111,8 @@ class EditDatabaseHost extends EditRecord
                 ->color('danger')
                 ->icon('tabler-database')
                 ->danger()
-                ->send();
+                ->send()
+                ->sendToDatabase(auth()->user());
 
             $stopPropagation();
         }

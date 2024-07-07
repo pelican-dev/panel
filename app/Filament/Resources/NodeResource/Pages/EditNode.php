@@ -405,7 +405,11 @@ class EditNode extends EditRecord
                                     ->modalDescription('Resetting the daemon token will void any request coming from the old token. This token is used for all sensitive operations on the daemon including server creation and deletion. We suggest changing this token regularly for security.')
                                     ->action(function (NodeUpdateService $nodeUpdateService, Node $node) {
                                         $nodeUpdateService->handle($node, [], true);
-                                        Notification::make()->success()->title('Daemon Key Reset')->send();
+                                        Notification::make()
+                                            ->success()
+                                            ->title('Daemon Key Reset')
+                                            ->send()
+                                            ->sendToDatabase(auth()->user());
                                         $this->fillForm();
                                     }),
                             ]),

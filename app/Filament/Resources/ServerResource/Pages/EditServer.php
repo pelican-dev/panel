@@ -650,7 +650,11 @@ class EditServer extends EditRecord
                                                         ->hidden(fn (Server $server) => $server->isSuspended())
                                                         ->action(function (SuspensionService $suspensionService, Server $server) {
                                                             $suspensionService->toggle($server, 'suspend');
-                                                            Notification::make()->success()->title('Server Suspended!')->send();
+                                                            Notification::make()
+                                                                ->success()
+                                                                ->title('Server Suspended!')
+                                                                ->send()
+                                                                ->sendToDatabase(auth()->user());
 
                                                             $this->refreshFormData(['status', 'docker']);
                                                         }),
@@ -660,7 +664,11 @@ class EditServer extends EditRecord
                                                         ->hidden(fn (Server $server) => !$server->isSuspended())
                                                         ->action(function (SuspensionService $suspensionService, Server $server) {
                                                             $suspensionService->toggle($server, 'unsuspend');
-                                                            Notification::make()->success()->title('Server Unsuspended!')->send();
+                                                            Notification::make()
+                                                                ->success()
+                                                                ->title('Server Unsuspended!')
+                                                                ->send()
+                                                                ->sendToDatabase(auth()->user());
 
                                                             $this->refreshFormData(['status', 'docker']);
                                                         }),

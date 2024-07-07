@@ -271,7 +271,8 @@ class EditEgg extends EditRecord
                                 ->title('Import Failed')
                                 ->body($exception->getMessage())
                                 ->danger()
-                                ->send();
+                                ->send()
+                                ->sendToDatabase(auth()->user());
 
                             report($exception);
 
@@ -287,7 +288,8 @@ class EditEgg extends EditRecord
                                 ->title('Import Failed')
                                 ->body($exception->getMessage())
                                 ->danger()
-                                ->send();
+                                ->send()
+                                ->sendToDatabase(auth()->user());
 
                             report($exception);
 
@@ -299,7 +301,8 @@ class EditEgg extends EditRecord
                     Notification::make()
                         ->title('Import Success')
                         ->success()
-                        ->send();
+                        ->send()
+                        ->sendToDatabase(auth()->user());
                 }),
 
             $this->getSaveFormAction()->formId('form'),
