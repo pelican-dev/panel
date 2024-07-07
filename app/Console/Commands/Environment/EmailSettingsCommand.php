@@ -61,6 +61,8 @@ class EmailSettingsCommand extends Command
 
         $this->writeToEnvironment($this->variables);
 
+        $this->call('queue:restart');
+
         $this->line('Updating stored environment configuration file.');
         $this->line('');
     }
