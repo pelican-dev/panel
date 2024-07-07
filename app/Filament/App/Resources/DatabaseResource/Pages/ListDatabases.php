@@ -3,11 +3,19 @@
 namespace App\Filament\App\Resources\DatabaseResource\Pages;
 
 use App\Filament\App\Resources\DatabaseResource;
+use App\Models\Database;
+use App\Models\DatabaseHost;
 use App\Services\Databases\DatabaseManagementService;
+use App\Services\Databases\DatabasePasswordService;
 use Filament\Actions\CreateAction;
 use Filament\Facades\Filament;
+use Filament\Forms\Components\Actions\Action;
+use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\TextInput;
+use Filament\Forms\Form;
+use Filament\Forms\Get;
 use Filament\Resources\Pages\ListRecords;
+use Filament\Tables\Actions\DeleteAction;
 use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
@@ -16,27 +24,44 @@ class ListDatabases extends ListRecords
 {
     protected static string $resource = DatabaseResource::class;
 
+    public function form(Form $form): Form
+    {
+        return $form
+            ->schema([
+                TextInput::make('database')->columnSpanFull(),
+                TextInput::make('username'),
+                TextInput::make('password')
+                    ->hintAction(
+                        Action::make('rotate')
+                            ->icon('tabler-refresh')
+                            ->requiresConfirmation()
+                            ->action(fn (DatabasePasswordService $service, Database $database, $set, $get) => $this->rotatePassword($service, $database, $set, $get))
+                    )
+                    ->formatStateUsing(fn (Database $database) => $database->password),
+                TextInput::make('remote')->label('Connections From'),
+                TextInput::make('max_connections')
+                    ->formatStateUsing(fn (Database $database) => $database->max_connections = 0 ? $database->max_connections : 'Unlimited'),
+                TextInput::make('JDBC')
+                    ->label('JDBC Connection String')
+                    ->columnSpanFull()
+                    ->formatStateUsing(fn (Get $get, Database $database) => 'jdbc:mysql://' . $get('username') . ':' . urlencode($database->password) . '@' . $database->host->host . ':' . $database->host->port . '/' . $get('database')),
+            ]);
+    }
+
     public function table(Table $table): Table
     {
         return $table
             ->columns([
-                TextColumn::make('database')
-                    ->searchable(),
-                TextColumn::make('username')
-                    ->searchable(),
-                TextColumn::make('remote')
-                    ->searchable(),
+                TextColumn::make('database'),
+                TextColumn::make('username'),
+                TextColumn::make('remote'),
                 TextColumn::make('created_at')
                     ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
-                TextColumn::make('updated_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
+                    ->sortable(),
             ])
             ->actions([
                 ViewAction::make(),
+                DeleteAction::make(),
             ]);
     }
 
@@ -50,24 +75,30 @@ class ListDatabases extends ListRecords
                 ->disabled(fn () => $server->database_limit <= $server->databases_count)
                 ->createAnother(false)
                 ->form([
-                    TextInput::make('database')
-                        ->label('Database Name')
-                        ->prefix('s'. $server->id . '_')
-                        ->hintIcon('tabler-question-mark')
-                        ->hintIconTooltip('FUCK YOURSELF'),
-                    TextInput::make('username')
-                        ->label('Database Username'),
+                    Grid::make()
+                        ->columns(3)
+                        ->schema([
+                            TextInput::make('database')
+                                ->columnSpan(2)
+                                ->label('Database Name')
+                                ->prefix('s'. $server->id . '_')
+                                ->hintIcon('tabler-question-mark')
+                                ->hintIconTooltip('Leaving this blank will auto generate a random name'),
+                            TextInput::make('remote')
+                                ->columnSpan(1)
+                                ->label('Connections From')
+                                ->default('%'),
+                        ]),
                 ])
                 ->action(function ($data) use ($server) {
                     if (empty($data['database'])) {
                         $data['database'] = str_random(12);
                     }
 
-                    $data['database_host_id'] =
-
+                    $data['database_host_id'] = DatabaseHost::where('node_id', $server->node_id)->first()->id;
                     $data['database'] = 's'. $server->id . '_' . $data['database'];
 
-                    resolve(DatabaseManagementService::class)->create($server, dd($data));
+                    resolve(DatabaseManagementService::class)->create($server, $data);
                 }),
         ];
     }

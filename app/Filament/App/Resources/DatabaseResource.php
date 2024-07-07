@@ -12,19 +12,10 @@ class DatabaseResource extends Resource
 
     protected static ?string $navigationIcon = 'tabler-database';
 
-    public static function getRelations(): array
-    {
-        return [
-            //
-        ];
-    }
-
     public static function getPages(): array
     {
         return [
             'index' => Pages\ListDatabases::route('/'),
-            'view' => Pages\ViewDatabase::route('/{record}'),
-            'edit' => Pages\EditDatabase::route('/{record}/edit'),
         ];
     }
 }
