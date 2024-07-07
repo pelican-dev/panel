@@ -19,6 +19,7 @@ use Filament\Tables\Actions\DeleteAction;
 use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
+use Webbingbrasil\FilamentCopyActions\Forms\Actions\CopyAction;
 
 class ListDatabases extends ListRecords
 {
@@ -28,8 +29,8 @@ class ListDatabases extends ListRecords
     {
         return $form
             ->schema([
-                TextInput::make('database')->columnSpanFull(),
-                TextInput::make('username'),
+                TextInput::make('database')->columnSpanFull()->suffixAction(CopyAction::make()),
+                TextInput::make('username')->suffixAction(CopyAction::make()),
                 TextInput::make('password')
                     ->hintAction(
                         Action::make('rotate')
@@ -37,12 +38,14 @@ class ListDatabases extends ListRecords
                             ->requiresConfirmation()
                             ->action(fn (DatabasePasswordService $service, Database $database, $set, $get) => $this->rotatePassword($service, $database, $set, $get))
                     )
+                    ->suffixAction(CopyAction::make())
                     ->formatStateUsing(fn (Database $database) => $database->password),
                 TextInput::make('remote')->label('Connections From'),
                 TextInput::make('max_connections')
                     ->formatStateUsing(fn (Database $database) => $database->max_connections = 0 ? $database->max_connections : 'Unlimited'),
                 TextInput::make('JDBC')
                     ->label('JDBC Connection String')
+                    ->suffixAction(CopyAction::make())
                     ->columnSpanFull()
                     ->formatStateUsing(fn (Get $get, Database $database) => 'jdbc:mysql://' . $get('username') . ':' . urlencode($database->password) . '@' . $database->host->host . ':' . $database->host->port . '/' . $get('database')),
             ]);
