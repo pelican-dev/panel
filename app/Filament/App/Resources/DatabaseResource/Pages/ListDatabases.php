@@ -71,8 +71,9 @@ class ListDatabases extends ListRecords
 
         return [
             CreateAction::make('new')
-                ->label(fn () => $server->database_limit <= $server->databases_count ? 'Database Limit Reached' : 'Create Database')
-                ->disabled(fn () => $server->database_limit <= $server->databases_count)
+                ->label(fn () => $server->databases()->count() >= $server->database_limit ? 'Database Limit Reached' : 'Create Database')
+                ->disabled(fn () => $server->databases()->count() >= $server->database_limit)
+                ->color(fn () => $server->databases()->count() >= $server->database_limit ? 'danger' : 'primary')
                 ->createAnother(false)
                 ->form([
                     Grid::make()
@@ -101,5 +102,14 @@ class ListDatabases extends ListRecords
                     resolve(DatabaseManagementService::class)->create($server, $data);
                 }),
         ];
+    }
+
+    protected function rotatePassword(DatabasePasswordService $service, Database $database, $set, $get): void
+    {
+        $newPassword = $service->handle($database);
+        $jdbcString = 'jdbc:mysql://' . $get('username') . ':' . urlencode($newPassword) . '@' . $database->host->host . ':' . $database->host->port . '/' . $get('database');
+
+        $set('password', $newPassword);
+        $set('JDBC', $jdbcString);
     }
 }
