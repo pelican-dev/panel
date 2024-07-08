@@ -14,7 +14,7 @@ class NodeVersionsCheck extends Check
         $all = Node::query()->count();
         $latestVersion = app(SoftwareVersionService::class)->getDaemon();
 
-         $outdated = Node::query()->get()
+        $outdated = Node::query()->get()
             ->filter(fn (Node $node) => !isset($node->systemInformation()['exception']) && $node->systemInformation()['version'] !== $latestVersion)
             ->count();
 
