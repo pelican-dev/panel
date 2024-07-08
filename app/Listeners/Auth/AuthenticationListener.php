@@ -28,10 +28,4 @@ class AuthenticationListener
 
         $activity->event($event instanceof Failed ? 'auth:fail' : 'auth:success')->log();
     }
-
-    public function subscribe(Dispatcher $events): void
-    {
-        $events->listen(Failed::class, self::class);
-        $events->listen(DirectLogin::class, self::class);
-    }
 }
