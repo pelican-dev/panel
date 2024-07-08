@@ -100,7 +100,7 @@ class AppServiceProvider extends ServiceProvider
                 ScheduleCheck::new(),
                 UsedDiskSpaceCheck::new(),
                 PanelVersionCheck::new(),
-                NodeVersionsCheck::new()->unless(Node::query()->count() === 0),
+                NodeVersionsCheck::new(),//->unless(Node::query()->count() === 0),
             ]);
         }
     }
