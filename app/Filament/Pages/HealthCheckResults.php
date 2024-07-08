@@ -6,6 +6,8 @@ use ShuvroRoy\FilamentSpatieLaravelHealth\Pages\HealthCheckResults as BaseHealth
  
 class HealthCheckResults extends BaseHealthCheckResults
 {
+    protected static ?string $slug = 'health';
+
     public static function getNavigationGroup(): ?string
     {
         return 'Advanced';
