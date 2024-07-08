@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Checks\PanelVersionCheck;
 use App\Extensions\Themes\Theme;
 use App\Models;
 use App\Models\ApiKey;
@@ -95,6 +96,7 @@ class AppServiceProvider extends ServiceProvider
             DatabaseCheck::new(),
             ScheduleCheck::new(),
             UsedDiskSpaceCheck::new(),
+            PanelVersionCheck::new(),
         ]);
     }
 
