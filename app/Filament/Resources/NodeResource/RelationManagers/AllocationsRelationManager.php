@@ -3,15 +3,24 @@
 namespace App\Filament\Resources\NodeResource\RelationManagers;
 
 use App\Models\Allocation;
-use App\Models\Server;
+use App\Models\Node;
 use App\Services\Allocations\AssignmentService;
-use Filament\Forms;
+use Filament\Forms\Components\TagsInput;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Set;
+use Filament\Tables\Actions\BulkActionGroup;
+use Filament\Tables\Actions\DeleteBulkAction;
 use Filament\Forms\Form;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Columns\TextInputColumn;
 use Filament\Tables\Table;
 use Illuminate\Support\HtmlString;
 
+/**
+ * @method Node getOwnerRecord()
+ */
 class AllocationsRelationManager extends RelationManager
 {
     protected static string $relationship = 'allocations';
@@ -22,7 +31,7 @@ class AllocationsRelationManager extends RelationManager
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make('ip')
+                TextInput::make('ip')
                     ->required()
                     ->maxLength(255),
             ]);
@@ -40,19 +49,19 @@ class AllocationsRelationManager extends RelationManager
             ->checkIfRecordIsSelectableUsing(fn (Allocation $allocation) => $allocation->server_id === null)
             ->searchable()
             ->columns([
-                Tables\Columns\TextColumn::make('id'),
-                Tables\Columns\TextColumn::make('port')
+                TextColumn::make('id'),
+                TextColumn::make('port')
                     ->searchable()
                     ->label('Port'),
-                Tables\Columns\TextColumn::make('server.name')
+                TextColumn::make('server.name')
                     ->label('Server')
                     ->icon('tabler-brand-docker')
                     ->searchable()
                     ->url(fn (Allocation $allocation): string => $allocation->server ? route('filament.admin.resources.servers.edit', ['record' => $allocation->server]) : ''),
-                Tables\Columns\TextInputColumn::make('ip_alias')
+                TextInputColumn::make('ip_alias')
                     ->searchable()
                     ->label('Alias'),
-                Tables\Columns\TextInputColumn::make('ip')
+                TextInputColumn::make('ip')
                     ->searchable()
                     ->label('IP'),
             ])
@@ -65,20 +74,20 @@ class AllocationsRelationManager extends RelationManager
             ->headerActions([
                 Tables\Actions\Action::make('create new allocation')->label('Create Allocations')
                     ->form(fn () => [
-                        Forms\Components\TextInput::make('allocation_ip')
-                            ->datalist($this->getOwnerRecord()->ipAddresses() ?? [])
+                        TextInput::make('allocation_ip')
+                            ->datalist($this->getOwnerRecord()->ipAddresses())
                             ->label('IP Address')
                             ->inlineLabel()
                             ->ipv4()
                             ->helperText("Usually your machine's public IP unless you are port forwarding.")
                             ->required(),
-                        Forms\Components\TextInput::make('allocation_alias')
+                        TextInput::make('allocation_alias')
                             ->label('Alias')
                             ->inlineLabel()
                             ->default(null)
                             ->helperText('Optional display name to help you remember what these are.')
                             ->required(false),
-                        Forms\Components\TagsInput::make('allocation_ports')
+                        TagsInput::make('allocation_ports')
                             ->placeholder('Examples: 27015, 27017-27019')
                             ->helperText(new HtmlString('
                                 These are the ports that users can connect to this Server through.
@@ -88,7 +97,7 @@ class AllocationsRelationManager extends RelationManager
                             ->label('Ports')
                             ->inlineLabel()
                             ->live()
-                            ->afterStateUpdated(function ($state, Forms\Set $set) {
+                            ->afterStateUpdated(function ($state, Set $set) {
                                 $ports = collect();
                                 $update = false;
                                 foreach ($state as $portEntry) {
@@ -113,7 +122,7 @@ class AllocationsRelationManager extends RelationManager
 
                                     $start = max((int) $start, 0);
                                     $end = min((int) $end, 2 ** 16 - 1);
-                                    for ($i = $start; $i <= $end; $i++) {
+                                    foreach (range($start, $end) as $i) {
                                         $ports->push($i);
                                     }
                                 }
@@ -142,9 +151,8 @@ class AllocationsRelationManager extends RelationManager
                     ->action(fn (array $data) => resolve(AssignmentService::class)->handle($this->getOwnerRecord(), $data)),
             ])
             ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    // Tables\Actions\DissociateBulkAction::make(),
-                    Tables\Actions\DeleteBulkAction::make(),
+                BulkActionGroup::make([
+                    DeleteBulkAction::make(),
                 ]),
             ]);
     }

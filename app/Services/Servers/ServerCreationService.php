@@ -17,6 +17,7 @@ use App\Repositories\Daemon\DaemonServerRepository;
 use App\Services\Deployment\FindViableNodesService;
 use App\Services\Deployment\AllocationSelectionService;
 use App\Exceptions\Http\Connection\DaemonConnectionException;
+use App\Models\Egg;
 
 class ServerCreationService
 {
@@ -49,6 +50,13 @@ class ServerCreationService
         if (!isset($data['oom_killer']) && isset($data['oom_disabled'])) {
             $data['oom_killer'] = !$data['oom_disabled'];
         }
+
+        /** @var Egg $egg */
+        $egg = Egg::query()->findOrFail($data['egg_id']);
+
+        // Fill missing fields from egg
+        $data['image'] = $data['image'] ?? collect($egg->docker_images)->first();
+        $data['startup'] = $data['startup'] ?? $egg->startup;
 
         // If a deployment object has been passed we need to get the allocation
         // that the server should use, and assign the node from that allocation.
@@ -109,8 +117,8 @@ class ServerCreationService
     {
         /** @var Collection<\App\Models\Node> $nodes */
         $nodes = $this->findViableNodesService->handle(
-            Arr::get($data, 'disk', 0),
             Arr::get($data, 'memory', 0),
+            Arr::get($data, 'disk', 0),
             Arr::get($data, 'cpu', 0),
             Arr::get($data, 'tags', []),
         );
@@ -154,6 +162,7 @@ class ServerCreationService
             'database_limit' => Arr::get($data, 'database_limit') ?? 0,
             'allocation_limit' => Arr::get($data, 'allocation_limit') ?? 0,
             'backup_limit' => Arr::get($data, 'backup_limit') ?? 0,
+            'docker_labels' => Arr::get($data, 'docker_labels'),
         ]);
     }
 

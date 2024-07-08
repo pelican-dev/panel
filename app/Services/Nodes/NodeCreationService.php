@@ -16,7 +16,7 @@ class NodeCreationService
     public function handle(array $data): Node
     {
         $data['uuid'] = Uuid::uuid4()->toString();
-        $data['daemon_token'] = encrypt(Str::random(Node::DAEMON_TOKEN_LENGTH));
+        $data['daemon_token'] = Str::random(Node::DAEMON_TOKEN_LENGTH);
         $data['daemon_token_id'] = Str::random(Node::DAEMON_TOKEN_ID_LENGTH);
 
         return Node::query()->create($data);

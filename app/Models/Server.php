@@ -2,9 +2,12 @@
 
 namespace App\Models;
 
+use App\Enums\ContainerStatus;
 use App\Enums\ServerState;
 use App\Exceptions\Http\Connection\DaemonConnectionException;
 use GuzzleHttp\Exception\GuzzleException;
+use Illuminate\Database\Eloquent\Casts\Attribute;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Query\JoinClause;
 use Illuminate\Support\Facades\Http;
@@ -13,7 +16,6 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
-use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use App\Exceptions\Http\Server\ServerStateConflictException;
 
 /**
@@ -26,7 +28,7 @@ use App\Exceptions\Http\Server\ServerStateConflictException;
  * @property int $node_id
  * @property string $name
  * @property string $description
- * @property string|null $status
+ * @property ServerState|null $status
  * @property bool $skip_scripts
  * @property int $owner_id
  * @property int $memory
@@ -69,7 +71,6 @@ use App\Exceptions\Http\Server\ServerStateConflictException;
  * @property \App\Models\User $user
  * @property \Illuminate\Database\Eloquent\Collection|\App\Models\EggVariable[] $variables
  * @property int|null $variables_count
- *
  * @method static \Database\Factories\ServerFactory factory(...$parameters)
  * @method static \Illuminate\Database\Eloquent\Builder|Server newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Server newQuery()
@@ -100,7 +101,17 @@ use App\Exceptions\Http\Server\ServerStateConflictException;
  * @method static \Illuminate\Database\Eloquent\Builder|Server whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Server whereUuid($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Server whereuuid_short($value)
- *
+ * @property array|null $docker_labels
+ * @property string|null $ports
+ * @property-read mixed $condition
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\EggVariable> $eggVariables
+ * @property-read int|null $egg_variables_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ServerVariable> $serverVariables
+ * @property-read int|null $server_variables_count
+ * @method static \Illuminate\Database\Eloquent\Builder|Server whereDockerLabels($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Server whereInstalledAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Server wherePorts($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Server whereUuidShort($value)
  * @mixin \Eloquent
  */
 class Server extends Model
@@ -139,9 +150,9 @@ class Server extends Model
     protected $guarded = ['id', self::CREATED_AT, self::UPDATED_AT, 'deleted_at', 'installed_at'];
 
     public static array $validationRules = [
-        'external_id' => 'sometimes|nullable|string|between:1,191|unique:servers',
+        'external_id' => 'sometimes|nullable|string|between:1,255|unique:servers',
         'owner_id' => 'required|integer|exists:users,id',
-        'name' => 'required|string|min:1|max:191',
+        'name' => 'required|string|min:1|max:255',
         'node_id' => 'required|exists:nodes,id',
         'description' => 'string',
         'status' => 'nullable|string',
@@ -156,7 +167,7 @@ class Server extends Model
         'egg_id' => 'required|exists:eggs,id',
         'startup' => 'required|string',
         'skip_scripts' => 'sometimes|boolean',
-        'image' => 'required|string|max:191',
+        'image' => 'required|string|max:255',
         'database_limit' => 'present|nullable|integer|min:0',
         'allocation_limit' => 'sometimes|nullable|integer|min:0',
         'backup_limit' => 'present|nullable|integer|min:0',
@@ -311,12 +322,9 @@ class Server extends Model
         return $this->hasMany(Backup::class);
     }
 
-    /**
-     * Returns all mounts that have this server has mounted.
-     */
-    public function mounts(): HasManyThrough
+    public function mounts(): BelongsToMany
     {
-        return $this->hasManyThrough(Mount::class, MountServer::class, 'server_id', 'id', 'id', 'mount_id');
+        return $this->belongsToMany(Mount::class);
     }
 
     /**
@@ -412,5 +420,34 @@ class Server extends Model
         $this->node->serverStatuses();
 
         return cache()->get("servers.$this->uuid.container.status") ?? 'missing';
+    }
+
+    public function condition(): Attribute
+    {
+        return Attribute::make(
+            get: fn () => $this->status?->value ?? $this->retrieveStatus(),
+        );
+    }
+
+    public function conditionIcon(): string
+    {
+        if ($this->status === null) {
+            $containerStatus = ContainerStatus::from($this->retrieveStatus());
+
+            return $containerStatus->icon();
+        }
+
+        return $this->status->icon();
+    }
+
+    public function conditionColor(): string
+    {
+        if ($this->status === null) {
+            $containerStatus = ContainerStatus::from($this->retrieveStatus());
+
+            return $containerStatus->color();
+        }
+
+        return $this->status->color();
     }
 }

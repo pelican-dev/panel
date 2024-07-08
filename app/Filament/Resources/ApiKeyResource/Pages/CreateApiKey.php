@@ -4,9 +4,13 @@ namespace App\Filament\Resources\ApiKeyResource\Pages;
 
 use App\Filament\Resources\ApiKeyResource;
 use App\Models\ApiKey;
+use Filament\Forms\Components\Fieldset;
+use Filament\Forms\Components\Hidden;
+use Filament\Forms\Components\TagsInput;
+use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\ToggleButtons;
 use Filament\Forms\Form;
 use Filament\Resources\Pages\CreateRecord;
-use Filament\Forms;
 
 class CreateApiKey extends CreateRecord
 {
@@ -18,40 +22,26 @@ class CreateApiKey extends CreateRecord
     {
         return $form
             ->schema([
-                Forms\Components\Hidden::make('identifier')->default(ApiKey::generateTokenIdentifier(ApiKey::TYPE_APPLICATION)),
-                Forms\Components\Hidden::make('token')->default(encrypt(str_random(ApiKey::KEY_LENGTH))),
+                Hidden::make('identifier')->default(ApiKey::generateTokenIdentifier(ApiKey::TYPE_APPLICATION)),
+                Hidden::make('token')->default(str_random(ApiKey::KEY_LENGTH)),
 
-                Forms\Components\Hidden::make('user_id')
+                Hidden::make('user_id')
                     ->default(auth()->user()->id)
                     ->required(),
 
-                Forms\Components\Select::make('key_type')
+                Hidden::make('key_type')
                     ->inlineLabel()
-                    ->options(function (ApiKey $apiKey) {
-                        $originalOptions = [
-                            //ApiKey::TYPE_NONE => 'None',
-                            ApiKey::TYPE_ACCOUNT => 'Account',
-                            ApiKey::TYPE_APPLICATION => 'Application',
-                            //ApiKey::TYPE_DAEMON_USER => 'Daemon User',
-                            //ApiKey::TYPE_DAEMON_APPLICATION => 'Daemon Application',
-                        ];
+                    ->default(ApiKey::TYPE_APPLICATION)
+                    ->required(),
 
-                        return collect($originalOptions)
-                            ->filter(fn ($value, $key) => $key <= ApiKey::TYPE_APPLICATION || $apiKey->key_type === $key)
-                            ->all();
-                    })
-                    ->selectablePlaceholder(false)
-                    ->required()
-                    ->default(ApiKey::TYPE_APPLICATION),
-
-                Forms\Components\Fieldset::make('Permissions')
+                Fieldset::make('Permissions')
                     ->columns([
                         'default' => 1,
                         'sm' => 1,
                         'md' => 2,
                     ])
                     ->schema(
-                        collect(ApiKey::RESOURCES)->map(fn ($resource) => Forms\Components\ToggleButtons::make("r_$resource")
+                        collect(ApiKey::RESOURCES)->map(fn ($resource) => ToggleButtons::make("r_$resource")
                             ->label(str($resource)->replace('_', ' ')->title())->inline()
                             ->options([
                                 0 => 'None',
@@ -81,15 +71,13 @@ class CreateApiKey extends CreateRecord
                         )->all(),
                     ),
 
-                Forms\Components\TagsInput::make('allowed_ips')
+                TagsInput::make('allowed_ips')
                     ->placeholder('Example: 127.0.0.1 or 192.168.1.1')
                     ->label('Whitelisted IPv4 Addresses')
                     ->helperText('Press enter to add a new IP address or leave blank to allow any IP address')
-                    ->columnSpanFull()
-                    ->hidden()
-                    ->default(null),
+                    ->columnSpanFull(),
 
-                Forms\Components\Textarea::make('memo')
+                Textarea::make('memo')
                     ->required()
                     ->label('Description')
                     ->helperText('

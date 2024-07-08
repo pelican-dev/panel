@@ -86,9 +86,7 @@ class DatabaseManagementService
         $data = array_merge($data, [
             'server_id' => $server->id,
             'username' => sprintf('u%d_%s', $server->id, str_random(10)),
-            'password' => encrypt(
-                Utilities::randomStringWithSpecialCharacters(24)
-            ),
+            'password' => Utilities::randomStringWithSpecialCharacters(24),
         ]);
 
         return $this->connection->transaction(function () use ($data, &$database) {
@@ -100,7 +98,7 @@ class DatabaseManagementService
             $database->createUser(
                 $database->username,
                 $database->remote,
-                decrypt($database->password),
+                $database->password,
                 $database->max_connections
             );
             $database->assignUserToDatabase($database->database, $database->username, $database->remote);

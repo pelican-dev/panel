@@ -65,9 +65,7 @@ class LoginCheckpointController extends AbstractLoginController
                 return $this->sendLoginResponse($user, $request);
             }
         } else {
-            $decrypted = decrypt($user->totp_secret);
-
-            if ($this->google2FA->verifyKey($decrypted, (string) $request->input('authentication_code'), config('panel.auth.2fa.window'))) {
+            if ($this->google2FA->verifyKey($user->totp_secret, (string) $request->input('authentication_code'), config('panel.auth.2fa.window'))) {
                 Event::dispatch(new ProvidedAuthenticationToken($user));
 
                 return $this->sendLoginResponse($user, $request);

@@ -33,7 +33,9 @@ use Illuminate\Database\Eloquent\Relations\HasManyThrough;
  * @property string $daemon_token
  * @property int $daemon_listen
  * @property int $daemon_sftp
+ * @property string|null $daemon_sftp_alias
  * @property string $daemon_base
+ * @property array $tags
  * @property \Carbon\Carbon $created_at
  * @property \Carbon\Carbon $updated_at
  * @property \App\Models\Mount[]|\Illuminate\Database\Eloquent\Collection $mounts
@@ -63,10 +65,6 @@ class Node extends Model
      */
     protected $hidden = ['daemon_token_id', 'daemon_token'];
 
-    public int $sum_memory;
-    public int $sum_disk;
-    public int $sum_cpu;
-
     /**
      * Fields that are mass assignable.
      */
@@ -76,7 +74,7 @@ class Node extends Model
         'memory', 'memory_overallocate', 'disk',
         'disk_overallocate', 'cpu', 'cpu_overallocate',
         'upload_size', 'daemon_base',
-        'daemon_sftp', 'daemon_listen',
+        'daemon_sftp', 'daemon_sftp_alias', 'daemon_listen',
         'description', 'maintenance_mode',
     ];
 
@@ -85,7 +83,7 @@ class Node extends Model
         'description' => 'string|nullable',
         'public' => 'boolean',
         'fqdn' => 'required|string',
-        'scheme' => 'required',
+        'scheme' => 'required|string|in:http,https',
         'behind_proxy' => 'boolean',
         'memory' => 'required|numeric|min:0',
         'memory_overallocate' => 'required|numeric|min:-1',
@@ -95,6 +93,7 @@ class Node extends Model
         'cpu_overallocate' => 'required|numeric|min:-1',
         'daemon_base' => 'sometimes|required|regex:/^([\/][\d\w.\-\/]+)$/',
         'daemon_sftp' => 'required|numeric|between:1,65535',
+        'daemon_sftp_alias' => 'nullable|string',
         'daemon_listen' => 'required|numeric|between:1,65535',
         'maintenance_mode' => 'boolean',
         'upload_size' => 'int|between:1,1024',
@@ -127,12 +126,17 @@ class Node extends Model
             'cpu' => 'integer',
             'daemon_listen' => 'integer',
             'daemon_sftp' => 'integer',
+            'daemon_token' => 'encrypted',
             'behind_proxy' => 'boolean',
             'public' => 'boolean',
             'maintenance_mode' => 'boolean',
             'tags' => 'array',
         ];
     }
+
+    public int $servers_sum_memory = 0;
+    public int $servers_sum_disk = 0;
+    public int $servers_sum_cpu = 0;
 
     public function getRouteKeyName(): string
     {
@@ -143,7 +147,7 @@ class Node extends Model
     {
         static::creating(function (self $node) {
             $node->uuid = Str::uuid();
-            $node->daemon_token = encrypt(Str::random(self::DAEMON_TOKEN_LENGTH));
+            $node->daemon_token = Str::random(self::DAEMON_TOKEN_LENGTH);
             $node->daemon_token_id = Str::random(self::DAEMON_TOKEN_ID_LENGTH);
 
             return true;
@@ -171,7 +175,7 @@ class Node extends Model
             'debug' => false,
             'uuid' => $this->uuid,
             'token_id' => $this->daemon_token_id,
-            'token' => decrypt($this->daemon_token),
+            'token' => $this->daemon_token,
             'api' => [
                 'host' => '0.0.0.0',
                 'port' => $this->daemon_listen,
@@ -209,16 +213,6 @@ class Node extends Model
         return json_encode($this->getConfiguration(), $pretty ? JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT : JSON_UNESCAPED_SLASHES);
     }
 
-    /**
-     * Helper function to return the decrypted key for a node.
-     */
-    public function getDecryptedKey(): string
-    {
-        return (string) decrypt(
-            $this->daemon_token
-        );
-    }
-
     public function isUnderMaintenance(): bool
     {
         return $this->maintenance_mode;
@@ -250,11 +244,28 @@ class Node extends Model
      */
     public function isViable(int $memory, int $disk, int $cpu): bool
     {
-        $memoryLimit = $this->memory * (1 + ($this->memory_overallocate / 100));
-        $diskLimit = $this->disk * (1 + ($this->disk_overallocate / 100));
-        $cpuLimit = $this->cpu * (1 + ($this->cpu_overallocate / 100));
+        if ($this->memory_overallocate >= 0) {
+            $memoryLimit = $this->memory * (1 + ($this->memory_overallocate / 100));
+            if ($this->servers_sum_memory + $memory > $memoryLimit) {
+                return false;
+            }
+        }
 
-        return ($this->sum_memory + $memory) <= $memoryLimit && ($this->sum_disk + $disk) <= $diskLimit && ($this->sum_cpu + $cpu) <= $cpuLimit;
+        if ($this->disk_overallocate >= 0) {
+            $diskLimit = $this->disk * (1 + ($this->disk_overallocate / 100));
+            if ($this->servers_sum_disk + $disk > $diskLimit) {
+                return false;
+            }
+        }
+
+        if ($this->cpu_overallocate >= 0) {
+            $cpuLimit = $this->cpu * (1 + ($this->cpu_overallocate / 100));
+            if ($this->servers_sum_cpu + $cpu > $cpuLimit) {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     public static function getForServerCreation()

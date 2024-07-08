@@ -22,7 +22,6 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property bool $has_alias
  * @property \App\Models\Server|null $server
  * @property \App\Models\Node $node
- * @property string $hashid
  *
  * @method static \Database\Factories\AllocationFactory factory(...$parameters)
  * @method static \Illuminate\Database\Eloquent\Builder|Allocation newModelQuery()
@@ -89,14 +88,6 @@ class Allocation extends Model
     }
 
     /**
-     * Return a hashid encoded string to represent the ID of the allocation.
-     */
-    public function getHashidAttribute(): string
-    {
-        return app()->make('hashids')->encode($this->id);
-    }
-
-    /**
      * Accessor to automatically provide the IP alias if defined.
      */
     public function getAliasAttribute(?string $value): string
@@ -112,7 +103,8 @@ class Allocation extends Model
         return !is_null($this->ip_alias);
     }
 
-    public function address(): Attribute
+    /** @return Attribute<string, never> */
+    protected function address(): Attribute
     {
         return Attribute::make(
             get: fn () => "$this->ip:$this->port",

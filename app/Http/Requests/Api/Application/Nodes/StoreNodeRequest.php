@@ -33,10 +33,9 @@ class StoreNodeRequest extends ApplicationApiRequest
             'upload_size',
             'daemon_listen',
             'daemon_sftp',
+            'daemon_sftp_alias',
             'daemon_base',
         ])->mapWithKeys(function ($value, $key) {
-            $key = ($key === 'daemon_sftp') ? 'daemon_sftp' : $key;
-
             return [snake_case($key) => $value];
         })->toArray();
     }
@@ -60,11 +59,7 @@ class StoreNodeRequest extends ApplicationApiRequest
     public function validated($key = null, $default = null): array
     {
         $response = parent::validated();
-        $response['daemon_listen'] = $response['daemon_listen'];
-        $response['daemon_sftp'] = $response['daemon_sftp'];
         $response['daemon_base'] = $response['daemon_base'] ?? (new Node())->getAttribute('daemon_base');
-
-        unset($response['daemon_base'], $response['daemon_listen'], $response['daemon_sftp']);
 
         return $response;
     }

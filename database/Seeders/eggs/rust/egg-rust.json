@@ -2,11 +2,12 @@
     "_comment": "DO NOT EDIT: FILE GENERATED AUTOMATICALLY BY PANEL",
     "meta": {
         "version": "PTDL_v2",
-        "update_url": null
+        "update_url": "https:\/\/github.com\/pelican-dev\/panel\/raw\/main\/database\/Seeders\/eggs\/rust\/egg-rust.json"
     },
-    "exported_at": "2024-05-08T11:57:56+02:00",
+    "exported_at": "2024-07-03T14:34:09+00:00",
     "name": "Rust",
     "author": "panel@example.com",
+    "uuid": "bace2dfb-209c-452a-9459-7d6f340b07ae",
     "description": "The only aim in Rust is to survive. To do this you will need to overcome struggles such as hunger, thirst and cold. Build a fire. Build a shelter. Kill animals for meat. Protect yourself from other players, and kill them for meat. Create alliances with other players and form a town. Do whatever it takes to survive.",
     "features": [
         "steam_disk_space"
@@ -38,6 +39,7 @@
             "user_viewable": true,
             "user_editable": true,
             "rules": "required|string|max:60",
+            "sort": 1,
             "field_type": "text"
         },
         {
@@ -48,6 +50,7 @@
             "user_viewable": true,
             "user_editable": true,
             "rules": "required|in:vanilla,oxide,carbon",
+            "sort": 2,
             "field_type": "text"
         },
         {
@@ -58,6 +61,7 @@
             "user_viewable": true,
             "user_editable": true,
             "rules": "required|string|max:20",
+            "sort": 3,
             "field_type": "text"
         },
         {
@@ -68,6 +72,7 @@
             "user_viewable": true,
             "user_editable": true,
             "rules": "required|string",
+            "sort": 4,
             "field_type": "text"
         },
         {
@@ -78,6 +83,7 @@
             "user_viewable": true,
             "user_editable": true,
             "rules": "nullable|url",
+            "sort": 5,
             "field_type": "text"
         },
         {
@@ -88,6 +94,7 @@
             "user_viewable": true,
             "user_editable": true,
             "rules": "required|integer",
+            "sort": 6,
             "field_type": "text"
         },
         {
@@ -98,6 +105,7 @@
             "user_viewable": true,
             "user_editable": true,
             "rules": "nullable|string",
+            "sort": 7,
             "field_type": "text"
         },
         {
@@ -108,6 +116,7 @@
             "user_viewable": true,
             "user_editable": true,
             "rules": "required|integer",
+            "sort": 8,
             "field_type": "text"
         },
         {
@@ -118,6 +127,7 @@
             "user_viewable": true,
             "user_editable": true,
             "rules": "nullable|url",
+            "sort": 9,
             "field_type": "text"
         },
         {
@@ -128,6 +138,7 @@
             "user_viewable": true,
             "user_editable": false,
             "rules": "required|integer",
+            "sort": 10,
             "field_type": "text"
         },
         {
@@ -138,6 +149,7 @@
             "user_viewable": true,
             "user_editable": false,
             "rules": "required|integer",
+            "sort": 11,
             "field_type": "text"
         },
         {
@@ -148,6 +160,7 @@
             "user_viewable": true,
             "user_editable": true,
             "rules": "required|regex:\/^[\\w.-]*$\/|max:64",
+            "sort": 12,
             "field_type": "text"
         },
         {
@@ -158,6 +171,7 @@
             "user_viewable": true,
             "user_editable": true,
             "rules": "required|integer",
+            "sort": 13,
             "field_type": "text"
         },
         {
@@ -168,6 +182,7 @@
             "user_viewable": true,
             "user_editable": true,
             "rules": "nullable|string",
+            "sort": 14,
             "field_type": "text"
         },
         {
@@ -178,6 +193,7 @@
             "user_viewable": true,
             "user_editable": false,
             "rules": "required|integer",
+            "sort": 15,
             "field_type": "text"
         },
         {
@@ -188,6 +204,7 @@
             "user_viewable": true,
             "user_editable": true,
             "rules": "nullable|url",
+            "sort": 16,
             "field_type": "text"
         },
         {
@@ -198,6 +215,7 @@
             "user_viewable": true,
             "user_editable": true,
             "rules": "nullable|url",
+            "sort": 17,
             "field_type": "text"
         },
         {
@@ -208,6 +226,7 @@
             "user_viewable": false,
             "user_editable": false,
             "rules": "required|string|in:258550",
+            "sort": 18,
             "field_type": "text"
         }
     ]

@@ -41,7 +41,7 @@ class DaemonAuthenticate
         /** @var Node $node */
         $node = Node::query()->where('daemon_token_id', $parts[0])->firstOrFail();
 
-        if (hash_equals((string) decrypt($node->daemon_token), $parts[1])) {
+        if (hash_equals((string) $node->daemon_token, $parts[1])) {
             $request->attributes->set('node', $node);
 
             return $next($request);

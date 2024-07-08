@@ -1,13 +1,37 @@
 <x-filament-panels::page>
-
     <x-filament-panels::header
         :actions="$this->getCachedHeaderActions()"
         :breadcrumbs="filament()->hasBreadcrumbs() ? $this->getBreadcrumbs() : []"
         :heading=" trans('dashboard/index.heading')"
-        :subheading="trans('strings.version', ['version' => config('app.version')])"
+        :subheading="trans('strings.version', ['version' => $version])"
     ></x-filament-panels::header>
 
     <p>{{ trans('dashboard/index.expand_sections') }}</p>
+
+    @if (!$isLatest)
+        <x-filament::section
+            icon="tabler-info-circle"
+            icon-color="warning"
+            id="intro-update-available"
+            :header-actions="$updateActions"
+        >
+            <x-slot name="heading">{{ trans('dashboard/index.sections.intro-update-available.heading') }}</x-slot>
+
+            <p>{{ trans('dashboard/index.sections.intro-update-available.content', ['latestVersion' => $latestVersion]) }}</p>
+
+        </x-filament::section>
+    @else
+        <x-filament::section
+            icon="tabler-checkbox"
+            icon-color="success"
+            id="intro-no-update"
+        >
+            <x-slot name="heading">{{ trans('dashboard/index.sections.intro-no-update.heading') }}</x-slot>
+
+            <p>{{ trans('dashboard/index.sections.intro-no-update.content', ['version' => $version]) }}</p>
+        </x-filament::section>
+    @endif
+
 
     @if ($inDevelopment)
         <x-filament::section
@@ -21,11 +45,11 @@
         >
             <x-slot name="heading">{{ trans('dashboard/index.sections.intro-developers.heading') }}</x-slot>
 
-            <p>{{  trans('dashboard/index.sections.intro-developers.content') }}</p>
+            <p>{{ trans('dashboard/index.sections.intro-developers.content') }}</p>
 
             <p><br /></p>
 
-            <p>{{  trans('dashboard/index.sections.intro-developers.extra_note') }}</p>
+            <p>{{ trans('dashboard/index.sections.intro-developers.extra_note') }}</p>
 
         </x-filament::section>
     @endif
@@ -42,13 +66,12 @@
         >
             <x-slot name="heading">{{ trans('dashboard/index.sections.intro-first-node.heading') }}</x-slot>
 
-            <p>{{  trans('dashboard/index.sections.intro-first-node.content') }}</p>
+            <p>{{ trans('dashboard/index.sections.intro-first-node.content') }}</p>
 
         </x-filament::section>
     @endif
 
     {{-- No Nodes Active --}}
-
 
     <x-filament::section
         icon="tabler-heart-filled"
@@ -60,15 +83,13 @@
     >
         <x-slot name="heading">{{ trans('dashboard/index.sections.intro-support.heading') }}</x-slot>
 
-        <p>{{  trans('dashboard/index.sections.intro-support.content') }}</p>
+        <p>{{ trans('dashboard/index.sections.intro-support.content') }}</p>
 
         <p><br /></p>
 
-        <p>{{  trans('dashboard/index.sections.intro-support.extra_note') }}</p>
+        <p>{{ trans('dashboard/index.sections.intro-support.extra_note') }}</p>
 
     </x-filament::section>
-
-
 
     <x-filament::section
         icon="tabler-question-mark"
@@ -87,7 +108,4 @@
         </p>
 
     </x-filament::section>
-
-    <div>
-    </div>
 </x-filament-panels::page>

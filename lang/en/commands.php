@@ -37,9 +37,9 @@ return [
         'upload_size' => "'Enter the maximum filesize upload",
         'daemonListen' => 'Enter the daemon listening port',
         'daemonSFTP' => 'Enter the daemon SFTP listening port',
+        'daemonSFTPAlias' => 'Enter the daemon SFTP alias (can be empty)',
         'daemonBase' => 'Enter the base folder',
-        'succes1' => 'Successfully created a new node with the name: ',
-        'succes2' => 'and has an id of: ',
+        'success' => 'Successfully created a new node with the name :name and has an id of :id',
     ],
     'node_config' => [
         'error_not_exist' => 'The selected node does not exist.',

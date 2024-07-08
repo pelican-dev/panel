@@ -94,7 +94,7 @@ class DaemonAuthenticateTest extends MiddlewareTestCase
     public function testSuccessfulMiddlewareProcess(): void
     {
         $node = Node::factory()->create();
-        $node->daemon_token = encrypt('the_same');
+        $node->daemon_token = 'the_same';
         $node->save();
 
         $this->request->expects('route->getName')->withNoArgs()->andReturn('random.route');

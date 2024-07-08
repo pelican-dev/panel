@@ -24,20 +24,21 @@ class HostUpdateService
      *
      * @throws \Throwable
      */
-    public function handle(int $hostId, array $data): DatabaseHost
+    public function handle(DatabaseHost|int $host, array $data): DatabaseHost
     {
-        if (!empty(array_get($data, 'password'))) {
-            $data['password'] = encrypt($data['password']);
-        } else {
+        if (!$host instanceof DatabaseHost) {
+            $host = DatabaseHost::query()->findOrFail($host);
+        }
+
+        if (empty(array_get($data, 'password'))) {
             unset($data['password']);
         }
 
-        return $this->connection->transaction(function () use ($data, $hostId) {
-            /** @var DatabaseHost $host */
-            $host = DatabaseHost::query()->findOrFail($hostId);
+        return $this->connection->transaction(function () use ($data, $host) {
             $host->update($data);
+
             $this->dynamic->set('dynamic', $host);
-            $this->databaseManager->connection('dynamic')->select('SELECT 1 FROM dual');
+            $this->databaseManager->connection('dynamic')->getPdo();
 
             return $host;
         });

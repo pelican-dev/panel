@@ -5,11 +5,10 @@ namespace App\Filament\Resources\ApiKeyResource\Pages;
 use App\Filament\Resources\ApiKeyResource;
 use App\Models\ApiKey;
 use Filament\Actions;
-use Filament\Resources\Components\Tab;
 use Filament\Resources\Pages\ListRecords;
+use Filament\Tables\Actions\DeleteAction;
+use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
-use Filament\Tables;
 
 class ListApiKeys extends ListRecords
 {
@@ -19,42 +18,39 @@ class ListApiKeys extends ListRecords
     {
         return $table
             ->searchable(false)
+            ->modifyQueryUsing(fn ($query) => $query->where('key_type', ApiKey::TYPE_APPLICATION))
             ->columns([
-                Tables\Columns\TextColumn::make('user.username')
-                    ->hidden()
-                    ->searchable()
-                    ->sortable(),
-
-                Tables\Columns\TextColumn::make('key')
+                TextColumn::make('key')
                     ->copyable()
                     ->icon('tabler-clipboard-text')
-                    ->state(fn (ApiKey $key) => $key->identifier . decrypt($key->token)),
+                    ->state(fn (ApiKey $key) => $key->identifier . $key->token),
 
-                Tables\Columns\TextColumn::make('memo')
+                TextColumn::make('memo')
                     ->label('Description')
                     ->wrap()
                     ->limit(50),
 
-                Tables\Columns\TextColumn::make('identifier')
+                TextColumn::make('identifier')
                     ->hidden()
                     ->searchable(),
 
-                Tables\Columns\TextColumn::make('last_used_at')
+                TextColumn::make('last_used_at')
                     ->label('Last Used')
+                    ->placeholder('Not Used')
                     ->dateTime()
                     ->sortable(),
 
-                Tables\Columns\TextColumn::make('created_at')
+                TextColumn::make('created_at')
                     ->label('Created')
                     ->dateTime()
                     ->sortable(),
-            ])
-            ->filters([
-                //
+
+                TextColumn::make('user.username')
+                    ->label('Created By')
+                    ->url(fn (ApiKey $apiKey): string => route('filament.admin.resources.users.edit', ['record' => $apiKey->user])),
             ])
             ->actions([
-                Tables\Actions\DeleteAction::make(),
-                //Tables\Actions\EditAction::make()
+                DeleteAction::make(),
             ]);
     }
 
@@ -63,23 +59,5 @@ class ListApiKeys extends ListRecords
         return [
             Actions\CreateAction::make(),
         ];
-    }
-
-    public function getTabs(): array
-    {
-        return [
-            'all' => Tab::make('All Keys'),
-            'application' => Tab::make('Application Keys')
-                ->modifyQueryUsing(fn (Builder $query) => $query->where('key_type', ApiKey::TYPE_APPLICATION)
-                ),
-            'account' => Tab::make('Account Keys')
-                ->modifyQueryUsing(fn (Builder $query) => $query->where('key_type', ApiKey::TYPE_ACCOUNT)
-                ),
-        ];
-    }
-
-    public function getDefaultActiveTab(): string|int|null
-    {
-        return 'application';
     }
 }

@@ -16,11 +16,11 @@
         "doctrine/dbal": "~3.6.0",
         "filament/filament": "^3.2",
         "guzzlehttp/guzzle": "^7.8.1",
-        "hashids/hashids": "~5.0.0",
         "laracasts/utilities": "~3.2.2",
         "laravel/framework": "^11.7",
         "laravel/helpers": "^1.7",
         "laravel/sanctum": "^4.0.2",
+        "laravel/socialite": "^5.14",
         "laravel/tinker": "^2.9",
         "laravel/ui": "^4.5.1",
         "lcobucci/jwt": "~4.3.0",
@@ -32,9 +32,12 @@
         "prologue/alerts": "^1.2",
         "ryangjchandler/blade-tabler-icons": "^2.3",
         "s1lentium/iptools": "~1.2.0",
+        "socialiteproviders/discord": "^4.2",
         "spatie/laravel-fractal": "^6.2",
         "spatie/laravel-query-builder": "^5.8.1",
-        "symfony/mailgun-mailer": "^7.0.7",
+        "spatie/temporary-directory": "^2.2",
+        "symfony/http-client": "^7.1",
+        "symfony/mailgun-mailer": "^7.1",
         "symfony/postmark-mailer": "^7.0.7",
         "symfony/yaml": "^7.0.7",
         "webbingbrasil/filament-copyactions": "^3.0.1",
@@ -43,7 +46,6 @@
     "require-dev": {
         "barryvdh/laravel-ide-helper": "^3.0",
         "fakerphp/faker": "^1.23.1",
-        "itsgoingd/clockwork": "~5.1.12",
         "larastan/larastan": "^2.9.6",
         "laravel/pint": "^1.15.3",
         "laravel/sail": "^1.29.1",
@@ -70,6 +72,7 @@
     "scripts": {
         "cs:fix": "php-cs-fixer fix",
         "cs:check": "php-cs-fixer fix --dry-run --diff --verbose",
+        "phpstan": "phpstan --memory-limit=-1",
         "post-autoload-dump": [
             "Illuminate\\Foundation\\ComposerScripts::postAutoloadDump"
         ],

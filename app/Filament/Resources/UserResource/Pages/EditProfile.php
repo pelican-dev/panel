@@ -2,15 +2,18 @@
 
 namespace App\Filament\Resources\UserResource\Pages;
 
+use App\Exceptions\Service\User\TwoFactorAuthenticationTokenInvalid;
 use App\Facades\Activity;
 use App\Models\ActivityLog;
 use App\Models\ApiKey;
 use App\Models\User;
+use App\Services\Users\ToggleTwoFactorService;
 use App\Services\Users\TwoFactorSetupService;
 use chillerlan\QRCode\Common\EccLevel;
 use chillerlan\QRCode\Common\Version;
 use chillerlan\QRCode\QRCode;
 use chillerlan\QRCode\QROptions;
+use DateTimeZone;
 use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\Placeholder;
@@ -20,13 +23,18 @@ use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Tabs;
 use Filament\Forms\Components\TagsInput;
 use Filament\Forms\Components\Tabs\Tab;
+use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Get;
+use Filament\Notifications\Notification;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\HtmlString;
 use Illuminate\Validation\Rules\Password;
 
+/**
+ * @method User getUser()
+ */
 class EditProfile extends \Filament\Pages\Auth\EditProfile
 {
     protected function getForms(): array
@@ -45,7 +53,7 @@ class EditProfile extends \Filament\Pages\Auth\EditProfile
                                             ->label(trans('strings.username'))
                                             ->disabled()
                                             ->readOnly()
-                                            ->maxLength(191)
+                                            ->maxLength(255)
                                             ->unique(ignoreRecord: true)
                                             ->autofocus(),
 
@@ -54,7 +62,7 @@ class EditProfile extends \Filament\Pages\Auth\EditProfile
                                             ->label(trans('strings.email'))
                                             ->email()
                                             ->required()
-                                            ->maxLength(191)
+                                            ->maxLength(255)
                                             ->unique(ignoreRecord: true),
 
                                         TextInput::make('password')
@@ -78,6 +86,12 @@ class EditProfile extends \Filament\Pages\Auth\EditProfile
                                             ->visible(fn (Get $get): bool => filled($get('password')))
                                             ->dehydrated(false),
 
+                                        Select::make('timezone')
+                                            ->required()
+                                            ->prefixIcon('tabler-clock-pin')
+                                            ->options(fn () => collect(DateTimeZone::listIdentifiers())->mapWithKeys(fn ($tz) => [$tz => $tz]))
+                                            ->searchable(),
+
                                         Select::make('language')
                                             ->label(trans('strings.language'))
                                             ->required()
@@ -99,15 +113,31 @@ class EditProfile extends \Filament\Pages\Auth\EditProfile
 
                                         if ($this->getUser()->use_totp) {
                                             return [
-                                                Placeholder::make('2FA already enabled!'),
+                                                Placeholder::make('2fa-already-enabled')
+                                                    ->label('Two Factor Authentication is currently enabled!'),
+                                                Textarea::make('backup-tokens')
+                                                    ->hidden(fn () => !cache()->get("users.{$this->getUser()->id}.2fa.tokens"))
+                                                    ->rows(10)
+                                                    ->readOnly()
+                                                    ->formatStateUsing(fn () => cache()->get("users.{$this->getUser()->id}.2fa.tokens"))
+                                                    ->helperText('These will not be shown again!')
+                                                    ->label('Backup Tokens:'),
+                                                TextInput::make('2fa-disable-code')
+                                                    ->label('Disable 2FA')
+                                                    ->helperText('Enter your current 2FA code to disable Two Factor Authentication'),
                                             ];
                                         }
+                                        /** @var TwoFactorSetupService */
                                         $setupService = app(TwoFactorSetupService::class);
 
-                                        ['image_url_data' => $url] = $setupService->handle($this->getUser());
+                                        ['image_url_data' => $url, 'secret' => $secret] = cache()->remember(
+                                            "users.{$this->getUser()->id}.2fa.state",
+                                            now()->addMinutes(5), fn () => $setupService->handle($this->getUser())
+                                        );
 
                                         $options = new QROptions([
                                             'svgLogo' => public_path('pelican.svg'),
+                                            'svgLogoScale' => 0.05,
                                             'addLogoSpace' => true,
                                             'logoSpaceWidth' => 13,
                                             'logoSpaceHeight' => 13,
@@ -115,22 +145,24 @@ class EditProfile extends \Filament\Pages\Auth\EditProfile
 
                                         // https://github.com/chillerlan/php-qrcode/blob/main/examples/svgWithLogo.php
 
-                                        // SVG logo options (see extended class)
-                                        $options->svgLogo = public_path('pelican.svg'); // logo from: https://github.com/simple-icons/simple-icons
-                                        $options->svgLogoScale = 0.05;
-                                        // $options->svgLogoCssClass     = 'dark';
-
                                         // QROptions
+                                        // @phpstan-ignore property.protected
                                         $options->version = Version::AUTO;
                                         // $options->outputInterface     = QRSvgWithLogo::class;
+                                        // @phpstan-ignore property.protected
                                         $options->outputBase64 = false;
+                                        // @phpstan-ignore property.protected
                                         $options->eccLevel = EccLevel::H; // ECC level H is necessary when using logos
+                                        // @phpstan-ignore property.protected
                                         $options->addQuietzone = true;
                                         // $options->drawLightModules    = true;
+                                        // @phpstan-ignore property.protected
                                         $options->connectPaths = true;
+                                        // @phpstan-ignore property.protected
                                         $options->drawCircularModules = true;
                                         // $options->circleRadius        = 0.45;
 
+                                        // @phpstan-ignore property.protected
                                         $options->svgDefs = '<linearGradient id="gradient" x1="100%" y2="100%">
                                             <stop stop-color="#7dd4fc" offset="0"/>
                                             <stop stop-color="#38bdf8" offset="0.5"/>
@@ -147,9 +179,19 @@ class EditProfile extends \Filament\Pages\Auth\EditProfile
                                             Placeholder::make('qr')
                                                 ->label('Scan QR Code')
                                                 ->content(fn () => new HtmlString("
-                                                <div style='width: 300px'>$image</div>
+                                                <div style='width: 300px; background-color: rgb(24, 24, 27);'>$image</div>
                                             "))
-                                                ->default('asdfasdf'),
+                                                ->helperText('Setup Key: '. $secret),
+                                            TextInput::make('2facode')
+                                                ->label('Code')
+                                                ->requiredWith('2fapassword')
+                                                ->helperText('Scan the QR code above using your two-step authentication app, then enter the code generated.'),
+                                            TextInput::make('2fapassword')
+                                                ->label('Current Password')
+                                                ->requiredWith('2facode')
+                                                ->currentPassword()
+                                                ->password()
+                                                ->helperText('Enter your current password to verify.'),
                                         ];
                                     }),
 
@@ -158,8 +200,12 @@ class EditProfile extends \Filament\Pages\Auth\EditProfile
                                     ->schema([
                                         Grid::make('asdf')->columns(5)->schema([
                                             Section::make('Create API Key')->columnSpan(3)->schema([
-                                                TextInput::make('description'),
+
+                                                TextInput::make('description')
+                                                    ->live(),
+
                                                 TagsInput::make('allowed_ips')
+                                                    ->live()
                                                     ->splitKeys([',', ' ', 'Tab'])
                                                     ->placeholder('Example: 127.0.0.1 or 192.168.1.1')
                                                     ->label('Whitelisted IP\'s')
@@ -167,9 +213,10 @@ class EditProfile extends \Filament\Pages\Auth\EditProfile
                                                     ->columnSpanFull(),
                                             ])->headerActions([
                                                 Action::make('Create')
+                                                    ->disabled(fn (Get $get) => $get('description') === null)
                                                     ->successRedirectUrl(route('filament.admin.auth.profile', ['tab' => '-api-keys-tab']))
-                                                    ->action(function (Get $get, Action $action) {
-                                                        $token = auth()->user()->createToken(
+                                                    ->action(function (Get $get, Action $action, User $user) {
+                                                        $token = $user->createToken(
                                                             $get('description'),
                                                             $get('allowed_ips'),
                                                         );
@@ -182,8 +229,9 @@ class EditProfile extends \Filament\Pages\Auth\EditProfile
                                                         $action->success();
                                                     }),
                                             ]),
-                                            Section::make('API Keys')->columnSpan(2)->schema([
+                                            Section::make('Keys')->columnSpan(2)->schema([
                                                 Repeater::make('keys')
+                                                    ->label('')
                                                     ->relationship('apiKeys')
                                                     ->addable(false)
                                                     ->itemLabel(fn ($state) => $state['identifier'])
@@ -234,5 +282,44 @@ class EditProfile extends \Filament\Pages\Auth\EditProfile
                     ->inlineLabel(!static::isSimple()),
             ),
         ];
+    }
+
+    protected function handleRecordUpdate($record, $data): \Illuminate\Database\Eloquent\Model
+    {
+        if ($token = $data['2facode'] ?? null) {
+            /** @var ToggleTwoFactorService $service */
+            $service = resolve(ToggleTwoFactorService::class);
+
+            $tokens = $service->handle($record, $token, true);
+            cache()->set("users.$record->id.2fa.tokens", implode("\n", $tokens), now()->addSeconds(15));
+
+            $this->redirectRoute('filament.admin.auth.profile', ['tab' => '-2fa-tab']);
+        }
+
+        if ($token = $data['2fa-disable-code'] ?? null) {
+            /** @var ToggleTwoFactorService $service */
+            $service = resolve(ToggleTwoFactorService::class);
+
+            $service->handle($record, $token, false);
+
+            cache()->forget("users.$record->id.2fa.state");
+        }
+
+        return parent::handleRecordUpdate($record, $data);
+    }
+
+    public function exception($e, $stopPropagation): void
+    {
+        if ($e instanceof TwoFactorAuthenticationTokenInvalid) {
+            Notification::make()
+                ->title('Invalid 2FA Code')
+                ->body($e->getMessage())
+                ->color('danger')
+                ->icon('tabler-2fa')
+                ->danger()
+                ->send();
+
+            $stopPropagation();
+        }
     }
 }

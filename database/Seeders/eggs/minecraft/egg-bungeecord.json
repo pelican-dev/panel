@@ -2,11 +2,12 @@
     "_comment": "DO NOT EDIT: FILE GENERATED AUTOMATICALLY BY PANEL",
     "meta": {
         "version": "PTDL_v2",
-        "update_url": null
+        "update_url": "https:\/\/github.com\/pelican-dev\/panel\/raw\/main\/database\/Seeders\/eggs\/minecraft\/egg-bungeecord.json"
     },
-    "exported_at": "2024-05-08T11:47:32+02:00",
+    "exported_at": "2024-07-03T14:33:51+00:00",
     "name": "Bungeecord",
     "author": "panel@example.com",
+    "uuid": "9e6b409e-4028-4947-aea8-50a2c404c271",
     "description": "For a long time, Minecraft server owners have had a dream that encompasses a free, easy, and reliable way to connect multiple Minecraft servers together. BungeeCord is the answer to said dream. Whether you are a small server wishing to string multiple game-modes together, or the owner of the ShotBow Network, BungeeCord is the ideal solution for you. With the help of BungeeCord, you will be able to unlock your community's full potential.",
     "features": [
         "eula",
@@ -23,7 +24,7 @@
     "file_denylist": [],
     "startup": "java -Xms128M -XX:MaxRAMPercentage=95.0 -jar {{SERVER_JARFILE}}",
     "config": {
-        "files": "{\r\n    \"config.yml\": {\r\n        \"parser\": \"yaml\",\r\n        \"find\": {\r\n            \"listeners[0].query_port\": \"{{server.build.default.port}}\",\r\n            \"listeners[0].host\": \"0.0.0.0:{{server.build.default.port}}\",\r\n            \"servers.*.address\": {\r\n                \"regex:^(127\\\\.0\\\\.0\\\\.1|localhost)(:\\\\d{1,5})?$\": \"{{config.docker.interface}}$2\"\r\n            }\r\n        }\r\n    }\r\n}",
+        "files": "{\r\n    \"config.yml\": {\r\n        \"parser\": \"yaml\",\r\n        \"find\": {\r\n            \"listeners[0].query_port\": \"{{server.allocations.default.port}}\",\r\n            \"listeners[0].host\": \"0.0.0.0:{{server.allocations.default.port}}\",\r\n            \"servers.*.address\": {\r\n                \"regex:^(127\\\\.0\\\\.0\\\\.1|localhost)(:\\\\d{1,5})?$\": \"{{config.docker.interface}}$2\"\r\n            }\r\n        }\r\n    }\r\n}",
         "startup": "{\r\n    \"done\": \"Listening on \"\r\n}",
         "logs": "{}",
         "stop": "end"
@@ -44,6 +45,7 @@
             "user_viewable": true,
             "user_editable": true,
             "rules": "required|alpha_num|between:1,6",
+            "sort": null,
             "field_type": "text"
         },
         {
@@ -54,6 +56,7 @@
             "user_viewable": true,
             "user_editable": true,
             "rules": "required|regex:\/^([\\w\\d._-]+)(\\.jar)$\/",
+            "sort": null,
             "field_type": "text"
         }
     ]

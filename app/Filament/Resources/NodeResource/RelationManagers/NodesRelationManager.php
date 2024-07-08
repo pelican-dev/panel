@@ -3,7 +3,8 @@
 namespace App\Filament\Resources\NodeResource\RelationManagers;
 
 use App\Models\Server;
-use Filament\Tables;
+use Filament\Tables\Columns\SelectColumn;
+use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Filament\Resources\RelationManagers\RelationManager;
 
@@ -18,34 +19,34 @@ class NodesRelationManager extends RelationManager
         return $table
             ->searchable(false)
             ->columns([
-                Tables\Columns\TextColumn::make('user.username')
+                TextColumn::make('user.username')
                     ->label('Owner')
                     ->icon('tabler-user')
                     ->url(fn (Server $server): string => route('filament.admin.resources.users.edit', ['record' => $server->user]))
                     ->searchable(),
-                Tables\Columns\TextColumn::make('name')
+                TextColumn::make('name')
                     ->icon('tabler-brand-docker')
                     ->url(fn (Server $server): string => route('filament.admin.resources.servers.edit', ['record' => $server]))
                     ->searchable()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('egg.name')
+                TextColumn::make('egg.name')
                     ->icon('tabler-egg')
                     ->url(fn (Server $server): string => route('filament.admin.resources.eggs.edit', ['record' => $server->user]))
                     ->sortable(),
-                Tables\Columns\SelectColumn::make('allocation.id')
+                SelectColumn::make('allocation.id')
                     ->label('Primary Allocation')
-                    ->options(fn ($state, Server $server) => [$server->allocation->id => $server->allocation->address])
+                    ->options(fn (Server $server) => [$server->allocation->id => $server->allocation->address])
                     ->selectablePlaceholder(false)
                     ->sortable(),
-                Tables\Columns\TextColumn::make('memory')->icon('tabler-device-desktop-analytics'),
-                Tables\Columns\TextColumn::make('cpu')->icon('tabler-cpu'),
-                Tables\Columns\TextColumn::make('databases_count')
+                TextColumn::make('memory')->icon('tabler-device-desktop-analytics'),
+                TextColumn::make('cpu')->icon('tabler-cpu'),
+                TextColumn::make('databases_count')
                     ->counts('databases')
                     ->label('Databases')
                     ->icon('tabler-database')
                     ->numeric()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('backups_count')
+                TextColumn::make('backups_count')
                     ->counts('backups')
                     ->label('Backups')
                     ->icon('tabler-file-download')

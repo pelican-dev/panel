@@ -8,9 +8,9 @@ use Illuminate\Auth\AuthManager;
 use Illuminate\Http\JsonResponse;
 use App\Facades\Activity;
 use App\Services\Users\UserUpdateService;
-use App\Transformers\Api\Client\AccountTransformer;
 use App\Http\Requests\Api\Client\Account\UpdateEmailRequest;
 use App\Http\Requests\Api\Client\Account\UpdatePasswordRequest;
+use App\Transformers\Api\Client\UserTransformer;
 
 class AccountController extends ClientApiController
 {
@@ -25,7 +25,7 @@ class AccountController extends ClientApiController
     public function index(Request $request): array
     {
         return $this->fractal->item($request->user())
-            ->transformWith($this->getTransformer(AccountTransformer::class))
+            ->transformWith($this->getTransformer(UserTransformer::class))
             ->toArray();
     }
 

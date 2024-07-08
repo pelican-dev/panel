@@ -40,7 +40,7 @@ class ServerConfigurationStructureService
      */
     protected function returnFormat(Server $server): array
     {
-        return [
+        $response = [
             'uuid' => $server->uuid,
             'meta' => [
                 'name' => $server->name,
@@ -51,18 +51,17 @@ class ServerConfigurationStructureService
             'invocation' => $server->startup,
             'skip_egg_scripts' => $server->skip_scripts,
             'build' => [
-                'memory_limit' => $server->memory,
-                'swap' => $server->swap,
+                'memory_limit' => config('panel.use_binary_prefix') ? $server->memory : $server->memory / 1.048576,
+                'swap' => config('panel.use_binary_prefix') ? $server->swap : $server->swap / 1.048576,
                 'io_weight' => $server->io,
                 'cpu_limit' => $server->cpu,
                 'threads' => $server->threads,
-                'disk_space' => $server->disk,
+                'disk_space' => config('panel.use_binary_prefix') ? $server->disk : $server->disk / 1.048576,
                 'oom_killer' => $server->oom_killer,
             ],
             'container' => [
                 'image' => $server->image,
                 'requires_rebuild' => false,
-                'labels' => $server->docker_labels,
             ],
             'allocations' => [
                 'force_outgoing_ip' => $server->egg->force_outgoing_ip,
@@ -72,17 +71,27 @@ class ServerConfigurationStructureService
                 ],
                 'mappings' => $server->getAllocationMappings(),
             ],
-            'mounts' => $server->mounts->map(function (Mount $mount) {
-                return [
-                    'source' => $mount->source,
-                    'target' => $mount->target,
-                    'read_only' => $mount->read_only,
-                ];
-            }),
             'egg' => [
                 'id' => $server->egg->uuid,
                 'file_denylist' => $server->egg->inherit_file_denylist,
             ],
         ];
+
+        if (!empty($server->docker_labels)) {
+            $response['labels'] = $server->docker_labels;
+        }
+
+        if ($server->mounts->isNotEmpty()) {
+            $response['mounts'] = $server->mounts->map(function (Mount $mount) {
+                return [
+                    'source' => $mount->source,
+                    'target' => $mount->target,
+                    'read_only' => $mount->read_only,
+                ];
+            })->toArray();
+        }
+
+        return $response;
     }
+
 }
