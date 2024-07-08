@@ -140,6 +140,10 @@ class ActivityLog extends Model
     {
         parent::boot();
 
+        static::creating(function (self $model) {
+            $model->timestamp = Carbon::now()->toDateTimeString();
+        });
+
         static::created(function (self $model) {
             Event::dispatch(new ActivityLogged($model));
         });
