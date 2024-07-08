@@ -90,7 +90,7 @@ class AppServiceProvider extends ServiceProvider
         });
 
         Health::checks([
-            DebugModeCheck::new(),
+            DebugModeCheck::new()->unless(app()->environment('local')),
             EnvironmentCheck::new(),
             CacheCheck::new(),
             DatabaseCheck::new(),
