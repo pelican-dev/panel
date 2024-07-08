@@ -31,7 +31,7 @@ class NodeVersionsCheck extends Check
             ->shortSummary($outdated === 0 ? 'All up-to-date' : "{$outdated} outdated");
 
         return $outdated === 0
-            ? $result->ok('All Nodes are up-to-date')
+            ? $result->ok("All `{$all}` Nodes are up-to-date")
             : $result->failed("`{$outdated}`/`{$all}` Nodes are outdated");
     }
 }
