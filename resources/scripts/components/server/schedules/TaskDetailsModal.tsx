@@ -34,7 +34,7 @@ interface Values {
 }
 
 const schema = object().shape({
-    action: string().required().oneOf(['command', 'power', 'backup']),
+    action: string().required().oneOf(['command', 'power', 'backup', 'delete_files']),
     payload: string().when('action', {
         is: (v) => v !== 'backup',
         then: string().required('A task payload must be provided.'),
@@ -131,6 +131,7 @@ const TaskDetailsModal = ({ schedule, task }: Props) => {
                                     <option value={'command'}>Send command</option>
                                     <option value={'power'}>Send power action</option>
                                     <option value={'backup'}>Create backup</option>
+                                    <option value={'delete_files'}>Delete files</option>
                                 </FormikField>
                             </FormikFieldWrapper>
                         </div>
@@ -166,7 +167,7 @@ const TaskDetailsModal = ({ schedule, task }: Props) => {
                                     </FormikField>
                                 </FormikFieldWrapper>
                             </div>
-                        ) : (
+                        ) : values.action === 'backup' ? (
                             <div>
                                 <Label>Ignored Files</Label>
                                 <FormikFieldWrapper
@@ -175,6 +176,13 @@ const TaskDetailsModal = ({ schedule, task }: Props) => {
                                         'Optional. Include the files and folders to be excluded in this backup. By default, the contents of your .pelicanignore file will be used. If you have reached your backup limit, the oldest backup will be rotated.'
                                     }
                                 >
+                                    <FormikField as={Textarea} name={'payload'} rows={6} />
+                                </FormikFieldWrapper>
+                            </div>
+                        ) : (
+                            <div>
+                                <Label>Files to Delete</Label>
+                                <FormikFieldWrapper name={'payload'}>
                                     <FormikField as={Textarea} name={'payload'} rows={6} />
                                 </FormikFieldWrapper>
                             </div>
