@@ -18,7 +18,7 @@ class NodeVersionsCheck extends Check
 
         $nodes = Node::query()->get();
         foreach ($nodes as $node) {
-            if ($node->systemInformation()['version'] === $latestVersion) {
+            if ($node->systemInformation()['version'] !== $latestVersion) {
                 $outdated++;
             }
         }
