@@ -3,13 +3,12 @@
 namespace App\Http\Middleware;
 
 use Illuminate\Http\Request;
-use Illuminate\Foundation\Application;
 
 class ProxyHandler
 {
     /**
-     * Handle an incoming request and set the request IP to X-Forwarded-For if exists.
-    */
+     * Handle an incoming request and set the request IP to X-Forwarded-For if it exists.
+     */
     public function handle(Request $request, \Closure $next)
     {
         if ($request->hasHeader('X-Forwarded-For')) {
