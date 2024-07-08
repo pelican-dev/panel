@@ -24,10 +24,6 @@ class EventServiceProvider extends ServiceProvider
         ServerInstalledEvent::class => [ServerInstalledNotification::class],
     ];
 
-    protected $subscribe = [
-        AuthenticationListener::class,
-    ];
-
     /**
      * Register any events for your application.
      */
