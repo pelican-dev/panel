@@ -12,16 +12,11 @@ class NodeVersionsCheck extends Check
     public function run(): Result
     {
         $all = Node::query()->count();
-        $outdated = 0;
-
         $latestVersion = app(SoftwareVersionService::class)->getDaemon();
 
-        $nodes = Node::query()->get();
-        foreach ($nodes as $node) {
-            if ($node->systemInformation()['version'] !== $latestVersion) {
-                $outdated++;
-            }
-        }
+         $outdated = Node::query()->get()
+            ->filter(fn (Node $node) => !isset($node->systemInformation()['exception']) && $node->systemInformation()['version'] !== $latestVersion)
+            ->count();
 
         $result = Result::make()
             ->meta([
