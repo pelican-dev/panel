@@ -14,7 +14,7 @@ return [
             'keep_history_for_days' => 5,
         ],
         */
-        
+
         Spatie\Health\ResultStores\CacheHealthResultStore::class => [
             'store' => 'file',
         ],
