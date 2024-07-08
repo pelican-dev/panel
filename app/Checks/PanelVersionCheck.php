@@ -23,7 +23,7 @@ class PanelVersionCheck extends Check
                 'currentVersion' => $currentVersion,
                 'latestVersion' => $latestVersion,
             ])
-            ->shortSummary($isLatest);
+            ->shortSummary($isLatest ? 'up-to-date' : 'outdated');
 
         return $isLatest
             ? $result->ok('Panel is up-to-date')
