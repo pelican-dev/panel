@@ -5,7 +5,6 @@ namespace App\Listeners\Auth;
 use App\Facades\Activity;
 use Illuminate\Auth\Events\Failed;
 use App\Events\Auth\DirectLogin;
-use Illuminate\Events\Dispatcher;
 
 class AuthenticationListener
 {
