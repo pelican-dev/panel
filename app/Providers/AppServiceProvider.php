@@ -90,16 +90,19 @@ class AppServiceProvider extends ServiceProvider
             $event->extendSocialite('discord', \SocialiteProviders\Discord\Provider::class);
         });
 
-        Health::checks([
-            DebugModeCheck::new()->unless(app()->environment('local')),
-            EnvironmentCheck::new(),
-            CacheCheck::new(),
-            DatabaseCheck::new(),
-            ScheduleCheck::new(),
-            UsedDiskSpaceCheck::new(),
-            PanelVersionCheck::new(),
-            NodeVersionsCheck::new()->unless(Node::query()->count() === 0),
-        ]);
+        // Don't run any health checks during tests
+        if (config('app.env') !== 'testing') {
+            Health::checks([
+                DebugModeCheck::new()->unless(app()->environment('local')),
+                EnvironmentCheck::new(),
+                CacheCheck::new(),
+                DatabaseCheck::new(),
+                ScheduleCheck::new(),
+                UsedDiskSpaceCheck::new(),
+                PanelVersionCheck::new(),
+                NodeVersionsCheck::new()->unless(Node::query()->count() === 0),
+            ]);
+        }
     }
 
     /**
