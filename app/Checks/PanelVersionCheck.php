@@ -10,7 +10,7 @@ class PanelVersionCheck extends Check
 {
     public function run(): Result
     {
-        /** @var SoftwareVersionServivce $versionService */
+        /** @var SoftwareVersionService $versionService */
         $versionService = app(SoftwareVersionService::class);
 
         $isLatest = $versionService->isLatestPanel();
