@@ -6,12 +6,21 @@ use App\Models\Node;
 use App\Services\Helpers\SoftwareVersionService;
 use Spatie\Health\Checks\Check;
 use Spatie\Health\Checks\Result;
+use Spatie\Health\Enums\Status;
 
 class NodeVersionsCheck extends Check
 {
     public function run(): Result
     {
         $all = Node::query()->count();
+
+        if ($all === 0) {
+            $result = Result::make()->notificationMessage('No Nodes created')->shortSummary('No Nodes');
+            $result->status = Status::skipped();
+
+            return $result;
+        }
+
         $latestVersion = app(SoftwareVersionService::class)->getDaemon();
 
         $outdated = Node::query()->get()
@@ -23,10 +32,10 @@ class NodeVersionsCheck extends Check
                 'all' => $all,
                 'outdated' => $outdated,
             ])
-            ->shortSummary($outdated === 0 ? 'All up-to-date' : "{$outdated} outdated");
+            ->shortSummary($outdated === 0 ? 'All up-to-date' : "{$outdated}/{$all} outdated");
 
         return $outdated === 0
-            ? $result->ok("All `{$all}` Nodes are up-to-date")
+            ? $result->ok('All Nodes are up-to-date')
             : $result->failed("`{$outdated}`/`{$all}` Nodes are outdated");
     }
 }
