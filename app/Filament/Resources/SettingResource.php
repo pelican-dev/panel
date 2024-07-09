@@ -7,12 +7,14 @@ use App\Models\Setting;
 use Filament\Resources\Resource;
 use Filament\Tables\Table;
 use Filament\Tables\Columns\TextColumn;
-use Filament\Forms\Components\TextInput;
-use Filament\Forms\Components\ToggleButtons;
-use Filament\Tables\Actions\EditAction;
+use Filament\Tables\Columns\TextInputColumn;
+use Illuminate\Support\Facades\Config;
+use App\Traits\Commands\EnvironmentWriterTrait;
 
 class SettingResource extends Resource
 {
+    use EnvironmentWriterTrait;
+
     protected static ?string $model = Setting::class;
 
     protected static ?string $navigationIcon = 'tabler-settings';
@@ -32,8 +34,6 @@ class SettingResource extends Resource
             ->paginated(false)
             ->searchable(false)
             ->striped(false)
-            ->recordUrl(null)
-            ->recordAction(EditAction::class)
             ->columns([
                 TextColumn::make('label')
                     ->label('Setting')
@@ -41,59 +41,14 @@ class SettingResource extends Resource
                     ->searchable()
                     ->tooltip(fn ($record) => $record->description ?? 'No description available'),
 
-                TextColumn::make('value')
+                TextInputColumn::make('value')
                     ->label('Value')
                     ->default(fn (Setting $setting) => config($setting->config))
                     ->sortable()
-                    ->searchable(),
-            ])
-            ->actions([
-                EditAction::make()
-                    ->using(function (Setting $setting, array $data): Setting {
-                        $setting->writeToEnvironment([$setting->key => $data['value']]);
-
-                        return $setting;
-                    })
-                    ->form(function (Setting $setting) {
-                        return match ($setting->type) {
-                            'number' => [
-                                TextInput::make('value')
-                                    ->label($setting->label)
-                                    ->placeholder($setting->description)
-                                    ->type('number'),
-                            ],
-                            'limit' => [
-                                TextInput::make('value')
-                                    ->label($setting->label)
-                                    ->maxLength($setting->limit)
-                                    ->placeholder($setting->description),
-                            ],
-                            'password' => [
-                                TextInput::make('value')
-                                    ->label($setting->label)
-                                    ->password()
-                                    ->revealable()
-                                    ->placeholder($setting->description),
-                            ],
-                            'toggle-buttons' => [
-                                ToggleButtons::make('value')
-                                    ->inline(true)
-                                    ->label($setting->label)
-                                    ->options([
-                                        'true' => 'True',
-                                        'false' => 'False',
-                                    ])
-                                    ->colors([
-                                        'false' => 'danger',
-                                        'true' => 'success',
-                                    ]),
-                            ],
-                            default => [
-                                TextInput::make('value')
-                                    ->label($setting->label)
-                                    ->placeholder($setting->description),
-                            ],
-                        };
+                    ->searchable()
+                    ->afterStateUpdated(function (Setting $setting, $state) {
+                        $setting->value = $state;
+                        $setting->writeToEnvironment([$setting->key => $state]);
                     }),
             ]);
     }
