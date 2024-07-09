@@ -8,7 +8,6 @@ use Filament\Resources\Resource;
 use Filament\Tables\Table;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Columns\TextInputColumn;
-use Illuminate\Support\Facades\Config;
 use App\Traits\Commands\EnvironmentWriterTrait;
 
 class SettingResource extends Resource
