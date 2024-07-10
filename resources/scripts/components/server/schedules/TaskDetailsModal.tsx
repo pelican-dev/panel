@@ -182,13 +182,11 @@ const TaskDetailsModal = ({ schedule, task }: Props) => {
                         ) : (
                             <div>
                                 <Label>Files to Delete</Label>
-                                <FormikFieldWrapper name={'payload'}>
-                                    <FormikField
-                                        as={Textarea}
-                                        name={'payload'}
-                                        description={'Specify the files that will be deleted. (Whitelist)'}
-                                        rows={6}
-                                    />
+                                <FormikFieldWrapper
+                                    name={'payload'}
+                                    description={'Specify the files that will be deleted. (Whitelist)'}
+                                >
+                                    <FormikField as={Textarea} name={'payload'} rows={6} />
                                 </FormikFieldWrapper>
                             </div>
                         )}
