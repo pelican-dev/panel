@@ -91,9 +91,9 @@ class AppServiceProvider extends ServiceProvider
         });
 
         // Don't run any health checks during tests
-        if (config('app.env') !== 'testing') {
+        if (!app()->runningUnitTests()) {
             Health::checks([
-                DebugModeCheck::new()->unless(app()->environment('local')),
+                DebugModeCheck::new()->if(app()->isProduction()),
                 EnvironmentCheck::new(),
                 CacheCheck::new(),
                 DatabaseCheck::new(),
