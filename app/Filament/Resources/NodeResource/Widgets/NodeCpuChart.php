@@ -24,7 +24,7 @@ class NodeCpuChart extends ChartWidget
             ->slice(-10)
             ->map(fn ($value, $key) => [
                 'cpu' => $value,
-                'timestamp' => Carbon::createFromTimestamp($key)->format('H:i:s'),
+                'timestamp' => Carbon::createFromTimestamp($key, (auth()->user()->timezone ?? 'UTC'))->format('H:i:s'),
             ])
             ->all();
 

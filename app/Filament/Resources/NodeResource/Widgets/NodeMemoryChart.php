@@ -22,8 +22,8 @@ class NodeMemoryChart extends ChartWidget
 
         $memUsed = collect(cache()->get("nodes.$node->id.memory_used"))->slice(-10)
             ->map(fn ($value, $key) => [
-                'memory' => $value / 1024 / 1024 / 1024,
-                'timestamp' => Carbon::createFromTimestamp($key)->format('H:i:s'),
+                'memory' => config('panel.use_binary_prefix') ? $value / 1024 / 1024 / 1024 : $value / 1.048576,
+                'timestamp' => Carbon::createFromTimestamp($key, (auth()->user()->timezone ?? 'UTC'))->format('H:i:s'),
             ])
             ->all();
 
@@ -37,7 +37,6 @@ class NodeMemoryChart extends ChartWidget
                     'tension' => '0.3',
                     'fill' => true,
                     'label' => 'Memory Usage',
-                    'datalabels' => true,
                 ],
             ],
             'labels' => array_column($memUsed, 'timestamp'),
@@ -71,10 +70,17 @@ class NodeMemoryChart extends ChartWidget
     {
         /** @var Node $node */
         $node = $this->record;
-
         $latestMemoryUsed = collect(cache()->get("nodes.$node->id.memory_used"))->last();
         $totalMemory = collect(cache()->get("nodes.$node->id.memory_total"))->last();
 
-        return 'Memory - ' . number_format($latestMemoryUsed / 1024 / 1024 / 1024, 2) . ' GB of ' . number_format($totalMemory / 1024 / 1024 / 1024). ' GB';
+        $used = config('panel.use_binary_prefix')
+            ? number_format($latestMemoryUsed / 1024 / 1024 / 1024, 2) .' GiB'
+            : number_format($latestMemoryUsed / 1000 / 1000 / 1000, 2) . ' GB';
+
+        $total = config('panel.use_binary_prefix')
+            ? number_format($totalMemory / 1024 / 1024 / 1024, 2) .' GiB'
+            : number_format($totalMemory / 1000 / 1000 / 1000, 2) . ' GB';
+
+        return 'Memory - ' . $used . ' Of ' . $total;
     }
 }
