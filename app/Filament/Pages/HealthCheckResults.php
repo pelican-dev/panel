@@ -11,11 +11,7 @@ use Spatie\Health\ResultStores\ResultStore;
 class HealthCheckResults extends BaseHealthCheckResults
 {
     protected static ?string $slug = 'health';
-
-    public static function getNavigationGroup(): ?string
-    {
-        return 'Advanced';
-    }
+    protected static ?int $navigationSort = 4;
 
     protected function getViewData(): array
     {
@@ -31,5 +27,56 @@ class HealthCheckResults extends BaseHealthCheckResults
             'lastRanAt' => new Carbon($checkResults?->finishedAt),
             'checkResults' => $checkResults,
         ];
+    }
+
+    public static function getNavigationGroup(): ?string
+    {
+        return 'Advanced';
+    }
+
+    public static function getNavigationLabel(): string
+    {
+        return 'Panel Health';
+    }
+
+    public static function getNavigationBadge(): ?string
+    {
+        $results = json_decode(app(ResultStore::class)->latestResults()->toJson(), true);
+
+        $failed = array_reduce($results['checkResults'], function ($numFailed, $result) {
+            return $numFailed + ($result['status'] === 'failed' ? 1 : 0);
+        }, 0);
+
+        return $failed === 0 ? null : (string) $failed;
+    }
+
+    public static function getNavigationBadgeColor(): string
+    {
+        return self::getNavigationBadge() > null ? 'danger' : '';
+    }
+
+    public static function getNavigationBadgeTooltip(): ?string
+    {
+        $results = json_decode(app(ResultStore::class)->latestResults()->toJson(), true);
+
+        $failedNames = array_reduce($results['checkResults'], function ($carry, $result) {
+            if ($result['status'] === 'failed') {
+                $carry[] = $result['name'];
+            }
+
+            return $carry;
+        }, []);
+
+        return 'Failed: ' . implode(', ', $failedNames);
+    }
+
+    public static function getNavigationIcon(): string
+    {
+        return app(ResultStore::class)->latestResults()->containsFailingCheck() ? 'tabler-heart-exclamation' : 'tabler-heart-check';
+    }
+
+    public static function getSlug(): string
+    {
+        return 'health';
     }
 }
