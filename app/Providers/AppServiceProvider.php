@@ -4,6 +4,7 @@ namespace App\Providers;
 
 use App\Checks\NodeVersionsCheck;
 use App\Checks\PanelVersionCheck;
+use App\Checks\UsedDiskSpaceCheck;
 use App\Extensions\Themes\Theme;
 use App\Models;
 use App\Models\ApiKey;
@@ -28,7 +29,6 @@ use Spatie\Health\Checks\Checks\DatabaseCheck;
 use Spatie\Health\Checks\Checks\DebugModeCheck;
 use Spatie\Health\Checks\Checks\EnvironmentCheck;
 use Spatie\Health\Checks\Checks\ScheduleCheck;
-use Spatie\Health\Checks\Checks\UsedDiskSpaceCheck;
 use Spatie\Health\Facades\Health;
 
 class AppServiceProvider extends ServiceProvider
