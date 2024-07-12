@@ -111,6 +111,7 @@ class EditNode extends EditRecord
 
                             ToggleButtons::make('dns')
                                 ->label('DNS Record Check')
+                                ->live()
                                 ->helperText('This lets you know if your DNS record correctly points to an IP Address.')
                                 ->disabled()
                                 ->inline()
