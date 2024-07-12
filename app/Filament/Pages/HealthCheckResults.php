@@ -41,7 +41,13 @@ class HealthCheckResults extends BaseHealthCheckResults
 
     public static function getNavigationBadge(): ?string
     {
-        $results = json_decode(app(ResultStore::class)->latestResults()->toJson(), true);
+        $results = app(ResultStore::class)->latestResults();
+
+        if ($results === null) {
+            return null;
+        }
+
+        $results = json_decode($results->toJson(), true);
 
         $failed = array_reduce($results['checkResults'], function ($numFailed, $result) {
             return $numFailed + ($result['status'] === 'failed' ? 1 : 0);
@@ -57,7 +63,13 @@ class HealthCheckResults extends BaseHealthCheckResults
 
     public static function getNavigationBadgeTooltip(): ?string
     {
-        $results = json_decode(app(ResultStore::class)->latestResults()->toJson(), true);
+        $results = app(ResultStore::class)->latestResults();
+
+        if ($results === null) {
+            return null;
+        }
+
+        $results = json_decode($results->toJson(), true);
 
         $failedNames = array_reduce($results['checkResults'], function ($carry, $result) {
             if ($result['status'] === 'failed') {
@@ -72,7 +84,13 @@ class HealthCheckResults extends BaseHealthCheckResults
 
     public static function getNavigationIcon(): string
     {
-        return app(ResultStore::class)->latestResults()->containsFailingCheck() ? 'tabler-heart-exclamation' : 'tabler-heart-check';
+        $results = app(ResultStore::class)->latestResults();
+
+        if ($results === null) {
+            return 'tabler-heart-question';
+        }
+
+        return $results->containsFailingCheck() ? 'tabler-heart-exclamation' : 'tabler-heart-check';
     }
 
     public static function getSlug(): string
