@@ -22,7 +22,7 @@ class NodeMemoryChart extends ChartWidget
 
         $memUsed = collect(cache()->get("nodes.$node->id.memory_used"))->slice(-10)
             ->map(fn ($value, $key) => [
-                'memory' => config('panel.use_binary_prefix') ? $value / 1024 / 1024 / 1024 : $value / 1.048576,
+                'memory' => config('panel.use_binary_prefix') ? $value / 1024 / 1024 / 1024 : $value / 1000 / 1000 / 1000,
                 'timestamp' => Carbon::createFromTimestamp($key, (auth()->user()->timezone ?? 'UTC'))->format('H:i:s'),
             ])
             ->all();
