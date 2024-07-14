@@ -36,7 +36,6 @@ class NodeMemoryChart extends ChartWidget
                     ],
                     'tension' => '0.3',
                     'fill' => true,
-                    'label' => 'Memory Usage',
                 ],
             ],
             'labels' => array_column($memUsed, 'timestamp'),

@@ -19,11 +19,12 @@ class NodeCpuChart extends ChartWidget
     {
         /** @var Node $node */
         $node = $this->record;
+        $threads = $node->systemInformation()['cpu_count'];
 
         $cpu = collect(cache()->get("nodes.$node->id.cpu_percent"))
             ->slice(-10)
             ->map(fn ($value, $key) => [
-                'cpu' => $value,
+                'cpu' => number_format($value * $threads, 2),
                 'timestamp' => Carbon::createFromTimestamp($key, (auth()->user()->timezone ?? 'UTC'))->format('H:i:s'),
             ])
             ->all();
@@ -37,7 +38,6 @@ class NodeCpuChart extends ChartWidget
                     ],
                     'tension' => '0.3',
                     'fill' => true,
-                    'label' => 'Current CPU',
                 ],
             ],
             'labels' => array_column($cpu, 'timestamp'),
@@ -56,7 +56,6 @@ class NodeCpuChart extends ChartWidget
             scales: {
                 y: {
                     min: 0,
-                    max: 100,
                 },
             },
             plugins: {
@@ -72,9 +71,11 @@ class NodeCpuChart extends ChartWidget
     {
         /** @var Node $node */
         $node = $this->record;
+        $threads = $node->systemInformation()['cpu_count'];
 
-        $cpu = collect(cache()->get("nodes.$node->id.cpu_percent"))->last();
+        $cpu = number_format(collect(cache()->get("nodes.$node->id.cpu_percent"))->last() * $threads, 2);
+        $max = number_format($threads * 100) . '%';
 
-        return 'CPU - ' . number_format($cpu, 2) . ' %';
+        return 'CPU - ' . $cpu . '% Of ' . $max;
     }
 }
