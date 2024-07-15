@@ -91,8 +91,8 @@ class SoftwareVersionService
             try {
                 $response = $this->client->request('GET', 'https://api.github.com/repos/pelican-dev/panel/releases/latest',
                     [
-                        'timeout' => 3,
-                        'connect_timeout' => 3,
+                        'timeout' => config('panel.guzzle.timeout'),
+                        'connect_timeout' => config('panel.guzzle.connect_timeout'),
                     ]
                 );
                 if ($response->getStatusCode() === 200) {
@@ -102,8 +102,8 @@ class SoftwareVersionService
 
                 $response = $this->client->request('GET', 'https://api.github.com/repos/pelican-dev/wings/releases/latest',
                     [
-                        'timeout' => 3,
-                        'connect_timeout' => 3,
+                        'timeout' => config('panel.guzzle.timeout'),
+                        'connect_timeout' => config('panel.guzzle.connect_timeout'),
                     ]
                 );
                 if ($response->getStatusCode() === 200) {
