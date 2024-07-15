@@ -9,6 +9,7 @@ import {
     faPencilAlt,
     faToggleOn,
     faTrashAlt,
+    faTrash,
 } from '@fortawesome/free-solid-svg-icons';
 import deleteScheduleTask from '@/api/server/schedules/deleteScheduleTask';
 import { httpErrorToHuman } from '@/api/http';
@@ -35,6 +36,8 @@ const getActionDetails = (action: string): [string, any] => {
             return ['Send Power Action', faToggleOn];
         case 'backup':
             return ['Create Backup', faFileArchive];
+        case 'delete_files':
+            return ['Delete Files', faTrash];
         default:
             return ['Unknown Action', faCode];
     }
@@ -93,6 +96,9 @@ export default ({ schedule, task }: Props) => {
                     <div css={tw`md:ml-6 mt-2`}>
                         {task.action === 'backup' && (
                             <p css={tw`text-xs uppercase text-neutral-400 mb-1`}>Ignoring files & folders:</p>
+                        )}
+                        {task.action === 'delete_files' && (
+                            <p css={tw`text-xs uppercase text-neutral-400 mb-1`}>Files to delete:</p>
                         )}
                         <div
                             css={tw`font-mono bg-neutral-800 rounded py-1 px-2 text-sm w-auto inline-block whitespace-pre-wrap break-all`}
