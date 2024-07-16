@@ -89,13 +89,23 @@ class SoftwareVersionService
             $versionData = [];
 
             try {
-                $response = $this->client->request('GET', 'https://api.github.com/repos/pelican-dev/panel/releases/latest');
+                $response = $this->client->request('GET', 'https://api.github.com/repos/pelican-dev/panel/releases/latest',
+                    [
+                        'timeout' => config('panel.guzzle.timeout'),
+                        'connect_timeout' => config('panel.guzzle.connect_timeout'),
+                    ]
+                );
                 if ($response->getStatusCode() === 200) {
                     $panelData = json_decode($response->getBody(), true);
                     $versionData['panel'] = trim($panelData['tag_name'], 'v');
                 }
 
-                $response = $this->client->request('GET', 'https://api.github.com/repos/pelican-dev/wings/releases/latest');
+                $response = $this->client->request('GET', 'https://api.github.com/repos/pelican-dev/wings/releases/latest',
+                    [
+                        'timeout' => config('panel.guzzle.timeout'),
+                        'connect_timeout' => config('panel.guzzle.connect_timeout'),
+                    ]
+                );
                 if ($response->getStatusCode() === 200) {
                     $wingsData = json_decode($response->getBody(), true);
                     $versionData['daemon'] = trim($wingsData['tag_name'], 'v');
