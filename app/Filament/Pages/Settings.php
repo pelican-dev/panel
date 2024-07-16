@@ -129,7 +129,7 @@ class Settings extends Page implements HasForms
                                     'postmark' => 'Postmark',
                                 ])
                                 ->live()
-                                ->default(env('MAIL_MAILER', 'log'))
+                                ->default(env('MAIL_MAILER', config('mail.default')))
                                 ->hintAction(
                                     FormAction::make('test')
                                         ->label('Send Test Mail')
@@ -157,16 +157,16 @@ class Settings extends Page implements HasForms
                                 ->label('From Address')
                                 ->required(true)
                                 ->email()
-                                ->default(env('MAIL_FROM_ADDRESS', 'no-reply@example.com')),
+                                ->default(env('MAIL_FROM_ADDRESS', config('mail.from.address'))),
                             TextInput::make('MAIL_FROM_NAME')
                                 ->label('From Name')
                                 ->required(true)
-                                ->default(env('MAIL_FROM_NAME', 'Pelican Admin')),
+                                ->default(env('MAIL_FROM_NAME', config('mail.from.name'))),
                             TextInput::make('MAIL_HOST')
                                 ->label('SMTP Host')
                                 ->required(true)
                                 ->visible(fn (Get $get) => $get('MAIL_MAILER') === 'smtp')
-                                ->default(env('MAIL_HOST', 'smtp.example.com')),
+                                ->default(env('MAIL_HOST', config('mail.mailers.smtp.host'))),
                             TextInput::make('MAIL_PORT')
                                 ->label('SMTP Port')
                                 ->required(true)
@@ -174,12 +174,12 @@ class Settings extends Page implements HasForms
                                 ->minValue(1)
                                 ->maxValue(65535)
                                 ->visible(fn (Get $get) => $get('MAIL_MAILER') === 'smtp')
-                                ->default(env('MAIL_PORT', 25)),
+                                ->default(env('MAIL_PORT', config('mail.mailers.smtp.port'))),
                             TextInput::make('MAIL_USERNAME')
                                 ->label('SMTP Username')
                                 ->required(true)
                                 ->visible(fn (Get $get) => $get('MAIL_MAILER') === 'smtp')
-                                ->default(env('MAIL_USERNAME')),
+                                ->default(env('MAIL_USERNAME', config('mail.mailers.smtp.username'))),
                             TextInput::make('MAIL_PASSWORD')
                                 ->label('SMTP Password')
                                 ->password()
@@ -192,7 +192,22 @@ class Settings extends Page implements HasForms
                                 ->grouped()
                                 ->options(['tls' => 'TLS', 'ssl' => 'SSL', '' => 'None'])
                                 ->visible(fn (Get $get) => $get('MAIL_MAILER') === 'smtp')
-                                ->default(env('MAIL_ENCRYPTION', 'tls')),
+                                ->default(env('MAIL_ENCRYPTION', config('mail.mailers.smtp.encryption', 'tls'))),
+                            TextInput::make('MAILGUN_DOMAIN')
+                                ->label('Mailgun Domain')
+                                ->required(true)
+                                ->visible(fn (Get $get) => $get('MAIL_MAILER') === 'mailgun')
+                                ->default(env('MAILGUN_DOMAIN', config('services.mailgun.domain'))),
+                            TextInput::make('MAILGUN_SECRET')
+                                ->label('Mailgun Secret')
+                                ->required(true)
+                                ->visible(fn (Get $get) => $get('MAIL_MAILER') === 'mailgun')
+                                ->default(env('MAIL_USERNAME', config('services.mailgun.secret'))),
+                            TextInput::make('MAILGUN_ENDPOINT')
+                                ->label('Mailgun Endpoint')
+                                ->required(true)
+                                ->visible(fn (Get $get) => $get('MAIL_MAILER') === 'mailgun')
+                                ->default(env('MAILGUN_ENDPOINT', config('services.mailgun.endpoint'))),
                         ]),
                     Tab::make('misc')
                         ->label('Misc')
