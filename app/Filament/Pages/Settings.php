@@ -94,6 +94,8 @@ class Settings extends Page implements HasForms
                                 ->onColor('success')
                                 ->offColor('danger')
                                 ->live()
+                                ->formatStateUsing(fn ($state): bool => (bool) $state)
+                                ->afterStateUpdated(fn ($state, Set $set) => $set('RECAPTCHA_ENABLED', (bool) $state))
                                 ->default(env('RECAPTCHA_ENABLED', config('recaptcha.enabled'))),
                             TextInput::make('RECAPTCHA_DOMAIN')
                                 ->label('Domain')
@@ -204,6 +206,8 @@ class Settings extends Page implements HasForms
                                 ->offColor('danger')
                                 ->live()
                                 ->columnSpanFull()
+                                ->formatStateUsing(fn ($state): bool => (bool) $state)
+                                ->afterStateUpdated(fn ($state, Set $set) => $set('PANEL_CLIENT_ALLOCATIONS_ENABLED', (bool) $state))
                                 ->default(env('PANEL_CLIENT_ALLOCATIONS_ENABLED', config('panel.client_features.allocations.enabled'))),
                             TextInput::make('PANEL_CLIENT_ALLOCATIONS_RANGE_START')
                                 ->label('Starting Port')
