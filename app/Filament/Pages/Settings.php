@@ -68,7 +68,7 @@ class Settings extends Page implements HasForms
                                     false => 'Sidebar',
                                     true => 'Topbar',
                                 ])
-                                ->default(env('FILAMENT_TOP_NAVIGATION', config('panel.filament.navigation'))),
+                                ->default(env('FILAMENT_TOP_NAVIGATION', config('panel.filament.top-navigation'))),
                             ToggleButtons::make('PANEL_USE_BINARY_PREFIX')
                                 ->label('Unit prefix')
                                 ->grouped()
