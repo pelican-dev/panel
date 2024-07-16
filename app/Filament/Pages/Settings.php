@@ -7,6 +7,7 @@ use App\Traits\Commands\EnvironmentWriterTrait;
 use Exception;
 use Filament\Actions\Action;
 use Filament\Forms\Components\Actions\Action as FormAction;
+use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Tabs;
 use Filament\Forms\Components\Tabs\Tab;
@@ -213,33 +214,65 @@ class Settings extends Page implements HasForms
                         ->label('Misc')
                         ->icon('tabler-tool')
                         ->schema([
-                            Toggle::make('PANEL_CLIENT_ALLOCATIONS_ENABLED')
-                                ->label('Automatic Allocation Creation')
-                                ->onIcon('tabler-check')
-                                ->offIcon('tabler-x')
-                                ->onColor('success')
-                                ->offColor('danger')
-                                ->live()
-                                ->columnSpanFull()
-                                ->formatStateUsing(fn ($state): bool => (bool) $state)
-                                ->afterStateUpdated(fn ($state, Set $set) => $set('PANEL_CLIENT_ALLOCATIONS_ENABLED', (bool) $state))
-                                ->default(env('PANEL_CLIENT_ALLOCATIONS_ENABLED', config('panel.client_features.allocations.enabled'))),
-                            TextInput::make('PANEL_CLIENT_ALLOCATIONS_RANGE_START')
-                                ->label('Starting Port')
-                                ->required(true)
-                                ->numeric()
-                                ->minValue(1)
-                                ->maxValue(65535)
-                                ->visible(fn (Get $get) => $get('PANEL_CLIENT_ALLOCATIONS_ENABLED'))
-                                ->default(env('PANEL_CLIENT_ALLOCATIONS_RANGE_START')),
-                            TextInput::make('PANEL_CLIENT_ALLOCATIONS_RANGE_END')
-                                ->label('Ending Port')
-                                ->required(true)
-                                ->numeric()
-                                ->minValue(1)
-                                ->maxValue(65535)
-                                ->visible(fn (Get $get) => $get('PANEL_CLIENT_ALLOCATIONS_ENABLED'))
-                                ->default(env('PANEL_CLIENT_ALLOCATIONS_RANGE_END')),
+                            Section::make('Automatic Allocation Creation')
+                                ->description('Toggle if Users can create allocations via the client area.')
+                                ->columns(2)
+                                ->schema([
+                                    Toggle::make('PANEL_CLIENT_ALLOCATIONS_ENABLED')
+                                        ->label('Status')
+                                        ->onIcon('tabler-check')
+                                        ->offIcon('tabler-x')
+                                        ->onColor('success')
+                                        ->offColor('danger')
+                                        ->live()
+                                        ->columnSpanFull()
+                                        ->formatStateUsing(fn ($state): bool => (bool) $state)
+                                        ->afterStateUpdated(fn ($state, Set $set) => $set('PANEL_CLIENT_ALLOCATIONS_ENABLED', (bool) $state))
+                                        ->default(env('PANEL_CLIENT_ALLOCATIONS_ENABLED', config('panel.client_features.allocations.enabled'))),
+                                    TextInput::make('PANEL_CLIENT_ALLOCATIONS_RANGE_START')
+                                        ->label('Starting Port')
+                                        ->required(true)
+                                        ->numeric()
+                                        ->minValue(1024)
+                                        ->maxValue(65535)
+                                        ->visible(fn (Get $get) => $get('PANEL_CLIENT_ALLOCATIONS_ENABLED'))
+                                        ->default(env('PANEL_CLIENT_ALLOCATIONS_RANGE_START')),
+                                    TextInput::make('PANEL_CLIENT_ALLOCATIONS_RANGE_END')
+                                        ->label('Ending Port')
+                                        ->required(true)
+                                        ->numeric()
+                                        ->minValue(1024)
+                                        ->maxValue(65535)
+                                        ->visible(fn (Get $get) => $get('PANEL_CLIENT_ALLOCATIONS_ENABLED'))
+                                        ->default(env('PANEL_CLIENT_ALLOCATIONS_RANGE_END')),
+                                ]),
+                            Section::make('Notifications')
+                                ->description('Toggle which notifications should be sent to Users.')
+                                ->columns(2)
+                                ->schema([
+                                    Toggle::make('PANEL_SEND_INSTALL_NOTIFICATION')
+                                        ->label('Server Installed')
+                                        ->onIcon('tabler-check')
+                                        ->offIcon('tabler-x')
+                                        ->onColor('success')
+                                        ->offColor('danger')
+                                        ->live()
+                                        ->columnSpanFull()
+                                        ->formatStateUsing(fn ($state): bool => (bool) $state)
+                                        ->afterStateUpdated(fn ($state, Set $set) => $set('PANEL_SEND_INSTALL_NOTIFICATION', (bool) $state))
+                                        ->default(env('PANEL_SEND_INSTALL_NOTIFICATION', config('panel.email.send_install_notification'))),
+                                    Toggle::make('PANEL_SEND_REINSTALL_NOTIFICATION')
+                                        ->label('Server Reinstalled')
+                                        ->onIcon('tabler-check')
+                                        ->offIcon('tabler-x')
+                                        ->onColor('success')
+                                        ->offColor('danger')
+                                        ->live()
+                                        ->columnSpanFull()
+                                        ->formatStateUsing(fn ($state): bool => (bool) $state)
+                                        ->afterStateUpdated(fn ($state, Set $set) => $set('PANEL_SEND_REINSTALL_NOTIFICATION', (bool) $state))
+                                        ->default(env('PANEL_SEND_REINSTALL_NOTIFICATION', config('panel.email.send_reinstall_notification'))),
+                                ]),
                         ]),
                 ]),
         ];
