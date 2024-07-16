@@ -273,6 +273,27 @@ class Settings extends Page implements HasForms
                                         ->afterStateUpdated(fn ($state, Set $set) => $set('PANEL_SEND_REINSTALL_NOTIFICATION', (bool) $state))
                                         ->default(env('PANEL_SEND_REINSTALL_NOTIFICATION', config('panel.email.send_reinstall_notification'))),
                                 ]),
+                            Section::make('Connections')
+                                ->description('Timeouts (in Seconds) used when making requests.')
+                                ->columns(2)
+                                ->schema([
+                                    TextInput::make('GUZZLE_TIMEOUT')
+                                        ->label('Request Timeout')
+                                        ->required(true)
+                                        ->numeric()
+                                        ->minValue(15)
+                                        ->maxValue(60)
+                                        ->visible(fn (Get $get) => $get('GUZZLE_TIMEOUT'))
+                                        ->default(env('GUZZLE_TIMEOUT', config('panel.guzzle.timeout'))),
+                                    TextInput::make('GUZZLE_CONNECT_TIMEOUT')
+                                        ->label('Connect Timeout')
+                                        ->required(true)
+                                        ->numeric()
+                                        ->minValue(5)
+                                        ->maxValue(60)
+                                        ->visible(fn (Get $get) => $get('GUZZLE_CONNECT_TIMEOUT'))
+                                        ->default(env('GUZZLE_CONNECT_TIMEOUT', config('panel.guzzle.connect_timeout'))),
+                                ]),
                         ]),
                 ]),
         ];
