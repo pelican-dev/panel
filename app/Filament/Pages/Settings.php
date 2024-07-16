@@ -17,6 +17,7 @@ use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Forms\Form;
 use Filament\Forms\Get;
+use Filament\Forms\Set;
 use Filament\Notifications\Notification;
 use Filament\Pages\Concerns\HasUnsavedDataChangesAlert;
 use Filament\Pages\Concerns\InteractsWithFormActions;
@@ -68,6 +69,8 @@ class Settings extends Page implements HasForms
                                     false => 'Sidebar',
                                     true => 'Topbar',
                                 ])
+                                ->formatStateUsing(fn ($state): bool => (bool) $state)
+                                ->afterStateUpdated(fn ($state, Set $set) => $set('FILAMENT_TOP_NAVIGATION', (bool) $state))
                                 ->default(env('FILAMENT_TOP_NAVIGATION', config('panel.filament.top-navigation'))),
                             ToggleButtons::make('PANEL_USE_BINARY_PREFIX')
                                 ->label('Unit prefix')
@@ -76,6 +79,8 @@ class Settings extends Page implements HasForms
                                     false => 'Decimal Prefix (MB/ GB)',
                                     true => 'Binary Prefix (MiB/ GiB)',
                                 ])
+                                ->formatStateUsing(fn ($state): bool => (bool) $state)
+                                ->afterStateUpdated(fn ($state, Set $set) => $set('PANEL_USE_BINARY_PREFIX', (bool) $state))
                                 ->default(env('PANEL_USE_BINARY_PREFIX', config('panel.use_binary_prefix'))),
                         ]),
                     Tab::make('recaptcha')
