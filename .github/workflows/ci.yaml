@@ -41,6 +41,8 @@ jobs:
       DB_HOST: 127.0.0.1
       DB_DATABASE: testing
       DB_USERNAME: root
+      GUZZLE_TIMEOUT: 60
+      GUZZLE_CONNECT_TIMEOUT: 60
     steps:
       - name: Code Checkout
         uses: actions/checkout@v4
@@ -113,6 +115,8 @@ jobs:
       DB_HOST: 127.0.0.1
       DB_DATABASE: testing
       DB_USERNAME: root
+      GUZZLE_TIMEOUT: 60
+      GUZZLE_CONNECT_TIMEOUT: 60
     steps:
       - name: Code Checkout
         uses: actions/checkout@v4
@@ -173,6 +177,8 @@ jobs:
       QUEUE_CONNECTION: sync
       DB_CONNECTION: sqlite
       DB_DATABASE: testing.sqlite
+      GUZZLE_TIMEOUT: 60
+      GUZZLE_CONNECT_TIMEOUT: 60
     steps:
       - name: Code Checkout
         uses: actions/checkout@v4
