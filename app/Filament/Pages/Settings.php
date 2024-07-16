@@ -117,6 +117,7 @@ class Settings extends Page implements HasForms
                                     'mandrill' => 'Mandrill',
                                     'postmark' => 'Postmark',
                                 ])
+                                ->live()
                                 ->default(env('MAIL_MAILER', 'log'))
                                 ->hintAction(
                                     FormAction::make('test')
@@ -153,7 +154,7 @@ class Settings extends Page implements HasForms
                             TextInput::make('MAIL_HOST')
                                 ->label('SMTP Host')
                                 ->required(true)
-                                ->hidden(fn () => env('MAIL_MAILER') != 'smtp')
+                                ->visible(fn (Get $get) => $get('MAIL_MAILER') === 'smtp')
                                 ->default(env('MAIL_HOST', 'smtp.example.com')),
                             TextInput::make('MAIL_PORT')
                                 ->label('SMTP Port')
@@ -161,25 +162,25 @@ class Settings extends Page implements HasForms
                                 ->numeric()
                                 ->minValue(1)
                                 ->maxValue(65535)
-                                ->hidden(fn () => env('MAIL_MAILER') != 'smtp')
+                                ->visible(fn (Get $get) => $get('MAIL_MAILER') === 'smtp')
                                 ->default(env('MAIL_PORT', 25)),
                             TextInput::make('MAIL_USERNAME')
                                 ->label('SMTP Username')
                                 ->required(true)
-                                ->hidden(fn () => env('MAIL_MAILER') != 'smtp')
+                                ->visible(fn (Get $get) => $get('MAIL_MAILER') === 'smtp')
                                 ->default(env('MAIL_USERNAME')),
                             TextInput::make('MAIL_PASSWORD')
                                 ->label('SMTP Password')
                                 ->password()
                                 ->revealable()
-                                ->hidden(fn () => env('MAIL_MAILER') != 'smtp')
+                                ->visible(fn (Get $get) => $get('MAIL_MAILER') === 'smtp')
                                 ->default(env('MAIL_PASSWORD')),
                             ToggleButtons::make('MAIL_ENCRYPTION')
                                 ->label('SMTP encryption')
                                 ->required(true)
                                 ->grouped()
                                 ->options(['tls' => 'TLS', 'ssl' => 'SSL', '' => 'None'])
-                                ->hidden(fn () => env('MAIL_MAILER') != 'smtp')
+                                ->visible(fn (Get $get) => $get('MAIL_MAILER') === 'smtp')
                                 ->default(env('MAIL_ENCRYPTION', 'tls')),
                         ]),
                     Tab::make('misc')
