@@ -2,9 +2,11 @@
 
 namespace App\Filament\Pages;
 
+use App\Notifications\MailTested;
 use App\Traits\Commands\EnvironmentWriterTrait;
 use Exception;
 use Filament\Actions\Action;
+use Filament\Forms\Components\Actions\Action as FormAction;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Tabs;
 use Filament\Forms\Components\Tabs\Tab;
@@ -19,6 +21,7 @@ use Filament\Pages\Concerns\HasUnsavedDataChangesAlert;
 use Filament\Pages\Concerns\InteractsWithFormActions;
 use Filament\Pages\Page;
 use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\Notification as MailNotification;
 
 class Settings extends Page implements HasForms
 {
@@ -42,7 +45,7 @@ class Settings extends Page implements HasForms
     protected function getFormSchema(): array
     {
         return [
-            Tabs::make('Tabs')            
+            Tabs::make('Tabs')
                 ->columns(2)
                 ->persistTabInQueryString()
                 ->tabs([
@@ -114,7 +117,30 @@ class Settings extends Page implements HasForms
                                     'mandrill' => 'Mandrill',
                                     'postmark' => 'Postmark',
                                 ])
-                                ->default(env('MAIL_MAILER', 'log')),
+                                ->default(env('MAIL_MAILER', 'log'))
+                                ->hintAction(
+                                    FormAction::make('test')
+                                        ->label('Send Test Mail')
+                                        ->icon('tabler-send')
+                                        ->hidden(fn (Get $get) => $get('MAIL_MAILER') === 'log')
+                                        ->action(function () {
+                                            try {
+                                                MailNotification::route('mail', auth()->user()->email)
+                                                    ->notify(new MailTested(auth()->user()));
+
+                                                Notification::make()
+                                                    ->title('Test Mail sent')
+                                                    ->success()
+                                                    ->send();
+                                            } catch (Exception $exception) {
+                                                Notification::make()
+                                                    ->title('Test Mail failed')
+                                                    ->body($exception->getMessage())
+                                                    ->danger()
+                                                    ->send();
+                                            }
+                                        })
+                                ),
                             TextInput::make('MAIL_FROM_ADDRESS')
                                 ->label('From Address')
                                 ->required(true)
@@ -179,7 +205,7 @@ class Settings extends Page implements HasForms
                                 ->default(env('PANEL_CLIENT_ALLOCATIONS_RANGE_START')),
                             TextInput::make('PANEL_CLIENT_ALLOCATIONS_RANGE_END')
                                 ->label('Ending Port')
-                                ->required(true)                                
+                                ->required(true)
                                 ->numeric()
                                 ->minValue(1)
                                 ->maxValue(65535)
