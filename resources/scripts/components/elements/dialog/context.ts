@@ -1,5 +1,5 @@
 import React from 'react';
-import { DialogContextType, DialogWrapperContextType } from './types';
+import type { DialogContextType, DialogWrapperContextType } from './types';
 
 export const DialogContext = React.createContext<DialogContextType>({
     setIcon: () => null,

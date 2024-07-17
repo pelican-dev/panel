@@ -6,6 +6,7 @@
 /storage/*.key
 /storage/clockwork/*
 /vendor
+/coverage
 *.DS_Store*
 .env
 .env.backup

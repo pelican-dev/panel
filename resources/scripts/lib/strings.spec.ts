@@ -1,3 +1,4 @@
+import { describe, expect, it } from 'vitest';
 import { capitalize } from '@/lib/strings';
 
 describe('@/lib/strings.ts', function () {

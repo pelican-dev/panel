@@ -16,7 +16,7 @@ import deleteBackup from '@/api/server/backups/deleteBackup';
 import Can from '@/components/elements/Can';
 import tw from 'twin.macro';
 import getServerBackups from '@/api/swr/getServerBackups';
-import { ServerBackup } from '@/api/server/types';
+import type { ServerBackup } from '@/api/server/types';
 import { ServerContext } from '@/state/server';
 import Input from '@/components/elements/Input';
 import { restoreServerBackup } from '@/api/server/backups';
