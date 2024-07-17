@@ -6,7 +6,6 @@ use Illuminate\View\View;
 
 class AssetComposer
 {
-
     /**
      * Provide access to the asset service in the views.
      */
