@@ -14,7 +14,7 @@ use App\Exceptions\Service\Allocation\TooManyPortsInRangeException;
 
 class AssignmentService
 {
-    public const CIDR_MAX_BITS = 27;
+    public const CIDR_MAX_BITS = 25;
     public const CIDR_MIN_BITS = 32;
     public const PORT_FLOOR = 1024;
     public const PORT_CEIL = 65535;
@@ -74,7 +74,7 @@ class AssignmentService
                         throw new TooManyPortsInRangeException();
                     }
 
-                    if ((int) $matches[1] <= self::PORT_FLOOR || (int) $matches[2] > self::PORT_CEIL) {
+                    if ((int) $matches[1] < self::PORT_FLOOR || (int) $matches[2] > self::PORT_CEIL) {
                         throw new PortOutOfRangeException();
                     }
 
@@ -88,7 +88,7 @@ class AssignmentService
                         ];
                     }
                 } else {
-                    if ((int) $port <= self::PORT_FLOOR || (int) $port > self::PORT_CEIL) {
+                    if ((int) $port < self::PORT_FLOOR || (int) $port > self::PORT_CEIL) {
                         throw new PortOutOfRangeException();
                     }
 
