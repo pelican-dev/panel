@@ -74,7 +74,7 @@ class AssignmentService
                         throw new TooManyPortsInRangeException();
                     }
 
-                    if ((int) $matches[1] <= self::PORT_FLOOR || (int) $matches[2] > self::PORT_CEIL) {
+                    if ((int) $matches[1] < self::PORT_FLOOR || (int) $matches[2] > self::PORT_CEIL) {
                         throw new PortOutOfRangeException();
                     }
 
@@ -88,7 +88,7 @@ class AssignmentService
                         ];
                     }
                 } else {
-                    if ((int) $port <= self::PORT_FLOOR || (int) $port > self::PORT_CEIL) {
+                    if ((int) $port < self::PORT_FLOOR || (int) $port > self::PORT_CEIL) {
                         throw new PortOutOfRangeException();
                     }
 
