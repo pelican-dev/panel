@@ -52,7 +52,7 @@ class EditNode extends EditRecord
                                 ->schema([
                                     Placeholder::make('')
                                         ->label('Wings Version')
-                                        ->content(fn (Node $node) => $node->systemInformation()['version'] ?? ''),
+                                        ->content(fn (Node $node) => $node->systemInformation()['version'] ?? 'Unknown'),
                                     Placeholder::make('')
                                         ->label('CPU Threads')
                                         ->content(fn (Node $node) => $node->systemInformation()['cpu_count'] ?? 0),
