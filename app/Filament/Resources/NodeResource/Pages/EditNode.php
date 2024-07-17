@@ -58,7 +58,7 @@ class EditNode extends EditRecord
                                         ->content(fn (Node $node) => $node->systemInformation()['cpu_count'] ?? 0),
                                     Placeholder::make('')
                                         ->label('Architecture')
-                                        ->content(fn (Node $node) => $node->systemInformation()['architecture'] ?? ''),
+                                        ->content(fn (Node $node) => $node->systemInformation()['architecture'] ?? 'Unknown'),
                                     Placeholder::make('')
                                         ->label('Kernel')
                                         ->content(fn (Node $node) => $node->systemInformation()['kernel_version'] ?? ''),
