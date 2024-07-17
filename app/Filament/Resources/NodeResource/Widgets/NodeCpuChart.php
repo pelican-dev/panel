@@ -19,7 +19,7 @@ class NodeCpuChart extends ChartWidget
     {
         /** @var Node $node */
         $node = $this->record;
-        $threads = $node->systemInformation()['cpu_count'];
+        $threads = $node->systemInformation()['cpu_count'] ?? 0;
 
         $cpu = collect(cache()->get("nodes.$node->id.cpu_percent"))
             ->slice(-10)
@@ -71,7 +71,7 @@ class NodeCpuChart extends ChartWidget
     {
         /** @var Node $node */
         $node = $this->record;
-        $threads = $node->systemInformation()['cpu_count'];
+        $threads = $node->systemInformation()['cpu_count'] ?? 0;
 
         $cpu = number_format(collect(cache()->get("nodes.$node->id.cpu_percent"))->last() * $threads, 2);
         $max = number_format($threads * 100) . '%';
