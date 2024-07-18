@@ -131,7 +131,7 @@
         "ts-essentials": "^9.1.2",
         "twin.macro": "^2.8.2",
         "typescript": "^4.7.3",
-        "vite": "^5.3.4",
+        "vite": "^4.5.3",
         "vitest": "^2.0.3",
         "yarn-deduplicate": "^1.1.1"
     },
