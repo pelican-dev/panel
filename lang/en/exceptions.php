@@ -11,7 +11,7 @@ return [
         'too_many_ports' => 'Adding more than 1000 ports in a single range at once is not supported.',
         'invalid_mapping' => 'The mapping provided for :port was invalid and could not be processed.',
         'cidr_out_of_range' => 'CIDR notation only allows masks between /25 and /32.',
-        'port_out_of_range' => 'Ports in an allocation must be greater than 1024 and less than or equal to 65535.',
+        'port_out_of_range' => 'Ports in an allocation must be greater than or equal to 1024 and less than or equal to 65535.',
     ],
     'egg' => [
         'delete_has_servers' => 'An Egg with active servers attached to it cannot be deleted from the Panel.',
