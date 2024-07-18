@@ -2,13 +2,13 @@
 
 namespace App\Filament\Pages;
 
+use App\Models\Backup;
 use App\Notifications\MailTested;
 use App\Traits\Commands\EnvironmentWriterTrait;
 use Exception;
 use Filament\Actions\Action;
 use Filament\Forms\Components\Actions\Action as FormAction;
 use Filament\Forms\Components\Section;
-use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Tabs;
 use Filament\Forms\Components\Tabs\Tab;
 use Filament\Forms\Components\TextInput;
@@ -67,6 +67,10 @@ class Settings extends Page implements HasForms
                         ->label('Mail')
                         ->icon('tabler-mail')
                         ->schema($this->mailSettings()),
+                    Tab::make('backup')
+                        ->label('Backup')
+                        ->icon('tabler-box')
+                        ->schema($this->backupSettings()),
                     Tab::make('misc')
                         ->label('Misc')
                         ->icon('tabler-tool')
@@ -161,9 +165,10 @@ class Settings extends Page implements HasForms
     private function mailSettings(): array
     {
         return [
-            Select::make('MAIL_MAILER')
+            ToggleButtons::make('MAIL_MAILER')
                 ->label('Mail Driver')
                 ->columnSpanFull()
+                ->grouped()
                 ->options([
                     'log' => 'Print mails to Log',
                     'smtp' => 'SMTP Server',
@@ -255,6 +260,76 @@ class Settings extends Page implements HasForms
         ];
     }
 
+    private function backupSettings(): array
+    {
+        return [
+            ToggleButtons::make('APP_BACKUP_DRIVER')
+                ->label('Backup Driver')
+                ->columnSpanFull()
+                ->grouped()
+                ->options([
+                    Backup::ADAPTER_DAEMON => 'Wings',
+                    Backup::ADAPTER_AWS_S3 => 'S3',
+                ])
+                ->live()
+                ->default(env('APP_BACKUP_DRIVER', config('backups.default'))),
+            Section::make('Throttles')
+                ->description('Configure how many backups can be created in a period. Set period to 0 to disable this throttle.')
+                ->columns(2)
+                ->schema([
+                    TextInput::make('BACKUP_THROTTLE_LIMIT')
+                        ->label('Limit')
+                        ->required(true)
+                        ->numeric()
+                        ->minValue(1)
+                        ->default(config('backups.throttles.limit')),
+                    TextInput::make('BACKUP_THROTTLE_PERIOD')
+                        ->label('Period')
+                        ->required(true)
+                        ->numeric()
+                        ->minValue(0)
+                        ->suffix('Seconds')
+                        ->default(config('backups.throttles.period')),
+                ]),
+            Section::make('S3 Configuration')
+                ->columns(2)
+                ->visible(fn (Get $get) => $get('APP_BACKUP_DRIVER') === Backup::ADAPTER_AWS_S3)
+                ->schema([
+                    TextInput::make('AWS_DEFAULT_REGION')
+                        ->label('Default Region')
+                        ->required(true)
+                        ->default(config('backups.disks.s3.region')),
+                    TextInput::make('AWS_ACCESS_KEY_ID')
+                        ->label('Access Key ID')
+                        ->required(true)
+                        ->default(config('backups.disks.s3.key')),
+                    TextInput::make('AWS_SECRET_ACCESS_KEY')
+                        ->label('Secret Access Key')
+                        ->required(true)
+                        ->default(config('backups.disks.s3.secret')),
+                    TextInput::make('AWS_BACKUPS_BUCKET')
+                        ->label('Bucket')
+                        ->required(true)
+                        ->default(config('backups.disks.s3.bucket')),
+                    TextInput::make('AWS_ENDPOINT')
+                        ->label('Endpoint')
+                        ->required(true)
+                        ->default(config('backups.disks.s3.endpoint')),
+                    Toggle::make('AWS_USE_PATH_STYLE_ENDPOINT')
+                        ->label('Use path style endpoint?')
+                        ->inline(false)
+                        ->onIcon('tabler-check')
+                        ->offIcon('tabler-x')
+                        ->onColor('success')
+                        ->offColor('danger')
+                        ->live()
+                        ->formatStateUsing(fn ($state): bool => (bool) $state)
+                        ->afterStateUpdated(fn ($state, Set $set) => $set('AWS_USE_PATH_STYLE_ENDPOINT', (bool) $state))
+                        ->default(env('AWS_USE_PATH_STYLE_ENDPOINT', config('backups.disks.s3.use_path_style_endpoint'))),
+                ]),
+        ];
+    }
+
     private function miscSettings(): array
     {
         return [
@@ -318,7 +393,7 @@ class Settings extends Page implements HasForms
                         ->default(env('PANEL_SEND_REINSTALL_NOTIFICATION', config('panel.email.send_reinstall_notification'))),
                 ]),
             Section::make('Connections')
-                ->description('Timeouts (in Seconds) used when making requests.')
+                ->description('Timeoutsused when making requests.')
                 ->columns(2)
                 ->schema([
                     TextInput::make('GUZZLE_TIMEOUT')
@@ -327,6 +402,7 @@ class Settings extends Page implements HasForms
                         ->numeric()
                         ->minValue(15)
                         ->maxValue(60)
+                        ->suffix('Seconds')
                         ->default(env('GUZZLE_TIMEOUT', config('panel.guzzle.timeout'))),
                     TextInput::make('GUZZLE_CONNECT_TIMEOUT')
                         ->label('Connect Timeout')
@@ -334,6 +410,7 @@ class Settings extends Page implements HasForms
                         ->numeric()
                         ->minValue(5)
                         ->maxValue(60)
+                        ->suffix('Seconds')
                         ->default(env('GUZZLE_CONNECT_TIMEOUT', config('panel.guzzle.connect_timeout'))),
                 ]),
             Section::make('Activity Logs')
@@ -341,11 +418,12 @@ class Settings extends Page implements HasForms
                 ->columns(2)
                 ->schema([
                     TextInput::make('APP_ACTIVITY_PRUNE_DAYS')
-                        ->label('Prune age (in days)')
+                        ->label('Prune age')
                         ->required(true)
                         ->numeric()
                         ->minValue(1)
                         ->maxValue(365)
+                        ->suffix('Days')
                         ->default(env('APP_ACTIVITY_PRUNE_DAYS', config('activity.prune_days'))),
                     Toggle::make('APP_ACTIVITY_HIDE_ADMIN')
                         ->label('Hide admin activities?')
