@@ -3,15 +3,32 @@
 namespace App\Filament\Pages;
 
 use Carbon\Carbon;
+use Filament\Actions\Action;
+use Filament\Notifications\Notification;
+use Filament\Pages\Page;
 use Illuminate\Support\Facades\Artisan;
-use ShuvroRoy\FilamentSpatieLaravelHealth\Pages\HealthCheckResults as BaseHealthCheckResults;
 use Spatie\Health\Commands\RunHealthChecksCommand;
 use Spatie\Health\ResultStores\ResultStore;
 
-class HealthCheckResults extends BaseHealthCheckResults
+class Health extends Page
 {
-    protected static ?string $slug = 'health';
-    protected static ?int $navigationSort = 4;
+    protected static ?string $navigationIcon = 'tabler-heart';
+    protected static ?string $navigationGroup = 'Advanced';
+
+    protected static string $view = 'filament.pages.health';
+
+    protected $listeners = [
+        'refresh-component' => '$refresh',
+    ];
+
+    protected function getActions(): array
+    {
+        return [
+            Action::make('refresh')
+                ->button()
+                ->action('refresh'),
+        ];
+    }
 
     protected function getViewData(): array
     {
@@ -29,14 +46,16 @@ class HealthCheckResults extends BaseHealthCheckResults
         ];
     }
 
-    public static function getNavigationGroup(): ?string
+    public function refresh(): void
     {
-        return 'Advanced';
-    }
+        Artisan::call(RunHealthChecksCommand::class);
 
-    public static function getNavigationLabel(): string
-    {
-        return 'Panel Health';
+        $this->dispatch('refresh-component');
+
+        Notification::make()
+            ->title('Health check results refreshed')
+            ->success()
+            ->send();
     }
 
     public static function getNavigationBadge(): ?string
@@ -91,10 +110,5 @@ class HealthCheckResults extends BaseHealthCheckResults
         }
 
         return $results->containsFailingCheck() ? 'tabler-heart-exclamation' : 'tabler-heart-check';
-    }
-
-    public static function getSlug(): string
-    {
-        return 'health';
     }
 }
