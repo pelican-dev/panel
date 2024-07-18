@@ -77,7 +77,7 @@ class AdminPanelProvider extends PanelProvider
                 LanguageMiddleware::class,
             ])
             ->plugins([
-                WebhookPlugin::make() // <- Add this
+                WebhookPlugin::make(),
             ])
             ->authMiddleware([
                 Authenticate::class,

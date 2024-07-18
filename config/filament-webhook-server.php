@@ -23,5 +23,5 @@ return [
     'pages' => [
         Webhooks::class,
         WebhookHistory::class,
-    ]
+    ],
 ];
