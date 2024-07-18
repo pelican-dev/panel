@@ -202,61 +202,68 @@ class Settings extends Page implements HasForms
                             }
                         })
                 ),
-            TextInput::make('MAIL_FROM_ADDRESS')
-                ->label('From Address')
-                ->required(true)
-                ->email()
-                ->default(env('MAIL_FROM_ADDRESS', config('mail.from.address'))),
-            TextInput::make('MAIL_FROM_NAME')
-                ->label('From Name')
-                ->required(true)
-                ->default(env('MAIL_FROM_NAME', config('mail.from.name'))),
-            TextInput::make('MAIL_HOST')
-                ->label('SMTP Host')
-                ->required(true)
+            Section::make('"From" Settings')
+                ->description('Set the Address and Name used as "From" in mails.')
+                ->columns(2)
+                ->schema([
+                    TextInput::make('MAIL_FROM_ADDRESS')
+                        ->label('From Address')
+                        ->required(true)
+                        ->email()
+                        ->default(env('MAIL_FROM_ADDRESS', config('mail.from.address'))),
+                    TextInput::make('MAIL_FROM_NAME')
+                        ->label('From Name')
+                        ->required(true)
+                        ->default(env('MAIL_FROM_NAME', config('mail.from.name'))),
+                ]),
+            Section::make('SMTP Configuration')
+                ->columns(2)
                 ->visible(fn (Get $get) => $get('MAIL_MAILER') === 'smtp')
-                ->default(env('MAIL_HOST', config('mail.mailers.smtp.host'))),
-            TextInput::make('MAIL_PORT')
-                ->label('SMTP Port')
-                ->required(true)
-                ->numeric()
-                ->minValue(1)
-                ->maxValue(65535)
-                ->visible(fn (Get $get) => $get('MAIL_MAILER') === 'smtp')
-                ->default(env('MAIL_PORT', config('mail.mailers.smtp.port'))),
-            TextInput::make('MAIL_USERNAME')
-                ->label('SMTP Username')
-                ->required(true)
-                ->visible(fn (Get $get) => $get('MAIL_MAILER') === 'smtp')
-                ->default(env('MAIL_USERNAME', config('mail.mailers.smtp.username'))),
-            TextInput::make('MAIL_PASSWORD')
-                ->label('SMTP Password')
-                ->password()
-                ->revealable()
-                ->visible(fn (Get $get) => $get('MAIL_MAILER') === 'smtp')
-                ->default(env('MAIL_PASSWORD')),
-            ToggleButtons::make('MAIL_ENCRYPTION')
-                ->label('SMTP encryption')
-                ->required(true)
-                ->grouped()
-                ->options(['tls' => 'TLS', 'ssl' => 'SSL', '' => 'None'])
-                ->visible(fn (Get $get) => $get('MAIL_MAILER') === 'smtp')
-                ->default(env('MAIL_ENCRYPTION', config('mail.mailers.smtp.encryption', 'tls'))),
-            TextInput::make('MAILGUN_DOMAIN')
-                ->label('Mailgun Domain')
-                ->required(true)
+                ->schema([
+                    TextInput::make('MAIL_HOST')
+                        ->label('SMTP Host')
+                        ->required(true)
+                        ->default(env('MAIL_HOST', config('mail.mailers.smtp.host'))),
+                    TextInput::make('MAIL_PORT')
+                        ->label('SMTP Port')
+                        ->required(true)
+                        ->numeric()
+                        ->minValue(1)
+                        ->maxValue(65535)
+                        ->default(env('MAIL_PORT', config('mail.mailers.smtp.port'))),
+                    TextInput::make('MAIL_USERNAME')
+                        ->label('SMTP Username')
+                        ->required(true)
+                        ->default(env('MAIL_USERNAME', config('mail.mailers.smtp.username'))),
+                    TextInput::make('MAIL_PASSWORD')
+                        ->label('SMTP Password')
+                        ->password()
+                        ->revealable()
+                        ->default(env('MAIL_PASSWORD')),
+                    ToggleButtons::make('MAIL_ENCRYPTION')
+                        ->label('SMTP encryption')
+                        ->required(true)
+                        ->grouped()
+                        ->options(['tls' => 'TLS', 'ssl' => 'SSL', '' => 'None'])
+                        ->default(env('MAIL_ENCRYPTION', config('mail.mailers.smtp.encryption', 'tls'))),
+                ]),
+            Section::make('Mailgun Configuration')
+                ->columns(2)
                 ->visible(fn (Get $get) => $get('MAIL_MAILER') === 'mailgun')
-                ->default(env('MAILGUN_DOMAIN', config('services.mailgun.domain'))),
-            TextInput::make('MAILGUN_SECRET')
-                ->label('Mailgun Secret')
-                ->required(true)
-                ->visible(fn (Get $get) => $get('MAIL_MAILER') === 'mailgun')
-                ->default(env('MAIL_USERNAME', config('services.mailgun.secret'))),
-            TextInput::make('MAILGUN_ENDPOINT')
-                ->label('Mailgun Endpoint')
-                ->required(true)
-                ->visible(fn (Get $get) => $get('MAIL_MAILER') === 'mailgun')
-                ->default(env('MAILGUN_ENDPOINT', config('services.mailgun.endpoint'))),
+                ->schema([
+                    TextInput::make('MAILGUN_DOMAIN')
+                        ->label('Mailgun Domain')
+                        ->required(true)
+                        ->default(env('MAILGUN_DOMAIN', config('services.mailgun.domain'))),
+                    TextInput::make('MAILGUN_SECRET')
+                        ->label('Mailgun Secret')
+                        ->required(true)
+                        ->default(env('MAIL_USERNAME', config('services.mailgun.secret'))),
+                    TextInput::make('MAILGUN_ENDPOINT')
+                        ->label('Mailgun Endpoint')
+                        ->required(true)
+                        ->default(env('MAILGUN_ENDPOINT', config('services.mailgun.endpoint'))),
+                ]),
         ];
     }
 
@@ -393,7 +400,7 @@ class Settings extends Page implements HasForms
                         ->default(env('PANEL_SEND_REINSTALL_NOTIFICATION', config('panel.email.send_reinstall_notification'))),
                 ]),
             Section::make('Connections')
-                ->description('Timeoutsused when making requests.')
+                ->description('Timeouts used when making requests.')
                 ->columns(2)
                 ->schema([
                     TextInput::make('GUZZLE_TIMEOUT')
