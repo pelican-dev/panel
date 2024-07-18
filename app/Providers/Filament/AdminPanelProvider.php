@@ -19,6 +19,7 @@ use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\AuthenticateSession;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
+use Marjose123\FilamentWebhookServer\WebhookPlugin;
 
 class AdminPanelProvider extends PanelProvider
 {
@@ -74,6 +75,9 @@ class AdminPanelProvider extends PanelProvider
                 DisableBladeIconComponents::class,
                 DispatchServingFilamentEvent::class,
                 LanguageMiddleware::class,
+            ])
+            ->plugins([
+                WebhookPlugin::make() // <- Add this
             ])
             ->authMiddleware([
                 Authenticate::class,
