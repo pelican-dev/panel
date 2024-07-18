@@ -11,6 +11,7 @@ use Filament\Forms\Components\Actions\Action as FormAction;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Tabs;
 use Filament\Forms\Components\Tabs\Tab;
+use Filament\Forms\Components\TagsInput;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Components\ToggleButtons;
@@ -127,6 +128,39 @@ class Settings extends Page implements HasForms
                 ->formatStateUsing(fn ($state): int => (int) $state)
                 ->afterStateUpdated(fn ($state, Set $set) => $set('APP_2FA_REQUIRED', (int) $state))
                 ->default(env('APP_2FA_REQUIRED', config('panel.auth.2fa_required'))),
+            TagsInput::make('TRUSTED_PROXIES')
+                ->label('Trusted Proxies')
+                ->separator(',')
+                ->splitKeys(['Tab', ' '])
+                ->placeholder('New IP or IP Range')
+                ->default(env('TRUSTED_PROXIES', config('trustedproxy.proxies')))
+                ->hintActions([
+                    FormAction::make('clear')
+                        ->label('Clear')
+                        ->color('danger')
+                        ->icon('tabler-trash')
+                        ->requiresConfirmation(),
+                    FormAction::make('cloudflare')
+                        ->label('Set to Cloudflare IPs')
+                        ->icon('tabler-brand-cloudflare')
+                        ->action(fn (Set $set) => $set('TRUSTED_PROXIES', [
+                            '173.245.48.0/20',
+                            '103.21.244.0/22',
+                            '103.22.200.0/22',
+                            '103.31.4.0/22',
+                            '141.101.64.0/18',
+                            '108.162.192.0/18',
+                            '190.93.240.0/20',
+                            '188.114.96.0/20',
+                            '197.234.240.0/22',
+                            '198.41.128.0/17',
+                            '162.158.0.0/15',
+                            '104.16.0.0/13',
+                            '104.24.0.0/14',
+                            '172.64.0.0/13',
+                            '131.0.72.0/22',
+                        ])),
+                ]),
         ];
     }
 
