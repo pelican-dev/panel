@@ -11,7 +11,7 @@ return new class extends Migration
         Schema::create('filament_webhook_server_histories', function (Blueprint $table) {
             $table->id();
             $table->foreignId('webhook_client')->nullable();
-            $table->uuid('uuid');
+            $table->char('uuid', 36);
             $table->string('status_code')->nullable();
             $table->text('errorMessage')->nullable();
             $table->string('errorType')->nullable();

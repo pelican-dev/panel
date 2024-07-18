@@ -18,7 +18,7 @@ return [
      */
     'polling' => '10s',
     'webhook' => [
-        'keep_history' => false,
+        'keep_history' => true,
     ],
     'pages' => [
         Webhooks::class,
