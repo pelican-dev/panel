@@ -38,7 +38,7 @@ class PruneImagesCommand extends Command
             $response = Http::daemon($node)
                 ->connectTimeout(5)
                 ->timeout(30)
-                ->get('/api/system/docker/image/prune')
+                ->delete('/api/system/docker/image/prune')
                 ->json() ?? [];
 
             if (empty($response)) {
