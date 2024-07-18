@@ -486,6 +486,11 @@ class Settings extends Page implements HasForms
         return 'data';
     }
 
+    protected function hasUnsavedDataChangesAlert(): bool
+    {
+        return true;
+    }
+
     public function save(): void
     {
         try {
