@@ -41,7 +41,7 @@ class PruneImagesCommand extends Command
                 ->delete('/api/system/docker/image/prune')
                 ->json() ?? [];
 
-            if (empty($response)) {
+            if (empty($response) || $response['ImagesDeleted'] === null) {
                 $this->warn("Node {$node->id}: No images to clean up.");
 
                 return;
