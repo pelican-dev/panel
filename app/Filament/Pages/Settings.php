@@ -58,243 +58,263 @@ class Settings extends Page implements HasForms
                     Tab::make('general')
                         ->label('General')
                         ->icon('tabler-home')
-                        ->schema([
-                            TextInput::make('APP_NAME')
-                                ->label('App Name')
-                                ->required(true)
-                                ->default(env('APP_NAME', 'Pelican')),
-                            ToggleButtons::make('FILAMENT_TOP_NAVIGATION')
-                                ->label('Navigation')
-                                ->grouped()
-                                ->options([
-                                    false => 'Sidebar',
-                                    true => 'Topbar',
-                                ])
-                                ->formatStateUsing(fn ($state): bool => (bool) $state)
-                                ->afterStateUpdated(fn ($state, Set $set) => $set('FILAMENT_TOP_NAVIGATION', (bool) $state))
-                                ->default(env('FILAMENT_TOP_NAVIGATION', config('panel.filament.top-navigation'))),
-                            ToggleButtons::make('PANEL_USE_BINARY_PREFIX')
-                                ->label('Unit prefix')
-                                ->grouped()
-                                ->options([
-                                    false => 'Decimal Prefix (MB/ GB)',
-                                    true => 'Binary Prefix (MiB/ GiB)',
-                                ])
-                                ->formatStateUsing(fn ($state): bool => (bool) $state)
-                                ->afterStateUpdated(fn ($state, Set $set) => $set('PANEL_USE_BINARY_PREFIX', (bool) $state))
-                                ->default(env('PANEL_USE_BINARY_PREFIX', config('panel.use_binary_prefix'))),
-                        ]),
+                        ->schema($this->generalSettings()),
                     Tab::make('recaptcha')
                         ->label('reCAPTCHA')
                         ->icon('tabler-shield')
-                        ->schema([
-                            Toggle::make('RECAPTCHA_ENABLED')
-                                ->label('Status')
-                                ->onIcon('tabler-check')
-                                ->offIcon('tabler-x')
-                                ->onColor('success')
-                                ->offColor('danger')
-                                ->live()
-                                ->formatStateUsing(fn ($state): bool => (bool) $state)
-                                ->afterStateUpdated(fn ($state, Set $set) => $set('RECAPTCHA_ENABLED', (bool) $state))
-                                ->default(env('RECAPTCHA_ENABLED', config('recaptcha.enabled'))),
-                            TextInput::make('RECAPTCHA_DOMAIN')
-                                ->label('Domain')
-                                ->required(true)
-                                ->visible(fn (Get $get) => $get('RECAPTCHA_ENABLED'))
-                                ->default(env('RECAPTCHA_DOMAIN', config('recaptcha.domain'))),
-                            TextInput::make('RECAPTCHA_WEBSITE_KEY')
-                                ->label('Website Key')
-                                ->required(true)
-                                ->visible(fn (Get $get) => $get('RECAPTCHA_ENABLED'))
-                                ->default(env('RECAPTCHA_WEBSITE_KEY', config('recaptcha.website_key'))),
-                            TextInput::make('RECAPTCHA_SECRET_KEY')
-                                ->label('Secret Key')
-                                ->required(true)
-                                ->visible(fn (Get $get) => $get('RECAPTCHA_ENABLED'))
-                                ->default(env('RECAPTCHA_SECRET_KEY', config('recaptcha.secret_key'))),
-                        ]),
+                        ->schema($this->recaptchaSettings()),
                     Tab::make('mail')
                         ->label('Mail')
                         ->icon('tabler-mail')
-                        ->schema([
-                            Select::make('MAIL_MAILER')
-                                ->label('Mail Driver')
-                                ->columnSpanFull()
-                                ->options([
-                                    'log' => 'Print mails to Log',
-                                    'smtp' => 'SMTP Server',
-                                    'sendmail' => 'sendmail Binary',
-                                    'mailgun' => 'Mailgun',
-                                    'mandrill' => 'Mandrill',
-                                    'postmark' => 'Postmark',
-                                ])
-                                ->live()
-                                ->default(env('MAIL_MAILER', config('mail.default')))
-                                ->hintAction(
-                                    FormAction::make('test')
-                                        ->label('Send Test Mail')
-                                        ->icon('tabler-send')
-                                        ->hidden(fn (Get $get) => $get('MAIL_MAILER') === 'log')
-                                        ->action(function () {
-                                            try {
-                                                MailNotification::route('mail', auth()->user()->email)
-                                                    ->notify(new MailTested(auth()->user()));
-
-                                                Notification::make()
-                                                    ->title('Test Mail sent')
-                                                    ->success()
-                                                    ->send();
-                                            } catch (Exception $exception) {
-                                                Notification::make()
-                                                    ->title('Test Mail failed')
-                                                    ->body($exception->getMessage())
-                                                    ->danger()
-                                                    ->send();
-                                            }
-                                        })
-                                ),
-                            TextInput::make('MAIL_FROM_ADDRESS')
-                                ->label('From Address')
-                                ->required(true)
-                                ->email()
-                                ->default(env('MAIL_FROM_ADDRESS', config('mail.from.address'))),
-                            TextInput::make('MAIL_FROM_NAME')
-                                ->label('From Name')
-                                ->required(true)
-                                ->default(env('MAIL_FROM_NAME', config('mail.from.name'))),
-                            TextInput::make('MAIL_HOST')
-                                ->label('SMTP Host')
-                                ->required(true)
-                                ->visible(fn (Get $get) => $get('MAIL_MAILER') === 'smtp')
-                                ->default(env('MAIL_HOST', config('mail.mailers.smtp.host'))),
-                            TextInput::make('MAIL_PORT')
-                                ->label('SMTP Port')
-                                ->required(true)
-                                ->numeric()
-                                ->minValue(1)
-                                ->maxValue(65535)
-                                ->visible(fn (Get $get) => $get('MAIL_MAILER') === 'smtp')
-                                ->default(env('MAIL_PORT', config('mail.mailers.smtp.port'))),
-                            TextInput::make('MAIL_USERNAME')
-                                ->label('SMTP Username')
-                                ->required(true)
-                                ->visible(fn (Get $get) => $get('MAIL_MAILER') === 'smtp')
-                                ->default(env('MAIL_USERNAME', config('mail.mailers.smtp.username'))),
-                            TextInput::make('MAIL_PASSWORD')
-                                ->label('SMTP Password')
-                                ->password()
-                                ->revealable()
-                                ->visible(fn (Get $get) => $get('MAIL_MAILER') === 'smtp')
-                                ->default(env('MAIL_PASSWORD')),
-                            ToggleButtons::make('MAIL_ENCRYPTION')
-                                ->label('SMTP encryption')
-                                ->required(true)
-                                ->grouped()
-                                ->options(['tls' => 'TLS', 'ssl' => 'SSL', '' => 'None'])
-                                ->visible(fn (Get $get) => $get('MAIL_MAILER') === 'smtp')
-                                ->default(env('MAIL_ENCRYPTION', config('mail.mailers.smtp.encryption', 'tls'))),
-                            TextInput::make('MAILGUN_DOMAIN')
-                                ->label('Mailgun Domain')
-                                ->required(true)
-                                ->visible(fn (Get $get) => $get('MAIL_MAILER') === 'mailgun')
-                                ->default(env('MAILGUN_DOMAIN', config('services.mailgun.domain'))),
-                            TextInput::make('MAILGUN_SECRET')
-                                ->label('Mailgun Secret')
-                                ->required(true)
-                                ->visible(fn (Get $get) => $get('MAIL_MAILER') === 'mailgun')
-                                ->default(env('MAIL_USERNAME', config('services.mailgun.secret'))),
-                            TextInput::make('MAILGUN_ENDPOINT')
-                                ->label('Mailgun Endpoint')
-                                ->required(true)
-                                ->visible(fn (Get $get) => $get('MAIL_MAILER') === 'mailgun')
-                                ->default(env('MAILGUN_ENDPOINT', config('services.mailgun.endpoint'))),
-                        ]),
+                        ->schema($this->mailSettings()),
                     Tab::make('misc')
                         ->label('Misc')
                         ->icon('tabler-tool')
-                        ->schema([
-                            Section::make('Automatic Allocation Creation')
-                                ->description('Toggle if Users can create allocations via the client area.')
-                                ->columns(2)
-                                ->schema([
-                                    Toggle::make('PANEL_CLIENT_ALLOCATIONS_ENABLED')
-                                        ->label('Status')
-                                        ->onIcon('tabler-check')
-                                        ->offIcon('tabler-x')
-                                        ->onColor('success')
-                                        ->offColor('danger')
-                                        ->live()
-                                        ->columnSpanFull()
-                                        ->formatStateUsing(fn ($state): bool => (bool) $state)
-                                        ->afterStateUpdated(fn ($state, Set $set) => $set('PANEL_CLIENT_ALLOCATIONS_ENABLED', (bool) $state))
-                                        ->default(env('PANEL_CLIENT_ALLOCATIONS_ENABLED', config('panel.client_features.allocations.enabled'))),
-                                    TextInput::make('PANEL_CLIENT_ALLOCATIONS_RANGE_START')
-                                        ->label('Starting Port')
-                                        ->required(true)
-                                        ->numeric()
-                                        ->minValue(1024)
-                                        ->maxValue(65535)
-                                        ->visible(fn (Get $get) => $get('PANEL_CLIENT_ALLOCATIONS_ENABLED'))
-                                        ->default(env('PANEL_CLIENT_ALLOCATIONS_RANGE_START')),
-                                    TextInput::make('PANEL_CLIENT_ALLOCATIONS_RANGE_END')
-                                        ->label('Ending Port')
-                                        ->required(true)
-                                        ->numeric()
-                                        ->minValue(1024)
-                                        ->maxValue(65535)
-                                        ->visible(fn (Get $get) => $get('PANEL_CLIENT_ALLOCATIONS_ENABLED'))
-                                        ->default(env('PANEL_CLIENT_ALLOCATIONS_RANGE_END')),
-                                ]),
-                            Section::make('Notifications')
-                                ->description('Toggle which notifications should be sent to Users.')
-                                ->columns(2)
-                                ->schema([
-                                    Toggle::make('PANEL_SEND_INSTALL_NOTIFICATION')
-                                        ->label('Server Installed')
-                                        ->onIcon('tabler-check')
-                                        ->offIcon('tabler-x')
-                                        ->onColor('success')
-                                        ->offColor('danger')
-                                        ->live()
-                                        ->columnSpanFull()
-                                        ->formatStateUsing(fn ($state): bool => (bool) $state)
-                                        ->afterStateUpdated(fn ($state, Set $set) => $set('PANEL_SEND_INSTALL_NOTIFICATION', (bool) $state))
-                                        ->default(env('PANEL_SEND_INSTALL_NOTIFICATION', config('panel.email.send_install_notification'))),
-                                    Toggle::make('PANEL_SEND_REINSTALL_NOTIFICATION')
-                                        ->label('Server Reinstalled')
-                                        ->onIcon('tabler-check')
-                                        ->offIcon('tabler-x')
-                                        ->onColor('success')
-                                        ->offColor('danger')
-                                        ->live()
-                                        ->columnSpanFull()
-                                        ->formatStateUsing(fn ($state): bool => (bool) $state)
-                                        ->afterStateUpdated(fn ($state, Set $set) => $set('PANEL_SEND_REINSTALL_NOTIFICATION', (bool) $state))
-                                        ->default(env('PANEL_SEND_REINSTALL_NOTIFICATION', config('panel.email.send_reinstall_notification'))),
-                                ]),
-                            Section::make('Connections')
-                                ->description('Timeouts (in Seconds) used when making requests.')
-                                ->columns(2)
-                                ->schema([
-                                    TextInput::make('GUZZLE_TIMEOUT')
-                                        ->label('Request Timeout')
-                                        ->required(true)
-                                        ->numeric()
-                                        ->minValue(15)
-                                        ->maxValue(60)
-                                        ->visible(fn (Get $get) => $get('GUZZLE_TIMEOUT'))
-                                        ->default(env('GUZZLE_TIMEOUT', config('panel.guzzle.timeout'))),
-                                    TextInput::make('GUZZLE_CONNECT_TIMEOUT')
-                                        ->label('Connect Timeout')
-                                        ->required(true)
-                                        ->numeric()
-                                        ->minValue(5)
-                                        ->maxValue(60)
-                                        ->visible(fn (Get $get) => $get('GUZZLE_CONNECT_TIMEOUT'))
-                                        ->default(env('GUZZLE_CONNECT_TIMEOUT', config('panel.guzzle.connect_timeout'))),
-                                ]),
-                        ]),
+                        ->schema($this->miscSettings()),
+                ]),
+        ];
+    }
+
+    private function generalSettings(): array
+    {
+        return [
+            TextInput::make('APP_NAME')
+                ->label('App Name')
+                ->required(true)
+                ->default(env('APP_NAME', 'Pelican')),
+            ToggleButtons::make('FILAMENT_TOP_NAVIGATION')
+                ->label('Navigation')
+                ->grouped()
+                ->options([
+                    false => 'Sidebar',
+                    true => 'Topbar',
+                ])
+                ->formatStateUsing(fn ($state): bool => (bool) $state)
+                ->afterStateUpdated(fn ($state, Set $set) => $set('FILAMENT_TOP_NAVIGATION', (bool) $state))
+                ->default(env('FILAMENT_TOP_NAVIGATION', config('panel.filament.top-navigation'))),
+            ToggleButtons::make('PANEL_USE_BINARY_PREFIX')
+                ->label('Unit prefix')
+                ->grouped()
+                ->options([
+                    false => 'Decimal Prefix (MB/ GB)',
+                    true => 'Binary Prefix (MiB/ GiB)',
+                ])
+                ->formatStateUsing(fn ($state): bool => (bool) $state)
+                ->afterStateUpdated(fn ($state, Set $set) => $set('PANEL_USE_BINARY_PREFIX', (bool) $state))
+                ->default(env('PANEL_USE_BINARY_PREFIX', config('panel.use_binary_prefix'))),
+        ];
+    }
+
+    private function recaptchaSettings(): array
+    {
+        return [
+            Toggle::make('RECAPTCHA_ENABLED')
+                ->label('Status')
+                ->onIcon('tabler-check')
+                ->offIcon('tabler-x')
+                ->onColor('success')
+                ->offColor('danger')
+                ->live()
+                ->formatStateUsing(fn ($state): bool => (bool) $state)
+                ->afterStateUpdated(fn ($state, Set $set) => $set('RECAPTCHA_ENABLED', (bool) $state))
+                ->default(env('RECAPTCHA_ENABLED', config('recaptcha.enabled'))),
+            TextInput::make('RECAPTCHA_DOMAIN')
+                ->label('Domain')
+                ->required(true)
+                ->visible(fn (Get $get) => $get('RECAPTCHA_ENABLED'))
+                ->default(env('RECAPTCHA_DOMAIN', config('recaptcha.domain'))),
+            TextInput::make('RECAPTCHA_WEBSITE_KEY')
+                ->label('Website Key')
+                ->required(true)
+                ->visible(fn (Get $get) => $get('RECAPTCHA_ENABLED'))
+                ->default(env('RECAPTCHA_WEBSITE_KEY', config('recaptcha.website_key'))),
+            TextInput::make('RECAPTCHA_SECRET_KEY')
+                ->label('Secret Key')
+                ->required(true)
+                ->visible(fn (Get $get) => $get('RECAPTCHA_ENABLED'))
+                ->default(env('RECAPTCHA_SECRET_KEY', config('recaptcha.secret_key'))),
+        ];
+    }
+
+    private function mailSettings(): array
+    {
+        return [
+            Select::make('MAIL_MAILER')
+                ->label('Mail Driver')
+                ->columnSpanFull()
+                ->options([
+                    'log' => 'Print mails to Log',
+                    'smtp' => 'SMTP Server',
+                    'sendmail' => 'sendmail Binary',
+                    'mailgun' => 'Mailgun',
+                    'mandrill' => 'Mandrill',
+                    'postmark' => 'Postmark',
+                ])
+                ->live()
+                ->default(env('MAIL_MAILER', config('mail.default')))
+                ->hintAction(
+                    FormAction::make('test')
+                        ->label('Send Test Mail')
+                        ->icon('tabler-send')
+                        ->hidden(fn (Get $get) => $get('MAIL_MAILER') === 'log')
+                        ->action(function () {
+                            try {
+                                MailNotification::route('mail', auth()->user()->email)
+                                    ->notify(new MailTested(auth()->user()));
+
+                                Notification::make()
+                                    ->title('Test Mail sent')
+                                    ->success()
+                                    ->send();
+                            } catch (Exception $exception) {
+                                Notification::make()
+                                    ->title('Test Mail failed')
+                                    ->body($exception->getMessage())
+                                    ->danger()
+                                    ->send();
+                            }
+                        })
+                ),
+            TextInput::make('MAIL_FROM_ADDRESS')
+                ->label('From Address')
+                ->required(true)
+                ->email()
+                ->default(env('MAIL_FROM_ADDRESS', config('mail.from.address'))),
+            TextInput::make('MAIL_FROM_NAME')
+                ->label('From Name')
+                ->required(true)
+                ->default(env('MAIL_FROM_NAME', config('mail.from.name'))),
+            TextInput::make('MAIL_HOST')
+                ->label('SMTP Host')
+                ->required(true)
+                ->visible(fn (Get $get) => $get('MAIL_MAILER') === 'smtp')
+                ->default(env('MAIL_HOST', config('mail.mailers.smtp.host'))),
+            TextInput::make('MAIL_PORT')
+                ->label('SMTP Port')
+                ->required(true)
+                ->numeric()
+                ->minValue(1)
+                ->maxValue(65535)
+                ->visible(fn (Get $get) => $get('MAIL_MAILER') === 'smtp')
+                ->default(env('MAIL_PORT', config('mail.mailers.smtp.port'))),
+            TextInput::make('MAIL_USERNAME')
+                ->label('SMTP Username')
+                ->required(true)
+                ->visible(fn (Get $get) => $get('MAIL_MAILER') === 'smtp')
+                ->default(env('MAIL_USERNAME', config('mail.mailers.smtp.username'))),
+            TextInput::make('MAIL_PASSWORD')
+                ->label('SMTP Password')
+                ->password()
+                ->revealable()
+                ->visible(fn (Get $get) => $get('MAIL_MAILER') === 'smtp')
+                ->default(env('MAIL_PASSWORD')),
+            ToggleButtons::make('MAIL_ENCRYPTION')
+                ->label('SMTP encryption')
+                ->required(true)
+                ->grouped()
+                ->options(['tls' => 'TLS', 'ssl' => 'SSL', '' => 'None'])
+                ->visible(fn (Get $get) => $get('MAIL_MAILER') === 'smtp')
+                ->default(env('MAIL_ENCRYPTION', config('mail.mailers.smtp.encryption', 'tls'))),
+            TextInput::make('MAILGUN_DOMAIN')
+                ->label('Mailgun Domain')
+                ->required(true)
+                ->visible(fn (Get $get) => $get('MAIL_MAILER') === 'mailgun')
+                ->default(env('MAILGUN_DOMAIN', config('services.mailgun.domain'))),
+            TextInput::make('MAILGUN_SECRET')
+                ->label('Mailgun Secret')
+                ->required(true)
+                ->visible(fn (Get $get) => $get('MAIL_MAILER') === 'mailgun')
+                ->default(env('MAIL_USERNAME', config('services.mailgun.secret'))),
+            TextInput::make('MAILGUN_ENDPOINT')
+                ->label('Mailgun Endpoint')
+                ->required(true)
+                ->visible(fn (Get $get) => $get('MAIL_MAILER') === 'mailgun')
+                ->default(env('MAILGUN_ENDPOINT', config('services.mailgun.endpoint'))),
+        ];
+    }
+
+    private function miscSettings(): array
+    {
+        return [
+            Section::make('Automatic Allocation Creation')
+                ->description('Toggle if Users can create allocations via the client area.')
+                ->columns(2)
+                ->schema([
+                    Toggle::make('PANEL_CLIENT_ALLOCATIONS_ENABLED')
+                        ->label('Status')
+                        ->onIcon('tabler-check')
+                        ->offIcon('tabler-x')
+                        ->onColor('success')
+                        ->offColor('danger')
+                        ->live()
+                        ->columnSpanFull()
+                        ->formatStateUsing(fn ($state): bool => (bool) $state)
+                        ->afterStateUpdated(fn ($state, Set $set) => $set('PANEL_CLIENT_ALLOCATIONS_ENABLED', (bool) $state))
+                        ->default(env('PANEL_CLIENT_ALLOCATIONS_ENABLED', config('panel.client_features.allocations.enabled'))),
+                    TextInput::make('PANEL_CLIENT_ALLOCATIONS_RANGE_START')
+                        ->label('Starting Port')
+                        ->required(true)
+                        ->numeric()
+                        ->minValue(1024)
+                        ->maxValue(65535)
+                        ->visible(fn (Get $get) => $get('PANEL_CLIENT_ALLOCATIONS_ENABLED'))
+                        ->default(env('PANEL_CLIENT_ALLOCATIONS_RANGE_START')),
+                    TextInput::make('PANEL_CLIENT_ALLOCATIONS_RANGE_END')
+                        ->label('Ending Port')
+                        ->required(true)
+                        ->numeric()
+                        ->minValue(1024)
+                        ->maxValue(65535)
+                        ->visible(fn (Get $get) => $get('PANEL_CLIENT_ALLOCATIONS_ENABLED'))
+                        ->default(env('PANEL_CLIENT_ALLOCATIONS_RANGE_END')),
+                ]),
+            Section::make('Notifications')
+                ->description('Toggle which notifications should be sent to Users.')
+                ->columns(2)
+                ->schema([
+                    Toggle::make('PANEL_SEND_INSTALL_NOTIFICATION')
+                        ->label('Server Installed')
+                        ->onIcon('tabler-check')
+                        ->offIcon('tabler-x')
+                        ->onColor('success')
+                        ->offColor('danger')
+                        ->live()
+                        ->columnSpanFull()
+                        ->formatStateUsing(fn ($state): bool => (bool) $state)
+                        ->afterStateUpdated(fn ($state, Set $set) => $set('PANEL_SEND_INSTALL_NOTIFICATION', (bool) $state))
+                        ->default(env('PANEL_SEND_INSTALL_NOTIFICATION', config('panel.email.send_install_notification'))),
+                    Toggle::make('PANEL_SEND_REINSTALL_NOTIFICATION')
+                        ->label('Server Reinstalled')
+                        ->onIcon('tabler-check')
+                        ->offIcon('tabler-x')
+                        ->onColor('success')
+                        ->offColor('danger')
+                        ->live()
+                        ->columnSpanFull()
+                        ->formatStateUsing(fn ($state): bool => (bool) $state)
+                        ->afterStateUpdated(fn ($state, Set $set) => $set('PANEL_SEND_REINSTALL_NOTIFICATION', (bool) $state))
+                        ->default(env('PANEL_SEND_REINSTALL_NOTIFICATION', config('panel.email.send_reinstall_notification'))),
+                ]),
+            Section::make('Connections')
+                ->description('Timeouts (in Seconds) used when making requests.')
+                ->columns(2)
+                ->schema([
+                    TextInput::make('GUZZLE_TIMEOUT')
+                        ->label('Request Timeout')
+                        ->required(true)
+                        ->numeric()
+                        ->minValue(15)
+                        ->maxValue(60)
+                        ->visible(fn (Get $get) => $get('GUZZLE_TIMEOUT'))
+                        ->default(env('GUZZLE_TIMEOUT', config('panel.guzzle.timeout'))),
+                    TextInput::make('GUZZLE_CONNECT_TIMEOUT')
+                        ->label('Connect Timeout')
+                        ->required(true)
+                        ->numeric()
+                        ->minValue(5)
+                        ->maxValue(60)
+                        ->visible(fn (Get $get) => $get('GUZZLE_CONNECT_TIMEOUT'))
+                        ->default(env('GUZZLE_CONNECT_TIMEOUT', config('panel.guzzle.connect_timeout'))),
                 ]),
         ];
     }
