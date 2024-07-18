@@ -82,6 +82,16 @@ class Settings extends Page implements HasForms
                 ->label('App Name')
                 ->required(true)
                 ->default(env('APP_NAME', 'Pelican')),
+            Toggle::make('APP_DEBUG')
+                ->label('Enable Debug Mode?')
+                ->inline(false)
+                ->onIcon('tabler-check')
+                ->offIcon('tabler-x')
+                ->onColor('success')
+                ->offColor('danger')
+                ->formatStateUsing(fn ($state): bool => (bool) $state)
+                ->afterStateUpdated(fn ($state, Set $set) => $set('APP_DEBUG', (bool) $state))
+                ->default(env('RECAPTCHA_ENABLED', config('recaptcha.enabled'))),
             ToggleButtons::make('FILAMENT_TOP_NAVIGATION')
                 ->label('Navigation')
                 ->grouped()
@@ -102,6 +112,17 @@ class Settings extends Page implements HasForms
                 ->formatStateUsing(fn ($state): bool => (bool) $state)
                 ->afterStateUpdated(fn ($state, Set $set) => $set('PANEL_USE_BINARY_PREFIX', (bool) $state))
                 ->default(env('PANEL_USE_BINARY_PREFIX', config('panel.use_binary_prefix'))),
+            ToggleButtons::make('APP_2FA_REQUIRED')
+                ->label('2FA Requirement')
+                ->grouped()
+                ->options([
+                    0 => 'Not required',
+                    1 => 'Required for only Admins',
+                    2 => 'Required for all Users',
+                ])
+                ->formatStateUsing(fn ($state): int => (int) $state)
+                ->afterStateUpdated(fn ($state, Set $set) => $set('APP_2FA_REQUIRED', (int) $state))
+                ->default(env('APP_2FA_REQUIRED', config('panel.auth.2fa_required'))),
         ];
     }
 
@@ -109,7 +130,8 @@ class Settings extends Page implements HasForms
     {
         return [
             Toggle::make('RECAPTCHA_ENABLED')
-                ->label('Status')
+                ->label('Enable reCAPTCHA?')
+                ->inline(false)
                 ->onIcon('tabler-check')
                 ->offIcon('tabler-x')
                 ->onColor('success')
@@ -241,7 +263,7 @@ class Settings extends Page implements HasForms
                 ->columns(2)
                 ->schema([
                     Toggle::make('PANEL_CLIENT_ALLOCATIONS_ENABLED')
-                        ->label('Status')
+                        ->label('Allow Users to create allocations?')
                         ->onIcon('tabler-check')
                         ->offIcon('tabler-x')
                         ->onColor('success')
@@ -305,7 +327,6 @@ class Settings extends Page implements HasForms
                         ->numeric()
                         ->minValue(15)
                         ->maxValue(60)
-                        ->visible(fn (Get $get) => $get('GUZZLE_TIMEOUT'))
                         ->default(env('GUZZLE_TIMEOUT', config('panel.guzzle.timeout'))),
                     TextInput::make('GUZZLE_CONNECT_TIMEOUT')
                         ->label('Connect Timeout')
@@ -313,8 +334,30 @@ class Settings extends Page implements HasForms
                         ->numeric()
                         ->minValue(5)
                         ->maxValue(60)
-                        ->visible(fn (Get $get) => $get('GUZZLE_CONNECT_TIMEOUT'))
                         ->default(env('GUZZLE_CONNECT_TIMEOUT', config('panel.guzzle.connect_timeout'))),
+                ]),
+            Section::make('Activity Logs')
+                ->description('Configure how often old activity logs should be pruned and whether admin activities should be logged.')
+                ->columns(2)
+                ->schema([
+                    TextInput::make('APP_ACTIVITY_PRUNE_DAYS')
+                        ->label('Prune age (in days)')
+                        ->required(true)
+                        ->numeric()
+                        ->minValue(1)
+                        ->maxValue(365)
+                        ->default(env('APP_ACTIVITY_PRUNE_DAYS', config('activity.prune_days'))),
+                    Toggle::make('APP_ACTIVITY_HIDE_ADMIN')
+                        ->label('Hide admin activities?')
+                        ->inline(false)
+                        ->onIcon('tabler-check')
+                        ->offIcon('tabler-x')
+                        ->onColor('success')
+                        ->offColor('danger')
+                        ->live()
+                        ->formatStateUsing(fn ($state): bool => (bool) $state)
+                        ->afterStateUpdated(fn ($state, Set $set) => $set('APP_ACTIVITY_HIDE_ADMIN', (bool) $state))
+                        ->default(env('APP_ACTIVITY_HIDE_ADMIN', config('activity.hide_admin_activity'))),
                 ]),
         ];
     }
