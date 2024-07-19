@@ -113,7 +113,7 @@ export default () => {
                                     <span css={tw`ml-4 pl-4 border-l-4 border-neutral-600 py-px`}>
                                         Next run at:&nbsp;
                                         {schedule.nextRunAt ? (
-                                            format(schedule.nextRunAt, "MMM do 'at' h:mma")
+                                            format(schedule.nextRunAt, "MMM do 'at' HH:mm (h:mma)")
                                         ) : (
                                             <span css={tw`text-neutral-300`}>n/a</span>
                                         )}
