@@ -25,6 +25,7 @@ use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
 use Illuminate\Contracts\Auth\Access\Authorizable as AuthorizableContract;
 use Illuminate\Contracts\Auth\CanResetPassword as CanResetPasswordContract;
 use App\Notifications\SendPasswordReset as ResetPasswordNotification;
+use Spatie\Permission\Traits\HasRoles;
 
 /**
  * App\Models\User.
@@ -95,6 +96,7 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
     use CanResetPassword;
     use HasAccessTokens;
     use Notifiable;
+    use HasRoles;
 
     public const USER_LEVEL_USER = 0;
     public const USER_LEVEL_ADMIN = 1;
