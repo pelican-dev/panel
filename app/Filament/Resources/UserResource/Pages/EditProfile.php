@@ -319,7 +319,8 @@ class EditProfile extends \Filament\Pages\Auth\EditProfile
                 ->color('danger')
                 ->icon('tabler-2fa')
                 ->danger()
-                ->send();
+                ->send()
+                ->sendToDatabase(auth()->user());
 
             $stopPropagation();
         }

@@ -106,7 +106,8 @@ class CreateDatabaseHost extends CreateRecord
                 ->color('danger')
                 ->icon('tabler-database')
                 ->danger()
-                ->send();
+                ->send()
+                ->sendToDatabase(auth()->user());
 
             $stopPropagation();
         }

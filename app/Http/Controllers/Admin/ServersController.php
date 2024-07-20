@@ -83,7 +83,8 @@ class ServersController extends Controller
             ->title('Success!')
             ->body(trans('admin/server.alerts.install_toggled'))
             ->success()
-            ->send();
+            ->send()
+            ->sendToDatabase(auth()->user());
 
         return null;
     }
@@ -102,7 +103,7 @@ class ServersController extends Controller
             ->title('Success!')
             ->body(trans('admin/server.alerts.server_reinstalled'))
             ->success()
-            ->send();
+            ->send()->sendToDatabase(auth()->user());
     }
 
     /**

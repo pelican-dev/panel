@@ -110,7 +110,8 @@ class ListEggs extends ListRecords
                                 Notification::make()
                                     ->title('Import Failed')
                                     ->danger()
-                                    ->send();
+                                    ->send()
+                                    ->sendToDatabase(auth()->user());
 
                                 report($exception);
 
@@ -126,7 +127,8 @@ class ListEggs extends ListRecords
                             Notification::make()
                                 ->title('Import Failed')
                                 ->danger()
-                                ->send();
+                                ->send()
+                                ->sendToDatabase(auth()->user());
 
                             report($exception);
 
@@ -137,7 +139,8 @@ class ListEggs extends ListRecords
                     Notification::make()
                         ->title('Import Success')
                         ->success()
-                        ->send();
+                        ->send()
+                        ->sendToDatabase(auth()->user());
                 }),
         ];
     }
