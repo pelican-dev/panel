@@ -4,7 +4,7 @@ namespace App\Services\Helpers;
 
 use GuzzleHttp\Client;
 use Carbon\CarbonImmutable;
-use GuzzleHttp\Exception\ClientException;
+use GuzzleHttp\Exception\GuzzleException;
 use Illuminate\Support\Arr;
 use Illuminate\Contracts\Cache\Repository as CacheRepository;
 
@@ -110,7 +110,7 @@ class SoftwareVersionService
                     $wingsData = json_decode($response->getBody(), true);
                     $versionData['daemon'] = trim($wingsData['tag_name'], 'v');
                 }
-            } catch (ClientException $e) {
+            } catch (GuzzleException $e) {
             }
 
             $versionData['discord'] = 'https://pelican.dev/discord';
