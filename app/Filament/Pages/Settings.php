@@ -53,7 +53,7 @@ class Settings extends Page implements HasForms
     {
         return [
             Tabs::make('Tabs')
-                ->columns(2)
+                ->columns()
                 ->persistTabInQueryString()
                 ->tabs([
                     Tab::make('general')
@@ -85,7 +85,7 @@ class Settings extends Page implements HasForms
         return [
             TextInput::make('APP_NAME')
                 ->label('App Name')
-                ->required(true)
+                ->required()
                 ->default(env('APP_NAME', 'Pelican')),
             TextInput::make('APP_FAVICON')
                 ->label('App Favicon')
@@ -136,7 +136,7 @@ class Settings extends Page implements HasForms
                 ->default(env('APP_2FA_REQUIRED', config('panel.auth.2fa_required'))),
             TagsInput::make('TRUSTED_PROXIES')
                 ->label('Trusted Proxies')
-                ->separator(',')
+                ->separator()
                 ->splitKeys(['Tab', ' '])
                 ->placeholder('New IP or IP Range')
                 ->default(env('TRUSTED_PROXIES', config('trustedproxy.proxies')))
@@ -187,17 +187,17 @@ class Settings extends Page implements HasForms
                 ->default(env('RECAPTCHA_ENABLED', config('recaptcha.enabled'))),
             TextInput::make('RECAPTCHA_DOMAIN')
                 ->label('Domain')
-                ->required(true)
+                ->required()
                 ->visible(fn (Get $get) => $get('RECAPTCHA_ENABLED'))
                 ->default(env('RECAPTCHA_DOMAIN', config('recaptcha.domain'))),
             TextInput::make('RECAPTCHA_WEBSITE_KEY')
                 ->label('Website Key')
-                ->required(true)
+                ->required()
                 ->visible(fn (Get $get) => $get('RECAPTCHA_ENABLED'))
                 ->default(env('RECAPTCHA_WEBSITE_KEY', config('recaptcha.website_key'))),
             TextInput::make('RECAPTCHA_SECRET_KEY')
                 ->label('Secret Key')
-                ->required(true)
+                ->required()
                 ->visible(fn (Get $get) => $get('RECAPTCHA_ENABLED'))
                 ->default(env('RECAPTCHA_SECRET_KEY', config('recaptcha.secret_key'))),
         ];
@@ -245,36 +245,36 @@ class Settings extends Page implements HasForms
                 ),
             Section::make('"From" Settings')
                 ->description('Set the Address and Name used as "From" in mails.')
-                ->columns(2)
+                ->columns()
                 ->schema([
                     TextInput::make('MAIL_FROM_ADDRESS')
                         ->label('From Address')
-                        ->required(true)
+                        ->required()
                         ->email()
                         ->default(env('MAIL_FROM_ADDRESS', config('mail.from.address'))),
                     TextInput::make('MAIL_FROM_NAME')
                         ->label('From Name')
-                        ->required(true)
+                        ->required()
                         ->default(env('MAIL_FROM_NAME', config('mail.from.name'))),
                 ]),
             Section::make('SMTP Configuration')
-                ->columns(2)
+                ->columns()
                 ->visible(fn (Get $get) => $get('MAIL_MAILER') === 'smtp')
                 ->schema([
                     TextInput::make('MAIL_HOST')
                         ->label('SMTP Host')
-                        ->required(true)
+                        ->required()
                         ->default(env('MAIL_HOST', config('mail.mailers.smtp.host'))),
                     TextInput::make('MAIL_PORT')
                         ->label('SMTP Port')
-                        ->required(true)
+                        ->required()
                         ->numeric()
                         ->minValue(1)
                         ->maxValue(65535)
                         ->default(env('MAIL_PORT', config('mail.mailers.smtp.port'))),
                     TextInput::make('MAIL_USERNAME')
                         ->label('SMTP Username')
-                        ->required(true)
+                        ->required()
                         ->default(env('MAIL_USERNAME', config('mail.mailers.smtp.username'))),
                     TextInput::make('MAIL_PASSWORD')
                         ->label('SMTP Password')
@@ -283,26 +283,26 @@ class Settings extends Page implements HasForms
                         ->default(env('MAIL_PASSWORD')),
                     ToggleButtons::make('MAIL_ENCRYPTION')
                         ->label('SMTP encryption')
-                        ->required(true)
+                        ->required()
                         ->grouped()
                         ->options(['tls' => 'TLS', 'ssl' => 'SSL', '' => 'None'])
                         ->default(env('MAIL_ENCRYPTION', config('mail.mailers.smtp.encryption', 'tls'))),
                 ]),
             Section::make('Mailgun Configuration')
-                ->columns(2)
+                ->columns()
                 ->visible(fn (Get $get) => $get('MAIL_MAILER') === 'mailgun')
                 ->schema([
                     TextInput::make('MAILGUN_DOMAIN')
                         ->label('Mailgun Domain')
-                        ->required(true)
+                        ->required()
                         ->default(env('MAILGUN_DOMAIN', config('services.mailgun.domain'))),
                     TextInput::make('MAILGUN_SECRET')
                         ->label('Mailgun Secret')
-                        ->required(true)
+                        ->required()
                         ->default(env('MAIL_USERNAME', config('services.mailgun.secret'))),
                     TextInput::make('MAILGUN_ENDPOINT')
                         ->label('Mailgun Endpoint')
-                        ->required(true)
+                        ->required()
                         ->default(env('MAILGUN_ENDPOINT', config('services.mailgun.endpoint'))),
                 ]),
         ];
@@ -323,45 +323,45 @@ class Settings extends Page implements HasForms
                 ->default(env('APP_BACKUP_DRIVER', config('backups.default'))),
             Section::make('Throttles')
                 ->description('Configure how many backups can be created in a period. Set period to 0 to disable this throttle.')
-                ->columns(2)
+                ->columns()
                 ->schema([
                     TextInput::make('BACKUP_THROTTLE_LIMIT')
                         ->label('Limit')
-                        ->required(true)
+                        ->required()
                         ->numeric()
                         ->minValue(1)
                         ->default(config('backups.throttles.limit')),
                     TextInput::make('BACKUP_THROTTLE_PERIOD')
                         ->label('Period')
-                        ->required(true)
+                        ->required()
                         ->numeric()
                         ->minValue(0)
                         ->suffix('Seconds')
                         ->default(config('backups.throttles.period')),
                 ]),
             Section::make('S3 Configuration')
-                ->columns(2)
+                ->columns()
                 ->visible(fn (Get $get) => $get('APP_BACKUP_DRIVER') === Backup::ADAPTER_AWS_S3)
                 ->schema([
                     TextInput::make('AWS_DEFAULT_REGION')
                         ->label('Default Region')
-                        ->required(true)
+                        ->required()
                         ->default(config('backups.disks.s3.region')),
                     TextInput::make('AWS_ACCESS_KEY_ID')
                         ->label('Access Key ID')
-                        ->required(true)
+                        ->required()
                         ->default(config('backups.disks.s3.key')),
                     TextInput::make('AWS_SECRET_ACCESS_KEY')
                         ->label('Secret Access Key')
-                        ->required(true)
+                        ->required()
                         ->default(config('backups.disks.s3.secret')),
                     TextInput::make('AWS_BACKUPS_BUCKET')
                         ->label('Bucket')
-                        ->required(true)
+                        ->required()
                         ->default(config('backups.disks.s3.bucket')),
                     TextInput::make('AWS_ENDPOINT')
                         ->label('Endpoint')
-                        ->required(true)
+                        ->required()
                         ->default(config('backups.disks.s3.endpoint')),
                     Toggle::make('AWS_USE_PATH_STYLE_ENDPOINT')
                         ->label('Use path style endpoint?')
@@ -383,7 +383,9 @@ class Settings extends Page implements HasForms
         return [
             Section::make('Automatic Allocation Creation')
                 ->description('Toggle if Users can create allocations via the client area.')
-                ->columns(2)
+                ->columns()
+                ->collapsible()
+                ->collapsed()
                 ->schema([
                     Toggle::make('PANEL_CLIENT_ALLOCATIONS_ENABLED')
                         ->label('Allow Users to create allocations?')
@@ -398,7 +400,7 @@ class Settings extends Page implements HasForms
                         ->default(env('PANEL_CLIENT_ALLOCATIONS_ENABLED', config('panel.client_features.allocations.enabled'))),
                     TextInput::make('PANEL_CLIENT_ALLOCATIONS_RANGE_START')
                         ->label('Starting Port')
-                        ->required(true)
+                        ->required()
                         ->numeric()
                         ->minValue(1024)
                         ->maxValue(65535)
@@ -406,16 +408,18 @@ class Settings extends Page implements HasForms
                         ->default(env('PANEL_CLIENT_ALLOCATIONS_RANGE_START')),
                     TextInput::make('PANEL_CLIENT_ALLOCATIONS_RANGE_END')
                         ->label('Ending Port')
-                        ->required(true)
+                        ->required()
                         ->numeric()
                         ->minValue(1024)
                         ->maxValue(65535)
                         ->visible(fn (Get $get) => $get('PANEL_CLIENT_ALLOCATIONS_ENABLED'))
                         ->default(env('PANEL_CLIENT_ALLOCATIONS_RANGE_END')),
                 ]),
-            Section::make('Notifications')
-                ->description('Toggle which notifications should be sent to Users.')
-                ->columns(2)
+            Section::make('Mail Notifications')
+                ->description('Toggle which mail notifications should be sent to Users.')
+                ->columns()
+                ->collapsible()
+                ->collapsed()
                 ->schema([
                     Toggle::make('PANEL_SEND_INSTALL_NOTIFICATION')
                         ->label('Server Installed')
@@ -442,11 +446,13 @@ class Settings extends Page implements HasForms
                 ]),
             Section::make('Connections')
                 ->description('Timeouts used when making requests.')
-                ->columns(2)
+                ->columns()
+                ->collapsible()
+                ->collapsed()
                 ->schema([
                     TextInput::make('GUZZLE_TIMEOUT')
                         ->label('Request Timeout')
-                        ->required(true)
+                        ->required()
                         ->numeric()
                         ->minValue(15)
                         ->maxValue(60)
@@ -454,7 +460,7 @@ class Settings extends Page implements HasForms
                         ->default(env('GUZZLE_TIMEOUT', config('panel.guzzle.timeout'))),
                     TextInput::make('GUZZLE_CONNECT_TIMEOUT')
                         ->label('Connect Timeout')
-                        ->required(true)
+                        ->required()
                         ->numeric()
                         ->minValue(5)
                         ->maxValue(60)
@@ -463,11 +469,13 @@ class Settings extends Page implements HasForms
                 ]),
             Section::make('Activity Logs')
                 ->description('Configure how often old activity logs should be pruned and whether admin activities should be logged.')
-                ->columns(2)
+                ->columns()
+                ->collapsible()
+                ->collapsed()
                 ->schema([
                     TextInput::make('APP_ACTIVITY_PRUNE_DAYS')
                         ->label('Prune age')
-                        ->required(true)
+                        ->required()
                         ->numeric()
                         ->minValue(1)
                         ->maxValue(365)
