@@ -52,16 +52,16 @@ class EditNode extends EditRecord
                                 ->schema([
                                     Placeholder::make('')
                                         ->label('Wings Version')
-                                        ->content(fn (Node $node) => $node->systemInformation()['version']),
+                                        ->content(fn (Node $node) => $node->systemInformation()['version'] ?? 'Unknown'),
                                     Placeholder::make('')
                                         ->label('CPU Threads')
-                                        ->content(fn (Node $node) => $node->systemInformation()['cpu_count']),
+                                        ->content(fn (Node $node) => $node->systemInformation()['cpu_count'] ?? 0),
                                     Placeholder::make('')
                                         ->label('Architecture')
-                                        ->content(fn (Node $node) => $node->systemInformation()['architecture']),
+                                        ->content(fn (Node $node) => $node->systemInformation()['architecture'] ?? 'Unknown'),
                                     Placeholder::make('')
                                         ->label('Kernel')
-                                        ->content(fn (Node $node) => $node->systemInformation()['kernel_version']),
+                                        ->content(fn (Node $node) => $node->systemInformation()['kernel_version'] ?? 'Unknown'),
                                 ]),
                             View::make('filament.components.node-cpu-chart')->columnSpan(3),
                             View::make('filament.components.node-memory-chart')->columnSpan(3),
