@@ -140,7 +140,7 @@ class Settings extends Page implements HasForms
                         ->color('danger')
                         ->icon('tabler-trash')
                         ->requiresConfirmation()
-                        ->action(fn (Set $set) => $set('TRUSTED_PROXIES', '')),
+                        ->action(fn (Set $set) => $set('TRUSTED_PROXIES', [])),
                     FormAction::make('cloudflare')
                         ->label('Set to Cloudflare IPs')
                         ->icon('tabler-brand-cloudflare')
