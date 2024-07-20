@@ -22,7 +22,7 @@ use Filament\Forms\Get;
 use Filament\Forms\Set;
 use Filament\Notifications\Notification;
 use Filament\Pages\Concerns\HasUnsavedDataChangesAlert;
-use Filament\Pages\Concerns\InteractsWithFormActions;
+use Filament\Pages\Concerns\InteractsWithHeaderActions;
 use Filament\Pages\Page;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Notification as MailNotification;
@@ -34,8 +34,8 @@ class Settings extends Page implements HasForms
 {
     use EnvironmentWriterTrait;
     use HasUnsavedDataChangesAlert;
-    use InteractsWithFormActions;
     use InteractsWithForms;
+    use InteractsWithHeaderActions;
 
     protected static ?string $navigationIcon = 'tabler-settings';
     protected static ?string $navigationGroup = 'Advanced';
