@@ -67,6 +67,7 @@ class AllocationsRelationManager extends RelationManager
             ])
             ->headerActions([
                 Tables\Actions\CreateAction::make()->label('Create Allocation')
+                    ->createAnother(false)
                     ->form(fn () => [
                         TextInput::make('allocation_ip')
                             ->datalist($this->getOwnerRecord()->node->ipAddresses())
@@ -145,6 +146,7 @@ class AllocationsRelationManager extends RelationManager
                     ->action(fn (array $data) => resolve(AssignmentService::class)->handle($this->getOwnerRecord()->node, $data, $this->getOwnerRecord())),
                 Tables\Actions\AssociateAction::make()
                     ->multiple()
+                    ->associateAnother(false)
                     ->preloadRecordSelect()
                     ->recordSelectOptionsQuery(fn ($query) => $query->whereBelongsTo($this->getOwnerRecord()->node))
                     ->label('Add Allocation'),
