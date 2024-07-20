@@ -493,6 +493,27 @@ class Settings extends Page implements HasForms
                         ->afterStateUpdated(fn ($state, Set $set) => $set('APP_ACTIVITY_HIDE_ADMIN', (bool) $state))
                         ->default(env('APP_ACTIVITY_HIDE_ADMIN', config('activity.hide_admin_activity'))),
                 ]),
+            Section::make('API')
+                ->description('Defines the rate limit for the number of requests per minute that can be executed.')
+                ->columns()
+                ->collapsible()
+                ->collapsed()
+                ->schema([
+                    TextInput::make('APP_API_CLIENT_RATELIMIT')
+                        ->label('Client API Rate Limit')
+                        ->required()
+                        ->numeric()
+                        ->minValue(1)
+                        ->suffix('Requests Per Minute')
+                        ->default(env('APP_API_CLIENT_RATELIMIT', config('http.rate_limit.client'))),
+                    TextInput::make('APP_API_APPLICATION_RATELIMIT')
+                        ->label('Application API Rate Limit')
+                        ->required()
+                        ->numeric()
+                        ->minValue(1)
+                        ->suffix('Requests Per Minute')
+                        ->default(env('APP_API_APPLICATION_RATELIMIT', config('http.rate_limit.application'))),
+                ]),
         ];
     }
 
@@ -533,12 +554,17 @@ class Settings extends Page implements HasForms
         }
     }
 
-    public function getFormActions(): array
+    protected function getHeaderActions(): array
     {
         return [
             Action::make('save')
-                ->submit('save')
+                ->action('save')
                 ->keyBindings(['mod+s']),
         ];
+
+    }
+    protected function getFormActions(): array
+    {
+        return [];
     }
 }
