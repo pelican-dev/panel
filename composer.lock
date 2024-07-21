@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "9b74ade8036e38839dd6bda240753f2c",
+    "content-hash": "363704d89ea4bdb68d96be4930fbeca0",
     "packages": [
         {
             "name": "abdelhamiderrahmouni/filament-monaco-editor",
