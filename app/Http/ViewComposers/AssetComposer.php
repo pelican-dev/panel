@@ -10,9 +10,7 @@ class AssetComposer
     /**
      * AssetComposer constructor.
      */
-    public function __construct(private AssetHashService $assetHashService)
-    {
-    }
+    public function __construct(private AssetHashService $assetHashService) {}
 
     /**
      * Provide access to the asset service in the views.

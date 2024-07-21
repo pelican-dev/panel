@@ -20,8 +20,7 @@ class EggShareController extends Controller
         protected AlertsMessageBag $alert,
         protected EggExporterService $exporterService,
         protected EggImporterService $importerService,
-    ) {
-    }
+    ) {}
 
     public function export(Egg $egg): Response
     {

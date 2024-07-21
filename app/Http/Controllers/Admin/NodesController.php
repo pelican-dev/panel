@@ -35,8 +35,7 @@ class NodesController extends Controller
         protected NodeUpdateService $updateService,
         protected SoftwareVersionService $versionService,
         protected ViewFactory $view
-    ) {
-    }
+    ) {}
 
     /**
      * Displays create new node page.

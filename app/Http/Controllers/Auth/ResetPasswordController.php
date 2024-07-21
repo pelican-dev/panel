@@ -29,8 +29,7 @@ class ResetPasswordController extends Controller
      */
     public function __construct(
         private Hasher $hasher,
-    ) {
-    }
+    ) {}
 
     /**
      * Reset the given user's password.

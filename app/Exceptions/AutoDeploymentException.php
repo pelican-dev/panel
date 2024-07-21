@@ -2,6 +2,4 @@
 
 namespace App\Exceptions;
 
-class AutoDeploymentException extends \Exception
-{
-}
+class AutoDeploymentException extends \Exception {}

@@ -15,8 +15,7 @@ class ReinstallServerService
     public function __construct(
         private ConnectionInterface $connection,
         private DaemonServerRepository $daemonServerRepository
-    ) {
-    }
+    ) {}
 
     /**
      * Reinstall a server on the remote daemon.

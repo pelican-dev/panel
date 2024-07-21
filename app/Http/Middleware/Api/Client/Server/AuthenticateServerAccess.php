@@ -19,9 +19,7 @@ class AuthenticateServerAccess
     /**
      * AuthenticateServerAccess constructor.
      */
-    public function __construct()
-    {
-    }
+    public function __construct() {}
 
     /**
      * Authenticate that this server exists and is not suspended or marked as installing.

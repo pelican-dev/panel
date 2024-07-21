@@ -20,8 +20,7 @@ class EggController extends Controller
     public function __construct(
         protected AlertsMessageBag $alert,
         protected ViewFactory $view
-    ) {
-    }
+    ) {}
 
     /**
      * Render eggs listing page.

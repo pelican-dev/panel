@@ -12,9 +12,7 @@ class EggConfigurationService
     /**
      * EggConfigurationService constructor.
      */
-    public function __construct(private ServerConfigurationStructureService $configurationStructureService)
-    {
-    }
+    public function __construct(private ServerConfigurationStructureService $configurationStructureService) {}
 
     /**
      * Return an Egg file to be used by the Daemon.

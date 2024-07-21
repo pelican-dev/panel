@@ -23,8 +23,7 @@ class ServerViewController extends Controller
      */
     public function __construct(
         private readonly EnvironmentService $environmentService,
-    ) {
-    }
+    ) {}
 
     /**
      * Returns the index view for a server.

@@ -31,8 +31,7 @@ class ServerCreationService
         private FindViableNodesService $findViableNodesService,
         private ServerDeletionService $serverDeletionService,
         private VariableValidatorService $validatorService
-    ) {
-    }
+    ) {}
 
     /**
      * Create a server on the Panel and trigger a request to the Daemon to begin the server

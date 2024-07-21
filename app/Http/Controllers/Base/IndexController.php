@@ -11,9 +11,7 @@ class IndexController extends Controller
     /**
      * IndexController constructor.
      */
-    public function __construct(protected ViewFactory $view)
-    {
-    }
+    public function __construct(protected ViewFactory $view) {}
 
     /**
      * Returns listing of user's servers.

@@ -22,8 +22,7 @@ class NodeViewController extends Controller
      */
     public function __construct(
         private SoftwareVersionService $versionService,
-    ) {
-    }
+    ) {}
 
     /**
      * Returns index view for a specific node on the system.

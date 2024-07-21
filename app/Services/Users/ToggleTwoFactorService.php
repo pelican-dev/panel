@@ -18,8 +18,7 @@ class ToggleTwoFactorService
     public function __construct(
         private ConnectionInterface $connection,
         private Google2FA $google2FA,
-    ) {
-    }
+    ) {}
 
     /**
      * Toggle 2FA on an account only if the token provided is valid.

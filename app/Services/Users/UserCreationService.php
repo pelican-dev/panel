@@ -18,8 +18,7 @@ class UserCreationService
         private ConnectionInterface $connection,
         private Hasher $hasher,
         private PasswordBroker $passwordBroker,
-    ) {
-    }
+    ) {}
 
     /**
      * Create a new user on the system.

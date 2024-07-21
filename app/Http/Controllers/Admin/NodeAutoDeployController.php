@@ -16,8 +16,7 @@ class NodeAutoDeployController extends Controller
      */
     public function __construct(
         private KeyCreationService $keyCreationService
-    ) {
-    }
+    ) {}
 
     /**
      * Generates a new API key for the logged-in user with only permission to read

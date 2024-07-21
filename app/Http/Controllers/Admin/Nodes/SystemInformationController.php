@@ -14,9 +14,7 @@ class SystemInformationController extends Controller
     /**
      * SystemInformationController constructor.
      */
-    public function __construct(private DaemonConfigurationRepository $repository)
-    {
-    }
+    public function __construct(private DaemonConfigurationRepository $repository) {}
 
     /**
      * Returns system information from the Daemon.

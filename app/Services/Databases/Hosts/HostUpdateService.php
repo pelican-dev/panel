@@ -16,8 +16,7 @@ class HostUpdateService
         private ConnectionInterface $connection,
         private DatabaseManager $databaseManager,
         private DynamicDatabaseConnection $dynamic,
-    ) {
-    }
+    ) {}
 
     /**
      * Update a database host and persist to the database.

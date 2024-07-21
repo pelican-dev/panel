@@ -16,9 +16,7 @@ class VariableValidatorService
     /**
      * VariableValidatorService constructor.
      */
-    public function __construct(private ValidationFactory $validator)
-    {
-    }
+    public function __construct(private ValidationFactory $validator) {}
 
     /**
      * Validate all of the passed data against the given egg variables.

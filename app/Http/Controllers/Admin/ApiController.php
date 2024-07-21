@@ -21,8 +21,7 @@ class ApiController extends Controller
     public function __construct(
         private AlertsMessageBag $alert,
         private KeyCreationService $keyCreationService,
-    ) {
-    }
+    ) {}
 
     /**
      * Render view showing all of a user's application API keys.

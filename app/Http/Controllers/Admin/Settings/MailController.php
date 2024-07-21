@@ -21,8 +21,7 @@ class MailController extends Controller
      */
     public function __construct(
         private Kernel $kernel,
-    ) {
-    }
+    ) {}
 
     /**
      * Render UI for editing mail settings. This UI should only display if

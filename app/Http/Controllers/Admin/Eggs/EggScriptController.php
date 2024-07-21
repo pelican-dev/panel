@@ -20,8 +20,7 @@ class EggScriptController extends Controller
         protected AlertsMessageBag $alert,
         protected InstallScriptService $installScriptService,
         protected ViewFactory $view
-    ) {
-    }
+    ) {}
 
     /**
      * Handle requests to render installation script for an Egg.

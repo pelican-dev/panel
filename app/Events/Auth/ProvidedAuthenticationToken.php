@@ -7,7 +7,5 @@ use App\Events\Event;
 
 class ProvidedAuthenticationToken extends Event
 {
-    public function __construct(public User $user, public bool $recovery = false)
-    {
-    }
+    public function __construct(public User $user, public bool $recovery = false) {}
 }

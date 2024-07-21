@@ -23,8 +23,7 @@ class EggVariableController extends Controller
         protected VariableCreationService $creationService,
         protected VariableUpdateService $updateService,
         protected ViewFactory $view
-    ) {
-    }
+    ) {}
 
     /**
      * Handle request to view the variables attached to an Egg.

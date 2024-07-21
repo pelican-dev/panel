@@ -18,8 +18,7 @@ class AdvancedController extends Controller
     public function __construct(
         private AlertsMessageBag $alert,
         private Kernel $kernel,
-    ) {
-    }
+    ) {}
 
     /**
      * Render advanced Panel settings UI.

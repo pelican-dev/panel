@@ -54,7 +54,5 @@ return Application::configure(basePath: dirname(__DIR__))
         \Illuminate\Contracts\Console\Kernel::class => \App\Console\Kernel::class,
         \Illuminate\Contracts\Debug\ExceptionHandler::class => \App\Exceptions\Handler::class,
     ])
-    ->withExceptions(function (Exceptions $exceptions) {
-
-    })
+    ->withExceptions(function (Exceptions $exceptions) {})
     ->create();

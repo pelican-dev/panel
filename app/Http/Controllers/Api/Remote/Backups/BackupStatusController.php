@@ -20,9 +20,7 @@ class BackupStatusController extends Controller
     /**
      * BackupStatusController constructor.
      */
-    public function __construct(private BackupManager $backupManager)
-    {
-    }
+    public function __construct(private BackupManager $backupManager) {}
 
     /**
      * Handles updating the state of a backup.
