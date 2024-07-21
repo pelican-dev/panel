@@ -17,7 +17,8 @@ class ServerTransferController extends Controller
     public function __construct(
         private AlertsMessageBag $alert,
         private TransferServerService $transferServerService,
-    ) {}
+    ) {
+    }
 
     /**
      * Starts a transfer of a server to a new node.

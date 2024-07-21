@@ -2,4 +2,6 @@
 
 namespace App\Http\Requests\Api\Application\Nodes;
 
-class GetNodeRequest extends GetNodesRequest {}
+class GetNodeRequest extends GetNodesRequest
+{
+}

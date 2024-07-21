@@ -13,7 +13,9 @@ class UserUpdateService
     /**
      * UserUpdateService constructor.
      */
-    public function __construct(private Hasher $hasher) {}
+    public function __construct(private Hasher $hasher)
+    {
+    }
 
     /**
      * Update the user model instance and return the updated model.

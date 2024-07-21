@@ -19,7 +19,8 @@ class BuildModificationService
         private ConnectionInterface $connection,
         private DaemonServerRepository $daemonServerRepository,
         private ServerConfigurationStructureService $structureService
-    ) {}
+    ) {
+    }
 
     /**
      * Change the build details for a specified server.

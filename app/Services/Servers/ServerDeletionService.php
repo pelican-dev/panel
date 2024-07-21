@@ -21,7 +21,8 @@ class ServerDeletionService
         private ConnectionInterface $connection,
         private DaemonServerRepository $daemonServerRepository,
         private DatabaseManagementService $databaseManagementService
-    ) {}
+    ) {
+    }
 
     /**
      * Set if the server should be forcibly deleted from the panel (ignoring daemon errors) or not.

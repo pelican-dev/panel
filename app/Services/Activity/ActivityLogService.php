@@ -23,7 +23,8 @@ class ActivityLogService
         protected ActivityLogBatchService $batch,
         protected ActivityLogTargetableService $targetable,
         protected ConnectionInterface $connection
-    ) {}
+    ) {
+    }
 
     /**
      * Sets the activity logger as having been caused by an anonymous

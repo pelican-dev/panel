@@ -8,7 +8,9 @@ use Illuminate\Notifications\Messages\MailMessage;
 
 class MailTested extends Notification
 {
-    public function __construct(private User $user) {}
+    public function __construct(private User $user)
+    {
+    }
 
     public function via(): array
     {

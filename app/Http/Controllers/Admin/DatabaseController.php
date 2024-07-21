@@ -23,7 +23,8 @@ class DatabaseController extends Controller
         private HostCreationService $creationService,
         private HostDeletionService $deletionService,
         private HostUpdateService $updateService,
-    ) {}
+    ) {
+    }
 
     /**
      * Display database host index.

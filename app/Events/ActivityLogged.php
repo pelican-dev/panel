@@ -8,7 +8,9 @@ use Illuminate\Database\Eloquent\Model;
 
 class ActivityLogged extends Event
 {
-    public function __construct(public ActivityLog $model) {}
+    public function __construct(public ActivityLog $model)
+    {
+    }
 
     public function is(string $event): bool
     {

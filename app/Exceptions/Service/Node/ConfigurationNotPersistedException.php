@@ -4,4 +4,6 @@ namespace App\Exceptions\Service\Node;
 
 use App\Exceptions\DisplayException;
 
-class ConfigurationNotPersistedException extends DisplayException {}
+class ConfigurationNotPersistedException extends DisplayException
+{
+}

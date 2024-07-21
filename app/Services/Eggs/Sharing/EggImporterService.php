@@ -25,7 +25,9 @@ class EggImporterService
         'server.build.environment.' => 'server.environment.',
     ];
 
-    public function __construct(protected ConnectionInterface $connection) {}
+    public function __construct(protected ConnectionInterface $connection)
+    {
+    }
 
     /**
      * Take an uploaded JSON file and parse it into a new egg.

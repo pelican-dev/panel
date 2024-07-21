@@ -21,7 +21,9 @@ class RequireTwoFactorAuthentication
     /**
      * RequireTwoFactorAuthentication constructor.
      */
-    public function __construct(private AlertsMessageBag $alert) {}
+    public function __construct(private AlertsMessageBag $alert)
+    {
+    }
 
     /**
      * Check the user state on the incoming request to determine if they should be allowed to

@@ -45,7 +45,8 @@ class ServersController extends Controller
         protected ServerConfigurationStructureService $serverConfigurationStructureService,
         protected StartupModificationService $startupModificationService,
         protected SuspensionService $suspensionService
-    ) {}
+    ) {
+    }
 
     /**
      * Update the details for a server.

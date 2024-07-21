@@ -12,5 +12,7 @@ class FailedPasswordReset extends Event
     /**
      * Create a new event instance.
      */
-    public function __construct(public string $ip, public string $email) {}
+    public function __construct(public string $ip, public string $email)
+    {
+    }
 }

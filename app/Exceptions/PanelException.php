@@ -2,4 +2,6 @@
 
 namespace App\Exceptions;
 
-class PanelException extends \Exception {}
+class PanelException extends \Exception
+{
+}

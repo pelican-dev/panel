@@ -31,7 +31,8 @@ class UserController extends Controller
         protected Translator $translator,
         protected UserUpdateService $updateService,
         protected ViewFactory $view
-    ) {}
+    ) {
+    }
 
     /**
      * Display user index page.

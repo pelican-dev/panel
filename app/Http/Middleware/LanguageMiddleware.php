@@ -10,7 +10,9 @@ class LanguageMiddleware
     /**
      * LanguageMiddleware constructor.
      */
-    public function __construct(private Application $app) {}
+    public function __construct(private Application $app)
+    {
+    }
 
     /**
      * Handle an incoming request and set the user's preferred language.

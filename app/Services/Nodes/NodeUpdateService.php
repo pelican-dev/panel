@@ -17,7 +17,8 @@ class NodeUpdateService
     public function __construct(
         private ConnectionInterface $connection,
         private DaemonConfigurationRepository $configurationRepository,
-    ) {}
+    ) {
+    }
 
     /**
      * Update the configuration values for a given node on the machine.

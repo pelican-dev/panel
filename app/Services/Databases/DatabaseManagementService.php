@@ -32,7 +32,8 @@ class DatabaseManagementService
     public function __construct(
         protected ConnectionInterface $connection,
         protected DynamicDatabaseConnection $dynamic,
-    ) {}
+    ) {
+    }
 
     /**
      * Generates a unique database name for the given server. This name should be passed through when

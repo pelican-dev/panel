@@ -14,7 +14,8 @@ class DeleteFilesService
      */
     public function __construct(
         private DaemonFileRepository $daemonFileRepository
-    ) {}
+    ) {
+    }
 
     /**
      * Deletes the given files.

@@ -13,7 +13,9 @@ class FindAssignableAllocationService
     /**
      * FindAssignableAllocationService constructor.
      */
-    public function __construct(private AssignmentService $service) {}
+    public function __construct(private AssignmentService $service)
+    {
+    }
 
     /**
      * Finds an existing unassigned allocation and attempts to assign it to the given server. If

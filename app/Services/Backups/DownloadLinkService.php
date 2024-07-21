@@ -13,7 +13,9 @@ class DownloadLinkService
     /**
      * DownloadLinkService constructor.
      */
-    public function __construct(private BackupManager $backupManager, private NodeJWTService $jwtService) {}
+    public function __construct(private BackupManager $backupManager, private NodeJWTService $jwtService)
+    {
+    }
 
     /**
      * Returns the URL that allows for a backup to be downloaded by an individual

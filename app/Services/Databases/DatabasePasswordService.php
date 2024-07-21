@@ -15,7 +15,8 @@ class DatabasePasswordService
     public function __construct(
         private ConnectionInterface $connection,
         private DynamicDatabaseConnection $dynamic,
-    ) {}
+    ) {
+    }
 
     /**
      * Updates a password for a given database.

@@ -13,5 +13,7 @@ class Creating extends Event
     /**
      * Create a new event instance.
      */
-    public function __construct(public Server $server) {}
+    public function __construct(public Server $server)
+    {
+    }
 }

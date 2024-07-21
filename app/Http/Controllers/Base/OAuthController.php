@@ -16,7 +16,8 @@ class OAuthController extends Controller
      */
     public function __construct(
         private UserUpdateService $updateService
-    ) {}
+    ) {
+    }
 
     /**
      * Link a new OAuth

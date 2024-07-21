@@ -21,7 +21,8 @@ class ServerTransferController extends Controller
     public function __construct(
         private ConnectionInterface $connection,
         private DaemonServerRepository $daemonServerRepository,
-    ) {}
+    ) {
+    }
 
     /**
      * The daemon notifies us about a transfer failure.

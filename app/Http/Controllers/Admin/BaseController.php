@@ -11,7 +11,9 @@ class BaseController extends Controller
     /**
      * BaseController constructor.
      */
-    public function __construct(private SoftwareVersionService $version) {}
+    public function __construct(private SoftwareVersionService $version)
+    {
+    }
 
     /**
      * Return the admin index view.

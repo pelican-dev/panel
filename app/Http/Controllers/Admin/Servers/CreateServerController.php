@@ -19,7 +19,8 @@ class CreateServerController extends Controller
     public function __construct(
         private AlertsMessageBag $alert,
         private ServerCreationService $creationService,
-    ) {}
+    ) {
+    }
 
     /**
      * Displays the create server page.

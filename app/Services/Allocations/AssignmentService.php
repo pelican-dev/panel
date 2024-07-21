@@ -25,7 +25,9 @@ class AssignmentService
     /**
      * AssignmentService constructor.
      */
-    public function __construct(protected ConnectionInterface $connection) {}
+    public function __construct(protected ConnectionInterface $connection)
+    {
+    }
 
     /**
      * Insert allocations into the database and link them to a specific node.

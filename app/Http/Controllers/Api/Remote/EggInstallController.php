@@ -13,7 +13,9 @@ class EggInstallController extends Controller
     /**
      * EggInstallController constructor.
      */
-    public function __construct(private EnvironmentService $environment) {}
+    public function __construct(private EnvironmentService $environment)
+    {
+    }
 
     /**
      * Handle request to get script and installation information for a server

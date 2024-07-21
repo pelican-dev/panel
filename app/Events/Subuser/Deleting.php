@@ -13,5 +13,7 @@ class Deleting extends Event
     /**
      * Create a new event instance.
      */
-    public function __construct(public Subuser $subuser) {}
+    public function __construct(public Subuser $subuser)
+    {
+    }
 }

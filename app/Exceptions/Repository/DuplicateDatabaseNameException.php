@@ -4,4 +4,6 @@ namespace App\Exceptions\Repository;
 
 use App\Exceptions\DisplayException;
 
-class DuplicateDatabaseNameException extends DisplayException {}
+class DuplicateDatabaseNameException extends DisplayException
+{
+}
