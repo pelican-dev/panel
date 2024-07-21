@@ -26,7 +26,7 @@
         "lcobucci/jwt": "~4.3.0",
         "league/flysystem-aws-s3-v3": "~3.12.2",
         "league/flysystem-memory": "~3.10.3",
-        "marjose123/filament-webhook-server": "^2.1",
+        "marjose123/filament-webhook-server": "^2.0",
         "phpseclib/phpseclib": "~3.0.18",
         "pragmarx/google2fa": "~8.0.0",
         "predis/predis": "~2.1.1",
