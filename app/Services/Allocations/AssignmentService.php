@@ -5,6 +5,7 @@ namespace App\Services\Allocations;
 use App\Models\Allocation;
 use IPTools\Network;
 use App\Models\Node;
+use App\Models\Server;
 use Illuminate\Database\ConnectionInterface;
 use App\Exceptions\DisplayException;
 use App\Exceptions\Service\Allocation\CidrOutOfRangeException;
@@ -35,7 +36,7 @@ class AssignmentService
      * @throws \App\Exceptions\Service\Allocation\PortOutOfRangeException
      * @throws \App\Exceptions\Service\Allocation\TooManyPortsInRangeException
      */
-    public function handle(Node $node, array $data): array
+    public function handle(Node $node, array $data, Server $server = null): array
     {
         $explode = explode('/', $data['allocation_ip']);
         if (count($explode) !== 1) {
@@ -82,7 +83,7 @@ class AssignmentService
                             'ip' => $ip->__toString(),
                             'port' => (int) $unit,
                             'ip_alias' => array_get($data, 'allocation_alias'),
-                            'server_id' => null,
+                            'server_id' => $server->id ?? null,
                         ];
                     }
                 } else {
@@ -95,7 +96,7 @@ class AssignmentService
                         'ip' => $ip->__toString(),
                         'port' => (int) $port,
                         'ip_alias' => array_get($data, 'allocation_alias'),
-                        'server_id' => null,
+                        'server_id' => $server->id ?? null,
                     ];
                 }
 

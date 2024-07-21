@@ -38,6 +38,7 @@ class AdminPanelProvider extends PanelProvider
             ->path('admin')
             ->topNavigation(config('panel.filament.top-navigation', true))
             ->login()
+            ->breadcrumbs(false)
             ->homeUrl('/')
             ->favicon(config('app.favicon', '/pelican.ico'))
             ->brandName(config('app.name', 'Pelican'))
