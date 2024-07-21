@@ -16,7 +16,7 @@ return [
         \App\Models\ApiKey::class,
         \App\Models\Mount::class,
     ],
-    'polling' => '10s',
+    'polling' => '20m',
     'webhook' => [
         'keep_history' => true,
     ],
@@ -24,4 +24,7 @@ return [
         Webhooks::class,
         WebhookHistory::class,
     ],
+    'navigation' => [
+        'icon' => 'heroicon-s-arrow-up-on-square-stack'
+    ]
 ];
