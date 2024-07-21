@@ -24,7 +24,4 @@ return [
         Webhooks::class,
         WebhookHistory::class,
     ],
-    'navigation' => [
-        'icon' => 'heroicon-s-arrow-up-on-square-stack'
-    ]
 ];
