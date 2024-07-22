@@ -360,7 +360,7 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
 
     public function isRootAdmin(): bool
     {
-        return $this->hasRole('Root Admin');
+        return $this->root_admin || $this->hasRole('Root Admin');
     }
 
     public function canAccessPanel(Panel $panel): bool

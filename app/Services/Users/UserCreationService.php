@@ -8,6 +8,7 @@ use Illuminate\Contracts\Hashing\Hasher;
 use Illuminate\Database\ConnectionInterface;
 use Illuminate\Contracts\Auth\PasswordBroker;
 use App\Notifications\AccountCreated;
+use Spatie\Permission\Models\Role;
 
 class UserCreationService
 {
@@ -39,9 +40,16 @@ class UserCreationService
             $data['password'] = $this->hasher->make(str_random(30));
         }
 
+        $rootAdmin = $data['root_admin'];
+        unset($data['root_admin']);
+
         $user = User::query()->forceCreate(array_merge($data, [
             'uuid' => Uuid::uuid4()->toString(),
         ]));
+
+        if ($rootAdmin) {
+            $user->assignRole(Role::findOrCreate('Root Admin'));
+        }
 
         if (isset($generateResetToken)) {
             $token = $this->passwordBroker->createToken($user);

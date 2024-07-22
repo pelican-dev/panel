@@ -36,7 +36,7 @@ class UserTransformer extends BaseTransformer
             'first_name' => $user->name_first,
             'last_name' => $user->name_last,
             'language' => $user->language,
-            'root_admin' => (bool) $user->root_admin,
+            'root_admin' => $user->isRootAdmin(),
             '2fa_enabled' => (bool) $user->use_totp,
             '2fa' => (bool) $user->use_totp, // deprecated, use "2fa_enabled"
             'created_at' => $this->formatTimestamp($user->created_at),
