@@ -40,12 +40,14 @@ class ListUsers extends ListRecords
                     ->icon('tabler-mail'),
                 Tables\Columns\IconColumn::make('root_admin')
                     ->visibleFrom('md')
-                    ->label('Admin')
+                    ->label('Root Admin')
                     ->boolean()
                     ->trueIcon('tabler-star-filled')
                     ->falseIcon('tabler-star-off')
-                    ->sortable(),
-                Tables\Columns\IconColumn::make('use_totp')->label('2FA')
+                    ->sortable()
+                    ->state(fn (User $user) => $user->isRootAdmin()),
+                Tables\Columns\IconColumn::make('use_totp')
+                    ->label('2FA')
                     ->visibleFrom('lg')
                     ->icon(fn (User $user) => $user->use_totp ? 'tabler-lock' : 'tabler-lock-open-off')
                     ->boolean()->sortable(),

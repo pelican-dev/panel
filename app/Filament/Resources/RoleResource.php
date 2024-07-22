@@ -6,9 +6,11 @@ use App\Filament\Resources\RoleResource\Pages;
 use Filament\Facades\Filament;
 use Filament\Forms\Components\CheckboxList;
 use Filament\Forms\Components\Component;
+use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
+use Filament\Forms\Get;
 use Filament\Resources\Resource;
 use Illuminate\Database\Eloquent\Model;
 use Spatie\Permission\Models\Role;
@@ -57,7 +59,11 @@ class RoleResource extends Resource
                     ->nullable(),
                 Section::make('Permissions')
                     ->columns(3)
-                    ->schema($permissions),
+                    ->schema($permissions)
+                    ->hidden(fn (Get $get) => $get('name') === 'Root Admin'),
+                Placeholder::make('permissions')
+                    ->content('The Root Admin has all permissions.')
+                    ->visible(fn (Get $get) => $get('name') === 'Root Admin'),
             ]);
     }
 

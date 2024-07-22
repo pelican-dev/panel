@@ -8,6 +8,7 @@ use Filament\Resources\Pages\EditRecord;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Spatie\Permission\Models\Permission;
+use Spatie\Permission\Models\Role;
 
 class EditRole extends EditRecord
 {
@@ -44,7 +45,9 @@ class EditRole extends EditRecord
     protected function getHeaderActions(): array
     {
         return [
-            Actions\DeleteAction::make(),
+            Actions\DeleteAction::make()
+                ->disabled(fn (Role $role) => $role->name === 'Root Admin')
+                ->label(fn (Role $role) => $role->name === 'Root Admin' ? 'Can\'t delete Root Admin' : 'Delete'),
         ];
     }
 }

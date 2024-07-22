@@ -317,7 +317,7 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
 
     protected function checkPermission(Server $server, string $permission = ''): bool
     {
-        if ($this->root_admin || $server->owner_id === $this->id) {
+        if ($this->isRootAdmin() || $server->owner_id === $this->id) {
             return true;
         }
 
@@ -353,15 +353,20 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
 
     public function isLastRootAdmin(): bool
     {
-        $rootAdmins = User::query()->where('root_admin', true)->limit(2)->get();
+        $rootAdmins = User::all()->filter(fn ($user) => $user->isRootAdmin());
 
         return once(fn () => $rootAdmins->count() === 1 && $rootAdmins->first()->is($this));
+    }
+
+    public function isRootAdmin(): bool
+    {
+        return $this->hasRole('Root Admin');
     }
 
     public function canAccessPanel(Panel $panel): bool
     {
         // TODO: better check
-        return $this->root_admin || $this->roles()->count() >= 1;
+        return $this->isRootAdmin() || $this->roles()->count() >= 1;
     }
 
     public function getFilamentName(): string

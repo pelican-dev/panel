@@ -85,7 +85,7 @@ class AppServiceProvider extends ServiceProvider
         });
 
         Gate::before(function (User $user, $ability) {
-            return $user->root_admin ? true : null;
+            return $user->isRootAdmin() ? true : null;
         });
 
         Gate::policy(Role::class, RolePolicy::class);

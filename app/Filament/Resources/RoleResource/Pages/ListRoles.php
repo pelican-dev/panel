@@ -11,6 +11,7 @@ use Filament\Tables\Actions\DeleteBulkAction;
 use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
+use Spatie\Permission\Models\Role;
 
 class ListRoles extends ListRecords
 {
@@ -29,11 +30,13 @@ class ListRoles extends ListRecords
                 TextColumn::make('permissions_count')
                     ->label('Permissions')
                     ->badge()
-                    ->counts('permissions'),
+                    ->counts('permissions')
+                    ->formatStateUsing(fn (Role $role, $state) => $role->name === 'Root Admin' ? 'All' : $state),
             ])
             ->actions([
                 EditAction::make(),
             ])
+            ->checkIfRecordIsSelectableUsing(fn (Role $role) => $role->name !== 'Root Admin')
             ->bulkActions([
                 BulkActionGroup::make([
                     DeleteBulkAction::make(),
