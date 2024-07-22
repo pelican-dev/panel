@@ -2,6 +2,7 @@
 
 namespace App\Services\Users;
 
+use App\Models\Role;
 use Ramsey\Uuid\Uuid;
 use App\Models\User;
 use Illuminate\Contracts\Hashing\Hasher;
@@ -42,6 +43,10 @@ class UserCreationService
         $user = User::query()->forceCreate(array_merge($data, [
             'uuid' => Uuid::uuid4()->toString(),
         ]));
+
+        if (array_key_exists('root_admin', $data) && $data['root_admin']) {
+            $user->syncRoles(Role::findOrCreate(Role::ROOT_ADMIN));
+        }
 
         if (isset($generateResetToken)) {
             $token = $this->passwordBroker->createToken($user);
