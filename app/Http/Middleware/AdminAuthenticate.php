@@ -14,7 +14,7 @@ class AdminAuthenticate
      */
     public function handle(Request $request, \Closure $next): mixed
     {
-        if (!$request->user() || !$request->user()->isRootAdmin()) {
+        if (!$request->user() || !$request->user()->root_admin) {
             throw new AccessDeniedHttpException();
         }
 
