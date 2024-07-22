@@ -91,25 +91,15 @@ class ListUsers extends ListRecords
                                 ->required()
                                 ->unique()
                                 ->maxLength(255),
-
                             Forms\Components\TextInput::make('password')
                                 ->hintIcon('tabler-question-mark')
                                 ->hintIconTooltip('Providing a user password is optional. New user email will prompt users to create a password the first time they login.')
                                 ->password(),
-
-                            Forms\Components\ToggleButtons::make('root_admin')
-                                ->label('Administrator (Root)')
-                                ->options([
-                                    false => 'No',
-                                    true => 'Admin',
-                                ])
-                                ->colors([
-                                    false => 'primary',
-                                    true => 'danger',
-                                ])
-                                ->inline()
-                                ->required()
-                                ->default(false),
+                            Forms\Components\CheckboxList::make('roles')
+                                ->relationship('roles', 'name')
+                                ->label('Admin Roles')
+                                ->columnSpanFull()
+                                ->bulkToggleable(false),
                         ]),
                 ])
                 ->successRedirectUrl(route('filament.admin.resources.users.index'))
