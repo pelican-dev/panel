@@ -7,7 +7,6 @@ use App\Models;
 use App\Models\ApiKey;
 use App\Models\Node;
 use App\Models\User;
-use App\Policies\RolePolicy;
 use App\Services\Helpers\SoftwareVersionService;
 use Dedoc\Scramble\Scramble;
 use Dedoc\Scramble\Support\Generator\OpenApi;
@@ -23,7 +22,6 @@ use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Str;
 use Laravel\Sanctum\Sanctum;
-use Spatie\Permission\Models\Role;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -87,8 +85,6 @@ class AppServiceProvider extends ServiceProvider
         Gate::before(function (User $user, $ability) {
             return $user->isRootAdmin() ? true : null;
         });
-
-        Gate::policy(Role::class, RolePolicy::class);
     }
 
     /**

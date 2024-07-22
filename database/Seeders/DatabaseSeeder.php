@@ -2,8 +2,8 @@
 
 namespace Database\Seeders;
 
+use App\Models\Role;
 use Illuminate\Database\Seeder;
-use Spatie\Permission\Models\Role;
 
 class DatabaseSeeder extends Seeder
 {
@@ -14,6 +14,6 @@ class DatabaseSeeder extends Seeder
     {
         $this->call(EggSeeder::class);
 
-        Role::firstOrCreate(['name' => 'Root Admin']);
+        Role::firstOrCreate(['name' => Role::ROOT_ADMIN]);
     }
 }

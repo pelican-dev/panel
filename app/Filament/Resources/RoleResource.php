@@ -3,6 +3,7 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\RoleResource\Pages;
+use App\Models\Role;
 use Filament\Facades\Filament;
 use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\CheckboxList;
@@ -16,7 +17,6 @@ use Filament\Forms\Get;
 use Filament\Resources\Resource;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
-use Spatie\Permission\Models\Role;
 
 class RoleResource extends Resource
 {
@@ -132,10 +132,10 @@ class RoleResource extends Resource
                 Fieldset::make('Permissions')
                     ->columns(3)
                     ->schema($permissions)
-                    ->hidden(fn (Get $get) => $get('name') === 'Root Admin'),
+                    ->hidden(fn (Get $get) => $get('name') === Role::ROOT_ADMIN),
                 Placeholder::make('permissions')
                     ->content('The Root Admin has all permissions.')
-                    ->visible(fn (Get $get) => $get('name') === 'Root Admin'),
+                    ->visible(fn (Get $get) => $get('name') === Role::ROOT_ADMIN),
             ]);
     }
 

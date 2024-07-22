@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\RoleResource\Pages;
 
 use App\Filament\Resources\RoleResource;
+use App\Models\Role;
 use Filament\Actions;
 use Filament\Resources\Pages\ListRecords;
 use Filament\Tables\Actions\BulkActionGroup;
@@ -11,7 +12,6 @@ use Filament\Tables\Actions\DeleteBulkAction;
 use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
-use Spatie\Permission\Models\Role;
 
 class ListRoles extends ListRecords
 {
@@ -32,12 +32,12 @@ class ListRoles extends ListRecords
                     ->label('Permissions')
                     ->badge()
                     ->counts('permissions')
-                    ->formatStateUsing(fn (Role $role, $state) => $role->name === 'Root Admin' ? 'All' : $state),
+                    ->formatStateUsing(fn (Role $role, $state) => $role->isRootAdmin() ? 'All' : $state),
             ])
             ->actions([
                 EditAction::make(),
             ])
-            ->checkIfRecordIsSelectableUsing(fn (Role $role) => $role->name !== 'Root Admin')
+            ->checkIfRecordIsSelectableUsing(fn (Role $role) => !$role->isRootAdmin())
             ->bulkActions([
                 BulkActionGroup::make([
                     DeleteBulkAction::make(),

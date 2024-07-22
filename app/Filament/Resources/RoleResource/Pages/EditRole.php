@@ -3,12 +3,12 @@
 namespace App\Filament\Resources\RoleResource\Pages;
 
 use App\Filament\Resources\RoleResource;
+use App\Models\Role;
 use Filament\Actions;
 use Filament\Resources\Pages\EditRecord;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Spatie\Permission\Models\Permission;
-use Spatie\Permission\Models\Role;
 
 class EditRole extends EditRecord
 {
@@ -46,8 +46,8 @@ class EditRole extends EditRecord
     {
         return [
             Actions\DeleteAction::make()
-                ->disabled(fn (Role $role) => $role->name === 'Root Admin')
-                ->label(fn (Role $role) => $role->name === 'Root Admin' ? 'Can\'t delete Root Admin' : 'Delete'),
+                ->disabled(fn (Role $role) => $role->isRootAdmin())
+                ->label(fn (Role $role) => $role->isRootAdmin() ? 'Can\'t delete Root Admin' : 'Delete'),
         ];
     }
 }
