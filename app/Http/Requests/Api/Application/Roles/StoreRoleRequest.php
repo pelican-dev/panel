@@ -4,7 +4,6 @@ namespace App\Http\Requests\Api\Application\Roles;
 
 use App\Services\Acl\Api\AdminAcl;
 use App\Http\Requests\Api\Application\ApplicationApiRequest;
-use App\Models\Role;
 
 class StoreRoleRequest extends ApplicationApiRequest
 {
@@ -14,6 +13,9 @@ class StoreRoleRequest extends ApplicationApiRequest
 
     public function rules(array $rules = null): array
     {
-        return $rules ?? Role::getRules();
+        return [
+            'name' => 'required|string',
+            'guard_name' => 'nullable|string',
+        ];
     }
 }

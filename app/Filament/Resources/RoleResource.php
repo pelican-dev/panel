@@ -15,7 +15,6 @@ use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Forms\Get;
 use Filament\Resources\Resource;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
 
 class RoleResource extends Resource
@@ -96,14 +95,14 @@ class RoleResource extends Resource
                         ->bulkToggleable()
                         ->live()
                         ->afterStateHydrated(
-                            function (Component $component, string $operation, ?Model $record) use ($options) {
+                            function (Component $component, string $operation, ?Role $record) use ($options) {
                                 if (in_array($operation, ['edit', 'view'])) {
 
                                     if (blank($record)) {
                                         return;
                                     }
 
-                                    if ($component->isVisible() && count($options) > 0) {
+                                    if ($component->isVisible()) {
                                         $component->state(
                                             collect($options)
                                                 ->filter(fn ($value, $key) => $record->checkPermissionTo($key))
