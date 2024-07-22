@@ -4,6 +4,7 @@ namespace App\Filament\Resources\EggResource\Pages;
 
 use App\Filament\Resources\EggResource;
 use App\Models\Egg;
+use App\Models\User;
 use App\Services\Eggs\Sharing\EggExporterService;
 use App\Services\Eggs\Sharing\EggImporterService;
 use Exception;
@@ -55,7 +56,13 @@ class ListEggs extends ListRecords
                     ->color('primary')
                     ->action(fn (EggExporterService $service, Egg $egg) => response()->streamDownload(function () use ($service, $egg) {
                         echo $service->handle($egg->id);
-                    }, 'egg-' . $egg->getKebabName() . '.json')),
+                    }, 'egg-' . $egg->getKebabName() . '.json'))
+                    ->visible(function () {
+                        /** @var User $user */
+                        $user = auth()->user();
+
+                        return $user->can('export egg');
+                    }),
             ])
             ->bulkActions([
                 BulkActionGroup::make([
@@ -138,6 +145,12 @@ class ListEggs extends ListRecords
                         ->title('Import Success')
                         ->success()
                         ->send();
+                })
+                ->visible(function () {
+                    /** @var User $user */
+                    $user = auth()->user();
+
+                    return $user->can('import egg');
                 }),
         ];
     }

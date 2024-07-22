@@ -40,12 +40,64 @@ class RoleResource extends Resource
         'User',
     ];
 
+    private const PERMISSION_PREFIXES = [
+        'viewAny',
+        'view',
+        'create',
+        'update',
+        'delete',
+        'restore',
+        'forceDelete',
+    ];
+
+    private const MODEL_SPECIFIC_PERMISSIONS = [
+        'Egg' => [
+            'import',
+            'export',
+        ],
+    ];
+
     public static function form(Form $form): Form
     {
         $permissions = [];
 
         foreach (self::PERMISSION_MODELS as $model) {
-            $permissions[] = self::generatePermissionChecklist($model);
+            $options = [];
+
+            foreach (self::PERMISSION_PREFIXES as $prefix) {
+                $options[$prefix . ' ' . strtolower($model)] = studly_case($prefix);
+            }
+
+            if (array_key_exists($model, self::MODEL_SPECIFIC_PERMISSIONS)) {
+                foreach (self::MODEL_SPECIFIC_PERMISSIONS[$model] as $permission) {
+                    $options[$permission . ' ' . strtolower($model)] = studly_case($permission);
+                }
+            }
+
+            $permissions[] = CheckboxList::make($model)
+                ->label($model)
+                ->options($options)
+                ->bulkToggleable()
+                ->afterStateHydrated(
+                    function (Component $component, string $operation, ?Model $record) use ($options) {
+                        if (in_array($operation, ['edit', 'view'])) {
+
+                            if (blank($record)) {
+                                return;
+                            }
+
+                            if ($component->isVisible() && count($options) > 0) {
+                                $component->state(
+                                    collect($options)
+                                        ->filter(fn ($value, $key) => $record->checkPermissionTo($key))
+                                        ->keys()
+                                        ->toArray()
+                                );
+                            }
+                        }
+                    }
+                )
+                ->dehydrated(fn ($state) => !blank($state));
         }
 
         return $form
@@ -65,50 +117,6 @@ class RoleResource extends Resource
                     ->content('The Root Admin has all permissions.')
                     ->visible(fn (Get $get) => $get('name') === 'Root Admin'),
             ]);
-    }
-
-    private const PERMISSION_PREFIXES = [
-        'viewAny',
-        'view',
-        'create',
-        'update',
-        'delete',
-        'restore',
-        'forceDelete',
-    ];
-
-    private static function generatePermissionChecklist(string $model): CheckboxList
-    {
-        $options = [];
-
-        foreach (self::PERMISSION_PREFIXES as $prefix) {
-            $options[$prefix . ' ' . strtolower($model)] = studly_case($prefix);
-        }
-
-        return CheckboxList::make($model)
-            ->label($model)
-            ->options($options)
-            ->bulkToggleable()
-            ->afterStateHydrated(
-                function (Component $component, string $operation, ?Model $record) use ($options) {
-                    if (in_array($operation, ['edit', 'view'])) {
-
-                        if (blank($record)) {
-                            return;
-                        }
-
-                        if ($component->isVisible() && count($options) > 0) {
-                            $component->state(
-                                collect($options)
-                                    ->filter(fn ($value, $key) => $record->checkPermissionTo($key))
-                                    ->keys()
-                                    ->toArray()
-                            );
-                        }
-                    }
-                }
-            )
-            ->dehydrated(fn ($state) => !blank($state));
     }
 
     public static function getPages(): array
