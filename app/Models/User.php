@@ -95,8 +95,8 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
     use AvailableLanguages;
     use CanResetPassword;
     use HasAccessTokens;
-    use Notifiable;
     use HasRoles;
+    use Notifiable;
 
     public const USER_LEVEL_USER = 0;
     public const USER_LEVEL_ADMIN = 1;
@@ -360,7 +360,8 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
 
     public function canAccessPanel(Panel $panel): bool
     {
-        return $this->root_admin;
+        // TODO: better check
+        return $this->root_admin || $this->roles()->count() >= 1;
     }
 
     public function getFilamentName(): string

@@ -2,9 +2,9 @@
 
 namespace App\Policies;
 
-class EggPolicy
+class RolePolicy
 {
     use DefaultPolicies;
 
-    protected string $modelName = 'egg';
+    protected string $modelName = 'role';
 }
