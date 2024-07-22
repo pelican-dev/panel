@@ -25,6 +25,7 @@ class ListRoles extends ListRecords
                     ->sortable()
                     ->searchable(),
                 TextColumn::make('guard_name')
+                    ->hidden()
                     ->sortable()
                     ->searchable(),
                 TextColumn::make('permissions_count')

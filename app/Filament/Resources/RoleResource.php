@@ -4,8 +4,10 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\RoleResource\Pages;
 use Filament\Facades\Filament;
+use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\CheckboxList;
 use Filament\Forms\Components\Component;
+use Filament\Forms\Components\Fieldset;
 use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\TextInput;
@@ -13,6 +15,7 @@ use Filament\Forms\Form;
 use Filament\Forms\Get;
 use Filament\Resources\Resource;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Str;
 use Spatie\Permission\Models\Role;
 
 class RoleResource extends Resource
@@ -65,42 +68,58 @@ class RoleResource extends Resource
             $options = [];
 
             foreach (self::PERMISSION_PREFIXES as $prefix) {
-                $options[$prefix . ' ' . strtolower($model)] = studly_case($prefix);
+                $options[$prefix . ' ' . strtolower($model)] = Str::headline($prefix);
             }
 
             if (array_key_exists($model, self::MODEL_SPECIFIC_PERMISSIONS)) {
                 foreach (self::MODEL_SPECIFIC_PERMISSIONS[$model] as $permission) {
-                    $options[$permission . ' ' . strtolower($model)] = studly_case($permission);
+                    $options[$permission . ' ' . strtolower($model)] = Str::headline($permission);
                 }
             }
 
-            $permissions[] = CheckboxList::make($model)
-                ->label($model)
-                ->options($options)
-                ->bulkToggleable()
-                ->afterStateHydrated(
-                    function (Component $component, string $operation, ?Model $record) use ($options) {
-                        if (in_array($operation, ['edit', 'view'])) {
+            $permissions[] = Section::make(Str::headline(Str::plural($model)))
+                ->columnSpan(1)
+                ->collapsible()
+                ->collapsed()
+                ->icon(('\App\Filament\Resources\\' . $model . 'Resource')::getNavigationIcon())
+                ->headerActions([
+                    Action::make('count')
+                        ->label(fn (Get $get) => count($get(strtolower($model) . '_list')))
+                        ->badge(),
+                ])
+                ->schema([
+                    CheckboxList::make(strtolower($model) . '_list')
+                        ->label('')
+                        ->options($options)
+                        ->columns()
+                        ->gridDirection('row')
+                        ->bulkToggleable()
+                        ->live()
+                        ->afterStateHydrated(
+                            function (Component $component, string $operation, ?Model $record) use ($options) {
+                                if (in_array($operation, ['edit', 'view'])) {
 
-                            if (blank($record)) {
-                                return;
-                            }
+                                    if (blank($record)) {
+                                        return;
+                                    }
 
-                            if ($component->isVisible() && count($options) > 0) {
-                                $component->state(
-                                    collect($options)
-                                        ->filter(fn ($value, $key) => $record->checkPermissionTo($key))
-                                        ->keys()
-                                        ->toArray()
-                                );
+                                    if ($component->isVisible() && count($options) > 0) {
+                                        $component->state(
+                                            collect($options)
+                                                ->filter(fn ($value, $key) => $record->checkPermissionTo($key))
+                                                ->keys()
+                                                ->toArray()
+                                        );
+                                    }
+                                }
                             }
-                        }
-                    }
-                )
-                ->dehydrated(fn ($state) => !blank($state));
+                        )
+                        ->dehydrated(fn ($state) => !blank($state)),
+                ]);
         }
 
         return $form
+            ->columns(1)
             ->schema([
                 TextInput::make('name')
                     ->label('Role Name')
@@ -108,8 +127,9 @@ class RoleResource extends Resource
                 TextInput::make('guard_name')
                     ->label('Guard Name')
                     ->default(Filament::getCurrentPanel()?->getAuthGuard() ?? '')
-                    ->nullable(),
-                Section::make('Permissions')
+                    ->nullable()
+                    ->hidden(),
+                Fieldset::make('Permissions')
                     ->columns(3)
                     ->schema($permissions)
                     ->hidden(fn (Get $get) => $get('name') === 'Root Admin'),
