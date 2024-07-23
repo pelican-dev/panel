@@ -17,6 +17,7 @@ use Filament\Forms\Contracts\HasForms;
 use Filament\Forms\Form;
 use Filament\Forms\Get;
 use Filament\Notifications\Notification;
+use Filament\Pages\Concerns\HasUnsavedDataChangesAlert;
 use Filament\Pages\SimplePage;
 use Filament\Support\Enums\MaxWidth;
 use Illuminate\Support\Facades\Artisan;
@@ -29,6 +30,7 @@ use Illuminate\Support\HtmlString;
 class PanelInstaller extends SimplePage implements HasForms
 {
     use EnvironmentWriterTrait;
+    use HasUnsavedDataChangesAlert;
     use InteractsWithForms;
 
     public $data = [];
@@ -83,6 +85,11 @@ class PanelInstaller extends SimplePage implements HasForms
         return 'data';
     }
 
+    protected function hasUnsavedDataChangesAlert(): bool
+    {
+        return true;
+    }
+
     public function submit()
     {
         try {
@@ -117,6 +124,8 @@ class PanelInstaller extends SimplePage implements HasForms
 
             // Install setup complete
             file_put_contents(storage_path('installed'), 'installed');
+
+            $this->rememberData();
 
             Notification::make()
                 ->title('Successfully Installed')
