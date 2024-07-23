@@ -28,8 +28,7 @@ class RedisStep
                 TextInput::make('env.REDIS_USERNAME')
                     ->label('Redis Username')
                     ->hintIcon('tabler-question-mark')
-                    ->hintIconTooltip('The name of your redis user.')
-                    ->required()
+                    ->hintIconTooltip('The name of your redis user. Can be empty')
                     ->default(config('database.redis.default.username')),
                 TextInput::make('env.REDIS_PASSWORD')
                     ->label('Redis Password')
