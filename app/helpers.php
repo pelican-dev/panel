@@ -40,3 +40,10 @@ if (!function_exists('object_get_strict')) {
         return $object;
     }
 }
+
+if (!function_exists('is_installed')) {
+    function is_installed(): bool
+    {
+        return file_exists(storage_path('installed'));
+    }
+}

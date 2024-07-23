@@ -44,7 +44,7 @@ class PanelInstaller extends SimplePage implements HasForms
 
     public function mount()
     {
-        if (file_exists(storage_path('installed'))) {
+        if (is_installed()) {
             abort(404);
         }
 
