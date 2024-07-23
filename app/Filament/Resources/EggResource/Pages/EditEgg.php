@@ -251,7 +251,7 @@ class EditEgg extends EditRecord
                                 ->schema([
                                     TextInput::make('url')
                                         ->label('URL')
-                                        ->default(fn (Egg $egg): string => $egg->update_url)
+                                        ->default(fn (Egg $egg): ?string => $egg->update_url)
                                         ->hint('Link to the egg file (eg. minecraft.json)')
                                         ->url(),
                                 ]),
