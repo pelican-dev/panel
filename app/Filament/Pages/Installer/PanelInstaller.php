@@ -132,6 +132,8 @@ class PanelInstaller extends SimplePage implements HasForms
                 ->title('Successfully Installed')
                 ->success()
                 ->send();
+
+            redirect()->intended(Filament::getUrl());
         } catch (Exception $exception) {
             Notification::make()
                 ->title('Installation Failed')
@@ -139,7 +141,5 @@ class PanelInstaller extends SimplePage implements HasForms
                 ->danger()
                 ->send();
         }
-
-        return redirect()->intended(Filament::getUrl());
     }
 }
