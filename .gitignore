@@ -5,7 +5,6 @@
 /public/storage
 /storage/*.key
 /storage/clockwork/*
-/storage/installed
 /vendor
 *.DS_Store*
 .env

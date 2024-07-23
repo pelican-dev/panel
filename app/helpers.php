@@ -44,6 +44,7 @@ if (!function_exists('object_get_strict')) {
 if (!function_exists('is_installed')) {
     function is_installed(): bool
     {
-        return file_exists(storage_path('installed'));
+        // This defaults to true so existing panels count as "installed"
+        return env('APP_INSTALLED', true);
     }
 }
