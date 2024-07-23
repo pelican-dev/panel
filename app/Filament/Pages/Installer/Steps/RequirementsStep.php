@@ -30,7 +30,6 @@ class RequirementsStep
             'Zip' => extension_loaded('zip'),
             'intl' => extension_loaded('intl'),
             'SQLite3' => extension_loaded('pdo_sqlite'),
-            'FPM' => extension_loaded('fpm'),
         ];
 
         foreach ($phpExtensions as $extension => $loaded) {
