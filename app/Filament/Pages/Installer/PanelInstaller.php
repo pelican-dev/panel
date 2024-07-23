@@ -9,6 +9,7 @@ use App\Filament\Pages\Installer\Steps\RedisStep;
 use App\Filament\Pages\Installer\Steps\RequirementsStep;
 use App\Services\Users\UserCreationService;
 use App\Traits\Commands\EnvironmentWriterTrait;
+use Carbon\Carbon;
 use Exception;
 use Filament\Facades\Filament;
 use Filament\Forms\Components\Wizard;
@@ -123,7 +124,7 @@ class PanelInstaller extends SimplePage implements HasForms
             app(UserCreationService::class)->handle($userData);
 
             // Install setup complete
-            file_put_contents(storage_path('installed'), 'installed');
+            file_put_contents(storage_path('installed'), Carbon::now()->toDateTimeString());
 
             $this->rememberData();
 
