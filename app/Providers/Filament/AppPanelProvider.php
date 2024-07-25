@@ -35,6 +35,7 @@ class AppPanelProvider extends PanelProvider
         return $panel
             ->id('app')
             ->path('app')
+            ->topNavigation(config('panel.filament.top-navigation', true))
             ->tenant(Server::class)
             ->colors([
                 'danger' => Color::Red,
