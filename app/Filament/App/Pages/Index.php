@@ -14,6 +14,7 @@ class Index extends Page
 
     public array $history = [];
     public int $historyIndex = 0;
+    public string $input = '';
 
     protected function getViewData(): array
     {
@@ -59,6 +60,9 @@ class Index extends Page
 
     public function enter()
     {
+        $this->dispatch('sendServerCommand', command: $this->input);
+
+        $this->input = '';
 
 //        setHistory((prevHistory) => [command, ...prevHistory!].slice(0, 32));
 //            setHistoryIndex(-1);
