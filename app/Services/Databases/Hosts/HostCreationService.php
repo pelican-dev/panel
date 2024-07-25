@@ -33,13 +33,13 @@ class HostCreationService
                 'host' => array_get($data, 'host'),
                 'port' => array_get($data, 'port'),
                 'username' => array_get($data, 'username'),
-                'max_databases' => null,
+                'max_databases' => array_get($data, 'max_databases'),
                 'node_id' => array_get($data, 'node_id'),
             ]);
 
             // Confirm access using the provided credentials before saving data.
             $this->dynamic->set('dynamic', $host);
-            $this->databaseManager->connection('dynamic')->select('SELECT 1 FROM dual');
+            $this->databaseManager->connection('dynamic')->getPdo();
 
             return $host;
         });

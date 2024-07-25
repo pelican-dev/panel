@@ -95,6 +95,7 @@ class Egg extends Model
         'config_stop',
         'config_from',
         'startup',
+        'update_url',
         'script_is_privileged',
         'script_install',
         'script_entry',
