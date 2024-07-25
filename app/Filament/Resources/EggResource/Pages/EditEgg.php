@@ -144,7 +144,7 @@ class EditEgg extends EditRecord
                                 ->mutateRelationshipDataBeforeCreateUsing(function (array $data): array {
                                     $data['default_value'] ??= '';
                                     $data['description'] ??= '';
-                                    $data['rules'] ??= '';
+                                    $data['rules'] ??= [];
                                     $data['user_viewable'] ??= '';
                                     $data['user_editable'] ??= '';
 
@@ -153,7 +153,7 @@ class EditEgg extends EditRecord
                                 ->mutateRelationshipDataBeforeSaveUsing(function (array $data): array {
                                     $data['default_value'] ??= '';
                                     $data['description'] ??= '';
-                                    $data['rules'] ??= '';
+                                    $data['rules'] ??= [];
                                     $data['user_viewable'] ??= '';
                                     $data['user_editable'] ??= '';
 

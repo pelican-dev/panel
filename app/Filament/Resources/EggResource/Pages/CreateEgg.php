@@ -134,7 +134,7 @@ class CreateEgg extends CreateRecord
                                 ->mutateRelationshipDataBeforeCreateUsing(function (array $data): array {
                                     $data['default_value'] ??= '';
                                     $data['description'] ??= '';
-                                    $data['rules'] ??= '';
+                                    $data['rules'] ??= [];
                                     $data['user_viewable'] ??= '';
                                     $data['user_editable'] ??= '';
 
@@ -143,7 +143,7 @@ class CreateEgg extends CreateRecord
                                 ->mutateRelationshipDataBeforeSaveUsing(function (array $data): array {
                                     $data['default_value'] ??= '';
                                     $data['description'] ??= '';
-                                    $data['rules'] ??= '';
+                                    $data['rules'] ??= [];
                                     $data['user_viewable'] ??= '';
                                     $data['user_editable'] ??= '';
 
