@@ -53,6 +53,7 @@ class EditProfile extends \Filament\Pages\Auth\EditProfile
                                             ->label(trans('strings.username'))
                                             ->disabled()
                                             ->readOnly()
+                                            ->dehydrated(false)
                                             ->maxLength(255)
                                             ->unique(ignoreRecord: true)
                                             ->autofocus(),
@@ -119,6 +120,7 @@ class EditProfile extends \Filament\Pages\Auth\EditProfile
                                                     ->hidden(fn () => !cache()->get("users.{$this->getUser()->id}.2fa.tokens"))
                                                     ->rows(10)
                                                     ->readOnly()
+                                                    ->dehydrated(false)
                                                     ->formatStateUsing(fn () => cache()->get("users.{$this->getUser()->id}.2fa.tokens"))
                                                     ->helperText('These will not be shown again!')
                                                     ->label('Backup Tokens:'),

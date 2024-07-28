@@ -124,7 +124,8 @@ class EditServer extends EditRecord
                                         'md' => 2,
                                         'lg' => 3,
                                     ])
-                                    ->readOnly(),
+                                    ->readOnly()
+                                    ->dehydrated(false),
                                 Forms\Components\TextInput::make('uuid_short')
                                     ->label('Short UUID')
                                     ->hintAction(CopyAction::make())
@@ -134,7 +135,8 @@ class EditServer extends EditRecord
                                         'md' => 2,
                                         'lg' => 3,
                                     ])
-                                    ->readOnly(),
+                                    ->readOnly()
+                                    ->dehydrated(false),
                                 Forms\Components\TextInput::make('external_id')
                                     ->label('External ID')
                                     ->columnSpan([
