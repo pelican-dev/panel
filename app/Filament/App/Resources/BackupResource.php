@@ -10,6 +10,8 @@ class BackupResource extends Resource
 {
     protected static ?string $model = Backup::class;
 
+    protected static bool $canCreateAnother = false;
+
     protected static ?string $navigationIcon = 'tabler-download';
 
     public static function getPages(): array
