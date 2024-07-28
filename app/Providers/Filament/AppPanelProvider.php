@@ -8,6 +8,7 @@ use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
 use App\Filament\App\Pages;
+use Filament\Navigation\NavigationItem;
 use Filament\Panel;
 use Filament\PanelProvider;
 use Filament\Support\Colors\Color;
@@ -49,7 +50,16 @@ class AppPanelProvider extends PanelProvider
             ->discoverResources(in: app_path('Filament/App/Resources'), for: 'App\\Filament\\App\\Resources')
             ->discoverPages(in: app_path('Filament/App/Pages'), for: 'App\\Filament\\App\\Pages')
             ->pages([
-                Pages\Dashboard::class,
+                //Pages\Dashboard::class,
+            ])
+            ->navigationItems([
+                NavigationItem::make('admin')
+                    ->label('Admin')
+                    ->group('Admin') // TODO find a better name for this
+                    ->url('/admin')
+                    ->icon('tabler-arrow-forward')
+                    ->sort(5)
+                    ->visible(fn (): bool => auth()->user()->root_admin),
             ])
             ->favicon(config('app.favicon', '/pelican.ico'))
             ->brandName(config('app.name', 'Pelican'))
