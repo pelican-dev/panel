@@ -24,4 +24,7 @@ return [
         Webhooks::class,
         WebhookHistory::class,
     ],
+    'navigation' => [
+        'icon' => 'tabler-webhook',
+    ],
 ];
