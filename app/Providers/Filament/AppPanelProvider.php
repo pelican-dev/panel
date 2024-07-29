@@ -21,6 +21,7 @@ use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\AuthenticateSession;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
+use Filament\Navigation\MenuItem;
 
 class AppPanelProvider extends PanelProvider
 {
@@ -52,10 +53,9 @@ class AppPanelProvider extends PanelProvider
             ->pages([
                 //Pages\Dashboard::class,
             ])
-            ->navigationItems([
-                NavigationItem::make('admin')
+            ->userMenuItems([
+                MenuItem::make()
                     ->label('Admin')
-                    ->group('Admin') // TODO find a better name for this
                     ->url('/admin')
                     ->icon('tabler-arrow-forward')
                     ->sort(5)
