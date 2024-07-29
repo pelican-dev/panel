@@ -127,7 +127,7 @@ const ConfigureTwoFactorForm = ({ onTokens }: Props) => {
 };
 
 export default asDialog({
-    title: i18n.t('dashboard/account:two_factor.setup.title') ?? 'Enable Two-Step Verification',
+    title: 'Enable Two-Step Verification',
     description:
         "Help protect your account from unauthorized access. You'll be prompted for a verification code each time you sign in.",
 })(ConfigureTwoFactorForm);
