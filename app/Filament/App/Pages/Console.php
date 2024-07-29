@@ -6,11 +6,11 @@ use Filament\Actions\Action;
 use Filament\Facades\Filament;
 use Filament\Pages\Page;
 
-class Index extends Page
+class Console extends Page
 {
-    protected static ?string $navigationIcon = 'heroicon-o-document-text';
+    protected static ?string $navigationIcon = 'tabler-brand-tabler';
 
-    protected static string $view = 'filament.app.pages.index';
+    protected static string $view = 'filament.app.pages.console';
 
     public array $history = [];
     public int $historyIndex = 0;
