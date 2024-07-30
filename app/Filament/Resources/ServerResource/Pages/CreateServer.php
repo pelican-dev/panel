@@ -303,7 +303,7 @@ class CreateServer extends CreateRecord
                                         ),
                                 ),
 
-                            Forms\Components\TextArea::make('description')
+                            Forms\Components\Textarea::make('description')
                                 ->placeholder('Description')
                                 ->rows(3)
                                 ->columnSpan([
