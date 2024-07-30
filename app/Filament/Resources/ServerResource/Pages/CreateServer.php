@@ -80,7 +80,7 @@ class CreateServer extends CreateRecord
                                     'lg' => 3,
                                 ])
                                 ->relationship('user', 'username')
-                                ->searchable(['user', 'username', 'email'])
+                                ->searchable(['username', 'email'])
                                 ->getOptionLabelFromRecordUsing(fn (User $user) => "$user->email | $user->username " . ($user->isRootAdmin() ? '(admin)' : ''))
                                 ->createOptionForm([
                                     Forms\Components\TextInput::make('username')

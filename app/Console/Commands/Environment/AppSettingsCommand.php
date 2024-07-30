@@ -38,8 +38,7 @@ class AppSettingsCommand extends Command
                             {--queue= : The queue driver backend to use.}
                             {--redis-host= : Redis host to use for connections.}
                             {--redis-pass= : Password used to connect to redis.}
-                            {--redis-port= : Port to connect to redis over.}
-                            {--settings-ui= : Enable or disable the settings UI.}';
+                            {--redis-port= : Port to connect to redis over.}';
 
     protected array $variables = [];
 
@@ -86,12 +85,6 @@ class AppSettingsCommand extends Command
             self::QUEUE_DRIVERS,
             array_key_exists($selected, self::QUEUE_DRIVERS) ? $selected : null
         );
-
-        if (!is_null($this->option('settings-ui'))) {
-            $this->variables['APP_ENVIRONMENT_ONLY'] = $this->option('settings-ui') == 'true' ? 'false' : 'true';
-        } else {
-            $this->variables['APP_ENVIRONMENT_ONLY'] = $this->confirm(__('commands.appsettings.comment.settings_ui'), true) ? 'false' : 'true';
-        }
 
         // Make sure session cookies are set as "secure" when using HTTPS
         if (str_starts_with($this->variables['APP_URL'], 'https://')) {
