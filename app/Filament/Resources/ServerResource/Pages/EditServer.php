@@ -453,8 +453,6 @@ class EditServer extends EditRecord
                                 Forms\Components\Textarea::make('startup')
                                     ->label('Startup Command')
                                     ->required()
-                                    ->hint('sdfa')
-                                    ->hintIcon('tabler-code')
                                     ->columnSpan(6)
                                     ->rows(function ($state) {
                                         return str($state)->explode("\n")->reduce(
