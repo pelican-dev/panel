@@ -19,6 +19,7 @@ use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\AuthenticateSession;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
+use Filament\Navigation\MenuItem;
 
 class AdminPanelProvider extends PanelProvider
 {
@@ -43,6 +44,13 @@ class AdminPanelProvider extends PanelProvider
             ->brandLogo(config('app.logo'))
             ->brandLogoHeight('2rem')
             ->profile(EditProfile::class, false)
+            ->userMenuItems([
+                MenuItem::make()
+                    ->label('Exit Admin')
+                    ->url('/app')
+                    ->icon('tabler-arrow-back')
+                    ->sort(24),
+            ])
             ->colors([
                 'danger' => Color::Red,
                 'gray' => Color::Zinc,

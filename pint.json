@@ -7,6 +7,7 @@
         "nullable_type_declaration_for_default_null_value": false,
         "ordered_imports": false,
         "phpdoc_align": false,
-        "phpdoc_separation": false
+        "phpdoc_separation": false,
+        "single_line_empty_body": false
     }
 }
