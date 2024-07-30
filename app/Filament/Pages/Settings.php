@@ -102,7 +102,7 @@ class Settings extends Page implements HasForms
                 ->offColor('danger')
                 ->formatStateUsing(fn ($state): bool => (bool) $state)
                 ->afterStateUpdated(fn ($state, Set $set) => $set('APP_DEBUG', (bool) $state))
-                ->default(env('RECAPTCHA_ENABLED', config('recaptcha.enabled'))),
+                ->default(env('APP_DEBUG', config('app.debug'))),
             ToggleButtons::make('FILAMENT_TOP_NAVIGATION')
                 ->label('Navigation')
                 ->inline()
