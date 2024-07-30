@@ -532,6 +532,9 @@ class Settings extends Page implements HasForms
         try {
             $data = $this->form->getState();
 
+            // Convert bools to a string, so they are correctly written to the .env file
+            $data = array_map(fn($value) => is_bool($value) ? ($value ? 'true' : 'false') : $value, $data);
+
             $this->writeToEnvironment($data);
 
             Artisan::call('config:clear');
