@@ -59,6 +59,13 @@ class RoleResource extends Resource
         ],
     ];
 
+    private const SPECIAL_PERMISSIONS = [
+        'Settings' => [
+            'view',
+            'update',
+        ],
+    ];
+
     public static function form(Form $form): Form
     {
         $permissions = [];
@@ -76,45 +83,17 @@ class RoleResource extends Resource
                 }
             }
 
-            $permissions[] = Section::make(Str::headline(Str::plural($model)))
-                ->columnSpan(1)
-                ->collapsible()
-                ->collapsed()
-                ->icon(('\App\Filament\Resources\\' . $model . 'Resource')::getNavigationIcon())
-                ->headerActions([
-                    Action::make('count')
-                        ->label(fn (Get $get) => count($get(strtolower($model) . '_list')))
-                        ->badge(),
-                ])
-                ->schema([
-                    CheckboxList::make(strtolower($model) . '_list')
-                        ->label('')
-                        ->options($options)
-                        ->columns()
-                        ->gridDirection('row')
-                        ->bulkToggleable()
-                        ->live()
-                        ->afterStateHydrated(
-                            function (Component $component, string $operation, ?Role $record) use ($options) {
-                                if (in_array($operation, ['edit', 'view'])) {
+            $permissions[] = self::makeSection($model, $options);
+        }
 
-                                    if (blank($record)) {
-                                        return;
-                                    }
+        foreach (self::SPECIAL_PERMISSIONS as $model => $prefixes) {
+            $options = [];
 
-                                    if ($component->isVisible()) {
-                                        $component->state(
-                                            collect($options)
-                                                ->filter(fn ($value, $key) => $record->checkPermissionTo($key))
-                                                ->keys()
-                                                ->toArray()
-                                        );
-                                    }
-                                }
-                            }
-                        )
-                        ->dehydrated(fn ($state) => !blank($state)),
-                ]);
+            foreach ($prefixes as $prefix) {
+                $options[$prefix . ' ' . strtolower($model)] = Str::headline($prefix);
+            }
+
+            $permissions[] = self::makeSection($model, $options);
         }
 
         return $form
@@ -135,6 +114,57 @@ class RoleResource extends Resource
                 Placeholder::make('permissions')
                     ->content('The Root Admin has all permissions.')
                     ->visible(fn (Get $get) => $get('name') === Role::ROOT_ADMIN),
+            ]);
+    }
+
+    private static function makeSection(string $model, array $options): Section
+    {
+        $icon = null;
+
+        if (class_exists('\App\Filament\Resources\\' . $model . 'Resource')) {
+            $icon = ('\App\Filament\Resources\\' . $model . 'Resource')::getNavigationIcon();
+        } elseif (class_exists('\App\Filament\Pages\\' . $model)) {
+            $icon = ('\App\Filament\Pages\\' . $model)::getNavigationIcon();
+        }
+
+        return Section::make(Str::headline(Str::plural($model)))
+            ->columnSpan(1)
+            ->collapsible()
+            ->collapsed()
+            ->icon($icon)
+            ->headerActions([
+                Action::make('count')
+                    ->label(fn (Get $get) => count($get(strtolower($model) . '_list')))
+                    ->badge(),
+            ])
+            ->schema([
+                CheckboxList::make(strtolower($model) . '_list')
+                    ->label('')
+                    ->options($options)
+                    ->columns()
+                    ->gridDirection('row')
+                    ->bulkToggleable()
+                    ->live()
+                    ->afterStateHydrated(
+                        function (Component $component, string $operation, ?Role $record) use ($options) {
+                            if (in_array($operation, ['edit', 'view'])) {
+
+                                if (blank($record)) {
+                                    return;
+                                }
+
+                                if ($component->isVisible()) {
+                                    $component->state(
+                                        collect($options)
+                                            ->filter(fn ($value, $key) => $record->checkPermissionTo($key))
+                                            ->keys()
+                                            ->toArray()
+                                    );
+                                }
+                            }
+                        }
+                    )
+                    ->dehydrated(fn ($state) => !blank($state)),
             ]);
     }
 
