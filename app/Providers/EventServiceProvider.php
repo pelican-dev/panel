@@ -2,6 +2,9 @@
 
 namespace App\Providers;
 
+use App\Events\User\Created as UserCreated;
+use App\Events\User\Deleted as UserDeleted;
+use App\Listeners\WebhookListener;
 use App\Models\User;
 use App\Models\Server;
 use App\Models\Subuser;
@@ -21,6 +24,8 @@ class EventServiceProvider extends ServiceProvider
      */
     protected $listen = [
         ServerInstalledEvent::class => [ServerInstalledNotification::class],
+        UserCreated::class => [WebhookListener::class],
+        UserDeleted::class => [WebhookListener::class],
     ];
 
     /**

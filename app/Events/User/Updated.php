@@ -6,7 +6,7 @@ use App\Models\User;
 use App\Events\Event;
 use Illuminate\Queue\SerializesModels;
 
-class Creating extends Event
+class Updated extends Event
 {
     use SerializesModels;
 

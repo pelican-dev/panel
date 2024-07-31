@@ -38,6 +38,7 @@ class Settings extends Page implements HasForms
     use InteractsWithHeaderActions;
 
     protected static ?string $navigationIcon = 'tabler-settings';
+
     protected static ?string $navigationGroup = 'Advanced';
 
     protected static string $view = 'filament.pages.settings';
@@ -68,6 +69,10 @@ class Settings extends Page implements HasForms
                         ->label('Mail')
                         ->icon('tabler-mail')
                         ->schema($this->mailSettings()),
+                    Tab::make('Webhooks')
+                        ->translateLabel()
+                        ->icon('tabler-webhook')
+                        ->schema($this->webhookSettings()),
                     Tab::make('backup')
                         ->label('Backup')
                         ->icon('tabler-box')
@@ -308,6 +313,67 @@ class Settings extends Page implements HasForms
         ];
     }
 
+    private function webhookSettings(): array
+    {
+        return [
+            Toggle::make('WEBHOOKS_ENABLED')
+                ->label('Enable Webhooks?')
+                ->onIcon('tabler-check')
+                ->offIcon('tabler-x')
+                ->onColor('success')
+                ->offColor('danger')
+                ->formatStateUsing(fn ($state): bool => (bool) $state)
+                ->default(env('WEBHOOKS_ENABLED', false)),
+
+            ToggleButtons::make('WEBHOOK_TYPE')
+                ->label('Webhook Type')
+                ->columnSpanFull()
+                ->inline()
+                ->options([
+                    'discord' => 'Discord',
+                    'json' => 'Json Payload',
+                ])
+                ->default(env('WEBHOOK_TYPE'))
+                ->live(),
+
+            Section::make('Webhooks')
+                ->visible(fn (Get $get) => $get('WEBHOOK_TYPE') === 'json')
+                ->columns(false)
+                ->schema([
+                    TextInput::make('MAIN_WEBHOOK')
+                        ->label('Main Webhook')
+                        ->url()
+                        ->helperText('When webhooks are enabled, and a specific category is not set up, this fallback webhook will be used.')
+                        ->default(env('MAIN_WEBHOOK')),
+
+                    TextInput::make('USER_WEBHOOK')
+                        ->label('User Webhook')
+                        ->url()
+                        ->helperText('All User related events will be logged to this webhook')
+                        ->default(env('USER_WEBHOOK')),
+                ]),
+
+            Section::make('Discord Webhooks')
+                ->visible(fn (Get $get) => $get('WEBHOOK_TYPE') === 'discord')
+                ->columns(false)
+                ->schema([
+                    TextInput::make('MAIN_WEBHOOK_DISCORD')
+                        ->label('Main Webhook')
+                        ->url()
+                        ->placeholder('https://discord.com/api/webhooks/')
+                        ->helperText('When webhooks are enabled, and a specific category is not set up, this fallback webhook will be used.')
+                        ->default(env('MAIN_WEBHOOK_DISCORD')),
+
+                    TextInput::make('USER_WEBHOOK_DISCORD')
+                        ->label('User Webhook')
+                        ->url()
+                        ->placeholder('https://discord.com/api/webhooks/')
+                        ->helperText('All User related events will be logged to this webhook')
+                        ->default(env('USER_WEBHOOK_DISCORD')),
+                ]),
+        ];
+    }
+
     private function backupSettings(): array
     {
         return [
@@ -541,8 +607,6 @@ class Settings extends Page implements HasForms
             Artisan::call('queue:restart');
 
             $this->rememberData();
-
-            $this->redirect($this->getUrl());
 
             Notification::make()
                 ->title('Settings saved')
