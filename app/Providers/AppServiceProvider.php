@@ -2,6 +2,9 @@
 
 namespace App\Providers;
 
+use App\Checks\NodeVersionsCheck;
+use App\Checks\PanelVersionCheck;
+use App\Checks\UsedDiskSpaceCheck;
 use App\Extensions\Themes\Theme;
 use App\Models;
 use App\Models\ApiKey;
@@ -21,6 +24,12 @@ use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Str;
 use Laravel\Sanctum\Sanctum;
+use Spatie\Health\Checks\Checks\CacheCheck;
+use Spatie\Health\Checks\Checks\DatabaseCheck;
+use Spatie\Health\Checks\Checks\DebugModeCheck;
+use Spatie\Health\Checks\Checks\EnvironmentCheck;
+use Spatie\Health\Checks\Checks\ScheduleCheck;
+use Spatie\Health\Facades\Health;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -80,6 +89,20 @@ class AppServiceProvider extends ServiceProvider
         Event::listen(function (\SocialiteProviders\Manager\SocialiteWasCalled $event) {
             $event->extendSocialite('discord', \SocialiteProviders\Discord\Provider::class);
         });
+
+        // Don't run any health checks during tests
+        if (!app()->runningUnitTests()) {
+            Health::checks([
+                DebugModeCheck::new()->if(app()->isProduction()),
+                EnvironmentCheck::new(),
+                CacheCheck::new(),
+                DatabaseCheck::new(),
+                ScheduleCheck::new(),
+                UsedDiskSpaceCheck::new(),
+                PanelVersionCheck::new(),
+                NodeVersionsCheck::new(),
+            ]);
+        }
     }
 
     /**
