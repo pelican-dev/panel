@@ -62,7 +62,7 @@ class EnvironmentStep
                     ->hintIcon('tabler-question-mark')
                     ->hintIconTooltip('The driver used for caching. We recommend "Filesystem".')
                     ->required()
-                    ->grouped()
+                    ->inline()
                     ->options(self::CACHE_DRIVERS)
                     ->default(config('cache.default', 'file')),
                 ToggleButtons::make('env.SESSION_DRIVER')
@@ -70,7 +70,7 @@ class EnvironmentStep
                     ->hintIcon('tabler-question-mark')
                     ->hintIconTooltip('The driver used for storing sessions. We recommend "Filesystem" or "Database".')
                     ->required()
-                    ->grouped()
+                    ->inline()
                     ->options(self::SESSION_DRIVERS)
                     ->default(config('session.driver', 'file')),
                 ToggleButtons::make('env.QUEUE_CONNECTION')
@@ -78,7 +78,7 @@ class EnvironmentStep
                     ->hintIcon('tabler-question-mark')
                     ->hintIconTooltip('The driver used for handling queues. We recommend "Database".')
                     ->required()
-                    ->grouped()
+                    ->inline()
                     ->options(self::QUEUE_DRIVERS)
                     ->default(config('queue.default', 'database')),
                 ToggleButtons::make('env.DB_CONNECTION')
@@ -86,7 +86,7 @@ class EnvironmentStep
                     ->hintIcon('tabler-question-mark')
                     ->hintIconTooltip('The driver used for the panel database. We recommend "SQLite".')
                     ->required()
-                    ->grouped()
+                    ->inline()
                     ->options(self::DATABASE_DRIVERS)
                     ->default(config('database.default', 'sqlite')),
             ]);
