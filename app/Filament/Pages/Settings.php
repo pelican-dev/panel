@@ -338,7 +338,7 @@ class Settings extends Page implements HasForms
 
             Section::make('Webhooks')
                 ->visible(fn (Get $get) => $get('WEBHOOK_TYPE') === 'json')
-                ->columns(false)
+                ->columns(1)
                 ->schema([
                     TextInput::make('MAIN_WEBHOOK')
                         ->label('Main Webhook')
@@ -355,7 +355,7 @@ class Settings extends Page implements HasForms
 
             Section::make('Discord Webhooks')
                 ->visible(fn (Get $get) => $get('WEBHOOK_TYPE') === 'discord')
-                ->columns(false)
+                ->columns(1)
                 ->schema([
                     TextInput::make('MAIN_WEBHOOK_DISCORD')
                         ->label('Main Webhook')

@@ -20,6 +20,11 @@ trait SendWebhook
                 'user' => 'USER_WEBHOOK_DISCORD',
                 'default' => 'MAIN_WEBHOOK_DISCORD',
             ];
+        } else {
+            $webhookCategories = [
+                'user' => 'USER_WEBHOOK',
+                'default' => 'MAIN_WEBHOOK',
+            ];
         }
 
         $settingKey = $webhookCategories[$webhook] ?? $webhookCategories['default'];
