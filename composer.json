@@ -26,7 +26,6 @@
         "lcobucci/jwt": "~4.3.0",
         "league/flysystem-aws-s3-v3": "~3.12.2",
         "league/flysystem-memory": "~3.10.3",
-        "marjose123/filament-webhook-server": "^2.1",
         "phpseclib/phpseclib": "~3.0.18",
         "pragmarx/google2fa": "~8.0.0",
         "predis/predis": "~2.1.1",
@@ -45,6 +44,7 @@
         "webmozart/assert": "~1.11.0"
     },
     "require-dev": {
+        "barryvdh/laravel-debugbar": "^3.13",
         "barryvdh/laravel-ide-helper": "^3.0",
         "fakerphp/faker": "^1.23.1",
         "larastan/larastan": "^2.9.6",
