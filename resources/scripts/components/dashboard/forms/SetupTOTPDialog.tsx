@@ -4,7 +4,6 @@ import getTwoFactorTokenData, { TwoFactorTokenData } from '@/api/account/getTwoF
 import { useFlashKey } from '@/plugins/useFlash';
 import tw from 'twin.macro';
 import { useTranslation } from 'react-i18next';
-import i18n from '@/i18n';
 import QRCode from 'qrcode.react';
 import { Button } from '@/components/elements/button/index';
 import Spinner from '@/components/elements/Spinner';
