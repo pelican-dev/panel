@@ -44,7 +44,6 @@
         "webmozart/assert": "~1.11.0"
     },
     "require-dev": {
-        "barryvdh/laravel-debugbar": "^3.13",
         "barryvdh/laravel-ide-helper": "^3.0",
         "fakerphp/faker": "^1.23.1",
         "larastan/larastan": "^2.9.6",

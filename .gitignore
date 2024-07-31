@@ -3,7 +3,6 @@
 /public/build
 /public/hot
 /public/storage
-/config/debugbar.php
 /storage/*.key
 /storage/clockwork/*
 /vendor
