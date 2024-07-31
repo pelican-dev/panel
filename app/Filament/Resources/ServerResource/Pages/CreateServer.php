@@ -40,8 +40,8 @@ class CreateServer extends CreateRecord
                         ->icon('tabler-info-circle')
                         ->completedIcon('tabler-check')
                         ->columns([
-                            'default' => 2,
-                            'sm' => 2,
+                            'default' => 1,
+                            'sm' => 1,
                             'md' => 4,
                             'lg' => 6,
                         ])
@@ -61,7 +61,7 @@ class CreateServer extends CreateRecord
                                     }))
                                 ->columnSpan([
                                     'default' => 2,
-                                    'sm' => 4,
+                                    'sm' => 3,
                                     'md' => 2,
                                     'lg' => 3,
                                 ])
@@ -75,12 +75,12 @@ class CreateServer extends CreateRecord
                                 ->label('Owner')
                                 ->columnSpan([
                                     'default' => 2,
-                                    'sm' => 4,
-                                    'md' => 2,
+                                    'sm' => 3,
+                                    'md' => 3,
                                     'lg' => 3,
                                 ])
                                 ->relationship('user', 'username')
-                                ->searchable(['user', 'username', 'email'])
+                                ->searchable(['username', 'email'])
                                 ->getOptionLabelFromRecordUsing(fn (User $user) => "$user->email | $user->username " . ($user->root_admin ? '(admin)' : ''))
                                 ->createOptionForm([
                                     Forms\Components\TextInput::make('username')
@@ -125,10 +125,10 @@ class CreateServer extends CreateRecord
                                 ->prefixIcon('tabler-server-2')
                                 ->default(fn () => ($this->node = Node::query()->latest()->first())?->id)
                                 ->columnSpan([
-                                    'default' => 1,
-                                    'sm' => 2,
-                                    'md' => 2,
-                                    'lg' => 2,
+                                    'default' => 2,
+                                    'sm' => 3,
+                                    'md' => 6,
+                                    'lg' => 6,
                                 ])
                                 ->live()
                                 ->relationship('node', 'name')
@@ -146,10 +146,10 @@ class CreateServer extends CreateRecord
                                 ->prefixIcon('tabler-network')
                                 ->label('Primary Allocation')
                                 ->columnSpan([
-                                    'default' => 1,
-                                    'sm' => 2,
-                                    'md' => 1,
-                                    'lg' => 2,
+                                    'default' => 2,
+                                    'sm' => 3,
+                                    'md' => 2,
+                                    'lg' => 3,
                                 ])
                                 ->disabled(fn (Forms\Get $get) => $get('node_id') === null)
                                 ->searchable(['ip', 'port', 'ip_alias'])
@@ -268,10 +268,10 @@ class CreateServer extends CreateRecord
                             Forms\Components\Repeater::make('allocation_additional')
                                 ->label('Additional Allocations')
                                 ->columnSpan([
-                                    'default' => 1,
-                                    'sm' => 2,
-                                    'md' => 1,
-                                    'lg' => 2,
+                                    'default' => 2,
+                                    'sm' => 3,
+                                    'md' => 3,
+                                    'lg' => 3,
                                 ])
                                 ->addActionLabel('Add Allocation')
                                 ->disabled(fn (Forms\Get $get) => $get('allocation_id') === null)
@@ -303,12 +303,13 @@ class CreateServer extends CreateRecord
                                         ),
                                 ),
 
-                            Forms\Components\TextInput::make('description')
+                            Forms\Components\Textarea::make('description')
                                 ->placeholder('Description')
+                                ->rows(3)
                                 ->columnSpan([
-                                    'default' => 1,
-                                    'sm' => 2,
-                                    'md' => 2,
+                                    'default' => 2,
+                                    'sm' => 6,
+                                    'md' => 6,
                                     'lg' => 6,
                                 ])
                                 ->label('Notes'),
@@ -491,12 +492,7 @@ class CreateServer extends CreateRecord
                         ->completedIcon('tabler-check')
                         ->schema([
                             Forms\Components\Fieldset::make('Resource Limits')
-                                ->columnSpan([
-                                    'default' => 2,
-                                    'sm' => 4,
-                                    'md' => 4,
-                                    'lg' => 6,
-                                ])
+                                ->columnSpan(6)
                                 ->columns([
                                     'default' => 1,
                                     'sm' => 2,
@@ -676,12 +672,7 @@ class CreateServer extends CreateRecord
 
                             Forms\Components\Fieldset::make('Feature Limits')
                                 ->inlineLabel()
-                                ->columnSpan([
-                                    'default' => 2,
-                                    'sm' => 4,
-                                    'md' => 4,
-                                    'lg' => 6,
-                                ])
+                                ->columnSpan(6)
                                 ->columns([
                                     'default' => 1,
                                     'sm' => 2,
@@ -712,18 +703,13 @@ class CreateServer extends CreateRecord
                                         ->default(0),
                                 ]),
                             Forms\Components\Fieldset::make('Docker Settings')
-                                ->columnSpan([
-                                    'default' => 2,
-                                    'sm' => 4,
-                                    'md' => 4,
-                                    'lg' => 6,
-                                ])
                                 ->columns([
                                     'default' => 1,
                                     'sm' => 2,
                                     'md' => 3,
-                                    'lg' => 3,
+                                    'lg' => 4,
                                 ])
+                                ->columnSpan(6)
                                 ->schema([
                                     Forms\Components\Select::make('select_image')
                                         ->label('Image Name')
@@ -742,7 +728,12 @@ class CreateServer extends CreateRecord
                                             return array_flip($images) + ['ghcr.io/custom-image' => 'Custom Image'];
                                         })
                                         ->selectablePlaceholder(false)
-                                        ->columnSpan(1),
+                                        ->columnSpan([
+                                            'default' => 1,
+                                            'sm' => 2,
+                                            'md' => 3,
+                                            'lg' => 2,
+                                        ]),
 
                                     Forms\Components\TextInput::make('image')
                                         ->label('Image')
@@ -758,13 +749,18 @@ class CreateServer extends CreateRecord
                                             }
                                         })
                                         ->placeholder('Enter a custom Image')
-                                        ->columnSpan(2),
+                                        ->columnSpan([
+                                            'default' => 1,
+                                            'sm' => 2,
+                                            'md' => 3,
+                                            'lg' => 2,
+                                        ]),
 
                                     Forms\Components\KeyValue::make('docker_labels')
                                         ->label('Container Labels')
                                         ->keyLabel('Title')
                                         ->valueLabel('Description')
-                                        ->columnSpan(3),
+                                        ->columnSpanFull(),
 
                                     Forms\Components\CheckboxList::make('mounts')
                                         ->live()

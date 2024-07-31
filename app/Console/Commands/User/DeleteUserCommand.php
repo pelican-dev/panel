@@ -15,7 +15,7 @@ class DeleteUserCommand extends Command
     public function handle(): int
     {
         $search = $this->option('user') ?? $this->ask(trans('command/messages.user.search_users'));
-        Assert::notEmpty($search, 'Search term should be an email address, got: %s.');
+        Assert::notEmpty($search, 'Search term should not be empty.');
 
         $results = User::query()
             ->where('id', 'LIKE', "$search%")
@@ -42,6 +42,8 @@ class DeleteUserCommand extends Command
             if (!$deleteUser = $this->ask(trans('command/messages.user.select_search_user'))) {
                 return $this->handle();
             }
+
+            $deleteUser = User::query()->findOrFail($deleteUser);
         } else {
             if (count($results) > 1) {
                 $this->error(trans('command/messages.user.multiple_found'));
@@ -53,8 +55,7 @@ class DeleteUserCommand extends Command
         }
 
         if ($this->confirm(trans('command/messages.user.confirm_delete')) || !$this->input->isInteractive()) {
-            $user = User::query()->findOrFail($deleteUser);
-            $user->delete();
+            $deleteUser->delete();
 
             $this->info(trans('command/messages.user.deleted'));
         }

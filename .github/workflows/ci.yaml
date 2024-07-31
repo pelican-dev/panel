@@ -32,7 +32,6 @@ jobs:
       APP_KEY: ThisIsARandomStringForTests12345
       APP_TIMEZONE: UTC
       APP_URL: http://localhost/
-      APP_ENVIRONMENT_ONLY: "true"
       CACHE_DRIVER: array
       MAIL_MAILER: array
       SESSION_DRIVER: array
@@ -106,7 +105,6 @@ jobs:
       APP_KEY: ThisIsARandomStringForTests12345
       APP_TIMEZONE: UTC
       APP_URL: http://localhost/
-      APP_ENVIRONMENT_ONLY: "true"
       CACHE_DRIVER: array
       MAIL_MAILER: array
       SESSION_DRIVER: array
@@ -170,7 +168,6 @@ jobs:
       APP_KEY: ThisIsARandomStringForTests12345
       APP_TIMEZONE: UTC
       APP_URL: http://localhost/
-      APP_ENVIRONMENT_ONLY: "true"
       CACHE_DRIVER: array
       MAIL_MAILER: array
       SESSION_DRIVER: array
