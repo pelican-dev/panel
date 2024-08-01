@@ -14,8 +14,13 @@ class ServerPolicy
     /**
      * Runs before any of the functions are called. Used to determine if the (sub-)user has permissions.
      */
-    public function before(User $user, string $ability, Server $server): bool
+    public function before(User $user, string $ability, string|Server $server): ?bool
     {
+        // For "viewAny" the $server param is the class name
+        if (is_string($server)) {
+            return null;
+        }
+
         if ($server->owner_id === $user->id) {
             return true;
         }
