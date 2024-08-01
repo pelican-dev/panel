@@ -48,8 +48,6 @@ class RoleResource extends Resource
         'create',
         'update',
         'delete',
-        'restore',
-        'forceDelete',
     ];
 
     private const MODEL_SPECIFIC_PERMISSIONS = [

@@ -46,20 +46,4 @@ trait DefaultPolicies
     {
         return $user->can('delete ' . $this->modelName, $model);
     }
-
-    /**
-     * Determine whether the user can restore the model.
-     */
-    public function restore(User $user, Model $model): bool
-    {
-        return $user->can('restore ' . $this->modelName, $model);
-    }
-
-    /**
-     * Determine whether the user can permanently delete the model.
-     */
-    public function forceDelete(User $user, Model $model): bool
-    {
-        return $user->can('forceDelete ' . $this->modelName, $model);
-    }
 }
