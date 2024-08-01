@@ -41,7 +41,7 @@ class ListRoles extends ListRecords
             ->actions([
                 EditAction::make(),
             ])
-            ->checkIfRecordIsSelectableUsing(fn (Role $role) => !$role->isRootAdmin())
+            ->checkIfRecordIsSelectableUsing(fn (Role $role) => !$role->isRootAdmin() && $role->users_count <= 0)
             ->bulkActions([
                 BulkActionGroup::make([
                     DeleteBulkAction::make(),

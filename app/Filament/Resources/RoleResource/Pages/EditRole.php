@@ -49,8 +49,8 @@ class EditRole extends EditRecord
     {
         return [
             Actions\DeleteAction::make()
-                ->disabled(fn (Role $role) => $role->isRootAdmin())
-                ->label(fn (Role $role) => $role->isRootAdmin() ? 'Can\'t delete Root Admin' : 'Delete'),
+                ->disabled(fn (Role $role) => $role->isRootAdmin() || $role->users_count >= 1)
+                ->label(fn (Role $role) => $role->isRootAdmin() ? 'Can\'t delete Root Admin' : ($role->users_count >= 1 ? 'In Use' : 'Delete')),
         ];
     }
 }
