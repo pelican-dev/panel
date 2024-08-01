@@ -30,7 +30,11 @@ trait SendWebhook
         $settingKey = $webhookCategories[$webhook] ?? $webhookCategories['default'];
         $url = env($settingKey);
 
-        return $url ?? env($webhookCategories['default']);
+        if (empty($url)) {
+            return env($webhookCategories['default']);
+        } else {
+            return $url;
+        }
     }
 
     public function send($webhook, $message)
