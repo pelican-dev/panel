@@ -39,7 +39,7 @@ class WebhookListener
         $appName = env('APP_NAME');
         $appUrl = env('APP_URL');
         $currentTime = Carbon::now()->toDateTimeString();
-        $color = hexdec(env('DISCORD_EMBED_COLOR')) ?? 7423;
+        $color = hexdec(env('DISCORD_EMBED_COLOR')) ?: 7423;
         $admin = auth()->user()->username;
 
         if (env('WEBHOOK_TYPE') === 'json') {
@@ -89,7 +89,7 @@ class WebhookListener
         $appName = env('APP_NAME');
         $appUrl = env('APP_URL');
         $currentTime = Carbon::now()->toDateTimeString();
-        $color = hexdec(env('DISCORD_EMBED_COLOR')) ?? 7423;
+        $color = hexdec(env('DISCORD_EMBED_COLOR')) ?: 7423;
 
         if (env('WEBHOOK_TYPE') === 'json') {
             $message = [
