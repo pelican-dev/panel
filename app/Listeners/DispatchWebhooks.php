@@ -2,15 +2,16 @@
 
 namespace App\Listeners;
 
-use App\Events\ShouldDispatchWebhooks;
+use App\Events\Event;
 use App\Jobs\DispatchWebhooksJob;
 
 class DispatchWebhooks
 {
-    public function handle(mixed $event): void
+    public function handle(string $eventName, array $data): void
     {
-        if ($event instanceof ShouldDispatchWebhooks) {
-            DispatchWebhooksJob::dispatch($event);
-        }
+        // dd($eventName, $data);
+
+        DispatchWebhooksJob::dispatch($eventName, $data);
+
     }
 }
