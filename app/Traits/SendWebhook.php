@@ -55,7 +55,7 @@ trait SendWebhook
                 } elseif (env('WEBHOOK_TYPE') === 'discord') {
                     $payload = [
                         'username' => env('APP_NAME'),
-                        'avatar_url' => 'https://raw.githubusercontent.com/pelican-dev/panel/main/public/pelican.svg',
+                        'avatar_url' => 'https://pelican.dev/img/logo.png',
                         'embeds' => $message['embeds'] ?? [],
                     ];
 

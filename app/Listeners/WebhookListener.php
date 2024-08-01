@@ -60,7 +60,7 @@ class WebhookListener
                 [
                     'author' => [
                         'name' => $appName,
-                        'icon_url' => 'https://raw.githubusercontent.com/pelican-dev/panel/main/public/pelican.svg',
+                        'icon_url' => 'https://pelican.dev/img/logo.png',
                         'url' => $appUrl,
                     ],
                     'title' => 'User Deleted',
@@ -107,7 +107,7 @@ class WebhookListener
                 [
                     'author' => [
                         'name' => $appName,
-                        'icon_url' => 'https://raw.githubusercontent.com/pelican-dev/panel/main/public/pelican.svg',
+                        'icon_url' => 'https://pelican.dev/img/logo.png',
                         'url' => $appUrl,
                     ],
                     'title' => 'User Created',
