@@ -63,7 +63,7 @@ class WebhookListener
                         'icon_url' => 'https://raw.githubusercontent.com/pelican-dev/panel/main/public/pelican.svg',
                         'url' => $appUrl,
                     ],
-                    'title' => 'User Created',
+                    'title' => 'User Deleted',
                     'description' => "ID: $userId\nUsername: $username\nEmail: $email",
                     'color' => 7274496,
                     'footer' => [
