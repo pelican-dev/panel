@@ -33,6 +33,10 @@ class ListRoles extends ListRecords
                     ->badge()
                     ->counts('permissions')
                     ->formatStateUsing(fn (Role $role, $state) => $role->isRootAdmin() ? 'All' : $state),
+                TextColumn::make('users_count')
+                    ->label('Users')
+                    ->counts('users')
+                    ->icon('tabler-users'),
             ])
             ->actions([
                 EditAction::make(),
