@@ -39,12 +39,15 @@ class WebhookListener
         $appName = env('APP_NAME');
         $appUrl = env('APP_URL');
         $currentTime = Carbon::now()->toDateTimeString();
+        $color = hexdec(env('DISCORD_EMBED_COLOR')) ?? 7423;
+        $admin = auth()->user()->username;
 
         if (env('WEBHOOK_TYPE') === 'json') {
             $message = [
                 'ID' => $userId,
                 'Username' => $username,
                 'Email' => $email,
+                'Deleted by' => $admin,
             ];
 
             $this->send(
@@ -64,8 +67,8 @@ class WebhookListener
                         'url' => $appUrl,
                     ],
                     'title' => 'User Deleted',
-                    'description' => "ID: $userId\nUsername: $username\nEmail: $email",
-                    'color' => 7274496,
+                    'description' => "ID: $userId\nUsername: $username\nEmail: $email\n\nDeleted by: $admin",
+                    'color' => $color,
                     'footer' => [
                         'text' => "Current Time: $currentTime",
                     ],
@@ -86,6 +89,7 @@ class WebhookListener
         $appName = env('APP_NAME');
         $appUrl = env('APP_URL');
         $currentTime = Carbon::now()->toDateTimeString();
+        $color = hexdec(env('DISCORD_EMBED_COLOR')) ?? 7423;
 
         if (env('WEBHOOK_TYPE') === 'json') {
             $message = [
@@ -112,7 +116,7 @@ class WebhookListener
                     ],
                     'title' => 'User Created',
                     'description' => "ID: $userId\nUsername: $username\nEmail: $email",
-                    'color' => 29696,
+                    'color' => $color,
                     'footer' => [
                         'text' => "Current Time: $currentTime",
                     ],

@@ -8,6 +8,7 @@ use App\Traits\Commands\EnvironmentWriterTrait;
 use Exception;
 use Filament\Actions\Action;
 use Filament\Forms\Components\Actions\Action as FormAction;
+use Filament\Forms\Components\ColorPicker;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Tabs;
 use Filament\Forms\Components\Tabs\Tab;
@@ -370,7 +371,16 @@ class Settings extends Page implements HasForms
                         ->placeholder('https://discord.com/api/webhooks/')
                         ->helperText('All User related events will be logged to this webhook')
                         ->default(env('USER_WEBHOOK_DISCORD')),
-                ]),
+            ]),
+
+            Section::make('Discord Embed')
+                ->visible(fn (Get $get) => $get('WEBHOOK_TYPE') === 'discord')
+                ->columns(1)
+                ->schema([
+                    ColorPicker::make('DISCORD_EMBED_COLOR')
+                    ->label('Color')
+                    ->default(env('DISCORD_EMBED_COLOR'))
+            ]),
         ];
     }
 
