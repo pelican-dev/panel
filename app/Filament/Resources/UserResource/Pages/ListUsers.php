@@ -38,19 +38,16 @@ class ListUsers extends ListRecords
                 Tables\Columns\TextColumn::make('email')
                     ->searchable()
                     ->icon('tabler-mail'),
-                Tables\Columns\IconColumn::make('root_admin')
-                    ->visibleFrom('md')
-                    ->label('Root Admin')
-                    ->boolean()
-                    ->trueIcon('tabler-star-filled')
-                    ->falseIcon('tabler-star-off')
-                    ->sortable()
-                    ->state(fn (User $user) => $user->isRootAdmin()),
                 Tables\Columns\IconColumn::make('use_totp')
                     ->label('2FA')
                     ->visibleFrom('lg')
                     ->icon(fn (User $user) => $user->use_totp ? 'tabler-lock' : 'tabler-lock-open-off')
                     ->boolean()->sortable(),
+                Tables\Columns\TextColumn::make('roles_count')
+                    ->counts('roles')
+                    ->icon('tabler-users-group')
+                    ->label('Roles')
+                    ->formatStateUsing(fn (User $user, $state) => $state . ($user->isRootAdmin() ? ' (Root Admin)' : '')),
                 Tables\Columns\TextColumn::make('servers_count')
                     ->counts('servers')
                     ->icon('tabler-server')
