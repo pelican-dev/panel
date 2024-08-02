@@ -93,7 +93,7 @@ class WebhookListener
         $appUrl = env('APP_URL');
         $currentTime = Carbon::now()->toDateTimeString();
         $color = hexdec(env('DISCORD_EMBED_COLOR')) ?: 7423;
-        $admin = auth()->user()->username;
+        $admin = auth()->check() ? auth()->user()->username : 'Unknown';
 
         if (env('WEBHOOK_TYPE') === 'json') {
             $message = [
@@ -140,7 +140,7 @@ class WebhookListener
         $author = $event->egg->author;
         $name = $event->egg->name;
         $description = $event->egg->description;
-        $admin = auth()->user()->username;
+        $admin = auth()->check() ? auth()->user()->username : 'Unknown';
         $appName = env('APP_NAME');
         $appUrl = env('APP_URL');
         $currentTime = Carbon::now()->toDateTimeString();
@@ -192,7 +192,7 @@ class WebhookListener
         $author = $event->egg->author;
         $name = $event->egg->name;
         $description = $event->egg->description;
-        $admin = auth()->user()->username;
+        $admin = auth()->check() ? auth()->user()->username : 'Unknown';
         $appName = env('APP_NAME');
         $appUrl = env('APP_URL');
         $currentTime = Carbon::now()->toDateTimeString();
@@ -210,7 +210,7 @@ class WebhookListener
             $this->send(
                 'user',
                 [
-                    'event' => 'Egg Added',
+                    'event' => 'Egg Deleted',
                     'triggered_at' => $currentTime,
                     'data' => $message,
                 ]
@@ -223,8 +223,8 @@ class WebhookListener
                         'icon_url' => 'https://pelican.dev/img/logo.png',
                         'url' => $appUrl,
                     ],
-                    'title' => 'Egg Added',
-                    'description' => "ID: $ID\nName: $name\nEgg Author: $author\nDescription: $description\n\nAdded by: $admin",
+                    'title' => 'Egg Deleted',
+                    'description' => "ID: $ID\nName: $name\nEgg Author: $author\nDescription: $description\n\nDeleted by: $admin",
                     'color' => $color,
                     'footer' => [
                         'text' => "Current Time: $currentTime",
