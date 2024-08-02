@@ -25,6 +25,7 @@ use Filament\Forms\Components\Toggle;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\EditRecord;
 use AbdelhamidErrahmouni\FilamentMonacoEditor\MonacoEditor;
+use App\Models\User;
 use App\Services\Eggs\Sharing\EggExporterService;
 use Filament\Forms;
 use Filament\Forms\Form;
