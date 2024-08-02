@@ -26,6 +26,9 @@ class Role extends BaseRole
 
     public static function getRootAdmin(): self
     {
-        return self::findOrCreate(self::ROOT_ADMIN);
+        /** @var self $role */
+        $role = self::findOrCreate(self::ROOT_ADMIN);
+
+        return $role;
     }
 }

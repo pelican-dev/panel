@@ -630,6 +630,7 @@ CREATE TABLE `users` (
   `password` text COLLATE utf8mb4_unicode_ci NOT NULL,
   `remember_token` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `language` char(5) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'en',
+  `root_admin` tinyint unsigned NOT NULL DEFAULT '0',
   `use_totp` tinyint unsigned NOT NULL,
   `totp_secret` text COLLATE utf8mb4_unicode_ci,
   `totp_authenticated_at` timestamp NULL DEFAULT NULL,

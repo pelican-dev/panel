@@ -40,11 +40,14 @@ class UserCreationService
             $data['password'] = $this->hasher->make(str_random(30));
         }
 
+        $isRootAdmin = array_key_exists('root_admin', $data) && $data['root_admin'];
+        unset($data['root_admin']);
+
         $user = User::query()->forceCreate(array_merge($data, [
             'uuid' => Uuid::uuid4()->toString(),
         ]));
 
-        if (array_key_exists('root_admin', $data) && $data['root_admin']) {
+        if ($isRootAdmin) {
             $user->syncRoles(Role::getRootAdmin());
         }
 
