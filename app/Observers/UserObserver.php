@@ -2,7 +2,7 @@
 
 namespace App\Observers;
 
-use App\Events;
+use App\Events\User as UserEvents;
 use App\Models\User;
 
 class UserObserver
@@ -12,7 +12,7 @@ class UserObserver
      */
     public function created(User $user): void
     {
-        event(new Events\User\Created($user));
+        event(new UserEvents\Created($user));
     }
 
     /**
@@ -20,7 +20,7 @@ class UserObserver
      */
     public function updated(User $user): void
     {
-        event(new Events\User\Updated($user));
+        event(new UserEvents\Updated($user));
     }
 
     /**
@@ -28,7 +28,7 @@ class UserObserver
      */
     public function deleted(User $user): void
     {
-        event(new Events\User\Deleted($user));
+        event(new UserEvents\Deleted($user));
     }
 
     /**
@@ -44,6 +44,6 @@ class UserObserver
      */
     public function forceDeleted(User $user): void
     {
-        event(new Events\User\Deleted($user));
+        event(new UserEvents\Deleted($user));
     }
 }

@@ -2,13 +2,16 @@
 
 namespace App\Providers;
 
-use App\Events\User\Created as UserCreated;
-use App\Events\User\Deleted as UserDeleted;
+use App\Events\Server as ServerEvents;
+use App\Events\User as UserEvents;
+use App\Events\Egg as EggEvents;
 use App\Listeners\WebhookListener;
+use App\Models\Egg;
 use App\Models\User;
 use App\Models\Server;
 use App\Models\Subuser;
 use App\Models\EggVariable;
+use App\Observers\EggObserver;
 use App\Observers\UserObserver;
 use App\Observers\ServerObserver;
 use App\Observers\SubuserObserver;
@@ -24,8 +27,12 @@ class EventServiceProvider extends ServiceProvider
      */
     protected $listen = [
         ServerInstalledEvent::class => [ServerInstalledNotification::class],
-        UserCreated::class => [WebhookListener::class],
-        UserDeleted::class => [WebhookListener::class],
+        UserEvents\Created::class => [WebhookListener::class],
+        UserEvents\Deleted::class => [WebhookListener::class],
+        EggEvents\Created::class => [WebhookListener::class],
+        EggEvents\Deleted::class => [WebhookListener::class],
+        ServerEvents\Created::class => [WebhookListener::class],
+        ServerEvents\Deleted::class => [WebhookListener::class],
     ];
 
     /**
@@ -34,7 +41,7 @@ class EventServiceProvider extends ServiceProvider
     public function boot(): void
     {
         parent::boot();
-
+        Egg::observe(EggObserver::class);
         User::observe(UserObserver::class);
         Server::observe(ServerObserver::class);
         Subuser::observe(SubuserObserver::class);

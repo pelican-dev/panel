@@ -334,7 +334,7 @@ class Settings extends Page implements HasForms
                     'discord' => 'Discord',
                     'json' => 'Json Payload',
                 ])
-                ->default(env('WEBHOOK_TYPE'))
+                ->default(env('WEBHOOK_TYPE', 'discord'))
                 ->live(),
 
             Section::make('Webhooks')
@@ -352,6 +352,18 @@ class Settings extends Page implements HasForms
                         ->url()
                         ->helperText('All User related events will be logged to this webhook')
                         ->default(env('USER_WEBHOOK')),
+
+                    TextInput::make('SERVER_WEBHOOK')
+                        ->label('Server Webhook')
+                        ->url()
+                        ->helperText('All Server related events will be logged to this webhook')
+                        ->default(env('SERVER_WEBHOOK')),
+
+                    TextInput::make('EGG_WEBHOOK')
+                        ->label('Egg Webhook')
+                        ->url()
+                        ->helperText('All Server related events will be logged to this webhook')
+                        ->default(env('EGG_WEBHOOK')),
                 ]),
 
             Section::make('Discord Webhooks')
@@ -371,6 +383,20 @@ class Settings extends Page implements HasForms
                         ->placeholder('https://discord.com/api/webhooks/')
                         ->helperText('All User related events will be logged to this webhook')
                         ->default(env('USER_WEBHOOK_DISCORD')),
+
+                    TextInput::make('SERVER_WEBHOOK_DISCORD')
+                        ->label('Server Webhook')
+                        ->url()
+                        ->placeholder('https://discord.com/api/webhooks/')
+                        ->helperText('All Server related events will be logged to this webhook')
+                        ->default(env('SERVER_WEBHOOK_DISCORD')),
+
+                    TextInput::make('EGG_WEBHOOK_DISCORD')
+                        ->label('Egg Webhook')
+                        ->url()
+                        ->placeholder('https://discord.com/api/webhooks/')
+                        ->helperText('All Egg related events will be logged to this webhook')
+                        ->default(env('EGG_WEBHOOK_DISCORD')),
                 ]),
 
             Section::make('Discord Embed')

@@ -4,27 +4,35 @@ namespace App\Traits;
 
 use Illuminate\Support\Facades\Log;
 use GuzzleHttp\Client;
+use Exception;
 use GuzzleHttp\Exception\RequestException;
 
 trait SendWebhook
 {
     private static function getWebhook($webhook)
     {
-        if (env('WEBHOOK_TYPE') === 'json') {
-            $webhookCategories = [
-                'user' => 'USER_WEBHOOK',
-                'default' => 'MAIN_WEBHOOK',
-            ];
-        } elseif (env('WEBHOOK_TYPE') === 'discord') {
-            $webhookCategories = [
-                'user' => 'USER_WEBHOOK_DISCORD',
-                'default' => 'MAIN_WEBHOOK_DISCORD',
-            ];
-        } else {
-            $webhookCategories = [
-                'user' => 'USER_WEBHOOK',
-                'default' => 'MAIN_WEBHOOK',
-            ];
+        $webhookCategories = [];
+
+        try {
+            if (env('WEBHOOK_TYPE') === 'json') {
+                $webhookCategories = [
+                    'user' => 'USER_WEBHOOK',
+                    'egg' => 'EGG_WEBHOOK',
+                    'server' => 'SERVER_WEBHOOK',
+                    'default' => 'MAIN_WEBHOOK',
+                ];
+            } elseif (env('WEBHOOK_TYPE') === 'discord') {
+                $webhookCategories = [
+                    'user' => 'USER_WEBHOOK_DISCORD',
+                    'server' => 'SERVER_WEBHOOK_DISCORD',
+                    'default' => 'MAIN_WEBHOOK_DISCORD',
+                ];
+            } else {
+                Log::warning('Unexpected WEBHOOK_TYPE value: ' . env('WEBHOOK_TYPE'));
+                $webhookCategories = [];
+            }
+        } catch (Exception $e) {
+            Log::error('Error getWebhook: ' . $e->getMessage());
         }
 
         $settingKey = $webhookCategories[$webhook] ?? $webhookCategories['default'];
@@ -65,6 +73,8 @@ trait SendWebhook
                             'Content-Type' => 'application/json',
                         ],
                     ]);
+                } else {
+                    Log::warning('Unexpected WEBHOOK_TYPE value during send: ' . env('WEBHOOK_TYPE'));
                 }
             } catch (RequestException $e) {
                 Log::error('Guzzle error: ' . $e->getMessage());
