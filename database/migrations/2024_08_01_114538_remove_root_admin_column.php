@@ -15,7 +15,7 @@ return new class extends Migration
     {
         $adminUsers = User::whereRootAdmin(1)->get();
         foreach ($adminUsers as $adminUser) {
-            $adminUser->syncRoles(Role::findOrCreate(Role::ROOT_ADMIN));
+            $adminUser->syncRoles(Role::getRootAdmin());
         }
 
         Schema::table('users', function (Blueprint $table) {

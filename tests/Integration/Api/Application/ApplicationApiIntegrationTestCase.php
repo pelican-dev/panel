@@ -69,7 +69,7 @@ abstract class ApplicationApiIntegrationTestCase extends IntegrationTestCase
     protected function createApiUser(): User
     {
         $user = User::factory()->create();
-        $user->syncRoles(Role::findOrCreate(Role::ROOT_ADMIN));
+        $user->syncRoles(Role::getRootAdmin());
 
         return $user;
     }

@@ -15,7 +15,7 @@ class AdminAuthenticateTest extends MiddlewareTestCase
     public function testAdminsAreAuthenticated(): void
     {
         $user = User::factory()->create();
-        $user->syncRoles(Role::findOrCreate(Role::ROOT_ADMIN));
+        $user->syncRoles(Role::getRootAdmin());
 
         $this->request->shouldReceive('user')->withNoArgs()->twice()->andReturn($user);
 

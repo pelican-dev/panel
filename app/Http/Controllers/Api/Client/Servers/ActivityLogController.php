@@ -33,7 +33,7 @@ class ActivityLogController extends ClientApiController
                 // We could do this with a query and a lot of joins, but that gets pretty
                 // painful so for now we'll execute a simpler query.
                 $subusers = $server->subusers()->pluck('user_id')->merge([$server->owner_id]);
-                $rootAdmins = Role::findOrCreate(Role::ROOT_ADMIN)->users()->pluck('id');
+                $rootAdmins = Role::getRootAdmin()->users()->pluck('id');
 
                 $builder->select('activity_logs.*')
                     ->leftJoin('users', function (JoinClause $join) {

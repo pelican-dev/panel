@@ -48,7 +48,7 @@ class ClientControllerTest extends ClientApiIntegrationTestCase
     {
         /** @var \App\Models\User[] $users */
         $users = User::factory()->times(2)->create();
-        $users[0]->syncRoles(Role::findOrCreate(Role::ROOT_ADMIN));
+        $users[0]->syncRoles(Role::getRootAdmin());
 
         /** @var \App\Models\Server[] $servers */
         $servers = [
@@ -226,7 +226,7 @@ class ClientControllerTest extends ClientApiIntegrationTestCase
     {
         /** @var \App\Models\User[] $users */
         $users = User::factory()->times(4)->create();
-        $users[0]->syncRoles(Role::findOrCreate(Role::ROOT_ADMIN));
+        $users[0]->syncRoles(Role::getRootAdmin());
 
         $servers = [
             $this->createServerModel(['user_id' => $users[0]->id]),
@@ -261,7 +261,7 @@ class ClientControllerTest extends ClientApiIntegrationTestCase
     {
         /** @var \App\Models\User[] $users */
         $users = User::factory()->times(4)->create();
-        $users[0]->syncRoles(Role::findOrCreate(Role::ROOT_ADMIN));
+        $users[0]->syncRoles(Role::getRootAdmin());
 
         $servers = [
             $this->createServerModel(['user_id' => $users[0]->id]),

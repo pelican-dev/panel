@@ -39,7 +39,7 @@ class AuthenticateUserTest extends MiddlewareTestCase
     public function testAdminUser(): void
     {
         $user = $this->generateRequestUserModel();
-        $user->syncRoles(Role::findOrCreate(Role::ROOT_ADMIN));
+        $user->syncRoles(Role::getRootAdmin());
 
         $this->getMiddleware()->handle($this->request, $this->getClosureAssertions());
     }

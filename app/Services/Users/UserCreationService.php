@@ -45,7 +45,7 @@ class UserCreationService
         ]));
 
         if (array_key_exists('root_admin', $data) && $data['root_admin']) {
-            $user->syncRoles(Role::findOrCreate(Role::ROOT_ADMIN));
+            $user->syncRoles(Role::getRootAdmin());
         }
 
         if (isset($generateResetToken)) {
