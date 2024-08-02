@@ -25,6 +25,7 @@ use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
 use Illuminate\Contracts\Auth\Access\Authorizable as AuthorizableContract;
 use Illuminate\Contracts\Auth\CanResetPassword as CanResetPasswordContract;
 use App\Notifications\SendPasswordReset as ResetPasswordNotification;
+use Spatie\Permission\Traits\HasRoles;
 
 /**
  * App\Models\User.
@@ -40,7 +41,6 @@ use App\Notifications\SendPasswordReset as ResetPasswordNotification;
  * @property string|null $remember_token
  * @property string $language
  * @property string $timezone
- * @property bool $root_admin
  * @property bool $use_totp
  * @property string|null $totp_secret
  * @property \Illuminate\Support\Carbon|null $totp_authenticated_at
@@ -77,7 +77,6 @@ use App\Notifications\SendPasswordReset as ResetPasswordNotification;
  * @method static Builder|User whereNameLast($value)
  * @method static Builder|User wherePassword($value)
  * @method static Builder|User whereRememberToken($value)
- * @method static Builder|User whereRootAdmin($value)
  * @method static Builder|User whereTotpAuthenticatedAt($value)
  * @method static Builder|User whereTotpSecret($value)
  * @method static Builder|User whereUpdatedAt($value)
@@ -94,6 +93,7 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
     use AvailableLanguages;
     use CanResetPassword;
     use HasAccessTokens;
+    use HasRoles;
     use Notifiable;
 
     public const USER_LEVEL_USER = 0;
@@ -131,7 +131,6 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
         'totp_secret',
         'totp_authenticated_at',
         'gravatar',
-        'root_admin',
         'oauth',
     ];
 
@@ -145,7 +144,6 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
      */
     protected $attributes = [
         'external_id' => null,
-        'root_admin' => false,
         'language' => 'en',
         'timezone' => 'UTC',
         'use_totp' => false,
@@ -166,7 +164,6 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
         'name_first' => 'nullable|string|between:0,255',
         'name_last' => 'nullable|string|between:0,255',
         'password' => 'sometimes|nullable|string',
-        'root_admin' => 'boolean',
         'language' => 'string',
         'timezone' => 'string',
         'use_totp' => 'boolean',
@@ -177,7 +174,6 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
     protected function casts(): array
     {
         return [
-            'root_admin' => 'boolean',
             'use_totp' => 'boolean',
             'gravatar' => 'boolean',
             'totp_authenticated_at' => 'datetime',
@@ -315,7 +311,7 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
 
     protected function checkPermission(Server $server, string $permission = ''): bool
     {
-        if ($this->root_admin || $server->owner_id === $this->id) {
+        if ($this->isRootAdmin() || $server->owner_id === $this->id) {
             return true;
         }
 
@@ -351,14 +347,20 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
 
     public function isLastRootAdmin(): bool
     {
-        $rootAdmins = User::query()->where('root_admin', true)->limit(2)->get();
+        $rootAdmins = User::all()->filter(fn ($user) => $user->isRootAdmin());
 
         return once(fn () => $rootAdmins->count() === 1 && $rootAdmins->first()->is($this));
     }
 
+    public function isRootAdmin(): bool
+    {
+        return $this->hasRole(Role::ROOT_ADMIN);
+    }
+
     public function canAccessPanel(Panel $panel): bool
     {
-        return $this->root_admin;
+        // TODO: better check
+        return $this->isRootAdmin() || $this->roles()->count() >= 1;
     }
 
     public function getFilamentName(): string

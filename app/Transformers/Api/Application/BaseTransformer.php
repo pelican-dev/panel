@@ -77,7 +77,7 @@ abstract class BaseTransformer extends TransformerAbstract
         // the user is a root admin at the moment. In a future release we'll be rolling
         // out more specific permissions for keys.
         if ($token->key_type === ApiKey::TYPE_ACCOUNT) {
-            return $this->request->user()->root_admin;
+            return $this->request->user()->isRootAdmin();
         }
 
         return AdminAcl::check($token, $resource);

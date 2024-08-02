@@ -6,6 +6,7 @@ use App\Extensions\Themes\Theme;
 use App\Models;
 use App\Models\ApiKey;
 use App\Models\Node;
+use App\Models\User;
 use App\Services\Helpers\SoftwareVersionService;
 use Dedoc\Scramble\Scramble;
 use Dedoc\Scramble\Support\Generator\OpenApi;
@@ -79,6 +80,10 @@ class AppServiceProvider extends ServiceProvider
 
         Event::listen(function (\SocialiteProviders\Manager\SocialiteWasCalled $event) {
             $event->extendSocialite('discord', \SocialiteProviders\Discord\Provider::class);
+        });
+
+        Gate::before(function (User $user, $ability) {
+            return $user->isRootAdmin() ? true : null;
         });
     }
 

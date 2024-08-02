@@ -2,6 +2,7 @@
 
 namespace App\Services\Users;
 
+use App\Models\Role;
 use Ramsey\Uuid\Uuid;
 use App\Models\User;
 use Illuminate\Contracts\Hashing\Hasher;
@@ -39,9 +40,16 @@ class UserCreationService
             $data['password'] = $this->hasher->make(str_random(30));
         }
 
+        $isRootAdmin = array_key_exists('root_admin', $data) && $data['root_admin'];
+        unset($data['root_admin']);
+
         $user = User::query()->forceCreate(array_merge($data, [
             'uuid' => Uuid::uuid4()->toString(),
         ]));
+
+        if ($isRootAdmin) {
+            $user->syncRoles(Role::getRootAdmin());
+        }
 
         if (isset($generateResetToken)) {
             $token = $this->passwordBroker->createToken($user);

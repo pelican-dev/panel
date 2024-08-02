@@ -27,7 +27,7 @@ class AuthenticateUserTest extends MiddlewareTestCase
     {
         $this->expectException(AccessDeniedHttpException::class);
 
-        $this->generateRequestUserModel(['root_admin' => false]);
+        $this->generateRequestUserModel(false);
 
         $this->getMiddleware()->handle($this->request, $this->getClosureAssertions());
     }
@@ -37,7 +37,7 @@ class AuthenticateUserTest extends MiddlewareTestCase
      */
     public function testAdminUser(): void
     {
-        $this->generateRequestUserModel(['root_admin' => true]);
+        $this->generateRequestUserModel(true);
 
         $this->getMiddleware()->handle($this->request, $this->getClosureAssertions());
     }

@@ -38,17 +38,16 @@ class ListUsers extends ListRecords
                 Tables\Columns\TextColumn::make('email')
                     ->searchable()
                     ->icon('tabler-mail'),
-                Tables\Columns\IconColumn::make('root_admin')
-                    ->visibleFrom('md')
-                    ->label('Admin')
-                    ->boolean()
-                    ->trueIcon('tabler-star-filled')
-                    ->falseIcon('tabler-star-off')
-                    ->sortable(),
-                Tables\Columns\IconColumn::make('use_totp')->label('2FA')
+                Tables\Columns\IconColumn::make('use_totp')
+                    ->label('2FA')
                     ->visibleFrom('lg')
                     ->icon(fn (User $user) => $user->use_totp ? 'tabler-lock' : 'tabler-lock-open-off')
                     ->boolean()->sortable(),
+                Tables\Columns\TextColumn::make('roles_count')
+                    ->counts('roles')
+                    ->icon('tabler-users-group')
+                    ->label('Roles')
+                    ->formatStateUsing(fn (User $user, $state) => $state . ($user->isRootAdmin() ? ' (Root Admin)' : '')),
                 Tables\Columns\TextColumn::make('servers_count')
                     ->counts('servers')
                     ->icon('tabler-server')
@@ -91,25 +90,15 @@ class ListUsers extends ListRecords
                                 ->required()
                                 ->unique()
                                 ->maxLength(255),
-
                             Forms\Components\TextInput::make('password')
                                 ->hintIcon('tabler-question-mark')
                                 ->hintIconTooltip('Providing a user password is optional. New user email will prompt users to create a password the first time they login.')
                                 ->password(),
-
-                            Forms\Components\ToggleButtons::make('root_admin')
-                                ->label('Administrator (Root)')
-                                ->options([
-                                    false => 'No',
-                                    true => 'Admin',
-                                ])
-                                ->colors([
-                                    false => 'primary',
-                                    true => 'danger',
-                                ])
-                                ->inline()
-                                ->required()
-                                ->default(false),
+                            Forms\Components\CheckboxList::make('roles')
+                                ->relationship('roles', 'name')
+                                ->label('Admin Roles')
+                                ->columnSpanFull()
+                                ->bulkToggleable(false),
                         ]),
                 ])
                 ->successRedirectUrl(route('filament.admin.resources.users.index'))

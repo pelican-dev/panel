@@ -15,7 +15,7 @@ class AuthenticateApplicationUser
     {
         /** @var \App\Models\User|null $user */
         $user = $request->user();
-        if (!$user || !$user->root_admin) {
+        if (!$user || !$user->isRootAdmin()) {
             throw new AccessDeniedHttpException('This account does not have permission to access the API.');
         }
 

@@ -33,19 +33,10 @@ class UserFactory extends Factory
             'name_last' => $this->faker->lastName(),
             'password' => $password ?: $password = bcrypt('password'),
             'language' => 'en',
-            'root_admin' => false,
             'use_totp' => false,
             'oauth' => [],
             'created_at' => Carbon::now(),
             'updated_at' => Carbon::now(),
         ];
-    }
-
-    /**
-     * Indicate that the user is an admin.
-     */
-    public function admin(): static
-    {
-        return $this->state(['root_admin' => true]);
     }
 }

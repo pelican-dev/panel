@@ -19,6 +19,8 @@ Route::prefix('/users')->group(function () {
     Route::post('/', [Application\Users\UserController::class, 'store']);
     Route::patch('/{user:id}', [Application\Users\UserController::class, 'update']);
 
+    Route::patch('/{user:id}/roles', [Application\Users\UserController::class, 'roles']);
+
     Route::delete('/{user:id}', [Application\Users\UserController::class, 'delete']);
 });
 
@@ -140,4 +142,23 @@ Route::prefix('mounts')->group(function () {
     Route::delete('/{mount:id}', [Application\Mounts\MountController::class, 'delete']);
     Route::delete('/{mount:id}/eggs/{egg_id}', [Application\Mounts\MountController::class, 'deleteEgg']);
     Route::delete('/{mount:id}/nodes/{node_id}', [Application\Mounts\MountController::class, 'deleteNode']);
+});
+
+/*
+|--------------------------------------------------------------------------
+| Role Controller Routes
+|--------------------------------------------------------------------------
+|
+| Endpoint: /api/application/roles
+|
+*/
+Route::group(['prefix' => '/roles'], function () {
+    Route::get('/', [Application\Roles\RoleController::class, 'index'])->name('api.application.roles');
+    Route::get('/{role:id}', [Application\Roles\RoleController::class, 'view'])->name('api.application.roles.view');
+
+    Route::post('/', [Application\Roles\RoleController::class, 'store']);
+
+    Route::patch('/{role:id}', [Application\Roles\RoleController::class, 'update']);
+
+    Route::delete('/{role:id}', [Application\Roles\RoleController::class, 'delete']);
 });

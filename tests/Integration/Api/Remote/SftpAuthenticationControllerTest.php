@@ -7,6 +7,7 @@ use App\Models\Node;
 use App\Models\User;
 use App\Models\Server;
 use App\Models\Permission;
+use App\Models\Role;
 use App\Models\UserSSHKey;
 use App\Tests\Integration\IntegrationTestCase;
 
@@ -180,7 +181,7 @@ class SftpAuthenticationControllerTest extends IntegrationTestCase
             ->assertOk()
             ->assertJsonPath('permissions', [Permission::ACTION_FILE_READ, Permission::ACTION_FILE_SFTP]);
 
-        $user->update(['root_admin' => true]);
+        $user->syncRoles(Role::getRootAdmin());
 
         $this->postJson('/api/remote/sftp/auth', $data)
             ->assertOk()
@@ -193,7 +194,7 @@ class SftpAuthenticationControllerTest extends IntegrationTestCase
             ->assertOk()
             ->assertJsonPath('permissions.0', '*');
 
-        $user->update(['root_admin' => false]);
+        $user->syncRoles();
         $this->post('/api/remote/sftp/auth', $data)->assertForbidden();
     }
 

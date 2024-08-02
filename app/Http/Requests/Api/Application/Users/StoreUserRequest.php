@@ -26,7 +26,6 @@ class StoreUserRequest extends ApplicationApiRequest
             'password',
             'language',
             'timezone',
-            'root_admin',
         ])->toArray();
 
         $response['first_name'] = $rules['name_first'];
@@ -56,7 +55,6 @@ class StoreUserRequest extends ApplicationApiRequest
             'external_id' => 'Third Party Identifier',
             'name_first' => 'First Name',
             'name_last' => 'Last Name',
-            'root_admin' => 'Root Administrator Status',
         ];
     }
 }
