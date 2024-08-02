@@ -4,6 +4,7 @@ namespace App\Listeners;
 
 use App\Events\User as UserEvents;
 use App\Events\Egg as EggEvents;
+use App\Events\Server as ServerEvents;
 use App\Traits\SendWebhook;
 use Carbon\Carbon;
 
@@ -33,7 +34,6 @@ class WebhookListener
         } elseif ($event instanceof EggEvents\Deleted) {
             $this->handleEggDeleted($event);
         }
-
     }
 
     protected function handleUserCreated($event)
@@ -44,7 +44,6 @@ class WebhookListener
         $appName = env('APP_NAME');
         $appUrl = env('APP_URL');
         $currentTime = Carbon::now()->toDateTimeString();
-        $color = hexdec(env('DISCORD_EMBED_COLOR')) ?: 7423;
 
         if (env('WEBHOOK_TYPE') === 'json') {
             $message = [
@@ -71,7 +70,6 @@ class WebhookListener
                     ],
                     'title' => 'User Created',
                     'description' => "ID: $userId\nUsername: $username\nEmail: $email",
-                    'color' => $color,
                     'footer' => [
                         'text' => "Current Time: $currentTime",
                     ],
@@ -92,7 +90,6 @@ class WebhookListener
         $appName = env('APP_NAME');
         $appUrl = env('APP_URL');
         $currentTime = Carbon::now()->toDateTimeString();
-        $color = hexdec(env('DISCORD_EMBED_COLOR')) ?: 7423;
         $admin = auth()->check() ? auth()->user()->username : 'Unknown';
 
         if (env('WEBHOOK_TYPE') === 'json') {
@@ -121,7 +118,6 @@ class WebhookListener
                     ],
                     'title' => 'User Deleted',
                     'description' => "ID: $userId\nUsername: $username\nEmail: $email\n\nDeleted by: $admin",
-                    'color' => $color,
                     'footer' => [
                         'text' => "Current Time: $currentTime",
                     ],
@@ -144,7 +140,6 @@ class WebhookListener
         $appName = env('APP_NAME');
         $appUrl = env('APP_URL');
         $currentTime = Carbon::now()->toDateTimeString();
-        $color = hexdec(env('DISCORD_EMBED_COLOR')) ?: 7423;
 
         if (env('WEBHOOK_TYPE') === 'json') {
             $message = [
@@ -173,7 +168,6 @@ class WebhookListener
                     ],
                     'title' => 'Egg Added',
                     'description' => "ID: $ID\nName: $name\nEgg Author: $author\nDescription: $description\n\nAdded by: $admin",
-                    'color' => $color,
                     'footer' => [
                         'text' => "Current Time: $currentTime",
                     ],
@@ -196,7 +190,6 @@ class WebhookListener
         $appName = env('APP_NAME');
         $appUrl = env('APP_URL');
         $currentTime = Carbon::now()->toDateTimeString();
-        $color = hexdec(env('DISCORD_EMBED_COLOR')) ?: 7423;
 
         if (env('WEBHOOK_TYPE') === 'json') {
             $message = [
@@ -225,7 +218,6 @@ class WebhookListener
                     ],
                     'title' => 'Egg Deleted',
                     'description' => "ID: $ID\nName: $name\nEgg Author: $author\nDescription: $description\n\nDeleted by: $admin",
-                    'color' => $color,
                     'footer' => [
                         'text' => "Current Time: $currentTime",
                     ],

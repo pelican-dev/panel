@@ -405,7 +405,7 @@ class Settings extends Page implements HasForms
                 ->schema([
                     ColorPicker::make('DISCORD_EMBED_COLOR')
                         ->label('Color')
-                        ->default(env('DISCORD_EMBED_COLOR')),
+                        ->default(env('DISCORD_EMBED_COLOR', '#024cc4')),
                 ]),
         ];
     }

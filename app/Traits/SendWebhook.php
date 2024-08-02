@@ -61,10 +61,14 @@ trait SendWebhook
                         ],
                     ]);
                 } elseif (env('WEBHOOK_TYPE') === 'discord') {
+                    $color = env('DISCORD_EMBED_COLOR', '#024cc4');
                     $payload = [
                         'username' => env('APP_NAME'),
                         'avatar_url' => 'https://pelican.dev/img/logo.png',
-                        'embeds' => $message['embeds'] ?? [],
+                        'embeds' => array_map(function ($embed) use ($color) {
+                            $embed['color'] = hexdec($color);
+                            return $embed;
+                        }, $message['embeds'] ?? []),
                     ];
 
                     $client->post($url, [
