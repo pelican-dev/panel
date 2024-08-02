@@ -4,6 +4,7 @@ namespace App\Tests\Unit\Http\Middleware;
 
 use App\Models\User;
 use App\Http\Middleware\AdminAuthenticate;
+use App\Models\Role;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 
 class AdminAuthenticateTest extends MiddlewareTestCase
@@ -13,7 +14,8 @@ class AdminAuthenticateTest extends MiddlewareTestCase
      */
     public function testAdminsAreAuthenticated(): void
     {
-        $user = User::factory()->make(['root_admin' => 1]);
+        $user = User::factory()->create();
+        $user->syncRoles(Role::findOrCreate(Role::ROOT_ADMIN));
 
         $this->request->shouldReceive('user')->withNoArgs()->twice()->andReturn($user);
 
@@ -39,7 +41,7 @@ class AdminAuthenticateTest extends MiddlewareTestCase
     {
         $this->expectException(AccessDeniedHttpException::class);
 
-        $user = User::factory()->make(['root_admin' => 0]);
+        $user = User::factory()->create();
 
         $this->request->shouldReceive('user')->withNoArgs()->twice()->andReturn($user);
 

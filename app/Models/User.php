@@ -41,7 +41,6 @@ use Spatie\Permission\Traits\HasRoles;
  * @property string|null $remember_token
  * @property string $language
  * @property string $timezone
- * @property bool $root_admin
  * @property bool $use_totp
  * @property string|null $totp_secret
  * @property \Illuminate\Support\Carbon|null $totp_authenticated_at
@@ -78,7 +77,6 @@ use Spatie\Permission\Traits\HasRoles;
  * @method static Builder|User whereNameLast($value)
  * @method static Builder|User wherePassword($value)
  * @method static Builder|User whereRememberToken($value)
- * @method static Builder|User whereRootAdmin($value)
  * @method static Builder|User whereTotpAuthenticatedAt($value)
  * @method static Builder|User whereTotpSecret($value)
  * @method static Builder|User whereUpdatedAt($value)
@@ -133,7 +131,6 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
         'totp_secret',
         'totp_authenticated_at',
         'gravatar',
-        'root_admin',
         'oauth',
     ];
 
@@ -147,7 +144,6 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
      */
     protected $attributes = [
         'external_id' => null,
-        'root_admin' => false,
         'language' => 'en',
         'timezone' => 'UTC',
         'use_totp' => false,
@@ -168,7 +164,6 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
         'name_first' => 'nullable|string|between:0,255',
         'name_last' => 'nullable|string|between:0,255',
         'password' => 'sometimes|nullable|string',
-        'root_admin' => 'boolean',
         'language' => 'string',
         'timezone' => 'string',
         'use_totp' => 'boolean',
@@ -179,7 +174,6 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
     protected function casts(): array
     {
         return [
-            'root_admin' => 'boolean',
             'use_totp' => 'boolean',
             'gravatar' => 'boolean',
             'totp_authenticated_at' => 'datetime',
@@ -360,7 +354,7 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
 
     public function isRootAdmin(): bool
     {
-        return $this->root_admin || $this->hasRole(Role::ROOT_ADMIN);
+        return $this->hasRole(Role::ROOT_ADMIN);
     }
 
     public function canAccessPanel(Panel $panel): bool
