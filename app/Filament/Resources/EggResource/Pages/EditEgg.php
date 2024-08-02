@@ -228,7 +228,13 @@ class EditEgg extends EditRecord
                 ->color('primary')
                 ->action(fn (EggExporterService $service, Egg $egg) => response()->streamDownload(function () use ($service, $egg) {
                     echo $service->handle($egg->id);
-                }, 'egg-' . $egg->getKebabName() . '.json')),
+                }, 'egg-' . $egg->getKebabName() . '.json'))
+                ->visible(function () {
+                    /** @var User $user */
+                    $user = auth()->user();
+
+                    return $user->can('export egg');
+                }),
 
             Actions\Action::make('importEgg')
                 ->label('Import')
@@ -300,6 +306,12 @@ class EditEgg extends EditRecord
                         ->title('Import Success')
                         ->success()
                         ->send();
+                })
+                ->visible(function () {
+                    /** @var User $user */
+                    $user = auth()->user();
+
+                    return $user->can('import egg');
                 }),
 
             $this->getSaveFormAction()->formId('form'),
