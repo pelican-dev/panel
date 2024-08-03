@@ -2,20 +2,24 @@
 
 namespace App\Providers;
 
+use App\Events\DatabaseHost as DatabaseHostEvents;
 use App\Events\Egg as EggEvents;
 use App\Events\Node as NodeEvents;
 use App\Events\Server as ServerEvents;
 use App\Events\User as UserEvents;
+use App\Listeners\Webhook\DatabaseHostWebhookListener;
 use App\Listeners\Webhook\EggWebhookListener;
 use App\Listeners\Webhook\NodeWebhookListener;
 use App\Listeners\Webhook\ServerWebhookListener;
 use App\Listeners\Webhook\UserWebhookListener;
+use App\Models\DatabaseHost;
 use App\Models\Egg;
 use App\Models\Node;
 use App\Models\User;
 use App\Models\Server;
 use App\Models\Subuser;
 use App\Models\EggVariable;
+use App\Observers\DatabaseHostObserver;
 use App\Observers\EggObserver;
 use App\Observers\NodeObserver;
 use App\Observers\UserObserver;
@@ -33,6 +37,8 @@ class EventServiceProvider extends ServiceProvider
      */
     protected $listen = [
         ServerInstalledEvent::class => [ServerInstalledNotification::class],
+        DatabaseHostEvents\Created::class => [DatabaseHostWebhookListener::class],
+        DatabaseHostEvents\Deleted::class => [DatabaseHostWebhookListener::class],
         EggEvents\Created::class => [EggWebhookListener::class],
         EggEvents\Deleted::class => [EggWebhookListener::class],
         NodeEvents\Created::class => [NodeWebhookListener::class],
@@ -50,6 +56,7 @@ class EventServiceProvider extends ServiceProvider
     {
         parent::boot();
 
+        DatabaseHost::observe(DatabaseHostObserver::class);
         Egg::observe(EggObserver::class);
         EggVariable::observe(EggVariableObserver::class);
         Node::observe(NodeObserver::class);

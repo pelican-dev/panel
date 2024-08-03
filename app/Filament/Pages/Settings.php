@@ -383,6 +383,14 @@ class Settings extends Page implements HasForms
                         ->helperText('All Node related events will be logged to this webhook')
                         ->default(env('NODE_WEBHOOK')),
 
+                    TextInput::make('DATABASE_HOST_WEBHOOK')
+                        ->label('DatabaseHost Webhook')
+                        ->visible(fn (Get $get) => $get('WEBHOOK_TYPE') === 'json')
+                        ->hintAction($this->getDatabaseHostHintAction())
+                        ->url()
+                        ->helperText('All DatabaseHost related events will be logged to this webhook')
+                        ->default(env('DATABASE_HOST_WEBHOOK')),
+
                     TextInput::make('MAIN_WEBHOOK_DISCORD')
                         ->label('Main Webhook')
                         ->visible(fn (Get $get) => $get('WEBHOOK_TYPE') === 'discord')
@@ -426,6 +434,15 @@ class Settings extends Page implements HasForms
                         ->placeholder('https://discord.com/api/webhooks/')
                         ->helperText('All Node related events will be logged to this webhook')
                         ->default(env('NODE_WEBHOOK_DISCORD')),
+
+                    TextInput::make('DATABASE_HOST_WEBHOOK_DISCORD')
+                        ->label('DatabaseHost Webhook')
+                        ->visible(fn (Get $get) => $get('WEBHOOK_TYPE') === 'discord')
+                        ->hintAction($this->getDatabaseHostHintAction())
+                        ->url()
+                        ->placeholder('https://discord.com/api/webhooks/')
+                        ->helperText('All DatabaseHost related events will be logged to this webhook')
+                        ->default(env('DATABASE_HOST_WEBHOOK_DISCORD')),
                 ]),
 
             Section::make('Discord Embed')
@@ -927,7 +944,7 @@ class Settings extends Page implements HasForms
                 Toggle::make('NODE_ID')
                     ->label('ID')
                     ->inline()
-                    ->default(env('USER_ID', true)),
+                    ->default(env('NODE_ID', true)),
                 Toggle::make('NODE_UUID')
                     ->label('UUID')
                     ->inline()
@@ -984,6 +1001,55 @@ class Settings extends Page implements HasForms
                     ->label('CPU Overallocate')
                     ->inline()
                     ->default(env('NODE_CPU_OVER', false)),
+            ])
+            ->action(function (array $data): void {
+                $data = array_map(fn ($value) => is_bool($value) ? ($value ? 'true' : 'false') : $value, $data);
+
+                $this->writeToEnvironment($data);
+
+                Artisan::call('config:clear');
+                Artisan::call('queue:restart');
+
+                $this->rememberData();
+
+                Notification::make()
+                    ->title('Content saved')
+                    ->success()
+                    ->send();
+            });
+    }
+
+    protected function getDatabaseHostHintAction()
+    {
+        return
+        FormAction::make('DATABASE_HOST_CUSTOM_PAYLOAD')
+            ->label('Customize Content')
+            ->modalDescription('Customize what data you would like to send to your webhook')
+            ->form([
+                Toggle::make('DATABASE_HOST_ID')
+                    ->label('ID')
+                    ->inline()
+                    ->default(env('DATABASE_HOST_ID', true)),
+                Toggle::make('DATABASE_HOST_NAME')
+                    ->label('Name')
+                    ->inline()
+                    ->default(env('DATABASE_HOST_NAME', true)),
+                Toggle::make('DATABASE_HOST_HOST')
+                    ->label('Host')
+                    ->inline()
+                    ->default(env('DATABASE_HOST_HOST', true)),
+                Toggle::make('DATABASE_HOST_PORT')
+                    ->label('Port')
+                    ->inline()
+                    ->default(env('DATABASE_HOST_PORT', true)),
+                Toggle::make('DATABASE_HOST_MAX_DB')
+                    ->label('Maximum Databases')
+                    ->inline()
+                    ->default(env('DATABASE_HOST_MAX_DB', true)),
+                Toggle::make('DATABASE_HOST_NODE_ID')
+                    ->label('Node ID')
+                    ->inline()
+                    ->default(env('DATABASE_HOST_NODE_ID', true)),
             ])
             ->action(function (array $data): void {
                 $data = array_map(fn ($value) => is_bool($value) ? ($value ? 'true' : 'false') : $value, $data);

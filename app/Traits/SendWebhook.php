@@ -16,6 +16,7 @@ trait SendWebhook
         try {
             if (env('WEBHOOK_TYPE') === 'json') {
                 $webhookCategories = [
+                    'databasehost' => 'DATABASE_HOST_WEBHOOK',
                     'egg' => 'EGG_WEBHOOK',
                     'node' => 'NODE_WEBHOOK',
                     'server' => 'SERVER_WEBHOOK',
@@ -24,6 +25,7 @@ trait SendWebhook
                 ];
             } elseif (env('WEBHOOK_TYPE') === 'discord') {
                 $webhookCategories = [
+                    'databasehost' => 'DATABASE_HOST_WEBHOOK_DISCORD',
                     'egg' => 'EGG_WEBHOOK_DISCORD',
                     'node' => 'NODE_WEBHOOK_DISCORD',
                     'server' => 'SERVER_WEBHOOK_DISCORD',
