@@ -24,12 +24,12 @@ trait SendWebhook
             } elseif (env('WEBHOOK_TYPE') === 'discord') {
                 $webhookCategories = [
                     'user' => 'USER_WEBHOOK_DISCORD',
+                    'egg' => 'EGG_WEBHOOK_DISCORD',
                     'server' => 'SERVER_WEBHOOK_DISCORD',
                     'default' => 'MAIN_WEBHOOK_DISCORD',
                 ];
             } else {
                 Log::warning('Unexpected WEBHOOK_TYPE value: ' . env('WEBHOOK_TYPE'));
-                $webhookCategories = [];
             }
         } catch (Exception $e) {
             Log::error('Error getWebhook: ' . $e->getMessage());
@@ -67,6 +67,7 @@ trait SendWebhook
                         'avatar_url' => 'https://pelican.dev/img/logo.png',
                         'embeds' => array_map(function ($embed) use ($color) {
                             $embed['color'] = hexdec($color);
+
                             return $embed;
                         }, $message['embeds'] ?? []),
                     ];
@@ -84,5 +85,19 @@ trait SendWebhook
                 Log::error('Guzzle error: ' . $e->getMessage());
             }
         }
+    }
+
+    public function buildDiscordDescription(array $settings, array $data, $extra): string
+    {
+        $descriptionParts = [];
+
+        foreach ($settings as $key => $isEnabled) {
+            if ($isEnabled && array_key_exists($key, $data)) {
+                $descriptionParts[] = ucwords(str_replace('_', ' ', $key)) . ': ' . $data[$key];
+            }
+        }
+        $descriptionParts[] = $extra;
+
+        return implode("\n", $descriptionParts);
     }
 }

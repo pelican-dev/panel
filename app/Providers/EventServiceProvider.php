@@ -5,7 +5,9 @@ namespace App\Providers;
 use App\Events\Server as ServerEvents;
 use App\Events\User as UserEvents;
 use App\Events\Egg as EggEvents;
-use App\Listeners\WebhookListener;
+use App\Listeners\Webhook\EggWebhookListener;
+use App\Listeners\Webhook\ServerWebhookListener;
+use App\Listeners\Webhook\UserWebhookListener;
 use App\Models\Egg;
 use App\Models\User;
 use App\Models\Server;
@@ -27,12 +29,12 @@ class EventServiceProvider extends ServiceProvider
      */
     protected $listen = [
         ServerInstalledEvent::class => [ServerInstalledNotification::class],
-        UserEvents\Created::class => [WebhookListener::class],
-        UserEvents\Deleted::class => [WebhookListener::class],
-        EggEvents\Created::class => [WebhookListener::class],
-        EggEvents\Deleted::class => [WebhookListener::class],
-        ServerEvents\Created::class => [WebhookListener::class],
-        ServerEvents\Deleted::class => [WebhookListener::class],
+        UserEvents\Created::class => [UserWebhookListener::class],
+        UserEvents\Deleted::class => [UserWebhookListener::class],
+        EggEvents\Created::class => [EggWebhookListener::class],
+        EggEvents\Deleted::class => [EggWebhookListener::class],
+        ServerEvents\Created::class => [ServerWebhookListener::class],
+        ServerEvents\Deleted::class => [ServerWebhookListener::class],
     ];
 
     /**
@@ -41,6 +43,7 @@ class EventServiceProvider extends ServiceProvider
     public function boot(): void
     {
         parent::boot();
+
         Egg::observe(EggObserver::class);
         User::observe(UserObserver::class);
         Server::observe(ServerObserver::class);
