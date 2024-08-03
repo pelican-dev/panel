@@ -348,6 +348,7 @@ class Settings extends Page implements HasForms
                         ->label('Main Webhook')
                         ->visible(fn (Get $get) => $get('WEBHOOK_TYPE') === 'json')
                         ->url()
+                        ->prefixIcon('tabler-webhook')
                         ->helperText('When webhooks are enabled, and a specific category is not set up, this fallback webhook will be used.')
                         ->default(env('MAIN_WEBHOOK')),
 
@@ -356,6 +357,7 @@ class Settings extends Page implements HasForms
                         ->visible(fn (Get $get) => $get('WEBHOOK_TYPE') === 'json')
                         ->hintAction($this->getUserHintAction())
                         ->url()
+                        ->prefixIcon('tabler-webhook')
                         ->helperText('All User related events will be logged to this webhook')
                         ->default(env('USER_WEBHOOK')),
 
@@ -364,6 +366,7 @@ class Settings extends Page implements HasForms
                         ->visible(fn (Get $get) => $get('WEBHOOK_TYPE') === 'json')
                         ->hintAction($this->getServerHintAction())
                         ->url()
+                        ->prefixIcon('tabler-webhook')
                         ->helperText('All Server related events will be logged to this webhook')
                         ->default(env('SERVER_WEBHOOK')),
 
@@ -372,6 +375,7 @@ class Settings extends Page implements HasForms
                         ->visible(fn (Get $get) => $get('WEBHOOK_TYPE') === 'json')
                         ->hintAction($this->getEggHintAction())
                         ->url()
+                        ->prefixIcon('tabler-webhook')
                         ->helperText('All Egg related events will be logged to this webhook')
                         ->default(env('EGG_WEBHOOK')),
 
@@ -380,6 +384,7 @@ class Settings extends Page implements HasForms
                         ->visible(fn (Get $get) => $get('WEBHOOK_TYPE') === 'json')
                         ->hintAction($this->getNodeHintAction())
                         ->url()
+                        ->prefixIcon('tabler-webhook')
                         ->helperText('All Node related events will be logged to this webhook')
                         ->default(env('NODE_WEBHOOK')),
 
@@ -388,6 +393,7 @@ class Settings extends Page implements HasForms
                         ->visible(fn (Get $get) => $get('WEBHOOK_TYPE') === 'json')
                         ->hintAction($this->getDatabaseHostHintAction())
                         ->url()
+                        ->prefixIcon('tabler-webhook')
                         ->helperText('All DatabaseHost related events will be logged to this webhook')
                         ->default(env('DATABASE_HOST_WEBHOOK')),
 
@@ -395,6 +401,7 @@ class Settings extends Page implements HasForms
                         ->label('Main Webhook')
                         ->visible(fn (Get $get) => $get('WEBHOOK_TYPE') === 'discord')
                         ->url()
+                        ->prefixIcon('tabler-brand-discord-filled')
                         ->placeholder('https://discord.com/api/webhooks/')
                         ->helperText('When webhooks are enabled, and a specific category is not set up, this fallback webhook will be used.')
                         ->default(env('MAIN_WEBHOOK_DISCORD')),
@@ -403,6 +410,7 @@ class Settings extends Page implements HasForms
                         ->label('User Webhook')
                         ->visible(fn (Get $get) => $get('WEBHOOK_TYPE') === 'discord')
                         ->url()
+                        ->prefixIcon('tabler-brand-discord-filled')
                         ->hintAction($this->getUserHintAction())
                         ->placeholder('https://discord.com/api/webhooks/')
                         ->helperText('All User related events will be logged to this webhook')
@@ -412,6 +420,7 @@ class Settings extends Page implements HasForms
                         ->label('Server Webhook')
                         ->visible(fn (Get $get) => $get('WEBHOOK_TYPE') === 'discord')
                         ->url()
+                        ->prefixIcon('tabler-brand-discord-filled')
                         ->hintAction($this->getServerHintAction())
                         ->placeholder('https://discord.com/api/webhooks/')
                         ->helperText('All Server related events will be logged to this webhook')
@@ -422,6 +431,7 @@ class Settings extends Page implements HasForms
                         ->visible(fn (Get $get) => $get('WEBHOOK_TYPE') === 'discord')
                         ->hintAction($this->getEggHintAction())
                         ->url()
+                        ->prefixIcon('tabler-brand-discord-filled')
                         ->placeholder('https://discord.com/api/webhooks/')
                         ->helperText('All Egg related events will be logged to this webhook')
                         ->default(env('EGG_WEBHOOK_DISCORD')),
@@ -431,6 +441,7 @@ class Settings extends Page implements HasForms
                         ->visible(fn (Get $get) => $get('WEBHOOK_TYPE') === 'discord')
                         ->hintAction($this->getNodeHintAction())
                         ->url()
+                        ->prefixIcon('tabler-brand-discord-filled')
                         ->placeholder('https://discord.com/api/webhooks/')
                         ->helperText('All Node related events will be logged to this webhook')
                         ->default(env('NODE_WEBHOOK_DISCORD')),
@@ -440,6 +451,7 @@ class Settings extends Page implements HasForms
                         ->visible(fn (Get $get) => $get('WEBHOOK_TYPE') === 'discord')
                         ->hintAction($this->getDatabaseHostHintAction())
                         ->url()
+                        ->prefixIcon('tabler-brand-discord-filled')
                         ->placeholder('https://discord.com/api/webhooks/')
                         ->helperText('All DatabaseHost related events will be logged to this webhook')
                         ->default(env('DATABASE_HOST_WEBHOOK_DISCORD')),
