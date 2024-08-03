@@ -418,6 +418,11 @@ class Settings extends Page implements HasForms
                     ColorPicker::make('DISCORD_EMBED_COLOR')
                         ->label('Color')
                         ->default(env('DISCORD_EMBED_COLOR', '#024cc4')),
+                    TextInput::make('DISCORD_EMBED_IMAGE')
+                        ->label('Image')
+                        ->url()
+                        ->placeholder('https://pelican.dev/img/logo.png')
+                        ->default(env('DISCORD_EMBED_IMAGE', 'https://pelican.dev/img/logo.png')),
                 ]),
         ];
     }

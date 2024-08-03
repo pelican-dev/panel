@@ -63,7 +63,6 @@ class UserWebhookListener
                 [
                     'author' => [
                         'name' => $appName,
-                        'icon_url' => 'https://pelican.dev/img/logo.png',
                         'url' => $Url,
                     ],
                     'title' => 'User Created',
@@ -113,7 +112,6 @@ class UserWebhookListener
                 [
                     'author' => [
                         'name' => $appName,
-                        'icon_url' => 'https://pelican.dev/img/logo.png',
                         'url' => $Url,
                     ],
                     'title' => 'User Deleted',

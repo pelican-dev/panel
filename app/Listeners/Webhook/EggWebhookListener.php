@@ -65,7 +65,6 @@ class EggWebhookListener
                 [
                     'author' => [
                         'name' => $appName,
-                        'icon_url' => 'https://pelican.dev/img/logo.png',
                         'url' => $Url,
                     ],
                     'title' => 'Egg Added',
@@ -115,7 +114,6 @@ class EggWebhookListener
                 [
                     'author' => [
                         'name' => $appName,
-                        'icon_url' => 'https://pelican.dev/img/logo.png',
                         'url' => $Url,
                     ],
                     'title' => 'Egg Deleted',

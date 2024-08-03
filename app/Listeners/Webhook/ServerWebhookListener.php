@@ -65,7 +65,6 @@ class ServerWebhookListener
                 [
                     'author' => [
                         'name' => $appName,
-                        'icon_url' => 'https://pelican.dev/img/logo.png',
                         'url' => $Url,
                     ],
                     'title' => 'Server Created',
@@ -115,7 +114,6 @@ class ServerWebhookListener
                 [
                     'author' => [
                         'name' => $appName,
-                        'icon_url' => 'https://pelican.dev/img/logo.png',
                         'url' => $APP_URL,
                     ],
                     'title' => 'Server Deleted',
