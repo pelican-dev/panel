@@ -16,16 +16,18 @@ trait SendWebhook
         try {
             if (env('WEBHOOK_TYPE') === 'json') {
                 $webhookCategories = [
-                    'user' => 'USER_WEBHOOK',
                     'egg' => 'EGG_WEBHOOK',
+                    'node' => 'NODE_WEBHOOK',
                     'server' => 'SERVER_WEBHOOK',
+                    'user' => 'USER_WEBHOOK',
                     'default' => 'MAIN_WEBHOOK',
                 ];
             } elseif (env('WEBHOOK_TYPE') === 'discord') {
                 $webhookCategories = [
-                    'user' => 'USER_WEBHOOK_DISCORD',
                     'egg' => 'EGG_WEBHOOK_DISCORD',
+                    'node' => 'NODE_WEBHOOK_DISCORD',
                     'server' => 'SERVER_WEBHOOK_DISCORD',
+                    'user' => 'USER_WEBHOOK_DISCORD',
                     'default' => 'MAIN_WEBHOOK_DISCORD',
                 ];
             } else {
@@ -65,7 +67,7 @@ trait SendWebhook
                     $image = env('DISCORD_EMBED_IMAGE', 'https://pelican.dev/img/logo.png');
                     $payload = [
                         'username' => env('APP_NAME'),
-                        'avatar_url' => env('DISCORD_EMBED_IMAGE', 'https://pelican.dev/img/logo.png'),
+                        'avatar_url' => $image,
                         'embeds' => array_map(function ($embed) use ($color, $image) {
                             $embed['color'] = hexdec($color);
                             $embed['author']['icon_url'] = $image;

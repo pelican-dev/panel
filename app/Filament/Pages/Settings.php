@@ -375,6 +375,14 @@ class Settings extends Page implements HasForms
                         ->helperText('All Egg related events will be logged to this webhook')
                         ->default(env('EGG_WEBHOOK')),
 
+                    TextInput::make('NODE_WEBHOOK')
+                        ->label('Node Webhook')
+                        ->visible(fn (Get $get) => $get('WEBHOOK_TYPE') === 'json')
+                        ->hintAction($this->getNodeHintAction())
+                        ->url()
+                        ->helperText('All Node related events will be logged to this webhook')
+                        ->default(env('NODE_WEBHOOK')),
+
                     TextInput::make('MAIN_WEBHOOK_DISCORD')
                         ->label('Main Webhook')
                         ->visible(fn (Get $get) => $get('WEBHOOK_TYPE') === 'discord')
@@ -409,6 +417,15 @@ class Settings extends Page implements HasForms
                         ->placeholder('https://discord.com/api/webhooks/')
                         ->helperText('All Egg related events will be logged to this webhook')
                         ->default(env('EGG_WEBHOOK_DISCORD')),
+
+                    TextInput::make('NODE_WEBHOOK_DISCORD')
+                        ->label('Node Webhook')
+                        ->visible(fn (Get $get) => $get('WEBHOOK_TYPE') === 'discord')
+                        ->hintAction($this->getNodeHintAction())
+                        ->url()
+                        ->placeholder('https://discord.com/api/webhooks/')
+                        ->helperText('All Node related events will be logged to this webhook')
+                        ->default(env('NODE_WEBHOOK_DISCORD')),
                 ]),
 
             Section::make('Discord Embed')
@@ -418,6 +435,7 @@ class Settings extends Page implements HasForms
                     ColorPicker::make('DISCORD_EMBED_COLOR')
                         ->label('Color')
                         ->default(env('DISCORD_EMBED_COLOR', '#024cc4')),
+
                     TextInput::make('DISCORD_EMBED_IMAGE')
                         ->label('Image')
                         ->url()
@@ -881,6 +899,91 @@ class Settings extends Page implements HasForms
                     ->label('Script Entry')
                     ->inline()
                     ->default(env('EGG_SCRIPT_ENTRY', false)),
+            ])
+            ->action(function (array $data): void {
+                $data = array_map(fn ($value) => is_bool($value) ? ($value ? 'true' : 'false') : $value, $data);
+
+                $this->writeToEnvironment($data);
+
+                Artisan::call('config:clear');
+                Artisan::call('queue:restart');
+
+                $this->rememberData();
+
+                Notification::make()
+                    ->title('Content saved')
+                    ->success()
+                    ->send();
+            });
+    }
+
+    protected function getNodeHintAction()
+    {
+        return
+        FormAction::make('NODE_CUSTOM_PAYLOAD')
+            ->label('Customize Content')
+            ->modalDescription('Customize what data you would like to send to your webhook')
+            ->form([
+                Toggle::make('NODE_ID')
+                    ->label('ID')
+                    ->inline()
+                    ->default(env('USER_ID', true)),
+                Toggle::make('NODE_UUID')
+                    ->label('UUID')
+                    ->inline()
+                    ->default(env('NODE_UUID', false)),
+                Toggle::make('NODE_PUBLIC')
+                    ->label('Public')
+                    ->inline()
+                    ->default(env('NODE_PUBLIC', false)),
+                Toggle::make('NODE_NAME')
+                    ->label('Name')
+                    ->inline()
+                    ->default(env('NODE_NAME', true)),
+                Toggle::make('NODE_DESCRIPTION')
+                    ->label('Description')
+                    ->inline()
+                    ->default(env('NODE_DESCRIPTION', false)),
+                Toggle::make('NODE_LOCATION_ID')
+                    ->label('Location ID')
+                    ->inline()
+                    ->default(env('NODE_LOCATION_ID', true)),
+                Toggle::make('NODE_FQDN')
+                    ->label('FQDN')
+                    ->inline()
+                    ->default(env('NODE_FQDN', true)),
+                Toggle::make('NODE_SCHEME')
+                    ->label('Scheme')
+                    ->inline()
+                    ->default(env('NODE_SCHEME', true)),
+                Toggle::make('NODE_BEHIND_PROXY')
+                    ->label('Behind Proxy')
+                    ->inline()
+                    ->default(env('NODE_BEHIND_PROXY', false)),
+                Toggle::make('NODE_MEMORY')
+                    ->label('Memory')
+                    ->inline()
+                    ->default(env('NODE_MEMORY', true)),
+                Toggle::make('NODE_MEMORY_OVER')
+                    ->label('Memory Overallocate')
+                    ->inline()
+                    ->default(env('NODE_MEMORY_OVER', false)),
+                Toggle::make('NODE_DISK')
+                    ->label('Disk')
+                    ->inline()
+                    ->default(env('NODE_DISK', true)),
+                Toggle::make('NODE_DISK_OVER')
+                    ->label('Disk Overallocate')
+                    ->inline()
+                    ->default(env('NODE_DISK_OVER', false)),
+                Toggle::make('NODE_CPU')
+                    ->label('CPU')
+                    ->inline()
+                    ->default(env('NODE_CPU', true)),
+                Toggle::make('NODE_CPU_OVER')
+                    ->label('CPU Overallocate')
+                    ->inline()
+                    ->default(env('NODE_CPU_OVER', false)),
             ])
             ->action(function (array $data): void {
                 $data = array_map(fn ($value) => is_bool($value) ? ($value ? 'true' : 'false') : $value, $data);
