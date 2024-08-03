@@ -37,7 +37,7 @@ class DatabaseHostWebhookListener
         $admin = auth()->check() ? auth()->user()->username : 'Unknown';
         $appName = env('APP_NAME');
         $APP_URL = env('APP_URL');
-        $Url = "$APP_URL/admin/eggs/$ID/edit";
+        $Url = "$APP_URL/admin/database-hosts/$ID/edit";
         $currentTime = Carbon::now()->toDateTimeString();
         $extra = "\nAdded by: $admin";
 
@@ -53,7 +53,7 @@ class DatabaseHostWebhookListener
 
         if (env('WEBHOOK_TYPE') === 'json') {
             $this->send(
-                'egg',
+                'databasehost',
                 [
                     'event' => 'DatabaseHost Added',
                     'triggered_at' => $currentTime,
@@ -102,7 +102,7 @@ class DatabaseHostWebhookListener
 
         if (env('WEBHOOK_TYPE') === 'json') {
             $this->send(
-                'egg',
+                'databasehost',
                 [
                     'event' => 'DatabaseHost Deleted',
                     'triggered_at' => $currentTime,
