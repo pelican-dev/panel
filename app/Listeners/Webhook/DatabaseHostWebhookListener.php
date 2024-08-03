@@ -33,7 +33,7 @@ class DatabaseHostWebhookListener
     protected function handleDatabaseHostCreated($event)
     {
         $settings = $this->getDatabaseHostSettings();
-        $ID = $event->egg->id;
+        $ID = $event->databaseHost->id;
         $admin = auth()->check() ? auth()->user()->username : 'Unknown';
         $appName = env('APP_NAME');
         $APP_URL = env('APP_URL');
