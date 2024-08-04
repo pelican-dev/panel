@@ -90,7 +90,7 @@ class Settings extends Page implements HasForms
             TextInput::make('APP_FAVICON')
                 ->label('App Favicon')
                 ->hintIcon('tabler-question-mark')
-                ->hintIconTooltip('Favicons should be placed in the public folder, located in the root panel directory. (File Type must be a .ico)')
+                ->hintIconTooltip('Favicons should be placed in the public folder, located in the root panel directory. The file type must be .ico.')
                 ->required()
                 ->default(env('APP_FAVICON', './pelican.ico')),
             Toggle::make('APP_DEBUG')
