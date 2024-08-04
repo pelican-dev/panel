@@ -6,11 +6,15 @@ use App\Filament\App\Resources\UserResource;
 use App\Services\Subusers\SubuserCreationService;
 use Filament\Actions;
 use Filament\Facades\Filament;
+use Filament\Forms\Components\Actions as assignAll;
+use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\CheckboxList;
 use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Tabs;
 use Filament\Forms\Components\TextInput;
+use Filament\Forms\Get;
+use Filament\Forms\Set;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\ListRecords;
 
@@ -27,12 +31,102 @@ class ListUsers extends ListRecords
                 ->form([
                     Grid::make()
                         ->columnSpanFull()
+                        ->columns([
+                            'default' => 1,
+                            'sm' => 1,
+                            'md' => 5,
+                            'lg' => 6,
+                        ])
                         ->schema([
                             TextInput::make('email')
                                 ->email()
-                                ->columnSpanFull()
+                                ->inlineLabel()
+                                ->columnSpan([
+                                    'default' => 1,
+                                    'sm' => 1,
+                                    'md' => 4,
+                                    'lg' => 5,
+                                ])
                                 ->required()
                                 ->unique(),
+                            assignAll::make([
+                                Action::make('assignAll')
+                                    ->label('Assign All')
+                                    ->action(function (Set $set, Get $get) {
+                                        $permissions = [
+                                            'control' => [
+                                                'console',
+                                                'start',
+                                                'stop',
+                                                'restart',
+                                                'kill',
+                                            ],
+                                            'user' => [
+                                                'read',
+                                                'create',
+                                                'update',
+                                                'delete',
+                                            ],
+                                            'file' => [
+                                                'read',
+                                                'read-content',
+                                                'create',
+                                                'update',
+                                                'delete',
+                                                'archive',
+                                                'sftp',
+                                            ],
+                                            'backup' => [
+                                                'read',
+                                                'create',
+                                                'delete',
+                                                'download',
+                                                'restore',
+                                            ],
+                                            'allocation' => [
+                                                'read',
+                                                'create',
+                                                'update',
+                                                'delete',
+                                            ],
+                                            'startup' => [
+                                                'read',
+                                                'update',
+                                                'docker-image',
+                                            ],
+                                            'database' => [
+                                                'read',
+                                                'create',
+                                                'update',
+                                                'delete',
+                                                'view_password',
+                                            ],
+                                            'schedule' => [
+                                                'read',
+                                                'create',
+                                                'update',
+                                                'delete',
+                                            ],
+                                            'settings' => [
+                                                'rename',
+                                                'reinstall',
+                                                'activity',
+                                            ],
+                                        ];
+
+                                        foreach ($permissions as $key => $value) {
+                                            $currentValues = $get($key) ?? [];
+                                            $allValues = array_unique(array_merge($currentValues, $value));
+                                            $set($key, $allValues);
+                                        }
+                                    }),
+                            ])
+                                ->columnSpan([
+                                    'default' => 1,
+                                    'sm' => 1,
+                                    'md' => 1,
+                                    'lg' => 1,
+                                ]),
                             Tabs::make()
                                 ->columnSpanFull()
                                 ->schema([
@@ -265,6 +359,7 @@ class ListUsers extends ListRecords
                         ]),
                 ])
                 ->modalHeading('Invite User')
+                ->modalSubmitActionLabel('Invite')
                 ->action(function (array $data) {
                     $email = $data['email'];
                     $permissions = collect($data)->forget('email')->map(fn ($permissions, $key) => collect($permissions)->map(fn ($permission) => "$key.$permission"))->flatten()->all();
