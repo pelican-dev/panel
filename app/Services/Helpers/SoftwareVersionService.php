@@ -2,7 +2,7 @@
 
 namespace App\Services\Helpers;
 
-use Exception;
+use GuzzleHttp\Client;
 use Carbon\CarbonImmutable;
 use GuzzleHttp\Exception\GuzzleException;
 use Illuminate\Support\Arr;
@@ -19,7 +19,7 @@ class SoftwareVersionService
      */
     public function __construct(
         protected CacheRepository $cache,
-        protected Factory $factory,
+        protected Client $client
     ) {
         self::$result = $this->cacheVersionData();
     }
