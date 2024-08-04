@@ -4,7 +4,7 @@ namespace App\Services\Helpers;
 
 use Exception;
 use Carbon\CarbonImmutable;
-use Illuminate\Http\Client\Factory;
+use GuzzleHttp\Exception\GuzzleException;
 use Illuminate\Support\Arr;
 use Illuminate\Contracts\Cache\Repository as CacheRepository;
 
@@ -89,14 +89,28 @@ class SoftwareVersionService
             $versionData = [];
 
             try {
-                $response = $this->factory->get('https://api.github.com/repos/pelican-dev/panel/releases/latest')->throw();
-                $panelData = json_decode($response->getBody(), true);
-                $versionData['panel'] = trim($panelData['tag_name'], 'v');
+                $response = $this->client->request('GET', 'https://api.github.com/repos/pelican-dev/panel/releases/latest',
+                    [
+                        'timeout' => config('panel.guzzle.timeout'),
+                        'connect_timeout' => config('panel.guzzle.connect_timeout'),
+                    ]
+                );
+                if ($response->getStatusCode() === 200) {
+                    $panelData = json_decode($response->getBody(), true);
+                    $versionData['panel'] = trim($panelData['tag_name'], 'v');
+                }
 
-                $response = $this->factory->get('https://api.github.com/repos/pelican-dev/wings/releases/latest')->throw();
-                $wingsData = json_decode($response->getBody(), true);
-                $versionData['daemon'] = trim($wingsData['tag_name'], 'v');
-            } catch (Exception) {
+                $response = $this->client->request('GET', 'https://api.github.com/repos/pelican-dev/wings/releases/latest',
+                    [
+                        'timeout' => config('panel.guzzle.timeout'),
+                        'connect_timeout' => config('panel.guzzle.connect_timeout'),
+                    ]
+                );
+                if ($response->getStatusCode() === 200) {
+                    $wingsData = json_decode($response->getBody(), true);
+                    $versionData['daemon'] = trim($wingsData['tag_name'], 'v');
+                }
+            } catch (GuzzleException $e) {
             }
 
             $versionData['discord'] = 'https://pelican.dev/discord';

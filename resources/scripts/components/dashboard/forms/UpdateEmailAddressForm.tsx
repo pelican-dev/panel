@@ -70,7 +70,7 @@ export default () => {
                                 id={'confirm_password'}
                                 type={'password'}
                                 name={'password'}
-                                label={t('confirm_password', { ns: 'strings' })}
+                                label={t('current_password', { ns: 'strings' })}
                             />
                         </div>
                         <div css={tw`mt-6`}>

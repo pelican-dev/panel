@@ -4,7 +4,6 @@ import getTwoFactorTokenData, { TwoFactorTokenData } from '@/api/account/getTwoF
 import { useFlashKey } from '@/plugins/useFlash';
 import tw from 'twin.macro';
 import { useTranslation } from 'react-i18next';
-import i18n from '@/i18n';
 import QRCode from 'qrcode.react';
 import { Button } from '@/components/elements/button/index';
 import Spinner from '@/components/elements/Spinner';
@@ -127,7 +126,7 @@ const ConfigureTwoFactorForm = ({ onTokens }: Props) => {
 };
 
 export default asDialog({
-    title: i18n.t('dashboard/account:two_factor.setup.title') ?? 'Enable Two-Step Verification',
+    title: 'Enable Two-Step Verification',
     description:
         "Help protect your account from unauthorized access. You'll be prompted for a verification code each time you sign in.",
 })(ConfigureTwoFactorForm);

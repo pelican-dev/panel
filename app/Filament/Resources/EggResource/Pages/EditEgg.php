@@ -249,9 +249,9 @@ class EditEgg extends EditRecord
                             Tab::make('From URL')
                                 ->icon('tabler-world-upload')
                                 ->schema([
-                                    TextInput::make('update_url')
+                                    TextInput::make('url')
                                         ->label('URL')
-                                        ->formatStateUsing(fn (Egg $egg): string => $egg->update_url)
+                                        ->default(fn (Egg $egg): ?string => $egg->update_url)
                                         ->hint('Link to the egg file (eg. minecraft.json)')
                                         ->url(),
                                 ]),
