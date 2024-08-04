@@ -99,18 +99,6 @@ class PanelInstaller extends SimplePage implements HasForms
             $variables = array_get($inputs, 'env');
             $this->writeToEnvironment($variables);
 
-            $redisUsed = count(collect($variables)->filter(function ($item) {
-                return $item === 'redis';
-            })) !== 0;
-
-            // Create queue worker service (if needed)
-            if ($variables['QUEUE_CONNECTION'] !== 'sync') {
-                Artisan::call('p:environment:queue-service', [
-                    '--use-redis' => $redisUsed,
-                    '--overwrite' => true,
-                ]);
-            }
-
             // Run migrations
             Artisan::call('migrate', [
                 '--force' => true,
