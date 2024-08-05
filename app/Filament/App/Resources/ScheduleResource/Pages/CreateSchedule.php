@@ -2,12 +2,12 @@
 
 namespace App\Filament\App\Resources\ScheduleResource\Pages;
 
+use App\Exceptions\DisplayException;
 use App\Filament\App\Resources\ScheduleResource;
+use App\Helpers\Utilities;
+use Carbon\Carbon;
+use Exception;
 use Filament\Facades\Filament;
-use Filament\Forms\Components\Section;
-use Filament\Forms\Components\TextInput;
-use Filament\Forms\Components\Toggle;
-use Filament\Forms\Form;
 use Filament\Resources\Pages\CreateRecord;
 
 class CreateSchedule extends CreateRecord
@@ -15,73 +15,32 @@ class CreateSchedule extends CreateRecord
     protected static string $resource = ScheduleResource::class;
 
     protected static bool $canCreateAnother = false;
-    public function form(Form $form): Form
-    {
-        return $form
-            ->columns(10)
-            ->schema([
-                TextInput::make('name')
-                    ->columnSpan(10)
-                    ->label('Schedule Name')
-                    ->placeholder('A human readable identifier for this schedule.')
-                    ->autocomplete(false)
-                    ->required(),
-                TextInput::make('cron_minute')
-                    ->columnSpan(2)
-                    ->label('Minute')
-                    ->default('*/5')
-                    ->required(),
-                TextInput::make('cron_hour')
-                    ->columnSpan(2)
-                    ->label('Hour')
-                    ->default('*')
-                    ->required(),
-                TextInput::make('cron_day_of_month')
-                    ->columnSpan(2)
-                    ->label('Day of Month')
-                    ->default('*')
-                    ->required(),
-                TextInput::make('cron_month')
-                    ->columnSpan(2)
-                    ->label('Month')
-                    ->default('*')
-                    ->required(),
-                TextInput::make('cron_day_of_week')
-                    ->columnSpan(2)
-                    ->label('Day of Week')
-                    ->default('*')
-                    ->required(),
-                Toggle::make('only_when_online')
-                    ->label('Only when Server is Online?')
-                    ->hintIconTooltip('Only execute this schedule when the server is in a running state.')
-                    ->hintIcon('tabler-question-mark')
-                    ->columnSpan(5)
-                    ->required()
-                    ->default(1),
-                Toggle::make('is_active')
-                    ->label('Enable Schedule?')
-                    ->hintIconTooltip('This schedule will be executed automatically if enabled.')
-                    ->hintIcon('tabler-question-mark')
-                    ->columnSpan(5)
-                    ->required()
-                    ->default(1),
-                Section::make()
-                    ->columnSpanFull()
-                    ->collapsible()->collapsed()
-                    ->icon('tabler-question-mark')
-                    ->heading('Cron Expression Help')
-                    ->schema([
-                        // TODO
-                    ]),
 
-            ]);
-    }
     protected function mutateFormDataBeforeSave(array $data): array
     {
         if (!isset($data['server_id'])) {
             $data['server_id'] = Filament::getTenant()->id;
         }
 
+        if (!isset($data['next_run_at'])) {
+            $data['next_run_at'] = $this->getNextRunAt($data['cron_minute'], $data['cron_hour'], $data['cron_day_of_month'], $data['cron_month'], $data['cron_day_of_week']);
+        }
+
         return $data;
+    }
+
+    protected function getNextRunAt(string $minute, string $hour, string $dayOfMonth, string $month, string $dayOfWeek): Carbon
+    {
+        try {
+            return Utilities::getScheduleNextRunDate(
+                $minute,
+                $hour,
+                $dayOfMonth,
+                $month,
+                $dayOfWeek
+            );
+        } catch (Exception) {
+            throw new DisplayException('The cron data provided does not evaluate to a valid expression.');
+        }
     }
 }
