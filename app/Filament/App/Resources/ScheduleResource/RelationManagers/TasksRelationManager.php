@@ -2,6 +2,7 @@
 
 namespace App\Filament\App\Resources\ScheduleResource\RelationManagers;
 
+use App\Facades\Activity;
 use App\Models\Schedule;
 use App\Models\Task;
 use Filament\Forms\Components\Select;
@@ -27,7 +28,14 @@ class TasksRelationManager extends RelationManager
         return $table
             ->reorderable('sequence_id', true)
             ->columns([
-                TextColumn::make('action'),
+                TextColumn::make('action')
+                    ->state(fn (Task $task) => match ($task->action) {
+                        Task::ACTION_POWER => 'Send power action',
+                        Task::ACTION_COMMAND => 'Send command',
+                        Task::ACTION_BACKUP => 'Create backup',
+                        Task::ACTION_DELETE_FILES => 'Delete files',
+                        default => $task->action
+                    }),
                 TextColumn::make('time_offset')
                     ->hidden(fn () => config('queue.default') === 'sync')
                     ->suffix(' Seconds'),
@@ -39,9 +47,6 @@ class TasksRelationManager extends RelationManager
                     ->label('Create Task')
                     ->createAnother(false)
                     ->form([
-                        TextInput::make('sequence_id')
-                            ->hidden()
-                            ->default(fn () => ($schedule->tasks()->orderByDesc('sequence_id')->first()->sequence_id ?? 0) + 1),
                         Select::make('action')
                             ->required()
                             ->live()
@@ -78,7 +83,24 @@ class TasksRelationManager extends RelationManager
                             ->maxValue(900)
                             ->suffix('Seconds'),
                         Toggle::make('continue_on_failure'),
-                    ]),
+                    ])
+                    ->action(function ($data) use ($schedule) {
+                        $sequenceId = ($schedule->tasks()->orderByDesc('sequence_id')->first()->sequence_id ?? 0) + 1;
+
+                        $task = Task::query()->create([
+                            'schedule_id' => $schedule->id,
+                            'sequence_id' => $sequenceId,
+                            'action' => $data['action'],
+                            'payload' => $data['payload'] ?? '',
+                            'time_offset' => $data['time_offset'] ?? 0,
+                            'continue_on_failure' => (bool) $data['continue_on_failure'],
+                        ]);
+
+                        Activity::event('server:task.create')
+                            ->subject($schedule, $task)
+                            ->property(['name' => $schedule->name, 'action' => $task->action, 'payload' => $task->payload])
+                            ->log();
+                    }),
             ]);
     }
 }
