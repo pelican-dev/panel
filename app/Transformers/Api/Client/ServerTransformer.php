@@ -16,7 +16,7 @@ use App\Services\Servers\StartupCommandService;
 
 class ServerTransformer extends BaseClientTransformer
 {
-    protected array $defaultIncludes = ['variables'];
+    protected array $defaultIncludes = ['allocations', 'variables'];
 
     protected array $availableIncludes = ['egg', 'subusers'];
 
