@@ -44,12 +44,14 @@ class TasksRelationManager extends RelationManager
             ])
             ->headerActions([
                 CreateAction::make()
-                    ->label('Create Task')
                     ->createAnother(false)
+                    ->label(fn () => $schedule->tasks()->count() >= config('panel.client_features.schedules.per_schedule_task_limit', 10) ? 'Task Limit Reached' : 'Create Task')
+                    ->disabled(fn () => $schedule->tasks()->count() >= config('panel.client_features.schedules.per_schedule_task_limit', 10))
                     ->form([
                         Select::make('action')
                             ->required()
                             ->live()
+                            ->disableOptionWhen(fn (string $value): bool => $value === Task::ACTION_BACKUP && $schedule->server->backup_limit === 0)
                             ->options([
                                 Task::ACTION_POWER => 'Send power action',
                                 Task::ACTION_COMMAND => 'Send command',
