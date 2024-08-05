@@ -5,6 +5,7 @@ namespace App\Filament\App\Resources\DatabaseResource\Pages;
 use App\Filament\App\Resources\DatabaseResource;
 use App\Models\Database;
 use App\Models\DatabaseHost;
+use App\Models\Server;
 use App\Services\Databases\DatabaseManagementService;
 use App\Services\Databases\DatabasePasswordService;
 use Filament\Actions\CreateAction;
@@ -42,7 +43,7 @@ class ListDatabases extends ListRecords
                     ->formatStateUsing(fn (Database $database) => $database->password),
                 TextInput::make('remote')->label('Connections From'),
                 TextInput::make('max_connections')
-                    ->formatStateUsing(fn (Database $database) => $database->max_connections = 0 ? $database->max_connections : 'Unlimited'),
+                    ->formatStateUsing(fn (Database $database) => $database->max_connections === 0 ? $database->max_connections : 'Unlimited'),
                 TextInput::make('JDBC')
                     ->label('JDBC Connection String')
                     ->suffixAction(CopyAction::make())
@@ -70,6 +71,7 @@ class ListDatabases extends ListRecords
 
     protected function getHeaderActions(): array
     {
+        /** @var Server $server */
         $server = Filament::getTenant();
 
         return [

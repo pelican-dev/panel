@@ -5,6 +5,7 @@ namespace App\Filament\App\Resources\ScheduleResource\Pages;
 use App\Exceptions\DisplayException;
 use App\Filament\App\Resources\ScheduleResource;
 use App\Helpers\Utilities;
+use App\Models\Server;
 use Carbon\Carbon;
 use Exception;
 use Filament\Facades\Filament;
@@ -19,7 +20,10 @@ class CreateSchedule extends CreateRecord
     protected function mutateFormDataBeforeSave(array $data): array
     {
         if (!isset($data['server_id'])) {
-            $data['server_id'] = Filament::getTenant()->id;
+            /** @var Server $server */
+            $server = Filament::getTenant();
+
+            $data['server_id'] = $server->id;
         }
 
         if (!isset($data['next_run_at'])) {

@@ -361,7 +361,7 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
 
     public function canAccessPanel(Panel $panel): bool
     {
-        return $this->root_admin;
+        return $this->root_admin; // TODO
     }
 
     public function getFilamentName(): string
@@ -388,6 +388,6 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
     {
         return true;
 
-        return $this->servers()->whereKey($tenant)->exists();
+        //return $this->servers()->whereKey($tenant)->exists(); // TODO
     }
 }

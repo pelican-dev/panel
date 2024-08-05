@@ -3,6 +3,7 @@
 namespace App\Filament\App\Resources\UserResource\Pages;
 
 use App\Filament\App\Resources\UserResource;
+use App\Models\Server;
 use App\Services\Subusers\SubuserCreationService;
 use Filament\Actions;
 use Filament\Facades\Filament;
@@ -363,9 +364,16 @@ class ListUsers extends ListRecords
                 ->action(function (array $data) {
                     $email = $data['email'];
                     $permissions = collect($data)->forget('email')->map(fn ($permissions, $key) => collect($permissions)->map(fn ($permission) => "$key.$permission"))->flatten()->all();
+
+                    /** @var Server $server */
                     $server = Filament::getTenant();
+
                     resolve(SubuserCreationService::class)->handle($server, $email, $permissions); // "It's Fine" ~ Lance
-                    Notification::make()->title('User Invited!')->success()->send();
+
+                    Notification::make()
+                        ->title('User Invited!')
+                        ->success()
+                        ->send();
 
                     return redirect()->route('filament.app.resources.users.index', ['tenant' => $server]);
                 }),
