@@ -7,6 +7,7 @@ use App\Models\Node;
 use App\Models\ApiKey;
 use Illuminate\Http\JsonResponse;
 use App\Http\Controllers\Controller;
+use App\Services\Acl\Api\AdminAcl;
 use App\Services\Api\KeyCreationService;
 
 class NodeAutoDeployController extends Controller
@@ -34,8 +35,8 @@ class NodeAutoDeployController extends Controller
         /** @var ApiKey|null $key */
         $key = $keys
             ->filter(function (ApiKey $key) {
-                foreach ($key->getAttributes() as $permission => $value) {
-                    if ($permission === 'r_nodes' && $value === 1) {
+                foreach ($key->permissions as $permission => $value) {
+                    if ($permission === Node::RESOURCE_NAME && $value === AdminAcl::READ) {
                         return true;
                     }
                 }
@@ -51,7 +52,7 @@ class NodeAutoDeployController extends Controller
                 'user_id' => $request->user()->id,
                 'memo' => 'Automatically generated node deployment key.',
                 'allowed_ips' => [],
-            ], ['r_nodes' => 1]);
+            ], [Node::RESOURCE_NAME => AdminAcl::READ]);
         }
 
         return new JsonResponse([

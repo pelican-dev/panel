@@ -32,18 +32,11 @@ return new class extends Migration
                 "updated_at" datetime, 
                 "user_id" integer not null, 
                 "memo" text, 
-                "r_servers" integer not null default \'0\', 
-                "r_nodes" integer not null default \'0\', 
-                "r_allocations" integer not null default \'0\', 
-                "r_users" integer not null default \'0\', 
-                "r_eggs" integer not null default \'0\', 
-                "r_database_hosts" integer not null default \'0\', 
-                "r_server_databases" integer not null default \'0\', 
                 "identifier" varchar, 
                 "key_type" integer not null default \'0\', 
                 "last_used_at" datetime, 
                 "expires_at" datetime,
-                "r_mounts" integer not null default \'0\',  
+                "permissions" text,  
                 foreign key("user_id") references "users"("id") on delete cascade)');
             DB::statement('INSERT INTO api_keys SELECT * FROM _api_keys_old');
             DB::statement('DROP TABLE _api_keys_old');
