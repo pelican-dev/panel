@@ -5,6 +5,7 @@ namespace App\Services\Allocations;
 use App\Models\Allocation;
 use IPTools\Network;
 use App\Models\Node;
+use App\Models\Server;
 use Illuminate\Database\ConnectionInterface;
 use App\Exceptions\DisplayException;
 use App\Exceptions\Service\Allocation\CidrOutOfRangeException;
@@ -14,7 +15,7 @@ use App\Exceptions\Service\Allocation\TooManyPortsInRangeException;
 
 class AssignmentService
 {
-    public const CIDR_MAX_BITS = 27;
+    public const CIDR_MAX_BITS = 25;
     public const CIDR_MIN_BITS = 32;
     public const PORT_FLOOR = 1024;
     public const PORT_CEIL = 65535;
@@ -37,7 +38,7 @@ class AssignmentService
      * @throws \App\Exceptions\Service\Allocation\PortOutOfRangeException
      * @throws \App\Exceptions\Service\Allocation\TooManyPortsInRangeException
      */
-    public function handle(Node $node, array $data): array
+    public function handle(Node $node, array $data, Server $server = null): array
     {
         $explode = explode('/', $data['allocation_ip']);
         if (count($explode) !== 1) {
@@ -74,7 +75,7 @@ class AssignmentService
                         throw new TooManyPortsInRangeException();
                     }
 
-                    if ((int) $matches[1] <= self::PORT_FLOOR || (int) $matches[2] > self::PORT_CEIL) {
+                    if ((int) $matches[1] < self::PORT_FLOOR || (int) $matches[2] > self::PORT_CEIL) {
                         throw new PortOutOfRangeException();
                     }
 
@@ -84,11 +85,11 @@ class AssignmentService
                             'ip' => $ip->__toString(),
                             'port' => (int) $unit,
                             'ip_alias' => array_get($data, 'allocation_alias'),
-                            'server_id' => null,
+                            'server_id' => $server->id ?? null,
                         ];
                     }
                 } else {
-                    if ((int) $port <= self::PORT_FLOOR || (int) $port > self::PORT_CEIL) {
+                    if ((int) $port < self::PORT_FLOOR || (int) $port > self::PORT_CEIL) {
                         throw new PortOutOfRangeException();
                     }
 
@@ -97,7 +98,7 @@ class AssignmentService
                         'ip' => $ip->__toString(),
                         'port' => (int) $port,
                         'ip_alias' => array_get($data, 'allocation_alias'),
-                        'server_id' => null,
+                        'server_id' => $server->id ?? null,
                     ];
                 }
 

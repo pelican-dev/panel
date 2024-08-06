@@ -316,6 +316,11 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
         return $this->hasMany(Subuser::class);
     }
 
+    public function subServers(): BelongsToMany
+    {
+        return $this->belongsToMany(Server::class, 'subusers');
+    }
+
     protected function checkPermission(Server $server, string $permission = ''): bool
     {
         if ($this->root_admin || $server->owner_id === $this->id) {
@@ -359,11 +364,6 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
         return once(fn () => $rootAdmins->count() === 1 && $rootAdmins->first()->is($this));
     }
 
-    public function canAccessPanel(Panel $panel): bool
-    {
-        return $this->root_admin;
-    }
-
     public function getFilamentName(): string
     {
         return $this->name_first ?: $this->username;
@@ -374,20 +374,27 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
         return 'https://gravatar.com/avatar/' . md5(strtolower($this->email));
     }
 
-    public function getTenants(Panel $panel): array|Collection
+    public function canAccessPanel(Panel $panel): bool
     {
-        return $this->servers;
+        if ($panel->getId() === 'admin') {
+            return $this->root_admin;
+        }
+
+        return true;
     }
 
-    public function subServers(): BelongsToMany
+    public function getTenants(Panel $panel): array|Collection
     {
-        return $this->belongsToMany(Server::class, 'subusers');
+        return $this->accessibleServers()->get();
     }
 
     public function canAccessTenant(\Illuminate\Database\Eloquent\Model $tenant): bool
     {
-        return true;
+        if ($tenant instanceof Server) {
+            /** @var Server $tenant */
+            return $this->checkPermission($tenant);
+        }
 
-        return $this->servers()->whereKey($tenant)->exists();
+        return false;
     }
 }

@@ -7,6 +7,8 @@ use App\Services\Databases\DatabaseManagementService;
 use App\Services\Databases\DatabasePasswordService;
 use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\Repeater;
+use Filament\Forms\Get;
+use Filament\Forms\Set;
 use LogicException;
 use App\Filament\Resources\ServerResource;
 use App\Http\Controllers\Admin\ServersController;
@@ -36,22 +38,16 @@ class EditServer extends EditRecord
     public function form(Form $form): Form
     {
         return $form
-            ->columns([
-                'default' => 1,
-                'sm' => 2,
-                'md' => 2,
-                'lg' => 4,
-            ])
             ->schema([
                 Tabs::make('Tabs')
                     ->persistTabInQueryString()
-                    ->columnSpan(6)
                     ->columns([
                         'default' => 2,
                         'sm' => 2,
                         'md' => 4,
                         'lg' => 6,
                     ])
+                    ->columnSpanFull()
                     ->tabs([
                         Tabs\Tab::make('Information')
                             ->icon('tabler-info-circle')
@@ -124,7 +120,8 @@ class EditServer extends EditRecord
                                         'md' => 2,
                                         'lg' => 3,
                                     ])
-                                    ->readOnly(),
+                                    ->readOnly()
+                                    ->dehydrated(false),
                                 Forms\Components\TextInput::make('uuid_short')
                                     ->label('Short UUID')
                                     ->hintAction(CopyAction::make())
@@ -134,7 +131,8 @@ class EditServer extends EditRecord
                                         'md' => 2,
                                         'lg' => 3,
                                     ])
-                                    ->readOnly(),
+                                    ->readOnly()
+                                    ->dehydrated(false),
                                 Forms\Components\TextInput::make('external_id')
                                     ->label('External ID')
                                     ->columnSpan([
@@ -159,12 +157,6 @@ class EditServer extends EditRecord
                             ->icon('tabler-brand-docker')
                             ->schema([
                                 Forms\Components\Fieldset::make('Resource Limits')
-                                    ->columnSpan([
-                                        'default' => 2,
-                                        'sm' => 4,
-                                        'md' => 4,
-                                        'lg' => 6,
-                                    ])
                                     ->columns([
                                         'default' => 1,
                                         'sm' => 2,
@@ -340,12 +332,6 @@ class EditServer extends EditRecord
 
                                 Forms\Components\Fieldset::make('Feature Limits')
                                     ->inlineLabel()
-                                    ->columnSpan([
-                                        'default' => 2,
-                                        'sm' => 4,
-                                        'md' => 4,
-                                        'lg' => 6,
-                                    ])
                                     ->columns([
                                         'default' => 1,
                                         'sm' => 2,
@@ -370,12 +356,6 @@ class EditServer extends EditRecord
                                             ->numeric(),
                                     ]),
                                 Forms\Components\Fieldset::make('Docker Settings')
-                                    ->columnSpan([
-                                        'default' => 2,
-                                        'sm' => 4,
-                                        'md' => 4,
-                                        'lg' => 6,
-                                    ])
                                     ->columns([
                                         'default' => 1,
                                         'sm' => 2,
@@ -438,10 +418,10 @@ class EditServer extends EditRecord
                                     ->disabledOn('edit')
                                     ->prefixIcon('tabler-egg')
                                     ->columnSpan([
-                                        'default' => 1,
+                                        'default' => 6,
                                         'sm' => 3,
                                         'md' => 3,
-                                        'lg' => 5,
+                                        'lg' => 4,
                                     ])
                                     ->relationship('egg', 'name')
                                     ->searchable()
@@ -450,6 +430,12 @@ class EditServer extends EditRecord
 
                                 Forms\Components\ToggleButtons::make('skip_scripts')
                                     ->label('Run Egg Install Script?')->inline()
+                                    ->columnSpan([
+                                        'default' => 6,
+                                        'sm' => 1,
+                                        'md' => 1,
+                                        'lg' => 2,
+                                    ])
                                     ->options([
                                         false => 'Yes',
                                         true => 'Skip',
@@ -467,12 +453,7 @@ class EditServer extends EditRecord
                                 Forms\Components\Textarea::make('startup')
                                     ->label('Startup Command')
                                     ->required()
-                                    ->columnSpan([
-                                        'default' => 2,
-                                        'sm' => 4,
-                                        'md' => 4,
-                                        'lg' => 6,
-                                    ])
+                                    ->columnSpan(6)
                                     ->rows(function ($state) {
                                         return str($state)->explode("\n")->reduce(
                                             fn (int $carry, $line) => $carry + floor(strlen($line) / 125),
@@ -484,17 +465,12 @@ class EditServer extends EditRecord
                                     ->hintAction(CopyAction::make())
                                     ->label('Default Startup Command')
                                     ->disabled()
-                                    ->formatStateUsing(function ($state, Forms\Get $get, Forms\Set $set) {
+                                    ->formatStateUsing(function ($state, Get $get, Set $set) {
                                         $egg = Egg::query()->find($get('egg_id'));
 
                                         return $egg->startup;
                                     })
-                                    ->columnSpan([
-                                        'default' => 2,
-                                        'sm' => 4,
-                                        'md' => 4,
-                                        'lg' => 6,
-                                    ]),
+                                    ->columnSpan(6),
 
                                 Forms\Components\Repeater::make('server_variables')
                                     ->relationship('serverVariables')
