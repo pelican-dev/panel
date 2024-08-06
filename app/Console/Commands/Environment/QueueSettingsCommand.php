@@ -52,7 +52,6 @@ class QueueSettingsCommand extends Command
             $this->requestRedisSettings();
 
             $this->call('p:environment:queue-service', [
-                '--use-redis' => true,
                 '--overwrite' => true,
             ]);
         }

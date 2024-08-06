@@ -54,7 +54,6 @@ class SessionSettingsCommand extends Command
 
             if (config('queue.default') !== 'sync') {
                 $this->call('p:environment:queue-service', [
-                    '--use-redis' => true,
                     '--overwrite' => true,
                 ]);
             }
