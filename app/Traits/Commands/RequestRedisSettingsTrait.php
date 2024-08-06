@@ -38,7 +38,7 @@ trait RequestRedisSettingsTrait
         }
 
         if (empty($this->variables['REDIS_USERNAME'])) {
-            $this->variables['REDIS_USERNAME'] = 'default';
+            $this->variables['REDIS_USERNAME'] = 'null';
         }
         if (empty($this->variables['REDIS_PASSWORD'])) {
             $this->variables['REDIS_PASSWORD'] = 'null';
