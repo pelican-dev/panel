@@ -17,13 +17,12 @@ trait RequestRedisSettingsTrait
 
         if (!empty(config('database.redis.default.user'))) {
             $this->variables['REDIS_USERNAME'] = config('database.redis.default.user');
-            $askForRedisUser = $this->confirm('It seems a user is already defined for Redis, would you like to change it?');
+            $askForRedisUser = $this->confirm(__('commands.appsettings.redis.confirm', ['field' => 'user']));
         }
         if (!empty(config('database.redis.default.password'))) {
             $this->variables['REDIS_PASSWORD'] = config('database.redis.default.password');
-            $askForRedisPassword = $this->confirm('It seems a password is already defined for Redis, would you like to change it?');
+            $askForRedisPassword = $this->confirm(__('commands.appsettings.redis.confirm', ['field' => 'password']));
         }
-
 
         if ($askForRedisUser) {
             $this->output->comment(__('commands.appsettings.redis.comment'));
@@ -37,7 +36,6 @@ trait RequestRedisSettingsTrait
                 'Redis Password'
             );
         }
-
 
         if (empty($this->variables['REDIS_USERNAME'])) {
             $this->variables['REDIS_USERNAME'] = 'default';
