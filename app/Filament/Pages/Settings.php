@@ -708,6 +708,8 @@ class Settings extends Page implements HasForms
 
             $this->rememberData();
 
+            $this->redirect($this->getUrl());
+
             Notification::make()
                 ->title('Settings saved')
                 ->success()
