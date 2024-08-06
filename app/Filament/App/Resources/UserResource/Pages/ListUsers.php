@@ -3,6 +3,7 @@
 namespace App\Filament\App\Resources\UserResource\Pages;
 
 use App\Filament\App\Resources\UserResource;
+use App\Models\Permission;
 use App\Models\Server;
 use App\Services\Subusers\SubuserCreationService;
 use Filament\Actions;
@@ -29,6 +30,7 @@ class ListUsers extends ListRecords
             Actions\CreateAction::make('invite')
                 ->label('Invite User')
                 ->createAnother(false)
+                ->hidden(!auth()->user()->can(Permission::ACTION_USER_CREATE, Filament::getTenant()))
                 ->form([
                     Grid::make()
                         ->columnSpanFull()
@@ -368,7 +370,7 @@ class ListUsers extends ListRecords
                     /** @var Server $server */
                     $server = Filament::getTenant();
 
-                    resolve(SubuserCreationService::class)->handle($server, $email, $permissions); // "It's Fine" ~ Lance
+                    resolve(SubuserCreationService::class)->handle($server, $email, $permissions);
 
                     Notification::make()
                         ->title('User Invited!')

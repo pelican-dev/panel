@@ -8,6 +8,7 @@ use App\Filament\App\Resources\BackupResource;
 use App\Http\Controllers\Api\Client\Servers\BackupController;
 use App\Models\Backup;
 use App\Models\Permission;
+use App\Models\Server;
 use App\Repositories\Daemon\DaemonBackupRepository;
 use App\Services\Backups\DownloadLinkService;
 use App\Services\Backups\InitiateBackupService;
@@ -52,7 +53,7 @@ class ListBackups extends ListRecords
 
     public function table(Table $table): Table
     {
-        /** @var \App\Models\Server $server */
+        /** @var Server $server */
         $server = Filament::getTenant();
 
         return $table
@@ -98,7 +99,7 @@ class ListBackups extends ListRecords
                         ])
                         ->action(function (Backup $backup, $data, DaemonBackupRepository $daemonRepository, DownloadLinkService $downloadLinkService) {
 
-                            /** @var \App\Models\Server $server */
+                            /** @var Server $server */
                             $server = Filament::getTenant();
 
                             if (!is_null($server->status)) {
@@ -160,18 +161,19 @@ class ListBackups extends ListRecords
 
     protected function getHeaderActions(): array
     {
-        /** @var \App\Models\Server $server */
+        /** @var Server $server */
         $server = Filament::getTenant();
 
         return [
             Actions\CreateAction::make()
+                ->hidden(!auth()->user()->can(Permission::ACTION_BACKUP_CREATE, Filament::getTenant()))
                 ->label(fn () => $server->backups()->count() >= $server->backup_limit ? 'Backup Limit Reached' : 'Create Backup')
                 ->disabled(fn () => $server->backups()->count() >= $server->backup_limit)
                 ->color(fn () => $server->backups()->count() >= $server->backup_limit ? 'danger' : 'primary')
                 ->createAnother(false)
                 ->action(function (InitiateBackupService $initiateBackupService, $data) {
 
-                    /** @var \App\Models\Server $server */
+                    /** @var Server $server */
                     $server = Filament::getTenant();
 
                     $action = $initiateBackupService
@@ -197,7 +199,7 @@ class ListBackups extends ListRecords
         ];
     }
 
-    public function convertToReadableSize($size)
+    public function convertToReadableSize($size) //Replace with panel prefix config
     {
         $base = log($size) / log(1024);
         $suffix = ['', 'KB', 'MB', 'GB', 'TB'];
