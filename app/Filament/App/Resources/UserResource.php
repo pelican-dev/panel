@@ -58,10 +58,12 @@ class UserResource extends Resource
             ])
             ->actions([
                 DeleteAction::make()
-                    ->label('Remove User'),
+                    ->label('Remove User')
+                    ->requiresConfirmation(),
                 EditAction::make()
                     ->label('Edit User')
                     ->hidden(!auth()->user()->can(Permission::ACTION_USER_UPDATE, Filament::getTenant()))
+                    ->modalHeading(fn (User $user) => 'Editing ' . $user->email)
                     ->form([
                         Grid::make()
                             ->columnSpanFull()
@@ -168,6 +170,27 @@ class UserResource extends Resource
                                                     ->icon('tabler-terminal-2')
                                                     ->schema([
                                                         CheckboxList::make('control')
+                                                            ->formatStateUsing(function (User $user, Set $set) {
+                                                                $server = Filament::getTenant();
+                                                                $permissionsArray = Subuser::query()
+                                                                    ->where('user_id', $user->id)
+                                                                    ->where('server_id', $server->id)
+                                                                    ->first()
+                                                                    ->permissions;
+
+                                                                $transformedPermissions = [];
+
+                                                                foreach ($permissionsArray as $permission) {
+                                                                    [$group, $action] = explode('.', $permission, 2);
+                                                                    $transformedPermissions[$group][] = $action;
+                                                                }
+
+                                                                foreach ($transformedPermissions as $key => $value) {
+                                                                    $set($key, $value);
+                                                                }
+
+                                                                return $transformedPermissions['control'];
+                                                            })
                                                             ->bulkToggleable()
                                                             ->label('')
                                                             ->options([
