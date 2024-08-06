@@ -9,7 +9,6 @@ use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
 use Filament\Panel;
 use Filament\PanelProvider;
-use Filament\Support\Colors\Color;
 use Filament\Support\Facades\FilamentAsset;
 use Filament\Widgets;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
@@ -37,21 +36,13 @@ class AdminPanelProvider extends PanelProvider
             ->path('admin')
             ->topNavigation(config('panel.filament.top-navigation', true))
             ->login()
+            ->breadcrumbs(false)
             ->homeUrl('/')
             ->favicon(config('app.favicon', '/pelican.ico'))
             ->brandName(config('app.name', 'Pelican'))
             ->brandLogo(config('app.logo'))
             ->brandLogoHeight('2rem')
             ->profile(EditProfile::class, false)
-            ->colors([
-                'danger' => Color::Red,
-                'gray' => Color::Zinc,
-                'info' => Color::Sky,
-                'primary' => Color::Blue,
-                'success' => Color::Green,
-                'warning' => Color::Amber,
-                'blurple' => Color::hex('#5865F2'),
-            ])
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\\Filament\\Resources')
             ->discoverPages(in: app_path('Filament/Pages'), for: 'App\\Filament\\Pages')
             ->discoverClusters(in: app_path('Filament/Clusters'), for: 'App\\Filament\\Clusters')
