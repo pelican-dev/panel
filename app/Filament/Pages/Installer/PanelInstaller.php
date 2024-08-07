@@ -2,14 +2,14 @@
 
 namespace App\Filament\Pages\Installer;
 
-use App\Console\RequiresDatabaseMigrations;
 use App\Filament\Pages\Installer\Steps\AdminUserStep;
 use App\Filament\Pages\Installer\Steps\DatabaseStep;
 use App\Filament\Pages\Installer\Steps\EnvironmentStep;
 use App\Filament\Pages\Installer\Steps\RedisStep;
 use App\Filament\Pages\Installer\Steps\RequirementsStep;
 use App\Services\Users\UserCreationService;
-use App\Traits\Commands\EnvironmentWriterTrait;
+use App\Traits\CheckMigrationsTrait;
+use App\Traits\EnvironmentWriterTrait;
 use Exception;
 use Filament\Facades\Filament;
 use Filament\Forms\Components\Wizard;
@@ -30,10 +30,10 @@ use Illuminate\Support\HtmlString;
  */
 class PanelInstaller extends SimplePage implements HasForms
 {
+    use CheckMigrationsTrait;
     use EnvironmentWriterTrait;
     use HasUnsavedDataChangesAlert;
     use InteractsWithForms;
-    use RequiresDatabaseMigrations;
 
     public $data = [];
 
