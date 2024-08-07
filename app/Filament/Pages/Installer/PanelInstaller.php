@@ -136,6 +136,7 @@ class PanelInstaller extends SimplePage implements HasForms
                 ->title('Installation Failed')
                 ->body($exception->getMessage())
                 ->danger()
+                ->persistent()
                 ->send();
         }
     }
