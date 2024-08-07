@@ -2,6 +2,7 @@
 
 namespace App\Filament\Pages\Installer;
 
+use App\Console\RequiresDatabaseMigrations;
 use App\Filament\Pages\Installer\Steps\AdminUserStep;
 use App\Filament\Pages\Installer\Steps\DatabaseStep;
 use App\Filament\Pages\Installer\Steps\EnvironmentStep;
@@ -32,6 +33,7 @@ class PanelInstaller extends SimplePage implements HasForms
     use EnvironmentWriterTrait;
     use HasUnsavedDataChangesAlert;
     use InteractsWithForms;
+    use RequiresDatabaseMigrations;
 
     public $data = [];
 
@@ -105,6 +107,10 @@ class PanelInstaller extends SimplePage implements HasForms
                 '--seed' => true,
             ]);
 
+            if (!$this->hasCompletedMigrations()) {
+                throw new Exception('Migrations didn\'t run successfully. Double check your database configuration.');
+            }
+
             // Create first admin user
             $userData = array_get($inputs, 'user');
             $userData['root_admin'] = true;
@@ -122,6 +128,8 @@ class PanelInstaller extends SimplePage implements HasForms
 
             redirect()->intended(Filament::getUrl());
         } catch (Exception $exception) {
+            report($exception);
+
             Notification::make()
                 ->title('Installation Failed')
                 ->body($exception->getMessage())
