@@ -13,7 +13,7 @@ trait RequiresDatabaseMigrations
     protected function hasCompletedMigrations(): bool
     {
         /** @var \Illuminate\Database\Migrations\Migrator $migrator */
-        $migrator = $this->getLaravel()->make('migrator');
+        $migrator = app()->make('migrator');
 
         $files = $migrator->getMigrationFiles(database_path('migrations'));
 

@@ -78,7 +78,7 @@ class PanelInstaller extends SimplePage implements HasForms
                         wire:loading.attr="disabled"
                     >
                         Finish
-                        <span wire:loading><x-filament::loading-indicator class="h-5 w-5" /></span>
+                        <span wire:loading><x-filament::loading-indicator class="h-4 w-4" /></span>
                     </x-filament::button>
                 BLADE))),
         ];
@@ -119,7 +119,7 @@ class PanelInstaller extends SimplePage implements HasForms
             app(UserCreationService::class)->handle($userData);
 
             // Install setup complete
-            $this->writeToEnvironment(['APP_INSTALLED' => true]);
+            $this->writeToEnvironment(['APP_INSTALLED' => 'true']);
 
             $this->rememberData();
 
