@@ -75,8 +75,10 @@ class PanelInstaller extends SimplePage implements HasForms
                     <x-filament::button
                         type="submit"
                         size="sm"
+                        wire:loading.attr="disabled"
                     >
                         Finish
+                        <span wire:loading><x-filament::loading-indicator class="h-5 w-5" /></span>
                     </x-filament::button>
                 BLADE))),
         ];
