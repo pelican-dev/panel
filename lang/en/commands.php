@@ -9,7 +9,8 @@ return [
         ],
         'redis' => [
             'note' => 'You\'ve selected the Redis driver for one or more options, please provide valid connection information below. In most cases you can use the defaults provided unless you have modified your setup.',
-            'comment' => 'By default a Redis server instance has no password as it is running locally and inaccessible to the outside world. If this is the case, simply hit enter without entering a value.',
+            'comment' => 'By default a Redis server instance has for username default and no password as it is running locally and inaccessible to the outside world. If this is the case, simply hit enter without entering a value.',
+            'confirm' => 'It seems a :field is already defined for Redis, would you like to change it?',
         ],
     ],
     'database_settings' => [

@@ -23,6 +23,7 @@ class CacheSettingsCommand extends Command
     protected $signature = 'p:environment:cache
                             {--driver= : The cache driver backend to use.}
                             {--redis-host= : Redis host to use for connections.}
+                            {--redis-user= : User used to connect to redis.}
                             {--redis-pass= : Password used to connect to redis.}
                             {--redis-port= : Port to connect to redis over.}';
 
@@ -53,7 +54,6 @@ class CacheSettingsCommand extends Command
 
             if (config('queue.default') !== 'sync') {
                 $this->call('p:environment:queue-service', [
-                    '--use-redis' => true,
                     '--overwrite' => true,
                 ]);
             }

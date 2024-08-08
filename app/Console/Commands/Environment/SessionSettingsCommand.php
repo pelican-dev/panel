@@ -24,6 +24,7 @@ class SessionSettingsCommand extends Command
     protected $signature = 'p:environment:session
                             {--driver= : The session driver backend to use.}
                             {--redis-host= : Redis host to use for connections.}
+                            {--redis-user= : User used to connect to redis.}
                             {--redis-pass= : Password used to connect to redis.}
                             {--redis-port= : Port to connect to redis over.}';
 
@@ -54,7 +55,6 @@ class SessionSettingsCommand extends Command
 
             if (config('queue.default') !== 'sync') {
                 $this->call('p:environment:queue-service', [
-                    '--use-redis' => true,
                     '--overwrite' => true,
                 ]);
             }
