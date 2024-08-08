@@ -62,7 +62,7 @@ class ListBackups extends ListRecords
                     ->searchable(),
                 TextColumn::make('bytes')
                     ->label('Size')
-                    ->formatStateUsing(fn ($state) => $this->convertToReadableSize($state)),
+                    ->formatStateUsing(fn ($state) => convert_bytes_to_readable($state)),
                 TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable(),
@@ -197,14 +197,5 @@ class ListBackups extends ListRecords
                         ->send();
                 }),
         ];
-    }
-
-    public function convertToReadableSize($size) //Replace with panel prefix config
-    {
-        $base = log($size) / log(1024);
-        $suffix = ['', 'KB', 'MB', 'GB', 'TB'];
-        $f_base = floor($base);
-
-        return round(pow(1024, $base - floor($base)), 2) . $suffix[$f_base];
     }
 }

@@ -171,7 +171,9 @@ class UserResource extends Resource
                                                     ->schema([
                                                         CheckboxList::make('control')
                                                             ->formatStateUsing(function (User $user, Set $set) {
+                                                                /** @var Server $server */
                                                                 $server = Filament::getTenant();
+
                                                                 $permissionsArray = Subuser::query()
                                                                     ->where('user_id', $user->id)
                                                                     ->where('server_id', $server->id)
