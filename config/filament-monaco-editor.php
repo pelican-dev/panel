@@ -2,15 +2,15 @@
 
 return [
     'general' => [
-        'enable-preview' => true,
+        'enable-preview' => false,
         'show-full-screen-toggle' => true,
         'show-placeholder' => true,
         'placeholder-text' => 'Your code here...',
         'show-loader' => true,
-        'font-size' => '15px',
+        'font-size' => '16px',
         'line-numbers-min-chars' => true,
         'automatic-layout' => true,
-        'default-theme' => 'iPlastic',
+        'default-theme' => 'blackboard',
     ],
     'themes' => [
         'blackboard' => [

@@ -2,6 +2,7 @@
 
 namespace App\Filament\App\Resources\FileResource\Pages;
 
+use AbdelhamidErrahmouni\FilamentMonacoEditor\MonacoEditor;
 use App\Facades\Activity;
 use App\Filament\App\Resources\FileResource;
 use App\Models\File;
@@ -11,7 +12,7 @@ use Filament\Actions\Action as HeaderAction;
 use Filament\Facades\Filament;
 use Filament\Forms\Components\CheckboxList;
 use Filament\Forms\Components\Placeholder;
-use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Get;
 use Filament\Notifications\Notification;
@@ -80,41 +81,43 @@ class ListFiles extends ListRecords
                     ->formatStateUsing(fn ($state) => $state->diffForHumans()),
             ])
             ->actions([
+                Action::make('view')
+                    ->label('Open')
+                    ->icon('tabler-eye')
+                    ->visible(fn (File $file) => $file->is_directory)
+                    ->url(fn (File $file) => self::getUrl(['path' => $this->path === '/' ? $file->name : $this->path . '/' . $file->name])),
+                EditAction::make()
+                    ->label('Edit')
+                    ->icon('tabler-edit')
+                    ->visible(fn (File $file) => $file->canEdit())
+                    ->modalHeading(fn (File $file) => 'Editing ' . $file->name)
+//                    ->keyBindings(['command+s', 'ctrl+s']) TODO:: Make this work...
+                    ->form([
+                        MonacoEditor::make('editor')
+                            ->view('filament.plugins.monaco-editor')
+                            ->label('')
+                            ->formatStateUsing(function (File $file) {
+                                /** @var Server $server */
+                                $server = Filament::getTenant();
+
+                                return app(DaemonFileRepository::class)
+                                    ->setServer($server)
+                                    ->getContent($this->path . $file->name, config('panel.files.max_edit_size'));
+                            }),
+                    ])
+                    ->action(function ($data, File $file) {
+                        /** @var Server $server */
+                        $server = Filament::getTenant();
+
+                        app(DaemonFileRepository::class)
+                            ->setServer($server)
+                            ->putContent($this->path . $file->name, $data['editor'] ?? '');
+
+                        Activity::event('server:file.write')
+                            ->property('file', $this->path . $file->name)
+                            ->log();
+                    }),
                 ActionGroup::make([
-                    Action::make('view')
-                        ->label('Open')
-                        ->icon('tabler-eye')
-                        ->visible(fn (File $file) => $file->is_directory)
-                        ->url(fn (File $file) => self::getUrl(['path' => $this->path === '/' ? $file->name : $this->path . '/' . $file->name])),
-                    EditAction::make()
-                        ->label('Edit')
-                        ->icon('tabler-edit')
-                        ->visible(fn (File $file) => $file->canEdit())
-                        ->form([
-                            Textarea::make('content') // TODO: replace with proper code editor
-                                ->rows(20)
-                                ->label(fn (File $file) => $file->name)
-                                ->formatStateUsing(function (File $file) {
-                                    /** @var Server $server */
-                                    $server = Filament::getTenant();
-
-                                    return app(DaemonFileRepository::class)
-                                        ->setServer($server)
-                                        ->getContent($this->path . $file->name, config('panel.files.max_edit_size'));
-                                }),
-                        ])
-                        ->action(function ($data, File $file) {
-                            /** @var Server $server */
-                            $server = Filament::getTenant();
-
-                            app(DaemonFileRepository::class)
-                                ->setServer($server)
-                                ->putContent($this->path . $file->name, $data['content'] ?? '');
-
-                            Activity::event('server:file.write')
-                                ->property('file', $this->path . $file->name)
-                                ->log();
-                        }),
                     Action::make('rename')
                         ->label('Rename')
                         ->icon('tabler-forms')
@@ -269,24 +272,26 @@ class ListFiles extends ListRecords
                         ->action(function (File $file) {
                             // TODO
                         }),
-                    DeleteAction::make()
-                        ->label('Delete')
-                        ->icon('tabler-trash')
-                        ->requiresConfirmation()
-                        ->action(function (File $file) {
-                            /** @var Server $server */
-                            $server = Filament::getTenant();
-
-                            app(DaemonFileRepository::class)
-                                ->setServer($server)
-                                ->deleteFiles($this->path, [$file->name]);
-
-                            Activity::event('server:file.delete')
-                                ->property('directory', $this->path)
-                                ->property('files', $file->name)
-                                ->log();
-                        }),
                 ]),
+                DeleteAction::make()
+                    ->label('')
+                    ->icon('tabler-trash')
+                    ->requiresConfirmation()
+                    ->modalDescription(fn (File $file) => $file->name)
+                    ->modalHeading('Delete {$files}?')
+                    ->action(function (File $file) {
+                        /** @var Server $server */
+                        $server = Filament::getTenant();
+
+                        app(DaemonFileRepository::class)
+                            ->setServer($server)
+                            ->deleteFiles($this->path, [$file->name]);
+
+                        Activity::event('server:file.delete')
+                            ->property('directory', $this->path)
+                            ->property('files', $file->name)
+                            ->log();
+                    }),
             ])
             ->bulkActions([
                 // TODO: add more bulk actions
@@ -313,10 +318,65 @@ class ListFiles extends ListRecords
 
     protected function getHeaderActions(): array
     {
-        return [ // TODO: add other header actions, like "create file", "create folder" etc.
+        return [ // TODO: add other header actions, upload.
             HeaderAction::make('back')
                 ->hidden(fn () => $this->path === '/')
                 ->url(fn () => self::getUrl(['path' => dirname($this->path)])),
+            HeaderAction::make('newfile')
+                ->label('New File')
+                ->action(function ($data) {
+                    /** @var Server $server */
+                    $server = Filament::getTenant();
+
+                    app(DaemonFileRepository::class)
+                        ->setServer($server)
+                        ->putContent($this->path . '/' . $data['name'], $data['editor'] ?? '');
+
+                    Activity::event('server:file.write')
+                        ->property('file', $this->path . '/' .  $data['name'])
+                        ->log();
+                })
+                ->form([
+                    TextInput::make('name')
+                        ->label('File Name')
+                        ->required(),
+                    Select::make('test') //TODO: Add  supported Langs
+                        ->label('')
+                        ->placeholder('File Language')
+                        ->options([ //Placeholders
+                            'html' => 'html',
+                            'php' => 'php',
+                            'js' => 'js',
+                            'css' => 'css',
+                            'sql' => 'sql',
+                            'csv' => 'csv',
+
+                        ]),
+                    MonacoEditor::make('editor')
+                        ->label('')
+                        ->view('filament.plugins.monaco-editor')
+                        ->language()
+                        ->required(),
+                ]),
+            HeaderAction::make('newfolder')
+                ->label('New Folder')
+                ->action(function ($data) {
+                    /** @var Server $server */
+                    $server = Filament::getTenant();
+
+                    app(DaemonFileRepository::class)
+                        ->setServer($server)
+                        ->createDirectory($data['name'], $this->path);
+
+                    Activity::event('server:file.write')
+                        ->property('file', $this->path . $data['name'])
+                        ->log();
+                })
+                ->form([
+                    TextInput::make('name')
+                        ->label('Folder Name')
+                        ->required(),
+                ]),
         ];
     }
 
