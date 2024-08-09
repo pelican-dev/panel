@@ -3,7 +3,7 @@
 namespace App\Tests\Unit\Helpers;
 
 use App\Tests\TestCase;
-use App\Traits\Commands\EnvironmentWriterTrait;
+use App\Traits\EnvironmentWriterTrait;
 
 class EnvironmentWriterTraitTest extends TestCase
 {

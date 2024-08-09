@@ -2,8 +2,8 @@
 
 namespace App\Console\Commands\Environment;
 
+use App\Traits\EnvironmentWriterTrait;
 use Illuminate\Console\Command;
-use App\Traits\Commands\EnvironmentWriterTrait;
 use Illuminate\Support\Facades\Artisan;
 
 class AppSettingsCommand extends Command

@@ -4,7 +4,7 @@ namespace App\Filament\Pages;
 
 use App\Models\Backup;
 use App\Notifications\MailTested;
-use App\Traits\Commands\EnvironmentWriterTrait;
+use App\Traits\EnvironmentWriterTrait;
 use Exception;
 use Filament\Actions\Action;
 use Filament\Forms\Components\Actions\Action as FormAction;

@@ -2,10 +2,10 @@
 
 namespace App\Console\Commands\Environment;
 
+use App\Traits\Commands\RequestRedisSettingsTrait;
+use App\Traits\EnvironmentWriterTrait;
 use Illuminate\Console\Command;
 use Illuminate\Contracts\Console\Kernel;
-use App\Traits\Commands\EnvironmentWriterTrait;
-use App\Traits\Commands\RequestRedisSettingsTrait;
 
 class SessionSettingsCommand extends Command
 {
