@@ -68,6 +68,7 @@ class EditDatabaseHost extends EditRecord
                         Select::make('node_id')
                             ->searchable()
                             ->preload()
+                            ->unique()
                             ->helperText('This setting only defaults to this database host when adding a database to a server on the selected node.')
                             ->label('Linked Node')
                             ->relationship('node', 'name'),

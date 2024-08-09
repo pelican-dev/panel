@@ -9,7 +9,10 @@ use DateTimeZone;
 use Filament\Models\Contracts\FilamentUser;
 use Filament\Models\Contracts\HasAvatar;
 use Filament\Models\Contracts\HasName;
+use Filament\Models\Contracts\HasTenants;
 use Filament\Panel;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rules\In;
 use Illuminate\Auth\Authenticatable;
@@ -87,7 +90,7 @@ use App\Notifications\SendPasswordReset as ResetPasswordNotification;
  *
  * @mixin \Eloquent
  */
-class User extends Model implements AuthenticatableContract, AuthorizableContract, CanResetPasswordContract, FilamentUser, HasAvatar, HasName
+class User extends Model implements AuthenticatableContract, AuthorizableContract, CanResetPasswordContract, FilamentUser, HasAvatar, HasName, HasTenants
 {
     use Authenticatable;
     use Authorizable {can as protected canned; }
@@ -313,6 +316,11 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
         return $this->hasMany(Subuser::class);
     }
 
+    public function subServers(): BelongsToMany
+    {
+        return $this->belongsToMany(Server::class, 'subusers');
+    }
+
     protected function checkPermission(Server $server, string $permission = ''): bool
     {
         if ($this->root_admin || $server->owner_id === $this->id) {
@@ -356,11 +364,6 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
         return once(fn () => $rootAdmins->count() === 1 && $rootAdmins->first()->is($this));
     }
 
-    public function canAccessPanel(Panel $panel): bool
-    {
-        return $this->root_admin;
-    }
-
     public function getFilamentName(): string
     {
         return $this->name_first ?: $this->username;
@@ -369,5 +372,29 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
     public function getFilamentAvatarUrl(): ?string
     {
         return 'https://gravatar.com/avatar/' . md5(strtolower($this->email));
+    }
+
+    public function canAccessPanel(Panel $panel): bool
+    {
+        if ($panel->getId() === 'admin') {
+            return $this->root_admin;
+        }
+
+        return true;
+    }
+
+    public function getTenants(Panel $panel): array|Collection
+    {
+        return $this->accessibleServers()->get();
+    }
+
+    public function canAccessTenant(\Illuminate\Database\Eloquent\Model $tenant): bool
+    {
+        if ($tenant instanceof Server) {
+            /** @var Server $tenant */
+            return $this->checkPermission($tenant);
+        }
+
+        return false;
     }
 }

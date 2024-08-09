@@ -293,7 +293,7 @@ class EditProfile extends \Filament\Pages\Auth\EditProfile
             $service = resolve(ToggleTwoFactorService::class);
 
             $tokens = $service->handle($record, $token, true);
-            cache()->set("users.$record->id.2fa.tokens", implode("\n", $tokens), now()->addSeconds(15));
+            cache(["users.$record->id.2fa.tokens" => implode("\n", $tokens)], now()->addSeconds(15));
 
             $this->redirectRoute('filament.admin.auth.profile', ['tab' => '-2fa-tab']);
         }
