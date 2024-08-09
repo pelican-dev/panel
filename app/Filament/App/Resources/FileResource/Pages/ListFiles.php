@@ -9,6 +9,7 @@ use App\Models\Server;
 use App\Repositories\Daemon\DaemonFileRepository;
 use Filament\Actions\Action as HeaderAction;
 use Filament\Facades\Filament;
+use Filament\Forms\Components\Textarea;
 use Filament\Panel;
 use Filament\Resources\Pages\ListRecords;
 use Filament\Resources\Pages\PageRegistration;
@@ -69,8 +70,6 @@ class ListFiles extends ListRecords
                     ->icon(fn (File $file) => $file->getIcon()),
                 TextColumn::make('size')
                     ->formatStateUsing(fn ($state, File $file) => $file->is_file ? convert_bytes_to_readable($state) : ''),
-                TextColumn::make('created_at')
-                    ->formatStateUsing(fn ($state) => $state->diffForHumans()),
                 TextColumn::make('modified_at')
                     ->formatStateUsing(fn ($state) => $state->diffForHumans()),
             ])
@@ -85,7 +84,32 @@ class ListFiles extends ListRecords
                     ->label('')
                     ->icon('tabler-edit')
                     ->tooltip('Edit')
-                    ->visible(fn (File $file) => $file->canEdit()),
+                    ->visible(fn (File $file) => $file->canEdit())
+                    ->form([
+                        Textarea::make('content') // TODO: replace with proper code editor
+                            ->rows(20)
+                            ->label(fn (File $file) => $file->name)
+                            ->formatStateUsing(function (File $file) {
+                                /** @var Server $server */
+                                $server = Filament::getTenant();
+
+                                return app(DaemonFileRepository::class)
+                                    ->setServer($server)
+                                    ->getContent($this->path . $file->name, config('panel.files.max_edit_size'));
+                            }),
+                    ])
+                    ->action(function ($data, File $file) {
+                        /** @var Server $server */
+                        $server = Filament::getTenant();
+
+                        app(DaemonFileRepository::class)
+                            ->setServer($server)
+                            ->putContent($this->path . $file->name, $data['content'] ?? '');
+
+                        Activity::event('server:file.write')
+                            ->property('file', $this->path . $file->name)
+                            ->log();
+                    }),
                 DeleteAction::make()
                     ->label('')
                     ->icon('tabler-trash')
@@ -110,12 +134,19 @@ class ListFiles extends ListRecords
                 BulkActionGroup::make([
                     DeleteBulkAction::make()
                         ->action(function ($files) {
+                            $files = $files->map(fn ($file) => $file->name)->toArray();
+
                             /** @var Server $server */
                             $server = Filament::getTenant();
 
                             app(DaemonFileRepository::class)
                                 ->setServer($server)
-                                ->deleteFiles($this->path, $files->map(fn ($file) => $file->name)->toArray());
+                                ->deleteFiles($this->path, $files);
+
+                            Activity::event('server:file.delete')
+                                ->property('directory', $this->path)
+                                ->property('files', $files)
+                                ->log();
                         }),
                 ]),
             ]);
