@@ -12,9 +12,9 @@ use Sushi\Sushi;
  * @property string mode
  * @property string mode_bits
  * @property int size
- * @property bool directory
- * @property bool file
- * @property bool symlink
+ * @property bool is_directory
+ * @property bool is_file
+ * @property bool is_symlink
  * @property string mime
  */
 class File extends Model
@@ -56,12 +56,12 @@ class File extends Model
 
     public function isArchive(): bool
     {
-        return $this->file && in_array($this->mime, self::ARCHIVE_MIMES);
+        return $this->is_file && in_array($this->mime, self::ARCHIVE_MIMES);
     }
 
     public function getIcon(): string
     {
-        if ($this->directory) {
+        if ($this->is_directory) {
             return 'tabler-folder';
         }
 
@@ -69,16 +69,16 @@ class File extends Model
             return 'tabler-file-zip';
         }
 
-        return $this->symlink ? 'tabler-file-symlink' : 'tabler-file';
+        return $this->is_symlink ? 'tabler-file-symlink' : 'tabler-file';
     }
 
     public function canEdit(): bool
     {
-        if ($this->directory || $this->isArchive() || $this->symlink) {
+        if ($this->is_directory || $this->isArchive() || $this->is_symlink) {
             return false;
         }
 
-        return $this->file && !in_array($this->mime, ['application/jar', 'application/octet-stream', 'inode/directory']);
+        return $this->is_file && !in_array($this->mime, ['application/jar', 'application/octet-stream', 'inode/directory']);
     }
 
     public function server()
@@ -101,9 +101,9 @@ class File extends Model
                     'mode' => 'drwxr-xr-x',
                     'mode_bits' => '755',
                     'size' => 4096,
-                    'directory' => true,
-                    'file' => false,
-                    'symlink' => false,
+                    'is_directory' => true,
+                    'is_file' => false,
+                    'is_symlink' => false,
                     'mime' => 'inode/directory',
                 ],
             ];
@@ -116,9 +116,9 @@ class File extends Model
                     'mode' => '-rw-r--r--',
                     'mode_bits' => '644',
                     'size' => 20765365,
-                    'directory' => false,
-                    'file' => true,
-                    'symlink' => false,
+                    'is_directory' => false,
+                    'is_file' => true,
+                    'is_symlink' => false,
                     'mime' => 'application/jar',
                 ],
 
@@ -132,9 +132,9 @@ class File extends Model
                     'mode' => 'drwxr-xr-x',
                     'mode_bits' => '755',
                     'size' => 4096,
-                    'directory' => true,
-                    'file' => false,
-                    'symlink' => false,
+                    'is_directory' => true,
+                    'is_file' => false,
+                    'is_symlink' => false,
                     'mime' => 'inode/directory',
                 ],
             ];
@@ -147,9 +147,9 @@ class File extends Model
                     'mode' => '-rw-r--r--',
                     'mode_bits' => '644',
                     'size' => 566,
-                    'directory' => false,
-                    'file' => true,
-                    'symlink' => false,
+                    'is_directory' => false,
+                    'is_file' => true,
+                    'is_symlink' => false,
                     'mime' => 'text/plain; charset=utf-8',
                 ],
                 [
@@ -159,9 +159,9 @@ class File extends Model
                     'mode' => '-rw-r--r--',
                     'mode_bits' => '644',
                     'size' => 402,
-                    'directory' => false,
-                    'file' => true,
-                    'symlink' => false,
+                    'is_directory' => false,
+                    'is_file' => true,
+                    'is_symlink' => false,
                     'mime' => 'application/gzip',
                 ],
             ];
@@ -174,9 +174,9 @@ class File extends Model
                     'mode' => '-rw-r--r--',
                     'mode_bits' => '644',
                     'size' => 1396,
-                    'directory' => false,
-                    'file' => true,
-                    'symlink' => false,
+                    'is_directory' => false,
+                    'is_file' => true,
+                    'is_symlink' => false,
                     'mime' => 'text/plain; charset=utf-8',
                 ],
                 [
@@ -186,9 +186,9 @@ class File extends Model
                     'mode' => '-rw-r--r--',
                     'mode_bits' => '644',
                     'size' => 49020968,
-                    'directory' => false,
-                    'file' => true,
-                    'symlink' => false,
+                    'is_directory' => false,
+                    'is_file' => true,
+                    'is_symlink' => false,
                     'mime' => 'application/jar',
                 ],
                 [
@@ -198,9 +198,9 @@ class File extends Model
                     'mode' => '-rw-r--r--',
                     'mode_bits' => '644',
                     'size' => 159,
-                    'directory' => false,
-                    'file' => true,
-                    'symlink' => false,
+                    'is_directory' => false,
+                    'is_file' => true,
+                    'is_symlink' => false,
                     'mime' => 'text/plain; charset=utf-8',
                 ],
                 [
@@ -210,9 +210,9 @@ class File extends Model
                     'mode' => 'drwxr-xr-x',
                     'mode_bits' => '755',
                     'size' => 4096,
-                    'directory' => true,
-                    'file' => false,
-                    'symlink' => false,
+                    'is_directory' => true,
+                    'is_file' => false,
+                    'is_symlink' => false,
                     'mime' => 'inode/directory',
                 ],
                 [
@@ -222,9 +222,9 @@ class File extends Model
                     'mode' => 'drwxr-xr-x',
                     'mode_bits' => '755',
                     'size' => 4096,
-                    'directory' => true,
-                    'file' => false,
-                    'symlink' => false,
+                    'is_directory' => true,
+                    'is_file' => false,
+                    'is_symlink' => false,
                     'mime' => 'inode/directory',
                 ],
                 [
@@ -234,9 +234,9 @@ class File extends Model
                     'mode' => 'drwxr-xr-x',
                     'mode_bits' => '755',
                     'size' => 4096,
-                    'directory' => true,
-                    'file' => false,
-                    'symlink' => false,
+                    'is_directory' => true,
+                    'is_file' => false,
+                    'is_symlink' => false,
                     'mime' => 'inode/directory',
                 ],
                 [
@@ -246,9 +246,9 @@ class File extends Model
                     'mode' => 'drwxr-xr-x',
                     'mode_bits' => '755',
                     'size' => 4096,
-                    'directory' => true,
-                    'file' => false,
-                    'symlink' => false,
+                    'is_directory' => true,
+                    'is_file' => false,
+                    'is_symlink' => false,
                     'mime' => 'inode/directory',
                 ],
                 [
@@ -258,9 +258,9 @@ class File extends Model
                     'mode' => 'drwxr-xr-x',
                     'mode_bits' => '755',
                     'size' => 4096,
-                    'directory' => true,
-                    'file' => false,
-                    'symlink' => false,
+                    'is_directory' => true,
+                    'is_file' => false,
+                    'is_symlink' => false,
                     'mime' => 'inode/directory',
                 ],
                 [
@@ -270,9 +270,9 @@ class File extends Model
                     'mode' => 'drwxr-xr-x',
                     'mode_bits' => '755',
                     'size' => 4096,
-                    'directory' => true,
-                    'file' => false,
-                    'symlink' => false,
+                    'is_directory' => true,
+                    'is_file' => false,
+                    'is_symlink' => false,
                     'mime' => 'inode/directory',
                 ],
             ];
