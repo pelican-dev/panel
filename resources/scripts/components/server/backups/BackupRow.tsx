@@ -10,7 +10,7 @@ import BackupContextMenu from '@/components/server/backups/BackupContextMenu';
 import tw from 'twin.macro';
 import GreyRowBox from '@/components/elements/GreyRowBox';
 import getServerBackups from '@/api/swr/getServerBackups';
-import { ServerBackup } from '@/api/server/types';
+import type { ServerBackup } from '@/api/server/types';
 import { SocketEvent } from '@/components/server/events';
 
 interface Props {

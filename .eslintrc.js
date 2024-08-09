@@ -29,7 +29,6 @@ module.exports = {
         'eslint:recommended',
         'plugin:react/recommended',
         'plugin:@typescript-eslint/recommended',
-        'plugin:jest-dom/recommended',
     ],
     rules: {
         eqeqeq: 'error',

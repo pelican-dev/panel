@@ -1,4 +1,4 @@
-name: Build
+name: UI
 
 on:
   push:
@@ -10,7 +10,7 @@ on:
 
 jobs:
   ui:
-    name: UI
+    name: Build & Test
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -30,4 +30,7 @@ jobs:
         run: yarn install --frozen-lockfile
 
       - name: Build
-        run: yarn build:production
+        run: yarn build
+
+      - name: Tests
+        run: yarn test
