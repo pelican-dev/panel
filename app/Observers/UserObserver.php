@@ -2,42 +2,48 @@
 
 namespace App\Observers;
 
-use App\Events;
+use App\Events\User as UserEvents;
 use App\Models\User;
 
 class UserObserver
 {
-    protected string $uuid;
-
     /**
-     * Listen to the User creating event.
-     */
-    public function creating(User $user): void
-    {
-        event(new Events\User\Creating($user));
-    }
-
-    /**
-     * Listen to the User created event.
+     * Handle the User "created" event.
      */
     public function created(User $user): void
     {
-        event(new Events\User\Created($user));
+        event(new UserEvents\Created($user));
     }
 
     /**
-     * Listen to the User deleting event.
+     * Handle the User "updated" event.
      */
-    public function deleting(User $user): void
+    public function updated(User $user): void
     {
-        event(new Events\User\Deleting($user));
+        event(new UserEvents\Updated($user));
     }
 
     /**
-     * Listen to the User deleted event.
+     * Handle the User "deleted" event.
      */
     public function deleted(User $user): void
     {
-        event(new Events\User\Deleted($user));
+        event(new UserEvents\Deleted($user));
+    }
+
+    /**
+     * Handle the User "restored" event.
+     */
+    public function restored(User $user): void
+    {
+        //
+    }
+
+    /**
+     * Handle the User "force deleted" event.
+     */
+    public function forceDeleted(User $user): void
+    {
+        event(new UserEvents\Deleted($user));
     }
 }

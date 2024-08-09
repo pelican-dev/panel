@@ -8,6 +8,7 @@ use App\Traits\EnvironmentWriterTrait;
 use Exception;
 use Filament\Actions\Action;
 use Filament\Forms\Components\Actions\Action as FormAction;
+use Filament\Forms\Components\ColorPicker;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Tabs;
 use Filament\Forms\Components\Tabs\Tab;
@@ -38,6 +39,7 @@ class Settings extends Page implements HasForms
     use InteractsWithHeaderActions;
 
     protected static ?string $navigationIcon = 'tabler-settings';
+
     protected static ?string $navigationGroup = 'Advanced';
 
     protected static string $view = 'filament.pages.settings';
@@ -68,6 +70,10 @@ class Settings extends Page implements HasForms
                         ->label('Mail')
                         ->icon('tabler-mail')
                         ->schema($this->mailSettings()),
+                    Tab::make('Webhooks')
+                        ->translateLabel()
+                        ->icon('tabler-webhook')
+                        ->schema($this->webhookSettings()),
                     Tab::make('backup')
                         ->label('Backup')
                         ->icon('tabler-box')
@@ -304,6 +310,166 @@ class Settings extends Page implements HasForms
                         ->label('Mailgun Endpoint')
                         ->required()
                         ->default(env('MAILGUN_ENDPOINT', config('services.mailgun.endpoint'))),
+                ]),
+        ];
+    }
+
+    private function webhookSettings(): array
+    {
+        return [
+            Toggle::make('WEBHOOKS_ENABLED')
+                ->label('Enable Webhooks?')
+                ->inline(false)
+                ->onIcon('tabler-check')
+                ->offIcon('tabler-x')
+                ->onColor('success')
+                ->offColor('danger')
+                ->formatStateUsing(fn ($state): bool => (bool) $state)
+                ->default(env('WEBHOOKS_ENABLED', false))
+                ->live(),
+
+            ToggleButtons::make('WEBHOOK_TYPE')
+                ->label('Webhook Type')
+                ->visible(fn (Get $get) => $get('WEBHOOKS_ENABLED') === true)
+                ->columnSpanFull()
+                ->inline()
+                ->options([
+                    'discord' => 'Discord',
+                    'json' => 'Json Payload',
+                ])
+                ->default(env('WEBHOOK_TYPE', 'discord'))
+                ->live(),
+
+            Section::make('Webhooks')
+                ->columns(1)
+                ->visible(fn (Get $get) => $get('WEBHOOKS_ENABLED') === true)
+                ->schema([
+                    TextInput::make('MAIN_WEBHOOK')
+                        ->label('Main Webhook')
+                        ->visible(fn (Get $get) => $get('WEBHOOK_TYPE') === 'json')
+                        ->url()
+                        ->prefixIcon('tabler-webhook')
+                        ->helperText('When webhooks are enabled, and a specific category is not set up, this fallback webhook will be used.')
+                        ->default(env('MAIN_WEBHOOK')),
+
+                    TextInput::make('USER_WEBHOOK')
+                        ->label('User Webhook')
+                        ->visible(fn (Get $get) => $get('WEBHOOK_TYPE') === 'json')
+                        ->hintAction($this->getUserHintAction())
+                        ->url()
+                        ->prefixIcon('tabler-webhook')
+                        ->helperText('All User related events will be logged to this webhook')
+                        ->default(env('USER_WEBHOOK')),
+
+                    TextInput::make('SERVER_WEBHOOK')
+                        ->label('Server Webhook')
+                        ->visible(fn (Get $get) => $get('WEBHOOK_TYPE') === 'json')
+                        ->hintAction($this->getServerHintAction())
+                        ->url()
+                        ->prefixIcon('tabler-webhook')
+                        ->helperText('All Server related events will be logged to this webhook')
+                        ->default(env('SERVER_WEBHOOK')),
+
+                    TextInput::make('EGG_WEBHOOK')
+                        ->label('Egg Webhook')
+                        ->visible(fn (Get $get) => $get('WEBHOOK_TYPE') === 'json')
+                        ->hintAction($this->getEggHintAction())
+                        ->url()
+                        ->prefixIcon('tabler-webhook')
+                        ->helperText('All Egg related events will be logged to this webhook')
+                        ->default(env('EGG_WEBHOOK')),
+
+                    TextInput::make('NODE_WEBHOOK')
+                        ->label('Node Webhook')
+                        ->visible(fn (Get $get) => $get('WEBHOOK_TYPE') === 'json')
+                        ->hintAction($this->getNodeHintAction())
+                        ->url()
+                        ->prefixIcon('tabler-webhook')
+                        ->helperText('All Node related events will be logged to this webhook')
+                        ->default(env('NODE_WEBHOOK')),
+
+                    TextInput::make('DATABASE_HOST_WEBHOOK')
+                        ->label('DatabaseHost Webhook')
+                        ->visible(fn (Get $get) => $get('WEBHOOK_TYPE') === 'json')
+                        ->hintAction($this->getDatabaseHostHintAction())
+                        ->url()
+                        ->prefixIcon('tabler-webhook')
+                        ->helperText('All DatabaseHost related events will be logged to this webhook')
+                        ->default(env('DATABASE_HOST_WEBHOOK')),
+
+                    TextInput::make('MAIN_WEBHOOK_DISCORD')
+                        ->label('Main Webhook')
+                        ->visible(fn (Get $get) => $get('WEBHOOK_TYPE') === 'discord')
+                        ->url()
+                        ->prefixIcon('tabler-brand-discord-filled')
+                        ->placeholder('https://discord.com/api/webhooks/')
+                        ->helperText('When webhooks are enabled, and a specific category is not set up, this fallback webhook will be used.')
+                        ->default(env('MAIN_WEBHOOK_DISCORD')),
+
+                    TextInput::make('USER_WEBHOOK_DISCORD')
+                        ->label('User Webhook')
+                        ->visible(fn (Get $get) => $get('WEBHOOK_TYPE') === 'discord')
+                        ->url()
+                        ->prefixIcon('tabler-brand-discord-filled')
+                        ->hintAction($this->getUserHintAction())
+                        ->placeholder('https://discord.com/api/webhooks/')
+                        ->helperText('All User related events will be logged to this webhook')
+                        ->default(env('USER_WEBHOOK_DISCORD')),
+
+                    TextInput::make('SERVER_WEBHOOK_DISCORD')
+                        ->label('Server Webhook')
+                        ->visible(fn (Get $get) => $get('WEBHOOK_TYPE') === 'discord')
+                        ->url()
+                        ->prefixIcon('tabler-brand-discord-filled')
+                        ->hintAction($this->getServerHintAction())
+                        ->placeholder('https://discord.com/api/webhooks/')
+                        ->helperText('All Server related events will be logged to this webhook')
+                        ->default(env('SERVER_WEBHOOK_DISCORD')),
+
+                    TextInput::make('EGG_WEBHOOK_DISCORD')
+                        ->label('Egg Webhook')
+                        ->visible(fn (Get $get) => $get('WEBHOOK_TYPE') === 'discord')
+                        ->hintAction($this->getEggHintAction())
+                        ->url()
+                        ->prefixIcon('tabler-brand-discord-filled')
+                        ->placeholder('https://discord.com/api/webhooks/')
+                        ->helperText('All Egg related events will be logged to this webhook')
+                        ->default(env('EGG_WEBHOOK_DISCORD')),
+
+                    TextInput::make('NODE_WEBHOOK_DISCORD')
+                        ->label('Node Webhook')
+                        ->visible(fn (Get $get) => $get('WEBHOOK_TYPE') === 'discord')
+                        ->hintAction($this->getNodeHintAction())
+                        ->url()
+                        ->prefixIcon('tabler-brand-discord-filled')
+                        ->placeholder('https://discord.com/api/webhooks/')
+                        ->helperText('All Node related events will be logged to this webhook')
+                        ->default(env('NODE_WEBHOOK_DISCORD')),
+
+                    TextInput::make('DATABASE_HOST_WEBHOOK_DISCORD')
+                        ->label('DatabaseHost Webhook')
+                        ->visible(fn (Get $get) => $get('WEBHOOK_TYPE') === 'discord')
+                        ->hintAction($this->getDatabaseHostHintAction())
+                        ->url()
+                        ->prefixIcon('tabler-brand-discord-filled')
+                        ->placeholder('https://discord.com/api/webhooks/')
+                        ->helperText('All DatabaseHost related events will be logged to this webhook')
+                        ->default(env('DATABASE_HOST_WEBHOOK_DISCORD')),
+                ]),
+
+            Section::make('Discord Embed')
+                ->visible(fn (Get $get) => $get('WEBHOOK_TYPE') === 'discord' and $get('WEBHOOKS_ENABLED') === true)
+                ->columns(1)
+                ->schema([
+                    ColorPicker::make('DISCORD_EMBED_COLOR')
+                        ->label('Color')
+                        ->default(env('DISCORD_EMBED_COLOR', '#024cc4')),
+
+                    TextInput::make('DISCORD_EMBED_IMAGE')
+                        ->label('Image')
+                        ->url()
+                        ->placeholder('https://pelican.dev/img/logo.png')
+                        ->default(env('DISCORD_EMBED_IMAGE', 'https://pelican.dev/img/logo.png')),
                 ]),
         ];
     }
@@ -569,5 +735,350 @@ class Settings extends Page implements HasForms
     protected function getFormActions(): array
     {
         return [];
+    }
+
+    private function getServerHintAction()
+    {
+        return
+            FormAction::make('SERVER_CUSTOM_PAYLOAD')
+                ->label('Customize Content')
+                ->modalDescription('Customize what data you would like to send to your webhook')
+                ->form([
+                    Toggle::make('SERVER_ID')
+                        ->label('ID')
+                        ->inline()
+                        ->default(env('SERVER_ID', true)),
+                    Toggle::make('SERVER_EXTERNAL_ID')
+                        ->label('External ID')
+                        ->inline()
+                        ->default(env('SERVER_EXTERNAL_ID', false)),
+                    Toggle::make('SERVER_UUID')
+                        ->label('UUID')
+                        ->inline()
+                        ->default(env('SERVER_UUID', false)),
+                    Toggle::make('SERVER_NODE_ID')
+                        ->label('Node ID')
+                        ->inline()
+                        ->default(env('SERVER_NODE_ID', true)),
+                    Toggle::make('SERVER_NAME')
+                        ->label('Name')
+                        ->inline()
+                        ->default(env('SERVER_NAME', true)),
+                    Toggle::make('SERVER_DESCRIPTION')
+                        ->label('Description')
+                        ->inline()
+                        ->default(env('SERVER_DESCRIPTION', true)),
+                    Toggle::make('SERVER_OWNER_ID')
+                        ->label('Owner ID')
+                        ->inline()
+                        ->default(env('SERVER_OWNER_ID', true)),
+                    Toggle::make('SERVER_MEMORY')
+                        ->label('Memory')
+                        ->inline()
+                        ->default(env('SERVER_MEMORY', false)),
+                    Toggle::make('SERVER_DISK')
+                        ->label('Disk')
+                        ->inline()
+                        ->default(env('SERVER_DISK', false)),
+                    Toggle::make('SERVER_CPU')
+                        ->label('CPU')
+                        ->inline()
+                        ->default(env('SERVER_CPU', false)),
+                    Toggle::make('SERVER_EGG_ID')
+                        ->label('Egg ID')
+                        ->inline()
+                        ->default(env('SERVER_EGG_ID', true)),
+                    Toggle::make('SERVER_STARTUP')
+                        ->label('Startup Command')
+                        ->inline()
+                        ->default(env('SERVER_STARTUP', false)),
+                    Toggle::make('SERVER_ALLO_LIMIT')
+                        ->label('Allocation Limit')
+                        ->inline()
+                        ->default(env('SERVER_ALLO_LIMIT', false)),
+                    Toggle::make('SERVER_DB_LIMIT')
+                        ->label('Database Limit')
+                        ->inline()
+                        ->default(env('SERVER_DB_LIMIT', false)),
+                    Toggle::make('SERVER_BACKUP_LIMIT')
+                        ->label('Backup Limit')
+                        ->inline()
+                        ->default(env('SERVER_BACKUP_LIMIT', false)),
+                ])
+                ->action(function (array $data): void {
+                    $data = array_map(fn ($value) => is_bool($value) ? ($value ? 'true' : 'false') : $value, $data);
+
+                    $this->writeToEnvironment($data);
+
+                    Artisan::call('config:clear');
+                    Artisan::call('queue:restart');
+
+                    $this->rememberData();
+
+                    Notification::make()
+                        ->title('Content saved')
+                        ->success()
+                        ->send();
+                });
+    }
+
+    protected function getUserHintAction()
+    {
+        return
+        FormAction::make('USER_CUSTOM_PAYLOAD') // TODO add roles once #193 is completed
+            ->label('Customize Content')
+            ->modalDescription('Customize what data you would like to send to your webhook')
+            ->form([
+                Toggle::make('USER_ID')
+                    ->label('ID')
+                    ->inline()
+                    ->default(env('USER_ID', true)),
+                Toggle::make('USER_EXTERNAL_ID')
+                    ->label('External ID')
+                    ->inline()
+                    ->default(env('USER_EXTERNAL_ID', false)),
+                Toggle::make('USER_UUID')
+                    ->label('UUID')
+                    ->inline()
+                    ->default(env('USER_UUID', false)),
+                Toggle::make('USER_USERNAME')
+                    ->label('Username')
+                    ->inline()
+                    ->default(env('USER_USERNAME', true)),
+                Toggle::make('USER_EMAIL')
+                    ->label('Email')
+                    ->inline()
+                    ->default(env('USER_EMAIL', true)),
+                Toggle::make('USER_LANG')
+                    ->label('Language')
+                    ->inline()
+                    ->default(env('USER_LANG', false)),
+                Toggle::make('USER_TIME')
+                    ->label('Timezone')
+                    ->inline()
+                    ->default(env('USER_TIME', false)),
+            ])
+            ->action(function (array $data): void {
+                $data = array_map(fn ($value) => is_bool($value) ? ($value ? 'true' : 'false') : $value, $data);
+
+                $this->writeToEnvironment($data);
+
+                Artisan::call('config:clear');
+                Artisan::call('queue:restart');
+
+                $this->rememberData();
+
+                Notification::make()
+                    ->title('Content saved')
+                    ->success()
+                    ->send();
+            });
+    }
+
+    private function getEggHintAction()
+    {
+        return
+        FormAction::make('EGG_CUSTOM_PAYLOAD')
+            ->label('Customize Content')
+            ->modalDescription('Customize what data you would like to send to your webhook')
+            ->form([
+                Toggle::make('EGG_ID')
+                    ->label('ID')
+                    ->inline()
+                    ->default(env('EGG_ID', true)),
+                Toggle::make('EGG_UUID')
+                    ->label('UUID')
+                    ->inline()
+                    ->default(env('EGG_UUID', false)),
+                Toggle::make('EGG_AUTHOR')
+                    ->label('Author')
+                    ->inline()
+                    ->default(env('EGG_AUTHOR', true)),
+                Toggle::make('EGG_NAME')
+                    ->label('Name')
+                    ->inline()
+                    ->default(env('EGG_NAME', true)),
+                Toggle::make('EGG_DESCRIPTION')
+                    ->label('Description')
+                    ->inline()
+                    ->default(env('EGG_DESCRIPTION', true)),
+                Toggle::make('EGG_UPDATE_URL')
+                    ->label('Update URL')
+                    ->inline()
+                    ->default(env('EGG_UPDATE_URL', false)),
+                Toggle::make('EGG_CONFIG_STOP')
+                    ->label('Config Stop')
+                    ->inline()
+                    ->default(env('EGG_CONFIG_STOP', false)),
+                Toggle::make('EGG_CONFIG_FROM')
+                    ->label('Config From')
+                    ->inline()
+                    ->default(env('EGG_CONFIG_FROM', false)),
+                Toggle::make('EGG_STARTUP')
+                    ->label('Startup')
+                    ->inline()
+                    ->default(env('EGG_STARTUP', false)),
+                Toggle::make('EGG_SCRIPT_CONTAINER')
+                    ->label('Script Container')
+                    ->inline()
+                    ->default(env('EGG_SCRIPT_CONTAINER', false)),
+                Toggle::make('EGG_COPY_SCRIPT_FROM')
+                    ->label('Copy Script From')
+                    ->inline()
+                    ->default(env('EGG_COPY_SCRIPT_FROM', false)),
+                Toggle::make('EGG_SCRIPT_ENTRY')
+                    ->label('Script Entry')
+                    ->inline()
+                    ->default(env('EGG_SCRIPT_ENTRY', false)),
+            ])
+            ->action(function (array $data): void {
+                $data = array_map(fn ($value) => is_bool($value) ? ($value ? 'true' : 'false') : $value, $data);
+
+                $this->writeToEnvironment($data);
+
+                Artisan::call('config:clear');
+                Artisan::call('queue:restart');
+
+                $this->rememberData();
+
+                Notification::make()
+                    ->title('Content saved')
+                    ->success()
+                    ->send();
+            });
+    }
+
+    protected function getNodeHintAction()
+    {
+        return
+        FormAction::make('NODE_CUSTOM_PAYLOAD')
+            ->label('Customize Content')
+            ->modalDescription('Customize what data you would like to send to your webhook')
+            ->form([
+                Toggle::make('NODE_ID')
+                    ->label('ID')
+                    ->inline()
+                    ->default(env('NODE_ID', true)),
+                Toggle::make('NODE_UUID')
+                    ->label('UUID')
+                    ->inline()
+                    ->default(env('NODE_UUID', false)),
+                Toggle::make('NODE_PUBLIC')
+                    ->label('Public')
+                    ->inline()
+                    ->default(env('NODE_PUBLIC', false)),
+                Toggle::make('NODE_NAME')
+                    ->label('Name')
+                    ->inline()
+                    ->default(env('NODE_NAME', true)),
+                Toggle::make('NODE_DESCRIPTION')
+                    ->label('Description')
+                    ->inline()
+                    ->default(env('NODE_DESCRIPTION', false)),
+                Toggle::make('NODE_LOCATION_ID')
+                    ->label('Location ID')
+                    ->inline()
+                    ->default(env('NODE_LOCATION_ID', true)),
+                Toggle::make('NODE_FQDN')
+                    ->label('FQDN')
+                    ->inline()
+                    ->default(env('NODE_FQDN', true)),
+                Toggle::make('NODE_SCHEME')
+                    ->label('Scheme')
+                    ->inline()
+                    ->default(env('NODE_SCHEME', true)),
+                Toggle::make('NODE_BEHIND_PROXY')
+                    ->label('Behind Proxy')
+                    ->inline()
+                    ->default(env('NODE_BEHIND_PROXY', false)),
+                Toggle::make('NODE_MEMORY')
+                    ->label('Memory')
+                    ->inline()
+                    ->default(env('NODE_MEMORY', true)),
+                Toggle::make('NODE_MEMORY_OVER')
+                    ->label('Memory Overallocate')
+                    ->inline()
+                    ->default(env('NODE_MEMORY_OVER', false)),
+                Toggle::make('NODE_DISK')
+                    ->label('Disk')
+                    ->inline()
+                    ->default(env('NODE_DISK', true)),
+                Toggle::make('NODE_DISK_OVER')
+                    ->label('Disk Overallocate')
+                    ->inline()
+                    ->default(env('NODE_DISK_OVER', false)),
+                Toggle::make('NODE_CPU')
+                    ->label('CPU')
+                    ->inline()
+                    ->default(env('NODE_CPU', true)),
+                Toggle::make('NODE_CPU_OVER')
+                    ->label('CPU Overallocate')
+                    ->inline()
+                    ->default(env('NODE_CPU_OVER', false)),
+            ])
+            ->action(function (array $data): void {
+                $data = array_map(fn ($value) => is_bool($value) ? ($value ? 'true' : 'false') : $value, $data);
+
+                $this->writeToEnvironment($data);
+
+                Artisan::call('config:clear');
+                Artisan::call('queue:restart');
+
+                $this->rememberData();
+
+                Notification::make()
+                    ->title('Content saved')
+                    ->success()
+                    ->send();
+            });
+    }
+
+    protected function getDatabaseHostHintAction()
+    {
+        return
+        FormAction::make('DATABASE_HOST_CUSTOM_PAYLOAD')
+            ->label('Customize Content')
+            ->modalDescription('Customize what data you would like to send to your webhook')
+            ->form([
+                Toggle::make('DATABASE_HOST_ID')
+                    ->label('ID')
+                    ->inline()
+                    ->default(env('DATABASE_HOST_ID', true)),
+                Toggle::make('DATABASE_HOST_NAME')
+                    ->label('Name')
+                    ->inline()
+                    ->default(env('DATABASE_HOST_NAME', true)),
+                Toggle::make('DATABASE_HOST_HOST')
+                    ->label('Host')
+                    ->inline()
+                    ->default(env('DATABASE_HOST_HOST', true)),
+                Toggle::make('DATABASE_HOST_PORT')
+                    ->label('Port')
+                    ->inline()
+                    ->default(env('DATABASE_HOST_PORT', true)),
+                Toggle::make('DATABASE_HOST_MAX_DB')
+                    ->label('Maximum Databases')
+                    ->inline()
+                    ->default(env('DATABASE_HOST_MAX_DB', true)),
+                Toggle::make('DATABASE_HOST_NODE_ID')
+                    ->label('Node ID')
+                    ->inline()
+                    ->default(env('DATABASE_HOST_NODE_ID', true)),
+            ])
+            ->action(function (array $data): void {
+                $data = array_map(fn ($value) => is_bool($value) ? ($value ? 'true' : 'false') : $value, $data);
+
+                $this->writeToEnvironment($data);
+
+                Artisan::call('config:clear');
+                Artisan::call('queue:restart');
+
+                $this->rememberData();
+
+                Notification::make()
+                    ->title('Content saved')
+                    ->success()
+                    ->send();
+            });
     }
 }

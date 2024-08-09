@@ -3,17 +3,16 @@
 namespace App\Events\User;
 
 use App\Models\User;
-use App\Events\Event;
 use Illuminate\Queue\SerializesModels;
 
-class Deleted extends Event
+class Deleted
 {
     use SerializesModels;
 
-    /**
-     * Create a new event instance.
-     */
-    public function __construct(public User $user)
+    public $user;
+
+    public function __construct(User $user)
     {
+        $this->user = $user;
     }
 }
