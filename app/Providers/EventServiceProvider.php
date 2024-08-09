@@ -24,7 +24,9 @@ class EventServiceProvider extends ServiceProvider
         ServerInstalledEvent::class => [ServerInstalledNotification::class],
         'App\Events\Server\*' => [DispatchWebhooks::class],
         'App\Events\User\*' => [DispatchWebhooks::class],
-        'App\Events\Subuser\*' => [DispatchWebhooks::class],
+        'App\Events\Subuser\*' => [DispatchWebhooks::class]
+
+        // '*' => [DispatchWebhooks::class],
     ];
 
     /**

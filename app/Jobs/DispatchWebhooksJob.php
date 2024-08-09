@@ -15,7 +15,7 @@ class DispatchWebhooksJob implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
-    public function __construct(string $eventName, array $data)
+    public function __construct(string $eventName, mixed $data)
     {
 
     }
@@ -23,7 +23,9 @@ class DispatchWebhooksJob implements ShouldQueue
     public function handle(): void
     {
         WebhookConfiguration::query()
-            ->forEvent($this->event)
-            ->eachById(fn (WebhookConfiguration $configuration) => DispatchWebhookForConfiguration::dispatch($configuration, $this->event));
+            ->forEvent($this->eventName)
+            ->eachById(fn (WebhookConfiguration $configuration) =>
+                DispatchWebhookForConfiguration::dispatch($configuration, $this->eventName)
+            );
     }
 }
