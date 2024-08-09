@@ -65,3 +65,37 @@ if (!function_exists('convert_bytes_to_readable')) {
         return round(pow($conversionUnit, $base - $f_base), $decimals) . ' ' . $suffix[$f_base];
     }
 }
+
+if (!function_exists('join_paths')) {
+    function join_paths(string $base, string ...$paths): string
+    {
+        if ($base === '/') {
+            return implode('/', $paths);
+        }
+
+        return $base . '/' . implode('/', $paths);
+    }
+}
+
+if (!function_exists('resolve_path')) {
+    function resolve_path(string $path): string
+    {
+        // @phpstan-ignore-next-line
+        $parts = array_filter(explode('/', $path), 'strlen');
+
+        $absolutes = [];
+        foreach ($parts as $part) {
+            if ($part == '.') {
+                continue;
+            }
+
+            if ($part == '..') {
+                array_pop($absolutes);
+            } else {
+                $absolutes[] = $part;
+            }
+        }
+
+        return implode('/', $absolutes);
+    }
+}

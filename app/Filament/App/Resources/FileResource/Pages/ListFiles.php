@@ -85,13 +85,13 @@ class ListFiles extends ListRecords
                     ->label('Open')
                     ->icon('tabler-eye')
                     ->visible(fn (File $file) => $file->is_directory)
-                    ->url(fn (File $file) => self::getUrl(['path' => $this->path === '/' ? $file->name : $this->path . '/' . $file->name])),
+                    ->url(fn (File $file) => self::getUrl(['path' => join_paths($this->path, $file->name)])),
                 EditAction::make()
                     ->label('Edit')
                     ->icon('tabler-edit')
                     ->visible(fn (File $file) => $file->canEdit())
                     ->modalHeading(fn (File $file) => 'Editing ' . $file->name)
-//                    ->keyBindings(['command+s', 'ctrl+s']) TODO:: Make this work...
+//                    ->keyBindings(['command+s', 'ctrl+s']) TODO: Make this work...
                     ->form([
                         MonacoEditor::make('editor')
                             ->view('filament.plugins.monaco-editor')
@@ -102,7 +102,7 @@ class ListFiles extends ListRecords
 
                                 return app(DaemonFileRepository::class)
                                     ->setServer($server)
-                                    ->getContent($this->path . $file->name, config('panel.files.max_edit_size'));
+                                    ->getContent(join_paths($this->path, $file->name), config('panel.files.max_edit_size'));
                             }),
                     ])
                     ->action(function ($data, File $file) {
@@ -111,10 +111,10 @@ class ListFiles extends ListRecords
 
                         app(DaemonFileRepository::class)
                             ->setServer($server)
-                            ->putContent($this->path . $file->name, $data['editor'] ?? '');
+                            ->putContent(join_paths($this->path, $file->name), $data['editor'] ?? '');
 
                         Activity::event('server:file.write')
-                            ->property('file', $this->path . $file->name)
+                            ->property('file', join_paths($this->path, $file->name))
                             ->log();
                     }),
                 ActionGroup::make([
@@ -155,10 +155,10 @@ class ListFiles extends ListRecords
 
                             app(DaemonFileRepository::class)
                                 ->setServer($server)
-                                ->copyFile($this->path . $file->name);
+                                ->copyFile(join_paths($this->path, $file->name));
 
                             Activity::event('server:file.copy')
-                                ->property('file', $this->path . $file->name)
+                                ->property('file', join_paths($this->path, $file->name))
                                 ->log();
 
                             Notification::make()
@@ -184,13 +184,13 @@ class ListFiles extends ListRecords
                                 ->required()
                                 ->live(),
                             Placeholder::make('new_location')
-                                ->content(fn (Get $get) => preg_replace('/^(\.\.\/|\/)+/', '', $this->path . '/' . $get('location'))), // TODO: regex not working
+                                ->content(fn (Get $get) => resolve_path('./' . join_paths($this->path, $get('location')))),
                         ])
                         ->action(function ($data, File $file) {
                             /** @var Server $server */
                             $server = Filament::getTenant();
 
-                            $location = preg_replace('/^(\.\.\/|\/)+/', '', $this->path . '/' . $data['location']);
+                            $location = resolve_path(join_paths($this->path, $data('location')));
 
                             app(DaemonFileRepository::class)
                                 ->setServer($server)
@@ -202,7 +202,7 @@ class ListFiles extends ListRecords
                                 ->log();
 
                             Notification::make()
-                                ->title($this->path . $file->name . ' was moved to ' . $location)
+                                ->title(join_paths($this->path, $file->name) . ' was moved to ' . $location)
                                 ->success()
                                 ->send();
                         }),
@@ -322,7 +322,7 @@ class ListFiles extends ListRecords
             HeaderAction::make('back')
                 ->hidden(fn () => $this->path === '/')
                 ->url(fn () => self::getUrl(['path' => dirname($this->path)])),
-            HeaderAction::make('newfile')
+            HeaderAction::make('new_file')
                 ->label('New File')
                 ->action(function ($data) {
                     /** @var Server $server */
@@ -330,10 +330,10 @@ class ListFiles extends ListRecords
 
                     app(DaemonFileRepository::class)
                         ->setServer($server)
-                        ->putContent($this->path . '/' . $data['name'], $data['editor'] ?? '');
+                        ->putContent(join_paths($this->path, $data['name']), $data['editor'] ?? '');
 
                     Activity::event('server:file.write')
-                        ->property('file', $this->path . '/' .  $data['name'])
+                        ->property('file', join_paths($this->path, $data['name']))
                         ->log();
                 })
                 ->form([
@@ -358,7 +358,7 @@ class ListFiles extends ListRecords
                         ->language()
                         ->required(),
                 ]),
-            HeaderAction::make('newfolder')
+            HeaderAction::make('new_folder')
                 ->label('New Folder')
                 ->action(function ($data) {
                     /** @var Server $server */
@@ -369,7 +369,7 @@ class ListFiles extends ListRecords
                         ->createDirectory($data['name'], $this->path);
 
                     Activity::event('server:file.write')
-                        ->property('file', $this->path . $data['name'])
+                        ->property('file', join_paths($this->path, $data['name']))
                         ->log();
                 })
                 ->form([
