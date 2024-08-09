@@ -67,7 +67,7 @@ class ListFiles extends ListRecords
                     ->searchable()
                     ->icon(fn (File $file) => $file->getIcon()),
                 TextColumn::make('size')
-                    ->formatStateUsing(fn ($state, File $file) => $file->file ? convert_bytes_to_readable($state) : ''),
+                    ->formatStateUsing(fn ($state, File $file) => $file->is_file ? convert_bytes_to_readable($state) : ''),
                 TextColumn::make('created')
                     ->formatStateUsing(fn ($state) => Carbon::parse($state)->diffForHumans()),
                 TextColumn::make('modified')
@@ -78,7 +78,7 @@ class ListFiles extends ListRecords
                     ->label('')
                     ->icon('tabler-eye')
                     ->tooltip('Open')
-                    ->visible(fn (File $file) => $file->directory)
+                    ->visible(fn (File $file) => $file->is_directory)
                     ->url(fn (File $file) => self::getUrl(['path' => $this->path === '/' ? $file->name : $this->path . '/' . $file->name])),
                 EditAction::make()
                     ->label('')
