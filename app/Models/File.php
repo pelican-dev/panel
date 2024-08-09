@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Repositories\Daemon\DaemonFileRepository;
 use Carbon\Carbon;
 use Exception;
+use Filament\Notifications\Notification;
 use Illuminate\Database\Eloquent\Builder;
 use Sushi\Sushi;
 
@@ -97,30 +98,58 @@ class File extends Model
         ];
     }
 
+    public function getSchema(): array
+    {
+        return [
+            'name' => 'string',
+            'created_at' => 'string',
+            'modified_at' => 'string',
+            'mode' => 'string',
+            'mode_bits' => 'integer',
+            'size' => 'integer',
+            'is_directory' => 'boolean',
+            'is_file' => 'boolean',
+            'is_symlink' => 'boolean',
+            'mime_type' => 'string',
+        ];
+    }
+
     public function getRows(): array
     {
-        $contents = app(DaemonFileRepository::class)
-            ->setServer($this->server())
-            ->getDirectory(self::$path ?? '/');
+        try {
+            $contents = app(DaemonFileRepository::class)
+                ->setServer($this->server())
+                ->getDirectory(self::$path ?? '/');
 
-        if (isset($contents['error'])) {
-            throw new Exception($contents['error']); // TODO: better error handling
+            if (isset($contents['error'])) {
+                throw new Exception($contents['error']);
+            }
+
+            return array_map(function ($file) {
+                return [
+                    'name' => $file['name'],
+                    'created_at' => Carbon::parse($file['created']),
+                    'modified_at' => Carbon::parse($file['modified']),
+                    'mode' => $file['mode'],
+                    'mode_bits' => (int) $file['mode_bits'],
+                    'size' => (int) $file['size'],
+                    'is_directory' => $file['directory'],
+                    'is_file' => $file['file'],
+                    'is_symlink' => $file['symlink'],
+                    'mime_type' => $file['mime'],
+                ];
+            }, $contents);
+        } catch (Exception $exception) {
+            report($exception);
+
+            Notification::make()
+                ->title('Error loading files')
+                ->body($exception->getMessage())
+                ->danger()
+                ->send();
+
+            return [];
         }
-
-        return array_map(function ($file) {
-            return [
-                'name' => $file['name'],
-                'created_at' => Carbon::parse($file['created']),
-                'modified_at' => Carbon::parse($file['modified']),
-                'mode' => $file['mode'],
-                'mode_bits' => (int) $file['mode_bits'],
-                'size' => (int) $file['size'],
-                'is_directory' => $file['directory'],
-                'is_file' => $file['file'],
-                'is_symlink' => $file['symlink'],
-                'mime_type' => $file['mime'],
-            ];
-        }, $contents);
     }
 
     protected function sushiShouldCache(): bool
