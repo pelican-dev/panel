@@ -92,7 +92,7 @@ class Settings extends Page implements HasForms
                 ->hintIcon('tabler-question-mark')
                 ->hintIconTooltip('Favicons should be placed in the public folder, located in the root panel directory.')
                 ->required()
-                ->default(env('APP_FAVICON', './pelican.ico')),
+                ->default(env('APP_FAVICON', '/pelican.ico')),
             Toggle::make('APP_DEBUG')
                 ->label('Enable Debug Mode?')
                 ->inline(false)
@@ -102,10 +102,10 @@ class Settings extends Page implements HasForms
                 ->offColor('danger')
                 ->formatStateUsing(fn ($state): bool => (bool) $state)
                 ->afterStateUpdated(fn ($state, Set $set) => $set('APP_DEBUG', (bool) $state))
-                ->default(env('RECAPTCHA_ENABLED', config('recaptcha.enabled'))),
+                ->default(env('APP_DEBUG', config('app.debug'))),
             ToggleButtons::make('FILAMENT_TOP_NAVIGATION')
                 ->label('Navigation')
-                ->grouped()
+                ->inline()
                 ->options([
                     false => 'Sidebar',
                     true => 'Topbar',
@@ -115,7 +115,7 @@ class Settings extends Page implements HasForms
                 ->default(env('FILAMENT_TOP_NAVIGATION', config('panel.filament.top-navigation'))),
             ToggleButtons::make('PANEL_USE_BINARY_PREFIX')
                 ->label('Unit prefix')
-                ->grouped()
+                ->inline()
                 ->options([
                     false => 'Decimal Prefix (MB/ GB)',
                     true => 'Binary Prefix (MiB/ GiB)',
@@ -125,7 +125,7 @@ class Settings extends Page implements HasForms
                 ->default(env('PANEL_USE_BINARY_PREFIX', config('panel.use_binary_prefix'))),
             ToggleButtons::make('APP_2FA_REQUIRED')
                 ->label('2FA Requirement')
-                ->grouped()
+                ->inline()
                 ->options([
                     0 => 'Not required',
                     1 => 'Required for only Admins',
@@ -209,7 +209,7 @@ class Settings extends Page implements HasForms
             ToggleButtons::make('MAIL_MAILER')
                 ->label('Mail Driver')
                 ->columnSpanFull()
-                ->grouped()
+                ->inline()
                 ->options([
                     'log' => 'Print mails to Log',
                     'smtp' => 'SMTP Server',
@@ -284,7 +284,7 @@ class Settings extends Page implements HasForms
                     ToggleButtons::make('MAIL_ENCRYPTION')
                         ->label('SMTP encryption')
                         ->required()
-                        ->grouped()
+                        ->inline()
                         ->options(['tls' => 'TLS', 'ssl' => 'SSL', '' => 'None'])
                         ->default(env('MAIL_ENCRYPTION', config('mail.mailers.smtp.encryption', 'tls'))),
                 ]),
@@ -314,7 +314,7 @@ class Settings extends Page implements HasForms
             ToggleButtons::make('APP_BACKUP_DRIVER')
                 ->label('Backup Driver')
                 ->columnSpanFull()
-                ->grouped()
+                ->inline()
                 ->options([
                     Backup::ADAPTER_DAEMON => 'Wings',
                     Backup::ADAPTER_AWS_S3 => 'S3',
@@ -531,6 +531,9 @@ class Settings extends Page implements HasForms
     {
         try {
             $data = $this->form->getState();
+
+            // Convert bools to a string, so they are correctly written to the .env file
+            $data = array_map(fn ($value) => is_bool($value) ? ($value ? 'true' : 'false') : $value, $data);
 
             $this->writeToEnvironment($data);
 
