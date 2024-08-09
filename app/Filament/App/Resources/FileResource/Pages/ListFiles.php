@@ -7,14 +7,15 @@ use App\Filament\App\Resources\FileResource;
 use App\Models\File;
 use App\Models\Server;
 use App\Repositories\Daemon\DaemonFileRepository;
-use Carbon\Carbon;
 use Filament\Actions\Action as HeaderAction;
 use Filament\Facades\Filament;
 use Filament\Panel;
 use Filament\Resources\Pages\ListRecords;
 use Filament\Resources\Pages\PageRegistration;
 use Filament\Tables\Actions\Action;
+use Filament\Tables\Actions\BulkActionGroup;
 use Filament\Tables\Actions\DeleteAction;
+use Filament\Tables\Actions\DeleteBulkAction;
 use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
@@ -60,25 +61,25 @@ class ListFiles extends ListRecords
                 /** @var Server $server */
                 $server = Filament::getTenant();
 
-                return File::get($server, $this->path)->orderByDesc('directory')->orderBy('name');
+                return File::get($server, $this->path)->orderByDesc('is_directory')->orderBy('name');
             })
             ->columns([
                 TextColumn::make('name')
                     ->searchable()
                     ->icon(fn (File $file) => $file->getIcon()),
                 TextColumn::make('size')
-                    ->formatStateUsing(fn ($state, File $file) => $file->file ? convert_bytes_to_readable($state) : ''),
-                TextColumn::make('created')
-                    ->formatStateUsing(fn ($state) => Carbon::parse($state)->diffForHumans()),
-                TextColumn::make('modified')
-                    ->formatStateUsing(fn ($state) => Carbon::parse($state)->diffForHumans()),
+                    ->formatStateUsing(fn ($state, File $file) => $file->is_file ? convert_bytes_to_readable($state) : ''),
+                TextColumn::make('created_at')
+                    ->formatStateUsing(fn ($state) => $state->diffForHumans()),
+                TextColumn::make('modified_at')
+                    ->formatStateUsing(fn ($state) => $state->diffForHumans()),
             ])
-            ->actions([
+            ->actions([ // TODO: add other actions like copy, rename etc.
                 Action::make('view')
                     ->label('')
                     ->icon('tabler-eye')
                     ->tooltip('Open')
-                    ->visible(fn (File $file) => $file->directory)
+                    ->visible(fn (File $file) => $file->is_directory)
                     ->url(fn (File $file) => self::getUrl(['path' => $this->path === '/' ? $file->name : $this->path . '/' . $file->name])),
                 EditAction::make()
                     ->label('')
@@ -89,25 +90,40 @@ class ListFiles extends ListRecords
                     ->label('')
                     ->icon('tabler-trash')
                     ->tooltip('Delete')
-                    ->visible(fn (File $file) => !$file->system)
                     ->requiresConfirmation()
                     ->action(function (File $file) {
                         /** @var Server $server */
                         $server = Filament::getTenant();
 
-                        app(DaemonFileRepository::class)->setServer($server)->deleteFiles($this->path, [$file->name]);
+                        app(DaemonFileRepository::class)
+                            ->setServer($server)
+                            ->deleteFiles($this->path, [$file->name]);
 
                         Activity::event('server:file.delete')
                             ->property('directory', $this->path)
                             ->property('files', $file->name)
                             ->log();
                     }),
+            ])
+            ->bulkActions([
+                // TODO: add more bulk actions
+                BulkActionGroup::make([
+                    DeleteBulkAction::make()
+                        ->action(function ($files) {
+                            /** @var Server $server */
+                            $server = Filament::getTenant();
+
+                            app(DaemonFileRepository::class)
+                                ->setServer($server)
+                                ->deleteFiles($this->path, $files->map(fn ($file) => $file->name)->toArray());
+                        }),
+                ]),
             ]);
     }
 
     protected function getHeaderActions(): array
     {
-        return [
+        return [ // TODO: add other header actions, like "create file", "create folder" etc.
             HeaderAction::make('back')
                 ->hidden(fn () => $this->path === '/')
                 ->url(fn () => self::getUrl(['path' => dirname($this->path)])),

@@ -53,7 +53,11 @@ if (!function_exists('convert_bytes_to_readable')) {
     function convert_bytes_to_readable($bytes, int $decimals = 2): string
     {
         $conversionUnit = config('panel.use_binary_prefix') ? 1024 : 1000;
-        $suffix = config('panel.use_binary_prefix') ? ['B', 'KiB', 'MiB', 'GiB', 'TiB'] : ['B', 'KB', 'MB', 'GB', 'TB'];
+        $suffix = config('panel.use_binary_prefix') ? ['Bytes', 'KiB', 'MiB', 'GiB', 'TiB'] : ['Bytes', 'KB', 'MB', 'GB', 'TB'];
+
+        if ($bytes <= 0) {
+            return '0 ' . $suffix[0];
+        }
 
         $base = log($bytes) / log($conversionUnit);
         $f_base = floor($base);
