@@ -21,9 +21,9 @@ class DispatchWebhooksTest extends TestCase
 
         $url = fake()->url();
 
-        $webhook = WebhookConfiguration::factory()->make([
-            'url' => $url,
-            'events' => ['server.create'],
+        $webhook = WebhookConfiguration::factory()->create([
+            'endpoint' => $url,
+            'events' => [Created::class],
             'description' => '',
         ]);
 
@@ -39,7 +39,7 @@ class DispatchWebhooksTest extends TestCase
 
         Http::assertSentCount(1);
         Http::assertSent(function (Request $request) use ($url) {
-            $this->assertEquals($url, $request->url());
+            return $url == $request->url();
         });
     }
 }
