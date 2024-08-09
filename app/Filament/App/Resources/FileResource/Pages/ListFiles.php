@@ -9,11 +9,17 @@ use App\Models\Server;
 use App\Repositories\Daemon\DaemonFileRepository;
 use Filament\Actions\Action as HeaderAction;
 use Filament\Facades\Filament;
+use Filament\Forms\Components\CheckboxList;
+use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Get;
+use Filament\Notifications\Notification;
 use Filament\Panel;
 use Filament\Resources\Pages\ListRecords;
 use Filament\Resources\Pages\PageRegistration;
 use Filament\Tables\Actions\Action;
+use Filament\Tables\Actions\ActionGroup;
 use Filament\Tables\Actions\BulkActionGroup;
 use Filament\Tables\Actions\DeleteAction;
 use Filament\Tables\Actions\DeleteBulkAction;
@@ -73,61 +79,214 @@ class ListFiles extends ListRecords
                 TextColumn::make('modified_at')
                     ->formatStateUsing(fn ($state) => $state->diffForHumans()),
             ])
-            ->actions([ // TODO: add other actions like copy, rename etc.
-                Action::make('view')
-                    ->label('')
-                    ->icon('tabler-eye')
-                    ->tooltip('Open')
-                    ->visible(fn (File $file) => $file->is_directory)
-                    ->url(fn (File $file) => self::getUrl(['path' => $this->path === '/' ? $file->name : $this->path . '/' . $file->name])),
-                EditAction::make()
-                    ->label('')
-                    ->icon('tabler-edit')
-                    ->tooltip('Edit')
-                    ->visible(fn (File $file) => $file->canEdit())
-                    ->form([
-                        Textarea::make('content') // TODO: replace with proper code editor
-                            ->rows(20)
-                            ->label(fn (File $file) => $file->name)
-                            ->formatStateUsing(function (File $file) {
-                                /** @var Server $server */
-                                $server = Filament::getTenant();
+            ->actions([
+                ActionGroup::make([
+                    Action::make('view')
+                        ->label('Open')
+                        ->icon('tabler-eye')
+                        ->visible(fn (File $file) => $file->is_directory)
+                        ->url(fn (File $file) => self::getUrl(['path' => $this->path === '/' ? $file->name : $this->path . '/' . $file->name])),
+                    EditAction::make()
+                        ->label('Edit')
+                        ->icon('tabler-edit')
+                        ->visible(fn (File $file) => $file->canEdit())
+                        ->form([
+                            Textarea::make('content') // TODO: replace with proper code editor
+                                ->rows(20)
+                                ->label(fn (File $file) => $file->name)
+                                ->formatStateUsing(function (File $file) {
+                                    /** @var Server $server */
+                                    $server = Filament::getTenant();
 
-                                return app(DaemonFileRepository::class)
-                                    ->setServer($server)
-                                    ->getContent($this->path . $file->name, config('panel.files.max_edit_size'));
-                            }),
-                    ])
-                    ->action(function ($data, File $file) {
-                        /** @var Server $server */
-                        $server = Filament::getTenant();
+                                    return app(DaemonFileRepository::class)
+                                        ->setServer($server)
+                                        ->getContent($this->path . $file->name, config('panel.files.max_edit_size'));
+                                }),
+                        ])
+                        ->action(function ($data, File $file) {
+                            /** @var Server $server */
+                            $server = Filament::getTenant();
 
-                        app(DaemonFileRepository::class)
-                            ->setServer($server)
-                            ->putContent($this->path . $file->name, $data['content'] ?? '');
+                            app(DaemonFileRepository::class)
+                                ->setServer($server)
+                                ->putContent($this->path . $file->name, $data['content'] ?? '');
 
-                        Activity::event('server:file.write')
-                            ->property('file', $this->path . $file->name)
-                            ->log();
-                    }),
-                DeleteAction::make()
-                    ->label('')
-                    ->icon('tabler-trash')
-                    ->tooltip('Delete')
-                    ->requiresConfirmation()
-                    ->action(function (File $file) {
-                        /** @var Server $server */
-                        $server = Filament::getTenant();
+                            Activity::event('server:file.write')
+                                ->property('file', $this->path . $file->name)
+                                ->log();
+                        }),
+                    Action::make('rename')
+                        ->label('Rename')
+                        ->icon('tabler-forms')
+                        ->form([
+                            TextInput::make('name')
+                                ->label('File name')
+                                ->default(fn (File $file) => $file->name)
+                                ->required(),
+                        ])
+                        ->action(function ($data, File $file) {
+                            /** @var Server $server */
+                            $server = Filament::getTenant();
 
-                        app(DaemonFileRepository::class)
-                            ->setServer($server)
-                            ->deleteFiles($this->path, [$file->name]);
+                            app(DaemonFileRepository::class)
+                                ->setServer($server)
+                                ->renameFiles($this->path, [['to' => $data['name'], 'from' => $file->name]]);
 
-                        Activity::event('server:file.delete')
-                            ->property('directory', $this->path)
-                            ->property('files', $file->name)
-                            ->log();
-                    }),
+                            Activity::event('server:file.rename')
+                                ->property('directory', $this->path)
+                                ->property('files', [['to' => $data['name'], 'from' => $file->name]])
+                                ->log();
+
+                            Notification::make()
+                                ->title($file->name . ' was renamed to ' . $data['name'])
+                                ->success()
+                                ->send();
+                        }),
+                    Action::make('copy')
+                        ->label('Copy')
+                        ->icon('tabler-copy')
+                        ->visible(fn (File $file) => $file->is_file)
+                        ->action(function (File $file) {
+                            /** @var Server $server */
+                            $server = Filament::getTenant();
+
+                            app(DaemonFileRepository::class)
+                                ->setServer($server)
+                                ->copyFile($this->path . $file->name);
+
+                            Activity::event('server:file.copy')
+                                ->property('file', $this->path . $file->name)
+                                ->log();
+
+                            Notification::make()
+                                ->title('File copied')
+                                ->success()
+                                ->send();
+                        }),
+                    Action::make('download')
+                        ->label('Download')
+                        ->icon('tabler-download')
+                        ->visible(fn (File $file) => $file->is_file)
+                        ->action(function (File $file) {
+                            // TODO
+                        }),
+                    Action::make('move')
+                        ->label('Move')
+                        ->icon('tabler-replace')
+                        ->form([
+                            TextInput::make('location')
+                                ->label('File name')
+                                ->hint('Enter the new name and directory of this file or folder, relative to the current directory.')
+                                ->default(fn (File $file) => $file->name)
+                                ->required()
+                                ->live(),
+                            Placeholder::make('new_location')
+                                ->content(fn (Get $get) => preg_replace('/^(\.\.\/|\/)+/', '', $this->path . '/' . $get('location'))), // TODO: regex not working
+                        ])
+                        ->action(function ($data, File $file) {
+                            /** @var Server $server */
+                            $server = Filament::getTenant();
+
+                            $location = preg_replace('/^(\.\.\/|\/)+/', '', $this->path . '/' . $data['location']);
+
+                            app(DaemonFileRepository::class)
+                                ->setServer($server)
+                                ->renameFiles($this->path, [['to' => $location, 'from' => $file->name]]);
+
+                            Activity::event('server:file.rename')
+                                ->property('directory', $this->path)
+                                ->property('files', [['to' => $location, 'from' => $file->name]])
+                                ->log();
+
+                            Notification::make()
+                                ->title($this->path . $file->name . ' was moved to ' . $location)
+                                ->success()
+                                ->send();
+                        }),
+                    Action::make('permissions')
+                        ->label('Permissions')
+                        ->icon('tabler-license')
+                        ->form([
+                            CheckboxList::make('owner')
+                                ->bulkToggleable()
+                                ->options([
+                                    'read' => 'Read',
+                                    'write' => 'Write',
+                                    'execute' => 'Execute',
+                                ])
+                                ->formatStateUsing(function ($state, File $file) {
+                                    $mode = (int) substr((string) $file->mode_bits, 0, 1);
+
+                                    return $this->getPermissionsFromModeBit($mode);
+                                }),
+                            CheckboxList::make('group')
+                                ->bulkToggleable()
+                                ->options([
+                                    'read' => 'Read',
+                                    'write' => 'Write',
+                                    'execute' => 'Execute',
+                                ])
+                                ->formatStateUsing(function ($state, File $file) {
+                                    $mode = (int) substr((string) $file->mode_bits, 1, 1);
+
+                                    return $this->getPermissionsFromModeBit($mode);
+                                }),
+                            CheckboxList::make('public')
+                                ->bulkToggleable()
+                                ->options([
+                                    'read' => 'Read',
+                                    'write' => 'Write',
+                                    'execute' => 'Execute',
+                                ])
+                                ->formatStateUsing(function ($state, File $file) {
+                                    $mode = (int) substr((string) $file->mode_bits, 2, 1);
+
+                                    return $this->getPermissionsFromModeBit($mode);
+                                }),
+                        ])
+                        ->action(function ($data, File $file) {
+                            $owner = (in_array('read', $data['owner']) ? 4 : 0) | (in_array('write', $data['owner']) ? 2 : 0) | (in_array('execute', $data['owner']) ? 1 : 0);
+                            $group = (in_array('read', $data['group']) ? 4 : 0) | (in_array('write', $data['group']) ? 2 : 0) | (in_array('execute', $data['group']) ? 1 : 0);
+                            $public = (in_array('read', $data['public']) ? 4 : 0) | (in_array('write', $data['public']) ? 2 : 0) | (in_array('execute', $data['public']) ? 1 : 0);
+
+                            $mode = $owner . $group . $public;
+
+                            /** @var Server $server */
+                            $server = Filament::getTenant();
+
+                            app(DaemonFileRepository::class)
+                                ->setServer($server)
+                                ->chmodFiles($this->path, [['file' => $file->name, 'mode' => $mode]]);
+
+                            Notification::make()
+                                ->title('Permissions changed to ' . $mode)
+                                ->success()
+                                ->send();
+                        }),
+                    Action::make('archive')
+                        ->label('Archive')
+                        ->icon('tabler-archive')
+                        ->action(function (File $file) {
+                            // TODO
+                        }),
+                    DeleteAction::make()
+                        ->label('Delete')
+                        ->icon('tabler-trash')
+                        ->requiresConfirmation()
+                        ->action(function (File $file) {
+                            /** @var Server $server */
+                            $server = Filament::getTenant();
+
+                            app(DaemonFileRepository::class)
+                                ->setServer($server)
+                                ->deleteFiles($this->path, [$file->name]);
+
+                            Activity::event('server:file.delete')
+                                ->property('directory', $this->path)
+                                ->property('files', $file->name)
+                                ->log();
+                        }),
+                ]),
             ])
             ->bulkActions([
                 // TODO: add more bulk actions
@@ -170,5 +329,26 @@ class ListFiles extends ListRecords
                 ->withoutMiddleware(static::getWithoutRouteMiddleware($panel))
                 ->where('path', '.*'),
         );
+    }
+
+    private function getPermissionsFromModeBit(int $mode): array
+    {
+        if ($mode === 1) {
+            return ['execute'];
+        } elseif ($mode === 2) {
+            return ['write'];
+        } elseif ($mode === 3) {
+            return ['write', 'execute'];
+        } elseif ($mode === 4) {
+            return ['read'];
+        } elseif ($mode === 5) {
+            return ['read', 'execute'];
+        } elseif ($mode === 6) {
+            return ['read', 'write'];
+        } elseif ($mode === 7) {
+            return ['read', 'write', 'execute'];
+        }
+
+        return [];
     }
 }
