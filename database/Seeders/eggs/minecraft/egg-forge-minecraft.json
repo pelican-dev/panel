@@ -4,7 +4,7 @@
         "version": "PTDL_v2",
         "update_url": "https:\/\/github.com\/pelican-dev\/panel\/raw\/main\/database\/Seeders\/eggs\/minecraft\/egg-forge-minecraft.json"
     },
-    "exported_at": "2024-07-03T14:33:51+00:00",
+    "exported_at": "2024-07-25T12:03:19+00:00",
     "name": "Forge Minecraft",
     "author": "panel@example.com",
     "uuid": "ed072427-f209-4603-875c-f540c6dd5a65",
@@ -44,7 +44,10 @@
             "default_value": "server.jar",
             "user_viewable": true,
             "user_editable": true,
-            "rules": "required|regex:\/^([\\w\\d._-]+)(\\.jar)$\/",
+            "rules": [
+                "required",
+                "regex:\/^([\\w\\d._-]+)(\\.jar)$\/"
+            ],
             "sort": 1,
             "field_type": "text"
         },
@@ -55,7 +58,11 @@
             "default_value": "latest",
             "user_viewable": true,
             "user_editable": true,
-            "rules": "required|string|max:9",
+            "rules": [
+                "required",
+                "string",
+                "max:9"
+            ],
             "sort": 2,
             "field_type": "text"
         },
@@ -66,7 +73,11 @@
             "default_value": "recommended",
             "user_viewable": true,
             "user_editable": true,
-            "rules": "required|string|in:recommended,latest",
+            "rules": [
+                "required",
+                "string",
+                "in:recommended,latest"
+            ],
             "sort": 3,
             "field_type": "text"
         },
@@ -77,7 +88,10 @@
             "default_value": "",
             "user_viewable": true,
             "user_editable": true,
-            "rules": "nullable|regex:\/^[0-9\\.\\-]+$\/",
+            "rules": [
+                "nullable",
+                "regex:\/^[0-9\\.\\-]+$\/"
+            ],
             "sort": 4,
             "field_type": "text"
         }

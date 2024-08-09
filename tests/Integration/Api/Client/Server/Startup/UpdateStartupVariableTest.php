@@ -120,7 +120,7 @@ class UpdateStartupVariableTest extends ClientApiIntegrationTestCase
         [$user, $server] = $this->generateTestAccount();
 
         $egg = $this->cloneEggAndVariables($server->egg);
-        $egg->variables()->first()->update(['rules' => 'nullable|string']);
+        $egg->variables()->first()->update(['rules' => ['nullable', 'string']]);
 
         $server->fill(['egg_id' => $egg->id])->save();
         $server->refresh();

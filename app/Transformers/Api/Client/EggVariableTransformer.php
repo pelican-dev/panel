@@ -27,7 +27,7 @@ class EggVariableTransformer extends BaseClientTransformer
             'default_value' => $variable->default_value,
             'server_value' => $variable->server_value,
             'is_editable' => $variable->user_editable,
-            'rules' => $variable->rules,
+            'rules' => implode('|', $variable->rules),
         ];
     }
 }

@@ -40,7 +40,7 @@ class VariableCreationService
             throw new ReservedVariableNameException(sprintf('Cannot use the protected name %s for this environment variable.', array_get($data, 'env_variable')));
         }
 
-        if (!empty($data['rules'] ?? '')) {
+        if (!empty($data['rules'] ?? [])) {
             $this->validateRules($data['rules']);
         }
 
@@ -55,7 +55,7 @@ class VariableCreationService
             'default_value' => $data['default_value'] ?? '',
             'user_viewable' => in_array('user_viewable', $options),
             'user_editable' => in_array('user_editable', $options),
-            'rules' => $data['rules'] ?? '',
+            'rules' => $data['rules'] ?? [],
         ]);
 
         return $eggVariable;
