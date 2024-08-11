@@ -187,7 +187,7 @@ class CreateEgg extends CreateRecord
                             TextInput::make('script_container')
                                 ->required()
                                 ->maxLength(255)
-                                ->default('alpine:3.4'),
+                                ->default('ghcr.io/pelican-eggs/installers:debian'),
 
                             Select::make('script_entry')
                                 ->selectablePlaceholder(false)
