@@ -63,6 +63,11 @@ class File extends Model
         return $this->is_file && in_array($this->mime_type, self::ARCHIVE_MIMES);
     }
 
+    public function isImage(): bool
+    {
+        return preg_match('/^image\/(?!svg\+xml)/', $this->mime_type);
+    }
+
     public function getIcon(): string
     {
         if ($this->is_directory) {
@@ -73,12 +78,16 @@ class File extends Model
             return 'tabler-file-zip';
         }
 
+        if ($this->isImage()) {
+            return 'tabler-photo';
+        }
+
         return $this->is_symlink ? 'tabler-file-symlink' : 'tabler-file';
     }
 
     public function canEdit(): bool
     {
-        if ($this->is_directory || $this->isArchive() || $this->is_symlink) {
+        if ($this->is_directory || $this->isArchive() || $this->is_symlink || $this->isImage()) {
             return false;
         }
 
