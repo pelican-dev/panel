@@ -3,6 +3,7 @@
 namespace App\Filament\App\Resources\FileResource\Pages;
 
 use AbdelhamidErrahmouni\FilamentMonacoEditor\MonacoEditor;
+use App\Enums\EditorLanguages;
 use App\Facades\Activity;
 use App\Filament\App\Resources\FileResource;
 use App\Models\File;
@@ -338,7 +339,7 @@ class ListFiles extends ListRecords
                         ->live()
                         ->label('Language')
                         ->placeholder('File Language')
-                        ->options([]), // TODO: add lang enum
+                        ->options(EditorLanguages::class),
                     MonacoEditor::make('editor')
                         ->label('')
                         ->view('filament.plugins.monaco-editor')

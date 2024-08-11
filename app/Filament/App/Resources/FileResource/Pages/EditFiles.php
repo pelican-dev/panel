@@ -3,6 +3,7 @@
 namespace App\Filament\App\Resources\FileResource\Pages;
 
 use AbdelhamidErrahmouni\FilamentMonacoEditor\MonacoEditor;
+use App\Enums\EditorLanguages;
 use App\Facades\Activity;
 use App\Filament\App\Resources\FileResource;
 use App\Models\File;
@@ -11,7 +12,6 @@ use App\Models\Server;
 use App\Repositories\Daemon\DaemonFileRepository;
 use Filament\Actions\Action;
 use Filament\Facades\Filament;
-use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Form;
@@ -53,100 +53,15 @@ class EditFiles extends Page
         return $form
             ->schema([
                 Select::make('lang')
+                    ->live()
                     ->label('')
                     ->placeholder('File Language')
-                    ->inlineLabel()
-                    ->live()
+                    ->options(EditorLanguages::class)
                     ->default(function () {
                         $split = explode('.', $this->path);
+
                         return end($split);
-                    })
-                    ->options([
-                        'Plain Text' => 'plaintext',
-                        'abap',
-                        'apex',
-                        'azcali',
-                        'bat',
-                        'bicep',
-                        'cameligo',
-                        'coljure',
-                        'coffeescript',
-                        'c',
-                        'cpp',
-                        'csharp',
-                        'csp',
-                        'css',
-                        'cypher',
-                        'dart',
-                        'dockerfile',
-                        'ecl',
-                        'elixir',
-                        'flow9',
-                        'fsharp',
-                        'go',
-                        'graphql',
-                        'handlebars',
-                        'hcl',
-                        'html',
-                        'ini',
-                        'java',
-                        'javascript',
-                        'julia',
-                        'kotlin',
-                        'less',
-                        'lexon',
-                        'lua',
-                        'liquid',
-                        'm3',
-                        'markdown',
-                        'mdx',
-                        'mips',
-                        'msdax',
-                        'mysql',
-                        'objective-c',
-                        'pascal',
-                        'pascaligo',
-                        'perl',
-                        'pgsql',
-                        'php',
-                        'pla',
-                        'postiats',
-                        'powerquery',
-                        'powershell',
-                        'proto',
-                        'pug',
-                        'python',
-                        'qsharp',
-                        'r',
-                        'razor',
-                        'redis',
-                        'redshift',
-                        'restructuredtext',
-                        'ruby',
-                        'rust',
-                        'sb',
-                        'scala',
-                        'scheme',
-                        'scss',
-                        'shell',
-                        'sol',
-                        'aes',
-                        'sparql',
-                        'sql',
-                        'st',
-                        'swift',
-                        'systemverilog',
-                        'verilog',
-                        'tcl',
-                        'twig',
-                        'typescript',
-                        'typespec',
-                        'vb',
-                        'wgsl',
-                        'xml',
-                        'yaml',
-                        'json',
-                    ]),
+                    }),
                 MonacoEditor::make('editor')
                     ->columnSpanFull()
                     ->label('')
