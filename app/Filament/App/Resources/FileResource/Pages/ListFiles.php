@@ -13,6 +13,7 @@ use App\Repositories\Daemon\DaemonFileRepository;
 use Filament\Actions\Action as HeaderAction;
 use Filament\Facades\Filament;
 use Filament\Forms\Components\CheckboxList;
+use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
@@ -29,6 +30,7 @@ use Filament\Tables\Actions\DeleteBulkAction;
 use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Routing\Route;
 use Illuminate\Support\Facades\Route as RouteFacade;
 use Livewire\Attributes\Locked;
@@ -271,7 +273,7 @@ class ListFiles extends ListRecords
                     ->icon('tabler-trash')
                     ->requiresConfirmation()
                     ->modalDescription(fn (File $file) => $file->name)
-                    ->modalHeading('Delete {$files}?')
+                    ->modalHeading('Delete file?')
                     ->action(function (File $file) {
                         /** @var Server $server */
                         $server = Filament::getTenant();
@@ -313,12 +315,10 @@ class ListFiles extends ListRecords
     protected function getHeaderActions(): array
     {
         return [
-            HeaderAction::make('back')
-                ->hidden(fn () => $this->path === '/')
-                ->url(fn () => self::getUrl(['path' => dirname($this->path)])),
             HeaderAction::make('new_file')
                 ->authorize(auth()->user()->can(Permission::ACTION_FILE_CREATE, Filament::getTenant()))
                 ->label('New File')
+                ->color('gray')
                 ->action(function ($data) {
                     /** @var Server $server */
                     $server = Filament::getTenant();
@@ -349,6 +349,7 @@ class ListFiles extends ListRecords
             HeaderAction::make('new_folder')
                 ->authorize(auth()->user()->can(Permission::ACTION_FILE_CREATE, Filament::getTenant()))
                 ->label('New Folder')
+                ->color('gray')
                 ->action(function ($data) {
                     /** @var Server $server */
                     $server = Filament::getTenant();
@@ -366,18 +367,54 @@ class ListFiles extends ListRecords
                         ->label('Folder Name')
                         ->required(),
                 ]),
-            HeaderAction::make('download')
-                ->authorize(auth()->user()->can(Permission::ACTION_FILE_READ_CONTENT, Filament::getTenant()))
-                ->label('Download')
+            HeaderAction::make('upload')
+                ->authorize(auth()->user()->can(Permission::ACTION_FILE_CREATE, Filament::getTenant()))
+                ->label('Upload')
                 ->action(function ($data) {
-                    // TODO
-                }),
+                    /** @var Server $server */
+                    $server = Filament::getTenant();
+
+                    /** @var UploadedFile $file */
+                    foreach ($data['files'] as $file) {
+                        app(DaemonFileRepository::class)
+                            ->setServer($server)
+                            ->putContent(join_paths($this->path, $file->getFilename()), $file->getContent());
+
+                        Activity::event('server:file.uploaded')
+                            ->property('directory', $this->path)
+                            ->property('file', $file->getFilename())
+                            ->log();
+                    }
+                })
+                ->form([
+                    FileUpload::make('files')
+                        ->label('File(s)')
+                        ->storeFiles(false)
+                        ->preserveFilenames() // TODO: not working
+                        ->multiple(),
+                ]),
             HeaderAction::make('pull')
                 ->authorize(auth()->user()->can(Permission::ACTION_FILE_CREATE, Filament::getTenant()))
                 ->label('Pull')
                 ->action(function ($data) {
-                    // TODO
-                }),
+                    /** @var Server $server */
+                    $server = Filament::getTenant();
+
+                    app(DaemonFileRepository::class)
+                        ->setServer($server)
+                        ->pull($data['url'], $this->path);
+
+                    Activity::event('server:file.pull')
+                        ->property('url', $data['url'])
+                        ->property('directory', $this->path)
+                        ->log();
+                })
+                ->form([
+                    TextInput::make('url')
+                        ->label('File URL')
+                        ->required()
+                        ->url(),
+                ]),
         ];
     }
 
