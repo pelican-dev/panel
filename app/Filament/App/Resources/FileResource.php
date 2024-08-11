@@ -15,6 +15,7 @@ class FileResource extends Resource
     public static function getPages(): array
     {
         return [
+            'edit' => Pages\EditFiles::route('/edit/{path?}'),
             'index' => Pages\ListFiles::route('/{path?}'),
         ];
     }

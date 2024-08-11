@@ -152,6 +152,7 @@
             "pure": true,
             "displayName": true,
             "fileName": true
-        }
+        },
+
     }
 }

@@ -70,10 +70,10 @@ if (!function_exists('join_paths')) {
     function join_paths(string $base, string ...$paths): string
     {
         if ($base === '/') {
-            return implode('/', $paths);
+            return str_replace('//', '', implode('/', $paths));
         }
 
-        return $base . '/' . implode('/', $paths);
+        return str_replace('//', '', $base . '/' . implode('/', $paths));
     }
 }
 

@@ -6,6 +6,7 @@ use AbdelhamidErrahmouni\FilamentMonacoEditor\MonacoEditor;
 use App\Facades\Activity;
 use App\Filament\App\Resources\FileResource;
 use App\Models\File;
+use App\Models\Permission;
 use App\Models\Server;
 use App\Repositories\Daemon\DaemonFileRepository;
 use Filament\Actions\Action as HeaderAction;
@@ -82,43 +83,20 @@ class ListFiles extends ListRecords
             ])
             ->actions([
                 Action::make('view')
+                    ->authorize(auth()->user()->can(Permission::ACTION_FILE_READ, Filament::getTenant()))
                     ->label('Open')
                     ->icon('tabler-eye')
                     ->visible(fn (File $file) => $file->is_directory)
                     ->url(fn (File $file) => self::getUrl(['path' => join_paths($this->path, $file->name)])),
-                EditAction::make()
+                EditAction::make('edit')
+                    ->authorize(auth()->user()->can(Permission::ACTION_FILE_READ_CONTENT, Filament::getTenant()))
                     ->label('Edit')
                     ->icon('tabler-edit')
                     ->visible(fn (File $file) => $file->canEdit())
-                    ->modalHeading(fn (File $file) => 'Editing ' . $file->name)
-//                    ->keyBindings(['command+s', 'ctrl+s']) TODO: Make this work...
-                    ->form([
-                        MonacoEditor::make('editor')
-                            ->view('filament.plugins.monaco-editor')
-                            ->label('')
-                            ->formatStateUsing(function (File $file) {
-                                /** @var Server $server */
-                                $server = Filament::getTenant();
-
-                                return app(DaemonFileRepository::class)
-                                    ->setServer($server)
-                                    ->getContent(join_paths($this->path, $file->name), config('panel.files.max_edit_size'));
-                            }),
-                    ])
-                    ->action(function ($data, File $file) {
-                        /** @var Server $server */
-                        $server = Filament::getTenant();
-
-                        app(DaemonFileRepository::class)
-                            ->setServer($server)
-                            ->putContent(join_paths($this->path, $file->name), $data['editor'] ?? '');
-
-                        Activity::event('server:file.write')
-                            ->property('file', join_paths($this->path, $file->name))
-                            ->log();
-                    }),
+                    ->url(fn (File $file) => self::getUrl(['path' => join_paths('edit', $this->path, $file->name)])),
                 ActionGroup::make([
                     Action::make('rename')
+                        ->authorize(auth()->user()->can(Permission::ACTION_FILE_UPDATE, Filament::getTenant()))
                         ->label('Rename')
                         ->icon('tabler-forms')
                         ->form([
@@ -146,6 +124,7 @@ class ListFiles extends ListRecords
                                 ->send();
                         }),
                     Action::make('copy')
+                        ->authorize(auth()->user()->can(Permission::ACTION_FILE_CREATE, Filament::getTenant()))
                         ->label('Copy')
                         ->icon('tabler-copy')
                         ->visible(fn (File $file) => $file->is_file)
@@ -167,6 +146,7 @@ class ListFiles extends ListRecords
                                 ->send();
                         }),
                     Action::make('download')
+                        ->authorize(auth()->user()->can(Permission::ACTION_FILE_READ_CONTENT, Filament::getTenant()))
                         ->label('Download')
                         ->icon('tabler-download')
                         ->visible(fn (File $file) => $file->is_file)
@@ -174,6 +154,7 @@ class ListFiles extends ListRecords
                             // TODO
                         }),
                     Action::make('move')
+                        ->authorize(auth()->user()->can(Permission::ACTION_FILE_UPDATE, Filament::getTenant()))
                         ->label('Move')
                         ->icon('tabler-replace')
                         ->form([
@@ -207,6 +188,7 @@ class ListFiles extends ListRecords
                                 ->send();
                         }),
                     Action::make('permissions')
+                        ->authorize(auth()->user()->can(Permission::ACTION_FILE_UPDATE, Filament::getTenant()))
                         ->label('Permissions')
                         ->icon('tabler-license')
                         ->form([
@@ -267,13 +249,23 @@ class ListFiles extends ListRecords
                                 ->send();
                         }),
                     Action::make('archive')
+                        ->authorize(auth()->user()->can(Permission::ACTION_FILE_ARCHIVE, Filament::getTenant()))
                         ->label('Archive')
                         ->icon('tabler-archive')
                         ->action(function (File $file) {
                             // TODO
                         }),
+                    Action::make('unarchive')
+                        ->authorize(auth()->user()->can(Permission::ACTION_FILE_ARCHIVE, Filament::getTenant()))
+                        ->label('Unarchive')
+                        ->icon('tabler-archive')
+                        ->visible(fn (File $file) => $file->isArchive())
+                        ->action(function (File $file) {
+                            // TODO
+                        }),
                 ]),
                 DeleteAction::make()
+                    ->authorize(auth()->user()->can(Permission::ACTION_FILE_DELETE, Filament::getTenant()))
                     ->label('')
                     ->icon('tabler-trash')
                     ->requiresConfirmation()
@@ -297,6 +289,7 @@ class ListFiles extends ListRecords
                 // TODO: add more bulk actions
                 BulkActionGroup::make([
                     DeleteBulkAction::make()
+                        ->authorize(auth()->user()->can(Permission::ACTION_FILE_DELETE, Filament::getTenant()))
                         ->action(function ($files) {
                             $files = $files->map(fn ($file) => $file->name)->toArray();
 
@@ -318,11 +311,12 @@ class ListFiles extends ListRecords
 
     protected function getHeaderActions(): array
     {
-        return [ // TODO: add other header actions, upload.
+        return [
             HeaderAction::make('back')
                 ->hidden(fn () => $this->path === '/')
                 ->url(fn () => self::getUrl(['path' => dirname($this->path)])),
             HeaderAction::make('new_file')
+                ->authorize(auth()->user()->can(Permission::ACTION_FILE_CREATE, Filament::getTenant()))
                 ->label('New File')
                 ->action(function ($data) {
                     /** @var Server $server */
@@ -340,25 +334,19 @@ class ListFiles extends ListRecords
                     TextInput::make('name')
                         ->label('File Name')
                         ->required(),
-                    Select::make('test') //TODO: Add  supported Langs
-                        ->label('')
+                    Select::make('lang')
+                        ->live()
+                        ->label('Language')
                         ->placeholder('File Language')
-                        ->options([ //Placeholders
-                            'html' => 'html',
-                            'php' => 'php',
-                            'js' => 'js',
-                            'css' => 'css',
-                            'sql' => 'sql',
-                            'csv' => 'csv',
-
-                        ]),
+                        ->options([]), // TODO: add lang enum
                     MonacoEditor::make('editor')
                         ->label('')
                         ->view('filament.plugins.monaco-editor')
-                        ->language()
+                        ->language(fn (Get $get) => $get('lang'))
                         ->required(),
                 ]),
             HeaderAction::make('new_folder')
+                ->authorize(auth()->user()->can(Permission::ACTION_FILE_CREATE, Filament::getTenant()))
                 ->label('New Folder')
                 ->action(function ($data) {
                     /** @var Server $server */
@@ -377,6 +365,18 @@ class ListFiles extends ListRecords
                         ->label('Folder Name')
                         ->required(),
                 ]),
+            HeaderAction::make('download')
+                ->authorize(auth()->user()->can(Permission::ACTION_FILE_READ_CONTENT, Filament::getTenant()))
+                ->label('Download')
+                ->action(function ($data) {
+                    // TODO
+                }),
+            HeaderAction::make('pull')
+                ->authorize(auth()->user()->can(Permission::ACTION_FILE_CREATE, Filament::getTenant()))
+                ->label('Pull')
+                ->action(function ($data) {
+                    // TODO
+                }),
         ];
     }
 
