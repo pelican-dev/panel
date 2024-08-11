@@ -83,6 +83,11 @@ class AppServiceProvider extends ServiceProvider
             $event->extendSocialite('discord', \SocialiteProviders\Discord\Provider::class);
         });
 
+        Event::listen(function (\SocialiteProviders\Manager\SocialiteWasCalled $event) {
+            $event->extendSocialite('authentik', \SocialiteProviders\Authentik\Provider::class);
+        });
+        
+
         FilamentColor::register([
             'danger' => Color::Red,
             'gray' => Color::Zinc,
