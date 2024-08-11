@@ -20,6 +20,7 @@ use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\AuthenticateSession;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
+use Filament\Navigation\MenuItem;
 
 class AppPanelProvider extends PanelProvider
 {
@@ -50,6 +51,14 @@ class AppPanelProvider extends PanelProvider
             ->discoverPages(in: app_path('Filament/App/Pages'), for: 'App\\Filament\\App\\Pages')
             ->pages([
                 Pages\Dashboard::class,
+            ])
+            ->userMenuItems([
+                MenuItem::make()
+                    ->label('Admin')
+                    ->url('/admin')
+                    ->icon('tabler-arrow-forward')
+                    ->sort(5)
+                    ->visible(fn (): bool => auth()->user()->root_admin),
             ])
             ->favicon(config('app.favicon', '/pelican.ico'))
             ->brandName(config('app.name', 'Pelican'))
