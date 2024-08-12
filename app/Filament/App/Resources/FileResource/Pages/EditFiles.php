@@ -10,8 +10,9 @@ use App\Models\File;
 use App\Models\Permission;
 use App\Models\Server;
 use App\Repositories\Daemon\DaemonFileRepository;
-use Filament\Actions\Action;
 use Filament\Facades\Filament;
+use Filament\Forms\Components\Actions\Action;
+use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Form;
@@ -21,6 +22,7 @@ use Filament\Pages\Concerns\InteractsWithFormActions;
 use Filament\Panel;
 use Filament\Resources\Pages\Page;
 use Filament\Resources\Pages\PageRegistration;
+use Filament\Support\Enums\Alignment;
 use Illuminate\Routing\Route;
 use Illuminate\Support\Facades\Route as RouteFacade;
 use Livewire\Attributes\Locked;
@@ -57,54 +59,54 @@ class EditFiles extends Page
                     ->label('')
                     ->placeholder('File Language')
                     ->options(EditorLanguages::class)
+                    ->hidden() //TODO Fix Dis
                     ->default(function () {
                         $split = explode('.', $this->path);
 
                         return end($split);
                     }),
-                MonacoEditor::make('editor')
-                    ->columnSpanFull()
-                    ->label('')
-                    ->language(fn (Get $get) => $get('lang') ?? 'plaintext')
-                    ->view('filament.plugins.monaco-editor')
-                    ->formatStateUsing(function () {
-                        /** @var Server $server */
-                        $server = Filament::getTenant();
+                Section::make('Editing: ' . $this->path)
+                    ->footerActions([
+                        Action::make('save')
+                            ->label('Save Changes')
+                            ->icon('tabler-device-floppy')
+                            ->keyBindings('mod+s')
+                            ->action(function () {
+                                /** @var Server $server */
+                                $server = Filament::getTenant();
 
-                        return app(DaemonFileRepository::class)
-                            ->setServer($server)
-                            ->getContent($this->path, config('panel.files.max_edit_size'));
-                    }),
+                                $data = $this->form->getState();
+
+                                app(DaemonFileRepository::class)
+                                    ->setServer($server)
+                                    ->putContent($this->path, $data['editor'] ?? '');
+
+                                Activity::event('server:file.write')
+                                    ->property('file', $this->path)
+                                    ->log();
+                            }),
+                        Action::make('cancel')
+                            ->label('Cancel')
+                            ->color('danger')
+                            ->icon('tabler-x')
+                            ->url(fn () => ListFiles::getUrl(['path' => dirname($this->path)])),
+                    ])
+                    ->footerActionsAlignment(Alignment::End)
+                    ->schema([
+                        MonacoEditor::make('editor')
+                            ->label('')
+                            ->formatStateUsing(function () {
+                                /** @var Server $server */
+                                $server = Filament::getTenant();
+
+                                return app(DaemonFileRepository::class)
+                                    ->setServer($server)
+                                    ->getContent($this->path, config('panel.files.max_edit_size'));
+                            })
+                            ->language(fn (Get $get) => $get('lang') ?? 'plaintext')
+                            ->view('filament.plugins.monaco-editor'),
+                    ]),
             ]);
-    }
-
-    protected function getHeaderActions(): array
-    {
-        return [
-            Action::make('save')
-                ->label('Save Changes')
-                ->icon('tabler-device-floppy')
-                ->keyBindings('mod+s')
-                ->action(function () {
-                    /** @var Server $server */
-                    $server = Filament::getTenant();
-
-                    $data = $this->form->getState();
-
-                    app(DaemonFileRepository::class)
-                        ->setServer($server)
-                        ->putContent($this->path, $data['editor'] ?? '');
-
-                    Activity::event('server:file.write')
-                        ->property('file', $this->path)
-                        ->log();
-                }),
-            Action::make('cancel')
-                ->label('Cancel')
-                ->color('danger')
-                ->icon('tabler-x')
-                ->url(fn () => ListFiles::getUrl(['path' => dirname($this->path)])),
-        ];
     }
 
     public function mount(string $path): void
