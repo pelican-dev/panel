@@ -14,7 +14,6 @@ class QueueWorkerServiceCommand extends Command
         {--service-name= : Name of the queue worker service.}
         {--user= : The user that PHP runs under.}
         {--group= : The group that PHP runs under.}
-        {--use-redis : Whether redis is used.}
         {--overwrite : Force overwrite if the service file already exists.}';
 
     public function handle(): void
@@ -32,7 +31,8 @@ class QueueWorkerServiceCommand extends Command
         $user = $this->option('user') ?? $this->ask('Webserver User', 'www-data');
         $group = $this->option('group') ?? $this->ask('Webserver Group', 'www-data');
 
-        $afterRedis = $this->option('use-redis') ? '
+        $redisUsed = config('queue.default') === 'redis' || config('session.driver') === 'redis' || config('cache.default') === 'redis';
+        $afterRedis = $redisUsed ? '
 After=redis-server.service' : '';
 
         $basePath = base_path();

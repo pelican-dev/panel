@@ -20,6 +20,7 @@ class StoreNodeRequest extends ApplicationApiRequest
         return collect($rules ?? Node::getRules())->only([
             'public',
             'name',
+            'description',
             'fqdn',
             'scheme',
             'behind_proxy',
