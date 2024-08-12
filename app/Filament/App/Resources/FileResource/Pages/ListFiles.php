@@ -496,7 +496,7 @@ class ListFiles extends ListRecords
                     foreach ($data['files'] as $file) {
                         app(DaemonFileRepository::class)
                             ->setServer($server)
-                            ->putContent(join_paths($this->path, $file->getFilename()), $file->getContent());
+                            ->putContent(join_paths($this->path, $file->getClientOriginalName()), $file->getContent());
 
                         Activity::event('server:file.uploaded')
                             ->property('directory', $this->path)
@@ -508,7 +508,8 @@ class ListFiles extends ListRecords
                     FileUpload::make('files')
                         ->label('File(s)')
                         ->storeFiles(false)
-                        ->preserveFilenames() // TODO: not working, still gets random name
+                        ->previewable(false)
+                        ->preserveFilenames()
                         ->multiple(),
                 ]),
             HeaderAction::make('pull')
