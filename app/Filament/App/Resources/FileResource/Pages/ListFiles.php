@@ -519,6 +519,7 @@ class ListFiles extends ListRecords
                 })
                 ->form([
                     Tabs::make()
+                        ->contained(false)
                         ->schema([
                             Tabs\Tab::make('Upload Files')
                                 ->live()
@@ -535,7 +536,7 @@ class ListFiles extends ListRecords
                                 ->disabled(fn (Get $get) => count($get('files')) > 0)
                                 ->schema([
                                     TextInput::make('url')
-                                        ->label('File URL')
+                                        ->label('URL')
                                         ->url(),
                                 ]),
                         ]),
