@@ -407,7 +407,7 @@ class ListFiles extends ListRecords
                         }),
                     DeleteBulkAction::make()
                         ->authorize(auth()->user()->can(Permission::ACTION_FILE_DELETE, Filament::getTenant()))
-                        ->action(function ($files) {
+                        ->action(function (Collection $files) {
                             $files = $files->map(fn ($file) => $file->name)->toArray();
 
                             /** @var Server $server */
