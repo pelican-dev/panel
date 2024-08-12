@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Auth;
 
+use App\Services\Users\UserCreationService;
 use Illuminate\Auth\AuthManager;
 use Illuminate\Http\RedirectResponse;
 use Laravel\Socialite\Facades\Socialite;
@@ -18,7 +19,8 @@ class OAuthController extends Controller
      */
     public function __construct(
         private AuthManager $auth,
-        private UserUpdateService $updateService
+        private UserUpdateService $updateService,
+        private UserCreationService $creationService
     ) {
     }
 
@@ -47,14 +49,25 @@ class OAuthController extends Controller
             return redirect()->route('account');
         }
 
-        try {
-            $user = User::query()->whereJsonContains('oauth->'. $driver, $oauthUser->getId())->firstOrFail();
+        $user = User::query()->whereJsonContains('oauth->'. $driver, $oauthUser->getId())->first();
 
-            $this->auth->guard()->login($user, true);
-        } catch (Exception $e) {
+        // creating the user if none was found (User Provisioning)
+        if (!$user && env('OAUTH_USER_PROVISIONING') == 'true') {
+            $userdata = [
+                'username' => $oauthUser->getId(),
+                'email' => $oauthUser->getEmail(),
+                'name_first' => str_split($oauthUser->getName())[0],
+                'name_last' => str_split($oauthUser->getName())[1],
+                'oauth' => [$driver => $oauthUser->getId()],
+            ];
+
+            $user = $this->creationService->handle($userdata);
+        }else {
             // No user found - redirect to normal login
             return redirect()->route('auth.login');
         }
+
+        $this->auth->guard()->login($user, true);
 
         return redirect('/');
     }
