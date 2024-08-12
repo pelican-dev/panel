@@ -10,6 +10,8 @@ use App\Models\File;
 use App\Models\Permission;
 use App\Models\Server;
 use App\Repositories\Daemon\DaemonFileRepository;
+use App\Services\Nodes\NodeJWTService;
+use Carbon\CarbonImmutable;
 use Filament\Actions\Action as HeaderAction;
 use Filament\Facades\Filament;
 use Filament\Forms\Components\CheckboxList;
@@ -24,6 +26,7 @@ use Filament\Resources\Pages\ListRecords;
 use Filament\Resources\Pages\PageRegistration;
 use Filament\Tables\Actions\Action;
 use Filament\Tables\Actions\ActionGroup;
+use Filament\Tables\Actions\BulkAction;
 use Filament\Tables\Actions\BulkActionGroup;
 use Filament\Tables\Actions\DeleteAction;
 use Filament\Tables\Actions\DeleteBulkAction;
@@ -95,8 +98,8 @@ class ListFiles extends ListRecords
                     ->authorize(auth()->user()->can(Permission::ACTION_FILE_READ_CONTENT, Filament::getTenant()))
                     ->label('Edit')
                     ->icon('tabler-edit')
-                    ->visible(fn (File $file) => $file->canEdit())
-                    ->url(fn (File $file) => self::getUrl(['path' => join_paths('edit', $this->path, $file->name)])),
+                    ->visible(fn (File $file) => $file->canEdit()) // TODO: even if this is hidden the url is opened when clicking the row (which opens a broken url then)
+                    ->url(fn (File $file) => EditFiles::getUrl(['path' => join_paths($this->path, $file->name)])),
                 ActionGroup::make([
                     Action::make('rename')
                         ->authorize(auth()->user()->can(Permission::ACTION_FILE_UPDATE, Filament::getTenant()))
@@ -153,8 +156,24 @@ class ListFiles extends ListRecords
                         ->label('Download')
                         ->icon('tabler-download')
                         ->visible(fn (File $file) => $file->is_file)
-                        ->action(function (File $file) {
-                            // TODO
+                        ->action(function (File $file) { // TODO: untested
+                            /** @var Server $server */
+                            $server = Filament::getTenant();
+
+                            $token = app(NodeJWTService::class)
+                                ->setExpiresAt(CarbonImmutable::now()->addMinutes(15))
+                                ->setUser(auth()->user())
+                                ->setClaims([
+                                    'file_path' => rawurldecode(join_paths($this->path, $file->name)),
+                                    'server_uuid' => $server->uuid,
+                                ])
+                                ->handle($server->node, auth()->user()->id . $server->uuid);
+
+                            Activity::event('server:file.download')
+                                ->property('file', join_paths($this->path, $file->name))
+                                ->log();
+
+                            redirect()->away(sprintf('%s/download/file?token=%s', $server->node->getConnectionAddress(), $token->toString()));
                         }),
                     Action::make('move')
                         ->authorize(auth()->user()->can(Permission::ACTION_FILE_UPDATE, Filament::getTenant()))
@@ -255,16 +274,46 @@ class ListFiles extends ListRecords
                         ->authorize(auth()->user()->can(Permission::ACTION_FILE_ARCHIVE, Filament::getTenant()))
                         ->label('Archive')
                         ->icon('tabler-archive')
-                        ->action(function (File $file) {
-                            // TODO
+                        ->action(function (File $file) { // TODO: untested
+                            /** @var Server $server */
+                            $server = Filament::getTenant();
+
+                            app(DaemonFileRepository::class)
+                                ->setServer($server)
+                                ->compressFiles($this->path, [$file->name]);
+
+                            Activity::event('server:file.compress')
+                                ->property('directory', $this->path)
+                                ->property('files', [$file->name])
+                                ->log();
+
+                            Notification::make()
+                                ->title('Archive created')
+                                ->success()
+                                ->send();
                         }),
                     Action::make('unarchive')
                         ->authorize(auth()->user()->can(Permission::ACTION_FILE_ARCHIVE, Filament::getTenant()))
                         ->label('Unarchive')
                         ->icon('tabler-archive')
                         ->visible(fn (File $file) => $file->isArchive())
-                        ->action(function (File $file) {
-                            // TODO
+                        ->action(function (File $file) { // TODO: untested
+                            /** @var Server $server */
+                            $server = Filament::getTenant();
+
+                            app(DaemonFileRepository::class)
+                                ->setServer($server)
+                                ->decompressFile($this->path, $file->name);
+
+                            Activity::event('server:file.decompress')
+                                ->property('directory', $this->path)
+                                ->property('files', $file->name)
+                                ->log();
+
+                            Notification::make()
+                                ->title('Unarchive completed')
+                                ->success()
+                                ->send();
                         }),
                 ]),
                 DeleteAction::make()
@@ -289,8 +338,62 @@ class ListFiles extends ListRecords
                     }),
             ])
             ->bulkActions([
-                // TODO: add more bulk actions
                 BulkActionGroup::make([
+                    BulkAction::make('move')
+                        ->authorize(auth()->user()->can(Permission::ACTION_FILE_UPDATE, Filament::getTenant()))
+                        ->form([
+                            TextInput::make('location')
+                                ->label('File name')
+                                ->hint('Enter the new name and directory of this file or folder, relative to the current directory.')
+                                ->default(fn (File $file) => $file->name)
+                                ->required()
+                                ->live(),
+                            Placeholder::make('new_location')
+                                ->content(fn (Get $get) => resolve_path('./' . join_paths($this->path, $get('location')))),
+                        ])
+                        ->action(function ($files, $data) { // TODO: untested
+                            $location = resolve_path(join_paths($this->path, $data('location')));
+                            $files = $files->map(fn ($file) => ['to' => $location, 'from' => $file->name])->toArray();
+
+                            /** @var Server $server */
+                            $server = Filament::getTenant();
+
+                            app(DaemonFileRepository::class)
+                                ->setServer($server)
+                                ->renameFiles($this->path, $files);
+
+                            Activity::event('server:file.rename')
+                                ->property('directory', $this->path)
+                                ->property('files', $files)
+                                ->log();
+
+                            Notification::make()
+                                ->title(count($files) . ' Files were moved from to ' . $location)
+                                ->success()
+                                ->send();
+                        }),
+                    BulkAction::make('archive')
+                        ->authorize(auth()->user()->can(Permission::ACTION_FILE_ARCHIVE, Filament::getTenant()))
+                        ->action(function ($files) { // TODO: untested
+                            $files = $files->map(fn ($file) => $file->name)->toArray();
+
+                            /** @var Server $server */
+                            $server = Filament::getTenant();
+
+                            app(DaemonFileRepository::class)
+                                ->setServer($server)
+                                ->compressFiles($this->path, $files);
+
+                            Activity::event('server:file.compress')
+                                ->property('directory', $this->path)
+                                ->property('files', $files)
+                                ->log();
+
+                            Notification::make()
+                                ->title('Archive created')
+                                ->success()
+                                ->send();
+                        }),
                     DeleteBulkAction::make()
                         ->authorize(auth()->user()->can(Permission::ACTION_FILE_DELETE, Filament::getTenant()))
                         ->action(function ($files) {
@@ -307,6 +410,11 @@ class ListFiles extends ListRecords
                                 ->property('directory', $this->path)
                                 ->property('files', $files)
                                 ->log();
+
+                            Notification::make()
+                                ->title(count($files) . ' Files deleted.')
+                                ->success()
+                                ->send();
                         }),
                 ]),
             ]);
@@ -390,7 +498,7 @@ class ListFiles extends ListRecords
                     FileUpload::make('files')
                         ->label('File(s)')
                         ->storeFiles(false)
-                        ->preserveFilenames() // TODO: not working
+                        ->preserveFilenames() // TODO: not working, still gets random name
                         ->multiple(),
                 ]),
             HeaderAction::make('pull')
