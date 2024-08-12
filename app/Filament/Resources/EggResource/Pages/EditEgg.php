@@ -293,16 +293,14 @@ class EditEgg extends EditRecord
                             Notification::make()
                                 ->title('Import Failed')
                                 ->body($exception->getMessage())
-                                ->danger()
+                                ->danger() // Will Robinson
                                 ->send();
 
                             report($exception);
 
                             return;
                         }
-                    }
-
-                    if (!empty($data['url'])) {
+                    } elseif (!empty($data['url'])) {
                         try {
                             $eggImportService->fromUrl($data['url'], $egg);
                         } catch (Exception $exception) {
