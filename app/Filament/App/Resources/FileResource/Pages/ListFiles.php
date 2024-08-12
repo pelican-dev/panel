@@ -18,6 +18,7 @@ use Filament\Forms\Components\CheckboxList;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Tabs;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Get;
 use Filament\Notifications\Notification;
@@ -492,47 +493,52 @@ class ListFiles extends ListRecords
                     /** @var Server $server */
                     $server = Filament::getTenant();
 
-                    /** @var UploadedFile $file */
-                    foreach ($data['files'] as $file) {
+                    if (count($data['files']) > 1 && !isset($data['url'])) {
+                        /** @var UploadedFile $file */
+                        foreach ($data['files'] as $file) {
+                            app(DaemonFileRepository::class)
+                                ->setServer($server)
+                                ->putContent(join_paths($this->path, $file->getClientOriginalName()), $file->getContent());
+
+                            Activity::event('server:file.uploaded')
+                                ->property('directory', $this->path)
+                                ->property('file', $file->getFilename())
+                                ->log();
+                        }
+                    } elseif ($data['url'] !== null) {
                         app(DaemonFileRepository::class)
                             ->setServer($server)
-                            ->putContent(join_paths($this->path, $file->getClientOriginalName()), $file->getContent());
+                            ->pull($data['url'], $this->path);
 
-                        Activity::event('server:file.uploaded')
+                        Activity::event('server:file.pull')
+                            ->property('url', $data['url'])
                             ->property('directory', $this->path)
-                            ->property('file', $file->getFilename())
                             ->log();
                     }
+
                 })
                 ->form([
-                    FileUpload::make('files')
-                        ->label('File(s)')
-                        ->storeFiles(false)
-                        ->previewable(false)
-                        ->preserveFilenames()
-                        ->multiple(),
-                ]),
-            HeaderAction::make('pull')
-                ->authorize(auth()->user()->can(Permission::ACTION_FILE_CREATE, Filament::getTenant()))
-                ->label('Pull')
-                ->action(function ($data) {
-                    /** @var Server $server */
-                    $server = Filament::getTenant();
-
-                    app(DaemonFileRepository::class)
-                        ->setServer($server)
-                        ->pull($data['url'], $this->path);
-
-                    Activity::event('server:file.pull')
-                        ->property('url', $data['url'])
-                        ->property('directory', $this->path)
-                        ->log();
-                })
-                ->form([
-                    TextInput::make('url')
-                        ->label('File URL')
-                        ->required()
-                        ->url(),
+                    Tabs::make()
+                        ->schema([
+                            Tabs\Tab::make('Upload Files')
+                                ->live()
+                                ->schema([
+                                    FileUpload::make('files')
+                                        ->label('File(s)')
+                                        ->storeFiles(false)
+                                        ->previewable(false)
+                                        ->preserveFilenames()
+                                        ->multiple(),
+                                ]),
+                            Tabs\Tab::make('Upload From URL')
+                                ->live()
+                                ->disabled(fn (Get $get) => count($get('files')) > 0)
+                                ->schema([
+                                    TextInput::make('url')
+                                        ->label('File URL')
+                                        ->url(),
+                                ]),
+                        ]),
                 ]),
         ];
     }
