@@ -53,7 +53,7 @@
 
         monacoEditorAddLoaderScriptToHead() {
             script = document.createElement('script');
-            script.src = 'https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.39.0/min/vs/loader.min.js';
+            script.src = 'https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.49.0/min/vs/loader.min.js';
             document.head.appendChild(script);
         },
 
@@ -64,11 +64,6 @@
             `${value}` +
             `{{ $getPreviewBodyEndContent() }}` +
             `&lt;/body&gt;`;
-        },
-
-        showCodePreview(){
-            this.previewContent = this.wrapPreview(this.monacoContent);
-            this.showPreview = true;
         },
 
     }" x-init="
@@ -90,8 +85,8 @@
             if(typeof _amdLoaderGlobal !== 'undefined'){
 
                 // Based on https://jsfiddle.net/developit/bwgkr6uq/ which works without needing service worker. Provided by loader.min.js.
-                require.config({ paths: { 'vs': 'https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.39.0/min/vs' }});
-                let proxy = URL.createObjectURL(new Blob([` self.MonacoEnvironment = { baseUrl: 'https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.39.0/min' }; importScripts('https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.39.0/min/vs/base/worker/workerMain.min.js');`], { type: 'text/javascript' }));
+                require.config({ paths: { 'vs': 'https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.49.0/min/vs' }});
+                let proxy = URL.createObjectURL(new Blob([` self.MonacoEnvironment = { baseUrl: 'https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.49.0/min' }; importScripts('https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.49.0/min/vs/base/worker/workerMain.min.js');`], { type: 'text/javascript' }));
                 window.MonacoEnvironment = { getWorkerUrl: () => proxy };
 
                 require(['vs/editor/editor.main'], () => {
@@ -106,7 +101,9 @@
                         language: monacoLanguage,
                         scrollbar: {
                             horizontal: 'auto',
-                            horizontalScrollbarSize: 15
+                            horizontalScrollbarSize: 15,
+                            vertical: 'auto',
+                            verticalScrollbarSize: 15
                         },
 
                     });
@@ -123,27 +120,6 @@
         }, 5); " :id="monacoId"
          class="fme-wrapper"
          :class="{ 'fme-full-screen': fullScreenModeEnabled }" x-cloak>
-        <div class="fme-control-section">
-            @if($getEnablePreview())
-                <div x-data="{
-                    repositionTabMarker(el){
-                        this.$refs.marker.classList.remove('p-1');
-                        this.$refs.marker.style.width   =   el.offsetWidth + 'px';
-                        this.$refs.marker.style.height  =   el.offsetHeight + 'px';
-                        this.$refs.marker.style.left    =   el.offsetLeft + 'px';
-                    }
-                }" x-cloak class="fme-code-preview-tab" wire:ignore>
-                    <button type="button" @click="repositionTabMarker($el); showPreview = false;" class="fme-code-preview-tab-item">
-                        {{ __("Code") }}
-                    </button>
-                    <button type="button" @click="repositionTabMarker($el); showCodePreview();" class="fme-code-preview-tab-item">
-                        {{ __("Preview") }}
-                    </button>
-                    <div x-ref="marker" class="fme-code-preview-tab-marker-container p-1">
-                        <div class="fme-code-preview-tab-marker"></div>
-                    </div>
-                </div>
-            @endif
             <div class="flex items-center ml-auto">
                 @if($getShowFullScreenToggle())
                     <button type="button" aria-label="{{ __("full_screen_btn_label") }}" class="fme-full-screen-btn" @click="toggleFullScreenMode()">
@@ -152,15 +128,12 @@
                     </button>
                 @endif
             </div>
-        </div>
-        <div class="h-full w-full">
             <div class="fme-container" x-show="!showPreview">
                 <!-- Editor -->
                 <div x-show="!monacoLoader" class="fme-element-wrapper">
                     <div x-ref="monacoEditorElement" class="fme-element" wire:ignore style="height: 100%"></div>
                     <div x-ref="monacoPlaceholderElement" x-show="monacoPlaceholder" @click="monacoEditorFocus()" :style="'font-size: ' + monacoFontSize" class="fme-placeholder" x-text="monacoPlaceholderText"></div>
                 </div>
-            </div>
         </div>
     </div>
 
