@@ -11,8 +11,8 @@ use Sushi\Sushi;
 
 /**
  * @property string $name
- * @property Carbon $created
- * @property Carbon $modified
+ * @property Carbon $created_at
+ * @property Carbon $modified_at
  * @property string $mode
  * @property int $mode_bits
  * @property int $size

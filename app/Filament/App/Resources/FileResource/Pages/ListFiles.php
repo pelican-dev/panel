@@ -85,7 +85,10 @@ class ListFiles extends ListRecords
                 TextColumn::make('size')
                     ->formatStateUsing(fn ($state, File $file) => $file->is_file ? convert_bytes_to_readable($state) : ''),
                 TextColumn::make('modified_at')
-                    ->formatStateUsing(fn ($state) => $state->diffForHumans()),
+                    ->dateTime()
+                    ->sortable()
+                    ->formatStateUsing(fn ($state) => $state->diffForHumans())
+                    ->tooltip(fn (File $file) => $file->modified_at),
             ])
             ->actions([
                 Action::make('view')

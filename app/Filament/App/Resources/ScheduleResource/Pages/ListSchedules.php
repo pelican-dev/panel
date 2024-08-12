@@ -32,11 +32,17 @@ class ListSchedules extends ListRecords
                     ->boolean()
                     ->sortable(),
                 TextColumn::make('last_run_at')
+                    ->label('Last run')
                     ->dateTime()
-                    ->sortable(),
+                    ->sortable()
+                    ->formatStateUsing(fn ($state) => $state->diffForHumans())
+                    ->tooltip(fn (Schedule $schedule) => $schedule->last_run_at), // TODO: deal with timezones
                 TextColumn::make('next_run_at')
+                    ->label('Next run')
                     ->dateTime()
-                    ->sortable(),
+                    ->sortable()
+                    ->formatStateUsing(fn ($state) => $state->diffForHumans())
+                    ->tooltip(fn (Schedule $schedule) => $schedule->next_run_at), // TODO: deal with timezones
             ])
             ->actions([
                 ViewAction::make(),

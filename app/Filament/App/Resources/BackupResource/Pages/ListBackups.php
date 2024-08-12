@@ -64,8 +64,11 @@ class ListBackups extends ListRecords
                     ->label('Size')
                     ->formatStateUsing(fn ($state) => convert_bytes_to_readable($state)),
                 TextColumn::make('created_at')
+                    ->label('Created')
                     ->dateTime()
-                    ->sortable(),
+                    ->sortable()
+                    ->formatStateUsing(fn ($state) => $state->diffForHumans())
+                    ->tooltip(fn (Backup $backup) => $backup->created_at),
                 IconColumn::make('is_successful')
                     ->label('Successful')
                     ->boolean(),
