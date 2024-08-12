@@ -33,6 +33,7 @@ use Filament\Tables\Actions\DeleteBulkAction;
 use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Routing\Route;
 use Illuminate\Support\Facades\Route as RouteFacade;
@@ -159,7 +160,7 @@ class ListFiles extends ListRecords
                         ->label('Download')
                         ->icon('tabler-download')
                         ->visible(fn (File $file) => $file->is_file)
-                        ->action(function (File $file) { // TODO: untested
+                        ->action(function (File $file) {
                             /** @var Server $server */
                             $server = Filament::getTenant();
 
@@ -176,7 +177,7 @@ class ListFiles extends ListRecords
                                 ->property('file', join_paths($this->path, $file->name))
                                 ->log();
 
-                            redirect()->away(sprintf('%s/download/file?token=%s', $server->node->getConnectionAddress(), $token->toString()));
+                            redirect()->away(sprintf('%s/download/file?token=%s', $server->node->getConnectionAddress(), $token->toString())); // TODO: download works, but breaks modals
                         }),
                     Action::make('move')
                         ->authorize(auth()->user()->can(Permission::ACTION_FILE_UPDATE, Filament::getTenant()))
@@ -277,7 +278,7 @@ class ListFiles extends ListRecords
                         ->authorize(auth()->user()->can(Permission::ACTION_FILE_ARCHIVE, Filament::getTenant()))
                         ->label('Archive')
                         ->icon('tabler-archive')
-                        ->action(function (File $file) { // TODO: untested
+                        ->action(function (File $file) {
                             /** @var Server $server */
                             $server = Filament::getTenant();
 
@@ -290,6 +291,8 @@ class ListFiles extends ListRecords
                                 ->property('files', [$file->name])
                                 ->log();
 
+                            // TODO: new archive file is not instantly displayed, requires page refresh
+
                             Notification::make()
                                 ->title('Archive created')
                                 ->success()
@@ -300,7 +303,7 @@ class ListFiles extends ListRecords
                         ->label('Unarchive')
                         ->icon('tabler-archive')
                         ->visible(fn (File $file) => $file->isArchive())
-                        ->action(function (File $file) { // TODO: untested
+                        ->action(function (File $file) {
                             /** @var Server $server */
                             $server = Filament::getTenant();
 
@@ -312,6 +315,8 @@ class ListFiles extends ListRecords
                                 ->property('directory', $this->path)
                                 ->property('files', $file->name)
                                 ->log();
+
+                            // TODO: new files are not instantly displayed, requires page refresh
 
                             Notification::make()
                                 ->title('Unarchive completed')
@@ -352,10 +357,10 @@ class ListFiles extends ListRecords
                                 ->required()
                                 ->live(),
                             Placeholder::make('new_location')
-                                ->content(fn (Get $get) => resolve_path('./' . join_paths($this->path, $get('location')))),
+                                ->content(fn (Get $get) => resolve_path('./' . join_paths($this->path, $get('location') ?? ''))),
                         ])
-                        ->action(function ($files, $data) { // TODO: untested
-                            $location = resolve_path(join_paths($this->path, $data('location')));
+                        ->action(function (Collection $files, $data) {
+                            $location = resolve_path(join_paths($this->path, $data('location'))); // TODO: error: Array callback must have exactly two elements
                             $files = $files->map(fn ($file) => ['to' => $location, 'from' => $file->name])->toArray();
 
                             /** @var Server $server */
@@ -377,7 +382,7 @@ class ListFiles extends ListRecords
                         }),
                     BulkAction::make('archive')
                         ->authorize(auth()->user()->can(Permission::ACTION_FILE_ARCHIVE, Filament::getTenant()))
-                        ->action(function ($files) { // TODO: untested
+                        ->action(function (Collection $files) {
                             $files = $files->map(fn ($file) => $file->name)->toArray();
 
                             /** @var Server $server */
@@ -391,6 +396,8 @@ class ListFiles extends ListRecords
                                 ->property('directory', $this->path)
                                 ->property('files', $files)
                                 ->log();
+
+                            // TODO: new archive file is not instantly displayed, requires page refresh
 
                             Notification::make()
                                 ->title('Archive created')
