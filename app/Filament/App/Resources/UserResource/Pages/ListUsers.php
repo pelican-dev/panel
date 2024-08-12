@@ -30,7 +30,7 @@ class ListUsers extends ListRecords
             Actions\CreateAction::make('invite')
                 ->label('Invite User')
                 ->createAnother(false)
-                ->hidden(!auth()->user()->can(Permission::ACTION_USER_CREATE, Filament::getTenant()))
+                ->authorize(auth()->user()->can(Permission::ACTION_USER_CREATE, Filament::getTenant()))
                 ->form([
                     Grid::make()
                         ->columnSpanFull()

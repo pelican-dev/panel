@@ -62,7 +62,7 @@ class UserResource extends Resource
                     ->requiresConfirmation(),
                 EditAction::make()
                     ->label('Edit User')
-                    ->hidden(!auth()->user()->can(Permission::ACTION_USER_UPDATE, Filament::getTenant()))
+                    ->authorize(auth()->user()->can(Permission::ACTION_USER_UPDATE, Filament::getTenant()))
                     ->modalHeading(fn (User $user) => 'Editing ' . $user->email)
                     ->form([
                         Grid::make()

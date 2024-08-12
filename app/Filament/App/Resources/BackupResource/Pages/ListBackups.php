@@ -77,20 +77,20 @@ class ListBackups extends ListRecords
                 ActionGroup::make([
                     Action::make('lock')
                         ->icon(fn (Backup $backup) => !$backup->is_locked ? 'tabler-lock' : 'tabler-lock-open')
-                        ->hidden(!auth()->user()->can(Permission::ACTION_BACKUP_DELETE, Filament::getTenant()))
+                        ->authorize(auth()->user()->can(Permission::ACTION_BACKUP_DELETE, Filament::getTenant()))
                         ->label(fn (Backup $backup) => !$backup->is_locked ? 'Lock' : 'Unlock')
                         ->action(fn (BackupController $backupController, Backup $backup, Request $request) => $backupController->toggleLock($request, $server, $backup)),
                     Action::make('download')
                         ->color('primary')
                         ->icon('tabler-download')
-                        ->hidden(!auth()->user()->can(Permission::ACTION_BACKUP_DOWNLOAD, Filament::getTenant()))
+                        ->authorize(auth()->user()->can(Permission::ACTION_BACKUP_DOWNLOAD, Filament::getTenant()))
                         ->url(function (DownloadLinkService $downloadLinkService, Backup $backup, Request $request) {
                             return $downloadLinkService->handle($backup, $request->user());
                         }, true),
                     Action::make('restore')
                         ->color('success')
                         ->icon('tabler-folder-up')
-                        ->hidden(!auth()->user()->can(Permission::ACTION_BACKUP_RESTORE, Filament::getTenant()))
+                        ->authorize(auth()->user()->can(Permission::ACTION_BACKUP_RESTORE, Filament::getTenant()))
                         ->form([
                             Placeholder::make('')
                                 ->helperText('Your server will be stopped. You will not be able to control the power state, access the file manager, or create additional backups until this process is completed.'),
@@ -150,7 +150,7 @@ class ListBackups extends ListRecords
                                 ->disabled(),
                         ])
                         ->disabled(fn (Backup $backup): bool => $backup->is_locked)
-                        ->hidden(!auth()->user()->can(Permission::ACTION_BACKUP_DELETE, Filament::getTenant()))
+                        ->authorize(auth()->user()->can(Permission::ACTION_BACKUP_DELETE, Filament::getTenant()))
                         ->requiresConfirmation()
                         ->action(fn (BackupController $backupController, Backup $backup, Request $request) => $backupController->delete($request, $server, $backup)),
                 ])
@@ -166,7 +166,7 @@ class ListBackups extends ListRecords
 
         return [
             Actions\CreateAction::make()
-                ->hidden(!auth()->user()->can(Permission::ACTION_BACKUP_CREATE, Filament::getTenant()))
+                ->authorize(auth()->user()->can(Permission::ACTION_BACKUP_CREATE, Filament::getTenant()))
                 ->label(fn () => $server->backups()->count() >= $server->backup_limit ? 'Backup Limit Reached' : 'Create Backup')
                 ->disabled(fn () => $server->backups()->count() >= $server->backup_limit)
                 ->color(fn () => $server->backups()->count() >= $server->backup_limit ? 'danger' : 'primary')

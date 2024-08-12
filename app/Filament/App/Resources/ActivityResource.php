@@ -14,7 +14,7 @@ class ActivityResource extends Resource
 
     protected static ?string $tenantOwnershipRelationshipName = 'actor';
 
-    protected static ?string $tenantRelationshipName = 'activity';
+    protected static ?string $tenantRelationshipName = 'activity'; // TODO: not displaying anything
 
     public static function getPages(): array
     {
