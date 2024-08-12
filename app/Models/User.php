@@ -391,8 +391,13 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
     public function canAccessTenant(\Illuminate\Database\Eloquent\Model $tenant): bool
     {
         if ($tenant instanceof Server) {
-            /** @var Server $tenant */
-            return $this->checkPermission($tenant);
+            if ($this->root_admin || $tenant->owner_id === $this->id) {
+                return true;
+            }
+
+            $subuser = $tenant->subusers->where('user_id', $this->id)->first();
+
+            return $subuser !== null;
         }
 
         return false;
