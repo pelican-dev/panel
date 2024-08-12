@@ -494,7 +494,7 @@ class ListFiles extends ListRecords
                     /** @var Server $server */
                     $server = Filament::getTenant();
 
-                    if (count($data['files']) > 1 && !isset($data['url'])) {
+                    if (count($data['files']) > 0 && !isset($data['url'])) {
                         /** @var UploadedFile $file */
                         foreach ($data['files'] as $file) {
                             app(DaemonFileRepository::class)
