@@ -9,6 +9,7 @@ use Filament\Resources\Resource;
 class ActivityResource extends Resource
 {
     protected static ?string $model = ActivityLog::class;
+    protected static ?int $navigationSort = 2;
 
     protected static ?string $navigationIcon = 'tabler-stack';
 

@@ -22,7 +22,7 @@ class Startup extends SimplePage
 {
 
     protected static ?string $navigationIcon = 'tabler-player-play';
-
+    protected static ?int $navigationSort = 8;
     protected static string $view = 'filament.app.pages.startup';
 
     public function form(Form $form): Form

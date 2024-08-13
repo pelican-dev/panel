@@ -9,6 +9,7 @@ use Filament\Resources\Resource;
 class BackupResource extends Resource
 {
     protected static ?string $model = Backup::class;
+    protected static ?int $navigationSort = 4;
 
     protected static bool $canCreateAnother = false;
 

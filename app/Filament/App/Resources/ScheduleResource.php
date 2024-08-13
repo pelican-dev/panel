@@ -18,6 +18,7 @@ use Filament\Resources\Resource;
 class ScheduleResource extends Resource
 {
     protected static ?string $model = Schedule::class;
+    protected static ?int $navigationSort = 6;
 
     protected static ?string $navigationIcon = 'tabler-clock';
 

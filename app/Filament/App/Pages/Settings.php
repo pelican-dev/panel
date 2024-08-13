@@ -10,7 +10,7 @@ use Filament\Forms\Form;
 class Settings extends SimplePage
 {
     protected static ?string $navigationIcon = 'tabler-settings';
-
+    protected static ?int $navigationSort = 9;
     protected static string $view = 'filament.app.pages.settings';
 
     public function form(Form $form): Form

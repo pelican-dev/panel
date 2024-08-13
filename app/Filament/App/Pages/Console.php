@@ -9,7 +9,7 @@ use Filament\Pages\Page;
 class Console extends Page
 {
     protected static ?string $navigationIcon = 'tabler-brand-tabler';
-
+    protected static ?int $navigationSort = 1;
     protected static string $view = 'filament.app.pages.console';
 
     public array $history = [];

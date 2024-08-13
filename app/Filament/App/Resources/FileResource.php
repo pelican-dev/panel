@@ -9,6 +9,7 @@ use Filament\Resources\Resource;
 class FileResource extends Resource
 {
     protected static ?string $model = File::class;
+    protected static ?int $navigationSort = 3;
 
     protected static ?string $navigationIcon = 'tabler-files';
 
