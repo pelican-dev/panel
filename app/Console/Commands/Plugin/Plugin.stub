@@ -39,7 +39,7 @@ class $class$ implements Plugin
     public static function getProviders(): array
     {
         return [
-            // '\$namespace$\Providers\$class$Provider'
+            \$namespace$\Providers\$class$Provider::class,
         ];
     }
 }
