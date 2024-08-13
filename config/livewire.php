@@ -1,8 +1,7 @@
 <?php
 
-
 return [
-    "temporary_file_upload" => [
-        "rules" => "file",
+    'temporary_file_upload' => [
+        'rules' => 'file',
     ],
 ];

@@ -92,6 +92,13 @@ class ListFiles extends ListRecords
                     ->formatStateUsing(fn ($state) => $state->diffForHumans())
                     ->tooltip(fn (File $file) => $file->modified_at),
             ])
+            ->recordUrl(function (File $file) {
+                if ($file->is_directory) {
+                    return self::getUrl(['path' => join_paths($this->path, $file->name)]);
+                }
+
+                return $file->canEdit() ? EditFiles::getUrl(['path' => join_paths($this->path, $file->name)]) : null;
+            })
             ->actions([
                 Action::make('view')
                     ->authorize(auth()->user()->can(Permission::ACTION_FILE_READ, Filament::getTenant()))
@@ -103,7 +110,7 @@ class ListFiles extends ListRecords
                     ->authorize(auth()->user()->can(Permission::ACTION_FILE_READ_CONTENT, Filament::getTenant()))
                     ->label('Edit')
                     ->icon('tabler-edit')
-                    ->visible(fn (File $file) => $file->canEdit()) // TODO: even if this is hidden the url is opened when clicking the row (which opens a broken url then)
+                    ->visible(fn (File $file) => $file->canEdit())
                     ->url(fn (File $file) => EditFiles::getUrl(['path' => join_paths($this->path, $file->name)])),
                 ActionGroup::make([
                     Action::make('rename')
@@ -362,6 +369,8 @@ class ListFiles extends ListRecords
                         ])
                         ->action(function (Collection $files, $data) {
                             $location = resolve_path(join_paths($this->path, $data('location'))); // TODO: error: Array callback must have exactly two elements
+
+                            // @phpstan-ignore-next-line
                             $files = $files->map(fn ($file) => ['to' => $location, 'from' => $file->name])->toArray();
 
                             /** @var Server $server */
@@ -384,6 +393,7 @@ class ListFiles extends ListRecords
                     BulkAction::make('archive')
                         ->authorize(auth()->user()->can(Permission::ACTION_FILE_ARCHIVE, Filament::getTenant()))
                         ->action(function (Collection $files) {
+                            // @phpstan-ignore-next-line
                             $files = $files->map(fn ($file) => $file->name)->toArray();
 
                             /** @var Server $server */
@@ -408,6 +418,7 @@ class ListFiles extends ListRecords
                     DeleteBulkAction::make()
                         ->authorize(auth()->user()->can(Permission::ACTION_FILE_DELETE, Filament::getTenant()))
                         ->action(function (Collection $files) {
+                            // @phpstan-ignore-next-line
                             $files = $files->map(fn ($file) => $file->name)->toArray();
 
                             /** @var Server $server */
