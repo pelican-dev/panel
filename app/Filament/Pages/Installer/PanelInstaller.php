@@ -8,7 +8,8 @@ use App\Filament\Pages\Installer\Steps\EnvironmentStep;
 use App\Filament\Pages\Installer\Steps\RedisStep;
 use App\Filament\Pages\Installer\Steps\RequirementsStep;
 use App\Services\Users\UserCreationService;
-use App\Traits\Commands\EnvironmentWriterTrait;
+use App\Traits\CheckMigrationsTrait;
+use App\Traits\EnvironmentWriterTrait;
 use Exception;
 use Filament\Facades\Filament;
 use Filament\Forms\Components\Wizard;
@@ -29,6 +30,7 @@ use Illuminate\Support\HtmlString;
  */
 class PanelInstaller extends SimplePage implements HasForms
 {
+    use CheckMigrationsTrait;
     use EnvironmentWriterTrait;
     use HasUnsavedDataChangesAlert;
     use InteractsWithForms;
@@ -73,8 +75,10 @@ class PanelInstaller extends SimplePage implements HasForms
                     <x-filament::button
                         type="submit"
                         size="sm"
+                        wire:loading.attr="disabled"
                     >
                         Finish
+                        <span wire:loading><x-filament::loading-indicator class="h-4 w-4" /></span>
                     </x-filament::button>
                 BLADE))),
         ];
@@ -105,13 +109,17 @@ class PanelInstaller extends SimplePage implements HasForms
                 '--seed' => true,
             ]);
 
+            if (!$this->hasCompletedMigrations()) {
+                throw new Exception('Migrations didn\'t run successfully. Double check your database configuration.');
+            }
+
             // Create first admin user
             $userData = array_get($inputs, 'user');
             $userData['root_admin'] = true;
             app(UserCreationService::class)->handle($userData);
 
             // Install setup complete
-            $this->writeToEnvironment(['APP_INSTALLED' => true]);
+            $this->writeToEnvironment(['APP_INSTALLED' => 'true']);
 
             $this->rememberData();
 
@@ -122,10 +130,13 @@ class PanelInstaller extends SimplePage implements HasForms
 
             redirect()->intended(Filament::getUrl());
         } catch (Exception $exception) {
+            report($exception);
+
             Notification::make()
                 ->title('Installation Failed')
                 ->body($exception->getMessage())
                 ->danger()
+                ->persistent()
                 ->send();
         }
     }

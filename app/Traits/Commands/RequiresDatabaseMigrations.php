@@ -1,32 +1,16 @@
 <?php
 
-namespace App\Console;
+namespace App\Traits\Commands;
+
+use App\Traits\CheckMigrationsTrait;
+use Illuminate\Console\Command;
 
 /**
- * @mixin \Illuminate\Console\Command
+ * @mixin Command
  */
 trait RequiresDatabaseMigrations
 {
-    /**
-     * Checks if the migrations have finished running by comparing the last migration file.
-     */
-    protected function hasCompletedMigrations(): bool
-    {
-        /** @var \Illuminate\Database\Migrations\Migrator $migrator */
-        $migrator = $this->getLaravel()->make('migrator');
-
-        $files = $migrator->getMigrationFiles(database_path('migrations'));
-
-        if (!$migrator->repositoryExists()) {
-            return false;
-        }
-
-        if (array_diff(array_keys($files), $migrator->getRepository()->getRan())) {
-            return false;
-        }
-
-        return true;
-    }
+    use CheckMigrationsTrait;
 
     /**
      * Throw a massive error into the console to hopefully catch the users attention and get

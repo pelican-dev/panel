@@ -2,7 +2,7 @@
 
 namespace App\Console\Commands\Overrides;
 
-use App\Console\RequiresDatabaseMigrations;
+use App\Traits\Commands\RequiresDatabaseMigrations;
 use Illuminate\Foundation\Console\UpCommand as BaseUpCommand;
 
 class UpCommand extends BaseUpCommand
