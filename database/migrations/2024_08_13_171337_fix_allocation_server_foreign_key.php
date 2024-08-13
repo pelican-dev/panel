@@ -34,7 +34,7 @@ return new class extends Migration
                 "ip_alias" text,
                 "notes" varchar,
                 foreign key("node_id") references "nodes"("id") on delete cascade,
-                foreign key("server_id") references "servers"("id") on update set null)');
+                foreign key("server_id") references "servers"("id") on delete set null)');
             DB::statement('INSERT INTO allocations SELECT * FROM _allocations_old');
             DB::statement('DROP TABLE _allocations_old');
             DB::statement('CREATE UNIQUE INDEX "allocations_node_id_ip_port_unique" on "allocations" ("node_id", "ip", "port")');
