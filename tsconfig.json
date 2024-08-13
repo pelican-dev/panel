@@ -39,7 +39,7 @@
     ]
   },
   "include": [
-    "./resources/scripts/**/*"
+    "./resources/scripts/**/*", "vite.config.ts"
   ],
   "exclude": [
     "/node_modules/"
