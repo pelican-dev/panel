@@ -35,6 +35,14 @@ class PluginService
                 if (!array_key_exists($plugin->namespace, $classLoader->getClassMap())) {
                     $classLoader->setPsr4($plugin->namespace . '\\', plugin_path($plugin->id, 'src/'));
                 }
+
+                foreach ($plugin->getProviders() as $provider) {
+                    if (is_string($provider) && !class_exists($provider)) {
+                        throw new Exception('Provider class "' . $provider . '" not found');
+                    }
+
+                    app()->register($provider);
+                }
             } catch (Exception $exception) {
                 report($exception);
 
@@ -57,7 +65,7 @@ class PluginService
             }
 
             try {
-                $pluginClass = $plugin->getFullClass();
+                $pluginClass = $plugin->fullClass();
 
                 if (!class_exists($pluginClass)) {
                     throw new Exception('Class "' . $pluginClass . '" not found');
@@ -86,31 +94,21 @@ class PluginService
 
     public function getStatus(string|Plugin $plugin): PluginStatus
     {
-        $data = $this->readJson($plugin);
+        $plugin = $plugin instanceof Plugin ? $plugin->id : $plugin;
+        $data = $this->fileSystem->json(plugin_path($plugin, 'plugin.json'), JSON_THROW_ON_ERROR);
 
         return $data['status'] ?? PluginStatus::Errored;
     }
 
     private function setStatus(string|Plugin $plugin, PluginStatus $status, ?string $message = null): void
     {
-        $data = $this->readJson($plugin);
+        $plugin = $plugin instanceof Plugin ? $plugin->id : $plugin;
+        $path = plugin_path($plugin, 'plugin.json');
+
+        $data = $this->fileSystem->json($path, JSON_THROW_ON_ERROR);
         $data['status'] = $status;
         $data['status_message'] = $message;
-        $this->writeJson($plugin, $data);
-    }
 
-    private function readJson(string|Plugin $plugin): array
-    {
-        $plugin = $plugin instanceof Plugin ? $plugin->id : $plugin;
-        $path = plugin_path($plugin, 'plugin.json');
-
-        return $this->fileSystem->json($path, JSON_THROW_ON_ERROR);
-    }
-
-    private function writeJson(string|Plugin $plugin, array $data): void
-    {
-        $plugin = $plugin instanceof Plugin ? $plugin->id : $plugin;
-        $path = plugin_path($plugin, 'plugin.json');
         $this->fileSystem->put($path, json_encode($data, JSON_THROW_ON_ERROR | JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
     }
 }

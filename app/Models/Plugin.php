@@ -14,8 +14,8 @@ use Sushi\Sushi;
  * @property string $version
  * @property string|null $description
  * @property string|null $url
- * @property string $class
  * @property string $namespace
+ * @property string $class
  * @property PluginStatus $status
  * @property string|null $status_message
  * @property string $panel
@@ -58,7 +58,13 @@ class Plugin extends IlluminateModel
         $directories = $fileSystem->directories(base_path('plugins/'));
         foreach ($directories as $directory) {
             $plugin = $fileSystem->basename($directory);
-            $plugins[] = $fileSystem->json(plugin_path($plugin, 'plugin.json'), JSON_THROW_ON_ERROR);
+
+            $path = plugin_path($plugin, 'plugin.json');
+            if (!file_exists($path)) {
+                continue;
+            }
+
+            $plugins[] = $fileSystem->json($path, JSON_THROW_ON_ERROR);
         }
 
         return $plugins;
@@ -74,6 +80,11 @@ class Plugin extends IlluminateModel
         return [
             'status' => PluginStatus::class,
         ];
+    }
+
+    public function fullClass(): string
+    {
+        return '\\' . $this->namespace . '\\' . $this->class;
     }
 
     public function shouldLoad(string $panelId): bool
@@ -104,14 +115,9 @@ class Plugin extends IlluminateModel
         return $this->panel_version === config('app.version');
     }
 
-    public function getFullClass(): string
-    {
-        return '\\' . $this->namespace . '\\' . $this->class;
-    }
-
     public function hasSettings(): bool
     {
-        $class = $this->getFullClass();
+        $class = $this->fullClass();
         if (class_exists($class) && method_exists($class, 'get')) {
             $pluginObject = ($class)::get();
 
@@ -123,7 +129,7 @@ class Plugin extends IlluminateModel
 
     public function getSettingsForm(): array
     {
-        $class = $this->getFullClass();
+        $class = $this->fullClass();
         if (class_exists($class) && method_exists($class, 'get')) {
             $pluginObject = ($class)::get();
 
@@ -137,7 +143,7 @@ class Plugin extends IlluminateModel
 
     public function saveSettings(array $data): void
     {
-        $class = $this->getFullClass();
+        $class = $this->fullClass();
         if (class_exists($class) && method_exists($class, 'get')) {
             $pluginObject = ($class)::get();
 
@@ -145,5 +151,15 @@ class Plugin extends IlluminateModel
                 $pluginObject->saveSettings($data);
             }
         }
+    }
+
+    public function getProviders(): array
+    {
+        $class = $this->fullClass();
+        if (class_exists($class) && method_exists($class, 'getProviders')) {
+            return ($class)::getProviders();
+        }
+
+        return [];
     }
 }

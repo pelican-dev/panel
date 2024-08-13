@@ -5,7 +5,7 @@ namespace $namespace$;
 use Filament\Contracts\Plugin;
 use Filament\Panel;
 
-class $class$ implements Plugin //, HasPluginSettings; // Implement this interface if your plugin should have a settings form
+class $class$ implements Plugin
 {
     public function getId(): string
     {
@@ -34,5 +34,12 @@ class $class$ implements Plugin //, HasPluginSettings; // Implement this interfa
         $plugin = filament(app(static::class)->getId());
 
         return $plugin;
+    }
+
+    public static function getProviders(): array
+    {
+        return [
+            // '\$namespace$\Providers\$class$Provider'
+        ];
     }
 }
