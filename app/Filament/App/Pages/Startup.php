@@ -92,7 +92,7 @@ class Startup extends SimplePage
 
                             $text = TextInput::make('var_' . $serverVariable->variable->name)
                                 ->hidden(fn (Component $component) => $this->shouldHideComponent($serverVariable, $component))
-                                ->readOnly(fn () => $serverVariable->variable->user_editable)
+                                ->readOnly(fn () => !$serverVariable->variable->user_editable)
                                 ->required(fn () => in_array('required', explode('|', $serverVariable->variable->rules)))
                                 ->rules([
                                     fn (): Closure => function (string $attribute, $value, Closure $fail) use ($serverVariable) {
@@ -110,6 +110,7 @@ class Startup extends SimplePage
 
                             $select = Select::make('var_' . $serverVariable->variable->name)
                                 ->hidden(fn (Component $component) => $this->shouldHideComponent($serverVariable, $component))
+                                ->disabled(fn () => !$serverVariable->variable->user_editable) // TODO: find better way, doesn't look so nice
                                 ->options(fn () => $this->getSelectOptionsFromRules($serverVariable))
                                 ->selectablePlaceholder(false);
 
@@ -120,6 +121,7 @@ class Startup extends SimplePage
                                     ->live(onBlur: true)
                                     ->hintIcon('tabler-code')
                                     ->label(fn () => $serverVariable->variable->name)
+                                    ->default(fn () => $serverVariable->variable_value ?? $serverVariable->variable->default_value)
                                     ->hintIconTooltip(fn () => $serverVariable->variable->rules)
                                     ->prefix(fn () => '{{' . $serverVariable->variable->env_variable . '}}')
                                     ->helperText(fn () => empty($serverVariable->variable->description) ? '—' : $serverVariable->variable->description);
@@ -132,6 +134,7 @@ class Startup extends SimplePage
                     }),
             ]);
     }
+
     protected function authorizeAccess(): void
     {
         abort_unless(!auth()->user()->can(Permission::ACTION_STARTUP_READ), 403);
