@@ -219,13 +219,6 @@ class Startup extends SimplePage
             }
             Notification::make()
                 ->success()
-                ->duration(5000) // 5 seconds
-                ->actions([
-                    NotificationAction::make('undo')
-                        ->label('Undo')
-                        ->color('warning')
-                        ->action(''), //TODO Allow user to click revert and change the value back?
-                ])
                 ->title('Updated: ' . $variable->name)
                 ->body(fn () => $original . ' -> ' . $state)
                 ->send();
