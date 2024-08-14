@@ -454,23 +454,19 @@ class EditServer extends EditRecord
                                     ->label('Startup Command')
                                     ->required()
                                     ->columnSpan(6)
-                                    ->rows(function ($state) {
-                                        return str($state)->explode("\n")->reduce(
-                                            fn (int $carry, $line) => $carry + floor(strlen($line) / 125),
-                                            0
-                                        );
-                                    }),
+                                    ->autosize(),
 
                                 Forms\Components\Textarea::make('defaultStartup')
                                     ->hintAction(CopyAction::make())
                                     ->label('Default Startup Command')
                                     ->disabled()
+                                    ->autosize()
+                                    ->columnSpan(6)
                                     ->formatStateUsing(function ($state, Get $get, Set $set) {
                                         $egg = Egg::query()->find($get('egg_id'));
 
                                         return $egg->startup;
-                                    })
-                                    ->columnSpan(6),
+                                    }),
 
                                 Forms\Components\Repeater::make('server_variables')
                                     ->relationship('serverVariables')

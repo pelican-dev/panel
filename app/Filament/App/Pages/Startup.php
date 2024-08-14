@@ -91,7 +91,7 @@ class Startup extends SimplePage
                                 continue;
                             }
 
-                            $text = TextInput::make('var_' . $serverVariable->variable->name)
+                            $text = TextInput::make($serverVariable->variable->name)
                                 ->hidden(fn (Component $component) => $this->shouldHideComponent($serverVariable, $component))
                                 ->readOnly(fn () => !$serverVariable->variable->user_editable)
                                 ->required(fn () => in_array('required', explode('|', $serverVariable->variable->rules)))
@@ -109,7 +109,7 @@ class Startup extends SimplePage
                                     },
                                 ]);
 
-                            $select = Select::make('var_' . $serverVariable->variable->name)
+                            $select = Select::make($serverVariable->variable->name)
                                 ->hidden(fn (Component $component) => $this->shouldHideComponent($serverVariable, $component))
                                 ->disabled(fn () => !$serverVariable->variable->user_editable) // TODO: find better way, doesn't look so nice
                                 ->options(fn () => $this->getSelectOptionsFromRules($serverVariable))
@@ -120,6 +120,9 @@ class Startup extends SimplePage
                             foreach ($components as &$component) {
                                 $component = $component
                                     ->live(onBlur: true)
+                                    ->afterStateUpdated(function ($state) use ($serverVariable) {
+                                        $this->update($state, $serverVariable->variable->env_variable);
+                                    })
                                     ->hintIcon('tabler-code')
                                     ->label(fn () => $serverVariable->variable->name)
                                     ->default(fn () => $serverVariable->variable_value ?? $serverVariable->variable->default_value)
@@ -181,5 +184,35 @@ class Startup extends SimplePage
             ->each(fn ($value) => str($value)->trim())
             ->mapWithKeys(fn ($value) => [$value => $value])
             ->all();
+    }
+
+    public function update($state, string $var): null
+    {
+        /** @var Server $server */
+        $server = Filament::getTenant();
+        $variable = $server->variables()->where('env_variable', $var)->first();
+        $original = $variable->server_value;
+
+        //$this->validate($state, $variable->rules); //TODO: Setup Rule Validation
+
+        ServerVariable::query()->updateOrCreate([
+            'server_id' => $server->id,
+            'variable_id' => $variable->id,
+        ], [
+            'variable_value' => $state ?? '',
+        ]);
+
+        if ($variable->env_variable !== $var) {
+            Activity::event('server:startup.edit')
+                ->subject($variable)
+                ->property([
+                    'variable' => $variable->env_variable,
+                    'old' => $original,
+                    'new' => $state,
+                ])
+                ->log();
+        }
+
+        return null;
     }
 }
