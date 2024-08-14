@@ -15,6 +15,8 @@ abstract class SimplePage extends Page
     use InteractsWithFormActions;
     use InteractsWithForms;
 
+    protected static string $view = 'filament.app.pages.simple-page';
+
     public ?array $data = [];
 
     public function mount(): void

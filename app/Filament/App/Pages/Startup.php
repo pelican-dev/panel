@@ -2,9 +2,9 @@
 
 namespace App\Filament\App\Pages;
 
-use App\Models\Egg;
 use App\Models\Permission;
 use App\Models\Server;
+use App\Models\ServerVariable;
 use Closure;
 use Filament\Facades\Filament;
 use Filament\Forms\Components\Component;
@@ -15,21 +15,15 @@ use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Forms\Get;
 use Filament\Forms\Set;
-use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\Validator;
 
 class Startup extends SimplePage
 {
-
     protected static ?string $navigationIcon = 'tabler-player-play';
     protected static ?int $navigationSort = 8;
-    protected static string $view = 'filament.app.pages.startup';
 
     public function form(Form $form): Form
     {
-        /** @var Server $server */
-        $server = Filament::getTenant();
-
         return $form
             ->columns([
                 'default' => 1,
@@ -46,7 +40,10 @@ class Startup extends SimplePage
                         'md' => 2,
                         'lg' => 4,
                     ])
-                    ->formatStateUsing(function () use ($server) {
+                    ->formatStateUsing(function () {
+                        /** @var Server $server */
+                        $server = Filament::getTenant();
+
                         return $server->startup;
                     })
                     ->autosize()
@@ -54,9 +51,11 @@ class Startup extends SimplePage
                 Select::make('select_image') //TODO: Show Custom Image if Image !== $egg->docker_images
                     ->label('Docker Image')
                     ->afterStateUpdated(fn (Set $set, $state) => $set('image', $state))
-                    ->options(function (Set $set) use ($server) {
-                        $egg = Egg::query()->find($server->egg_id);
-                        $images = $egg->docker_images ?? [];
+                    ->options(function (Set $set) {
+                        /** @var Server $server */
+                        $server = Filament::getTenant();
+
+                        $images = $server->egg->docker_images ?? [];
 
                         $currentImage = $server->image;
                         if (!$currentImage && $images) {
@@ -77,16 +76,20 @@ class Startup extends SimplePage
                 Section::make('Server Variables') //TODO: Make purtty, Make rules (test vs select) work.
                     ->columnSpanFull()
                     ->schema(function () {
+                        /** @var Server $server */
+                        $server = Filament::getTenant();
+
                         $variableComponents = [];
 
-                        foreach ($this->serverVariables() as $serverVariable) {
+                        /** @var ServerVariable $serverVariable */
+                        foreach ($server->serverVariables as $serverVariable) {
                             if (!$serverVariable->variable->user_viewable) {
                                 continue;
                             }
 
-                            $text = TextInput::make('var_'.$serverVariable->variable->name)
+                            $text = TextInput::make('var_' . $serverVariable->variable->name)
                                 ->hidden($this->shouldHideComponent(...))
-                                ->readOnlyOn($serverVariable->variable->user_editable)
+                                ->readOnly(fn () => $serverVariable->variable->user_editable)
                                 ->required(fn () => in_array('required', explode('|', $serverVariable->variable->rules)))
                                 ->rules([
                                     fn (): Closure => function (string $attribute, $value, Closure $fail) use ($serverVariable) {
@@ -102,7 +105,7 @@ class Startup extends SimplePage
                                     },
                                 ]);
 
-                            $select = Select::make('var_'.$serverVariable->variable->name)
+                            $select = Select::make('var_' . $serverVariable->variable->name)
                                 ->hidden($this->shouldHideComponent(...))
                                 ->options($this->getSelectOptionsFromRules(...))
                                 ->selectablePlaceholder(false);
@@ -160,13 +163,5 @@ class Startup extends SimplePage
             ->each(fn ($value) => str($value)->trim())
             ->mapWithKeys(fn ($value) => [$value => $value])
             ->all();
-    }
-
-    private function serverVariables(): Collection
-    {
-        /** @var Server $server */
-        $server = Filament::getTenant();
-
-        return $server->serverVariables;
     }
 }
