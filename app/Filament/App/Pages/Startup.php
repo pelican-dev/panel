@@ -13,7 +13,6 @@ use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
-use Filament\Forms\Get;
 use Filament\Forms\Set;
 use Illuminate\Support\Facades\Validator;
 
@@ -73,8 +72,12 @@ class Startup extends SimplePage
                         'md' => 2,
                         'lg' => 2,
                     ]),
-                Section::make('Server Variables') //TODO: Make purtty, Make rules (test vs select) work.
+                Section::make('Server Variables')
                     ->columnSpanFull()
+                    ->columns([
+                        'default' => 1,
+                        'lg' => 2,
+                    ])
                     ->schema(function () {
                         /** @var Server $server */
                         $server = Filament::getTenant();
@@ -88,7 +91,7 @@ class Startup extends SimplePage
                             }
 
                             $text = TextInput::make('var_' . $serverVariable->variable->name)
-                                ->hidden($this->shouldHideComponent(...))
+                                ->hidden(fn (Component $component) => $this->shouldHideComponent($serverVariable, $component))
                                 ->readOnly(fn () => $serverVariable->variable->user_editable)
                                 ->required(fn () => in_array('required', explode('|', $serverVariable->variable->rules)))
                                 ->rules([
@@ -106,8 +109,8 @@ class Startup extends SimplePage
                                 ]);
 
                             $select = Select::make('var_' . $serverVariable->variable->name)
-                                ->hidden($this->shouldHideComponent(...))
-                                ->options($this->getSelectOptionsFromRules(...))
+                                ->hidden(fn (Component $component) => $this->shouldHideComponent($serverVariable, $component))
+                                ->options(fn () => $this->getSelectOptionsFromRules($serverVariable))
                                 ->selectablePlaceholder(false);
 
                             $components = [$text, $select];
@@ -134,9 +137,9 @@ class Startup extends SimplePage
         abort_unless(!auth()->user()->can(Permission::ACTION_STARTUP_READ), 403);
     }
 
-    private function shouldHideComponent(Get $get, Component $component): bool
+    private function shouldHideComponent(ServerVariable $serverVariable, Component $component): bool
     {
-        $containsRuleIn = str($get('rules'))->explode('|')->reduce(
+        $containsRuleIn = str($serverVariable->variable->rules)->explode('|')->reduce(
             fn ($result, $value) => $result === true && !str($value)->startsWith('in:'), true
         );
 
@@ -151,9 +154,9 @@ class Startup extends SimplePage
         throw new \Exception('Component type not supported: ' . $component::class);
     }
 
-    private function getSelectOptionsFromRules(Get $get): array
+    private function getSelectOptionsFromRules(ServerVariable $serverVariable): array
     {
-        $inRule = str($get('rules'))->explode('|')->reduce(
+        $inRule = str($serverVariable->variable->rules)->explode('|')->reduce(
             fn ($result, $value) => str($value)->startsWith('in:') ? $value : $result, ''
         );
 
