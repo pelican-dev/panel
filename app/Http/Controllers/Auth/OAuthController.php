@@ -9,7 +9,6 @@ use Laravel\Socialite\Facades\Socialite;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use App\Services\Users\UserUpdateService;
-use Exception;
 use Illuminate\Http\Request;
 
 class OAuthController extends Controller
