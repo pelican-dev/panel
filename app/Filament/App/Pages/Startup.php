@@ -142,17 +142,6 @@ class Startup extends SimplePage
             ]);
     }
 
-    protected function getHeaderActions(): array
-    {
-        return [
-            Action::make('save')
-                ->keyBindings('mod+s')
-                ->action(function () {
-                    // TODO
-                }),
-        ];
-    }
-
     protected function authorizeAccess(): void
     {
         abort_unless(!auth()->user()->can(Permission::ACTION_STARTUP_READ), 403);
@@ -197,7 +186,21 @@ class Startup extends SimplePage
         $original = $variable->server_value;
 
         try {
-            //TODO: RULE CHECK
+
+            $validator = Validator::make(
+                ['variable_value' => $state],
+                ['variable_value' => $variable->rules]
+            );
+
+            if ($validator->fails()) {
+                Notification::make()
+                    ->danger()
+                    ->title('Validation Failed: ' . $variable->name)
+                    ->body(implode(', ', $validator->errors()->all()))
+                    ->send();
+
+                return null;
+            }
 
             ServerVariable::query()->updateOrCreate([
                 'server_id' => $server->id,
