@@ -2,6 +2,7 @@
 
 namespace App\Filament\App\Pages;
 
+use App\Facades\Activity;
 use App\Models\Permission;
 use App\Models\Server;
 use App\Models\ServerVariable;
@@ -15,7 +16,9 @@ use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Forms\Set;
+use Filament\Notifications\Notification;
 use Illuminate\Support\Facades\Validator;
+use Filament\Notifications\Actions\Action as NotificationAction;
 
 class Startup extends SimplePage
 {
@@ -93,7 +96,7 @@ class Startup extends SimplePage
 
                             $text = TextInput::make($serverVariable->variable->name)
                                 ->hidden(fn (Component $component) => $this->shouldHideComponent($serverVariable, $component))
-                                ->readOnly(fn () => !$serverVariable->variable->user_editable)
+                                ->disabled(fn () => !$serverVariable->variable->user_editable)
                                 ->required(fn () => in_array('required', explode('|', $serverVariable->variable->rules)))
                                 ->rules([
                                     fn (): Closure => function (string $attribute, $value, Closure $fail) use ($serverVariable) {
@@ -193,24 +196,44 @@ class Startup extends SimplePage
         $variable = $server->variables()->where('env_variable', $var)->first();
         $original = $variable->server_value;
 
-        //$this->validate($state, $variable->rules); //TODO: Setup Rule Validation
+        try {
+            //TODO: RULE CHECK
 
-        ServerVariable::query()->updateOrCreate([
-            'server_id' => $server->id,
-            'variable_id' => $variable->id,
-        ], [
-            'variable_value' => $state ?? '',
-        ]);
+            ServerVariable::query()->updateOrCreate([
+                'server_id' => $server->id,
+                'variable_id' => $variable->id,
+            ], [
+                'variable_value' => $state ?? '',
+            ]);
 
-        if ($variable->env_variable !== $var) {
-            Activity::event('server:startup.edit')
-                ->subject($variable)
-                ->property([
-                    'variable' => $variable->env_variable,
-                    'old' => $original,
-                    'new' => $state,
+            if ($variable->env_variable !== $var) {
+                Activity::event('server:startup.edit')
+                    ->subject($variable)
+                    ->property([
+                        'variable' => $variable->env_variable,
+                        'old' => $original,
+                        'new' => $state,
+                    ])
+                    ->log();
+            }
+            Notification::make()
+                ->success()
+                ->duration(5000) // 5 seconds
+                ->actions([
+                    NotificationAction::make('undo')
+                        ->label('Undo')
+                        ->color('warning')
+                        ->action(''), //TODO Allow user to click revert and change the value back?
                 ])
-                ->log();
+                ->title('Updated: ' . $variable->name)
+                ->body(fn () => $original . ' -> ' . $state)
+                ->send();
+        } catch (\Exception $e) {
+            Notification::make()
+                ->danger()
+                ->title('Failed: ' . $variable->name)
+                ->body($e->getMessage())
+                ->send();
         }
 
         return null;
