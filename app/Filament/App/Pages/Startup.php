@@ -85,11 +85,10 @@ class Startup extends SimplePage
                     ->schema(function () {
                         /** @var Server $server */
                         $server = Filament::getTenant();
-
                         $variableComponents = [];
 
                         /** @var ServerVariable $serverVariable */
-                        foreach ($server->serverVariables as $serverVariable) {
+                        foreach ($server->serverVariables->sortBy(fn ($serverVariable) => $serverVariable->variable->sort) as $serverVariable) {
                             if (!$serverVariable->variable->user_viewable) {
                                 continue;
                             }
