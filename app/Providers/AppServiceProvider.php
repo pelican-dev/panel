@@ -86,7 +86,6 @@ class AppServiceProvider extends ServiceProvider
         Event::listen(function (\SocialiteProviders\Manager\SocialiteWasCalled $event) {
             $event->extendSocialite('authentik', \SocialiteProviders\Authentik\Provider::class);
         });
-        
 
         FilamentColor::register([
             'danger' => Color::Red,
