@@ -62,7 +62,7 @@ class OAuthController extends Controller
 
             $user = $this->creationService->handle($userdata);
         }
-        
+
         if (!$user) {
             // No user found - redirect to normal login
             return redirect()->route('auth.login');
