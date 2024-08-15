@@ -44,7 +44,7 @@ use App\Exceptions\Http\Server\ServerStateConflictException;
  * @property string $image
  * @property int|null $allocation_limit
  * @property int|null $database_limit
- * @property int $backup_limit
+ * @property int|null $backup_limit
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property \Illuminate\Support\Carbon|null $installed_at
