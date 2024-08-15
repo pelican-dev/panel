@@ -84,9 +84,13 @@ class CreatePluginCommand extends Command
         $this->filesystem->makeDirectory(plugin_path($id, 'src'));
         $this->filesystem->put(plugin_path($id, 'src', $class . '.php'), str_replace(['$namespace$', '$class$', '$id$'], [$namespace, $class, $id], file_get_contents(__DIR__ . '/Plugin.stub')));
 
-        // Create provider directory and create service provider
+        // Create Providers directory and create service provider
         $this->filesystem->makeDirectory(plugin_path($id, 'src', 'Providers'));
         $this->filesystem->put(plugin_path($id, 'src', 'Providers', $class . 'Provider.php'), str_replace(['$namespace$', '$class$'], [$namespace, $class], file_get_contents(__DIR__ . '/PluginProvider.stub')));
+
+        // Create config directory and create config file
+        $this->filesystem->makeDirectory(plugin_path($id, 'config'));
+        $this->filesystem->put(plugin_path($id, 'config', $id . '.php'), str_replace(['$name$'], [$name], file_get_contents(__DIR__ . '/PluginConfig.stub')));
 
         $this->info('Plugin created.');
     }

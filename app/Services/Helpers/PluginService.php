@@ -32,10 +32,18 @@ class PluginService
             }
 
             try {
+                // Load config
+                $config = plugin_path($plugin->id, 'config', $plugin->id . '.php');
+                if (file_exists($config)) {
+                    config()->set($plugin->id, require $config);
+                }
+
+                // Autoload src directory
                 if (!array_key_exists($plugin->namespace, $classLoader->getClassMap())) {
                     $classLoader->setPsr4($plugin->namespace . '\\', plugin_path($plugin->id, 'src/'));
                 }
 
+                // Register service providers
                 foreach ($plugin->getProviders() as $provider) {
                     if (is_string($provider) && !class_exists($provider)) {
                         throw new Exception('Provider class "' . $provider . '" not found');
