@@ -51,6 +51,22 @@ class PluginService
 
                     app()->register($provider);
                 }
+
+                // Load migrations
+                $migrations = plugin_path($plugin->id, 'database', 'migrations');
+                if (file_exists($migrations)) {
+                    app()->afterResolving('migrator', function ($migrator) use ($migrations) {
+                        $migrator->path($migrations);
+                    });
+                }
+
+                // Load translations
+                $translations = plugin_path($plugin->id, 'lang');
+                if (file_exists($translations)) {
+                    app()->afterResolving('translator', function ($translator) use ($plugin, $translations) {
+                        $translator->addNamespace($plugin->id, $translations);
+                    });
+                }
             } catch (Exception $exception) {
                 report($exception);
 
