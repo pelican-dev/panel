@@ -6,6 +6,7 @@ use App\Events\Event;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class WebhookConfiguration extends Model
 {
@@ -22,6 +23,11 @@ class WebhookConfiguration extends Model
         return [
             'events' => 'json',
         ];
+    }
+
+    public function webhooks(): HasMany
+    {
+        return $this->hasMany(Webhook::class);
     }
 
     public function scopeForEvent(Builder $builder, Event $event): Builder

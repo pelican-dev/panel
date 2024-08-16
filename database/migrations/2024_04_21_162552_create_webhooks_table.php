@@ -13,6 +13,8 @@ return new class extends Migration
     {
         Schema::create('webhooks', function (Blueprint $table) {
             $table->id();
+            $table->foreignIdFor(\App\Models\WebhookConfiguration::class)->constrained();
+            $table->string('event');
             $table->string('endpoint');
             $table->timestamp('successful_at')->nullable();
             $table->json('payload');
