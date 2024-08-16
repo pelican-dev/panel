@@ -47,4 +47,8 @@ class CreateSchedule extends CreateRecord
             throw new DisplayException('The cron data provided does not evaluate to a valid expression.');
         }
     }
+    public function getBreadcrumbs(): array
+    {
+        return [];
+    }
 }

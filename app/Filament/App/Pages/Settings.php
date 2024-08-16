@@ -23,7 +23,7 @@ use Illuminate\Support\Facades\Http;
 class Settings extends ServerFormPage
 {
     protected static ?string $navigationIcon = 'tabler-settings';
-    protected static ?int $navigationSort = 9;
+    protected static ?int $navigationSort = 10;
 
     public function form(Form $form): Form
     {

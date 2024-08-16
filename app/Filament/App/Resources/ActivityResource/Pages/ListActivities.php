@@ -28,4 +28,8 @@ class ListActivities extends ListRecords
                     ->formatStateUsing(fn ($state) => $state->diffForHumans()),
             ]);
     }
+    public function getBreadcrumbs(): array
+    {
+        return [];
+    }
 }

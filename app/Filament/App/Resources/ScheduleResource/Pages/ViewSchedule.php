@@ -16,4 +16,8 @@ class ViewSchedule extends ViewRecord
             Actions\EditAction::make(),
         ];
     }
+    public function getBreadcrumbs(): array
+    {
+        return [];
+    }
 }

@@ -381,4 +381,8 @@ class ListUsers extends ListRecords
                 }),
         ];
     }
+    public function getBreadcrumbs(): array
+    {
+        return [];
+    }
 }
