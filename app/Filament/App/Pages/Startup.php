@@ -102,8 +102,8 @@ class Startup extends ServerFormPage
                                 foreach ($components as &$component) {
                                     $component = $component
                                         ->live(onBlur: true)
-                                        ->afterStateUpdated(function ($state, Server $server, ServerVariable $serverVariable) {
-                                            $this->update($state, $serverVariable->variable->env_variable, $server);
+                                        ->afterStateUpdated(function ($state, ServerVariable $serverVariable) {
+                                            $this->update($state, $serverVariable);
                                         })
                                         ->hintIcon('tabler-code')
                                         ->label(fn (ServerVariable $serverVariable) => $serverVariable->variable->name)
@@ -155,22 +155,21 @@ class Startup extends ServerFormPage
             ->all();
     }
 
-    public function update($state, string $var, Server $server): null
+    public function update($state, ServerVariable $serverVariable): null
     {
-        $variable = $server->variables()->where('env_variable', $var)->first();
-        $original = $variable->server_value;
+        $original = $serverVariable->variable_value;
 
         try {
 
             $validator = Validator::make(
                 ['variable_value' => $state],
-                ['variable_value' => $variable->rules]
+                ['variable_value' => $serverVariable->variable->rules]
             );
 
             if ($validator->fails()) {
                 Notification::make()
                     ->danger()
-                    ->title('Validation Failed: ' . $variable->name)
+                    ->title('Validation Failed: ' . $serverVariable->variable->name)
                     ->body(implode(', ', $validator->errors()->all()))
                     ->send();
 
@@ -178,17 +177,16 @@ class Startup extends ServerFormPage
             }
 
             ServerVariable::query()->updateOrCreate([
-                'server_id' => $server->id,
-                'variable_id' => $variable->id,
+                'server_id' => $this->getRecord()->id,
+                'variable_id' => $serverVariable->variable->id,
             ], [
                 'variable_value' => $state ?? '',
             ]);
 
-            if ($variable->env_variable !== $var) {
+            if ($serverVariable->variable_value !== $original) {
                 Activity::event('server:startup.edit')
-                    ->subject($variable)
                     ->property([
-                        'variable' => $variable->env_variable,
+                        'variable' => $serverVariable->variable->env_variable,
                         'old' => $original,
                         'new' => $state,
                     ])
@@ -196,13 +194,13 @@ class Startup extends ServerFormPage
             }
             Notification::make()
                 ->success()
-                ->title('Updated: ' . $variable->name)
+                ->title('Updated: ' . $serverVariable->variable->name)
                 ->body(fn () => $original . ' -> ' . $state)
                 ->send();
         } catch (\Exception $e) {
             Notification::make()
                 ->danger()
-                ->title('Failed: ' . $variable->name)
+                ->title('Failed: ' . $serverVariable->variable->name)
                 ->body($e->getMessage())
                 ->send();
         }
