@@ -8,7 +8,6 @@ use App\Facades\Activity;
 use App\Models\Permission;
 use App\Models\Server;
 use Exception;
-use Filament\Facades\Filament;
 use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\Fieldset;
 use Filament\Forms\Components\Placeholder;
@@ -21,16 +20,13 @@ use Filament\Support\Enums\Alignment;
 use GuzzleHttp\Exception\TransferException;
 use Illuminate\Support\Facades\Http;
 
-class Settings extends SimplePage
+class Settings extends ServerFormPage
 {
     protected static ?string $navigationIcon = 'tabler-settings';
     protected static ?int $navigationSort = 9;
 
     public function form(Form $form): Form
     {
-        /** @var Server $server */
-        $server = Filament::getTenant();
-
         return $form
             ->columns([
                 'default' => 1,
@@ -60,8 +56,7 @@ class Settings extends SimplePage
                                         'lg' => 6,
                                     ])
                                     ->live(onBlur: true)
-                                    ->formatStateUsing(fn () => $server->name)
-                                    ->afterStateUpdated(fn ($state) => $this->updateName($state)),
+                                    ->afterStateUpdated(fn ($state, Server $server) => $this->updateName($state, $server)),
                                 Textarea::make('description')
                                     ->label('Server Description')
                                     ->disabled(auth()->user()->can(Permission::ACTION_SETTINGS_RENAME))
@@ -73,8 +68,7 @@ class Settings extends SimplePage
                                     ])
                                     ->autosize()
                                     ->live(onBlur: true)
-                                    ->formatStateUsing(fn () => $server->description)
-                                    ->afterStateUpdated(fn ($state) => $this->updateDescription($state)),
+                                    ->afterStateUpdated(fn ($state, Server $server) => $this->updateDescription($state, $server)),
                                 TextInput::make('uuid')
                                     ->label('Server UUID')
                                     ->columnSpan([
@@ -83,12 +77,10 @@ class Settings extends SimplePage
                                         'md' => 3,
                                         'lg' => 5,
                                     ])
-                                    ->disabled()
-                                    ->formatStateUsing(fn () => $server->uuid),
+                                    ->disabled(),
                                 TextInput::make('id')
                                     ->label('Server ID')
                                     ->disabled()
-                                    ->formatStateUsing(fn () => $server->id)
                                     ->columnSpan(1),
                             ]),
                         Fieldset::make('Limits')
@@ -104,25 +96,24 @@ class Settings extends SimplePage
                                     ->label('Backup Limit')
                                     ->columnSpan(1)
                                     ->disabled()
-                                    ->formatStateUsing(fn () => !$server->backup_limit ? 'No Backups can be created' : $server->backups->count() . ' of ' . $server->backup_limit),
+                                    ->formatStateUsing(fn ($state, Server $server) => !$state ? 'No Backups can be created' : $server->backups->count() . ' of ' . $state),
                                 TextInput::make('database_limit')
                                     ->label('Database Limit')
                                     ->columnSpan(1)
                                     ->disabled()
-                                    ->formatStateUsing(fn () => !$server->database_limit ? 'No Databases can be created' : $server->databases->count() . ' of ' . $server->database_limit),
+                                    ->formatStateUsing(fn ($state, Server $server) => !$state ? 'No Databases can be created' : $server->databases->count() . ' of ' . $state),
                                 TextInput::make('allocation_limit')
                                     ->label('Allocation Limit')
                                     ->columnSpan(1)
                                     ->disabled()
-                                    ->formatStateUsing(fn () => !$server->allocation_limit ? 'No additional Allocations can be created' : $server->allocations->count() . ' of ' . ($server->allocation_limit + 1)),
+                                    ->formatStateUsing(fn ($state, Server $server) => !$state ? 'No additional Allocations can be created' : $server->allocations->count() . ' of ' . ($state + 1)),
                             ]),
                     ]),
                 Section::make('Node Information')
                     ->schema([
-                        TextInput::make('node_name')
+                        TextInput::make('node.name') // TODO: not working :(
                             ->label('Node Name')
-                            ->disabled()
-                            ->formatStateUsing(fn () => $server->node->name),
+                            ->disabled(),
                         Fieldset::make('SFTP Information')
                             ->label('SFTP Information')
                             ->columns([
@@ -141,13 +132,13 @@ class Settings extends SimplePage
                                             ->label('Connect to SFTP')
                                             ->color('success')
                                             ->icon('tabler-plug')
-                                            ->url(function () use ($server) {
+                                            ->url(function (Server $server) {
                                                 $fqdn = $server->node->daemon_sftp_alias ?? $server->node->fqdn;
 
                                                 return 'sftp://' . auth()->user()->username . '.' . $server->uuid_short . '@' . $fqdn . ':' . $server->node->daemon_sftp;
                                             }),
                                     ])
-                                    ->formatStateUsing(function () use ($server) {
+                                    ->formatStateUsing(function (Server $server) {
                                         $fqdn = $server->node->daemon_sftp_alias ?? $server->node->fqdn;
 
                                         return 'sftp://' . auth()->user()->username . '.' . $server->uuid_short . '@' . $fqdn . ':' . $server->node->daemon_sftp;
@@ -156,7 +147,7 @@ class Settings extends SimplePage
                                     ->label('Username')
                                     ->columnSpan(1)
                                     ->disabled()
-                                    ->formatStateUsing(fn () => auth()->user()->username . '.' . $server->uuid_short),
+                                    ->formatStateUsing(fn (Server $server) => auth()->user()->username . '.' . $server->uuid_short),
                                 Placeholder::make('password')
                                     ->columnSpan(1)
                                     ->content('Your SFTP password is the same as the password you use to access this panel.'),
@@ -173,10 +164,7 @@ class Settings extends SimplePage
                             ->modalHeading('Are you sure you want to reinstall the server?')
                             ->modalDescription('Some files may be deleted or modified during this process, please back up your data before continuing.')
                             ->modalSubmitActionLabel('Yes, Reinstall')
-                            ->action(function () {
-                                /** @var Server $server */
-                                $server = Filament::getTenant();
-
+                            ->action(function (Server $server) {
                                 abort_unless(!auth()->user()->can(Permission::ACTION_SETTINGS_REINSTALL), 403);
 
                                 $server->fill(['status' => ServerState::Installing])->save();
@@ -208,12 +196,10 @@ class Settings extends SimplePage
             ]);
     }
 
-    public function updateName(string $name): void
+    public function updateName(string $name, Server $server): void
     {
         abort_unless(!auth()->user()->can(Permission::ACTION_SETTINGS_RENAME), 403);
 
-        /** @var Server $server */
-        $server = Filament::getTenant();
         $original = $server->name;
 
         try {
@@ -241,12 +227,10 @@ class Settings extends SimplePage
                 ->send();
         }
     }
-    public function updateDescription(string $description): void
+    public function updateDescription(string $description, Server $server): void
     {
         abort_unless(!auth()->user()->can(Permission::ACTION_SETTINGS_RENAME), 403);
 
-        /** @var Server $server */
-        $server = Filament::getTenant();
         $original = $server->description;
 
         try {

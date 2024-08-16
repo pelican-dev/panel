@@ -7,7 +7,6 @@ use App\Models\Permission;
 use App\Models\Server;
 use App\Models\ServerVariable;
 use Closure;
-use Filament\Facades\Filament;
 use Filament\Forms\Components\Component;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
@@ -17,9 +16,8 @@ use Filament\Forms\Form;
 use Filament\Forms\Set;
 use Filament\Notifications\Notification;
 use Illuminate\Support\Facades\Validator;
-use Filament\Notifications\Actions\Action as NotificationAction;
 
-class Startup extends SimplePage
+class Startup extends ServerFormPage
 {
     protected static ?string $navigationIcon = 'tabler-player-play';
     protected static ?int $navigationSort = 8;
@@ -42,21 +40,12 @@ class Startup extends SimplePage
                         'md' => 2,
                         'lg' => 4,
                     ])
-                    ->formatStateUsing(function () {
-                        /** @var Server $server */
-                        $server = Filament::getTenant();
-
-                        return $server->startup;
-                    })
                     ->autosize()
                     ->readOnly(),
                 Select::make('select_image') //TODO: Show Custom Image if Image !== $egg->docker_images
                     ->label('Docker Image')
                     ->afterStateUpdated(fn (Set $set, $state) => $set('image', $state))
-                    ->options(function (Set $set) {
-                        /** @var Server $server */
-                        $server = Filament::getTenant();
-
+                    ->options(function (Set $set, Server $server) {
                         $images = $server->egg->docker_images ?? [];
 
                         $currentImage = $server->image;
@@ -81,9 +70,7 @@ class Startup extends SimplePage
                         'default' => 1,
                         'lg' => 2,
                     ])
-                    ->schema(function () {
-                        /** @var Server $server */
-                        $server = Filament::getTenant();
+                    ->schema(function (Server $server) {
                         $variableComponents = [];
 
                         /** @var ServerVariable $serverVariable */
@@ -121,8 +108,8 @@ class Startup extends SimplePage
                             foreach ($components as &$component) {
                                 $component = $component
                                     ->live(onBlur: true)
-                                    ->afterStateUpdated(function ($state) use ($serverVariable) {
-                                        $this->update($state, $serverVariable->variable->env_variable);
+                                    ->afterStateUpdated(function ($state, Server $server) use ($serverVariable) {
+                                        $this->update($state, $serverVariable->variable->env_variable, $server);
                                     })
                                     ->hintIcon('tabler-code')
                                     ->label(fn () => $serverVariable->variable->name)
@@ -176,10 +163,8 @@ class Startup extends SimplePage
             ->all();
     }
 
-    public function update($state, string $var): null
+    public function update($state, string $var, Server $server): null
     {
-        /** @var Server $server */
-        $server = Filament::getTenant();
         $variable = $server->variables()->where('env_variable', $var)->first();
         $original = $variable->server_value;
 

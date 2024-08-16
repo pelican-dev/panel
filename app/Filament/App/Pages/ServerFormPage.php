@@ -2,6 +2,8 @@
 
 namespace App\Filament\App\Pages;
 
+use App\Models\Server;
+use Filament\Facades\Filament;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Form;
 use Filament\Pages\Concerns\InteractsWithFormActions;
@@ -10,12 +12,12 @@ use Filament\Pages\Page;
 /**
  * @property Form $form
  */
-abstract class SimplePage extends Page
+abstract class ServerFormPage extends Page
 {
     use InteractsWithFormActions;
     use InteractsWithForms;
 
-    protected static string $view = 'filament.app.pages.simple-page';
+    protected static string $view = 'filament.app.pages.server-form-page';
 
     public ?array $data = [];
 
@@ -23,12 +25,18 @@ abstract class SimplePage extends Page
     {
         $this->authorizeAccess();
 
-        $this->form->fill();
+        $this->fillForm();
     }
 
     protected function authorizeAccess(): void
     {
 
+    }
+
+    protected function fillForm(): void
+    {
+        $data = $this->getRecord()->attributesToArray();
+        $this->form->fill($data);
     }
 
     /**
@@ -38,6 +46,7 @@ abstract class SimplePage extends Page
     {
         return [
             'form' => $this->form($this->makeForm()
+                ->model($this->getRecord())
                 ->statePath($this->getFormStatePath())
                 ->columns($this->hasInlineLabels() ? 1 : 2)
                 ->inlineLabel($this->hasInlineLabels()),
@@ -48,5 +57,13 @@ abstract class SimplePage extends Page
     public function getFormStatePath(): ?string
     {
         return 'data';
+    }
+
+    public function getRecord(): Server
+    {
+        /** @var Server $server */
+        $server = Filament::getTenant();
+
+        return $server;
     }
 }
