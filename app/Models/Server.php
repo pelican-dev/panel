@@ -285,6 +285,14 @@ class Server extends Model
         return $this->hasMany(ServerVariable::class);
     }
 
+    public function viewableServerVariables(): HasMany
+    {
+        return $this->hasMany(ServerVariable::class)->rightJoin('egg_variables', function (JoinClause $join) {
+            $join->on('egg_variables.id', 'server_variables.variable_id')
+                ->where('egg_variables.user_viewable', true);
+        });
+    }
+
     /**
      * Gets information for the node associated with this server.
      */

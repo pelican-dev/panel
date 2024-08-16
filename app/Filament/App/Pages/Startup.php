@@ -8,6 +8,7 @@ use App\Models\Server;
 use App\Models\ServerVariable;
 use Closure;
 use Filament\Forms\Components\Component;
+use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
@@ -65,65 +66,56 @@ class Startup extends ServerFormPage
                         'lg' => 2,
                     ]),
                 Section::make('Server Variables')
-                    ->columnSpanFull()
-                    ->columns([
-                        'default' => 1,
-                        'lg' => 2,
-                    ])
-                    ->schema(function (Server $server) {
-                        $variableComponents = [];
+                    ->schema([
+                        Repeater::make('server_variables')
+                            ->label('')
+                            ->relationship('viewableServerVariables')
+                            ->grid()
+                            ->reorderable(false)->addable(false)->deletable(false)
+                            ->schema(function () {
+                                $text = TextInput::make('variable_value')
+                                    ->hidden($this->shouldHideComponent(...))
+                                    ->disabled(fn (ServerVariable $serverVariable) => !$serverVariable->variable->user_editable)
+                                    ->required(fn (ServerVariable $serverVariable) => in_array('required', explode('|', $serverVariable->variable->rules)))
+                                    ->rules([
+                                        fn (ServerVariable $serverVariable): Closure => function (string $attribute, $value, Closure $fail) use ($serverVariable) {
+                                            $validator = Validator::make(['validatorkey' => $value], [
+                                                'validatorkey' => $serverVariable->variable->rules,
+                                            ]);
 
-                        /** @var ServerVariable $serverVariable */
-                        foreach ($server->serverVariables->sortBy(fn ($serverVariable) => $serverVariable->variable->sort) as $serverVariable) {
-                            if (!$serverVariable->variable->user_viewable) {
-                                continue;
-                            }
+                                            if ($validator->fails()) {
+                                                $message = str($validator->errors()->first())->replace('validatorkey', $serverVariable->variable->name);
 
-                            $text = TextInput::make($serverVariable->variable->name)
-                                ->hidden(fn (Component $component) => $this->shouldHideComponent($serverVariable, $component))
-                                ->disabled(fn () => !$serverVariable->variable->user_editable)
-                                ->required(fn () => in_array('required', explode('|', $serverVariable->variable->rules)))
-                                ->rules([
-                                    fn (): Closure => function (string $attribute, $value, Closure $fail) use ($serverVariable) {
-                                        $validator = Validator::make(['validatorkey' => $value], [
-                                            'validatorkey' => $serverVariable->variable->rules,
-                                        ]);
+                                                $fail($message);
+                                            }
+                                        },
+                                    ]);
 
-                                        if ($validator->fails()) {
-                                            $message = str($validator->errors()->first())->replace('validatorkey', $serverVariable->variable->name);
+                                $select = Select::make('variable_value')
+                                    ->hidden($this->shouldHideComponent(...))
+                                    ->disabled(fn (ServerVariable $serverVariable) => !$serverVariable->variable->user_editable)
+                                    ->options($this->getSelectOptionsFromRules(...))
+                                    ->selectablePlaceholder(false);
 
-                                            $fail($message);
-                                        }
-                                    },
-                                ]);
+                                $components = [$text, $select];
 
-                            $select = Select::make($serverVariable->variable->name)
-                                ->hidden(fn (Component $component) => $this->shouldHideComponent($serverVariable, $component))
-                                ->disabled(fn () => !$serverVariable->variable->user_editable) // TODO: find better way, doesn't look so nice
-                                ->options(fn () => $this->getSelectOptionsFromRules($serverVariable))
-                                ->selectablePlaceholder(false);
+                                foreach ($components as &$component) {
+                                    $component = $component
+                                        ->live(onBlur: true)
+                                        ->afterStateUpdated(function ($state, Server $server, ServerVariable $serverVariable) {
+                                            $this->update($state, $serverVariable->variable->env_variable, $server);
+                                        })
+                                        ->hintIcon('tabler-code')
+                                        ->label(fn (ServerVariable $serverVariable) => $serverVariable->variable->name)
+                                        ->hintIconTooltip(fn (ServerVariable $serverVariable) => $serverVariable->variable->rules)
+                                        ->prefix(fn (ServerVariable $serverVariable) => '{{' . $serverVariable->variable->env_variable . '}}')
+                                        ->helperText(fn (ServerVariable $serverVariable) => empty($serverVariable->variable->description) ? '—' : $serverVariable->variable->description);
+                                }
 
-                            $components = [$text, $select];
-
-                            foreach ($components as &$component) {
-                                $component = $component
-                                    ->live(onBlur: true)
-                                    ->afterStateUpdated(function ($state, Server $server) use ($serverVariable) {
-                                        $this->update($state, $serverVariable->variable->env_variable, $server);
-                                    })
-                                    ->hintIcon('tabler-code')
-                                    ->label(fn () => $serverVariable->variable->name)
-                                    ->default(fn () => $serverVariable->variable_value ?? $serverVariable->variable->default_value)
-                                    ->hintIconTooltip(fn () => $serverVariable->variable->rules)
-                                    ->prefix(fn () => '{{' . $serverVariable->variable->env_variable . '}}')
-                                    ->helperText(fn () => empty($serverVariable->variable->description) ? '—' : $serverVariable->variable->description);
-                            }
-
-                            $variableComponents = array_merge($variableComponents, $components);
-                        }
-
-                        return $variableComponents;
-                    }),
+                                return $components;
+                            })
+                            ->columnSpan(6),
+                    ]),
             ]);
     }
 
