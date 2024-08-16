@@ -18,19 +18,11 @@ class DispatchWebhooksTest extends TestCase
 
     public function test_it_sends_a_single_webhook(): void
     {
-        \Http::preventStrayRequests();
+        Http::preventStrayRequests();
 
-        $url = fake()->url();
+        $webhook = WebhookConfiguration::factory()->create(['events' => [Created::class]]);
 
-        $webhook = WebhookConfiguration::factory()->create([
-            'endpoint' => $url,
-            'events' => [Created::class],
-            'description' => '',
-        ]);
-
-        Http::fake([
-            $url => Http::response(),
-        ]);
+        Http::fake([$webhook->endpoint => Http::response()]);
 
         $event = new Created(Server::factory()->make());
 
@@ -39,9 +31,7 @@ class DispatchWebhooksTest extends TestCase
         $whl->handle(get_class($event), [$event]);
 
         Http::assertSentCount(1);
-        Http::assertSent(function (Request $request) use ($url) {
-            return $url == $request->url();
-        });
+        Http::assertSent(fn(Request $request) => $webhook->endpoint === $request->url());
     }
 
     public function test_sends_multiple_webhooks()
@@ -49,11 +39,7 @@ class DispatchWebhooksTest extends TestCase
         Http::preventStrayRequests();
 
         [$webhook1, $webhook2] = WebhookConfiguration::factory(2)
-            ->sequence(['endpoint' => fake()->url()], ['endpoint' => fake()->url()])
-            ->create([
-                'events' => [Created::class],
-                'description' => '',
-            ]);
+            ->create(['events' => [Created::class]]);
 
         Http::fake([
             $webhook1->endpoint => Http::response(),
@@ -67,12 +53,8 @@ class DispatchWebhooksTest extends TestCase
         $whl->handle(get_class($event), [$event]);
 
         Http::assertSentCount(2);
-        Http::assertSent(function (Request $request) use ($webhook1) {
-            return $webhook1->endpoint == $request->url();
-        });
-        Http::assertSent(function (Request $request) use ($webhook2) {
-            return $webhook2->endpoint == $request->url();
-        });
+        Http::assertSent(fn(Request $request) => $webhook1->endpoint === $request->url());
+        Http::assertSent(fn(Request $request) => $webhook2->endpoint === $request->url());
     }
 
     public function test_it_sends_no_webhooks()
@@ -80,12 +62,7 @@ class DispatchWebhooksTest extends TestCase
         Http::preventStrayRequests();
         Http::fake();
 
-        WebhookConfiguration::factory()
-            ->create([
-                'endpoint' => fake()->url(),
-                'events' => [],
-                'description' => '',
-            ]);
+        WebhookConfiguration::factory()->create();
 
         $event = new Created(Server::factory()->make());
 
@@ -102,11 +79,9 @@ class DispatchWebhooksTest extends TestCase
 
         [$webhook1, $webhook2] = WebhookConfiguration::factory(2)
             ->sequence(
-                ['endpoint' => fake()->url(), 'events' => [Created::class]],
-                ['endpoint' => fake()->url(), 'events' => [Deleted::class]]
-            )->create([
-                'description' => '',
-            ]);
+                ['events' => [Created::class]],
+                ['events' => [Deleted::class]]
+            )->create();
 
         Http::fake([
             $webhook1->endpoint => Http::response(),
@@ -120,11 +95,7 @@ class DispatchWebhooksTest extends TestCase
         $whl->handle(get_class($event), [$event]);
 
         Http::assertSentCount(1);
-        Http::assertSent(function (Request $request) use ($webhook1) {
-            return $webhook1->endpoint == $request->url();
-        });
-        Http::assertNotSent(function (Request $request) use ($webhook2) {
-            return $webhook2->endpoint == $request->url();
-        });
+        Http::assertSent(fn(Request $request) => $webhook1->endpoint === $request->url());
+        Http::assertNotSent(fn(Request $request) => $webhook2->endpoint === $request->url());
     }
 }
