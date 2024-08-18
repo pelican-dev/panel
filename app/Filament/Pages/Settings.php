@@ -298,7 +298,7 @@ class Settings extends Page implements HasForms
                     TextInput::make('MAILGUN_SECRET')
                         ->label('Secret')
                         ->required()
-                        ->default(env('MAIL_USERNAME', config('services.mailgun.secret'))),
+                        ->default(env('MAILGUN_SECRET', config('services.mailgun.secret'))),
                     TextInput::make('MAILGUN_ENDPOINT')
                         ->label('Endpoint')
                         ->required()
