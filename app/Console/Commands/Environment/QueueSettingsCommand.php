@@ -2,10 +2,10 @@
 
 namespace App\Console\Commands\Environment;
 
+use App\Traits\Commands\RequestRedisSettingsTrait;
+use App\Traits\EnvironmentWriterTrait;
 use Illuminate\Console\Command;
 use Illuminate\Contracts\Console\Kernel;
-use App\Traits\Commands\EnvironmentWriterTrait;
-use App\Traits\Commands\RequestRedisSettingsTrait;
 
 class QueueSettingsCommand extends Command
 {
@@ -23,6 +23,7 @@ class QueueSettingsCommand extends Command
     protected $signature = 'p:environment:queue
                             {--driver= : The queue driver backend to use.}
                             {--redis-host= : Redis host to use for connections.}
+                            {--redis-user= : User used to connect to redis.}
                             {--redis-pass= : Password used to connect to redis.}
                             {--redis-port= : Port to connect to redis over.}';
 
@@ -52,7 +53,6 @@ class QueueSettingsCommand extends Command
             $this->requestRedisSettings();
 
             $this->call('p:environment:queue-service', [
-                '--use-redis' => true,
                 '--overwrite' => true,
             ]);
         }

@@ -12,12 +12,24 @@ trait RequestRedisSettingsTrait
             config('database.redis.default.host')
         );
 
+        $askForRedisUser = true;
         $askForRedisPassword = true;
+
+        if (!empty(config('database.redis.default.user'))) {
+            $this->variables['REDIS_USERNAME'] = config('database.redis.default.user');
+            $askForRedisUser = $this->confirm(__('commands.appsettings.redis.confirm', ['field' => 'user']));
+        }
         if (!empty(config('database.redis.default.password'))) {
             $this->variables['REDIS_PASSWORD'] = config('database.redis.default.password');
-            $askForRedisPassword = $this->confirm('It seems a password is already defined for Redis, would you like to change it?');
+            $askForRedisPassword = $this->confirm(__('commands.appsettings.redis.confirm', ['field' => 'password']));
         }
 
+        if ($askForRedisUser) {
+            $this->output->comment(__('commands.appsettings.redis.comment'));
+            $this->variables['REDIS_USERNAME'] = $this->option('redis-user') ?? $this->output->askHidden(
+                'Redis User'
+            );
+        }
         if ($askForRedisPassword) {
             $this->output->comment(__('commands.appsettings.redis.comment'));
             $this->variables['REDIS_PASSWORD'] = $this->option('redis-pass') ?? $this->output->askHidden(
@@ -25,6 +37,9 @@ trait RequestRedisSettingsTrait
             );
         }
 
+        if (empty($this->variables['REDIS_USERNAME'])) {
+            $this->variables['REDIS_USERNAME'] = 'null';
+        }
         if (empty($this->variables['REDIS_PASSWORD'])) {
             $this->variables['REDIS_PASSWORD'] = 'null';
         }

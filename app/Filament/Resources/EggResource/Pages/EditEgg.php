@@ -145,7 +145,7 @@ class EditEgg extends EditRecord
                                 ->mutateRelationshipDataBeforeCreateUsing(function (array $data): array {
                                     $data['default_value'] ??= '';
                                     $data['description'] ??= '';
-                                    $data['rules'] ??= '';
+                                    $data['rules'] ??= [];
                                     $data['user_viewable'] ??= '';
                                     $data['user_editable'] ??= '';
 
@@ -154,7 +154,7 @@ class EditEgg extends EditRecord
                                 ->mutateRelationshipDataBeforeSaveUsing(function (array $data): array {
                                     $data['default_value'] ??= '';
                                     $data['description'] ??= '';
-                                    $data['rules'] ??= '';
+                                    $data['rules'] ??= [];
                                     $data['user_viewable'] ??= '';
                                     $data['user_editable'] ??= '';
 
@@ -184,7 +184,30 @@ class EditEgg extends EditRecord
                                             Checkbox::make('user_viewable')->label('Viewable'),
                                             Checkbox::make('user_editable')->label('Editable'),
                                         ]),
-                                    TextInput::make('rules')->columnSpanFull(),
+                                    TagsInput::make('rules')
+                                        ->columnSpanFull()
+                                        ->placeholder('Add Rule')
+                                        ->reorderable()
+                                        ->suggestions([
+                                            'required',
+                                            'nullable',
+                                            'string',
+                                            'integer',
+                                            'numeric',
+                                            'boolean',
+                                            'alpha',
+                                            'alpha_dash',
+                                            'alpha_num',
+                                            'url',
+                                            'email',
+                                            'regex:',
+                                            'min:',
+                                            'max:',
+                                            'between:',
+                                            'between:1024,65535',
+                                            'in:',
+                                            'in:true,false',
+                                        ]),
                                 ]),
                         ]),
                     Tab::make('Install Script')
@@ -277,16 +300,14 @@ class EditEgg extends EditRecord
                             Notification::make()
                                 ->title('Import Failed')
                                 ->body($exception->getMessage())
-                                ->danger()
+                                ->danger() // Will Robinson
                                 ->send();
 
                             report($exception);
 
                             return;
                         }
-                    }
-
-                    if (!empty($data['url'])) {
+                    } elseif (!empty($data['url'])) {
                         try {
                             $eggImportService->fromUrl($data['url'], $egg);
                         } catch (Exception $exception) {
