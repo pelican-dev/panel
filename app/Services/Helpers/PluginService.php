@@ -7,7 +7,10 @@ use App\Models\Plugin;
 use Composer\Autoload\ClassLoader;
 use Exception;
 use Filament\Panel;
+use Illuminate\Console\Command;
 use Illuminate\Filesystem\Filesystem;
+use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\ServiceProvider;
 
 class PluginService
 {
@@ -45,11 +48,22 @@ class PluginService
 
                 // Register service providers
                 foreach ($plugin->getProviders() as $provider) {
-                    if (is_string($provider) && !class_exists($provider)) {
+                    if (!class_exists($provider) || !is_subclass_of($command, ServiceProvider::class)) {
                         throw new Exception('Provider class "' . $provider . '" not found');
                     }
 
                     app()->register($provider);
+                }
+
+                // Resolve artisan commands
+                foreach ($plugin->getCommands() as $command) {
+                    if (!class_exists($command) || !is_subclass_of($command, Command::class)) {
+                        throw new Exception('Command class "' . $command . '" not found');
+                    }
+
+                    Artisan::starting(function ($artisan) use ($command) {
+                        $artisan->resolve($command);
+                    });
                 }
 
                 // Load migrations

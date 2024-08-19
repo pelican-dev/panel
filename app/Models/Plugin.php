@@ -162,4 +162,14 @@ class Plugin extends IlluminateModel
 
         return [];
     }
+
+    public function getCommands(): array
+    {
+        $class = $this->fullClass();
+        if (class_exists($class) && method_exists($class, 'getCommands')) {
+            return ($class)::getCommands();
+        }
+
+        return [];
+    }
 }
