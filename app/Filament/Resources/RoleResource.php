@@ -99,7 +99,8 @@ class RoleResource extends Resource
             ->schema([
                 TextInput::make('name')
                     ->label('Role Name')
-                    ->required(),
+                    ->required()
+                    ->disabled(fn (Get $get) => $get('name') === Role::ROOT_ADMIN),
                 TextInput::make('guard_name')
                     ->label('Guard Name')
                     ->default(Filament::getCurrentPanel()?->getAuthGuard() ?? '')

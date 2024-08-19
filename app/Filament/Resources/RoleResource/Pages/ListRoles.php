@@ -4,10 +4,10 @@ namespace App\Filament\Resources\RoleResource\Pages;
 
 use App\Filament\Resources\RoleResource;
 use App\Models\Role;
-use Filament\Actions;
+use Filament\Actions\CreateAction;
 use Filament\Resources\Pages\ListRecords;
 use Filament\Tables\Actions\BulkActionGroup;
-use Filament\Tables\Actions\CreateAction;
+use Filament\Tables\Actions\CreateAction as CreateActionTable;
 use Filament\Tables\Actions\DeleteBulkAction;
 use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Columns\TextColumn;
@@ -51,7 +51,7 @@ class ListRoles extends ListRecords
             ->emptyStateDescription('')
             ->emptyStateHeading('No Roles')
             ->emptyStateActions([
-                CreateAction::make('create')
+                CreateActionTable::make('create')
                     ->label('Create Role')
                     ->button(),
             ]);
@@ -60,7 +60,7 @@ class ListRoles extends ListRecords
     protected function getHeaderActions(): array
     {
         return [
-            Actions\CreateAction::make()
+            CreateAction::make()
                 ->label('Create Role'),
         ];
     }

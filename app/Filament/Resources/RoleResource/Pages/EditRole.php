@@ -4,7 +4,7 @@ namespace App\Filament\Resources\RoleResource\Pages;
 
 use App\Filament\Resources\RoleResource;
 use App\Models\Role;
-use Filament\Actions;
+use Filament\Actions\DeleteAction;
 use Filament\Resources\Pages\EditRecord;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
@@ -48,7 +48,7 @@ class EditRole extends EditRecord
     protected function getHeaderActions(): array
     {
         return [
-            Actions\DeleteAction::make()
+            DeleteAction::make()
                 ->disabled(fn (Role $role) => $role->isRootAdmin() || $role->users_count >= 1)
                 ->label(fn (Role $role) => $role->isRootAdmin() ? 'Can\'t delete Root Admin' : ($role->users_count >= 1 ? 'In Use' : 'Delete')),
         ];
