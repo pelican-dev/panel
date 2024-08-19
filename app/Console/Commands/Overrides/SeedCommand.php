@@ -2,7 +2,7 @@
 
 namespace App\Console\Commands\Overrides;
 
-use App\Console\RequiresDatabaseMigrations;
+use App\Traits\Commands\RequiresDatabaseMigrations;
 use Illuminate\Database\Console\Seeds\SeedCommand as BaseSeedCommand;
 
 class SeedCommand extends BaseSeedCommand

@@ -4,7 +4,7 @@ namespace App\Filament\Pages;
 
 use App\Models\Backup;
 use App\Notifications\MailTested;
-use App\Traits\Commands\EnvironmentWriterTrait;
+use App\Traits\EnvironmentWriterTrait;
 use Exception;
 use Filament\Actions\Action;
 use Filament\Forms\Components\Actions\Action as FormAction;
@@ -262,28 +262,27 @@ class Settings extends Page implements HasForms
                 ->visible(fn (Get $get) => $get('MAIL_MAILER') === 'smtp')
                 ->schema([
                     TextInput::make('MAIL_HOST')
-                        ->label('SMTP Host')
+                        ->label('Host')
                         ->required()
                         ->default(env('MAIL_HOST', config('mail.mailers.smtp.host'))),
                     TextInput::make('MAIL_PORT')
-                        ->label('SMTP Port')
+                        ->label('Port')
                         ->required()
                         ->numeric()
                         ->minValue(1)
                         ->maxValue(65535)
                         ->default(env('MAIL_PORT', config('mail.mailers.smtp.port'))),
                     TextInput::make('MAIL_USERNAME')
-                        ->label('SMTP Username')
+                        ->label('Username')
                         ->required()
                         ->default(env('MAIL_USERNAME', config('mail.mailers.smtp.username'))),
                     TextInput::make('MAIL_PASSWORD')
-                        ->label('SMTP Password')
+                        ->label('Password')
                         ->password()
                         ->revealable()
                         ->default(env('MAIL_PASSWORD')),
                     ToggleButtons::make('MAIL_ENCRYPTION')
-                        ->label('SMTP encryption')
-                        ->required()
+                        ->label('Encryption')
                         ->inline()
                         ->options(['tls' => 'TLS', 'ssl' => 'SSL', '' => 'None'])
                         ->default(env('MAIL_ENCRYPTION', config('mail.mailers.smtp.encryption', 'tls'))),
@@ -293,15 +292,15 @@ class Settings extends Page implements HasForms
                 ->visible(fn (Get $get) => $get('MAIL_MAILER') === 'mailgun')
                 ->schema([
                     TextInput::make('MAILGUN_DOMAIN')
-                        ->label('Mailgun Domain')
+                        ->label('Domain')
                         ->required()
                         ->default(env('MAILGUN_DOMAIN', config('services.mailgun.domain'))),
                     TextInput::make('MAILGUN_SECRET')
-                        ->label('Mailgun Secret')
+                        ->label('Secret')
                         ->required()
-                        ->default(env('MAIL_USERNAME', config('services.mailgun.secret'))),
+                        ->default(env('MAILGUN_SECRET', config('services.mailgun.secret'))),
                     TextInput::make('MAILGUN_ENDPOINT')
-                        ->label('Mailgun Endpoint')
+                        ->label('Endpoint')
                         ->required()
                         ->default(env('MAILGUN_ENDPOINT', config('services.mailgun.endpoint'))),
                 ]),
