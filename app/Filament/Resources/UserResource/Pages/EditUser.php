@@ -38,7 +38,7 @@ class EditUser extends EditRecord
                     Hidden::make('skipValidation')->default(true),
                     CheckboxList::make('roles')
                         ->disabled(fn (User $user) => $user->id === auth()->user()->id)
-                        ->disableOptionWhen(fn (string $value): bool => $value === Role::ROOT_ADMIN)
+                        ->disableOptionWhen(fn (string $value): bool => $value == Role::getRootAdmin()->id)
                         ->relationship('roles', 'name')
                         ->label('Admin Roles')
                         ->columnSpanFull()

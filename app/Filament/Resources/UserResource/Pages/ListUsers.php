@@ -100,7 +100,7 @@ class ListUsers extends ListRecords
                                 ->hintIconTooltip('Providing a user password is optional. New user email will prompt users to create a password the first time they login.')
                                 ->password(),
                             CheckboxList::make('roles')
-                                ->disableOptionWhen(fn (string $value): bool => $value === Role::ROOT_ADMIN)
+                                ->disableOptionWhen(fn (string $value): bool => $value == Role::getRootAdmin()->id)
                                 ->relationship('roles', 'name')
                                 ->dehydrated()
                                 ->label('Admin Roles')
