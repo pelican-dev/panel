@@ -6,6 +6,7 @@ use App\Filament\Resources\ServerResource;
 use App\Models\Allocation;
 use App\Models\Egg;
 use App\Models\Node;
+use App\Models\ServerVariable;
 use App\Models\User;
 use App\Services\Allocations\AssignmentService;
 use App\Services\Servers\RandomWordService;
@@ -443,8 +444,7 @@ class CreateServer extends CreateRecord
 
                                             $text = Forms\Components\TextInput::make('variable_value')
                                                 ->hidden($this->shouldHideComponent(...))
-                                                ->maxLength(255)
-                                                ->required(fn (Forms\Get $get) => in_array('required', explode('|', $get('rules'))))
+                                                ->required(fn (ServerVariable $serverVariable) => $serverVariable->variable->getRequiredAttribute())
                                                 ->rules(
                                                     fn (Forms\Get $get): Closure => function (string $attribute, $value, Closure $fail) use ($get) {
                                                         $validator = Validator::make(['validatorkey' => $value], [
@@ -806,11 +806,9 @@ class CreateServer extends CreateRecord
         return $service->handle($data);
     }
 
-    private function shouldHideComponent(Forms\Get $get, Forms\Components\Component $component): bool
+    private function shouldHideComponent(ServerVariable $serverVariable, Forms\Components\Component $component): bool
     {
-        $containsRuleIn = str($get('rules'))->explode('|')->reduce(
-            fn ($result, $value) => $result === true && !str($value)->startsWith('in:'), true
-        );
+        $containsRuleIn = array_first($serverVariable->variable->rules, fn ($value) => str($value)->startsWith('in:'), false);
 
         if ($component instanceof Forms\Components\Select) {
             return $containsRuleIn;
@@ -823,11 +821,9 @@ class CreateServer extends CreateRecord
         throw new \Exception('Component type not supported: ' . $component::class);
     }
 
-    private function getSelectOptionsFromRules(Forms\Get $get): array
+    private function getSelectOptionsFromRules(ServerVariable $serverVariable): array
     {
-        $inRule = str($get('rules'))->explode('|')->reduce(
-            fn ($result, $value) => str($value)->startsWith('in:') ? $value : $result, ''
-        );
+        $inRule = array_first($serverVariable->variable->rules, fn ($value) => str($value)->startsWith('in:'));
 
         return str($inRule)
             ->after('in:')
