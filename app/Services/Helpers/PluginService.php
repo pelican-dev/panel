@@ -67,6 +67,14 @@ class PluginService
                         $translator->addNamespace($plugin->id, $translations);
                     });
                 }
+
+                // Load views
+                $views = plugin_path($plugin->id, 'resources', 'views');
+                if (file_exists($views)) {
+                    app()->afterResolving('view', function ($view) use ($plugin, $views) {
+                        $view->addNamespace($plugin->id, $views);
+                    });
+                }
             } catch (Exception $exception) {
                 report($exception);
 
