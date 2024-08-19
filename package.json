@@ -40,6 +40,7 @@
         "react-router-dom": "^5.1.2",
         "react-transition-group": "^4.4.1",
         "reaptcha": "^1.7.2",
+        "rimraf": "^4",
         "sockette": "^2.0.6",
         "styled-components": "^5.2.1",
         "styled-components-breakpoint": "^3.0.0-preview.20",
@@ -130,7 +131,7 @@
         "yarn-deduplicate": "^1.1.1"
     },
     "scripts": {
-        "clean": "cd public/assets && find . \\( -name \"*.js\" -o -name \"*.map\" \\) -type f -delete",
+        "clean": "cd public/assets && rimraf -g *.js *.map",
         "test": "jest",
         "lint": "eslint ./resources/scripts/**/*.{ts,tsx} --ext .ts,.tsx",
         "watch": "cross-env NODE_ENV=development ./node_modules/.bin/webpack --watch --progress",

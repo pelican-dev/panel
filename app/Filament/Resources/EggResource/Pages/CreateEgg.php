@@ -134,7 +134,7 @@ class CreateEgg extends CreateRecord
                                 ->mutateRelationshipDataBeforeCreateUsing(function (array $data): array {
                                     $data['default_value'] ??= '';
                                     $data['description'] ??= '';
-                                    $data['rules'] ??= '';
+                                    $data['rules'] ??= [];
                                     $data['user_viewable'] ??= '';
                                     $data['user_editable'] ??= '';
 
@@ -143,7 +143,7 @@ class CreateEgg extends CreateRecord
                                 ->mutateRelationshipDataBeforeSaveUsing(function (array $data): array {
                                     $data['default_value'] ??= '';
                                     $data['description'] ??= '';
-                                    $data['rules'] ??= '';
+                                    $data['rules'] ??= [];
                                     $data['user_viewable'] ??= '';
                                     $data['user_editable'] ??= '';
 
@@ -173,7 +173,30 @@ class CreateEgg extends CreateRecord
                                             Checkbox::make('user_viewable')->label('Viewable'),
                                             Checkbox::make('user_editable')->label('Editable'),
                                         ]),
-                                    Textarea::make('rules')->columnSpanFull(),
+                                    TagsInput::make('rules')
+                                        ->columnSpanFull()
+                                        ->placeholder('Add Rule')
+                                        ->reorderable()
+                                        ->suggestions([
+                                            'required',
+                                            'nullable',
+                                            'string',
+                                            'integer',
+                                            'numeric',
+                                            'boolean',
+                                            'alpha',
+                                            'alpha_dash',
+                                            'alpha_num',
+                                            'url',
+                                            'email',
+                                            'regex:',
+                                            'min:',
+                                            'max:',
+                                            'between:',
+                                            'between:1024,65535',
+                                            'in:',
+                                            'in:true,false',
+                                        ]),
                                 ]),
                         ]),
                     Tab::make('Install Script')
@@ -187,7 +210,7 @@ class CreateEgg extends CreateRecord
                             TextInput::make('script_container')
                                 ->required()
                                 ->maxLength(255)
-                                ->default('alpine:3.4'),
+                                ->default('ghcr.io/pelican-eggs/installers:debian'),
 
                             Select::make('script_entry')
                                 ->selectablePlaceholder(false)
