@@ -3,13 +3,14 @@
 namespace App\Filament\Resources\UserResource\Pages;
 
 use App\Filament\Resources\UserResource;
+use App\Models\Role;
+use App\Models\User;
 use App\Services\Exceptions\FilamentExceptionHandler;
 use Filament\Actions;
-use Filament\Resources\Pages\EditRecord;
-use App\Models\User;
 use Filament\Forms;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Form;
+use Filament\Resources\Pages\EditRecord;
 use Illuminate\Support\Facades\Hash;
 
 class EditUser extends EditRecord
@@ -34,6 +35,8 @@ class EditUser extends EditRecord
                         ->options(fn (User $user) => $user->getAvailableLanguages()),
                     Forms\Components\Hidden::make('skipValidation')->default(true),
                     Forms\Components\CheckboxList::make('roles')
+                        ->disabled(fn (User $user) => $user->id === auth()->user()->id)
+                        ->disableOptionWhen(fn (string $value): bool => $value === Role::ROOT_ADMIN)
                         ->relationship('roles', 'name')
                         ->label('Admin Roles')
                         ->columnSpanFull()
