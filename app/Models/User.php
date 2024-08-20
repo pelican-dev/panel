@@ -222,7 +222,9 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
      */
     public function toReactObject(): array
     {
-        return collect($this->toArray())->except(['id', 'external_id'])->toArray();
+        return array_merge(collect($this->toArray())->except(['id', 'external_id'])->toArray(), [
+            'root_admin' => $this->isRootAdmin(),
+        ]);
     }
 
     /**
