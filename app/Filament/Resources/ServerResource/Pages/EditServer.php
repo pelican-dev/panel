@@ -478,15 +478,13 @@ class EditServer extends EditRecord
                                         /** @var Server $server */
                                         $server = $this->getRecord();
 
-                                        if ($server->serverVariables->count() !== $server->variables->count()) {
-                                            foreach ($server->variables as $variable) {
-                                                ServerVariable::query()->firstOrCreate([
-                                                    'server_id' => $server->id,
-                                                    'variable_id' => $variable->id,
-                                                ], [
-                                                    'variable_value' => $variable->server_value ?? '',
-                                                ]);
-                                            }
+                                        foreach ($server->variables as $variable) {
+                                            ServerVariable::query()->firstOrCreate([
+                                                'server_id' => $server->id,
+                                                'variable_id' => $variable->id,
+                                            ], [
+                                                'variable_value' => $variable->server_value ?? '',
+                                            ]);
                                         }
 
                                         return $query;
