@@ -98,7 +98,7 @@ class Settings extends Page implements HasForms
                 ->hintIcon('tabler-question-mark')
                 ->hintIconTooltip('Favicons should be placed in the public folder, located in the root panel directory.')
                 ->required()
-                ->default(env('APP_FAVICON', './pelican.ico')),
+                ->default(env('APP_FAVICON', '/pelican.ico')),
             Toggle::make('APP_DEBUG')
                 ->label('Enable Debug Mode?')
                 ->inline(false)
