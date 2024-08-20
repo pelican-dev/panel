@@ -29,6 +29,7 @@ use Filament\Notifications\Notification;
 use Filament\Resources\Pages\EditRecord;
 use Illuminate\Support\Facades\Validator;
 use Closure;
+use Illuminate\Database\Eloquent\Builder;
 use Webbingbrasil\FilamentCopyActions\Forms\Actions\CopyAction;
 
 class EditServer extends EditRecord
@@ -473,7 +474,23 @@ class EditServer extends EditRecord
                                     ->columnSpan(6),
 
                                 Forms\Components\Repeater::make('server_variables')
-                                    ->relationship('serverVariables')
+                                    ->relationship('serverVariables', function (Builder $query) {
+                                        /** @var Server $server */
+                                        $server = $this->getRecord();
+
+                                        if ($server->serverVariables->count() !== $server->variables->count()) {
+                                            foreach ($server->variables as $variable) {
+                                                ServerVariable::query()->firstOrCreate([
+                                                    'server_id' => $server->id,
+                                                    'variable_id' => $variable->id,
+                                                ], [
+                                                    'variable_value' => $variable->server_value ?? '',
+                                                ]);
+                                            }
+                                        }
+
+                                        return $query;
+                                    })
                                     ->grid()
                                     ->mutateRelationshipDataBeforeSaveUsing(function (array &$data): array {
                                         foreach ($data as $key => $value) {
