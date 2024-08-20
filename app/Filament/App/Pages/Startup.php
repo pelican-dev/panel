@@ -76,7 +76,7 @@ class Startup extends ServerFormPage
                                 $text = TextInput::make('variable_value')
                                     ->hidden($this->shouldHideComponent(...))
                                     ->disabled(fn (ServerVariable $serverVariable) => !$serverVariable->variable->user_editable)
-                                    ->required(fn (ServerVariable $serverVariable) => in_array('required', explode('|', $serverVariable->variable->rules)))
+                                    ->required(fn (ServerVariable $serverVariable) => $serverVariable->variable->getRequiredAttribute())
                                     ->rules([
                                         fn (ServerVariable $serverVariable): Closure => function (string $attribute, $value, Closure $fail) use ($serverVariable) {
                                             $validator = Validator::make(['validatorkey' => $value], [
@@ -126,16 +126,14 @@ class Startup extends ServerFormPage
 
     private function shouldHideComponent(ServerVariable $serverVariable, Component $component): bool
     {
-        $containsRuleIn = str($serverVariable->variable->rules)->explode('|')->reduce(
-            fn ($result, $value) => $result === true && !str($value)->startsWith('in:'), true
-        );
+        $containsRuleIn = array_first($serverVariable->variable->rules, fn ($value) => str($value)->startsWith('in:'), false);
 
         if ($component instanceof Select) {
-            return $containsRuleIn;
+            return !$containsRuleIn;
         }
 
         if ($component instanceof TextInput) {
-            return !$containsRuleIn;
+            return $containsRuleIn;
         }
 
         throw new \Exception('Component type not supported: ' . $component::class);
@@ -143,9 +141,7 @@ class Startup extends ServerFormPage
 
     private function getSelectOptionsFromRules(ServerVariable $serverVariable): array
     {
-        $inRule = str($serverVariable->variable->rules)->explode('|')->reduce(
-            fn ($result, $value) => str($value)->startsWith('in:') ? $value : $result, ''
-        );
+        $inRule = array_first($serverVariable->variable->rules, fn ($value) => str($value)->startsWith('in:'));
 
         return str($inRule)
             ->after('in:')
