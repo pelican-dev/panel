@@ -107,6 +107,7 @@ class PanelInstaller extends SimplePage implements HasForms
             Artisan::call('migrate', [
                 '--force' => true,
                 '--seed' => true,
+                '--database' => $variables['DB_CONNECTION'],
             ]);
 
             if (!$this->hasCompletedMigrations()) {
