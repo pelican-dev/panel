@@ -443,8 +443,7 @@ class CreateServer extends CreateRecord
 
                                             $text = Forms\Components\TextInput::make('variable_value')
                                                 ->hidden($this->shouldHideComponent(...))
-                                                ->maxLength(255)
-                                                ->required(fn (Forms\Get $get) => in_array('required', explode('|', $get('rules'))))
+                                                ->required(fn (Forms\Get $get) => in_array('required', $get('rules')))
                                                 ->rules(
                                                     fn (Forms\Get $get): Closure => function (string $attribute, $value, Closure $fail) use ($get) {
                                                         $validator = Validator::make(['validatorkey' => $value], [
@@ -471,7 +470,7 @@ class CreateServer extends CreateRecord
                                                     ->live(onBlur: true)
                                                     ->hintIcon('tabler-code')
                                                     ->label(fn (Forms\Get $get) => $get('name'))
-                                                    ->hintIconTooltip(fn (Forms\Get $get) => $get('rules'))
+                                                    ->hintIconTooltip(fn (Forms\Get $get) => implode('|', $get('rules')))
                                                     ->prefix(fn (Forms\Get $get) => '{{' . $get('env_variable') . '}}')
                                                     ->helperText(fn (Forms\Get $get) => empty($get('description')) ? '—' : $get('description'))
                                                     ->afterStateUpdated(function (Forms\Set $set, Forms\Get $get, $state) {
@@ -808,7 +807,7 @@ class CreateServer extends CreateRecord
 
     private function shouldHideComponent(Forms\Get $get, Forms\Components\Component $component): bool
     {
-        $containsRuleIn = str($get('rules'))->explode('|')->reduce(
+        $containsRuleIn = collect($get('rules'))->reduce(
             fn ($result, $value) => $result === true && !str($value)->startsWith('in:'), true
         );
 
@@ -825,7 +824,7 @@ class CreateServer extends CreateRecord
 
     private function getSelectOptionsFromRules(Forms\Get $get): array
     {
-        $inRule = str($get('rules'))->explode('|')->reduce(
+        $inRule = collect($get('rules'))->reduce(
             fn ($result, $value) => str($value)->startsWith('in:') ? $value : $result, ''
         );
 
