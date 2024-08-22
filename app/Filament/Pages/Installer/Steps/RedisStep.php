@@ -2,8 +2,13 @@
 
 namespace App\Filament\Pages\Installer\Steps;
 
+use Exception;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Wizard\Step;
+use Filament\Forms\Get;
+use Filament\Notifications\Notification;
+use Filament\Support\Exceptions\Halt;
+use Illuminate\Support\Facades\Redis;
 
 class RedisStep
 {
@@ -37,6 +42,26 @@ class RedisStep
                     ->password()
                     ->revealable()
                     ->default(config('database.redis.default.password')),
-            ]);
+            ])
+            ->afterValidation(function (Get $get) {
+                try {
+                    config()->set('database.redis._panel_install_test', [
+                        'host' => $get('env.REDIS_HOST'),
+                        'username' => $get('env.REDIS_USERNAME'),
+                        'password' => $get('env.REDIS_PASSWORD'),
+                        'port' => $get('env.REDIS_PORT'),
+                    ]);
+
+                    Redis::connection('_panel_install_test')->command('ping');
+                } catch (Exception $exception) {
+                    Notification::make()
+                        ->title('Redis connection failed')
+                        ->body($exception->getMessage())
+                        ->danger()
+                        ->send();
+
+                    throw new Halt('Redis connection failed');
+                }
+            });
     }
 }
