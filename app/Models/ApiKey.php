@@ -168,13 +168,30 @@ class ApiKey extends Model
         return $this->permissions[$resource] ?? AdminAcl::NONE;
     }
 
+    public const DEFAULT_RESOURCE_NAMES = [
+        Server::RESOURCE_NAME,
+        Node::RESOURCE_NAME,
+        Allocation::RESOURCE_NAME,
+        User::RESOURCE_NAME,
+        Egg::RESOURCE_NAME,
+        DatabaseHost::RESOURCE_NAME,
+        Database::RESOURCE_NAME,
+        Mount::RESOURCE_NAME,
+    ];
+
+    private static array $customResourceNames = [];
+
+    public static function registerCustomResourceName(string $resourceName)
+    {
+        $customResourceNames[] = $resourceName;
+    }
+
     /**
      * Returns a list of all possible permission keys.
      */
     public static function getPermissionList(): array
     {
-        // TODO: load dynamically
-        return [Server::RESOURCE_NAME, Node::RESOURCE_NAME, Allocation::RESOURCE_NAME, User::RESOURCE_NAME, Egg::RESOURCE_NAME, DatabaseHost::RESOURCE_NAME, Database::RESOURCE_NAME, Mount::RESOURCE_NAME];
+        return array_unique(array_merge(self::DEFAULT_RESOURCE_NAMES, self::$customResourceNames));
     }
 
     /**
