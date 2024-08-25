@@ -4,6 +4,9 @@ namespace App\Filament\App\Pages;
 
 use Filament\Actions\Action;
 use Filament\Facades\Filament;
+use Filament\Forms\Components\Split;
+use Filament\Forms\Components\View;
+use Filament\Forms\Form;
 use Filament\Pages\Page;
 
 class Console extends Page
@@ -16,12 +19,32 @@ class Console extends Page
     public int $historyIndex = 0;
     public string $input = '';
 
+    public function form(Form $form): Form
+    {
+        return $form
+            ->columns(9)
+            ->schema([
+                View::make('filament.components.server-cpu-chart')->columnSpan(3),
+                View::make('filament.components.server-memory-chart')->columnSpan(3),
+                View::make('filament.components.server-network-chart')->columnSpan(3),
+            ]);
+    }
+
     protected function getViewData(): array
     {
         return [
             'server' => Filament::getTenant(),
             'user' => auth()->user(),
         ];
+    }
+
+    protected function getColumnSpan(): string
+    {
+        return ''; //TODO: Why do we need this...
+    }
+    protected function getColumnStart(): string
+    {
+        return ''; //TODO: Why do we need this...
     }
 
     protected function getHeaderActions(): array

@@ -54,6 +54,8 @@
                 wire:keydown.down="down"
             >
         </div>
+
+
     </div>
 
     @script
@@ -137,5 +139,7 @@
         });
     </script>
     @endscript
-
+    <x-filament-panels::form>
+        {{ $this->form }}
+    </x-filament-panels::form>
 </x-filament-panels::page>
