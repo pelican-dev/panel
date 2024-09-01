@@ -275,7 +275,6 @@ class Settings extends Page implements HasForms
                         ->default(env('MAIL_PORT', config('mail.mailers.smtp.port'))),
                     TextInput::make('MAIL_USERNAME')
                         ->label('Username')
-                        ->required()
                         ->default(env('MAIL_USERNAME', config('mail.mailers.smtp.username'))),
                     TextInput::make('MAIL_PASSWORD')
                         ->label('Password')
