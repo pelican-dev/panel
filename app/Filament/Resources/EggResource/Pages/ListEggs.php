@@ -4,7 +4,6 @@ namespace App\Filament\Resources\EggResource\Pages;
 
 use App\Filament\Resources\EggResource;
 use App\Models\Egg;
-use App\Models\User;
 use App\Services\Eggs\Sharing\EggExporterService;
 use App\Services\Eggs\Sharing\EggImporterService;
 use Exception;
@@ -15,13 +14,13 @@ use Filament\Forms\Components\Tabs\Tab;
 use Filament\Forms\Components\TextInput;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\ListRecords;
+use Filament\Tables;
 use Filament\Tables\Actions\BulkActionGroup;
 use Filament\Tables\Actions\DeleteBulkAction;
 use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
-use Filament\Tables;
 
 class ListEggs extends ListRecords
 {
@@ -57,16 +56,12 @@ class ListEggs extends ListRecords
                     ->action(fn (EggExporterService $service, Egg $egg) => response()->streamDownload(function () use ($service, $egg) {
                         echo $service->handle($egg->id);
                     }, 'egg-' . $egg->getKebabName() . '.json'))
-                    ->visible(function () {
-                        /** @var User $user */
-                        $user = auth()->user();
-
-                        return $user->can('export egg');
-                    }),
+                    ->authorize(fn () => auth()->user()->can('export egg')),
             ])
             ->bulkActions([
                 BulkActionGroup::make([
-                    DeleteBulkAction::make(),
+                    DeleteBulkAction::make()
+                        ->authorize(fn () => auth()->user()->can('delete egg')),
                 ]),
             ]);
     }
@@ -146,12 +141,7 @@ class ListEggs extends ListRecords
                         ->success()
                         ->send();
                 })
-                ->visible(function () {
-                    /** @var User $user */
-                    $user = auth()->user();
-
-                    return $user->can('import egg');
-                }),
+                ->authorize(fn () => auth()->user()->can('import egg')),
         ];
     }
 }

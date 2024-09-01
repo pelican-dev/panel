@@ -44,7 +44,8 @@ class ListRoles extends ListRecords
             ->checkIfRecordIsSelectableUsing(fn (Role $role) => !$role->isRootAdmin() && $role->users_count <= 0)
             ->bulkActions([
                 BulkActionGroup::make([
-                    DeleteBulkAction::make(),
+                    DeleteBulkAction::make()
+                        ->authorize(fn () => auth()->user()->can('delete role')),
                 ]),
             ])
             ->emptyStateIcon('tabler-users-group')

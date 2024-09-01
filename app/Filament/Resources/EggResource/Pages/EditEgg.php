@@ -2,12 +2,15 @@
 
 namespace App\Filament\Resources\EggResource\Pages;
 
+use AbdelhamidErrahmouni\FilamentMonacoEditor\MonacoEditor;
 use App\Filament\Resources\EggResource;
 use App\Filament\Resources\EggResource\RelationManagers\ServersRelationManager;
 use App\Models\Egg;
+use App\Services\Eggs\Sharing\EggExporterService;
 use App\Services\Eggs\Sharing\EggImporterService;
 use Exception;
 use Filament\Actions;
+use Filament\Forms;
 use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\Fieldset;
 use Filament\Forms\Components\FileUpload;
@@ -22,13 +25,9 @@ use Filament\Forms\Components\TagsInput;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
+use Filament\Forms\Form;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\EditRecord;
-use AbdelhamidErrahmouni\FilamentMonacoEditor\MonacoEditor;
-use App\Models\User;
-use App\Services\Eggs\Sharing\EggExporterService;
-use Filament\Forms;
-use Filament\Forms\Form;
 
 class EditEgg extends EditRecord
 {
@@ -246,20 +245,13 @@ class EditEgg extends EditRecord
             Actions\DeleteAction::make('deleteEgg')
                 ->disabled(fn (Egg $egg): bool => $egg->servers()->count() > 0)
                 ->label(fn (Egg $egg): string => $egg->servers()->count() <= 0 ? 'Delete' : 'In Use'),
-
             Actions\Action::make('exportEgg')
                 ->label('Export')
                 ->color('primary')
                 ->action(fn (EggExporterService $service, Egg $egg) => response()->streamDownload(function () use ($service, $egg) {
                     echo $service->handle($egg->id);
                 }, 'egg-' . $egg->getKebabName() . '.json'))
-                ->visible(function () {
-                    /** @var User $user */
-                    $user = auth()->user();
-
-                    return $user->can('export egg');
-                }),
-
+                ->authorize(fn () => auth()->user()->can('export egg')),
             Actions\Action::make('importEgg')
                 ->label('Import')
                 ->form([
@@ -329,13 +321,7 @@ class EditEgg extends EditRecord
                         ->success()
                         ->send();
                 })
-                ->visible(function () {
-                    /** @var User $user */
-                    $user = auth()->user();
-
-                    return $user->can('import egg');
-                }),
-
+                ->authorize(fn () => auth()->user()->can('import egg')),
             $this->getSaveFormAction()->formId('form'),
         ];
     }
