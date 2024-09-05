@@ -25,6 +25,7 @@ use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
 use Illuminate\Contracts\Auth\Access\Authorizable as AuthorizableContract;
 use Illuminate\Contracts\Auth\CanResetPassword as CanResetPasswordContract;
 use App\Notifications\SendPasswordReset as ResetPasswordNotification;
+use Filament\Facades\Filament;
 use Spatie\Permission\Traits\HasRoles;
 
 /**
@@ -224,6 +225,7 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
     {
         return array_merge(collect($this->toArray())->except(['id', 'external_id'])->toArray(), [
             'root_admin' => $this->isRootAdmin(),
+            'admin' => $this->canAccessPanel(Filament::getPanel('admin')),
         ]);
     }
 
