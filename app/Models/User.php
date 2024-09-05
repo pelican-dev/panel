@@ -361,8 +361,11 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
 
     public function canAccessPanel(Panel $panel): bool
     {
-        // TODO: better check
-        return $this->isRootAdmin() || $this->roles()->count() >= 1;
+        if ($this->isRootAdmin()) {
+            return true;
+        }
+
+        return $this->roles()->count() >= 1 && $this->getAllPermissions()->count() >= 1;
     }
 
     public function getFilamentName(): string
