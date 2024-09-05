@@ -12,7 +12,7 @@ trait DefaultPolicies
      */
     public function viewAny(User $user): bool
     {
-        return $user->can('viewAny ' . $this->modelName);
+        return $user->can('viewList ' . $this->modelName);
     }
 
     /**

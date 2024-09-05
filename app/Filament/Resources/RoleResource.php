@@ -43,7 +43,7 @@ class RoleResource extends Resource
     ];
 
     private const PERMISSION_PREFIXES = [
-        'viewAny',
+        'viewList',
         'view',
         'create',
         'update',
