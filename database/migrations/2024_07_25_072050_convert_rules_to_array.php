@@ -26,7 +26,7 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('api_keys', function (Blueprint $table) {
+        Schema::table('egg_variables', function (Blueprint $table) {
             $table->text('rules')->change();
         });
 
