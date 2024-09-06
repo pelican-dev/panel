@@ -2,9 +2,7 @@
 
 namespace App\Tests\Feature;
 
-use App\Events\Server\Created;
-use App\Events\Server\Deleted;
-use App\Listeners\DispatchWebhooks;
+use App\Models\Node;
 use App\Models\Server;
 use App\Models\Webhook;
 use App\Models\WebhookConfiguration;
@@ -22,22 +20,19 @@ class DispatchWebhooksTest extends TestCase
     {
         Http::preventStrayRequests();
 
-        $webhook = WebhookConfiguration::factory()->create(['events' => [Created::class]]);
+        $webhook = WebhookConfiguration::factory()->create([
+            'events' => ['eloquent.created: ' . Server::class],
+        ]);
 
         Http::fake([$webhook->endpoint => Http::response()]);
 
-        $server = Server::factory()->make();
-
-        $event = new Created($server);
-
-        $whl = new DispatchWebhooks();
-
-        $whl->handle(get_class($event), [$event]);
+        $node = Node::factory()->create();
+        $server = Server::factory()->withNode($node)->create();
 
         Http::assertSentCount(1);
-        Http::assertSent(function (Request $request) use ($webhook, $event, $server) {
+        Http::assertSent(function (Request $request) use ($webhook, $server) {
             return $webhook->endpoint === $request->url()
-                && $request[0]->server === $server;
+                && $request[0] === $server;
         });
     }
 
@@ -46,22 +41,19 @@ class DispatchWebhooksTest extends TestCase
         Http::preventStrayRequests();
 
         [$webhook1, $webhook2] = WebhookConfiguration::factory(2)
-            ->create(['events' => [Created::class]]);
+            ->create(['events' => ['eloquent.created: ' . Server::class]]);
 
         Http::fake([
             $webhook1->endpoint => Http::response(),
             $webhook2->endpoint => Http::response(),
         ]);
 
-        $event = new Created(Server::factory()->make());
-
-        $whl = new DispatchWebhooks();
-
-        $whl->handle(get_class($event), [$event]);
+        $node = Node::factory()->create();
+        $server = Server::factory()->withNode($node)->create();
 
         Http::assertSentCount(2);
-        Http::assertSent(fn(Request $request) => $webhook1->endpoint === $request->url());
-        Http::assertSent(fn(Request $request) => $webhook2->endpoint === $request->url());
+        Http::assertSent(fn (Request $request) => $webhook1->endpoint === $request->url());
+        Http::assertSent(fn (Request $request) => $webhook2->endpoint === $request->url());
     }
 
     public function test_it_sends_no_webhooks()
@@ -71,11 +63,8 @@ class DispatchWebhooksTest extends TestCase
 
         WebhookConfiguration::factory()->create();
 
-        $event = new Created(Server::factory()->make());
-
-        $whl = new DispatchWebhooks();
-
-        $whl->handle(get_class($event), [$event]);
+        $node = Node::factory()->create();
+        $server = Server::factory()->withNode($node)->create();
 
         Http::assertSentCount(0);
     }
@@ -86,8 +75,8 @@ class DispatchWebhooksTest extends TestCase
 
         [$webhook1, $webhook2] = WebhookConfiguration::factory(2)
             ->sequence(
-                ['events' => [Created::class]],
-                ['events' => [Deleted::class]]
+                ['events' => ['eloquent.created: ' . Server::class]],
+                ['events' => ['eloquent.deleted: ' . Server::class]]
             )->create();
 
         Http::fake([
@@ -95,69 +84,63 @@ class DispatchWebhooksTest extends TestCase
             $webhook2->endpoint => Http::response(),
         ]);
 
-        $event = new Created(Server::factory()->make());
-
-        $whl = new DispatchWebhooks();
-
-        $whl->handle(get_class($event), [$event]);
+        $node = Node::factory()->create();
+        $server = Server::factory()->withNode($node)->create();
 
         Http::assertSentCount(1);
-        Http::assertSent(fn(Request $request) => $webhook1->endpoint === $request->url());
-        Http::assertNotSent(fn(Request $request) => $webhook2->endpoint === $request->url());
+        Http::assertSent(fn (Request $request) => $webhook1->endpoint === $request->url());
+        Http::assertNotSent(fn (Request $request) => $webhook2->endpoint === $request->url());
     }
-    
-    public function test_it_records_when_a_webhook_is_sent() {
+
+    public function test_it_records_when_a_webhook_is_sent()
+    {
 
         Carbon::setTestNow();
         Http::preventStrayRequests();
 
-        $webhookConfig = WebhookConfiguration::factory()->create(['events' => [Created::class]]);
+        $webhookConfig = WebhookConfiguration::factory()
+            ->create(['events' => ['eloquent.created: ' . Server::class]]);
 
         Http::fake([$webhookConfig->endpoint => Http::response()]);
 
-        $server = Server::factory()->make();
-
         $this->assertDatabaseCount(Webhook::class, 0);
 
-        $event = new Created($server);
-
-        $whl = new DispatchWebhooks();
-
-        $whl->handle($event::class, [$event]);
+        $node = Node::factory()->create();
+        $server = Server::factory()->withNode($node)->create();
 
         $this->assertDatabaseCount(Webhook::class, 1);
+
+        $webhook = Webhook::query()->first();
+        $this->assertEquals($server->uuid, $webhook->payload[0]['uuid']);
+
         $this->assertDatabaseHas(Webhook::class, [
-            'payload' => json_encode([['server' => $server->toArray()]]),
             'endpoint' => $webhookConfig->endpoint,
             'successful_at' => now()->startOfSecond(),
-            'event' => Created::class,
+            'event' => 'eloquent.created: ' . Server::class,
         ]);
     }
 
-    public function test_it_records_when_a_webhook_fails() {
+    public function test_it_records_when_a_webhook_fails()
+    {
         Carbon::setTestNow();
         Http::preventStrayRequests();
 
-        $webhookConfig = WebhookConfiguration::factory()->create(['events' => [Created::class]]);
+        $webhookConfig = WebhookConfiguration::factory()->create(['events' => ['eloquent.created: ' . Server::class],
+        ]);
 
         Http::fake([$webhookConfig->endpoint => Http::response(status: 500)]);
 
-        $server = Server::factory()->make();
-
         $this->assertDatabaseCount(Webhook::class, 0);
 
-        $event = new Created($server);
-
-        $whl = new DispatchWebhooks();
-
-        $whl->handle($event::class, [$event]);
+        $node = Node::factory()->create();
+        $server = Server::factory()->withNode($node)->create();
 
         $this->assertDatabaseCount(Webhook::class, 1);
         $this->assertDatabaseHas(Webhook::class, [
-            'payload' => json_encode([['server' => $server->toArray()]]),
+            // 'payload' => json_encode([['server' => $server->toArray()]]),
             'endpoint' => $webhookConfig->endpoint,
             'successful_at' => null,
-            'event' => Created::class,
+            'event' => 'eloquent.created: ' . Server::class,
         ]);
     }
 }

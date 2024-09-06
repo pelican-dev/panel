@@ -21,12 +21,11 @@ class EventServiceProvider extends ServiceProvider
      * The event to listener mappings for the application.
      */
     protected $listen = [
-        ServerInstalledEvent::class => [ServerInstalledNotification::class],
-        'App\Events\Server\*' => [DispatchWebhooks::class],
-        'App\Events\User\*' => [DispatchWebhooks::class],
-        'App\Events\Subuser\*' => [DispatchWebhooks::class]
-
-        // '*' => [DispatchWebhooks::class],
+        //'*' => [DispatchWebhooks::class],
+        'eloquent.created*' => [DispatchWebhooks::class],
+        'eloquent.deleted*' => [DispatchWebhooks::class],
+        'eloquent.restored*' => [DispatchWebhooks::class],
+        'eloquent.updated*' => [DispatchWebhooks::class],
     ];
 
     /**

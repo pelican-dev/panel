@@ -2,11 +2,9 @@
 
 namespace App\Listeners;
 
-use App\Events\Event;
-use App\Jobs\DispatchWebhooksJob;
-use App\Models\Webhook;
 use App\Models\WebhookConfiguration;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Str;
 
 class DispatchWebhooks
 {
@@ -19,7 +17,8 @@ class DispatchWebhooks
         }
     }
 
-    private function callWebhook(WebhookConfiguration $wh, $eventName, $data) {
+    private function callWebhook(WebhookConfiguration $wh, $eventName, $data)
+    {
         try {
             Http::post($wh->endpoint, $data)->throw();
             $successful = now();

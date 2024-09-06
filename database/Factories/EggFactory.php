@@ -22,6 +22,12 @@ class EggFactory extends Factory
     {
         return [
             'uuid' => Uuid::uuid4()->toString(),
+            'author' => $this->faker->email(),
+            'docker_images' => ['a', 'b', 'c'],
+            'config_logs' => '{}',
+            'config_startup' => '{}',
+            'config_stop' => '{}',
+            'config_files' => '{}',
             'name' => $this->faker->name(),
             'description' => implode(' ', $this->faker->sentences()),
             'startup' => 'java -jar test.jar',
