@@ -26,6 +26,7 @@ use Illuminate\Contracts\Auth\Access\Authorizable as AuthorizableContract;
 use Illuminate\Contracts\Auth\CanResetPassword as CanResetPasswordContract;
 use App\Notifications\SendPasswordReset as ResetPasswordNotification;
 use Filament\Facades\Filament;
+use Illuminate\Database\Eloquent\Model;
 use Spatie\Permission\Traits\HasRoles;
 
 /**
@@ -378,5 +379,14 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
     public function getFilamentAvatarUrl(): ?string
     {
         return 'https://gravatar.com/avatar/' . md5(strtolower($this->email));
+    }
+
+    public function canTarget(Model $user): bool
+    {
+        if ($this->isRootAdmin()) {
+            return true;
+        }
+
+        return $user instanceof User && !$user->isRootAdmin();
     }
 }
