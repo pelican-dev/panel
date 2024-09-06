@@ -55,7 +55,7 @@ class Settings extends Page implements HasForms
         /** @var User $user */
         $user = auth()->user();
 
-        return $user->can('view Settings');
+        return $user->can('view settings');
     }
 
     protected function getFormSchema(): array
@@ -68,7 +68,7 @@ class Settings extends Page implements HasForms
                     /** @var User $user */
                     $user = auth()->user();
 
-                    return !$user->can('update Settings');
+                    return !$user->can('update settings');
                 })
                 ->tabs([
                     Tab::make('general')
