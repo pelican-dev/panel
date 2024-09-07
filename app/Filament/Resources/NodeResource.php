@@ -3,7 +3,8 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\NodeResource\Pages;
-use App\Filament\Resources\NodeResource\RelationManagers;
+use App\Filament\Resources\NodeResource\RelationManagers\AllocationsRelationManager;
+use App\Filament\Resources\NodeResource\RelationManagers\NodesRelationManager;
 use App\Models\Node;
 use Filament\Resources\Resource;
 
@@ -23,8 +24,8 @@ class NodeResource extends Resource
     public static function getRelations(): array
     {
         return [
-            RelationManagers\AllocationsRelationManager::class,
-            RelationManagers\NodesRelationManager::class,
+            AllocationsRelationManager::class,
+            NodesRelationManager::class,
         ];
     }
 

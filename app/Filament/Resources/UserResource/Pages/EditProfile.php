@@ -13,6 +13,7 @@ use chillerlan\QRCode\Common\EccLevel;
 use chillerlan\QRCode\Common\Version;
 use chillerlan\QRCode\QRCode;
 use chillerlan\QRCode\QROptions;
+use DateTimeZone;
 use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\Placeholder;
@@ -52,7 +53,8 @@ class EditProfile extends \Filament\Pages\Auth\EditProfile
                                             ->label(trans('strings.username'))
                                             ->disabled()
                                             ->readOnly()
-                                            ->maxLength(191)
+                                            ->dehydrated(false)
+                                            ->maxLength(255)
                                             ->unique(ignoreRecord: true)
                                             ->autofocus(),
 
@@ -61,7 +63,7 @@ class EditProfile extends \Filament\Pages\Auth\EditProfile
                                             ->label(trans('strings.email'))
                                             ->email()
                                             ->required()
-                                            ->maxLength(191)
+                                            ->maxLength(255)
                                             ->unique(ignoreRecord: true),
 
                                         TextInput::make('password')
@@ -84,6 +86,12 @@ class EditProfile extends \Filament\Pages\Auth\EditProfile
                                             ->required()
                                             ->visible(fn (Get $get): bool => filled($get('password')))
                                             ->dehydrated(false),
+
+                                        Select::make('timezone')
+                                            ->required()
+                                            ->prefixIcon('tabler-clock-pin')
+                                            ->options(fn () => collect(DateTimeZone::listIdentifiers())->mapWithKeys(fn ($tz) => [$tz => $tz]))
+                                            ->searchable(),
 
                                         Select::make('language')
                                             ->label(trans('strings.language'))
@@ -112,6 +120,7 @@ class EditProfile extends \Filament\Pages\Auth\EditProfile
                                                     ->hidden(fn () => !cache()->get("users.{$this->getUser()->id}.2fa.tokens"))
                                                     ->rows(10)
                                                     ->readOnly()
+                                                    ->dehydrated(false)
                                                     ->formatStateUsing(fn () => cache()->get("users.{$this->getUser()->id}.2fa.tokens"))
                                                     ->helperText('These will not be shown again!')
                                                     ->label('Backup Tokens:'),
@@ -193,8 +202,10 @@ class EditProfile extends \Filament\Pages\Auth\EditProfile
                                     ->schema([
                                         Grid::make('asdf')->columns(5)->schema([
                                             Section::make('Create API Key')->columnSpan(3)->schema([
+
                                                 TextInput::make('description')
                                                     ->live(),
+
                                                 TagsInput::make('allowed_ips')
                                                     ->live()
                                                     ->splitKeys([',', ' ', 'Tab'])
@@ -206,7 +217,7 @@ class EditProfile extends \Filament\Pages\Auth\EditProfile
                                                 Action::make('Create')
                                                     ->disabled(fn (Get $get) => $get('description') === null)
                                                     ->successRedirectUrl(route('filament.admin.auth.profile', ['tab' => '-api-keys-tab']))
-                                                    ->action(function (Get $get, Action $action, $user) {
+                                                    ->action(function (Get $get, Action $action, User $user) {
                                                         $token = $user->createToken(
                                                             $get('description'),
                                                             $get('allowed_ips'),

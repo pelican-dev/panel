@@ -66,7 +66,7 @@ class ListUsers extends ListRecords
             ->actions([
                 Tables\Actions\EditAction::make(),
             ])
-            ->checkIfRecordIsSelectableUsing(fn (User $user) => !$user->servers_count)
+            ->checkIfRecordIsSelectableUsing(fn (User $user) => auth()->user()->id !== $user->id && !$user->servers_count)
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
@@ -85,12 +85,12 @@ class ListUsers extends ListRecords
                             Forms\Components\TextInput::make('username')
                                 ->alphaNum()
                                 ->required()
-                                ->maxLength(191),
+                                ->maxLength(255),
                             Forms\Components\TextInput::make('email')
                                 ->email()
                                 ->required()
                                 ->unique()
-                                ->maxLength(191),
+                                ->maxLength(255),
 
                             Forms\Components\TextInput::make('password')
                                 ->hintIcon('tabler-question-mark')

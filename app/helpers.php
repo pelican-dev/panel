@@ -40,3 +40,11 @@ if (!function_exists('object_get_strict')) {
         return $object;
     }
 }
+
+if (!function_exists('is_installed')) {
+    function is_installed(): bool
+    {
+        // This defaults to true so existing panels count as "installed"
+        return env('APP_INSTALLED', true);
+    }
+}

@@ -6,11 +6,11 @@ return [
             'author' => 'Provide the email address that eggs exported by this Panel should be from. This should be a valid email address.',
             'url' => 'The application URL MUST begin with https:// or http:// depending on if you are using SSL or not. If you do not include the scheme your emails and other content will link to the wrong location.',
             'timezone' => "The timezone should match one of PHP\'s supported timezones. If you are unsure, please reference https://php.net/manual/en/timezones.php.",
-            'settings_ui' => 'Enable UI based settings editor?',
         ],
         'redis' => [
             'note' => 'You\'ve selected the Redis driver for one or more options, please provide valid connection information below. In most cases you can use the defaults provided unless you have modified your setup.',
-            'comment' => 'By default a Redis server instance has no password as it is running locally and inaccessible to the outside world. If this is the case, simply hit enter without entering a value.',
+            'comment' => 'By default a Redis server instance has for username default and no password as it is running locally and inaccessible to the outside world. If this is the case, simply hit enter without entering a value.',
+            'confirm' => 'It seems a :field is already defined for Redis, would you like to change it?',
         ],
     ],
     'database_settings' => [
@@ -39,8 +39,7 @@ return [
         'daemonSFTP' => 'Enter the daemon SFTP listening port',
         'daemonSFTPAlias' => 'Enter the daemon SFTP alias (can be empty)',
         'daemonBase' => 'Enter the base folder',
-        'succes1' => 'Successfully created a new node with the name: ',
-        'succes2' => 'and has an id of: ',
+        'success' => 'Successfully created a new node with the name :name and has an id of :id',
     ],
     'node_config' => [
         'error_not_exist' => 'The selected node does not exist.',

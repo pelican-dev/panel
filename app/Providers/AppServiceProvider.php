@@ -10,13 +10,14 @@ use App\Services\Helpers\SoftwareVersionService;
 use Dedoc\Scramble\Scramble;
 use Dedoc\Scramble\Support\Generator\OpenApi;
 use Dedoc\Scramble\Support\Generator\SecurityScheme;
+use Filament\Support\Colors\Color;
+use Filament\Support\Facades\FilamentColor;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Facades\Broadcast;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Http;
-use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
@@ -30,8 +31,6 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        Schema::defaultStringLength(191);
-
         $versionData = app(SoftwareVersionService::class)->versionData();
         View::share('appVersion', $versionData['version'] ?? 'undefined');
         View::share('appIsGit', $versionData['is_git'] ?? false);
@@ -83,6 +82,15 @@ class AppServiceProvider extends ServiceProvider
         Event::listen(function (\SocialiteProviders\Manager\SocialiteWasCalled $event) {
             $event->extendSocialite('discord', \SocialiteProviders\Discord\Provider::class);
         });
+
+        FilamentColor::register([
+            'danger' => Color::Red,
+            'gray' => Color::Zinc,
+            'info' => Color::Sky,
+            'primary' => Color::Blue,
+            'success' => Color::Green,
+            'warning' => Color::Amber,
+        ]);
     }
 
     /**
@@ -90,11 +98,6 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        // Only load the settings service provider if the environment is configured to allow it.
-        if (!config('panel.load_environment_only', false) && $this->app->environment() !== 'testing') {
-            $this->app->register(SettingsServiceProvider::class);
-        }
-
         $this->app->singleton('extensions.themes', function () {
             return new Theme();
         });

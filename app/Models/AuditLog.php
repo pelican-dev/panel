@@ -16,8 +16,8 @@ class AuditLog extends Model
 
     public static array $validationRules = [
         'uuid' => 'required|uuid',
-        'action' => 'required|string|max:191',
-        'subaction' => 'nullable|string|max:191',
+        'action' => 'required|string|max:255',
+        'subaction' => 'nullable|string|max:255',
         'device' => 'array',
         'device.ip_address' => 'ip',
         'device.user_agent' => 'string',

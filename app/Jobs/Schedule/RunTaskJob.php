@@ -12,6 +12,7 @@ use Illuminate\Foundation\Bus\DispatchesJobs;
 use App\Services\Backups\InitiateBackupService;
 use App\Repositories\Daemon\DaemonPowerRepository;
 use App\Exceptions\Http\Connection\DaemonConnectionException;
+use App\Services\Files\DeleteFilesService;
 
 class RunTaskJob extends Job implements ShouldQueue
 {
@@ -24,7 +25,7 @@ class RunTaskJob extends Job implements ShouldQueue
      */
     public function __construct(public Task $task, public bool $manualRun = false)
     {
-        $this->queue = 'standard';
+
     }
 
     /**
@@ -34,7 +35,8 @@ class RunTaskJob extends Job implements ShouldQueue
      */
     public function handle(
         InitiateBackupService $backupService,
-        DaemonPowerRepository $powerRepository
+        DaemonPowerRepository $powerRepository,
+        DeleteFilesService $deleteFilesService
     ): void {
         // Do not process a task that is not set to active, unless it's been manually triggered.
         if (!$this->task->schedule->is_active && !$this->manualRun) {
@@ -66,6 +68,9 @@ class RunTaskJob extends Job implements ShouldQueue
                     break;
                 case Task::ACTION_BACKUP:
                     $backupService->setIgnoredFiles(explode(PHP_EOL, $this->task->payload))->handle($server, null, true);
+                    break;
+                case Task::ACTION_DELETE_FILES:
+                    $deleteFilesService->handle($server, explode(PHP_EOL, $this->task->payload));
                     break;
                 default:
                     throw new \InvalidArgumentException('Invalid task action provided: ' . $this->task->action);
