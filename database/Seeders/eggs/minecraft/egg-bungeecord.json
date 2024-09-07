@@ -49,7 +49,7 @@
                 "alpha_num",
                 "between:1,6"
             ],
-            "sort": null,
+            "sort": 1,
             "field_type": "text"
         },
         {
@@ -63,7 +63,7 @@
                 "required",
                 "regex:\/^([\\w\\d._-]+)(\\.jar)$\/"
             ],
-            "sort": null,
+            "sort": 2,
             "field_type": "text"
         }
     ]
