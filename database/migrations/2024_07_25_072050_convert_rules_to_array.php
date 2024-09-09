@@ -12,12 +12,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('egg_variables', function (Blueprint $table) {
-            $table->json('rules')->change();
-        });
-
         DB::table('egg_variables')->select(['id', 'rules'])->cursor()->each(function ($eggVariable) {
             DB::table('egg_variables')->where('id', $eggVariable->id)->update(['rules' => explode('|', $eggVariable->rules)]);
+        });
+
+        Schema::table('egg_variables', function (Blueprint $table) {
+            $table->json('rules')->change();
         });
     }
 
@@ -26,7 +26,7 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('api_keys', function (Blueprint $table) {
+        Schema::table('egg_variables', function (Blueprint $table) {
             $table->text('rules')->change();
         });
 
