@@ -86,6 +86,7 @@ class Settings extends Page implements HasForms
             TextInput::make('APP_NAME')
                 ->label('App Name')
                 ->required()
+                ->alphaNum()
                 ->default(env('APP_NAME', 'Pelican')),
             TextInput::make('APP_FAVICON')
                 ->label('App Favicon')
@@ -274,7 +275,6 @@ class Settings extends Page implements HasForms
                         ->default(env('MAIL_PORT', config('mail.mailers.smtp.port'))),
                     TextInput::make('MAIL_USERNAME')
                         ->label('Username')
-                        ->required()
                         ->default(env('MAIL_USERNAME', config('mail.mailers.smtp.username'))),
                     TextInput::make('MAIL_PASSWORD')
                         ->label('Password')
