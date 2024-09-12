@@ -16,18 +16,22 @@ class DispatchWebhooksTest extends TestCase
 {
     use LazilyRefreshDatabase;
 
+    public function setUp(): void
+    {
+        parent::setUp();
+        Http::preventStrayRequests();
+        Carbon::setTestNow();
+    }
+
     public function test_it_sends_a_single_webhook(): void
     {
-        Http::preventStrayRequests();
-
         $webhook = WebhookConfiguration::factory()->create([
             'events' => ['eloquent.created: ' . Server::class],
         ]);
 
         Http::fake([$webhook->endpoint => Http::response()]);
 
-        $node = Node::factory()->create();
-        $server = Server::factory()->withNode($node)->create();
+        $server = $this->createServer();
 
         Http::assertSentCount(1);
         Http::assertSent(function (Request $request) use ($webhook, $server) {
@@ -38,7 +42,6 @@ class DispatchWebhooksTest extends TestCase
 
     public function test_sends_multiple_webhooks()
     {
-        Http::preventStrayRequests();
 
         [$webhook1, $webhook2] = WebhookConfiguration::factory(2)
             ->create(['events' => ['eloquent.created: ' . Server::class]]);
@@ -48,8 +51,7 @@ class DispatchWebhooksTest extends TestCase
             $webhook2->endpoint => Http::response(),
         ]);
 
-        $node = Node::factory()->create();
-        $server = Server::factory()->withNode($node)->create();
+        $this->createServer();
 
         Http::assertSentCount(2);
         Http::assertSent(fn (Request $request) => $webhook1->endpoint === $request->url());
@@ -58,21 +60,17 @@ class DispatchWebhooksTest extends TestCase
 
     public function test_it_sends_no_webhooks()
     {
-        Http::preventStrayRequests();
         Http::fake();
 
         WebhookConfiguration::factory()->create();
 
-        $node = Node::factory()->create();
-        $server = Server::factory()->withNode($node)->create();
+        $this->createServer();
 
         Http::assertSentCount(0);
     }
 
     public function test_it_sends_some_webhooks()
     {
-        Http::preventStrayRequests();
-
         [$webhook1, $webhook2] = WebhookConfiguration::factory(2)
             ->sequence(
                 ['events' => ['eloquent.created: ' . Server::class]],
@@ -84,8 +82,7 @@ class DispatchWebhooksTest extends TestCase
             $webhook2->endpoint => Http::response(),
         ]);
 
-        $node = Node::factory()->create();
-        $server = Server::factory()->withNode($node)->create();
+        $this->createServer();
 
         Http::assertSentCount(1);
         Http::assertSent(fn (Request $request) => $webhook1->endpoint === $request->url());
@@ -94,10 +91,6 @@ class DispatchWebhooksTest extends TestCase
 
     public function test_it_records_when_a_webhook_is_sent()
     {
-
-        Carbon::setTestNow();
-        Http::preventStrayRequests();
-
         $webhookConfig = WebhookConfiguration::factory()
             ->create(['events' => ['eloquent.created: ' . Server::class]]);
 
@@ -105,8 +98,7 @@ class DispatchWebhooksTest extends TestCase
 
         $this->assertDatabaseCount(Webhook::class, 0);
 
-        $node = Node::factory()->create();
-        $server = Server::factory()->withNode($node)->create();
+        $server = $this->createServer();
 
         $this->assertDatabaseCount(Webhook::class, 1);
 
@@ -122,9 +114,6 @@ class DispatchWebhooksTest extends TestCase
 
     public function test_it_records_when_a_webhook_fails()
     {
-        Carbon::setTestNow();
-        Http::preventStrayRequests();
-
         $webhookConfig = WebhookConfiguration::factory()->create(['events' => ['eloquent.created: ' . Server::class],
         ]);
 
@@ -132,8 +121,7 @@ class DispatchWebhooksTest extends TestCase
 
         $this->assertDatabaseCount(Webhook::class, 0);
 
-        $node = Node::factory()->create();
-        $server = Server::factory()->withNode($node)->create();
+        $this->createServer();
 
         $this->assertDatabaseCount(Webhook::class, 1);
         $this->assertDatabaseHas(Webhook::class, [
@@ -142,5 +130,11 @@ class DispatchWebhooksTest extends TestCase
             'successful_at' => null,
             'event' => 'eloquent.created: ' . Server::class,
         ]);
+    }
+
+    public function createServer(): Server
+    {
+        $node = Node::factory()->create();
+        return Server::factory()->withNode($node)->create();
     }
 }
