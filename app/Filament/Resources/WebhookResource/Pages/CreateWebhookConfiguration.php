@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Filament\Resources\WebhookConfigurationResource\Pages;
+namespace App\Filament\Resources\WebhookResource\Pages;
 
 use App\Filament\Resources\WebhookResource;
 use Filament\Resources\Pages\CreateRecord;

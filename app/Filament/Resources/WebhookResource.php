@@ -2,7 +2,7 @@
 
 namespace App\Filament\Resources;
 
-use App\Filament\Resources\WebhookConfigurationResource\Pages;
+use App\Filament\Resources\WebhookResource\Pages;
 use App\Models\WebhookConfiguration;
 use App\Services\Webhooks\DiscoverWebhookEventsService;
 use Filament\Forms;
