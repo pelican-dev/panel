@@ -21,8 +21,10 @@ class ServerFactory extends Factory
      */
     protected $model = Server::class;
 
-    public function withNode(Node $node): static
+    public function withNode(Node $node = null): static
     {
+        $node ??= Node::factory()->create();
+
         return $this->state(fn () => [
             'node_id' => $node->id,
             'allocation_id' => Allocation::factory([
