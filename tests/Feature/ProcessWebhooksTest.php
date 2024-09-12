@@ -29,6 +29,11 @@ class ProcessWebhooksTest extends TestCase
             'events' => ['eloquent.created: '.Server::class],
         ]);
 
+        // todo: pass less strings around such as 'eloquent.created: ...'
+        // todo: get list of events: foreach ($models as $model) {
+        // todo: EventFactory::from(Server::class)->created();
+        // todo outputs: eloquent.created: \App\Models\Server
+
         Http::fake([$webhook->endpoint => Http::response()]);
 
         $data = [

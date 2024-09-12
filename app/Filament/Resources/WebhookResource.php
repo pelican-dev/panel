@@ -17,6 +17,8 @@ class WebhookResource extends Resource
 
     protected static ?string $navigationIcon = 'tabler-webhook';
 
+    protected static ?string $label = 'Webhooks';
+
     public static function form(Form $form): Form
     {
         return $form
