@@ -244,21 +244,21 @@ class Node extends Model
      */
     public function isViable(int $memory, int $disk, int $cpu): bool
     {
-        if ($this->memory_overallocate >= 0) {
+        if ($this->memory > 0 && $this->memory_overallocate >= 0) {
             $memoryLimit = $this->memory * (1 + ($this->memory_overallocate / 100));
             if ($this->servers_sum_memory + $memory > $memoryLimit) {
                 return false;
             }
         }
 
-        if ($this->disk_overallocate >= 0) {
+        if ($this->disk > 0 && $this->disk_overallocate >= 0) {
             $diskLimit = $this->disk * (1 + ($this->disk_overallocate / 100));
             if ($this->servers_sum_disk + $disk > $diskLimit) {
                 return false;
             }
         }
 
-        if ($this->cpu_overallocate >= 0) {
+        if ($this->cpu > 0 && $this->cpu_overallocate >= 0) {
             $cpuLimit = $this->cpu * (1 + ($this->cpu_overallocate / 100));
             if ($this->servers_sum_cpu + $cpu > $cpuLimit) {
                 return false;
