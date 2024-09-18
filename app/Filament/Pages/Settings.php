@@ -166,7 +166,7 @@ class Settings extends Page implements HasForms
                             /** @var User $user */
                             $user = auth()->user();
 
-                            return !$user->can('update Settings');
+                            return !$user->can('update settings');
                         })
                         ->action(fn (Set $set) => $set('TRUSTED_PROXIES', [])),
                     FormAction::make('cloudflare')
@@ -176,7 +176,7 @@ class Settings extends Page implements HasForms
                             /** @var User $user */
                             $user = auth()->user();
 
-                            return !$user->can('update Settings');
+                            return !$user->can('update settings');
                         })
                         ->action(fn (Set $set) => $set('TRUSTED_PROXIES', [
                             '173.245.48.0/20',
@@ -257,7 +257,7 @@ class Settings extends Page implements HasForms
                             /** @var User $user */
                             $user = auth()->user();
 
-                            return !$user->can('update Settings');
+                            return !$user->can('update settings');
                         })
                         ->action(function () {
                             try {
@@ -598,7 +598,7 @@ class Settings extends Page implements HasForms
                     /** @var User $user */
                     $user = auth()->user();
 
-                    return !$user->can('update Settings');
+                    return !$user->can('update settings');
                 })
                 ->keyBindings(['mod+s']),
         ];
