@@ -21,16 +21,19 @@ class ServerPolicy
             return null;
         }
 
+        // Owner has full server permissions
         if ($server->owner_id === $user->id) {
             return true;
         }
 
         $subuser = $server->subusers->where('user_id', $user->id)->first();
-        if (!$subuser || empty($ability)) {
-            return false;
+        // If the user is a subuser check their permissions
+        if ($subuser) {
+            return in_array($ability, $subuser->permissions);
         }
 
-        return in_array($ability, $subuser->permissions);
+        // Return null to let default policies take over
+        return null;
     }
 
     /**
