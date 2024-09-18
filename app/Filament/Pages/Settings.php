@@ -3,7 +3,6 @@
 namespace App\Filament\Pages;
 
 use App\Models\Backup;
-use App\Models\User;
 use App\Notifications\MailTested;
 use App\Traits\EnvironmentWriterTrait;
 use Exception;
@@ -52,10 +51,7 @@ class Settings extends Page implements HasForms
 
     public static function canAccess(): bool
     {
-        /** @var User $user */
-        $user = auth()->user();
-
-        return $user->can('view settings');
+        return auth()->user()->can('view settings');
     }
 
     protected function getFormSchema(): array
@@ -64,12 +60,7 @@ class Settings extends Page implements HasForms
             Tabs::make('Tabs')
                 ->columns()
                 ->persistTabInQueryString()
-                ->disabled(function () {
-                    /** @var User $user */
-                    $user = auth()->user();
-
-                    return !$user->can('update settings');
-                })
+                ->disabled(fn () => !auth()->user()->can('update settings'))
                 ->tabs([
                     Tab::make('general')
                         ->label('General')
@@ -162,22 +153,12 @@ class Settings extends Page implements HasForms
                         ->color('danger')
                         ->icon('tabler-trash')
                         ->requiresConfirmation()
-                        ->disabled(function () {
-                            /** @var User $user */
-                            $user = auth()->user();
-
-                            return !$user->can('update settings');
-                        })
+                        ->authorize(fn () => auth()->user()->can('update settings'))
                         ->action(fn (Set $set) => $set('TRUSTED_PROXIES', [])),
                     FormAction::make('cloudflare')
                         ->label('Set to Cloudflare IPs')
                         ->icon('tabler-brand-cloudflare')
-                        ->disabled(function () {
-                            /** @var User $user */
-                            $user = auth()->user();
-
-                            return !$user->can('update settings');
-                        })
+                        ->authorize(fn () => auth()->user()->can('update settings'))
                         ->action(fn (Set $set) => $set('TRUSTED_PROXIES', [
                             '173.245.48.0/20',
                             '103.21.244.0/22',
@@ -253,12 +234,7 @@ class Settings extends Page implements HasForms
                         ->label('Send Test Mail')
                         ->icon('tabler-send')
                         ->hidden(fn (Get $get) => $get('MAIL_MAILER') === 'log')
-                        ->disabled(function () {
-                            /** @var User $user */
-                            $user = auth()->user();
-
-                            return !$user->can('update settings');
-                        })
+                        ->authorize(fn () => auth()->user()->can('update settings'))
                         ->action(function () {
                             try {
                                 MailNotification::route('mail', auth()->user()->email)
@@ -594,12 +570,7 @@ class Settings extends Page implements HasForms
         return [
             Action::make('save')
                 ->action('save')
-                ->hidden(function () {
-                    /** @var User $user */
-                    $user = auth()->user();
-
-                    return !$user->can('update settings');
-                })
+                ->authorize(fn () => auth()->user()->can('update settings'))
                 ->keyBindings(['mod+s']),
         ];
 
