@@ -40,10 +40,10 @@ class RoleResource extends Resource
             $options = [];
 
             foreach (RolePermissionPrefixes::cases() as $prefix) {
-                $options[$prefix->value . ' ' . strtolower($model->value)] = Str::headline($prefix);
+                $options[$prefix->value . ' ' . strtolower($model->value)] = Str::headline($prefix->value);
             }
 
-            if (array_key_exists($model, Role::MODEL_SPECIFIC_PERMISSIONS)) {
+            if (array_key_exists($model->value, Role::MODEL_SPECIFIC_PERMISSIONS)) {
                 foreach (Role::MODEL_SPECIFIC_PERMISSIONS[$model] as $permission) {
                     $options[$permission . ' ' . strtolower($model->value)] = Str::headline($permission);
                 }
