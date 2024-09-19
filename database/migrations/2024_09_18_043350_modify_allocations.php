@@ -43,15 +43,8 @@ return new class extends Migration
             $server->save();
         }
 
-        try {
-            Schema::table('servers', function (Blueprint $table) {
-                $table->dropForeign(['allocation_id']);
-            });
-        } catch (Throwable) {
-            // pass for databases that don't support this like sqlite
-        }
-
         Schema::table('servers', function (Blueprint $table) {
+            $table->dropForeign(['allocation_id']);
             $table->dropUnique(['allocation_id']);
             $table->dropColumn(['allocation_id']);
         });

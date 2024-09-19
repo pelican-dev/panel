@@ -31,6 +31,9 @@ return new class extends Migration
                 $table->dropIndex('permissions_server_id_foreign');
                 $table->dropForeign('permissions_user_id_foreign');
                 $table->dropIndex('permissions_user_id_foreign');
+            } else {
+                $table->dropForeign(['server_id']);
+                $table->dropForeign(['user_id']);
             }
 
             $table->dropColumn('server_id');
