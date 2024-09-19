@@ -2,6 +2,8 @@
 
 namespace App\Filament\Resources;
 
+use App\Enums\RolePermissionModels;
+use App\Enums\RolePermissionPrefixes;
 use App\Filament\Resources\RoleResource\Pages;
 use App\Models\Role;
 use Filament\Facades\Filament;
@@ -30,61 +32,27 @@ class RoleResource extends Resource
         return static::getModel()::count() ?: null;
     }
 
-    private const PERMISSION_MODELS = [
-        'ApiKey',
-        'DatabaseHost',
-        'Database',
-        'Egg',
-        'Mount',
-        'Node',
-        'Role',
-        'Server',
-        'User',
-    ];
-
-    private const PERMISSION_PREFIXES = [
-        'viewList',
-        'view',
-        'create',
-        'update',
-        'delete',
-    ];
-
-    private const MODEL_SPECIFIC_PERMISSIONS = [
-        'Egg' => [
-            'import',
-            'export',
-        ],
-    ];
-
-    private const SPECIAL_PERMISSIONS = [
-        'Settings' => [
-            'view',
-            'update',
-        ],
-    ];
-
     public static function form(Form $form): Form
     {
         $permissions = [];
 
-        foreach (self::PERMISSION_MODELS as $model) {
+        foreach (RolePermissionModels::cases() as $model) {
             $options = [];
 
-            foreach (self::PERMISSION_PREFIXES as $prefix) {
-                $options[$prefix . ' ' . strtolower($model)] = Str::headline($prefix);
+            foreach (RolePermissionPrefixes::cases() as $prefix) {
+                $options[$prefix->value . ' ' . strtolower($model->value)] = Str::headline($prefix);
             }
 
-            if (array_key_exists($model, self::MODEL_SPECIFIC_PERMISSIONS)) {
-                foreach (self::MODEL_SPECIFIC_PERMISSIONS[$model] as $permission) {
-                    $options[$permission . ' ' . strtolower($model)] = Str::headline($permission);
+            if (array_key_exists($model, Role::MODEL_SPECIFIC_PERMISSIONS)) {
+                foreach (Role::MODEL_SPECIFIC_PERMISSIONS[$model] as $permission) {
+                    $options[$permission . ' ' . strtolower($model->value)] = Str::headline($permission);
                 }
             }
 
-            $permissions[] = self::makeSection($model, $options);
+            $permissions[] = self::makeSection($model->value, $options);
         }
 
-        foreach (self::SPECIAL_PERMISSIONS as $model => $prefixes) {
+        foreach (Role::SPECIAL_PERMISSIONS as $model => $prefixes) {
             $options = [];
 
             foreach ($prefixes as $prefix) {

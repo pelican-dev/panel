@@ -19,6 +19,20 @@ class Role extends BaseRole
 
     public const ROOT_ADMIN = 'Root Admin';
 
+    public const MODEL_SPECIFIC_PERMISSIONS = [
+        'egg' => [
+            'import',
+            'export',
+        ],
+    ];
+
+    public const SPECIAL_PERMISSIONS = [
+        'settings' => [
+            'view',
+            'update',
+        ],
+    ];
+
     public function isRootAdmin(): bool
     {
         return $this->name === self::ROOT_ADMIN;
