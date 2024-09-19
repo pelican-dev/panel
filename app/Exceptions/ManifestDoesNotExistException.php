@@ -2,8 +2,8 @@
 
 namespace App\Exceptions;
 
-use Spatie\Ignition\Contracts\Solution;
-use Spatie\Ignition\Contracts\ProvidesSolution;
+use Spatie\ErrorSolutions\Contracts\Solution;
+use Spatie\ErrorSolutions\Contracts\ProvidesSolution;
 
 class ManifestDoesNotExistException extends \Exception implements ProvidesSolution
 {
