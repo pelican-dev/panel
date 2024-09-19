@@ -2,6 +2,7 @@
 
 namespace App\Console;
 
+use App\Jobs\NodeStatistics;
 use App\Models\ActivityLog;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Database\Console\PruneCommand;
@@ -9,6 +10,7 @@ use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 use App\Console\Commands\Schedule\ProcessRunnableCommand;
 use App\Console\Commands\Maintenance\PruneOrphanedBackupsCommand;
 use App\Console\Commands\Maintenance\CleanServiceBackupFilesCommand;
+use App\Console\Commands\Maintenance\PruneImagesCommand;
 
 class Kernel extends ConsoleKernel
 {
@@ -30,7 +32,11 @@ class Kernel extends ConsoleKernel
 
         // Execute scheduled commands for servers every minute, as if there was a normal cron running.
         $schedule->command(ProcessRunnableCommand::class)->everyMinute()->withoutOverlapping();
+
         $schedule->command(CleanServiceBackupFilesCommand::class)->daily();
+        $schedule->command(PruneImagesCommand::class)->daily();
+
+        $schedule->job(new NodeStatistics())->everyFiveSeconds()->withoutOverlapping();
 
         if (config('backups.prune_age')) {
             // Every 30 minutes, run the backup pruning command so that any abandoned backups can be deleted.

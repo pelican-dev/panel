@@ -12,6 +12,8 @@ use App\Services\Databases\DatabaseManagementService;
 use App\Services\Databases\DatabasePasswordService;
 use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\Repeater;
+use Filament\Forms\Get;
+use Filament\Forms\Set;
 use LogicException;
 use App\Filament\Resources\ServerResource;
 use App\Http\Controllers\Admin\ServersController;
@@ -46,22 +48,16 @@ class EditServer extends EditRecord
     public function form(Form $form): Form
     {
         return $form
-            ->columns([
-                'default' => 1,
-                'sm' => 2,
-                'md' => 2,
-                'lg' => 4,
-            ])
             ->schema([
                 Tabs::make('Tabs')
                     ->persistTabInQueryString()
-                    ->columnSpan(6)
                     ->columns([
                         'default' => 2,
                         'sm' => 2,
                         'md' => 4,
                         'lg' => 6,
                     ])
+                    ->columnSpanFull()
                     ->tabs([
                         Tabs\Tab::make('Information')
                             ->icon('tabler-info-circle')
@@ -133,7 +129,8 @@ class EditServer extends EditRecord
                                         'md' => 2,
                                         'lg' => 3,
                                     ])
-                                    ->readOnly(),
+                                    ->readOnly()
+                                    ->dehydrated(false),
                                 Forms\Components\TextInput::make('uuid_short')
                                     ->label('Short UUID')
                                     ->hintAction(CopyAction::make())
@@ -143,7 +140,8 @@ class EditServer extends EditRecord
                                         'md' => 2,
                                         'lg' => 3,
                                     ])
-                                    ->readOnly(),
+                                    ->readOnly()
+                                    ->dehydrated(false),
                                 Forms\Components\TextInput::make('external_id')
                                     ->label('External ID')
                                     ->columnSpan([
@@ -169,12 +167,6 @@ class EditServer extends EditRecord
                             ->icon('tabler-brand-docker')
                             ->schema([
                                 Forms\Components\Fieldset::make('Resource Limits')
-                                    ->columnSpan([
-                                        'default' => 2,
-                                        'sm' => 4,
-                                        'md' => 4,
-                                        'lg' => 6,
-                                    ])
                                     ->columns([
                                         'default' => 1,
                                         'sm' => 2,
@@ -350,12 +342,6 @@ class EditServer extends EditRecord
 
                                 Forms\Components\Fieldset::make('Feature Limits')
                                     ->inlineLabel()
-                                    ->columnSpan([
-                                        'default' => 2,
-                                        'sm' => 4,
-                                        'md' => 4,
-                                        'lg' => 6,
-                                    ])
                                     ->columns([
                                         'default' => 1,
                                         'sm' => 2,
@@ -380,12 +366,6 @@ class EditServer extends EditRecord
                                             ->numeric(),
                                     ]),
                                 Forms\Components\Fieldset::make('Docker Settings')
-                                    ->columnSpan([
-                                        'default' => 2,
-                                        'sm' => 4,
-                                        'md' => 4,
-                                        'lg' => 6,
-                                    ])
                                     ->columns([
                                         'default' => 1,
                                         'sm' => 2,
@@ -448,10 +428,10 @@ class EditServer extends EditRecord
                                     ->disabledOn('edit')
                                     ->prefixIcon('tabler-egg')
                                     ->columnSpan([
-                                        'default' => 1,
+                                        'default' => 6,
                                         'sm' => 3,
                                         'md' => 3,
-                                        'lg' => 5,
+                                        'lg' => 4,
                                     ])
                                     ->relationship('egg', 'name')
                                     ->searchable()
@@ -460,6 +440,12 @@ class EditServer extends EditRecord
 
                                 Forms\Components\ToggleButtons::make('skip_scripts')
                                     ->label('Run Egg Install Script?')->inline()
+                                    ->columnSpan([
+                                        'default' => 6,
+                                        'sm' => 1,
+                                        'md' => 1,
+                                        'lg' => 2,
+                                    ])
                                     ->options([
                                         false => 'Yes',
                                         true => 'Skip',
@@ -537,29 +523,40 @@ class EditServer extends EditRecord
                                 Forms\Components\Textarea::make('startup')
                                     ->label('Startup Command')
                                     ->required()
-                                    ->hintAction(Forms\Components\Actions\Action::make('startup-restore')
-                                        ->label('Restore Default')
-                                        ->icon('tabler-restore')
-                                        ->action(fn (Forms\Get $get, Forms\Set $set) => $set('startup', Egg::find($get('egg_id'))?->startup ?? '')
-                                        )
-                                    )
-                                    ->columnSpan([
-                                        'default' => 2,
-                                        'sm' => 4,
-                                        'md' => 4,
-                                        'lg' => 6,
-                                    ])
-                                    ->rows(fn ($state) => str($state)->explode("\n")->reduce(
-                                        fn (int $carry, $line) => $carry + floor(strlen($line) / 125), 0
-                                    )),
+                                    ->columnSpan(6)
+                                    ->rows(function ($state) {
+                                        return str($state)->explode("\n")->reduce(
+                                            fn (int $carry, $line) => $carry + floor(strlen($line) / 125),
+                                            0
+                                        );
+                                    }),
 
-                                Forms\Components\Hidden::make('environment')->default([]),
+                                Forms\Components\Textarea::make('defaultStartup')
+                                    ->hintAction(CopyAction::make())
+                                    ->label('Default Startup Command')
+                                    ->disabled()
+                                    ->formatStateUsing(function ($state, Get $get, Set $set) {
+                                        $egg = Egg::query()->find($get('egg_id'));
+
+                                        return $egg->startup;
+                                    })
+                                    ->columnSpan(6),
 
                                 Forms\Components\Repeater::make('server_variables')
                                     ->relationship('serverVariables', function (Builder $query) {
-                                        $query->whereHas('variable', function (Builder $query) {
-                                            $query->whereNot('rules', 'like', '%port%');
-                                        });
+                                        /** @var Server $server */
+                                        $server = $this->getRecord();
+
+                                        foreach ($server->variables as $variable) {
+                                            ServerVariable::query()->firstOrCreate([
+                                                'server_id' => $server->id,
+                                                'variable_id' => $variable->id,
+                                            ], [
+                                                'variable_value' => $variable->server_value ?? '',
+                                            ]);
+                                        }
+
+                                        return $query;
                                     })
                                     ->grid()
                                     ->mutateRelationshipDataBeforeSaveUsing(function (array &$data): array {
@@ -576,7 +573,7 @@ class EditServer extends EditRecord
 
                                         $text = Forms\Components\TextInput::make('variable_value')
                                             ->hidden($this->shouldHideComponent(...))
-                                            ->required(fn (ServerVariable $serverVariable) => in_array('required', explode('|', $serverVariable->variable->rules)))
+                                            ->required(fn (ServerVariable $serverVariable) => $serverVariable->variable->getRequiredAttribute())
                                             ->rules([
                                                 fn (ServerVariable $serverVariable): Closure => function (string $attribute, $value, Closure $fail) use ($serverVariable) {
                                                     $validator = Validator::make(['validatorkey' => $value], [
@@ -603,7 +600,7 @@ class EditServer extends EditRecord
                                                 ->live(onBlur: true)
                                                 ->hintIcon('tabler-code')
                                                 ->label(fn (ServerVariable $serverVariable) => $serverVariable->variable->name)
-                                                ->hintIconTooltip(fn (ServerVariable $serverVariable) => $serverVariable->variable->rules)
+                                                ->hintIconTooltip(fn (ServerVariable $serverVariable) => implode('|', $serverVariable->variable->rules))
                                                 ->prefix(fn (ServerVariable $serverVariable) => '{{' . $serverVariable->variable->env_variable . '}}')
                                                 ->helperText(fn (ServerVariable $serverVariable) => empty($serverVariable->variable?->description) ? '—' : $serverVariable->variable->description);
                                         }
@@ -810,8 +807,7 @@ class EditServer extends EditRecord
             Actions\DeleteAction::make('Delete')
                 ->successRedirectUrl(route('filament.admin.resources.servers.index'))
                 ->color('danger')
-                ->disabled(fn (Server $server) => $server->databases()->count() > 0)
-                ->label(fn (Server $server) => $server->databases()->count() > 0 ? 'Server has a Database' : 'Delete')
+                ->label('Delete')
                 ->after(fn (Server $server) => resolve(ServerDeletionService::class)->handle($server))
                 ->requiresConfirmation(),
             Actions\Action::make('console')
@@ -842,20 +838,18 @@ class EditServer extends EditRecord
     {
         $rules = str($serverVariable->variable->rules)->explode('|');
 
-        $containsRuleIn = $rules->reduce(
-            fn ($result, $value) => $result === true && !str($value)->startsWith('in:'), true
-        );
+        $containsRuleIn = array_first($serverVariable->variable->rules, fn ($value) => str($value)->startsWith('in:'), false);
 
         if ($rules->contains('port')) {
             return true;
         }
 
         if ($component instanceof Forms\Components\Select) {
-            return $containsRuleIn;
+            return !$containsRuleIn;
         }
 
         if ($component instanceof Forms\Components\TextInput) {
-            return !$containsRuleIn;
+            return $containsRuleIn;
         }
 
         throw new \Exception('Component type not supported: ' . $component::class);
@@ -863,10 +857,8 @@ class EditServer extends EditRecord
 
     private function getSelectOptionsFromRules(ServerVariable $serverVariable): array
     {
-        $rules = str($serverVariable->variable->rules)->explode('|');
-        $inRule = $rules->reduce(
-            fn ($result, $value) => str($value)->startsWith('in:') ? $value : $result, ''
-        );
+
+        $inRule = array_first($serverVariable->variable->rules, fn ($value) => str($value)->startsWith('in:'));
 
         return str($inRule)
             ->after('in:')

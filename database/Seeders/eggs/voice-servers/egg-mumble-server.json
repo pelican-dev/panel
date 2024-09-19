@@ -2,9 +2,9 @@
     "_comment": "DO NOT EDIT: FILE GENERATED AUTOMATICALLY BY PANEL",
     "meta": {
         "version": "PTDL_v2",
-        "update_url": null
+        "update_url": "https:\/\/github.com\/pelican-dev\/panel\/raw\/main\/database\/Seeders\/eggs\/voice-servers\/egg-mumble-server.json"
     },
-    "exported_at": "2024-07-03T10:30:24+00:00",
+    "exported_at": "2024-07-25T12:05:52+00:00",
     "name": "Mumble Server",
     "author": "panel@example.com",
     "uuid": "727ee758-7fb2-4979-972b-d3eba4e1e9f0",
@@ -36,19 +36,12 @@
             "default_value": "100",
             "user_viewable": true,
             "user_editable": false,
-            "rules": "required|numeric|digits_between:1,5",
+            "rules": [
+                "required",
+                "numeric",
+                "digits_between:1,5"
+            ],
             "sort": 1,
-            "field_type": "text"
-        },
-        {
-            "name": "Server Port",
-            "description": "",
-            "env_variable": "SERVER_PORT",
-            "default_value": "64738",
-            "user_viewable": true,
-            "user_editable": false,
-            "rules": "required|port",
-            "sort": 2,
             "field_type": "text"
         }
     ]

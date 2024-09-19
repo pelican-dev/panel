@@ -65,8 +65,7 @@ class EditDatabaseHost extends EditRecord
                             ->helperText('The password for the database user.')
                             ->password()
                             ->revealable()
-                            ->maxLength(255)
-                            ->required(),
+                            ->maxLength(255),
                         Select::make('node_id')
                             ->searchable()
                             ->preload()

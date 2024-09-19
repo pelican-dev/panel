@@ -17,7 +17,7 @@ use Illuminate\Support\Str;
  * @property array|null $features
  * @property string $docker_image -- deprecated, use $docker_images
  * @property array<string, string> $docker_images
- * @property string $update_url
+ * @property string|null $update_url
  * @property bool $force_outgoing_ip
  * @property array|null $file_denylist
  * @property string|null $config_files
@@ -95,6 +95,7 @@ class Egg extends Model
         'config_stop',
         'config_from',
         'startup',
+        'update_url',
         'script_is_privileged',
         'script_install',
         'script_entry',

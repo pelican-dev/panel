@@ -2,9 +2,9 @@
     "_comment": "DO NOT EDIT: FILE GENERATED AUTOMATICALLY BY PANEL",
     "meta": {
         "version": "PTDL_v2",
-        "update_url": null
+        "update_url": "https:\/\/github.com\/pelican-dev\/panel\/raw\/main\/database\/Seeders\/eggs\/minecraft\/egg-paper.json"
     },
-    "exported_at": "2024-07-03T10:30:19+00:00",
+    "exported_at": "2024-07-25T12:03:43+00:00",
     "name": "Paper",
     "author": "parker@example.com",
     "uuid": "5da37ef6-58da-4169-90a6-e683e1721247",
@@ -44,7 +44,11 @@
             "default_value": "latest",
             "user_viewable": true,
             "user_editable": true,
-            "rules": "nullable|string|max:20",
+            "rules": [
+                "nullable",
+                "string",
+                "max:20"
+            ],
             "sort": 1,
             "field_type": "text"
         },
@@ -55,7 +59,10 @@
             "default_value": "server.jar",
             "user_viewable": true,
             "user_editable": true,
-            "rules": "required|regex:\/^([\\w\\d._-]+)(\\.jar)$\/",
+            "rules": [
+                "required",
+                "regex:\/^([\\w\\d._-]+)(\\.jar)$\/"
+            ],
             "sort": 2,
             "field_type": "text"
         },
@@ -66,7 +73,10 @@
             "default_value": "",
             "user_viewable": false,
             "user_editable": false,
-            "rules": "nullable|string",
+            "rules": [
+                "nullable",
+                "string"
+            ],
             "sort": 3,
             "field_type": "text"
         },
@@ -77,19 +87,12 @@
             "default_value": "latest",
             "user_viewable": true,
             "user_editable": true,
-            "rules": "required|string|max:20",
+            "rules": [
+                "required",
+                "string",
+                "max:20"
+            ],
             "sort": 4,
-            "field_type": "text"
-        },
-        {
-            "name": "Server Port",
-            "description": "",
-            "env_variable": "SERVER_PORT",
-            "default_value": "25565",
-            "user_viewable": true,
-            "user_editable": false,
-            "rules": "required|port",
-            "sort": 5,
             "field_type": "text"
         }
     ]

@@ -3,13 +3,12 @@
 namespace App\Filament\Resources\NodeResource\Pages;
 
 use App\Filament\Resources\NodeResource;
-use App\Filament\Resources\NodeResource\Widgets\NodeMemoryChart;
-use App\Filament\Resources\NodeResource\Widgets\NodeStorageChart;
 use App\Models\Node;
 use App\Models\Objects\Endpoint;
 use App\Services\Nodes\NodeUpdateService;
 use Filament\Actions;
 use Filament\Forms;
+use Filament\Forms\Components\Fieldset;
 use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\Tabs;
@@ -18,6 +17,7 @@ use Filament\Forms\Components\TagsInput;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\ToggleButtons;
+use Filament\Forms\Components\View;
 use Filament\Forms\Get;
 use Filament\Forms\Set;
 use Filament\Notifications\Notification;
@@ -42,6 +42,32 @@ class EditNode extends EditRecord
                 ->persistTabInQueryString()
                 ->columnSpanFull()
                 ->tabs([
+                    Tab::make('')
+                        ->label('Overview')
+                        ->icon('tabler-chart-area-line-filled')
+                        ->columns(6)
+                        ->schema([
+                            Fieldset::make()
+                                ->label('Node Information')
+                                ->columns(4)
+                                ->schema([
+                                    Placeholder::make('')
+                                        ->label('Wings Version')
+                                        ->content(fn (Node $node) => $node->systemInformation()['version'] ?? 'Unknown'),
+                                    Placeholder::make('')
+                                        ->label('CPU Threads')
+                                        ->content(fn (Node $node) => $node->systemInformation()['cpu_count'] ?? 0),
+                                    Placeholder::make('')
+                                        ->label('Architecture')
+                                        ->content(fn (Node $node) => $node->systemInformation()['architecture'] ?? 'Unknown'),
+                                    Placeholder::make('')
+                                        ->label('Kernel')
+                                        ->content(fn (Node $node) => $node->systemInformation()['kernel_version'] ?? 'Unknown'),
+                                ]),
+                            View::make('filament.components.node-cpu-chart')->columnSpan(3),
+                            View::make('filament.components.node-memory-chart')->columnSpan(3),
+                            // TODO: Make purdy View::make('filament.components.node-storage-chart')->columnSpan(3),
+                        ]),
                     Tab::make('Basic Settings')
                         ->icon('tabler-server')
                         ->schema([
@@ -438,16 +464,17 @@ class EditNode extends EditRecord
         ];
     }
 
-    protected function getFooterWidgets(): array
-    {
-        return [
-            NodeStorageChart::class,
-            NodeMemoryChart::class,
-        ];
-    }
-
     protected function afterSave(): void
     {
         $this->fillForm();
+    }
+
+    protected function getColumnSpan()
+    {
+        return null;
+    }
+    protected function getColumnStart()
+    {
+        return null;
     }
 }

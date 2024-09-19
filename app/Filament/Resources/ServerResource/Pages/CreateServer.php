@@ -41,8 +41,8 @@ class CreateServer extends CreateRecord
                         ->icon('tabler-info-circle')
                         ->completedIcon('tabler-check')
                         ->columns([
-                            'default' => 2,
-                            'sm' => 2,
+                            'default' => 1,
+                            'sm' => 1,
                             'md' => 4,
                             'lg' => 6,
                         ])
@@ -62,7 +62,7 @@ class CreateServer extends CreateRecord
                                     }))
                                 ->columnSpan([
                                     'default' => 2,
-                                    'sm' => 4,
+                                    'sm' => 3,
                                     'md' => 2,
                                     'lg' => 3,
                                 ])
@@ -76,12 +76,12 @@ class CreateServer extends CreateRecord
                                 ->label('Owner')
                                 ->columnSpan([
                                     'default' => 2,
-                                    'sm' => 4,
-                                    'md' => 2,
+                                    'sm' => 3,
+                                    'md' => 3,
                                     'lg' => 3,
                                 ])
                                 ->relationship('user', 'username')
-                                ->searchable(['user', 'username', 'email'])
+                                ->searchable(['username', 'email'])
                                 ->getOptionLabelFromRecordUsing(fn (User $user) => "$user->email | $user->username " . ($user->root_admin ? '(admin)' : ''))
                                 ->createOptionForm([
                                     Forms\Components\TextInput::make('username')
@@ -126,10 +126,10 @@ class CreateServer extends CreateRecord
                                 ->prefixIcon('tabler-server-2')
                                 ->default(fn () => ($this->node = Node::query()->latest()->first())?->id)
                                 ->columnSpan([
-                                    'default' => 1,
-                                    'sm' => 2,
-                                    'md' => 2,
-                                    'lg' => 3,
+                                    'default' => 2,
+                                    'sm' => 3,
+                                    'md' => 6,
+                                    'lg' => 6,
                                 ])
                                 ->live()
                                 ->relationship('node', 'name')
@@ -140,13 +140,14 @@ class CreateServer extends CreateRecord
                                 })
                                 ->required(),
 
-                            Forms\Components\TextInput::make('description')
-                                ->placeholder('Notes')
+                            Forms\Components\Textarea::make('description')
+                                ->placeholder('Description')
+                                ->rows(3)
                                 ->columnSpan([
-                                    'default' => 1,
-                                    'sm' => 2,
-                                    'md' => 2,
-                                    'lg' => 3,
+                                    'default' => 2,
+                                    'sm' => 6,
+                                    'md' => 6,
+                                    'lg' => 6,
                                 ])
                                 ->label('Notes'),
                         ]),
@@ -157,9 +158,9 @@ class CreateServer extends CreateRecord
                         ->completedIcon('tabler-check')
                         ->columns([
                             'default' => 1,
-                            'sm' => 2,
-                            'md' => 2,
-                            'lg' => 4,
+                            'sm' => 4,
+                            'md' => 4,
+                            'lg' => 6,
                         ])
                         ->schema([
 
@@ -170,7 +171,7 @@ class CreateServer extends CreateRecord
                                     'default' => 2,
                                     'sm' => 2,
                                     'md' => 2,
-                                    'lg' => 3,
+                                    'lg' => 4,
                                 ])
                                 ->relationship('egg', 'name')
                                 ->searchable()
@@ -214,6 +215,30 @@ class CreateServer extends CreateRecord
                                 ->inline()
                                 ->required(),
 
+                            Forms\Components\ToggleButtons::make('start_on_completion')
+                                ->label('Start Server After Install?')
+                                ->default(true)
+                                ->required()
+                                ->columnSpan([
+                                    'default' => 1,
+                                    'sm' => 1,
+                                    'md' => 1,
+                                    'lg' => 1,
+                                ])
+                                ->options([
+                                    true => 'Yes',
+                                    false => 'No',
+                                ])
+                                ->colors([
+                                    true => 'primary',
+                                    false => 'danger',
+                                ])
+                                ->icons([
+                                    true => 'tabler-code',
+                                    false => 'tabler-code-off',
+                                ])
+                                ->inline(),
+
                             Forms\Components\Textarea::make('startup')
                                 ->hidden(fn () => !$this->egg)
                                 ->hintIcon('tabler-code')
@@ -233,11 +258,15 @@ class CreateServer extends CreateRecord
                                         fn (int $carry, $line) => $carry + floor(strlen($line) / 125),
                                         0
                                     );
-                                }),
+                                })
+                                ->columnSpan([
+                                    'default' => 1,
+                                    'sm' => 4,
+                                    'md' => 4,
+                                    'lg' => 6,
+                                ]),
 
                             Forms\Components\Hidden::make('environment')->default([]),
-
-                            Forms\Components\Hidden::make('start_on_completion')->default(true),
 
                             Forms\Components\Section::make('Variables')
                                 ->icon('tabler-eggs')
@@ -269,8 +298,7 @@ class CreateServer extends CreateRecord
 
                                             $text = Forms\Components\TextInput::make('variable_value')
                                                 ->hidden($this->shouldHideComponent(...))
-                                                ->maxLength(255)
-                                                ->required(fn (Forms\Get $get) => in_array('required', explode('|', $get('rules'))))
+                                                ->required(fn (Forms\Get $get) => in_array('required', $get('rules')))
                                                 ->rules(
                                                     fn (Forms\Get $get): Closure => function (string $attribute, $value, Closure $fail) use ($get) {
                                                         $validator = Validator::make(['validatorkey' => $value], [
@@ -297,7 +325,7 @@ class CreateServer extends CreateRecord
                                                     ->live(onBlur: true)
                                                     ->hintIcon('tabler-code')
                                                     ->label(fn (Forms\Get $get) => $get('name'))
-                                                    ->hintIconTooltip(fn (Forms\Get $get) => $get('rules'))
+                                                    ->hintIconTooltip(fn (Forms\Get $get) => implode('|', $get('rules')))
                                                     ->prefix(fn (Forms\Get $get) => '{{' . $get('env_variable') . '}}')
                                                     ->helperText(fn (Forms\Get $get) => empty($get('description')) ? '—' : $get('description'))
                                                     ->afterStateUpdated(function (Forms\Set $set, Forms\Get $get, $state) {
@@ -382,12 +410,7 @@ class CreateServer extends CreateRecord
                         ->completedIcon('tabler-check')
                         ->schema([
                             Forms\Components\Fieldset::make('Resource Limits')
-                                ->columnSpan([
-                                    'default' => 2,
-                                    'sm' => 4,
-                                    'md' => 4,
-                                    'lg' => 6,
-                                ])
+                                ->columnSpan(6)
                                 ->columns([
                                     'default' => 1,
                                     'sm' => 2,
@@ -567,12 +590,7 @@ class CreateServer extends CreateRecord
 
                             Forms\Components\Fieldset::make('Feature Limits')
                                 ->inlineLabel()
-                                ->columnSpan([
-                                    'default' => 2,
-                                    'sm' => 4,
-                                    'md' => 4,
-                                    'lg' => 6,
-                                ])
+                                ->columnSpan(6)
                                 ->columns([
                                     'default' => 1,
                                     'sm' => 2,
@@ -603,18 +621,13 @@ class CreateServer extends CreateRecord
                                         ->default(0),
                                 ]),
                             Forms\Components\Fieldset::make('Docker Settings')
-                                ->columnSpan([
-                                    'default' => 2,
-                                    'sm' => 4,
-                                    'md' => 4,
-                                    'lg' => 6,
-                                ])
                                 ->columns([
                                     'default' => 1,
                                     'sm' => 2,
                                     'md' => 3,
-                                    'lg' => 3,
+                                    'lg' => 4,
                                 ])
+                                ->columnSpan(6)
                                 ->schema([
                                     Forms\Components\Select::make('select_image')
                                         ->label('Image Name')
@@ -633,7 +646,12 @@ class CreateServer extends CreateRecord
                                             return array_flip($images) + ['ghcr.io/custom-image' => 'Custom Image'];
                                         })
                                         ->selectablePlaceholder(false)
-                                        ->columnSpan(1),
+                                        ->columnSpan([
+                                            'default' => 1,
+                                            'sm' => 2,
+                                            'md' => 3,
+                                            'lg' => 2,
+                                        ]),
 
                                     Forms\Components\TextInput::make('image')
                                         ->label('Image')
@@ -649,13 +667,18 @@ class CreateServer extends CreateRecord
                                             }
                                         })
                                         ->placeholder('Enter a custom Image')
-                                        ->columnSpan(2),
+                                        ->columnSpan([
+                                            'default' => 1,
+                                            'sm' => 2,
+                                            'md' => 3,
+                                            'lg' => 2,
+                                        ]),
 
                                     Forms\Components\KeyValue::make('docker_labels')
                                         ->label('Container Labels')
                                         ->keyLabel('Title')
                                         ->valueLabel('Description')
-                                        ->columnSpan(3),
+                                        ->columnSpanFull(),
 
                                     Forms\Components\CheckboxList::make('mounts')
                                         ->live()
@@ -710,7 +733,7 @@ class CreateServer extends CreateRecord
 
     private function shouldHideComponent(Forms\Get $get, Forms\Components\Component $component): bool
     {
-        $containsRuleIn = str($get('rules'))->explode('|')->reduce(
+        $containsRuleIn = collect($get('rules'))->reduce(
             fn ($result, $value) => $result === true && !str($value)->startsWith('in:'), true
         );
 
@@ -727,7 +750,7 @@ class CreateServer extends CreateRecord
 
     private function getSelectOptionsFromRules(Forms\Get $get): array
     {
-        $inRule = str($get('rules'))->explode('|')->reduce(
+        $inRule = collect($get('rules'))->reduce(
             fn ($result, $value) => str($value)->startsWith('in:') ? $value : $result, ''
         );
 

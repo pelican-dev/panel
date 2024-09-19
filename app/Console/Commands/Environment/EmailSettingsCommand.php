@@ -2,8 +2,8 @@
 
 namespace App\Console\Commands\Environment;
 
+use App\Traits\EnvironmentWriterTrait;
 use Illuminate\Console\Command;
-use App\Traits\Commands\EnvironmentWriterTrait;
 
 class EmailSettingsCommand extends Command
 {
@@ -60,6 +60,8 @@ class EmailSettingsCommand extends Command
         );
 
         $this->writeToEnvironment($this->variables);
+
+        $this->call('queue:restart');
 
         $this->line('Updating stored environment configuration file.');
         $this->line('');

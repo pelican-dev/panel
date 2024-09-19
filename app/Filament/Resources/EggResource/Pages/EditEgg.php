@@ -91,8 +91,10 @@ class EditEgg extends EditRecord
                                 ->helperText('')
                                 ->columnSpan(['default' => 1, 'sm' => 1, 'md' => 2, 'lg' => 2]),
                             TextInput::make('update_url')
-                                ->disabled()
-                                ->helperText('Not implemented.')
+                                ->label('Update URL')
+                                ->url()
+                                ->hintIcon('tabler-question-mark')
+                                ->hintIconTooltip('URLs must point directly to the raw .json file.')
                                 ->columnSpan(['default' => 1, 'sm' => 1, 'md' => 2, 'lg' => 2]),
                             KeyValue::make('docker_images')
                                 ->live()
@@ -142,7 +144,7 @@ class EditEgg extends EditRecord
                                 ->mutateRelationshipDataBeforeCreateUsing(function (array $data): array {
                                     $data['default_value'] ??= '';
                                     $data['description'] ??= '';
-                                    $data['rules'] ??= '';
+                                    $data['rules'] ??= [];
                                     $data['user_viewable'] ??= '';
                                     $data['user_editable'] ??= '';
 
@@ -151,7 +153,7 @@ class EditEgg extends EditRecord
                                 ->mutateRelationshipDataBeforeSaveUsing(function (array $data): array {
                                     $data['default_value'] ??= '';
                                     $data['description'] ??= '';
-                                    $data['rules'] ??= '';
+                                    $data['rules'] ??= [];
                                     $data['user_viewable'] ??= '';
                                     $data['user_editable'] ??= '';
 
@@ -181,7 +183,30 @@ class EditEgg extends EditRecord
                                             Checkbox::make('user_viewable')->label('Viewable'),
                                             Checkbox::make('user_editable')->label('Editable'),
                                         ]),
-                                    TextInput::make('rules')->columnSpanFull(),
+                                    TagsInput::make('rules')
+                                        ->columnSpanFull()
+                                        ->placeholder('Add Rule')
+                                        ->reorderable()
+                                        ->suggestions([
+                                            'required',
+                                            'nullable',
+                                            'string',
+                                            'integer',
+                                            'numeric',
+                                            'boolean',
+                                            'alpha',
+                                            'alpha_dash',
+                                            'alpha_num',
+                                            'url',
+                                            'email',
+                                            'regex:',
+                                            'min:',
+                                            'max:',
+                                            'between:',
+                                            'between:1024,65535',
+                                            'in:',
+                                            'in:true,false',
+                                        ]),
                                 ]),
                         ]),
                     Tab::make('Install Script')
@@ -249,6 +274,7 @@ class EditEgg extends EditRecord
                                 ->schema([
                                     TextInput::make('url')
                                         ->label('URL')
+                                        ->default(fn (Egg $egg): ?string => $egg->update_url)
                                         ->hint('Link to the egg file (eg. minecraft.json)')
                                         ->url(),
                                 ]),
@@ -267,16 +293,14 @@ class EditEgg extends EditRecord
                             Notification::make()
                                 ->title('Import Failed')
                                 ->body($exception->getMessage())
-                                ->danger()
+                                ->danger() // Will Robinson
                                 ->send();
 
                             report($exception);
 
                             return;
                         }
-                    }
-
-                    if (!empty($data['url'])) {
+                    } elseif (!empty($data['url'])) {
                         try {
                             $eggImportService->fromUrl($data['url'], $egg);
                         } catch (Exception $exception) {
