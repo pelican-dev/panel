@@ -13,7 +13,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        $adminUsers = User::whereRootAdmin(1)->get();
+        $adminUsers = User::whereRootAdmin(true)->get();
         foreach ($adminUsers as $adminUser) {
             $adminUser->syncRoles(Role::getRootAdmin());
         }
