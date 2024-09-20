@@ -24,7 +24,6 @@ class EventServiceProvider extends ServiceProvider
         //'*' => [DispatchWebhooks::class],
         'eloquent.created*' => [DispatchWebhooks::class],
         'eloquent.deleted*' => [DispatchWebhooks::class],
-        'eloquent.restored*' => [DispatchWebhooks::class],
         'eloquent.updated*' => [DispatchWebhooks::class],
     ];
 
