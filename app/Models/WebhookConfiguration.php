@@ -36,8 +36,29 @@ class WebhookConfiguration extends Model
         return $builder->whereJsonContains('events', $event::class);
     }
 
-    public static function allPossibleEvents() {
-        return static::allModelEvents();
+    public static function allPossibleEvents(): array
+    {
+        return static::discoverCustomEvents() + static::allModelEvents();
+    }
+
+    public static function filamentCheckboxList(): array
+    {
+        $list = [];
+        $events = static::allPossibleEvents();
+        foreach ($events as $event) {
+            $list[$event] = static::transformClassName($event);
+        }
+
+        return $list;
+    }
+
+    public static function transformClassName(string $event): string
+    {
+        return str($event)
+            ->after('eloquent.')
+            ->replace("App\\Models\\", '')
+            ->replace("App\\Events\\", 'event: ')
+            ->toString();
     }
 
     public static function allModelEvents()
@@ -68,5 +89,25 @@ class WebhookConfiguration extends Model
         }
 
         return $models;
+    }
+    
+    public static function discoverCustomEvents(): array
+    {
+        $directory = app_path('Events');
+        $filesystem = app(Filesystem::class);
+
+        $events = [];
+        foreach ($filesystem->allFiles($directory) as $file) {
+            $namespace = str($file->getPath())
+                ->after(base_path())
+                ->replace(DIRECTORY_SEPARATOR, '\\')
+                ->replace("\\app\\", "App\\")
+                ->toString();
+
+            $events[] = $namespace . '\\' . str($file->getFilename())
+                ->replace([DIRECTORY_SEPARATOR, '.php'], ['\\', '']);
+        }
+
+        return $events;
     }
 }

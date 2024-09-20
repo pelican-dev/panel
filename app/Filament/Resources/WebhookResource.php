@@ -4,7 +4,6 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\WebhookResource\Pages;
 use App\Models\WebhookConfiguration;
-use App\Services\Webhooks\DiscoverWebhookEventsService;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
@@ -25,7 +24,13 @@ class WebhookResource extends Resource
             ->schema([
                 Forms\Components\TextInput::make('endpoint')->activeUrl()->required(),
                 Forms\Components\TextInput::make('description')->nullable(),
-                Forms\Components\CheckboxList::make('events')->lazy()->options(fn () => DiscoverWebhookEventsService::toFilamentCheckboxList())->required(),
+                Forms\Components\CheckboxList::make('events')->lazy()->options(
+                    fn () => WebhookConfiguration::filamentCheckboxList()
+                )
+                    ->columns(3)
+                    ->columnSpanFull()
+                    ->gridDirection('row')
+                    ->required(),
             ]);
     }
 
