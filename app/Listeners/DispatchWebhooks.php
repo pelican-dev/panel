@@ -13,7 +13,7 @@ class DispatchWebhooks
 
         foreach (WebhookConfiguration::all() as $webhookConfig) {
             if (in_array($eventName, $webhookConfig->events)) {
-                ProcessWebhook::dispatchSync($webhookConfig, $eventName, $data);
+                ProcessWebhook::dispatch($webhookConfig, $eventName, $data);
             }
         }
     }
