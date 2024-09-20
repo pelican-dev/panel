@@ -3,14 +3,11 @@
 namespace App\Events\Server;
 
 use App\Events\Event;
-use App\Events\ShouldDispatchWebhooks;
 use App\Models\Server;
-use App\Traits\Services\HasWebhookPayload;
 use Illuminate\Queue\SerializesModels;
 
-class Created extends Event implements ShouldDispatchWebhooks
+class Created extends Event
 {
-    use HasWebhookPayload;
     use SerializesModels;
 
     /**

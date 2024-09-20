@@ -3,14 +3,11 @@
 namespace App\Events\Subuser;
 
 use App\Events\Event;
-use App\Events\ShouldDispatchWebhooks;
 use App\Models\Subuser;
-use App\Traits\Services\HasWebhookPayload;
 use Illuminate\Queue\SerializesModels;
 
-class Creating extends Event implements ShouldDispatchWebhooks
+class Creating extends Event
 {
-    use HasWebhookPayload;
     use SerializesModels;
 
     /**
