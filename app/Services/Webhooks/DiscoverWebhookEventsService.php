@@ -2,7 +2,6 @@
 
 namespace App\Services\Webhooks;
 
-use App\Events\ShouldDispatchWebhooks;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\File;
 use ReflectionClass;
