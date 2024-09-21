@@ -56,7 +56,7 @@ abstract class SubuserRequest extends ClientApiRequest
         $server = $this->route()->parameter('server');
 
         // If we are a root admin or the server owner, no need to perform these checks.
-        if ($user->root_admin || $user->id === $server->owner_id) {
+        if ($user->isRootAdmin() || $user->id === $server->owner_id) {
             return;
         }
 

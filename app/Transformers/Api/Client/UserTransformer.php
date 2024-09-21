@@ -29,8 +29,8 @@ class UserTransformer extends BaseClientTransformer
             'last_name' => $user->name_last,
             'language' => $user->language,
             'image' => 'https://gravatar.com/avatar/' . md5(Str::lower($user->email)), // deprecated
-            'admin' => (bool) $user->root_admin, // deprecated, use "root_admin"
-            'root_admin' => (bool) $user->root_admin,
+            'admin' => $user->isRootAdmin(), // deprecated, use "root_admin"
+            'root_admin' => $user->isRootAdmin(),
             '2fa_enabled' => (bool) $user->use_totp,
             'created_at' => $this->formatTimestamp($user->created_at),
             'updated_at' => $this->formatTimestamp($user->updated_at),

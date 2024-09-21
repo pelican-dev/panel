@@ -81,7 +81,7 @@ class CreateServer extends CreateRecord
                                 ])
                                 ->relationship('user', 'username')
                                 ->searchable(['username', 'email'])
-                                ->getOptionLabelFromRecordUsing(fn (User $user) => "$user->email | $user->username " . ($user->root_admin ? '(admin)' : ''))
+                                ->getOptionLabelFromRecordUsing(fn (User $user) => "$user->email | $user->username " . ($user->isRootAdmin() ? '(admin)' : ''))
                                 ->createOptionForm([
                                     Forms\Components\TextInput::make('username')
                                         ->alphaNum()
@@ -98,21 +98,6 @@ class CreateServer extends CreateRecord
                                         ->hintIcon('tabler-question-mark')
                                         ->hintIconTooltip('Providing a user password is optional. New user email will prompt users to create a password the first time they login.')
                                         ->password(),
-
-                                    Forms\Components\ToggleButtons::make('root_admin')
-                                        ->label('Administrator (Root)')
-                                        ->options([
-                                            false => 'No',
-                                            true => 'Admin',
-                                        ])
-                                        ->colors([
-                                            false => 'primary',
-                                            true => 'danger',
-                                        ])
-                                        ->inline()
-                                        ->required()
-                                        ->default(false)
-                                        ->hidden(),
                                 ])
                                 ->createOptionUsing(function ($data) {
                                     resolve(UserCreationService::class)->handle($data);

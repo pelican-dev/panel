@@ -113,6 +113,6 @@ class ActivityLogTransformer extends BaseClientTransformer
      */
     protected function canViewIP(Model $actor = null): bool
     {
-        return $actor?->is($this->request->user()) || $this->request->user()->root_admin;
+        return $actor?->is($this->request->user()) || $this->request->user()->isRootAdmin();
     }
 }
