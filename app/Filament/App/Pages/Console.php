@@ -4,7 +4,6 @@ namespace App\Filament\App\Pages;
 
 use Filament\Actions\Action;
 use Filament\Facades\Filament;
-use Filament\Forms\Components\Split;
 use Filament\Forms\Components\View;
 use Filament\Forms\Form;
 use Filament\Pages\Page;

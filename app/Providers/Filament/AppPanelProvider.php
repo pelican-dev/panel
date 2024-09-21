@@ -2,12 +2,13 @@
 
 namespace App\Providers\Filament;
 
+use App\Filament\App\Pages;
 use App\Filament\Resources\UserResource\Pages\EditProfile;
 use App\Models\Server;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
-use App\Filament\App\Pages;
+use Filament\Navigation\MenuItem;
 use Filament\Panel;
 use Filament\PanelProvider;
 use Filament\Support\Colors\Color;
@@ -20,7 +21,6 @@ use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\AuthenticateSession;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
-use Filament\Navigation\MenuItem;
 
 class AppPanelProvider extends PanelProvider
 {
@@ -58,7 +58,7 @@ class AppPanelProvider extends PanelProvider
                     ->url('/admin')
                     ->icon('tabler-arrow-forward')
                     ->sort(5)
-                    ->visible(fn (): bool => auth()->user()->root_admin),
+                    ->visible(fn (): bool => auth()->user()->isRootAdmin()),
             ])
             ->favicon(config('app.favicon', '/pelican.ico'))
             ->brandName(config('app.name', 'Pelican'))
