@@ -13,6 +13,7 @@ use Illuminate\Database\Query\JoinClause;
 use App\Http\Requests\Api\Client\ClientApiRequest;
 use App\Transformers\Api\Client\ActivityLogTransformer;
 use App\Http\Controllers\Api\Client\ClientApiController;
+use App\Models\Role;
 
 class ActivityLogController extends ClientApiController
 {
@@ -32,15 +33,16 @@ class ActivityLogController extends ClientApiController
                 // We could do this with a query and a lot of joins, but that gets pretty
                 // painful so for now we'll execute a simpler query.
                 $subusers = $server->subusers()->pluck('user_id')->merge([$server->owner_id]);
+                $rootAdmins = Role::getRootAdmin()->users()->pluck('id');
 
                 $builder->select('activity_logs.*')
                     ->leftJoin('users', function (JoinClause $join) {
                         $join->on('users.id', 'activity_logs.actor_id')
                             ->where('activity_logs.actor_type', (new User())->getMorphClass());
                     })
-                    ->where(function (Builder $builder) use ($subusers) {
+                    ->where(function (Builder $builder) use ($subusers, $rootAdmins) {
                         $builder->whereNull('users.id')
-                            ->orWhere('users.root_admin', 0)
+                            ->orWhereNotIn('users.id', $rootAdmins)
                             ->orWhereIn('users.id', $subusers);
                     });
             })

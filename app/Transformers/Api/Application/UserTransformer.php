@@ -2,6 +2,7 @@
 
 namespace App\Transformers\Api\Application;
 
+use App\Models\Role;
 use App\Models\User;
 use League\Fractal\Resource\Collection;
 use League\Fractal\Resource\NullResource;
@@ -12,7 +13,10 @@ class UserTransformer extends BaseTransformer
     /**
      * List of resources that can be included.
      */
-    protected array $availableIncludes = ['servers'];
+    protected array $availableIncludes = [
+        'servers',
+        'roles',
+    ];
 
     /**
      * Return the resource name for the JSONAPI output.
@@ -36,7 +40,7 @@ class UserTransformer extends BaseTransformer
             'first_name' => $user->name_first,
             'last_name' => $user->name_last,
             'language' => $user->language,
-            'root_admin' => (bool) $user->root_admin,
+            'root_admin' => $user->isRootAdmin(),
             '2fa_enabled' => (bool) $user->use_totp,
             '2fa' => (bool) $user->use_totp, // deprecated, use "2fa_enabled"
             'created_at' => $this->formatTimestamp($user->created_at),
@@ -58,5 +62,21 @@ class UserTransformer extends BaseTransformer
         $user->loadMissing('servers');
 
         return $this->collection($user->getRelation('servers'), $this->makeTransformer(ServerTransformer::class), 'server');
+    }
+
+    /**
+     * Return the roles associated with this user.
+     *
+     * @throws \App\Exceptions\Transformer\InvalidTransformerLevelException
+     */
+    public function includeRoles(User $user): Collection|NullResource
+    {
+        if (!$this->authorize(AdminAcl::RESOURCE_ROLES)) {
+            return $this->null();
+        }
+
+        $user->loadMissing('roles');
+
+        return $this->collection($user->getRelation('roles'), $this->makeTransformer(RoleTransformer::class), Role::RESOURCE_NAME);
     }
 }

@@ -49,12 +49,18 @@ class Settings extends Page implements HasForms
         $this->form->fill();
     }
 
+    public static function canAccess(): bool
+    {
+        return auth()->user()->can('view settings');
+    }
+
     protected function getFormSchema(): array
     {
         return [
             Tabs::make('Tabs')
                 ->columns()
                 ->persistTabInQueryString()
+                ->disabled(fn () => !auth()->user()->can('update settings'))
                 ->tabs([
                     Tab::make('general')
                         ->label('General')
@@ -86,6 +92,7 @@ class Settings extends Page implements HasForms
             TextInput::make('APP_NAME')
                 ->label('App Name')
                 ->required()
+                ->alphaNum()
                 ->default(env('APP_NAME', 'Pelican')),
             TextInput::make('APP_FAVICON')
                 ->label('App Favicon')
@@ -146,10 +153,12 @@ class Settings extends Page implements HasForms
                         ->color('danger')
                         ->icon('tabler-trash')
                         ->requiresConfirmation()
+                        ->authorize(fn () => auth()->user()->can('update settings'))
                         ->action(fn (Set $set) => $set('TRUSTED_PROXIES', [])),
                     FormAction::make('cloudflare')
                         ->label('Set to Cloudflare IPs')
                         ->icon('tabler-brand-cloudflare')
+                        ->authorize(fn () => auth()->user()->can('update settings'))
                         ->action(fn (Set $set) => $set('TRUSTED_PROXIES', [
                             '173.245.48.0/20',
                             '103.21.244.0/22',
@@ -225,6 +234,7 @@ class Settings extends Page implements HasForms
                         ->label('Send Test Mail')
                         ->icon('tabler-send')
                         ->hidden(fn (Get $get) => $get('MAIL_MAILER') === 'log')
+                        ->authorize(fn () => auth()->user()->can('update settings'))
                         ->action(function () {
                             try {
                                 MailNotification::route('mail', auth()->user()->email)
@@ -274,7 +284,6 @@ class Settings extends Page implements HasForms
                         ->default(env('MAIL_PORT', config('mail.mailers.smtp.port'))),
                     TextInput::make('MAIL_USERNAME')
                         ->label('Username')
-                        ->required()
                         ->default(env('MAIL_USERNAME', config('mail.mailers.smtp.username'))),
                     TextInput::make('MAIL_PASSWORD')
                         ->label('Password')
@@ -561,12 +570,9 @@ class Settings extends Page implements HasForms
         return [
             Action::make('save')
                 ->action('save')
+                ->authorize(fn () => auth()->user()->can('update settings'))
                 ->keyBindings(['mod+s']),
         ];
 
-    }
-    protected function getFormActions(): array
-    {
-        return [];
     }
 }

@@ -6,6 +6,7 @@ use App\Extensions\Themes\Theme;
 use App\Models;
 use App\Models\ApiKey;
 use App\Models\Node;
+use App\Models\User;
 use App\Services\Helpers\SoftwareVersionService;
 use Dedoc\Scramble\Scramble;
 use Dedoc\Scramble\Support\Generator\OpenApi;
@@ -91,6 +92,10 @@ class AppServiceProvider extends ServiceProvider
             'success' => Color::Green,
             'warning' => Color::Amber,
         ]);
+
+        Gate::before(function (User $user, $ability) {
+            return $user->isRootAdmin() ? true : null;
+        });
     }
 
     /**

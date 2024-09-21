@@ -7,7 +7,7 @@ use Filament\Forms\Components\Wizard\Step;
 use Filament\Forms\Get;
 use Filament\Notifications\Notification;
 use Filament\Support\Exceptions\Halt;
-use Illuminate\Database\DatabaseManager;
+use Illuminate\Support\Facades\DB;
 use PDOException;
 
 class DatabaseStep
@@ -61,9 +61,6 @@ class DatabaseStep
             ->afterValidation(function (Get $get) {
                 $driver = $get('env.DB_CONNECTION');
                 if ($driver !== 'sqlite') {
-                    /** @var DatabaseManager $database */
-                    $database = app(DatabaseManager::class);
-
                     try {
                         config()->set('database.connections._panel_install_test', [
                             'driver' => $driver,
@@ -77,7 +74,7 @@ class DatabaseStep
                             'strict' => true,
                         ]);
 
-                        $database->connection('_panel_install_test')->getPdo();
+                        DB::connection('_panel_install_test')->getPdo();
                     } catch (PDOException $exception) {
                         Notification::make()
                             ->title('Database connection failed')
@@ -85,7 +82,7 @@ class DatabaseStep
                             ->danger()
                             ->send();
 
-                        $database->disconnect('_panel_install_test');
+                        DB::disconnect('_panel_install_test');
 
                         throw new Halt('Database connection failed');
                     }
