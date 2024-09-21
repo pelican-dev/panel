@@ -3,7 +3,6 @@
 namespace App\Models;
 
 use App\Exceptions\Service\HasActiveServersException;
-use App\Models\Objects\Endpoint;
 use App\Repositories\Daemon\DaemonConfigurationRepository;
 use Exception;
 use Illuminate\Support\Facades\Http;

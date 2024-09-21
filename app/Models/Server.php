@@ -200,8 +200,7 @@ class Server extends Model
      */
     public function getPortMappings(): array
     {
-        return $this->ports->mapToGroups(fn (Endpoint $endpoint) =>
-            [$endpoint->ip => $endpoint->port]
+        return $this->ports->mapToGroups(fn (Endpoint $endpoint) => [$endpoint->ip => $endpoint->port]
         )->toArray();
     }
 

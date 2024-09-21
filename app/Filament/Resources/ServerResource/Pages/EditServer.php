@@ -891,8 +891,6 @@ class EditServer extends EditRecord
                     $ports->push(new Endpoint($port, $startEndpoint->ip));
                 }
 
-
-
                 for ($i = $start; $i <= $end; $i++) {
                     $ports->push($i);
                 }
