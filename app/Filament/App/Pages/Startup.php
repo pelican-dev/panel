@@ -108,7 +108,7 @@ class Startup extends ServerFormPage
                                         })
                                         ->hintIcon('tabler-code')
                                         ->label(fn (ServerVariable $serverVariable) => $serverVariable->variable->name)
-                                        ->hintIconTooltip(fn (ServerVariable $serverVariable) => $serverVariable->variable->rules)
+                                        ->hintIconTooltip(fn (ServerVariable $serverVariable) => implode('|', $serverVariable->variable->rules))
                                         ->prefix(fn (ServerVariable $serverVariable) => '{{' . $serverVariable->variable->env_variable . '}}')
                                         ->helperText(fn (ServerVariable $serverVariable) => empty($serverVariable->variable->description) ? '—' : $serverVariable->variable->description);
                                 }
