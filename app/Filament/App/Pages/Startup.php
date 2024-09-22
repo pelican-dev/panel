@@ -7,6 +7,7 @@ use App\Models\Permission;
 use App\Models\Server;
 use App\Models\ServerVariable;
 use Closure;
+use Filament\Facades\Filament;
 use Filament\Forms\Components\Component;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Section;
@@ -121,7 +122,7 @@ class Startup extends ServerFormPage
 
     protected function authorizeAccess(): void
     {
-        abort_unless(!auth()->user()->can(Permission::ACTION_STARTUP_READ), 403);
+        abort_unless(auth()->user()->can(Permission::ACTION_STARTUP_READ, Filament::getTenant()), 403);
     }
 
     private function shouldHideComponent(ServerVariable $serverVariable, Component $component): bool

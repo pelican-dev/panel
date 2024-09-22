@@ -120,7 +120,7 @@ class EditFiles extends Page
 
     protected function authorizeAccess(): void
     {
-        abort_unless(!auth()->user()->can(Permission::ACTION_FILE_UPDATE), 403);
+        abort_unless(auth()->user()->can(Permission::ACTION_FILE_UPDATE, Filament::getTenant()), 403);
     }
 
     /**
