@@ -33,7 +33,11 @@ class SettingsController extends ClientApiController
         $description = $request->has('description') ? (string) $request->input('description') : $server->description;
 
         $server->name = $name;
-        $server->description = $description;
+
+        if (config('panel.enable_server_descriptions')) {
+            $server->description = $description;
+        }
+
         $server->save();
 
         if ($server->name !== $name) {

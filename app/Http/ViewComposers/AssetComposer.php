@@ -28,6 +28,7 @@ class AssetComposer
                 'siteKey' => config('recaptcha.website_key') ?? '',
             ],
             'usesSyncDriver' => config('queue.default') === 'sync',
+            'serverDescriptionsEnabled' => config('panel.enable_server_descriptions'),
         ]);
     }
 }

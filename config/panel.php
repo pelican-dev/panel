@@ -165,4 +165,6 @@ return [
     ],
 
     'use_binary_prefix' => env('PANEL_USE_BINARY_PREFIX', true),
+
+    'enable_server_descriptions' => env('PANEL_ENABLE_SERVER_DESCRIPTIONS', true),
 ];

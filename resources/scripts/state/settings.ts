@@ -8,6 +8,7 @@ export interface SiteSettings {
         siteKey: string;
     };
     usesSyncDriver: boolean;
+    serverDescriptionsEnabled: boolean;
 }
 
 export interface SettingsStore {

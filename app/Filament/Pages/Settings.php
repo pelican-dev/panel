@@ -522,6 +522,33 @@ class Settings extends Page implements HasForms
                         ->suffix('Requests Per Minute')
                         ->default(env('APP_API_APPLICATION_RATELIMIT', config('http.rate_limit.application'))),
                 ]),
+            Section::make('Server')
+                ->description('Settings for Servers.')
+                ->columns()
+                ->collapsible()
+                ->collapsed()
+                ->schema([
+                    Toggle::make('PANEL_ENABLE_SERVER_DESCRIPTIONS')
+                        ->label('Enable Server Descriptions')
+                        ->onIcon('tabler-check')
+                        ->offIcon('tabler-x')
+                        ->onColor('success')
+                        ->offColor('danger')
+                        ->live()
+                        ->columnSpanFull()
+                        ->formatStateUsing(fn ($state): bool => (bool) $state)
+                        ->afterStateUpdated(fn ($state, Set $set) => $set('PANEL_ENABLE_SERVER_DESCRIPTIONS', (bool) $state))
+                        ->default(env('PANEL_ENABLE_SERVER_DESCRIPTIONS', config('panel.enable_server_descriptions'))),
+                    TextInput::make('PANEL_PER_SCHEDULE_TASK_LIMIT')
+                        ->label('Task Limit per Schedule')
+                        ->required()
+                        ->numeric()
+                        ->minValue(1)
+                        ->suffix('Tasks per Schedule')
+                        ->visible(fn (Get $get) => $get('PANEL_PER_SCHEDULE_TASK_LIMIT'))
+                        ->default(env('PANEL_PER_SCHEDULE_TASK_LIMIT')),
+                ]),
+
         ];
     }
 

@@ -14,6 +14,7 @@ import tw from 'twin.macro';
 import Label from '@/components/elements/Label';
 import FormikFieldWrapper from '@/components/elements/FormikFieldWrapper';
 import { Textarea } from '@/components/elements/Input';
+import { useStoreState } from 'easy-peasy';
 
 interface Values {
     name: string;
@@ -23,17 +24,21 @@ interface Values {
 const RenameServerBox = () => {
     const { isSubmitting } = useFormikContext<Values>();
 
+    const serverDescriptionsEnabled = useStoreState((state) => state.settings.data!.serverDescriptionsEnabled);
+
     return (
         <TitledGreyBox title={'Change Server Details'} css={tw`relative`}>
             <SpinnerOverlay visible={isSubmitting} />
             <Form css={tw`mb-0`}>
                 <Field id={'name'} name={'name'} label={'Server Name'} type={'text'} />
-                <div css={tw`mt-6`}>
-                    <Label>Server Description</Label>
-                    <FormikFieldWrapper name={'description'}>
-                        <FormikField as={Textarea} name={'description'} rows={3} />
-                    </FormikFieldWrapper>
-                </div>
+                {!serverDescriptionsEnabled && (
+                    <div css={tw`mt-6`}>
+                        <Label>Server Description</Label>
+                        <FormikFieldWrapper name={'description'}>
+                            <FormikField as={Textarea} name={'description'} rows={3} />
+                        </FormikFieldWrapper>
+                    </div>
+                )}
                 <div css={tw`mt-6 text-right`}>
                     <Button type={'submit'}>Save</Button>
                 </div>

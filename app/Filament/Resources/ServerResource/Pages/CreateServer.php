@@ -297,7 +297,8 @@ class CreateServer extends CreateRecord
                                     'md' => 6,
                                     'lg' => 6,
                                 ])
-                                ->label('Notes'),
+                                ->label('Description')
+                                ->visible(fn () => config('panel.enable_server_descriptions')),
                         ]),
 
                     Wizard\Step::make('Egg Configuration')
