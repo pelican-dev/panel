@@ -111,8 +111,7 @@ class EditServer extends EditRecord
 
                                 Forms\Components\Textarea::make('description')
                                     ->label('Description')
-                                    ->columnSpanFull()
-                                    ->visible(fn () => config('panel.enable_server_descriptions')),
+                                    ->columnSpanFull(),
 
                                 Forms\Components\TextInput::make('uuid')
                                     ->hintAction(CopyAction::make())

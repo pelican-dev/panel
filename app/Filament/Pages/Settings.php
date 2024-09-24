@@ -528,8 +528,8 @@ class Settings extends Page implements HasForms
                 ->collapsible()
                 ->collapsed()
                 ->schema([
-                    Toggle::make('PANEL_ENABLE_SERVER_DESCRIPTIONS')
-                        ->label('Enable Server Descriptions')
+                    Toggle::make('PANEL_EDITABLE_SERVER_DESCRIPTIONS')
+                        ->label('Allow Users to edit Server Descriptions?')
                         ->onIcon('tabler-check')
                         ->offIcon('tabler-x')
                         ->onColor('success')
@@ -537,8 +537,8 @@ class Settings extends Page implements HasForms
                         ->live()
                         ->columnSpanFull()
                         ->formatStateUsing(fn ($state): bool => (bool) $state)
-                        ->afterStateUpdated(fn ($state, Set $set) => $set('PANEL_ENABLE_SERVER_DESCRIPTIONS', (bool) $state))
-                        ->default(env('PANEL_ENABLE_SERVER_DESCRIPTIONS', config('panel.enable_server_descriptions'))),
+                        ->afterStateUpdated(fn ($state, Set $set) => $set('PANEL_EDITABLE_SERVER_DESCRIPTIONS', (bool) $state))
+                        ->default(env('PANEL_EDITABLE_SERVER_DESCRIPTIONS', config('panel.editable_server_descriptions'))),
                     TextInput::make('PANEL_PER_SCHEDULE_TASK_LIMIT')
                         ->label('Task Limit per Schedule')
                         ->required()

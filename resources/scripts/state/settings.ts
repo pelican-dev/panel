@@ -8,7 +8,7 @@ export interface SiteSettings {
         siteKey: string;
     };
     usesSyncDriver: boolean;
-    serverDescriptionsEnabled: boolean;
+    serverDescriptionsEditable: boolean;
 }
 
 export interface SettingsStore {
@@ -21,7 +21,7 @@ const settings: SettingsStore = {
 
     setSettings: action((state, payload) => {
         state.data = payload;
-    }),
+    })
 };
 
 export default settings;
