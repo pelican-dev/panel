@@ -60,7 +60,7 @@ class SubuserCreationService
                 throw new ServerSubuserExistsException(trans('exceptions.subusers.subuser_exists'));
             }
 
-            $subuser =  Subuser::query()->create([
+            $subuser = Subuser::query()->create([
                 'user_id' => $user->id,
                 'server_id' => $server->id,
                 'permissions' => array_unique($permissions),

@@ -7,7 +7,6 @@ use App\Jobs\ProcessWebhook;
 use App\Models\Server;
 use App\Models\Webhook;
 use App\Models\WebhookConfiguration;
-use App\Notifications\ServerInstalled;
 use App\Tests\TestCase;
 use Illuminate\Foundation\Testing\LazilyRefreshDatabase;
 use Illuminate\Http\Client\Request;

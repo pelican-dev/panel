@@ -56,8 +56,8 @@ class WebhookConfiguration extends Model
     {
         return str($event)
             ->after('eloquent.')
-            ->replace("App\\Models\\", '')
-            ->replace("App\\Events\\", 'event: ')
+            ->replace('App\\Models\\', '')
+            ->replace('App\\Events\\', 'event: ')
             ->toString();
     }
 
@@ -78,7 +78,7 @@ class WebhookConfiguration extends Model
 
     public static function discoverModels(): array
     {
-        $namespace = "App\\Models\\";
+        $namespace = 'App\\Models\\';
         $directory = app_path('Models');
         $filesystem = app(Filesystem::class);
 
@@ -90,7 +90,7 @@ class WebhookConfiguration extends Model
 
         return $models;
     }
-    
+
     public static function discoverCustomEvents(): array
     {
         $directory = app_path('Events');
@@ -101,7 +101,7 @@ class WebhookConfiguration extends Model
             $namespace = str($file->getPath())
                 ->after(base_path())
                 ->replace(DIRECTORY_SEPARATOR, '\\')
-                ->replace("\\app\\", "App\\")
+                ->replace('\\app\\', 'App\\')
                 ->toString();
 
             $events[] = $namespace . '\\' . str($file->getFilename())
