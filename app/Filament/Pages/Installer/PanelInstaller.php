@@ -120,7 +120,7 @@ class PanelInstaller extends SimplePage implements HasForms
             // Create first admin user
             $userData = array_get($inputs, 'user');
             $userData['root_admin'] = true;
-            app(UserCreationService::class)->handle($userData);
+            $user = app(UserCreationService::class)->handle($userData);
 
             // Install setup complete
             $this->writeToEnvironment(['APP_INSTALLED' => 'true']);
@@ -132,7 +132,9 @@ class PanelInstaller extends SimplePage implements HasForms
                 ->success()
                 ->send();
 
-            redirect()->intended(Filament::getUrl());
+            auth()->loginUsingId($user->id);
+
+            return redirect('/admin');
         } catch (Exception $exception) {
             report($exception);
 
