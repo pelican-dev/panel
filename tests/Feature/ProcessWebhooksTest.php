@@ -2,10 +2,12 @@
 
 namespace App\Tests\Feature;
 
+use App\Events\Server\Installed;
 use App\Jobs\ProcessWebhook;
 use App\Models\Server;
 use App\Models\Webhook;
 use App\Models\WebhookConfiguration;
+use App\Notifications\ServerInstalled;
 use App\Tests\TestCase;
 use Illuminate\Foundation\Testing\LazilyRefreshDatabase;
 use Illuminate\Http\Client\Request;
@@ -28,10 +30,6 @@ class ProcessWebhooksTest extends TestCase
         $webhook = WebhookConfiguration::factory()->create([
             'events' => ['eloquent.created: '.Server::class],
         ]);
-
-        // todo: pass less strings around such as 'eloquent.created: ...'
-        // todo: EventFactory::from(Server::class)->created();
-        // todo outputs: eloquent.created: \App\Models\Server
 
         Http::fake([$webhook->endpoint => Http::response()]);
 
@@ -167,6 +165,30 @@ class ProcessWebhooksTest extends TestCase
             'successful_at' => null,
             'event' => 'eloquent.created: '.Server::class,
         ]);
+    }
+
+    public function test_it_is_triggered_on_custom_events()
+    {
+        $webhookConfig = WebhookConfiguration::factory()->create([
+            'events' => [Installed::class],
+        ]);
+
+        Http::fake([$webhookConfig->endpoint => Http::response()]);
+
+        $this->assertDatabaseCount(Webhook::class, 0);
+
+        $server = $this->createServer();
+
+        event(new Installed($server));
+
+        $this->assertDatabaseCount(Webhook::class, 1);
+        $this->assertDatabaseHas(Webhook::class, [
+            // 'payload' => json_encode([['server' => $server->toArray()]]),
+            'endpoint' => $webhookConfig->endpoint,
+            'successful_at' => now()->startOfSecond(),
+            'event' => Installed::class,
+        ]);
+
     }
 
     public function createServer(): Server
