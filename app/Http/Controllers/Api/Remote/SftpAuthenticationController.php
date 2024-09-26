@@ -140,7 +140,7 @@ class SftpAuthenticationController extends Controller
      */
     protected function validateSftpAccess(User $user, Server $server): void
     {
-        if (!$user->root_admin && $server->owner_id !== $user->id) {
+        if (!$user->isRootAdmin() && $server->owner_id !== $user->id) {
             $permissions = $this->permissions->handle($server, $user);
 
             if (!in_array(Permission::ACTION_FILE_SFTP, $permissions)) {

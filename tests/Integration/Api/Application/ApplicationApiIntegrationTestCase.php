@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\User;
 use PHPUnit\Framework\Assert;
 use App\Models\ApiKey;
+use App\Models\Role;
 use App\Services\Acl\Api\AdminAcl;
 use App\Tests\Integration\IntegrationTestCase;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
@@ -67,9 +68,10 @@ abstract class ApplicationApiIntegrationTestCase extends IntegrationTestCase
      */
     protected function createApiUser(): User
     {
-        return User::factory()->create([
-            'root_admin' => true,
-        ]);
+        $user = User::factory()->create();
+        $user->syncRoles(Role::getRootAdmin());
+
+        return $user;
     }
 
     /**
