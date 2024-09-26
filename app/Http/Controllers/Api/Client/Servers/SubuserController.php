@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api\Client\Servers;
 
 use App\Models\User;
+use App\Notifications\RemovedFromServer;
 use Illuminate\Http\Request;
 use App\Models\Server;
 use Illuminate\Http\JsonResponse;
@@ -143,6 +144,11 @@ class SubuserController extends ClientApiController
 
         $log->transaction(function ($instance) use ($server, $subuser) {
             $subuser->delete();
+
+            $subuser->user->notify(new RemovedFromServer([
+                'user' => $subuser->user->name_first,
+                'name' => $subuser->server->name,
+            ]));
 
             try {
                 $this->serverRepository->setServer($server)->revokeUserJTI($subuser->user_id);
