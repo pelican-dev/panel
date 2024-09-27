@@ -74,7 +74,7 @@ return [
     | Client Features
     |--------------------------------------------------------------------------
     |
-    | Allow clients to create their own databases.
+    | Allow clients to turn features on or off
     */
 
     'client_features' => [
@@ -92,6 +92,10 @@ return [
             'enabled' => env('PANEL_CLIENT_ALLOCATIONS_ENABLED', false),
             'range_start' => env('PANEL_CLIENT_ALLOCATIONS_RANGE_START'),
             'range_end' => env('PANEL_CLIENT_ALLOCATIONS_RANGE_END'),
+        ],
+
+        'installer' => [
+            'enabled' => env('APP_INSTALLER', true),
         ],
     ],
 
