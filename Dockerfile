@@ -42,8 +42,9 @@ RUN chmod -R 755 /var/www/html/storage \
 # Add scheduler to cron
 RUN echo "* * * * * php /var/www/html/artisan schedule:run >> /dev/null 2>&1" | crontab -u www-data -
 
-# Create new service for the queue
-RUN php artisan p:environment:queue-service --service-name=pelican-queue --user=www-data --group=www-data --overwrite
+## supervisord config and log dir
+RUN cp .github/docker/supervisord.conf /etc/supervisord.conf && \
+    mkdir /var/log/supervisord/
 
 HEALTHCHECK --interval=5m --timeout=10s --start-period=5s --retries=3 \
   CMD curl -f http://localhost/up || exit 1
@@ -53,8 +54,5 @@ EXPOSE 443
 
 VOLUME /pelican-data
 
-# Start PHP-FPM
-CMD ["sh", "-c", "php-fpm"]
-
 ENTRYPOINT [ "/bin/ash", ".github/docker/entrypoint.sh" ]
-# CMD [ "supervisord", "-n", "-c", "/etc/supervisord.conf" ]
+CMD [ "supervisord", "-n", "-c", "/etc/supervisord.conf" ]
