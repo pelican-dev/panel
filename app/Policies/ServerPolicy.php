@@ -2,34 +2,38 @@
 
 namespace App\Policies;
 
-use App\Models\User;
 use App\Models\Server;
+use App\Models\User;
 
 class ServerPolicy
 {
+    use DefaultPolicies;
+
+    protected string $modelName = 'server';
+
     /**
-     * Checks if the user has the given permission on/for the server.
+     * Runs before any of the functions are called. Used to determine if the (sub-)user has permissions.
      */
-    protected function checkPermission(User $user, Server $server, string $permission): bool
+    public function before(User $user, string $ability, string|Server $server): ?bool
     {
-        $subuser = $server->subusers->where('user_id', $user->id)->first();
-        if (!$subuser || empty($permission)) {
-            return false;
+        // For "viewAny" the $server param is the class name
+        if (is_string($server)) {
+            return null;
         }
 
-        return in_array($permission, $subuser->permissions);
-    }
-
-    /**
-     * Runs before any of the functions are called. Used to determine if user is root admin, if so, ignore permissions.
-     */
-    public function before(User $user, string $ability, Server $server): bool
-    {
-        if ($user->root_admin || $server->owner_id === $user->id) {
+        // Owner has full server permissions
+        if ($server->owner_id === $user->id) {
             return true;
         }
 
-        return $this->checkPermission($user, $server, $ability);
+        $subuser = $server->subusers->where('user_id', $user->id)->first();
+        // If the user is a subuser check their permissions
+        if ($subuser) {
+            return in_array($ability, $subuser->permissions);
+        }
+
+        // Return null to let default policies take over
+        return null;
     }
 
     /**

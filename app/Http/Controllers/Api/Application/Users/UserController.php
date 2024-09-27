@@ -13,6 +13,7 @@ use App\Http\Requests\Api\Application\Users\StoreUserRequest;
 use App\Http\Requests\Api\Application\Users\DeleteUserRequest;
 use App\Http\Requests\Api\Application\Users\UpdateUserRequest;
 use App\Http\Controllers\Api\Application\ApplicationApiController;
+use App\Http\Requests\Api\Application\Users\AssignUserRolesRequest;
 
 class UserController extends ApplicationApiController
 {
@@ -68,6 +69,19 @@ class UserController extends ApplicationApiController
     {
         $this->updateService->setUserLevel(User::USER_LEVEL_ADMIN);
         $user = $this->updateService->handle($user, $request->validated());
+
+        $response = $this->fractal->item($user)
+            ->transformWith($this->getTransformer(UserTransformer::class));
+
+        return $response->toArray();
+    }
+
+    /**
+     * Assign roles to a user.
+     */
+    public function roles(AssignUserRolesRequest $request, User $user): array
+    {
+        $user->syncRoles($request->input('roles'));
 
         $response = $this->fractal->item($user)
             ->transformWith($this->getTransformer(UserTransformer::class));

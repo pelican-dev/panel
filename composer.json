@@ -35,6 +35,7 @@
         "socialiteproviders/discord": "^4.2",
         "spatie/laravel-fractal": "^6.2",
         "spatie/laravel-health": "^1.29",
+        "spatie/laravel-permission": "^6.9",
         "spatie/laravel-query-builder": "^5.8.1",
         "spatie/temporary-directory": "^2.2",
         "symfony/http-client": "^7.1",
