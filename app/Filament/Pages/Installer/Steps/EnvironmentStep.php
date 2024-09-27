@@ -23,9 +23,9 @@ class EnvironmentStep
     ];
 
     public const QUEUE_DRIVERS = [
+        'sync' => 'Sync',
         'database' => 'Database',
         'redis' => 'Redis',
-        'sync' => 'Synchronous',
     ];
 
     public const DATABASE_DRIVERS = [
@@ -76,11 +76,11 @@ class EnvironmentStep
                 ToggleButtons::make('env.QUEUE_CONNECTION')
                     ->label('Queue Driver')
                     ->hintIcon('tabler-question-mark')
-                    ->hintIconTooltip('The driver used for handling queues. We recommend "Database".')
+                    ->hintIconTooltip('The driver used for handling queues. We recommend "Sync" or "Database".')
                     ->required()
                     ->inline()
                     ->options(self::QUEUE_DRIVERS)
-                    ->default(config('queue.default', 'database')),
+                    ->default(config('queue.default', 'sync')),
                 ToggleButtons::make('env.DB_CONNECTION')
                     ->label('Database Driver')
                     ->hintIcon('tabler-question-mark')
