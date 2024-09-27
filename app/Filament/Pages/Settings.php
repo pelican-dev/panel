@@ -539,14 +539,6 @@ class Settings extends Page implements HasForms
                         ->formatStateUsing(fn ($state): bool => (bool) $state)
                         ->afterStateUpdated(fn ($state, Set $set) => $set('PANEL_EDITABLE_SERVER_DESCRIPTIONS', (bool) $state))
                         ->default(env('PANEL_EDITABLE_SERVER_DESCRIPTIONS', config('panel.editable_server_descriptions'))),
-                    TextInput::make('PANEL_PER_SCHEDULE_TASK_LIMIT')
-                        ->label('Task Limit per Schedule')
-                        ->required()
-                        ->numeric()
-                        ->minValue(1)
-                        ->suffix('Tasks per Schedule')
-                        ->visible(fn (Get $get) => $get('PANEL_PER_SCHEDULE_TASK_LIMIT'))
-                        ->default(env('PANEL_PER_SCHEDULE_TASK_LIMIT')),
                 ]),
 
         ];
