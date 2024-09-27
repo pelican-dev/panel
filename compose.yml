@@ -1,10 +1,10 @@
 x-common:
   panel:
     &panel-environment
-    APP_URL: "https://localhost" # can be set to 'http://localhost' to un on port 80 only
-    APP_DEBUG: "false"
+    APP_URL: "https://localhost" # can be set to 'http://localhost' on port 80 only
     ADMIN_EMAIL: "USEYOUROWNEMAILHERE@example.com"
 
+    APP_DEBUG: "false"
     APP_ENVIRONMENT_ONLY: "false"
     APP_ENV: "production"
     SESSION_DRIVER: "file"
