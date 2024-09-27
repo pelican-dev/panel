@@ -557,7 +557,7 @@ class EditServer extends EditRecord
                                 Repeater::make('databases')
                                     ->grid()
                                     ->helperText(fn (Server $server) => $server->databases->isNotEmpty() ? '' : 'No Databases exist for this Server')
-                                    ->columns(2)
+                                    ->columns()
                                     ->schema([
                                         Forms\Components\TextInput::make('database')
                                             ->columnSpan(2)
