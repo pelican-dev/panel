@@ -17,8 +17,11 @@ class Login extends BaseLogin
                         $this->getPasswordFormComponent(),
                         $this->getRememberFormComponent(),
                         Turnstile::make('captcha')
-                            ->label('Captcha')
-                            ->theme('auto'),
+                            ->language(config('app.locale'))
+                            ->hidden(!config('turnstile.turnstile_enabled'))
+                            ->validationMessages([
+                                'required' => config('turnstile.error_messages.turnstile_check_message'),
+                            ]),
                     ])
                     ->statePath('data'),
             ),

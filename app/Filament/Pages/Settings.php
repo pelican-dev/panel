@@ -8,6 +8,7 @@ use App\Traits\EnvironmentWriterTrait;
 use Exception;
 use Filament\Actions\Action;
 use Filament\Forms\Components\Actions\Action as FormAction;
+use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Tabs;
 use Filament\Forms\Components\Tabs\Tab;
@@ -26,6 +27,7 @@ use Filament\Pages\Concerns\InteractsWithHeaderActions;
 use Filament\Pages\Page;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Notification as MailNotification;
+use Illuminate\Support\HtmlString;
 
 /**
  * @property Form $form
@@ -66,10 +68,10 @@ class Settings extends Page implements HasForms
                         ->label('General')
                         ->icon('tabler-home')
                         ->schema($this->generalSettings()),
-                    Tab::make('recaptcha')
-                        ->label('reCAPTCHA')
+                    Tab::make('captcha')
+                        ->label('Captcha')
                         ->icon('tabler-shield')
-                        ->schema($this->recaptchaSettings()),
+                        ->schema($this->captchaSettings()),
                     Tab::make('mail')
                         ->label('Mail')
                         ->icon('tabler-mail')
@@ -180,11 +182,11 @@ class Settings extends Page implements HasForms
         ];
     }
 
-    private function recaptchaSettings(): array
+    private function captchaSettings(): array
     {
         return [
-            Toggle::make('RECAPTCHA_ENABLED')
-                ->label('Enable reCAPTCHA?')
+            Toggle::make('TURNSTILE_ENABLED')
+                ->label('Enable Turnstile Captcha?')
                 ->inline(false)
                 ->onIcon('tabler-check')
                 ->offIcon('tabler-x')
@@ -192,23 +194,20 @@ class Settings extends Page implements HasForms
                 ->offColor('danger')
                 ->live()
                 ->formatStateUsing(fn ($state): bool => (bool) $state)
-                ->afterStateUpdated(fn ($state, Set $set) => $set('RECAPTCHA_ENABLED', (bool) $state))
-                ->default(env('RECAPTCHA_ENABLED', config('recaptcha.enabled'))),
-            TextInput::make('RECAPTCHA_DOMAIN')
-                ->label('Domain')
+                ->afterStateUpdated(fn ($state, Set $set) => $set('TURNSTILE_ENABLED', (bool) $state))
+                ->default(env('TURNSTILE_ENABLED', config('turnstile.turnstile_enabled'))),
+            Placeholder::make('info')
+                ->content(new HtmlString('<p>You can generate the keys on your <a href="https://developers.cloudflare.com/turnstile/get-started/#get-a-sitekey-and-secret-key" target="_blank">Cloudflare Dashboard</a>.</p><p>A Cloudflare account is required.</p>')),
+            TextInput::make('TURNSTILE_SITE_KEY')
+                ->label('Site Key')
                 ->required()
-                ->visible(fn (Get $get) => $get('RECAPTCHA_ENABLED'))
-                ->default(env('RECAPTCHA_DOMAIN', config('recaptcha.domain'))),
-            TextInput::make('RECAPTCHA_WEBSITE_KEY')
-                ->label('Website Key')
-                ->required()
-                ->visible(fn (Get $get) => $get('RECAPTCHA_ENABLED'))
-                ->default(env('RECAPTCHA_WEBSITE_KEY', config('recaptcha.website_key'))),
-            TextInput::make('RECAPTCHA_SECRET_KEY')
+                ->visible(fn (Get $get) => $get('TURNSTILE_ENABLED'))
+                ->default(env('TURNSTILE_SITE_KEY', config('turnstile.turnstile_site_key'))),
+            TextInput::make('TURNSTILE_SECRET_KEY')
                 ->label('Secret Key')
                 ->required()
-                ->visible(fn (Get $get) => $get('RECAPTCHA_ENABLED'))
-                ->default(env('RECAPTCHA_SECRET_KEY', config('recaptcha.secret_key'))),
+                ->visible(fn (Get $get) => $get('TURNSTILE_ENABLED'))
+                ->default(env('TURNSTILE_SECRET_KEY', config('turnstile.secret_key'))),
         ];
     }
 
