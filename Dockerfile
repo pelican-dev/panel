@@ -31,7 +31,7 @@ COPY . .
 
 COPY --from=yarn /build/public/assets ./public/assets
 
-RUN cp .env.docker .env
+RUN touch .env
 
 RUN composer install --no-dev --optimize-autoloader
 
