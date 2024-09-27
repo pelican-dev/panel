@@ -177,6 +177,7 @@ class ApiKey extends Model
         DatabaseHost::RESOURCE_NAME,
         Database::RESOURCE_NAME,
         Mount::RESOURCE_NAME,
+        Role::RESOURCE_NAME,
     ];
 
     private static array $customResourceNames = [];
