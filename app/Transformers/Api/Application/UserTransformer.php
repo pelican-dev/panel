@@ -71,7 +71,7 @@ class UserTransformer extends BaseTransformer
      */
     public function includeRoles(User $user): Collection|NullResource
     {
-        if (!$this->authorize(AdminAcl::RESOURCE_ROLES)) {
+        if (!$this->authorize(Role::RESOURCE_NAME)) {
             return $this->null();
         }
 
