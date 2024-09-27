@@ -13,6 +13,7 @@ use App\Models\Egg;
 use App\Models\Mount;
 use App\Models\Node;
 use App\Models\Server;
+use App\Models\Role;
 use App\Services\Acl\Api\AdminAcl;
 use App\Tests\Integration\IntegrationTestCase;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
@@ -74,9 +75,10 @@ abstract class ApplicationApiIntegrationTestCase extends IntegrationTestCase
      */
     protected function createApiUser(): User
     {
-        return User::factory()->create([
-            'root_admin' => true,
-        ]);
+        $user = User::factory()->create();
+        $user->syncRoles(Role::getRootAdmin());
+
+        return $user;
     }
 
     /**
@@ -96,6 +98,7 @@ abstract class ApplicationApiIntegrationTestCase extends IntegrationTestCase
                 DatabaseHost::RESOURCE_NAME => AdminAcl::READ | AdminAcl::WRITE,
                 Database::RESOURCE_NAME => AdminAcl::READ | AdminAcl::WRITE,
                 Mount::RESOURCE_NAME => AdminAcl::READ | AdminAcl::WRITE,
+                Role::RESOURCE_NAME => AdminAcl::READ | AdminAcl::WRITE,
             ], $permissions),
         ]);
     }
