@@ -80,7 +80,7 @@ class EnvironmentStep
                     ->required()
                     ->inline()
                     ->options(self::QUEUE_DRIVERS)
-                    ->default(config('queue.default', 'sync')),
+                    ->default(config('queue.default', 'database')),
                 ToggleButtons::make('env.DB_CONNECTION')
                     ->label('Database Driver')
                     ->hintIcon('tabler-question-mark')
