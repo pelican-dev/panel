@@ -51,5 +51,4 @@ fi
 
 chown -R www-data:www-data . /pelican-data/.env /pelican-data/database
 
-echo -e "Starting supervisord."
 exec "$@"
