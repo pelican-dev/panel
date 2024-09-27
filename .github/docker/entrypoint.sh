@@ -23,9 +23,9 @@ else
   fi
 fi
 
+mkdir /pelican-data/database
 ln -s /pelican-data/.env /var/www/html/
-
-touch /pelican-data/database.sqlite
+ln -s /pelican-data/database/database.sqlite /var/www/html/database/
 
 if ! grep -q "APP_KEY=" .env || grep -q "APP_KEY=$" .env; then
   echo "Generating APP_KEY..."
@@ -35,7 +35,7 @@ else
 fi
 
 ## make sure the db is set up
-echo -e "Migrating and Seeding Database"
+echo -e "Migrating Database"
 php artisan migrate --force
 
 ## start cronjobs for the queue
@@ -49,8 +49,7 @@ else
   echo "Starting PHP-FPM only"
 fi
 
-#chmod -R 755 storage/* bootstrap/cache/
-chown -R www-data:www-data .
+chown -R www-data:www-data . /pelican-data/.env /pelican-data/database
 
 echo -e "Starting supervisord."
 exec "$@"
