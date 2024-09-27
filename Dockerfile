@@ -39,7 +39,11 @@ RUN composer install --no-dev --optimize-autoloader
 RUN chmod -R 755 /var/www/html/storage \
     && chmod -R 755 /var/www/html/bootstrap/cache
 
-#echo "* * * * * /usr/local/bin/php /build/artisan schedule:run >> /dev/null 2>&1" >> /var/spool/cron/crontabs/root
+# Add scheduler to cron
+RUN echo "* * * * * php /var/www/html/artisan schedule:run >> /dev/null 2>&1" | crontab -u www-data -
+
+# Create new service for the queue
+RUN php artisan p:environment:queue-service --service-name=pelican-queue --user=www-data --group=www-data --overwrite
 
 HEALTHCHECK --interval=5m --timeout=10s --start-period=5s --retries=3 \
   CMD curl -f http://localhost/up || exit 1
