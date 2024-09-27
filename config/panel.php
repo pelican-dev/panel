@@ -95,7 +95,7 @@ return [
         ],
 
         'installer' => [
-            'enabled' => env('APP_INSTALLER', true),
+            'enabled' => env('APP_INSTALLER', false),
         ],
     ],
 
