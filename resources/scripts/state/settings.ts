@@ -21,7 +21,7 @@ const settings: SettingsStore = {
 
     setSettings: action((state, payload) => {
         state.data = payload;
-    })
+    }),
 };
 
 export default settings;
