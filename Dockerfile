@@ -21,7 +21,7 @@ RUN apk update && apk add --no-cache \
     libpng-dev libjpeg-turbo-dev freetype-dev libzip-dev icu-dev \
     zip unzip curl \
     caddy ca-certificates supervisor \
-    && docker-php-ext-install bcmath gd intl zip opcache pcntl posix
+    && docker-php-ext-install bcmath gd intl zip opcache pcntl posix pdo_mysql
 
 # Copy the Caddyfile to the container
 COPY Caddyfile /etc/caddy/Caddyfile
