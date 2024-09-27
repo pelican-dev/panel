@@ -7,6 +7,7 @@ use App\Filament\Pages\Installer\Steps\DatabaseStep;
 use App\Filament\Pages\Installer\Steps\EnvironmentStep;
 use App\Filament\Pages\Installer\Steps\RedisStep;
 use App\Filament\Pages\Installer\Steps\RequirementsStep;
+use App\Models\User;
 use App\Services\Users\UserCreationService;
 use App\Traits\CheckMigrationsTrait;
 use App\Traits\EnvironmentWriterTrait;
@@ -43,11 +44,22 @@ class PanelInstaller extends SimplePage implements HasForms
         return MaxWidth::SevenExtraLarge;
     }
 
+    public static function show(): bool
+    {
+        if (User::count() <= 0) {
+            return true;
+        }
+
+        if (config('panel.client_features.installer.enabled')) {
+            return true;
+        }
+
+        return false;
+    }
+
     public function mount()
     {
-        if (is_installed()) {
-            abort(404);
-        }
+        abort_unless(self::show(), 404);
 
         $this->form->fill();
     }
@@ -122,7 +134,7 @@ class PanelInstaller extends SimplePage implements HasForms
             $user = app(UserCreationService::class)->handle($userData);
 
             // Install setup complete
-            $this->writeToEnvironment(['APP_INSTALLED' => 'true']);
+            $this->writeToEnvironment(['APP_INSTALLER' => 'false']);
 
             $this->rememberData();
 
