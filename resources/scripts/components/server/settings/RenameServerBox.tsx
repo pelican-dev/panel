@@ -30,7 +30,7 @@ const RenameServerBox = () => {
             <SpinnerOverlay visible={isSubmitting} />
             <Form css={tw`mb-0`}>
                 <Field id={'name'} name={'name'} label={'Server Name'} type={'text'} />
-                {!serverDescriptionsEditable && (
+                {serverDescriptionsEditable && (
                     <div css={tw`mt-6`}>
                         <Label>Server Description</Label>
                         <FormikFieldWrapper name={'description'}>
