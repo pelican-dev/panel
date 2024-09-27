@@ -11,7 +11,6 @@ class NodeAutoDeployService
      * NodeAutoDeployService constructor.
      */
     public function __construct(
-
         private readonly NodeAutoDeployController $nodeAutoDeployController
     ) {
     }
