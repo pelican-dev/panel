@@ -735,12 +735,16 @@ class EditServer extends EditRecord
     protected function getHeaderActions(): array
     {
         return [
-            Actions\DeleteAction::make('Delete')
+            Actions\Action::make('Delete')
                 ->successRedirectUrl(route('filament.admin.resources.servers.index'))
                 ->color('danger')
                 ->label('Delete')
-                ->after(fn (Server $server) => resolve(ServerDeletionService::class)->handle($server))
-                ->requiresConfirmation(),
+                ->requiresConfirmation()
+                ->action(function (Server $server) {
+                    resolve(ServerDeletionService::class)->handle($server);
+
+                    return redirect(ListServers::getUrl());
+                }),
             Actions\Action::make('console')
                 ->label('Console')
                 ->icon('tabler-terminal')
