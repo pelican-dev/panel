@@ -27,8 +27,8 @@
             @endif
         @show
         <style>
-            @import url('//fonts.googleapis.com/css?family=Rubik:300,400,500&display=swap');
-            @import url('//fonts.googleapis.com/css?family=IBM+Plex+Mono|IBM+Plex+Sans:500&display=swap');
+            @import url('//fonts.bunny.net/css?family=Rubik:300,400,500&display=swap');
+            @import url('//fonts.bunny.net/css?family=IBM+Plex+Mono|IBM+Plex+Sans:500&display=swap');
         </style>
 
         @yield('assets')
