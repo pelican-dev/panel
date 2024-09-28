@@ -6,7 +6,6 @@ use App\Enums\ServerState;
 use App\Models\Server;
 use App\Models\User;
 use App\Services\Servers\SuspensionService;
-use Filament\Tables;
 use Filament\Tables\Columns\SelectColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
@@ -67,7 +66,7 @@ class ServersRelationManager extends RelationManager
                     ->icon('tabler-egg')
                     ->url(fn (Server $server): string => route('filament.admin.resources.eggs.edit', ['record' => $server->egg]))
                     ->sortable(),
-               SelectColumn::make('allocation.id')
+                SelectColumn::make('allocation.id')
                     ->label('Primary Allocation')
                     ->options(fn (Server $server) => [$server->allocation->id => $server->allocation->address])
                     ->selectablePlaceholder(false)
