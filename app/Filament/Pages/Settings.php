@@ -522,6 +522,25 @@ class Settings extends Page implements HasForms
                         ->suffix('Requests Per Minute')
                         ->default(env('APP_API_APPLICATION_RATELIMIT', config('http.rate_limit.application'))),
                 ]),
+            Section::make('Server')
+                ->description('Settings for Servers.')
+                ->columns()
+                ->collapsible()
+                ->collapsed()
+                ->schema([
+                    Toggle::make('PANEL_EDITABLE_SERVER_DESCRIPTIONS')
+                        ->label('Allow Users to edit Server Descriptions?')
+                        ->onIcon('tabler-check')
+                        ->offIcon('tabler-x')
+                        ->onColor('success')
+                        ->offColor('danger')
+                        ->live()
+                        ->columnSpanFull()
+                        ->formatStateUsing(fn ($state): bool => (bool) $state)
+                        ->afterStateUpdated(fn ($state, Set $set) => $set('PANEL_EDITABLE_SERVER_DESCRIPTIONS', (bool) $state))
+                        ->default(env('PANEL_EDITABLE_SERVER_DESCRIPTIONS', config('panel.editable_server_descriptions'))),
+                ]),
+
         ];
     }
 

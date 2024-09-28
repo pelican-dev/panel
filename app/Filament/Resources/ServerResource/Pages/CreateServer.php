@@ -297,7 +297,7 @@ class CreateServer extends CreateRecord
                                     'md' => 6,
                                     'lg' => 6,
                                 ])
-                                ->label('Notes'),
+                                ->label('Description'),
                         ]),
 
                     Wizard\Step::make('Egg Configuration')

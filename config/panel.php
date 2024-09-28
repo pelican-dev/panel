@@ -169,4 +169,6 @@ return [
     ],
 
     'use_binary_prefix' => env('PANEL_USE_BINARY_PREFIX', true),
+
+    'editable_server_descriptions' => env('PANEL_EDITABLE_SERVER_DESCRIPTIONS', true),
 ];
