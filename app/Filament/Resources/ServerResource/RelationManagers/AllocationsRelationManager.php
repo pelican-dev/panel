@@ -11,6 +11,12 @@ use Filament\Forms\Set;
 use Filament\Forms\Form;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables;
+use Filament\Tables\Actions\Action;
+use Filament\Tables\Actions\AssociateAction;
+use Filament\Tables\Actions\CreateAction;
+use Filament\Tables\Columns\IconColumn;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Columns\TextInputColumn;
 use Filament\Tables\Table;
 use Illuminate\Support\HtmlString;
 
@@ -41,10 +47,10 @@ class AllocationsRelationManager extends RelationManager
             // ->groups
             ->inverseRelationship('server')
             ->columns([
-                Tables\Columns\TextColumn::make('ip')->label('IP'),
-                Tables\Columns\TextColumn::make('port')->label('Port'),
-                Tables\Columns\TextInputColumn::make('ip_alias')->label('Alias'),
-                Tables\Columns\IconColumn::make('primary')
+                TextColumn::make('ip')->label('IP'),
+                TextColumn::make('port')->label('Port'),
+                TextInputColumn::make('ip_alias')->label('Alias'),
+                IconColumn::make('primary')
                     ->icon(fn ($state) => match ($state) {
                         true => 'tabler-star-filled',
                         default => 'tabler-star',
@@ -61,12 +67,12 @@ class AllocationsRelationManager extends RelationManager
                 //
             ])
             ->actions([
-                Tables\Actions\Action::make('make-primary')
+                Action::make('make-primary')
                     ->action(fn (Allocation $allocation) => $this->getOwnerRecord()->update(['allocation_id' => $allocation->id]))
                     ->label(fn (Allocation $allocation) => $allocation->id === $this->getOwnerRecord()->allocation_id ? '' : 'Make Primary'),
             ])
             ->headerActions([
-                Tables\Actions\CreateAction::make()->label('Create Allocation')
+                CreateAction::make()->label('Create Allocation')
                     ->createAnother(false)
                     ->form(fn () => [
                         TextInput::make('allocation_ip')
@@ -144,7 +150,7 @@ class AllocationsRelationManager extends RelationManager
                             ->required(),
                     ])
                     ->action(fn (array $data) => resolve(AssignmentService::class)->handle($this->getOwnerRecord()->node, $data, $this->getOwnerRecord())),
-                Tables\Actions\AssociateAction::make()
+                AssociateAction::make()
                     ->multiple()
                     ->associateAnother(false)
                     ->preloadRecordSelect()
