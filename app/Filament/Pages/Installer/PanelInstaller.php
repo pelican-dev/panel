@@ -24,6 +24,7 @@ use Filament\Support\Enums\MaxWidth;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\HtmlString;
+use Illuminate\Database\QueryException;
 
 /**
  * @property Form $form
@@ -46,15 +47,14 @@ class PanelInstaller extends SimplePage implements HasForms
 
     public static function show(): bool
     {
-        if (User::count() <= 0) {
-            return true;
+        try {
+            if (User::count() > 0) {
+                return false;
+            }
+        } catch (QueryException $e) {
         }
 
-        if (config('panel.client_features.installer.enabled')) {
-            return true;
-        }
-
-        return false;
+        return config('panel.client_features.installer.enabled');
     }
 
     public function mount()
@@ -143,7 +143,7 @@ class PanelInstaller extends SimplePage implements HasForms
                 ->success()
                 ->send();
 
-            auth()->loginUsingId($user->id);
+            auth()->guard()->loginUsingId($user->id, true);
 
             return redirect('/admin');
         } catch (Exception $exception) {
