@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="fi min-h-screen">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <link rel="icon" href="{{ config('app.favicon', '/pelican.ico') }}" />
+
+    <title>
+        {{ $title }} - {{ config('app.name', 'Pelican') }}
+    </title>
+
+    @filamentStyles
+
+    {{ filament()->getTheme()->getHtml() }}
+    {{ filament()->getFontHtml() }}
+
+    <style>
+        :root { --font-family: '{!! filament()->getFontFamily() !!}'; }
+    </style>
+</head>
+
+<body class="fi-body min-h-screen bg-gray-50 font-normal text-gray-950 antialiased dark:bg-gray-950 dark:text-white">
+    <div class="fi-simple-layout flex min-h-screen flex-col items-center">
+        <div class="fi-simple-main-ctn flex w-full flex-grow items-center justify-center">
+            <main class="fi-simple-main my-16 w-full bg-white px-6 py-12 shadow-sm ring-1 ring-gray-950/5 dark:bg-gray-900 dark:ring-white/10 sm:rounded-xl sm:px-12 sm:max-w-lg">
+                <div class="fi-simple-page">
+                    <section class="grid auto-cols-fr gap-y-6">
+                        <header class="fi-simple-header flex flex-col items-center">
+                            @if(filled($icon))
+								<x-filament::icon icon="{{ $icon }}" />
+                            @endif
+
+                            <h1 class="fi-simple-header-heading flex text-center text-2xl font-bold tracking-tight text-gray-950 dark:text-white">
+                                {{$code}} | {{ $title }}
+                            </h1>
+
+                            <p class="fi-simple-header-subheading mt-2 text-center text-sm text-gray-500 dark:text-gray-400">
+                                {{ $subtitle }}
+                            </p>
+                        </header>
+                    </section>
+                </div>
+            </main>
+        </div>
+    </div>
+</body>
+
+</html>
