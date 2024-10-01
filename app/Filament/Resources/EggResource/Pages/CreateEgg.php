@@ -15,9 +15,9 @@ use Filament\Forms\Components\TagsInput;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
+use Filament\Forms\Set;
 use Filament\Resources\Pages\CreateRecord;
 use AbdelhamidErrahmouni\FilamentMonacoEditor\MonacoEditor;
-use Filament\Forms;
 use Filament\Forms\Form;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
@@ -155,7 +155,7 @@ class CreateEgg extends CreateRecord
                                         ->debounce(750)
                                         ->maxLength(255)
                                         ->columnSpanFull()
-                                        ->afterStateUpdated(fn (Forms\Set $set, $state) => $set('env_variable', str($state)->trim()->snake()->upper()->toString())
+                                        ->afterStateUpdated(fn (Set $set, $state) => $set('env_variable', str($state)->trim()->snake()->upper()->toString())
                                         )
                                         ->required(),
                                     Textarea::make('description')->columnSpanFull(),

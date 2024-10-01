@@ -10,7 +10,6 @@ use App\Services\Eggs\Sharing\EggExporterService;
 use App\Services\Eggs\Sharing\EggImporterService;
 use Exception;
 use Filament\Actions;
-use Filament\Forms;
 use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\Fieldset;
 use Filament\Forms\Components\FileUpload;
@@ -26,6 +25,7 @@ use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Form;
+use Filament\Forms\Set;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\EditRecord;
 
@@ -165,7 +165,7 @@ class EditEgg extends EditRecord
                                         ->debounce(750)
                                         ->maxLength(255)
                                         ->columnSpanFull()
-                                        ->afterStateUpdated(fn (Forms\Set $set, $state) => $set('env_variable', str($state)->trim()->snake()->upper()->toString())
+                                        ->afterStateUpdated(fn (Set $set, $state) => $set('env_variable', str($state)->trim()->snake()->upper()->toString())
                                         )
                                         ->required(),
                                     Textarea::make('description')->columnSpanFull(),
@@ -212,21 +212,17 @@ class EditEgg extends EditRecord
                     Tab::make('Install Script')
                         ->columns(3)
                         ->schema([
-
                             Select::make('copy_script_from')
                                 ->placeholder('None')
                                 ->relationship('scriptFrom', 'name', ignoreRecord: true),
-
                             TextInput::make('script_container')
                                 ->required()
                                 ->maxLength(255)
                                 ->default('alpine:3.4'),
-
                             TextInput::make('script_entry')
                                 ->required()
                                 ->maxLength(255)
                                 ->default('ash'),
-
                             MonacoEditor::make('script_install')
                                 ->label('Install Script')
                                 ->columnSpanFull()
