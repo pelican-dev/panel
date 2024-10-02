@@ -220,7 +220,7 @@ class CreateNode extends CreateRecord
                             ToggleButtons::make('public')
                                 ->default(true)
                                 ->columnSpan(1)
-                                ->label('Automatic Allocation')->inline()
+                                ->label('Use Node for deployment?')->inline()
                                 ->options([
                                     true => 'Yes',
                                     false => 'No',

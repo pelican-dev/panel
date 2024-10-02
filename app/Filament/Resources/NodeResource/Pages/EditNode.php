@@ -259,7 +259,7 @@ class EditNode extends EditRecord
                                 ->helperText('Display alias for the SFTP address. Leave empty to use the Node FQDN.'),
                             ToggleButtons::make('public')
                                 ->columnSpan(['default' => 1, 'sm' => 1, 'md' => 1, 'lg' => 3])
-                                ->label('Automatic Allocation')->inline()
+                                ->label('Use Node for deployment?')->inline()
                                 ->options([
                                     true => 'Yes',
                                     false => 'No',
