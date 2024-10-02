@@ -64,9 +64,8 @@ class ListServers extends ListRecords
                     ->searchable(),
                 SelectColumn::make('allocation_id')
                     ->label('Primary Allocation')
-                    ->options(fn (Server $server) => $server->allocations->mapWithKeys(
-                        fn ($allocation) => [$allocation->id => $allocation->address])
-                    )
+                    ->disabled(fn () => !auth()->user()->can('update server'))
+                    ->options(fn (Server $server) => $server->allocations->mapWithKeys(fn ($allocation) => [$allocation->id => $allocation->address]))
                     ->selectablePlaceholder(false)
                     ->sortable(),
                 TextColumn::make('image')->hidden(),
@@ -81,12 +80,7 @@ class ListServers extends ListRecords
                 Action::make('View')
                     ->icon('tabler-terminal')
                     ->url(fn (Server $server) => "/server/$server->uuid_short")
-                    ->visible(function (Server $server) {
-                        /** @var User $user */
-                        $user = auth()->user();
-
-                        return $user->isRootAdmin() || $user->id === $server->owner_id;
-                    }),
+                    ->visible(fn () => auth()->user()->can('view server')),
                 EditAction::make(),
             ])
             ->emptyStateIcon('tabler-brand-docker')
