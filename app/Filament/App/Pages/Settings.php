@@ -111,8 +111,9 @@ class Settings extends ServerFormPage
                     ]),
                 Section::make('Node Information')
                     ->schema([
-                        TextInput::make('node.name') // TODO: not working :(
+                        TextInput::make('node.name')
                             ->label('Node Name')
+                            ->formatStateUsing(fn (Server $server) => $server->node->name)
                             ->disabled(),
                         Fieldset::make('SFTP Information')
                             ->label('SFTP Information')
