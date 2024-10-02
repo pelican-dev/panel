@@ -21,13 +21,14 @@ use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Tabs;
-use Filament\Forms\Components\TagsInput;
 use Filament\Forms\Components\Tabs\Tab;
+use Filament\Forms\Components\TagsInput;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Get;
 use Filament\Notifications\Notification;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\HtmlString;
 use Illuminate\Validation\Rules\Password;
@@ -273,7 +274,7 @@ class EditProfile extends \Filament\Pages\Auth\EditProfile
         ];
     }
 
-    protected function handleRecordUpdate($record, $data): \Illuminate\Database\Eloquent\Model
+    protected function handleRecordUpdate($record, $data): Model
     {
         if ($token = $data['2facode'] ?? null) {
             /** @var ToggleTwoFactorService $service */

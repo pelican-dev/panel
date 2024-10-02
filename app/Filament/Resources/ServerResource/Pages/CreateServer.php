@@ -11,6 +11,9 @@ use App\Services\Allocations\AssignmentService;
 use App\Services\Servers\RandomWordService;
 use App\Services\Servers\ServerCreationService;
 use App\Services\Users\UserCreationService;
+use Closure;
+use Exception;
+use Filament\Forms;
 use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\CheckboxList;
 use Filament\Forms\Components\Component;
@@ -26,6 +29,7 @@ use Filament\Forms\Components\TagsInput;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\ToggleButtons;
+use Filament\Forms\Components\Wizard;
 use Filament\Forms\Components\Wizard\Step;
 use Filament\Forms\Form;
 use Filament\Forms\Get;
@@ -33,12 +37,10 @@ use Filament\Forms\Set;
 use Filament\Resources\Pages\CreateRecord;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
-use Filament\Forms;
-use Filament\Forms\Components\Wizard;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\HtmlString;
-use Closure;
+use LogicException;
 
 class CreateServer extends CreateRecord
 {
@@ -633,7 +635,7 @@ class CreateServer extends CreateRecord
                                                         'unlimited' => -1,
                                                         'disabled' => 0,
                                                         'limited' => 128,
-                                                        default => throw new \LogicException('Invalid state'),
+                                                        default => throw new LogicException('Invalid state'),
                                                     };
 
                                                     $set('swap', $value);
@@ -843,7 +845,7 @@ class CreateServer extends CreateRecord
             return !$containsRuleIn;
         }
 
-        throw new \Exception('Component type not supported: ' . $component::class);
+        throw new Exception('Component type not supported: ' . $component::class);
     }
 
     private function getSelectOptionsFromRules(Get $get): array
