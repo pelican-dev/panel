@@ -80,6 +80,7 @@ class EditEgg extends EditRecord
                                 ->helperText('')
                                 ->columnSpan(['default' => 1, 'sm' => 1, 'md' => 2, 'lg' => 2]),
                             Toggle::make('force_outgoing_ip')
+                                ->inline(false)
                                 ->hintIcon('tabler-question-mark')
                                 ->hintIconTooltip("Forces all outgoing network traffic to have its Source IP NATed to the IP of the server's primary allocation IP.
                                     Required for certain games to work properly when the Node has multiple public IP addresses.
