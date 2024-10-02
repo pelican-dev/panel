@@ -9,8 +9,7 @@ use Filament\Resources\Resource;
 class DatabaseHostResource extends Resource
 {
     protected static ?string $model = DatabaseHost::class;
-
-    protected static ?string $label = 'Databases';
+    protected static ?string $label = 'Database Host';
 
     protected static ?string $navigationIcon = 'tabler-database';
     protected static ?string $navigationGroup = 'Advanced';
