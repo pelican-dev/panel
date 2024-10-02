@@ -58,7 +58,7 @@ class ListNodes extends ListRecords
                     ->sortable(),
                 TextColumn::make('cpu')
                     ->visibleFrom('sm')
-                    ->icon('tabler-file')
+                    ->icon('tabler-cpu')
                     ->numeric()
                     ->suffix(' %')
                     ->sortable(),
