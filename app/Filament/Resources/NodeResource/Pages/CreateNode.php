@@ -3,8 +3,8 @@
 namespace App\Filament\Resources\NodeResource\Pages;
 
 use App\Filament\Resources\NodeResource;
-use Filament\Forms\Components\Actions\Action;
 use Filament\Forms;
+use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\TagsInput;
 use Filament\Forms\Components\TextInput;
@@ -230,11 +230,7 @@ class CreateNode extends CreateRecord
                                     false => 'danger',
                                 ]),
                             TagsInput::make('tags')
-                                ->label('Tags')
-                                ->disabled()
-                                ->placeholder('Not Implemented')
-                                ->hintIcon('tabler-question-mark')
-                                ->hintIconTooltip('Not Implemented')
+                                ->placeholder('Add Tags')
                                 ->columnSpan(2),
                             TextInput::make('upload_size')
                                 ->label('Upload Limit')

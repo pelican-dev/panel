@@ -235,11 +235,7 @@ class EditNode extends EditRecord
                                 ->disabled(),
                             TagsInput::make('tags')
                                 ->columnSpan(['default' => 1, 'sm' => 1, 'md' => 2, 'lg' => 2])
-                                ->label('Tags')
-                                ->disabled()
-                                ->placeholder('Not Implemented')
-                                ->hintIcon('tabler-question-mark')
-                                ->hintIconTooltip('Not Implemented'),
+                                ->placeholder('Add Tags'),
                             TextInput::make('upload_size')
                                 ->columnSpan(['default' => 1, 'sm' => 1, 'md' => 2, 'lg' => 1])
                                 ->label('Upload Limit')
