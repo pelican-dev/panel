@@ -12,7 +12,7 @@
                 disableStdin: true,
                 cursorStyle: 'underline',
                 allowTransparency: true,
-                rows: 20,
+                rows: 35,
                 cols: 110,
                 // theme: theme,
             };
