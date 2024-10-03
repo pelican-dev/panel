@@ -182,7 +182,6 @@ class EditNode extends EditRecord
                                     'lg' => 2,
                                 ])
                                 ->required()
-                                ->regex('/[a-zA-Z0-9_\.\- ]+/')
                                 ->helperText('This name is for display only and can be changed later.')
                                 ->maxLength(100),
 

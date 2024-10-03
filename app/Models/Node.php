@@ -79,7 +79,7 @@ class Node extends Model
     ];
 
     public static array $validationRules = [
-        'name' => 'required|regex:/^([\w .-]{1,100})$/',
+        'name' => 'required|string|min:1|max:100',
         'description' => 'string|nullable',
         'public' => 'boolean',
         'fqdn' => 'required|string',
