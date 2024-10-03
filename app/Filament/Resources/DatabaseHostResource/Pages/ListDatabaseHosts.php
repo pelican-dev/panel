@@ -62,7 +62,7 @@ class ListDatabaseHosts extends ListRecords
     {
         return [
             Actions\CreateAction::make('create')
-                ->label('New Database Host')
+                ->label('Create Database Host')
                 ->hidden(fn () => DatabaseHost::count() <= 0),
         ];
     }
