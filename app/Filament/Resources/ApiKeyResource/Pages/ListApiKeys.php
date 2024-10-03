@@ -68,7 +68,7 @@ class ListApiKeys extends ListRecords
         return [
             Actions\CreateAction::make()
                 ->label('New API Key')
-                ->hidden(fn () => ApiKey::count() <= 0),
+                ->hidden(fn () => ApiKey::where('key_type', ApiKey::TYPE_APPLICATION)->count() <= 0),
         ];
     }
 }
