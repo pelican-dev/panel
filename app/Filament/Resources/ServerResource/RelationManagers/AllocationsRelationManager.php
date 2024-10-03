@@ -7,8 +7,8 @@ use App\Models\Server;
 use App\Services\Allocations\AssignmentService;
 use Filament\Forms\Components\TagsInput;
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Set;
 use Filament\Forms\Form;
+use Filament\Forms\Set;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables;
 use Filament\Tables\Actions\Action;
@@ -43,8 +43,6 @@ class AllocationsRelationManager extends RelationManager
             ->recordTitleAttribute('ip')
             ->recordTitle(fn (Allocation $allocation) => "$allocation->ip:$allocation->port")
             ->checkIfRecordIsSelectableUsing(fn (Allocation $record) => $record->id !== $this->getOwnerRecord()->allocation_id)
-            // ->actions
-            // ->groups
             ->inverseRelationship('server')
             ->columns([
                 TextColumn::make('ip')->label('IP'),
@@ -62,9 +60,6 @@ class AllocationsRelationManager extends RelationManager
                     ->action(fn (Allocation $allocation) => $this->getOwnerRecord()->update(['allocation_id' => $allocation->id]))
                     ->default(fn (Allocation $allocation) => $allocation->id === $this->getOwnerRecord()->allocation_id)
                     ->label('Primary'),
-            ])
-            ->filters([
-                //
             ])
             ->actions([
                 Action::make('make-primary')

@@ -40,6 +40,7 @@ class EditEgg extends EditRecord
                 Tabs::make()->tabs([
                     Tab::make('Configuration')
                         ->columns(['default' => 1, 'sm' => 1, 'md' => 2, 'lg' => 4])
+                        ->icon('tabler-egg')
                         ->schema([
                             TextInput::make('name')
                                 ->required()
@@ -80,6 +81,7 @@ class EditEgg extends EditRecord
                                 ->helperText('')
                                 ->columnSpan(['default' => 1, 'sm' => 1, 'md' => 2, 'lg' => 2]),
                             Toggle::make('force_outgoing_ip')
+                                ->inline(false)
                                 ->hintIcon('tabler-question-mark')
                                 ->hintIconTooltip("Forces all outgoing network traffic to have its Source IP NATed to the IP of the server's primary allocation IP.
                                     Required for certain games to work properly when the Node has multiple public IP addresses.
@@ -105,9 +107,9 @@ class EditEgg extends EditRecord
                                 ->valueLabel('Image URI')
                                 ->helperText('The docker images available to servers using this egg.'),
                         ]),
-
                     Tab::make('Process Management')
                         ->columns()
+                        ->icon('tabler-server-cog')
                         ->schema([
                             Select::make('config_from')
                                 ->label('Copy Settings From')
@@ -130,6 +132,7 @@ class EditEgg extends EditRecord
                         ]),
                     Tab::make('Egg Variables')
                         ->columnSpanFull()
+                        ->icon('tabler-variable')
                         ->schema([
                             Repeater::make('variables')
                                 ->label('')
@@ -211,6 +214,7 @@ class EditEgg extends EditRecord
                         ]),
                     Tab::make('Install Script')
                         ->columns(3)
+                        ->icon('tabler-file-download')
                         ->schema([
                             Select::make('copy_script_from')
                                 ->placeholder('None')
@@ -230,7 +234,6 @@ class EditEgg extends EditRecord
                                 ->language('shell')
                                 ->view('filament.plugins.monaco-editor'),
                         ]),
-
                 ])->columnSpanFull()->persistTabInQueryString(),
             ]);
     }

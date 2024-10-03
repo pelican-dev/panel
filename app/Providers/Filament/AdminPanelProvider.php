@@ -24,7 +24,7 @@ class AdminPanelProvider extends PanelProvider
     public function boot()
     {
         FilamentAsset::registerCssVariables([
-            'sidebar-width' => '14rem !important',
+            'sidebar-width' => '16rem !important',
         ]);
     }
 

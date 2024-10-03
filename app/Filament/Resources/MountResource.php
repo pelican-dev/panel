@@ -18,13 +18,6 @@ class MountResource extends Resource
         return static::getModel()::count() ?: null;
     }
 
-    public static function getRelations(): array
-    {
-        return [
-            //
-        ];
-    }
-
     public static function getPages(): array
     {
         return [

@@ -182,7 +182,6 @@ class EditNode extends EditRecord
                                     'lg' => 2,
                                 ])
                                 ->required()
-                                ->regex('/[a-zA-Z0-9_\.\- ]+/')
                                 ->helperText('This name is for display only and can be changed later.')
                                 ->maxLength(100),
 
@@ -235,11 +234,7 @@ class EditNode extends EditRecord
                                 ->disabled(),
                             TagsInput::make('tags')
                                 ->columnSpan(['default' => 1, 'sm' => 1, 'md' => 2, 'lg' => 2])
-                                ->label('Tags')
-                                ->disabled()
-                                ->placeholder('Not Implemented')
-                                ->hintIcon('tabler-question-mark')
-                                ->hintIconTooltip('Not Implemented'),
+                                ->placeholder('Add Tags'),
                             TextInput::make('upload_size')
                                 ->columnSpan(['default' => 1, 'sm' => 1, 'md' => 2, 'lg' => 1])
                                 ->label('Upload Limit')
@@ -263,7 +258,7 @@ class EditNode extends EditRecord
                                 ->helperText('Display alias for the SFTP address. Leave empty to use the Node FQDN.'),
                             ToggleButtons::make('public')
                                 ->columnSpan(['default' => 1, 'sm' => 1, 'md' => 1, 'lg' => 3])
-                                ->label('Automatic Allocation')->inline()
+                                ->label('Use Node for deployment?')->inline()
                                 ->options([
                                     true => 'Yes',
                                     false => 'No',

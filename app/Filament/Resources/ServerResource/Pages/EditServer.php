@@ -2,42 +2,43 @@
 
 namespace App\Filament\Resources\ServerResource\Pages;
 
+use App\Enums\ContainerStatus;
+use App\Enums\ServerState;
+use App\Filament\Resources\ServerResource;
+use App\Http\Controllers\Admin\ServersController;
 use App\Models\Database;
+use App\Models\Egg;
+use App\Models\Server;
+use App\Models\ServerVariable;
 use App\Services\Databases\DatabaseManagementService;
 use App\Services\Databases\DatabasePasswordService;
+use App\Services\Servers\RandomWordService;
+use App\Services\Servers\ServerDeletionService;
+use App\Services\Servers\SuspensionService;
+use App\Services\Servers\TransferServerService;
+use Closure;
+use Exception;
+use Filament\Actions;
+use Filament\Forms;
 use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\CheckboxList;
 use Filament\Forms\Components\Fieldset;
 use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Tabs;
 use Filament\Forms\Components\Tabs\Tab;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\ToggleButtons;
+use Filament\Forms\Form;
 use Filament\Forms\Get;
 use Filament\Forms\Set;
-use LogicException;
-use App\Filament\Resources\ServerResource;
-use App\Http\Controllers\Admin\ServersController;
-use App\Services\Servers\RandomWordService;
-use App\Services\Servers\SuspensionService;
-use App\Services\Servers\TransferServerService;
-use Filament\Actions;
-use Filament\Forms;
-use App\Enums\ContainerStatus;
-use App\Enums\ServerState;
-use App\Models\Egg;
-use App\Models\Server;
-use App\Models\ServerVariable;
-use App\Services\Servers\ServerDeletionService;
-use Filament\Forms\Components\Tabs;
-use Filament\Forms\Form;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\EditRecord;
-use Illuminate\Support\Facades\Validator;
-use Closure;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\Validator;
+use LogicException;
 use Webbingbrasil\FilamentCopyActions\Forms\Actions\CopyAction;
 
 class EditServer extends EditRecord
@@ -796,7 +797,7 @@ class EditServer extends EditRecord
             return $containsRuleIn;
         }
 
-        throw new \Exception('Component type not supported: ' . $component::class);
+        throw new Exception('Component type not supported: ' . $component::class);
     }
 
     private function getSelectOptionsFromRules(ServerVariable $serverVariable): array
