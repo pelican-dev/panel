@@ -9,9 +9,11 @@ class DispatchWebhooks
 {
     public function handle(string $eventName, array $data): void
     {
-        // todo: cache webhook configs
+        $matchingHooks = cache()->rememberForever("webhooks.$eventName", function () use ($eventName) {
+            return WebhookConfiguration::query()->whereJsonContains('events', $eventName)->get();
+        });
 
-        foreach (WebhookConfiguration::all() as $webhookConfig) {
+        foreach ($matchingHooks ?? [] as $webhookConfig) {
             if (in_array($eventName, $webhookConfig->events)) {
                 ProcessWebhook::dispatch($webhookConfig, $eventName, $data);
             }

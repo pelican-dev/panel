@@ -2,8 +2,6 @@
 
 namespace App\Models;
 
-use App\Events\Event;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -26,14 +24,19 @@ class WebhookConfiguration extends Model
         ];
     }
 
+    protected static function booted(): void
+    {
+        self::saved(static function (self $webhookConfiguration): void {
+            $changedEvents = collect([...$webhookConfiguration->events, ...$webhookConfiguration->getOriginal('events', '[]')])->unique();
+            $changedEvents->each(function (string $event) {
+                cache()->forever("webhooks.$event", WebhookConfiguration::query()->whereJsonContains('events', $event)->get());
+            });
+        });
+    }
+
     public function webhooks(): HasMany
     {
         return $this->hasMany(Webhook::class);
-    }
-
-    public function scopeForEvent(Builder $builder, Event $event): Builder
-    {
-        return $builder->whereJsonContains('events', $event::class);
     }
 
     public static function allPossibleEvents(): array

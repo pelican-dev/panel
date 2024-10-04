@@ -11,6 +11,7 @@ use App\Tests\TestCase;
 use Illuminate\Foundation\Testing\LazilyRefreshDatabase;
 use Illuminate\Http\Client\Request;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
 
 class ProcessWebhooksTest extends TestCase
@@ -27,7 +28,7 @@ class ProcessWebhooksTest extends TestCase
     public function test_it_sends_a_single_webhook(): void
     {
         $webhook = WebhookConfiguration::factory()->create([
-            'events' => ['eloquent.created: '.Server::class],
+            'events' => [$eventName = 'eloquent.created: '.Server::class],
         ]);
 
         Http::fake([$webhook->endpoint => Http::response()]);
@@ -67,6 +68,9 @@ class ProcessWebhooksTest extends TestCase
             $data,
         );
 
+        $this->assertCount(1, cache()->get("webhooks.$eventName"));
+        $this->assertEquals($webhook->id, cache()->get("webhooks.$eventName")->first()->id);
+
         Http::assertSentCount(1);
         Http::assertSent(function (Request $request) use ($webhook, $data) {
             return $webhook->endpoint === $request->url()
@@ -77,7 +81,7 @@ class ProcessWebhooksTest extends TestCase
     public function test_sends_multiple_webhooks()
     {
         [$webhook1, $webhook2] = WebhookConfiguration::factory(2)
-            ->create(['events' => ['eloquent.created: '.Server::class]]);
+            ->create(['events' => [$eventName = 'eloquent.created: '.Server::class]]);
 
         Http::fake([
             $webhook1->endpoint => Http::response(),
@@ -85,6 +89,10 @@ class ProcessWebhooksTest extends TestCase
         ]);
 
         $this->createServer();
+
+        $this->assertCount(2, cache()->get("webhooks.$eventName"));
+        $this->assertContains($webhook1->id, cache()->get("webhooks.$eventName")->pluck('id'));
+        $this->assertContains($webhook2->id, cache()->get("webhooks.$eventName")->pluck('id'));
 
         Http::assertSentCount(2);
         Http::assertSent(fn (Request $request) => $webhook1->endpoint === $request->url());
