@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api\Application\Roles;
 
+use App\Exceptions\PanelException;
 use Illuminate\Http\Response;
 use Illuminate\Http\JsonResponse;
 use App\Models\Role;
@@ -67,6 +68,10 @@ class RoleController extends ApplicationApiController
      */
     public function update(UpdateRoleRequest $request, Role $role): array
     {
+        if ($role->isRootAdmin()) {
+            throw new PanelException('Can\'t update root admin role!');
+        }
+
         $role->update($request->validated());
 
         return $this->fractal->item($role)
@@ -81,6 +86,10 @@ class RoleController extends ApplicationApiController
      */
     public function delete(DeleteRoleRequest $request, Role $role): Response
     {
+        if ($role->isRootAdmin()) {
+            throw new PanelException('Can\'t delete root admin role!');
+        }
+
         $role->delete();
 
         return $this->returnNoContent();
