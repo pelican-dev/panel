@@ -14,17 +14,24 @@ use App\Services\Nodes\NodeJWTService;
 use Carbon\CarbonImmutable;
 use Filament\Actions\Action as HeaderAction;
 use Filament\Facades\Filament;
+use Filament\Forms\Components\Actions;
+use Filament\Forms\Components\Actions\Action as FormAction;
 use Filament\Forms\Components\CheckboxList;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Placeholder;
+use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Tabs;
 use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Wizard;
+use Filament\Forms\Components\Wizard\Step;
 use Filament\Forms\Get;
+use Filament\Forms\Set;
 use Filament\Notifications\Notification;
 use Filament\Panel;
 use Filament\Resources\Pages\ListRecords;
 use Filament\Resources\Pages\PageRegistration;
+use Filament\Support\Enums\VerticalAlignment;
 use Filament\Tables\Actions\Action;
 use Filament\Tables\Actions\ActionGroup;
 use Filament\Tables\Actions\BulkAction;
@@ -37,7 +44,9 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Routing\Route;
+use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\Route as RouteFacade;
+use Illuminate\Support\HtmlString;
 use Livewire\Attributes\Locked;
 
 class ListFiles extends ListRecords
@@ -553,6 +562,67 @@ class ListFiles extends ListRecords
                                         ->url(),
                                 ]),
                         ]),
+                ]),
+            HeaderAction::make('search')
+                ->authorize(auth()->user()->can(Permission::ACTION_FILE_READ, Filament::getTenant()))
+                ->label('Global Search')
+                ->modalSubmitAction(false)
+                ->modalCancelAction(false)
+                ->form([
+                    Wizard::make([
+                        Step::make('Input')
+                            ->schema([
+                                TextInput::make('searchTerm')
+                                    ->placeholder('Enter a search term, e.g. *.txt')
+                                    ->minLength(3),
+                            ])
+                            ->afterValidation(function (Get $get, Set $set) {
+                                /** @var Server $server */
+                                $server = Filament::getTenant();
+
+                                $foundFiles = app(DaemonFileRepository::class)
+                                    ->setServer($server)
+                                    ->search($get('searchTerm'), $this->path);
+
+                                $set('foundFiles', $foundFiles);
+                            }),
+                        Step::make('Result')
+                            ->schema([
+                                Repeater::make('foundFiles')
+                                    ->disabled()
+                                    ->addable(false)
+                                    ->deletable(false)
+                                    ->reorderable(false)
+                                    ->defaultItems(0)
+                                    ->columns(5)
+                                    ->live()
+                                    ->schema([ // TODO: make pretty and mobile friendly
+                                        TextInput::make('name')
+                                            ->hidden(),
+                                        TextInput::make('symlink')
+                                            ->hidden(),
+                                        Placeholder::make('icon')
+                                            ->label('')
+                                            ->content(fn (Get $get) => new HtmlString(Blade::render(<<<'BLADE'
+                                                <div @class(['fi-in-icon flex flex-wrap gap-1.5'])>
+                                                    <x-filament::icon icon="{{ $icon }}" @class(['fi-in-icon-item', 'fi-in-icon-item-size-lg h-6 w-6', 'fi-color-custom text-custom-500 dark:text-custom-400', 'fi-color-primary'])/>
+                                                </div>
+                                            BLADE, ['icon' => $get('symlink') ? 'tabler-file-symlink' : 'tabler-file']))),
+                                        Placeholder::make('name')
+                                            ->label('')
+                                            ->content(fn (Get $get) => $get('name'))
+                                            ->columnSpan(3),
+                                        Actions::make([
+                                            FormAction::make('edit')
+                                                ->authorize(auth()->user()->can(Permission::ACTION_FILE_READ_CONTENT, Filament::getTenant()))
+                                                ->icon('tabler-edit')
+                                                ->url(fn (Get $get) => EditFiles::getUrl(['path' => join_paths($this->path, $get('name'))])),
+                                        ])
+                                            ->verticalAlignment(VerticalAlignment::End),
+                                    ]),
+                            ]),
+                    ])
+                        ->nextAction(fn (FormAction $action) => $action->label('Search')),
                 ]),
         ];
     }

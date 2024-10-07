@@ -272,4 +272,52 @@ class DaemonFileRepository extends DaemonRepository
             throw new DaemonConnectionException($exception);
         }
     }
+
+    /**
+     * Searches all files in the directory (and its subdirectories) for the given search term.
+     *
+     * @throws \App\Exceptions\Http\Connection\DaemonConnectionException
+     */
+    public function search(string $searchTerm, ?string $directory): array
+    {
+        Assert::isInstanceOf($this->server, Server::class);
+
+        // DEBUG
+        return [
+            [
+                'name' => 'yeet.txt',
+                'size' => 420,
+                'file' => true,
+                'symlink' => false,
+            ],
+            [
+                'name' => 'yeet2.txt',
+                'size' => 4200,
+                'file' => true,
+                'symlink' => false,
+            ],
+            [
+                'name' => 'yeet3.txt',
+                'size' => 0,
+                'file' => true,
+                'symlink' => true,
+            ],
+        ];
+
+        try {
+            $response = $this->getHttpClient()
+                ->timeout(120)
+                ->get(
+                    sprintf('/api/servers/%s/files/search', $this->server->uuid),
+                    [
+                        'pattern' => $searchTerm,
+                        'directory' => $directory ?? '/',
+                    ]
+                );
+        } catch (TransferException $exception) {
+            throw new DaemonConnectionException($exception);
+        }
+
+        return $response->json();
+    }
 }
