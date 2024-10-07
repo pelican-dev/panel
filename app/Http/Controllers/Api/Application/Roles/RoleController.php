@@ -21,8 +21,8 @@ class RoleController extends ApplicationApiController
     public function index(GetRoleRequest $request): array
     {
         $roles = QueryBuilder::for(Role::query())
-            ->allowedFilters(['name'])
-            ->allowedSorts(['name'])
+            ->allowedFilters(['id', 'name'])
+            ->allowedSorts(['id', 'name'])
             ->paginate($request->query('per_page') ?? 10);
 
         return $this->fractal->collection($roles)
