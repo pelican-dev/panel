@@ -282,28 +282,6 @@ class DaemonFileRepository extends DaemonRepository
     {
         Assert::isInstanceOf($this->server, Server::class);
 
-        // DEBUG
-        return [
-            [
-                'name' => 'yeet.txt',
-                'size' => 420,
-                'file' => true,
-                'symlink' => false,
-            ],
-            [
-                'name' => 'yeet2.txt',
-                'size' => 4200,
-                'file' => true,
-                'symlink' => false,
-            ],
-            [
-                'name' => 'yeet3.txt',
-                'size' => 0,
-                'file' => true,
-                'symlink' => true,
-            ],
-        ];
-
         try {
             $response = $this->getHttpClient()
                 ->timeout(120)
