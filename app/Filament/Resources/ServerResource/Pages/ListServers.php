@@ -67,7 +67,7 @@ class ListServers extends ListRecords
                     ->options(fn (Server $server) => $server->allocations->mapWithKeys(fn ($allocation) => [$allocation->id => $allocation->address]))
                     ->selectablePlaceholder(false)
                     ->sortable(),
-                TextColumn::make('allocation_id_can')
+                TextColumn::make('allocation_id_readonly')
                     ->label('Primary Allocation')
                     ->hidden(auth()->user()->can('update server'))
                     ->state(fn (Server $server) => $server->allocation->address),
