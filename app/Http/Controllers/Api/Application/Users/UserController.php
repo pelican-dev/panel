@@ -80,10 +80,24 @@ class UserController extends ApplicationApiController
     /**
      * Assign roles to a user.
      */
-    public function roles(AssignUserRolesRequest $request, User $user): array
+    public function assignRoles(AssignUserRolesRequest $request, User $user): array
     {
         $roles = collect($request->input('roles'))->except(Role::getRootAdmin()->id);
-        $user->syncRoles($roles);
+        $user->assignRole($roles);
+
+        $response = $this->fractal->item($user)
+            ->transformWith($this->getTransformer(UserTransformer::class));
+
+        return $response->toArray();
+    }
+
+    /**
+     * Removes roles from a user.
+     */
+    public function removeRoles(AssignUserRolesRequest $request, User $user): array
+    {
+        $roles = collect($request->input('roles'))->except(Role::getRootAdmin()->id);
+        $user->removeRoles($roles);
 
         $response = $this->fractal->item($user)
             ->transformWith($this->getTransformer(UserTransformer::class));
