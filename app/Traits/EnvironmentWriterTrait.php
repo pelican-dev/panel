@@ -14,7 +14,7 @@ trait EnvironmentWriterTrait
     public function escapeEnvironmentValue(string $value): string
     {
         if (!preg_match('/^\"(.*)\"$/', $value) && preg_match('/([^\w.\-+\/])+/', $value)) {
-            return sprintf('"%s"', addslashes($value));
+            return sprintf('"%s"', addcslashes($value, '\\"'));
         }
 
         return $value;
