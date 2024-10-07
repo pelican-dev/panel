@@ -4,8 +4,8 @@ namespace App\Enums;
 
 enum RolePermissionModels: string
 {
-    case ApiKey = 'apikey';
-    case DatabaseHost = 'databasehost';
+    case ApiKey = 'apiKey';
+    case DatabaseHost = 'databaseHost';
     case Database = 'database';
     case Egg = 'egg';
     case Mount = 'mount';

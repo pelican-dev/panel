@@ -16,11 +16,11 @@ class AdminUserStep
                     ->label('Admin E-Mail')
                     ->required()
                     ->email()
-                    ->default('admin@example.com'),
+                    ->placeholder('admin@example.com'),
                 TextInput::make('user.username')
                     ->label('Admin Username')
                     ->required()
-                    ->default('admin'),
+                    ->placeholder('admin'),
                 TextInput::make('user.password')
                     ->label('Admin Password')
                     ->required()

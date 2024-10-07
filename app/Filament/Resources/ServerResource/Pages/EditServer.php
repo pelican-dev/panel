@@ -2,34 +2,43 @@
 
 namespace App\Filament\Resources\ServerResource\Pages;
 
-use App\Models\Database;
-use App\Services\Databases\DatabaseManagementService;
-use App\Services\Databases\DatabasePasswordService;
-use Filament\Forms\Components\Actions\Action;
-use Filament\Forms\Components\Repeater;
-use Filament\Forms\Get;
-use Filament\Forms\Set;
-use LogicException;
-use App\Filament\Resources\ServerResource;
-use App\Http\Controllers\Admin\ServersController;
-use App\Services\Servers\RandomWordService;
-use App\Services\Servers\SuspensionService;
-use App\Services\Servers\TransferServerService;
-use Filament\Actions;
-use Filament\Forms;
 use App\Enums\ContainerStatus;
 use App\Enums\ServerState;
+use App\Filament\Resources\ServerResource;
+use App\Http\Controllers\Admin\ServersController;
+use App\Models\Database;
 use App\Models\Egg;
 use App\Models\Server;
 use App\Models\ServerVariable;
+use App\Services\Databases\DatabaseManagementService;
+use App\Services\Databases\DatabasePasswordService;
+use App\Services\Servers\RandomWordService;
 use App\Services\Servers\ServerDeletionService;
+use App\Services\Servers\SuspensionService;
+use App\Services\Servers\TransferServerService;
+use Closure;
+use Exception;
+use Filament\Actions;
+use Filament\Forms;
+use Filament\Forms\Components\Actions\Action;
+use Filament\Forms\Components\CheckboxList;
+use Filament\Forms\Components\Fieldset;
+use Filament\Forms\Components\Grid;
+use Filament\Forms\Components\Repeater;
+use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Tabs;
+use Filament\Forms\Components\Tabs\Tab;
+use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\ToggleButtons;
 use Filament\Forms\Form;
+use Filament\Forms\Get;
+use Filament\Forms\Set;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\EditRecord;
-use Illuminate\Support\Facades\Validator;
-use Closure;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\Validator;
+use LogicException;
 use Webbingbrasil\FilamentCopyActions\Forms\Actions\CopyAction;
 
 class EditServer extends EditRecord
@@ -50,15 +59,15 @@ class EditServer extends EditRecord
                     ])
                     ->columnSpanFull()
                     ->tabs([
-                        Tabs\Tab::make('Information')
+                        Tab::make('Information')
                             ->icon('tabler-info-circle')
                             ->schema([
-                                Forms\Components\TextInput::make('name')
+                                TextInput::make('name')
                                     ->prefixIcon('tabler-server')
                                     ->label('Display Name')
-                                    ->suffixAction(Forms\Components\Actions\Action::make('random')
+                                    ->suffixAction(Action::make('random')
                                         ->icon('tabler-dice-' . random_int(1, 6))
-                                        ->action(function (Forms\Set $set, Forms\Get $get) {
+                                        ->action(function (Set $set, Get $get) {
                                             $egg = Egg::find($get('egg_id'));
                                             $prefix = $egg ? str($egg->name)->lower()->kebab() . '-' : '';
 
@@ -75,7 +84,7 @@ class EditServer extends EditRecord
                                     ->required()
                                     ->maxLength(255),
 
-                                Forms\Components\Select::make('owner_id')
+                                Select::make('owner_id')
                                     ->prefixIcon('tabler-user')
                                     ->label('Owner')
                                     ->columnSpan([
@@ -89,7 +98,7 @@ class EditServer extends EditRecord
                                     ->preload()
                                     ->required(),
 
-                                Forms\Components\ToggleButtons::make('condition')
+                                ToggleButtons::make('condition')
                                     ->label('Server Status')
                                     ->formatStateUsing(fn (Server $server) => $server->condition)
                                     ->options(fn ($state) => collect(array_merge(ContainerStatus::cases(), ServerState::cases()))
@@ -109,11 +118,11 @@ class EditServer extends EditRecord
                                         'lg' => 1,
                                     ]),
 
-                                Forms\Components\Textarea::make('description')
+                                Textarea::make('description')
                                     ->label('Description')
                                     ->columnSpanFull(),
 
-                                Forms\Components\TextInput::make('uuid')
+                                TextInput::make('uuid')
                                     ->hintAction(CopyAction::make())
                                     ->columnSpan([
                                         'default' => 2,
@@ -123,7 +132,7 @@ class EditServer extends EditRecord
                                     ])
                                     ->readOnly()
                                     ->dehydrated(false),
-                                Forms\Components\TextInput::make('uuid_short')
+                                TextInput::make('uuid_short')
                                     ->label('Short UUID')
                                     ->hintAction(CopyAction::make())
                                     ->columnSpan([
@@ -134,7 +143,7 @@ class EditServer extends EditRecord
                                     ])
                                     ->readOnly()
                                     ->dehydrated(false),
-                                Forms\Components\TextInput::make('external_id')
+                                TextInput::make('external_id')
                                     ->label('External ID')
                                     ->columnSpan([
                                         'default' => 2,
@@ -143,7 +152,7 @@ class EditServer extends EditRecord
                                         'lg' => 3,
                                     ])
                                     ->maxLength(255),
-                                Forms\Components\Select::make('node_id')
+                                Select::make('node_id')
                                     ->label('Node')
                                     ->relationship('node', 'name')
                                     ->columnSpan([
@@ -154,10 +163,10 @@ class EditServer extends EditRecord
                                     ])
                                     ->disabled(),
                             ]),
-                        Tabs\Tab::make('Environment')
+                        Tab::make('Environment')
                             ->icon('tabler-brand-docker')
                             ->schema([
-                                Forms\Components\Fieldset::make('Resource Limits')
+                                Fieldset::make('Resource Limits')
                                     ->columns([
                                         'default' => 1,
                                         'sm' => 2,
@@ -165,14 +174,14 @@ class EditServer extends EditRecord
                                         'lg' => 3,
                                     ])
                                     ->schema([
-                                        Forms\Components\Grid::make()
+                                        Grid::make()
                                             ->columns(4)
                                             ->columnSpanFull()
                                             ->schema([
-                                                Forms\Components\ToggleButtons::make('unlimited_mem')
+                                                ToggleButtons::make('unlimited_mem')
                                                     ->label('Memory')->inlineLabel()->inline()
-                                                    ->afterStateUpdated(fn (Forms\Set $set) => $set('memory', 0))
-                                                    ->formatStateUsing(fn (Forms\Get $get) => $get('memory') == 0)
+                                                    ->afterStateUpdated(fn (Set $set) => $set('memory', 0))
+                                                    ->formatStateUsing(fn (Get $get) => $get('memory') == 0)
                                                     ->live()
                                                     ->options([
                                                         true => 'Unlimited',
@@ -184,9 +193,9 @@ class EditServer extends EditRecord
                                                     ])
                                                     ->columnSpan(2),
 
-                                                Forms\Components\TextInput::make('memory')
+                                                TextInput::make('memory')
                                                     ->dehydratedWhenHidden()
-                                                    ->hidden(fn (Forms\Get $get) => $get('unlimited_mem'))
+                                                    ->hidden(fn (Get $get) => $get('unlimited_mem'))
                                                     ->label('Memory Limit')->inlineLabel()
                                                     ->suffix(config('panel.use_binary_prefix') ? 'MiB' : 'MB')
                                                     ->required()
@@ -195,15 +204,15 @@ class EditServer extends EditRecord
                                                     ->minValue(0),
                                             ]),
 
-                                        Forms\Components\Grid::make()
+                                        Grid::make()
                                             ->columns(4)
                                             ->columnSpanFull()
                                             ->schema([
-                                                Forms\Components\ToggleButtons::make('unlimited_disk')
+                                                ToggleButtons::make('unlimited_disk')
                                                     ->label('Disk Space')->inlineLabel()->inline()
                                                     ->live()
-                                                    ->afterStateUpdated(fn (Forms\Set $set) => $set('disk', 0))
-                                                    ->formatStateUsing(fn (Forms\Get $get) => $get('disk') == 0)
+                                                    ->afterStateUpdated(fn (Set $set) => $set('disk', 0))
+                                                    ->formatStateUsing(fn (Get $get) => $get('disk') == 0)
                                                     ->options([
                                                         true => 'Unlimited',
                                                         false => 'Limited',
@@ -214,9 +223,9 @@ class EditServer extends EditRecord
                                                     ])
                                                     ->columnSpan(2),
 
-                                                Forms\Components\TextInput::make('disk')
+                                                TextInput::make('disk')
                                                     ->dehydratedWhenHidden()
-                                                    ->hidden(fn (Forms\Get $get) => $get('unlimited_disk'))
+                                                    ->hidden(fn (Get $get) => $get('unlimited_disk'))
                                                     ->label('Disk Space Limit')->inlineLabel()
                                                     ->suffix(config('panel.use_binary_prefix') ? 'MiB' : 'MB')
                                                     ->required()
@@ -225,14 +234,14 @@ class EditServer extends EditRecord
                                                     ->minValue(0),
                                             ]),
 
-                                        Forms\Components\Grid::make()
+                                        Grid::make()
                                             ->columns(4)
                                             ->columnSpanFull()
                                             ->schema([
-                                                Forms\Components\ToggleButtons::make('unlimited_cpu')
+                                                ToggleButtons::make('unlimited_cpu')
                                                     ->label('CPU')->inlineLabel()->inline()
-                                                    ->afterStateUpdated(fn (Forms\Set $set) => $set('cpu', 0))
-                                                    ->formatStateUsing(fn (Forms\Get $get) => $get('cpu') == 0)
+                                                    ->afterStateUpdated(fn (Set $set) => $set('cpu', 0))
+                                                    ->formatStateUsing(fn (Get $get) => $get('cpu') == 0)
                                                     ->live()
                                                     ->options([
                                                         true => 'Unlimited',
@@ -244,9 +253,9 @@ class EditServer extends EditRecord
                                                     ])
                                                     ->columnSpan(2),
 
-                                                Forms\Components\TextInput::make('cpu')
+                                                TextInput::make('cpu')
                                                     ->dehydratedWhenHidden()
-                                                    ->hidden(fn (Forms\Get $get) => $get('unlimited_cpu'))
+                                                    ->hidden(fn (Get $get) => $get('unlimited_cpu'))
                                                     ->label('CPU Limit')->inlineLabel()
                                                     ->suffix('%')
                                                     ->required()
@@ -255,15 +264,15 @@ class EditServer extends EditRecord
                                                     ->minValue(0),
                                             ]),
 
-                                        Forms\Components\Grid::make()
+                                        Grid::make()
                                             ->columns(4)
                                             ->columnSpanFull()
                                             ->schema([
-                                                Forms\Components\ToggleButtons::make('swap_support')
+                                                ToggleButtons::make('swap_support')
                                                     ->live()
                                                     ->label('Enable Swap Memory')->inlineLabel()->inline()
                                                     ->columnSpan(2)
-                                                    ->afterStateUpdated(function ($state, Forms\Set $set) {
+                                                    ->afterStateUpdated(function ($state, Set $set) {
                                                         $value = match ($state) {
                                                             'unlimited' => -1,
                                                             'disabled' => 0,
@@ -273,7 +282,7 @@ class EditServer extends EditRecord
 
                                                         $set('swap', $value);
                                                     })
-                                                    ->formatStateUsing(function (Forms\Get $get) {
+                                                    ->formatStateUsing(function (Get $get) {
                                                         return match (true) {
                                                             $get('swap') > 0 => 'limited',
                                                             $get('swap') == 0 => 'disabled',
@@ -292,9 +301,9 @@ class EditServer extends EditRecord
                                                         'disabled' => 'danger',
                                                     ]),
 
-                                                Forms\Components\TextInput::make('swap')
+                                                TextInput::make('swap')
                                                     ->dehydratedWhenHidden()
-                                                    ->hidden(fn (Forms\Get $get) => match ($get('swap_support')) {
+                                                    ->hidden(fn (Get $get) => match ($get('swap_support')) {
                                                         'disabled', 'unlimited', true => true,
                                                         default => false,
                                                     })
@@ -310,11 +319,11 @@ class EditServer extends EditRecord
                                             ->helperText('The IO performance relative to other running containers')
                                             ->label('Block IO Proportion'),
 
-                                        Forms\Components\Grid::make()
+                                        Grid::make()
                                             ->columns(4)
                                             ->columnSpanFull()
                                             ->schema([
-                                                Forms\Components\ToggleButtons::make('oom_killer')
+                                                ToggleButtons::make('oom_killer')
                                                     ->label('OOM Killer')->inlineLabel()->inline()
                                                     ->columnSpan(2)
                                                     ->options([
@@ -326,12 +335,12 @@ class EditServer extends EditRecord
                                                         true => 'danger',
                                                     ]),
 
-                                                Forms\Components\TextInput::make('oom_disabled_hidden')
+                                                TextInput::make('oom_disabled_hidden')
                                                     ->hidden(),
                                             ]),
                                     ]),
 
-                                Forms\Components\Fieldset::make('Feature Limits')
+                                Fieldset::make('Feature Limits')
                                     ->inlineLabel()
                                     ->columns([
                                         'default' => 1,
@@ -340,23 +349,23 @@ class EditServer extends EditRecord
                                         'lg' => 3,
                                     ])
                                     ->schema([
-                                        Forms\Components\TextInput::make('allocation_limit')
+                                        TextInput::make('allocation_limit')
                                             ->suffixIcon('tabler-network')
                                             ->required()
                                             ->minValue(0)
                                             ->numeric(),
-                                        Forms\Components\TextInput::make('database_limit')
+                                        TextInput::make('database_limit')
                                             ->suffixIcon('tabler-database')
                                             ->required()
                                             ->minValue(0)
                                             ->numeric(),
-                                        Forms\Components\TextInput::make('backup_limit')
+                                        TextInput::make('backup_limit')
                                             ->suffixIcon('tabler-copy-check')
                                             ->required()
                                             ->minValue(0)
                                             ->numeric(),
                                     ]),
-                                Forms\Components\Fieldset::make('Docker Settings')
+                                Fieldset::make('Docker Settings')
                                     ->columns([
                                         'default' => 1,
                                         'sm' => 2,
@@ -364,10 +373,10 @@ class EditServer extends EditRecord
                                         'lg' => 3,
                                     ])
                                     ->schema([
-                                        Forms\Components\Select::make('select_image')
+                                        Select::make('select_image')
                                             ->label('Image Name')
-                                            ->afterStateUpdated(fn (Forms\Set $set, $state) => $set('image', $state))
-                                            ->options(function ($state, Forms\Get $get, Forms\Set $set) {
+                                            ->afterStateUpdated(fn (Set $set, $state) => $set('image', $state))
+                                            ->options(function ($state, Get $get, Set $set) {
                                                 $egg = Egg::query()->find($get('egg_id'));
                                                 $images = $egg->docker_images ?? [];
 
@@ -383,10 +392,10 @@ class EditServer extends EditRecord
                                             ->selectablePlaceholder(false)
                                             ->columnSpan(1),
 
-                                        Forms\Components\TextInput::make('image')
+                                        TextInput::make('image')
                                             ->label('Image')
                                             ->debounce(500)
-                                            ->afterStateUpdated(function ($state, Forms\Get $get, Forms\Set $set) {
+                                            ->afterStateUpdated(function ($state, Get $get, Set $set) {
                                                 $egg = Egg::query()->find($get('egg_id'));
                                                 $images = $egg->docker_images ?? [];
 
@@ -406,7 +415,7 @@ class EditServer extends EditRecord
                                             ->columnSpanFull(),
                                     ]),
                             ]),
-                        Tabs\Tab::make('Egg')
+                        Tab::make('Egg')
                             ->icon('tabler-egg')
                             ->columns([
                                 'default' => 1,
@@ -415,7 +424,7 @@ class EditServer extends EditRecord
                                 'lg' => 5,
                             ])
                             ->schema([
-                                Forms\Components\Select::make('egg_id')
+                                Select::make('egg_id')
                                     ->disabledOn('edit')
                                     ->prefixIcon('tabler-egg')
                                     ->columnSpan([
@@ -429,7 +438,7 @@ class EditServer extends EditRecord
                                     ->preload()
                                     ->required(),
 
-                                Forms\Components\ToggleButtons::make('skip_scripts')
+                                ToggleButtons::make('skip_scripts')
                                     ->label('Run Egg Install Script?')->inline()
                                     ->columnSpan([
                                         'default' => 6,
@@ -451,25 +460,25 @@ class EditServer extends EditRecord
                                     ])
                                     ->required(),
 
-                                Forms\Components\Textarea::make('startup')
+                                Textarea::make('startup')
                                     ->label('Startup Command')
                                     ->required()
                                     ->columnSpan(6)
                                     ->autosize(),
 
-                                Forms\Components\Textarea::make('defaultStartup')
+                                Textarea::make('defaultStartup')
                                     ->hintAction(CopyAction::make())
                                     ->label('Default Startup Command')
                                     ->disabled()
                                     ->autosize()
                                     ->columnSpan(6)
-                                    ->formatStateUsing(function ($state, Get $get, Set $set) {
+                                    ->formatStateUsing(function ($state, Get $get) {
                                         $egg = Egg::query()->find($get('egg_id'));
 
                                         return $egg->startup;
                                     }),
 
-                                Forms\Components\Repeater::make('server_variables')
+                                Repeater::make('server_variables')
                                     ->relationship('serverVariables', function (Builder $query) {
                                         /** @var Server $server */
                                         $server = $this->getRecord();
@@ -498,7 +507,7 @@ class EditServer extends EditRecord
                                     ->reorderable(false)->addable(false)->deletable(false)
                                     ->schema(function () {
 
-                                        $text = Forms\Components\TextInput::make('variable_value')
+                                        $text = TextInput::make('variable_value')
                                             ->hidden($this->shouldHideComponent(...))
                                             ->required(fn (ServerVariable $serverVariable) => $serverVariable->variable->getRequiredAttribute())
                                             ->rules([
@@ -515,7 +524,7 @@ class EditServer extends EditRecord
                                                 },
                                             ]);
 
-                                        $select = Forms\Components\Select::make('variable_value')
+                                        $select = Select::make('variable_value')
                                             ->hidden($this->shouldHideComponent(...))
                                             ->options($this->getSelectOptionsFromRules(...))
                                             ->selectablePlaceholder(false);
@@ -536,10 +545,10 @@ class EditServer extends EditRecord
                                     })
                                     ->columnSpan(6),
                             ]),
-                        Tabs\Tab::make('Mounts')
+                        Tab::make('Mounts')
                             ->icon('tabler-layers-linked')
                             ->schema([
-                                Forms\Components\CheckboxList::make('mounts')
+                                CheckboxList::make('mounts')
                                     ->relationship('mounts')
                                     ->options(fn (Server $server) => $server->node->mounts->mapWithKeys(fn ($mount) => [$mount->id => $mount->name]))
                                     ->descriptions(fn (Server $server) => $server->node->mounts->mapWithKeys(fn ($mount) => [$mount->id => "$mount->source -> $mount->target"]))
@@ -547,7 +556,7 @@ class EditServer extends EditRecord
                                     ->helperText(fn (Server $server) => $server->node->mounts->isNotEmpty() ? '' : 'No Mounts exist for this Node')
                                     ->columnSpanFull(),
                             ]),
-                        Tabs\Tab::make('Databases')
+                        Tab::make('Databases')
                             ->icon('tabler-database')
                             ->schema([
                                 Repeater::make('databases')
@@ -555,7 +564,7 @@ class EditServer extends EditRecord
                                     ->helperText(fn (Server $server) => $server->databases->isNotEmpty() ? '' : 'No Databases exist for this Server')
                                     ->columns(2)
                                     ->schema([
-                                        Forms\Components\TextInput::make('database')
+                                        TextInput::make('database')
                                             ->columnSpan(2)
                                             ->label('Database Name')
                                             ->disabled()
@@ -566,11 +575,11 @@ class EditServer extends EditRecord
                                                     ->icon('tabler-trash')
                                                     ->action(fn (DatabaseManagementService $databaseManagementService, $record) => $databaseManagementService->delete($record))
                                             ),
-                                        Forms\Components\TextInput::make('username')
+                                        TextInput::make('username')
                                             ->disabled()
                                             ->formatStateUsing(fn ($record) => $record->username)
                                             ->columnSpan(2),
-                                        Forms\Components\TextInput::make('password')
+                                        TextInput::make('password')
                                             ->disabled()
                                             ->hintAction(
                                                 Action::make('rotate')
@@ -580,30 +589,30 @@ class EditServer extends EditRecord
                                             )
                                             ->formatStateUsing(fn (Database $database) => $database->password)
                                             ->columnSpan(2),
-                                        Forms\Components\TextInput::make('remote')
+                                        TextInput::make('remote')
                                             ->disabled()
                                             ->formatStateUsing(fn ($record) => $record->remote)
                                             ->columnSpan(1)
                                             ->label('Connections From'),
-                                        Forms\Components\TextInput::make('max_connections')
+                                        TextInput::make('max_connections')
                                             ->disabled()
                                             ->formatStateUsing(fn ($record) => $record->max_connections)
                                             ->columnSpan(1),
-                                        Forms\Components\TextInput::make('JDBC')
+                                        TextInput::make('JDBC')
                                             ->disabled()
                                             ->label('JDBC Connection String')
                                             ->columnSpan(2)
-                                            ->formatStateUsing(fn (Forms\Get $get, $record) => 'jdbc:mysql://' . $get('username') . ':' . urlencode($record->password) . '@' . $record->host->host . ':' . $record->host->port . '/' . $get('database')),
+                                            ->formatStateUsing(fn (Get $get, $record) => 'jdbc:mysql://' . $get('username') . ':' . urlencode($record->password) . '@' . $record->host->host . ':' . $record->host->port . '/' . $get('database')),
                                     ])
                                     ->relationship('databases')
                                     ->deletable(false)
                                     ->addable(false)
                                     ->columnSpan(4),
                             ])->columns(4),
-                        Tabs\Tab::make('Actions')
+                        Tab::make('Actions')
                             ->icon('tabler-settings')
                             ->schema([
-                                Forms\Components\Fieldset::make('Server Actions')
+                                Fieldset::make('Server Actions')
                                     ->columns([
                                         'default' => 1,
                                         'sm' => 2,
@@ -611,11 +620,11 @@ class EditServer extends EditRecord
                                         'lg' => 6,
                                     ])
                                     ->schema([
-                                        Forms\Components\Grid::make()
+                                        Grid::make()
                                             ->columnSpan(3)
                                             ->schema([
                                                 Forms\Components\Actions::make([
-                                                    Forms\Components\Actions\Action::make('toggleInstall')
+                                                    Action::make('toggleInstall')
                                                         ->label('Toggle Install Status')
                                                         ->disabled(fn (Server $server) => $server->isSuspended())
                                                         ->action(function (ServersController $serversController, Server $server) {
@@ -624,14 +633,14 @@ class EditServer extends EditRecord
                                                             $this->refreshFormData(['status', 'docker']);
                                                         }),
                                                 ])->fullWidth(),
-                                                Forms\Components\ToggleButtons::make('')
+                                                ToggleButtons::make('')
                                                     ->hint('If you need to change the install status from uninstalled to installed, or vice versa, you may do so with this button.'),
                                             ]),
-                                        Forms\Components\Grid::make()
+                                        Grid::make()
                                             ->columnSpan(3)
                                             ->schema([
                                                 Forms\Components\Actions::make([
-                                                    Forms\Components\Actions\Action::make('toggleSuspend')
+                                                    Action::make('toggleSuspend')
                                                         ->label('Suspend')
                                                         ->color('warning')
                                                         ->hidden(fn (Server $server) => $server->isSuspended())
@@ -641,7 +650,7 @@ class EditServer extends EditRecord
 
                                                             $this->refreshFormData(['status', 'docker']);
                                                         }),
-                                                    Forms\Components\Actions\Action::make('toggleUnsuspend')
+                                                    Action::make('toggleUnsuspend')
                                                         ->label('Unsuspend')
                                                         ->color('success')
                                                         ->hidden(fn (Server $server) => !$server->isSuspended())
@@ -652,37 +661,37 @@ class EditServer extends EditRecord
                                                             $this->refreshFormData(['status', 'docker']);
                                                         }),
                                                 ])->fullWidth(),
-                                                Forms\Components\ToggleButtons::make('')
+                                                ToggleButtons::make('')
                                                     ->hidden(fn (Server $server) => $server->isSuspended())
                                                     ->hint('This will suspend the server, stop any running processes, and immediately block the user from being able to access their files or otherwise manage the server through the panel or API.'),
-                                                Forms\Components\ToggleButtons::make('')
+                                                ToggleButtons::make('')
                                                     ->hidden(fn (Server $server) => !$server->isSuspended())
                                                     ->hint('This will unsuspend the server and restore normal user access.'),
                                             ]),
-                                        Forms\Components\Grid::make()
+                                        Grid::make()
                                             ->columnSpan(3)
                                             ->schema([
                                                 Forms\Components\Actions::make([
-                                                    Forms\Components\Actions\Action::make('transfer')
+                                                    Action::make('transfer')
                                                         ->label('Transfer Soon™')
                                                         ->action(fn (TransferServerService $transfer, Server $server) => $transfer->handle($server, []))
                                                         ->disabled() //TODO!
                                                         ->form([ //TODO!
-                                                            Forms\Components\Select::make('newNode')
+                                                            Select::make('newNode')
                                                                 ->label('New Node')
                                                                 ->required()
                                                                 ->options([
                                                                     true => 'on',
                                                                     false => 'off',
                                                                 ]),
-                                                            Forms\Components\Select::make('newMainAllocation')
+                                                            Select::make('newMainAllocation')
                                                                 ->label('New Main Allocation')
                                                                 ->required()
                                                                 ->options([
                                                                     true => 'on',
                                                                     false => 'off',
                                                                 ]),
-                                                            Forms\Components\Select::make('newAdditionalAllocation')
+                                                            Select::make('newAdditionalAllocation')
                                                                 ->label('New Additional Allocations')
                                                                 ->options([
                                                                     true => 'on',
@@ -691,14 +700,14 @@ class EditServer extends EditRecord
                                                         ])
                                                         ->modalHeading('Transfer'),
                                                 ])->fullWidth(),
-                                                Forms\Components\ToggleButtons::make('')
+                                                ToggleButtons::make('')
                                                     ->hint('Transfer this server to another node connected to this panel. Warning! This feature has not been fully tested and may have bugs.'),
                                             ]),
-                                        Forms\Components\Grid::make()
+                                        Grid::make()
                                             ->columnSpan(3)
                                             ->schema([
                                                 Forms\Components\Actions::make([
-                                                    Forms\Components\Actions\Action::make('reinstall')
+                                                    Action::make('reinstall')
                                                         ->label('Reinstall')
                                                         ->color('danger')
                                                         ->requiresConfirmation()
@@ -707,7 +716,7 @@ class EditServer extends EditRecord
                                                         ->disabled(fn (Server $server) => $server->isSuspended())
                                                         ->action(fn (ServersController $serversController, Server $server) => $serversController->reinstallServer($server)),
                                                 ])->fullWidth(),
-                                                Forms\Components\ToggleButtons::make('')
+                                                ToggleButtons::make('')
                                                     ->hint('This will reinstall the server with the assigned egg install script.'),
                                             ]),
                                     ]),
@@ -721,9 +730,9 @@ class EditServer extends EditRecord
         return $form
             ->columns()
             ->schema([
-                Forms\Components\Select::make('toNode')
+                Select::make('toNode')
                     ->label('New Node'),
-                Forms\Components\TextInput::make('newAllocation')
+                TextInput::make('newAllocation')
                     ->label('Allocation'),
             ]);
 
@@ -731,12 +740,16 @@ class EditServer extends EditRecord
     protected function getHeaderActions(): array
     {
         return [
-            Actions\DeleteAction::make('Delete')
+            Actions\Action::make('Delete')
                 ->successRedirectUrl(route('filament.admin.resources.servers.index'))
                 ->color('danger')
                 ->label('Delete')
-                ->after(fn (Server $server) => resolve(ServerDeletionService::class)->handle($server))
-                ->requiresConfirmation(),
+                ->requiresConfirmation()
+                ->action(function (Server $server) {
+                    resolve(ServerDeletionService::class)->handle($server);
+
+                    return redirect(ListServers::getUrl());
+                }),
             Actions\Action::make('console')
                 ->label('Console')
                 ->icon('tabler-terminal')
@@ -772,15 +785,15 @@ class EditServer extends EditRecord
     {
         $containsRuleIn = array_first($serverVariable->variable->rules, fn ($value) => str($value)->startsWith('in:'), false);
 
-        if ($component instanceof Forms\Components\Select) {
+        if ($component instanceof Select) {
             return !$containsRuleIn;
         }
 
-        if ($component instanceof Forms\Components\TextInput) {
+        if ($component instanceof TextInput) {
             return $containsRuleIn;
         }
 
-        throw new \Exception('Component type not supported: ' . $component::class);
+        throw new Exception('Component type not supported: ' . $component::class);
     }
 
     private function getSelectOptionsFromRules(ServerVariable $serverVariable): array

@@ -10,7 +10,7 @@ class DatabaseHostResource extends Resource
 {
     protected static ?string $model = DatabaseHost::class;
 
-    protected static ?string $label = 'Databases';
+    protected static ?string $label = 'Database Host';
 
     protected static ?string $navigationIcon = 'tabler-database';
     protected static ?string $navigationGroup = 'Advanced';
@@ -18,13 +18,6 @@ class DatabaseHostResource extends Resource
     public static function getNavigationBadge(): ?string
     {
         return static::getModel()::count() ?: null;
-    }
-
-    public static function getRelations(): array
-    {
-        return [
-            //
-        ];
     }
 
     public static function getPages(): array

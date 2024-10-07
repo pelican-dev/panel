@@ -21,13 +21,6 @@ class EggResource extends Resource
         return static::getModel()::count() ?: null;
     }
 
-    public static function getRelations(): array
-    {
-        return [
-            //
-        ];
-    }
-
     public static function getGloballySearchableAttributes(): array
     {
         return ['name', 'tags', 'uuid', 'id'];

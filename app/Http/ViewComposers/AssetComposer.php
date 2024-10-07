@@ -2,8 +2,8 @@
 
 namespace App\Http\ViewComposers;
 
-use Illuminate\View\View;
 use App\Services\Helpers\AssetHashService;
+use Illuminate\View\View;
 
 class AssetComposer
 {
@@ -28,6 +28,7 @@ class AssetComposer
                 'siteKey' => config('recaptcha.website_key') ?? '',
             ],
             'usesSyncDriver' => config('queue.default') === 'sync',
+            'serverDescriptionsEditable' => config('panel.editable_server_descriptions'),
         ]);
     }
 }
