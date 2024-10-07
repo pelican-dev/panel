@@ -568,7 +568,7 @@ class ListFiles extends ListRecords
                 ->label('Global Search')
                 ->modalSubmitAction(false)
                 ->modalCancelAction(false)
-                ->form([
+                ->form([ // TODO: replace modal with custom page
                     Wizard::make([
                         Step::make('Input')
                             ->schema([
@@ -594,12 +594,16 @@ class ListFiles extends ListRecords
                                     ->deletable(false)
                                     ->reorderable(false)
                                     ->defaultItems(0)
-                                    ->columns(5)
+                                    ->columns(6)
                                     ->live()
-                                    ->schema([ // TODO: make pretty and mobile friendly
+                                    ->schema([
                                         TextInput::make('name')
                                             ->hidden(),
+                                        TextInput::make('size')
+                                            ->hidden(),
                                         TextInput::make('symlink')
+                                            ->hidden(),
+                                        TextInput::make('directory')
                                             ->hidden(),
                                         Placeholder::make('icon')
                                             ->label('')
@@ -607,11 +611,14 @@ class ListFiles extends ListRecords
                                                 <div @class(['fi-in-icon flex flex-wrap gap-1.5'])>
                                                     <x-filament::icon icon="{{ $icon }}" @class(['fi-in-icon-item', 'fi-in-icon-item-size-lg h-6 w-6', 'fi-color-custom text-custom-500 dark:text-custom-400', 'fi-color-primary'])/>
                                                 </div>
-                                            BLADE, ['icon' => $get('symlink') ? 'tabler-file-symlink' : 'tabler-file']))),
+                                            BLADE, ['icon' => $get('directory') ? 'tabler-folder' : ($get('symlink') ? 'tabler-file-symlink' : 'tabler-file')]))),
                                         Placeholder::make('name')
                                             ->label('')
                                             ->content(fn (Get $get) => $get('name'))
                                             ->columnSpan(3),
+                                        Placeholder::make('size')
+                                            ->label('')
+                                            ->content(fn (Get $get) => $get('directory') ? '' : convert_bytes_to_readable($get('size'))),
                                         Actions::make([
                                             FormAction::make('edit')
                                                 ->authorize(auth()->user()->can(Permission::ACTION_FILE_READ_CONTENT, Filament::getTenant()))
