@@ -11,7 +11,6 @@ use Filament\Http\Middleware\DispatchServingFilamentEvent;
 use Filament\Navigation\MenuItem;
 use Filament\Panel;
 use Filament\PanelProvider;
-use Filament\Support\Colors\Color;
 use Filament\Support\Facades\FilamentAsset;
 use Filament\Widgets;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
@@ -38,15 +37,6 @@ class AppPanelProvider extends PanelProvider
             ->path('app')
             ->topNavigation(config('panel.filament.top-navigation', true))
             ->tenant(Server::class)
-            ->colors([
-                'danger' => Color::Red,
-                'gray' => Color::Zinc,
-                'info' => Color::Sky,
-                'primary' => Color::Blue,
-                'success' => Color::Green,
-                'warning' => Color::Amber,
-                'blurple' => Color::hex('#5865F2'),
-            ])
             ->spa()
             ->discoverResources(in: app_path('Filament/App/Resources'), for: 'App\\Filament\\App\\Resources')
             ->discoverPages(in: app_path('Filament/App/Pages'), for: 'App\\Filament\\App\\Pages')
