@@ -82,8 +82,13 @@ class UserController extends ApplicationApiController
      */
     public function assignRoles(AssignUserRolesRequest $request, User $user): array
     {
-        $roles = collect($request->input('roles'))->except(Role::getRootAdmin()->id);
-        $user->assignRole($roles);
+        foreach ($request->input('roles') as $role) {
+            if ($role === Role::getRootAdmin()->id) {
+                continue;
+            }
+
+            $user->assignRole($role);
+        }
 
         $response = $this->fractal->item($user)
             ->transformWith($this->getTransformer(UserTransformer::class));
@@ -96,8 +101,13 @@ class UserController extends ApplicationApiController
      */
     public function removeRoles(AssignUserRolesRequest $request, User $user): array
     {
-        $roles = collect($request->input('roles'))->except(Role::getRootAdmin()->id);
-        $user->removeRoles($roles);
+        foreach ($request->input('roles') as $role) {
+            if ($role === Role::getRootAdmin()->id) {
+                continue;
+            }
+
+            $user->removeRole($role);
+        }
 
         $response = $this->fractal->item($user)
             ->transformWith($this->getTransformer(UserTransformer::class));
