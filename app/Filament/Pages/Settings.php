@@ -92,7 +92,6 @@ class Settings extends Page implements HasForms
             TextInput::make('APP_NAME')
                 ->label('App Name')
                 ->required()
-                ->alphaNum()
                 ->default(env('APP_NAME', 'Pelican')),
             TextInput::make('APP_FAVICON')
                 ->label('App Favicon')
