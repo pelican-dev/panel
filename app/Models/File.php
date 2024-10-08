@@ -49,11 +49,13 @@ class File extends Model
 
     protected static Server $server;
     protected static string $path;
+    protected static ?string $searchTerm;
 
-    public static function get(Server $server, string $path = '/'): Builder
+    public static function get(Server $server, string $path = '/', string $searchTerm = null): Builder
     {
         self::$server = $server;
         self::$path = $path;
+        self::$searchTerm = $searchTerm;
 
         return self::query();
     }
@@ -126,9 +128,10 @@ class File extends Model
     public function getRows(): array
     {
         try {
-            $contents = app(DaemonFileRepository::class)
-                ->setServer($this->server())
-                ->getDirectory(self::$path ?? '/');
+            /** @var DaemonFileRepository $fileRepository */
+            $fileRepository = app(DaemonFileRepository::class)->setServer($this->server);
+
+            $contents = is_null(self::$searchTerm) ? $fileRepository->getDirectory(self::$path ?? '/') : $fileRepository->search(self::$searchTerm, self::$path);
 
             if (isset($contents['error'])) {
                 throw new Exception($contents['error']);
@@ -163,6 +166,6 @@ class File extends Model
 
     protected function sushiShouldCache(): bool
     {
-        return false;
+        return !is_null(self::$searchTerm);
     }
 }
