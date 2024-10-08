@@ -5,7 +5,6 @@ namespace App\Filament\Pages\Installer\Steps;
 use App\Filament\Pages\Installer\PanelInstaller;
 use App\Traits\EnvironmentWriterTrait;
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Components\Toggle;
 use Filament\Forms\Components\ToggleButtons;
 use Filament\Forms\Components\Wizard\Step;
 use Filament\Forms\Set;
@@ -57,10 +56,10 @@ class EnvironmentStep
                     ->required()
                     ->default(url(''))
                     ->live()
-                    ->afterStateUpdated(fn ($state, Set $set) => $set('env_general.SESSION_SECURE_COOKIE', str_starts_with($state, 'https://'))),
-                Toggle::make('env_general.SESSION_SECURE_COOKIE')
+                    ->afterStateUpdated(fn ($state, Set $set) => $set('env_general.SESSION_SECURE_COOKIE', str_starts_with($state, 'https://') ? 'true' : 'false')),
+                TextInput::make('env_general.SESSION_SECURE_COOKIE')
                     ->hidden()
-                    ->default(str_starts_with(url(''), 'https://')),
+                    ->default(str_starts_with(url(''), 'https://') ? 'true' : 'false'),
                 ToggleButtons::make('env_general.CACHE_STORE')
                     ->label('Cache Driver')
                     ->hintIcon('tabler-question-mark')
