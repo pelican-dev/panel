@@ -2,7 +2,7 @@ import * as React from 'react';
 import { useState } from 'react';
 import { Link, NavLink } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCogs, faLayerGroup, faSignOutAlt } from '@fortawesome/free-solid-svg-icons';
+import { faCogs, faHandSparkles, faLayerGroup, faSignOutAlt } from '@fortawesome/free-solid-svg-icons';
 import { useStoreState } from 'easy-peasy';
 import { useTranslation } from 'react-i18next';
 import { ApplicationStore } from '@/state';
@@ -64,6 +64,11 @@ export default () => {
                 </div>
                 <RightNavigation className={'flex h-full items-center justify-center'}>
                     <SearchContainer />
+                    <Tooltip placement={'bottom'} content={'New Client Area'}>
+                        <NavLink to={'/app/'} target={'_blank'} rel={'noreferrer'}>
+                            <FontAwesomeIcon icon={faHandSparkles} />
+                        </NavLink>
+                    </Tooltip>
                     <Tooltip placement={'bottom'} content={t<string>('dashboard')}>
                         <NavLink to={'/'} exact>
                             <FontAwesomeIcon icon={faLayerGroup} />
