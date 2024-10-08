@@ -6,13 +6,9 @@ use App\Filament\App\Resources\FileResource;
 use App\Models\File;
 use App\Models\Server;
 use Filament\Facades\Filament;
-use Filament\Panel;
 use Filament\Resources\Pages\ListRecords;
-use Filament\Resources\Pages\PageRegistration;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
-use Illuminate\Routing\Route;
-use Illuminate\Support\Facades\Route as RouteFacade;
 use Livewire\Attributes\Locked;
 
 class SearchFiles extends ListRecords
@@ -60,16 +56,5 @@ class SearchFiles extends ListRecords
 
                 return $file->canEdit() ? EditFiles::getUrl(['path' => join_paths($this->path, $file->name)]) : null;
             });
-    }
-
-    public static function route(string $path): PageRegistration
-    {
-        return new PageRegistration(
-            page: static::class,
-            route: fn (Panel $panel): Route => RouteFacade::get($path, static::class)
-                ->middleware(static::getRouteMiddleware($panel))
-                ->withoutMiddleware(static::getWithoutRouteMiddleware($panel))
-                ->where('path', '.*'),
-        );
     }
 }
