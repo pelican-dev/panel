@@ -4,7 +4,6 @@ namespace App\Filament\Resources\ServerResource\Pages;
 
 use App\Filament\Resources\ServerResource;
 use App\Models\Server;
-use App\Models\User;
 use Filament\Actions;
 use Filament\Resources\Pages\ListRecords;
 use Filament\Tables\Actions\Action;
@@ -64,11 +63,14 @@ class ListServers extends ListRecords
                     ->searchable(),
                 SelectColumn::make('allocation_id')
                     ->label('Primary Allocation')
-                    ->options(fn (Server $server) => $server->allocations->mapWithKeys(
-                        fn ($allocation) => [$allocation->id => $allocation->address])
-                    )
+                    ->hidden(!auth()->user()->can('update server'))
+                    ->options(fn (Server $server) => $server->allocations->mapWithKeys(fn ($allocation) => [$allocation->id => $allocation->address]))
                     ->selectablePlaceholder(false)
                     ->sortable(),
+                TextColumn::make('allocation_id_readonly')
+                    ->label('Primary Allocation')
+                    ->hidden(auth()->user()->can('update server'))
+                    ->state(fn (Server $server) => $server->allocation->address),
                 TextColumn::make('image')->hidden(),
                 TextColumn::make('backups_count')
                     ->counts('backups')
@@ -81,12 +83,7 @@ class ListServers extends ListRecords
                 Action::make('View')
                     ->icon('tabler-terminal')
                     ->url(fn (Server $server) => "/server/$server->uuid_short")
-                    ->visible(function (Server $server) {
-                        /** @var User $user */
-                        $user = auth()->user();
-
-                        return $user->isRootAdmin() || $user->id === $server->owner_id;
-                    }),
+                    ->authorize(fn () => auth()->user()->can('view server')),
                 EditAction::make(),
             ])
             ->emptyStateIcon('tabler-brand-docker')
