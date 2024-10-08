@@ -129,7 +129,7 @@ class File extends Model
     {
         try {
             /** @var DaemonFileRepository $fileRepository */
-            $fileRepository = app(DaemonFileRepository::class)->setServer($this->server);
+            $fileRepository = app(DaemonFileRepository::class)->setServer(self::$server);
 
             $contents = is_null(self::$searchTerm) ? $fileRepository->getDirectory(self::$path ?? '/') : $fileRepository->search(self::$searchTerm, self::$path);
 
