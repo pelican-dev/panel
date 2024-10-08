@@ -74,15 +74,15 @@ class PanelInstaller extends SimplePage implements HasForms
             ])
                 ->persistStepInQueryString()
                 ->submitAction(new HtmlString(Blade::render(<<<'BLADE'
-                <x-filament::button
-                    type="submit"
-                    size="sm"
-                    wire:loading.attr="disabled"
-                >
-                    Finish
-                    <span wire:loading><x-filament::loading-indicator class="h-4 w-4" /></span>
-                </x-filament::button>
-            BLADE))),
+                    <x-filament::button
+                        type="submit"
+                        size="sm"
+                        wire:loading.attr="disabled"
+                    >
+                        Finish
+                        <span wire:loading><x-filament::loading-indicator class="h-4 w-4" /></span>
+                    </x-filament::button>
+                BLADE))),
         ];
     }
 
@@ -97,6 +97,7 @@ class PanelInstaller extends SimplePage implements HasForms
         $this->writeToEnvironment(['APP_INSTALLED' => 'true']);
 
         // Login user
+        $this->user ??= User::all()->filter(fn ($user) => $user->isRootAdmin())->first();
         auth()->guard()->login($this->user, true);
 
         // Redirect to admin panel
