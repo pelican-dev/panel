@@ -15,6 +15,8 @@ class SearchFiles extends ListRecords
 {
     protected static string $resource = FileResource::class;
 
+    protected static ?string $title = 'Global Search';
+
     #[Locked]
     public string $searchTerm;
     #[Locked]
@@ -25,6 +27,16 @@ class SearchFiles extends ListRecords
         parent::mount();
         $this->searchTerm = $searchTerm;
         $this->path = $path ?? '/';
+    }
+
+    public function getBreadcrumbs(): array
+    {
+        $resource = static::getResource();
+
+        return [
+            $resource::getUrl() => $resource::getBreadcrumb(),
+            self::getUrl(['searchTerm' => $this->searchTerm]) => 'Search "' . $this->searchTerm . '"',
+        ];
     }
 
     public function table(Table $table): Table
