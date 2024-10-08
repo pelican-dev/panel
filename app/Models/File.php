@@ -131,7 +131,11 @@ class File extends Model
             /** @var DaemonFileRepository $fileRepository */
             $fileRepository = app(DaemonFileRepository::class)->setServer(self::$server);
 
-            $contents = is_null(self::$searchTerm) ? $fileRepository->getDirectory(self::$path ?? '/') : $fileRepository->search(self::$searchTerm, self::$path);
+            if (!is_null(self::$searchTerm)) {
+                $contents = cache()->remember('file_search_' . self::$path . '_' . self::$searchTerm, now()->addMinute(), fn () => $fileRepository->search(self::$searchTerm, self::$path));
+            } else {
+                $contents = $fileRepository->getDirectory(self::$path ?? '/');
+            }
 
             if (isset($contents['error'])) {
                 throw new Exception($contents['error']);
@@ -166,6 +170,6 @@ class File extends Model
 
     protected function sushiShouldCache(): bool
     {
-        return !is_null(self::$searchTerm);
+        return false;
     }
 }
