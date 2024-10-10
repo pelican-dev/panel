@@ -26,14 +26,13 @@ class DispatchWebhooks
 
     protected function eventIsWatched(string $eventName): bool
     {
-        $watchedEvents = cache()->rememberForever("watchedWebhooks", function () {
+        $watchedEvents = cache()->rememberForever('watchedWebhooks', function () {
             return WebhookConfiguration::all()
                 ->pluck('events')
                 ->flatten()
                 ->unique()
                 ->values()
-                ->all()
-            ;
+                ->all();
         });
 
         return in_array($eventName, $watchedEvents);

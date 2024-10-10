@@ -32,7 +32,7 @@ class WebhookConfiguration extends Model
                 cache()->forever("webhooks.$event", WebhookConfiguration::query()->whereJsonContains('events', $event)->get());
             });
 
-            cache()->forever("watchedWebhooks", WebhookConfiguration::all()->pluck('events')->flatten()->unique()->values()->all());
+            cache()->forever('watchedWebhooks', WebhookConfiguration::all()->pluck('events')->flatten()->unique()->values()->all());
         });
     }
 
