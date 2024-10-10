@@ -6,6 +6,7 @@ use App\Filament\Resources\ApiKeyResource;
 use App\Models\ApiKey;
 use Filament\Actions;
 use Filament\Resources\Pages\ListRecords;
+use Filament\Tables\Actions\CreateAction;
 use Filament\Tables\Actions\DeleteAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
@@ -51,13 +52,23 @@ class ListApiKeys extends ListRecords
             ])
             ->actions([
                 DeleteAction::make(),
+            ])
+            ->emptyStateIcon('tabler-key')
+            ->emptyStateDescription('')
+            ->emptyStateHeading('No API Keys')
+            ->emptyStateActions([
+                CreateAction::make('create')
+                    ->label('Create API Key')
+                    ->button(),
             ]);
     }
 
     protected function getHeaderActions(): array
     {
         return [
-            Actions\CreateAction::make(),
+            Actions\CreateAction::make()
+                ->label('Create API Key')
+                ->hidden(fn () => ApiKey::where('key_type', ApiKey::TYPE_APPLICATION)->count() <= 0),
         ];
     }
 }

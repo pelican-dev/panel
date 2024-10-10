@@ -16,7 +16,6 @@ class StoreRoleRequest extends ApplicationApiRequest
     {
         return [
             'name' => 'required|string',
-            'guard_name' => 'nullable|string',
         ];
     }
 }
