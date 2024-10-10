@@ -4,10 +4,11 @@ namespace App\Http\Requests\Api\Application\Servers\Databases;
 
 use App\Services\Acl\Api\AdminAcl;
 use App\Http\Requests\Api\Application\ApplicationApiRequest;
+use App\Models\Database;
 
 class GetServerDatabaseRequest extends ApplicationApiRequest
 {
-    protected ?string $resource = AdminAcl::RESOURCE_SERVER_DATABASES;
+    protected ?string $resource = Database::RESOURCE_NAME;
 
     protected int $permission = AdminAcl::READ;
 }
