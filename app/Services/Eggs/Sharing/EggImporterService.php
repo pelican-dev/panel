@@ -160,7 +160,6 @@ class EggImporterService
             $images = $parsed['images'];
         }
 
-        dd($parsed);
         unset($parsed['images'], $parsed['image'], $parsed['field_type']);
 
         $parsed['docker_images'] = [];

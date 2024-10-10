@@ -27,8 +27,7 @@ class DispatchWebhooks
     protected function eventIsWatched(string $eventName): bool
     {
         $watchedEvents = cache()->rememberForever('watchedWebhooks', function () {
-            return WebhookConfiguration::all()
-                ->pluck('events')
+            return WebhookConfiguration::pluck('events')
                 ->flatten()
                 ->unique()
                 ->values()

@@ -27,12 +27,16 @@ class WebhookConfiguration extends Model
     protected static function booted(): void
     {
         self::saved(static function (self $webhookConfiguration): void {
-            $changedEvents = collect([...$webhookConfiguration->events, ...$webhookConfiguration->getOriginal('events', '[]')])->unique();
+            $changedEvents = collect([
+                ...((array) $webhookConfiguration->events),
+                ...$webhookConfiguration->getOriginal('events', '[]')
+            ])->unique();
+
             $changedEvents->each(function (string $event) {
                 cache()->forever("webhooks.$event", WebhookConfiguration::query()->whereJsonContains('events', $event)->get());
             });
 
-            cache()->forever('watchedWebhooks', WebhookConfiguration::all()->pluck('events')->flatten()->unique()->values()->all());
+            cache()->forever('watchedWebhooks', WebhookConfiguration::pluck('events')->flatten()->unique()->values()->all());
         });
     }
 
