@@ -31,6 +31,8 @@ class WebhookConfiguration extends Model
             $changedEvents->each(function (string $event) {
                 cache()->forever("webhooks.$event", WebhookConfiguration::query()->whereJsonContains('events', $event)->get());
             });
+
+            cache()->forever("watchedWebhooks", WebhookConfiguration::all()->pluck('events')->flatten()->unique()->values()->all());
         });
     }
 

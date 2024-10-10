@@ -9,6 +9,10 @@ class DispatchWebhooks
 {
     public function handle(string $eventName, array $data): void
     {
+        if (!$this->eventIsWatched($eventName)) {
+            return;
+        }
+
         $matchingHooks = cache()->rememberForever("webhooks.$eventName", function () use ($eventName) {
             return WebhookConfiguration::query()->whereJsonContains('events', $eventName)->get();
         });
@@ -18,5 +22,20 @@ class DispatchWebhooks
                 ProcessWebhook::dispatch($webhookConfig, $eventName, $data);
             }
         }
+    }
+
+    protected function eventIsWatched(string $eventName): bool
+    {
+        $watchedEvents = cache()->rememberForever("watchedWebhooks", function () {
+            return WebhookConfiguration::all()
+                ->pluck('events')
+                ->flatten()
+                ->unique()
+                ->values()
+                ->all()
+            ;
+        });
+
+        return in_array($eventName, $watchedEvents);
     }
 }
