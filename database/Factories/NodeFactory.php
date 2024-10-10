@@ -40,6 +40,7 @@ class NodeFactory extends Factory
             'daemon_listen' => 8080,
             'daemon_sftp' => 2022,
             'daemon_base' => '/var/lib/panel/volumes',
+            'maintenance_mode' => false,
         ];
     }
 }
