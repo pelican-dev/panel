@@ -93,10 +93,6 @@ return [
             'range_start' => env('PANEL_CLIENT_ALLOCATIONS_RANGE_START'),
             'range_end' => env('PANEL_CLIENT_ALLOCATIONS_RANGE_END'),
         ],
-
-        'installer' => [
-            'enabled' => env('APP_INSTALLER', false),
-        ],
     ],
 
     /*

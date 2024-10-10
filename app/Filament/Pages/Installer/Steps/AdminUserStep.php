@@ -2,12 +2,13 @@
 
 namespace App\Filament\Pages\Installer\Steps;
 
+use App\Filament\Pages\Installer\PanelInstaller;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Wizard\Step;
 
 class AdminUserStep
 {
-    public static function make(): Step
+    public static function make(PanelInstaller $installer): Step
     {
         return Step::make('user')
             ->label('Admin User')
@@ -26,6 +27,7 @@ class AdminUserStep
                     ->required()
                     ->password()
                     ->revealable(),
-            ]);
+            ])
+            ->afterValidation(fn () => $installer->createAdminUser());
     }
 }
