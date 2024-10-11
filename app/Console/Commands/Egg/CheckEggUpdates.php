@@ -26,10 +26,10 @@ class CheckEggUpdates extends Command
                 }
 
                 $currentJson = json_decode($exporterService->handle($egg->id));
-                unset($currentJson['exported_at']);
+                unset($currentJson->exported_at);
 
                 $updatedJson = json_decode(file_get_contents($egg->update_url));
-                unset($updatedJson['exported_at']);
+                unset($updatedJson->exported_at);
 
                 if (md5(json_encode($currentJson)) === md5(json_encode($updatedJson))) {
                     $this->info("{$egg->name}: Up-to-date");
