@@ -2,6 +2,7 @@
 
 namespace App\Console;
 
+use App\Console\Commands\Egg\CheckEggUpdates;
 use App\Jobs\NodeStatistics;
 use App\Models\ActivityLog;
 use Illuminate\Console\Scheduling\Schedule;
@@ -35,6 +36,7 @@ class Kernel extends ConsoleKernel
 
         $schedule->command(CleanServiceBackupFilesCommand::class)->daily();
         $schedule->command(PruneImagesCommand::class)->daily();
+        $schedule->command(CheckEggUpdates::class)->hourly();
 
         $schedule->job(new NodeStatistics())->everyFiveSeconds()->withoutOverlapping();
 
