@@ -8,6 +8,7 @@ x-common:
     APP_ENVIRONMENT_ONLY: "false"
     APP_ENV: "production"
     SESSION_DRIVER: "file"
+    SESSION_COOKIE: "pelican_session"
 
   mail:
     &mail-environment
@@ -43,7 +44,7 @@ services:
       - pelican-data:/pelican-data
       - pelican-logs:/var/www/html/storage/logs
     environment:
-      <<: [*panel-environment, *mail-environment]
+      <<: [ *panel-environment, *mail-environment ]
       XDG_DATA_HOME: /pelican-data
       # SKIP_CADDY: true # enable when not using caddy.
 
