@@ -14,6 +14,7 @@ use App\Traits\CheckMigrationsTrait;
 use App\Traits\EnvironmentWriterTrait;
 use Exception;
 use Filament\Facades\Filament;
+use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\Wizard;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
@@ -73,6 +74,7 @@ class PanelInstaller extends SimplePage implements HasForms
                 CompletedStep::make(),
             ])
                 ->persistStepInQueryString()
+                ->nextAction(fn (Action $action) => $action->keyBindings('enter'))
                 ->submitAction(new HtmlString(Blade::render(<<<'BLADE'
                     <x-filament::button
                         type="submit"
