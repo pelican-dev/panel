@@ -23,5 +23,7 @@ class AppSettingsCommand extends Command
             $this->comment('Generating app key');
             Artisan::call('key:generate');
         }
+
+        Artisan::call('filament:optimize');
     }
 }
