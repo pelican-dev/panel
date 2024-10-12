@@ -7,7 +7,7 @@ use App\Services\Eggs\Sharing\EggExporterService;
 use Exception;
 use Illuminate\Console\Command;
 
-class CheckEggUpdates extends Command
+class CheckEggUpdatesCommand extends Command
 {
     protected $signature = 'p:egg:check-updates';
 
