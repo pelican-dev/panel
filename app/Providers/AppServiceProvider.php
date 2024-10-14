@@ -31,6 +31,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        // TODO: remove when old admin area gets yeeted
         View::share('appVersion', config('app.version'));
         View::share('appIsGit', false);
 
