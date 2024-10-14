@@ -38,8 +38,7 @@ RUN touch .env
 RUN composer install --no-dev --optimize-autoloader
 
 # Set file permissions
-RUN chmod -R 755 storage \
-    && chmod -R 755 bootstrap/cache
+RUN chmod -R 755 storage bootstrap/cache
 
 # Add scheduler to cron
 RUN echo "* * * * * php /var/www/html/artisan schedule:run >> /dev/null 2>&1" | crontab -u www-data -
