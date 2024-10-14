@@ -6,8 +6,6 @@ x-common:
 
     APP_DEBUG: "false"
     APP_ENV: "production"
-    SESSION_DRIVER: "file"
-    SESSION_COOKIE: "pelican_session"
 
   mail:
     &mail-environment
