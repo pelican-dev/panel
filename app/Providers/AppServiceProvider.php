@@ -7,7 +7,6 @@ use App\Models;
 use App\Models\ApiKey;
 use App\Models\Node;
 use App\Models\User;
-use App\Services\Helpers\SoftwareVersionService;
 use Dedoc\Scramble\Scramble;
 use Dedoc\Scramble\Support\Generator\OpenApi;
 use Dedoc\Scramble\Support\Generator\SecurityScheme;
@@ -20,7 +19,6 @@ use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\URL;
-use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Str;
 use Laravel\Sanctum\Sanctum;
@@ -32,10 +30,6 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        $versionData = app(SoftwareVersionService::class)->versionData();
-        View::share('appVersion', $versionData['version'] ?? 'undefined');
-        View::share('appIsGit', $versionData['is_git'] ?? false);
-
         Paginator::useBootstrap();
 
         // If the APP_URL value is set with https:// make sure we force it here. Theoretically
