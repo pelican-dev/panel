@@ -7,6 +7,7 @@ use Illuminate\Http\Response;
 use App\Models\ApiKey;
 use Illuminate\Support\Facades\Event;
 use App\Events\ActivityLogged;
+use Spatie\FlareClient\Api;
 
 class ApiKeyControllerTest extends ClientApiIntegrationTestCase
 {
@@ -96,14 +97,14 @@ class ApiKeyControllerTest extends ClientApiIntegrationTestCase
     }
 
     /**
-     * Test that no more than 25 API keys can exist at any one time for an account. This prevents
+     * Test that no more than the Max number of API keys can exist at one time for an account. This prevents
      * a DoS attack vector against the panel.
      */
     public function testApiKeyLimitIsApplied(): void
     {
         /** @var \App\Models\User $user */
         $user = User::factory()->create();
-        ApiKey::factory()->times(25)->for($user)->create([
+        ApiKey::factory()->times(ApiKey::API_KEYS_LIMIT+1)->for($user)->create([
             'key_type' => ApiKey::TYPE_ACCOUNT,
         ]);
 

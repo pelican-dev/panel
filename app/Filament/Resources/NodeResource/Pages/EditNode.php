@@ -4,6 +4,7 @@ namespace App\Filament\Resources\NodeResource\Pages;
 
 use App\Filament\Resources\NodeResource;
 use App\Models\Node;
+use App\Services\Nodes\NodeAutoDeployService;
 use App\Services\Nodes\NodeUpdateService;
 use Filament\Actions;
 use Filament\Forms;
@@ -21,6 +22,7 @@ use Filament\Forms\Get;
 use Filament\Forms\Set;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\EditRecord;
+use Filament\Support\Enums\Alignment;
 use Illuminate\Support\HtmlString;
 use Webbingbrasil\FilamentCopyActions\Forms\Actions\CopyAction;
 
@@ -417,19 +419,66 @@ class EditNode extends EditRecord
                                 ->rows(19)
                                 ->hintAction(CopyAction::make())
                                 ->columnSpanFull(),
-                            Forms\Components\Actions::make([
-                                Forms\Components\Actions\Action::make('resetKey')
-                                    ->label('Reset Daemon Token')
-                                    ->color('danger')
-                                    ->requiresConfirmation()
-                                    ->modalHeading('Reset Daemon Token?')
-                                    ->modalDescription('Resetting the daemon token will void any request coming from the old token. This token is used for all sensitive operations on the daemon including server creation and deletion. We suggest changing this token regularly for security.')
-                                    ->action(function (NodeUpdateService $nodeUpdateService, Node $node) {
-                                        $nodeUpdateService->handle($node, [], true);
-                                        Notification::make()->success()->title('Daemon Key Reset')->send();
-                                        $this->fillForm();
-                                    }),
-                            ]),
+                            Grid::make()
+                                ->columns()
+                                ->schema([
+                                    Forms\Components\Actions::make([
+                                        Forms\Components\Actions\Action::make('autoDeploy')
+                                            ->label('Auto Deploy Command')
+                                            ->color('primary')
+                                            ->modalHeading('Auto Deploy Command')
+                                            ->icon('tabler-rocket')
+                                            ->modalSubmitAction(false)
+                                            ->modalCancelAction(false)
+                                            ->modalFooterActionsAlignment(Alignment::Center)
+                                            ->form([
+                                                ToggleButtons::make('docker')
+                                                    ->label('Type')
+                                                    ->live()
+                                                    ->helperText('Choose between Standalone and Docker install.')
+                                                    ->inline()
+                                                    ->default(false)
+                                                    ->afterStateUpdated(fn (bool $state, NodeAutoDeployService $service, Node $node, Set $set) => $set('generatedToken', $service->handle(request(), $node, $state)))
+                                                    ->options([
+                                                        false => 'Standalone',
+                                                        true => 'Docker',
+                                                    ])
+                                                    ->colors([
+                                                        false => 'primary',
+                                                        true => 'success',
+                                                    ])
+                                                    ->columnSpan([
+                                                        'default' => 1,
+                                                        'sm' => 1,
+                                                        'md' => 1,
+                                                        'lg' => 1,
+                                                    ]),
+                                                Textarea::make('generatedToken')
+                                                    ->label('To auto-configure your node run the following command:')
+                                                    ->readOnly()
+                                                    ->autosize()
+                                                    ->hintAction(fn (string $state) => CopyAction::make()->copyable($state))
+                                                    ->formatStateUsing(fn (NodeAutoDeployService $service, Node $node, Set $set, Get $get) => $set('generatedToken', $service->handle(request(), $node, $get('docker')))),
+                                            ])
+                                            ->mountUsing(function (Forms\Form $form) {
+                                                Notification::make()->success()->title('Autodeploy Generated')->send();
+                                                $form->fill();
+                                            }),
+                                    ])->fullWidth(),
+                                    Forms\Components\Actions::make([
+                                        Forms\Components\Actions\Action::make('resetKey')
+                                            ->label('Reset Daemon Token')
+                                            ->color('danger')
+                                            ->requiresConfirmation()
+                                            ->modalHeading('Reset Daemon Token?')
+                                            ->modalDescription('Resetting the daemon token will void any request coming from the old token. This token is used for all sensitive operations on the daemon including server creation and deletion. We suggest changing this token regularly for security.')
+                                            ->action(function (NodeUpdateService $nodeUpdateService, Node $node) {
+                                                $nodeUpdateService->handle($node, [], true);
+                                                Notification::make()->success()->title('Daemon Key Reset')->send();
+                                                $this->fillForm();
+                                            }),
+                                    ])->fullWidth(),
+                                ]),
                         ]),
                 ]),
         ]);
