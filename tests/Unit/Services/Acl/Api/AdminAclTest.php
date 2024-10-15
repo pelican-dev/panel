@@ -5,6 +5,7 @@ namespace App\Tests\Unit\Services\Acl\Api;
 use App\Models\ApiKey;
 use App\Tests\TestCase;
 use App\Services\Acl\Api\AdminAcl;
+use App\Models\Server;
 
 class AdminAclTest extends TestCase
 {
@@ -23,9 +24,11 @@ class AdminAclTest extends TestCase
      */
     public function testCheck(): void
     {
-        $model = ApiKey::factory()->make(['r_servers' => AdminAcl::READ | AdminAcl::WRITE]);
+        $model = ApiKey::factory()->make(['permissions' => [
+            Server::RESOURCE_NAME => AdminAcl::READ | AdminAcl::WRITE,
+        ]]);
 
-        $this->assertTrue(AdminAcl::check($model, AdminAcl::RESOURCE_SERVERS, AdminAcl::WRITE));
+        $this->assertTrue(AdminAcl::check($model, Server::RESOURCE_NAME, AdminAcl::WRITE));
     }
 
     /**
