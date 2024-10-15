@@ -7,7 +7,6 @@ use App\Models;
 use App\Models\ApiKey;
 use App\Models\Node;
 use App\Models\User;
-use App\Services\Helpers\SoftwareVersionService;
 use Dedoc\Scramble\Scramble;
 use Dedoc\Scramble\Support\Generator\OpenApi;
 use Dedoc\Scramble\Support\Generator\SecurityScheme;
@@ -32,9 +31,9 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        $versionData = app(SoftwareVersionService::class)->versionData();
-        View::share('appVersion', $versionData['version'] ?? 'undefined');
-        View::share('appIsGit', $versionData['is_git'] ?? false);
+        // TODO: remove when old admin area gets yeeted
+        View::share('appVersion', config('app.version'));
+        View::share('appIsGit', false);
 
         Paginator::useBootstrap();
 
