@@ -61,13 +61,18 @@ class ListEggs extends ListRecords
                     ->icon('tabler-cloud-download')
                     ->label('Update')
                     ->color('success')
+                    ->requiresConfirmation()
+                    ->modalHeading('Are you sure you want to update this egg?')
+                    ->modalDescription('If you made any changes to the egg they will be overwritten!')
+                    ->modalIconColor('danger')
+                    ->modalSubmitAction(fn (Actions\StaticAction $action) => $action->color('danger'))
                     ->action(function (Egg $egg) {
                         try {
                             app(EggImporterService::class)->fromUrl($egg->update_url, $egg);
                             cache()->forget("eggs.{$egg->uuid}.update");
                         } catch (Exception $exception) {
                             Notification::make()
-                                ->title('Update Failed')
+                                ->title('Egg Update failed')
                                 ->body($exception->getMessage())
                                 ->danger()
                                 ->send();
@@ -78,7 +83,7 @@ class ListEggs extends ListRecords
                         }
 
                         Notification::make()
-                            ->title('Update started')
+                            ->title('Egg updated')
                             ->success()
                             ->send();
                     })
