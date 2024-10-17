@@ -30,7 +30,7 @@ class MaintenanceMiddlewareTest extends MiddlewareTestCase
     public function testHandle(): void
     {
         // maintenance mode is off by default
-        $server = Server::factory()->withNode()->make();
+        $server = Server::factory()->make();
         $server->load('node');
 
         $this->setRequestAttribute('server', $server);
@@ -43,10 +43,9 @@ class MaintenanceMiddlewareTest extends MiddlewareTestCase
      */
     public function testHandleInMaintenanceMode(): void
     {
-        $server = Server::factory()
-            ->withNode(Node::factory()->create(['maintenance_mode' => true]))
-            ->create()
-            ->load('node');
+        $server = Server::factory()->make()->load('node');
+
+        $server->node->maintenance_mode = true;
 
         $this->setRequestAttribute('server', $server);
 
