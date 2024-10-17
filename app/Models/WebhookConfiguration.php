@@ -29,7 +29,7 @@ class WebhookConfiguration extends Model
         self::saved(static function (self $webhookConfiguration): void {
             $changedEvents = collect([
                 ...((array) $webhookConfiguration->events),
-                ...$webhookConfiguration->getOriginal('events', '[]')
+                ...$webhookConfiguration->getOriginal('events', '[]'),
             ])->unique();
 
             $changedEvents->each(function (string $event) {
