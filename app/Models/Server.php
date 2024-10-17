@@ -44,7 +44,7 @@ use App\Exceptions\Http\Server\ServerStateConflictException;
  * @property string $image
  * @property int|null $allocation_limit
  * @property int|null $database_limit
- * @property int $backup_limit
+ * @property int|null $backup_limit
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property \Illuminate\Support\Carbon|null $installed_at
@@ -283,6 +283,14 @@ class Server extends Model
     public function serverVariables(): HasMany
     {
         return $this->hasMany(ServerVariable::class);
+    }
+
+    public function viewableServerVariables(): HasMany
+    {
+        return $this->hasMany(ServerVariable::class)->rightJoin('egg_variables', function (JoinClause $join) {
+            $join->on('egg_variables.id', 'server_variables.variable_id')
+                ->where('egg_variables.user_viewable', true);
+        });
     }
 
     /**
