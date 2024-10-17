@@ -23,6 +23,7 @@ class EnvironmentWriterTraitTest extends TestCase
             ['foo', 'foo'],
             ['abc123', 'abc123'],
             ['val"ue', '"val\"ue"'],
+            ['val\'ue', '"val\'ue"'],
             ['my test value', '"my test value"'],
             ['mysql_p@assword', '"mysql_p@assword"'],
             ['mysql_p#assword', '"mysql_p#assword"'],

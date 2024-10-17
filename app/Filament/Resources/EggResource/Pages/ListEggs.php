@@ -14,7 +14,7 @@ use Filament\Forms\Components\Tabs\Tab;
 use Filament\Forms\Components\TextInput;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\ListRecords;
-use Filament\Tables;
+use Filament\Tables\Actions\Action;
 use Filament\Tables\Actions\BulkActionGroup;
 use Filament\Tables\Actions\DeleteBulkAction;
 use Filament\Tables\Actions\EditAction;
@@ -49,7 +49,7 @@ class ListEggs extends ListRecords
             ])
             ->actions([
                 EditAction::make(),
-                Tables\Actions\Action::make('export')
+                Action::make('export')
                     ->icon('tabler-download')
                     ->label('Export')
                     ->color('primary')
@@ -57,6 +57,38 @@ class ListEggs extends ListRecords
                         echo $service->handle($egg->id);
                     }, 'egg-' . $egg->getKebabName() . '.json'))
                     ->authorize(fn () => auth()->user()->can('export egg')),
+                Action::make('update')
+                    ->icon('tabler-cloud-download')
+                    ->label('Update')
+                    ->color('success')
+                    ->requiresConfirmation()
+                    ->modalHeading('Are you sure you want to update this egg?')
+                    ->modalDescription('If you made any changes to the egg they will be overwritten!')
+                    ->modalIconColor('danger')
+                    ->modalSubmitAction(fn (Actions\StaticAction $action) => $action->color('danger'))
+                    ->action(function (Egg $egg) {
+                        try {
+                            app(EggImporterService::class)->fromUrl($egg->update_url, $egg);
+                            cache()->forget("eggs.{$egg->uuid}.update");
+                        } catch (Exception $exception) {
+                            Notification::make()
+                                ->title('Egg Update failed')
+                                ->body($exception->getMessage())
+                                ->danger()
+                                ->send();
+
+                            report($exception);
+
+                            return;
+                        }
+
+                        Notification::make()
+                            ->title('Egg updated')
+                            ->success()
+                            ->send();
+                    })
+                    ->authorize(fn () => auth()->user()->can('import egg'))
+                    ->visible(fn (Egg $egg) => cache()->get("eggs.{$egg->uuid}.update", false)),
             ])
             ->bulkActions([
                 BulkActionGroup::make([

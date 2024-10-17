@@ -21,6 +21,9 @@ else
     echo -e "APP_KEY exists in environment, using that."
     echo -e "APP_KEY=$APP_KEY" > /pelican-data/.env
   fi
+
+  ## enable installer
+  echo -e "APP_INSTALLED=false" >> /pelican-data/.env
 fi
 
 mkdir /pelican-data/database
@@ -37,6 +40,9 @@ fi
 ## make sure the db is set up
 echo -e "Migrating Database"
 php artisan migrate --force
+
+echo -e "Optimizing Filament"
+php artisan filament:optimize
 
 ## start cronjobs for the queue
 echo -e "Starting cron jobs."

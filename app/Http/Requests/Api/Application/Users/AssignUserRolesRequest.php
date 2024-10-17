@@ -11,7 +11,7 @@ class AssignUserRolesRequest extends StoreUserRequest
     {
         return [
             'roles' => 'array',
-            'roles.*' => 'string',
+            'roles.*' => 'int',
         ];
     }
 }

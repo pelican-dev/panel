@@ -5,9 +5,7 @@ x-common:
     ADMIN_EMAIL: "USEYOUROWNEMAILHERE@example.com"
 
     APP_DEBUG: "false"
-    APP_ENVIRONMENT_ONLY: "false"
     APP_ENV: "production"
-    SESSION_DRIVER: "file"
 
   mail:
     &mail-environment

@@ -9,7 +9,6 @@ use Illuminate\Http\Request;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use App\Facades\Activity;
-use Illuminate\View\View;
 
 class LoginController extends AbstractLoginController
 {
@@ -20,7 +19,7 @@ class LoginController extends AbstractLoginController
      */
     public function index()
     {
-        if (PanelInstaller::show()) {
+        if (!PanelInstaller::isInstalled()) {
             return redirect('/installer');
         }
 

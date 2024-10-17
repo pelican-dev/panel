@@ -64,11 +64,14 @@ class ListServers extends ListRecords
                     ->searchable(),
                 SelectColumn::make('allocation_id')
                     ->label('Primary Allocation')
-                    ->options(fn (Server $server) => $server->allocations->mapWithKeys(
-                        fn ($allocation) => [$allocation->id => $allocation->address])
-                    )
+                    ->hidden(!auth()->user()->can('update server'))
+                    ->options(fn (Server $server) => $server->allocations->mapWithKeys(fn ($allocation) => [$allocation->id => $allocation->address]))
                     ->selectablePlaceholder(false)
                     ->sortable(),
+                TextColumn::make('allocation_id_readonly')
+                    ->label('Primary Allocation')
+                    ->hidden(auth()->user()->can('update server'))
+                    ->state(fn (Server $server) => $server->allocation->address),
                 TextColumn::make('image')->hidden(),
                 TextColumn::make('backups_count')
                     ->counts('backups')

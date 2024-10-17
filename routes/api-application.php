@@ -19,7 +19,8 @@ Route::prefix('/users')->group(function () {
     Route::post('/', [Application\Users\UserController::class, 'store']);
     Route::patch('/{user:id}', [Application\Users\UserController::class, 'update']);
 
-    Route::patch('/{user:id}/roles', [Application\Users\UserController::class, 'roles']);
+    Route::patch('/{user:id}/roles/assign', [Application\Users\UserController::class, 'assignRoles']);
+    Route::patch('/{user:id}/roles/remove', [Application\Users\UserController::class, 'removeRoles']);
 
     Route::delete('/{user:id}', [Application\Users\UserController::class, 'delete']);
 });
