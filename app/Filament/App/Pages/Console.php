@@ -6,6 +6,7 @@ use App\Filament\App\Widgets\ServerConsole;
 use App\Filament\App\Widgets\ServerCpuChart;
 use App\Filament\App\Widgets\ServerMemoryChart;
 use App\Filament\App\Widgets\ServerNetworkChart;
+use App\Filament\App\Widgets\ServerOverview;
 use Filament\Actions\Action;
 use Filament\Facades\Filament;
 use Filament\Pages\Page;
@@ -27,6 +28,7 @@ class Console extends Page
     public function getWidgets(): array
     {
         return [
+            ServerOverview::class,
             ServerConsole::class,
             ServerCpuChart::class,
             ServerMemoryChart::class,
