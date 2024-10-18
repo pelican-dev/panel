@@ -12,6 +12,8 @@ class ServerConsole extends Widget
 
     protected int|string|array $columnSpan = 'full';
 
+    protected static bool $isLazy = false;
+
     public ?Server $server = null;
     public ?User $user = null;
 
