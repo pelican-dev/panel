@@ -753,7 +753,8 @@ class EditServer extends EditRecord
                     resolve(ServerDeletionService::class)->handle($server);
 
                     return redirect(ListServers::getUrl());
-                }),
+                })
+                ->authorize(fn (Server $server) => auth()->user()->can('delete server', $server)),
             Actions\Action::make('console')
                 ->label('Console')
                 ->icon('tabler-terminal')
