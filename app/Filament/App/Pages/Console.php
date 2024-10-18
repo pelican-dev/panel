@@ -2,6 +2,7 @@
 
 namespace App\Filament\App\Pages;
 
+use App\Models\Server;
 use Filament\Actions\Action;
 use Filament\Facades\Filament;
 use Filament\Forms\Components\View;
