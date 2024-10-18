@@ -5,6 +5,7 @@ namespace App\Filament\App\Widgets;
 use App\Models\Server;
 use App\Models\User;
 use Filament\Widgets\Widget;
+use Illuminate\Support\Arr;
 
 class ServerConsole extends Widget
 {
@@ -26,30 +27,26 @@ class ServerConsole extends Widget
     {
         $this->historyIndex = min($this->historyIndex + 1, count($this->history) - 1);
 
-        //        e.currentTarget.value = history![newIndex] || '';
-        //
-        //        // By default up arrow will also bring the cursor to the start of the line, so we'll preventDefault to keep it at the end.
-        //        e.preventDefault();
+        $this->input = $this->history[$this->historyIndex] ?? '';
     }
 
     public function down()
     {
         $this->historyIndex = max($this->historyIndex - 1, -1);
 
-        // e.currentTarget.value = history![newIndex] || '';
+        $this->input = $this->history[$this->historyIndex] ?? '';
     }
 
     public function enter()
     {
-        $this->dispatch('sendServerCommand', command: $this->input);
+        if (!empty($this->input)) {
+            $this->dispatch('sendServerCommand', command: $this->input);
 
-        $this->input = '';
+            $this->history = Arr::prepend($this->history, $this->input);
+            $this->historyIndex = -1;
 
-        //        setHistory((prevHistory) => [command, ...prevHistory!].slice(0, 32));
-        //            setHistoryIndex(-1);
-        //
-        //            instance && instance.send('send command', command);
-        //            e.currentTarget.value = '';
+            $this->input = '';
+        }
     }
 
     public function storeStats(array $data)

@@ -18,9 +18,11 @@
         };
 
         const terminal = new Terminal(options);
-        const TERMINAL_PRELUDE = '\u001b[1m\u001b[33mpelican@' + '{{ \Filament\Facades\Filament::getTenant()->name }}' + ' ~ \u001b[0m';
+        // TODO: load addons
         terminal.open(document.getElementById('terminal'));
 
+        const TERMINAL_PRELUDE = '\u001b[1m\u001b[33mpelican@' + '{{ \Filament\Facades\Filament::getTenant()->name }}' + ' ~ \u001b[0m';
+        
         const handleConsoleOutput = (line, prelude = false) =>
             terminal.writeln((prelude ? TERMINAL_PRELUDE : '') + line.replace(/(?:\r\n|\r|\n)$/im, '') + '\u001b[0m');
 
@@ -49,7 +51,7 @@
             placeholder="Type a command..."
             wire:model="input"
             wire:keydown.enter="enter"
-            wire:keydown.up="up"
+            wire:keydown.up.prevent="up"
             wire:keydown.down="down"
         >
     </div>
