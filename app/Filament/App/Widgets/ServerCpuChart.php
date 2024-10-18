@@ -2,9 +2,12 @@
 
 namespace App\Filament\App\Widgets;
 
+use App\Models\Server;
+use Carbon\Carbon;
 use Filament\Support\RawJs;
 use Filament\Widgets\ChartWidget;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Number;
 
 class ServerCpuChart extends ChartWidget
 {
@@ -15,7 +18,16 @@ class ServerCpuChart extends ChartWidget
 
     protected function getData(): array
     {
-        $cpu = [];
+        /** @var Server $server */
+        $server = $this->record;
+
+        $cpu = collect(cache()->get("servers.$server->id.cpu_absolute"))
+            ->slice(-10)
+            ->map(fn ($value, $key) => [
+                'cpu' => Number::format($value, maxPrecision: 2, locale: auth()->user()->language),
+                'timestamp' => Carbon::createFromTimestamp($key, (auth()->user()->timezone ?? 'UTC'))->format('H:i:s'),
+            ])
+            ->all();
 
         return [
             'datasets' => [
@@ -57,6 +69,12 @@ class ServerCpuChart extends ChartWidget
 
     public function getHeading(): string
     {
-        return 'CPU - $current% Of $max%';
+        /** @var Server $server */
+        $server = $this->record;
+
+        $cpu = Number::format(collect(cache()->get("servers.$server->id.cpu_absolute"))->last(), maxPrecision: 2, locale: auth()->user()->language);
+        $max = Number::format($server->cpu, locale: auth()->user()->language) . '%';
+
+        return 'CPU - ' . $cpu . '% Of ' . $max;
     }
 }

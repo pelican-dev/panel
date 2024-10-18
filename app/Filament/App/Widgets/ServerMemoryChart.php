@@ -2,9 +2,11 @@
 
 namespace App\Filament\App\Widgets;
 
+use Carbon\Carbon;
 use Filament\Support\RawJs;
 use Filament\Widgets\ChartWidget;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Number;
 
 class ServerMemoryChart extends ChartWidget
 {
@@ -15,7 +17,15 @@ class ServerMemoryChart extends ChartWidget
 
     protected function getData(): array
     {
-        $memUsed = [];
+        /** @var Server $server */
+        $server = $this->record;
+
+        $memUsed = collect(cache()->get("servers.$server->id.memory_bytes"))->slice(-10)
+            ->map(fn ($value, $key) => [
+                'memory' => Number::format(config('panel.use_binary_prefix') ? $value / 1024 / 1024 / 1024 : $value / 1000 / 1000 / 1000, maxPrecision: 2, locale: auth()->user()->language),
+                'timestamp' => Carbon::createFromTimestamp($key, (auth()->user()->timezone ?? 'UTC'))->format('H:i:s'),
+            ])
+            ->all();
 
         return [
             'datasets' => [
@@ -57,6 +67,20 @@ class ServerMemoryChart extends ChartWidget
 
     public function getHeading(): string
     {
-        return 'Memory - $used Of $total';
+        /** @var Server $server */
+        $server = $this->record;
+
+        $latestMemoryUsed = collect(cache()->get("servers.$server->id.memory_bytes"))->last();
+        $totalMemory = collect(cache()->get("servers.$server->id.memory_limit_bytes"))->last();
+
+        $used = config('panel.use_binary_prefix')
+            ? Number::format($latestMemoryUsed / 1024 / 1024 / 1024, maxPrecision: 2, locale: auth()->user()->language) .' GiB'
+            : Number::format($latestMemoryUsed / 1000 / 1000 / 1000, maxPrecision: 2, locale: auth()->user()->language) . ' GB';
+
+        $total = config('panel.use_binary_prefix')
+            ? Number::format($totalMemory / 1024 / 1024 / 1024, maxPrecision: 2, locale: auth()->user()->language) .' GiB'
+            : Number::format($totalMemory / 1000 / 1000 / 1000, maxPrecision: 2, locale: auth()->user()->language) . ' GB';
+
+        return 'Memory - ' . $used . ' Of ' . $total;
     }
 }

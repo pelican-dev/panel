@@ -41,6 +41,7 @@ class Console extends Page
     {
         return ''; //TODO: Why do we need this...
     }
+
     protected function getColumnStart(): string
     {
         return ''; //TODO: Why do we need this...
@@ -93,4 +94,18 @@ class Console extends Page
         //            e.currentTarget.value = '';
     }
 
+    public function storeStats(array $data)
+    {
+        // ["{\"memory_bytes\":2382733312,\"memory_limit_bytes\":25204965376,\"cpu_absolute\":40.529,\"network\":{\"rx_bytes\":22302231,\"tx_bytes\":7138264},\"uptime\":129543658,\"state\":\"running\",\"disk_bytes\":3500798875}"]
+        dd($data);
+
+        foreach ($data as $key => $value) {
+            $cacheKey = "servers.{$server->id}.$key";
+            $data = cache()->get($cacheKey, []);
+
+            $data[$timestamp] = $value;
+
+            cache()->put($cacheKey, $data, now()->addMinute());
+        }
+    }
 }

@@ -54,14 +54,11 @@
                 wire:keydown.down="down"
             >
         </div>
-
-
     </div>
 
     @script
     <script>
         @php
-
             if ($user->cannot(\App\Models\Permission::ACTION_WEBSOCKET_CONNECT, $server)) {
                 throw new \App\Exceptions\Http\HttpForbiddenException('You do not have permission to connect to this server\'s websocket.');
             }
@@ -84,11 +81,10 @@
         const socket = new WebSocket("{{ $socket }}");
         const token = '{{ $token->toString() }}';
 
-
         socket.onmessage = function (websocketMessageEvent) {
             let eventData = JSON.parse(websocketMessageEvent.data);
 
-            if (eventData.event === 'console output') {
+            if (eventData.event === 'console output' || eventData.event === 'install output') {
                 handleConsoleOutput(eventData.args[0]);
             }
 
@@ -101,9 +97,7 @@
             }
 
             if (eventData.event === 'stats') {
-                // TODO: store and show stats
-
-                // {"event":"stats","args":["{\"memory_bytes\":2382733312,\"memory_limit_bytes\":25204965376,\"cpu_absolute\":40.529,\"network\":{\"rx_bytes\":22302231,\"tx_bytes\":7138264},\"uptime\":129543658,\"state\":\"running\",\"disk_bytes\":3500798875}"]}
+                $wire.dispatchSelf('storeStats', { data: eventData.args });
             }
 
             if (eventData.event === 'auth success') {
@@ -112,10 +106,9 @@
                     "args": [null]
                 }));
             }
-        };
 
-        // {"event":"","args":["[S_API FAIL] Tried to access Steam interface SteamUser021 before SteamAPI_Init succeeded."]}
-        // {"event":"send command","args":["hello!"]}
+            // TODO: handle "token expiring" and "token expired"
+        };
 
         socket.onopen = (event) => {
             socket.send(JSON.stringify({
@@ -139,6 +132,7 @@
         });
     </script>
     @endscript
+    
     <x-filament-panels::form>
         {{ $this->form }}
     </x-filament-panels::form>
