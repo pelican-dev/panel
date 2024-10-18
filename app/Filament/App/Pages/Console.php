@@ -96,8 +96,10 @@ class Console extends Page
 
     public function storeStats(array $data)
     {
-        // ["{\"memory_bytes\":2382733312,\"memory_limit_bytes\":25204965376,\"cpu_absolute\":40.529,\"network\":{\"rx_bytes\":22302231,\"tx_bytes\":7138264},\"uptime\":129543658,\"state\":\"running\",\"disk_bytes\":3500798875}"]
-        dd($data);
+        /** @var Server $server */
+        $server = Filament::getTenant();
+
+        $timestamp = now()->getTimestamp();
 
         foreach ($data as $key => $value) {
             $cacheKey = "servers.{$server->id}.$key";

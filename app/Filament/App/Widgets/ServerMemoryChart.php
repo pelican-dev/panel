@@ -2,6 +2,7 @@
 
 namespace App\Filament\App\Widgets;
 
+use App\Models\Server;
 use Carbon\Carbon;
 use Filament\Support\RawJs;
 use Filament\Widgets\ChartWidget;
