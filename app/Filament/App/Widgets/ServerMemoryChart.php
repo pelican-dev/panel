@@ -6,7 +6,6 @@ use App\Models\Server;
 use Carbon\Carbon;
 use Filament\Support\RawJs;
 use Filament\Widgets\ChartWidget;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Number;
 
 class ServerMemoryChart extends ChartWidget
@@ -14,14 +13,11 @@ class ServerMemoryChart extends ChartWidget
     protected static ?string $pollingInterval = '5s';
     protected static ?string $maxHeight = '300px';
 
-    public ?Model $record = null;
+    public ?Server $server = null;
 
     protected function getData(): array
     {
-        /** @var Server $server */
-        $server = $this->record;
-
-        $memUsed = collect(cache()->get("servers.$server->id.memory_bytes"))->slice(-10)
+        $memUsed = collect(cache()->get("servers.{$this->server->id}.memory_bytes"))->slice(-10)
             ->map(fn ($value, $key) => [
                 'memory' => Number::format(config('panel.use_binary_prefix') ? $value / 1024 / 1024 / 1024 : $value / 1000 / 1000 / 1000, maxPrecision: 2, locale: auth()->user()->language),
                 'timestamp' => Carbon::createFromTimestamp($key, (auth()->user()->timezone ?? 'UTC'))->format('H:i:s'),
@@ -68,11 +64,8 @@ class ServerMemoryChart extends ChartWidget
 
     public function getHeading(): string
     {
-        /** @var Server $server */
-        $server = $this->record;
-
-        $latestMemoryUsed = collect(cache()->get("servers.$server->id.memory_bytes"))->last();
-        $totalMemory = collect(cache()->get("servers.$server->id.memory_limit_bytes"))->last();
+        $latestMemoryUsed = collect(cache()->get("servers.{$this->server->id}.memory_bytes"))->last() ?? 0;
+        $totalMemory = collect(cache()->get("servers.{$this->server->id}.memory_limit_bytes"))->last() ?? 0;
 
         $used = config('panel.use_binary_prefix')
             ? Number::format($latestMemoryUsed / 1024 / 1024 / 1024, maxPrecision: 2, locale: auth()->user()->language) .' GiB'

@@ -6,7 +6,6 @@ use App\Models\Server;
 use Carbon\Carbon;
 use Filament\Support\RawJs;
 use Filament\Widgets\ChartWidget;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Number;
 
 class ServerCpuChart extends ChartWidget
@@ -14,14 +13,11 @@ class ServerCpuChart extends ChartWidget
     protected static ?string $pollingInterval = '5s';
     protected static ?string $maxHeight = '300px';
 
-    public ?Model $record = null;
+    public ?Server $server = null;
 
     protected function getData(): array
     {
-        /** @var Server $server */
-        $server = $this->record;
-
-        $cpu = collect(cache()->get("servers.$server->id.cpu_absolute"))
+        $cpu = collect(cache()->get("servers.{$this->server->id}.cpu_absolute"))
             ->slice(-10)
             ->map(fn ($value, $key) => [
                 'cpu' => Number::format($value, maxPrecision: 2, locale: auth()->user()->language),
@@ -69,11 +65,8 @@ class ServerCpuChart extends ChartWidget
 
     public function getHeading(): string
     {
-        /** @var Server $server */
-        $server = $this->record;
-
-        $cpu = Number::format(collect(cache()->get("servers.$server->id.cpu_absolute"))->last(), maxPrecision: 2, locale: auth()->user()->language);
-        $max = Number::format($server->cpu, locale: auth()->user()->language) . '%';
+        $cpu = Number::format(collect(cache()->get("servers.{$this->server->id}.cpu_absolute"))->last() ?? 0, maxPrecision: 2, locale: auth()->user()->language);
+        $max = Number::format($this->server->cpu, locale: auth()->user()->language) . '%';
 
         return 'CPU - ' . $cpu . '% Of ' . $max;
     }

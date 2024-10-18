@@ -2,8 +2,9 @@
 
 namespace App\Filament\App\Widgets;
 
+use App\Models\Server;
+use Filament\Support\RawJs;
 use Filament\Widgets\ChartWidget;
-use Illuminate\Database\Eloquent\Model;
 
 class ServerNetworkChart extends ChartWidget
 {
@@ -11,37 +12,42 @@ class ServerNetworkChart extends ChartWidget
     protected static ?string $pollingInterval = '60s';
     protected static ?string $maxHeight = '300px';
 
-    public ?Model $record = null;
-
-    protected static ?array $options = [
-        'scales' => [
-            'x' => [
-                'grid' => [
-                    'display' => false,
-                ],
-                'ticks' => [
-                    'display' => false,
-                ],
-            ],
-            'y' => [
-                'grid' => [
-                    'display' => false,
-                ],
-                'ticks' => [
-                    'display' => false,
-                ],
-            ],
-        ],
-    ];
+    public ?Server $server = null;
 
     protected function getData(): array
     {
-
+        // TODO
         return [];
     }
 
     protected function getType(): string
     {
         return 'line';
+    }
+
+    protected function getOptions(): RawJs
+    {
+        return RawJs::make(<<<'JS'
+        {
+            scales: {
+                x: {
+                    grid: {
+                        display: false,
+                    },
+                    ticks: {
+                        display: false,
+                    },
+                },
+                y: {
+                    grid: {
+                        display: false,
+                    },
+                    ticks: {
+                        display: false,
+                    },
+                },
+            }
+        }
+    JS);
     }
 }

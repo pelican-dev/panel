@@ -2,8 +2,8 @@
 
 namespace App\Filament\App\Pages;
 
-use Filament\Facades\Filament;
 use Filament\Pages\Page;
+use Filament\Widgets\AccountWidget;
 use Illuminate\Contracts\Support\Htmlable;
 
 class Dashboard extends Page
@@ -31,7 +31,9 @@ class Dashboard extends Page
 
     public function getWidgets(): array
     {
-        return Filament::getWidgets();
+        return [
+            AccountWidget::class,
+        ];
     }
 
     public function getVisibleWidgets(): array
