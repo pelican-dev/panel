@@ -8,6 +8,7 @@ use App\Models;
 use App\Models\ApiKey;
 use App\Models\Node;
 use App\Models\User;
+use App\Rules\Port;
 use Dedoc\Scramble\Scramble;
 use Dedoc\Scramble\Support\Generator\OpenApi;
 use Dedoc\Scramble\Support\Generator\SecurityScheme;
@@ -20,9 +21,11 @@ use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\URL;
+use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Str;
+use Illuminate\Validation\InvokableValidationRule;
 use Laravel\Sanctum\Sanctum;
 use Livewire\Livewire;
 
@@ -75,6 +78,20 @@ class AppServiceProvider extends ServiceProvider
         $this->bootBroadcast();
 
         Livewire::propertySynthesizer(EndpointSynth::class);
+
+        // Assign custom validation rules
+        Validator::extend('port', function ($attribute, $value, $parameters, $validator) {
+            $rule = InvokableValidationRule::make(new Port(...$parameters));
+            $rule->setValidator($validator);
+            $rule->setData($validator->getData());
+
+            $result = $rule->passes($attribute, $value);
+            if (!$result) {
+                $validator->customMessages[$attribute] = $rule->message();
+            }
+
+            return $result;
+        });
 
         $bearerTokens = fn (OpenApi $openApi) => $openApi->secure(SecurityScheme::http('bearer'));
         Gate::define('viewApiDocs', fn () => true);
