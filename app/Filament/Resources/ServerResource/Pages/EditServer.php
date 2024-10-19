@@ -870,11 +870,9 @@ class EditServer extends EditRecord
 
     private function shouldHideComponent(ServerVariable $serverVariable, Forms\Components\Component $component): bool
     {
-        $rules = str($serverVariable->variable->rules)->explode('|');
-
         $containsRuleIn = array_first($serverVariable->variable->rules, fn ($value) => str($value)->startsWith('in:'), false);
 
-        if ($rules->contains('port')) {
+        if (collect($serverVariable->variable->rules)->contains('port')) {
             return true;
         }
 
@@ -961,7 +959,7 @@ class EditServer extends EditRecord
         }
 
         foreach ($egg->variables as $variable) {
-            if (!in_array('port', explode('|', $variable->rules))) {
+            if (!in_array('port', $variable->rules)) {
                 continue;
             }
 
