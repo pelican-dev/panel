@@ -2,12 +2,9 @@
 
 namespace App\Policies;
 
-use App\Models\User;
-
 class EggPolicy
 {
-    public function create(User $user): bool
-    {
-        return true;
-    }
+    use DefaultPolicies;
+
+    protected string $modelName = 'egg';
 }

@@ -43,7 +43,8 @@ class ListMounts extends ListRecords
             ])
             ->bulkActions([
                 BulkActionGroup::make([
-                    DeleteBulkAction::make(),
+                    DeleteBulkAction::make()
+                        ->authorize(fn () => auth()->user()->can('delete mount')),
                 ]),
             ])
             ->emptyStateIcon('tabler-layers-linked')

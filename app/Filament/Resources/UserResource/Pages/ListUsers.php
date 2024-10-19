@@ -3,14 +3,22 @@
 namespace App\Filament\Resources\UserResource\Pages;
 
 use App\Filament\Resources\UserResource;
+use App\Models\Role;
 use App\Models\User;
 use App\Services\Users\UserCreationService;
-use Filament\Actions;
+use Filament\Actions\CreateAction;
+use Filament\Forms\Components\CheckboxList;
+use Filament\Forms\Components\Grid;
+use Filament\Forms\Components\TextInput;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\ListRecords;
+use Filament\Tables\Actions\BulkActionGroup;
+use Filament\Tables\Actions\DeleteBulkAction;
+use Filament\Tables\Actions\EditAction;
+use Filament\Tables\Columns\IconColumn;
+use Filament\Tables\Columns\ImageColumn;
+use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
-use Filament\Tables;
-use Filament\Forms;
 
 class ListUsers extends ListRecords
 {
@@ -21,101 +29,102 @@ class ListUsers extends ListRecords
         return $table
             ->searchable(false)
             ->columns([
-                Tables\Columns\ImageColumn::make('picture')
+                ImageColumn::make('picture')
                     ->visibleFrom('lg')
                     ->label('')
                     ->extraImgAttributes(['class' => 'rounded-full'])
                     ->defaultImageUrl(fn (User $user) => 'https://gravatar.com/avatar/' . md5(strtolower($user->email))),
-                Tables\Columns\TextColumn::make('external_id')
+                TextColumn::make('external_id')
                     ->searchable()
                     ->hidden(),
-                Tables\Columns\TextColumn::make('uuid')
+                TextColumn::make('uuid')
                     ->label('UUID')
                     ->hidden()
                     ->searchable(),
-                Tables\Columns\TextColumn::make('username')
+                TextColumn::make('username')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('email')
+                TextColumn::make('email')
                     ->searchable()
                     ->icon('tabler-mail'),
-                Tables\Columns\IconColumn::make('root_admin')
-                    ->visibleFrom('md')
-                    ->label('Admin')
-                    ->boolean()
-                    ->trueIcon('tabler-star-filled')
-                    ->falseIcon('tabler-star-off')
-                    ->sortable(),
-                Tables\Columns\IconColumn::make('use_totp')->label('2FA')
+                IconColumn::make('use_totp')
+                    ->label('2FA')
                     ->visibleFrom('lg')
                     ->icon(fn (User $user) => $user->use_totp ? 'tabler-lock' : 'tabler-lock-open-off')
                     ->boolean()->sortable(),
-                Tables\Columns\TextColumn::make('servers_count')
+                TextColumn::make('roles_count')
+                    ->counts('roles')
+                    ->icon('tabler-users-group')
+                    ->label('Roles')
+                    ->formatStateUsing(fn (User $user, $state) => $state . ($user->isRootAdmin() ? ' (Root Admin)' : '')),
+                TextColumn::make('servers_count')
                     ->counts('servers')
                     ->icon('tabler-server')
                     ->label('Servers'),
-                Tables\Columns\TextColumn::make('subusers_count')
+                TextColumn::make('subusers_count')
                     ->visibleFrom('sm')
                     ->label('Subusers')
                     ->counts('subusers')
                     ->icon('tabler-users'),
                 // ->formatStateUsing(fn (string $state, $record): string => (string) ($record->servers_count + $record->subusers_count))
             ])
-            ->filters([
-                //
-            ])
             ->actions([
-                Tables\Actions\EditAction::make(),
+                EditAction::make(),
             ])
             ->checkIfRecordIsSelectableUsing(fn (User $user) => auth()->user()->id !== $user->id && !$user->servers_count)
             ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
+                BulkActionGroup::make([
+                    DeleteBulkAction::make()
+                        ->authorize(fn () => auth()->user()->can('delete user')),
                 ]),
             ]);
     }
     protected function getHeaderActions(): array
     {
         return [
-            Actions\CreateAction::make('create')
+            CreateAction::make('create')
                 ->label('Create User')
                 ->createAnother(false)
                 ->form([
-                    Forms\Components\Grid::make()
+                    Grid::make()
                         ->schema([
-                            Forms\Components\TextInput::make('username')
+                            TextInput::make('username')
                                 ->alphaNum()
                                 ->required()
                                 ->maxLength(255),
-                            Forms\Components\TextInput::make('email')
+                            TextInput::make('email')
                                 ->email()
                                 ->required()
                                 ->unique()
                                 ->maxLength(255),
-
-                            Forms\Components\TextInput::make('password')
+                            TextInput::make('password')
                                 ->hintIcon('tabler-question-mark')
                                 ->hintIconTooltip('Providing a user password is optional. New user email will prompt users to create a password the first time they login.')
                                 ->password(),
-
-                            Forms\Components\ToggleButtons::make('root_admin')
-                                ->label('Administrator (Root)')
-                                ->options([
-                                    false => 'No',
-                                    true => 'Admin',
-                                ])
-                                ->colors([
-                                    false => 'primary',
-                                    true => 'danger',
-                                ])
-                                ->inline()
-                                ->required()
-                                ->default(false),
+                            CheckboxList::make('roles')
+                                ->disableOptionWhen(fn (string $value): bool => $value == Role::getRootAdmin()->id)
+                                ->relationship('roles', 'name')
+                                ->dehydrated()
+                                ->label('Admin Roles')
+                                ->columnSpanFull()
+                                ->bulkToggleable(false),
                         ]),
                 ])
                 ->successRedirectUrl(route('filament.admin.resources.users.index'))
                 ->action(function (array $data) {
-                    resolve(UserCreationService::class)->handle($data);
-                    Notification::make()->title('User Created!')->success()->send();
+                    $roles = $data['roles'];
+                    $roles = collect($roles)->map(fn ($role) => Role::findById($role));
+                    unset($data['roles']);
+
+                    /** @var UserCreationService $creationService */
+                    $creationService = resolve(UserCreationService::class);
+                    $user = $creationService->handle($data);
+
+                    $user->syncRoles($roles);
+
+                    Notification::make()
+                        ->title('User Created!')
+                        ->success()
+                        ->send();
 
                     return redirect()->route('filament.admin.resources.users.index');
                 }),

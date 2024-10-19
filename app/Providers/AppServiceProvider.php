@@ -7,7 +7,7 @@ use App\Livewire\EndpointSynth;
 use App\Models;
 use App\Models\ApiKey;
 use App\Models\Node;
-use App\Services\Helpers\SoftwareVersionService;
+use App\Models\User;
 use Dedoc\Scramble\Scramble;
 use Dedoc\Scramble\Support\Generator\OpenApi;
 use Dedoc\Scramble\Support\Generator\SecurityScheme;
@@ -33,9 +33,9 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        $versionData = app(SoftwareVersionService::class)->versionData();
-        View::share('appVersion', $versionData['version'] ?? 'undefined');
-        View::share('appIsGit', $versionData['is_git'] ?? false);
+        // TODO: remove when old admin area gets yeeted
+        View::share('appVersion', config('app.version'));
+        View::share('appIsGit', false);
 
         Paginator::useBootstrap();
 
@@ -94,6 +94,10 @@ class AppServiceProvider extends ServiceProvider
             'success' => Color::Green,
             'warning' => Color::Amber,
         ]);
+
+        Gate::before(function (User $user, $ability) {
+            return $user->isRootAdmin() ? true : null;
+        });
     }
 
     /**

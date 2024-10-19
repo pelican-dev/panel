@@ -37,7 +37,7 @@ export default () => {
     const { t } = useTranslation('strings');
 
     const name = useStoreState((state: ApplicationStore) => state.settings.data!.name);
-    const rootAdmin = useStoreState((state: ApplicationStore) => state.user.data!.rootAdmin);
+    const isAdmin = useStoreState((state: ApplicationStore) => state.user.data!.admin);
     const [isLoggingOut, setIsLoggingOut] = useState(false);
 
     const onTriggerLogout = () => {
@@ -69,7 +69,7 @@ export default () => {
                             <FontAwesomeIcon icon={faLayerGroup} />
                         </NavLink>
                     </Tooltip>
-                    {rootAdmin && (
+                    {isAdmin && (
                         <Tooltip placement={'bottom'} content={t<string>('admin')}>
                             <a href={'/admin'} rel={'noreferrer'}>
                                 <FontAwesomeIcon icon={faCogs} />

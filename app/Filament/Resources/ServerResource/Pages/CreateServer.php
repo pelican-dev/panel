@@ -10,16 +10,34 @@ use App\Models\User;
 use App\Services\Servers\RandomWordService;
 use App\Services\Servers\ServerCreationService;
 use App\Services\Users\UserCreationService;
+use Closure;
+use Exception;
+use Filament\Forms;
 use Filament\Forms\Components\Actions\Action;
+use Filament\Forms\Components\CheckboxList;
+use Filament\Forms\Components\Component;
+use Filament\Forms\Components\Fieldset;
+use Filament\Forms\Components\Grid;
+use Filament\Forms\Components\Hidden;
+use Filament\Forms\Components\KeyValue;
+use Filament\Forms\Components\Placeholder;
+use Filament\Forms\Components\Repeater;
+use Filament\Forms\Components\Section;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\ToggleButtons;
+use Filament\Forms\Components\Wizard;
+use Filament\Forms\Components\Wizard\Step;
 use Filament\Forms\Form;
+use Filament\Forms\Get;
+use Filament\Forms\Set;
 use Filament\Resources\Pages\CreateRecord;
 use Illuminate\Database\Eloquent\Model;
-use Filament\Forms;
-use Filament\Forms\Components\Wizard;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\HtmlString;
-use Closure;
+use LogicException;
 
 class CreateServer extends CreateRecord
 {
@@ -36,7 +54,7 @@ class CreateServer extends CreateRecord
         return $form
             ->schema([
                 Wizard::make([
-                    Wizard\Step::make('Information')
+                    Step::make('Information')
                         ->label('Information')
                         ->icon('tabler-info-circle')
                         ->completedIcon('tabler-check')
@@ -47,12 +65,12 @@ class CreateServer extends CreateRecord
                             'lg' => 6,
                         ])
                         ->schema([
-                            Forms\Components\TextInput::make('name')
+                            TextInput::make('name')
                                 ->prefixIcon('tabler-server')
                                 ->label('Name')
                                 ->suffixAction(Forms\Components\Actions\Action::make('random')
                                     ->icon('tabler-dice-' . random_int(1, 6))
-                                    ->action(function (Forms\Set $set, Forms\Get $get) {
+                                    ->action(function (Set $set, Get $get) {
                                         $egg = Egg::find($get('egg_id'));
                                         $prefix = $egg ? str($egg->name)->lower()->kebab() . '-' : '';
 
@@ -69,7 +87,7 @@ class CreateServer extends CreateRecord
                                 ->required()
                                 ->maxLength(255),
 
-                            Forms\Components\Select::make('owner_id')
+                            Select::make('owner_id')
                                 ->preload()
                                 ->prefixIcon('tabler-user')
                                 ->default(auth()->user()->id)
@@ -82,38 +100,23 @@ class CreateServer extends CreateRecord
                                 ])
                                 ->relationship('user', 'username')
                                 ->searchable(['username', 'email'])
-                                ->getOptionLabelFromRecordUsing(fn (User $user) => "$user->email | $user->username " . ($user->root_admin ? '(admin)' : ''))
+                                ->getOptionLabelFromRecordUsing(fn (User $user) => "$user->email | $user->username " . ($user->isRootAdmin() ? '(admin)' : ''))
                                 ->createOptionForm([
-                                    Forms\Components\TextInput::make('username')
+                                    TextInput::make('username')
                                         ->alphaNum()
                                         ->required()
                                         ->maxLength(255),
 
-                                    Forms\Components\TextInput::make('email')
+                                    TextInput::make('email')
                                         ->email()
                                         ->required()
                                         ->unique()
                                         ->maxLength(255),
 
-                                    Forms\Components\TextInput::make('password')
+                                    TextInput::make('password')
                                         ->hintIcon('tabler-question-mark')
                                         ->hintIconTooltip('Providing a user password is optional. New user email will prompt users to create a password the first time they login.')
                                         ->password(),
-
-                                    Forms\Components\ToggleButtons::make('root_admin')
-                                        ->label('Administrator (Root)')
-                                        ->options([
-                                            false => 'No',
-                                            true => 'Admin',
-                                        ])
-                                        ->colors([
-                                            false => 'primary',
-                                            true => 'danger',
-                                        ])
-                                        ->inline()
-                                        ->required()
-                                        ->default(false)
-                                        ->hidden(),
                                 ])
                                 ->createOptionUsing(function ($data) {
                                     resolve(UserCreationService::class)->handle($data);
@@ -121,7 +124,7 @@ class CreateServer extends CreateRecord
                                 })
                                 ->required(),
 
-                            Forms\Components\Select::make('node_id')
+                            Select::make('node_id')
                                 ->disabledOn('edit')
                                 ->prefixIcon('tabler-server-2')
                                 ->default(fn () => ($this->node = Node::query()->latest()->first())?->id)
@@ -140,7 +143,7 @@ class CreateServer extends CreateRecord
                                 })
                                 ->required(),
 
-                            Forms\Components\Textarea::make('description')
+                            Textarea::make('description')
                                 ->placeholder('Description')
                                 ->rows(3)
                                 ->columnSpan([
@@ -149,11 +152,11 @@ class CreateServer extends CreateRecord
                                     'md' => 6,
                                     'lg' => 6,
                                 ])
-                                ->label('Notes'),
+                                ->label('Description'),
                         ]),
 
-                    Wizard\Step::make('Egg')
-                        ->label('Egg')
+                    Step::make('Egg Configuration')
+                        ->label('Egg Configuration')
                         ->icon('tabler-egg')
                         ->completedIcon('tabler-check')
                         ->columns([
@@ -163,9 +166,7 @@ class CreateServer extends CreateRecord
                             'lg' => 6,
                         ])
                         ->schema([
-
-                            Forms\Components\Select::make('egg_id')
-                                ->disabledOn('edit')
+                            Select::make('egg_id')
                                 ->prefixIcon('tabler-egg')
                                 ->columnSpan([
                                     'default' => 2,
@@ -177,7 +178,7 @@ class CreateServer extends CreateRecord
                                 ->searchable()
                                 ->preload()
                                 ->live()
-                                ->afterStateUpdated(function ($state, Forms\Set $set, Forms\Get $get, $old) {
+                                ->afterStateUpdated(function ($state, Set $set, Get $get, $old) {
                                     $this->egg = Egg::query()->find($state);
                                     $set('startup', $this->egg?->startup);
                                     $set('image', '');
@@ -191,7 +192,7 @@ class CreateServer extends CreateRecord
                                 })
                                 ->required(),
 
-                            Forms\Components\ToggleButtons::make('skip_scripts')
+                            ToggleButtons::make('skip_scripts')
                                 ->label('Run Egg Install Script?')
                                 ->default(false)
                                 ->columnSpan([
@@ -215,7 +216,7 @@ class CreateServer extends CreateRecord
                                 ->inline()
                                 ->required(),
 
-                            Forms\Components\ToggleButtons::make('start_on_completion')
+                            ToggleButtons::make('start_on_completion')
                                 ->label('Start Server After Install?')
                                 ->default(true)
                                 ->required()
@@ -239,10 +240,10 @@ class CreateServer extends CreateRecord
                                 ])
                                 ->inline(),
 
-                            Forms\Components\Textarea::make('startup')
-                                ->hidden(fn () => !$this->egg)
+                            Textarea::make('startup')
                                 ->hintIcon('tabler-code')
                                 ->label('Startup Command')
+                                ->hidden(fn () => !$this->egg)
                                 ->required()
                                 ->live()
                                 ->disabled(fn (Forms\Get $get) => $this->egg === null)
@@ -266,24 +267,24 @@ class CreateServer extends CreateRecord
                                     'lg' => 6,
                                 ]),
 
-                            Forms\Components\Hidden::make('environment')->default([]),
+                            Hidden::make('environment')->default([]),
 
-                            Forms\Components\Section::make('Variables')
+                            Section::make('Variables')
                                 ->icon('tabler-eggs')
                                 ->iconColor('primary')
-                                ->hidden(fn (Forms\Get $get) => $get('egg_id') === null)
+                                ->hidden(fn (Get $get) => $get('egg_id') === null)
                                 ->collapsible()
                                 ->columnSpanFull()
                                 ->schema([
-                                    Forms\Components\Placeholder::make('Select an egg first to show its variables!')
-                                        ->hidden(fn (Forms\Get $get) => $get('egg_id')),
+                                    Placeholder::make('Select an egg first to show its variables!')
+                                        ->hidden(fn (Get $get) => $get('egg_id')),
 
-                                    Forms\Components\Placeholder::make('The selected egg has no variables!')
-                                        ->hidden(fn (Forms\Get $get) => !$get('egg_id') ||
+                                    Placeholder::make('The selected egg has no variables!')
+                                        ->hidden(fn (Get $get) => !$get('egg_id') ||
                                             Egg::query()->find($get('egg_id'))?->variables()?->count()
                                         ),
 
-                                    Forms\Components\Repeater::make('server_variables')
+                                    Repeater::make('server_variables')
                                         ->label('')
                                         ->relationship('serverVariables')
                                         ->saveRelationshipsBeforeChildrenUsing(null)
@@ -296,11 +297,11 @@ class CreateServer extends CreateRecord
                                         ->hidden(fn ($state) => empty($state))
                                         ->schema(function () {
 
-                                            $text = Forms\Components\TextInput::make('variable_value')
+                                            $text = TextInput::make('variable_value')
                                                 ->hidden($this->shouldHideComponent(...))
-                                                ->required(fn (Forms\Get $get) => in_array('required', $get('rules')))
+                                                ->required(fn (Get $get) => in_array('required', $get('rules')))
                                                 ->rules(
-                                                    fn (Forms\Get $get): Closure => function (string $attribute, $value, Closure $fail) use ($get) {
+                                                    fn (Get $get): Closure => function (string $attribute, $value, Closure $fail) use ($get) {
                                                         $validator = Validator::make(['validatorkey' => $value], [
                                                             'validatorkey' => $get('rules'),
                                                         ]);
@@ -313,7 +314,7 @@ class CreateServer extends CreateRecord
                                                     },
                                                 );
 
-                                            $select = Forms\Components\Select::make('variable_value')
+                                            $select = Select::make('variable_value')
                                                 ->hidden($this->shouldHideComponent(...))
                                                 ->options($this->getSelectOptionsFromRules(...))
                                                 ->selectablePlaceholder(false);
@@ -324,11 +325,11 @@ class CreateServer extends CreateRecord
                                                 $component = $component
                                                     ->live(onBlur: true)
                                                     ->hintIcon('tabler-code')
-                                                    ->label(fn (Forms\Get $get) => $get('name'))
-                                                    ->hintIconTooltip(fn (Forms\Get $get) => implode('|', $get('rules')))
-                                                    ->prefix(fn (Forms\Get $get) => '{{' . $get('env_variable') . '}}')
-                                                    ->helperText(fn (Forms\Get $get) => empty($get('description')) ? '—' : $get('description'))
-                                                    ->afterStateUpdated(function (Forms\Set $set, Forms\Get $get, $state) {
+                                                    ->label(fn (Get $get) => $get('name'))
+                                                    ->hintIconTooltip(fn (Get $get) => implode('|', $get('rules')))
+                                                    ->prefix(fn (Get $get) => '{{' . $get('env_variable') . '}}')
+                                                    ->helperText(fn (Get $get) => empty($get('description')) ? '—' : $get('description'))
+                                                    ->afterStateUpdated(function (Set $set, Get $get, $state) {
                                                         $environment = $get($envPath = '../../environment');
                                                         $environment[$get('env_variable')] = $state;
                                                         $set($envPath, $environment);
@@ -404,12 +405,12 @@ class CreateServer extends CreateRecord
 
                         ]),
 
-                    Wizard\Step::make('Environment')
-                        ->label('Environment')
+                    Step::make('Environment Configuration')
+                        ->label('Environment Configuration')
                         ->icon('tabler-brand-docker')
                         ->completedIcon('tabler-check')
                         ->schema([
-                            Forms\Components\Fieldset::make('Resource Limits')
+                            Fieldset::make('Resource Limits')
                                 ->columnSpan(6)
                                 ->columns([
                                     'default' => 1,
@@ -418,14 +419,14 @@ class CreateServer extends CreateRecord
                                     'lg' => 3,
                                 ])
                                 ->schema([
-                                    Forms\Components\Grid::make()
+                                    Grid::make()
                                         ->columns(4)
                                         ->columnSpanFull()
                                         ->schema([
-                                            Forms\Components\ToggleButtons::make('unlimited_mem')
+                                            ToggleButtons::make('unlimited_mem')
                                                 ->label('Memory')->inlineLabel()->inline()
                                                 ->default(true)
-                                                ->afterStateUpdated(fn (Forms\Set $set) => $set('memory', 0))
+                                                ->afterStateUpdated(fn (Set $set) => $set('memory', 0))
                                                 ->live()
                                                 ->options([
                                                     true => 'Unlimited',
@@ -437,9 +438,9 @@ class CreateServer extends CreateRecord
                                                 ])
                                                 ->columnSpan(2),
 
-                                            Forms\Components\TextInput::make('memory')
+                                            TextInput::make('memory')
                                                 ->dehydratedWhenHidden()
-                                                ->hidden(fn (Forms\Get $get) => $get('unlimited_mem'))
+                                                ->hidden(fn (Get $get) => $get('unlimited_mem'))
                                                 ->label('Memory Limit')->inlineLabel()
                                                 ->suffix(config('panel.use_binary_prefix') ? 'MiB' : 'MB')
                                                 ->default(0)
@@ -449,15 +450,15 @@ class CreateServer extends CreateRecord
                                                 ->minValue(0),
                                         ]),
 
-                                    Forms\Components\Grid::make()
+                                    Grid::make()
                                         ->columns(4)
                                         ->columnSpanFull()
                                         ->schema([
-                                            Forms\Components\ToggleButtons::make('unlimited_disk')
+                                            ToggleButtons::make('unlimited_disk')
                                                 ->label('Disk Space')->inlineLabel()->inline()
                                                 ->default(true)
                                                 ->live()
-                                                ->afterStateUpdated(fn (Forms\Set $set) => $set('disk', 0))
+                                                ->afterStateUpdated(fn (Set $set) => $set('disk', 0))
                                                 ->options([
                                                     true => 'Unlimited',
                                                     false => 'Limited',
@@ -468,9 +469,9 @@ class CreateServer extends CreateRecord
                                                 ])
                                                 ->columnSpan(2),
 
-                                            Forms\Components\TextInput::make('disk')
+                                            TextInput::make('disk')
                                                 ->dehydratedWhenHidden()
-                                                ->hidden(fn (Forms\Get $get) => $get('unlimited_disk'))
+                                                ->hidden(fn (Get $get) => $get('unlimited_disk'))
                                                 ->label('Disk Space Limit')->inlineLabel()
                                                 ->suffix(config('panel.use_binary_prefix') ? 'MiB' : 'MB')
                                                 ->default(0)
@@ -480,14 +481,14 @@ class CreateServer extends CreateRecord
                                                 ->minValue(0),
                                         ]),
 
-                                    Forms\Components\Grid::make()
+                                    Grid::make()
                                         ->columns(4)
                                         ->columnSpanFull()
                                         ->schema([
-                                            Forms\Components\ToggleButtons::make('unlimited_cpu')
+                                            ToggleButtons::make('unlimited_cpu')
                                                 ->label('CPU')->inlineLabel()->inline()
                                                 ->default(true)
-                                                ->afterStateUpdated(fn (Forms\Set $set) => $set('cpu', 0))
+                                                ->afterStateUpdated(fn (Set $set) => $set('cpu', 0))
                                                 ->live()
                                                 ->options([
                                                     true => 'Unlimited',
@@ -499,9 +500,9 @@ class CreateServer extends CreateRecord
                                                 ])
                                                 ->columnSpan(2),
 
-                                            Forms\Components\TextInput::make('cpu')
+                                            TextInput::make('cpu')
                                                 ->dehydratedWhenHidden()
-                                                ->hidden(fn (Forms\Get $get) => $get('unlimited_cpu'))
+                                                ->hidden(fn (Get $get) => $get('unlimited_cpu'))
                                                 ->label('CPU Limit')->inlineLabel()
                                                 ->suffix('%')
                                                 ->default(0)
@@ -512,23 +513,23 @@ class CreateServer extends CreateRecord
                                                 ->helperText('100% equals one CPU core.'),
                                         ]),
 
-                                    Forms\Components\Grid::make()
+                                    Grid::make()
                                         ->columns(4)
                                         ->columnSpanFull()
                                         ->schema([
-                                            Forms\Components\ToggleButtons::make('swap_support')
+                                            ToggleButtons::make('swap_support')
                                                 ->live()
                                                 ->label('Enable Swap Memory')
                                                 ->inlineLabel()
                                                 ->inline()
                                                 ->columnSpan(2)
                                                 ->default('disabled')
-                                                ->afterStateUpdated(function ($state, Forms\Set $set) {
+                                                ->afterStateUpdated(function ($state, Set $set) {
                                                     $value = match ($state) {
                                                         'unlimited' => -1,
                                                         'disabled' => 0,
                                                         'limited' => 128,
-                                                        default => throw new \LogicException('Invalid state'),
+                                                        default => throw new LogicException('Invalid state'),
                                                     };
 
                                                     $set('swap', $value);
@@ -544,9 +545,9 @@ class CreateServer extends CreateRecord
                                                     'disabled' => 'danger',
                                                 ]),
 
-                                            Forms\Components\TextInput::make('swap')
+                                            TextInput::make('swap')
                                                 ->dehydratedWhenHidden()
-                                                ->hidden(fn (Forms\Get $get) => match ($get('swap_support')) {
+                                                ->hidden(fn (Get $get) => match ($get('swap_support')) {
                                                     'disabled', 'unlimited' => true,
                                                     default => false,
                                                 })
@@ -560,16 +561,16 @@ class CreateServer extends CreateRecord
                                                 ->integer(),
                                         ]),
 
-                                    Forms\Components\Hidden::make('io')
+                                    Hidden::make('io')
                                         ->helperText('The IO performance relative to other running containers')
                                         ->label('Block IO Proportion')
                                         ->default(config('panel.default_io_weight')),
 
-                                    Forms\Components\Grid::make()
+                                    Grid::make()
                                         ->columns(4)
                                         ->columnSpanFull()
                                         ->schema([
-                                            Forms\Components\ToggleButtons::make('oom_killer')
+                                            ToggleButtons::make('oom_killer')
                                                 ->label('OOM Killer')
                                                 ->inlineLabel()->inline()
                                                 ->default(false)
@@ -583,12 +584,12 @@ class CreateServer extends CreateRecord
                                                     true => 'danger',
                                                 ]),
 
-                                            Forms\Components\TextInput::make('oom_disabled_hidden')
+                                            TextInput::make('oom_disabled_hidden')
                                                 ->hidden(),
                                         ]),
                                 ]),
 
-                            Forms\Components\Fieldset::make('Feature Limits')
+                            Fieldset::make('Feature Limits')
                                 ->inlineLabel()
                                 ->columnSpan(6)
                                 ->columns([
@@ -598,21 +599,21 @@ class CreateServer extends CreateRecord
                                     'lg' => 3,
                                 ])
                                 ->schema([
-                                    Forms\Components\TextInput::make('allocation_limit')
+                                    TextInput::make('allocation_limit')
                                         ->label('Allocations')
                                         ->suffixIcon('tabler-network')
                                         ->required()
                                         ->numeric()
                                         ->minValue(0)
                                         ->default(0),
-                                    Forms\Components\TextInput::make('database_limit')
+                                    TextInput::make('database_limit')
                                         ->label('Databases')
                                         ->suffixIcon('tabler-database')
                                         ->required()
                                         ->numeric()
                                         ->minValue(0)
                                         ->default(0),
-                                    Forms\Components\TextInput::make('backup_limit')
+                                    TextInput::make('backup_limit')
                                         ->label('Backups')
                                         ->suffixIcon('tabler-copy-check')
                                         ->required()
@@ -620,7 +621,7 @@ class CreateServer extends CreateRecord
                                         ->minValue(0)
                                         ->default(0),
                                 ]),
-                            Forms\Components\Fieldset::make('Docker Settings')
+                            Fieldset::make('Docker Settings')
                                 ->columns([
                                     'default' => 1,
                                     'sm' => 2,
@@ -629,10 +630,10 @@ class CreateServer extends CreateRecord
                                 ])
                                 ->columnSpan(6)
                                 ->schema([
-                                    Forms\Components\Select::make('select_image')
+                                    Select::make('select_image')
                                         ->label('Image Name')
-                                        ->afterStateUpdated(fn (Forms\Set $set, $state) => $set('image', $state))
-                                        ->options(function ($state, Forms\Get $get, Forms\Set $set) {
+                                        ->afterStateUpdated(fn (Set $set, $state) => $set('image', $state))
+                                        ->options(function ($state, Get $get, Set $set) {
                                             $egg = Egg::query()->find($get('egg_id'));
                                             $images = $egg->docker_images ?? [];
 
@@ -653,10 +654,10 @@ class CreateServer extends CreateRecord
                                             'lg' => 2,
                                         ]),
 
-                                    Forms\Components\TextInput::make('image')
+                                    TextInput::make('image')
                                         ->label('Image')
                                         ->debounce(500)
-                                        ->afterStateUpdated(function ($state, Forms\Get $get, Forms\Set $set) {
+                                        ->afterStateUpdated(function ($state, Get $get, Set $set) {
                                             $egg = Egg::query()->find($get('egg_id'));
                                             $images = $egg->docker_images ?? [];
 
@@ -674,13 +675,13 @@ class CreateServer extends CreateRecord
                                             'lg' => 2,
                                         ]),
 
-                                    Forms\Components\KeyValue::make('docker_labels')
+                                    KeyValue::make('docker_labels')
                                         ->label('Container Labels')
                                         ->keyLabel('Title')
                                         ->valueLabel('Description')
                                         ->columnSpanFull(),
 
-                                    Forms\Components\CheckboxList::make('mounts')
+                                    CheckboxList::make('mounts')
                                         ->live()
                                         ->relationship('mounts')
                                         ->options(fn () => $this->node?->mounts->mapWithKeys(fn ($mount) => [$mount->id => $mount->name]) ?? [])
@@ -731,24 +732,24 @@ class CreateServer extends CreateRecord
         return $service->handle($data, validateVariables: false);
     }
 
-    private function shouldHideComponent(Forms\Get $get, Forms\Components\Component $component): bool
+    private function shouldHideComponent(Get $get, Component $component): bool
     {
         $containsRuleIn = collect($get('rules'))->reduce(
             fn ($result, $value) => $result === true && !str($value)->startsWith('in:'), true
         );
 
-        if ($component instanceof Forms\Components\Select) {
+        if ($component instanceof Select) {
             return $containsRuleIn;
         }
 
-        if ($component instanceof Forms\Components\TextInput) {
+        if ($component instanceof TextInput) {
             return !$containsRuleIn;
         }
 
-        throw new \Exception('Component type not supported: ' . $component::class);
+        throw new Exception('Component type not supported: ' . $component::class);
     }
 
-    private function getSelectOptionsFromRules(Forms\Get $get): array
+    private function getSelectOptionsFromRules(Get $get): array
     {
         $inRule = collect($get('rules'))->reduce(
             fn ($result, $value) => str($value)->startsWith('in:') ? $value : $result, ''

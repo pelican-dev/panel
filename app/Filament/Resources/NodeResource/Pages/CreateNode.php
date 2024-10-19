@@ -4,8 +4,8 @@ namespace App\Filament\Resources\NodeResource\Pages;
 
 use App\Filament\Resources\NodeResource;
 use App\Models\Objects\Endpoint;
-use Filament\Forms\Components\Actions\Action;
 use Filament\Forms;
+use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\TagsInput;
 use Filament\Forms\Components\TextInput;
@@ -154,7 +154,6 @@ class CreateNode extends CreateRecord
                                     'lg' => 2,
                                 ])
                                 ->required()
-                                ->regex('/[a-zA-Z0-9_\.\- ]+/')
                                 ->helperText('This name is for display only and can be changed later.')
                                 ->maxLength(100),
 
@@ -221,7 +220,7 @@ class CreateNode extends CreateRecord
                             ToggleButtons::make('public')
                                 ->default(true)
                                 ->columnSpan(1)
-                                ->label('Automatic Allocation')->inline()
+                                ->label('Use Node for deployment?')->inline()
                                 ->options([
                                     true => 'Yes',
                                     false => 'No',
@@ -231,11 +230,7 @@ class CreateNode extends CreateRecord
                                     false => 'danger',
                                 ]),
                             TagsInput::make('tags')
-                                ->label('Tags')
-                                ->disabled()
-                                ->placeholder('Not Implemented')
-                                ->hintIcon('tabler-question-mark')
-                                ->hintIconTooltip('Not Implemented')
+                                ->placeholder('Add Tags')
                                 ->columnSpan(2),
                             TextInput::make('upload_size')
                                 ->label('Upload Limit')

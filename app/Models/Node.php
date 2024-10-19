@@ -5,12 +5,12 @@ namespace App\Models;
 use App\Exceptions\Service\HasActiveServersException;
 use App\Repositories\Daemon\DaemonConfigurationRepository;
 use Exception;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasManyThrough;
+use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Str;
 use Symfony\Component\Yaml\Yaml;
-use Illuminate\Notifications\Notifiable;
-use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 
 /**
  * @property int $id
@@ -75,11 +75,11 @@ class Node extends Model
         'disk_overallocate', 'cpu', 'cpu_overallocate',
         'upload_size', 'daemon_base',
         'daemon_sftp', 'daemon_sftp_alias', 'daemon_listen',
-        'description', 'maintenance_mode',
+        'description', 'maintenance_mode', 'tags',
     ];
 
     public static array $validationRules = [
-        'name' => 'required|regex:/^([\w .-]{1,100})$/',
+        'name' => 'required|string|min:1|max:100',
         'description' => 'string|nullable',
         'public' => 'boolean',
         'fqdn' => 'required|string',

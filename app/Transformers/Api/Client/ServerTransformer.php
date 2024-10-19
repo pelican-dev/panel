@@ -3,14 +3,14 @@
 namespace App\Transformers\Api\Client;
 
 use App\Models\Egg;
+use App\Models\EggVariable;
+use App\Models\Permission;
 use App\Models\Server;
 use App\Models\Subuser;
-use League\Fractal\Resource\Item;
-use App\Models\Permission;
-use Illuminate\Container\Container;
-use App\Models\EggVariable;
 use League\Fractal\Resource\Collection;
 use League\Fractal\Resource\NullResource;
+use League\Fractal\Resource\Item;
+use Illuminate\Container\Container;
 use App\Services\Servers\StartupCommandService;
 
 class ServerTransformer extends BaseClientTransformer
@@ -35,7 +35,7 @@ class ServerTransformer extends BaseClientTransformer
 
         $user = $this->request->user();
 
-        return [
+        $data = [
             'server_owner' => $user->id === $server->owner_id,
             'identifier' => $server->uuid_short,
             'internal_id' => $server->id,
@@ -76,6 +76,12 @@ class ServerTransformer extends BaseClientTransformer
             'is_transferring' => !is_null($server->transfer),
             'ports' => $user->can(Permission::ACTION_ALLOCATION_READ, $server) ? $server->ports : collect(),
         ];
+
+        if (!config('panel.editable_server_descriptions')) {
+            unset($data['description']);
+        }
+
+        return $data;
     }
 
     /**
