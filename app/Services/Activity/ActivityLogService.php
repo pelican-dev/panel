@@ -130,7 +130,7 @@ class ActivityLogService
      * performing this action it will be logged to the disk but will not interrupt
      * the code flow.
      */
-    public function log(string $description = null): ActivityLog
+    public function log(?string $description = null): ActivityLog
     {
         $activity = $this->getActivity();
 

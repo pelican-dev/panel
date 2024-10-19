@@ -43,7 +43,7 @@ class AssignmentService
      * @throws \App\Exceptions\Service\Allocation\PortOutOfRangeException
      * @throws \App\Exceptions\Service\Allocation\TooManyPortsInRangeException
      */
-    public function handle(Node $node, array $data, Server $server = null): array
+    public function handle(Node $node, array $data, ?Server $server = null): array
     {
         $explode = explode('/', $data['allocation_ip']);
         if (count($explode) !== 1) {

@@ -70,7 +70,7 @@ class InitiateBackupService
      * @throws \App\Exceptions\Service\Backup\TooManyBackupsException
      * @throws \Symfony\Component\HttpKernel\Exception\TooManyRequestsHttpException
      */
-    public function handle(Server $server, string $name = null, bool $override = false): Backup
+    public function handle(Server $server, ?string $name = null, bool $override = false): Backup
     {
         $limit = config('backups.throttles.limit');
         $period = config('backups.throttles.period');
