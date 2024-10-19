@@ -127,13 +127,13 @@ class SoftwareVersionService
                 $head = explode(' ', file_get_contents(base_path('.git/HEAD')));
 
                 if (array_key_exists(1, $head)) {
-                    $path = base_path('.git/' . trim($head[1]));
+                    $path = base_path('.git/'.trim($head[1]));
                 }
             }
 
             if (isset($path) && file_exists($path)) {
                 return [
-                    'version' => 'canary (' . substr(file_get_contents($path), 0, 8) . ')',
+                    'version' => 'canary ('.substr(file_get_contents($path), 0, 8).')',
                     'is_git' => true,
                 ];
             }

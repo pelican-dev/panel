@@ -38,7 +38,7 @@ abstract class ApplicationApiIntegrationTestCase extends IntegrationTestCase
 
         $this
             ->withHeader('Accept', 'application/vnd.panel.v1+json')
-            ->withHeader('Authorization', 'Bearer ' . $this->key->identifier . $this->key->token);
+            ->withHeader('Authorization', 'Bearer '.$this->key->identifier.$this->key->token);
     }
 
     public function getApiUser(): User
@@ -58,7 +58,7 @@ abstract class ApplicationApiIntegrationTestCase extends IntegrationTestCase
     {
         $this->key = $this->createApiKey($user, $permissions);
 
-        $this->withHeader('Authorization', 'Bearer ' . $this->key->identifier . $this->key->token);
+        $this->withHeader('Authorization', 'Bearer '.$this->key->identifier.$this->key->token);
 
         return $this->key;
     }

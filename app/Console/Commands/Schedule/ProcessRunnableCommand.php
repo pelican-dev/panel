@@ -67,7 +67,7 @@ class ProcessRunnableCommand extends Command
         } catch (\Throwable|\Exception $exception) {
             logger()->error($exception, ['schedule_id' => $schedule->id]);
 
-            $this->error(__('commands.schedule.process.no_tasks') . " #$schedule->id: " . $exception->getMessage());
+            $this->error(__('commands.schedule.process.no_tasks')." #$schedule->id: ".$exception->getMessage());
         }
     }
 }

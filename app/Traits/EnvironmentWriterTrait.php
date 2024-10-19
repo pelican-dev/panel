@@ -36,10 +36,10 @@ trait EnvironmentWriterTrait
             $key = strtoupper($key);
             $saveValue = sprintf('%s=%s', $key, $this->escapeEnvironmentValue($value ?? ''));
 
-            if (preg_match_all('/^' . $key . '=(.*)$/m', $saveContents) < 1) {
-                $saveContents = $saveContents . PHP_EOL . $saveValue;
+            if (preg_match_all('/^'.$key.'=(.*)$/m', $saveContents) < 1) {
+                $saveContents = $saveContents.PHP_EOL.$saveValue;
             } else {
-                $saveContents = preg_replace('/^' . $key . '=(.*)$/m', $saveValue, $saveContents);
+                $saveContents = preg_replace('/^'.$key.'=(.*)$/m', $saveValue, $saveContents);
             }
         });
 

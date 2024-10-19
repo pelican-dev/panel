@@ -249,7 +249,7 @@ class EditEgg extends EditRecord
                 ->color('primary')
                 ->action(fn (EggExporterService $service, Egg $egg) => response()->streamDownload(function () use ($service, $egg) {
                     echo $service->handle($egg->id);
-                }, 'egg-' . $egg->getKebabName() . '.json'))
+                }, 'egg-'.$egg->getKebabName().'.json'))
                 ->authorize(fn () => auth()->user()->can('export egg')),
             Actions\Action::make('importEgg')
                 ->label('Import')

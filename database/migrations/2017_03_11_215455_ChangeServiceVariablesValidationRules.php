@@ -17,7 +17,7 @@ return new class extends Migration
 
         DB::transaction(function () {
             foreach (DB::table('service_variables')->get() as $variable) {
-                $variable->rules = ($variable->required) ? 'required|regex:' . $variable->rules : 'regex:' . $variable->rules;
+                $variable->rules = ($variable->required) ? 'required|regex:'.$variable->rules : 'regex:'.$variable->rules;
                 $variable->save();
             }
         });

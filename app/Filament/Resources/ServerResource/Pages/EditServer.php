@@ -66,14 +66,14 @@ class EditServer extends EditRecord
                                     ->prefixIcon('tabler-server')
                                     ->label('Display Name')
                                     ->suffixAction(Action::make('random')
-                                        ->icon('tabler-dice-' . random_int(1, 6))
+                                        ->icon('tabler-dice-'.random_int(1, 6))
                                         ->action(function (Set $set, Get $get) {
                                             $egg = Egg::find($get('egg_id'));
-                                            $prefix = $egg ? str($egg->name)->lower()->kebab() . '-' : '';
+                                            $prefix = $egg ? str($egg->name)->lower()->kebab().'-' : '';
 
                                             $word = (new RandomWordService())->word();
 
-                                            $set('name', $prefix . $word);
+                                            $set('name', $prefix.$word);
                                         }))
                                     ->columnSpan([
                                         'default' => 2,
@@ -541,7 +541,7 @@ class EditServer extends EditRecord
                                                 ->hintIcon('tabler-code')
                                                 ->label(fn (ServerVariable $serverVariable) => $serverVariable->variable->name)
                                                 ->hintIconTooltip(fn (ServerVariable $serverVariable) => implode('|', $serverVariable->variable->rules))
-                                                ->prefix(fn (ServerVariable $serverVariable) => '{{' . $serverVariable->variable->env_variable . '}}')
+                                                ->prefix(fn (ServerVariable $serverVariable) => '{{'.$serverVariable->variable->env_variable.'}}')
                                                 ->helperText(fn (ServerVariable $serverVariable) => empty($serverVariable->variable->description) ? '—' : $serverVariable->variable->description);
                                         }
 
@@ -606,7 +606,7 @@ class EditServer extends EditRecord
                                             ->disabled()
                                             ->label('JDBC Connection String')
                                             ->columnSpan(2)
-                                            ->formatStateUsing(fn (Get $get, $record) => 'jdbc:mysql://' . $get('username') . ':' . urlencode($record->password) . '@' . $record->host->host . ':' . $record->host->port . '/' . $get('database')),
+                                            ->formatStateUsing(fn (Get $get, $record) => 'jdbc:mysql://'.$get('username').':'.urlencode($record->password).'@'.$record->host->host.':'.$record->host->port.'/'.$get('database')),
                                     ])
                                     ->relationship('databases')
                                     ->deletable(false)
@@ -800,7 +800,7 @@ class EditServer extends EditRecord
             return $containsRuleIn;
         }
 
-        throw new Exception('Component type not supported: ' . $component::class);
+        throw new Exception('Component type not supported: '.$component::class);
     }
 
     private function getSelectOptionsFromRules(ServerVariable $serverVariable): array
@@ -818,7 +818,7 @@ class EditServer extends EditRecord
     protected function rotatePassword(DatabasePasswordService $service, $record, $set, $get): void
     {
         $newPassword = $service->handle($record);
-        $jdbcString = 'jdbc:mysql://' . $get('username') . ':' . urlencode($newPassword) . '@' . $record->host->host . ':' . $record->host->port . '/' . $get('database');
+        $jdbcString = 'jdbc:mysql://'.$get('username').':'.urlencode($newPassword).'@'.$record->host->host.':'.$record->host->port.'/'.$get('database');
 
         $set('password', $newPassword);
         $set('JDBC', $jdbcString);

@@ -259,7 +259,7 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
      */
     public function getNameAttribute(): string
     {
-        return trim($this->name_first . ' ' . $this->name_last);
+        return trim($this->name_first.' '.$this->name_last);
     }
 
     /**
@@ -379,7 +379,7 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
 
     public function getFilamentAvatarUrl(): ?string
     {
-        return 'https://gravatar.com/avatar/' . md5(strtolower($this->email));
+        return 'https://gravatar.com/avatar/'.md5(strtolower($this->email));
     }
 
     public function canTarget(IlluminateModel $user): bool

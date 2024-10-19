@@ -56,7 +56,7 @@ class NodeAutoDeployController extends Controller
 
         return new JsonResponse([
             'node' => $node->id,
-            'token' => $key->identifier . $key->token,
+            'token' => $key->identifier.$key->token,
         ]);
     }
 }

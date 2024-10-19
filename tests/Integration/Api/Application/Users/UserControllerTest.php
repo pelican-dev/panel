@@ -89,7 +89,7 @@ class UserControllerTest extends ApplicationApiIntegrationTestCase
     {
         $user = User::factory()->create();
 
-        $response = $this->getJson('/api/application/users/' . $user->id);
+        $response = $this->getJson('/api/application/users/'.$user->id);
         $response->assertStatus(Response::HTTP_OK);
         $response->assertJsonCount(2);
         $response->assertJsonStructure([
@@ -124,7 +124,7 @@ class UserControllerTest extends ApplicationApiIntegrationTestCase
         $user = User::factory()->create();
         $server = $this->createServerModel(['user_id' => $user->id]);
 
-        $response = $this->getJson('/api/application/users/' . $user->id . '?include=servers');
+        $response = $this->getJson('/api/application/users/'.$user->id.'?include=servers');
         $response->assertStatus(Response::HTTP_OK);
         $response->assertJsonCount(2);
         $response->assertJsonStructure([
@@ -157,7 +157,7 @@ class UserControllerTest extends ApplicationApiIntegrationTestCase
         $user = User::factory()->create();
         $this->createServerModel(['user_id' => $user->id]);
 
-        $response = $this->getJson('/api/application/users/' . $user->id . '?include=servers');
+        $response = $this->getJson('/api/application/users/'.$user->id.'?include=servers');
         $response->assertStatus(Response::HTTP_OK);
         $response->assertJsonCount(2)->assertJsonCount(1, 'attributes.relationships');
         $response->assertJsonStructure([
@@ -199,7 +199,7 @@ class UserControllerTest extends ApplicationApiIntegrationTestCase
         $user = User::factory()->create();
         $this->createNewDefaultApiKey($this->getApiUser(), ['r_users' => 0]);
 
-        $response = $this->getJson('/api/application/users/' . $user->id);
+        $response = $this->getJson('/api/application/users/'.$user->id);
         $this->assertAccessDeniedJson($response);
     }
 
@@ -242,7 +242,7 @@ class UserControllerTest extends ApplicationApiIntegrationTestCase
     {
         $user = User::factory()->create();
 
-        $response = $this->patchJson('/api/application/users/' . $user->id, [
+        $response = $this->patchJson('/api/application/users/'.$user->id, [
             'username' => 'new.test.name',
             'email' => 'new@emailtest.com',
             'first_name' => $user->name_first,
@@ -272,7 +272,7 @@ class UserControllerTest extends ApplicationApiIntegrationTestCase
         $user = User::factory()->create();
         $this->assertDatabaseHas('users', ['id' => $user->id]);
 
-        $response = $this->delete('/api/application/users/' . $user->id);
+        $response = $this->delete('/api/application/users/'.$user->id);
         $response->assertStatus(Response::HTTP_NO_CONTENT);
 
         $this->assertDatabaseMissing('users', ['id' => $user->id]);

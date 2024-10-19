@@ -33,7 +33,7 @@ class ListUsers extends ListRecords
                     ->visibleFrom('lg')
                     ->label('')
                     ->extraImgAttributes(['class' => 'rounded-full'])
-                    ->defaultImageUrl(fn (User $user) => 'https://gravatar.com/avatar/' . md5(strtolower($user->email))),
+                    ->defaultImageUrl(fn (User $user) => 'https://gravatar.com/avatar/'.md5(strtolower($user->email))),
                 TextColumn::make('external_id')
                     ->searchable()
                     ->hidden(),
@@ -55,7 +55,7 @@ class ListUsers extends ListRecords
                     ->counts('roles')
                     ->icon('tabler-users-group')
                     ->label('Roles')
-                    ->formatStateUsing(fn (User $user, $state) => $state . ($user->isRootAdmin() ? ' (Root Admin)' : '')),
+                    ->formatStateUsing(fn (User $user, $state) => $state.($user->isRootAdmin() ? ' (Root Admin)' : '')),
                 TextColumn::make('servers_count')
                     ->counts('servers')
                     ->icon('tabler-server')

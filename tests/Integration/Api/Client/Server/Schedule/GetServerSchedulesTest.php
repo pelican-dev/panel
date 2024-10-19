@@ -47,13 +47,13 @@ class GetServerSchedulesTest extends ClientApiIntegrationTestCase
             $response->assertJsonCount(1, 'data');
         }
 
-        $response->assertJsonCount(1, $prefix . 'attributes.relationships.tasks.data');
+        $response->assertJsonCount(1, $prefix.'attributes.relationships.tasks.data');
 
-        $response->assertJsonPath($prefix . 'object', Schedule::RESOURCE_NAME);
-        $response->assertJsonPath($prefix . 'attributes.relationships.tasks.data.0.object', Task::RESOURCE_NAME);
+        $response->assertJsonPath($prefix.'object', Schedule::RESOURCE_NAME);
+        $response->assertJsonPath($prefix.'attributes.relationships.tasks.data.0.object', Task::RESOURCE_NAME);
 
-        $this->assertJsonTransformedWith($response->json($prefix . 'attributes'), $schedule);
-        $this->assertJsonTransformedWith($response->json($prefix . 'attributes.relationships.tasks.data.0.attributes'), $task);
+        $this->assertJsonTransformedWith($response->json($prefix.'attributes'), $schedule);
+        $this->assertJsonTransformedWith($response->json($prefix.'attributes.relationships.tasks.data.0.attributes'), $task);
     }
 
     /**

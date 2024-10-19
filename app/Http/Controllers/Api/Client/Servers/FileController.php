@@ -83,7 +83,7 @@ class FileController extends ClientApiController
                 'file_path' => rawurldecode($request->get('file')),
                 'server_uuid' => $server->uuid,
             ])
-            ->handle($server->node, $request->user()->id . $server->uuid);
+            ->handle($server->node, $request->user()->id.$server->uuid);
 
         Activity::event('server:file.download')->property('file', $request->get('file'))->log();
 

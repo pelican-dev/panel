@@ -19,7 +19,7 @@ class QueueWorkerServiceCommand extends Command
     public function handle(): void
     {
         $serviceName = $this->option('service-name') ?? $this->ask('Queue worker service name', 'pelican-queue');
-        $path = '/etc/systemd/system/' . $serviceName  . '.service';
+        $path = '/etc/systemd/system/'.$serviceName.'.service';
 
         $fileExists = file_exists($path);
         if ($fileExists && !$this->option('overwrite') && !$this->confirm('The service file already exists. Do you want to overwrite it?')) {
@@ -65,7 +65,7 @@ WantedBy=multi-user.target
         if ($fileExists) {
             $result = Process::run("systemctl restart $serviceName.service");
             if ($result->failed()) {
-                $this->error('Error restarting service: ' . $result->errorOutput());
+                $this->error('Error restarting service: '.$result->errorOutput());
 
                 return;
             }
@@ -74,7 +74,7 @@ WantedBy=multi-user.target
         } else {
             $result = Process::run("systemctl enable --now $serviceName.service");
             if ($result->failed()) {
-                $this->error('Error enabling service: ' . $result->errorOutput());
+                $this->error('Error enabling service: '.$result->errorOutput());
 
                 return;
             }

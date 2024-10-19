@@ -48,7 +48,7 @@ class EggControllerTest extends ApplicationApiIntegrationTestCase
             $this->assertSame(
                 $expected,
                 $actual,
-                'Unable to find JSON fragment: ' . PHP_EOL . PHP_EOL . "[$expected]" . PHP_EOL . PHP_EOL . 'within' . PHP_EOL . PHP_EOL . "[$actual]."
+                'Unable to find JSON fragment: '.PHP_EOL.PHP_EOL."[$expected]".PHP_EOL.PHP_EOL.'within'.PHP_EOL.PHP_EOL."[$actual]."
             );
         }
     }
@@ -60,7 +60,7 @@ class EggControllerTest extends ApplicationApiIntegrationTestCase
     {
         $egg = Egg::query()->findOrFail(1);
 
-        $response = $this->getJson('/api/application/eggs/' . $egg->id);
+        $response = $this->getJson('/api/application/eggs/'.$egg->id);
         $response->assertStatus(Response::HTTP_OK);
         $response->assertJsonStructure([
             'object',
@@ -82,7 +82,7 @@ class EggControllerTest extends ApplicationApiIntegrationTestCase
     {
         $egg = Egg::query()->findOrFail(1);
 
-        $response = $this->getJson('/api/application/eggs/' . $egg->id . '?include=servers,variables');
+        $response = $this->getJson('/api/application/eggs/'.$egg->id.'?include=servers,variables');
         $response->assertStatus(Response::HTTP_OK);
         $response->assertJsonStructure([
             'object',

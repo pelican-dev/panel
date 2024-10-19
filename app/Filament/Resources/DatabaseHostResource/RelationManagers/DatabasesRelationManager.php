@@ -37,7 +37,7 @@ class DatabasesRelationManager extends RelationManager
                 TextInput::make('JDBC')
                     ->label('JDBC Connection String')
                     ->columnSpanFull()
-                    ->formatStateUsing(fn (Get $get, Database $database) => 'jdbc:mysql://' . $get('username') . ':' . urlencode($database->password) . '@' . $database->host->host . ':' . $database->host->port . '/' . $get('database')),
+                    ->formatStateUsing(fn (Get $get, Database $database) => 'jdbc:mysql://'.$get('username').':'.urlencode($database->password).'@'.$database->host->host.':'.$database->host->port.'/'.$get('database')),
             ]);
     }
 
@@ -64,7 +64,7 @@ class DatabasesRelationManager extends RelationManager
     protected function rotatePassword(DatabasePasswordService $service, Database $database, $set, $get): void
     {
         $newPassword = $service->handle($database);
-        $jdbcString = 'jdbc:mysql://' . $get('username') . ':' . urlencode($newPassword) . '@' . $database->host->host . ':' . $database->host->port . '/' . $get('database');
+        $jdbcString = 'jdbc:mysql://'.$get('username').':'.urlencode($newPassword).'@'.$database->host->host.':'.$database->host->port.'/'.$get('database');
 
         $set('password', $newPassword);
         $set('JDBC', $jdbcString);

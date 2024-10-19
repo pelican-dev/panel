@@ -16,7 +16,7 @@ class AppSettingsCommand extends Command
         $path = base_path('.env');
         if (!file_exists($path)) {
             $this->comment('Copying example .env file');
-            copy($path . '.example', $path);
+            copy($path.'.example', $path);
         }
 
         if (!config('app.key')) {

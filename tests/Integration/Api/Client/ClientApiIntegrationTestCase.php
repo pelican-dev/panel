@@ -69,7 +69,7 @@ abstract class ClientApiIntegrationTestCase extends IntegrationTestCase
                 throw new \InvalidArgumentException(sprintf('Cannot create link for Model of type %s', class_basename($model)));
         }
 
-        return $link . ($append ? '/' . ltrim($append, '/') : '');
+        return $link.($append ? '/'.ltrim($append, '/') : '');
     }
 
     /**

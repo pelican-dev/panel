@@ -62,7 +62,7 @@ class ActivityLogTransformer extends BaseClientTransformer
                 if (!is_array($value)) {
                     // Perform some directory normalization at this point.
                     if ($key === 'directory') {
-                        $value = str_replace('//', '/', '/' . trim($value, '/') . '/');
+                        $value = str_replace('//', '/', '/'.trim($value, '/').'/');
                     }
 
                     return [$key => $value];
@@ -94,7 +94,7 @@ class ActivityLogTransformer extends BaseClientTransformer
             return false;
         }
 
-        $str = trans('activity.' . str_replace(':', '.', $model->event));
+        $str = trans('activity.'.str_replace(':', '.', $model->event));
         preg_match_all('/:(?<key>[\w.-]+\w)(?:[^\w:]?|$)/', $str, $matches);
 
         $exclude = array_merge($matches['key'], ['ip', 'useragent', 'using_sftp']);

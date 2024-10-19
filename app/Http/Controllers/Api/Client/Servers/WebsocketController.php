@@ -59,14 +59,14 @@ class WebsocketController extends ClientApiController
                 'server_uuid' => $server->uuid,
                 'permissions' => $permissions,
             ])
-            ->handle($node, $user->id . $server->uuid);
+            ->handle($node, $user->id.$server->uuid);
 
         $socket = str_replace(['https://', 'http://'], ['wss://', 'ws://'], $node->getConnectionAddress());
 
         return new JsonResponse([
             'data' => [
                 'token' => $token->toString(),
-                'socket' => $socket . sprintf('/api/servers/%s/ws', $server->uuid),
+                'socket' => $socket.sprintf('/api/servers/%s/ws', $server->uuid),
             ],
         ]);
     }

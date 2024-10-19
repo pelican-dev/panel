@@ -112,9 +112,9 @@ return new class extends Migration
             }
 
             if (!empty($values)) {
-                $string = 'VALUES ' . implode(', ', array_fill(0, count($values) / 2, '(?, ?)'));
+                $string = 'VALUES '.implode(', ', array_fill(0, count($values) / 2, '(?, ?)'));
 
-                DB::insert('INSERT INTO permissions(`subuser_id`, `permission`) ' . $string, $values);
+                DB::insert('INSERT INTO permissions(`subuser_id`, `permission`) '.$string, $values);
             }
         }
 

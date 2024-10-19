@@ -21,7 +21,7 @@ return new class extends Migration
             $inserts[] = [
                 'user_id' => $server->owner_id,
                 'server_id' => $server->id,
-                'secret' => DaemonKeyRepositoryInterface::INTERNAL_KEY_IDENTIFIER . str_random(40),
+                'secret' => DaemonKeyRepositoryInterface::INTERNAL_KEY_IDENTIFIER.str_random(40),
                 'expires_at' => Carbon::now()->addMinutes(config('panel.api.key_expire_time', 720))->toDateTimeString(),
                 'created_at' => Carbon::now()->toDateTimeString(),
                 'updated_at' => Carbon::now()->toDateTimeString(),

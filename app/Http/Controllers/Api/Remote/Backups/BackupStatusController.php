@@ -64,7 +64,7 @@ class BackupStatusController extends Controller
                 // deleted easily. Also does not make sense to have a locked backup on the system
                 // that is failed.
                 'is_locked' => $successful ? $model->is_locked : false,
-                'checksum' => $successful ? ($request->input('checksum_type') . ':' . $request->input('checksum')) : null,
+                'checksum' => $successful ? ($request->input('checksum_type').':'.$request->input('checksum')) : null,
                 'bytes' => $successful ? $request->input('size') : 0,
                 'completed_at' => CarbonImmutable::now(),
             ])->save();

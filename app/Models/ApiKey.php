@@ -110,14 +110,14 @@ class ApiKey extends Model
         'memo',
         'last_used_at',
         'expires_at',
-        'r_' . AdminAcl::RESOURCE_USERS,
-        'r_' . AdminAcl::RESOURCE_ALLOCATIONS,
-        'r_' . AdminAcl::RESOURCE_DATABASE_HOSTS,
-        'r_' . AdminAcl::RESOURCE_SERVER_DATABASES,
-        'r_' . AdminAcl::RESOURCE_EGGS,
-        'r_' . AdminAcl::RESOURCE_NODES,
-        'r_' . AdminAcl::RESOURCE_SERVERS,
-        'r_' . AdminAcl::RESOURCE_MOUNTS,
+        'r_'.AdminAcl::RESOURCE_USERS,
+        'r_'.AdminAcl::RESOURCE_ALLOCATIONS,
+        'r_'.AdminAcl::RESOURCE_DATABASE_HOSTS,
+        'r_'.AdminAcl::RESOURCE_SERVER_DATABASES,
+        'r_'.AdminAcl::RESOURCE_EGGS,
+        'r_'.AdminAcl::RESOURCE_NODES,
+        'r_'.AdminAcl::RESOURCE_SERVERS,
+        'r_'.AdminAcl::RESOURCE_MOUNTS,
     ];
 
     /**
@@ -146,14 +146,14 @@ class ApiKey extends Model
         'allowed_ips.*' => 'string',
         'last_used_at' => 'nullable|date',
         'expires_at' => 'nullable|date',
-        'r_' . AdminAcl::RESOURCE_USERS => 'integer|min:0|max:3',
-        'r_' . AdminAcl::RESOURCE_ALLOCATIONS => 'integer|min:0|max:3',
-        'r_' . AdminAcl::RESOURCE_DATABASE_HOSTS => 'integer|min:0|max:3',
-        'r_' . AdminAcl::RESOURCE_SERVER_DATABASES => 'integer|min:0|max:3',
-        'r_' . AdminAcl::RESOURCE_EGGS => 'integer|min:0|max:3',
-        'r_' . AdminAcl::RESOURCE_NODES => 'integer|min:0|max:3',
-        'r_' . AdminAcl::RESOURCE_SERVERS => 'integer|min:0|max:3',
-        'r_' . AdminAcl::RESOURCE_MOUNTS => 'integer|min:0|max:3',
+        'r_'.AdminAcl::RESOURCE_USERS => 'integer|min:0|max:3',
+        'r_'.AdminAcl::RESOURCE_ALLOCATIONS => 'integer|min:0|max:3',
+        'r_'.AdminAcl::RESOURCE_DATABASE_HOSTS => 'integer|min:0|max:3',
+        'r_'.AdminAcl::RESOURCE_SERVER_DATABASES => 'integer|min:0|max:3',
+        'r_'.AdminAcl::RESOURCE_EGGS => 'integer|min:0|max:3',
+        'r_'.AdminAcl::RESOURCE_NODES => 'integer|min:0|max:3',
+        'r_'.AdminAcl::RESOURCE_SERVERS => 'integer|min:0|max:3',
+        'r_'.AdminAcl::RESOURCE_MOUNTS => 'integer|min:0|max:3',
     ];
 
     protected function casts(): array
@@ -166,14 +166,14 @@ class ApiKey extends Model
             'token' => 'encrypted',
             self::CREATED_AT => 'datetime',
             self::UPDATED_AT => 'datetime',
-            'r_' . AdminAcl::RESOURCE_USERS => 'int',
-            'r_' . AdminAcl::RESOURCE_ALLOCATIONS => 'int',
-            'r_' . AdminAcl::RESOURCE_DATABASE_HOSTS => 'int',
-            'r_' . AdminAcl::RESOURCE_SERVER_DATABASES => 'int',
-            'r_' . AdminAcl::RESOURCE_EGGS => 'int',
-            'r_' . AdminAcl::RESOURCE_NODES => 'int',
-            'r_' . AdminAcl::RESOURCE_SERVERS => 'int',
-            'r_' . AdminAcl::RESOURCE_MOUNTS => 'int',
+            'r_'.AdminAcl::RESOURCE_USERS => 'int',
+            'r_'.AdminAcl::RESOURCE_ALLOCATIONS => 'int',
+            'r_'.AdminAcl::RESOURCE_DATABASE_HOSTS => 'int',
+            'r_'.AdminAcl::RESOURCE_SERVER_DATABASES => 'int',
+            'r_'.AdminAcl::RESOURCE_EGGS => 'int',
+            'r_'.AdminAcl::RESOURCE_NODES => 'int',
+            'r_'.AdminAcl::RESOURCE_SERVERS => 'int',
+            'r_'.AdminAcl::RESOURCE_MOUNTS => 'int',
         ];
     }
 
@@ -227,6 +227,6 @@ class ApiKey extends Model
     {
         $prefix = self::getPrefixForType($type);
 
-        return $prefix . Str::random(self::IDENTIFIER_LENGTH - strlen($prefix));
+        return $prefix.Str::random(self::IDENTIFIER_LENGTH - strlen($prefix));
     }
 }

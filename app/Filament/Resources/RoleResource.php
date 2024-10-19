@@ -40,12 +40,12 @@ class RoleResource extends Resource
             $options = [];
 
             foreach (RolePermissionPrefixes::cases() as $prefix) {
-                $options[$prefix->value . ' ' . strtolower($model->value)] = Str::headline($prefix->value);
+                $options[$prefix->value.' '.strtolower($model->value)] = Str::headline($prefix->value);
             }
 
             if (array_key_exists($model->value, Role::MODEL_SPECIFIC_PERMISSIONS)) {
                 foreach (Role::MODEL_SPECIFIC_PERMISSIONS[$model->value] as $permission) {
-                    $options[$permission . ' ' . strtolower($model->value)] = Str::headline($permission);
+                    $options[$permission.' '.strtolower($model->value)] = Str::headline($permission);
                 }
             }
 
@@ -56,7 +56,7 @@ class RoleResource extends Resource
             $options = [];
 
             foreach ($prefixes as $prefix) {
-                $options[$prefix . ' ' . strtolower($model)] = Str::headline($prefix);
+                $options[$prefix.' '.strtolower($model)] = Str::headline($prefix);
             }
 
             $permissions[] = self::makeSection($model, $options);
@@ -88,10 +88,10 @@ class RoleResource extends Resource
     {
         $icon = null;
 
-        if (class_exists('\App\Filament\Resources\\' . $model . 'Resource')) {
-            $icon = ('\App\Filament\Resources\\' . $model . 'Resource')::getNavigationIcon();
-        } elseif (class_exists('\App\Filament\Pages\\' . $model)) {
-            $icon = ('\App\Filament\Pages\\' . $model)::getNavigationIcon();
+        if (class_exists('\App\Filament\Resources\\'.$model.'Resource')) {
+            $icon = ('\App\Filament\Resources\\'.$model.'Resource')::getNavigationIcon();
+        } elseif (class_exists('\App\Filament\Pages\\'.$model)) {
+            $icon = ('\App\Filament\Pages\\'.$model)::getNavigationIcon();
         }
 
         return Section::make(Str::headline(Str::plural($model)))
@@ -101,11 +101,11 @@ class RoleResource extends Resource
             ->icon($icon)
             ->headerActions([
                 Action::make('count')
-                    ->label(fn (Get $get) => count($get(strtolower($model) . '_list')))
+                    ->label(fn (Get $get) => count($get(strtolower($model).'_list')))
                     ->badge(),
             ])
             ->schema([
-                CheckboxList::make(strtolower($model) . '_list')
+                CheckboxList::make(strtolower($model).'_list')
                     ->label('')
                     ->options($options)
                     ->columns()

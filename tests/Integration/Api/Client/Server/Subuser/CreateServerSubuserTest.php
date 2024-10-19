@@ -23,7 +23,7 @@ class CreateServerSubuserTest extends ClientApiIntegrationTestCase
     {
         [$user, $server] = $this->generateTestAccount($permissions);
 
-        $response = $this->actingAs($user)->postJson($this->link($server) . '/users', [
+        $response = $this->actingAs($user)->postJson($this->link($server).'/users', [
             'email' => $email = $this->faker->email(),
             'permissions' => [
                 Permission::ACTION_USER_CREATE,
@@ -60,7 +60,7 @@ class CreateServerSubuserTest extends ClientApiIntegrationTestCase
             Permission::ACTION_CONTROL_CONSOLE,
         ]);
 
-        $response = $this->actingAs($user)->postJson($this->link($server) . '/users', [
+        $response = $this->actingAs($user)->postJson($this->link($server).'/users', [
             'email' => $this->faker->email(),
             'permissions' => [
                 Permission::ACTION_USER_CREATE,
@@ -80,9 +80,9 @@ class CreateServerSubuserTest extends ClientApiIntegrationTestCase
     {
         [$user, $server] = $this->generateTestAccount();
 
-        $email = str_repeat(Str::random(35), 7) . '@gmail.com'; // 255 is the hard limit for the column in MySQL.
+        $email = str_repeat(Str::random(35), 7).'@gmail.com'; // 255 is the hard limit for the column in MySQL.
 
-        $response = $this->actingAs($user)->postJson($this->link($server) . '/users', [
+        $response = $this->actingAs($user)->postJson($this->link($server).'/users', [
             'email' => $email,
             'permissions' => [
                 Permission::ACTION_USER_CREATE,
@@ -91,8 +91,8 @@ class CreateServerSubuserTest extends ClientApiIntegrationTestCase
 
         $response->assertOk();
 
-        $response = $this->actingAs($user)->postJson($this->link($server) . '/users', [
-            'email' => $email . '.au',
+        $response = $this->actingAs($user)->postJson($this->link($server).'/users', [
+            'email' => $email.'.au',
             'permissions' => [
                 Permission::ACTION_USER_CREATE,
             ],
@@ -114,7 +114,7 @@ class CreateServerSubuserTest extends ClientApiIntegrationTestCase
         /** @var \App\Models\User $existing */
         $existing = User::factory()->create(['email' => $this->faker->email()]);
 
-        $response = $this->actingAs($user)->postJson($this->link($server) . '/users', [
+        $response = $this->actingAs($user)->postJson($this->link($server).'/users', [
             'email' => $existing->email,
             'permissions' => [
                 Permission::ACTION_USER_CREATE,
@@ -134,7 +134,7 @@ class CreateServerSubuserTest extends ClientApiIntegrationTestCase
     {
         [$user, $server] = $this->generateTestAccount();
 
-        $response = $this->actingAs($user)->postJson($this->link($server) . '/users', [
+        $response = $this->actingAs($user)->postJson($this->link($server).'/users', [
             'email' => $email = $this->faker->email(),
             'permissions' => [
                 Permission::ACTION_USER_CREATE,
@@ -143,7 +143,7 @@ class CreateServerSubuserTest extends ClientApiIntegrationTestCase
 
         $response->assertOk();
 
-        $response = $this->actingAs($user)->postJson($this->link($server) . '/users', [
+        $response = $this->actingAs($user)->postJson($this->link($server).'/users', [
             'email' => $email,
             'permissions' => [
                 Permission::ACTION_USER_CREATE,

@@ -115,7 +115,7 @@ class ServersController extends Controller
     {
         $this->suspensionService->toggle($server, $request->input('action'));
         $this->alert->success(trans('admin/server.alerts.suspension_toggled', [
-            'status' => $request->input('action') . 'ed',
+            'status' => $request->input('action').'ed',
         ]))->flash();
 
         return redirect()->route('admin.servers.view.manage', $server->id);

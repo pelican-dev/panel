@@ -50,7 +50,7 @@ class PruneImagesCommand extends Command
             $count = count($response['ImagesDeleted']);
 
             $useBinaryPrefix = config('panel.use_binary_prefix');
-            $space = round($useBinaryPrefix ? $response['SpaceReclaimed'] / 1024 / 1024 : $response['SpaceReclaimed'] / 1000 / 1000, 2) . ($useBinaryPrefix ? ' MiB' : ' MB');
+            $space = round($useBinaryPrefix ? $response['SpaceReclaimed'] / 1024 / 1024 : $response['SpaceReclaimed'] / 1000 / 1000, 2).($useBinaryPrefix ? ' MiB' : ' MB');
 
             $this->info("Node {$node->id}: Cleaned up {$count} dangling docker images. ({$space})");
         } catch (Exception $exception) {
