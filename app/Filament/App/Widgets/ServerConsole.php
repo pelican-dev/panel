@@ -23,21 +23,21 @@ class ServerConsole extends Widget
 
     public string $input = '';
 
-    public function up()
+    public function up(): void
     {
         $this->historyIndex = min($this->historyIndex + 1, count($this->history) - 1);
 
         $this->input = $this->history[$this->historyIndex] ?? '';
     }
 
-    public function down()
+    public function down(): void
     {
         $this->historyIndex = max($this->historyIndex - 1, -1);
 
         $this->input = $this->history[$this->historyIndex] ?? '';
     }
 
-    public function enter()
+    public function enter(): void
     {
         if (!empty($this->input)) {
             $this->dispatch('sendServerCommand', command: $this->input);
@@ -49,8 +49,10 @@ class ServerConsole extends Widget
         }
     }
 
-    public function storeStats(array $data)
+    public function storeStats($data): void
     {
+        $data = json_decode($data);
+
         $timestamp = now()->getTimestamp();
 
         foreach ($data as $key => $value) {
