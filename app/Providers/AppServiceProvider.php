@@ -81,9 +81,9 @@ class AppServiceProvider extends ServiceProvider
 
         // Assign custom validation rules
         Validator::extend('port', function ($attribute, $value, $parameters, $validator) {
-            $rule = InvokableValidationRule::make(new Port(...$parameters));
-            $rule->setValidator($validator);
-            $rule->setData($validator->getData());
+            $rule = InvokableValidationRule::make(new Port());
+            $rule->setValidator($validator); // @phpstan-ignore-line
+            $rule->setData($validator->getData()); // @phpstan-ignore-line
 
             $result = $rule->passes($attribute, $value);
             if (!$result) {
