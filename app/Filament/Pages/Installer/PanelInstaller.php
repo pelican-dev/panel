@@ -159,12 +159,12 @@ class PanelInstaller extends SimplePage implements HasForms
         }
     }
 
-    public function createAdminUser(): void
+    public function createAdminUser(UserCreationService $userCreationService): void
     {
         try {
             $userData = array_get($this->data, 'user');
             $userData['root_admin'] = true;
-            $this->user = app(UserCreationService::class)->handle($userData);
+            $this->user = $userCreationService->handle($userData);
         } catch (Exception $exception) {
             report($exception);
 

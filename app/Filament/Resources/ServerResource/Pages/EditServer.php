@@ -749,8 +749,8 @@ class EditServer extends EditRecord
                 ->color('danger')
                 ->label('Delete')
                 ->requiresConfirmation()
-                ->action(function (Server $server) {
-                    resolve(ServerDeletionService::class)->handle($server);
+                ->action(function (Server $server, ServerDeletionService $service) {
+                    $service->handle($server);
 
                     return redirect(ListServers::getUrl());
                 })

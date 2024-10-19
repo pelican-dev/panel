@@ -21,6 +21,13 @@ class EditDatabaseHost extends EditRecord
 {
     protected static string $resource = DatabaseHostResource::class;
 
+    private HostUpdateService $hostUpdateService;
+
+    public function boot(HostUpdateService $hostUpdateService)
+    {
+        $this->hostUpdateService = $hostUpdateService;
+    }
+
     public function form(Form $form): Form
     {
         return $form
@@ -99,7 +106,7 @@ class EditDatabaseHost extends EditRecord
 
     protected function handleRecordUpdate($record, array $data): Model
     {
-        return resolve(HostUpdateService::class)->handle($record->id, $data);
+        return $this->hostUpdateService->handle($record->id, $data);
     }
 
     public function exception($e, $stopPropagation): void

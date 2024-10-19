@@ -1,6 +1,9 @@
 includes:
     - vendor/larastan/larastan/extension.neon
 
+rules:
+    - App\PHPStan\ForbiddenGlobalFunctionsRule
+
 parameters:
 
     paths:
@@ -13,8 +16,4 @@ parameters:
         # Prologue\Alerts defines its methods from its configuration file dynamically
         - '#^Call to an undefined method Prologue\\Alerts\\AlertsMessageBag::(danger|success|info|warning)\(\)\.$#'
 
-#    excludePaths:
-#        - ./*/*/FileToBeExcluded.php
-#
-#    checkMissingIterableValueType: false
-
+    # checkMissingIterableValueType: false
