@@ -10,7 +10,9 @@ use App\Exceptions\Http\TwoFactorAuthRequiredException;
 class RequireTwoFactorAuthentication
 {
     public const LEVEL_NONE = 0;
+
     public const LEVEL_ADMIN = 1;
+
     public const LEVEL_ALL = 2;
 
     /**

@@ -741,6 +741,7 @@ class EditServer extends EditRecord
             ]);
 
     }
+
     protected function getHeaderActions(): array
     {
         return [
@@ -763,6 +764,7 @@ class EditServer extends EditRecord
         ];
 
     }
+
     protected function getFormActions(): array
     {
         return [];

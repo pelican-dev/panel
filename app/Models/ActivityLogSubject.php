@@ -25,6 +25,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class ActivityLogSubject extends Pivot
 {
     public $incrementing = true;
+
     public $timestamps = false;
 
     protected $table = 'activity_log_subjects';

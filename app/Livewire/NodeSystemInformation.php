@@ -8,6 +8,7 @@ use Livewire\Component;
 class NodeSystemInformation extends Component
 {
     public Node $node;
+
     public string $sizeClasses;
 
     public function render()

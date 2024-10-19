@@ -7,7 +7,9 @@ use App\Models\DatabaseHost;
 class DynamicDatabaseConnection
 {
     public const DB_CHARSET = 'utf8';
+
     public const DB_COLLATION = 'utf8_unicode_ci';
+
     public const DB_DRIVER = 'mysql';
 
     /**

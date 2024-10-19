@@ -14,8 +14,11 @@ use Symfony\Component\HttpKernel\Exception\HttpExceptionInterface;
 class DisplayException extends PanelException implements HttpExceptionInterface
 {
     public const LEVEL_DEBUG = 'debug';
+
     public const LEVEL_INFO = 'info';
+
     public const LEVEL_WARNING = 'warning';
+
     public const LEVEL_ERROR = 'error';
 
     /**

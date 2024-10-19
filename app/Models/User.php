@@ -99,6 +99,7 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
     use Notifiable;
 
     public const USER_LEVEL_USER = 0;
+
     public const USER_LEVEL_ADMIN = 1;
 
     /**

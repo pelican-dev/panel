@@ -45,6 +45,7 @@ use LogicException;
 class CreateServer extends CreateRecord
 {
     protected static string $resource = ServerResource::class;
+
     protected static bool $canCreateAnother = false;
 
     public ?Node $node = null;

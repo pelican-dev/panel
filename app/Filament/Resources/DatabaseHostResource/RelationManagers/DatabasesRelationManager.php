@@ -40,6 +40,7 @@ class DatabasesRelationManager extends RelationManager
                     ->formatStateUsing(fn (Get $get, Database $database) => 'jdbc:mysql://' . $get('username') . ':' . urlencode($database->password) . '@' . $database->host->host . ':' . $database->host->port . '/' . $get('database')),
             ]);
     }
+
     public function table(Table $table): Table
     {
         return $table
