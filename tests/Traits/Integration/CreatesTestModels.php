@@ -66,7 +66,6 @@ trait CreatesTestModels
      * is assumed that the user is actually a subuser of the server.
      *
      * @param  string[]  $permissions
-     *
      * @return array{\App\Models\User, \App\Models\Server}
      */
     public function generateTestAccount(array $permissions = []): array

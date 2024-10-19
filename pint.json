@@ -2,7 +2,6 @@
     "preset": "laravel",
     "rules": {
         "not_operator_with_successor_space": false,
-        "ordered_imports": false,
-        "phpdoc_separation": false
+        "ordered_imports": false
     }
 }
