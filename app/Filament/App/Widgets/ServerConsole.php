@@ -6,6 +6,7 @@ use App\Models\Server;
 use App\Models\User;
 use Filament\Widgets\Widget;
 use Illuminate\Support\Arr;
+use Livewire\Attributes\On;
 
 class ServerConsole extends Widget
 {
@@ -49,6 +50,7 @@ class ServerConsole extends Widget
         }
     }
 
+    #[On('storeStats')]
     public function storeStats($data): void
     {
         $data = json_decode($data);
