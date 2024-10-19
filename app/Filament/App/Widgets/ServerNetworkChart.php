@@ -20,18 +20,18 @@ class ServerNetworkChart extends ChartWidget
     {
         $data = cache()->get("servers.{$this->server->id}.network");
 
-        $rx = collect($data['rx_bytes'])
+        $rx = collect($data)
             ->slice(-10)
             ->map(fn ($value, $key) => [
-                'rx' => Number::format($value, maxPrecision: 2, locale: auth()->user()->language),
+                'rx' => Number::format($value['rx_bytes'], maxPrecision: 2, locale: auth()->user()->language),
                 'timestamp' => Carbon::createFromTimestamp($key, (auth()->user()->timezone ?? 'UTC'))->format('H:i:s'),
             ])
             ->all();
 
-        $tx = collect($data['tx_bytes'])
+        $tx = collect($data)
             ->slice(-10)
             ->map(fn ($value, $key) => [
-                'tx' => Number::format($value, maxPrecision: 2, locale: auth()->user()->language),
+                'tx' => Number::format($value['tx_bytes'], maxPrecision: 2, locale: auth()->user()->language),
                 'timestamp' => Carbon::createFromTimestamp($key, (auth()->user()->timezone ?? 'UTC'))->format('H:i:s'),
             ])
             ->all();
