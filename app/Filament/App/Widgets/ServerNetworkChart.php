@@ -23,15 +23,16 @@ class ServerNetworkChart extends ChartWidget
         $rx = collect($data)
             ->slice(-10)
             ->map(fn ($value, $key) => [
-                'rx' => Number::format($value['rx_bytes'], maxPrecision: 2, locale: auth()->user()->language),
+                'rx' => $value->rx_bytes,
                 'timestamp' => Carbon::createFromTimestamp($key, (auth()->user()->timezone ?? 'UTC'))->format('H:i:s'),
             ])
             ->all();
 
+
         $tx = collect($data)
             ->slice(-10)
             ->map(fn ($value, $key) => [
-                'tx' => Number::format($value['tx_bytes'], maxPrecision: 2, locale: auth()->user()->language),
+                'tx' => $value->rx_bytes,
                 'timestamp' => Carbon::createFromTimestamp($key, (auth()->user()->timezone ?? 'UTC'))->format('H:i:s'),
             ])
             ->all();
@@ -76,15 +77,14 @@ class ServerNetworkChart extends ChartWidget
                         display: false,
                     },
                     ticks: {
-                        display: false,
+                        display: true,
                     },
+                    display: false, //debug
                 },
                 y: {
-                    grid: {
-                        display: false,
-                    },
                     ticks: {
-                        display: false,
+                        callback: (value) => '954' + value,
+                        display: true,
                     },
                 },
             }
