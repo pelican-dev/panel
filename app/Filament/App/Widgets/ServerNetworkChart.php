@@ -83,7 +83,6 @@ class ServerNetworkChart extends ChartWidget
                 },
                 y: {
                     ticks: {
-                        callback: (value) => '954' + value,
                         display: true,
                     },
                 },
