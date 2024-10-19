@@ -18,7 +18,9 @@ class ServerNetworkChart extends ChartWidget
 
     protected function getData(): array
     {
-        $rx = collect(cache()->get("servers.{$this->server->id}.rx_bytes"))
+        $data = cache()->get("servers.{$this->server->id}.network");
+
+        $rx = collect($data['rx_bytes'])
             ->slice(-10)
             ->map(fn ($value, $key) => [
                 'rx' => Number::format($value, maxPrecision: 2, locale: auth()->user()->language),
@@ -26,7 +28,7 @@ class ServerNetworkChart extends ChartWidget
             ])
             ->all();
 
-        $tx = collect(cache()->get("servers.{$this->server->id}.tx_bytes"))
+        $tx = collect($data['tx_bytes'])
             ->slice(-10)
             ->map(fn ($value, $key) => [
                 'tx' => Number::format($value, maxPrecision: 2, locale: auth()->user()->language),
