@@ -65,9 +65,9 @@ class ServerCpuChart extends ChartWidget
 
     public function getHeading(): string
     {
-        $cpu = Number::format(collect(cache()->get("servers.{$this->server->id}.cpu_absolute"))->last() ?? 0, maxPrecision: 2, locale: auth()->user()->language);
+        $cpu = Number::format(collect(cache()->get("servers.{$this->server->id}.cpu_absolute"))->last() ?? 0, maxPrecision: 2, locale: auth()->user()->language) . '%';
         $max = Number::format($this->server->cpu, locale: auth()->user()->language) . '%';
 
-        return 'CPU - ' . $cpu . '% Of ' . $max;
+        return 'CPU - ' . $cpu . ($this->server->cpu > 0 ? ' Of ' . $max : '');
     }
 }
