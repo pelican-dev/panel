@@ -29,6 +29,7 @@ class StartupModificationServiceTest extends IntegrationTestCase
                 'environment' => [
                     'BUNGEE_VERSION' => '$$',
                     'SERVER_JARFILE' => 'server.jar',
+                    'SERVER_PORT' => '1234',
                 ],
             ]);
 
@@ -54,11 +55,12 @@ class StartupModificationServiceTest extends IntegrationTestCase
                 'environment' => [
                     'BUNGEE_VERSION' => '1234',
                     'SERVER_JARFILE' => 'test.jar',
+                    'SERVER_PORT' => '1234',
                 ],
             ]);
 
         $this->assertInstanceOf(Server::class, $result);
-        $this->assertCount(2, $result->variables);
+        $this->assertCount(3, $result->variables);
         $this->assertSame($server->startup, $result->startup);
         $this->assertSame('1234', $result->variables[0]->server_value);
         $this->assertSame('test.jar', $result->variables[1]->server_value);
@@ -125,7 +127,7 @@ class StartupModificationServiceTest extends IntegrationTestCase
             ],
         ]);
 
-        $this->assertCount(2, $response->variables);
+        $this->assertCount(3, $response->variables);
         $this->assertSame('EXIST', $response->variables[0]->server_value);
         $this->assertSame('test.jar', $response->variables[1]->server_value);
 
@@ -135,12 +137,14 @@ class StartupModificationServiceTest extends IntegrationTestCase
                 'environment' => [
                     'BUNGEE_VERSION' => '1234',
                     'SERVER_JARFILE' => 'test.jar',
+                    'SERVER_PORT' => '1111',
                 ],
             ]);
 
-        $this->assertCount(2, $response->variables);
+        $this->assertCount(3, $response->variables);
         $this->assertSame('1234', $response->variables[0]->server_value);
         $this->assertSame('test.jar', $response->variables[1]->server_value);
+        $this->assertSame('1111', $response->variables[2]->server_value);
     }
 
     /**

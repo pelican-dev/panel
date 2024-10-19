@@ -87,6 +87,7 @@ class ServerCreationServiceTest extends IntegrationTestCase
             'environment' => [
                 'BUNGEE_VERSION' => '123',
                 'SERVER_JARFILE' => 'server2.jar',
+                'SERVER_PORT' => '1234',
             ],
             'start_on_completion' => true,
         ];
@@ -98,13 +99,14 @@ class ServerCreationServiceTest extends IntegrationTestCase
                 'environment' => [
                     'BUNGEE_VERSION' => '',
                     'SERVER_JARFILE' => 'server2.jar',
+                    'SERVER_PORT' => '1234',
                 ],
             ]), $deployment);
 
             $this->fail('This execution pathway should not be reached.');
         } catch (ValidationException $exception) {
-            $this->assertCount(1, $exception->errors());
             $this->assertArrayHasKey('environment.BUNGEE_VERSION', $exception->errors());
+            $this->assertArrayNotHasKey('environment.SERVER_JARFILE', $exception->errors());
             $this->assertSame('The Bungeecord Version variable field is required.', $exception->errors()['environment.BUNGEE_VERSION'][0]);
         }
 
@@ -114,7 +116,7 @@ class ServerCreationServiceTest extends IntegrationTestCase
         $this->assertNotNull($response->uuid);
         $this->assertSame($response->uuid_short, substr($response->uuid, 0, 8));
         $this->assertSame($egg->id, $response->egg_id);
-        $this->assertCount(2, $response->variables);
+        $this->assertCount(3, $response->variables);
         $this->assertSame('123', $response->variables[0]->server_value);
         $this->assertSame('server2.jar', $response->variables[1]->server_value);
 
@@ -167,6 +169,7 @@ class ServerCreationServiceTest extends IntegrationTestCase
             'environment' => [
                 'BUNGEE_VERSION' => '123',
                 'SERVER_JARFILE' => 'server2.jar',
+                'SERVER_PORT' => '1234',
             ],
         ];
 
