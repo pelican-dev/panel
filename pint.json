@@ -3,7 +3,6 @@
     "rules": {
         "not_operator_with_successor_space": false,
         "ordered_imports": false,
-        "phpdoc_align": false,
         "phpdoc_separation": false
     }
 }

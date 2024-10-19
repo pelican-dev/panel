@@ -64,7 +64,7 @@ class ActivityLogService
      *
      * @template T extends \Illuminate\Database\Eloquent\Model|\Illuminate\Contracts\Auth\Authenticatable
      *
-     * @param T|T[]|null $subjects
+     * @param  T|T[]|null  $subjects
      */
     public function subject(...$subjects): self
     {
@@ -100,8 +100,8 @@ class ActivityLogService
     /**
      * Sets a custom property on the activity log instance.
      *
-     * @param string|array $key
-     * @param mixed $value
+     * @param  string|array  $key
+     * @param  mixed  $value
      */
     public function property($key, $value = null): self
     {

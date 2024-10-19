@@ -64,8 +64,8 @@ class ResetPasswordController extends Controller
      * account do not automatically log them in. In those cases, send the user back to the login
      * form with a note telling them their password was changed and to log back in.
      *
-     * @param \Illuminate\Contracts\Auth\CanResetPassword|\App\Models\User $user
-     * @param string $password
+     * @param  \Illuminate\Contracts\Auth\CanResetPassword|\App\Models\User  $user
+     * @param  string  $password
      *
      * @throws \App\Exceptions\Model\DataValidationException
      */

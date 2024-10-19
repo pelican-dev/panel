@@ -15,7 +15,7 @@ class DaemonFileRepository extends DaemonRepository
     /**
      * Return the contents of a given file.
      *
-     * @param int|null $notLargerThan the maximum content length in bytes
+     * @param  int|null  $notLargerThan  the maximum content length in bytes
      *
      * @throws \GuzzleHttp\Exception\TransferException
      * @throws \App\Exceptions\Http\Server\FileSizeTooLargeException

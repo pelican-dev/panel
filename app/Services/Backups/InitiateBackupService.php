@@ -43,7 +43,7 @@ class InitiateBackupService
     /**
      * Sets the files to be ignored by this backup.
      *
-     * @param string[]|null $ignored
+     * @param  string[]|null  $ignored
      */
     public function setIgnoredFiles(?array $ignored): self
     {

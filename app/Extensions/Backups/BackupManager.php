@@ -145,7 +145,7 @@ class BackupManager
     /**
      * Unset the given adapter instances.
      *
-     * @param string|string[] $adapter
+     * @param  string|string[]  $adapter
      */
     public function forget(array|string $adapter): self
     {

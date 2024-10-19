@@ -11,7 +11,7 @@ class AdminServerFilter implements Filter
      * A multi-column filter for the servers table that allows an administrative user to search
      * across UUID, name, owner username, and owner email.
      *
-     * @param string $value
+     * @param  string  $value
      */
     public function __invoke(Builder $query, $value, string $property)
     {

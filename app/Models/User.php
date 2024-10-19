@@ -234,7 +234,7 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
     /**
      * Send the password reset notification.
      *
-     * @param string $token
+     * @param  string  $token
      */
     public function sendPasswordResetNotification($token)
     {
