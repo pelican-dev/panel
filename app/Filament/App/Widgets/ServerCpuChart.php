@@ -53,6 +53,9 @@ class ServerCpuChart extends ChartWidget
                 y: {
                     min: 0,
                 },
+                x: {
+                    display: false,
+                }
             },
             plugins: {
                 legend: {
