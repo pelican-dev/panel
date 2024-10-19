@@ -10,6 +10,8 @@ use Illuminate\Support\Str;
 
 class ServerOverview extends StatsOverviewWidget
 {
+    protected static ?string $pollingInterval = '1s';
+
     public ?Server $server = null;
 
     protected function getStats(): array

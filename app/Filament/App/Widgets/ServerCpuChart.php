@@ -10,7 +10,7 @@ use Illuminate\Support\Number;
 
 class ServerCpuChart extends ChartWidget
 {
-    protected static ?string $pollingInterval = '5s';
+    protected static ?string $pollingInterval = '1s';
     protected static ?string $maxHeight = '300px';
 
     public ?Server $server = null;
