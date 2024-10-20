@@ -40,8 +40,10 @@ abstract class IntegrationTestCase extends TestCase
 
     /**
      * The database connections that should have transactions.
+     *
+     * @return array
      */
-    protected function connectionsToTransact(): array
+    protected function connectionsToTransact()
     {
         return [DB::getDriverName()];
     }
