@@ -32,13 +32,15 @@ class ListDatabaseHosts extends ListRecords
                     ->sortable(),
                 TextColumn::make('username')
                     ->searchable(),
-                TextColumn::make('max_databases')
-                    ->numeric()
-                    ->sortable(),
+                TextColumn::make('databases_count')
+                    ->counts('databases')
+                    ->icon('tabler-database')
+                    ->label('Databases'),
                 TextColumn::make('node.name')
                     ->numeric()
                     ->sortable(),
             ])
+            ->checkIfRecordIsSelectableUsing(fn (DatabaseHost $databaseHost) => !$databaseHost->databases_count)
             ->actions([
                 EditAction::make(),
             ])
