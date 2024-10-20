@@ -5,6 +5,7 @@ namespace App\Repositories\Daemon;
 use App\Models\Node;
 use GuzzleHttp\Exception\TransferException;
 use App\Exceptions\Http\Connection\DaemonConnectionException;
+use Illuminate\Http\Client\Response;
 
 class DaemonConfigurationRepository extends DaemonRepository
 {
@@ -13,7 +14,7 @@ class DaemonConfigurationRepository extends DaemonRepository
      *
      * @throws \App\Exceptions\Http\Connection\DaemonConnectionException
      */
-    public function getSystemInformation(?int $version = null, $connectTimeout = 5): array
+    public function getSystemInformation(?int $version = null, int $connectTimeout = 5): array
     {
         try {
             $response = $this
@@ -34,7 +35,7 @@ class DaemonConfigurationRepository extends DaemonRepository
      *
      * @throws \App\Exceptions\Http\Connection\DaemonConnectionException
      */
-    public function update(Node $node)
+    public function update(Node $node): Response
     {
         try {
             return $this->getHttpClient()->post(

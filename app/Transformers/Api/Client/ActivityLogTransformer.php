@@ -6,6 +6,7 @@ use Illuminate\Support\Str;
 use App\Models\User;
 use App\Models\ActivityLog;
 use Illuminate\Database\Eloquent\Model;
+use League\Fractal\Resource\ResourceAbstract;
 
 class ActivityLogTransformer extends BaseClientTransformer
 {
@@ -34,7 +35,7 @@ class ActivityLogTransformer extends BaseClientTransformer
         ];
     }
 
-    public function includeActor(ActivityLog $model)
+    public function includeActor(ActivityLog $model): ResourceAbstract
     {
         if (!$model->actor instanceof User) {
             return $this->null();

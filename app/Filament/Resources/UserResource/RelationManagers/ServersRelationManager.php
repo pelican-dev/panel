@@ -32,18 +32,18 @@ class ServersRelationManager extends RelationManager
                     )
                     ->label('Suspend All Servers')
                     ->color('warning')
-                    ->action(function () use ($user) {
+                    ->action(function (SuspensionService $suspensionService) use ($user) {
                         foreach ($user->servers()->whereNot('status', ServerState::Suspended)->get() as $server) {
-                            resolve(SuspensionService::class)->toggle($server);
+                            $suspensionService->toggle($server);
                         }
                     }),
                 Actions\Action::make('toggleUnsuspend')
                     ->hidden(fn () => $user->servers()->where('status', ServerState::Suspended)->count() === 0)
                     ->label('Unsuspend All Servers')
                     ->color('primary')
-                    ->action(function () use ($user) {
+                    ->action(function (SuspensionService $suspensionService) use ($user) {
                         foreach ($user->servers()->where('status', ServerState::Suspended)->get() as $server) {
-                            resolve(SuspensionService::class)->toggle($server, SuspensionService::ACTION_UNSUSPEND);
+                            $suspensionService->toggle($server, SuspensionService::ACTION_UNSUSPEND);
                         }
                     }),
             ])

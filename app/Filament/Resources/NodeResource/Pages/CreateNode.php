@@ -398,7 +398,7 @@ class CreateNode extends CreateRecord
     protected function getRedirectUrlParameters(): array
     {
         return [
-            'tab' => '-configuration-tab',
+            'tab' => '-configuration-file-tab',
         ];
     }
 

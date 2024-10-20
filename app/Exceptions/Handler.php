@@ -273,6 +273,7 @@ class Handler extends ExceptionHandler
      */
     public static function toArray(\Throwable $e): array
     {
+        // @phpstan-ignore-next-line
         return (new self(app()))->convertExceptionToArray($e);
     }
 }

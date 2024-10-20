@@ -5,6 +5,7 @@ namespace App\Filament\Resources;
 use App\Filament\Resources\ApiKeyResource\Pages;
 use App\Models\ApiKey;
 use Filament\Resources\Resource;
+use Illuminate\Database\Eloquent\Model;
 
 class ApiKeyResource extends Resource
 {
@@ -21,7 +22,7 @@ class ApiKeyResource extends Resource
         return static::getModel()::where('key_type', '2')->count() ?: null;
     }
 
-    public static function canEdit($record): bool
+    public static function canEdit(Model $record): bool
     {
         return false;
     }

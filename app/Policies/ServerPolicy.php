@@ -41,7 +41,7 @@ class ServerPolicy
      * not call the before() function if there isn't a function matching the
      * policy permission.
      */
-    public function __call(string $name, mixed $arguments)
+    public function __call(string $name, mixed $arguments): void
     {
         // do nothing
     }

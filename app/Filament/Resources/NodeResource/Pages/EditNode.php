@@ -469,12 +469,12 @@ class EditNode extends EditRecord
         $this->fillForm();
     }
 
-    protected function getColumnSpan()
+    protected function getColumnSpan(): ?int
     {
         return null;
     }
 
-    protected function getColumnStart()
+    protected function getColumnStart(): ?int
     {
         return null;
     }

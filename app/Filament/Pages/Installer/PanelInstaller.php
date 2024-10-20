@@ -2,6 +2,7 @@
 
 namespace App\Filament\Pages\Installer;
 
+use App\Filament\Pages\Dashboard;
 use App\Filament\Pages\Installer\Steps\AdminUserStep;
 use App\Filament\Pages\Installer\Steps\CompletedStep;
 use App\Filament\Pages\Installer\Steps\DatabaseStep;
@@ -13,7 +14,6 @@ use App\Services\Users\UserCreationService;
 use App\Traits\CheckMigrationsTrait;
 use App\Traits\EnvironmentWriterTrait;
 use Exception;
-use Filament\Facades\Filament;
 use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\Wizard;
 use Filament\Forms\Concerns\InteractsWithForms;
@@ -24,6 +24,7 @@ use Filament\Notifications\Notification;
 use Filament\Pages\SimplePage;
 use Filament\Support\Enums\MaxWidth;
 use Filament\Support\Exceptions\Halt;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\HtmlString;
@@ -37,7 +38,7 @@ class PanelInstaller extends SimplePage implements HasForms
     use EnvironmentWriterTrait;
     use InteractsWithForms;
 
-    public $data = [];
+    public array $data = [];
 
     protected static string $view = 'filament.pages.installer';
 
@@ -54,7 +55,7 @@ class PanelInstaller extends SimplePage implements HasForms
         return env('APP_INSTALLED', true);
     }
 
-    public function mount()
+    public function mount(): void
     {
         abort_if(self::isInstalled(), 404);
 
@@ -93,7 +94,7 @@ class PanelInstaller extends SimplePage implements HasForms
         return 'data';
     }
 
-    public function submit()
+    public function submit(): RedirectResponse
     {
         // Disable installer
         $this->writeToEnvironment(['APP_INSTALLED' => 'true']);
@@ -103,7 +104,7 @@ class PanelInstaller extends SimplePage implements HasForms
         auth()->guard()->login($this->user, true);
 
         // Redirect to admin panel
-        return redirect(Filament::getPanel('admin')->getUrl());
+        return redirect(Dashboard::getUrl());
     }
 
     public function writeToEnv(string $key): void
@@ -159,12 +160,12 @@ class PanelInstaller extends SimplePage implements HasForms
         }
     }
 
-    public function createAdminUser(): void
+    public function createAdminUser(UserCreationService $userCreationService): void
     {
         try {
             $userData = array_get($this->data, 'user');
             $userData['root_admin'] = true;
-            $this->user = app(UserCreationService::class)->handle($userData);
+            $this->user = $userCreationService->handle($userData);
         } catch (Exception $exception) {
             report($exception);
 

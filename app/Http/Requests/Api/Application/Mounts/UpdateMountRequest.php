@@ -14,6 +14,6 @@ class UpdateMountRequest extends StoreMountRequest
         /** @var Mount $mount */
         $mount = $this->route()->parameter('mount');
 
-        return Mount::getRulesForUpdate($mount->id);
+        return Mount::getRulesForUpdate($mount);
     }
 }

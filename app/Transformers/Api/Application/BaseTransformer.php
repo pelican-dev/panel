@@ -54,6 +54,7 @@ abstract class BaseTransformer extends TransformerAbstract
      */
     public static function fromRequest(Request $request): self
     {
+        // @phpstan-ignore-next-line
         return app(static::class)->setRequest($request);
     }
 
