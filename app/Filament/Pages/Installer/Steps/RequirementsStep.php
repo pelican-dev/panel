@@ -18,12 +18,12 @@ class RequirementsStep
 
         $fields = [
             Section::make('PHP Version')
-                ->description(self::MIN_PHP_VERSION.' or newer')
+                ->description(self::MIN_PHP_VERSION . ' or newer')
                 ->icon($correctPhpVersion ? 'tabler-check' : 'tabler-x')
                 ->iconColor($correctPhpVersion ? 'success' : 'danger')
                 ->schema([
                     Placeholder::make('')
-                        ->content('Your PHP Version is '.PHP_VERSION.'.'),
+                        ->content('Your PHP Version is ' . PHP_VERSION . '.'),
                 ]),
         ];
 
@@ -49,7 +49,7 @@ class RequirementsStep
                     ->content('All needed PHP Extensions are installed.')
                     ->visible($allExtensionsInstalled),
                 Placeholder::make('')
-                    ->content('The following PHP Extensions are missing: '.implode(', ', array_keys($phpExtensions, false)))
+                    ->content('The following PHP Extensions are missing: ' . implode(', ', array_keys($phpExtensions, false)))
                     ->visible(!$allExtensionsInstalled),
             ]);
 
@@ -68,7 +68,7 @@ class RequirementsStep
                     ->content('All Folders have the correct permissions.')
                     ->visible($correctFolderPermissions),
                 Placeholder::make('')
-                    ->content('The following Folders have wrong permissions: '.implode(', ', array_keys($folderPermissions, false)))
+                    ->content('The following Folders have wrong permissions: ' . implode(', ', array_keys($folderPermissions, false)))
                     ->visible(!$correctFolderPermissions),
             ]);
 

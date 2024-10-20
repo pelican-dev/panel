@@ -48,7 +48,7 @@ class OAuthController extends Controller
         }
 
         try {
-            $user = User::query()->whereJsonContains('oauth->'.$driver, $oauthUser->getId())->firstOrFail();
+            $user = User::query()->whereJsonContains('oauth->'. $driver, $oauthUser->getId())->firstOrFail();
 
             $this->auth->guard()->login($user, true);
         } catch (Exception $e) {

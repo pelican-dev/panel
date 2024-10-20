@@ -21,7 +21,7 @@ class DynamicDatabaseConnection
             $host = DatabaseHost::query()->findOrFail($host);
         }
 
-        config()->set('database.connections.'.$connection, [
+        config()->set('database.connections.' . $connection, [
             'driver' => self::DB_DRIVER,
             'host' => $host->host,
             'port' => $host->port,

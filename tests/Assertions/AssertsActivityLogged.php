@@ -35,7 +35,7 @@ trait AssertsActivityLogged
     public function assertActivitySubjects(string $event, Model|array $subjects): void
     {
         if (is_array($subjects)) {
-            \Webmozart\Assert\Assert::lessThanEq(count(func_get_args()), 2, 'Invalid call to '.__METHOD__.': cannot provide additional arguments if providing an array.');
+            \Webmozart\Assert\Assert::lessThanEq(count(func_get_args()), 2, 'Invalid call to ' . __METHOD__ . ': cannot provide additional arguments if providing an array.');
         } else {
             $subjects = array_slice(func_get_args(), 1);
         }

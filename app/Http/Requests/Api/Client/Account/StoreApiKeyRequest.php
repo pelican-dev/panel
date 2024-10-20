@@ -39,7 +39,7 @@ class StoreApiKeyRequest extends ClientApiRequest
                         throw $exception;
                     }
                 } finally {
-                    $validator->errors()->addIf(!$valid, "allowed_ips.{$index}", '"'.$ip.'" is not a valid IP address or CIDR range.');
+                    $validator->errors()->addIf(!$valid, "allowed_ips.{$index}", '"' . $ip . '" is not a valid IP address or CIDR range.');
                 }
             }
         });

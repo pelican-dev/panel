@@ -74,7 +74,7 @@ class BackupManager
             return $this->callCustomCreator($config);
         }
 
-        $adapterMethod = 'create'.Str::studly($adapter).'Adapter';
+        $adapterMethod = 'create' . Str::studly($adapter) . 'Adapter';
         if (method_exists($this, $adapterMethod)) {
             $instance = $this->{$adapterMethod}($config);
 

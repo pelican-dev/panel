@@ -19,7 +19,7 @@ class DaemonConfigurationRepository extends DaemonRepository
             $response = $this
                 ->getHttpClient()
                 ->connectTimeout($connectTimeout)
-                ->get('/api/system'.(!is_null($version) ? '?v='.$version : ''));
+                ->get('/api/system' . (!is_null($version) ? '?v=' . $version : ''));
         } catch (TransferException $exception) {
             throw new DaemonConnectionException($exception);
         }

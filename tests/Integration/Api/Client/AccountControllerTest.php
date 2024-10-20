@@ -28,7 +28,7 @@ class AccountControllerTest extends ClientApiIntegrationTestCase
                 'first_name' => $user->name_first,
                 'last_name' => $user->name_last,
                 'language' => 'en',
-                'image' => 'https://gravatar.com/avatar/'.md5(Str::lower($user->email)),
+                'image' => 'https://gravatar.com/avatar/' . md5(Str::lower($user->email)),
                 'admin' => false,
                 'root_admin' => false,
                 '2fa_enabled' => false,
@@ -47,7 +47,7 @@ class AccountControllerTest extends ClientApiIntegrationTestCase
         $user = User::factory()->create();
 
         $response = $this->actingAs($user)->putJson('/api/client/account/email', [
-            'email' => $email = Str::random().'@example.com',
+            'email' => $email = Str::random() . '@example.com',
             'password' => 'password',
         ]);
 

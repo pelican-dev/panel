@@ -75,13 +75,13 @@ class NodeMemoryChart extends ChartWidget
         $totalMemory = collect(cache()->get("nodes.$node->id.memory_total"))->last();
 
         $used = config('panel.use_binary_prefix')
-            ? Number::format($latestMemoryUsed / 1024 / 1024 / 1024, maxPrecision: 2, locale: auth()->user()->language).' GiB'
-            : Number::format($latestMemoryUsed / 1000 / 1000 / 1000, maxPrecision: 2, locale: auth()->user()->language).' GB';
+            ? Number::format($latestMemoryUsed / 1024 / 1024 / 1024, maxPrecision: 2, locale: auth()->user()->language) .' GiB'
+            : Number::format($latestMemoryUsed / 1000 / 1000 / 1000, maxPrecision: 2, locale: auth()->user()->language) . ' GB';
 
         $total = config('panel.use_binary_prefix')
-            ? Number::format($totalMemory / 1024 / 1024 / 1024, maxPrecision: 2, locale: auth()->user()->language).' GiB'
-            : Number::format($totalMemory / 1000 / 1000 / 1000, maxPrecision: 2, locale: auth()->user()->language).' GB';
+            ? Number::format($totalMemory / 1024 / 1024 / 1024, maxPrecision: 2, locale: auth()->user()->language) .' GiB'
+            : Number::format($totalMemory / 1000 / 1000 / 1000, maxPrecision: 2, locale: auth()->user()->language) . ' GB';
 
-        return 'Memory - '.$used.' Of '.$total;
+        return 'Memory - ' . $used . ' Of ' . $total;
     }
 }

@@ -47,9 +47,9 @@ class EggSeeder extends Seeder
      */
     protected function parseEggFiles($name)
     {
-        $files = new \DirectoryIterator(database_path('Seeders/eggs/'.kebab_case($name)));
+        $files = new \DirectoryIterator(database_path('Seeders/eggs/' . kebab_case($name)));
 
-        $this->command->alert('Updating Eggs for: '.$name);
+        $this->command->alert('Updating Eggs for: ' . $name);
         /** @var \DirectoryIterator $file */
         foreach ($files as $file) {
             if (!$file->isFile() || !$file->isReadable()) {
@@ -71,10 +71,10 @@ class EggSeeder extends Seeder
 
             if ($egg instanceof Egg) {
                 $this->importerService->fromFile($file, $egg);
-                $this->command->info('Updated '.$decoded['name']);
+                $this->command->info('Updated ' . $decoded['name']);
             } else {
                 $this->importerService->fromFile($file);
-                $this->command->comment('Created '.$decoded['name']);
+                $this->command->comment('Created ' . $decoded['name']);
             }
         }
 

@@ -38,7 +38,7 @@ class RequireTwoFactorAuthentication
     public function handle(Request $request, \Closure $next): mixed
     {
         $user = $request->user();
-        $uri = rtrim($request->getRequestUri(), '/').'/';
+        $uri = rtrim($request->getRequestUri(), '/') . '/';
         $current = $request->route()->getName();
 
         if (!$user || Str::startsWith($uri, ['/auth/']) || Str::startsWith($current, ['auth.', 'account.'])) {

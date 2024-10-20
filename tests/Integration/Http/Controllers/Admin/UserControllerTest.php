@@ -21,8 +21,8 @@ class UserControllerTest extends IntegrationTestCase
     {
         $unique = Str::random();
         $users = [
-            User::factory()->create(['username' => $unique.'_1']),
-            User::factory()->create(['username' => $unique.'_2']),
+            User::factory()->create(['username' => $unique . '_1']),
+            User::factory()->create(['username' => $unique . '_2']),
         ];
 
         $servers = [
@@ -38,7 +38,7 @@ class UserControllerTest extends IntegrationTestCase
         /** @var \App\Http\Controllers\Admin\UserController $controller */
         $controller = $this->app->make(UserController::class);
 
-        $request = Request::create('/admin/users?filter[username]='.$unique);
+        $request = Request::create('/admin/users?filter[username]=' . $unique);
         $this->app->instance(Request::class, $request);
 
         $data = $controller->index($request)->getData();

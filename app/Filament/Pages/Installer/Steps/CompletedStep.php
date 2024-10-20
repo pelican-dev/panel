@@ -21,12 +21,12 @@ class CompletedStep
                     ->label(new HtmlString('Run the following command to setup your crontab. Note that <code>www-data</code> is your webserver user. On some systems this username might be different!'))
                     ->disabled()
                     ->hintAction(CopyAction::make())
-                    ->default('(crontab -l -u www-data 2>/dev/null; echo "* * * * * php '.base_path().'/artisan schedule:run >> /dev/null 2>&1") | crontab -u www-data -'),
+                    ->default('(crontab -l -u www-data 2>/dev/null; echo "* * * * * php ' . base_path() . '/artisan schedule:run >> /dev/null 2>&1") | crontab -u www-data -'),
                 TextInput::make('queueService')
                     ->label(new HtmlString('To setup the queue worker service you simply have to run the following command.'))
                     ->disabled()
                     ->hintAction(CopyAction::make())
-                    ->default('sudo php '.base_path().'/artisan p:environment:queue-service'),
+                    ->default('sudo php ' . base_path() . '/artisan p:environment:queue-service'),
                 Placeholder::make('')
                     ->content('After you finished these two last tasks you can click on "Finish" and use your new panel! Have fun!'),
             ]);

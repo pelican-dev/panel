@@ -30,7 +30,7 @@ class EggShareController extends Controller
         return response($this->exporterService->handle($egg->id), 200, [
             'Content-Transfer-Encoding' => 'binary',
             'Content-Description' => 'File Transfer',
-            'Content-Disposition' => 'attachment; filename=egg-'.$filename.'.json',
+            'Content-Disposition' => 'attachment; filename=egg-' . $filename . '.json',
             'Content-Type' => 'application/json',
         ]);
     }

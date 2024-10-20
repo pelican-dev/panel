@@ -298,7 +298,7 @@ class ClientControllerTest extends ClientApiIntegrationTestCase
         $this->createServerModel(['user_id' => $users[1]->id]);
         $this->createServerModel(['user_id' => $users[2]->id]);
 
-        $response = $this->actingAs($users[0])->getJson('/api/client?type='.$type);
+        $response = $this->actingAs($users[0])->getJson('/api/client?type=' . $type);
 
         $response->assertOk();
         $response->assertJsonCount(0, 'data');

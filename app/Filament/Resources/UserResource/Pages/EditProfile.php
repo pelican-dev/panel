@@ -178,7 +178,7 @@ class EditProfile extends \Filament\Pages\Auth\EditProfile
                                                 ->content(fn () => new HtmlString("
                                                 <div style='width: 300px; background-color: rgb(24, 24, 27);'>$image</div>
                                             "))
-                                                ->helperText('Setup Key: '.$secret),
+                                                ->helperText('Setup Key: '. $secret),
                                             TextInput::make('2facode')
                                                 ->label('Code')
                                                 ->requiredWith('2fapassword')

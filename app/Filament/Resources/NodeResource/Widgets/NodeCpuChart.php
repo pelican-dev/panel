@@ -76,8 +76,8 @@ class NodeCpuChart extends ChartWidget
         $threads = $node->systemInformation()['cpu_count'] ?? 0;
 
         $cpu = Number::format(collect(cache()->get("nodes.$node->id.cpu_percent"))->last() * $threads, maxPrecision: 2, locale: auth()->user()->language);
-        $max = Number::format($threads * 100, locale: auth()->user()->language).'%';
+        $max = Number::format($threads * 100, locale: auth()->user()->language) . '%';
 
-        return 'CPU - '.$cpu.'% Of '.$max;
+        return 'CPU - ' . $cpu . '% Of ' . $max;
     }
 }

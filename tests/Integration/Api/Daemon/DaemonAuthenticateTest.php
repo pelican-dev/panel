@@ -69,7 +69,7 @@ class DaemonAuthenticateTest extends MiddlewareTestCase
         $this->expectException(AccessDeniedHttpException::class);
 
         $this->request->expects('route->getName')->withNoArgs()->andReturn('random.route');
-        $this->request->expects('bearerToken')->withNoArgs()->andReturn($node->daemon_token_id.'.random_string_123');
+        $this->request->expects('bearerToken')->withNoArgs()->andReturn($node->daemon_token_id . '.random_string_123');
 
         $this->getMiddleware()->handle($this->request, $this->getClosureAssertions());
     }
@@ -98,7 +98,7 @@ class DaemonAuthenticateTest extends MiddlewareTestCase
         $node->save();
 
         $this->request->expects('route->getName')->withNoArgs()->andReturn('random.route');
-        $this->request->expects('bearerToken')->withNoArgs()->andReturn($node->daemon_token_id.'.the_same');
+        $this->request->expects('bearerToken')->withNoArgs()->andReturn($node->daemon_token_id . '.the_same');
 
         $this->getMiddleware()->handle($this->request, $this->getClosureAssertions());
         $this->assertRequestHasAttribute('node');

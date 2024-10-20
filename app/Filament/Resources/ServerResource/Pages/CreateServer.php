@@ -70,14 +70,14 @@ class CreateServer extends CreateRecord
                                 ->prefixIcon('tabler-server')
                                 ->label('Name')
                                 ->suffixAction(Forms\Components\Actions\Action::make('random')
-                                    ->icon('tabler-dice-'.random_int(1, 6))
+                                    ->icon('tabler-dice-' . random_int(1, 6))
                                     ->action(function (Set $set, Get $get) {
                                         $egg = Egg::find($get('egg_id'));
-                                        $prefix = $egg ? str($egg->name)->lower()->kebab().'-' : '';
+                                        $prefix = $egg ? str($egg->name)->lower()->kebab() . '-' : '';
 
                                         $word = (new RandomWordService())->word();
 
-                                        $set('name', $prefix.$word);
+                                        $set('name', $prefix . $word);
                                     }))
                                 ->columnSpan([
                                     'default' => 2,
@@ -101,7 +101,7 @@ class CreateServer extends CreateRecord
                                 ])
                                 ->relationship('user', 'username')
                                 ->searchable(['username', 'email'])
-                                ->getOptionLabelFromRecordUsing(fn (User $user) => "$user->email | $user->username ".($user->isRootAdmin() ? '(admin)' : ''))
+                                ->getOptionLabelFromRecordUsing(fn (User $user) => "$user->email | $user->username " . ($user->isRootAdmin() ? '(admin)' : ''))
                                 ->createOptionForm([
                                     TextInput::make('username')
                                         ->alphaNum()
@@ -163,7 +163,7 @@ class CreateServer extends CreateRecord
                                     $set('allocation_additional.needstobeastringhere.extra_allocations', null);
                                 })
                                 ->getOptionLabelFromRecordUsing(
-                                    fn (Allocation $allocation) => "$allocation->ip:$allocation->port".
+                                    fn (Allocation $allocation) => "$allocation->ip:$allocation->port" .
                                         ($allocation->ip_alias ? " ($allocation->ip_alias)" : '')
                                 )
                                 ->placeholder(function (Get $get) {
@@ -293,7 +293,7 @@ class CreateServer extends CreateRecord
                                         ->disabled(fn (Get $get) => $get('../../node_id') === null)
                                         ->searchable(['ip', 'port', 'ip_alias'])
                                         ->getOptionLabelFromRecordUsing(
-                                            fn (Allocation $allocation) => "$allocation->ip:$allocation->port".
+                                            fn (Allocation $allocation) => "$allocation->ip:$allocation->port" .
                                                 ($allocation->ip_alias ? " ($allocation->ip_alias)" : '')
                                         )
                                         ->placeholder('Select additional Allocations')
@@ -498,7 +498,7 @@ class CreateServer extends CreateRecord
                                                     ->hintIcon('tabler-code')
                                                     ->label(fn (Get $get) => $get('name'))
                                                     ->hintIconTooltip(fn (Get $get) => implode('|', $get('rules')))
-                                                    ->prefix(fn (Get $get) => '{{'.$get('env_variable').'}}')
+                                                    ->prefix(fn (Get $get) => '{{' . $get('env_variable') . '}}')
                                                     ->helperText(fn (Get $get) => empty($get('description')) ? '—' : $get('description'))
                                                     ->afterStateUpdated(function (Set $set, Get $get, $state) {
                                                         $environment = $get($envPath = '../../environment');
@@ -846,7 +846,7 @@ class CreateServer extends CreateRecord
             return !$containsRuleIn;
         }
 
-        throw new Exception('Component type not supported: '.$component::class);
+        throw new Exception('Component type not supported: ' . $component::class);
     }
 
     private function getSelectOptionsFromRules(Get $get): array

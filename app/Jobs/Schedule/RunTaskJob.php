@@ -73,7 +73,7 @@ class RunTaskJob extends Job implements ShouldQueue
                     $deleteFilesService->handle($server, explode(PHP_EOL, $this->task->payload));
                     break;
                 default:
-                    throw new \InvalidArgumentException('Invalid task action provided: '.$this->task->action);
+                    throw new \InvalidArgumentException('Invalid task action provided: ' . $this->task->action);
             }
         } catch (\Exception $exception) {
             // If this isn't a DaemonConnectionException on a task that allows for failures

@@ -23,7 +23,7 @@ class UpdateStartupVariableTest extends ClientApiIntegrationTestCase
             'startup' => 'java {{SERVER_JARFILE}} --version {{BUNGEE_VERSION}}',
         ])->save();
 
-        $response = $this->actingAs($user)->putJson($this->link($server).'/startup/variable', [
+        $response = $this->actingAs($user)->putJson($this->link($server) . '/startup/variable', [
             'key' => 'BUNGEE_VERSION',
             'value' => '1.2.3',
         ]);
@@ -32,7 +32,7 @@ class UpdateStartupVariableTest extends ClientApiIntegrationTestCase
         $response->assertJsonPath('errors.0.code', 'ValidationException');
         $response->assertJsonPath('errors.0.detail', 'The value may only contain letters and numbers.');
 
-        $response = $this->actingAs($user)->putJson($this->link($server).'/startup/variable', [
+        $response = $this->actingAs($user)->putJson($this->link($server) . '/startup/variable', [
             'key' => 'BUNGEE_VERSION',
             'value' => '123',
         ]);
@@ -62,7 +62,7 @@ class UpdateStartupVariableTest extends ClientApiIntegrationTestCase
         $server->fill(['egg_id' => $egg->id])->save();
         $server->refresh();
 
-        $response = $this->actingAs($user)->putJson($this->link($server).'/startup/variable', [
+        $response = $this->actingAs($user)->putJson($this->link($server) . '/startup/variable', [
             'key' => 'BUNGEE_VERSION',
             'value' => '123',
         ]);
@@ -71,7 +71,7 @@ class UpdateStartupVariableTest extends ClientApiIntegrationTestCase
         $response->assertJsonPath('errors.0.code', 'BadRequestHttpException');
         $response->assertJsonPath('errors.0.detail', 'The environment variable you are trying to edit does not exist.');
 
-        $response = $this->actingAs($user)->putJson($this->link($server).'/startup/variable', [
+        $response = $this->actingAs($user)->putJson($this->link($server) . '/startup/variable', [
             'key' => 'SERVER_JARFILE',
             'value' => 'server2.jar',
         ]);
@@ -100,7 +100,7 @@ class UpdateStartupVariableTest extends ClientApiIntegrationTestCase
 
         $server->refresh();
 
-        $response = $this->actingAs($user)->putJson($this->link($server).'/startup/variable', [
+        $response = $this->actingAs($user)->putJson($this->link($server) . '/startup/variable', [
             'key' => 'SERVER_JARFILE',
             'value' => 'server2.jar',
         ]);
@@ -125,7 +125,7 @@ class UpdateStartupVariableTest extends ClientApiIntegrationTestCase
         $server->fill(['egg_id' => $egg->id])->save();
         $server->refresh();
 
-        $response = $this->actingAs($user)->putJson($this->link($server).'/startup/variable', [
+        $response = $this->actingAs($user)->putJson($this->link($server) . '/startup/variable', [
             'key' => 'BUNGEE_VERSION',
             'value' => '',
         ]);
@@ -141,10 +141,10 @@ class UpdateStartupVariableTest extends ClientApiIntegrationTestCase
     public function testStartupVariableCannotBeUpdatedIfNotUserViewable(): void
     {
         [$user, $server] = $this->generateTestAccount([Permission::ACTION_WEBSOCKET_CONNECT]);
-        $this->actingAs($user)->putJson($this->link($server).'/startup/variable')->assertForbidden();
+        $this->actingAs($user)->putJson($this->link($server) . '/startup/variable')->assertForbidden();
 
         $user2 = User::factory()->create();
-        $this->actingAs($user2)->putJson($this->link($server).'/startup/variable')->assertNotFound();
+        $this->actingAs($user2)->putJson($this->link($server) . '/startup/variable')->assertNotFound();
     }
 
     public static function permissionsDataProvider(): array

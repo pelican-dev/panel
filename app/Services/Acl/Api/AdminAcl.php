@@ -62,7 +62,7 @@ class AdminAcl
      */
     public static function check(ApiKey $key, string $resource, int $action = self::READ): bool
     {
-        return self::can(data_get($key, self::COLUMN_IDENTIFIER.$resource, self::NONE), $action);
+        return self::can(data_get($key, self::COLUMN_IDENTIFIER . $resource, self::NONE), $action);
     }
 
     /**

@@ -108,7 +108,7 @@ class Handler extends ExceptionHandler
             $exception->getLine()
         );
 
-        return $message."\nStack trace:\n".trim($cleanedStack);
+        return $message . "\nStack trace:\n" . trim($cleanedStack);
     }
 
     /**
@@ -160,7 +160,7 @@ class Handler extends ExceptionHandler
                     'source_field' => $field,
                     'rule' => str_replace(self::PANEL_RULE_STRING, 'p_', Arr::get(
                         $codes,
-                        str_replace('.', '_', $field).'.'.$key
+                        str_replace('.', '_', $field) . '.' . $key
                     )),
                 ];
 

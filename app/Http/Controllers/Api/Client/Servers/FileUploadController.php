@@ -43,7 +43,7 @@ class FileUploadController extends ClientApiController
             ->setExpiresAt(CarbonImmutable::now()->addMinutes(15))
             ->setUser($user)
             ->setClaims(['server_uuid' => $server->uuid])
-            ->handle($server->node, $user->id.$server->uuid);
+            ->handle($server->node, $user->id . $server->uuid);
 
         return sprintf(
             '%s/upload/file?token=%s',

@@ -12,7 +12,7 @@ trait DefaultPolicies
      */
     public function viewAny(User $user): bool
     {
-        return $user->can('viewList '.$this->modelName);
+        return $user->can('viewList ' . $this->modelName);
     }
 
     /**
@@ -20,7 +20,7 @@ trait DefaultPolicies
      */
     public function view(User $user, Model $model): bool
     {
-        return $user->can('view '.$this->modelName, $model);
+        return $user->can('view ' . $this->modelName, $model);
     }
 
     /**
@@ -28,7 +28,7 @@ trait DefaultPolicies
      */
     public function create(User $user): bool
     {
-        return $user->can('create '.$this->modelName);
+        return $user->can('create ' . $this->modelName);
     }
 
     /**
@@ -36,7 +36,7 @@ trait DefaultPolicies
      */
     public function update(User $user, Model $model): bool
     {
-        return $user->can('update '.$this->modelName, $model);
+        return $user->can('update ' . $this->modelName, $model);
     }
 
     /**
@@ -44,6 +44,6 @@ trait DefaultPolicies
      */
     public function delete(User $user, Model $model): bool
     {
-        return $user->can('delete '.$this->modelName, $model);
+        return $user->can('delete ' . $this->modelName, $model);
     }
 }

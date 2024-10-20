@@ -21,7 +21,7 @@ class MailTested extends Notification
     {
         return (new MailMessage())
             ->subject('Panel Test Message')
-            ->greeting('Hello '.$this->user->name.'!')
+            ->greeting('Hello ' . $this->user->name . '!')
             ->line('This is a test of the Panel mail system. You\'re good to go!');
     }
 }

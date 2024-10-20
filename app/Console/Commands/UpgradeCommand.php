@@ -40,7 +40,7 @@ class UpgradeCommand extends Command
         }
 
         if (version_compare(PHP_VERSION, '7.4.0') < 0) {
-            $this->error(__('commands.upgrade.php_version').' ['.PHP_VERSION.'].');
+            $this->error(__('commands.upgrade.php_version') . ' [' . PHP_VERSION . '].');
         }
 
         $user = 'www-data';
@@ -125,7 +125,7 @@ class UpgradeCommand extends Command
                 $command[] = '--no-dev';
             }
 
-            $this->line('$upgrader> '.implode(' ', $command));
+            $this->line('$upgrader> ' . implode(' ', $command));
             $process = new Process($command);
             $process->setTimeout(10 * 60);
             $process->run(function ($type, $buffer) {
@@ -134,7 +134,7 @@ class UpgradeCommand extends Command
         });
 
         /** @var \Illuminate\Foundation\Application $app */
-        $app = require __DIR__.'/../../../bootstrap/app.php';
+        $app = require __DIR__ . '/../../../bootstrap/app.php';
         /** @var \App\Console\Kernel $kernel */
         $kernel = $app->make(Kernel::class);
         $kernel->bootstrap();
@@ -192,6 +192,6 @@ class UpgradeCommand extends Command
             return $this->option('url');
         }
 
-        return sprintf(self::DEFAULT_URL, $this->option('release') ? 'download/v'.$this->option('release') : 'latest/download');
+        return sprintf(self::DEFAULT_URL, $this->option('release') ? 'download/v' . $this->option('release') : 'latest/download');
     }
 }

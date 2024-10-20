@@ -29,7 +29,7 @@ class DatabaseManagementServiceTest extends IntegrationTestCase
     {
         $this->assertSame('s1_example', DatabaseManagementService::generateUniqueDatabaseName('example', 1));
         $this->assertSame('s123_something_else', DatabaseManagementService::generateUniqueDatabaseName('something_else', 123));
-        $this->assertSame('s123_'.str_repeat('a', 43), DatabaseManagementService::generateUniqueDatabaseName(str_repeat('a', 100), 123));
+        $this->assertSame('s123_' . str_repeat('a', 43), DatabaseManagementService::generateUniqueDatabaseName(str_repeat('a', 100), 123));
     }
 
     /**

@@ -53,7 +53,7 @@ return new class extends Migration
         DB::transaction(function () {
             foreach (DB::select('SELECT id, daemon_token_id, daemon_token FROM nodes') as $datum) {
                 DB::update('UPDATE nodes SET daemon_token = ? WHERE id = ?', [
-                    $datum->daemon_token_id.decrypt($datum->daemon_token),
+                    $datum->daemon_token_id . decrypt($datum->daemon_token),
                     $datum->id,
                 ]);
             }

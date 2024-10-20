@@ -17,7 +17,7 @@ return new class extends Migration
                 continue;
             }
 
-            $newPermission = $parts[0].'-'.str_replace('task', 'schedule', $parts[1]);
+            $newPermission = $parts[0] . '-' . str_replace('task', 'schedule', $parts[1]);
 
             DB::table('permissions')->where('id', '=', $record->id)->update(['permission' => $newPermission]);
         }
@@ -35,7 +35,7 @@ return new class extends Migration
                 continue;
             }
 
-            $newPermission = $parts[0].'-'.str_replace('schedule', 'task', $parts[1]);
+            $newPermission = $parts[0] . '-' . str_replace('schedule', 'task', $parts[1]);
 
             DB::table('permissions')->where('id', '=', $record->id)->update(['permission' => $newPermission]);
         }

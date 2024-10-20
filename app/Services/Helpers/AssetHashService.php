@@ -70,7 +70,7 @@ class AssetHashService
             $output .= " $key=\"$value\"";
         }
 
-        return $output.'>';
+        return $output . '>';
     }
 
     /**
@@ -92,7 +92,7 @@ class AssetHashService
             $output .= " $key=\"$value\"";
         }
 
-        return $output.'></script>';
+        return $output . '></script>';
     }
 
     /**
