@@ -25,7 +25,7 @@ class EditDatabaseHost extends EditRecord
 
     private HostUpdateService $hostUpdateService;
 
-    public function boot(HostUpdateService $hostUpdateService)
+    public function boot(HostUpdateService $hostUpdateService): void
     {
         $this->hostUpdateService = $hostUpdateService;
     }

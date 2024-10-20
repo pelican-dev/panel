@@ -28,7 +28,7 @@ class CreateDatabaseHost extends CreateRecord
 
     protected ?string $subheading = '(database servers that can have individual databases)';
 
-    public function boot(HostCreationService $service)
+    public function boot(HostCreationService $service): void
     {
         $this->service = $service;
     }
