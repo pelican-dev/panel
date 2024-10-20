@@ -166,5 +166,7 @@ return [
 
     'use_binary_prefix' => env('PANEL_USE_BINARY_PREFIX', true),
 
+    'default_io_weight' => env('PANEL_IO_WEIGHT', 500),
+
     'editable_server_descriptions' => env('PANEL_EDITABLE_SERVER_DESCRIPTIONS', true),
 ];

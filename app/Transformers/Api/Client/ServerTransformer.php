@@ -2,21 +2,20 @@
 
 namespace App\Transformers\Api\Client;
 
-use App\Models\Allocation;
 use App\Models\Egg;
 use App\Models\EggVariable;
 use App\Models\Permission;
 use App\Models\Server;
 use App\Models\Subuser;
-use App\Services\Servers\StartupCommandService;
-use Illuminate\Container\Container;
 use League\Fractal\Resource\Collection;
-use League\Fractal\Resource\Item;
 use League\Fractal\Resource\NullResource;
+use League\Fractal\Resource\Item;
+use Illuminate\Container\Container;
+use App\Services\Servers\StartupCommandService;
 
 class ServerTransformer extends BaseClientTransformer
 {
-    protected array $defaultIncludes = ['allocations', 'variables'];
+    protected array $defaultIncludes = ['variables'];
 
     protected array $availableIncludes = ['egg', 'subusers'];
 
@@ -75,6 +74,7 @@ class ServerTransformer extends BaseClientTransformer
             // This field is deprecated, please use "status".
             'is_installing' => !$server->isInstalled(),
             'is_transferring' => !is_null($server->transfer),
+            'ports' => $user->can(Permission::ACTION_ALLOCATION_READ, $server) ? $server->ports : collect(),
         ];
 
         if (!config('panel.editable_server_descriptions')) {
@@ -82,33 +82,6 @@ class ServerTransformer extends BaseClientTransformer
         }
 
         return $data;
-    }
-
-    /**
-     * Returns the allocations associated with this server.
-     *
-     * @throws \App\Exceptions\Transformer\InvalidTransformerLevelException
-     */
-    public function includeAllocations(Server $server): Collection
-    {
-        $transformer = $this->makeTransformer(AllocationTransformer::class);
-
-        $user = $this->request->user();
-        // While we include this permission, we do need to actually handle it slightly different here
-        // for the purpose of keeping things functionally working. If the user doesn't have read permissions
-        // for the allocations we'll only return the primary server allocation, and any notes associated
-        // with it will be hidden.
-        //
-        // This allows us to avoid too much permission regression, without also hiding information that
-        // is generally needed for the frontend to make sense when browsing or searching results.
-        if (!$user->can(Permission::ACTION_ALLOCATION_READ, $server)) {
-            $primary = clone $server->allocation;
-            $primary->notes = null;
-
-            return $this->collection([$primary], $transformer, Allocation::RESOURCE_NAME);
-        }
-
-        return $this->collection($server->allocations, $transformer, Allocation::RESOURCE_NAME);
     }
 
     /**

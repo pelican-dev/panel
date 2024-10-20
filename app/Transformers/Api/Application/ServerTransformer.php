@@ -17,7 +17,6 @@ class ServerTransformer extends BaseTransformer
      * List of resources that can be included.
      */
     protected array $availableIncludes = [
-        'allocations',
         'user',
         'subusers',
         'egg',
@@ -76,7 +75,6 @@ class ServerTransformer extends BaseTransformer
             ],
             'user' => $server->owner_id,
             'node' => $server->node_id,
-            'allocation' => $server->allocation_id,
             'egg' => $server->egg_id,
             'container' => [
                 'startup_command' => $server->startup,
@@ -87,23 +85,23 @@ class ServerTransformer extends BaseTransformer
             ],
             $server->getUpdatedAtColumn() => $this->formatTimestamp($server->updated_at),
             $server->getCreatedAtColumn() => $this->formatTimestamp($server->created_at),
+
+            'allocations' => collect($server->ports)->map(function ($port) {
+                $ip = '0.0.0.0';
+                if (str_contains($port, ':')) {
+                    [$ip, $port] = explode(':', $port);
+                }
+
+                return [
+                    'id' => random_int(1, PHP_INT_MAX),
+                    'ip' => $ip,
+                    'alias' => null,
+                    'port' => (int) $port,
+                    'notes' => null,
+                    'assigned' => false,
+                ];
+            })->all(),
         ];
-    }
-
-    /**
-     * Return a generic array of allocations for this server.
-     *
-     * @throws \App\Exceptions\Transformer\InvalidTransformerLevelException
-     */
-    public function includeAllocations(Server $server): Collection|NullResource
-    {
-        if (!$this->authorize(AdminAcl::RESOURCE_ALLOCATIONS)) {
-            return $this->null();
-        }
-
-        $server->loadMissing('allocations');
-
-        return $this->collection($server->getRelation('allocations'), $this->makeTransformer(AllocationTransformer::class), 'allocation');
     }
 
     /**

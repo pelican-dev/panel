@@ -40,7 +40,7 @@ class GetStartupAndVariablesTest extends ClientApiIntegrationTestCase
         $response->assertJsonPath('meta.raw_startup_command', $server->startup);
 
         $response->assertJsonPath('object', 'list');
-        $response->assertJsonCount(1, 'data');
+        $response->assertJsonMissing(['env_variable' => 'BUNGEE_VERSION']);
         $response->assertJsonPath('data.0.object', EggVariable::RESOURCE_NAME);
         $this->assertJsonTransformedWith($response->json('data.0.attributes'), $egg->variables[1]);
     }

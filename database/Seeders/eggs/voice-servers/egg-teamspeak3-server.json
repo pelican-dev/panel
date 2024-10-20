@@ -53,8 +53,7 @@
             "user_editable": false,
             "rules": [
                 "required",
-                "integer",
-                "between:1025,65535"
+                "port"
             ],
             "sort": 2,
             "field_type": "text"
@@ -69,7 +68,7 @@
             "rules": [
                 "required",
                 "integer",
-                "between:1025,65535"
+                "port"
             ],
             "sort": 3,
             "field_type": "text"
@@ -96,10 +95,10 @@
             "default_value": "10022",
             "user_viewable": true,
             "user_editable": false,
+            "rules": "required|port",
             "rules": [
                 "required",
-                "integer",
-                "between:1025,65535"
+                "port"
             ],
             "sort": 5,
             "field_type": "text"
@@ -113,8 +112,7 @@
             "user_editable": false,
             "rules": [
                 "required",
-                "integer",
-                "between:1025,65535"
+                "port",
             ],
             "sort": 6,
             "field_type": "text"

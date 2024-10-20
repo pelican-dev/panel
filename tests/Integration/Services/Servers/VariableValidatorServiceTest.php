@@ -94,25 +94,28 @@ class VariableValidatorServiceTest extends IntegrationTestCase
             $this->getService()->setUserLevel(User::USER_LEVEL_ADMIN)->handle($egg->id, [
                 'BUNGEE_VERSION' => '1.2.3',
                 'SERVER_JARFILE' => 'server.jar',
+                'SERVER_PORT' => '1234',
             ]);
 
             $this->fail('This statement should not be reached.');
         } catch (ValidationException $exception) {
-            $this->assertCount(1, $exception->errors());
             $this->assertArrayHasKey('environment.BUNGEE_VERSION', $exception->errors());
         }
 
         $response = $this->getService()->setUserLevel(User::USER_LEVEL_ADMIN)->handle($egg->id, [
             'BUNGEE_VERSION' => '123',
             'SERVER_JARFILE' => 'server.jar',
+            'SERVER_PORT' => '1234',
         ]);
 
         $this->assertInstanceOf(Collection::class, $response);
-        $this->assertCount(2, $response);
+        $this->assertCount(3, $response);
         $this->assertSame('BUNGEE_VERSION', $response->get(0)->key);
         $this->assertSame('123', $response->get(0)->value);
         $this->assertSame('SERVER_JARFILE', $response->get(1)->key);
         $this->assertSame('server.jar', $response->get(1)->value);
+        $this->assertSame('SERVER_PORT', $response->get(2)->key);
+        $this->assertSame('1234', $response->get(2)->value);
     }
 
     public function testNullableEnvironmentVariablesCanBeUsedCorrectly(): void

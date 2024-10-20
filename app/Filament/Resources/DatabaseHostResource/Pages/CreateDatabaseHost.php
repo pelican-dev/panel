@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\DatabaseHostResource\Pages;
 
 use App\Filament\Resources\DatabaseHostResource;
+use App\Models\Objects\Endpoint;
 use App\Services\Databases\Hosts\HostCreationService;
 use Closure;
 use Exception;
@@ -59,7 +60,7 @@ class CreateDatabaseHost extends CreateRecord
                             ->numeric()
                             ->default(3306)
                             ->minValue(0)
-                            ->maxValue(65535),
+                            ->maxValue(Endpoint::PORT_CEIL),
                         TextInput::make('max_databases')
                             ->label('Max databases')
                             ->helpertext('Blank is unlimited.')

@@ -9,7 +9,6 @@ use Filament\Resources\Pages\ListRecords;
 use Filament\Tables\Actions\Action;
 use Filament\Tables\Actions\CreateAction;
 use Filament\Tables\Actions\EditAction;
-use Filament\Tables\Columns\SelectColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Grouping\Group;
 use Filament\Tables\Table;
@@ -61,16 +60,6 @@ class ListServers extends ListRecords
                     ->hidden(fn (Table $table) => $table->getGrouping()?->getId() === 'user.username')
                     ->sortable()
                     ->searchable(),
-                SelectColumn::make('allocation_id')
-                    ->label('Primary Allocation')
-                    ->hidden(!auth()->user()->can('update server'))
-                    ->options(fn (Server $server) => $server->allocations->mapWithKeys(fn ($allocation) => [$allocation->id => $allocation->address]))
-                    ->selectablePlaceholder(false)
-                    ->sortable(),
-                TextColumn::make('allocation_id_readonly')
-                    ->label('Primary Allocation')
-                    ->hidden(auth()->user()->can('update server'))
-                    ->state(fn (Server $server) => $server->allocation->address),
                 TextColumn::make('image')->hidden(),
                 TextColumn::make('backups_count')
                     ->counts('backups')
@@ -78,6 +67,9 @@ class ListServers extends ListRecords
                     ->icon('tabler-file-download')
                     ->numeric()
                     ->sortable(),
+                TextColumn::make('ports')
+                    ->badge()
+                    ->separator(),
             ])
             ->actions([
                 Action::make('View')

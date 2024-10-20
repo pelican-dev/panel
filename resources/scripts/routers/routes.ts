@@ -4,7 +4,6 @@ import DatabasesContainer from '@/components/server/databases/DatabasesContainer
 import ScheduleContainer from '@/components/server/schedules/ScheduleContainer';
 import UsersContainer from '@/components/server/users/UsersContainer';
 import BackupContainer from '@/components/server/backups/BackupContainer';
-import NetworkContainer from '@/components/server/network/NetworkContainer';
 import StartupContainer from '@/components/server/startup/StartupContainer';
 import FileManagerContainer from '@/components/server/files/FileManagerContainer';
 import SettingsContainer from '@/components/server/settings/SettingsContainer';
@@ -115,12 +114,6 @@ export default {
             permission: 'backup.*',
             name: 'Backups',
             component: BackupContainer,
-        },
-        {
-            path: '/network',
-            permission: 'allocation.*',
-            name: 'Network',
-            component: NetworkContainer,
         },
         {
             path: '/startup',

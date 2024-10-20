@@ -2,6 +2,7 @@
 
 namespace App\Services\Servers;
 
+use App\Models\Objects\Endpoint;
 use App\Models\Server;
 
 class StartupCommandService
@@ -11,8 +12,10 @@ class StartupCommandService
      */
     public function handle(Server $server, bool $hideAllValues = false): string
     {
+        $endpoint = $server->getPrimaryEndpoint();
+
         $find = ['{{SERVER_MEMORY}}', '{{SERVER_IP}}', '{{SERVER_PORT}}'];
-        $replace = [$server->memory, $server->allocation->ip, $server->allocation->port];
+        $replace = [$server->memory, $endpoint->ip ?? Endpoint::INADDR_ANY, $endpoint->port ?? ''];
 
         foreach ($server->variables as $variable) {
             $find[] = '{{' . $variable->env_variable . '}}';

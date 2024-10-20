@@ -36,11 +36,6 @@ class CreateServerController extends Controller
 
         $eggs = Egg::with('variables')->get();
 
-        \JavaScript::put([
-            'nodeData' => Node::getForServerCreation(),
-            'eggs' => $eggs->keyBy('id'),
-        ]);
-
         return view('admin.servers.new', [
             'eggs' => $eggs,
             'nodes' => Node::all(),
@@ -52,7 +47,6 @@ class CreateServerController extends Controller
      *
      * @throws \Illuminate\Validation\ValidationException
      * @throws \App\Exceptions\DisplayException
-     * @throws \App\Exceptions\Service\Deployment\NoViableAllocationException
      * @throws \Throwable
      */
     public function store(ServerFormRequest $request): RedirectResponse

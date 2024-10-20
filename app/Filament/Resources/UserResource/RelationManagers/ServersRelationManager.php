@@ -8,7 +8,6 @@ use App\Models\User;
 use App\Services\Servers\SuspensionService;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables\Actions;
-use Filament\Tables\Columns\SelectColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 
@@ -65,11 +64,6 @@ class ServersRelationManager extends RelationManager
                 TextColumn::make('egg.name')
                     ->icon('tabler-egg')
                     ->url(fn (Server $server): string => route('filament.admin.resources.eggs.edit', ['record' => $server->egg]))
-                    ->sortable(),
-                SelectColumn::make('allocation.id')
-                    ->label('Primary Allocation')
-                    ->options(fn (Server $server) => [$server->allocation->id => $server->allocation->address])
-                    ->selectablePlaceholder(false)
                     ->sortable(),
                 TextColumn::make('image')->hidden(),
                 TextColumn::make('databases_count')

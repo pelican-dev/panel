@@ -6,7 +6,6 @@ use App\Models\Server;
 use App\Repositories\Daemon\DaemonServerRepository;
 use Illuminate\Http\Response;
 use Illuminate\Http\JsonResponse;
-use App\Models\Allocation;
 use App\Models\ServerTransfer;
 use Illuminate\Database\ConnectionInterface;
 use App\Http\Controllers\Controller;
@@ -53,13 +52,7 @@ class ServerTransferController extends Controller
 
         /** @var \App\Models\Server $server */
         $server = $this->connection->transaction(function () use ($server, $transfer) {
-            $allocations = array_merge([$transfer->old_allocation], $transfer->old_additional_allocations);
-
-            // Remove the old allocations for the server and re-assign the server to the new
-            // primary allocation and node.
-            Allocation::query()->whereIn('id', $allocations)->update(['server_id' => null]);
             $server->update([
-                'allocation_id' => $transfer->new_allocation,
                 'node_id' => $transfer->new_node,
             ]);
 
@@ -93,9 +86,6 @@ class ServerTransferController extends Controller
     {
         $this->connection->transaction(function () use (&$transfer) {
             $transfer->forceFill(['successful' => false])->saveOrFail();
-
-            $allocations = array_merge([$transfer->new_allocation], $transfer->new_additional_allocations);
-            Allocation::query()->whereIn('id', $allocations)->update(['server_id' => null]);
         });
 
         return new JsonResponse([], Response::HTTP_NO_CONTENT);

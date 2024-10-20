@@ -65,6 +65,17 @@
             ],
             "sort": 2,
             "field_type": "text"
+        },
+        {
+            "name": "Server Port",
+            "description": "",
+            "env_variable": "SERVER_PORT",
+            "default_value": "25565",
+            "user_viewable": true,
+            "user_editable": false,
+            "rules": "required|port",
+            "sort": 3,
+            "field_type": "text"
         }
     ]
 }

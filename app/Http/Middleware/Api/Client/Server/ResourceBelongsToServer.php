@@ -10,7 +10,6 @@ use App\Models\Server;
 use App\Models\Subuser;
 use App\Models\Database;
 use App\Models\Schedule;
-use App\Models\Allocation;
 use Illuminate\Database\Eloquent\Model;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
@@ -48,7 +47,6 @@ class ResourceBelongsToServer
             switch (get_class($model)) {
                 // All of these models use "server_id" as the field key for the server
                 // they are assigned to, so the logic is identical for them all.
-                case Allocation::class:
                 case Backup::class:
                 case Database::class:
                 case Schedule::class:

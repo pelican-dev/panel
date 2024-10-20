@@ -16,7 +16,7 @@
         "filament/filament": "^3.2",
         "guzzlehttp/guzzle": "^7.8.1",
         "laracasts/utilities": "~3.2.2",
-        "laravel/framework": "^11.7",
+        "laravel/framework": "^11.28.1",
         "laravel/helpers": "^1.7",
         "laravel/sanctum": "^4.0.2",
         "laravel/socialite": "^5.14",

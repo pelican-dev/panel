@@ -201,7 +201,7 @@ class EditProfile extends \Filament\Pages\Auth\EditProfile
                                 Tab::make('API Keys')
                                     ->icon('tabler-key')
                                     ->schema([
-                                        Grid::make('asdf')->columns(5)->schema([
+                                        Grid::make(5)->schema([
                                             Section::make('Create API Key')->columnSpan(3)->schema([
                                                 TextInput::make('description')
                                                     ->live(),
@@ -289,7 +289,7 @@ class EditProfile extends \Filament\Pages\Auth\EditProfile
 
         if ($token = $data['2facode'] ?? null) {
             $tokens = $this->toggleTwoFactorService->handle($record, $token, true);
-            cache()->set("users.$record->id.2fa.tokens", implode("\n", $tokens), now()->addSeconds(15));
+            cache()->set("users.$record->id.2fa.tokens", implode("\n", $tokens), 15);
 
             $this->redirectRoute('filament.admin.auth.profile', ['tab' => '-2fa-tab']);
         }

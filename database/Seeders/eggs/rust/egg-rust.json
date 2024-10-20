@@ -168,7 +168,7 @@
             "user_editable": false,
             "rules": [
                 "required",
-                "integer"
+                "port"
             ],
             "sort": 10,
             "field_type": "text"
@@ -182,7 +182,7 @@
             "user_editable": false,
             "rules": [
                 "required",
-                "integer"
+                "port"
             ],
             "sort": 11,
             "field_type": "text"
@@ -239,7 +239,7 @@
             "user_editable": false,
             "rules": [
                 "required",
-                "integer"
+                "port"
             ],
             "sort": 15,
             "field_type": "text"

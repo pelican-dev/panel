@@ -2,29 +2,36 @@
 
 namespace App\Filament\Resources\ServerResource\Pages;
 
-use App\Enums\ContainerStatus;
-use App\Enums\ServerState;
+use App\Models\Node;
+use App\Models\Objects\Endpoint;
+use Exception;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\HtmlString;
+use App\Models\Database;
+use App\Services\Databases\DatabaseManagementService;
+use App\Services\Databases\DatabasePasswordService;
+use Filament\Forms\Components\Actions\Action;
+use Filament\Forms\Components\Repeater;
+use Filament\Forms\Get;
+use Filament\Forms\Set;
+use LogicException;
 use App\Filament\Resources\ServerResource;
 use App\Http\Controllers\Admin\ServersController;
-use App\Models\Database;
+use App\Services\Servers\RandomWordService;
+use App\Services\Servers\SuspensionService;
+use App\Services\Servers\TransferServerService;
+use Filament\Actions;
+use Filament\Forms;
+use App\Enums\ContainerStatus;
+use App\Enums\ServerState;
 use App\Models\Egg;
 use App\Models\Server;
 use App\Models\ServerVariable;
-use App\Services\Databases\DatabaseManagementService;
-use App\Services\Databases\DatabasePasswordService;
-use App\Services\Servers\RandomWordService;
 use App\Services\Servers\ServerDeletionService;
-use App\Services\Servers\SuspensionService;
-use App\Services\Servers\TransferServerService;
 use Closure;
-use Exception;
-use Filament\Actions;
-use Filament\Forms;
-use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\CheckboxList;
 use Filament\Forms\Components\Fieldset;
 use Filament\Forms\Components\Grid;
-use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Tabs;
 use Filament\Forms\Components\Tabs\Tab;
@@ -32,17 +39,21 @@ use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\ToggleButtons;
 use Filament\Forms\Form;
-use Filament\Forms\Get;
-use Filament\Forms\Set;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\EditRecord;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Validator;
-use LogicException;
 use Webbingbrasil\FilamentCopyActions\Forms\Actions\CopyAction;
 
 class EditServer extends EditRecord
 {
+    public ?Node $node = null;
+
+    public ?Egg $egg = null;
+
+    public array $ports = [];
+
+    public array $eggDefaultPorts = [];
+
     protected static string $resource = ServerResource::class;
 
     public function form(Form $form): Form
@@ -62,6 +73,26 @@ class EditServer extends EditRecord
                         Tab::make('Information')
                             ->icon('tabler-info-circle')
                             ->schema([
+                                Forms\Components\ToggleButtons::make('condition')
+                                    ->label('Status')
+                                    ->formatStateUsing(fn (Server $server) => $server->condition)
+                                    ->options(fn ($state) => collect(array_merge(ContainerStatus::cases(), ServerState::cases()))
+                                        ->filter(fn ($condition) => $condition->value === $state)
+                                        ->mapWithKeys(fn ($state) => [$state->value => str($state->value)->replace('_', ' ')->ucwords()])
+                                    )
+                                    ->colors(collect(array_merge(ContainerStatus::cases(), ServerState::cases()))->mapWithKeys(
+                                        fn ($status) => [$status->value => $status->color()]
+                                    ))
+                                    ->icons(collect(array_merge(ContainerStatus::cases(), ServerState::cases()))->mapWithKeys(
+                                        fn ($status) => [$status->value => $status->icon()]
+                                    ))
+                                    ->columnSpan([
+                                        'default' => 2,
+                                        'sm' => 1,
+                                        'md' => 1,
+                                        'lg' => 1,
+                                    ]),
+
                                 TextInput::make('name')
                                     ->prefixIcon('tabler-server')
                                     ->label('Display Name')
@@ -119,7 +150,7 @@ class EditServer extends EditRecord
                                     ]),
 
                                 Textarea::make('description')
-                                    ->label('Description')
+                                    ->label('Notes')
                                     ->columnSpanFull(),
 
                                 TextInput::make('uuid')
@@ -163,6 +194,7 @@ class EditServer extends EditRecord
                                     ])
                                     ->disabled(),
                             ]),
+
                         Tab::make('Environment')
                             ->icon('tabler-brand-docker')
                             ->schema([
@@ -460,6 +492,66 @@ class EditServer extends EditRecord
                                     ])
                                     ->required(),
 
+                                Forms\Components\TagsInput::make('ports')
+                                    ->columnSpan(3)
+                                    ->placeholder('Example: 25565, 8080, 1337-1340')
+                                    ->splitKeys(['Tab', ' ', ','])
+                                    ->helperText(new HtmlString('
+                                        These are the ports that users can connect to this Server through.
+                                        <br />
+                                        You would typically port forward these on your home network.
+                                    '))
+                                    ->label('Ports')
+                                    ->formatStateUsing(fn (Server $server) => $server->ports->map(fn ($port) => (string) $port)->all())
+                                    ->afterStateUpdated(self::ports(...))
+                                    ->live(),
+
+                                Forms\Components\Repeater::make('portVariables')
+                                    ->label('Port Assignments')
+                                    ->columnSpan(3)
+                                    ->addable(false)
+                                    ->deletable(false)
+
+                                    ->mutateRelationshipDataBeforeSaveUsing(function ($data) {
+                                        $portIndex = $data['port'];
+                                        unset($data['port']);
+
+                                        return [
+                                            'variable_value' => (string) $this->ports[$portIndex],
+                                        ];
+                                    })
+
+                                    ->relationship('serverVariables', function (Builder $query) {
+                                        $query->whereHas('variable', function (Builder $query) {
+                                            $query->where('rules', 'like', '%port%');
+                                        });
+                                    })
+
+                                    ->simple(
+                                        Forms\Components\Select::make('port')
+                                            ->live()
+                                            ->disabled(fn (Forms\Get $get) => empty($get('../../ports')) || empty($get('../../assignments')))
+                                            ->prefix(function (Forms\Components\Component $component, ServerVariable $serverVariable) {
+                                                return $serverVariable->variable->env_variable;
+                                            })
+
+                                            ->formatStateUsing(function (ServerVariable $serverVariable, Forms\Get $get) {
+                                                return array_search($serverVariable->variable_value, array_values($get('../../ports')));
+                                            })
+
+                                            ->disableOptionsWhenSelectedInSiblingRepeaterItems()
+                                            ->options(fn (Forms\Get $get) => $this->ports)
+                                            ->required(),
+                                    )
+
+                                    ->afterStateHydrated(function (Forms\Set $set, Forms\Get $get, Server $server) {
+                                        $this->ports($ports = $get('ports'), $set);
+
+                                        foreach ($this->portOptions($server->egg) as $key => $port) {
+                                            $set("assignments.$key", ['port' => $portIndex = array_search($port, array_values($ports))]);
+                                        }
+                                    }),
+
                                 Textarea::make('startup')
                                     ->label('Startup Command')
                                     ->required()
@@ -542,7 +634,7 @@ class EditServer extends EditRecord
                                                 ->label(fn (ServerVariable $serverVariable) => $serverVariable->variable->name)
                                                 ->hintIconTooltip(fn (ServerVariable $serverVariable) => implode('|', $serverVariable->variable->rules))
                                                 ->prefix(fn (ServerVariable $serverVariable) => '{{' . $serverVariable->variable->env_variable . '}}')
-                                                ->helperText(fn (ServerVariable $serverVariable) => empty($serverVariable->variable->description) ? '—' : $serverVariable->variable->description);
+                                                ->helperText(fn (ServerVariable $serverVariable) => empty($serverVariable->variable?->description) ? '—' : $serverVariable->variable->description);
                                         }
 
                                         return $components;
@@ -781,16 +873,13 @@ class EditServer extends EditRecord
         return $data;
     }
 
-    public function getRelationManagers(): array
-    {
-        return [
-            ServerResource\RelationManagers\AllocationsRelationManager::class,
-        ];
-    }
-
     private function shouldHideComponent(ServerVariable $serverVariable, Forms\Components\Component $component): bool
     {
         $containsRuleIn = array_first($serverVariable->variable->rules, fn ($value) => str($value)->startsWith('in:'), false);
+
+        if (collect($serverVariable->variable->rules)->contains('port')) {
+            return true;
+        }
 
         if ($component instanceof Select) {
             return !$containsRuleIn;
@@ -813,6 +902,76 @@ class EditServer extends EditRecord
             ->each(fn ($value) => str($value)->trim())
             ->mapWithKeys(fn ($value) => [$value => $value])
             ->all();
+    }
+
+    public function ports(array $state, Forms\Set $set): void
+    {
+        $ports = collect();
+
+        foreach ($state as $portEntry) {
+            if (str_contains($portEntry, '-')) {
+                [$start, $end] = explode('-', $portEntry);
+
+                try {
+                    $startEndpoint = new Endpoint($start);
+                    $endEndpoint = new Endpoint($end);
+                } catch (Exception) {
+                    continue;
+                }
+
+                if ($startEndpoint->ip !== $endEndpoint->ip) {
+                    continue;
+                }
+
+                foreach (range($startEndpoint->port, $endEndpoint->port) as $port) {
+                    $ports->push(new Endpoint($port, $startEndpoint->ip));
+                }
+
+                for ($i = $start; $i <= $end; $i++) {
+                    $ports->push($i);
+                }
+
+                continue;
+            }
+
+            try {
+                $ports->push(new Endpoint($portEntry));
+            } catch (Exception) {
+                continue;
+            }
+        }
+
+        $ports = $ports->map(fn ($endpoint) => (string) $endpoint);
+
+        $uniquePorts = $ports->unique()->values();
+        if ($ports->count() > $uniquePorts->count()) {
+            $ports = $uniquePorts;
+        }
+
+        $set('ports', $ports->all());
+        $this->ports = $ports->all();
+    }
+
+    public function portOptions(Egg $egg, ?string $startup = null): array
+    {
+        if (empty($startup)) {
+            $startup = $egg->startup;
+        }
+
+        $options = [];
+        if (str_contains($startup, '{{SERVER_PORT}}')) {
+            $options['SERVER_PORT'] = null;
+        }
+
+        foreach ($egg->variables as $variable) {
+            if (!in_array('port', $variable->rules)) {
+                continue;
+            }
+
+            $options[$variable->env_variable] = $variable->default_value;
+        }
+
+        return $options;
     }
 
     protected function rotatePassword(DatabasePasswordService $service, Database $record, Set $set, Get $get): void

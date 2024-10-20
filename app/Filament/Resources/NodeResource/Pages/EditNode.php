@@ -4,6 +4,7 @@ namespace App\Filament\Resources\NodeResource\Pages;
 
 use App\Filament\Resources\NodeResource;
 use App\Models\Node;
+use App\Models\Objects\Endpoint;
 use App\Services\Nodes\NodeUpdateService;
 use Filament\Actions;
 use Filament\Forms;
@@ -165,7 +166,7 @@ class EditNode extends EditRecord
                                 ->label(trans('strings.port'))
                                 ->helperText('If you are running the daemon behind Cloudflare you should set the daemon port to 8443 to allow websocket proxying over SSL.')
                                 ->minValue(1)
-                                ->maxValue(65535)
+                                ->maxValue(Endpoint::PORT_CEIL)
                                 ->default(8080)
                                 ->required()
                                 ->integer(),
@@ -243,7 +244,7 @@ class EditNode extends EditRecord
                                 ->columnSpan(['default' => 1, 'sm' => 1, 'md' => 1, 'lg' => 3])
                                 ->label('SFTP Port')
                                 ->minValue(1)
-                                ->maxValue(65535)
+                                ->maxValue(Endpoint::PORT_CEIL)
                                 ->default(2022)
                                 ->required()
                                 ->integer(),

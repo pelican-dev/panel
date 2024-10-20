@@ -47,12 +47,8 @@ class ServerViewController extends Controller
      */
     public function build(Server $server): View
     {
-        $allocations = $server->node->allocations->toBase();
-
         return view('admin.servers.view.build', [
             'server' => $server,
-            'assigned' => $allocations->where('server_id', $server->id)->sortBy('port')->sortBy('ip'),
-            'unassigned' => $allocations->where('server_id', null)->sortBy('port')->sortBy('ip'),
         ]);
     }
 
@@ -120,10 +116,6 @@ class ServerViewController extends Controller
         if ($nodeCount >= 2) {
             $canTransfer = true;
         }
-
-        \JavaScript::put([
-            'nodeData' => Node::getForServerCreation(),
-        ]);
 
         return view('admin.servers.view.manage', [
             'nodes' => Node::all(),

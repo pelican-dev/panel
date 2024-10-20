@@ -8,7 +8,6 @@ use Exception;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Notifications\Notifiable;
-use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Str;
 use Symfony\Component\Yaml\Yaml;
@@ -41,7 +40,6 @@ use Symfony\Component\Yaml\Yaml;
  * @property \Carbon\Carbon $updated_at
  * @property \App\Models\Mount[]|\Illuminate\Database\Eloquent\Collection $mounts
  * @property \App\Models\Server[]|\Illuminate\Database\Eloquent\Collection $servers
- * @property \App\Models\Allocation[]|\Illuminate\Database\Eloquent\Collection $allocations
  */
 class Node extends Model
 {
@@ -236,14 +234,6 @@ class Node extends Model
     }
 
     /**
-     * Gets the allocations associated with a node.
-     */
-    public function allocations(): HasMany
-    {
-        return $this->hasMany(Allocation::class);
-    }
-
-    /**
      * Returns a boolean if the node is viable for an additional server to be placed on it.
      */
     public function isViable(int $memory, int $disk, int $cpu): bool
@@ -272,28 +262,6 @@ class Node extends Model
         return true;
     }
 
-    public static function getForServerCreation(): Collection
-    {
-        return self::with('allocations')->get()->map(function (Node $item) {
-            $filtered = $item->getRelation('allocations')->where('server_id', null)->map(function ($map) {
-                return collect($map)->only(['id', 'ip', 'port']);
-            });
-
-            $ports = $filtered->map(function ($map) {
-                return [
-                    'id' => $map['id'],
-                    'text' => sprintf('%s:%s', $map['ip'], $map['port']),
-                ];
-            })->values();
-
-            return [
-                'id' => $item->id,
-                'text' => $item->name,
-                'allocations' => $ports,
-            ];
-        })->values();
-    }
-
     public function systemInformation(): array
     {
         return once(function () {
@@ -320,11 +288,10 @@ class Node extends Model
 
     public function serverStatuses(): array
     {
-        $statuses = [];
         try {
-            $statuses = Http::daemon($this)->connectTimeout(1)->timeout(1)->get('/api/servers')->json() ?? [];
-        } catch (Exception $exception) {
-            report($exception);
+            $statuses = Http::daemon($this)->connectTimeout(1)->timeout(1)->throw()->get('/api/servers')->json() ?? [];
+        } catch (Exception) {
+            $statuses = [];
         }
 
         foreach ($statuses as $status) {
@@ -378,7 +345,10 @@ class Node extends Model
                 // pass
             }
 
-            return $ips->all();
+            return $ips
+                ->filter(fn ($ip) => preg_match('/^((25[0-5]|(2[0-4]|1\d|[1-9]|)\d)\.?\b){4}$/', $ip))
+                ->unique()
+                ->all();
         });
     }
 }
