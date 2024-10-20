@@ -38,6 +38,7 @@ class ListDatabaseHosts extends ListRecords
                     ->label('Databases'),
                 TextColumn::make('node.name')
                     ->icon('tabler-server-2')
+                    ->placeholder('No Nodes')
                     ->sortable(),
             ])
             ->checkIfRecordIsSelectableUsing(fn (DatabaseHost $databaseHost) => !$databaseHost->databases_count)
