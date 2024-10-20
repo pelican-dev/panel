@@ -51,7 +51,7 @@ class CreateServer extends CreateRecord
 
     private ServerCreationService $serverCreationService;
 
-    public function boot(ServerCreationService $serverCreationService)
+    public function boot(ServerCreationService $serverCreationService): void
     {
         $this->serverCreationService = $serverCreationService;
     }

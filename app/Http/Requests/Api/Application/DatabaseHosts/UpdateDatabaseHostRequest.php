@@ -11,6 +11,6 @@ class UpdateDatabaseHostRequest extends StoreDatabaseHostRequest
         /** @var DatabaseHost $databaseHost */
         $databaseHost = $this->route()->parameter('database_host');
 
-        return $rules ?? DatabaseHost::getRulesForUpdate($databaseHost->id);
+        return $rules ?? DatabaseHost::getRulesForUpdate($databaseHost);
     }
 }

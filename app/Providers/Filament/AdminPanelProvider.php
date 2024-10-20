@@ -22,7 +22,7 @@ use Illuminate\View\Middleware\ShareErrorsFromSession;
 
 class AdminPanelProvider extends PanelProvider
 {
-    public function boot()
+    public function boot(): void
     {
         FilamentAsset::registerCssVariables([
             'sidebar-width' => '16rem !important',

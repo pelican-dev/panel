@@ -24,6 +24,7 @@ use Filament\Notifications\Notification;
 use Filament\Pages\SimplePage;
 use Filament\Support\Enums\MaxWidth;
 use Filament\Support\Exceptions\Halt;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\HtmlString;
@@ -37,7 +38,7 @@ class PanelInstaller extends SimplePage implements HasForms
     use EnvironmentWriterTrait;
     use InteractsWithForms;
 
-    public $data = [];
+    public array $data = [];
 
     protected static string $view = 'filament.pages.installer';
 
@@ -54,7 +55,7 @@ class PanelInstaller extends SimplePage implements HasForms
         return env('APP_INSTALLED', true);
     }
 
-    public function mount()
+    public function mount(): void
     {
         abort_if(self::isInstalled(), 404);
 
@@ -93,7 +94,7 @@ class PanelInstaller extends SimplePage implements HasForms
         return 'data';
     }
 
-    public function submit()
+    public function submit(): RedirectResponse
     {
         // Disable installer
         $this->writeToEnvironment(['APP_INSTALLED' => 'true']);
