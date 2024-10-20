@@ -2,7 +2,7 @@
 
 namespace App\Exceptions\Solutions;
 
-use Spatie\Ignition\Contracts\Solution;
+use Spatie\ErrorSolutions\Contracts\Solution;
 
 class ManifestDoesNotExistSolution implements Solution
 {
@@ -19,7 +19,7 @@ class ManifestDoesNotExistSolution implements Solution
     public function getDocumentationLinks(): array
     {
         return [
-            'Docs' => 'https://github.com/pelican/panel/blob/master/package.json',
+            'Docs' => 'https://github.com/pelican-dev/panel/blob/main/package.json#L139',
         ];
     }
 }
