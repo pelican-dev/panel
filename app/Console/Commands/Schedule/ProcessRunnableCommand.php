@@ -51,7 +51,7 @@ class ProcessRunnableCommand extends Command
      * never throw an exception out, otherwise you'll end up killing the entire run group causing
      * any other schedules to not process correctly.
      */
-    protected function processSchedule(Schedule $schedule)
+    protected function processSchedule(Schedule $schedule): void
     {
         if ($schedule->tasks->isEmpty()) {
             return;

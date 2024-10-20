@@ -168,7 +168,7 @@ class ActivityLogService
      *
      * @throws \Throwable
      */
-    public function transaction(\Closure $callback)
+    public function transaction(\Closure $callback): mixed
     {
         return $this->connection->transaction(function () use ($callback) {
             $response = $callback($this);

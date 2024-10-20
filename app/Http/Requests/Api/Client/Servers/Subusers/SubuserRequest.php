@@ -49,7 +49,7 @@ abstract class SubuserRequest extends ClientApiRequest
      *
      * @throws \Illuminate\Contracts\Container\BindingResolutionException
      */
-    protected function validatePermissionsCanBeAssigned(array $permissions)
+    protected function validatePermissionsCanBeAssigned(array $permissions): void
     {
         $user = $this->user();
         /** @var \App\Models\Server $server */

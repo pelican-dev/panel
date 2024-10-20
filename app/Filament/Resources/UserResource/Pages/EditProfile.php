@@ -13,7 +13,9 @@ use chillerlan\QRCode\Common\EccLevel;
 use chillerlan\QRCode\Common\Version;
 use chillerlan\QRCode\QRCode;
 use chillerlan\QRCode\QROptions;
+use Closure;
 use DateTimeZone;
+use Exception;
 use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\Placeholder;
@@ -274,8 +276,12 @@ class EditProfile extends \Filament\Pages\Auth\EditProfile
         ];
     }
 
-    protected function handleRecordUpdate($record, $data): Model
+    protected function handleRecordUpdate(Model $record, array $data): Model
     {
+        if (! $record instanceof User) {
+            return $record;
+        }
+
         if ($token = $data['2facode'] ?? null) {
             /** @var ToggleTwoFactorService $service */
             $service = resolve(ToggleTwoFactorService::class);
@@ -298,7 +304,7 @@ class EditProfile extends \Filament\Pages\Auth\EditProfile
         return parent::handleRecordUpdate($record, $data);
     }
 
-    public function exception($e, $stopPropagation): void
+    public function exception(Exception $e, Closure $stopPropagation): void
     {
         if ($e instanceof TwoFactorAuthenticationTokenInvalid) {
             Notification::make()

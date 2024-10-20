@@ -4,6 +4,8 @@ namespace App\Filament\Resources\DatabaseHostResource\Pages;
 
 use App\Filament\Resources\DatabaseHostResource;
 use App\Services\Databases\Hosts\HostCreationService;
+use Closure;
+use Exception;
 use Filament\Forms;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
@@ -97,7 +99,7 @@ class CreateDatabaseHost extends CreateRecord
         return resolve(HostCreationService::class)->handle($data);
     }
 
-    public function exception($e, $stopPropagation): void
+    public function exception(Exception $e, Closure $stopPropagation): void
     {
         if ($e instanceof PDOException) {
             Notification::make()

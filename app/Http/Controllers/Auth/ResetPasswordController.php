@@ -69,7 +69,7 @@ class ResetPasswordController extends Controller
      *
      * @throws \App\Exceptions\Model\DataValidationException
      */
-    protected function resetPassword($user, $password)
+    protected function resetPassword($user, $password): void
     {
         /** @var User $user */
         $user->password = $this->hasher->make($password);

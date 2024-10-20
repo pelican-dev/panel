@@ -813,7 +813,7 @@ class EditServer extends EditRecord
             ->all();
     }
 
-    protected function rotatePassword(DatabasePasswordService $service, $record, $set, $get): void
+    protected function rotatePassword(DatabasePasswordService $service, Database $record, Set $set, Get $get): void
     {
         $newPassword = $service->handle($record);
         $jdbcString = 'jdbc:mysql://' . $get('username') . ':' . urlencode($newPassword) . '@' . $record->host->host . ':' . $record->host->port . '/' . $get('database');

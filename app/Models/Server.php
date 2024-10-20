@@ -363,7 +363,7 @@ class Server extends Model
      *
      * @throws ServerStateConflictException
      */
-    public function validateCurrentState()
+    public function validateCurrentState(): void
     {
         if (
             $this->isSuspended() ||
@@ -382,7 +382,7 @@ class Server extends Model
      * sure the server can be transferred and is not currently being transferred
      * or installed.
      */
-    public function validateTransferState()
+    public function validateTransferState(): void
     {
         if (
             !$this->isInstalled() ||
