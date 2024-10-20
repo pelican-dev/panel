@@ -31,7 +31,6 @@ class ListDatabaseHosts extends ListRecords
                 TextColumn::make('port')
                     ->sortable(),
                 TextColumn::make('username')
-                    ->icon('tabler-user')
                     ->searchable(),
                 TextColumn::make('databases_count')
                     ->counts('databases')
