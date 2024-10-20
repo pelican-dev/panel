@@ -21,9 +21,12 @@ class CreateDatabase extends CreateRecord
                     ->searchable()
                     ->preload()
                     ->required(),
-                TextInput::make('database_host_id')
-                    ->required()
-                    ->numeric(),
+                Select::make('database_host_id')
+                    ->relationship('host', 'name')
+                    ->searchable()
+                    ->selectablePlaceholder(false)
+                    ->preload()
+                    ->required(),
                 TextInput::make('database')
                     ->required()
                     ->maxLength(255),
