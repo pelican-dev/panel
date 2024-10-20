@@ -47,12 +47,8 @@ class ServerViewController extends Controller
      */
     public function build(Server $server): View
     {
-        $allocations = $server->node->allocations->toBase();
-
         return view('admin.servers.view.build', [
             'server' => $server,
-            'assigned' => $allocations->where('server_id', $server->id)->sortBy('port')->sortBy('ip'),
-            'unassigned' => $allocations->where('server_id', null)->sortBy('port')->sortBy('ip'),
         ]);
     }
 

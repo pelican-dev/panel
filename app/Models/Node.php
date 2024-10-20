@@ -40,7 +40,6 @@ use Symfony\Component\Yaml\Yaml;
  * @property \Carbon\Carbon $updated_at
  * @property \App\Models\Mount[]|\Illuminate\Database\Eloquent\Collection $mounts
  * @property \App\Models\Server[]|\Illuminate\Database\Eloquent\Collection $servers
- * @property \App\Models\Allocation[]|\Illuminate\Database\Eloquent\Collection $allocations
  */
 class Node extends Model
 {

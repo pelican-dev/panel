@@ -41,7 +41,6 @@ use App\Exceptions\Http\Server\ServerStateConflictException;
  * @property int $cpu
  * @property string|null $threads
  * @property bool $oom_killer
- * @property int $allocation_id
  * @property int $egg_id
  * @property string $startup
  * @property string $image
@@ -53,7 +52,6 @@ use App\Exceptions\Http\Server\ServerStateConflictException;
  * @property \Illuminate\Support\Carbon|null $installed_at
  * @property \Illuminate\Database\Eloquent\Collection|\App\Models\ActivityLog[] $activity
  * @property int|null $activity_count
- * @property \App\Models\Allocation|null $allocation
  * @property \Illuminate\Database\Eloquent\Collection|\App\Models\Allocation[] $allocations
  * @property int|null $allocations_count
  * @property \Illuminate\Database\Eloquent\Collection|\App\Models\Backup[] $backups
@@ -79,7 +77,6 @@ use App\Exceptions\Http\Server\ServerStateConflictException;
  * @method static \Illuminate\Database\Eloquent\Builder|Server newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Server newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Server query()
- * @method static \Illuminate\Database\Eloquent\Builder|Server whereAllocationId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Server whereAllocationLimit($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Server whereBackupLimit($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Server whereCpu($value)
@@ -200,7 +197,7 @@ class Server extends Model
     }
 
     /**
-     * Returns the format for server allocations when communicating with the Daemon.
+     * Returns the format for server's ports when communicating with the Daemon.
      */
     public function getPortMappings(): array
     {

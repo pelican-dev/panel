@@ -8,8 +8,7 @@ use Illuminate\Support\Collection;
 class FindViableNodesService
 {
     /**
-     * Returns a collection of nodes that meet the provided requirements and can then
-     * be passed to the AllocationSelectionService to return a single allocation.
+     * Returns a collection of nodes that meet the provided requirements
      *
      * This functionality is used for automatic deployments of servers and will
      * attempt to find all nodes in the defined locations that meet the memory, disk
