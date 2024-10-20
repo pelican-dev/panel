@@ -46,8 +46,11 @@ class CreateServer extends CreateRecord
     protected static bool $canCreateAnother = false;
 
     public ?Node $node = null;
+
     public ?Egg $egg = null;
+
     public array $ports = [];
+
     public array $eggDefaultPorts = [];
 
     private ServerCreationService $serverCreationService;
@@ -769,7 +772,7 @@ class CreateServer extends CreateRecord
             ->all();
     }
 
-    public function ports($state, Forms\Set $set)
+    public function ports(array $state, Forms\Set $set): void
     {
         $ports = collect();
         foreach ($state as $portEntry) {
@@ -804,7 +807,7 @@ class CreateServer extends CreateRecord
         $this->ports = $ports->all();
     }
 
-    public function resetEggVariables(Forms\Set $set, Forms\Get $get)
+    public function resetEggVariables(Forms\Set $set, Forms\Get $get): void
     {
         $set('assignments', []);
 

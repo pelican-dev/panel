@@ -8,18 +8,26 @@ use InvalidArgumentException;
 class Endpoint implements Jsonable
 {
     public const CIDR_MAX_BITS = 27;
+
     public const CIDR_MIN_BITS = 32;
+
     public const PORT_FLOOR = 1024;
+
     public const PORT_CEIL = 65535;
+
     public const PORT_RANGE_LIMIT = 1000;
+
     public const PORT_RANGE_REGEX = '/^(\d{4,5})-(\d{4,5})$/';
+
     public const INADDR_ANY = '0.0.0.0';
+
     public const INADDR_LOOPBACK = '127.0.0.1';
 
     public int $port;
+
     public string $ip;
 
-    public function __construct(string|int $port, string $ip = null)
+    public function __construct(string|int $port, ?string $ip = null)
     {
         $this->ip = $ip ?? self::INADDR_ANY;
         $this->port = (int) $port;

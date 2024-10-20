@@ -433,6 +433,7 @@ class Server extends Model
 
         return $this->status->color();
     }
+
     public function getPrimaryEndpoint(): ?Endpoint
     {
         $endpoint = $this->ports->first();

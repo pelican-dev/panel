@@ -47,8 +47,11 @@ use Webbingbrasil\FilamentCopyActions\Forms\Actions\CopyAction;
 class EditServer extends EditRecord
 {
     public ?Node $node = null;
+
     public ?Egg $egg = null;
+
     public array $ports = [];
+
     public array $eggDefaultPorts = [];
 
     protected static string $resource = ServerResource::class;
@@ -901,7 +904,7 @@ class EditServer extends EditRecord
             ->all();
     }
 
-    public function ports($state, Forms\Set $set)
+    public function ports(array $state, Forms\Set $set): void
     {
         $ports = collect();
 
@@ -949,7 +952,7 @@ class EditServer extends EditRecord
         $this->ports = $ports->all();
     }
 
-    public function portOptions(Egg $egg, string $startup = null): array
+    public function portOptions(Egg $egg, ?string $startup = null): array
     {
         if (empty($startup)) {
             $startup = $egg->startup;

@@ -18,9 +18,6 @@ use App\Models\Egg;
 
 class ServerCreationService
 {
-    /**
-     * ServerCreationService constructor.
-     */
     public function __construct(
         private ConnectionInterface $connection,
         private DaemonServerRepository $daemonServerRepository,
@@ -32,19 +29,13 @@ class ServerCreationService
     /**
      * Create a server on the Panel and trigger a request to the Daemon to begin the server creation process.
      * This function will attempt to set as many additional values as possible given the input data.
-     *
-     * @throws \Throwable
-     * @throws \App\Exceptions\DisplayException
-     * @throws \Illuminate\Validation\ValidationException
-     * @throws \App\Exceptions\Service\Deployment\NoViableAllocationException
      */
-    public function handle(array $data, ?DeploymentObject $deployment = null, $validateVariables = true): Server
+    public function handle(array $data, ?DeploymentObject $deployment = null, bool $validateVariables = true): Server
     {
         if (!isset($data['oom_killer']) && isset($data['oom_disabled'])) {
             $data['oom_killer'] = !$data['oom_disabled'];
         }
 
-        /** @var Egg $egg */
         $egg = Egg::query()->findOrFail($data['egg_id']);
 
         // Fill missing fields from egg
@@ -62,7 +53,7 @@ class ServerCreationService
         //
         // If that connection fails out we will attempt to perform a cleanup by just
         // deleting the server itself from the system.
-        /** @var \App\Models\Server $server */
+        /** @var Server $server */
         $server = $this->connection->transaction(function () use ($data, $eggVariableData) {
             // Create the server and assign any additional allocations to it.
             $server = $this->createModel($data);
