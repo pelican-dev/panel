@@ -11,11 +11,8 @@ class CheckEggUpdatesCommand extends Command
 {
     protected $signature = 'p:egg:check-updates';
 
-    public function handle(): void
+    public function handle(EggExporterService $exporterService): void
     {
-        /** @var EggExporterService $exporterService */
-        $exporterService = app(EggExporterService::class);
-
         $eggs = Egg::all();
         foreach ($eggs as $egg) {
             try {

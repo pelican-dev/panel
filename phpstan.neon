@@ -1,6 +1,9 @@
 includes:
     - vendor/larastan/larastan/extension.neon
 
+rules:
+    - App\PHPStan\ForbiddenGlobalFunctionsRule
+
 parameters:
 
     paths:

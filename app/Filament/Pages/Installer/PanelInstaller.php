@@ -2,6 +2,7 @@
 
 namespace App\Filament\Pages\Installer;
 
+use App\Filament\Pages\Dashboard;
 use App\Filament\Pages\Installer\Steps\AdminUserStep;
 use App\Filament\Pages\Installer\Steps\CompletedStep;
 use App\Filament\Pages\Installer\Steps\DatabaseStep;
@@ -13,7 +14,6 @@ use App\Services\Users\UserCreationService;
 use App\Traits\CheckMigrationsTrait;
 use App\Traits\EnvironmentWriterTrait;
 use Exception;
-use Filament\Facades\Filament;
 use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\Wizard;
 use Filament\Forms\Concerns\InteractsWithForms;
@@ -104,7 +104,7 @@ class PanelInstaller extends SimplePage implements HasForms
         auth()->guard()->login($this->user, true);
 
         // Redirect to admin panel
-        return redirect(Filament::getPanel('admin')->getUrl());
+        return redirect(Dashboard::getUrl());
     }
 
     public function writeToEnv(string $key): void
@@ -160,12 +160,12 @@ class PanelInstaller extends SimplePage implements HasForms
         }
     }
 
-    public function createAdminUser(): void
+    public function createAdminUser(UserCreationService $userCreationService): void
     {
         try {
             $userData = array_get($this->data, 'user');
             $userData['root_admin'] = true;
-            $this->user = app(UserCreationService::class)->handle($userData);
+            $this->user = $userCreationService->handle($userData);
         } catch (Exception $exception) {
             report($exception);
 

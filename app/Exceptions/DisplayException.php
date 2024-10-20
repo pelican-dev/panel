@@ -64,6 +64,7 @@ class DisplayException extends PanelException implements HttpExceptionInterface
             return response()->json(Handler::toArray($this), $this->getStatusCode(), $this->getHeaders());
         }
 
+        // @phpstan-ignore-next-line
         app(AlertsMessageBag::class)->danger($this->getMessage())->flash();
 
         return redirect()->back()->withInput();

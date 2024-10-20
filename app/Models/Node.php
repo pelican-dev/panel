@@ -295,6 +295,7 @@ class Node extends Model
     {
         return once(function () {
             try {
+                // @phpstan-ignore-next-line
                 return resolve(DaemonConfigurationRepository::class)
                     ->setNode($this)
                     ->getSystemInformation(connectTimeout: 3);

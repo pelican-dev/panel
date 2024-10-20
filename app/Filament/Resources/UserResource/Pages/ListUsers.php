@@ -110,13 +110,11 @@ class ListUsers extends ListRecords
                         ]),
                 ])
                 ->successRedirectUrl(route('filament.admin.resources.users.index'))
-                ->action(function (array $data) {
+                ->action(function (array $data, UserCreationService $creationService) {
                     $roles = $data['roles'];
                     $roles = collect($roles)->map(fn ($role) => Role::findById($role));
                     unset($data['roles']);
 
-                    /** @var UserCreationService $creationService */
-                    $creationService = resolve(UserCreationService::class);
                     $user = $creationService->handle($data);
 
                     $user->syncRoles($roles);
