@@ -278,7 +278,7 @@ class EditProfile extends \Filament\Pages\Auth\EditProfile
 
     protected function handleRecordUpdate(Model $record, array $data): Model
     {
-        if (! $record instanceof User) {
+        if (!$record instanceof User) {
             return $record;
         }
 

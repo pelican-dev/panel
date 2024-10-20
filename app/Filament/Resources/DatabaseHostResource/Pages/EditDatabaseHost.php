@@ -101,7 +101,7 @@ class EditDatabaseHost extends EditRecord
 
     protected function handleRecordUpdate(Model $record, array $data): Model
     {
-        if (! $record instanceof DatabaseHost) {
+        if (!$record instanceof DatabaseHost) {
             return $record;
         }
 
