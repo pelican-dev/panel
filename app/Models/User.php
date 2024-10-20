@@ -99,6 +99,7 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
     use Notifiable;
 
     public const USER_LEVEL_USER = 0;
+
     public const USER_LEVEL_ADMIN = 1;
 
     /**
@@ -233,7 +234,7 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
     /**
      * Send the password reset notification.
      *
-     * @param string $token
+     * @param  string  $token
      */
     public function sendPasswordResetNotification($token): void
     {

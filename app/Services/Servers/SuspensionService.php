@@ -12,6 +12,7 @@ use Symfony\Component\HttpKernel\Exception\ConflictHttpException;
 class SuspensionService
 {
     public const ACTION_SUSPEND = 'suspend';
+
     public const ACTION_UNSUSPEND = 'unsuspend';
 
     /**

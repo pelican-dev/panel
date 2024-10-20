@@ -7,6 +7,7 @@ use Ramsey\Uuid\Uuid;
 class ActivityLogBatchService
 {
     protected int $transaction = 0;
+
     protected ?string $uuid = null;
 
     /**

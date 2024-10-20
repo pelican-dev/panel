@@ -9,7 +9,9 @@ use Illuminate\Database\Eloquent\Model;
 class NodeStorageChart extends ChartWidget
 {
     protected static ?string $heading = 'Storage';
+
     protected static ?string $pollingInterval = '60s';
+
     protected static ?string $maxHeight = '300px';
 
     public ?Model $record = null;

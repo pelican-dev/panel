@@ -9,7 +9,7 @@ class UpdateMountRequest extends StoreMountRequest
     /**
      * Apply validation rules to this request.
      */
-    public function rules(array $rules = null): array
+    public function rules(?array $rules = null): array
     {
         /** @var Mount $mount */
         $mount = $this->route()->parameter('mount');

@@ -51,7 +51,7 @@ class DaemonBackupRepository extends DaemonRepository
      *
      * @throws \App\Exceptions\Http\Connection\DaemonConnectionException
      */
-    public function restore(Backup $backup, string $url = null, bool $truncate = false): Response
+    public function restore(Backup $backup, ?string $url = null, bool $truncate = false): Response
     {
         Assert::isInstanceOf($this->server, Server::class);
 
