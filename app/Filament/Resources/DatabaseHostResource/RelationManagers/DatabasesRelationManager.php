@@ -8,6 +8,7 @@ use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Forms\Get;
+use Filament\Forms\Set;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables\Actions\DeleteAction;
 use Filament\Tables\Actions\ViewAction;
@@ -40,6 +41,7 @@ class DatabasesRelationManager extends RelationManager
                     ->formatStateUsing(fn (Get $get, Database $database) => 'jdbc:mysql://' . $get('username') . ':' . urlencode($database->password) . '@' . $database->host->host . ':' . $database->host->port . '/' . $get('database')),
             ]);
     }
+
     public function table(Table $table): Table
     {
         return $table
@@ -60,7 +62,7 @@ class DatabasesRelationManager extends RelationManager
             ]);
     }
 
-    protected function rotatePassword(DatabasePasswordService $service, Database $database, $set, $get): void
+    protected function rotatePassword(DatabasePasswordService $service, Database $database, Set $set, Get $get): void
     {
         $newPassword = $service->handle($database);
         $jdbcString = 'jdbc:mysql://' . $get('username') . ':' . urlencode($newPassword) . '@' . $database->host->host . ':' . $database->host->port . '/' . $get('database');

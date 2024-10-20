@@ -29,7 +29,7 @@ class ServerTransformer extends BaseTransformer
     /**
      * Perform dependency injection.
      */
-    public function handle(EnvironmentService $environmentService)
+    public function handle(EnvironmentService $environmentService): void
     {
         $this->environmentService = $environmentService;
     }

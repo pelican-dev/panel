@@ -16,7 +16,7 @@ class ForgotPasswordController extends Controller
     /**
      * Get the response for a failed password reset link.
      */
-    protected function sendResetLinkFailedResponse(Request $request, $response): JsonResponse
+    protected function sendResetLinkFailedResponse(Request $request, string $response): JsonResponse
     {
         // As noted in #358 we will return success even if it failed
         // to avoid pointing out that an account does or does not
@@ -28,10 +28,8 @@ class ForgotPasswordController extends Controller
 
     /**
      * Get the response for a successful password reset link.
-     *
-     * @param string $response
      */
-    protected function sendResetLinkResponse(Request $request, $response): JsonResponse
+    protected function sendResetLinkResponse(Request $request, string $response): JsonResponse
     {
         return response()->json([
             'status' => trans($response),

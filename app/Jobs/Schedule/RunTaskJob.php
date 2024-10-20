@@ -90,7 +90,7 @@ class RunTaskJob extends Job implements ShouldQueue
     /**
      * Handle a failure while sending the action to the daemon or otherwise processing the job.
      */
-    public function failed(\Exception $exception = null)
+    public function failed(?\Exception $exception = null): void
     {
         $this->markTaskNotQueued();
         $this->markScheduleComplete();
@@ -99,7 +99,7 @@ class RunTaskJob extends Job implements ShouldQueue
     /**
      * Get the next task in the schedule and queue it for running after the defined period of wait time.
      */
-    private function queueNextTask()
+    private function queueNextTask(): void
     {
         /** @var \App\Models\Task|null $nextTask */
         $nextTask = Task::query()->where('schedule_id', $this->task->schedule_id)
@@ -121,7 +121,7 @@ class RunTaskJob extends Job implements ShouldQueue
     /**
      * Marks the parent schedule as being complete.
      */
-    private function markScheduleComplete()
+    private function markScheduleComplete(): void
     {
         $this->task->schedule()->update([
             'is_processing' => false,
@@ -132,7 +132,7 @@ class RunTaskJob extends Job implements ShouldQueue
     /**
      * Mark a specific task as no longer being queued.
      */
-    private function markTaskNotQueued()
+    private function markTaskNotQueued(): void
     {
         $this->task->update(['is_queued' => false]);
     }

@@ -27,6 +27,7 @@ class CreateEgg extends CreateRecord
     protected static string $resource = EggResource::class;
 
     protected static bool $canCreateAnother = false;
+
     public function form(Form $form): Form
     {
         return $form

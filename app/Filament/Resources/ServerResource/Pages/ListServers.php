@@ -88,6 +88,7 @@ class ListServers extends ListRecords
                     ->button(),
             ]);
     }
+
     protected function getHeaderActions(): array
     {
         return [

@@ -38,6 +38,7 @@ class Settings extends Page implements HasForms
     use InteractsWithHeaderActions;
 
     protected static ?string $navigationIcon = 'tabler-settings';
+
     protected static ?string $navigationGroup = 'Advanced';
 
     protected static string $view = 'filament.pages.settings';

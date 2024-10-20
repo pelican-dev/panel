@@ -66,9 +66,10 @@ class ListEggs extends ListRecords
                     ->modalDescription('If you made any changes to the egg they will be overwritten!')
                     ->modalIconColor('danger')
                     ->modalSubmitAction(fn (Actions\StaticAction $action) => $action->color('danger'))
-                    ->action(function (Egg $egg) {
+                    ->action(function (Egg $egg, EggImporterService $eggImporterService) {
                         try {
-                            app(EggImporterService::class)->fromUrl($egg->update_url, $egg);
+                            $eggImporterService->fromUrl($egg->update_url, $egg);
+
                             cache()->forget("eggs.{$egg->uuid}.update");
                         } catch (Exception $exception) {
                             Notification::make()
@@ -97,6 +98,7 @@ class ListEggs extends ListRecords
                 ]),
             ]);
     }
+
     protected function getHeaderActions(): array
     {
         return [
@@ -129,10 +131,7 @@ class ListEggs extends ListRecords
                         ->contained(false),
 
                 ])
-                ->action(function (array $data): void {
-                    /** @var EggImporterService $eggImportService */
-                    $eggImportService = resolve(EggImporterService::class);
-
+                ->action(function (array $data, EggImporterService $eggImportService): void {
                     if (!empty($data['egg'])) {
                         /** @var TemporaryUploadedFile[] $eggFile */
                         $eggFile = $data['egg'];

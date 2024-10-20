@@ -31,8 +31,11 @@ class Task extends Model
      * The default actions that can exist for a task
      */
     public const ACTION_POWER = 'power';
+
     public const ACTION_COMMAND = 'command';
+
     public const ACTION_BACKUP = 'backup';
+
     public const ACTION_DELETE_FILES = 'delete_files';
 
     /**

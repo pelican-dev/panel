@@ -34,7 +34,7 @@ class EggImporterService
      *
      * @throws \App\Exceptions\Service\InvalidFileUploadException|\Throwable
      */
-    public function fromFile(UploadedFile $file, Egg $egg = null): Egg
+    public function fromFile(UploadedFile $file, ?Egg $egg = null): Egg
     {
         $parsed = $this->parseFile($file);
 
@@ -75,7 +75,7 @@ class EggImporterService
      *
      * @throws \App\Exceptions\Service\InvalidFileUploadException|\Throwable
      */
-    public function fromUrl(string $url, Egg $egg = null): Egg
+    public function fromUrl(string $url, ?Egg $egg = null): Egg
     {
         $info = pathinfo($url);
         $tmpDir = TemporaryDirectory::make()->deleteWhenDestroyed();

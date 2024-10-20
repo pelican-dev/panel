@@ -93,5 +93,4 @@ class ServerConfigurationStructureService
 
         return $response;
     }
-
 }

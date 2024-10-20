@@ -830,6 +830,7 @@ class EditServer extends EditRecord
             ]);
 
     }
+
     protected function getHeaderActions(): array
     {
         return [
@@ -838,8 +839,8 @@ class EditServer extends EditRecord
                 ->color('danger')
                 ->label('Delete')
                 ->requiresConfirmation()
-                ->action(function (Server $server) {
-                    resolve(ServerDeletionService::class)->handle($server);
+                ->action(function (Server $server, ServerDeletionService $service) {
+                    $service->handle($server);
 
                     return redirect(ListServers::getUrl());
                 })
@@ -852,6 +853,7 @@ class EditServer extends EditRecord
         ];
 
     }
+
     protected function getFormActions(): array
     {
         return [];
@@ -969,7 +971,7 @@ class EditServer extends EditRecord
         return $options;
     }
 
-    protected function rotatePassword(DatabasePasswordService $service, $record, $set, $get): void
+    protected function rotatePassword(DatabasePasswordService $service, Database $record, Set $set, Get $get): void
     {
         $newPassword = $service->handle($record);
         $jdbcString = 'jdbc:mysql://' . $get('username') . ':' . urlencode($newPassword) . '@' . $record->host->host . ':' . $record->host->port . '/' . $get('database');

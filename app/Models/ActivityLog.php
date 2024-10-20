@@ -123,7 +123,7 @@ class ActivityLog extends Model
      *
      * @see https://laravel.com/docs/9.x/eloquent#pruning-models
      */
-    public function prunable()
+    public function prunable(): Builder
     {
         if (is_null(config('activity.prune_days'))) {
             throw new \LogicException('Cannot prune activity logs: no "prune_days" configuration value is set.');
@@ -136,7 +136,7 @@ class ActivityLog extends Model
      * Boots the model event listeners. This will trigger an activity log event every
      * time a new model is inserted which can then be captured and worked with as needed.
      */
-    protected static function boot()
+    protected static function boot(): void
     {
         parent::boot();
 
@@ -149,7 +149,7 @@ class ActivityLog extends Model
         });
     }
 
-    public function htmlable()
+    public function htmlable(): string
     {
         $user = $this->actor;
         if (!$user instanceof User) {

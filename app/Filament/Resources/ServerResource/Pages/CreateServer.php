@@ -42,12 +42,20 @@ use LogicException;
 class CreateServer extends CreateRecord
 {
     protected static string $resource = ServerResource::class;
+
     protected static bool $canCreateAnother = false;
 
     public ?Node $node = null;
     public ?Egg $egg = null;
     public array $ports = [];
     public array $eggDefaultPorts = [];
+
+    private ServerCreationService $serverCreationService;
+
+    public function boot(ServerCreationService $serverCreationService): void
+    {
+        $this->serverCreationService = $serverCreationService;
+    }
 
     public function form(Form $form): Form
     {
@@ -118,8 +126,9 @@ class CreateServer extends CreateRecord
                                         ->hintIconTooltip('Providing a user password is optional. New user email will prompt users to create a password the first time they login.')
                                         ->password(),
                                 ])
-                                ->createOptionUsing(function ($data) {
-                                    resolve(UserCreationService::class)->handle($data);
+                                ->createOptionUsing(function ($data, UserCreationService $service) {
+                                    $service->handle($data);
+
                                     $this->refreshForm();
                                 })
                                 ->required(),
@@ -726,10 +735,7 @@ class CreateServer extends CreateRecord
             $data['environment'][$env] = $data['ports'][$data['assignments'][$i]];
         }
 
-        /** @var ServerCreationService $service */
-        $service = resolve(ServerCreationService::class);
-
-        return $service->handle($data, validateVariables: false);
+        return $this->serverCreationService->handle($data, validateVariables: false);
     }
 
     private function shouldHideComponent(Get $get, Component $component): bool

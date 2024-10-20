@@ -19,6 +19,7 @@ class DeleteFilesService
 
     /**
      * Deletes the given files.
+     *
      * @throws DaemonConnectionException
      */
     public function handle(Server $server, array $files): void
