@@ -93,8 +93,6 @@ abstract class BaseTransformer extends TransformerAbstract
      * @param  class-string<T>  $abstract
      * @return T
      *
-     * @throws \App\Exceptions\Transformer\InvalidTransformerLevelException
-     *
      * @noinspection PhpDocSignatureInspection
      */
     protected function makeTransformer(string $abstract)

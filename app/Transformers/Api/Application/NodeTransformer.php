@@ -47,8 +47,6 @@ class NodeTransformer extends BaseTransformer
 
     /**
      * Return the nodes associated with this location.
-     *
-     * @throws \App\Exceptions\Transformer\InvalidTransformerLevelException
      */
     public function includeAllocations(Node $node): Collection|NullResource
     {
@@ -67,8 +65,6 @@ class NodeTransformer extends BaseTransformer
 
     /**
      * Return the nodes associated with this location.
-     *
-     * @throws \App\Exceptions\Transformer\InvalidTransformerLevelException
      */
     public function includeServers(Node $node): Collection|NullResource
     {

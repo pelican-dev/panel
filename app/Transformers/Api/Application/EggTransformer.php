@@ -78,8 +78,6 @@ class EggTransformer extends BaseTransformer
 
     /**
      * Include the Servers relationship for the given Egg in the transformation.
-     *
-     * @throws \App\Exceptions\Transformer\InvalidTransformerLevelException
      */
     public function includeServers(Egg $model): Collection|NullResource
     {
@@ -94,8 +92,6 @@ class EggTransformer extends BaseTransformer
 
     /**
      * Include the variables that are defined for this Egg.
-     *
-     * @throws \App\Exceptions\Transformer\InvalidTransformerLevelException
      */
     public function includeVariables(Egg $model): Collection|NullResource
     {
