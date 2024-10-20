@@ -33,8 +33,6 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @method static \Illuminate\Database\Query\Builder|UserSSHKey withTrashed()
  * @method static \Illuminate\Database\Query\Builder|UserSSHKey withoutTrashed()
  *
- * @mixin \Eloquent
- *
  * @method static \Database\Factories\UserSSHKeyFactory factory(...$parameters)
  */
 class UserSSHKey extends Model

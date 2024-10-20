@@ -45,8 +45,6 @@ use Illuminate\Database\Eloquent\Model as IlluminateModel;
  * @method static Builder|ActivityLog whereIp($value)
  * @method static Builder|ActivityLog whereProperties($value)
  * @method static Builder|ActivityLog whereTimestamp($value)
- *
- * @mixin \Eloquent
  */
 class ActivityLog extends Model
 {
