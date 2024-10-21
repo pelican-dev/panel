@@ -15,6 +15,7 @@ use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Forms\Get;
+use Filament\Forms\Set;
 use Filament\Resources\Pages\ListRecords;
 use Filament\Tables\Actions\DeleteAction;
 use Filament\Tables\Actions\ViewAction;
@@ -96,7 +97,7 @@ class ListDatabases extends ListRecords
                                 ->default('%'),
                         ]),
                 ])
-                ->action(function ($data) use ($server) {
+                ->action(function ($data, DatabaseManagementService $service) use ($server) {
                     if (empty($data['database'])) {
                         $data['database'] = str_random(12);
                     }
@@ -104,12 +105,12 @@ class ListDatabases extends ListRecords
                     $data['database_host_id'] = DatabaseHost::where('node_id', $server->node_id)->first()->id;
                     $data['database'] = 's'. $server->id . '_' . $data['database'];
 
-                    resolve(DatabaseManagementService::class)->create($server, $data);
+                    $service->create($server, $data);
                 }),
         ];
     }
 
-    protected function rotatePassword(DatabasePasswordService $service, Database $database, $set, $get): void
+    protected function rotatePassword(DatabasePasswordService $service, Database $database, Set $set, Get $get): void
     {
         $newPassword = $service->handle($database);
         $jdbcString = 'jdbc:mysql://' . $get('username') . ':' . urlencode($newPassword) . '@' . $database->host->host . ':' . $database->host->port . '/' . $get('database');

@@ -98,10 +98,11 @@ class ListAllocations extends ListRecords
 
                     return $server->allocations()->count() >= $server->allocation_limit ? 'danger' : 'primary';
                 })
-                ->action(function () {
+                ->action(function (FindAssignableAllocationService $service) {
                     /** @var Server $server */
                     $server = Filament::getTenant();
-                    $allocation = app(FindAssignableAllocationService::class)->handle($server);
+
+                    $allocation = $service->handle($server);
 
                     Activity::event('server:allocation.create')
                         ->subject($allocation)

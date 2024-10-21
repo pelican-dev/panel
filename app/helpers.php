@@ -19,7 +19,7 @@ if (!function_exists('is_ip')) {
 }
 
 if (!function_exists('convert_bytes_to_readable')) {
-    function convert_bytes_to_readable($bytes, int $decimals = 2): string
+    function convert_bytes_to_readable(int $bytes, int $decimals = 2): string
     {
         $conversionUnit = config('panel.use_binary_prefix') ? 1024 : 1000;
         $suffix = config('panel.use_binary_prefix') ? ['Bytes', 'KiB', 'MiB', 'GiB', 'TiB'] : ['Bytes', 'KB', 'MB', 'GB', 'TB'];

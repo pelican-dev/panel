@@ -363,14 +363,14 @@ class ListUsers extends ListRecords
                 ])
                 ->modalHeading('Invite User')
                 ->modalSubmitActionLabel('Invite')
-                ->action(function (array $data) {
+                ->action(function (array $data, SubuserCreationService $service) {
                     $email = $data['email'];
                     $permissions = collect($data)->forget('email')->map(fn ($permissions, $key) => collect($permissions)->map(fn ($permission) => "$key.$permission"))->flatten()->all();
 
                     /** @var Server $server */
                     $server = Filament::getTenant();
 
-                    resolve(SubuserCreationService::class)->handle($server, $email, $permissions);
+                    $service->handle($server, $email, $permissions);
 
                     Notification::make()
                         ->title('User Invited!')

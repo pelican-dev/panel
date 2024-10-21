@@ -24,7 +24,7 @@ use Illuminate\View\Middleware\ShareErrorsFromSession;
 
 class AppPanelProvider extends PanelProvider
 {
-    public function boot()
+    public function boot(): void
     {
         FilamentAsset::registerCssVariables([
             'sidebar-width' => '20rem !important',

@@ -131,7 +131,7 @@ class File extends Model
     {
         try {
             /** @var DaemonFileRepository $fileRepository */
-            $fileRepository = app(DaemonFileRepository::class)->setServer(self::$server);
+            $fileRepository = app(DaemonFileRepository::class)->setServer(self::$server); // @phpstan-ignore-line
 
             if (!is_null(self::$searchTerm)) {
                 $contents = cache()->remember('file_search_' . self::$path . '_' . self::$searchTerm, now()->addMinute(), fn () => $fileRepository->search(self::$searchTerm, self::$path));

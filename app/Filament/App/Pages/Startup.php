@@ -153,7 +153,7 @@ class Startup extends ServerFormPage
             ->all();
     }
 
-    public function update($state, ServerVariable $serverVariable): null
+    public function update(?string $state, ServerVariable $serverVariable): null
     {
         $original = $serverVariable->variable_value;
 

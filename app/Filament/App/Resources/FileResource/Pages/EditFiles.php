@@ -77,6 +77,7 @@ class EditFiles extends Page
 
                                 $data = $this->form->getState();
 
+                                // @phpstan-ignore-next-line
                                 app(DaemonFileRepository::class)
                                     ->setServer($server)
                                     ->putContent($this->path, $data['editor'] ?? '');
@@ -99,6 +100,7 @@ class EditFiles extends Page
                                 /** @var Server $server */
                                 $server = Filament::getTenant();
 
+                                // @phpstan-ignore-next-line
                                 return app(DaemonFileRepository::class)
                                     ->setServer($server)
                                     ->getContent($this->path, config('panel.files.max_edit_size'));

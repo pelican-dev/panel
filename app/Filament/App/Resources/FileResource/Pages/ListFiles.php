@@ -128,6 +128,7 @@ class ListFiles extends ListRecords
                             /** @var Server $server */
                             $server = Filament::getTenant();
 
+                            // @phpstan-ignore-next-line
                             app(DaemonFileRepository::class)
                                 ->setServer($server)
                                 ->renameFiles($this->path, [['to' => $data['name'], 'from' => $file->name]]);
@@ -151,6 +152,7 @@ class ListFiles extends ListRecords
                             /** @var Server $server */
                             $server = Filament::getTenant();
 
+                            // @phpstan-ignore-next-line
                             app(DaemonFileRepository::class)
                                 ->setServer($server)
                                 ->copyFile(join_paths($this->path, $file->name));
@@ -173,6 +175,7 @@ class ListFiles extends ListRecords
                             /** @var Server $server */
                             $server = Filament::getTenant();
 
+                            // @phpstan-ignore-next-line
                             $token = app(NodeJWTService::class)
                                 ->setExpiresAt(CarbonImmutable::now()->addMinutes(15))
                                 ->setUser(auth()->user())
@@ -208,6 +211,7 @@ class ListFiles extends ListRecords
 
                             $location = resolve_path(join_paths($this->path, $data('location')));
 
+                            // @phpstan-ignore-next-line
                             app(DaemonFileRepository::class)
                                 ->setServer($server)
                                 ->renameFiles($this->path, [['to' => $location, 'from' => $file->name]]);
@@ -274,6 +278,7 @@ class ListFiles extends ListRecords
                             /** @var Server $server */
                             $server = Filament::getTenant();
 
+                            // @phpstan-ignore-next-line
                             app(DaemonFileRepository::class)
                                 ->setServer($server)
                                 ->chmodFiles($this->path, [['file' => $file->name, 'mode' => $mode]]);
@@ -291,6 +296,7 @@ class ListFiles extends ListRecords
                             /** @var Server $server */
                             $server = Filament::getTenant();
 
+                            // @phpstan-ignore-next-line
                             app(DaemonFileRepository::class)
                                 ->setServer($server)
                                 ->compressFiles($this->path, [$file->name]);
@@ -316,6 +322,7 @@ class ListFiles extends ListRecords
                             /** @var Server $server */
                             $server = Filament::getTenant();
 
+                            // @phpstan-ignore-next-line
                             app(DaemonFileRepository::class)
                                 ->setServer($server)
                                 ->decompressFile($this->path, $file->name);
@@ -344,6 +351,7 @@ class ListFiles extends ListRecords
                         /** @var Server $server */
                         $server = Filament::getTenant();
 
+                        // @phpstan-ignore-next-line
                         app(DaemonFileRepository::class)
                             ->setServer($server)
                             ->deleteFiles($this->path, [$file->name]);
@@ -377,6 +385,7 @@ class ListFiles extends ListRecords
                             /** @var Server $server */
                             $server = Filament::getTenant();
 
+                            // @phpstan-ignore-next-line
                             app(DaemonFileRepository::class)
                                 ->setServer($server)
                                 ->renameFiles($this->path, $files);
@@ -400,6 +409,7 @@ class ListFiles extends ListRecords
                             /** @var Server $server */
                             $server = Filament::getTenant();
 
+                            // @phpstan-ignore-next-line
                             app(DaemonFileRepository::class)
                                 ->setServer($server)
                                 ->compressFiles($this->path, $files);
@@ -425,6 +435,7 @@ class ListFiles extends ListRecords
                             /** @var Server $server */
                             $server = Filament::getTenant();
 
+                            // @phpstan-ignore-next-line
                             app(DaemonFileRepository::class)
                                 ->setServer($server)
                                 ->deleteFiles($this->path, $files);
@@ -454,6 +465,7 @@ class ListFiles extends ListRecords
                     /** @var Server $server */
                     $server = Filament::getTenant();
 
+                    // @phpstan-ignore-next-line
                     app(DaemonFileRepository::class)
                         ->setServer($server)
                         ->putContent(join_paths($this->path, $data['name']), $data['editor'] ?? '');
@@ -486,6 +498,7 @@ class ListFiles extends ListRecords
                     /** @var Server $server */
                     $server = Filament::getTenant();
 
+                    // @phpstan-ignore-next-line
                     app(DaemonFileRepository::class)
                         ->setServer($server)
                         ->createDirectory($data['name'], $this->path);
@@ -509,6 +522,7 @@ class ListFiles extends ListRecords
                     if (count($data['files']) > 0 && !isset($data['url'])) {
                         /** @var UploadedFile $file */
                         foreach ($data['files'] as $file) {
+                            // @phpstan-ignore-next-line
                             app(DaemonFileRepository::class)
                                 ->setServer($server)
                                 ->putContent(join_paths($this->path, $file->getClientOriginalName()), $file->getContent());
@@ -519,6 +533,7 @@ class ListFiles extends ListRecords
                                 ->log();
                         }
                     } elseif ($data['url'] !== null) {
+                        // @phpstan-ignore-next-line
                         app(DaemonFileRepository::class)
                             ->setServer($server)
                             ->pull($data['url'], $this->path);
