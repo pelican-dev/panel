@@ -6,6 +6,9 @@ use Illuminate\Support\Str;
 use Spatie\QueryBuilder\Filters\Filter;
 use Illuminate\Database\Eloquent\Builder;
 
+/**
+ * @template-implements Filter<\Illuminate\Database\Eloquent\Model>
+ */
 class MultiFieldServerFilter implements Filter
 {
     /**

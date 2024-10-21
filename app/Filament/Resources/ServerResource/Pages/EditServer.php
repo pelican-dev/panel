@@ -5,7 +5,6 @@ namespace App\Filament\Resources\ServerResource\Pages;
 use App\Enums\ContainerStatus;
 use App\Enums\ServerState;
 use App\Filament\Resources\ServerResource;
-use App\Http\Controllers\Admin\ServersController;
 use App\Models\Database;
 use App\Models\Egg;
 use App\Models\Server;
@@ -13,8 +12,10 @@ use App\Models\ServerVariable;
 use App\Services\Databases\DatabaseManagementService;
 use App\Services\Databases\DatabasePasswordService;
 use App\Services\Servers\RandomWordService;
+use App\Services\Servers\ReinstallServerService;
 use App\Services\Servers\ServerDeletionService;
 use App\Services\Servers\SuspensionService;
+use App\Services\Servers\ToggleInstallService;
 use App\Services\Servers\TransferServerService;
 use Closure;
 use Exception;
@@ -631,8 +632,8 @@ class EditServer extends EditRecord
                                                     Action::make('toggleInstall')
                                                         ->label('Toggle Install Status')
                                                         ->disabled(fn (Server $server) => $server->isSuspended())
-                                                        ->action(function (ServersController $serversController, Server $server) {
-                                                            $serversController->toggleInstall($server);
+                                                        ->action(function (ToggleInstallService $service, Server $server) {
+                                                            $service->handle($server);
 
                                                             $this->refreshFormData(['status', 'docker']);
                                                         }),
@@ -718,7 +719,7 @@ class EditServer extends EditRecord
                                                         ->modalHeading('Are you sure you want to reinstall this server?')
                                                         ->modalDescription('!! This can result in unrecoverable data loss !!')
                                                         ->disabled(fn (Server $server) => $server->isSuspended())
-                                                        ->action(fn (ServersController $serversController, Server $server) => $serversController->reinstallServer($server)),
+                                                        ->action(fn (ReinstallServerService $service, Server $server) => $service->handle($server)),
                                                 ])->fullWidth(),
                                                 ToggleButtons::make('')
                                                     ->hint('This will reinstall the server with the assigned egg install script.'),

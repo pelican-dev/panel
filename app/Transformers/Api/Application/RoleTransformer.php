@@ -35,8 +35,6 @@ class RoleTransformer extends BaseTransformer
 
     /**
      * Include the permissions associated with this role.
-     *
-     * @throws \App\Exceptions\Transformer\InvalidTransformerLevelException
      */
     public function includePermissions(Role $model): Collection|NullResource
     {

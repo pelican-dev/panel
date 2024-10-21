@@ -86,8 +86,6 @@ class ServerTransformer extends BaseClientTransformer
 
     /**
      * Returns the allocations associated with this server.
-     *
-     * @throws \App\Exceptions\Transformer\InvalidTransformerLevelException
      */
     public function includeAllocations(Server $server): Collection
     {
@@ -111,9 +109,6 @@ class ServerTransformer extends BaseClientTransformer
         return $this->collection($server->allocations, $transformer, Allocation::RESOURCE_NAME);
     }
 
-    /**
-     * @throws \App\Exceptions\Transformer\InvalidTransformerLevelException
-     */
     public function includeVariables(Server $server): Collection|NullResource
     {
         if (!$this->request->user()->can(Permission::ACTION_STARTUP_READ, $server)) {
@@ -129,8 +124,6 @@ class ServerTransformer extends BaseClientTransformer
 
     /**
      * Returns the egg associated with this server.
-     *
-     * @throws \App\Exceptions\Transformer\InvalidTransformerLevelException
      */
     public function includeEgg(Server $server): Item
     {
@@ -139,8 +132,6 @@ class ServerTransformer extends BaseClientTransformer
 
     /**
      * Returns the subusers associated with this server.
-     *
-     * @throws \App\Exceptions\Transformer\InvalidTransformerLevelException
      */
     public function includeSubusers(Server $server): Collection|NullResource
     {

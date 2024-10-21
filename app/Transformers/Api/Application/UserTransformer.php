@@ -50,8 +50,6 @@ class UserTransformer extends BaseTransformer
 
     /**
      * Return the servers associated with this user.
-     *
-     * @throws \App\Exceptions\Transformer\InvalidTransformerLevelException
      */
     public function includeServers(User $user): Collection|NullResource
     {
@@ -66,8 +64,6 @@ class UserTransformer extends BaseTransformer
 
     /**
      * Return the roles associated with this user.
-     *
-     * @throws \App\Exceptions\Transformer\InvalidTransformerLevelException
      */
     public function includeRoles(User $user): Collection|NullResource
     {
