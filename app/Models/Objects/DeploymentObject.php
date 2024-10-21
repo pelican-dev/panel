@@ -45,5 +45,4 @@ class DeploymentObject
 
         return $this;
     }
-
 }

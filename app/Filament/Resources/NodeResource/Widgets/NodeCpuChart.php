@@ -12,6 +12,7 @@ use Illuminate\Support\Number;
 class NodeCpuChart extends ChartWidget
 {
     protected static ?string $pollingInterval = '5s';
+
     protected static ?string $maxHeight = '300px';
 
     public ?Model $record = null;

@@ -3,6 +3,7 @@
 namespace App\Http\Requests\Admin\Egg;
 
 use App\Http\Requests\Admin\AdminFormRequest;
+use Illuminate\Validation\Validator;
 
 class EggFormRequest extends AdminFormRequest
 {
@@ -25,7 +26,7 @@ class EggFormRequest extends AdminFormRequest
         return $rules;
     }
 
-    public function withValidator($validator)
+    public function withValidator(Validator $validator): void
     {
         $validator->sometimes('config_from', 'exists:eggs,id', function () {
             return (int) $this->input('config_from') !== 0;

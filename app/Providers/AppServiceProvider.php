@@ -13,6 +13,7 @@ use Dedoc\Scramble\Support\Generator\SecurityScheme;
 use Filament\Support\Colors\Color;
 use Filament\Support\Facades\FilamentColor;
 use Illuminate\Database\Eloquent\Relations\Relation;
+use Illuminate\Foundation\Application;
 use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Facades\Broadcast;
 use Illuminate\Support\Facades\Event;
@@ -29,7 +30,7 @@ class AppServiceProvider extends ServiceProvider
     /**
      * Bootstrap any application services.
      */
-    public function boot(): void
+    public function boot(Application $app): void
     {
         // TODO: remove when old admin area gets yeeted
         View::share('appVersion', config('app.version'));
@@ -64,7 +65,7 @@ class AppServiceProvider extends ServiceProvider
                 ->asJson()
                 ->withToken($node->daemon_token)
                 ->withHeaders($headers)
-                ->withOptions(['verify' => (bool) app()->environment('production')])
+                ->withOptions(['verify' => (bool) $app->environment('production')])
                 ->timeout(config('panel.guzzle.timeout'))
                 ->connectTimeout(config('panel.guzzle.connect_timeout'))
                 ->baseUrl($node->getConnectionAddress())

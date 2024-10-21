@@ -144,7 +144,7 @@ class AllocationsRelationManager extends RelationManager
                             ->splitKeys(['Tab', ' ', ','])
                             ->required(),
                     ])
-                    ->action(fn (array $data) => resolve(AssignmentService::class)->handle($this->getOwnerRecord()->node, $data, $this->getOwnerRecord())),
+                    ->action(fn (array $data, AssignmentService $service) => $service->handle($this->getOwnerRecord()->node, $data, $this->getOwnerRecord())),
                 AssociateAction::make()
                     ->multiple()
                     ->associateAnother(false)

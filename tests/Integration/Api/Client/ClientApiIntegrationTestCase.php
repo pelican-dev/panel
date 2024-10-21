@@ -47,7 +47,7 @@ abstract class ClientApiIntegrationTestCase extends IntegrationTestCase
     /**
      * Returns a link to the specific resource using the client API.
      */
-    protected function link(mixed $model, string $append = null): string
+    protected function link(mixed $model, ?string $append = null): string
     {
         switch (get_class($model)) {
             case Server::class:
@@ -76,7 +76,7 @@ abstract class ClientApiIntegrationTestCase extends IntegrationTestCase
      * Asserts that the data passed through matches the output of the data from the transformer. This
      * will remove the "relationships" key when performing the comparison.
      */
-    protected function assertJsonTransformedWith(array $data, Model|EloquentModel $model)
+    protected function assertJsonTransformedWith(array $data, Model|EloquentModel $model): void
     {
         $reflect = new \ReflectionClass($model);
         $transformer = sprintf('\\App\\Transformers\\Api\\Client\\%sTransformer', $reflect->getShortName());

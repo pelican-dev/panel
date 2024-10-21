@@ -1,20 +1,20 @@
 includes:
     - vendor/larastan/larastan/extension.neon
 
+rules:
+    - App\PHPStan\ForbiddenGlobalFunctionsRule
+
 parameters:
 
     paths:
-        - app/
+        - app
 
-    # Level 9 is the highest level
-    level: 5
+    level: 6
 
     ignoreErrors:
         # Prologue\Alerts defines its methods from its configuration file dynamically
         - '#^Call to an undefined method Prologue\\Alerts\\AlertsMessageBag::(danger|success|info|warning)\(\)\.$#'
 
-#    excludePaths:
-#        - ./*/*/FileToBeExcluded.php
-#
-#    checkMissingIterableValueType: false
-
+        - '#no value type specified in iterable#'
+        - '#Unable to resolve the template type#'
+        - '#does not specify its types#'

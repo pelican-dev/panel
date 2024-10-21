@@ -41,8 +41,7 @@ abstract class ClientApiController extends ApplicationApiController
      *
      * @template T of \App\Transformers\Api\Client\BaseClientTransformer
      *
-     * @param class-string<T> $abstract
-     *
+     * @param  class-string<T>  $abstract
      * @return T
      *
      * @noinspection PhpDocSignatureInspection

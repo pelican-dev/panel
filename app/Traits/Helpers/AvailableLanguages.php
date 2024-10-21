@@ -51,6 +51,7 @@ trait AvailableLanguages
      */
     private function getFilesystemInstance(): Filesystem
     {
+        // @phpstan-ignore-next-line
         return $this->filesystem = $this->filesystem ?: app()->make(Filesystem::class);
     }
 }

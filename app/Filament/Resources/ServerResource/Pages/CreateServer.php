@@ -45,9 +45,17 @@ use LogicException;
 class CreateServer extends CreateRecord
 {
     protected static string $resource = ServerResource::class;
+
     protected static bool $canCreateAnother = false;
 
     public ?Node $node = null;
+
+    private ServerCreationService $serverCreationService;
+
+    public function boot(ServerCreationService $serverCreationService): void
+    {
+        $this->serverCreationService = $serverCreationService;
+    }
 
     public function form(Form $form): Form
     {
@@ -118,8 +126,9 @@ class CreateServer extends CreateRecord
                                         ->hintIconTooltip('Providing a user password is optional. New user email will prompt users to create a password the first time they login.')
                                         ->password(),
                                 ])
-                                ->createOptionUsing(function ($data) {
-                                    resolve(UserCreationService::class)->handle($data);
+                                ->createOptionUsing(function ($data, UserCreationService $service) {
+                                    $service->handle($data);
+
                                     $this->refreshForm();
                                 })
                                 ->required(),
@@ -262,9 +271,9 @@ class CreateServer extends CreateRecord
                                         ->splitKeys(['Tab', ' ', ','])
                                         ->required(),
                                 ])
-                                ->createOptionUsing(function (array $data, Get $get): int {
+                                ->createOptionUsing(function (array $data, Get $get, AssignmentService $assignmentService): int {
                                     return collect(
-                                        resolve(AssignmentService::class)->handle(Node::find($get('node_id')), $data)
+                                        $assignmentService->handle(Node::find($get('node_id')), $data)
                                     )->first();
                                 })
                                 ->required(),
@@ -825,10 +834,7 @@ class CreateServer extends CreateRecord
     {
         $data['allocation_additional'] = collect($data['allocation_additional'])->filter()->all();
 
-        /** @var ServerCreationService $service */
-        $service = resolve(ServerCreationService::class);
-
-        return $service->handle($data);
+        return $this->serverCreationService->handle($data);
     }
 
     private function shouldHideComponent(Get $get, Component $component): bool

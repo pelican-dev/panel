@@ -22,6 +22,7 @@ trait EnvironmentWriterTrait
 
     /**
      * Update the .env file for the application using the passed in values.
+     *
      * @throws Exception
      */
     public function writeToEnvironment(array $values = []): void
