@@ -58,7 +58,7 @@ else
   echo "Starting PHP-FPM only"
 fi
 
-chown -R www-data:www-data . /pelican-data/.env /pelican-data/database
+chown -R www-data:www-data /pelican-data/.env /pelican-data/database
 
 echo "Starting Supervisord"
 exec "$@"
