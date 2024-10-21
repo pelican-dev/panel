@@ -48,8 +48,7 @@ class EggExporterService
             ],
             'variables' => $egg->variables->map(function (EggVariable $eggVariable) {
                 return Collection::make($eggVariable->toArray())
-                    ->except(['id', 'egg_id', 'created_at', 'updated_at'])
-                    ->merge(['field_type' => 'text']);
+                    ->except(['id', 'egg_id', 'created_at', 'updated_at']);
             }),
         ];
 
