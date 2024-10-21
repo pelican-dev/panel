@@ -22,6 +22,7 @@ use Illuminate\Support\Facades\Validator;
 class Startup extends ServerFormPage
 {
     protected static ?string $navigationIcon = 'tabler-player-play';
+
     protected static ?int $navigationSort = 9;
 
     public function form(Form $form): Form

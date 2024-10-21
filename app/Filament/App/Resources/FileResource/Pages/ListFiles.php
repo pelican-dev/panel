@@ -47,7 +47,7 @@ class ListFiles extends ListRecords
     #[Locked]
     public string $path;
 
-    public function mount(string $path = null): void
+    public function mount(?string $path = null): void
     {
         parent::mount();
         $this->path = $path ?? '/';

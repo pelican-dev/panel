@@ -117,6 +117,7 @@ class ListDatabases extends ListRecords
         $set('password', $newPassword);
         $set('JDBC', $jdbcString);
     }
+
     public function getBreadcrumbs(): array
     {
         return [];

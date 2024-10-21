@@ -19,6 +19,7 @@ use Filament\Tables\Table;
 class ListAllocations extends ListRecords
 {
     protected static string $resource = AllocationResource::class;
+
     public function table(Table $table): Table
     {
         return $table
@@ -73,6 +74,7 @@ class ListAllocations extends ListRecords
                     }),
             ]);
     }
+
     protected function getHeaderActions(): array
     {
         return [

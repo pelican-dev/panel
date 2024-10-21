@@ -32,6 +32,7 @@ use Illuminate\Http\Request;
 class ListBackups extends ListRecords
 {
     protected static string $resource = BackupResource::class;
+
     protected static bool $canCreateAnother = false;
 
     public function form(Form $form): Form
@@ -201,6 +202,7 @@ class ListBackups extends ListRecords
                 }),
         ];
     }
+
     public function getBreadcrumbs(): array
     {
         return [];

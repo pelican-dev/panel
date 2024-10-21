@@ -17,9 +17,11 @@ class ServerConsole extends Widget
     protected static bool $isLazy = false;
 
     public ?Server $server = null;
+
     public ?User $user = null;
 
     public array $history = [];
+
     public int $historyIndex = 0;
 
     public string $input = '';

@@ -6,12 +6,13 @@ use App\Models\Server;
 use Carbon\Carbon;
 use Filament\Support\RawJs;
 use Filament\Widgets\ChartWidget;
-use Illuminate\Support\Number;
 
 class ServerNetworkChart extends ChartWidget
 {
     protected static ?string $heading = 'Network';
+
     protected static ?string $pollingInterval = '1s';
+
     protected static ?string $maxHeight = '300px';
 
     public ?Server $server = null;
@@ -27,7 +28,6 @@ class ServerNetworkChart extends ChartWidget
                 'timestamp' => Carbon::createFromTimestamp($key, (auth()->user()->timezone ?? 'UTC'))->format('H:i:s'),
             ])
             ->all();
-
 
         $tx = collect($data)
             ->slice(-10)

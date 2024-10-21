@@ -23,6 +23,7 @@ use Illuminate\Support\Facades\Http;
 class Settings extends ServerFormPage
 {
     protected static ?string $navigationIcon = 'tabler-settings';
+
     protected static ?int $navigationSort = 10;
 
     public function form(Form $form): Form
@@ -228,6 +229,7 @@ class Settings extends ServerFormPage
                 ->send();
         }
     }
+
     public function updateDescription(string $description, Server $server): void
     {
         abort_unless(!auth()->user()->can(Permission::ACTION_SETTINGS_RENAME), 403);

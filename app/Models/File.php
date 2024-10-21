@@ -48,10 +48,12 @@ class File extends Model
     ];
 
     protected static Server $server;
+
     protected static string $path;
+
     protected static ?string $searchTerm;
 
-    public static function get(Server $server, string $path = '/', string $searchTerm = null): Builder
+    public static function get(Server $server, string $path = '/', ?string $searchTerm = null): Builder
     {
         self::$server = $server;
         self::$path = $path;

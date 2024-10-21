@@ -19,10 +19,11 @@ class SearchFiles extends ListRecords
 
     #[Locked]
     public string $searchTerm;
+
     #[Locked]
     public string $path;
 
-    public function mount(string $searchTerm = null, string $path = null): void
+    public function mount(?string $searchTerm = null, ?string $path = null): void
     {
         parent::mount();
         $this->searchTerm = $searchTerm;
