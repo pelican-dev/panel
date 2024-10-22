@@ -2,6 +2,7 @@
 
 namespace App\Repositories\Daemon;
 
+use Illuminate\Http\Client\Response;
 use Webmozart\Assert\Assert;
 use App\Models\Backup;
 use App\Models\Server;
@@ -27,7 +28,7 @@ class DaemonBackupRepository extends DaemonRepository
      *
      * @throws \App\Exceptions\Http\Connection\DaemonConnectionException
      */
-    public function backup(Backup $backup)
+    public function backup(Backup $backup): Response
     {
         Assert::isInstanceOf($this->server, Server::class);
 
@@ -50,7 +51,7 @@ class DaemonBackupRepository extends DaemonRepository
      *
      * @throws \App\Exceptions\Http\Connection\DaemonConnectionException
      */
-    public function restore(Backup $backup, string $url = null, bool $truncate = false)
+    public function restore(Backup $backup, ?string $url = null, bool $truncate = false): Response
     {
         Assert::isInstanceOf($this->server, Server::class);
 
@@ -73,7 +74,7 @@ class DaemonBackupRepository extends DaemonRepository
      *
      * @throws \App\Exceptions\Http\Connection\DaemonConnectionException
      */
-    public function delete(Backup $backup)
+    public function delete(Backup $backup): Response
     {
         Assert::isInstanceOf($this->server, Server::class);
 

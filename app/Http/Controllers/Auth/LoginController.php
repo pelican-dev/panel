@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Auth;
 
 use App\Filament\Pages\Installer\PanelInstaller;
 use Carbon\CarbonImmutable;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use App\Models\User;
@@ -18,9 +19,9 @@ class LoginController extends AbstractLoginController
      * base authentication view component. React will take over at this point and
      * turn the login area into an SPA.
      */
-    public function index()
+    public function index(): View|RedirectResponse
     {
-        if (PanelInstaller::show()) {
+        if (!PanelInstaller::isInstalled()) {
             return redirect('/installer');
         }
 

@@ -2,15 +2,16 @@
 
 namespace App\Console;
 
+use App\Console\Commands\Egg\CheckEggUpdatesCommand;
+use App\Console\Commands\Maintenance\CleanServiceBackupFilesCommand;
+use App\Console\Commands\Maintenance\PruneImagesCommand;
+use App\Console\Commands\Maintenance\PruneOrphanedBackupsCommand;
+use App\Console\Commands\Schedule\ProcessRunnableCommand;
 use App\Jobs\NodeStatistics;
 use App\Models\ActivityLog;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Database\Console\PruneCommand;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
-use App\Console\Commands\Schedule\ProcessRunnableCommand;
-use App\Console\Commands\Maintenance\PruneOrphanedBackupsCommand;
-use App\Console\Commands\Maintenance\CleanServiceBackupFilesCommand;
-use App\Console\Commands\Maintenance\PruneImagesCommand;
 
 class Kernel extends ConsoleKernel
 {
@@ -35,6 +36,7 @@ class Kernel extends ConsoleKernel
 
         $schedule->command(CleanServiceBackupFilesCommand::class)->daily();
         $schedule->command(PruneImagesCommand::class)->daily();
+        $schedule->command(CheckEggUpdatesCommand::class)->hourly();
 
         $schedule->job(new NodeStatistics())->everyFiveSeconds()->withoutOverlapping();
 

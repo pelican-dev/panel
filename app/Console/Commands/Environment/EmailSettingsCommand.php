@@ -70,7 +70,7 @@ class EmailSettingsCommand extends Command
     /**
      * Handle variables for SMTP driver.
      */
-    private function setupSmtpDriverVariables()
+    private function setupSmtpDriverVariables(): void
     {
         $this->variables['MAIL_HOST'] = $this->option('host') ?? $this->ask(
             trans('command/messages.environment.mail.ask_smtp_host'),
@@ -101,7 +101,7 @@ class EmailSettingsCommand extends Command
     /**
      * Handle variables for mailgun driver.
      */
-    private function setupMailgunDriverVariables()
+    private function setupMailgunDriverVariables(): void
     {
         $this->variables['MAILGUN_DOMAIN'] = $this->option('host') ?? $this->ask(
             trans('command/messages.environment.mail.ask_mailgun_domain'),
@@ -122,7 +122,7 @@ class EmailSettingsCommand extends Command
     /**
      * Handle variables for mandrill driver.
      */
-    private function setupMandrillDriverVariables()
+    private function setupMandrillDriverVariables(): void
     {
         $this->variables['MANDRILL_SECRET'] = $this->option('password') ?? $this->ask(
             trans('command/messages.environment.mail.ask_mandrill_secret'),
@@ -133,7 +133,7 @@ class EmailSettingsCommand extends Command
     /**
      * Handle variables for postmark driver.
      */
-    private function setupPostmarkDriverVariables()
+    private function setupPostmarkDriverVariables(): void
     {
         $this->variables['MAIL_DRIVER'] = 'smtp';
         $this->variables['MAIL_HOST'] = 'smtp.postmarkapp.com';

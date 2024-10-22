@@ -57,13 +57,13 @@ class AllocationsRelationManager extends RelationManager
                         true => 'warning',
                         default => 'gray',
                     })
-                    ->action(fn (Allocation $allocation) => $this->getOwnerRecord()->update(['allocation_id' => $allocation->id]))
+                    ->action(fn (Allocation $allocation) => $this->getOwnerRecord()->update(['allocation_id' => $allocation->id]) && $this->deselectAllTableRecords())
                     ->default(fn (Allocation $allocation) => $allocation->id === $this->getOwnerRecord()->allocation_id)
                     ->label('Primary'),
             ])
             ->actions([
                 Action::make('make-primary')
-                    ->action(fn (Allocation $allocation) => $this->getOwnerRecord()->update(['allocation_id' => $allocation->id]))
+                    ->action(fn (Allocation $allocation) => $this->getOwnerRecord()->update(['allocation_id' => $allocation->id]) && $this->deselectAllTableRecords())
                     ->label(fn (Allocation $allocation) => $allocation->id === $this->getOwnerRecord()->allocation_id ? '' : 'Make Primary'),
             ])
             ->headerActions([
@@ -144,7 +144,7 @@ class AllocationsRelationManager extends RelationManager
                             ->splitKeys(['Tab', ' ', ','])
                             ->required(),
                     ])
-                    ->action(fn (array $data) => resolve(AssignmentService::class)->handle($this->getOwnerRecord()->node, $data, $this->getOwnerRecord())),
+                    ->action(fn (array $data, AssignmentService $service) => $service->handle($this->getOwnerRecord()->node, $data, $this->getOwnerRecord())),
                 AssociateAction::make()
                     ->multiple()
                     ->associateAnother(false)

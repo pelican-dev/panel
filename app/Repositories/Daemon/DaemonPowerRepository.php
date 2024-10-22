@@ -2,6 +2,7 @@
 
 namespace App\Repositories\Daemon;
 
+use Illuminate\Http\Client\Response;
 use Webmozart\Assert\Assert;
 use App\Models\Server;
 use GuzzleHttp\Exception\TransferException;
@@ -14,7 +15,7 @@ class DaemonPowerRepository extends DaemonRepository
      *
      * @throws \App\Exceptions\Http\Connection\DaemonConnectionException
      */
-    public function send(string $action)
+    public function send(string $action): Response
     {
         Assert::isInstanceOf($this->server, Server::class);
 

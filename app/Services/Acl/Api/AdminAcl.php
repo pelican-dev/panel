@@ -11,7 +11,9 @@ class AdminAcl
      * implements a read/write/none permissions scheme for all endpoints.
      */
     public const NONE = 0;
+
     public const READ = 1;
+
     public const WRITE = 2;
 
     /**

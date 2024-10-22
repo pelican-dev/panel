@@ -40,7 +40,7 @@ abstract class ApplicationApiController extends Controller
      * Perform dependency injection of certain classes needed for core functionality
      * without littering the constructors of classes that extend this abstract.
      */
-    public function loadDependencies(Fractal $fractal, Request $request)
+    public function loadDependencies(Fractal $fractal, Request $request): void
     {
         $this->fractal = $fractal;
         $this->request = $request;
@@ -51,8 +51,7 @@ abstract class ApplicationApiController extends Controller
      *
      * @template T of \App\Transformers\Api\Application\BaseTransformer
      *
-     * @param class-string<T> $abstract
-     *
+     * @param  class-string<T>  $abstract
      * @return T
      *
      * @noinspection PhpDocSignatureInspection

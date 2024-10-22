@@ -7,10 +7,12 @@ use Carbon\Carbon;
 use Filament\Support\RawJs;
 use Filament\Widgets\ChartWidget;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Number;
 
 class NodeCpuChart extends ChartWidget
 {
     protected static ?string $pollingInterval = '5s';
+
     protected static ?string $maxHeight = '300px';
 
     public ?Model $record = null;
@@ -24,7 +26,7 @@ class NodeCpuChart extends ChartWidget
         $cpu = collect(cache()->get("nodes.$node->id.cpu_percent"))
             ->slice(-10)
             ->map(fn ($value, $key) => [
-                'cpu' => number_format($value * $threads, 2),
+                'cpu' => Number::format($value * $threads, maxPrecision: 2, locale: auth()->user()->language),
                 'timestamp' => Carbon::createFromTimestamp($key, (auth()->user()->timezone ?? 'UTC'))->format('H:i:s'),
             ])
             ->all();
@@ -73,8 +75,8 @@ class NodeCpuChart extends ChartWidget
         $node = $this->record;
         $threads = $node->systemInformation()['cpu_count'] ?? 0;
 
-        $cpu = number_format(collect(cache()->get("nodes.$node->id.cpu_percent"))->last() * $threads, 2);
-        $max = number_format($threads * 100) . '%';
+        $cpu = Number::format(collect(cache()->get("nodes.$node->id.cpu_percent"))->last() * $threads, maxPrecision: 2, locale: auth()->user()->language);
+        $max = Number::format($threads * 100, locale: auth()->user()->language) . '%';
 
         return 'CPU - ' . $cpu . '% Of ' . $max;
     }

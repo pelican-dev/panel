@@ -45,7 +45,7 @@ class ServerCreationService
      * @throws \Illuminate\Validation\ValidationException
      * @throws \App\Exceptions\Service\Deployment\NoViableAllocationException
      */
-    public function handle(array $data, DeploymentObject $deployment = null): Server
+    public function handle(array $data, ?DeploymentObject $deployment = null): Server
     {
         if (!isset($data['oom_killer']) && isset($data['oom_disabled'])) {
             $data['oom_killer'] = !$data['oom_disabled'];

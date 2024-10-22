@@ -3,19 +3,21 @@
 namespace App\Livewire;
 
 use App\Models\Node;
+use Illuminate\View\View;
 use Livewire\Component;
 
 class NodeSystemInformation extends Component
 {
     public Node $node;
+
     public string $sizeClasses;
 
-    public function render()
+    public function render(): View
     {
         return view('livewire.node-system-information');
     }
 
-    public function placeholder()
+    public function placeholder(): string
     {
         return <<<'HTML'
         <div>

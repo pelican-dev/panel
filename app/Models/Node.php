@@ -8,6 +8,7 @@ use Exception;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Str;
 use Symfony\Component\Yaml\Yaml;
@@ -53,6 +54,7 @@ class Node extends Model
     public const RESOURCE_NAME = 'node';
 
     public const DAEMON_TOKEN_ID_LENGTH = 16;
+
     public const DAEMON_TOKEN_LENGTH = 64;
 
     /**
@@ -135,7 +137,9 @@ class Node extends Model
     }
 
     public int $servers_sum_memory = 0;
+
     public int $servers_sum_disk = 0;
+
     public int $servers_sum_cpu = 0;
 
     public function getRouteKeyName(): string
@@ -268,7 +272,7 @@ class Node extends Model
         return true;
     }
 
-    public static function getForServerCreation()
+    public static function getForServerCreation(): Collection
     {
         return self::with('allocations')->get()->map(function (Node $item) {
             $filtered = $item->getRelation('allocations')->where('server_id', null)->map(function ($map) {
@@ -294,6 +298,7 @@ class Node extends Model
     {
         return once(function () {
             try {
+                // @phpstan-ignore-next-line
                 return resolve(DaemonConfigurationRepository::class)
                     ->setNode($this)
                     ->getSystemInformation(connectTimeout: 3);
@@ -330,7 +335,7 @@ class Node extends Model
         return $statuses;
     }
 
-    public function statistics()
+    public function statistics(): array
     {
         $default = [
             'memory_total' => 0,

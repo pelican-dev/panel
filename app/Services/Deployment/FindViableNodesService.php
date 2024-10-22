@@ -17,7 +17,7 @@ class FindViableNodesService
      * are tossed out, as are any nodes marked as non-public, meaning automatic
      * deployments should not be done against them.
      */
-    public function handle(int $memory = 0, int $disk = 0, int $cpu = 0, $tags = []): Collection
+    public function handle(int $memory = 0, int $disk = 0, int $cpu = 0, array $tags = []): Collection
     {
         $nodes = Node::query()
             ->withSum('servers', 'memory')
