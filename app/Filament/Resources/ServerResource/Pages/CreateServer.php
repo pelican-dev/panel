@@ -627,14 +627,24 @@ class CreateServer extends CreateRecord
                                                 ->minValue(0)
                                                 ->helperText('100% equals one CPU core.'),
                                         ]),
+                                ]),
 
+                            Fieldset::make('Advanced Limits')
+                                ->columnSpan(6)
+                                ->columns([
+                                    'default' => 1,
+                                    'sm' => 2,
+                                    'md' => 3,
+                                    'lg' => 3,
+                                ])
+                                ->schema([
                                     Grid::make()
                                         ->columns(4)
                                         ->columnSpanFull()
                                         ->schema([
                                             ToggleButtons::make('swap_support')
                                                 ->live()
-                                                ->label('Enable Swap Memory')
+                                                ->label('Swap Memory')
                                                 ->inlineLabel()
                                                 ->inline()
                                                 ->columnSpan(2)

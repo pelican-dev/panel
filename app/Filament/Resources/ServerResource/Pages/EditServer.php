@@ -24,6 +24,7 @@ use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\CheckboxList;
 use Filament\Forms\Components\Fieldset;
 use Filament\Forms\Components\Grid;
+use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Tabs;
@@ -264,14 +265,23 @@ class EditServer extends EditRecord
                                                     ->numeric()
                                                     ->minValue(0),
                                             ]),
+                                    ]),
 
+                                Fieldset::make('Advanced Limits')
+                                    ->columns([
+                                        'default' => 1,
+                                        'sm' => 2,
+                                        'md' => 3,
+                                        'lg' => 3,
+                                    ])
+                                    ->schema([
                                         Grid::make()
                                             ->columns(4)
                                             ->columnSpanFull()
                                             ->schema([
                                                 ToggleButtons::make('swap_support')
                                                     ->live()
-                                                    ->label('Enable Swap Memory')->inlineLabel()->inline()
+                                                    ->label('Swap Memory')->inlineLabel()->inline()
                                                     ->columnSpan(2)
                                                     ->afterStateUpdated(function ($state, Set $set) {
                                                         $value = match ($state) {
@@ -316,7 +326,7 @@ class EditServer extends EditRecord
                                                     ->integer(),
                                             ]),
 
-                                        Forms\Components\Hidden::make('io')
+                                        Hidden::make('io')
                                             ->helperText('The IO performance relative to other running containers')
                                             ->label('Block IO Proportion'),
 
