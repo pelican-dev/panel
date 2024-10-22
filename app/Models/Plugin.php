@@ -27,7 +27,9 @@ class Plugin extends IlluminateModel
     use Sushi;
 
     protected $primaryKey = 'id';
+
     protected $keyType = 'string';
+
     public $incrementing = false;
 
     public function getSchema(): array
@@ -51,7 +53,7 @@ class Plugin extends IlluminateModel
 
     public function getRows(): array
     {
-        $fileSystem = app(Filesystem::class);
+        $fileSystem = app(Filesystem::class); // @phpstan-ignore-line
 
         $plugins = [];
 
@@ -70,7 +72,7 @@ class Plugin extends IlluminateModel
         return $plugins;
     }
 
-    protected function sushiShouldCache()
+    protected function sushiShouldCache(): bool
     {
         return false;
     }

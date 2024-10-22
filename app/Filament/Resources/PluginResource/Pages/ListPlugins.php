@@ -60,8 +60,8 @@ class ListPlugins extends ListRecords
                         ->icon('tabler-check')
                         ->color('success')
                         ->hidden(fn (Plugin $plugin) => !$plugin->isDisabled())
-                        ->action(function (Plugin $plugin) {
-                            app(PluginService::class)->enablePlugin($plugin);
+                        ->action(function (Plugin $plugin, PluginService $service) {
+                            $service->enablePlugin($plugin);
 
                             $this->redirect($this->getUrl());
 
@@ -74,8 +74,8 @@ class ListPlugins extends ListRecords
                         ->icon('tabler-x')
                         ->color('danger')
                         ->hidden(fn (Plugin $plugin) => $plugin->isDisabled())
-                        ->action(function (Plugin $plugin) {
-                            app(PluginService::class)->disablePlugin($plugin);
+                        ->action(function (Plugin $plugin, PluginService $service) {
+                            $service->disablePlugin($plugin);
 
                             $this->redirect($this->getUrl());
 

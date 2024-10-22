@@ -42,7 +42,7 @@ class AdminPanelProvider extends PanelProvider
                     ->navigationIcon('tabler-file-info'),
             ]);
 
-        app(PluginService::class)->loadPanelPlugins($panel);
+        app(PluginService::class)->loadPanelPlugins(app(), $panel); // @phpstan-ignore-line
 
         return $panel;
     }

@@ -7,9 +7,10 @@ use App\Models\Plugin;
 use Composer\Autoload\ClassLoader;
 use Exception;
 use Filament\Panel;
+use Illuminate\Console\Application as Artisan;
 use Illuminate\Console\Command;
 use Illuminate\Filesystem\Filesystem;
-use Illuminate\Support\Facades\Artisan;
+use Illuminate\Foundation\Application;
 use Illuminate\Support\ServiceProvider;
 
 class PluginService
@@ -18,10 +19,10 @@ class PluginService
     {
     }
 
-    public function loadPlugins(): void
+    public function loadPlugins(Application $app): void
     {
         // Don't load any plugins during tests
-        if (app()->runningUnitTests()) {
+        if ($app->runningUnitTests()) {
             return;
         }
 
@@ -48,11 +49,11 @@ class PluginService
 
                 // Register service providers
                 foreach ($plugin->getProviders() as $provider) {
-                    if (!class_exists($provider) || !is_subclass_of($command, ServiceProvider::class)) {
+                    if (!class_exists($provider) || !is_subclass_of($provider, ServiceProvider::class)) {
                         throw new Exception('Provider class "' . $provider . '" not found');
                     }
 
-                    app()->register($provider);
+                    $app->register($provider);
                 }
 
                 // Resolve artisan commands
@@ -69,7 +70,7 @@ class PluginService
                 // Load migrations
                 $migrations = plugin_path($plugin->id, 'database', 'migrations');
                 if (file_exists($migrations)) {
-                    app()->afterResolving('migrator', function ($migrator) use ($migrations) {
+                    $app->afterResolving('migrator', function ($migrator) use ($migrations) {
                         $migrator->path($migrations);
                     });
                 }
@@ -77,7 +78,7 @@ class PluginService
                 // Load translations
                 $translations = plugin_path($plugin->id, 'lang');
                 if (file_exists($translations)) {
-                    app()->afterResolving('translator', function ($translator) use ($plugin, $translations) {
+                    $app->afterResolving('translator', function ($translator) use ($plugin, $translations) {
                         $translator->addNamespace($plugin->id, $translations);
                     });
                 }
@@ -85,7 +86,7 @@ class PluginService
                 // Load views
                 $views = plugin_path($plugin->id, 'resources', 'views');
                 if (file_exists($views)) {
-                    app()->afterResolving('view', function ($view) use ($plugin, $views) {
+                    $app->afterResolving('view', function ($view) use ($plugin, $views) {
                         $view->addNamespace($plugin->id, $views);
                     });
                 }
@@ -97,10 +98,10 @@ class PluginService
         }
     }
 
-    public function loadPanelPlugins(Panel $panel): void
+    public function loadPanelPlugins(Application $app, Panel $panel): void
     {
         // Don't load any plugins during tests
-        if (app()->runningUnitTests()) {
+        if ($app->runningUnitTests()) {
             return;
         }
 
