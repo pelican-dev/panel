@@ -189,7 +189,7 @@ class ApiKey extends Model
 
     private static array $customResourceNames = [];
 
-    public static function registerCustomResourceName(string $resourceName)
+    public static function registerCustomResourceName(string $resourceName): void
     {
         $customResourceNames[] = $resourceName;
     }
