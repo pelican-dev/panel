@@ -28,6 +28,7 @@ use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Tabs;
 use Filament\Forms\Components\Tabs\Tab;
+use Filament\Forms\Components\TagsInput;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\ToggleButtons;
@@ -318,6 +319,37 @@ class EditServer extends EditRecord
                                         Forms\Components\Hidden::make('io')
                                             ->helperText('The IO performance relative to other running containers')
                                             ->label('Block IO Proportion'),
+
+                                        Grid::make()
+                                            ->columns(4)
+                                            ->columnSpanFull()
+                                            ->schema([
+                                                ToggleButtons::make('cpu_pinning')
+                                                    ->label('CPU Pinning')->inlineLabel()->inline()
+                                                    ->default(false)
+                                                    ->afterStateUpdated(fn (Set $set) => $set('threads', []))
+                                                    ->formatStateUsing(fn (Get $get) => !empty($get('threads')))
+                                                    ->live()
+                                                    ->options([
+                                                        false => 'Disabled',
+                                                        true => 'Enabled',
+                                                    ])
+                                                    ->colors([
+                                                        false => 'success',
+                                                        true => 'warning',
+                                                    ])
+                                                    ->columnSpan(2),
+
+                                                TagsInput::make('threads')
+                                                    ->dehydratedWhenHidden()
+                                                    ->hidden(fn (Get $get) => !$get('cpu_pinning'))
+                                                    ->label('Pinned Threads')->inlineLabel()
+                                                    ->required()
+                                                    ->columnSpan(2)
+                                                    ->separator()
+                                                    ->splitKeys([','])
+                                                    ->placeholder('Add pinned thread, e.g. 0 or 2-4'),
+                                            ]),
 
                                         Grid::make()
                                             ->columns(4)

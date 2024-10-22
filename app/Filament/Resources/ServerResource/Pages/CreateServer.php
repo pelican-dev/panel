@@ -685,6 +685,36 @@ class CreateServer extends CreateRecord
                                         ->columns(4)
                                         ->columnSpanFull()
                                         ->schema([
+                                            ToggleButtons::make('cpu_pinning')
+                                                ->label('CPU Pinning')->inlineLabel()->inline()
+                                                ->default(false)
+                                                ->afterStateUpdated(fn (Set $set) => $set('threads', []))
+                                                ->live()
+                                                ->options([
+                                                    false => 'Disabled',
+                                                    true => 'Enabled',
+                                                ])
+                                                ->colors([
+                                                    false => 'success',
+                                                    true => 'warning',
+                                                ])
+                                                ->columnSpan(2),
+
+                                            TagsInput::make('threads')
+                                                ->dehydratedWhenHidden()
+                                                ->hidden(fn (Get $get) => !$get('cpu_pinning'))
+                                                ->label('Pinned Threads')->inlineLabel()
+                                                ->required()
+                                                ->columnSpan(2)
+                                                ->separator()
+                                                ->splitKeys([','])
+                                                ->placeholder('Add pinned thread, e.g. 0 or 2-4'),
+                                        ]),
+
+                                    Grid::make()
+                                        ->columns(4)
+                                        ->columnSpanFull()
+                                        ->schema([
                                             ToggleButtons::make('oom_killer')
                                                 ->label('OOM Killer')
                                                 ->inlineLabel()->inline()
