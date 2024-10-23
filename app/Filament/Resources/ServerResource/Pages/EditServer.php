@@ -354,7 +354,7 @@ class EditServer extends EditRecord
                                                     ->dehydratedWhenHidden()
                                                     ->hidden(fn (Get $get) => !$get('cpu_pinning'))
                                                     ->label('Pinned Threads')->inlineLabel()
-                                                    ->required()
+                                                    ->required(fn (Get $get) => $get('cpu_pinning'))
                                                     ->columnSpan(2)
                                                     ->separator()
                                                     ->splitKeys([','])
