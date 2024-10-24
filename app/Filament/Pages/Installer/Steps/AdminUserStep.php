@@ -3,6 +3,7 @@
 namespace App\Filament\Pages\Installer\Steps;
 
 use App\Filament\Pages\Installer\PanelInstaller;
+use App\Services\Users\UserCreationService;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Wizard\Step;
 
@@ -28,6 +29,6 @@ class AdminUserStep
                     ->password()
                     ->revealable(),
             ])
-            ->afterValidation(fn () => $installer->createAdminUser());
+            ->afterValidation(fn (UserCreationService $service) => $installer->createAdminUser($service));
     }
 }

@@ -15,7 +15,7 @@ class EnsureStatefulRequests extends EnsureFrontendRequestsAreStateful
      * We don't want to support API usage using the cookies, except for requests stemming
      * from the front-end we control.
      */
-    public static function fromFrontend($request)
+    public static function fromFrontend($request): bool
     {
         if (parent::fromFrontend($request)) {
             return true;

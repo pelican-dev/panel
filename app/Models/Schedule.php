@@ -2,8 +2,7 @@
 
 namespace App\Models;
 
-use Cron\CronExpression;
-use Carbon\CarbonImmutable;
+use App\Helpers\Utilities;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
@@ -112,13 +111,9 @@ class Schedule extends Model
      *
      * @throws \Exception
      */
-    public function getNextRunDate(): CarbonImmutable
+    public function getNextRunDate(): string
     {
-        $formatted = sprintf('%s %s %s %s %s', $this->cron_minute, $this->cron_hour, $this->cron_day_of_month, $this->cron_month, $this->cron_day_of_week);
-
-        return CarbonImmutable::createFromTimestamp(
-            (new CronExpression($formatted))->getNextRunDate()->getTimestamp()
-        );
+        return Utilities::getScheduleNextRunDate($this->cron_minute, $this->cron_hour, $this->cron_day_of_month, $this->cron_month, $this->cron_day_of_week)->toDateTimeString();
     }
 
     /**

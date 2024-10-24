@@ -21,6 +21,9 @@ else
     echo -e "APP_KEY exists in environment, using that."
     echo -e "APP_KEY=$APP_KEY" > /pelican-data/.env
   fi
+
+  ## enable installer
+  echo -e "APP_INSTALLED=false" >> /pelican-data/.env
 fi
 
 mkdir /pelican-data/database
@@ -55,7 +58,7 @@ else
   echo "Starting PHP-FPM only"
 fi
 
-chown -R www-data:www-data . /pelican-data/.env /pelican-data/database
+chown -R www-data:www-data /pelican-data/.env /pelican-data/database
 
 echo "Starting Supervisord"
 exec "$@"

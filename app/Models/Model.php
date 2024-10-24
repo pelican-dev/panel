@@ -38,7 +38,7 @@ abstract class Model extends IlluminateModel
      *
      * @throws \Illuminate\Contracts\Container\BindingResolutionException
      */
-    protected static function boot()
+    protected static function boot(): void
     {
         parent::boot();
 
@@ -69,7 +69,7 @@ abstract class Model extends IlluminateModel
         return 'uuid';
     }
 
-    protected function asDateTime($value)
+    protected function asDateTime($value): Carbon
     {
         $timezone = auth()->user()?->timezone ?? config('app.timezone', 'UTC');
 
@@ -135,11 +135,9 @@ abstract class Model extends IlluminateModel
      * Returns the rules associated with the model, specifically for updating the given model
      * rather than just creating it.
      */
-    public static function getRulesForUpdate($model, string $column = 'id'): array
+    public static function getRulesForUpdate(self $model): array
     {
-        if ($model instanceof Model) {
-            [$id, $column] = [$model->getKey(), $model->getKeyName()];
-        }
+        [$id, $column] = [$model->getKey(), $model->getKeyName()];
 
         $rules = static::getRules();
         foreach ($rules as $key => &$data) {

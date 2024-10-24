@@ -45,9 +45,17 @@ use LogicException;
 class CreateServer extends CreateRecord
 {
     protected static string $resource = ServerResource::class;
+
     protected static bool $canCreateAnother = false;
 
     public ?Node $node = null;
+
+    private ServerCreationService $serverCreationService;
+
+    public function boot(ServerCreationService $serverCreationService): void
+    {
+        $this->serverCreationService = $serverCreationService;
+    }
 
     public function form(Form $form): Form
     {
@@ -118,8 +126,9 @@ class CreateServer extends CreateRecord
                                         ->hintIconTooltip('Providing a user password is optional. New user email will prompt users to create a password the first time they login.')
                                         ->password(),
                                 ])
-                                ->createOptionUsing(function ($data) {
-                                    resolve(UserCreationService::class)->handle($data);
+                                ->createOptionUsing(function ($data, UserCreationService $service) {
+                                    $service->handle($data);
+
                                     $this->refreshForm();
                                 })
                                 ->required(),
@@ -262,9 +271,9 @@ class CreateServer extends CreateRecord
                                         ->splitKeys(['Tab', ' ', ','])
                                         ->required(),
                                 ])
-                                ->createOptionUsing(function (array $data, Get $get): int {
+                                ->createOptionUsing(function (array $data, Get $get, AssignmentService $assignmentService): int {
                                     return collect(
-                                        resolve(AssignmentService::class)->handle(Node::find($get('node_id')), $data)
+                                        $assignmentService->handle(Node::find($get('node_id')), $data)
                                     )->first();
                                 })
                                 ->required(),
@@ -618,14 +627,24 @@ class CreateServer extends CreateRecord
                                                 ->minValue(0)
                                                 ->helperText('100% equals one CPU core.'),
                                         ]),
+                                ]),
 
+                            Fieldset::make('Advanced Limits')
+                                ->columnSpan(6)
+                                ->columns([
+                                    'default' => 1,
+                                    'sm' => 2,
+                                    'md' => 3,
+                                    'lg' => 3,
+                                ])
+                                ->schema([
                                     Grid::make()
                                         ->columns(4)
                                         ->columnSpanFull()
                                         ->schema([
                                             ToggleButtons::make('swap_support')
                                                 ->live()
-                                                ->label('Enable Swap Memory')
+                                                ->label('Swap Memory')
                                                 ->inlineLabel()
                                                 ->inline()
                                                 ->columnSpan(2)
@@ -671,6 +690,36 @@ class CreateServer extends CreateRecord
                                         ->helperText('The IO performance relative to other running containers')
                                         ->label('Block IO Proportion')
                                         ->default(500),
+
+                                    Grid::make()
+                                        ->columns(4)
+                                        ->columnSpanFull()
+                                        ->schema([
+                                            ToggleButtons::make('cpu_pinning')
+                                                ->label('CPU Pinning')->inlineLabel()->inline()
+                                                ->default(false)
+                                                ->afterStateUpdated(fn (Set $set) => $set('threads', []))
+                                                ->live()
+                                                ->options([
+                                                    false => 'Disabled',
+                                                    true => 'Enabled',
+                                                ])
+                                                ->colors([
+                                                    false => 'success',
+                                                    true => 'warning',
+                                                ])
+                                                ->columnSpan(2),
+
+                                            TagsInput::make('threads')
+                                                ->dehydratedWhenHidden()
+                                                ->hidden(fn (Get $get) => !$get('cpu_pinning'))
+                                                ->label('Pinned Threads')->inlineLabel()
+                                                ->required(fn (Get $get) => $get('cpu_pinning'))
+                                                ->columnSpan(2)
+                                                ->separator()
+                                                ->splitKeys([','])
+                                                ->placeholder('Add pinned thread, e.g. 0 or 2-4'),
+                                        ]),
 
                                     Grid::make()
                                         ->columns(4)
@@ -825,10 +874,7 @@ class CreateServer extends CreateRecord
     {
         $data['allocation_additional'] = collect($data['allocation_additional'])->filter()->all();
 
-        /** @var ServerCreationService $service */
-        $service = resolve(ServerCreationService::class);
-
-        return $service->handle($data);
+        return $this->serverCreationService->handle($data);
     }
 
     private function shouldHideComponent(Get $get, Component $component): bool

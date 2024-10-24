@@ -280,10 +280,7 @@ class EditEgg extends EditRecord
                         ->contained(false),
 
                 ])
-                ->action(function (array $data, Egg $egg): void {
-                    /** @var EggImporterService $eggImportService */
-                    $eggImportService = resolve(EggImporterService::class);
-
+                ->action(function (array $data, Egg $egg, EggImporterService $eggImportService): void {
                     if (!empty($data['egg'])) {
                         try {
                             $eggImportService->fromFile($data['egg'], $egg);

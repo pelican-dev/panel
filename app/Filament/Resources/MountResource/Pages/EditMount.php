@@ -96,6 +96,7 @@ class EditMount extends EditRecord
                 'lg' => 2,
             ]);
     }
+
     protected function getHeaderActions(): array
     {
         return [

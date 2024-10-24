@@ -6,6 +6,7 @@ use Illuminate\Support\Str;
 use App\Models\User;
 use App\Models\ActivityLog;
 use Illuminate\Database\Eloquent\Model;
+use League\Fractal\Resource\ResourceAbstract;
 
 class ActivityLogTransformer extends BaseClientTransformer
 {
@@ -34,7 +35,7 @@ class ActivityLogTransformer extends BaseClientTransformer
         ];
     }
 
-    public function includeActor(ActivityLog $model)
+    public function includeActor(ActivityLog $model): ResourceAbstract
     {
         if (!$model->actor instanceof User) {
             return $this->null();
@@ -111,7 +112,7 @@ class ActivityLogTransformer extends BaseClientTransformer
      * Determines if the user can view the IP address in the output either because they are the
      * actor that performed the action, or because they are an administrator on the Panel.
      */
-    protected function canViewIP(Model $actor = null): bool
+    protected function canViewIP(?Model $actor = null): bool
     {
         return $actor?->is($this->request->user()) || $this->request->user()->isRootAdmin();
     }

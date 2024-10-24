@@ -56,7 +56,7 @@ class RedisStep
             });
     }
 
-    private static function testConnection($host, $port, $username, $password): bool
+    private static function testConnection(string $host, null|string|int $port, ?string $username, ?string $password): bool
     {
         try {
             config()->set('database.redis._panel_install_test', [

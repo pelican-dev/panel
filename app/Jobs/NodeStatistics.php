@@ -42,5 +42,4 @@ class NodeStatistics implements ShouldQueue
             }
         }
     }
-
 }

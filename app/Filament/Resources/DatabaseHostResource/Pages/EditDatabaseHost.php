@@ -6,6 +6,8 @@ use App\Filament\Resources\DatabaseHostResource;
 use App\Filament\Resources\DatabaseHostResource\RelationManagers\DatabasesRelationManager;
 use App\Models\DatabaseHost;
 use App\Services\Databases\Hosts\HostUpdateService;
+use Closure;
+use Exception;
 use Filament\Actions;
 use Filament\Forms;
 use Filament\Forms\Components\Section;
@@ -20,6 +22,13 @@ use PDOException;
 class EditDatabaseHost extends EditRecord
 {
     protected static string $resource = DatabaseHostResource::class;
+
+    private HostUpdateService $hostUpdateService;
+
+    public function boot(HostUpdateService $hostUpdateService): void
+    {
+        $this->hostUpdateService = $hostUpdateService;
+    }
 
     public function form(Form $form): Form
     {
@@ -97,12 +106,16 @@ class EditDatabaseHost extends EditRecord
         ];
     }
 
-    protected function handleRecordUpdate($record, array $data): Model
+    protected function handleRecordUpdate(Model $record, array $data): Model
     {
-        return resolve(HostUpdateService::class)->handle($record->id, $data);
+        if (!$record instanceof DatabaseHost) {
+            return $record;
+        }
+
+        return $this->hostUpdateService->handle($record, $data);
     }
 
-    public function exception($e, $stopPropagation): void
+    public function exception(Exception $e, Closure $stopPropagation): void
     {
         if ($e instanceof PDOException) {
             Notification::make()

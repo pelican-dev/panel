@@ -30,7 +30,7 @@ class ToggleTwoFactorService
      * @throws \PragmaRX\Google2FA\Exceptions\SecretKeyTooShortException
      * @throws \App\Exceptions\Service\User\TwoFactorAuthenticationTokenInvalid
      */
-    public function handle(User $user, string $token, bool $toggleState = null): array
+    public function handle(User $user, string $token, ?bool $toggleState = null): array
     {
         $isValidToken = $this->google2FA->verifyKey($user->totp_secret, $token, config()->get('panel.auth.2fa.window'));
 

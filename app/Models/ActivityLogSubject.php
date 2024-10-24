@@ -3,8 +3,9 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\Relations\Pivot;
-use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 /**
  * \App\Models\ActivityLogSubject.
@@ -25,6 +26,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class ActivityLogSubject extends Pivot
 {
     public $incrementing = true;
+
     public $timestamps = false;
 
     protected $table = 'activity_log_subjects';
@@ -36,15 +38,8 @@ class ActivityLogSubject extends Pivot
         return $this->belongsTo(ActivityLog::class);
     }
 
-    public function subject()
+    public function subject(): MorphTo
     {
-        $morph = $this->morphTo();
-
-        if (in_array(SoftDeletes::class, class_uses_recursive($morph::class))) {
-            /** @var self|Backup|UserSSHKey $morph - cannot use traits in doc blocks */
-            return $morph->withTrashed();
-        }
-
-        return $morph;
+        return $this->morphTo()->withoutGlobalScope(SoftDeletingScope::class);
     }
 }

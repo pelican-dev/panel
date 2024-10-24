@@ -13,7 +13,9 @@ use chillerlan\QRCode\Common\EccLevel;
 use chillerlan\QRCode\Common\Version;
 use chillerlan\QRCode\QRCode;
 use chillerlan\QRCode\QROptions;
+use Closure;
 use DateTimeZone;
+use Exception;
 use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\Placeholder;
@@ -38,6 +40,13 @@ use Illuminate\Validation\Rules\Password;
  */
 class EditProfile extends \Filament\Pages\Auth\EditProfile
 {
+    private ToggleTwoFactorService $toggleTwoFactorService;
+
+    public function boot(ToggleTwoFactorService $toggleTwoFactorService): void
+    {
+        $this->toggleTwoFactorService = $toggleTwoFactorService;
+    }
+
     protected function getForms(): array
     {
         return [
@@ -106,7 +115,7 @@ class EditProfile extends \Filament\Pages\Auth\EditProfile
 
                                 Tab::make('2FA')
                                     ->icon('tabler-shield-lock')
-                                    ->schema(function () {
+                                    ->schema(function (TwoFactorSetupService $setupService) {
                                         if ($this->getUser()->use_totp) {
                                             return [
                                                 Placeholder::make('2fa-already-enabled')
@@ -124,8 +133,6 @@ class EditProfile extends \Filament\Pages\Auth\EditProfile
                                                     ->helperText('Enter your current 2FA code to disable Two Factor Authentication'),
                                             ];
                                         }
-                                        /** @var TwoFactorSetupService */
-                                        $setupService = app(TwoFactorSetupService::class);
 
                                         ['image_url_data' => $url, 'secret' => $secret] = cache()->remember(
                                             "users.{$this->getUser()->id}.2fa.state",
@@ -274,23 +281,21 @@ class EditProfile extends \Filament\Pages\Auth\EditProfile
         ];
     }
 
-    protected function handleRecordUpdate($record, $data): Model
+    protected function handleRecordUpdate(Model $record, array $data): Model
     {
-        if ($token = $data['2facode'] ?? null) {
-            /** @var ToggleTwoFactorService $service */
-            $service = resolve(ToggleTwoFactorService::class);
+        if (!$record instanceof User) {
+            return $record;
+        }
 
-            $tokens = $service->handle($record, $token, true);
+        if ($token = $data['2facode'] ?? null) {
+            $tokens = $this->toggleTwoFactorService->handle($record, $token, true);
             cache()->set("users.$record->id.2fa.tokens", implode("\n", $tokens), now()->addSeconds(15));
 
             $this->redirectRoute('filament.admin.auth.profile', ['tab' => '-2fa-tab']);
         }
 
         if ($token = $data['2fa-disable-code'] ?? null) {
-            /** @var ToggleTwoFactorService $service */
-            $service = resolve(ToggleTwoFactorService::class);
-
-            $service->handle($record, $token, false);
+            $this->toggleTwoFactorService->handle($record, $token, false);
 
             cache()->forget("users.$record->id.2fa.state");
         }
@@ -298,7 +303,7 @@ class EditProfile extends \Filament\Pages\Auth\EditProfile
         return parent::handleRecordUpdate($record, $data);
     }
 
-    public function exception($e, $stopPropagation): void
+    public function exception(Exception $e, Closure $stopPropagation): void
     {
         if ($e instanceof TwoFactorAuthenticationTokenInvalid) {
             Notification::make()

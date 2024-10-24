@@ -63,6 +63,7 @@ class ApiKey extends Model
      * API representation using fractal.
      */
     public const RESOURCE_NAME = 'api_key';
+
     /**
      * Maximum number of Api keys that a user can have.
      */
@@ -71,12 +72,22 @@ class ApiKey extends Model
      * Different API keys that can exist on the system.
      */
     public const TYPE_NONE = 0;
+
     public const TYPE_ACCOUNT = 1;
+  
     public const TYPE_APPLICATION = 2;
+
+    /* @deprecated */
+    public const TYPE_DAEMON_USER = 3;
+
+    /* @deprecated */
+    public const TYPE_DAEMON_APPLICATION = 4;
+
     /**
      * The length of API key identifiers.
      */
     public const IDENTIFIER_LENGTH = 16;
+
     /**
      * The length of the actual API key that is encrypted and stored
      * in the database.

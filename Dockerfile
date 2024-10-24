@@ -7,7 +7,9 @@ WORKDIR /build
 
 COPY . ./
 
-RUN yarn install --frozen-lockfile && yarn run build:production
+RUN yarn config set network-timeout 300000 \
+    && yarn install --frozen-lockfile \
+    && yarn run build:production
 
 FROM php:8.3-fpm-alpine
 # FROM --platform=$TARGETOS/$TARGETARCH php:8.3-fpm-alpine
@@ -36,8 +38,8 @@ RUN touch .env
 RUN composer install --no-dev --optimize-autoloader
 
 # Set file permissions
-RUN chmod -R 755 /var/www/html/storage \
-    && chmod -R 755 /var/www/html/bootstrap/cache
+RUN chmod -R 755 storage bootstrap/cache \
+    && chown -R www-data:www-data ./
 
 # Add scheduler to cron
 RUN echo "* * * * * php /var/www/html/artisan schedule:run >> /dev/null 2>&1" | crontab -u www-data -
@@ -49,8 +51,7 @@ RUN cp .github/docker/supervisord.conf /etc/supervisord.conf && \
 HEALTHCHECK --interval=5m --timeout=10s --start-period=5s --retries=3 \
   CMD curl -f http://localhost/up || exit 1
 
-EXPOSE 80:2019
-EXPOSE 443
+EXPOSE 80 443
 
 VOLUME /pelican-data
 
