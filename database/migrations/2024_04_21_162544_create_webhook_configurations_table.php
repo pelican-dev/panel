@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('endpoint');
             $table->string('description');
-            $table->json('events')->index();
+            $table->json('events');
             $table->timestamps();
         });
     }
