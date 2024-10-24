@@ -2,6 +2,10 @@
 
 namespace Database\Factories;
 
+use App\Models\Allocation;
+use App\Models\Egg;
+use App\Models\Node;
+use App\Models\User;
 use Carbon\Carbon;
 use Ramsey\Uuid\Uuid;
 use Illuminate\Support\Str;
@@ -17,12 +21,28 @@ class ServerFactory extends Factory
      */
     protected $model = Server::class;
 
+    public function withNode(?Node $node = null): static
+    {
+        $node ??= Node::factory()->create();
+
+        return $this->state(fn () => [
+            'node_id' => $node->id,
+            'allocation_id' => Allocation::factory([
+                'node_id' => $node->id,
+            ]),
+        ]);
+    }
+
     /**
      * Define the model's default state.
      */
     public function definition(): array
     {
         return [
+            'owner_id' => User::factory(),
+            'node_id' => Node::factory(),
+            'allocation_id' => Allocation::factory(),
+            'egg_id' => Egg::factory(),
             'uuid' => Uuid::uuid4()->toString(),
             'uuid_short' => Str::lower(Str::random(8)),
             'name' => $this->faker->firstName(),
