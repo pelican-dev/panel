@@ -13,6 +13,7 @@ use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
+use Illuminate\Support\Number;
 
 class ListNodes extends ListRecords
 {
@@ -47,18 +48,18 @@ class ListNodes extends ListRecords
                     ->icon('tabler-device-desktop-analytics')
                     ->numeric()
                     ->suffix(config('panel.use_binary_prefix') ? ' GiB' : ' GB')
-                    ->formatStateUsing(fn ($state) => number_format($state / (config('panel.use_binary_prefix') ? 1024 : 1000), 2))
+                    ->formatStateUsing(fn ($state) => Number::format($state / (config('panel.use_binary_prefix') ? 1024 : 1000), maxPrecision: 2, locale: auth()->user()->language))
                     ->sortable(),
                 TextColumn::make('disk')
                     ->visibleFrom('sm')
                     ->icon('tabler-file')
                     ->numeric()
                     ->suffix(config('panel.use_binary_prefix') ? ' GiB' : ' GB')
-                    ->formatStateUsing(fn ($state) => number_format($state / (config('panel.use_binary_prefix') ? 1024 : 1000), 2))
+                    ->formatStateUsing(fn ($state) => Number::format($state / (config('panel.use_binary_prefix') ? 1024 : 1000), maxPrecision: 2, locale: auth()->user()->language))
                     ->sortable(),
                 TextColumn::make('cpu')
                     ->visibleFrom('sm')
-                    ->icon('tabler-file')
+                    ->icon('tabler-cpu')
                     ->numeric()
                     ->suffix(' %')
                     ->sortable(),
@@ -84,7 +85,8 @@ class ListNodes extends ListRecords
             ])
             ->bulkActions([
                 BulkActionGroup::make([
-                    DeleteBulkAction::make(),
+                    DeleteBulkAction::make()
+                        ->authorize(fn () => auth()->user()->can('delete node')),
                 ]),
             ])
             ->emptyStateIcon('tabler-server-2')

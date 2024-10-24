@@ -52,7 +52,7 @@ class MakeUserCommand extends Command
             ['UUID', $user->uuid],
             ['Email', $user->email],
             ['Username', $user->username],
-            ['Admin', $user->root_admin ? 'Yes' : 'No'],
+            ['Admin', $user->isRootAdmin() ? 'Yes' : 'No'],
         ]);
 
         return 0;

@@ -5,6 +5,7 @@ namespace App\Tests;
 use Carbon\Carbon;
 use Carbon\CarbonImmutable;
 use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
+use Spatie\Permission\PermissionRegistrar;
 
 abstract class TestCase extends BaseTestCase
 {
@@ -28,6 +29,8 @@ abstract class TestCase extends BaseTestCase
         config()->set('app.debug', false);
 
         $this->setKnownUuidFactory();
+
+        $this->app->make(PermissionRegistrar::class)->forgetCachedPermissions();
     }
 
     /**

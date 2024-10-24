@@ -3,23 +3,26 @@
 namespace App\Http\Middleware;
 
 use GuzzleHttp\Client;
+use Illuminate\Foundation\Application;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use App\Events\Auth\FailedCaptcha;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 
-class VerifyReCaptcha
+readonly class VerifyReCaptcha
 {
-    /**
-     * Handle an incoming request.
-     */
+    public function __construct(private Application $app)
+    {
+
+    }
+
     public function handle(Request $request, \Closure $next): mixed
     {
         if (!config('recaptcha.enabled')) {
             return $next($request);
         }
 
-        if (app()->isLocal()) {
+        if ($this->app->isLocal()) {
             return $next($request);
         }
 

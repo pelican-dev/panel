@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\EggResource\Pages;
 
+use AbdelhamidErrahmouni\FilamentMonacoEditor\MonacoEditor;
 use App\Filament\Resources\EggResource;
 use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\Fieldset;
@@ -15,10 +16,9 @@ use Filament\Forms\Components\TagsInput;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
-use Filament\Resources\Pages\CreateRecord;
-use AbdelhamidErrahmouni\FilamentMonacoEditor\MonacoEditor;
-use Filament\Forms;
 use Filament\Forms\Form;
+use Filament\Forms\Set;
+use Filament\Resources\Pages\CreateRecord;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
 
@@ -27,6 +27,7 @@ class CreateEgg extends CreateRecord
     protected static string $resource = EggResource::class;
 
     protected static bool $canCreateAnother = false;
+
     public function form(Form $form): Form
     {
         return $form
@@ -155,7 +156,7 @@ class CreateEgg extends CreateRecord
                                         ->debounce(750)
                                         ->maxLength(255)
                                         ->columnSpanFull()
-                                        ->afterStateUpdated(fn (Forms\Set $set, $state) => $set('env_variable', str($state)->trim()->snake()->upper()->toString())
+                                        ->afterStateUpdated(fn (Set $set, $state) => $set('env_variable', str($state)->trim()->snake()->upper()->toString())
                                         )
                                         ->required(),
                                     Textarea::make('description')->columnSpanFull(),

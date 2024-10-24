@@ -7,10 +7,12 @@ use Carbon\Carbon;
 use Filament\Support\RawJs;
 use Filament\Widgets\ChartWidget;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Number;
 
 class NodeMemoryChart extends ChartWidget
 {
     protected static ?string $pollingInterval = '5s';
+
     protected static ?string $maxHeight = '300px';
 
     public ?Model $record = null;
@@ -22,7 +24,7 @@ class NodeMemoryChart extends ChartWidget
 
         $memUsed = collect(cache()->get("nodes.$node->id.memory_used"))->slice(-10)
             ->map(fn ($value, $key) => [
-                'memory' => config('panel.use_binary_prefix') ? $value / 1024 / 1024 / 1024 : $value / 1000 / 1000 / 1000,
+                'memory' => Number::format(config('panel.use_binary_prefix') ? $value / 1024 / 1024 / 1024 : $value / 1000 / 1000 / 1000, maxPrecision: 2, locale: auth()->user()->language),
                 'timestamp' => Carbon::createFromTimestamp($key, (auth()->user()->timezone ?? 'UTC'))->format('H:i:s'),
             ])
             ->all();
@@ -73,12 +75,12 @@ class NodeMemoryChart extends ChartWidget
         $totalMemory = collect(cache()->get("nodes.$node->id.memory_total"))->last();
 
         $used = config('panel.use_binary_prefix')
-            ? number_format($latestMemoryUsed / 1024 / 1024 / 1024, 2) .' GiB'
-            : number_format($latestMemoryUsed / 1000 / 1000 / 1000, 2) . ' GB';
+            ? Number::format($latestMemoryUsed / 1024 / 1024 / 1024, maxPrecision: 2, locale: auth()->user()->language) .' GiB'
+            : Number::format($latestMemoryUsed / 1000 / 1000 / 1000, maxPrecision: 2, locale: auth()->user()->language) . ' GB';
 
         $total = config('panel.use_binary_prefix')
-            ? number_format($totalMemory / 1024 / 1024 / 1024, 2) .' GiB'
-            : number_format($totalMemory / 1000 / 1000 / 1000, 2) . ' GB';
+            ? Number::format($totalMemory / 1024 / 1024 / 1024, maxPrecision: 2, locale: auth()->user()->language) .' GiB'
+            : Number::format($totalMemory / 1000 / 1000 / 1000, maxPrecision: 2, locale: auth()->user()->language) . ' GB';
 
         return 'Memory - ' . $used . ' Of ' . $total;
     }

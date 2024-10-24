@@ -12,6 +12,7 @@ use Symfony\Component\HttpKernel\Exception\ConflictHttpException;
 class SuspensionService
 {
     public const ACTION_SUSPEND = 'suspend';
+
     public const ACTION_UNSUSPEND = 'unsuspend';
 
     /**
@@ -27,7 +28,7 @@ class SuspensionService
      *
      * @throws \Throwable
      */
-    public function toggle(Server $server, string $action = self::ACTION_SUSPEND)
+    public function toggle(Server $server, string $action = self::ACTION_SUSPEND): void
     {
         Assert::oneOf($action, [self::ACTION_SUSPEND, self::ACTION_UNSUSPEND]);
 
@@ -36,7 +37,9 @@ class SuspensionService
         // suspended in the database. Additionally, nothing needs to happen if the server
         // is not suspended, and we try to un-suspend the instance.
         if ($isSuspending === $server->isSuspended()) {
-            return Notification::make()->danger()->title('Failed!')->body('Server is already suspended!')->send();
+            Notification::make()->danger()->title('Failed!')->body('Server is already suspended!')->send();
+
+            return;
         }
 
         // Check if the server is currently being transferred.

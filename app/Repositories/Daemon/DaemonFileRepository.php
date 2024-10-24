@@ -3,6 +3,7 @@
 namespace App\Repositories\Daemon;
 
 use Carbon\CarbonInterval;
+use Illuminate\Http\Client\Response;
 use Webmozart\Assert\Assert;
 use App\Models\Server;
 use GuzzleHttp\Exception\ClientException;
@@ -15,13 +16,13 @@ class DaemonFileRepository extends DaemonRepository
     /**
      * Return the contents of a given file.
      *
-     * @param int|null $notLargerThan the maximum content length in bytes
+     * @param  int|null  $notLargerThan  the maximum content length in bytes
      *
      * @throws \GuzzleHttp\Exception\TransferException
      * @throws \App\Exceptions\Http\Server\FileSizeTooLargeException
      * @throws \App\Exceptions\Http\Connection\DaemonConnectionException
      */
-    public function getContent(string $path, int $notLargerThan = null): string
+    public function getContent(string $path, ?int $notLargerThan = null): string
     {
         Assert::isInstanceOf($this->server, Server::class);
 
@@ -48,7 +49,7 @@ class DaemonFileRepository extends DaemonRepository
      *
      * @throws \App\Exceptions\Http\Connection\DaemonConnectionException
      */
-    public function putContent(string $path, string $content)
+    public function putContent(string $path, string $content): Response
     {
         Assert::isInstanceOf($this->server, Server::class);
 
@@ -88,7 +89,7 @@ class DaemonFileRepository extends DaemonRepository
      *
      * @throws \App\Exceptions\Http\Connection\DaemonConnectionException
      */
-    public function createDirectory(string $name, string $path)
+    public function createDirectory(string $name, string $path): Response
     {
         Assert::isInstanceOf($this->server, Server::class);
 
@@ -110,7 +111,7 @@ class DaemonFileRepository extends DaemonRepository
      *
      * @throws \App\Exceptions\Http\Connection\DaemonConnectionException
      */
-    public function renameFiles(?string $root, array $files)
+    public function renameFiles(?string $root, array $files): Response
     {
         Assert::isInstanceOf($this->server, Server::class);
 
@@ -132,7 +133,7 @@ class DaemonFileRepository extends DaemonRepository
      *
      * @throws \App\Exceptions\Http\Connection\DaemonConnectionException
      */
-    public function copyFile(string $location)
+    public function copyFile(string $location): Response
     {
         Assert::isInstanceOf($this->server, Server::class);
 
@@ -153,7 +154,7 @@ class DaemonFileRepository extends DaemonRepository
      *
      * @throws \App\Exceptions\Http\Connection\DaemonConnectionException
      */
-    public function deleteFiles(?string $root, array $files)
+    public function deleteFiles(?string $root, array $files): Response
     {
         Assert::isInstanceOf($this->server, Server::class);
 
@@ -203,7 +204,7 @@ class DaemonFileRepository extends DaemonRepository
      *
      * @throws \App\Exceptions\Http\Connection\DaemonConnectionException
      */
-    public function decompressFile(?string $root, string $file)
+    public function decompressFile(?string $root, string $file): Response
     {
         Assert::isInstanceOf($this->server, Server::class);
 
@@ -229,7 +230,7 @@ class DaemonFileRepository extends DaemonRepository
      *
      * @throws \App\Exceptions\Http\Connection\DaemonConnectionException
      */
-    public function chmodFiles(?string $root, array $files)
+    public function chmodFiles(?string $root, array $files): Response
     {
         Assert::isInstanceOf($this->server, Server::class);
 
@@ -251,7 +252,7 @@ class DaemonFileRepository extends DaemonRepository
      *
      * @throws \App\Exceptions\Http\Connection\DaemonConnectionException
      */
-    public function pull(string $url, ?string $directory, array $params = [])
+    public function pull(string $url, ?string $directory, array $params = []): Response
     {
         Assert::isInstanceOf($this->server, Server::class);
 

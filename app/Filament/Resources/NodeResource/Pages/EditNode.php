@@ -83,7 +83,7 @@ class EditNode extends EditRecord
                                         if (request()->isSecure()) {
                                             return '
                                     Your panel is currently secured via an SSL certificate and that means your nodes require one too.
-                                    You must use a domain name, because you cannot get SSL certificates for IP Addresses
+                                    You must use a domain name, because you cannot get SSL certificates for IP Addresses.
                                 ';
                                         }
 
@@ -98,7 +98,7 @@ class EditNode extends EditRecord
                                 ->hintColor('danger')
                                 ->hint(function ($state) {
                                     if (is_ip($state) && request()->isSecure()) {
-                                        return 'You cannot connect to an IP Address over SSL';
+                                        return 'You cannot connect to an IP Address over SSL!';
                                     }
 
                                     return '';
@@ -130,11 +130,9 @@ class EditNode extends EditRecord
                                     $set('dns', false);
                                 })
                                 ->maxLength(255),
-
                             TextInput::make('ip')
                                 ->disabled()
                                 ->hidden(),
-
                             ToggleButtons::make('dns')
                                 ->label('DNS Record Check')
                                 ->helperText('This lets you know if your DNS record correctly points to an IP Address.')
@@ -157,7 +155,6 @@ class EditNode extends EditRecord
                                     'md' => 1,
                                     'lg' => 1,
                                 ]),
-
                             TextInput::make('daemon_listen')
                                 ->columnSpan([
                                     'default' => 1,
@@ -172,7 +169,6 @@ class EditNode extends EditRecord
                                 ->default(8080)
                                 ->required()
                                 ->integer(),
-
                             TextInput::make('name')
                                 ->label('Display Name')
                                 ->columnSpan([
@@ -182,10 +178,8 @@ class EditNode extends EditRecord
                                     'lg' => 2,
                                 ])
                                 ->required()
-                                ->regex('/[a-zA-Z0-9_\.\- ]+/')
                                 ->helperText('This name is for display only and can be changed later.')
                                 ->maxLength(100),
-
                             ToggleButtons::make('scheme')
                                 ->label('Communicate over SSL')
                                 ->columnSpan([
@@ -235,11 +229,7 @@ class EditNode extends EditRecord
                                 ->disabled(),
                             TagsInput::make('tags')
                                 ->columnSpan(['default' => 1, 'sm' => 1, 'md' => 2, 'lg' => 2])
-                                ->label('Tags')
-                                ->disabled()
-                                ->placeholder('Not Implemented')
-                                ->hintIcon('tabler-question-mark')
-                                ->hintIconTooltip('Not Implemented'),
+                                ->placeholder('Add Tags'),
                             TextInput::make('upload_size')
                                 ->columnSpan(['default' => 1, 'sm' => 1, 'md' => 2, 'lg' => 1])
                                 ->label('Upload Limit')
@@ -263,7 +253,7 @@ class EditNode extends EditRecord
                                 ->helperText('Display alias for the SFTP address. Leave empty to use the Node FQDN.'),
                             ToggleButtons::make('public')
                                 ->columnSpan(['default' => 1, 'sm' => 1, 'md' => 1, 'lg' => 3])
-                                ->label('Automatic Allocation')->inline()
+                                ->label('Use Node for deployment?')->inline()
                                 ->options([
                                     true => 'Yes',
                                     false => 'No',
@@ -446,6 +436,16 @@ class EditNode extends EditRecord
 
         $data['config'] = $node->getYamlConfiguration();
 
+        if (!is_ip($node->fqdn)) {
+            $validRecords = gethostbynamel($node->fqdn);
+            if ($validRecords) {
+                $data['dns'] = true;
+                $data['ip'] = collect($validRecords)->first();
+            } else {
+                $data['dns'] = false;
+            }
+        }
+
         return $data;
     }
 
@@ -453,6 +453,7 @@ class EditNode extends EditRecord
     {
         return [];
     }
+
     protected function getHeaderActions(): array
     {
         return [
@@ -468,11 +469,12 @@ class EditNode extends EditRecord
         $this->fillForm();
     }
 
-    protected function getColumnSpan()
+    protected function getColumnSpan(): ?int
     {
         return null;
     }
-    protected function getColumnStart()
+
+    protected function getColumnStart(): ?int
     {
         return null;
     }

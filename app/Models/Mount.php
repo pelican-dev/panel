@@ -70,7 +70,7 @@ class Mount extends Model
     /**
      * Blacklisted source paths.
      */
-    public static $invalidSourcePaths = [
+    public static array $invalidSourcePaths = [
         '/etc/pelican',
         '/var/lib/pelican/volumes',
         '/srv/daemon-data',
@@ -79,7 +79,7 @@ class Mount extends Model
     /**
      * Blacklisted target paths.
      */
-    public static $invalidTargetPaths = [
+    public static array $invalidTargetPaths = [
         '/home/container',
     ];
 

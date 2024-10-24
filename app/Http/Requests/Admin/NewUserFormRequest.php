@@ -22,7 +22,6 @@ class NewUserFormRequest extends AdminFormRequest
             'name_last',
             'password',
             'language',
-            'root_admin',
         ])->toArray();
     }
 }

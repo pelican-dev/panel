@@ -4,6 +4,8 @@ namespace App\Exceptions;
 
 use Exception;
 use Filament\Notifications\Notification;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Psr\Log\LoggerInterface;
 use Illuminate\Http\Response;
@@ -14,8 +16,11 @@ use Symfony\Component\HttpKernel\Exception\HttpExceptionInterface;
 class DisplayException extends PanelException implements HttpExceptionInterface
 {
     public const LEVEL_DEBUG = 'debug';
+
     public const LEVEL_INFO = 'info';
+
     public const LEVEL_WARNING = 'warning';
+
     public const LEVEL_ERROR = 'error';
 
     /**
@@ -46,7 +51,7 @@ class DisplayException extends PanelException implements HttpExceptionInterface
      * and then redirecting them back to the page that they came from. If the
      * request originated from an API hit, return the error in JSONAPI spec format.
      */
-    public function render(Request $request)
+    public function render(Request $request): bool|RedirectResponse|JsonResponse
     {
         if ($request->is('livewire/update')) {
             Notification::make()
@@ -55,13 +60,14 @@ class DisplayException extends PanelException implements HttpExceptionInterface
                 ->danger()
                 ->send();
 
-            return;
+            return false;
         }
 
         if ($request->expectsJson()) {
             return response()->json(Handler::toArray($this), $this->getStatusCode(), $this->getHeaders());
         }
 
+        // @phpstan-ignore-next-line
         app(AlertsMessageBag::class)->danger($this->getMessage())->flash();
 
         return redirect()->back()->withInput();
@@ -73,10 +79,10 @@ class DisplayException extends PanelException implements HttpExceptionInterface
      *
      * @throws \Throwable
      */
-    public function report()
+    public function report(): void
     {
         if (!$this->getPrevious() instanceof \Exception || !Handler::isReportable($this->getPrevious())) {
-            return null;
+            return;
         }
 
         try {
@@ -85,6 +91,6 @@ class DisplayException extends PanelException implements HttpExceptionInterface
             throw $this->getPrevious();
         }
 
-        return $logger->{$this->getErrorLevel()}($this->getPrevious());
+        $logger->{$this->getErrorLevel()}($this->getPrevious());
     }
 }

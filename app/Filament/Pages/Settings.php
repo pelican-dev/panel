@@ -38,6 +38,7 @@ class Settings extends Page implements HasForms
     use InteractsWithHeaderActions;
 
     protected static ?string $navigationIcon = 'tabler-settings';
+
     protected static ?string $navigationGroup = 'Advanced';
 
     protected static string $view = 'filament.pages.settings';
@@ -49,12 +50,18 @@ class Settings extends Page implements HasForms
         $this->form->fill();
     }
 
+    public static function canAccess(): bool
+    {
+        return auth()->user()->can('view settings');
+    }
+
     protected function getFormSchema(): array
     {
         return [
             Tabs::make('Tabs')
                 ->columns()
                 ->persistTabInQueryString()
+                ->disabled(fn () => !auth()->user()->can('update settings'))
                 ->tabs([
                     Tab::make('general')
                         ->label('General')
@@ -86,7 +93,6 @@ class Settings extends Page implements HasForms
             TextInput::make('APP_NAME')
                 ->label('App Name')
                 ->required()
-                ->alphaNum()
                 ->default(env('APP_NAME', 'Pelican')),
             TextInput::make('APP_FAVICON')
                 ->label('App Favicon')
@@ -147,10 +153,12 @@ class Settings extends Page implements HasForms
                         ->color('danger')
                         ->icon('tabler-trash')
                         ->requiresConfirmation()
+                        ->authorize(fn () => auth()->user()->can('update settings'))
                         ->action(fn (Set $set) => $set('TRUSTED_PROXIES', [])),
                     FormAction::make('cloudflare')
                         ->label('Set to Cloudflare IPs')
                         ->icon('tabler-brand-cloudflare')
+                        ->authorize(fn () => auth()->user()->can('update settings'))
                         ->action(fn (Set $set) => $set('TRUSTED_PROXIES', [
                             '173.245.48.0/20',
                             '103.21.244.0/22',
@@ -226,6 +234,7 @@ class Settings extends Page implements HasForms
                         ->label('Send Test Mail')
                         ->icon('tabler-send')
                         ->hidden(fn (Get $get) => $get('MAIL_MAILER') === 'log')
+                        ->authorize(fn () => auth()->user()->can('update settings'))
                         ->action(function () {
                             try {
                                 MailNotification::route('mail', auth()->user()->email)
@@ -513,6 +522,25 @@ class Settings extends Page implements HasForms
                         ->suffix('Requests Per Minute')
                         ->default(env('APP_API_APPLICATION_RATELIMIT', config('http.rate_limit.application'))),
                 ]),
+            Section::make('Server')
+                ->description('Settings for Servers.')
+                ->columns()
+                ->collapsible()
+                ->collapsed()
+                ->schema([
+                    Toggle::make('PANEL_EDITABLE_SERVER_DESCRIPTIONS')
+                        ->label('Allow Users to edit Server Descriptions?')
+                        ->onIcon('tabler-check')
+                        ->offIcon('tabler-x')
+                        ->onColor('success')
+                        ->offColor('danger')
+                        ->live()
+                        ->columnSpanFull()
+                        ->formatStateUsing(fn ($state): bool => (bool) $state)
+                        ->afterStateUpdated(fn ($state, Set $set) => $set('PANEL_EDITABLE_SERVER_DESCRIPTIONS', (bool) $state))
+                        ->default(env('PANEL_EDITABLE_SERVER_DESCRIPTIONS', config('panel.editable_server_descriptions'))),
+                ]),
+
         ];
     }
 
@@ -561,12 +589,9 @@ class Settings extends Page implements HasForms
         return [
             Action::make('save')
                 ->action('save')
+                ->authorize(fn () => auth()->user()->can('update settings'))
                 ->keyBindings(['mod+s']),
         ];
 
-    }
-    protected function getFormActions(): array
-    {
-        return [];
     }
 }

@@ -32,6 +32,7 @@ class Backup extends Model
     public const RESOURCE_NAME = 'backup';
 
     public const ADAPTER_DAEMON = 'wings';
+
     public const ADAPTER_AWS_S3 = 's3';
 
     protected $table = 'backups';

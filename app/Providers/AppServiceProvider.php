@@ -6,13 +6,14 @@ use App\Extensions\Themes\Theme;
 use App\Models;
 use App\Models\ApiKey;
 use App\Models\Node;
-use App\Services\Helpers\SoftwareVersionService;
+use App\Models\User;
 use Dedoc\Scramble\Scramble;
 use Dedoc\Scramble\Support\Generator\OpenApi;
 use Dedoc\Scramble\Support\Generator\SecurityScheme;
 use Filament\Support\Colors\Color;
 use Filament\Support\Facades\FilamentColor;
 use Illuminate\Database\Eloquent\Relations\Relation;
+use Illuminate\Foundation\Application;
 use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Facades\Broadcast;
 use Illuminate\Support\Facades\Event;
@@ -29,11 +30,11 @@ class AppServiceProvider extends ServiceProvider
     /**
      * Bootstrap any application services.
      */
-    public function boot(): void
+    public function boot(Application $app): void
     {
-        $versionData = app(SoftwareVersionService::class)->versionData();
-        View::share('appVersion', $versionData['version'] ?? 'undefined');
-        View::share('appIsGit', $versionData['is_git'] ?? false);
+        // TODO: remove when old admin area gets yeeted
+        View::share('appVersion', config('app.version'));
+        View::share('appIsGit', false);
 
         Paginator::useBootstrap();
 
@@ -64,7 +65,7 @@ class AppServiceProvider extends ServiceProvider
                 ->asJson()
                 ->withToken($node->daemon_token)
                 ->withHeaders($headers)
-                ->withOptions(['verify' => (bool) app()->environment('production')])
+                ->withOptions(['verify' => (bool) $app->environment('production')])
                 ->timeout(config('panel.guzzle.timeout'))
                 ->connectTimeout(config('panel.guzzle.connect_timeout'))
                 ->baseUrl($node->getConnectionAddress())
@@ -91,6 +92,10 @@ class AppServiceProvider extends ServiceProvider
             'success' => Color::Green,
             'warning' => Color::Amber,
         ]);
+
+        Gate::before(function (User $user, $ability) {
+            return $user->isRootAdmin() ? true : null;
+        });
     }
 
     /**

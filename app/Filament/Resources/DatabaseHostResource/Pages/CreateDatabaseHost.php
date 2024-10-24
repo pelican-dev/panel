@@ -4,18 +4,22 @@ namespace App\Filament\Resources\DatabaseHostResource\Pages;
 
 use App\Filament\Resources\DatabaseHostResource;
 use App\Services\Databases\Hosts\HostCreationService;
-use Filament\Forms\Components\Select;
-use Filament\Forms\Components\TextInput;
-use Filament\Resources\Pages\CreateRecord;
+use Closure;
+use Exception;
 use Filament\Forms;
 use Filament\Forms\Components\Section;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Notifications\Notification;
+use Filament\Resources\Pages\CreateRecord;
 use Illuminate\Database\Eloquent\Model;
 use PDOException;
 
 class CreateDatabaseHost extends CreateRecord
 {
+    private HostCreationService $service;
+
     protected static string $resource = DatabaseHostResource::class;
 
     protected ?string $heading = 'Database Hosts';
@@ -23,6 +27,11 @@ class CreateDatabaseHost extends CreateRecord
     protected static bool $canCreateAnother = false;
 
     protected ?string $subheading = '(database servers that can have individual databases)';
+
+    public function boot(HostCreationService $service): void
+    {
+        $this->service = $service;
+    }
 
     public function form(Form $form): Form
     {
@@ -94,10 +103,10 @@ class CreateDatabaseHost extends CreateRecord
 
     protected function handleRecordCreation(array $data): Model
     {
-        return resolve(HostCreationService::class)->handle($data);
+        return $this->service->handle($data);
     }
 
-    public function exception($e, $stopPropagation): void
+    public function exception(Exception $e, Closure $stopPropagation): void
     {
         if ($e instanceof PDOException) {
             Notification::make()
