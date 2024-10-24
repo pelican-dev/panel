@@ -35,7 +35,7 @@ class KeyCreationService
         ]);
 
         if ($this->keyType === ApiKey::TYPE_APPLICATION) {
-            $data = array_merge($data, $permissions);
+            $data['permissions'] = array_merge($data['permissions'], $permissions);
         }
 
         return ApiKey::query()->forceCreate($data);

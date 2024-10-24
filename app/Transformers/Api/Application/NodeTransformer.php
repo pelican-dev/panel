@@ -3,9 +3,10 @@
 namespace App\Transformers\Api\Application;
 
 use App\Models\Node;
+use App\Models\Server;
+use App\Models\Allocation;
 use League\Fractal\Resource\Collection;
 use League\Fractal\Resource\NullResource;
-use App\Services\Acl\Api\AdminAcl;
 
 class NodeTransformer extends BaseTransformer
 {
@@ -52,7 +53,7 @@ class NodeTransformer extends BaseTransformer
      */
     public function includeAllocations(Node $node): Collection|NullResource
     {
-        if (!$this->authorize(AdminAcl::RESOURCE_ALLOCATIONS)) {
+        if (!$this->authorize(Allocation::RESOURCE_NAME)) {
             return $this->null();
         }
 
@@ -72,7 +73,7 @@ class NodeTransformer extends BaseTransformer
      */
     public function includeServers(Node $node): Collection|NullResource
     {
-        if (!$this->authorize(AdminAcl::RESOURCE_SERVERS)) {
+        if (!$this->authorize(Server::RESOURCE_NAME)) {
             return $this->null();
         }
 

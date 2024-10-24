@@ -8,7 +8,7 @@ use App\Http\Requests\Api\Application\ApplicationApiRequest;
 
 class StoreDatabaseHostRequest extends ApplicationApiRequest
 {
-    protected ?string $resource = AdminAcl::RESOURCE_DATABASE_HOSTS;
+    protected ?string $resource = DatabaseHost::RESOURCE_NAME;
 
     protected int $permission = AdminAcl::WRITE;
 
