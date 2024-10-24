@@ -12,5 +12,4 @@ trait HasWebhookPayload
 
         return [];
     }
-
 }
