@@ -29,7 +29,7 @@ readonly class VerifyReCaptcha
         if ($request->filled('cf-turnstile-response')) {
             $response = LaravelTurnstile::validate($request->get('cf-turnstile-response'));
 
-            if ($response['success']) {
+            if ($response['success'] && $this->isResponseVerified($response['hostname'] ?? '', $request)) {
                 return $next($request);
             }
         }
@@ -37,5 +37,19 @@ readonly class VerifyReCaptcha
         event(new FailedCaptcha($request->ip(), $response['message'] ?? null));
 
         throw new HttpException(Response::HTTP_BAD_REQUEST, 'Failed to validate turnstile captcha data.');
+    }
+
+    /**
+     * Determine if the response from the recaptcha servers was valid.
+     */
+    private function isResponseVerified(string $hostname, Request $request): bool
+    {
+        if (!config('turnstile.turnstile_verify_domain')) {
+            return true;
+        }
+
+        $url = parse_url($request->url());
+
+        return $hostname === array_get($url, 'host');
     }
 }

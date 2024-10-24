@@ -72,7 +72,8 @@ class Settings extends Page implements HasForms
                     Tab::make('captcha')
                         ->label('Captcha')
                         ->icon('tabler-shield')
-                        ->schema($this->captchaSettings()),
+                        ->schema($this->captchaSettings())
+                        ->columns(3),
                     Tab::make('mail')
                         ->label('Mail')
                         ->icon('tabler-mail')
@@ -188,6 +189,7 @@ class Settings extends Page implements HasForms
             Toggle::make('TURNSTILE_ENABLED')
                 ->label('Enable Turnstile Captcha?')
                 ->inline(false)
+                ->columnSpan(1)
                 ->onIcon('tabler-check')
                 ->offIcon('tabler-x')
                 ->onColor('success')
@@ -197,17 +199,31 @@ class Settings extends Page implements HasForms
                 ->afterStateUpdated(fn ($state, Set $set) => $set('TURNSTILE_ENABLED', (bool) $state))
                 ->default(env('TURNSTILE_ENABLED', config('turnstile.turnstile_enabled'))),
             Placeholder::make('info')
-                ->content(new HtmlString('<p>You can generate the keys on your <a href="https://developers.cloudflare.com/turnstile/get-started/#get-a-sitekey-and-secret-key" target="_blank">Cloudflare Dashboard</a>.</p><p>A Cloudflare account is required.</p>')),
+                ->columnSpan(2)
+                ->content(new HtmlString('<p>You can generate the keys on your <u><a href="https://developers.cloudflare.com/turnstile/get-started/#get-a-sitekey-and-secret-key" target="_blank">Cloudflare Dashboard</a></u>. A Cloudflare account is required.</p>')),
             TextInput::make('TURNSTILE_SITE_KEY')
                 ->label('Site Key')
                 ->required()
                 ->visible(fn (Get $get) => $get('TURNSTILE_ENABLED'))
-                ->default(env('TURNSTILE_SITE_KEY', config('turnstile.turnstile_site_key'))),
+                ->default(env('TURNSTILE_SITE_KEY', config('turnstile.turnstile_site_key')))
+                ->placeholder('1x00000000000000000000AA'),
             TextInput::make('TURNSTILE_SECRET_KEY')
                 ->label('Secret Key')
                 ->required()
                 ->visible(fn (Get $get) => $get('TURNSTILE_ENABLED'))
-                ->default(env('TURNSTILE_SECRET_KEY', config('turnstile.secret_key'))),
+                ->default(env('TURNSTILE_SECRET_KEY', config('turnstile.secret_key')))
+                ->placeholder('1x0000000000000000000000000000000AA'),
+            Toggle::make('TURNSTILE_VERIFY_DOMAIN')
+                ->label('Verify domain?')
+                ->inline(false)
+                ->onIcon('tabler-check')
+                ->offIcon('tabler-x')
+                ->onColor('success')
+                ->offColor('danger')
+                ->visible(fn (Get $get) => $get('TURNSTILE_ENABLED'))
+                ->formatStateUsing(fn ($state): bool => (bool) $state)
+                ->afterStateUpdated(fn ($state, Set $set) => $set('TURNSTILE_VERIFY_DOMAIN', (bool) $state))
+                ->default(env('TURNSTILE_VERIFY_DOMAIN', config('turnstile.turnstile_verify_domain'))),
         ];
     }
 
