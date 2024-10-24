@@ -85,8 +85,6 @@ use Spatie\Permission\Traits\HasRoles;
  * @method static Builder|User whereUseTotp($value)
  * @method static Builder|User whereUsername($value)
  * @method static Builder|User whereUuid($value)
- *
- * @mixin \Eloquent
  */
 class User extends Model implements AuthenticatableContract, AuthorizableContract, CanResetPasswordContract, FilamentUser, HasAvatar, HasName
 {

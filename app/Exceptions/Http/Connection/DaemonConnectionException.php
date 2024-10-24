@@ -7,9 +7,6 @@ use GuzzleHttp\Exception\GuzzleException;
 use App\Exceptions\DisplayException;
 use Illuminate\Support\Facades\Context;
 
-/**
- * @method \GuzzleHttp\Exception\GuzzleException getPrevious()
- */
 class DaemonConnectionException extends DisplayException
 {
     private int $statusCode = Response::HTTP_GATEWAY_TIMEOUT;

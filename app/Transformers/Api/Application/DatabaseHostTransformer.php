@@ -44,8 +44,6 @@ class DatabaseHostTransformer extends BaseTransformer
 
     /**
      * Include the databases associated with this host.
-     *
-     * @throws \App\Exceptions\Transformer\InvalidTransformerLevelException
      */
     public function includeDatabases(DatabaseHost $model): Collection|NullResource
     {
@@ -60,8 +58,6 @@ class DatabaseHostTransformer extends BaseTransformer
 
     /**
      * Include the node associated with this host.
-     *
-     * @throws \App\Exceptions\Transformer\InvalidTransformerLevelException
      */
     public function includeNode(DatabaseHost $model): Item|NullResource
     {

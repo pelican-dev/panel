@@ -20,8 +20,6 @@ use Illuminate\Database\Eloquent\SoftDeletingScope;
  * @method static \Illuminate\Database\Eloquent\Builder|ActivityLogSubject newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|ActivityLogSubject newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|ActivityLogSubject query()
- *
- * @mixin \Eloquent
  */
 class ActivityLogSubject extends Pivot
 {
