@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link, RouteComponentProps } from 'react-router-dom';
 import login from '@/api/auth/login';
 import LoginFormContainer from '@/components/auth/LoginFormContainer';
@@ -9,7 +9,7 @@ import { useTranslation } from 'react-i18next';
 import Field from '@/components/elements/Field';
 import tw from 'twin.macro';
 import Button from '@/components/elements/Button';
-import Reaptcha from 'reaptcha';
+import Turnstile, { useTurnstile } from 'react-turnstile';
 import useFlash from '@/plugins/useFlash';
 
 interface Values {
@@ -20,10 +20,10 @@ interface Values {
 const LoginContainer = ({ history }: RouteComponentProps) => {
     const { t } = useTranslation(['auth', 'strings']);
 
-    const ref = useRef<Reaptcha>(null);
+    const turnstile = useTurnstile();
     const [token, setToken] = useState('');
 
-    const { clearFlashes, clearAndAddHttpError } = useFlash();
+    const { clearFlashes, clearAndAddHttpError, addError } = useFlash();
     const { enabled: recaptchaEnabled, siteKey } = useStoreState((state) => state.settings.data!.recaptcha);
 
     useEffect(() => {
@@ -33,16 +33,10 @@ const LoginContainer = ({ history }: RouteComponentProps) => {
     const onSubmit = (values: Values, { setSubmitting }: FormikHelpers<Values>) => {
         clearFlashes();
 
-        // If there is no token in the state yet, request the token and then abort this submit request
-        // since it will be re-submitted when the recaptcha data is returned by the component.
         if (recaptchaEnabled && !token) {
-            ref.current!.execute().catch((error) => {
-                console.error(error);
+            addError({ message: 'No captcha token found.' });
 
-                setSubmitting(false);
-                clearAndAddHttpError({ error });
-            });
-
+            setSubmitting(false);
             return;
         }
 
@@ -60,7 +54,7 @@ const LoginContainer = ({ history }: RouteComponentProps) => {
                 console.error(error);
 
                 setToken('');
-                if (ref.current) ref.current.reset();
+                turnstile.reset();
 
                 setSubmitting(false);
                 clearAndAddHttpError({ error });
@@ -76,7 +70,7 @@ const LoginContainer = ({ history }: RouteComponentProps) => {
                 password: string().required(t('login.required.password')),
             })}
         >
-            {({ isSubmitting, setSubmitting, submitForm }) => (
+            {({ isSubmitting, setSubmitting }) => (
                 <LoginFormContainer title={t('login.title')} css={tw`w-full flex`}>
                     <Field
                         light
@@ -94,19 +88,20 @@ const LoginContainer = ({ history }: RouteComponentProps) => {
                             disabled={isSubmitting}
                         />
                     </div>
-                    <div css={tw`mt-6`}>
-                        <Button type={'submit'} size={'xlarge'} isLoading={isSubmitting} disabled={isSubmitting}>
-                            {t('login.button')}
-                        </Button>
-                    </div>
                     {recaptchaEnabled && (
-                        <Reaptcha
-                            ref={ref}
-                            size={'invisible'}
+                        <Turnstile
                             sitekey={siteKey || '_invalid_key'}
-                            onVerify={(response) => {
-                                setToken(response);
-                                submitForm();
+                            className='mt-6 flex justify-center'
+                            retry='never'
+                            onVerify={(token) => {
+                                setToken(token);
+                            }}
+                            onError={(error) => {
+                                console.error('Error verifying captcha: ' + error);
+                                addError({ message: 'Error verifying captcha: ' + error });
+
+                                setSubmitting(false);
+                                setToken('');
                             }}
                             onExpire={() => {
                                 setSubmitting(false);
@@ -114,6 +109,11 @@ const LoginContainer = ({ history }: RouteComponentProps) => {
                             }}
                         />
                     )}
+                    <div css={tw`mt-6`}>
+                        <Button type={'submit'} size={'xlarge'} isLoading={isSubmitting} disabled={isSubmitting}>
+                            {t('login.button')}
+                        </Button>
+                    </div>
                     <div css={tw`mt-6 text-center`}>
                         <Link
                             to={'/auth/password'}

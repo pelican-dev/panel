@@ -19,7 +19,7 @@ export default ({ username, password, recaptchaData }: LoginData): Promise<Login
                 http.post('/auth/login', {
                     user: username,
                     password,
-                    'g-recaptcha-response': recaptchaData,
+                    'cf-turnstile-response': recaptchaData,
                 })
             )
             .then((response) => {

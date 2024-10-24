@@ -2,11 +2,11 @@
 
 namespace App\Http\Middleware;
 
-use GuzzleHttp\Client;
 use Illuminate\Foundation\Application;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use App\Events\Auth\FailedCaptcha;
+use Coderflex\LaravelTurnstile\Facades\LaravelTurnstile;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 
 readonly class VerifyReCaptcha
@@ -18,7 +18,7 @@ readonly class VerifyReCaptcha
 
     public function handle(Request $request, \Closure $next): mixed
     {
-        if (!config('recaptcha.enabled')) {
+        if (!config('turnstile.turnstile_enabled')) {
             return $next($request);
         }
 
@@ -26,40 +26,30 @@ readonly class VerifyReCaptcha
             return $next($request);
         }
 
-        if ($request->filled('g-recaptcha-response')) {
-            $client = new Client();
-            $res = $client->post(config('recaptcha.domain'), [
-                'form_params' => [
-                    'secret' => config('recaptcha.secret_key'),
-                    'response' => $request->input('g-recaptcha-response'),
-                ],
-            ]);
+        if ($request->filled('cf-turnstile-response')) {
+            $response = LaravelTurnstile::validate($request->get('cf-turnstile-response'));
 
-            if ($res->getStatusCode() === 200) {
-                $result = json_decode($res->getBody());
-
-                if ($result->success && (!config('recaptcha.verify_domain') || $this->isResponseVerified($result, $request))) {
-                    return $next($request);
-                }
+            if ($response['success'] && $this->isResponseVerified($response['hostname'] ?? '', $request)) {
+                return $next($request);
             }
         }
 
-        event(new FailedCaptcha($request->ip(), $result->hostname ?? null));
+        event(new FailedCaptcha($request->ip(), $response['message'] ?? null));
 
-        throw new HttpException(Response::HTTP_BAD_REQUEST, 'Failed to validate reCAPTCHA data.');
+        throw new HttpException(Response::HTTP_BAD_REQUEST, 'Failed to validate turnstile captcha data.');
     }
 
     /**
      * Determine if the response from the recaptcha servers was valid.
      */
-    private function isResponseVerified(\stdClass $result, Request $request): bool
+    private function isResponseVerified(string $hostname, Request $request): bool
     {
-        if (!config('recaptcha.verify_domain')) {
-            return false;
+        if (!config('turnstile.turnstile_verify_domain')) {
+            return true;
         }
 
         $url = parse_url($request->url());
 
-        return $result->hostname === array_get($url, 'host');
+        return $hostname === array_get($url, 'host');
     }
 }

@@ -11,6 +11,7 @@
         "abdelhamiderrahmouni/filament-monaco-editor": "0.2.1",
         "aws/aws-sdk-php": "~3.288.1",
         "chillerlan/php-qrcode": "^5.0.2",
+        "coderflex/filament-turnstile": "^2.2",
         "dedoc/scramble": "^0.10.0",
         "doctrine/dbal": "~3.6.0",
         "filament/filament": "^3.2",
