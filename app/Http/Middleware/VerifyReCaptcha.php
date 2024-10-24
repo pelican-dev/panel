@@ -34,7 +34,7 @@ readonly class VerifyReCaptcha
             }
         }
 
-        event(new FailedCaptcha($request->ip(), $result->hostname ?? null));
+        event(new FailedCaptcha($request->ip(), $response['message'] ?? null));
 
         throw new HttpException(Response::HTTP_BAD_REQUEST, 'Failed to validate turnstile captcha data.');
     }
