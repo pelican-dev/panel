@@ -31,7 +31,7 @@ trait HasAccessTokens
             'user_id' => $this->id,
             'key_type' => ApiKey::TYPE_ACCOUNT,
             'identifier' => ApiKey::generateTokenIdentifier(ApiKey::TYPE_ACCOUNT),
-            'token' => $plain = Str::random(ApiKey::KEY_LENGTH),
+            'token' => $plain = Str::random(config('api.key.secret_length', 32)),
             'memo' => $memo ?? '',
             'allowed_ips' => $ips ?? [],
         ]);

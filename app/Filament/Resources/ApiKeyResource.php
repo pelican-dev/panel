@@ -19,7 +19,7 @@ class ApiKeyResource extends Resource
 
     public static function getNavigationBadge(): ?string
     {
-        return static::getModel()::where('key_type', '2')->count() ?: null;
+        return static::getModel()::where('key_type', ApiKey::TYPE_APPLICATION)->count() ?: null;
     }
 
     public static function canEdit(Model $record): bool

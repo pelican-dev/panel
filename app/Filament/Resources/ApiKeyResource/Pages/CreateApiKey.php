@@ -23,7 +23,7 @@ class CreateApiKey extends CreateRecord
         return $form
             ->schema([
                 Hidden::make('identifier')->default(ApiKey::generateTokenIdentifier(ApiKey::TYPE_APPLICATION)),
-                Hidden::make('token')->default(str_random(ApiKey::KEY_LENGTH)),
+                Hidden::make('token')->default(str_random(config('api.key.secret_length', 32))),
 
                 Hidden::make('user_id')
                     ->default(auth()->user()->id)
