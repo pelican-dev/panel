@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Filesystem\Filesystem;
+use Illuminate\Support\Facades\File;
 
 class WebhookConfiguration extends Model
 {
@@ -70,7 +70,7 @@ class WebhookConfiguration extends Model
             ->toString();
     }
 
-    public static function allModelEvents()
+    public static function allModelEvents(): array
     {
         $eventTypes = ['created', 'updated', 'deleted'];
         $models = static::discoverModels();
@@ -89,10 +89,9 @@ class WebhookConfiguration extends Model
     {
         $namespace = 'App\\Models\\';
         $directory = app_path('Models');
-        $filesystem = app(Filesystem::class);
 
         $models = [];
-        foreach ($filesystem->allFiles($directory) as $file) {
+        foreach (File::allFiles($directory) as $file) {
             $models[] = $namespace . str($file->getFilename())
                 ->replace([DIRECTORY_SEPARATOR, '.php'], ['\\', '']);
         }
@@ -103,10 +102,9 @@ class WebhookConfiguration extends Model
     public static function discoverCustomEvents(): array
     {
         $directory = app_path('Events');
-        $filesystem = app(Filesystem::class);
 
         $events = [];
-        foreach ($filesystem->allFiles($directory) as $file) {
+        foreach (File::allFiles($directory) as $file) {
             $namespace = str($file->getPath())
                 ->after(base_path())
                 ->replace(DIRECTORY_SEPARATOR, '\\')
