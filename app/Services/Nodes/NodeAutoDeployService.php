@@ -27,7 +27,6 @@ class NodeAutoDeployService
     {
         /** @var ApiKey|null $key */
         $key = ApiKey::query()
-            ->where('user_id', $request->user()->id)
             ->where('key_type', ApiKey::TYPE_APPLICATION)
             ->where('r_nodes', 1)
             ->first();
@@ -47,7 +46,7 @@ class NodeAutoDeployService
             sprintf(
                 '%s wings configure --panel-url %s --token %s --node %d%s',
                 $docker ? 'docker compose exec -it' : 'sudo',
-                config('app.url'),
+                route('index'),
                 $token,
                 $node->id,
                 $request->isSecure() ? '' : ' --allow-insecure'

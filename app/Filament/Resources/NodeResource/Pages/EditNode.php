@@ -8,6 +8,7 @@ use App\Services\Nodes\NodeAutoDeployService;
 use App\Services\Nodes\NodeUpdateService;
 use Filament\Actions;
 use Filament\Forms;
+use Filament\Forms\Components\Actions as FormActions;
 use Filament\Forms\Components\Fieldset;
 use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\Placeholder;
@@ -151,19 +152,9 @@ class EditNode extends EditRecord
                                     true => 'success',
                                     false => 'danger',
                                 ])
-                                ->columnSpan([
-                                    'default' => 1,
-                                    'sm' => 1,
-                                    'md' => 1,
-                                    'lg' => 1,
-                                ]),
+                                ->columnSpan(1),
                             TextInput::make('daemon_listen')
-                                ->columnSpan([
-                                    'default' => 1,
-                                    'sm' => 1,
-                                    'md' => 1,
-                                    'lg' => 1,
-                                ])
+                                ->columnSpan(1)
                                 ->label(trans('strings.port'))
                                 ->helperText('If you are running the daemon behind Cloudflare you should set the daemon port to 8443 to allow websocket proxying over SSL.')
                                 ->minValue(1)
@@ -184,12 +175,7 @@ class EditNode extends EditRecord
                                 ->maxLength(100),
                             ToggleButtons::make('scheme')
                                 ->label('Communicate over SSL')
-                                ->columnSpan([
-                                    'default' => 1,
-                                    'sm' => 1,
-                                    'md' => 1,
-                                    'lg' => 1,
-                                ])
+                                ->columnSpan(1)
                                 ->inline()
                                 ->helperText(function (Get $get) {
                                     if (request()->isSecure()) {
@@ -217,23 +203,48 @@ class EditNode extends EditRecord
                                 ])
                                 ->default(fn () => request()->isSecure() ? 'https' : 'http'), ]),
                     Tab::make('Advanced Settings')
-                        ->columns(['default' => 1, 'sm' => 1, 'md' => 4, 'lg' => 6])
+                        ->columns([
+                            'default' => 1,
+                            'sm' => 1,
+                            'md' => 4,
+                            'lg' => 6,
+                        ])
                         ->icon('tabler-server-cog')
                         ->schema([
                             TextInput::make('id')
                                 ->label('Node ID')
-                                ->columnSpan(['default' => 1, 'sm' => 1, 'md' => 2, 'lg' => 1])
+                                ->columnSpan([
+                                    'default' => 1,
+                                    'sm' => 1,
+                                    'md' => 2,
+                                    'lg' => 1,
+                                ])
                                 ->disabled(),
                             TextInput::make('uuid')
-                                ->columnSpan(['default' => 1, 'sm' => 1, 'md' => 2, 'lg' => 2])
+                                ->columnSpan([
+                                    'default' => 1,
+                                    'sm' => 1,
+                                    'md' => 2,
+                                    'lg' => 2,
+                                ])
                                 ->label('Node UUID')
                                 ->hintAction(CopyAction::make())
                                 ->disabled(),
                             TagsInput::make('tags')
-                                ->columnSpan(['default' => 1, 'sm' => 1, 'md' => 2, 'lg' => 2])
+                                ->columnSpan([
+                                    'default' => 1,
+                                    'sm' => 1,
+                                    'md' => 2,
+                                    'lg' => 2,
+                                ])
                                 ->placeholder('Add Tags'),
                             TextInput::make('upload_size')
-                                ->columnSpan(['default' => 1, 'sm' => 1, 'md' => 2, 'lg' => 1])
+                                ->columnSpan([
+                                    'default' => 1,
+                                    'sm' => 1,
+                                    'md' => 2,
+                                    'lg' => 1,
+                                ])
                                 ->label('Upload Limit')
                                 ->hintIcon('tabler-question-mark')
                                 ->hintIconTooltip('Enter the maximum size of files that can be uploaded through the web-based file manager.')
@@ -242,7 +253,12 @@ class EditNode extends EditRecord
                                 ->maxValue(1024)
                                 ->suffix(config('panel.use_binary_prefix') ? 'MiB' : 'MB'),
                             TextInput::make('daemon_sftp')
-                                ->columnSpan(['default' => 1, 'sm' => 1, 'md' => 1, 'lg' => 3])
+                                ->columnSpan([
+                                    'default' => 1,
+                                    'sm' => 1,
+                                    'md' => 1,
+                                    'lg' => 3,
+                                ])
                                 ->label('SFTP Port')
                                 ->minValue(1)
                                 ->maxValue(65535)
@@ -250,11 +266,21 @@ class EditNode extends EditRecord
                                 ->required()
                                 ->integer(),
                             TextInput::make('daemon_sftp_alias')
-                                ->columnSpan(['default' => 1, 'sm' => 1, 'md' => 1, 'lg' => 3])
+                                ->columnSpan([
+                                    'default' => 1,
+                                    'sm' => 1,
+                                    'md' => 1,
+                                    'lg' => 3,
+                                ])
                                 ->label('SFTP Alias')
                                 ->helperText('Display alias for the SFTP address. Leave empty to use the Node FQDN.'),
                             ToggleButtons::make('public')
-                                ->columnSpan(['default' => 1, 'sm' => 1, 'md' => 1, 'lg' => 3])
+                                ->columnSpan([
+                                    'default' => 1,
+                                    'sm' => 1,
+                                    'md' => 1,
+                                    'lg' => 3,
+                                ])
                                 ->label('Use Node for deployment?')->inline()
                                 ->options([
                                     true => 'Yes',
@@ -265,7 +291,12 @@ class EditNode extends EditRecord
                                     false => 'danger',
                                 ]),
                             ToggleButtons::make('maintenance_mode')
-                                ->columnSpan(['default' => 1, 'sm' => 1, 'md' => 1, 'lg' => 3])
+                                ->columnSpan([
+                                    'default' => 1,
+                                    'sm' => 1,
+                                    'md' => 1,
+                                    'lg' => 3,
+                                ])
                                 ->label('Maintenance Mode')->inline()
                                 ->hinticon('tabler-question-mark')
                                 ->hintIconTooltip("If the node is marked 'Under Maintenance' users won't be able to access servers that are on this node.")
@@ -278,7 +309,12 @@ class EditNode extends EditRecord
                                     true => 'danger',
                                 ]),
                             Grid::make()
-                                ->columns(['default' => 1, 'sm' => 1, 'md' => 3, 'lg' => 6])
+                                ->columns([
+                                    'default' => 1,
+                                    'sm' => 1,
+                                    'md' => 3,
+                                    'lg' => 6,
+                                ])
                                 ->columnSpanFull()
                                 ->schema([
                                     ToggleButtons::make('unlimited_mem')
@@ -295,14 +331,24 @@ class EditNode extends EditRecord
                                             true => 'primary',
                                             false => 'warning',
                                         ])
-                                        ->columnSpan(['default' => 1, 'sm' => 1, 'md' => 1, 'lg' => 2]),
+                                        ->columnSpan([
+                                            'default' => 1,
+                                            'sm' => 1,
+                                            'md' => 1,
+                                            'lg' => 2,
+                                        ]),
                                     TextInput::make('memory')
                                         ->dehydratedWhenHidden()
                                         ->hidden(fn (Get $get) => $get('unlimited_mem'))
                                         ->label('Memory Limit')->inlineLabel()
                                         ->suffix(config('panel.use_binary_prefix') ? 'MiB' : 'MB')
                                         ->required()
-                                        ->columnSpan(['default' => 1, 'sm' => 1, 'md' => 1, 'lg' => 2])
+                                        ->columnSpan([
+                                            'default' => 1,
+                                            'sm' => 1,
+                                            'md' => 1,
+                                            'lg' => 2,
+                                        ])
                                         ->numeric()
                                         ->minValue(0),
                                     TextInput::make('memory_overallocate')
@@ -312,14 +358,24 @@ class EditNode extends EditRecord
                                         ->hidden(fn (Get $get) => $get('unlimited_mem'))
                                         ->hintIcon('tabler-question-mark')
                                         ->hintIconTooltip('The % allowable to go over the set limit.')
-                                        ->columnSpan(['default' => 1, 'sm' => 1, 'md' => 1, 'lg' => 2])
+                                        ->columnSpan([
+                                            'default' => 1,
+                                            'sm' => 1,
+                                            'md' => 1,
+                                            'lg' => 2,
+                                        ])
                                         ->numeric()
                                         ->minValue(-1)
                                         ->maxValue(100)
                                         ->suffix('%'),
                                 ]),
                             Grid::make()
-                                ->columns(['default' => 1, 'sm' => 1, 'md' => 3, 'lg' => 6])
+                                ->columns([
+                                    'default' => 1,
+                                    'sm' => 1,
+                                    'md' => 3,
+                                    'lg' => 6,
+                                ])
                                 ->schema([
                                     ToggleButtons::make('unlimited_disk')
                                         ->label('Disk')->inlineLabel()->inline()
@@ -335,14 +391,24 @@ class EditNode extends EditRecord
                                             true => 'primary',
                                             false => 'warning',
                                         ])
-                                        ->columnSpan(['default' => 1, 'sm' => 1, 'md' => 1, 'lg' => 2]),
+                                        ->columnSpan([
+                                            'default' => 1,
+                                            'sm' => 1,
+                                            'md' => 1,
+                                            'lg' => 2,
+                                        ]),
                                     TextInput::make('disk')
                                         ->dehydratedWhenHidden()
                                         ->hidden(fn (Get $get) => $get('unlimited_disk'))
                                         ->label('Disk Limit')->inlineLabel()
                                         ->suffix(config('panel.use_binary_prefix') ? 'MiB' : 'MB')
                                         ->required()
-                                        ->columnSpan(['default' => 1, 'sm' => 1, 'md' => 1, 'lg' => 2])
+                                        ->columnSpan([
+                                            'default' => 1,
+                                            'sm' => 1,
+                                            'md' => 1,
+                                            'lg' => 2,
+                                        ])
                                         ->numeric()
                                         ->minValue(0),
                                     TextInput::make('disk_overallocate')
@@ -351,7 +417,12 @@ class EditNode extends EditRecord
                                         ->label('Overallocate')->inlineLabel()
                                         ->hintIcon('tabler-question-mark')
                                         ->hintIconTooltip('The % allowable to go over the set limit.')
-                                        ->columnSpan(['default' => 1, 'sm' => 1, 'md' => 1, 'lg' => 2])
+                                        ->columnSpan([
+                                            'default' => 1,
+                                            'sm' => 1,
+                                            'md' => 1,
+                                            'lg' => 2,
+                                        ])
                                         ->required()
                                         ->numeric()
                                         ->minValue(-1)
@@ -417,8 +488,8 @@ class EditNode extends EditRecord
                             Grid::make()
                                 ->columns()
                                 ->schema([
-                                    Forms\Components\Actions::make([
-                                        Forms\Components\Actions\Action::make('autoDeploy')
+                                    FormActions::make([
+                                        FormActions\Action::make('autoDeploy')
                                             ->label('Auto Deploy Command')
                                             ->color('primary')
                                             ->modalHeading('Auto Deploy Command')
@@ -442,12 +513,7 @@ class EditNode extends EditRecord
                                                         false => 'primary',
                                                         true => 'success',
                                                     ])
-                                                    ->columnSpan([
-                                                        'default' => 1,
-                                                        'sm' => 1,
-                                                        'md' => 1,
-                                                        'lg' => 1,
-                                                    ]),
+                                                    ->columnSpan(1),
                                                 Textarea::make('generatedToken')
                                                     ->label('To auto-configure your node run the following command:')
                                                     ->readOnly()
@@ -460,8 +526,8 @@ class EditNode extends EditRecord
                                                 $form->fill();
                                             }),
                                     ])->fullWidth(),
-                                    Forms\Components\Actions::make([
-                                        Forms\Components\Actions\Action::make('resetKey')
+                                    FormActions::make([
+                                        FormActions\Action::make('resetKey')
                                             ->label('Reset Daemon Token')
                                             ->color('danger')
                                             ->requiresConfirmation()
