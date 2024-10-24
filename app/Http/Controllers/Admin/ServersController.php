@@ -70,7 +70,7 @@ class ServersController extends Controller
      * @throws \App\Exceptions\DisplayException
      * @throws \App\Exceptions\Model\DataValidationException
      */
-    public function toggleInstall(Server $server)
+    public function toggleInstall(Server $server): void
     {
         if ($server->status === ServerState::InstallFailed) {
             throw new DisplayException(trans('admin/server.exceptions.marked_as_failed'));
@@ -84,8 +84,6 @@ class ServersController extends Controller
             ->body(trans('admin/server.alerts.install_toggled'))
             ->success()
             ->send();
-
-        return null;
     }
 
     /**
@@ -94,7 +92,7 @@ class ServersController extends Controller
      * @throws \App\Exceptions\DisplayException
      * @throws \App\Exceptions\Model\DataValidationException
      */
-    public function reinstallServer(Server $server)
+    public function reinstallServer(Server $server): void
     {
         $this->reinstallService->handle($server);
 

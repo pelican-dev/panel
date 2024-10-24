@@ -10,18 +10,20 @@ use Filament\Support\Exceptions\Halt;
 
 class RequirementsStep
 {
+    public const MIN_PHP_VERSION = '8.2';
+
     public static function make(): Step
     {
-        $correctPhpVersion = version_compare(PHP_VERSION, '8.2.0') >= 0;
+        $correctPhpVersion = version_compare(PHP_VERSION, self::MIN_PHP_VERSION) >= 0;
 
         $fields = [
             Section::make('PHP Version')
-                ->description('8.2 or newer')
+                ->description(self::MIN_PHP_VERSION . ' or newer')
                 ->icon($correctPhpVersion ? 'tabler-check' : 'tabler-x')
                 ->iconColor($correctPhpVersion ? 'success' : 'danger')
                 ->schema([
                     Placeholder::make('')
-                        ->content('Your PHP Version ' . ($correctPhpVersion ? 'is' : 'needs to be') .' 8.2 or newer.'),
+                        ->content('Your PHP Version is ' . PHP_VERSION . '.'),
                 ]),
         ];
 
@@ -80,7 +82,7 @@ class RequirementsStep
                         ->danger()
                         ->send();
 
-                    throw new Halt();
+                    throw new Halt('Some requirements are missing');
                 }
             });
     }

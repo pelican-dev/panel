@@ -14,7 +14,7 @@ use App\Http\Requests\Api\Remote\ActivityEventRequest;
 
 class ActivityProcessingController extends Controller
 {
-    public function __invoke(ActivityEventRequest $request)
+    public function __invoke(ActivityEventRequest $request): void
     {
         $tz = Carbon::now()->getTimezone();
 

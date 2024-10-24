@@ -4,13 +4,15 @@ namespace App\Filament\Resources\ServerResource\Pages;
 
 use App\Filament\Resources\ServerResource;
 use App\Models\Server;
-use App\Models\User;
 use Filament\Actions;
 use Filament\Resources\Pages\ListRecords;
+use Filament\Tables\Actions\Action;
 use Filament\Tables\Actions\CreateAction;
+use Filament\Tables\Actions\EditAction;
+use Filament\Tables\Columns\SelectColumn;
+use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Grouping\Group;
 use Filament\Tables\Table;
-use Filament\Tables;
 
 class ListServers extends ListRecords
 {
@@ -27,47 +29,50 @@ class ListServers extends ListRecords
                 Group::make('egg.name')->getDescriptionFromRecordUsing(fn (Server $server): string => str($server->egg->description)->limit(150)),
             ])
             ->columns([
-                Tables\Columns\TextColumn::make('condition')
+                TextColumn::make('condition')
                     ->default('unknown')
                     ->badge()
                     ->icon(fn (Server $server) => $server->conditionIcon())
                     ->color(fn (Server $server) => $server->conditionColor()),
-                Tables\Columns\TextColumn::make('uuid')
+                TextColumn::make('uuid')
                     ->hidden()
                     ->label('UUID')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('name')
+                TextColumn::make('name')
                     ->icon('tabler-brand-docker')
                     ->searchable()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('node.name')
+                TextColumn::make('node.name')
                     ->icon('tabler-server-2')
                     ->url(fn (Server $server): string => route('filament.admin.resources.nodes.edit', ['record' => $server->node]))
                     ->hidden(fn (Table $table) => $table->getGrouping()?->getId() === 'node.name')
                     ->sortable()
                     ->searchable(),
-                Tables\Columns\TextColumn::make('egg.name')
+                TextColumn::make('egg.name')
                     ->icon('tabler-egg')
                     ->url(fn (Server $server): string => route('filament.admin.resources.eggs.edit', ['record' => $server->egg]))
                     ->hidden(fn (Table $table) => $table->getGrouping()?->getId() === 'egg.name')
                     ->sortable()
                     ->searchable(),
-                Tables\Columns\TextColumn::make('user.username')
+                TextColumn::make('user.username')
                     ->icon('tabler-user')
                     ->label('Owner')
                     ->url(fn (Server $server): string => route('filament.admin.resources.users.edit', ['record' => $server->user]))
                     ->hidden(fn (Table $table) => $table->getGrouping()?->getId() === 'user.username')
                     ->sortable()
                     ->searchable(),
-                Tables\Columns\SelectColumn::make('allocation_id')
+                SelectColumn::make('allocation_id')
                     ->label('Primary Allocation')
-                    ->options(fn (Server $server) => $server->allocations->mapWithKeys(
-                        fn ($allocation) => [$allocation->id => $allocation->address])
-                    )
+                    ->hidden(!auth()->user()->can('update server'))
+                    ->options(fn (Server $server) => $server->allocations->mapWithKeys(fn ($allocation) => [$allocation->id => $allocation->address]))
                     ->selectablePlaceholder(false)
                     ->sortable(),
-                Tables\Columns\TextColumn::make('image')->hidden(),
-                Tables\Columns\TextColumn::make('backups_count')
+                TextColumn::make('allocation_id_readonly')
+                    ->label('Primary Allocation')
+                    ->hidden(auth()->user()->can('update server'))
+                    ->state(fn (Server $server) => $server->allocation->address),
+                TextColumn::make('image')->hidden(),
+                TextColumn::make('backups_count')
                     ->counts('backups')
                     ->label('Backups')
                     ->icon('tabler-file-download')
@@ -75,16 +80,11 @@ class ListServers extends ListRecords
                     ->sortable(),
             ])
             ->actions([
-                Tables\Actions\Action::make('View')
+                Action::make('View')
                     ->icon('tabler-terminal')
                     ->url(fn (Server $server) => "/server/$server->uuid_short")
-                    ->visible(function (Server $server) {
-                        /** @var User $user */
-                        $user = auth()->user();
-
-                        return $user->isRootAdmin() || $user->id === $server->owner_id;
-                    }),
-                Tables\Actions\EditAction::make(),
+                    ->authorize(fn () => auth()->user()->can('view server')),
+                EditAction::make(),
             ])
             ->emptyStateIcon('tabler-brand-docker')
             ->searchable()
@@ -96,6 +96,7 @@ class ListServers extends ListRecords
                     ->button(),
             ]);
     }
+
     protected function getHeaderActions(): array
     {
         return [

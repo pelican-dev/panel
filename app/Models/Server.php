@@ -71,6 +71,7 @@ use App\Exceptions\Http\Server\ServerStateConflictException;
  * @property \App\Models\User $user
  * @property \Illuminate\Database\Eloquent\Collection|\App\Models\EggVariable[] $variables
  * @property int|null $variables_count
+ *
  * @method static \Database\Factories\ServerFactory factory(...$parameters)
  * @method static \Illuminate\Database\Eloquent\Builder|Server newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Server newQuery()
@@ -101,6 +102,7 @@ use App\Exceptions\Http\Server\ServerStateConflictException;
  * @method static \Illuminate\Database\Eloquent\Builder|Server whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Server whereUuid($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Server whereuuid_short($value)
+ *
  * @property array|null $docker_labels
  * @property string|null $ports
  * @property-read mixed $condition
@@ -108,10 +110,12 @@ use App\Exceptions\Http\Server\ServerStateConflictException;
  * @property-read int|null $egg_variables_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ServerVariable> $serverVariables
  * @property-read int|null $server_variables_count
+ *
  * @method static \Illuminate\Database\Eloquent\Builder|Server whereDockerLabels($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Server whereInstalledAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Server wherePorts($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Server whereUuidShort($value)
+ *
  * @mixin \Eloquent
  */
 class Server extends Model
@@ -363,7 +367,7 @@ class Server extends Model
      *
      * @throws ServerStateConflictException
      */
-    public function validateCurrentState()
+    public function validateCurrentState(): void
     {
         if (
             $this->isSuspended() ||
@@ -382,7 +386,7 @@ class Server extends Model
      * sure the server can be transferred and is not currently being transferred
      * or installed.
      */
-    public function validateTransferState()
+    public function validateTransferState(): void
     {
         if (
             !$this->isInstalled() ||

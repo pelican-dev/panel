@@ -65,8 +65,7 @@ trait CreatesTestModels
      * Generates a user and a server for that user. If an array of permissions is passed it
      * is assumed that the user is actually a subuser of the server.
      *
-     * @param string[] $permissions
-     *
+     * @param  string[]  $permissions
      * @return array{\App\Models\User, \App\Models\Server}
      */
     public function generateTestAccount(array $permissions = []): array

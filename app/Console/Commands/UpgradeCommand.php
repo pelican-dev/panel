@@ -178,7 +178,7 @@ class UpgradeCommand extends Command
         $this->info(__('commands.upgrade.success'));
     }
 
-    protected function withProgress(ProgressBar $bar, \Closure $callback)
+    protected function withProgress(ProgressBar $bar, \Closure $callback): void
     {
         $bar->clear();
         $callback();

@@ -2,7 +2,7 @@ import React from 'react';
 import { ServerContext } from '@/state/server';
 import TitledGreyBox from '@/components/elements/TitledGreyBox';
 import { Field as FormikField, Form, Formik, FormikHelpers, useFormikContext } from 'formik';
-import { Actions, useStoreActions } from 'easy-peasy';
+import { Actions, useStoreActions, useStoreState } from 'easy-peasy';
 import renameServer from '@/api/server/renameServer';
 import Field from '@/components/elements/Field';
 import { object, string } from 'yup';
@@ -23,17 +23,21 @@ interface Values {
 const RenameServerBox = () => {
     const { isSubmitting } = useFormikContext<Values>();
 
+    const serverDescriptionsEditable = useStoreState((state) => state.settings.data!.serverDescriptionsEditable);
+
     return (
         <TitledGreyBox title={'Change Server Details'} css={tw`relative`}>
             <SpinnerOverlay visible={isSubmitting} />
             <Form css={tw`mb-0`}>
                 <Field id={'name'} name={'name'} label={'Server Name'} type={'text'} />
-                <div css={tw`mt-6`}>
-                    <Label>Server Description</Label>
-                    <FormikFieldWrapper name={'description'}>
-                        <FormikField as={Textarea} name={'description'} rows={3} />
-                    </FormikFieldWrapper>
-                </div>
+                {serverDescriptionsEditable && (
+                    <div css={tw`mt-6`}>
+                        <Label>Server Description</Label>
+                        <FormikFieldWrapper name={'description'}>
+                            <FormikField as={Textarea} name={'description'} rows={3} />
+                        </FormikFieldWrapper>
+                    </div>
+                )}
                 <div css={tw`mt-6 text-right`}>
                     <Button type={'submit'}>Save</Button>
                 </div>

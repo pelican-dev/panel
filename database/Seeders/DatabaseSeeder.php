@@ -10,7 +10,7 @@ class DatabaseSeeder extends Seeder
     /**
      * Run the database seeds.
      */
-    public function run()
+    public function run(): void
     {
         $this->call(EggSeeder::class);
 

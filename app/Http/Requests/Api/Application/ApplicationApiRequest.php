@@ -74,8 +74,7 @@ abstract class ApplicationApiRequest extends FormRequest
      *
      * @template T of \Illuminate\Database\Eloquent\Model
      *
-     * @param class-string<T> $expect
-     *
+     * @param  class-string<T>  $expect
      * @return T
      *
      * @noinspection PhpDocSignatureInspection

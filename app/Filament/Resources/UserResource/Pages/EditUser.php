@@ -18,6 +18,7 @@ use Illuminate\Support\Facades\Hash;
 class EditUser extends EditRecord
 {
     protected static string $resource = UserResource::class;
+
     public function form(Form $form): Form
     {
         return $form
@@ -46,6 +47,7 @@ class EditUser extends EditRecord
                 ])->columns(),
             ]);
     }
+
     protected function getHeaderActions(): array
     {
         return [
