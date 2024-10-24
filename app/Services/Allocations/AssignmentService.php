@@ -16,10 +16,15 @@ use App\Exceptions\Service\Allocation\TooManyPortsInRangeException;
 class AssignmentService
 {
     public const CIDR_MAX_BITS = 25;
+
     public const CIDR_MIN_BITS = 32;
+
     public const PORT_FLOOR = 1024;
+
     public const PORT_CEIL = 65535;
+
     public const PORT_RANGE_LIMIT = 1000;
+
     public const PORT_RANGE_REGEX = '/^(\d{4,5})-(\d{4,5})$/';
 
     /**
@@ -38,7 +43,7 @@ class AssignmentService
      * @throws \App\Exceptions\Service\Allocation\PortOutOfRangeException
      * @throws \App\Exceptions\Service\Allocation\TooManyPortsInRangeException
      */
-    public function handle(Node $node, array $data, Server $server = null): array
+    public function handle(Node $node, array $data, ?Server $server = null): array
     {
         $explode = explode('/', $data['allocation_ip']);
         if (count($explode) !== 1) {

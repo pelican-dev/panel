@@ -33,7 +33,6 @@ body:
   attributes:
     label: Panel Version
     description: Version number of your Panel (latest is not a version)
-    placeholder: 1.4.0
   validations:
     required: true
 
@@ -42,7 +41,6 @@ body:
   attributes:
     label: Wings Version
     description: Version number of your Wings (latest is not a version)
-    placeholder: 1.4.2
   validations:
     required: true
 
@@ -68,7 +66,7 @@ body:
       Run the following command to collect logs on your system.
 
       Wings: `sudo wings diagnostics`
-      Panel: `tail -n 150 /var/www/pelican/storage/logs/laravel-$(date +%F).log | nc pelipaste.com 99`
+      Panel: `tail -n 150 /var/www/pelican/storage/logs/laravel-$(date +%F).log | curl -X POST -F 'c=@-' paste.pelistuff.com`
     placeholder: "https://pelipaste.com/a1h6z"
     render: bash
   validations:

@@ -4,7 +4,7 @@
         "version": "PTDL_v2",
         "update_url": "https:\/\/github.com\/pelican-dev\/panel\/raw\/main\/database\/Seeders\/eggs\/voice-servers\/egg-teamspeak3-server.json"
     },
-    "exported_at": "2024-07-03T14:34:08+00:00",
+    "exported_at": "2024-07-25T12:06:05+00:00",
     "name": "Teamspeak3 Server",
     "author": "panel@example.com",
     "uuid": "983b1fac-d322-4d5f-a636-436127326b37",
@@ -36,7 +36,11 @@
             "default_value": "latest",
             "user_viewable": true,
             "user_editable": true,
-            "rules": "required|string|max:6",
+            "rules": [
+                "required",
+                "string",
+                "max:6"
+            ],
             "sort": 1,
             "field_type": "text"
         },
@@ -47,7 +51,11 @@
             "default_value": "30033",
             "user_viewable": true,
             "user_editable": false,
-            "rules": "required|integer|between:1025,65535",
+            "rules": [
+                "required",
+                "integer",
+                "between:1025,65535"
+            ],
             "sort": 2,
             "field_type": "text"
         },
@@ -58,7 +66,11 @@
             "default_value": "10011",
             "user_viewable": true,
             "user_editable": false,
-            "rules": "required|integer|between:1025,65535",
+            "rules": [
+                "required",
+                "integer",
+                "between:1025,65535"
+            ],
             "sort": 3,
             "field_type": "text"
         },
@@ -69,7 +81,11 @@
             "default_value": "raw,http,ssh",
             "user_viewable": true,
             "user_editable": true,
-            "rules": "required|string|max:12",
+            "rules": [
+                "required",
+                "string",
+                "max:12"
+            ],
             "sort": 4,
             "field_type": "text"
         },
@@ -80,7 +96,11 @@
             "default_value": "10022",
             "user_viewable": true,
             "user_editable": false,
-            "rules": "required|integer|between:1025,65535",
+            "rules": [
+                "required",
+                "integer",
+                "between:1025,65535"
+            ],
             "sort": 5,
             "field_type": "text"
         },
@@ -91,7 +111,11 @@
             "default_value": "10080",
             "user_viewable": true,
             "user_editable": false,
-            "rules": "required|integer|between:1025,65535",
+            "rules": [
+                "required",
+                "integer",
+                "between:1025,65535"
+            ],
             "sort": 6,
             "field_type": "text"
         }

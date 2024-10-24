@@ -54,6 +54,7 @@ abstract class BaseTransformer extends TransformerAbstract
      */
     public static function fromRequest(Request $request): self
     {
+        // @phpstan-ignore-next-line
         return app(static::class)->setRequest($request);
     }
 
@@ -77,7 +78,7 @@ abstract class BaseTransformer extends TransformerAbstract
         // the user is a root admin at the moment. In a future release we'll be rolling
         // out more specific permissions for keys.
         if ($token->key_type === ApiKey::TYPE_ACCOUNT) {
-            return $this->request->user()->root_admin;
+            return $this->request->user()->isRootAdmin();
         }
 
         return AdminAcl::check($token, $resource);
@@ -89,8 +90,7 @@ abstract class BaseTransformer extends TransformerAbstract
      *
      * @template T of \App\Transformers\Api\Application\BaseTransformer
      *
-     * @param class-string<T> $abstract
-     *
+     * @param  class-string<T>  $abstract
      * @return T
      *
      * @throws \App\Exceptions\Transformer\InvalidTransformerLevelException

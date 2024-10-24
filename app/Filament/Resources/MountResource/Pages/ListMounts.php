@@ -17,6 +17,7 @@ use Filament\Tables\Table;
 class ListMounts extends ListRecords
 {
     protected static string $resource = MountResource::class;
+
     public function table(Table $table): Table
     {
         return $table
@@ -43,7 +44,8 @@ class ListMounts extends ListRecords
             ])
             ->bulkActions([
                 BulkActionGroup::make([
-                    DeleteBulkAction::make(),
+                    DeleteBulkAction::make()
+                        ->authorize(fn () => auth()->user()->can('delete mount')),
                 ]),
             ])
             ->emptyStateIcon('tabler-layers-linked')
@@ -55,6 +57,7 @@ class ListMounts extends ListRecords
                     ->button(),
             ]);
     }
+
     protected function getHeaderActions(): array
     {
         return [

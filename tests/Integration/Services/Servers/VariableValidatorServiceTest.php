@@ -120,7 +120,7 @@ class VariableValidatorServiceTest extends IntegrationTestCase
         $egg = $this->cloneEggAndVariables($this->egg);
         $egg->variables()->where('env_variable', '!=', 'BUNGEE_VERSION')->delete();
 
-        $egg->variables()->update(['rules' => 'nullable|string']);
+        $egg->variables()->update(['rules' => ['nullable', 'string']]);
 
         $response = $this->getService()->handle($egg->id, []);
         $this->assertCount(1, $response);

@@ -27,6 +27,7 @@ interface ExtendedWindow extends Window {
         email: string;
         /* eslint-disable camelcase */
         root_admin: boolean;
+        admin: boolean;
         use_totp: boolean;
         language: string;
         updated_at: string;
@@ -46,6 +47,7 @@ const App = () => {
             email: PanelUser.email,
             language: PanelUser.language,
             rootAdmin: PanelUser.root_admin,
+            admin: PanelUser.admin,
             useTotp: PanelUser.use_totp,
             createdAt: new Date(PanelUser.created_at),
             updatedAt: new Date(PanelUser.updated_at),

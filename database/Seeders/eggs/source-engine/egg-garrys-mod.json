@@ -4,7 +4,7 @@
         "version": "PTDL_v2",
         "update_url": "https:\/\/github.com\/pelican-dev\/panel\/raw\/main\/database\/Seeders\/eggs\/source-engine\/egg-garrys-mod.json"
     },
-    "exported_at": "2024-07-03T14:34:04+00:00",
+    "exported_at": "2024-07-25T12:05:02+00:00",
     "name": "Garrys Mod",
     "author": "panel@example.com",
     "uuid": "60ef81d4-30a2-4d98-ab64-f59c69e2f915",
@@ -39,7 +39,11 @@
             "default_value": "gm_flatgrass",
             "user_viewable": true,
             "user_editable": true,
-            "rules": "required|string|alpha_dash",
+            "rules": [
+                "required",
+                "string",
+                "alpha_dash"
+            ],
             "sort": 1,
             "field_type": "text"
         },
@@ -50,7 +54,12 @@
             "default_value": "",
             "user_viewable": true,
             "user_editable": true,
-            "rules": "nullable|string|alpha_num|size:32",
+            "rules": [
+                "nullable",
+                "string",
+                "alpha_num",
+                "size:32"
+            ],
             "sort": 2,
             "field_type": "text"
         },
@@ -61,7 +70,11 @@
             "default_value": "4020",
             "user_viewable": false,
             "user_editable": false,
-            "rules": "required|string|max:20",
+            "rules": [
+                "required",
+                "string",
+                "max:20"
+            ],
             "sort": 3,
             "field_type": "text"
         },
@@ -72,7 +85,10 @@
             "default_value": "",
             "user_viewable": true,
             "user_editable": true,
-            "rules": "nullable|integer",
+            "rules": [
+                "nullable",
+                "integer"
+            ],
             "sort": 4,
             "field_type": "text"
         },
@@ -83,7 +99,10 @@
             "default_value": "sandbox",
             "user_viewable": true,
             "user_editable": true,
-            "rules": "required|string",
+            "rules": [
+                "required",
+                "string"
+            ],
             "sort": 5,
             "field_type": "text"
         },
@@ -94,7 +113,11 @@
             "default_value": "32",
             "user_viewable": true,
             "user_editable": true,
-            "rules": "required|integer|max:128",
+            "rules": [
+                "required",
+                "integer",
+                "max:128"
+            ],
             "sort": 6,
             "field_type": "text"
         },
@@ -105,7 +128,11 @@
             "default_value": "22",
             "user_viewable": true,
             "user_editable": true,
-            "rules": "required|integer|max:100",
+            "rules": [
+                "required",
+                "integer",
+                "max:100"
+            ],
             "sort": 7,
             "field_type": "text"
         },
@@ -116,7 +143,10 @@
             "default_value": "0",
             "user_viewable": true,
             "user_editable": true,
-            "rules": "required|boolean",
+            "rules": [
+                "required",
+                "boolean"
+            ],
             "sort": 8,
             "field_type": "text"
         }

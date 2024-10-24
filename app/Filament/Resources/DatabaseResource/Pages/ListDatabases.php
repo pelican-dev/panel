@@ -4,10 +4,10 @@ namespace App\Filament\Resources\DatabaseResource\Pages;
 
 use App\Filament\Resources\DatabaseResource;
 use Filament\Actions;
-use Filament\Tables\Actions\EditAction;
 use Filament\Resources\Pages\ListRecords;
 use Filament\Tables\Actions\BulkActionGroup;
 use Filament\Tables\Actions\DeleteBulkAction;
+use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 
@@ -48,7 +48,8 @@ class ListDatabases extends ListRecords
             ])
             ->bulkActions([
                 BulkActionGroup::make([
-                    DeleteBulkAction::make(),
+                    DeleteBulkAction::make()
+                        ->authorize(fn () => auth()->user()->can('delete database')),
                 ]),
             ]);
     }

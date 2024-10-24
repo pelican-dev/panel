@@ -42,6 +42,13 @@ class DatabaseSettingsCommand extends Command
      */
     public function handle(): int
     {
+        $this->error('Changing the database driver will NOT move any database data!');
+        $this->error('Please make sure you made a database backup first!');
+        $this->error('After changing the driver you will have to manually move the old data to the new database.');
+        if (!$this->confirm('Do you want to continue?')) {
+            return 1;
+        }
+
         $selected = config('database.default', 'sqlite');
         $this->variables['DB_CONNECTION'] = $this->option('driver') ?? $this->choice(
             'Database Driver',

@@ -4,7 +4,7 @@
         "version": "PTDL_v2",
         "update_url": "https:\/\/github.com\/pelican-dev\/panel\/raw\/main\/database\/Seeders\/eggs\/rust\/egg-rust.json"
     },
-    "exported_at": "2024-07-03T14:34:09+00:00",
+    "exported_at": "2024-07-25T12:06:17+00:00",
     "name": "Rust",
     "author": "panel@example.com",
     "uuid": "bace2dfb-209c-452a-9459-7d6f340b07ae",
@@ -38,7 +38,11 @@
             "default_value": "A Rust Server",
             "user_viewable": true,
             "user_editable": true,
-            "rules": "required|string|max:60",
+            "rules": [
+                "required",
+                "string",
+                "max:60"
+            ],
             "sort": 1,
             "field_type": "text"
         },
@@ -49,7 +53,10 @@
             "default_value": "vanilla",
             "user_viewable": true,
             "user_editable": true,
-            "rules": "required|in:vanilla,oxide,carbon",
+            "rules": [
+                "required",
+                "in:vanilla,oxide,carbon"
+            ],
             "sort": 2,
             "field_type": "text"
         },
@@ -60,7 +67,11 @@
             "default_value": "Procedural Map",
             "user_viewable": true,
             "user_editable": true,
-            "rules": "required|string|max:20",
+            "rules": [
+                "required",
+                "string",
+                "max:20"
+            ],
             "sort": 3,
             "field_type": "text"
         },
@@ -71,7 +82,10 @@
             "default_value": "Powered by Panel",
             "user_viewable": true,
             "user_editable": true,
-            "rules": "required|string",
+            "rules": [
+                "required",
+                "string"
+            ],
             "sort": 4,
             "field_type": "text"
         },
@@ -82,7 +96,10 @@
             "default_value": "http:\/\/example.com",
             "user_viewable": true,
             "user_editable": true,
-            "rules": "nullable|url",
+            "rules": [
+                "nullable",
+                "url"
+            ],
             "sort": 5,
             "field_type": "text"
         },
@@ -93,7 +110,10 @@
             "default_value": "3000",
             "user_viewable": true,
             "user_editable": true,
-            "rules": "required|integer",
+            "rules": [
+                "required",
+                "integer"
+            ],
             "sort": 6,
             "field_type": "text"
         },
@@ -104,7 +124,10 @@
             "default_value": "",
             "user_viewable": true,
             "user_editable": true,
-            "rules": "nullable|string",
+            "rules": [
+                "nullable",
+                "string"
+            ],
             "sort": 7,
             "field_type": "text"
         },
@@ -115,7 +138,10 @@
             "default_value": "40",
             "user_viewable": true,
             "user_editable": true,
-            "rules": "required|integer",
+            "rules": [
+                "required",
+                "integer"
+            ],
             "sort": 8,
             "field_type": "text"
         },
@@ -126,7 +152,10 @@
             "default_value": "",
             "user_viewable": true,
             "user_editable": true,
-            "rules": "nullable|url",
+            "rules": [
+                "nullable",
+                "url"
+            ],
             "sort": 9,
             "field_type": "text"
         },
@@ -137,7 +166,10 @@
             "default_value": "27017",
             "user_viewable": true,
             "user_editable": false,
-            "rules": "required|integer",
+            "rules": [
+                "required",
+                "integer"
+            ],
             "sort": 10,
             "field_type": "text"
         },
@@ -148,7 +180,10 @@
             "default_value": "28016",
             "user_viewable": true,
             "user_editable": false,
-            "rules": "required|integer",
+            "rules": [
+                "required",
+                "integer"
+            ],
             "sort": 11,
             "field_type": "text"
         },
@@ -159,7 +194,11 @@
             "default_value": "",
             "user_viewable": true,
             "user_editable": true,
-            "rules": "required|regex:\/^[\\w.-]*$\/|max:64",
+            "rules": [
+                "required",
+                "regex:\/^[\\w.-]*$\/",
+                "max:64"
+            ],
             "sort": 12,
             "field_type": "text"
         },
@@ -170,7 +209,10 @@
             "default_value": "60",
             "user_viewable": true,
             "user_editable": true,
-            "rules": "required|integer",
+            "rules": [
+                "required",
+                "integer"
+            ],
             "sort": 13,
             "field_type": "text"
         },
@@ -181,7 +223,10 @@
             "default_value": "",
             "user_viewable": true,
             "user_editable": true,
-            "rules": "nullable|string",
+            "rules": [
+                "nullable",
+                "string"
+            ],
             "sort": 14,
             "field_type": "text"
         },
@@ -192,7 +237,10 @@
             "default_value": "28082",
             "user_viewable": true,
             "user_editable": false,
-            "rules": "required|integer",
+            "rules": [
+                "required",
+                "integer"
+            ],
             "sort": 15,
             "field_type": "text"
         },
@@ -203,7 +251,10 @@
             "default_value": "",
             "user_viewable": true,
             "user_editable": true,
-            "rules": "nullable|url",
+            "rules": [
+                "nullable",
+                "url"
+            ],
             "sort": 16,
             "field_type": "text"
         },
@@ -214,7 +265,10 @@
             "default_value": "",
             "user_viewable": true,
             "user_editable": true,
-            "rules": "nullable|url",
+            "rules": [
+                "nullable",
+                "url"
+            ],
             "sort": 17,
             "field_type": "text"
         },
@@ -225,7 +279,11 @@
             "default_value": "258550",
             "user_viewable": false,
             "user_editable": false,
-            "rules": "required|string|in:258550",
+            "rules": [
+                "required",
+                "string",
+                "in:258550"
+            ],
             "sort": 18,
             "field_type": "text"
         }

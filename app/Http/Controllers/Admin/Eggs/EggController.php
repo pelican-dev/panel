@@ -127,7 +127,7 @@ class EggController extends Controller
     /**
      * Normalizes a string of docker image data into the expected egg format.
      */
-    protected function normalizeDockerImages(string $input = null): array
+    protected function normalizeDockerImages(?string $input = null): array
     {
         $data = array_map(fn ($value) => trim($value), explode("\n", $input ?? ''));
 

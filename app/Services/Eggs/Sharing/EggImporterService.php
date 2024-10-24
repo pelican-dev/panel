@@ -34,7 +34,7 @@ class EggImporterService
      *
      * @throws \App\Exceptions\Service\InvalidFileUploadException|\Throwable
      */
-    public function fromFile(UploadedFile $file, Egg $egg = null): Egg
+    public function fromFile(UploadedFile $file, ?Egg $egg = null): Egg
     {
         $parsed = $this->parseFile($file);
 
@@ -59,6 +59,8 @@ class EggImporterService
             // Update existing variables or create new ones.
             foreach ($parsed['variables'] ?? [] as $variable) {
                 EggVariable::unguarded(function () use ($egg, $variable) {
+                    $variable['rules'] = is_array($variable['rules']) ? $variable['rules'] : explode('|', $variable['rules']);
+
                     $egg->variables()->updateOrCreate([
                         'env_variable' => $variable['env_variable'],
                     ], Collection::make($variable)->except(['egg_id', 'env_variable'])->toArray());
@@ -78,7 +80,7 @@ class EggImporterService
      *
      * @throws \App\Exceptions\Service\InvalidFileUploadException|\Throwable
      */
-    public function fromUrl(string $url, Egg $egg = null): Egg
+    public function fromUrl(string $url, ?Egg $egg = null): Egg
     {
         $info = pathinfo($url);
         $tmpDir = TemporaryDirectory::make()->deleteWhenDestroyed();

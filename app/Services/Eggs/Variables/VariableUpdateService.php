@@ -2,7 +2,6 @@
 
 namespace App\Services\Eggs\Variables;
 
-use Illuminate\Support\Str;
 use App\Models\EggVariable;
 use App\Exceptions\DisplayException;
 use App\Traits\Services\ValidatesValidationRules;
@@ -54,12 +53,8 @@ class VariableUpdateService
             }
         }
 
-        if (!empty($data['rules'] ?? '')) {
-            $this->validateRules(
-                (is_string($data['rules']) && Str::contains($data['rules'], ';;'))
-                    ? explode(';;', $data['rules'])
-                    : $data['rules']
-            );
+        if (!empty($data['rules'] ?? [])) {
+            $this->validateRules($data['rules']);
         }
 
         $options = array_get($data, 'options') ?? [];
@@ -71,7 +66,7 @@ class VariableUpdateService
             'default_value' => $data['default_value'] ?? '',
             'user_viewable' => in_array('user_viewable', $options),
             'user_editable' => in_array('user_editable', $options),
-            'rules' => $data['rules'] ?? '',
+            'rules' => $data['rules'] ?? [],
         ]);
     }
 }

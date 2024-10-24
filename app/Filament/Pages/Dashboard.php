@@ -28,16 +28,20 @@ class Dashboard extends Page
 
     public string $activeTab = 'nodes';
 
+    private SoftwareVersionService $softwareVersionService;
+
+    public function mount(SoftwareVersionService $softwareVersionService): void
+    {
+        $this->softwareVersionService = $softwareVersionService;
+    }
+
     public function getViewData(): array
     {
-        /** @var SoftwareVersionService $softwareVersionService */
-        $softwareVersionService = app(SoftwareVersionService::class);
-
         return [
             'inDevelopment' => config('app.version') === 'canary',
-            'version' => $softwareVersionService->versionData()['version'],
-            'latestVersion' => $softwareVersionService->getPanel(),
-            'isLatest' => $softwareVersionService->isLatestPanel(),
+            'version' => $this->softwareVersionService->versionData()['version'],
+            'latestVersion' => $this->softwareVersionService->getPanel(),
+            'isLatest' => $this->softwareVersionService->isLatestPanel(),
             'eggsCount' => Egg::query()->count(),
             'nodesList' => ListNodes::getUrl(),
             'nodesCount' => Node::query()->count(),
@@ -67,7 +71,7 @@ class Dashboard extends Page
                 CreateAction::make()
                     ->label(trans('dashboard/index.sections.intro-support.button_donate'))
                     ->icon('tabler-cash')
-                    ->url($softwareVersionService->getDonations(), true)
+                    ->url($this->softwareVersionService->getDonations(), true)
                     ->color('success'),
             ],
             'helpActions' => [

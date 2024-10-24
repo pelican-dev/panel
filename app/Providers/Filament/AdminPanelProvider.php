@@ -9,6 +9,7 @@ use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
 use Filament\Panel;
 use Filament\PanelProvider;
+use Filament\Support\Enums\MaxWidth;
 use Filament\Support\Facades\FilamentAsset;
 use Filament\Widgets;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
@@ -21,10 +22,10 @@ use Illuminate\View\Middleware\ShareErrorsFromSession;
 
 class AdminPanelProvider extends PanelProvider
 {
-    public function boot()
+    public function boot(): void
     {
         FilamentAsset::registerCssVariables([
-            'sidebar-width' => '14rem !important',
+            'sidebar-width' => '16rem !important',
         ]);
     }
 
@@ -43,12 +44,12 @@ class AdminPanelProvider extends PanelProvider
             ->brandLogo(config('app.logo'))
             ->brandLogoHeight('2rem')
             ->profile(EditProfile::class, false)
+            ->maxContentWidth(MaxWidth::ScreenTwoExtraLarge)
+            ->spa()
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\\Filament\\Resources')
             ->discoverPages(in: app_path('Filament/Pages'), for: 'App\\Filament\\Pages')
             ->discoverClusters(in: app_path('Filament/Clusters'), for: 'App\\Filament\\Clusters')
-            ->pages([
-                // Pages\Dashboard::class,
-            ])
+            ->spa()
             ->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\\Filament\\Widgets')
             ->widgets([
                 Widgets\AccountWidget::class,

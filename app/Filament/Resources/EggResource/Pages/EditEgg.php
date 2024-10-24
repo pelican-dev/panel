@@ -2,9 +2,11 @@
 
 namespace App\Filament\Resources\EggResource\Pages;
 
+use AbdelhamidErrahmouni\FilamentMonacoEditor\MonacoEditor;
 use App\Filament\Resources\EggResource;
 use App\Filament\Resources\EggResource\RelationManagers\ServersRelationManager;
 use App\Models\Egg;
+use App\Services\Eggs\Sharing\EggExporterService;
 use App\Services\Eggs\Sharing\EggImporterService;
 use Exception;
 use Filament\Actions;
@@ -22,12 +24,10 @@ use Filament\Forms\Components\TagsInput;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
+use Filament\Forms\Form;
+use Filament\Forms\Set;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\EditRecord;
-use AbdelhamidErrahmouni\FilamentMonacoEditor\MonacoEditor;
-use App\Services\Eggs\Sharing\EggExporterService;
-use Filament\Forms;
-use Filament\Forms\Form;
 
 class EditEgg extends EditRecord
 {
@@ -40,6 +40,7 @@ class EditEgg extends EditRecord
                 Tabs::make()->tabs([
                     Tab::make('Configuration')
                         ->columns(['default' => 1, 'sm' => 1, 'md' => 2, 'lg' => 4])
+                        ->icon('tabler-egg')
                         ->schema([
                             TextInput::make('name')
                                 ->required()
@@ -80,6 +81,7 @@ class EditEgg extends EditRecord
                                 ->helperText('')
                                 ->columnSpan(['default' => 1, 'sm' => 1, 'md' => 2, 'lg' => 2]),
                             Toggle::make('force_outgoing_ip')
+                                ->inline(false)
                                 ->hintIcon('tabler-question-mark')
                                 ->hintIconTooltip("Forces all outgoing network traffic to have its Source IP NATed to the IP of the server's primary allocation IP.
                                     Required for certain games to work properly when the Node has multiple public IP addresses.
@@ -105,9 +107,9 @@ class EditEgg extends EditRecord
                                 ->valueLabel('Image URI')
                                 ->helperText('The docker images available to servers using this egg.'),
                         ]),
-
                     Tab::make('Process Management')
                         ->columns()
+                        ->icon('tabler-server-cog')
                         ->schema([
                             Select::make('config_from')
                                 ->label('Copy Settings From')
@@ -130,6 +132,7 @@ class EditEgg extends EditRecord
                         ]),
                     Tab::make('Egg Variables')
                         ->columnSpanFull()
+                        ->icon('tabler-variable')
                         ->schema([
                             Repeater::make('variables')
                                 ->label('')
@@ -144,7 +147,7 @@ class EditEgg extends EditRecord
                                 ->mutateRelationshipDataBeforeCreateUsing(function (array $data): array {
                                     $data['default_value'] ??= '';
                                     $data['description'] ??= '';
-                                    $data['rules'] ??= '';
+                                    $data['rules'] ??= [];
                                     $data['user_viewable'] ??= '';
                                     $data['user_editable'] ??= '';
 
@@ -153,7 +156,7 @@ class EditEgg extends EditRecord
                                 ->mutateRelationshipDataBeforeSaveUsing(function (array $data): array {
                                     $data['default_value'] ??= '';
                                     $data['description'] ??= '';
-                                    $data['rules'] ??= '';
+                                    $data['rules'] ??= [];
                                     $data['user_viewable'] ??= '';
                                     $data['user_editable'] ??= '';
 
@@ -165,7 +168,7 @@ class EditEgg extends EditRecord
                                         ->debounce(750)
                                         ->maxLength(255)
                                         ->columnSpanFull()
-                                        ->afterStateUpdated(fn (Forms\Set $set, $state) => $set('env_variable', str($state)->trim()->snake()->upper()->toString())
+                                        ->afterStateUpdated(fn (Set $set, $state) => $set('env_variable', str($state)->trim()->snake()->upper()->toString())
                                         )
                                         ->required(),
                                     Textarea::make('description')->columnSpanFull(),
@@ -183,27 +186,47 @@ class EditEgg extends EditRecord
                                             Checkbox::make('user_viewable')->label('Viewable'),
                                             Checkbox::make('user_editable')->label('Editable'),
                                         ]),
-                                    TextInput::make('rules')->columnSpanFull(),
+                                    TagsInput::make('rules')
+                                        ->columnSpanFull()
+                                        ->placeholder('Add Rule')
+                                        ->reorderable()
+                                        ->suggestions([
+                                            'required',
+                                            'nullable',
+                                            'string',
+                                            'integer',
+                                            'numeric',
+                                            'boolean',
+                                            'alpha',
+                                            'alpha_dash',
+                                            'alpha_num',
+                                            'url',
+                                            'email',
+                                            'regex:',
+                                            'min:',
+                                            'max:',
+                                            'between:',
+                                            'between:1024,65535',
+                                            'in:',
+                                            'in:true,false',
+                                        ]),
                                 ]),
                         ]),
                     Tab::make('Install Script')
                         ->columns(3)
+                        ->icon('tabler-file-download')
                         ->schema([
-
                             Select::make('copy_script_from')
                                 ->placeholder('None')
                                 ->relationship('scriptFrom', 'name', ignoreRecord: true),
-
                             TextInput::make('script_container')
                                 ->required()
                                 ->maxLength(255)
                                 ->default('alpine:3.4'),
-
                             TextInput::make('script_entry')
                                 ->required()
                                 ->maxLength(255)
                                 ->default('ash'),
-
                             MonacoEditor::make('script_install')
                                 ->label('Install Script')
                                 ->columnSpanFull()
@@ -211,7 +234,6 @@ class EditEgg extends EditRecord
                                 ->language('shell')
                                 ->view('filament.plugins.monaco-editor'),
                         ]),
-
                 ])->columnSpanFull()->persistTabInQueryString(),
             ]);
     }
@@ -222,14 +244,13 @@ class EditEgg extends EditRecord
             Actions\DeleteAction::make('deleteEgg')
                 ->disabled(fn (Egg $egg): bool => $egg->servers()->count() > 0)
                 ->label(fn (Egg $egg): string => $egg->servers()->count() <= 0 ? 'Delete' : 'In Use'),
-
             Actions\Action::make('exportEgg')
                 ->label('Export')
                 ->color('primary')
                 ->action(fn (EggExporterService $service, Egg $egg) => response()->streamDownload(function () use ($service, $egg) {
                     echo $service->handle($egg->id);
-                }, 'egg-' . $egg->getKebabName() . '.json')),
-
+                }, 'egg-' . $egg->getKebabName() . '.json'))
+                ->authorize(fn () => auth()->user()->can('export egg')),
             Actions\Action::make('importEgg')
                 ->label('Import')
                 ->form([
@@ -259,10 +280,7 @@ class EditEgg extends EditRecord
                         ->contained(false),
 
                 ])
-                ->action(function (array $data, Egg $egg): void {
-                    /** @var EggImporterService $eggImportService */
-                    $eggImportService = resolve(EggImporterService::class);
-
+                ->action(function (array $data, Egg $egg, EggImporterService $eggImportService): void {
                     if (!empty($data['egg'])) {
                         try {
                             $eggImportService->fromFile($data['egg'], $egg);
@@ -298,8 +316,8 @@ class EditEgg extends EditRecord
                         ->title('Import Success')
                         ->success()
                         ->send();
-                }),
-
+                })
+                ->authorize(fn () => auth()->user()->can('import egg')),
             $this->getSaveFormAction()->formId('form'),
         ];
     }

@@ -15,7 +15,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property string $default_value
  * @property bool $user_viewable
  * @property bool $user_editable
- * @property string $rules
+ * @property array $rules
  * @property \Carbon\CarbonImmutable $created_at
  * @property \Carbon\CarbonImmutable $updated_at
  * @property bool $required
@@ -58,12 +58,14 @@ class EggVariable extends Model
         'default_value' => 'string',
         'user_viewable' => 'boolean',
         'user_editable' => 'boolean',
-        'rules' => 'string',
+        'rules' => 'array',
+        'rules.*' => 'string',
     ];
 
     protected $attributes = [
         'user_editable' => 0,
         'user_viewable' => 0,
+        'rules' => '[]',
     ];
 
     protected function casts(): array
@@ -72,6 +74,7 @@ class EggVariable extends Model
             'egg_id' => 'integer',
             'user_viewable' => 'bool',
             'user_editable' => 'bool',
+            'rules' => 'array',
             'created_at' => 'immutable_datetime',
             'updated_at' => 'immutable_datetime',
         ];
@@ -79,7 +82,7 @@ class EggVariable extends Model
 
     public function getRequiredAttribute(): bool
     {
-        return in_array('required', explode('|', $this->rules));
+        return in_array('required', $this->rules);
     }
 
     public function egg(): HasOne

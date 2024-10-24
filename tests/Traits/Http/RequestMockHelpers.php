@@ -27,7 +27,7 @@ trait RequestMockHelpers
     /**
      * Configure the user model that the request mock should return with.
      */
-    public function setRequestUserModel(User $user = null): void
+    public function setRequestUserModel(?User $user = null): void
     {
         $this->request->shouldReceive('user')->andReturn($user);
     }
@@ -35,13 +35,14 @@ trait RequestMockHelpers
     /**
      * Generates a new request user model and also returns the generated model.
      */
-    public function generateRequestUserModel(array $args = []): User
+    public function generateRequestUserModel(bool $isRootAdmin, array $args = []): void
     {
-        /** @var \App\Models\User $user */
         $user = User::factory()->make($args);
-        $this->setRequestUserModel($user);
+        $user = m::mock($user)->makePartial();
+        $user->shouldReceive('isRootAdmin')->andReturn($isRootAdmin);
 
-        return $user;
+        /** @var User|Mock $user */
+        $this->setRequestUserModel($user);
     }
 
     /**
@@ -79,7 +80,7 @@ trait RequestMockHelpers
      *
      * @deprecated
      */
-    protected function setRequestUser(User $user = null): User
+    protected function setRequestUser(?User $user = null): User
     {
         $user = $user instanceof User ? $user : User::factory()->make();
         $this->request->shouldReceive('user')->withNoArgs()->andReturn($user);
