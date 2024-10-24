@@ -34,6 +34,7 @@ use Filament\Forms\Components\Wizard\Step;
 use Filament\Forms\Form;
 use Filament\Forms\Get;
 use Filament\Forms\Set;
+use Filament\Notifications\Notification;
 use Filament\Resources\Pages\CreateRecord;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
@@ -219,15 +220,23 @@ class CreateServer extends CreateRecord
                                         ->label('Ports')
                                         ->inlineLabel()
                                         ->live()
-                                        ->afterStateUpdated(function ($state, Set $set) {
+                                        ->afterStateUpdated(function ($state, Set $set, Get $get) {
                                             $ports = collect();
                                             $update = false;
                                             foreach ($state as $portEntry) {
                                                 if (!str_contains($portEntry, '-')) {
                                                     if (is_numeric($portEntry)) {
-                                                        $ports->push((int) $portEntry);
+                                                        if (Allocation::query()->where('ip', $get('allocation_ip'))->where('port', $portEntry)->exists()) {
+                                                            Notification::make()
+                                                                ->title('Port Already Exists')
+                                                                ->danger()
+                                                                ->body('Port ' . $portEntry . ' already exists.')
+                                                                ->send();
+                                                        } else {
+                                                            $ports->push((int) $portEntry);
 
-                                                        continue;
+                                                            continue;
+                                                        }
                                                     }
 
                                                     // Do not add non-numerical ports
@@ -247,7 +256,15 @@ class CreateServer extends CreateRecord
                                                 $range = $start <= $end ? range($start, $end) : range($end, $start);
                                                 foreach ($range as $i) {
                                                     if ($i > 1024 && $i <= 65535) {
-                                                        $ports->push($i);
+                                                        if (Allocation::query()->where('ip', $get('allocation_ip'))->where('port', $portEntry)->exists()) {
+                                                            Notification::make()
+                                                                ->title('Port Already Exists')
+                                                                ->danger()
+                                                                ->body('Port ' . $portEntry . ' already exists.')
+                                                                ->send();
+                                                        } else {
+                                                            $ports->push($i);
+                                                        }
                                                     }
                                                 }
                                             }

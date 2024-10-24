@@ -8,7 +8,9 @@ use App\Services\Allocations\AssignmentService;
 use Filament\Forms\Components\TagsInput;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
+use Filament\Forms\Get;
 use Filament\Forms\Set;
+use Filament\Notifications\Notification;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables;
 use Filament\Tables\Actions\BulkActionGroup;
@@ -97,18 +99,26 @@ class AllocationsRelationManager extends RelationManager
                             ->label('Ports')
                             ->inlineLabel()
                             ->live()
-                            ->afterStateUpdated(function ($state, Set $set) {
+                            ->afterStateUpdated(function ($state, Set $set, Get $get) {
                                 $ports = collect();
                                 $update = false;
                                 foreach ($state as $portEntry) {
                                     if (!str_contains($portEntry, '-')) {
                                         if (is_numeric($portEntry)) {
-                                            $ports->push((int) $portEntry);
+                                            if (Allocation::query()->where('ip', $get('allocation_ip'))->where('port', $portEntry)->exists()) {
+                                                Notification::make()
+                                                    ->title('Port Already Exists')
+                                                    ->danger()
+                                                    ->body('Port ' . $portEntry . ' already exists.')
+                                                    ->send();
+                                            } else {
+                                                $ports->push((int) $portEntry);
 
-                                            continue;
+                                                continue;
+                                            }
                                         }
 
-                                        // Do not add non numerical ports
+                                        // Do not add non-numerical ports
                                         $update = true;
 
                                         continue;
@@ -122,8 +132,19 @@ class AllocationsRelationManager extends RelationManager
 
                                     $start = max((int) $start, 0);
                                     $end = min((int) $end, 2 ** 16 - 1);
-                                    foreach (range($start, $end) as $i) {
-                                        $ports->push($i);
+                                    $range = $start <= $end ? range($start, $end) : range($end, $start);
+                                    foreach ($range as $i) {
+                                        if ($i > 1024 && $i <= 65535) {
+                                            if (Allocation::query()->where('ip', $get('allocation_ip'))->where('port', $portEntry)->exists()) {
+                                                Notification::make()
+                                                    ->title('Port Already Exists')
+                                                    ->danger()
+                                                    ->body('Port ' . $portEntry . ' already exists.')
+                                                    ->send();
+                                            } else {
+                                                $ports->push($i);
+                                            }
+                                        }
                                     }
                                 }
 
@@ -138,8 +159,6 @@ class AllocationsRelationManager extends RelationManager
                                     $update = true;
                                     $ports = $sortedPorts;
                                 }
-
-                                $ports = $ports->filter(fn ($port) => $port > 1024 && $port < 65535)->values();
 
                                 if ($update) {
                                     $set('allocation_ports', $ports->all());
