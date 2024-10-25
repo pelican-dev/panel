@@ -65,13 +65,6 @@ class ApiKey extends Model
     public const RESOURCE_NAME = 'api_key';
 
     /**
-     * Maximum number of Api keys that a user can have.
-     *
-     * @deprecated
-     */
-    public const API_KEYS_LIMIT = 25;
-
-    /**
      * Different API keys that can exist on the system.
      */
     public const TYPE_NONE = 0;
@@ -79,27 +72,6 @@ class ApiKey extends Model
     public const TYPE_ACCOUNT = 1;
 
     public const TYPE_APPLICATION = 2;
-
-    /* @deprecated */
-    public const TYPE_DAEMON_USER = 3;
-
-    /* @deprecated */
-    public const TYPE_DAEMON_APPLICATION = 4;
-
-    /**
-     * The length of API key identifiers.
-     *
-     * @deprecated
-     */
-    public const IDENTIFIER_LENGTH = 16;
-
-    /**
-     * The length of the actual API key that is encrypted and stored
-     * in the database.
-     *
-     * @deprecated
-     */
-    public const KEY_LENGTH = 32;
 
     public const RESOURCES = ['servers', 'nodes', 'allocations', 'users', 'eggs', 'database_hosts', 'server_databases', 'mounts'];
 
@@ -148,7 +120,7 @@ class ApiKey extends Model
      */
     public static array $validationRules = [
         'user_id' => 'required|exists:users,id',
-        'key_type' => 'present|integer|min:0|max:4',
+        'key_type' => 'present|integer|min:0|max:2',
         'identifier' => 'required|string|size:16|unique:api_keys,identifier',
         'token' => 'required|string',
         'memo' => 'required|nullable|string|max:500',

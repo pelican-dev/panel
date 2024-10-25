@@ -46,7 +46,7 @@ class NodeAutoDeployService
             sprintf(
                 '%s wings configure --panel-url %s --token %s --node %d%s',
                 $docker ? 'docker compose exec -it' : 'sudo',
-                route('index'),
+                config('app.url'),
                 $token,
                 $node->id,
                 $request->isSecure() ? '' : ' --allow-insecure'
