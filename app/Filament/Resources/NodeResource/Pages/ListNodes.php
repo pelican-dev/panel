@@ -83,12 +83,6 @@ class ListNodes extends ListRecords
             ->actions([
                 EditAction::make(),
             ])
-            ->bulkActions([
-                BulkActionGroup::make([
-                    DeleteBulkAction::make()
-                        ->authorize(fn () => auth()->user()->can('delete node')),
-                ]),
-            ])
             ->emptyStateIcon('tabler-server-2')
             ->emptyStateDescription('')
             ->emptyStateHeading('No Nodes')
