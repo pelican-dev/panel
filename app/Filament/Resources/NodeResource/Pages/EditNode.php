@@ -121,7 +121,11 @@ class EditNode extends EditRecord
                                         return;
                                     }
 
-                                    $validRecords = gethostbynamel($state);
+                                    $url = parse_url($state);
+                                    $fqdn = array_get($url, 'host', $state);
+                                    $scheme = array_get($url, 'scheme', 'https');
+                                    $validRecords = gethostbynamel(array_get(parse_url("$scheme://$fqdn"), 'host'));
+
                                     if ($validRecords) {
                                         $set('dns', true);
 
@@ -548,11 +552,12 @@ class EditNode extends EditRecord
     protected function mutateFormDataBeforeFill(array $data): array
     {
         $node = Node::findOrFail($data['id']);
+        $fqdn = array_get($node->parseFQDN(), 'host');
 
         $data['config'] = $node->getYamlConfiguration();
 
-        if (!is_ip($node->fqdn)) {
-            $validRecords = gethostbynamel($node->fqdn);
+        if (!is_ip($fqdn)) {
+            $validRecords = gethostbynamel($fqdn);
             if ($validRecords) {
                 $data['dns'] = true;
                 $data['ip'] = collect($validRecords)->first();
