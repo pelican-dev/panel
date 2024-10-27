@@ -5,6 +5,7 @@ namespace App\Filament\Resources\ServerResource\Pages;
 use App\Enums\ContainerStatus;
 use App\Enums\ServerState;
 use App\Filament\Resources\ServerResource;
+use App\Filament\Resources\ServerResource\RelationManagers\AllocationsRelationManager;
 use App\Http\Controllers\Admin\ServersController;
 use App\Models\Database;
 use App\Models\Egg;
@@ -25,6 +26,7 @@ use Filament\Forms\Components\CheckboxList;
 use Filament\Forms\Components\Fieldset;
 use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\Hidden;
+use Filament\Forms\Components\KeyValue;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Tabs;
@@ -417,6 +419,7 @@ class EditServer extends EditRecord
                                     ->schema([
                                         Select::make('select_image')
                                             ->label('Image Name')
+                                            ->live()
                                             ->afterStateUpdated(fn (Set $set, $state) => $set('image', $state))
                                             ->options(function ($state, Get $get, Set $set) {
                                                 $egg = Egg::query()->find($get('egg_id'));
@@ -436,7 +439,7 @@ class EditServer extends EditRecord
 
                                         TextInput::make('image')
                                             ->label('Image')
-                                            ->debounce(500)
+                                            ->required()
                                             ->afterStateUpdated(function ($state, Get $get, Set $set) {
                                                 $egg = Egg::query()->find($get('egg_id'));
                                                 $images = $egg->docker_images ?? [];
@@ -450,7 +453,7 @@ class EditServer extends EditRecord
                                             ->placeholder('Enter a custom Image')
                                             ->columnSpan(2),
 
-                                        Forms\Components\KeyValue::make('docker_labels')
+                                        KeyValue::make('docker_labels')
                                             ->label('Container Labels')
                                             ->keyLabel('Label Name')
                                             ->valueLabel('Label Description')
@@ -826,7 +829,7 @@ class EditServer extends EditRecord
     public function getRelationManagers(): array
     {
         return [
-            ServerResource\RelationManagers\AllocationsRelationManager::class,
+            AllocationsRelationManager::class,
         ];
     }
 
