@@ -787,6 +787,7 @@ class CreateServer extends CreateRecord
                                 ->schema([
                                     Select::make('select_image')
                                         ->label('Image Name')
+                                        ->live()
                                         ->afterStateUpdated(fn (Set $set, $state) => $set('image', $state))
                                         ->options(function ($state, Get $get, Set $set) {
                                             $egg = Egg::query()->find($get('egg_id'));
@@ -811,7 +812,7 @@ class CreateServer extends CreateRecord
 
                                     TextInput::make('image')
                                         ->label('Image')
-                                        ->debounce(500)
+                                        ->required()
                                         ->afterStateUpdated(function ($state, Get $get, Set $set) {
                                             $egg = Egg::query()->find($get('egg_id'));
                                             $images = $egg->docker_images ?? [];
