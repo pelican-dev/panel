@@ -110,6 +110,7 @@ class EggImporterService
         $parsed = match ($version) {
             'PTDL_v1' => $this->convertToV2($parsed),
             'PTDL_v2' => $parsed,
+            'PLCN_V1' => $parsed,
             default => throw new InvalidFileUploadException('The JSON file provided is not in a format that can be recognized.')
         };
 
