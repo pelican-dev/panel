@@ -89,10 +89,7 @@ class CreateNode extends CreateRecord
                                         return;
                                     }
 
-                                    $url = parse_url($state);
-                                    $fqdn = array_get($url, 'host', $state);
-                                    $scheme = array_get($url, 'scheme', 'https');
-                                    $validRecords = gethostbynamel(array_get(parse_url("$scheme://$fqdn"), 'host'));
+                                    $validRecords = gethostbynamel(array_get(parse_url("http://$state"), 'host', $state));
 
                                     if ($validRecords) {
                                         $set('dns', true);

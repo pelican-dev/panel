@@ -163,27 +163,13 @@ class Node extends Model
     }
 
     /**
-     * Parses the FQDN and returns the host and path.
-     */
-    public function parseFQDN(): array
-    {
-        $fqdn = array_get(parse_url($this->fqdn), 'host', $this->fqdn);
-        $url = parse_url("$this->scheme://$fqdn");
-
-        return [
-            'host' => array_get($url, 'host', $fqdn),
-            'path' => array_get($url, 'path', ''),
-        ];
-    }
-
-    /**
      * Get the connection address to use when making calls to this node.
      */
     public function getConnectionAddress(): string
     {
-        $parsedFQDN = $this->parseFQDN();
-        $host = array_get($parsedFQDN, 'host');
-        $path = array_get($parsedFQDN, 'path');
+        $url = parse_url("$this->scheme://$this->fqdn");
+        $host = array_get($url, 'host', $this->fqdn);
+        $path = array_get($url, 'path');
 
         return "$this->scheme://$host:$this->daemon_listen$path";
     }
