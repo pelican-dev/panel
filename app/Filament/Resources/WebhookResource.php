@@ -4,10 +4,12 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\WebhookResource\Pages;
 use App\Models\WebhookConfiguration;
-use Filament\Forms;
+use Filament\Forms\Components\CheckboxList;
+use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
+use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 
 class WebhookResource extends Resource
@@ -16,17 +18,21 @@ class WebhookResource extends Resource
 
     protected static ?string $navigationIcon = 'tabler-webhook';
 
+    protected static ?string $navigationGroup = 'Advanced';
+
     protected static ?string $label = 'Webhooks';
 
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make('endpoint')->activeUrl()->required(),
-                Forms\Components\TextInput::make('description')->nullable(),
-                Forms\Components\CheckboxList::make('events')->lazy()->options(
+                TextInput::make('endpoint')->activeUrl()->required(),
+                TextInput::make('description')->nullable(),
+                CheckboxList::make('events')->lazy()->options(
                     fn () => WebhookConfiguration::filamentCheckboxList()
                 )
+                    ->searchable()
+                    ->bulkToggleable()
                     ->columns(3)
                     ->columnSpanFull()
                     ->gridDirection('row')
@@ -38,18 +44,11 @@ class WebhookResource extends Resource
     {
         return $table
             ->columns([
-                //
-            ])
-            ->filters([
-                //
+                TextColumn::make('description'),
+                TextColumn::make('endpoint'),
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
-            ])
-            ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
-                ]),
             ]);
     }
 
