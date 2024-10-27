@@ -26,11 +26,14 @@ class WebhookResource extends Resource
     {
         return $form
             ->schema([
-                TextInput::make('endpoint')->activeUrl()->required(),
-                TextInput::make('description')->nullable(),
-                CheckboxList::make('events')->lazy()->options(
-                    fn () => WebhookConfiguration::filamentCheckboxList()
-                )
+                TextInput::make('endpoint')
+                    ->activeUrl()
+                    ->required(),
+                TextInput::make('description')
+                    ->required(),
+                CheckboxList::make('events')
+                    ->lazy()
+                    ->options(fn () => WebhookConfiguration::filamentCheckboxList())
                     ->searchable()
                     ->bulkToggleable()
                     ->columns(3)
