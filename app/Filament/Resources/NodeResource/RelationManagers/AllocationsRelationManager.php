@@ -139,7 +139,7 @@ class AllocationsRelationManager extends RelationManager
                                                 Notification::make()
                                                     ->title('Port Already Exists')
                                                     ->danger()
-                                                    ->body('Port ' . $portEntry . ' already exists.')
+                                                    ->body("Port $portEntry already exists.")
                                                     ->send();
                                             } else {
                                                 $ports->push($i);
