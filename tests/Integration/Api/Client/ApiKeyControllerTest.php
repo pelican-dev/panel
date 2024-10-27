@@ -103,7 +103,7 @@ class ApiKeyControllerTest extends ClientApiIntegrationTestCase
     {
         /** @var \App\Models\User $user */
         $user = User::factory()->create();
-        ApiKey::factory()->times(config('api.key.limit', 25))->for($user)->create([
+        ApiKey::factory()->times(config('panel.api.key_limit', 25))->for($user)->create([
             'key_type' => ApiKey::TYPE_ACCOUNT,
         ]);
 

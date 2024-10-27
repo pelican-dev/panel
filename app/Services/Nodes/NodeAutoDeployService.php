@@ -28,7 +28,7 @@ class NodeAutoDeployService
         /** @var ApiKey|null $key */
         $key = ApiKey::query()
             ->where('key_type', ApiKey::TYPE_APPLICATION)
-            ->where('r_nodes', 1)
+            ->where('r_nodes', true)
             ->first();
 
         // We couldn't find a key that exists for this user with only permission for
@@ -37,21 +37,22 @@ class NodeAutoDeployService
             $key = $this->keyCreationService->setKeyType(ApiKey::TYPE_APPLICATION)->handle([
                 'memo' => 'Automatically generated node deployment key.',
                 'user_id' => $request->user()->id,
-            ], ['r_nodes' => 1]);
+            ], ['r_nodes' => true]);
         }
 
         $token = $key->identifier . $key->token;
 
-        return $token ?
-            sprintf(
-                '%s wings configure --panel-url %s --token %s --node %d%s',
-                $docker ? 'docker compose exec -it' : 'sudo',
-                config('app.url'),
-                $token,
-                $node->id,
-                $request->isSecure() ? '' : ' --allow-insecure'
-            )
-            :
-                null;
+        if (!$token) {
+            return null;
+        }
+
+        return sprintf(
+            '%s wings configure --panel-url %s --token %s --node %d%s',
+            $docker ? 'docker compose exec -it' : 'sudo',
+            config('app.url'),
+            $token,
+            $node->id,
+            $request->isSecure() ? '' : ' --allow-insecure'
+        );
     }
 }
