@@ -180,4 +180,16 @@ return [
         'key_limit' => env('API_KEYS_LIMIT', 25),
         'key_expire_time' => env('API_KEYS_EXPIRE_TIME', 720),
     ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Webhook Settings
+    |--------------------------------------------------------------------------
+    |
+    | This section controls Webhook configurations
+    */
+
+    'webhook' => [
+        'prune_days' => env('APP_WEBHOOK_PRUNE_DAYS', 30),
+    ],
 ];

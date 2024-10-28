@@ -9,7 +9,7 @@ use App\Console\Commands\Maintenance\PruneOrphanedBackupsCommand;
 use App\Console\Commands\Schedule\ProcessRunnableCommand;
 use App\Jobs\NodeStatistics;
 use App\Models\ActivityLog;
-use App\Models\WebhookConfiguration;
+use App\Models\Webhook;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Database\Console\PruneCommand;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
@@ -50,8 +50,8 @@ class Kernel extends ConsoleKernel
             $schedule->command(PruneCommand::class, ['--model' => [ActivityLog::class]])->daily();
         }
 
-        if (config('webhook.prune_days')) {
-            $schedule->command(PruneCommand::class, ['--model' => [WebhookConfiguration::class]])->daily();
+        if (config('panel.webhook.prune_days')) {
+            $schedule->command(PruneCommand::class, ['--model' => [Webhook::class]])->daily();
         }
     }
 }

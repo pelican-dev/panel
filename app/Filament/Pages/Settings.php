@@ -553,7 +553,7 @@ class Settings extends Page implements HasForms
                         ->minValue(1)
                         ->maxValue(365)
                         ->suffix('Days')
-                        ->default(env('APP_WEBHOOK_PRUNE_DAYS', config('webhook.prune_days'))),
+                        ->default(env('APP_WEBHOOK_PRUNE_DAYS', config('panel.webhook.prune_days'))),
                 ]),
         ];
     }

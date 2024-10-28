@@ -5,43 +5,12 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Carbon\Carbon;
-use Illuminate\Database\Eloquent\MassPrunable;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\File;
 
-/**
- * @property int $id
- * @property string $endpoint
- * @property string $description
- * @property array $events
- * @property \Illuminate\Support\Carbon|null $created_at
- * @property \Illuminate\Support\Carbon|null $updated_at
- * @property \Illuminate\Support\Carbon|null $deleted_at
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Webhook> $webhooks
- * @property-read int|null $webhooks_count
- *
- * @method static \Database\Factories\WebhookConfigurationFactory factory($count = null, $state = [])
- * @method static \Illuminate\Database\Eloquent\Builder|WebhookConfiguration newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|WebhookConfiguration newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|WebhookConfiguration onlyTrashed()
- * @method static \Illuminate\Database\Eloquent\Builder|WebhookConfiguration query()
- * @method static \Illuminate\Database\Eloquent\Builder|WebhookConfiguration whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|WebhookConfiguration whereDeletedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|WebhookConfiguration whereDescription($value)
- * @method static \Illuminate\Database\Eloquent\Builder|WebhookConfiguration whereEndpoint($value)
- * @method static \Illuminate\Database\Eloquent\Builder|WebhookConfiguration whereEvents($value)
- * @method static \Illuminate\Database\Eloquent\Builder|WebhookConfiguration whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|WebhookConfiguration whereUpdatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|WebhookConfiguration withTrashed()
- * @method static \Illuminate\Database\Eloquent\Builder|WebhookConfiguration withoutTrashed()
- *
- * @mixin \Eloquent
- */
 class WebhookConfiguration extends Model
 {
-    use HasFactory, MassPrunable, SoftDeletes;
+    use HasFactory, SoftDeletes;
 
     /**
      * Blacklisted events.
@@ -159,13 +128,5 @@ class WebhookConfiguration extends Model
         }
 
         return $events;
-    }
-
-    /**
-     * Get the prunable model query.
-     */
-    public function prunable(): Builder
-    {
-        return static::where('created_at', '<=', Carbon::now()->subDays(config('webhook.prune_days')));
     }
 }
