@@ -41,7 +41,7 @@ use Illuminate\Support\Facades\File;
  */
 class WebhookConfiguration extends Model
 {
-    use HasFactory, SoftDeletes, MassPrunable;
+    use HasFactory, MassPrunable, SoftDeletes;
 
     /**
      * Blacklisted events.
@@ -89,7 +89,7 @@ class WebhookConfiguration extends Model
         return collect(static::discoverCustomEvents())
             ->merge(static::allModelEvents())
             ->unique()
-            ->filter(fn($event) => !in_array($event, static::$eventBlacklist))
+            ->filter(fn ($event) => !in_array($event, static::$eventBlacklist))
             ->all();
     }
 
