@@ -541,7 +541,7 @@ class Settings extends Page implements HasForms
                         ->default(env('PANEL_EDITABLE_SERVER_DESCRIPTIONS', config('panel.editable_server_descriptions'))),
                 ]),
             Section::make('Webhook')
-                ->description('Configure how often old Webhook should be pruned.')
+                ->description('Configure how often old webhook logs should be pruned.')
                 ->columns()
                 ->collapsible()
                 ->collapsed()

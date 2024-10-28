@@ -166,6 +166,6 @@ class WebhookConfiguration extends Model
      */
     public function prunable(): Builder
     {
-        return static::where('deleted_at', '<=', Carbon::now()->subDays(config('webhook.prune_days')));
+        return static::where('created_at', '<=', Carbon::now()->subDays(config('webhook.prune_days')));
     }
 }
