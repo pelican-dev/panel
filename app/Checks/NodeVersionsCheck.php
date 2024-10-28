@@ -21,6 +21,7 @@ class NodeVersionsCheck extends Check
             return $result;
         }
 
+        // @phpstan-ignore-next-line
         $latestVersion = app(SoftwareVersionService::class)->getDaemon();
 
         $outdated = Node::query()->get()

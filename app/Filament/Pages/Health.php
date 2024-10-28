@@ -13,10 +13,12 @@ use Spatie\Health\ResultStores\ResultStore;
 class Health extends Page
 {
     protected static ?string $navigationIcon = 'tabler-heart';
+
     protected static ?string $navigationGroup = 'Advanced';
 
     protected static string $view = 'filament.pages.health';
 
+    // @phpstan-ignore-next-line
     protected $listeners = [
         'refresh-component' => '$refresh',
     ];
@@ -32,6 +34,7 @@ class Health extends Page
 
     protected function getViewData(): array
     {
+        // @phpstan-ignore-next-line
         $checkResults = app(ResultStore::class)->latestResults();
 
         if ($checkResults === null) {
@@ -60,6 +63,7 @@ class Health extends Page
 
     public static function getNavigationBadge(): ?string
     {
+        // @phpstan-ignore-next-line
         $results = app(ResultStore::class)->latestResults();
 
         if ($results === null) {
@@ -82,6 +86,7 @@ class Health extends Page
 
     public static function getNavigationBadgeTooltip(): ?string
     {
+        // @phpstan-ignore-next-line
         $results = app(ResultStore::class)->latestResults();
 
         if ($results === null) {
@@ -103,6 +108,7 @@ class Health extends Page
 
     public static function getNavigationIcon(): string
     {
+        // @phpstan-ignore-next-line
         $results = app(ResultStore::class)->latestResults();
 
         if ($results === null) {

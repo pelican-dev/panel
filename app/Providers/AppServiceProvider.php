@@ -103,9 +103,9 @@ class AppServiceProvider extends ServiceProvider
         ]);
 
         // Don't run any health checks during tests
-        if (!app()->runningUnitTests()) {
+        if (!$app->runningUnitTests()) {
             Health::checks([
-                DebugModeCheck::new()->if(app()->isProduction()),
+                DebugModeCheck::new()->if($app->isProduction()),
                 EnvironmentCheck::new(),
                 CacheCheck::new(),
                 DatabaseCheck::new(),

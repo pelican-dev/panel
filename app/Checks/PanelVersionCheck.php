@@ -11,7 +11,7 @@ class PanelVersionCheck extends Check
     public function run(): Result
     {
         /** @var SoftwareVersionService $versionService */
-        $versionService = app(SoftwareVersionService::class);
+        $versionService = app(SoftwareVersionService::class); // @phpstan-ignore-line
 
         $isLatest = $versionService->isLatestPanel();
         $currentVersion = $versionService->versionData()['version'];
