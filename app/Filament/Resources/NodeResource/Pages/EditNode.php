@@ -121,7 +121,7 @@ class EditNode extends EditRecord
                                         return;
                                     }
 
-                                    $scheme = $get('scheme') ?? "http";
+                                    $scheme = $get('scheme') ?? 'http';
                                     $validRecords = gethostbynamel(array_get(parse_url("$scheme://$state"), 'host', $state));
 
                                     if ($validRecords) {
