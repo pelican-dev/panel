@@ -6,7 +6,6 @@ use Illuminate\Console\Command;
 use App\Models\Schedule;
 use Illuminate\Database\Eloquent\Builder;
 use App\Services\Schedules\ProcessScheduleService;
-use Carbon\Carbon;
 
 class ProcessRunnableCommand extends Command
 {
@@ -24,7 +23,7 @@ class ProcessRunnableCommand extends Command
             ->whereRelation('server', fn (Builder $builder) => $builder->whereNull('status'))
             ->where('is_active', true)
             ->where('is_processing', false)
-            ->where('next_run_at', '<=', Carbon::now()->toDateTimeString())
+            ->where('next_run_at', '<=', now('UTC')->toDateTimeString())
             ->get();
 
         if ($schedules->count() < 1) {
@@ -51,7 +50,7 @@ class ProcessRunnableCommand extends Command
      * never throw an exception out, otherwise you'll end up killing the entire run group causing
      * any other schedules to not process correctly.
      */
-    protected function processSchedule(Schedule $schedule)
+    protected function processSchedule(Schedule $schedule): void
     {
         if ($schedule->tasks->isEmpty()) {
             return;

@@ -19,9 +19,9 @@ class MultiFieldServerFilter implements Filter
      * search across multiple columns. This allows us to provide a very generic search ability for
      * the frontend.
      *
-     * @param string $value
+     * @param  string  $value
      */
-    public function __invoke(Builder $query, $value, string $property)
+    public function __invoke(Builder $query, $value, string $property): void
     {
         if ($query->getQuery()->from !== 'servers') {
             throw new \BadMethodCallException('Cannot use the MultiFieldServerFilter against a non-server model.');

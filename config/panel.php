@@ -74,7 +74,7 @@ return [
     | Client Features
     |--------------------------------------------------------------------------
     |
-    | Allow clients to create their own databases.
+    | Allow clients to turn features on or off
     */
 
     'client_features' => [
@@ -165,4 +165,11 @@ return [
     ],
 
     'use_binary_prefix' => env('PANEL_USE_BINARY_PREFIX', true),
+
+    'editable_server_descriptions' => env('PANEL_EDITABLE_SERVER_DESCRIPTIONS', true),
+
+    'api' => [
+        'key_limit' => env('API_KEYS_LIMIT', 25),
+        'key_expire_time' => env('API_KEYS_EXPIRE_TIME', 720),
+    ],
 ];

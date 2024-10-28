@@ -3,6 +3,7 @@
 namespace App\Services\Subusers;
 
 use App\Models\User;
+use App\Notifications\AddedToServer;
 use Illuminate\Support\Str;
 use App\Models\Server;
 use App\Models\Subuser;
@@ -59,11 +60,19 @@ class SubuserCreationService
                 throw new ServerSubuserExistsException(trans('exceptions.subusers.subuser_exists'));
             }
 
-            return Subuser::query()->create([
+            $subuser = Subuser::query()->create([
                 'user_id' => $user->id,
                 'server_id' => $server->id,
                 'permissions' => array_unique($permissions),
             ]);
+
+            $subuser->user->notify(new AddedToServer([
+                'user' => $subuser->user->name_first,
+                'name' => $subuser->server->name,
+                'uuid_short' => $subuser->server->uuid_short,
+            ]));
+
+            return $subuser;
         });
     }
 }

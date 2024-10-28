@@ -14,7 +14,7 @@ class PowerControllerTest extends ClientApiIntegrationTestCase
      * an error in response. This checks against the specific permission needed to send
      * the command to the server.
      *
-     * @param string[] $permissions
+     * @param  string[]  $permissions
      *
      * @dataProvider invalidPermissionDataProvider
      */

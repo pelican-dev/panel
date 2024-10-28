@@ -13,18 +13,12 @@ class DatabaseResource extends Resource
     protected static ?string $navigationIcon = 'tabler-database';
 
     protected static bool $shouldRegisterNavigation = false;
+
     protected static ?string $navigationGroup = 'Advanced';
 
     public static function getNavigationBadge(): ?string
     {
         return static::getModel()::count() ?: null;
-    }
-
-    public static function getRelations(): array
-    {
-        return [
-            //
-        ];
     }
 
     public static function getPages(): array

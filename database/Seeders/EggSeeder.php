@@ -34,10 +34,9 @@ class EggSeeder extends Seeder
     /**
      * Run the egg seeder.
      */
-    public function run()
+    public function run(): void
     {
         foreach (static::$imports as $import) {
-            /* @noinspection PhpParamsInspection */
             $this->parseEggFiles($import);
         }
     }
@@ -45,7 +44,7 @@ class EggSeeder extends Seeder
     /**
      * Loop through the list of egg files and import them.
      */
-    protected function parseEggFiles($name)
+    protected function parseEggFiles($name): void
     {
         $files = new \DirectoryIterator(database_path('Seeders/eggs/' . kebab_case($name)));
 

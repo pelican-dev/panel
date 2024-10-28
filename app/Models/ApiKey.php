@@ -63,21 +63,21 @@ class ApiKey extends Model
      * API representation using fractal.
      */
     public const RESOURCE_NAME = 'api_key';
+
     /**
      * Different API keys that can exist on the system.
      */
     public const TYPE_NONE = 0;
+
     public const TYPE_ACCOUNT = 1;
-    /* @deprecated */
+
     public const TYPE_APPLICATION = 2;
-    /* @deprecated */
-    public const TYPE_DAEMON_USER = 3;
-    /* @deprecated */
-    public const TYPE_DAEMON_APPLICATION = 4;
+
     /**
      * The length of API key identifiers.
      */
     public const IDENTIFIER_LENGTH = 16;
+
     /**
      * The length of the actual API key that is encrypted and stored
      * in the database.
@@ -131,7 +131,7 @@ class ApiKey extends Model
      */
     public static array $validationRules = [
         'user_id' => 'required|exists:users,id',
-        'key_type' => 'present|integer|min:0|max:4',
+        'key_type' => 'present|integer|min:0|max:2',
         'identifier' => 'required|string|size:16|unique:api_keys,identifier',
         'token' => 'required|string',
         'memo' => 'required|nullable|string|max:500',

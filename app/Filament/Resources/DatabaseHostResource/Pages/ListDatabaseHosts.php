@@ -3,9 +3,11 @@
 namespace App\Filament\Resources\DatabaseHostResource\Pages;
 
 use App\Filament\Resources\DatabaseHostResource;
+use App\Models\DatabaseHost;
 use Filament\Actions;
 use Filament\Resources\Pages\ListRecords;
 use Filament\Tables\Actions\BulkActionGroup;
+use Filament\Tables\Actions\CreateAction;
 use Filament\Tables\Actions\DeleteBulkAction;
 use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Columns\TextColumn;
@@ -30,13 +32,16 @@ class ListDatabaseHosts extends ListRecords
                     ->sortable(),
                 TextColumn::make('username')
                     ->searchable(),
-                TextColumn::make('max_databases')
-                    ->numeric()
-                    ->sortable(),
+                TextColumn::make('databases_count')
+                    ->counts('databases')
+                    ->icon('tabler-database')
+                    ->label('Databases'),
                 TextColumn::make('node.name')
-                    ->numeric()
+                    ->icon('tabler-server-2')
+                    ->placeholder('No Nodes')
                     ->sortable(),
             ])
+            ->checkIfRecordIsSelectableUsing(fn (DatabaseHost $databaseHost) => !$databaseHost->databases_count)
             ->actions([
                 EditAction::make(),
             ])
@@ -45,13 +50,23 @@ class ListDatabaseHosts extends ListRecords
                     DeleteBulkAction::make()
                         ->authorize(fn () => auth()->user()->can('delete databasehost')),
                 ]),
+            ])
+            ->emptyStateIcon('tabler-database')
+            ->emptyStateDescription('')
+            ->emptyStateHeading('No Database Hosts')
+            ->emptyStateActions([
+                CreateAction::make('create')
+                    ->label('Create Database Host')
+                    ->button(),
             ]);
     }
 
     protected function getHeaderActions(): array
     {
         return [
-            Actions\CreateAction::make('create')->label('New Database Host'),
+            Actions\CreateAction::make('create')
+                ->label('Create Database Host')
+                ->hidden(fn () => DatabaseHost::count() <= 0),
         ];
     }
 }

@@ -9,7 +9,7 @@ trait PlainJavascriptInjection
     /**
      * Injects statistics into javascript.
      */
-    public function injectJavascript($data)
+    public function injectJavascript($data): void
     {
         \JavaScript::put($data);
     }

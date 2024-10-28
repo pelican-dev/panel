@@ -7,11 +7,11 @@ class AssignUserRolesRequest extends StoreUserRequest
     /**
      * Return the validation rules for this request.
      */
-    public function rules(array $rules = null): array
+    public function rules(?array $rules = null): array
     {
         return [
             'roles' => 'array',
-            'roles.*' => 'string',
+            'roles.*' => 'int',
         ];
     }
 }
