@@ -6,9 +6,7 @@ use App\Filament\Resources\NodeResource;
 use App\Models\Node;
 use Filament\Actions;
 use Filament\Resources\Pages\ListRecords;
-use Filament\Tables\Actions\BulkActionGroup;
 use Filament\Tables\Actions\CreateAction;
-use Filament\Tables\Actions\DeleteBulkAction;
 use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
@@ -82,12 +80,6 @@ class ListNodes extends ListRecords
             ])
             ->actions([
                 EditAction::make(),
-            ])
-            ->bulkActions([
-                BulkActionGroup::make([
-                    DeleteBulkAction::make()
-                        ->authorize(fn () => auth()->user()->can('delete node')),
-                ]),
             ])
             ->emptyStateIcon('tabler-server-2')
             ->emptyStateDescription('')

@@ -58,7 +58,7 @@ class Egg extends Model
     /**
      * Defines the current egg export version.
      */
-    public const EXPORT_VERSION = 'PTDL_v2';
+    public const EXPORT_VERSION = 'PLCN_v1';
 
     /**
      * Different features that can be enabled on any given egg. These are used internally
