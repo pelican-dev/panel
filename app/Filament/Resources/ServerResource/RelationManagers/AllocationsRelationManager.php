@@ -149,7 +149,7 @@ class AllocationsRelationManager extends RelationManager
                     ->multiple()
                     ->associateAnother(false)
                     ->preloadRecordSelect()
-                    ->recordSelectOptionsQuery(fn ($query) => $query->whereBelongsTo($this->getOwnerRecord()->node))
+                    ->recordSelectOptionsQuery(fn ($query) => $query->whereBelongsTo($this->getOwnerRecord()->node)->whereNull('server_id'))
                     ->label('Add Allocation'),
             ])
             ->bulkActions([

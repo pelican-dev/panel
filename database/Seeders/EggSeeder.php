@@ -37,7 +37,6 @@ class EggSeeder extends Seeder
     public function run(): void
     {
         foreach (static::$imports as $import) {
-            /* @noinspection PhpParamsInspection */
             $this->parseEggFiles($import);
         }
     }
