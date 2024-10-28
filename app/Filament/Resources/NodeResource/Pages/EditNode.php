@@ -106,7 +106,7 @@ class EditNode extends EditRecord
 
                                     return '';
                                 })
-                                ->afterStateUpdated(function (Set $set, ?string $state) {
+                                ->afterStateUpdated(function (Set $set, Get $get, ?string $state) {
                                     $set('dns', null);
                                     $set('ip', null);
 
@@ -121,7 +121,8 @@ class EditNode extends EditRecord
                                         return;
                                     }
 
-                                    $validRecords = gethostbynamel(array_get(parse_url("http://$state"), 'host', $state));
+                                    $scheme = $get('scheme') ?? "http";
+                                    $validRecords = gethostbynamel(array_get(parse_url("$scheme://$state"), 'host', $state));
 
                                     if ($validRecords) {
                                         $set('dns', true);

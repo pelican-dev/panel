@@ -74,7 +74,7 @@ class CreateNode extends CreateRecord
 
                                     return '';
                                 })
-                                ->afterStateUpdated(function (Set $set, ?string $state) {
+                                ->afterStateUpdated(function (Set $set, Get $get, ?string $state) {
                                     $set('dns', null);
                                     $set('ip', null);
 
@@ -89,7 +89,8 @@ class CreateNode extends CreateRecord
                                         return;
                                     }
 
-                                    $validRecords = gethostbynamel(array_get(parse_url("http://$state"), 'host', $state));
+                                    $scheme = $get('scheme') ?? "http";
+                                    $validRecords = gethostbynamel(array_get(parse_url("$scheme://$state"), 'host', $state));
 
                                     if ($validRecords) {
                                         $set('dns', true);
