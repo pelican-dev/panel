@@ -35,10 +35,16 @@ class EditWebhookConfiguration extends EditRecord
             ]);
     }
 
+    protected function getFormActions(): array
+    {
+        return [];
+    }
+
     protected function getHeaderActions(): array
     {
         return [
             Actions\DeleteAction::make(),
+            $this->getSaveFormAction()->formId('form'),
         ];
     }
 }
