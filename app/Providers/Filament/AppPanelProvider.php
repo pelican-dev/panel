@@ -51,7 +51,7 @@ class AppPanelProvider extends PanelProvider
                     ->url('/admin')
                     ->icon('tabler-arrow-forward')
                     ->sort(5)
-                    ->visible(fn (): bool => auth()->user()->isRootAdmin()),
+                    ->visible(fn (): bool => auth()->user()->canAccessPanel($panel)),
             ])
             ->favicon(config('app.favicon', '/pelican.ico'))
             ->brandName(config('app.name', 'Pelican'))
