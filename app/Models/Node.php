@@ -307,7 +307,9 @@ class Node extends Model
 
                 if ($message->startsWith('cURL error 6: Could not resolve host')) {
                     $message = str('Could not resolve host');
-                } elseif ($message->startsWith('cURL error 28: Failed to connect to ')) {
+                }
+                
+                if ($message->startsWith('cURL error 28: Failed to connect to ')) {
                     $message = $message->after('cURL error 28: ')->before(' after ');
                 }
 
