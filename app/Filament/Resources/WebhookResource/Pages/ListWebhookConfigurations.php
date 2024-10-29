@@ -27,9 +27,9 @@ class ListWebhookConfigurations extends ListRecords
             ])
             ->actions([
                 DeleteAction::make()
-                    ->label('Delete Webhook'),
+                    ->label('Delete'),
                 EditAction::make()
-                    ->label('Edit Webhook'),
+                    ->label('Edit'),
             ])
             ->emptyStateIcon('tabler-webhook')
             ->emptyStateDescription('')
