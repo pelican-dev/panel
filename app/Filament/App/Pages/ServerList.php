@@ -2,26 +2,17 @@
 
 namespace App\Filament\App\Pages;
 
+use App\Filament\App\Widgets\ServerListEntryWidget;
 use Filament\Pages\Page;
-use Illuminate\Contracts\Support\Htmlable;
+use Filament\Widgets\WidgetConfiguration;
 
-class Dashboard extends Page
+class ServerList extends Page
 {
     protected static string $routePath = '/';
 
-    protected static ?int $navigationSort = 0;
+    protected static bool $shouldRegisterNavigation = false;
 
     protected static string $view = 'filament-panels::pages.dashboard';
-
-    public static function getNavigationLabel(): string
-    {
-        return 'Dashboard';
-    }
-
-    public static function getNavigationIcon(): string|Htmlable|null
-    {
-        return 'tabler-home';
-    }
 
     public static function getRoutePath(): string
     {
@@ -30,7 +21,12 @@ class Dashboard extends Page
 
     public function getWidgets(): array
     {
-        return [];
+        $servers = [];
+        foreach (auth()->user()->accessibleServers()->get() as $server) {
+            $servers[] = new WidgetConfiguration(ServerListEntryWidget::class, ['server' => $server]);
+        }
+
+        return $servers;
     }
 
     public function getVisibleWidgets(): array
@@ -41,10 +37,5 @@ class Dashboard extends Page
     public function getColumns(): int|string|array
     {
         return 2;
-    }
-
-    public function getTitle(): string|Htmlable
-    {
-        return 'Welcome, '. auth()->user()->username;
     }
 }

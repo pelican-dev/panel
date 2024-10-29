@@ -2,7 +2,7 @@
 
 namespace App\Providers\Filament;
 
-use App\Filament\App\Pages;
+use App\Filament\App\Pages\ServerList;
 use App\Filament\Resources\UserResource\Pages\EditProfile;
 use App\Models\Server;
 use Filament\Http\Middleware\Authenticate;
@@ -42,7 +42,7 @@ class AppPanelProvider extends PanelProvider
             ->discoverResources(in: app_path('Filament/App/Resources'), for: 'App\\Filament\\App\\Resources')
             ->discoverPages(in: app_path('Filament/App/Pages'), for: 'App\\Filament\\App\\Pages')
             ->pages([
-                Pages\Dashboard::class,
+                ServerList::class,
             ])
             ->userMenuItems([
                 MenuItem::make()
