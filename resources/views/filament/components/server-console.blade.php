@@ -97,7 +97,7 @@
             }
 
             if (eventData.event === 'stats') {
-                $wire.dispatchSelf('storeStats', { data: eventData.args });
+                $wire.dispatchSelf('storeStats', { data: eventData.args[0] });
             }
 
             if (eventData.event === 'auth success') {
