@@ -72,7 +72,7 @@ class DatabaseStep
             });
     }
 
-    private static function testConnection(string $driver, string $host, string $port, string $database, string $username, string $password): bool
+    private static function testConnection(string $driver, ?string $host, null|string|int $port, ?string $database, ?string $username, ?string $password): bool
     {
         if ($driver === 'sqlite') {
             return true;

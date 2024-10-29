@@ -19,6 +19,9 @@ abstract class TestCase extends BaseTestCase
         Carbon::setTestNow(Carbon::now());
         CarbonImmutable::setTestNow(Carbon::now());
 
+        // TODO: if unit tests suite, then force set DB_HOST=UNIT_NO_DB
+        // env('DB_DATABASE', 'UNIT_NO_DB');
+
         // Why, you ask? If we don't force this to false it is possible for certain exceptions
         // to show their error message properly in the integration test output, but not actually
         // be setup correctly to display their message in production.

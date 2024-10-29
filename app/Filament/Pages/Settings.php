@@ -540,7 +540,21 @@ class Settings extends Page implements HasForms
                         ->afterStateUpdated(fn ($state, Set $set) => $set('PANEL_EDITABLE_SERVER_DESCRIPTIONS', (bool) $state))
                         ->default(env('PANEL_EDITABLE_SERVER_DESCRIPTIONS', config('panel.editable_server_descriptions'))),
                 ]),
-
+            Section::make('Webhook')
+                ->description('Configure how often old webhook logs should be pruned.')
+                ->columns()
+                ->collapsible()
+                ->collapsed()
+                ->schema([
+                    TextInput::make('APP_WEBHOOK_PRUNE_DAYS')
+                        ->label('Prune age')
+                        ->required()
+                        ->numeric()
+                        ->minValue(1)
+                        ->maxValue(365)
+                        ->suffix('Days')
+                        ->default(env('APP_WEBHOOK_PRUNE_DAYS', config('panel.webhook.prune_days'))),
+                ]),
         ];
     }
 

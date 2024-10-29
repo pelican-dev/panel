@@ -25,6 +25,7 @@ use Filament\Pages\SimplePage;
 use Filament\Support\Enums\MaxWidth;
 use Filament\Support\Exceptions\Halt;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Routing\Redirector;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\HtmlString;
@@ -94,7 +95,7 @@ class PanelInstaller extends SimplePage implements HasForms
         return 'data';
     }
 
-    public function submit(): RedirectResponse
+    public function submit(): Redirector|RedirectResponse
     {
         // Disable installer
         $this->writeToEnvironment(['APP_INSTALLED' => 'true']);

@@ -5,6 +5,7 @@ namespace App\Filament\Resources\ServerResource\Pages;
 use App\Enums\ContainerStatus;
 use App\Enums\ServerState;
 use App\Filament\Resources\ServerResource;
+use App\Filament\Resources\ServerResource\RelationManagers\AllocationsRelationManager;
 use App\Http\Controllers\Admin\ServersController;
 use App\Models\Database;
 use App\Models\Egg;
@@ -24,10 +25,13 @@ use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\CheckboxList;
 use Filament\Forms\Components\Fieldset;
 use Filament\Forms\Components\Grid;
+use Filament\Forms\Components\Hidden;
+use Filament\Forms\Components\KeyValue;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Tabs;
 use Filament\Forms\Components\Tabs\Tab;
+use Filament\Forms\Components\TagsInput;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\ToggleButtons;
@@ -263,14 +267,23 @@ class EditServer extends EditRecord
                                                     ->numeric()
                                                     ->minValue(0),
                                             ]),
+                                    ]),
 
+                                Fieldset::make('Advanced Limits')
+                                    ->columns([
+                                        'default' => 1,
+                                        'sm' => 2,
+                                        'md' => 3,
+                                        'lg' => 3,
+                                    ])
+                                    ->schema([
                                         Grid::make()
                                             ->columns(4)
                                             ->columnSpanFull()
                                             ->schema([
                                                 ToggleButtons::make('swap_support')
                                                     ->live()
-                                                    ->label('Enable Swap Memory')->inlineLabel()->inline()
+                                                    ->label('Swap Memory')->inlineLabel()->inline()
                                                     ->columnSpan(2)
                                                     ->afterStateUpdated(function ($state, Set $set) {
                                                         $value = match ($state) {
@@ -315,9 +328,40 @@ class EditServer extends EditRecord
                                                     ->integer(),
                                             ]),
 
-                                        Forms\Components\Hidden::make('io')
+                                        Hidden::make('io')
                                             ->helperText('The IO performance relative to other running containers')
                                             ->label('Block IO Proportion'),
+
+                                        Grid::make()
+                                            ->columns(4)
+                                            ->columnSpanFull()
+                                            ->schema([
+                                                ToggleButtons::make('cpu_pinning')
+                                                    ->label('CPU Pinning')->inlineLabel()->inline()
+                                                    ->default(false)
+                                                    ->afterStateUpdated(fn (Set $set) => $set('threads', []))
+                                                    ->formatStateUsing(fn (Get $get) => !empty($get('threads')))
+                                                    ->live()
+                                                    ->options([
+                                                        false => 'Disabled',
+                                                        true => 'Enabled',
+                                                    ])
+                                                    ->colors([
+                                                        false => 'success',
+                                                        true => 'warning',
+                                                    ])
+                                                    ->columnSpan(2),
+
+                                                TagsInput::make('threads')
+                                                    ->dehydratedWhenHidden()
+                                                    ->hidden(fn (Get $get) => !$get('cpu_pinning'))
+                                                    ->label('Pinned Threads')->inlineLabel()
+                                                    ->required(fn (Get $get) => $get('cpu_pinning'))
+                                                    ->columnSpan(2)
+                                                    ->separator()
+                                                    ->splitKeys([','])
+                                                    ->placeholder('Add pinned thread, e.g. 0 or 2-4'),
+                                            ]),
 
                                         Grid::make()
                                             ->columns(4)
@@ -375,6 +419,7 @@ class EditServer extends EditRecord
                                     ->schema([
                                         Select::make('select_image')
                                             ->label('Image Name')
+                                            ->live()
                                             ->afterStateUpdated(fn (Set $set, $state) => $set('image', $state))
                                             ->options(function ($state, Get $get, Set $set) {
                                                 $egg = Egg::query()->find($get('egg_id'));
@@ -394,7 +439,7 @@ class EditServer extends EditRecord
 
                                         TextInput::make('image')
                                             ->label('Image')
-                                            ->debounce(500)
+                                            ->required()
                                             ->afterStateUpdated(function ($state, Get $get, Set $set) {
                                                 $egg = Egg::query()->find($get('egg_id'));
                                                 $images = $egg->docker_images ?? [];
@@ -408,7 +453,7 @@ class EditServer extends EditRecord
                                             ->placeholder('Enter a custom Image')
                                             ->columnSpan(2),
 
-                                        Forms\Components\KeyValue::make('docker_labels')
+                                        KeyValue::make('docker_labels')
                                             ->label('Container Labels')
                                             ->keyLabel('Label Name')
                                             ->valueLabel('Label Description')
@@ -780,7 +825,7 @@ class EditServer extends EditRecord
     public function getRelationManagers(): array
     {
         return [
-            ServerResource\RelationManagers\AllocationsRelationManager::class,
+            AllocationsRelationManager::class,
         ];
     }
 
