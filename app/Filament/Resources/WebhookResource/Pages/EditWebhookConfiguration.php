@@ -19,11 +19,14 @@ class EditWebhookConfiguration extends EditRecord
         return $form
             ->schema([
                 TextInput::make('endpoint')
+                    ->label('Endpoint')
                     ->activeUrl()
                     ->required(),
                 TextInput::make('description')
+                    ->label('Description')
                     ->required(),
                 CheckboxList::make('events')
+                    ->label('Events')
                     ->lazy()
                     ->options(fn () => WebhookConfiguration::filamentCheckboxList())
                     ->searchable()
@@ -43,7 +46,11 @@ class EditWebhookConfiguration extends EditRecord
     protected function getHeaderActions(): array
     {
         return [
-            Actions\DeleteAction::make(),
+            Actions\DeleteAction::make()
+                ->label('Delete')
+                ->modalHeading('Are you sure you want to delete this?')
+                ->modalDescription('')
+                ->modalSubmitActionLabel('Delete'),
             $this->getSaveFormAction()->formId('form'),
         ];
     }
