@@ -5,6 +5,7 @@ namespace App\Providers\Filament;
 use App\Filament\App\Pages\ServerList;
 use App\Filament\Resources\UserResource\Pages\EditProfile;
 use App\Models\Server;
+use Filament\Facades\Filament;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
@@ -50,7 +51,7 @@ class AppPanelProvider extends PanelProvider
                     ->url('/admin')
                     ->icon('tabler-arrow-forward')
                     ->sort(5)
-                    ->visible(fn (): bool => auth()->user()->canAccessPanel($panel)),
+                    ->visible(fn (): bool => auth()->user()->canAccessPanel(Filament::getPanel('admin'))),
             ])
             ->favicon(config('app.favicon', '/pelican.ico'))
             ->brandName(config('app.name', 'Pelican'))
