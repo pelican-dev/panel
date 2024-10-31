@@ -627,14 +627,24 @@ class CreateServer extends CreateRecord
                                                 ->minValue(0)
                                                 ->helperText('100% equals one CPU core.'),
                                         ]),
+                                ]),
 
+                            Fieldset::make('Advanced Limits')
+                                ->columnSpan(6)
+                                ->columns([
+                                    'default' => 1,
+                                    'sm' => 2,
+                                    'md' => 3,
+                                    'lg' => 3,
+                                ])
+                                ->schema([
                                     Grid::make()
                                         ->columns(4)
                                         ->columnSpanFull()
                                         ->schema([
                                             ToggleButtons::make('swap_support')
                                                 ->live()
-                                                ->label('Enable Swap Memory')
+                                                ->label('Swap Memory')
                                                 ->inlineLabel()
                                                 ->inline()
                                                 ->columnSpan(2)
@@ -680,6 +690,36 @@ class CreateServer extends CreateRecord
                                         ->helperText('The IO performance relative to other running containers')
                                         ->label('Block IO Proportion')
                                         ->default(500),
+
+                                    Grid::make()
+                                        ->columns(4)
+                                        ->columnSpanFull()
+                                        ->schema([
+                                            ToggleButtons::make('cpu_pinning')
+                                                ->label('CPU Pinning')->inlineLabel()->inline()
+                                                ->default(false)
+                                                ->afterStateUpdated(fn (Set $set) => $set('threads', []))
+                                                ->live()
+                                                ->options([
+                                                    false => 'Disabled',
+                                                    true => 'Enabled',
+                                                ])
+                                                ->colors([
+                                                    false => 'success',
+                                                    true => 'warning',
+                                                ])
+                                                ->columnSpan(2),
+
+                                            TagsInput::make('threads')
+                                                ->dehydratedWhenHidden()
+                                                ->hidden(fn (Get $get) => !$get('cpu_pinning'))
+                                                ->label('Pinned Threads')->inlineLabel()
+                                                ->required(fn (Get $get) => $get('cpu_pinning'))
+                                                ->columnSpan(2)
+                                                ->separator()
+                                                ->splitKeys([','])
+                                                ->placeholder('Add pinned thread, e.g. 0 or 2-4'),
+                                        ]),
 
                                     Grid::make()
                                         ->columns(4)
@@ -747,6 +787,7 @@ class CreateServer extends CreateRecord
                                 ->schema([
                                     Select::make('select_image')
                                         ->label('Image Name')
+                                        ->live()
                                         ->afterStateUpdated(fn (Set $set, $state) => $set('image', $state))
                                         ->options(function ($state, Get $get, Set $set) {
                                             $egg = Egg::query()->find($get('egg_id'));
@@ -771,7 +812,7 @@ class CreateServer extends CreateRecord
 
                                     TextInput::make('image')
                                         ->label('Image')
-                                        ->debounce(500)
+                                        ->required()
                                         ->afterStateUpdated(function ($state, Get $get, Set $set) {
                                             $egg = Egg::query()->find($get('egg_id'));
                                             $images = $egg->docker_images ?? [];

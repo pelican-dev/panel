@@ -57,13 +57,13 @@ class AllocationsRelationManager extends RelationManager
                         true => 'warning',
                         default => 'gray',
                     })
-                    ->action(fn (Allocation $allocation) => $this->getOwnerRecord()->update(['allocation_id' => $allocation->id]))
+                    ->action(fn (Allocation $allocation) => $this->getOwnerRecord()->update(['allocation_id' => $allocation->id]) && $this->deselectAllTableRecords())
                     ->default(fn (Allocation $allocation) => $allocation->id === $this->getOwnerRecord()->allocation_id)
                     ->label('Primary'),
             ])
             ->actions([
                 Action::make('make-primary')
-                    ->action(fn (Allocation $allocation) => $this->getOwnerRecord()->update(['allocation_id' => $allocation->id]))
+                    ->action(fn (Allocation $allocation) => $this->getOwnerRecord()->update(['allocation_id' => $allocation->id]) && $this->deselectAllTableRecords())
                     ->label(fn (Allocation $allocation) => $allocation->id === $this->getOwnerRecord()->allocation_id ? '' : 'Make Primary'),
             ])
             ->headerActions([
@@ -149,7 +149,7 @@ class AllocationsRelationManager extends RelationManager
                     ->multiple()
                     ->associateAnother(false)
                     ->preloadRecordSelect()
-                    ->recordSelectOptionsQuery(fn ($query) => $query->whereBelongsTo($this->getOwnerRecord()->node))
+                    ->recordSelectOptionsQuery(fn ($query) => $query->whereBelongsTo($this->getOwnerRecord()->node)->whereNull('server_id'))
                     ->label('Add Allocation'),
             ])
             ->bulkActions([

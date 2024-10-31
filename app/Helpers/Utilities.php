@@ -40,7 +40,7 @@ class Utilities
     {
         return Carbon::instance((new CronExpression(
             sprintf('%s %s %s %s %s', $minute, $hour, $dayOfMonth, $month, $dayOfWeek)
-        ))->getNextRunDate());
+        ))->getNextRunDate(now('UTC')));
     }
 
     public static function checked(string $name, mixed $default): string

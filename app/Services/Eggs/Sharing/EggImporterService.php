@@ -48,6 +48,11 @@ class EggImporterService
                 'copy_script_from' => null,
             ]);
 
+            // Don't check for this anymore
+            for ($i = 0; $i < count($parsed['variables']); $i++) {
+                unset($parsed['variables'][$i]['field_type']);
+            }
+
             $egg = $this->fillFromParsed($egg, $parsed);
             $egg->save();
 
@@ -105,6 +110,7 @@ class EggImporterService
         $parsed = match ($version) {
             'PTDL_v1' => $this->convertToV2($parsed),
             'PTDL_v2' => $parsed,
+            'PLCN_V1' => $parsed,
             default => throw new InvalidFileUploadException('The JSON file provided is not in a format that can be recognized.')
         };
 
@@ -157,16 +163,12 @@ class EggImporterService
             $images = $parsed['images'];
         }
 
-        unset($parsed['images'], $parsed['image']);
+        unset($parsed['images'], $parsed['image'], $parsed['field_type']);
 
         $parsed['docker_images'] = [];
         foreach ($images as $image) {
             $parsed['docker_images'][$image] = $image;
         }
-
-        $parsed['variables'] = array_map(function ($value) {
-            return array_merge($value, ['field_type' => 'text']);
-        }, $parsed['variables']);
 
         return $parsed;
     }
