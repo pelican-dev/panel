@@ -4,6 +4,7 @@ namespace App\Filament\Pages;
 
 use App\Models\Backup;
 use App\Notifications\MailTested;
+use App\Services\Helpers\TrustedProxyService;
 use App\Traits\EnvironmentWriterTrait;
 use Exception;
 use Filament\Actions\Action;
@@ -159,7 +160,7 @@ class Settings extends Page implements HasForms
                         ->label('Set to Cloudflare IPs')
                         ->icon('tabler-brand-cloudflare')
                         ->authorize(fn () => auth()->user()->can('update settings'))
-                        ->action(fn (Set $set) => $set('TRUSTED_PROXIES', config('trustedproxy.cloudflare'))),
+                        ->action(fn (Set $set, TrustedProxyService $service) => $set('TRUSTED_PROXIES', $service->handle())),
                 ]),
         ];
     }
