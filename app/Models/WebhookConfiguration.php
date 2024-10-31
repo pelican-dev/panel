@@ -40,12 +40,21 @@ class WebhookConfiguration extends Model
                 ...$webhookConfiguration->getOriginal('events', '[]'),
             ])->unique();
 
-            $changedEvents->each(function (string $event) {
-                cache()->forever("webhooks.$event", WebhookConfiguration::query()->whereJsonContains('events', $event)->get());
-            });
-
-            cache()->forever('watchedWebhooks', WebhookConfiguration::pluck('events')->flatten()->unique()->values()->all());
+            self::updateCache($changedEvents);
         });
+
+        self::deleted(static function (self $webhookConfiguration): void {
+            self::updateCache(collect($webhookConfiguration->events));
+        });
+    }
+
+    private static function updateCache($eventList): void
+    {
+        $eventList->each(function (string $event) {
+            cache()->forever("webhooks.$event", WebhookConfiguration::query()->whereJsonContains('events', $event)->get());
+        });
+
+        cache()->forever('watchedWebhooks', WebhookConfiguration::pluck('events')->flatten()->unique()->values()->all());
     }
 
     public function webhooks(): HasMany
