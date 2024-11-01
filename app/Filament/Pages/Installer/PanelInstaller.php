@@ -71,7 +71,7 @@ class PanelInstaller extends SimplePage implements HasForms
                 EnvironmentStep::make($this),
                 DatabaseStep::make($this),
                 RedisStep::make($this)
-                    ->hidden(fn (Get $get) => $get('env_general.SESSION_DRIVER') != 'redis' && $get('env_general.QUEUE_CONNECTION') != 'redis' && $get('env_general.CACHE_STORE') != 'redis'),
+                    ->hidden(fn (Get $get) => $get('env_special.SESSION_DRIVER') != 'redis' && $get('env_general.QUEUE_CONNECTION') != 'redis' && $get('env_general.CACHE_STORE') != 'redis'),
                 AdminUserStep::make($this),
                 CompletedStep::make(),
             ])
