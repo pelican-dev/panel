@@ -10,7 +10,8 @@ use Filament\Forms\Components\Wizard\Step;
 use Filament\Forms\Get;
 use Filament\Notifications\Notification;
 use Filament\Support\Exceptions\Halt;
-use Illuminate\Support\Facades\Redis;
+use Illuminate\Foundation\Application;
+use Illuminate\Redis\RedisManager;
 
 class RedisStep
 {
@@ -47,8 +48,8 @@ class RedisStep
                     ->revealable()
                     ->default(config('database.redis.default.password')),
             ])
-            ->afterValidation(function (Get $get) use ($installer) {
-                if (!self::testConnection($get('env_redis.REDIS_HOST'), $get('env_redis.REDIS_PORT'), $get('env_redis.REDIS_USERNAME'), $get('env_redis.REDIS_PASSWORD'))) {
+            ->afterValidation(function (Get $get, Application $app) use ($installer) {
+                if (!self::testConnection($app, $get('env_redis.REDIS_HOST'), $get('env_redis.REDIS_PORT'), $get('env_redis.REDIS_USERNAME'), $get('env_redis.REDIS_PASSWORD'))) {
                     throw new Halt('Redis connection failed');
                 }
 
@@ -56,17 +57,19 @@ class RedisStep
             });
     }
 
-    private static function testConnection(string $host, null|string|int $port, ?string $username, ?string $password): bool
+    private static function testConnection(Application $app, string $host, null|string|int $port, ?string $username, ?string $password): bool
     {
         try {
-            config()->set('database.redis._panel_install_test', [
-                'host' => $host,
-                'port' => $port,
-                'username' => $username,
-                'password' => $password,
+            $redis = new RedisManager($app, 'predis', [
+                'default' => [
+                    'host' => $host,
+                    'port' => $port,
+                    'username' => $username,
+                    'password' => $password,
+                ],
             ]);
 
-            Redis::connection('_panel_install_test')->command('ping');
+            $redis->connection()->command('ping');
         } catch (Exception $exception) {
             Notification::make()
                 ->title('Redis connection failed')
