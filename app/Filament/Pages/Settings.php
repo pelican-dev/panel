@@ -25,6 +25,8 @@ use Filament\Notifications\Notification;
 use Filament\Pages\Concerns\HasUnsavedDataChangesAlert;
 use Filament\Pages\Concerns\InteractsWithHeaderActions;
 use Filament\Pages\Page;
+use GuzzleHttp\Client;
+use GuzzleHttp\Exception\GuzzleException;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Notification as MailNotification;
 use Illuminate\Support\HtmlString;
@@ -149,7 +151,7 @@ class Settings extends Page implements HasForms
                 ->separator()
                 ->splitKeys(['Tab', ' '])
                 ->placeholder('New IP or IP Range')
-                ->default(env('TRUSTED_PROXIES', config('trustedproxy.proxies')))
+                ->default(env('TRUSTED_PROXIES', implode(',', config('trustedproxy.proxies'))))
                 ->hintActions([
                     FormAction::make('clear')
                         ->label('Clear')
@@ -162,23 +164,26 @@ class Settings extends Page implements HasForms
                         ->label('Set to Cloudflare IPs')
                         ->icon('tabler-brand-cloudflare')
                         ->authorize(fn () => auth()->user()->can('update settings'))
-                        ->action(fn (Set $set) => $set('TRUSTED_PROXIES', [
-                            '173.245.48.0/20',
-                            '103.21.244.0/22',
-                            '103.22.200.0/22',
-                            '103.31.4.0/22',
-                            '141.101.64.0/18',
-                            '108.162.192.0/18',
-                            '190.93.240.0/20',
-                            '188.114.96.0/20',
-                            '197.234.240.0/22',
-                            '198.41.128.0/17',
-                            '162.158.0.0/15',
-                            '104.16.0.0/13',
-                            '104.24.0.0/14',
-                            '172.64.0.0/13',
-                            '131.0.72.0/22',
-                        ])),
+                        ->action(function (Client $client, Set $set) {
+                            $ips = collect();
+                            try {
+                                $response = $client->request(
+                                    'GET',
+                                    'https://api.cloudflare.com/client/v4/ips',
+                                    config('panel.guzzle')
+                                );
+                                if ($response->getStatusCode() === 200) {
+                                    $result = json_decode($response->getBody(), true)['result'];
+                                    foreach (['ipv4_cidrs', 'ipv6_cidrs'] as $value) {
+                                        $ips->push(...data_get($result, $value));
+                                    }
+                                    $ips->unique();
+                                }
+                            } catch (GuzzleException $e) {
+                            }
+
+                            $set('TRUSTED_PROXIES', $ips->values()->all());
+                        }),
                 ]),
         ];
     }
