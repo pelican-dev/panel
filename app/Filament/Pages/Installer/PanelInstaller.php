@@ -104,6 +104,9 @@ class PanelInstaller extends SimplePage implements HasForms
         $this->user ??= User::all()->filter(fn ($user) => $user->isRootAdmin())->first();
         auth()->guard()->login($this->user, true);
 
+        // Special handling for special env variables (looking at you, SESSION_DRIVER)
+        $this->writeToEnv('env_special');
+
         // Redirect to admin panel
         return redirect(Dashboard::getUrl());
     }

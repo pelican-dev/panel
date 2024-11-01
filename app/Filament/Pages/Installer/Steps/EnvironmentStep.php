@@ -68,7 +68,7 @@ class EnvironmentStep
                     ->inline()
                     ->options(self::CACHE_DRIVERS)
                     ->default(config('cache.default', 'file')),
-                ToggleButtons::make('env_general.SESSION_DRIVER')
+                ToggleButtons::make('env_special.SESSION_DRIVER')
                     ->label('Session Driver')
                     ->hintIcon('tabler-question-mark')
                     ->hintIconTooltip('The driver used for storing sessions. We recommend "Filesystem" or "Database".')
