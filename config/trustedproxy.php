@@ -25,15 +25,4 @@ return [
      */
     'proxies' => in_array(env('TRUSTED_PROXIES', []), ['*', '**']) ?
         env('TRUSTED_PROXIES') : explode(',', env('TRUSTED_PROXIES') ?? ''),
-
-    /*
-    * Automatically pull ips from url
-    */
-    'auto' => [
-        'url' => 'https://api.cloudflare.com/client/v4/ips',
-        'keys' => [
-            'result.ipv4_cidrs',
-            'result.ipv6_cidrs',
-        ],
-    ],
 ];

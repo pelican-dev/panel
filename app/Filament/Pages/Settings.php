@@ -4,7 +4,6 @@ namespace App\Filament\Pages;
 
 use App\Models\Backup;
 use App\Notifications\MailTested;
-use App\Services\Helpers\TrustedProxyService;
 use App\Traits\EnvironmentWriterTrait;
 use Exception;
 use Filament\Actions\Action;
@@ -25,6 +24,8 @@ use Filament\Notifications\Notification;
 use Filament\Pages\Concerns\HasUnsavedDataChangesAlert;
 use Filament\Pages\Concerns\InteractsWithHeaderActions;
 use Filament\Pages\Page;
+use GuzzleHttp\Client;
+use GuzzleHttp\Exception\GuzzleException;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Notification as MailNotification;
 
@@ -160,7 +161,26 @@ class Settings extends Page implements HasForms
                         ->label('Set to Cloudflare IPs')
                         ->icon('tabler-brand-cloudflare')
                         ->authorize(fn () => auth()->user()->can('update settings'))
-                        ->action(fn (Set $set, TrustedProxyService $service) => $set('TRUSTED_PROXIES', $service->handle())),
+                        ->action(function (Client $client, Set $set) {
+                            $ips = collect();
+                            try {
+                                $response = $client->request(
+                                    'GET',
+                                    'https://api.cloudflare.com/client/v4/ips',
+                                    config('panel.guzzle')
+                                );
+                                if ($response->getStatusCode() === 200) {
+                                    $result = json_decode($response->getBody(), true)['result'];
+                                    foreach (['ipv4_cidrs', 'ipv6_cidrs'] as $value) {
+                                        $ips->push(...data_get($result, $value));
+                                    }
+                                    $ips->unique();
+                                }
+                            } catch (GuzzleException $e) {
+                            }
+
+                            $set('TRUSTED_PROXIES', $ips->values()->all());
+                        }),
                 ]),
         ];
     }
