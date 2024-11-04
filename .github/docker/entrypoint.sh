@@ -52,7 +52,7 @@ crond -L /var/log/crond -l 5
 export SUPERVISORD_CADDY=false
 
 ## disable caddy if SKIP_CADDY is set
-if [[ "$SKIP_CADDY" == "true" ]];
+if [[ "$SKIP_CADDY:-" == "true" ]];
   echo "Starting PHP-FPM only"
 else
   echo "Starting PHP-FPM and Caddy"
