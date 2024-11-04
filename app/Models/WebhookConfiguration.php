@@ -12,6 +12,13 @@ class WebhookConfiguration extends Model
 {
     use HasFactory, SoftDeletes;
 
+    /**
+     * Blacklisted events.
+     */
+    protected static array $eventBlacklist = [
+        'eloquent.created: App\Models\Webhook',
+    ];
+
     protected $fillable = [
         'endpoint',
         'description',
@@ -48,7 +55,11 @@ class WebhookConfiguration extends Model
 
     public static function allPossibleEvents(): array
     {
-        return static::discoverCustomEvents() + static::allModelEvents();
+        return collect(static::discoverCustomEvents())
+            ->merge(static::allModelEvents())
+            ->unique()
+            ->filter(fn ($event) => !in_array($event, static::$eventBlacklist))
+            ->all();
     }
 
     public static function filamentCheckboxList(): array
