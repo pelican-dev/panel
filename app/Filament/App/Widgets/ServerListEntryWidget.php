@@ -7,6 +7,7 @@ use App\Models\Server;
 use Carbon\CarbonInterface;
 use Filament\Widgets\Widget;
 use Illuminate\Support\Number;
+use Illuminate\Support\Str;
 
 class ServerListEntryWidget extends Widget
 {
@@ -22,7 +23,9 @@ class ServerListEntryWidget extends Widget
             'cpu' => $this->cpu(),
             'memory' => $this->memory(),
             'disk' => $this->disk(),
-            'color' => 'danger',
+            'status' => Str::title($this->server->condition),
+            'icon' => $this->server->conditionIcon(),
+            'color' => $this->server->conditionColor(),
         ];
     }
 
