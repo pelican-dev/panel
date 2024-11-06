@@ -2,9 +2,9 @@
 
 namespace App\Models;
 
+use App\Services\Acl\Api\AdminAcl;
 use Illuminate\Support\Str;
 use Webmozart\Assert\Assert;
-use App\Services\Acl\Api\AdminAcl;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
@@ -15,20 +15,13 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property int $key_type
  * @property string $identifier
  * @property string $token
+ * @property array $permissions
  * @property array $allowed_ips
  * @property string|null $memo
  * @property \Illuminate\Support\Carbon|null $last_used_at
  * @property \Illuminate\Support\Carbon|null $expires_at
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
- * @property int $r_servers
- * @property int $r_nodes
- * @property int $r_allocations
- * @property int $r_users
- * @property int $r_eggs
- * @property int $r_database_hosts
- * @property int $r_server_databases
- * @property int $r_mounts
  * @property \App\Models\User $tokenable
  * @property \App\Models\User $user
  *
@@ -84,8 +77,6 @@ class ApiKey extends Model
      */
     public const KEY_LENGTH = 32;
 
-    public const RESOURCES = ['servers', 'nodes', 'allocations', 'users', 'eggs', 'database_hosts', 'server_databases', 'mounts'];
-
     /**
      * The table associated with the model.
      */
@@ -99,18 +90,11 @@ class ApiKey extends Model
         'key_type',
         'identifier',
         'token',
+        'permissions',
         'allowed_ips',
         'memo',
         'last_used_at',
         'expires_at',
-        'r_' . AdminAcl::RESOURCE_USERS,
-        'r_' . AdminAcl::RESOURCE_ALLOCATIONS,
-        'r_' . AdminAcl::RESOURCE_DATABASE_HOSTS,
-        'r_' . AdminAcl::RESOURCE_SERVER_DATABASES,
-        'r_' . AdminAcl::RESOURCE_EGGS,
-        'r_' . AdminAcl::RESOURCE_NODES,
-        'r_' . AdminAcl::RESOURCE_SERVERS,
-        'r_' . AdminAcl::RESOURCE_MOUNTS,
     ];
 
     /**
@@ -118,6 +102,7 @@ class ApiKey extends Model
      */
     protected $attributes = [
         'allowed_ips' => '[]',
+        'permissions' => '[]',
     ];
 
     /**
@@ -134,24 +119,19 @@ class ApiKey extends Model
         'key_type' => 'present|integer|min:0|max:2',
         'identifier' => 'required|string|size:16|unique:api_keys,identifier',
         'token' => 'required|string',
+        'permissions' => 'array',
+        'permissions.*' => 'integer|min:0|max:3',
         'memo' => 'required|nullable|string|max:500',
         'allowed_ips' => 'array',
         'allowed_ips.*' => 'string',
         'last_used_at' => 'nullable|date',
         'expires_at' => 'nullable|date',
-        'r_' . AdminAcl::RESOURCE_USERS => 'integer|min:0|max:3',
-        'r_' . AdminAcl::RESOURCE_ALLOCATIONS => 'integer|min:0|max:3',
-        'r_' . AdminAcl::RESOURCE_DATABASE_HOSTS => 'integer|min:0|max:3',
-        'r_' . AdminAcl::RESOURCE_SERVER_DATABASES => 'integer|min:0|max:3',
-        'r_' . AdminAcl::RESOURCE_EGGS => 'integer|min:0|max:3',
-        'r_' . AdminAcl::RESOURCE_NODES => 'integer|min:0|max:3',
-        'r_' . AdminAcl::RESOURCE_SERVERS => 'integer|min:0|max:3',
-        'r_' . AdminAcl::RESOURCE_MOUNTS => 'integer|min:0|max:3',
     ];
 
     protected function casts(): array
     {
         return [
+            'permissions' => 'array',
             'allowed_ips' => 'array',
             'user_id' => 'int',
             'last_used_at' => 'datetime',
@@ -159,14 +139,6 @@ class ApiKey extends Model
             'token' => 'encrypted',
             self::CREATED_AT => 'datetime',
             self::UPDATED_AT => 'datetime',
-            'r_' . AdminAcl::RESOURCE_USERS => 'int',
-            'r_' . AdminAcl::RESOURCE_ALLOCATIONS => 'int',
-            'r_' . AdminAcl::RESOURCE_DATABASE_HOSTS => 'int',
-            'r_' . AdminAcl::RESOURCE_SERVER_DATABASES => 'int',
-            'r_' . AdminAcl::RESOURCE_EGGS => 'int',
-            'r_' . AdminAcl::RESOURCE_NODES => 'int',
-            'r_' . AdminAcl::RESOURCE_SERVERS => 'int',
-            'r_' . AdminAcl::RESOURCE_MOUNTS => 'int',
         ];
     }
 
@@ -186,6 +158,41 @@ class ApiKey extends Model
     public function tokenable(): BelongsTo
     {
         return $this->user();
+    }
+
+    /**
+     * Returns the permission for the given resource.
+     */
+    public function getPermission(string $resource): int
+    {
+        return $this->permissions[$resource] ?? AdminAcl::NONE;
+    }
+
+    public const DEFAULT_RESOURCE_NAMES = [
+        Server::RESOURCE_NAME,
+        Node::RESOURCE_NAME,
+        Allocation::RESOURCE_NAME,
+        User::RESOURCE_NAME,
+        Egg::RESOURCE_NAME,
+        DatabaseHost::RESOURCE_NAME,
+        Database::RESOURCE_NAME,
+        Mount::RESOURCE_NAME,
+        Role::RESOURCE_NAME,
+    ];
+
+    private static array $customResourceNames = [];
+
+    public static function registerCustomResourceName(string $resourceName): void
+    {
+        $customResourceNames[] = $resourceName;
+    }
+
+    /**
+     * Returns a list of all possible permission keys.
+     */
+    public static function getPermissionList(): array
+    {
+        return array_unique(array_merge(self::DEFAULT_RESOURCE_NAMES, self::$customResourceNames));
     }
 
     /**

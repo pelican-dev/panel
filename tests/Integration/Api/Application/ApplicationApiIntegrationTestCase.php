@@ -2,10 +2,17 @@
 
 namespace App\Tests\Integration\Api\Application;
 
+use App\Models\Allocation;
 use Illuminate\Http\Request;
 use App\Models\User;
 use PHPUnit\Framework\Assert;
 use App\Models\ApiKey;
+use App\Models\Database;
+use App\Models\DatabaseHost;
+use App\Models\Egg;
+use App\Models\Mount;
+use App\Models\Node;
+use App\Models\Server;
 use App\Models\Role;
 use App\Services\Acl\Api\AdminAcl;
 use App\Tests\Integration\IntegrationTestCase;
@@ -79,18 +86,21 @@ abstract class ApplicationApiIntegrationTestCase extends IntegrationTestCase
      */
     protected function createApiKey(User $user, array $permissions = []): ApiKey
     {
-        return ApiKey::factory()->create(array_merge([
+        return ApiKey::factory()->create([
             'user_id' => $user->id,
             'key_type' => ApiKey::TYPE_APPLICATION,
-            'r_servers' => AdminAcl::READ | AdminAcl::WRITE,
-            'r_nodes' => AdminAcl::READ | AdminAcl::WRITE,
-            'r_allocations' => AdminAcl::READ | AdminAcl::WRITE,
-            'r_users' => AdminAcl::READ | AdminAcl::WRITE,
-            'r_eggs' => AdminAcl::READ | AdminAcl::WRITE,
-            'r_database_hosts' => AdminAcl::READ | AdminAcl::WRITE,
-            'r_server_databases' => AdminAcl::READ | AdminAcl::WRITE,
-            'r_mounts' => AdminAcl::READ | AdminAcl::WRITE,
-        ], $permissions));
+            'permissions' => array_merge([
+                Server::RESOURCE_NAME => AdminAcl::READ | AdminAcl::WRITE,
+                Node::RESOURCE_NAME => AdminAcl::READ | AdminAcl::WRITE,
+                Allocation::RESOURCE_NAME => AdminAcl::READ | AdminAcl::WRITE,
+                User::RESOURCE_NAME => AdminAcl::READ | AdminAcl::WRITE,
+                Egg::RESOURCE_NAME => AdminAcl::READ | AdminAcl::WRITE,
+                DatabaseHost::RESOURCE_NAME => AdminAcl::READ | AdminAcl::WRITE,
+                Database::RESOURCE_NAME => AdminAcl::READ | AdminAcl::WRITE,
+                Mount::RESOURCE_NAME => AdminAcl::READ | AdminAcl::WRITE,
+                Role::RESOURCE_NAME => AdminAcl::READ | AdminAcl::WRITE,
+            ], $permissions),
+        ]);
     }
 
     /**
