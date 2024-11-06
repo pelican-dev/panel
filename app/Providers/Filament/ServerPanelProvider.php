@@ -13,7 +13,6 @@ use Filament\Navigation\MenuItem;
 use Filament\Panel;
 use Filament\PanelProvider;
 use Filament\Support\Enums\MaxWidth;
-use Filament\Support\Facades\FilamentAsset;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
 use Illuminate\Cookie\Middleware\EncryptCookies;
 use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
@@ -24,18 +23,11 @@ use Illuminate\View\Middleware\ShareErrorsFromSession;
 
 class ServerPanelProvider extends PanelProvider
 {
-    public function boot(): void
-    {
-        FilamentAsset::registerCssVariables([
-            'sidebar-width' => '20rem !important',
-        ]);
-    }
-
     public function panel(Panel $panel): Panel
     {
         return $panel
             ->id('server')
-            ->path('server')
+            ->path('app/server')
             ->spa()
             ->tenant(Server::class)
             ->brandName(config('app.name', 'Pelican'))
