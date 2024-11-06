@@ -1,0 +1,25 @@
+<?php
+
+namespace App\Filament\Server\Resources;
+
+use App\Filament\Server\Resources\BackupResource\Pages;
+use App\Models\Backup;
+use Filament\Resources\Resource;
+
+class BackupResource extends Resource
+{
+    protected static ?string $model = Backup::class;
+
+    protected static ?int $navigationSort = 4;
+
+    protected static bool $canCreateAnother = false;
+
+    protected static ?string $navigationIcon = 'tabler-download';
+
+    public static function getPages(): array
+    {
+        return [
+            'index' => Pages\ListBackups::route('/'),
+        ];
+    }
+}

@@ -2,7 +2,7 @@
 
 namespace App\Filament\App\Widgets;
 
-use App\Filament\App\Pages\Console;
+use App\Filament\Server\Pages\Console;
 use App\Models\Server;
 use Carbon\CarbonInterface;
 use Filament\Widgets\Widget;
@@ -28,7 +28,7 @@ class ServerListEntryWidget extends Widget
 
     public function openServer(): void
     {
-        $this->redirect(Console::getUrl(panel: 'app', tenant: $this->server));
+        $this->redirect(Console::getUrl(panel: 'server', tenant: $this->server));
     }
 
     private function uptime(): string

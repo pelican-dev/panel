@@ -4,6 +4,7 @@ namespace App\Providers\Filament;
 
 use App\Filament\App\Pages\ServerList;
 use App\Filament\Resources\UserResource\Pages\EditProfile;
+use App\Models\Server;
 use Filament\Facades\Filament;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\DisableBladeIconComponents;
@@ -12,6 +13,7 @@ use Filament\Navigation\MenuItem;
 use Filament\Panel;
 use Filament\PanelProvider;
 use Filament\Support\Enums\MaxWidth;
+use Filament\Support\Facades\FilamentAsset;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
 use Illuminate\Cookie\Middleware\EncryptCookies;
 use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
@@ -20,14 +22,22 @@ use Illuminate\Session\Middleware\AuthenticateSession;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
 
-class AppPanelProvider extends PanelProvider
+class ServerPanelProvider extends PanelProvider
 {
+    public function boot(): void
+    {
+        FilamentAsset::registerCssVariables([
+            'sidebar-width' => '20rem !important',
+        ]);
+    }
+
     public function panel(Panel $panel): Panel
     {
         return $panel
-            ->id('app')
-            ->path('app')
+            ->id('server')
+            ->path('server')
             ->spa()
+            ->tenant(Server::class)
             ->brandName(config('app.name', 'Pelican'))
             ->brandLogo(config('app.logo'))
             ->brandLogoHeight('2rem')
@@ -37,14 +47,20 @@ class AppPanelProvider extends PanelProvider
             ->profile(EditProfile::class, true)
             ->userMenuItems([
                 MenuItem::make()
+                    ->label('Server List')
+                    ->icon('tabler-brand-docker')
+                    ->url(fn () => ServerList::getUrl(panel: 'app'))
+                    ->sort(6),
+                MenuItem::make()
                     ->label('Admin')
-                    ->url('/admin')
                     ->icon('tabler-arrow-forward')
+                    ->url(fn () => Filament::getPanel('admin')->getUrl())
                     ->sort(5)
                     ->visible(fn (): bool => auth()->user()->canAccessPanel(Filament::getPanel('admin'))),
             ])
-            ->pages([ServerList::class])
-            ->discoverWidgets(in: app_path('Filament/App/Widgets'), for: 'App\\Filament\\App\\Widgets')
+            ->discoverResources(in: app_path('Filament/Server/Resources'), for: 'App\\Filament\\Server\\Resources')
+            ->discoverPages(in: app_path('Filament/Server/Pages'), for: 'App\\Filament\\Server\\Pages')
+            ->discoverWidgets(in: app_path('Filament/Server/Widgets'), for: 'App\\Filament\\Server\\Widgets')
             ->middleware([
                 EncryptCookies::class,
                 AddQueuedCookiesToResponse::class,

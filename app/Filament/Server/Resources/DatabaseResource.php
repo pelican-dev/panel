@@ -1,0 +1,23 @@
+<?php
+
+namespace App\Filament\Server\Resources;
+
+use App\Filament\Server\Resources\DatabaseResource\Pages;
+use App\Models\Database;
+use Filament\Resources\Resource;
+
+class DatabaseResource extends Resource
+{
+    protected static ?string $model = Database::class;
+
+    protected static ?int $navigationSort = 5;
+
+    protected static ?string $navigationIcon = 'tabler-database';
+
+    public static function getPages(): array
+    {
+        return [
+            'index' => Pages\ListDatabases::route('/'),
+        ];
+    }
+}

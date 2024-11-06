@@ -7,6 +7,7 @@ return [
     App\Providers\EventServiceProvider::class,
     App\Providers\Filament\AdminPanelProvider::class,
     App\Providers\Filament\AppPanelProvider::class,
+    App\Providers\Filament\ServerPanelProvider::class,
     App\Providers\RouteServiceProvider::class,
     App\Providers\ViewComposerServiceProvider::class,
     SocialiteProviders\Manager\ServiceProvider::class,
