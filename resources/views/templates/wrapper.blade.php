@@ -37,5 +37,8 @@
             @yield('container')
             @yield('below-container')
         @show
+        @section('scripts')
+            {!! $asset->js('main.js') !!}
+        @show
     </body>
 </html>
