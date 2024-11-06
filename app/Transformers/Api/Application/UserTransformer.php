@@ -4,9 +4,9 @@ namespace App\Transformers\Api\Application;
 
 use App\Models\Role;
 use App\Models\User;
+use App\Models\Server;
 use League\Fractal\Resource\Collection;
 use League\Fractal\Resource\NullResource;
-use App\Services\Acl\Api\AdminAcl;
 
 class UserTransformer extends BaseTransformer
 {
@@ -53,7 +53,7 @@ class UserTransformer extends BaseTransformer
      */
     public function includeServers(User $user): Collection|NullResource
     {
-        if (!$this->authorize(AdminAcl::RESOURCE_SERVERS)) {
+        if (!$this->authorize(Server::RESOURCE_NAME)) {
             return $this->null();
         }
 
@@ -67,7 +67,7 @@ class UserTransformer extends BaseTransformer
      */
     public function includeRoles(User $user): Collection|NullResource
     {
-        if (!$this->authorize(AdminAcl::RESOURCE_ROLES)) {
+        if (!$this->authorize(Role::RESOURCE_NAME)) {
             return $this->null();
         }
 

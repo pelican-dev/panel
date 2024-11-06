@@ -7,7 +7,6 @@ use App\Models\Server;
 use League\Fractal\Resource\Item;
 use App\Models\Allocation;
 use League\Fractal\Resource\NullResource;
-use App\Services\Acl\Api\AdminAcl;
 
 class AllocationTransformer extends BaseTransformer
 {
@@ -44,7 +43,7 @@ class AllocationTransformer extends BaseTransformer
      */
     public function includeNode(Allocation $allocation): Item|NullResource
     {
-        if (!$this->authorize(AdminAcl::RESOURCE_NODES)) {
+        if (!$this->authorize(Node::RESOURCE_NAME)) {
             return $this->null();
         }
 
@@ -60,7 +59,7 @@ class AllocationTransformer extends BaseTransformer
      */
     public function includeServer(Allocation $allocation): Item|NullResource
     {
-        if (!$this->authorize(AdminAcl::RESOURCE_SERVERS) || !$allocation->server) {
+        if (!$this->authorize(Server::RESOURCE_NAME) || !$allocation->server) {
             return $this->null();
         }
 
