@@ -142,6 +142,7 @@ class ListEggs extends ListRecords
                             } catch (Exception $exception) {
                                 Notification::make()
                                     ->title('Import Failed')
+                                    ->body($exception->getMessage())
                                     ->danger()
                                     ->send();
 
@@ -158,6 +159,7 @@ class ListEggs extends ListRecords
                         } catch (Exception $exception) {
                             Notification::make()
                                 ->title('Import Failed')
+                                ->body($exception->getMessage())
                                 ->danger()
                                 ->send();
 
