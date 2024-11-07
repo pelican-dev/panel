@@ -140,7 +140,7 @@ class CreateNode extends CreateRecord
                                 ->helperText('If you are running the daemon behind Cloudflare you should set the daemon port to 8443 to allow websocket proxying over SSL.')
                                 ->minValue(1)
                                 ->maxValue(65535)
-                                ->default(8080)
+                                ->default(request()->isSecure() ? 8443 : 8080)
                                 ->required()
                                 ->integer(),
 
