@@ -26,7 +26,7 @@ return new class extends Migration
         DB::table('database_host_node')->insert($newJoinEntries->toArray());
 
         Schema::table('database_hosts', function (Blueprint $table) {
-            // $table->dropForeign()
+            $table->dropForeign(['node_id']);
             $table->dropColumn('node_id');
         });
     }

@@ -2,8 +2,8 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
  * @property int $id
@@ -39,7 +39,7 @@ class DatabaseHost extends Model
      * Fields that are mass assignable.
      */
     protected $fillable = [
-        'name', 'host', 'port', 'username', 'password', 'max_databases', 'node_id',
+        'name', 'host', 'port', 'username', 'password', 'max_databases',
     ];
 
     /**
@@ -51,7 +51,8 @@ class DatabaseHost extends Model
         'port' => 'required|numeric|between:1,65535',
         'username' => 'required|string|max:32',
         'password' => 'nullable|string',
-        'node_id' => 'sometimes|nullable|integer|exists:nodes,id',
+        'node_ids' => 'nullable|array',
+        'node_ids.*' => 'required|integer,exists:nodes,id',
     ];
 
     protected function casts(): array
@@ -59,7 +60,6 @@ class DatabaseHost extends Model
         return [
             'id' => 'integer',
             'max_databases' => 'integer',
-            'node_id' => 'integer',
             'password' => 'encrypted',
             'created_at' => 'immutable_datetime',
             'updated_at' => 'immutable_datetime',
@@ -71,12 +71,9 @@ class DatabaseHost extends Model
         return 'id';
     }
 
-    /**
-     * Gets the node associated with a database host.
-     */
-    public function node(): BelongsTo
+    public function nodes(): BelongsToMany
     {
-        return $this->belongsTo(Node::class);
+        return $this->belongsToMany(Node::class);
     }
 
     /**
