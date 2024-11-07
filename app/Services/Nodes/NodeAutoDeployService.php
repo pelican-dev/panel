@@ -38,7 +38,7 @@ class NodeAutoDeployService
             $key = $this->keyCreationService->setKeyType(ApiKey::TYPE_APPLICATION)->handle([
                 'memo' => 'Automatically generated node deployment key.',
                 'user_id' => $request->user()->id,
-            ], ['permissions' => [Node::RESOURCE_NAME => AdminAcl::READ]]);
+            ], [Node::RESOURCE_NAME => AdminAcl::READ]);
         }
 
         $token = $key->identifier . $key->token;
