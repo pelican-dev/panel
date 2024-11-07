@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\File;
 
 class WebhookConfiguration extends Model
@@ -44,11 +45,11 @@ class WebhookConfiguration extends Model
         });
 
         self::deleted(static function (self $webhookConfiguration): void {
-            self::updateCache(collect($webhookConfiguration->events));
+            self::updateCache(collect((array) $webhookConfiguration->events));
         });
     }
 
-    private static function updateCache($eventList): void
+    private static function updateCache(Collection $eventList): void
     {
         $eventList->each(function (string $event) {
             cache()->forever("webhooks.$event", WebhookConfiguration::query()->whereJsonContains('events', $event)->get());
