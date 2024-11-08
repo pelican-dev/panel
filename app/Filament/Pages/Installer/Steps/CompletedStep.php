@@ -17,6 +17,8 @@ class CompletedStep
             ->schema([
                 Placeholder::make('')
                     ->content(new HtmlString('The setup is nearly complete!<br>As last step you need to create a new cronjob that runs every minute to process specific tasks, such as session cleanup and scheduled tasks, and also create a queue worker.')),
+                Placeholder::make('')
+                    ->content(new HtmlString('<b class="text-danger-600 dark:text-danger-400">Important:</b> You do not have to do these two tasks if you use the dockerized version of the Panel. In this case just press "Finish"!')),
                 TextInput::make('crontab')
                     ->label(new HtmlString('Run the following command to setup your crontab. Note that <code>www-data</code> is your webserver user. On some systems this username might be different!'))
                     ->disabled()

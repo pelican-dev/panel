@@ -4,10 +4,10 @@ namespace App\Filament\Pages\Installer;
 
 use App\Filament\Pages\Dashboard;
 use App\Filament\Pages\Installer\Steps\AdminUserStep;
+use App\Filament\Pages\Installer\Steps\CacheStep;
 use App\Filament\Pages\Installer\Steps\CompletedStep;
 use App\Filament\Pages\Installer\Steps\DatabaseStep;
 use App\Filament\Pages\Installer\Steps\EnvironmentStep;
-use App\Filament\Pages\Installer\Steps\RedisStep;
 use App\Filament\Pages\Installer\Steps\RequirementsStep;
 use App\Models\User;
 use App\Services\Users\UserCreationService;
@@ -19,7 +19,6 @@ use Filament\Forms\Components\Wizard;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Forms\Form;
-use Filament\Forms\Get;
 use Filament\Notifications\Notification;
 use Filament\Pages\SimplePage;
 use Filament\Support\Enums\MaxWidth;
@@ -70,8 +69,7 @@ class PanelInstaller extends SimplePage implements HasForms
                 RequirementsStep::make(),
                 EnvironmentStep::make($this),
                 DatabaseStep::make($this),
-                RedisStep::make($this)
-                    ->hidden(fn (Get $get) => $get('env_general.SESSION_DRIVER') != 'redis' && $get('env_general.QUEUE_CONNECTION') != 'redis' && $get('env_general.CACHE_STORE') != 'redis'),
+                CacheStep::make($this),
                 AdminUserStep::make($this),
                 CompletedStep::make(),
             ])
@@ -104,6 +102,9 @@ class PanelInstaller extends SimplePage implements HasForms
         $this->user ??= User::all()->filter(fn ($user) => $user->isRootAdmin())->first();
         auth()->guard()->login($this->user, true);
 
+        // Write session data at the very end to avid page expire errors
+        $this->writeToEnv('env_session');
+
         // Redirect to admin panel
         return redirect(Dashboard::getUrl());
     }
@@ -112,6 +113,7 @@ class PanelInstaller extends SimplePage implements HasForms
     {
         try {
             $variables = array_get($this->data, $key);
+            $variables = array_filter($variables); // Filter array to remove NULL values
             $this->writeToEnvironment($variables);
         } catch (Exception $exception) {
             report($exception);
