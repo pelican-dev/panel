@@ -26,7 +26,7 @@ class KeyCreationService
      *
      * @throws \App\Exceptions\Model\DataValidationException
      */
-    public function handle(array $data, array $permissions = []): ApiKey
+    public function handle(array $data): ApiKey
     {
         $data = array_merge($data, [
             'key_type' => $this->keyType,
@@ -34,8 +34,8 @@ class KeyCreationService
             'token' => str_random(ApiKey::KEY_LENGTH),
         ]);
 
-        if ($this->keyType === ApiKey::TYPE_APPLICATION) {
-            $data = array_merge($data, $permissions);
+        if ($this->keyType !== ApiKey::TYPE_APPLICATION) {
+            unset($data['permissions']);
         }
 
         return ApiKey::query()->forceCreate($data);

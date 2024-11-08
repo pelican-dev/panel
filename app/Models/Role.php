@@ -19,6 +19,8 @@ class Role extends BaseRole
 
     public const ROOT_ADMIN = 'Root Admin';
 
+    public const DEFAULT_GUARD_NAME = 'web';
+
     public const MODEL_SPECIFIC_PERMISSIONS = [
         'egg' => [
             'import',
@@ -41,7 +43,7 @@ class Role extends BaseRole
     public static function getRootAdmin(): self
     {
         /** @var self $role */
-        $role = self::findOrCreate(self::ROOT_ADMIN);
+        $role = self::findOrCreate(self::ROOT_ADMIN, self::DEFAULT_GUARD_NAME);
 
         return $role;
     }

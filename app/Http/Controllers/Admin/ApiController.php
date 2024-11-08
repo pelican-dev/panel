@@ -68,7 +68,8 @@ class ApiController extends Controller
         $this->keyCreationService->setKeyType(ApiKey::TYPE_APPLICATION)->handle([
             'memo' => $request->input('memo'),
             'user_id' => $request->user()->id,
-        ], $request->getKeyPermissions());
+            'permissions' => $request->getKeyPermissions(),
+        ]);
 
         $this->alert->success('A new application API key has been generated for your account.')->flash();
 

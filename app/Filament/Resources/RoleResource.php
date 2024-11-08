@@ -6,7 +6,6 @@ use App\Enums\RolePermissionModels;
 use App\Enums\RolePermissionPrefixes;
 use App\Filament\Resources\RoleResource\Pages;
 use App\Models\Role;
-use Filament\Facades\Filament;
 use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\CheckboxList;
 use Filament\Forms\Components\Component;
@@ -71,7 +70,7 @@ class RoleResource extends Resource
                     ->disabled(fn (Get $get) => $get('name') === Role::ROOT_ADMIN),
                 TextInput::make('guard_name')
                     ->label('Guard Name')
-                    ->default(Filament::getCurrentPanel()?->getAuthGuard() ?? '')
+                    ->default(Role::DEFAULT_GUARD_NAME)
                     ->nullable()
                     ->hidden(),
                 Fieldset::make('Permissions')

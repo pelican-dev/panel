@@ -8,6 +8,7 @@ use App\Traits\EnvironmentWriterTrait;
 use Exception;
 use Filament\Actions\Action;
 use Filament\Forms\Components\Actions\Action as FormAction;
+use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Tabs;
 use Filament\Forms\Components\Tabs\Tab;
@@ -24,8 +25,11 @@ use Filament\Notifications\Notification;
 use Filament\Pages\Concerns\HasUnsavedDataChangesAlert;
 use Filament\Pages\Concerns\InteractsWithHeaderActions;
 use Filament\Pages\Page;
+use GuzzleHttp\Client;
+use GuzzleHttp\Exception\GuzzleException;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Notification as MailNotification;
+use Illuminate\Support\HtmlString;
 
 /**
  * @property Form $form
@@ -67,10 +71,11 @@ class Settings extends Page implements HasForms
                         ->label('General')
                         ->icon('tabler-home')
                         ->schema($this->generalSettings()),
-                    Tab::make('recaptcha')
-                        ->label('reCAPTCHA')
+                    Tab::make('captcha')
+                        ->label('Captcha')
                         ->icon('tabler-shield')
-                        ->schema($this->recaptchaSettings()),
+                        ->schema($this->captchaSettings())
+                        ->columns(3),
                     Tab::make('mail')
                         ->label('Mail')
                         ->icon('tabler-mail')
@@ -146,7 +151,7 @@ class Settings extends Page implements HasForms
                 ->separator()
                 ->splitKeys(['Tab', ' '])
                 ->placeholder('New IP or IP Range')
-                ->default(env('TRUSTED_PROXIES', config('trustedproxy.proxies')))
+                ->default(env('TRUSTED_PROXIES', implode(',', config('trustedproxy.proxies'))))
                 ->hintActions([
                     FormAction::make('clear')
                         ->label('Clear')
@@ -159,56 +164,71 @@ class Settings extends Page implements HasForms
                         ->label('Set to Cloudflare IPs')
                         ->icon('tabler-brand-cloudflare')
                         ->authorize(fn () => auth()->user()->can('update settings'))
-                        ->action(fn (Set $set) => $set('TRUSTED_PROXIES', [
-                            '173.245.48.0/20',
-                            '103.21.244.0/22',
-                            '103.22.200.0/22',
-                            '103.31.4.0/22',
-                            '141.101.64.0/18',
-                            '108.162.192.0/18',
-                            '190.93.240.0/20',
-                            '188.114.96.0/20',
-                            '197.234.240.0/22',
-                            '198.41.128.0/17',
-                            '162.158.0.0/15',
-                            '104.16.0.0/13',
-                            '104.24.0.0/14',
-                            '172.64.0.0/13',
-                            '131.0.72.0/22',
-                        ])),
+                        ->action(function (Client $client, Set $set) {
+                            $ips = collect();
+                            try {
+                                $response = $client->request(
+                                    'GET',
+                                    'https://api.cloudflare.com/client/v4/ips',
+                                    config('panel.guzzle')
+                                );
+                                if ($response->getStatusCode() === 200) {
+                                    $result = json_decode($response->getBody(), true)['result'];
+                                    foreach (['ipv4_cidrs', 'ipv6_cidrs'] as $value) {
+                                        $ips->push(...data_get($result, $value));
+                                    }
+                                    $ips->unique();
+                                }
+                            } catch (GuzzleException $e) {
+                            }
+
+                            $set('TRUSTED_PROXIES', $ips->values()->all());
+                        }),
                 ]),
         ];
     }
 
-    private function recaptchaSettings(): array
+    private function captchaSettings(): array
     {
         return [
-            Toggle::make('RECAPTCHA_ENABLED')
-                ->label('Enable reCAPTCHA?')
+            Toggle::make('TURNSTILE_ENABLED')
+                ->label('Enable Turnstile Captcha?')
                 ->inline(false)
+                ->columnSpan(1)
                 ->onIcon('tabler-check')
                 ->offIcon('tabler-x')
                 ->onColor('success')
                 ->offColor('danger')
                 ->live()
                 ->formatStateUsing(fn ($state): bool => (bool) $state)
-                ->afterStateUpdated(fn ($state, Set $set) => $set('RECAPTCHA_ENABLED', (bool) $state))
-                ->default(env('RECAPTCHA_ENABLED', config('recaptcha.enabled'))),
-            TextInput::make('RECAPTCHA_DOMAIN')
-                ->label('Domain')
+                ->afterStateUpdated(fn ($state, Set $set) => $set('TURNSTILE_ENABLED', (bool) $state))
+                ->default(env('TURNSTILE_ENABLED', config('turnstile.turnstile_enabled'))),
+            Placeholder::make('info')
+                ->columnSpan(2)
+                ->content(new HtmlString('<p>You can generate the keys on your <u><a href="https://developers.cloudflare.com/turnstile/get-started/#get-a-sitekey-and-secret-key" target="_blank">Cloudflare Dashboard</a></u>. A Cloudflare account is required.</p>')),
+            TextInput::make('TURNSTILE_SITE_KEY')
+                ->label('Site Key')
                 ->required()
-                ->visible(fn (Get $get) => $get('RECAPTCHA_ENABLED'))
-                ->default(env('RECAPTCHA_DOMAIN', config('recaptcha.domain'))),
-            TextInput::make('RECAPTCHA_WEBSITE_KEY')
-                ->label('Website Key')
-                ->required()
-                ->visible(fn (Get $get) => $get('RECAPTCHA_ENABLED'))
-                ->default(env('RECAPTCHA_WEBSITE_KEY', config('recaptcha.website_key'))),
-            TextInput::make('RECAPTCHA_SECRET_KEY')
+                ->visible(fn (Get $get) => $get('TURNSTILE_ENABLED'))
+                ->default(env('TURNSTILE_SITE_KEY', config('turnstile.turnstile_site_key')))
+                ->placeholder('1x00000000000000000000AA'),
+            TextInput::make('TURNSTILE_SECRET_KEY')
                 ->label('Secret Key')
                 ->required()
-                ->visible(fn (Get $get) => $get('RECAPTCHA_ENABLED'))
-                ->default(env('RECAPTCHA_SECRET_KEY', config('recaptcha.secret_key'))),
+                ->visible(fn (Get $get) => $get('TURNSTILE_ENABLED'))
+                ->default(env('TURNSTILE_SECRET_KEY', config('turnstile.secret_key')))
+                ->placeholder('1x0000000000000000000000000000000AA'),
+            Toggle::make('TURNSTILE_VERIFY_DOMAIN')
+                ->label('Verify domain?')
+                ->inline(false)
+                ->onIcon('tabler-check')
+                ->offIcon('tabler-x')
+                ->onColor('success')
+                ->offColor('danger')
+                ->visible(fn (Get $get) => $get('TURNSTILE_ENABLED'))
+                ->formatStateUsing(fn ($state): bool => (bool) $state)
+                ->afterStateUpdated(fn ($state, Set $set) => $set('TURNSTILE_VERIFY_DOMAIN', (bool) $state))
+                ->default(env('TURNSTILE_VERIFY_DOMAIN', config('turnstile.turnstile_verify_domain'))),
         ];
     }
 

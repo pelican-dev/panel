@@ -8,7 +8,6 @@ use App\Models\Server;
 use App\Models\EggVariable;
 use League\Fractal\Resource\Collection;
 use League\Fractal\Resource\NullResource;
-use App\Services\Acl\Api\AdminAcl;
 
 class EggTransformer extends BaseTransformer
 {
@@ -83,7 +82,7 @@ class EggTransformer extends BaseTransformer
      */
     public function includeServers(Egg $model): Collection|NullResource
     {
-        if (!$this->authorize(AdminAcl::RESOURCE_SERVERS)) {
+        if (!$this->authorize(Server::RESOURCE_NAME)) {
             return $this->null();
         }
 
@@ -99,7 +98,7 @@ class EggTransformer extends BaseTransformer
      */
     public function includeVariables(Egg $model): Collection|NullResource
     {
-        if (!$this->authorize(AdminAcl::RESOURCE_EGGS)) {
+        if (!$this->authorize(Egg::RESOURCE_NAME)) {
             return $this->null();
         }
 
