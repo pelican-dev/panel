@@ -21,18 +21,6 @@ class SoftwareVersionService
         return $data['wings'] ?? 'error';
     }
 
-    // TODO: remove when old admin area gets yeeted
-    public function getDiscord(): string
-    {
-        return 'https://pelican.dev/discord';
-    }
-
-    // TODO: remove when old admin area gets yeeted
-    public function getDonations(): string
-    {
-        return 'https://pelican.dev/donate';
-    }
-
     public function isLatestPanel(): bool
     {
         if (config('app.version') === 'canary') {
