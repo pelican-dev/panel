@@ -2,23 +2,35 @@
 
 namespace App\Services\Helpers;
 
-use GuzzleHttp\Exception\GuzzleException;
+use Exception;
 use Illuminate\Support\Facades\Http;
 
 class SoftwareVersionService
 {
     public function latestPanelVersion(): string
     {
-        $data = $this->getVersionData();
+        return cache()->remember('wings:latest_version', now()->addMinutes(config('panel.cdn.cache_time', 60)), function () {
+            try {
+                $response = Http::timeout(5)->connectTimeout(1)->get('https://api.github.com/repos/pelican-dev/panel/releases/latest')->throw()->json();
 
-        return $data['panel'] ?? 'error';
+                return trim($response['tag_name'], 'v');
+            } catch (Exception) {
+                return 'error';
+            }
+        });
     }
 
     public function latestWingsVersion(): string
     {
-        $data = $this->getVersionData();
+        return cache()->remember('wings:latest_version', now()->addMinutes(config('panel.cdn.cache_time', 60)), function () {
+            try {
+                $response = Http::timeout(5)->connectTimeout(1)->get('https://api.github.com/repos/pelican-dev/wings/releases/latest')->throw()->json();
 
-        return $data['wings'] ?? 'error';
+                return trim($response['tag_name'], 'v');
+            } catch (Exception) {
+                return 'error';
+            }
+        });
     }
 
     public function isLatestPanel(): bool
@@ -39,9 +51,9 @@ class SoftwareVersionService
         return version_compare($version, $this->latestWingsVersion()) >= 0;
     }
 
-    public function currentPanelVersion(): array
+    public function currentPanelVersion(): string
     {
-        return cache()->remember('panel:git-version', now()->addMinutes(5), function () {
+        return cache()->remember('panel:current_version', now()->addMinutes(5), function () {
             if (file_exists(base_path('.git/HEAD'))) {
                 $head = explode(' ', file_get_contents(base_path('.git/HEAD')));
 
@@ -55,24 +67,6 @@ class SoftwareVersionService
             }
 
             return config('app.version');
-        });
-    }
-
-    private function getVersionData(): array
-    {
-        return cache()->remember('panel:version_data', now()->addMinutes(config('panel.cdn.cache_time', 60)), function () {
-            $versionData = [];
-
-            try {
-                $response = Http::timeout(5)->connectTimeout(1)->get('https://api.github.com/repos/pelican-dev/panel/releases/latest')->throw()->json();
-                $versionData['panel'] = trim($response['tag_name'], 'v');
-
-                $response = Http::timeout(5)->connectTimeout(1)->get('https://api.github.com/repos/pelican-dev/wings/releases/latest')->throw()->json();
-                $versionData['wings'] = trim($response['tag_name'], 'v');
-            } catch (GuzzleException) {
-            }
-
-            return $versionData;
         });
     }
 }
