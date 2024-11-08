@@ -24,8 +24,8 @@ class AssetComposer
             'name' => config('app.name', 'Panel'),
             'locale' => config('app.locale') ?? 'en',
             'recaptcha' => [
-                'enabled' => config('recaptcha.enabled', false),
-                'siteKey' => config('recaptcha.website_key') ?? '',
+                'enabled' => config('turnstile.turnstile_enabled', false),
+                'siteKey' => config('turnstile.turnstile_site_key') ?? '',
             ],
             'usesSyncDriver' => config('queue.default') === 'sync',
             'serverDescriptionsEditable' => config('panel.editable_server_descriptions'),

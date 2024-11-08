@@ -4,6 +4,7 @@ namespace App\Tests\Integration\Api\Application\Users;
 
 use Illuminate\Support\Str;
 use App\Models\User;
+use App\Services\Acl\Api\AdminAcl;
 use Illuminate\Http\Response;
 use App\Tests\Integration\Api\Application\ApplicationApiIntegrationTestCase;
 
@@ -62,7 +63,7 @@ class ExternalUserControllerTest extends ApplicationApiIntegrationTestCase
     public function testErrorReturnedIfNoPermission(): void
     {
         $user = User::factory()->create(['external_id' => Str::random()]);
-        $this->createNewDefaultApiKey($this->getApiUser(), ['r_users' => 0]);
+        $this->createNewDefaultApiKey($this->getApiUser(), [User::RESOURCE_NAME => AdminAcl::NONE]);
 
         $response = $this->getJson('/api/application/users/external/' . $user->external_id);
         $this->assertAccessDeniedJson($response);

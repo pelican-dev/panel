@@ -52,11 +52,11 @@ crond -L /var/log/crond -l 5
 export SUPERVISORD_CADDY=false
 
 ## disable caddy if SKIP_CADDY is set
-if [[ -z $SKIP_CADDY ]]; then
+if [[ "${SKIP_CADDY:-}" == "true" ]]; then
+  echo "Starting PHP-FPM only"
+else
   echo "Starting PHP-FPM and Caddy"
   export SUPERVISORD_CADDY=true
-else
-  echo "Starting PHP-FPM only"
 fi
 
 chown -R www-data:www-data /pelican-data/.env /pelican-data/database

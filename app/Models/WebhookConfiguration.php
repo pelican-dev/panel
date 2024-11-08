@@ -6,11 +6,19 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\File;
 
 class WebhookConfiguration extends Model
 {
     use HasFactory, SoftDeletes;
+
+    /**
+     * Blacklisted events.
+     */
+    protected static array $eventBlacklist = [
+        'eloquent.created: App\Models\Webhook',
+    ];
 
     protected $fillable = [
         'endpoint',
@@ -33,12 +41,21 @@ class WebhookConfiguration extends Model
                 ...$webhookConfiguration->getOriginal('events', '[]'),
             ])->unique();
 
-            $changedEvents->each(function (string $event) {
-                cache()->forever("webhooks.$event", WebhookConfiguration::query()->whereJsonContains('events', $event)->get());
-            });
-
-            cache()->forever('watchedWebhooks', WebhookConfiguration::pluck('events')->flatten()->unique()->values()->all());
+            self::updateCache($changedEvents);
         });
+
+        self::deleted(static function (self $webhookConfiguration): void {
+            self::updateCache(collect((array) $webhookConfiguration->events));
+        });
+    }
+
+    private static function updateCache(Collection $eventList): void
+    {
+        $eventList->each(function (string $event) {
+            cache()->forever("webhooks.$event", WebhookConfiguration::query()->whereJsonContains('events', $event)->get());
+        });
+
+        cache()->forever('watchedWebhooks', WebhookConfiguration::pluck('events')->flatten()->unique()->values()->all());
     }
 
     public function webhooks(): HasMany
@@ -48,7 +65,11 @@ class WebhookConfiguration extends Model
 
     public static function allPossibleEvents(): array
     {
-        return static::discoverCustomEvents() + static::allModelEvents();
+        return collect(static::discoverCustomEvents())
+            ->merge(static::allModelEvents())
+            ->unique()
+            ->filter(fn ($event) => !in_array($event, static::$eventBlacklist))
+            ->all();
     }
 
     public static function filamentCheckboxList(): array

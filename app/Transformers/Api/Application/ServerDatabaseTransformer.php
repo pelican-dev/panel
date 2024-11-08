@@ -6,7 +6,6 @@ use App\Models\Database;
 use League\Fractal\Resource\Item;
 use App\Models\DatabaseHost;
 use League\Fractal\Resource\NullResource;
-use App\Services\Acl\Api\AdminAcl;
 
 class ServerDatabaseTransformer extends BaseTransformer
 {
@@ -57,7 +56,7 @@ class ServerDatabaseTransformer extends BaseTransformer
      */
     public function includeHost(Database $model): Item|NullResource
     {
-        if (!$this->authorize(AdminAcl::RESOURCE_DATABASE_HOSTS)) {
+        if (!$this->authorize(DatabaseHost::RESOURCE_NAME)) {
             return $this->null();
         }
 

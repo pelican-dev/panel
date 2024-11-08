@@ -4,6 +4,7 @@ namespace App\Services\Nodes;
 
 use App\Models\ApiKey;
 use App\Models\Node;
+use App\Services\Acl\Api\AdminAcl;
 use App\Services\Api\KeyCreationService;
 use Illuminate\Http\Request;
 
@@ -28,7 +29,7 @@ class NodeAutoDeployService
         /** @var ApiKey|null $key */
         $key = ApiKey::query()
             ->where('key_type', ApiKey::TYPE_APPLICATION)
-            ->where('r_nodes', true)
+            ->whereJsonContains('permissions->' . Node::RESOURCE_NAME, AdminAcl::READ)
             ->first();
 
         // We couldn't find a key that exists for this user with only permission for
@@ -37,7 +38,8 @@ class NodeAutoDeployService
             $key = $this->keyCreationService->setKeyType(ApiKey::TYPE_APPLICATION)->handle([
                 'memo' => 'Automatically generated node deployment key.',
                 'user_id' => $request->user()->id,
-            ], ['r_nodes' => true]);
+                'permissions' => [Node::RESOURCE_NAME => AdminAcl::READ],
+            ]);
         }
 
         $token = $key->identifier . $key->token;

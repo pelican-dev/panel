@@ -8,7 +8,7 @@ use App\Http\Requests\Api\Application\ApplicationApiRequest;
 
 class StoreUserRequest extends ApplicationApiRequest
 {
-    protected ?string $resource = AdminAcl::RESOURCE_USERS;
+    protected ?string $resource = User::RESOURCE_NAME;
 
     protected int $permission = AdminAcl::WRITE;
 

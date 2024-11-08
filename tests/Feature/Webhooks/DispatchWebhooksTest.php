@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Tests\Feature;
+namespace App\Tests\Feature\Webhooks;
 
 use App\Jobs\ProcessWebhook;
 use App\Models\Server;
@@ -60,6 +60,32 @@ class DispatchWebhooksTest extends TestCase
         $this->createServer();
 
         Queue::assertPushed(ProcessWebhook::class, 1);
+    }
+
+    public function test_it_does_not_call_removed_events()
+    {
+        $webhookConfig = WebhookConfiguration::factory()->create([
+            'events' => ['eloquent.created: '.Server::class],
+        ]);
+
+        $webhookConfig->update(['events' => 'eloquent.deleted: '.Server::class]);
+
+        $this->createServer();
+
+        Queue::assertNothingPushed();
+    }
+
+    public function test_it_does_not_call_deleted_webhooks()
+    {
+        $webhookConfig = WebhookConfiguration::factory()->create([
+            'events' => ['eloquent.created: '.Server::class],
+        ]);
+
+        $webhookConfig->delete();
+
+        $this->createServer();
+
+        Queue::assertNothingPushed();
     }
 
     public function createServer(): Server

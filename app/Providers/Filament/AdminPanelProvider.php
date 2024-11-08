@@ -2,6 +2,7 @@
 
 namespace App\Providers\Filament;
 
+use App\Filament\Pages\Auth\Login;
 use App\Filament\Resources\UserResource\Pages\EditProfile;
 use App\Http\Middleware\LanguageMiddleware;
 use Filament\Http\Middleware\Authenticate;
@@ -36,7 +37,7 @@ class AdminPanelProvider extends PanelProvider
             ->id('admin')
             ->path('admin')
             ->topNavigation(config('panel.filament.top-navigation', true))
-            ->login()
+            ->login(Login::class)
             ->breadcrumbs(false)
             ->homeUrl('/')
             ->favicon(config('app.favicon', '/pelican.ico'))

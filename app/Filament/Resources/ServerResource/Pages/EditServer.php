@@ -9,6 +9,7 @@ use App\Filament\Resources\ServerResource\RelationManagers\AllocationsRelationMa
 use App\Http\Controllers\Admin\ServersController;
 use App\Models\Database;
 use App\Models\Egg;
+use App\Models\Mount;
 use App\Models\Server;
 use App\Models\ServerVariable;
 use App\Services\Databases\DatabaseManagementService;
@@ -599,8 +600,8 @@ class EditServer extends EditRecord
                             ->schema([
                                 CheckboxList::make('mounts')
                                     ->relationship('mounts')
-                                    ->options(fn (Server $server) => $server->node->mounts->mapWithKeys(fn ($mount) => [$mount->id => $mount->name]))
-                                    ->descriptions(fn (Server $server) => $server->node->mounts->mapWithKeys(fn ($mount) => [$mount->id => "$mount->source -> $mount->target"]))
+                                    ->options(fn (Server $server) => $server->node->mounts->filter(fn (Mount $mount) => $mount->eggs->contains($server->egg))->mapWithKeys(fn (Mount $mount) => [$mount->id => $mount->name]))
+                                    ->descriptions(fn (Server $server) => $server->node->mounts->mapWithKeys(fn (Mount $mount) => [$mount->id => "$mount->source -> $mount->target"]))
                                     ->label('Mounts')
                                     ->helperText(fn (Server $server) => $server->node->mounts->isNotEmpty() ? '' : 'No Mounts exist for this Node')
                                     ->columnSpanFull(),
