@@ -1,0 +1,98 @@
+<?php
+
+namespace App\Filament\App\Resources\ServerResource\Pages;
+
+use App\Filament\App\Resources\ServerResource;
+use App\Filament\Server\Pages\Console;
+use App\Models\Server;
+use App\Tables\Columns\ServerEntryColumn;
+use Carbon\CarbonInterface;
+use Filament\Resources\Pages\ListRecords;
+use Filament\Tables\Columns\Layout\Stack;
+use Filament\Tables\Table;
+use Illuminate\Support\Number;
+
+class ListServers extends ListRecords
+{
+    protected static string $resource = ServerResource::class;
+
+    public function table(Table $table): Table
+    {
+        return $table
+            ->paginated(false)
+            ->query(fn () => auth()->user()->accessibleServers())
+            ->columns([
+                Stack::make([
+                    ServerEntryColumn::make('server_entry')
+                        ->searchable(['name', 'egg.name']),
+                ]),
+            ])
+            ->contentGrid([
+                'default' => 2,
+            ])
+            ->emptyStateIcon('tabler-brand-docker')
+            ->emptyStateDescription('')
+            ->emptyStateHeading('You don\'t have access to any servers!');
+    }
+
+    private function serverUrl(Server $server): string
+    {
+        return Console::getUrl(panel: 'server', tenant: $server);
+    }
+
+    private function uptime(Server $server): string
+    {
+        $uptime = collect(cache()->get("servers.{$server->id}.uptime"))->last() ?? 0;
+
+        if ($uptime === 0) {
+            return 'Offline';
+        }
+
+        return now()->subMillis($uptime)->diffForHumans(syntax: CarbonInterface::DIFF_ABSOLUTE, short: true, parts: 2);
+    }
+
+    private function cpu(Server $server): string
+    {
+        $cpu = Number::format(collect(cache()->get("servers.{$server->id}.cpu_absolute"))->last() ?? 0, maxPrecision: 2, locale: auth()->user()->language) . '%';
+        $max = Number::format($server->cpu, locale: auth()->user()->language) . '%';
+
+        return $cpu . ($server->cpu > 0 ? ' Of ' . $max : '');
+    }
+
+    private function memory(Server $server): string
+    {
+        $latestMemoryUsed = collect(cache()->get("servers.{$server->id}.memory_bytes"))->last() ?? 0;
+        $totalMemory = collect(cache()->get("servers.{$server->id}.memory_limit_bytes"))->last() ?? 0;
+
+        $used = config('panel.use_binary_prefix')
+            ? Number::format($latestMemoryUsed / 1024 / 1024 / 1024, maxPrecision: 2, locale: auth()->user()->language) .' GiB'
+            : Number::format($latestMemoryUsed / 1000 / 1000 / 1000, maxPrecision: 2, locale: auth()->user()->language) . ' GB';
+
+        if ($totalMemory === 0) {
+            $total = config('panel.use_binary_prefix')
+                ? Number::format($server->memory / 1024, maxPrecision: 2, locale: auth()->user()->language) .' GiB'
+                : Number::format($server->memory / 1000, maxPrecision: 2, locale: auth()->user()->language) . ' GB';
+        } else {
+            $total = config('panel.use_binary_prefix')
+                ? Number::format($totalMemory / 1024 / 1024 / 1024, maxPrecision: 2, locale: auth()->user()->language) .' GiB'
+                : Number::format($totalMemory / 1000 / 1000 / 1000, maxPrecision: 2, locale: auth()->user()->language) . ' GB';
+        }
+
+        return $used . ($server->memory > 0 ? ' Of ' . $total : '');
+    }
+
+    private function disk(Server $server): string
+    {
+        $usedDisk = collect(cache()->get("servers.{$server->id}.disk_bytes"))->last() ?? 0;
+
+        $used = config('panel.use_binary_prefix')
+            ? Number::format($usedDisk / 1024 / 1024 / 1024, maxPrecision: 2, locale: auth()->user()->language) .' GiB'
+            : Number::format($usedDisk / 1000 / 1000 / 1000, maxPrecision: 2, locale: auth()->user()->language) . ' GB';
+
+        $total = config('panel.use_binary_prefix')
+            ? Number::format($server->disk / 1024, maxPrecision: 2, locale: auth()->user()->language) .' GiB'
+            : Number::format($server->disk / 1000, maxPrecision: 2, locale: auth()->user()->language) . ' GB';
+
+        return $used . ($server->disk > 0 ? ' Of ' . $total : '');
+    }
+}
