@@ -2,7 +2,7 @@
 
 namespace App\Providers\Filament;
 
-use App\Filament\App\Pages\ServerList;
+use App\Filament\App\Resources\ServerResource\Pages\ListServers;
 use App\Filament\Resources\UserResource\Pages\EditProfile;
 use App\Models\Server;
 use Filament\Facades\Filament;
@@ -41,7 +41,7 @@ class ServerPanelProvider extends PanelProvider
                 MenuItem::make()
                     ->label('Server List')
                     ->icon('tabler-brand-docker')
-                    ->url(fn () => ServerList::getUrl(panel: 'app'))
+                    ->url(fn () => ListServers::getUrl(panel: 'app'))
                     ->sort(6),
                 MenuItem::make()
                     ->label('Admin')

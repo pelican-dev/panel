@@ -35,11 +35,13 @@ class ListServers extends ListRecords
             ->emptyStateHeading('You don\'t have access to any servers!');
     }
 
+    // @phpstan-ignore-next-line
     private function serverUrl(Server $server): string
     {
         return Console::getUrl(panel: 'server', tenant: $server);
     }
 
+    // @phpstan-ignore-next-line
     private function uptime(Server $server): string
     {
         $uptime = collect(cache()->get("servers.{$server->id}.uptime"))->last() ?? 0;
@@ -51,6 +53,7 @@ class ListServers extends ListRecords
         return now()->subMillis($uptime)->diffForHumans(syntax: CarbonInterface::DIFF_ABSOLUTE, short: true, parts: 2);
     }
 
+    // @phpstan-ignore-next-line
     private function cpu(Server $server): string
     {
         $cpu = Number::format(collect(cache()->get("servers.{$server->id}.cpu_absolute"))->last() ?? 0, maxPrecision: 2, locale: auth()->user()->language) . '%';
@@ -59,6 +62,7 @@ class ListServers extends ListRecords
         return $cpu . ($server->cpu > 0 ? ' Of ' . $max : '');
     }
 
+    // @phpstan-ignore-next-line
     private function memory(Server $server): string
     {
         $latestMemoryUsed = collect(cache()->get("servers.{$server->id}.memory_bytes"))->last() ?? 0;
@@ -81,6 +85,7 @@ class ListServers extends ListRecords
         return $used . ($server->memory > 0 ? ' Of ' . $total : '');
     }
 
+    // @phpstan-ignore-next-line
     private function disk(Server $server): string
     {
         $usedDisk = collect(cache()->get("servers.{$server->id}.disk_bytes"))->last() ?? 0;

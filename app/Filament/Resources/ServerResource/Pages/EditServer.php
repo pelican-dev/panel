@@ -795,7 +795,7 @@ class EditServer extends EditRecord
                 ->action(function (Server $server, ServerDeletionService $service) {
                     $service->handle($server);
 
-                    return redirect(ListServers::getUrl());
+                    return redirect(ListServers::getUrl(panel: 'admin'));
                 })
                 ->authorize(fn (Server $server) => auth()->user()->can('delete server', $server)),
             Actions\Action::make('console')
