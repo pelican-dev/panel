@@ -28,17 +28,13 @@ class ListServers extends ListRecords
                 ]),
             ])
             ->contentGrid([
-                'default' => 2,
+                'default' => 1,
+                'xl' => 2,
             ])
+            ->recordUrl(fn (Server $server) => Console::getUrl(panel: 'server', tenant: $server))
             ->emptyStateIcon('tabler-brand-docker')
             ->emptyStateDescription('')
             ->emptyStateHeading('You don\'t have access to any servers!');
-    }
-
-    // @phpstan-ignore-next-line
-    private function serverUrl(Server $server): string
-    {
-        return Console::getUrl(panel: 'server', tenant: $server);
     }
 
     // @phpstan-ignore-next-line

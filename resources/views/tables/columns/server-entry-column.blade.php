@@ -1,14 +1,14 @@
 <div class="w-full grid gap-y-2">
     <div class="flex items-center gap-x-2">
-        <x-filament::icon-button :icon="$getRecord()->conditionIcon()" :color="$getRecord()->conditionColor()" :tooltip="\Illuminate\Support\Str::title($getRecord()->condition)" size="xl" />
+        <x-filament::icon-button
+            :icon="$getRecord()->conditionIcon()"
+            :color="$getRecord()->conditionColor()"
+            :tooltip="\Illuminate\Support\Str::title($getRecord()->condition)" size="xl"
+        />
 
         <span class="text-2xl font-semibold text-gray-500 dark:text-gray-400">
             {{ $getRecord()->name }} ({{ $this->uptime($getRecord()) }})
         </span>
-
-        <x-filament::button class="ml-auto" tag="a" :href="$this->serverUrl($getRecord())">
-            Open
-        </x-filament::button>
     </div>
 
     <div class="flex">
