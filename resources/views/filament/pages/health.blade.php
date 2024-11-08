@@ -2,11 +2,11 @@
     if(! function_exists('backgroundColor')) {
         function backgroundColor($status) {
             return match ($status) {
-                Spatie\Health\Enums\Status::ok()->value => 'bg-emerald-100',
-                Spatie\Health\Enums\Status::warning()->value => 'bg-yellow-100',
-                Spatie\Health\Enums\Status::skipped()->value => 'bg-blue-100',
-                Spatie\Health\Enums\Status::failed()->value, Spatie\Health\Enums\Status::crashed()->value => 'bg-red-100',
-                default => 'bg-gray-100'
+                Spatie\Health\Enums\Status::ok()->value => 'text-success-100',
+                Spatie\Health\Enums\Status::warning()->value => 'text-warning-100',
+                Spatie\Health\Enums\Status::skipped()->value => 'text-primary-100',
+                Spatie\Health\Enums\Status::failed()->value, Spatie\Health\Enums\Status::crashed()->value => 'text-danger-100',
+                default => 'text-gray-100'
             };
         }
     }
@@ -15,10 +15,10 @@
         function iconColor($status)
         {
             return match ($status) {
-                Spatie\Health\Enums\Status::ok()->value => 'text-emerald-500',
-                Spatie\Health\Enums\Status::warning()->value => 'text-yellow-500',
-                Spatie\Health\Enums\Status::skipped()->value => 'text-blue-500',
-                Spatie\Health\Enums\Status::failed()->value, Spatie\Health\Enums\Status::crashed()->value => 'text-red-500',
+                Spatie\Health\Enums\Status::ok()->value => 'text-success-500',
+                Spatie\Health\Enums\Status::warning()->value => 'text-warning-500',
+                Spatie\Health\Enums\Status::skipped()->value => 'text-primary-500',
+                Spatie\Health\Enums\Status::failed()->value, Spatie\Health\Enums\Status::crashed()->value => 'text-danger-500',
                 default => 'text-gray-500'
             };
         }
@@ -32,7 +32,7 @@
                 Spatie\Health\Enums\Status::warning()->value => 'tabler-exclamation-circle',
                 Spatie\Health\Enums\Status::skipped()->value => 'tabler-circle-chevron-right',
                 Spatie\Health\Enums\Status::failed()->value, Spatie\Health\Enums\Status::crashed()->value => 'tabler-circle-x',
-                default => ''
+                default => 'tabler-help-circle'
             };
         }
     }
@@ -64,7 +64,7 @@
     @endif
 
     @if ($lastRanAt)
-        <div class="{{ $lastRanAt->diffInMinutes() > 5 ? 'text-red-500' : 'text-gray-400 dark:text-gray-200' }} text-md text-center font-medium">
+        <div class="{{ $lastRanAt->diffInMinutes() > 5 ? 'text-danger-500' : 'text-gray-400 dark:text-gray-200' }} text-md text-center font-medium">
             Check results from {{ $lastRanAt->diffForHumans() }}
         </div>
     @endif
