@@ -5,9 +5,9 @@ namespace App\Filament\Pages\Installer;
 use App\Filament\Pages\Dashboard;
 use App\Filament\Pages\Installer\Steps\AdminUserStep;
 use App\Filament\Pages\Installer\Steps\CacheStep;
-use App\Filament\Pages\Installer\Steps\CompletedStep;
 use App\Filament\Pages\Installer\Steps\DatabaseStep;
 use App\Filament\Pages\Installer\Steps\EnvironmentStep;
+use App\Filament\Pages\Installer\Steps\QueueStep;
 use App\Filament\Pages\Installer\Steps\RequirementsStep;
 use App\Models\User;
 use App\Services\Users\UserCreationService;
@@ -70,8 +70,8 @@ class PanelInstaller extends SimplePage implements HasForms
                 EnvironmentStep::make($this),
                 DatabaseStep::make($this),
                 CacheStep::make($this),
+                QueueStep::make($this),
                 AdminUserStep::make($this),
-                CompletedStep::make(),
             ])
                 ->persistStepInQueryString()
                 ->nextAction(fn (Action $action) => $action->keyBindings('enter'))

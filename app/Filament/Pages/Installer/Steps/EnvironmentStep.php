@@ -17,12 +17,6 @@ class EnvironmentStep
         'redis' => 'Redis',
     ];
 
-    public const QUEUE_DRIVERS = [
-        'database' => 'Database',
-        'sync' => 'Sync',
-        'redis' => 'Redis',
-    ];
-
     public static function make(PanelInstaller $installer): Step
     {
         return Step::make('environment')
@@ -54,14 +48,6 @@ class EnvironmentStep
                     ->inline()
                     ->options(self::SESSION_DRIVERS)
                     ->default(config('session.driver')),
-                ToggleButtons::make('env_general.QUEUE_CONNECTION')
-                    ->label('Queue Driver')
-                    ->hintIcon('tabler-question-mark')
-                    ->hintIconTooltip('The driver used for handling queues. We recommend "Database".')
-                    ->required()
-                    ->inline()
-                    ->options(self::QUEUE_DRIVERS)
-                    ->default(config('queue.default')),
             ])
             ->afterValidation(fn () => $installer->writeToEnv('env_general'));
     }
