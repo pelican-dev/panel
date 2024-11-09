@@ -37,12 +37,16 @@ class CacheStep
                     ->default(config('cache.default'))
                     ->columnSpanFull()
                     ->live()
-                    ->afterStateUpdated(function ($state, Set $set) {
+                    ->afterStateUpdated(function ($state, Set $set, Get $get) {
                         if ($state !== 'redis') {
                             $set('env_cache.REDIS_HOST', null);
                             $set('env_cache.REDIS_PORT', null);
                             $set('env_cache.REDIS_USERNAME', null);
                             $set('env_cache.REDIS_PASSWORD', null);
+                        } else {
+                            $set('env_cache.REDIS_HOST', $get('env_cache.REDIS_HOST') ?? '127.0.0.1');
+                            $set('env_cache.REDIS_PORT', $get('env_cache.REDIS_PORT') ?? '6379');
+                            $set('env_cache.REDIS_USERNAME', null);
                         }
                     }),
                 TextInput::make('env_cache.REDIS_HOST')

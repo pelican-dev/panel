@@ -36,7 +36,7 @@ class DatabaseStep
                     ->options(self::DATABASE_DRIVERS)
                     ->default(config('database.default'))
                     ->live()
-                    ->afterStateUpdated(function ($state, Set $set) {
+                    ->afterStateUpdated(function ($state, Set $set, Get $get) {
                         $set('env_database.DB_DATABASE', $state === 'sqlite' ? 'database.sqlite' : 'panel');
 
                         if ($state === 'sqlite') {
@@ -44,6 +44,10 @@ class DatabaseStep
                             $set('env_database.DB_PORT', null);
                             $set('env_database.DB_USERNAME', null);
                             $set('env_database.DB_PASSWORD', null);
+                        } else {
+                            $set('env_database.DB_HOST', $get('env_database.DB_HOST') ?? '127.0.0.1');
+                            $set('env_database.DB_PORT', $get('env_database.DB_PORT') ?? '3306');
+                            $set('env_database.DB_USERNAME', $get('env_database.DB_USERNAME') ?? 'pelican');
                         }
                     }),
                 TextInput::make('env_database.DB_DATABASE')
