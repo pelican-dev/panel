@@ -42,8 +42,6 @@ class PanelInstaller extends SimplePage implements HasForms
 
     protected static string $view = 'filament.pages.installer';
 
-    private User $user;
-
     public function getMaxWidth(): MaxWidth|string
     {
         return MaxWidth::SevenExtraLarge;
@@ -71,7 +69,7 @@ class PanelInstaller extends SimplePage implements HasForms
                 DatabaseStep::make($this),
                 CacheStep::make($this),
                 QueueStep::make($this),
-                AdminUserStep::make($this),
+                AdminUserStep::make(),
             ])
                 ->persistStepInQueryString()
                 ->nextAction(fn (Action $action) => $action->keyBindings('enter'))
@@ -93,14 +91,14 @@ class PanelInstaller extends SimplePage implements HasForms
         return 'data';
     }
 
-    public function submit(): Redirector|RedirectResponse
+    public function submit(UserCreationService $userCreationService): Redirector|RedirectResponse
     {
         // Disable installer
         $this->writeToEnvironment(['APP_INSTALLED' => 'true']);
 
-        // Login user
-        $this->user ??= User::all()->filter(fn ($user) => $user->isRootAdmin())->first();
-        auth()->guard()->login($this->user, true);
+        // Create admin user & login
+        $user = $this->createAdminUser($userCreationService);
+        auth()->guard()->login($user, true);
 
         // Write session data at the very end to avid page expire errors
         $this->writeToEnv('env_session');
@@ -163,12 +161,13 @@ class PanelInstaller extends SimplePage implements HasForms
         }
     }
 
-    public function createAdminUser(UserCreationService $userCreationService): void
+    public function createAdminUser(UserCreationService $userCreationService): User
     {
         try {
             $userData = array_get($this->data, 'user');
             $userData['root_admin'] = true;
-            $this->user = $userCreationService->handle($userData);
+
+            return $userCreationService->handle($userData);
         } catch (Exception $exception) {
             report($exception);
 
