@@ -34,7 +34,7 @@ class AppPanelProvider extends PanelProvider
             ->favicon(config('app.favicon', '/pelican.ico'))
             ->topNavigation(config('panel.filament.top-navigation', true))
             ->maxContentWidth(MaxWidth::ScreenTwoExtraLarge)
-            ->profile(EditProfile::class, true)
+            ->profile(EditProfile::class, false)
             ->userMenuItems([
                 MenuItem::make()
                     ->label('Admin')
