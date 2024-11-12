@@ -7,6 +7,7 @@ use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Components\ToggleButtons;
 use Filament\Forms\Components\Wizard\Step;
+use Filament\Forms\Get;
 use Illuminate\Support\HtmlString;
 use Webbingbrasil\FilamentCopyActions\Forms\Actions\CopyAction;
 
@@ -31,6 +32,7 @@ class QueueStep
                     ->required()
                     ->inline()
                     ->options(self::QUEUE_DRIVERS)
+                    ->disableOptionWhen(fn ($value, Get $get) => $value === 'redis' && $get('env_cache.CACHE_STORE') !== 'redis')
                     ->default(config('queue.default')),
                 Toggle::make('done')
                     ->label('I have done both steps below.')
