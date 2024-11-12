@@ -3,12 +3,12 @@
 namespace App\Filament\Pages\Installer;
 
 use App\Filament\Pages\Dashboard;
-use App\Filament\Pages\Installer\Steps\AdminUserStep;
 use App\Filament\Pages\Installer\Steps\CacheStep;
 use App\Filament\Pages\Installer\Steps\DatabaseStep;
 use App\Filament\Pages\Installer\Steps\EnvironmentStep;
 use App\Filament\Pages\Installer\Steps\QueueStep;
 use App\Filament\Pages\Installer\Steps\RequirementsStep;
+use App\Filament\Pages\Installer\Steps\SessionStep;
 use App\Models\User;
 use App\Services\Users\UserCreationService;
 use App\Traits\CheckMigrationsTrait;
@@ -69,7 +69,7 @@ class PanelInstaller extends SimplePage implements HasForms
                 DatabaseStep::make($this),
                 CacheStep::make($this),
                 QueueStep::make($this),
-                AdminUserStep::make(),
+                SessionStep::make(),
             ])
                 ->persistStepInQueryString()
                 ->nextAction(fn (Action $action) => $action->keyBindings('enter'))
@@ -100,7 +100,7 @@ class PanelInstaller extends SimplePage implements HasForms
         $user = $this->createAdminUser($userCreationService);
         auth()->guard()->login($user, true);
 
-        // Write session data at the very end to avid page expire errors
+        // Write session data at the very end to avoid "page expired" errors
         $this->writeToEnv('env_session');
 
         // Redirect to admin panel
