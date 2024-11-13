@@ -31,7 +31,7 @@
                 @else
                     Your panel is <strong>not up-to-date!</strong> The latest version is
                     <a>
-                        <code>{{ $version->getPanel() }}</code>
+                        <code>{{ $version->latestPanelVersion() }}</code>
                     </a>
                     and you are currently running version <code>{{ config('app.version') }}</code>.
                 @endif
@@ -41,7 +41,7 @@
 </div>
 <div class="row">
     <div class="col-xs-6 col-sm-3 text-center">
-        <a href="{{ $version->getDiscord() }}"><button class="btn btn-warning" style="width:100%;"><i class="fa fa-fw fa-support"></i> Get Help <small>(via Discord)</small></button></a>
+        <a href="https://pelican.dev/discord"><button class="btn btn-warning" style="width:100%;"><i class="fa fa-fw fa-support"></i> Get Help <small>(via Discord)</small></button></a>
     </div>
     <div class="col-xs-6 col-sm-3 text-center">
         <a href="https://pelican.dev"><button class="btn btn-primary" style="width:100%;"><i class="fa fa-fw fa-link"></i> Documentation</button></a>
@@ -51,7 +51,7 @@
         <a href="https://github.com/pelican-dev/panel"><button class="btn btn-primary" style="width:100%;"><i class="fa fa-fw fa-support"></i> Github</button></a>
     </div>
     <div class="col-xs-6 col-sm-3 text-center">
-        <a href="{{ $version->getDonations() }}"><button class="btn btn-success" style="width:100%;"><i class="fa fa-fw fa-money"></i> Support the Project</button></a>
+        <a href="https://pelican.dev/donate"><button class="btn btn-success" style="width:100%;"><i class="fa fa-fw fa-money"></i> Support the Project</button></a>
     </div>
 </div>
 @endsection
