@@ -20,11 +20,11 @@ class ListServers extends ListRecords
     {
         return $table
             ->paginated(false)
-            ->query(fn () => auth()->user()->accessibleServers())
+            ->query(fn () => auth()->user()->can('viewList server') ? Server::query() : auth()->user()->accessibleServers())
             ->columns([
                 Stack::make([
                     ServerEntryColumn::make('server_entry')
-                        ->searchable(['name', 'egg.name']),
+                        ->searchable(['name']),
                 ]),
             ])
             ->contentGrid([
