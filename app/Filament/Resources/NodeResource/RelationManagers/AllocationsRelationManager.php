@@ -46,8 +46,9 @@ class AllocationsRelationManager extends RelationManager
             // ->checkIfRecordIsSelectableUsing(fn (Allocation $allocation) => $allocation->id !== $allocation->server?->allocation_id)
 
             // All assigned allocations
-            ->checkIfRecordIsSelectableUsing(fn (Allocation $allocation) => $allocation->server_id === null)
+            ->checkIfRecordIsSelectableUsing(fn(Allocation $allocation) => $allocation->server_id === null)
             ->searchable()
+            ->selectCurrentPageOnly() //Prevent people from trying to nuke 30,000 ports at once.... -,-
             ->columns([
                 TextColumn::make('id'),
                 TextColumn::make('port')
@@ -57,7 +58,7 @@ class AllocationsRelationManager extends RelationManager
                     ->label('Server')
                     ->icon('tabler-brand-docker')
                     ->searchable()
-                    ->url(fn (Allocation $allocation): string => $allocation->server ? route('filament.admin.resources.servers.edit', ['record' => $allocation->server]) : ''),
+                    ->url(fn(Allocation $allocation): string => $allocation->server ? route('filament.admin.resources.servers.edit', ['record' => $allocation->server]) : ''),
                 TextInputColumn::make('ip_alias')
                     ->searchable()
                     ->label('Alias'),
@@ -65,15 +66,9 @@ class AllocationsRelationManager extends RelationManager
                     ->searchable()
                     ->label('IP'),
             ])
-            ->filters([
-                //
-            ])
-            ->actions([
-                //
-            ])
             ->headerActions([
                 Tables\Actions\Action::make('create new allocation')->label('Create Allocations')
-                    ->form(fn () => [
+                    ->form(fn() => [
                         TextInput::make('allocation_ip')
                             ->datalist($this->getOwnerRecord()->ipAddresses())
                             ->label('IP Address')
@@ -103,7 +98,7 @@ class AllocationsRelationManager extends RelationManager
                                 foreach ($state as $portEntry) {
                                     if (!str_contains($portEntry, '-')) {
                                         if (is_numeric($portEntry)) {
-                                            $ports->push((int) $portEntry);
+                                            $ports->push((int)$portEntry);
 
                                             continue;
                                         }
@@ -120,8 +115,8 @@ class AllocationsRelationManager extends RelationManager
                                         continue;
                                     }
 
-                                    $start = max((int) $start, 0);
-                                    $end = min((int) $end, 2 ** 16 - 1);
+                                    $start = max((int)$start, 0);
+                                    $end = min((int)$end, 2 ** 16 - 1);
                                     foreach (range($start, $end) as $i) {
                                         $ports->push($i);
                                     }
@@ -139,7 +134,7 @@ class AllocationsRelationManager extends RelationManager
                                     $ports = $sortedPorts;
                                 }
 
-                                $ports = $ports->filter(fn ($port) => $port > 1024 && $port < 65535)->values();
+                                $ports = $ports->filter(fn($port) => $port > 1024 && $port < 65535)->values();
 
                                 if ($update) {
                                     $set('allocation_ports', $ports->all());
@@ -148,12 +143,12 @@ class AllocationsRelationManager extends RelationManager
                             ->splitKeys(['Tab', ' ', ','])
                             ->required(),
                     ])
-                    ->action(fn (array $data, AssignmentService $service) => $service->handle($this->getOwnerRecord(), $data)),
+                    ->action(fn(array $data, AssignmentService $service) => $service->handle($this->getOwnerRecord(), $data)),
             ])
             ->bulkActions([
                 BulkActionGroup::make([
                     DeleteBulkAction::make()
-                        ->authorize(fn () => auth()->user()->can('delete allocation')),
+                        ->authorize(fn() => auth()->user()->can('delete allocation')),
                 ]),
             ]);
     }

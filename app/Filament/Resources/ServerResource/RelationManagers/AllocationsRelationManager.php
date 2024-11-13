@@ -40,36 +40,37 @@ class AllocationsRelationManager extends RelationManager
     public function table(Table $table): Table
     {
         return $table
+            ->selectCurrentPageOnly()
             ->recordTitleAttribute('ip')
-            ->recordTitle(fn (Allocation $allocation) => "$allocation->ip:$allocation->port")
-            ->checkIfRecordIsSelectableUsing(fn (Allocation $record) => $record->id !== $this->getOwnerRecord()->allocation_id)
+            ->recordTitle(fn(Allocation $allocation) => "$allocation->ip:$allocation->port")
+            ->checkIfRecordIsSelectableUsing(fn(Allocation $record) => $record->id !== $this->getOwnerRecord()->allocation_id)
             ->inverseRelationship('server')
             ->columns([
                 TextColumn::make('ip')->label('IP'),
                 TextColumn::make('port')->label('Port'),
                 TextInputColumn::make('ip_alias')->label('Alias'),
                 IconColumn::make('primary')
-                    ->icon(fn ($state) => match ($state) {
+                    ->icon(fn($state) => match ($state) {
                         true => 'tabler-star-filled',
                         default => 'tabler-star',
                     })
-                    ->color(fn ($state) => match ($state) {
+                    ->color(fn($state) => match ($state) {
                         true => 'warning',
                         default => 'gray',
                     })
-                    ->action(fn (Allocation $allocation) => $this->getOwnerRecord()->update(['allocation_id' => $allocation->id]) && $this->deselectAllTableRecords())
-                    ->default(fn (Allocation $allocation) => $allocation->id === $this->getOwnerRecord()->allocation_id)
+                    ->action(fn(Allocation $allocation) => $this->getOwnerRecord()->update(['allocation_id' => $allocation->id]) && $this->deselectAllTableRecords())
+                    ->default(fn(Allocation $allocation) => $allocation->id === $this->getOwnerRecord()->allocation_id)
                     ->label('Primary'),
             ])
             ->actions([
                 Action::make('make-primary')
-                    ->action(fn (Allocation $allocation) => $this->getOwnerRecord()->update(['allocation_id' => $allocation->id]) && $this->deselectAllTableRecords())
-                    ->label(fn (Allocation $allocation) => $allocation->id === $this->getOwnerRecord()->allocation_id ? '' : 'Make Primary'),
+                    ->action(fn(Allocation $allocation) => $this->getOwnerRecord()->update(['allocation_id' => $allocation->id]) && $this->deselectAllTableRecords())
+                    ->label(fn(Allocation $allocation) => $allocation->id === $this->getOwnerRecord()->allocation_id ? '' : 'Make Primary'),
             ])
             ->headerActions([
                 CreateAction::make()->label('Create Allocation')
                     ->createAnother(false)
-                    ->form(fn () => [
+                    ->form(fn() => [
                         TextInput::make('allocation_ip')
                             ->datalist($this->getOwnerRecord()->node->ipAddresses())
                             ->label('IP Address')
@@ -99,7 +100,7 @@ class AllocationsRelationManager extends RelationManager
                                 foreach ($state as $portEntry) {
                                     if (!str_contains($portEntry, '-')) {
                                         if (is_numeric($portEntry)) {
-                                            $ports->push((int) $portEntry);
+                                            $ports->push((int)$portEntry);
 
                                             continue;
                                         }
@@ -116,8 +117,8 @@ class AllocationsRelationManager extends RelationManager
                                         continue;
                                     }
 
-                                    $start = max((int) $start, 0);
-                                    $end = min((int) $end, 2 ** 16 - 1);
+                                    $start = max((int)$start, 0);
+                                    $end = min((int)$end, 2 ** 16 - 1);
                                     foreach (range($start, $end) as $i) {
                                         $ports->push($i);
                                     }
@@ -135,7 +136,7 @@ class AllocationsRelationManager extends RelationManager
                                     $ports = $sortedPorts;
                                 }
 
-                                $ports = $ports->filter(fn ($port) => $port > 1024 && $port < 65535)->values();
+                                $ports = $ports->filter(fn($port) => $port > 1024 && $port < 65535)->values();
 
                                 if ($update) {
                                     $set('allocation_ports', $ports->all());
@@ -144,12 +145,12 @@ class AllocationsRelationManager extends RelationManager
                             ->splitKeys(['Tab', ' ', ','])
                             ->required(),
                     ])
-                    ->action(fn (array $data, AssignmentService $service) => $service->handle($this->getOwnerRecord()->node, $data, $this->getOwnerRecord())),
+                    ->action(fn(array $data, AssignmentService $service) => $service->handle($this->getOwnerRecord()->node, $data, $this->getOwnerRecord())),
                 AssociateAction::make()
                     ->multiple()
                     ->associateAnother(false)
                     ->preloadRecordSelect()
-                    ->recordSelectOptionsQuery(fn ($query) => $query->whereBelongsTo($this->getOwnerRecord()->node)->whereNull('server_id'))
+                    ->recordSelectOptionsQuery(fn($query) => $query->whereBelongsTo($this->getOwnerRecord()->node)->whereNull('server_id'))
                     ->label('Add Allocation'),
             ])
             ->bulkActions([
