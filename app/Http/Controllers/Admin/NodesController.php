@@ -138,8 +138,10 @@ class NodesController extends Controller
      * Creates new allocations on a node.
      *
      * @throws \App\Exceptions\Service\Allocation\CidrOutOfRangeException
+     * @throws \App\Exceptions\Service\Allocation\InvalidIpException
      * @throws \App\Exceptions\Service\Allocation\InvalidPortMappingException
      * @throws \App\Exceptions\Service\Allocation\PortOutOfRangeException
+     * @throws \App\Exceptions\Service\Allocation\PortsAlreadyExistsException
      * @throws \App\Exceptions\Service\Allocation\TooManyPortsInRangeException
      */
     public function createAllocation(AllocationFormRequest $request, Node $node): RedirectResponse

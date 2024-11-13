@@ -4,11 +4,14 @@ namespace App\Filament\Resources\NodeResource\RelationManagers;
 
 use App\Models\Allocation;
 use App\Models\Node;
+use App\Rules\Ip;
 use App\Services\Allocations\AssignmentService;
+use Exception;
 use Filament\Forms\Components\TagsInput;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Forms\Set;
+use Filament\Notifications\Notification;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables;
 use Filament\Tables\Actions\BulkActionGroup;
@@ -42,11 +45,8 @@ class AllocationsRelationManager extends RelationManager
         return $table
             ->recordTitleAttribute('ip')
 
-            // Non Primary Allocations
-            // ->checkIfRecordIsSelectableUsing(fn (Allocation $allocation) => $allocation->id !== $allocation->server?->allocation_id)
-
             // All assigned allocations
-            ->checkIfRecordIsSelectableUsing(fn (Allocation $allocation) => $allocation->server_id === null)
+            ->checkIfRecordIsSelectableUsing(fn (Allocation $allocation) => $allocation->server_id === null && $allocation->id !== $allocation->server?->allocation_id)
             ->searchable()
             ->selectCurrentPageOnly() //Prevent people from trying to nuke 30,000 ports at once.... -,-
             ->columns([
@@ -73,7 +73,7 @@ class AllocationsRelationManager extends RelationManager
                             ->datalist($this->getOwnerRecord()->ipAddresses())
                             ->label('IP Address')
                             ->inlineLabel()
-                            ->ipv4()
+                            ->rules([new Ip()])
                             ->helperText("Usually your machine's public IP unless you are port forwarding.")
                             ->required(),
                         TextInput::make('allocation_alias')
@@ -92,58 +92,46 @@ class AllocationsRelationManager extends RelationManager
                             ->label('Ports')
                             ->inlineLabel()
                             ->live()
-                            ->afterStateUpdated(function ($state, Set $set) {
-                                $ports = collect();
-                                $update = false;
-                                foreach ($state as $portEntry) {
-                                    if (!str_contains($portEntry, '-')) {
-                                        if (is_numeric($portEntry)) {
-                                            $ports->push((int) $portEntry);
+                            ->splitKeys(['Tab', ' ', ','])
+                            ->required()
+                            ->afterStateUpdated(function (array $state, Set $set) {
+                                $ports = collect($state)
+                                    ->flatMap(function ($portEntry) {
+                                        if (preg_match(AssignmentService::PORT_RANGE_REGEX, $portEntry, $matches)) {
+                                            array_shift($matches);
 
-                                            continue;
+                                            [$start, $end] = $matches;
+
+                                            if ($start > $end) {
+                                                [$start, $end] = [$end, $start];
+                                            }
+
+                                            return range((int) $start, (int) $end);
                                         }
 
-                                        // Do not add non numerical ports
-                                        $update = true;
+                                        if (is_numeric($portEntry)) {
+                                            return (int) $portEntry;
+                                        }
+                                    })->unique()->all();
 
-                                        continue;
-                                    }
-
-                                    $update = true;
-                                    [$start, $end] = explode('-', $portEntry);
-                                    if (!is_numeric($start) || !is_numeric($end)) {
-                                        continue;
-                                    }
-
-                                    $start = max((int) $start, 0);
-                                    $end = min((int) $end, 2 ** 16 - 1);
-                                    foreach (range($start, $end) as $i) {
-                                        $ports->push($i);
-                                    }
+                                if (count($ports) > count($state)) {
+                                    $set('allocation_ports', $ports);
                                 }
-
-                                $uniquePorts = $ports->unique()->values();
-                                if ($ports->count() > $uniquePorts->count()) {
-                                    $update = true;
-                                    $ports = $uniquePorts;
-                                }
-
-                                $sortedPorts = $ports->sort()->values();
-                                if ($sortedPorts->all() !== $ports->all()) {
-                                    $update = true;
-                                    $ports = $sortedPorts;
-                                }
-
-                                $ports = $ports->filter(fn ($port) => $port > 1024 && $port < 65535)->values();
-
-                                if ($update) {
-                                    $set('allocation_ports', $ports->all());
-                                }
-                            })
-                            ->splitKeys(['Tab', ' ', ','])
-                            ->required(),
+                            }),
                     ])
-                    ->action(fn (array $data, AssignmentService $service) => $service->handle($this->getOwnerRecord(), $data)),
+                    ->action(function (array $data, AssignmentService $service) {
+                        try {
+                            $service->handle($this->getOwnerRecord(), $data);
+                        } catch (Exception $exception) {
+                            report($exception);
+
+                            Notification::make()
+                                ->title(str($exception::class)->afterLast('\\'))
+                                ->body($exception->getMessage())
+                                ->danger()
+                                ->send();
+                        }
+                    }),
             ])
             ->bulkActions([
                 BulkActionGroup::make([

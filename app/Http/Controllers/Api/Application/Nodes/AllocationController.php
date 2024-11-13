@@ -54,10 +54,11 @@ class AllocationController extends ApplicationApiController
     /**
      * Store new allocations for a given node.
      *
-     * @throws \App\Exceptions\DisplayException
      * @throws \App\Exceptions\Service\Allocation\CidrOutOfRangeException
+     * @throws \App\Exceptions\Service\Allocation\InvalidIpException
      * @throws \App\Exceptions\Service\Allocation\InvalidPortMappingException
      * @throws \App\Exceptions\Service\Allocation\PortOutOfRangeException
+     * @throws \App\Exceptions\Service\Allocation\PortsAlreadyExistsException
      * @throws \App\Exceptions\Service\Allocation\TooManyPortsInRangeException
      */
     public function store(StoreAllocationRequest $request, Node $node): JsonResponse

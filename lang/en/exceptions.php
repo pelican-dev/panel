@@ -7,11 +7,13 @@ return [
         'daemon_off_config_updated' => 'The daemon configuration <strong>has been updated</strong>, however there was an error encountered while attempting to automatically update the configuration file on the Daemon. You will need to manually update the configuration file (config.yml) for the daemon to apply these changes.',
     ],
     'allocations' => [
+        'exists' => 'Couldn\'t add provided allocations, IP address :ips with ports :ports as they already exists',
         'server_using' => 'A server is currently assigned to this allocation. An allocation can only be deleted if no server is currently assigned.',
         'too_many_ports' => 'Adding more than 1000 ports in a single range at once is not supported.',
+        'invalid_ip' => 'The provided ip address :ip was invalid and could not be processed.',
         'invalid_mapping' => 'The mapping provided for :port was invalid and could not be processed.',
-        'cidr_out_of_range' => 'CIDR notation only allows masks between /25 and /32.',
-        'port_out_of_range' => 'Ports in an allocation must be greater than or equal to 1024 and less than or equal to 65535.',
+        'cidr_out_of_range' => 'CIDR notation only allows masks between :max and :min for IPv:version.',
+        'port_out_of_range' => 'Ports in an allocation must be between :min and :max.',
     ],
     'egg' => [
         'delete_has_servers' => 'An Egg with active servers attached to it cannot be deleted from the Panel.',

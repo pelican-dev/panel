@@ -11,6 +11,6 @@ class InvalidPortMappingException extends DisplayException
      */
     public function __construct(mixed $port)
     {
-        parent::__construct(trans('exceptions.allocations.invalid_mapping', ['port' => $port]));
+        parent::__construct(trans('exceptions.allocations.invalid_mapping', compact('port')));
     }
 }

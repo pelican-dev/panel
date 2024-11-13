@@ -22,10 +22,11 @@ class FindAssignableAllocationService
      * no allocation can be found, a new one will be created with a random port between the defined
      * range from the configuration.
      *
-     * @throws \App\Exceptions\DisplayException
      * @throws \App\Exceptions\Service\Allocation\CidrOutOfRangeException
+     * @throws \App\Exceptions\Service\Allocation\InvalidIpException
      * @throws \App\Exceptions\Service\Allocation\InvalidPortMappingException
      * @throws \App\Exceptions\Service\Allocation\PortOutOfRangeException
+     * @throws \App\Exceptions\Service\Allocation\PortsAlreadyExistsException
      * @throws \App\Exceptions\Service\Allocation\TooManyPortsInRangeException
      */
     public function handle(Server $server): Allocation
@@ -56,10 +57,11 @@ class FindAssignableAllocationService
      * in the settings. If there are no matches in that range, or something is wrong with the
      * range information provided an exception will be raised.
      *
-     * @throws \App\Exceptions\DisplayException
      * @throws \App\Exceptions\Service\Allocation\CidrOutOfRangeException
+     * @throws \App\Exceptions\Service\Allocation\InvalidIpException
      * @throws \App\Exceptions\Service\Allocation\InvalidPortMappingException
      * @throws \App\Exceptions\Service\Allocation\PortOutOfRangeException
+     * @throws \App\Exceptions\Service\Allocation\PortsAlreadyExistsException
      * @throws \App\Exceptions\Service\Allocation\TooManyPortsInRangeException
      */
     protected function createNewAllocation(Server $server): Allocation
