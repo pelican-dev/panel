@@ -6,7 +6,6 @@ use App\Filament\Pages\Installer\PanelInstaller;
 use Filament\Forms\Components\Fieldset;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Wizard\Step;
-use Filament\Forms\Set;
 
 class EnvironmentStep
 {
@@ -27,9 +26,7 @@ class EnvironmentStep
                     ->hintIcon('tabler-question-mark')
                     ->hintIconTooltip('This will be the URL you access your Panel from.')
                     ->required()
-                    ->default(url(''))
-                    ->live()
-                    ->afterStateUpdated(fn ($state, Set $set) => $set('env_session.SESSION_SECURE_COOKIE', str_starts_with($state, 'https://') ? 'true' : 'false')),
+                    ->default(url('')),
                 Fieldset::make('adminuser')
                     ->label('Admin User')
                     ->columns(3)

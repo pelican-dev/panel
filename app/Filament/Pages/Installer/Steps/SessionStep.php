@@ -32,7 +32,7 @@ class SessionStep
                     ->default(config('session.driver')),
                 TextInput::make('env_session.SESSION_SECURE_COOKIE')
                     ->hidden()
-                    ->default(str_starts_with(url(''), 'https://') ? 'true' : 'false'),
+                    ->default(request()->isSecure()),
             ]);
     }
 }
