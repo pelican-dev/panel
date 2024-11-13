@@ -87,8 +87,8 @@ class EditProfile extends \Filament\Pages\Auth\EditProfile
                                             ->revealable(filament()->arePasswordsRevealable())
                                             ->rule(Password::default())
                                             ->autocomplete('new-password')
-                                            ->dehydrated(fn($state): bool => filled($state))
-                                            ->dehydrateStateUsing(fn($state): string => Hash::make($state))
+                                            ->dehydrated(fn ($state): bool => filled($state))
+                                            ->dehydrateStateUsing(fn ($state): string => Hash::make($state))
                                             ->live(debounce: 500)
                                             ->same('passwordConfirmation'),
                                         TextInput::make('passwordConfirmation')
@@ -97,12 +97,12 @@ class EditProfile extends \Filament\Pages\Auth\EditProfile
                                             ->prefixIcon('tabler-password-fingerprint')
                                             ->revealable(filament()->arePasswordsRevealable())
                                             ->required()
-                                            ->visible(fn(Get $get): bool => filled($get('password')))
+                                            ->visible(fn (Get $get): bool => filled($get('password')))
                                             ->dehydrated(false),
                                         Select::make('timezone')
                                             ->required()
                                             ->prefixIcon('tabler-clock-pin')
-                                            ->options(fn() => collect(DateTimeZone::listIdentifiers())->mapWithKeys(fn($tz) => [$tz => $tz]))
+                                            ->options(fn () => collect(DateTimeZone::listIdentifiers())->mapWithKeys(fn ($tz) => [$tz => $tz]))
                                             ->searchable(),
                                         Select::make('language')
                                             ->label(trans('strings.language'))
@@ -110,13 +110,13 @@ class EditProfile extends \Filament\Pages\Auth\EditProfile
                                             ->prefixIcon('tabler-flag')
                                             ->live()
                                             ->default('en')
-                                            ->helperText(fn(User $user, $state) => new HtmlString($user->isLanguageTranslated($state) ? '' : "
+                                            ->helperText(fn (User $user, $state) => new HtmlString($user->isLanguageTranslated($state) ? '' : "
                                                 Your language ($state) has not been translated yet!
                                                 But never fear, you can help fix that by
                                                 <a style='color: rgb(56, 189, 248)' href='https://crowdin.com/project/pelican-dev'>contributing directly here</a>.
                                             ")
                                             )
-                                            ->options(fn(User $user) => $user->getAvailableLanguages()),
+                                            ->options(fn (User $user) => $user->getAvailableLanguages()),
                                     ]),
 
                                 Tab::make('2FA')
@@ -127,11 +127,11 @@ class EditProfile extends \Filament\Pages\Auth\EditProfile
                                                 Placeholder::make('2fa-already-enabled')
                                                     ->label('Two Factor Authentication is currently enabled!'),
                                                 Textarea::make('backup-tokens')
-                                                    ->hidden(fn() => !cache()->get("users.{$this->getUser()->id}.2fa.tokens"))
+                                                    ->hidden(fn () => !cache()->get("users.{$this->getUser()->id}.2fa.tokens"))
                                                     ->rows(10)
                                                     ->readOnly()
                                                     ->dehydrated(false)
-                                                    ->formatStateUsing(fn() => cache()->get("users.{$this->getUser()->id}.2fa.tokens"))
+                                                    ->formatStateUsing(fn () => cache()->get("users.{$this->getUser()->id}.2fa.tokens"))
                                                     ->helperText('These will not be shown again!')
                                                     ->label('Backup Tokens:'),
                                                 TextInput::make('2fa-disable-code')
@@ -142,7 +142,7 @@ class EditProfile extends \Filament\Pages\Auth\EditProfile
 
                                         ['image_url_data' => $url, 'secret' => $secret] = cache()->remember(
                                             "users.{$this->getUser()->id}.2fa.state",
-                                            now()->addMinutes(5), fn() => $setupService->handle($this->getUser())
+                                            now()->addMinutes(5), fn () => $setupService->handle($this->getUser())
                                         );
 
                                         $options = new QROptions([
@@ -188,7 +188,7 @@ class EditProfile extends \Filament\Pages\Auth\EditProfile
                                         return [
                                             Placeholder::make('qr')
                                                 ->label('Scan QR Code')
-                                                ->content(fn() => new HtmlString("
+                                                ->content(fn () => new HtmlString("
                                                 <div style='width: 300px; background-color: rgb(24, 24, 27);'>$image</div>
                                             "))
                                                 ->helperText('Setup Key: ' . $secret),
@@ -220,7 +220,7 @@ class EditProfile extends \Filament\Pages\Auth\EditProfile
                                                     ->columnSpanFull(),
                                             ])->headerActions([
                                                 Action::make('Create')
-                                                    ->disabled(fn(Get $get) => $get('description') === null)
+                                                    ->disabled(fn (Get $get) => $get('description') === null)
                                                     ->successRedirectUrl(route('filament.admin.auth.profile', ['tab' => '-api-keys-tab']))
                                                     ->action(function (Get $get, Action $action, User $user) {
                                                         $token = $user->createToken(
@@ -239,7 +239,7 @@ class EditProfile extends \Filament\Pages\Auth\EditProfile
                                                     ->label('')
                                                     ->relationship('apiKeys')
                                                     ->addable(false)
-                                                    ->itemLabel(fn($state) => $state['identifier'])
+                                                    ->itemLabel(fn ($state) => $state['identifier'])
                                                     ->deleteAction(function (Action $action) {
                                                         $action->requiresConfirmation()->action(function (array $arguments, Repeater $component) {
                                                             $items = $component->getState();
@@ -253,8 +253,8 @@ class EditProfile extends \Filament\Pages\Auth\EditProfile
                                                             $component->callAfterStateUpdated();
                                                         });
                                                     })
-                                                    ->schema(fn() => [
-                                                        Placeholder::make('adf')->label(fn(ApiKey $key) => $key->memo),
+                                                    ->schema(fn () => [
+                                                        Placeholder::make('adf')->label(fn (ApiKey $key) => $key->memo),
                                                     ]),
                                             ]),
                                         ]),
@@ -274,7 +274,7 @@ class EditProfile extends \Filament\Pages\Auth\EditProfile
                                                 $query->orderBy('timestamp', 'desc');
                                             })
                                             ->schema([
-                                                Placeholder::make('activity!')->label('')->content(fn(ActivityLog $log) => new HtmlString($log->htmlable())),
+                                                Placeholder::make('activity!')->label('')->content(fn (ActivityLog $log) => new HtmlString($log->htmlable())),
                                             ]),
                                     ]),
                             ]),
