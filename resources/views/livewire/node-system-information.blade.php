@@ -14,7 +14,7 @@
             />
             @script
             <script>
-                console.error(@json($node->systemInformation()['exception']));
+                console.error(@json($node->systemInformation())); // TODO Make Purdy
             </script>
             @endscript
             @break
