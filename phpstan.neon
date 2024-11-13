@@ -12,9 +12,6 @@ parameters:
     level: 6
 
     ignoreErrors:
-        # Prologue\Alerts defines its methods from its configuration file dynamically
-        - '#^Call to an undefined method Prologue\\Alerts\\AlertsMessageBag::(danger|success|info|warning)\(\)\.$#'
-
         - '#no value type specified in iterable#'
         - '#Unable to resolve the template type#'
         - '#does not specify its types#'

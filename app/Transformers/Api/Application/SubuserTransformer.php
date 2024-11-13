@@ -40,8 +40,6 @@ class SubuserTransformer extends BaseTransformer
 
     /**
      * Return a generic item of user for this subuser.
-     *
-     * @throws \App\Exceptions\Transformer\InvalidTransformerLevelException
      */
     public function includeUser(Subuser $subuser): Item|NullResource
     {
@@ -56,8 +54,6 @@ class SubuserTransformer extends BaseTransformer
 
     /**
      * Return a generic item of server for this subuser.
-     *
-     * @throws \App\Exceptions\Transformer\InvalidTransformerLevelException
      */
     public function includeServer(Subuser $subuser): Item|NullResource
     {

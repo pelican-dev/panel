@@ -36,8 +36,6 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @method static \Illuminate\Database\Eloquent\Builder|Allocation wherePort($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Allocation whereServerId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Allocation whereUpdatedAt($value)
- *
- * @mixin \Eloquent
  */
 class Allocation extends Model
 {

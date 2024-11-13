@@ -7,7 +7,6 @@ use Illuminate\Foundation\Http\Middleware\TrimStrings;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Support\Facades\RateLimiter;
-use App\Http\Middleware\AdminAuthenticate;
 use App\Http\Middleware\RequireTwoFactorAuthentication;
 use Illuminate\Foundation\Support\Providers\RouteServiceProvider as ServiceProvider;
 
@@ -36,10 +35,6 @@ class RouteServiceProvider extends ServiceProvider
 
                 Route::middleware(['auth.session', RequireTwoFactorAuthentication::class])
                     ->group(base_path('routes/base.php'));
-
-                Route::middleware(['auth.session', RequireTwoFactorAuthentication::class, AdminAuthenticate::class])
-                    ->prefix('/legacy')
-                    ->group(base_path('routes/admin.php'));
 
                 Route::middleware('guest')->prefix('/auth')->group(base_path('routes/auth.php'));
             });

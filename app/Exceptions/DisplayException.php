@@ -10,7 +10,6 @@ use Illuminate\Http\Request;
 use Psr\Log\LoggerInterface;
 use Illuminate\Http\Response;
 use Illuminate\Container\Container;
-use Prologue\Alerts\AlertsMessageBag;
 use Symfony\Component\HttpKernel\Exception\HttpExceptionInterface;
 
 class DisplayException extends PanelException implements HttpExceptionInterface
@@ -66,9 +65,6 @@ class DisplayException extends PanelException implements HttpExceptionInterface
         if ($request->expectsJson()) {
             return response()->json(Handler::toArray($this), $this->getStatusCode(), $this->getHeaders());
         }
-
-        // @phpstan-ignore-next-line
-        app(AlertsMessageBag::class)->danger($this->getMessage())->flash();
 
         return redirect()->back()->withInput();
     }

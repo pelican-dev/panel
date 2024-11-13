@@ -115,7 +115,6 @@ class ServerCreationService
      */
     private function configureDeployment(array $data, DeploymentObject $deployment): Allocation
     {
-        /** @var Collection<\App\Models\Node> $nodes */
         $nodes = $this->findViableNodesService->handle(
             Arr::get($data, 'memory', 0),
             Arr::get($data, 'disk', 0),

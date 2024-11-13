@@ -40,8 +40,6 @@ class AllocationTransformer extends BaseTransformer
 
     /**
      * Load the node relationship onto a given transformation.
-     *
-     * @throws \App\Exceptions\Transformer\InvalidTransformerLevelException
      */
     public function includeNode(Allocation $allocation): Item|NullResource
     {
@@ -58,8 +56,6 @@ class AllocationTransformer extends BaseTransformer
 
     /**
      * Load the server relationship onto a given transformation.
-     *
-     * @throws \App\Exceptions\Transformer\InvalidTransformerLevelException
      */
     public function includeServer(Allocation $allocation): Item|NullResource
     {
