@@ -13,7 +13,7 @@ class DatabaseHostTransformer extends BaseTransformer
 {
     protected array $availableIncludes = [
         'databases',
-        'node',
+        'nodes',
     ];
 
     /**
@@ -56,16 +56,16 @@ class DatabaseHostTransformer extends BaseTransformer
     }
 
     /**
-     * Include the node associated with this host.
+     * Include the nodes associated with this host.
      */
-    public function includeNode(DatabaseHost $model): Item|NullResource
+    public function includeNodes(DatabaseHost $model): Item|NullResource
     {
         if (!$this->authorize(Node::RESOURCE_NAME)) {
             return $this->null();
         }
 
-        $model->loadMissing('node');
+        $model->loadMissing('nodes');
 
-        return $this->item($model->getRelation('node'), $this->makeTransformer(NodeTransformer::class), Node::RESOURCE_NAME);
+        return $this->item($model->getRelation('nodes'), $this->makeTransformer(NodeTransformer::class), Node::RESOURCE_NAME);
     }
 }
