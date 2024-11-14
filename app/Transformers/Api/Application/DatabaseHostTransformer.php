@@ -14,7 +14,7 @@ class DatabaseHostTransformer extends BaseTransformer
 {
     protected array $availableIncludes = [
         'databases',
-        'node',
+        'nodes',
     ];
 
     /**
@@ -36,7 +36,6 @@ class DatabaseHostTransformer extends BaseTransformer
             'host' => $model->host,
             'port' => $model->port,
             'username' => $model->username,
-            'node' => $model->node_id,
             'created_at' => $model->created_at->toAtomString(),
             'updated_at' => $model->updated_at->toAtomString(),
         ];
@@ -59,18 +58,18 @@ class DatabaseHostTransformer extends BaseTransformer
     }
 
     /**
-     * Include the node associated with this host.
+     * Include the nodes associated with this host.
      *
      * @throws \App\Exceptions\Transformer\InvalidTransformerLevelException
      */
-    public function includeNode(DatabaseHost $model): Item|NullResource
+    public function includeNodes(DatabaseHost $model): Item|NullResource
     {
         if (!$this->authorize(AdminAcl::RESOURCE_NODES)) {
             return $this->null();
         }
 
-        $model->loadMissing('node');
+        $model->loadMissing('nodes');
 
-        return $this->item($model->getRelation('node'), $this->makeTransformer(NodeTransformer::class), Node::RESOURCE_NAME);
+        return $this->item($model->getRelation('nodes'), $this->makeTransformer(NodeTransformer::class), Node::RESOURCE_NAME);
     }
 }

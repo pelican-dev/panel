@@ -79,13 +79,13 @@ class CreateDatabaseHost extends CreateRecord
                             ->revealable()
                             ->maxLength(255)
                             ->required(),
-//                        Select::make('node_ids')
-//                            ->multiple()
-//                            ->searchable()
-//                            ->preload()
-//                            ->helperText('This setting only defaults to this database host when adding a database to a server on the selected node.')
-//                            ->label('Linked Node')
-//                            ->relationship('nodes', 'name'),
+                        Select::make('node_ids')
+                            ->multiple()
+                            ->searchable()
+                            ->preload()
+                            ->helperText('This setting only defaults to this database host when adding a database to a server on the selected node.')
+                            ->label('Linked Node')
+                            ->relationship('nodes', 'name'),
                     ]),
             ]);
     }
