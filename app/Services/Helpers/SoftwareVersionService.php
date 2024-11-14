@@ -9,7 +9,7 @@ class SoftwareVersionService
 {
     public function latestPanelVersion(): string
     {
-        return cache()->remember('wings:latest_version', now()->addMinutes(config('panel.cdn.cache_time', 60)), function () {
+        return cache()->remember('panel:latest_version', now()->addMinutes(config('panel.cdn.cache_time', 60)), function () {
             try {
                 $response = Http::timeout(5)->connectTimeout(1)->get('https://api.github.com/repos/pelican-dev/panel/releases/latest')->throw()->json();
 
