@@ -84,7 +84,7 @@ class CreateDatabaseHost extends CreateRecord
                             ->searchable()
                             ->preload()
                             ->helperText('This setting only defaults to this database host when adding a database to a server on the selected node.')
-                            ->label('Linked Node')
+                            ->label('Linked Nodes')
                             ->relationship('nodes', 'name'),
                     ]),
             ]);

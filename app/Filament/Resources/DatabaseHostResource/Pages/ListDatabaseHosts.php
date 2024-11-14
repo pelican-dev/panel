@@ -36,8 +36,9 @@ class ListDatabaseHosts extends ListRecords
                     ->counts('databases')
                     ->icon('tabler-database')
                     ->label('Databases'),
-                TextColumn::make('node.name')
+                TextColumn::make('nodes.name')
                     ->icon('tabler-server-2')
+                    ->badge()
                     ->placeholder('No Nodes')
                     ->sortable(),
             ])
