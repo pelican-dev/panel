@@ -54,7 +54,7 @@ class Login extends BaseLogin
         $loginType = filter_var($data['login'], FILTER_VALIDATE_EMAIL) ? 'email' : 'username';
 
         return [
-            $loginType => $data['login'],
+            $loginType => mb_strtolower($data['login']),
             'password' => $data['password'],
         ];
     }
