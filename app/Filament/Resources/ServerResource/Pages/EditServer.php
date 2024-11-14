@@ -6,16 +6,18 @@ use App\Enums\ContainerStatus;
 use App\Enums\ServerState;
 use App\Filament\Resources\ServerResource;
 use App\Filament\Resources\ServerResource\RelationManagers\AllocationsRelationManager;
-use App\Http\Controllers\Admin\ServersController;
 use App\Models\Database;
 use App\Models\Egg;
+use App\Models\Mount;
 use App\Models\Server;
 use App\Models\ServerVariable;
 use App\Services\Databases\DatabaseManagementService;
 use App\Services\Databases\DatabasePasswordService;
 use App\Services\Servers\RandomWordService;
+use App\Services\Servers\ReinstallServerService;
 use App\Services\Servers\ServerDeletionService;
 use App\Services\Servers\SuspensionService;
+use App\Services\Servers\ToggleInstallService;
 use App\Services\Servers\TransferServerService;
 use Closure;
 use Exception;
@@ -599,8 +601,8 @@ class EditServer extends EditRecord
                             ->schema([
                                 CheckboxList::make('mounts')
                                     ->relationship('mounts')
-                                    ->options(fn (Server $server) => $server->node->mounts->mapWithKeys(fn ($mount) => [$mount->id => $mount->name]))
-                                    ->descriptions(fn (Server $server) => $server->node->mounts->mapWithKeys(fn ($mount) => [$mount->id => "$mount->source -> $mount->target"]))
+                                    ->options(fn (Server $server) => $server->node->mounts->filter(fn (Mount $mount) => $mount->eggs->contains($server->egg))->mapWithKeys(fn (Mount $mount) => [$mount->id => $mount->name]))
+                                    ->descriptions(fn (Server $server) => $server->node->mounts->mapWithKeys(fn (Mount $mount) => [$mount->id => "$mount->source -> $mount->target"]))
                                     ->label('Mounts')
                                     ->helperText(fn (Server $server) => $server->node->mounts->isNotEmpty() ? '' : 'No Mounts exist for this Node')
                                     ->columnSpanFull(),
@@ -676,8 +678,8 @@ class EditServer extends EditRecord
                                                     Action::make('toggleInstall')
                                                         ->label('Toggle Install Status')
                                                         ->disabled(fn (Server $server) => $server->isSuspended())
-                                                        ->action(function (ServersController $serversController, Server $server) {
-                                                            $serversController->toggleInstall($server);
+                                                        ->action(function (ToggleInstallService $service, Server $server) {
+                                                            $service->handle($server);
 
                                                             $this->refreshFormData(['status', 'docker']);
                                                         }),
@@ -763,7 +765,7 @@ class EditServer extends EditRecord
                                                         ->modalHeading('Are you sure you want to reinstall this server?')
                                                         ->modalDescription('!! This can result in unrecoverable data loss !!')
                                                         ->disabled(fn (Server $server) => $server->isSuspended())
-                                                        ->action(fn (ServersController $serversController, Server $server) => $serversController->reinstallServer($server)),
+                                                        ->action(fn (ReinstallServerService $service, Server $server) => $service->handle($server)),
                                                 ])->fullWidth(),
                                                 ToggleButtons::make('')
                                                     ->hint('This will reinstall the server with the assigned egg install script.'),

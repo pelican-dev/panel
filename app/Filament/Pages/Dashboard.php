@@ -2,6 +2,7 @@
 
 namespace App\Filament\Pages;
 
+use App\Filament\Resources\NodeResource\Pages\CreateNode;
 use App\Filament\Resources\NodeResource\Pages\ListNodes;
 use App\Models\Egg;
 use App\Models\Node;
@@ -39,8 +40,8 @@ class Dashboard extends Page
     {
         return [
             'inDevelopment' => config('app.version') === 'canary',
-            'version' => $this->softwareVersionService->versionData()['version'],
-            'latestVersion' => $this->softwareVersionService->getPanel(),
+            'version' => $this->softwareVersionService->currentPanelVersion(),
+            'latestVersion' => $this->softwareVersionService->latestPanelVersion(),
             'isLatest' => $this->softwareVersionService->isLatestPanel(),
             'eggsCount' => Egg::query()->count(),
             'nodesList' => ListNodes::getUrl(),
@@ -65,13 +66,13 @@ class Dashboard extends Page
                 CreateAction::make()
                     ->label(trans('dashboard/index.sections.intro-first-node.button_label'))
                     ->icon('tabler-server-2')
-                    ->url(route('filament.admin.resources.nodes.create')),
+                    ->url(CreateNode::getUrl()),
             ],
             'supportActions' => [
                 CreateAction::make()
                     ->label(trans('dashboard/index.sections.intro-support.button_donate'))
                     ->icon('tabler-cash')
-                    ->url($this->softwareVersionService->getDonations(), true)
+                    ->url('https://pelican.dev/donate', true)
                     ->color('success'),
             ],
             'helpActions' => [

@@ -36,14 +36,12 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @method static \Illuminate\Database\Eloquent\Builder|Allocation wherePort($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Allocation whereServerId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Allocation whereUpdatedAt($value)
- *
- * @mixin \Eloquent
  */
 class Allocation extends Model
 {
     /**
      * The resource name for this model when it is transformed into an
-     * API representation using fractal.
+     * API representation using fractal. Also used as name for api key permissions.
      */
     public const RESOURCE_NAME = 'allocation';
 

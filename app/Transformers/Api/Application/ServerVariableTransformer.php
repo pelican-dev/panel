@@ -4,8 +4,8 @@ namespace App\Transformers\Api\Application;
 
 use League\Fractal\Resource\Item;
 use App\Models\EggVariable;
+use App\Models\Egg;
 use League\Fractal\Resource\NullResource;
-use App\Services\Acl\Api\AdminAcl;
 
 class ServerVariableTransformer extends BaseTransformer
 {
@@ -32,12 +32,10 @@ class ServerVariableTransformer extends BaseTransformer
 
     /**
      * Return the parent service variable data.
-     *
-     * @throws \App\Exceptions\Transformer\InvalidTransformerLevelException
      */
     public function includeParent(EggVariable $variable): Item|NullResource
     {
-        if (!$this->authorize(AdminAcl::RESOURCE_EGGS)) {
+        if (!$this->authorize(Egg::RESOURCE_NAME)) {
             return $this->null();
         }
 

@@ -85,8 +85,6 @@ use Spatie\Permission\Traits\HasRoles;
  * @method static Builder|User whereUseTotp($value)
  * @method static Builder|User whereUsername($value)
  * @method static Builder|User whereUuid($value)
- *
- * @mixin \Eloquent
  */
 class User extends Model implements AuthenticatableContract, AuthorizableContract, CanResetPasswordContract, FilamentUser, HasAvatar, HasName
 {
@@ -104,7 +102,7 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
 
     /**
      * The resource name for this model when it is transformed into an
-     * API representation using fractal.
+     * API representation using fractal. Also used as name for api key permissions.
      */
     public const RESOURCE_NAME = 'user';
 

@@ -8,13 +8,12 @@ use App\Models\DatabaseHost;
 use League\Fractal\Resource\Item;
 use League\Fractal\Resource\Collection;
 use League\Fractal\Resource\NullResource;
-use App\Services\Acl\Api\AdminAcl;
 
 class DatabaseHostTransformer extends BaseTransformer
 {
     protected array $availableIncludes = [
         'databases',
-        'nodes',
+        'node',
     ];
 
     /**
@@ -36,6 +35,7 @@ class DatabaseHostTransformer extends BaseTransformer
             'host' => $model->host,
             'port' => $model->port,
             'username' => $model->username,
+            'node' => $model->node_id,
             'created_at' => $model->created_at->toAtomString(),
             'updated_at' => $model->updated_at->toAtomString(),
         ];
@@ -43,12 +43,10 @@ class DatabaseHostTransformer extends BaseTransformer
 
     /**
      * Include the databases associated with this host.
-     *
-     * @throws \App\Exceptions\Transformer\InvalidTransformerLevelException
      */
     public function includeDatabases(DatabaseHost $model): Collection|NullResource
     {
-        if (!$this->authorize(AdminAcl::RESOURCE_SERVER_DATABASES)) {
+        if (!$this->authorize(Database::RESOURCE_NAME)) {
             return $this->null();
         }
 
@@ -58,18 +56,16 @@ class DatabaseHostTransformer extends BaseTransformer
     }
 
     /**
-     * Include the nodes associated with this host.
-     *
-     * @throws \App\Exceptions\Transformer\InvalidTransformerLevelException
+     * Include the node associated with this host.
      */
-    public function includeNodes(DatabaseHost $model): Item|NullResource
+    public function includeNode(DatabaseHost $model): Item|NullResource
     {
-        if (!$this->authorize(AdminAcl::RESOURCE_NODES)) {
+        if (!$this->authorize(Node::RESOURCE_NAME)) {
             return $this->null();
         }
 
-        $model->loadMissing('nodes');
+        $model->loadMissing('node');
 
-        return $this->item($model->getRelation('nodes'), $this->makeTransformer(NodeTransformer::class), Node::RESOURCE_NAME);
+        return $this->item($model->getRelation('node'), $this->makeTransformer(NodeTransformer::class), Node::RESOURCE_NAME);
     }
 }

@@ -40,6 +40,7 @@ class AllocationsRelationManager extends RelationManager
     public function table(Table $table): Table
     {
         return $table
+            ->selectCurrentPageOnly()
             ->recordTitleAttribute('ip')
             ->recordTitle(fn (Allocation $allocation) => "$allocation->ip:$allocation->port")
             ->checkIfRecordIsSelectableUsing(fn (Allocation $record) => $record->id !== $this->getOwnerRecord()->allocation_id)

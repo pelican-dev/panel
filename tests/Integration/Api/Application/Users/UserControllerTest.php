@@ -2,6 +2,7 @@
 
 namespace App\Tests\Integration\Api\Application\Users;
 
+use App\Models\Server;
 use App\Models\User;
 use Illuminate\Http\Response;
 use App\Services\Acl\Api\AdminAcl;
@@ -152,7 +153,7 @@ class UserControllerTest extends ApplicationApiIntegrationTestCase
      */
     public function testKeyWithoutPermissionCannotLoadRelationship(): void
     {
-        $this->createNewDefaultApiKey($this->getApiUser(), ['r_servers' => 0]);
+        $this->createNewDefaultApiKey($this->getApiUser(), [Server::RESOURCE_NAME => AdminAcl::NONE]);
 
         $user = User::factory()->create();
         $this->createServerModel(['user_id' => $user->id]);
@@ -197,7 +198,7 @@ class UserControllerTest extends ApplicationApiIntegrationTestCase
     public function testErrorReturnedIfNoPermission(): void
     {
         $user = User::factory()->create();
-        $this->createNewDefaultApiKey($this->getApiUser(), ['r_users' => 0]);
+        $this->createNewDefaultApiKey($this->getApiUser(), [User::RESOURCE_NAME => AdminAcl::NONE]);
 
         $response = $this->getJson('/api/application/users/' . $user->id);
         $this->assertAccessDeniedJson($response);
@@ -286,7 +287,7 @@ class UserControllerTest extends ApplicationApiIntegrationTestCase
      */
     public function testApiKeyWithoutWritePermissions(string $method, string $url): void
     {
-        $this->createNewDefaultApiKey($this->getApiUser(), ['r_users' => AdminAcl::READ]);
+        $this->createNewDefaultApiKey($this->getApiUser(), [User::RESOURCE_NAME => AdminAcl::READ]);
 
         if (str_contains($url, '{id}')) {
             $user = User::factory()->create();

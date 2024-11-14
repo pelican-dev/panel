@@ -20,20 +20,16 @@
                     window.PanelUser = {!! json_encode(Auth::user()->toReactObject()) !!};
                 </script>
             @endif
-            @if(!empty($siteConfiguration))
-                <script>
-                    window.SiteConfiguration = {!! json_encode($siteConfiguration) !!};
-                </script>
-            @endif
         @show
+
+        <script>window.SiteConfiguration = {!! json_encode($siteConfiguration) !!};</script>
+
         <style>
             @import url('//fonts.bunny.net/css?family=Rubik:300,400,500&display=swap');
             @import url('//fonts.bunny.net/css?family=IBM+Plex+Mono|IBM+Plex+Sans:500&display=swap');
         </style>
 
         @yield('assets')
-
-        @include('layouts.scripts')
     </head>
     <body class="{{ $css['body'] ?? 'bg-neutral-50' }}">
         @section('content')

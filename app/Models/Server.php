@@ -115,8 +115,6 @@ use App\Exceptions\Http\Server\ServerStateConflictException;
  * @method static \Illuminate\Database\Eloquent\Builder|Server whereInstalledAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Server wherePorts($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Server whereUuidShort($value)
- *
- * @mixin \Eloquent
  */
 class Server extends Model
 {
@@ -124,7 +122,7 @@ class Server extends Model
 
     /**
      * The resource name for this model when it is transformed into an
-     * API representation using fractal.
+     * API representation using fractal. Also used as name for api key permissions.
      */
     public const RESOURCE_NAME = 'server';
 

@@ -3,9 +3,10 @@
 namespace App\Transformers\Api\Application;
 
 use App\Models\Subuser;
+use App\Models\User;
+use App\Models\Server;
 use League\Fractal\Resource\Item;
 use League\Fractal\Resource\NullResource;
-use App\Services\Acl\Api\AdminAcl;
 
 class SubuserTransformer extends BaseTransformer
 {
@@ -39,12 +40,10 @@ class SubuserTransformer extends BaseTransformer
 
     /**
      * Return a generic item of user for this subuser.
-     *
-     * @throws \App\Exceptions\Transformer\InvalidTransformerLevelException
      */
     public function includeUser(Subuser $subuser): Item|NullResource
     {
-        if (!$this->authorize(AdminAcl::RESOURCE_USERS)) {
+        if (!$this->authorize(User::RESOURCE_NAME)) {
             return $this->null();
         }
 
@@ -55,12 +54,10 @@ class SubuserTransformer extends BaseTransformer
 
     /**
      * Return a generic item of server for this subuser.
-     *
-     * @throws \App\Exceptions\Transformer\InvalidTransformerLevelException
      */
     public function includeServer(Subuser $subuser): Item|NullResource
     {
-        if (!$this->authorize(AdminAcl::RESOURCE_SERVERS)) {
+        if (!$this->authorize(Server::RESOURCE_NAME)) {
             return $this->null();
         }
 

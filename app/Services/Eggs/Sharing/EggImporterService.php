@@ -86,7 +86,9 @@ class EggImporterService
         $tmpDir = TemporaryDirectory::make()->deleteWhenDestroyed();
         $tmpPath = $tmpDir->path($info['basename']);
 
-        file_put_contents($tmpPath, file_get_contents($url));
+        if (!file_put_contents($tmpPath, file_get_contents($url))) {
+            throw new InvalidFileUploadException('Could not write temporary file.');
+        }
 
         return $this->fromFile(new UploadedFile($tmpPath, $info['basename'], 'application/json'), $egg);
     }
@@ -94,7 +96,6 @@ class EggImporterService
     /**
      * Takes an uploaded file and parses out the egg configuration from within.
      *
-     * @throws \JsonException
      * @throws \App\Exceptions\Service\InvalidFileUploadException
      */
     protected function parseFile(UploadedFile $file): array
@@ -103,14 +104,18 @@ class EggImporterService
             throw new InvalidFileUploadException('The selected file was not uploaded successfully');
         }
 
-        $parsed = json_decode($file->getContent(), true, 512, JSON_THROW_ON_ERROR);
+        try {
+            $parsed = json_decode($file->getContent(), true, 512, JSON_THROW_ON_ERROR);
+        } catch (\JsonException $exception) {
+            throw new InvalidFileUploadException('Could not read JSON file: ' . $exception->getMessage());
+        }
 
         $version = $parsed['meta']['version'] ?? '';
 
         $parsed = match ($version) {
             'PTDL_v1' => $this->convertToV2($parsed),
             'PTDL_v2' => $parsed,
-            'PLCN_V1' => $parsed,
+            'PLCN_v1' => $parsed,
             default => throw new InvalidFileUploadException('The JSON file provided is not in a format that can be recognized.')
         };
 

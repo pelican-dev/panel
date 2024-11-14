@@ -89,7 +89,7 @@ class DatabaseManagementService
             'password' => Utilities::randomStringWithSpecialCharacters(24),
         ]);
 
-        return $this->connection->transaction(function () use ($data, &$database) {
+        return $this->connection->transaction(function () use ($data) {
             $database = $this->createModel($data);
 
             $this->dynamic->set('dynamic', $data['database_host_id']);

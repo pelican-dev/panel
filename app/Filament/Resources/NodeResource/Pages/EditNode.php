@@ -4,6 +4,7 @@ namespace App\Filament\Resources\NodeResource\Pages;
 
 use App\Filament\Resources\NodeResource;
 use App\Models\Node;
+use App\Services\Helpers\SoftwareVersionService;
 use App\Services\Nodes\NodeAutoDeployService;
 use App\Services\Nodes\NodeUpdateService;
 use Filament\Actions;
@@ -55,7 +56,7 @@ class EditNode extends EditRecord
                                 ->schema([
                                     Placeholder::make('')
                                         ->label('Wings Version')
-                                        ->content(fn (Node $node) => $node->systemInformation()['version'] ?? 'Unknown'),
+                                        ->content(fn (Node $node, SoftwareVersionService $versionService) => ($node->systemInformation()['version'] ?? 'Unknown') . ' (Latest: ' . $versionService->latestWingsVersion() . ')'),
                                     Placeholder::make('')
                                         ->label('CPU Threads')
                                         ->content(fn (Node $node) => $node->systemInformation()['cpu_count'] ?? 0),
