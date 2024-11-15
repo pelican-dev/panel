@@ -156,9 +156,9 @@ class DatabaseManagementServiceTest extends IntegrationTestCase
 
         $host = DatabaseHost::factory()->create(['node_id' => $server->node_id]);
 
-        $this->repository->expects('createDatabase')->with($name)->andThrows(new \BadMethodCallException);
+        $this->repository->expects('createDatabase')->with($name)->andThrows(new \BadMethodCallException());
         $this->repository->expects('dropDatabase')->with($name);
-        $this->repository->expects('dropUser')->withAnyArgs()->andThrows(new \InvalidArgumentException);
+        $this->repository->expects('dropUser')->withAnyArgs()->andThrows(new \InvalidArgumentException());
 
         $this->expectException(\BadMethodCallException::class);
 

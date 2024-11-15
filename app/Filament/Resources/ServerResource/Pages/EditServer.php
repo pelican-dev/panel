@@ -77,7 +77,7 @@ class EditServer extends EditRecord
                                             $egg = Egg::find($get('egg_id'));
                                             $prefix = $egg ? str($egg->name)->lower()->kebab() . '-' : '';
 
-                                            $word = (new RandomWordService)->word();
+                                            $word = (new RandomWordService())->word();
 
                                             $set('name', $prefix . $word);
                                         }))

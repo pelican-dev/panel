@@ -38,7 +38,7 @@ class ActivityLogController extends ClientApiController
                 $builder->select('activity_logs.*')
                     ->leftJoin('users', function (JoinClause $join) {
                         $join->on('users.id', 'activity_logs.actor_id')
-                            ->where('activity_logs.actor_type', (new User)->getMorphClass());
+                            ->where('activity_logs.actor_type', (new User())->getMorphClass());
                     })
                     ->where(function (Builder $builder) use ($subusers, $rootAdmins) {
                         $builder->whereNull('users.id')

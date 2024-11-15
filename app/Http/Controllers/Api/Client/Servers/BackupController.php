@@ -43,7 +43,7 @@ class BackupController extends ClientApiController
     public function index(Request $request, Server $server): array
     {
         if (!$request->user()->can(Permission::ACTION_BACKUP_READ, $server)) {
-            throw new AuthorizationException;
+            throw new AuthorizationException();
         }
 
         $limit = min($request->query('per_page') ?? 20, 50);
@@ -97,7 +97,7 @@ class BackupController extends ClientApiController
     public function toggleLock(Request $request, Server $server, Backup $backup): array
     {
         if (!$request->user()->can(Permission::ACTION_BACKUP_DELETE, $server)) {
-            throw new AuthorizationException;
+            throw new AuthorizationException();
         }
 
         $action = $backup->is_locked ? 'server:backup.unlock' : 'server:backup.lock';
@@ -119,7 +119,7 @@ class BackupController extends ClientApiController
     public function view(Request $request, Server $server, Backup $backup): array
     {
         if (!$request->user()->can(Permission::ACTION_BACKUP_READ, $server)) {
-            throw new AuthorizationException;
+            throw new AuthorizationException();
         }
 
         return $this->fractal->item($backup)
@@ -136,7 +136,7 @@ class BackupController extends ClientApiController
     public function delete(Request $request, Server $server, Backup $backup): JsonResponse
     {
         if (!$request->user()->can(Permission::ACTION_BACKUP_DELETE, $server)) {
-            throw new AuthorizationException;
+            throw new AuthorizationException();
         }
 
         $this->deleteBackupService->handle($backup);
@@ -160,7 +160,7 @@ class BackupController extends ClientApiController
     public function download(Request $request, Server $server, Backup $backup): JsonResponse
     {
         if (!$request->user()->can(Permission::ACTION_BACKUP_DOWNLOAD, $server)) {
-            throw new AuthorizationException;
+            throw new AuthorizationException();
         }
 
         if ($backup->disk !== Backup::ADAPTER_AWS_S3 && $backup->disk !== Backup::ADAPTER_DAEMON) {

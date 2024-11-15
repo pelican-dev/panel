@@ -46,7 +46,7 @@ class AssignmentService
         $explode = explode('/', $data['allocation_ip']);
         if (count($explode) !== 1) {
             if (!ctype_digit($explode[1]) || ($explode[1] > self::CIDR_MIN_BITS || $explode[1] < self::CIDR_MAX_BITS)) {
-                throw new CidrOutOfRangeException;
+                throw new CidrOutOfRangeException();
             }
         }
 
@@ -75,11 +75,11 @@ class AssignmentService
                     $block = range($matches[1], $matches[2]);
 
                     if (count($block) > self::PORT_RANGE_LIMIT) {
-                        throw new TooManyPortsInRangeException;
+                        throw new TooManyPortsInRangeException();
                     }
 
                     if ((int) $matches[1] < self::PORT_FLOOR || (int) $matches[2] > self::PORT_CEIL) {
-                        throw new PortOutOfRangeException;
+                        throw new PortOutOfRangeException();
                     }
 
                     foreach ($block as $unit) {
@@ -93,7 +93,7 @@ class AssignmentService
                     }
                 } else {
                     if ((int) $port < self::PORT_FLOOR || (int) $port > self::PORT_CEIL) {
-                        throw new PortOutOfRangeException;
+                        throw new PortOutOfRangeException();
                     }
 
                     $insertData[] = [

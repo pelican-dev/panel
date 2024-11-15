@@ -51,7 +51,7 @@ class RequireTwoFactorAuthentication
 
         // For API calls return an exception which gets rendered nicely in the API response.
         if ($request->isJson() || Str::startsWith($uri, '/api/')) {
-            throw new TwoFactorAuthRequiredException;
+            throw new TwoFactorAuthRequiredException();
         }
 
         return redirect()->to($this->redirectRoute);

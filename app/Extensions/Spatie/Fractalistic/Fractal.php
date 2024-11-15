@@ -21,7 +21,7 @@ class Fractal extends SpatieFractal
     {
         // Set the serializer by default.
         if (empty($this->serializer)) {
-            $this->serializer = new PanelSerializer;
+            $this->serializer = new PanelSerializer();
         }
 
         // Automatically set the paginator on the response object if the

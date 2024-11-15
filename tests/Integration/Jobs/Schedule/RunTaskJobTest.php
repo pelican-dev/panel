@@ -127,7 +127,7 @@ class RunTaskJobTest extends IntegrationTestCase
         $this->instance(DaemonPowerRepository::class, $mock);
 
         $mock->expects('setServer->send')->andThrow(
-            new DaemonConnectionException(new BadResponseException('Bad request', new Request('GET', '/test'), new Response))
+            new DaemonConnectionException(new BadResponseException('Bad request', new Request('GET', '/test'), new Response()))
         );
 
         if (!$continueOnFailure) {

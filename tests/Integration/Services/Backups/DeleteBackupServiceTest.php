@@ -39,7 +39,7 @@ class DeleteBackupServiceTest extends IntegrationTestCase
         ]);
 
         $mock = $this->mock(DaemonBackupRepository::class);
-        $mock->expects('setServer->delete')->with($backup)->andReturn(new Response);
+        $mock->expects('setServer->delete')->with($backup)->andReturn(new Response());
 
         $this->app->make(DeleteBackupService::class)->handle($backup);
 

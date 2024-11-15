@@ -82,7 +82,7 @@ class ScheduleController extends ClientApiController
     public function view(ViewScheduleRequest $request, Server $server, Schedule $schedule): array
     {
         if ($schedule->server_id !== $server->id) {
-            throw new NotFoundHttpException;
+            throw new NotFoundHttpException();
         }
 
         $schedule->loadMissing('tasks');

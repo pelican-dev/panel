@@ -72,7 +72,7 @@ class TransferServerService
 
         $this->connection->transaction(function () use ($server, $node_id, $allocation_id, $additional_allocations) {
             // Create a new ServerTransfer entry.
-            $transfer = new ServerTransfer;
+            $transfer = new ServerTransfer();
 
             $transfer->server_id = $server->id;
             $transfer->old_node = $server->node_id;

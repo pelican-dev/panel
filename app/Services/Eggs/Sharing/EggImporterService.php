@@ -38,7 +38,7 @@ class EggImporterService
 
         return $this->connection->transaction(function () use ($egg, $parsed) {
             $uuid = $parsed['uuid'] ?? Uuid::uuid4()->toString();
-            $egg = $egg ?? Egg::where('uuid', $uuid)->first() ?? new Egg;
+            $egg = $egg ?? Egg::where('uuid', $uuid)->first() ?? new Egg();
 
             $egg = $egg->forceFill([
                 'uuid' => $uuid,

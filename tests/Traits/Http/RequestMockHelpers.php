@@ -71,7 +71,7 @@ trait RequestMockHelpers
             throw new \InvalidArgumentException('Request mock class must be an instance of ' . Request::class . ' when mocked.');
         }
 
-        $this->request->attributes = new ParameterBag;
+        $this->request->attributes = new ParameterBag();
     }
 
     /**
