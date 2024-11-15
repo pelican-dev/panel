@@ -60,7 +60,7 @@ class MountController extends ApplicationApiController
      */
     public function store(StoreMountRequest $request): JsonResponse
     {
-        $model = (new Mount())->fill($request->validated());
+        $model = (new Mount)->fill($request->validated());
         $model->forceFill(['uuid' => Uuid::uuid4()->toString()]);
 
         $model->saveOrFail();

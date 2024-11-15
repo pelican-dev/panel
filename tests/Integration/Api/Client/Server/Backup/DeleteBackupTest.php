@@ -50,7 +50,7 @@ class DeleteBackupTest extends ClientApiIntegrationTestCase
             \Mockery::on(function ($value) use ($backup) {
                 return $value instanceof Backup && $value->uuid === $backup->uuid;
             })
-        )->andReturn(new Response());
+        )->andReturn(new Response);
 
         $this->actingAs($user)->deleteJson($this->link($backup))->assertStatus(Response::HTTP_NO_CONTENT);
 

@@ -19,9 +19,9 @@ $kernel->bootstrap();
 
 // Register the collision service provider so that errors during the test
 // setup process are output nicely.
-(new Provider())->register();
+(new Provider)->register();
 
-$output = new ConsoleOutput();
+$output = new ConsoleOutput;
 
 $prefix = 'database.connections.' . config('database.default');
 if (!Str::contains(config("$prefix.database"), 'test')) {

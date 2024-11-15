@@ -16,9 +16,7 @@ class ProcessScheduleService
     /**
      * ProcessScheduleService constructor.
      */
-    public function __construct(private ConnectionInterface $connection, private Dispatcher $dispatcher, private DaemonServerRepository $serverRepository)
-    {
-    }
+    public function __construct(private ConnectionInterface $connection, private Dispatcher $dispatcher, private DaemonServerRepository $serverRepository) {}
 
     /**
      * Process a schedule and push the first task onto the queue worker.

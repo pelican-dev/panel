@@ -25,9 +25,7 @@ class EggImporterService
         'server.build.environment.' => 'server.environment.',
     ];
 
-    public function __construct(protected ConnectionInterface $connection)
-    {
-    }
+    public function __construct(protected ConnectionInterface $connection) {}
 
     /**
      * Take an uploaded JSON file and parse it into a new egg.
@@ -40,7 +38,7 @@ class EggImporterService
 
         return $this->connection->transaction(function () use ($egg, $parsed) {
             $uuid = $parsed['uuid'] ?? Uuid::uuid4()->toString();
-            $egg = $egg ?? Egg::where('uuid', $uuid)->first() ?? new Egg();
+            $egg = $egg ?? Egg::where('uuid', $uuid)->first() ?? new Egg;
 
             $egg = $egg->forceFill([
                 'uuid' => $uuid,

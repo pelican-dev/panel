@@ -15,9 +15,7 @@ class AccountCreated extends Notification implements ShouldQueue
     /**
      * Create a new notification instance.
      */
-    public function __construct(public User $user, public ?string $token = null)
-    {
-    }
+    public function __construct(public User $user, public ?string $token = null) {}
 
     /**
      * Get the notification's delivery channels.
@@ -32,7 +30,7 @@ class AccountCreated extends Notification implements ShouldQueue
      */
     public function toMail(): MailMessage
     {
-        $message = (new MailMessage())
+        $message = (new MailMessage)
             ->greeting('Hello ' . $this->user->name . '!')
             ->line('You are receiving this email because an account has been created for you on ' . config('app.name') . '.')
             ->line('Username: ' . $this->user->username)

@@ -30,7 +30,7 @@ class MaintenanceMiddlewareTest extends MiddlewareTestCase
     public function testHandle(): void
     {
         // maintenance mode is off by default
-        $server = new Server();
+        $server = new Server;
 
         $node = new Node([
             'maintenance_mode' => false,
@@ -47,7 +47,7 @@ class MaintenanceMiddlewareTest extends MiddlewareTestCase
      */
     public function testHandleInMaintenanceMode(): void
     {
-        $server = new Server();
+        $server = new Server;
 
         $node = new Node([
             'maintenance_mode' => true,
@@ -59,7 +59,7 @@ class MaintenanceMiddlewareTest extends MiddlewareTestCase
         $this->response->shouldReceive('view')
             ->once()
             ->with('errors.maintenance')
-            ->andReturn(new Response());
+            ->andReturn(new Response);
 
         $response = $this->getMiddleware()->handle($this->request, $this->getClosureAssertions());
         $this->assertInstanceOf(Response::class, $response);

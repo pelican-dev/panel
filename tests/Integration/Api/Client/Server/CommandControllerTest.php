@@ -58,7 +58,7 @@ class CommandControllerTest extends ClientApiIntegrationTestCase
 
         $this->instance(Server::class, $server);
 
-        $server->expects('send')->with('say Test')->andReturn(new GuzzleResponse());
+        $server->expects('send')->with('say Test')->andReturn(new GuzzleResponse);
 
         $request = new SendCommandRequest(['command' => 'say Test']);
         $cc = resolve(CommandController::class);

@@ -13,9 +13,7 @@ class FindAssignableAllocationService
     /**
      * FindAssignableAllocationService constructor.
      */
-    public function __construct(private AssignmentService $service)
-    {
-    }
+    public function __construct(private AssignmentService $service) {}
 
     /**
      * Finds an existing unassigned allocation and attempts to assign it to the given server. If
@@ -31,7 +29,7 @@ class FindAssignableAllocationService
     public function handle(Server $server): Allocation
     {
         if (!config('panel.client_features.allocations.enabled')) {
-            throw new AutoAllocationNotEnabledException();
+            throw new AutoAllocationNotEnabledException;
         }
 
         // Attempt to find a given available allocation for a server. If one cannot be found
@@ -68,7 +66,7 @@ class FindAssignableAllocationService
         $end = config('panel.client_features.allocations.range_end', null);
 
         if (!$start || !$end) {
-            throw new NoAutoAllocationSpaceAvailableException();
+            throw new NoAutoAllocationSpaceAvailableException;
         }
 
         Assert::integerish($start);
@@ -88,7 +86,7 @@ class FindAssignableAllocationService
 
         // If we've already allocated all of the ports, just abort.
         if (empty($available)) {
-            throw new NoAutoAllocationSpaceAvailableException();
+            throw new NoAutoAllocationSpaceAvailableException;
         }
 
         // Pick a random port out of the remaining available ports.

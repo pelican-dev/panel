@@ -104,7 +104,7 @@ class DeployServerDatabaseServiceTest extends IntegrationTestCase
             'database_host_id' => $host->id,
             'database' => "s{$server->id}_something",
             'remote' => '%',
-        ])->andReturns(new Database());
+        ])->andReturns(new Database);
 
         $response = $this->getService()->handle($server, [
             'database' => 'something',
@@ -130,7 +130,7 @@ class DeployServerDatabaseServiceTest extends IntegrationTestCase
             'database_host_id' => $host->id,
             'database' => "s{$server->id}_something",
             'remote' => '%',
-        ])->andReturns(new Database());
+        ])->andReturns(new Database);
 
         $response = $this->getService()->handle($server, [
             'database' => 'something',

@@ -47,6 +47,6 @@ class AuthenticateUserTest extends MiddlewareTestCase
      */
     private function getMiddleware(): AuthenticateApplicationUser
     {
-        return new AuthenticateApplicationUser();
+        return new AuthenticateApplicationUser;
     }
 }

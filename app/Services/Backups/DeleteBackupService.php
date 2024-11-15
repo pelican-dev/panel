@@ -19,8 +19,7 @@ class DeleteBackupService
         private ConnectionInterface $connection,
         private BackupManager $manager,
         private DaemonBackupRepository $daemonBackupRepository
-    ) {
-    }
+    ) {}
 
     /**
      * Deletes a backup from the system. If the backup is stored in S3 a request
@@ -37,7 +36,7 @@ class DeleteBackupService
         // around. The logic that updates the backup to the failed state will also remove
         // the lock, so this condition should really never happen.
         if ($backup->is_locked && ($backup->is_successful && !is_null($backup->completed_at))) {
-            throw new BackupLockedException();
+            throw new BackupLockedException;
         }
 
         if ($backup->disk === Backup::ADAPTER_AWS_S3) {

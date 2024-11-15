@@ -9,6 +9,6 @@ class ManifestDoesNotExistException extends \Exception implements ProvidesSoluti
 {
     public function getSolution(): Solution
     {
-        return new Solutions\ManifestDoesNotExistSolution();
+        return new Solutions\ManifestDoesNotExistSolution;
     }
 }

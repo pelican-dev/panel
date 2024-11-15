@@ -13,9 +13,7 @@ class DeployServerDatabaseService
     /**
      * DeployServerDatabaseService constructor.
      */
-    public function __construct(private DatabaseManagementService $managementService)
-    {
-    }
+    public function __construct(private DatabaseManagementService $managementService) {}
 
     /**
      * @throws \Throwable
@@ -29,12 +27,12 @@ class DeployServerDatabaseService
 
         $hosts = DatabaseHost::query()->get()->toBase();
         if ($hosts->isEmpty()) {
-            throw new NoSuitableDatabaseHostException();
+            throw new NoSuitableDatabaseHostException;
         } else {
             $nodeHosts = $hosts->where('node_id', $server->node_id)->toBase();
 
             if ($nodeHosts->isEmpty() && !config('panel.client_features.databases.allow_random')) {
-                throw new NoSuitableDatabaseHostException();
+                throw new NoSuitableDatabaseHostException;
             }
         }
 

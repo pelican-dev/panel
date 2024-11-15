@@ -37,7 +37,7 @@ class ClientController extends ClientApiController
             'name',
             'description',
             'external_id',
-            AllowedFilter::custom('*', new MultiFieldServerFilter()),
+            AllowedFilter::custom('*', new MultiFieldServerFilter),
         ]);
 
         $type = $request->input('type');

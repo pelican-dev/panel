@@ -145,7 +145,7 @@ class StoreServerRequest extends ApplicationApiRequest
             return null;
         }
 
-        $object = new DeploymentObject();
+        $object = new DeploymentObject;
         $object->setDedicated($this->input('deploy.dedicated_ip', false));
         $object->setTags($this->input('deploy.tags', $this->input('deploy.locations', [])));
         $object->setPorts($this->input('deploy.port_range', []));

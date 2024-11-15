@@ -32,8 +32,7 @@ class DatabaseManagementService
     public function __construct(
         protected ConnectionInterface $connection,
         protected DynamicDatabaseConnection $dynamic,
-    ) {
-    }
+    ) {}
 
     /**
      * Generates a unique database name for the given server. This name should be passed through when
@@ -67,14 +66,14 @@ class DatabaseManagementService
     public function create(Server $server, array $data): Database
     {
         if (!config('panel.client_features.databases.enabled')) {
-            throw new DatabaseClientFeatureNotEnabledException();
+            throw new DatabaseClientFeatureNotEnabledException;
         }
 
         if ($this->validateDatabaseLimit) {
             // If the server has a limit assigned and we've already reached that limit, throw back
             // an exception and kill the process.
             if (!is_null($server->database_limit) && $server->databases()->count() >= $server->database_limit) {
-                throw new TooManyDatabasesException();
+                throw new TooManyDatabasesException;
             }
         }
 
@@ -142,7 +141,7 @@ class DatabaseManagementService
             throw new DuplicateDatabaseNameException('A database with that name already exists for this server.');
         }
 
-        $database = (new Database())->forceFill($data);
+        $database = (new Database)->forceFill($data);
         $database->saveOrFail();
 
         return $database;

@@ -12,7 +12,7 @@ class EnvironmentWriterTraitTest extends TestCase
      */
     public function testVariableIsEscapedProperly($input, $expected): void
     {
-        $output = (new FooClass())->escapeEnvironmentValue($input);
+        $output = (new FooClass)->escapeEnvironmentValue($input);
 
         $this->assertSame($expected, $output);
     }

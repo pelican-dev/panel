@@ -60,7 +60,7 @@ class StoreNodeRequest extends ApplicationApiRequest
     public function validated($key = null, $default = null): array
     {
         $response = parent::validated();
-        $response['daemon_base'] = $response['daemon_base'] ?? (new Node())->getAttribute('daemon_base');
+        $response['daemon_base'] = $response['daemon_base'] ?? (new Node)->getAttribute('daemon_base');
 
         return $response;
     }

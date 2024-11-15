@@ -98,7 +98,7 @@ class ScheduleTaskController extends ClientApiController
     public function update(StoreTaskRequest $request, Server $server, Schedule $schedule, Task $task): array
     {
         if ($schedule->id !== $task->schedule_id || $server->id !== $schedule->server_id) {
-            throw new NotFoundHttpException();
+            throw new NotFoundHttpException;
         }
 
         if ($server->backup_limit === 0 && $request->action === 'backup') {
@@ -153,7 +153,7 @@ class ScheduleTaskController extends ClientApiController
     public function delete(ClientApiRequest $request, Server $server, Schedule $schedule, Task $task): JsonResponse
     {
         if ($task->schedule_id !== $schedule->id || $schedule->server_id !== $server->id) {
-            throw new NotFoundHttpException();
+            throw new NotFoundHttpException;
         }
 
         if (!$request->user()->can(Permission::ACTION_SCHEDULE_UPDATE, $server)) {

@@ -151,7 +151,7 @@ class BuildModificationServiceTest extends IntegrationTestCase
 
         $this->daemonServerRepository->expects('setServer->sync')->andThrows(
             new DaemonConnectionException(
-                new RequestException('Bad request', new Request('GET', '/test'), new Response())
+                new RequestException('Bad request', new Request('GET', '/test'), new Response)
             )
         );
 

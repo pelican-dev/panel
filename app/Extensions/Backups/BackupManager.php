@@ -27,9 +27,7 @@ class BackupManager
     /**
      * BackupManager constructor.
      */
-    public function __construct(protected Application $app)
-    {
-    }
+    public function __construct(protected Application $app) {}
 
     /**
      * Returns a backup adapter instance.
@@ -99,7 +97,7 @@ class BackupManager
      */
     public function createWingsAdapter(array $config): FilesystemAdapter
     {
-        return new InMemoryFilesystemAdapter();
+        return new InMemoryFilesystemAdapter;
     }
 
     /**

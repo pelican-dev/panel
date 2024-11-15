@@ -64,7 +64,7 @@ class ServerCreationServiceTest extends IntegrationTestCase
             'node_id' => $node->id,
         ]);
 
-        $deployment = (new DeploymentObject())->setDedicated(true)->setPorts([
+        $deployment = (new DeploymentObject)->setDedicated(true)->setPorts([
             $allocations[0]->port,
         ]);
 

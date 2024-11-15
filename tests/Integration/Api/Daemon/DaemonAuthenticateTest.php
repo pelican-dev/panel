@@ -129,6 +129,6 @@ class DaemonAuthenticateTest extends MiddlewareTestCase
      */
     private function getMiddleware(): DaemonAuthenticate
     {
-        return new DaemonAuthenticate();
+        return new DaemonAuthenticate;
     }
 }

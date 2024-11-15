@@ -39,7 +39,7 @@ class Kernel extends ConsoleKernel
         $schedule->command(PruneImagesCommand::class)->daily();
         $schedule->command(CheckEggUpdatesCommand::class)->hourly();
 
-        $schedule->job(new NodeStatistics())->everyFiveSeconds()->withoutOverlapping();
+        $schedule->job(new NodeStatistics)->everyFiveSeconds()->withoutOverlapping();
 
         if (config('backups.prune_age')) {
             // Every 30 minutes, run the backup pruning command so that any abandoned backups can be deleted.

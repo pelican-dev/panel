@@ -81,7 +81,7 @@ abstract class ClientApiIntegrationTestCase extends IntegrationTestCase
         $reflect = new \ReflectionClass($model);
         $transformer = sprintf('\\App\\Transformers\\Api\\Client\\%sTransformer', $reflect->getShortName());
 
-        $transformer = new $transformer();
+        $transformer = new $transformer;
         $this->assertInstanceOf(BaseClientTransformer::class, $transformer);
 
         $this->assertSame(
