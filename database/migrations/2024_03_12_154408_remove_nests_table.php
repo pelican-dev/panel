@@ -28,7 +28,11 @@ return new class extends Migration
         }
 
         Schema::table('eggs', function (Blueprint $table) {
-            $table->dropForeign(['nest_id']);
+            if (Schema::getConnection()->getDriverName() !== 'sqlite') {
+                $table->dropForeign('service_options_nest_id_foreign');
+            } else {
+                $table->dropForeign(['nest_id']);
+            }
             $table->dropColumn('nest_id');
         });
 

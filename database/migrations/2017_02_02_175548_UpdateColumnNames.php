@@ -20,12 +20,12 @@ return new class extends Migration
             $table->dropForeign(['pack']);
 
             if (Schema::getConnection()->getDriverName() !== 'sqlite') {
-                $table->dropIndex(['node']);
-                $table->dropIndex(['owner']);
-                $table->dropIndex(['allocation']);
-                $table->dropIndex(['service']);
-                $table->dropIndex(['option']);
-                $table->dropIndex(['pack']);
+                $table->dropIndex('servers_node_foreign');
+                $table->dropIndex('servers_owner_foreign');
+                $table->dropIndex('servers_allocation_foreign');
+                $table->dropIndex('servers_service_foreign');
+                $table->dropIndex('servers_option_foreign');
+                $table->dropIndex('servers_pack_foreign');
             }
 
             $table->renameColumn('node', 'node_id');
