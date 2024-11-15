@@ -188,6 +188,8 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
         static::creating(function (self $user) {
             $user->uuid = Str::uuid()->toString();
 
+            $user->timezone = env('APP_TIMEZONE', 'UTC');
+
             return true;
         });
 

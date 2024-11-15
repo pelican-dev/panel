@@ -7,6 +7,8 @@ return [
 
     'version' => 'canary',
 
+    'timezone' => 'UTC',
+
     'exceptions' => [
         'report_all' => env('APP_REPORT_ALL_EXCEPTIONS', false),
     ],

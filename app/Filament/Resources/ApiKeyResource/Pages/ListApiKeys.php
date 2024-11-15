@@ -4,6 +4,7 @@ namespace App\Filament\Resources\ApiKeyResource\Pages;
 
 use App\Filament\Resources\ApiKeyResource;
 use App\Models\ApiKey;
+use App\Tables\Columns\DateTimeColumn;
 use Filament\Actions;
 use Filament\Resources\Pages\ListRecords;
 use Filament\Tables\Actions\CreateAction;
@@ -35,15 +36,13 @@ class ListApiKeys extends ListRecords
                     ->hidden()
                     ->searchable(),
 
-                TextColumn::make('last_used_at')
+                DateTimeColumn::make('last_used_at')
                     ->label('Last Used')
                     ->placeholder('Not Used')
-                    ->dateTime()
                     ->sortable(),
 
-                TextColumn::make('created_at')
+                DateTimeColumn::make('created_at')
                     ->label('Created')
-                    ->dateTime()
                     ->sortable(),
 
                 TextColumn::make('user.username')
