@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\DatabaseResource\Pages;
 
 use App\Filament\Resources\DatabaseResource;
+use App\Tables\Columns\DateTimeColumn;
 use Filament\Actions;
 use Filament\Resources\Pages\ListRecords;
 use Filament\Tables\Actions\BulkActionGroup;
@@ -34,12 +35,10 @@ class ListDatabases extends ListRecords
                 TextColumn::make('max_connections')
                     ->numeric()
                     ->sortable(),
-                TextColumn::make('created_at')
-                    ->dateTime()
+                DateTimeColumn::make('created_at')
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
-                TextColumn::make('updated_at')
-                    ->dateTime()
+                DateTimeColumn::make('updated_at')
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
