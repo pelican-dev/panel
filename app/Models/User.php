@@ -253,6 +253,14 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
     }
 
     /**
+     * Store the email as a lowercase string.
+     */
+    public function setEmailAttribute(string $value): void
+    {
+        $this->attributes['email'] = mb_strtolower($value);
+    }
+
+    /**
      * Return a concatenated result for the accounts full name.
      */
     public function getNameAttribute(): string
