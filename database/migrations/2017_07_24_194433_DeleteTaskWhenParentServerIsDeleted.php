@@ -12,9 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('tasks', function (Blueprint $table) {
-            if (Schema::getConnection()->getDriverName() !== 'sqlite') {
-                $table->dropForeign(['server_id']);
-            }
+            $table->dropForeign(['server_id']);
 
             $table->foreign('server_id')->references('id')->on('servers')->onDelete('cascade');
         });
