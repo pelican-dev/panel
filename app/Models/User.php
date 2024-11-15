@@ -213,9 +213,9 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
     {
         $rules = parent::getRules();
 
-        $rules['language'][] = new In(array_keys((new self)->getAvailableLanguages()));
+        $rules['language'][] = new In(array_keys((new self())->getAvailableLanguages()));
         $rules['timezone'][] = new In(array_values(DateTimeZone::listIdentifiers()));
-        $rules['username'][] = new Username;
+        $rules['username'][] = new Username();
 
         return $rules;
     }
