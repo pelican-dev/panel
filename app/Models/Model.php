@@ -2,11 +2,7 @@
 
 namespace App\Models;
 
-use Carbon\CarbonInterface;
-use DateTimeInterface;
 use Illuminate\Support\Arr;
-use Illuminate\Support\Carbon;
-use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 use Illuminate\Container\Container;
@@ -16,7 +12,6 @@ use App\Exceptions\Model\DataValidationException;
 use Illuminate\Database\Eloquent\Model as IlluminateModel;
 use Illuminate\Validation\Factory as ValidationFactory;
 use Illuminate\Validation\Validator;
-use InvalidArgumentException;
 
 abstract class Model extends IlluminateModel
 {
@@ -67,36 +62,6 @@ abstract class Model extends IlluminateModel
     public function getRouteKeyName(): string
     {
         return 'uuid';
-    }
-
-    protected function asDateTime($value): Carbon
-    {
-        $timezone = auth()->user()?->timezone ?? config('app.timezone', 'UTC');
-
-        if ($value instanceof CarbonInterface) {
-            return Date::instance($value->timezone($timezone));
-        }
-
-        if ($value instanceof DateTimeInterface) {
-            return Date::parse($value->format('Y-m-d H:i:s.u'), $timezone);
-        }
-
-        if (is_numeric($value)) {
-            return Date::createFromTimestamp($value, $timezone);
-        }
-
-        if ($this->isStandardDateFormat($value)) {
-            return Date::instance(Carbon::createFromFormat('Y-m-d', $value)->timezone($timezone)->startOfDay());
-        }
-
-        $format = $this->getDateFormat();
-        try {
-            $date = Date::createFromFormat($format, $value)->timezone($timezone);
-        } catch (InvalidArgumentException) {
-            $date = false;
-        }
-
-        return $date ?: Date::parse($value);
     }
 
     /**
