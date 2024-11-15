@@ -22,7 +22,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('api_keys', function (Blueprint $table) {
-            $table->json('permissions');
+            $table->json('permissions')->nullable();
         });
 
         foreach (ApiKey::query() as $apiKey) {
