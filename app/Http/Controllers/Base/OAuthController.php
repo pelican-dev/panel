@@ -23,10 +23,8 @@ class OAuthController extends Controller
     /**
      * Link a new OAuth
      */
-    protected function link(Request $request): RedirectResponse
+    protected function link(string $driver): RedirectResponse
     {
-        $driver = $request->get('driver');
-
         if (!config("auth.oauth.$driver.enabled")) {
             throw new Exception("OAuth driver $driver is disabled!");
         }
@@ -37,10 +35,10 @@ class OAuthController extends Controller
     /**
      * Remove a OAuth link
      */
-    protected function unlink(Request $request): Response
+    protected function unlink(Request $request, string $driver): Response
     {
         $oauth = $request->user()->oauth;
-        unset($oauth[$request->get('driver')]);
+        unset($oauth[$driver]);
 
         $this->updateService->handle($request->user(), ['oauth' => $oauth]);
 
