@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Auth;
 
+use Filament\Notifications\Notification;
 use Illuminate\Auth\AuthManager;
 use Illuminate\Http\RedirectResponse;
 use Laravel\Socialite\Facades\Socialite;
@@ -63,6 +64,12 @@ class OAuthController extends Controller
             $this->auth->guard()->login($user, true);
         } catch (Exception) {
             // No user found - redirect to normal login
+            Notification::make()
+                ->title('No linked User found')
+                ->danger()
+                ->persistent()
+                ->send();
+
             return redirect()->route('auth.login');
         }
 
