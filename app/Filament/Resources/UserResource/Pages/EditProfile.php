@@ -16,6 +16,7 @@ use chillerlan\QRCode\QROptions;
 use Closure;
 use DateTimeZone;
 use Exception;
+use Filament\Forms\Components\Actions;
 use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\Placeholder;
@@ -33,6 +34,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\HtmlString;
+use Illuminate\Support\Str;
 use Illuminate\Validation\Rules\Password;
 
 /**
@@ -112,6 +114,28 @@ class EditProfile extends \Filament\Pages\Auth\EditProfile
                                             )
                                             ->options(fn (User $user) => $user->getAvailableLanguages()),
                                     ]),
+
+                                Tab::make('OAuth')
+                                    ->icon('tabler-brand-oauth')
+                                    ->schema(function () {
+                                        $providers = [];
+
+                                        foreach (config('auth.oauth') as $name => $data) {
+                                            if (!$data['enabled']) {
+                                                continue;
+                                            }
+
+                                            $unlink = array_key_exists($name, $this->getUser()->oauth);
+
+                                            $providers[] = Action::make("oauth_$name")
+                                                ->label(($unlink ? 'Unlink ' : 'Link ') . Str::title($name))
+                                                ->icon($unlink ? 'tabler-unlink' : 'tabler-link')
+                                                ->color($data['color'])
+                                                ->url('/account/oauth/' . ($unlink ? 'unlink' : 'link') .  "/$name");
+                                        }
+
+                                        return [Actions::make($providers)];
+                                    }),
 
                                 Tab::make('2FA')
                                     ->icon('tabler-shield-lock')
