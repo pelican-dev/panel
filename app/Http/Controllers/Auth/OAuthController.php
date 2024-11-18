@@ -27,6 +27,10 @@ class OAuthController extends Controller
      */
     protected function redirect(string $driver): RedirectResponse
     {
+        if (!config("auth.oauth.$driver.enabled")) {
+            throw new Exception("OAuth driver $driver is disabled!");
+        }
+
         return Socialite::with($driver)->redirect();
     }
 
@@ -35,6 +39,10 @@ class OAuthController extends Controller
      */
     protected function callback(Request $request, string $driver): RedirectResponse
     {
+        if (!config("auth.oauth.$driver.enabled")) {
+            throw new Exception("OAuth driver $driver is disabled!");
+        }
+
         $oauthUser = Socialite::driver($driver)->user();
 
         // User is already logged in and wants to link a new OAuth Provider

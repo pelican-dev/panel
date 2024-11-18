@@ -7,6 +7,7 @@ use Illuminate\Http\RedirectResponse;
 use Laravel\Socialite\Facades\Socialite;
 use App\Http\Controllers\Controller;
 use App\Services\Users\UserUpdateService;
+use Exception;
 use Illuminate\Http\Response;
 
 class OAuthController extends Controller
@@ -25,6 +26,10 @@ class OAuthController extends Controller
     protected function link(Request $request): RedirectResponse
     {
         $driver = $request->get('driver');
+
+        if (!config("auth.oauth.$driver.enabled")) {
+            throw new Exception("OAuth driver $driver is disabled!");
+        }
 
         return Socialite::with($driver)->redirect();
     }
