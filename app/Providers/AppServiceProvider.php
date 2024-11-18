@@ -63,9 +63,7 @@ class AppServiceProvider extends ServiceProvider
 
         $oauthProviders = [];
         foreach (config('auth.oauth') as $name => $data) {
-            config()->set("services.$name.client_id", $data['client_id']);
-            config()->set("services.$name.client_secret", $data['client_secret']);
-            config()->set("services.$name.redirect", "/auth/oauth/callback/$name");
+            config()->set("services.$name", array_merge($data['service'], ['redirect' => "/auth/oauth/callback/$name"]));
 
             if (isset($data['provider'])) {
                 $oauthProviders[$name] = $data['provider'];
