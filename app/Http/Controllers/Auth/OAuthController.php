@@ -27,8 +27,9 @@ class OAuthController extends Controller
      */
     protected function redirect(string $driver): RedirectResponse
     {
+        // Driver is disabled - redirect to normal login
         if (!config("auth.oauth.$driver.enabled")) {
-            throw new Exception("OAuth driver $driver is disabled!");
+            return redirect()->route('auth.login');
         }
 
         return Socialite::with($driver)->redirect();
@@ -39,8 +40,9 @@ class OAuthController extends Controller
      */
     protected function callback(Request $request, string $driver): RedirectResponse
     {
+        // Driver is disabled - redirect to normal login
         if (!config("auth.oauth.$driver.enabled")) {
-            throw new Exception("OAuth driver $driver is disabled!");
+            return redirect()->route('auth.login');
         }
 
         $oauthUser = Socialite::driver($driver)->user();
@@ -59,7 +61,7 @@ class OAuthController extends Controller
             $user = User::query()->whereJsonContains('oauth->'. $driver, $oauthUser->getId())->firstOrFail();
 
             $this->auth->guard()->login($user, true);
-        } catch (Exception $e) {
+        } catch (Exception) {
             // No user found - redirect to normal login
             return redirect()->route('auth.login');
         }
