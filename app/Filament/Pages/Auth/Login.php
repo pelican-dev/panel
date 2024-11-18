@@ -69,7 +69,7 @@ class Login extends BaseLogin
                 ->url("/auth/oauth/redirect/$name");
         }
 
-        return Actions::make($actions)->fullWidth();
+        return Actions::make($actions);
     }
 
     protected function getCredentialsFromFormData(array $data): array
