@@ -26,7 +26,7 @@ return [
     'oauth' => [
         // Default providers
         'facebook' => [
-            'enabled' => true,
+            'enabled' => env('OAUTH_FACEBOOK_ENABLED'),
             'icon' => 'tabler-brand-facebook',
             'color' => \Filament\Support\Colors\Color::hex('#1877f2'),
             'service' => [
@@ -35,7 +35,7 @@ return [
             ],
         ],
         'x' => [
-            'enabled' => true,
+            'enabled' => env('OAUTH_X_ENABLED'),
             'icon' => 'tabler-brand-x',
             'color' => \Filament\Support\Colors\Color::hex('#1da1f2'),
             'service' => [
@@ -44,7 +44,7 @@ return [
             ],
         ],
         'linkedin' => [
-            'enabled' => true,
+            'enabled' => env('OAUTH_LINKEDIN_ENABLED'),
             'icon' => 'tabler-brand-linkedin',
             'color' => \Filament\Support\Colors\Color::hex('#0a66c2'),
             'service' => [
@@ -53,7 +53,7 @@ return [
             ],
         ],
         'google' => [
-            'enabled' => true,
+            'enabled' => env('OAUTH_GOOGLE_ENABLED'),
             'icon' => 'tabler-brand-google',
             'color' => \Filament\Support\Colors\Color::hex('#4285f4'),
             'service' => [
@@ -62,7 +62,7 @@ return [
             ],
         ],
         'github' => [
-            'enabled' => true,
+            'enabled' => env('OAUTH_GITHUB_ENABLED'),
             'icon' => 'tabler-brand-github',
             'color' => \Filament\Support\Colors\Color::hex('#4078c0'),
             'service' => [
@@ -71,7 +71,7 @@ return [
             ],
         ],
         'gitlab' => [
-            'enabled' => true,
+            'enabled' => env('OAUTH_GITLAB_ENABLED'),
             'icon' => 'tabler-brand-gitlab',
             'color' => \Filament\Support\Colors\Color::hex('#fca326'),
             'service' => [
@@ -80,7 +80,7 @@ return [
             ],
         ],
         'bitbucket' => [
-            'enabled' => true,
+            'enabled' => env('OAUTH_BITBUCKET_ENABLED'),
             'icon' => 'tabler-brand-bitbucket',
             'color' => \Filament\Support\Colors\Color::hex('#205081'),
             'service' => [
@@ -89,7 +89,7 @@ return [
             ],
         ],
         'slack' => [
-            'enabled' => true,
+            'enabled' => env('OAUTH_SLACK_ENABLED'),
             'icon' => 'tabler-brand-slack',
             'color' => \Filament\Support\Colors\Color::hex('#6ecadc'),
             'service' => [
@@ -100,7 +100,7 @@ return [
 
         // Additional providers from socialiteproviders.com
         'authentik' => [
-            'enabled' => true,
+            'enabled' => env('OAUTH_AUTHENTIK_ENABLED'),
             'icon' => null,
             'color' => \Filament\Support\Colors\Color::hex('#fd4b2d'),
             'service' => [
@@ -111,7 +111,7 @@ return [
             'provider' => \SocialiteProviders\Authentik\Provider::class,
         ],
         'discord' => [
-            'enabled' => true,
+            'enabled' => env('OAUTH_DISCORD_ENABLED'),
             'icon' => 'tabler-brand-discord',
             'color' => \Filament\Support\Colors\Color::hex('#5865F2'),
             'service' => [
@@ -121,7 +121,7 @@ return [
             'provider' => \SocialiteProviders\Discord\Provider::class,
         ],
         'steam' => [
-            'enabled' => true,
+            'enabled' => env('OAUTH_STEAM_ENABLED'),
             'icon' => 'tabler-brand-steam',
             'color' => \Filament\Support\Colors\Color::hex('#00adee'),
             'service' => [
@@ -133,7 +133,7 @@ return [
             'provider' => \SocialiteProviders\Steam\Provider::class,
         ],
         'whmcs' => [
-            'enabled' => true,
+            'enabled' => env('OAUTH_WHMCS_ENABLED'),
             'icon' => null,
             'color' => \Filament\Support\Colors\Color::hex('#7bc143'),
             'service' => [
