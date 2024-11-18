@@ -48,6 +48,7 @@ class AllocationsRelationManager extends RelationManager
             // All assigned allocations
             ->checkIfRecordIsSelectableUsing(fn (Allocation $allocation) => $allocation->server_id === null)
             ->searchable()
+            ->selectCurrentPageOnly() //Prevent people from trying to nuke 30,000 ports at once.... -,-
             ->columns([
                 TextColumn::make('id'),
                 TextColumn::make('port')
@@ -64,12 +65,6 @@ class AllocationsRelationManager extends RelationManager
                 TextInputColumn::make('ip')
                     ->searchable()
                     ->label('IP'),
-            ])
-            ->filters([
-                //
-            ])
-            ->actions([
-                //
             ])
             ->headerActions([
                 Tables\Actions\Action::make('create new allocation')->label('Create Allocations')

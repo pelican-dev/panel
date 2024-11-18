@@ -85,8 +85,6 @@ use Spatie\Permission\Traits\HasRoles;
  * @method static Builder|User whereUseTotp($value)
  * @method static Builder|User whereUsername($value)
  * @method static Builder|User whereUuid($value)
- *
- * @mixin \Eloquent
  */
 class User extends Model implements AuthenticatableContract, AuthorizableContract, CanResetPasswordContract, FilamentUser, HasAvatar, HasName
 {
@@ -190,6 +188,8 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
         static::creating(function (self $user) {
             $user->uuid = Str::uuid()->toString();
 
+            $user->timezone = env('APP_TIMEZONE', 'UTC');
+
             return true;
         });
 
@@ -252,6 +252,14 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
     public function setUsernameAttribute(string $value): void
     {
         $this->attributes['username'] = mb_strtolower($value);
+    }
+
+    /**
+     * Store the email as a lowercase string.
+     */
+    public function setEmailAttribute(string $value): void
+    {
+        $this->attributes['email'] = mb_strtolower($value);
     }
 
     /**

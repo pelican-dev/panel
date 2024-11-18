@@ -31,8 +31,6 @@ class MountTransformer extends BaseTransformer
 
     /**
      * Return the eggs associated with this mount.
-     *
-     * @throws \App\Exceptions\Transformer\InvalidTransformerLevelException
      */
     public function includeEggs(Mount $mount): Collection|NullResource
     {
@@ -51,8 +49,6 @@ class MountTransformer extends BaseTransformer
 
     /**
      * Return the nodes associated with this mount.
-     *
-     * @throws \App\Exceptions\Transformer\InvalidTransformerLevelException
      */
     public function includeNodes(Mount $mount): Collection|NullResource
     {
@@ -71,8 +67,6 @@ class MountTransformer extends BaseTransformer
 
     /**
      * Return the servers associated with this mount.
-     *
-     * @throws \App\Exceptions\Transformer\InvalidTransformerLevelException
      */
     public function includeServers(Mount $mount): Collection|NullResource
     {
