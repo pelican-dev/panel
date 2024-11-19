@@ -1,11 +1,25 @@
 <x-filament::widget>
+    @assets
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xterm/5.5.0/xterm.js" integrity="sha512-Gujw5GajF5is3nMoGv9X+tCMqePLL/60qvAv1LofUZTV9jK8ENbM9L+maGmOsNzuZaiuyc/fpph1KT9uR5w3CQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/xterm/5.5.0/xterm.css" integrity="sha512-AbNrj/oSHJaILgcdnkYm+DQ08SqVbZ8jlkJbFyyS1WDcAaXAcAfxJnCH69el7oVgTwVwyA5u5T+RdFyUykrV3Q==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    @endassets
 
     <div id="terminal" wire:ignore></div>
 
+    <div>
+        <input
+            class="w-full bg-transparent"
+            type="text"
+            placeholder="Type a command..."
+            wire:model="input"
+            wire:keydown.enter="enter"
+            wire:keydown.up.prevent="up"
+            wire:keydown.down="down"
+        >
+    </div>
+
+    @script
     <script>
-        // https://xtermjs.org/docs/api/terminal/interfaces/iterminaloptions/
         let options = {
             fontSize: 18,
             // fontFamily: th('fontFamily.mono'),
@@ -22,7 +36,7 @@
         terminal.open(document.getElementById('terminal'));
 
         const TERMINAL_PRELUDE = '\u001b[1m\u001b[33mpelican@' + '{{ \Filament\Facades\Filament::getTenant()->name }}' + ' ~ \u001b[0m';
-        
+
         const handleConsoleOutput = (line, prelude = false) =>
             terminal.writeln((prelude ? TERMINAL_PRELUDE : '') + line.replace(/(?:\r\n|\r|\n)$/im, '') + '\u001b[0m');
 
@@ -42,22 +56,7 @@
 
         const handlePowerChangeEvent = (state) =>
             terminal.writeln(TERMINAL_PRELUDE + 'Server marked as ' + state + '...\u001b[0m');
-    </script>
 
-    <div>
-        <input
-            class="w-full bg-transparent"
-            type="text"
-            placeholder="Type a command..."
-            wire:model="input"
-            wire:keydown.enter="enter"
-            wire:keydown.up.prevent="up"
-            wire:keydown.down="down"
-        >
-    </div>
-
-    @script
-    <script>
         @php
             if ($user->cannot(\App\Models\Permission::ACTION_WEBSOCKET_CONNECT, $server)) {
                 throw new \App\Exceptions\Http\HttpForbiddenException('You do not have permission to connect to this server\'s websocket.');
@@ -81,7 +80,7 @@
         const socket = new WebSocket("{{ $socket }}");
         const token = '{{ $token->toString() }}';
 
-        socket.onmessage = function (websocketMessageEvent) {
+        socket.onmessage = function(websocketMessageEvent) {
             let eventData = JSON.parse(websocketMessageEvent.data);
 
             if (eventData.event === 'console output' || eventData.event === 'install output') {
@@ -102,8 +101,8 @@
 
             if (eventData.event === 'auth success') {
                 socket.send(JSON.stringify({
-                    "event": "send logs",
-                    "args": [null]
+                    'event': 'send logs',
+                    'args': [null]
                 }));
             }
 
@@ -112,22 +111,22 @@
 
         socket.onopen = (event) => {
             socket.send(JSON.stringify({
-                "event": "auth",
-                "args": [token]
+                'event': 'auth',
+                'args': [token]
             }));
         };
 
         Livewire.on('setServerState', ({ state }) => {
             socket.send(JSON.stringify({
-                "event": "set state",
-                "args": [state]
+                'event': 'set state',
+                'args': [state]
             }));
         });
 
         Livewire.on('sendServerCommand', ({ command }) => {
             socket.send(JSON.stringify({
-                "event": "send command",
-                "args": [command]
+                'event': 'send command',
+                'args': [command]
             }));
         });
     </script>
