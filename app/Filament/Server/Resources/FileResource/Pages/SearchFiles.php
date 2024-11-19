@@ -5,6 +5,7 @@ namespace App\Filament\Server\Resources\FileResource\Pages;
 use App\Filament\Server\Resources\FileResource;
 use App\Models\File;
 use App\Models\Server;
+use App\Tables\Columns\DateTimeColumn;
 use Filament\Facades\Filament;
 use Filament\Resources\Pages\ListRecords;
 use Filament\Tables\Columns\TextColumn;
@@ -56,11 +57,9 @@ class SearchFiles extends ListRecords
                     ->icon(fn (File $file) => $file->getIcon()),
                 TextColumn::make('size')
                     ->formatStateUsing(fn ($state, File $file) => $file->is_file ? convert_bytes_to_readable($state) : ''),
-                TextColumn::make('modified_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->formatStateUsing(fn ($state) => $state->diffForHumans())
-                    ->tooltip(fn (File $file) => $file->modified_at),
+                DateTimeColumn::make('modified_at')
+                    ->since()
+                    ->sortable(),
             ])
             ->recordUrl(function (File $file) {
                 if ($file->is_directory) {

@@ -4,6 +4,7 @@ namespace App\Filament\Server\Resources\ScheduleResource\Pages;
 
 use App\Filament\Server\Resources\ScheduleResource;
 use App\Models\Schedule;
+use App\Tables\Columns\DateTimeColumn;
 use Filament\Actions;
 use Filament\Resources\Pages\ListRecords;
 use Filament\Tables\Actions\BulkActionGroup;
@@ -31,18 +32,14 @@ class ListSchedules extends ListRecords
                 IconColumn::make('only_when_online')
                     ->boolean()
                     ->sortable(),
-                TextColumn::make('last_run_at')
+                DateTimeColumn::make('last_run_at')
                     ->label('Last run')
-                    ->dateTime()
-                    ->sortable()
-                    ->formatStateUsing(fn ($state) => $state->diffForHumans())
-                    ->tooltip(fn (Schedule $schedule) => $schedule->last_run_at), // TODO: deal with timezones
-                TextColumn::make('next_run_at')
+                    ->since()
+                    ->sortable(),
+                DateTimeColumn::make('next_run_at')
                     ->label('Next run')
-                    ->dateTime()
-                    ->sortable()
-                    ->formatStateUsing(fn ($state) => $state->diffForHumans())
-                    ->tooltip(fn (Schedule $schedule) => $schedule->next_run_at), // TODO: deal with timezones
+                    ->since()
+                    ->sortable(),
             ])
             ->actions([
                 ViewAction::make(),

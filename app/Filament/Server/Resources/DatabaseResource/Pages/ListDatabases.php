@@ -8,6 +8,7 @@ use App\Models\DatabaseHost;
 use App\Models\Server;
 use App\Services\Databases\DatabaseManagementService;
 use App\Services\Databases\DatabasePasswordService;
+use App\Tables\Columns\DateTimeColumn;
 use Filament\Actions\CreateAction;
 use Filament\Facades\Filament;
 use Filament\Forms\Components\Actions\Action;
@@ -60,8 +61,7 @@ class ListDatabases extends ListRecords
                 TextColumn::make('database'),
                 TextColumn::make('username'),
                 TextColumn::make('remote'),
-                TextColumn::make('created_at')
-                    ->dateTime()
+                DateTimeColumn::make('created_at')
                     ->sortable(),
             ])
             ->actions([

@@ -12,6 +12,7 @@ use App\Models\Server;
 use App\Repositories\Daemon\DaemonBackupRepository;
 use App\Services\Backups\DownloadLinkService;
 use App\Services\Backups\InitiateBackupService;
+use App\Tables\Columns\DateTimeColumn;
 use Filament\Actions;
 use Filament\Facades\Filament;
 use Filament\Forms\Components\Checkbox;
@@ -64,12 +65,10 @@ class ListBackups extends ListRecords
                 TextColumn::make('bytes')
                     ->label('Size')
                     ->formatStateUsing(fn ($state) => convert_bytes_to_readable($state)),
-                TextColumn::make('created_at')
+                DateTimeColumn::make('created_at')
                     ->label('Created')
-                    ->dateTime()
-                    ->sortable()
-                    ->formatStateUsing(fn ($state) => $state->diffForHumans())
-                    ->tooltip(fn (Backup $backup) => $backup->created_at),
+                    ->since()
+                    ->sortable(),
                 IconColumn::make('is_successful')
                     ->label('Successful')
                     ->boolean(),
