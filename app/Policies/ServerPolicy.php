@@ -28,8 +28,8 @@ class ServerPolicy
 
         $subuser = $server->subusers->where('user_id', $user->id)->first();
         // If the user is a subuser check their permissions
-        if ($subuser) {
-            return in_array($ability, $subuser->permissions);
+        if ($subuser && in_array($ability, $subuser->permissions)) {
+            return true;
         }
 
         // Return null to let default policies take over
