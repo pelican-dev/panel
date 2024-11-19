@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "c21f5c06eaf398480f33cb59dabd886a",
+    "content-hash": "6be29c745a7e8809ca315ffb815a196d",
     "packages": [
         {
             "name": "abdelhamiderrahmouni/filament-monaco-editor",
@@ -2945,67 +2945,6 @@
                 "source": "https://github.com/kirschbaum-development/eloquent-power-joins/tree/4.0.0"
             },
             "time": "2024-10-06T12:28:14+00:00"
-        },
-        {
-            "name": "laracasts/utilities",
-            "version": "3.2.3",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/laracasts/PHP-Vars-To-Js-Transformer.git",
-                "reference": "4826fe062f58d07b13e72460141b21c8c07b736d"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/laracasts/PHP-Vars-To-Js-Transformer/zipball/4826fe062f58d07b13e72460141b21c8c07b736d",
-                "reference": "4826fe062f58d07b13e72460141b21c8c07b736d",
-                "shasum": ""
-            },
-            "require": {
-                "illuminate/support": "^5.0|^6.0|^7.0|^8.0|^9.0|^10.0|^11.0",
-                "php": ">=5.5.0|>=7.2.5|>=8.0.0"
-            },
-            "require-dev": {
-                "phpspec/phpspec": ">=2.0"
-            },
-            "type": "library",
-            "extra": {
-                "laravel": {
-                    "providers": [
-                        "Laracasts\\Utilities\\JavaScript\\JavaScriptServiceProvider"
-                    ],
-                    "aliases": {
-                        "JavaScript": "Laracasts\\Utilities\\JavaScript\\JavaScriptFacade"
-                    }
-                }
-            },
-            "autoload": {
-                "files": [
-                    "src/helpers.php"
-                ],
-                "psr-4": {
-                    "Laracasts\\Utilities\\JavaScript\\": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Jeffrey Way",
-                    "email": "jeffrey@laracasts.com"
-                }
-            ],
-            "description": "Transform your PHP to JavaScript",
-            "keywords": [
-                "javascript",
-                "laravel"
-            ],
-            "support": {
-                "issues": "https://github.com/laracasts/PHP-Vars-To-Js-Transformer/issues",
-                "source": "https://github.com/laracasts/PHP-Vars-To-Js-Transformer/tree/3.2.3"
-            },
-            "time": "2024-03-03T16:53:37+00:00"
         },
         {
             "name": "laravel/framework",
@@ -5967,75 +5906,6 @@
                 }
             ],
             "time": "2023-03-02T18:32:04+00:00"
-        },
-        {
-            "name": "prologue/alerts",
-            "version": "1.2.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/prologuephp/alerts.git",
-                "reference": "00c4662ce50a633c39d3424698baa5cbfb880da3"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/prologuephp/alerts/zipball/00c4662ce50a633c39d3424698baa5cbfb880da3",
-                "reference": "00c4662ce50a633c39d3424698baa5cbfb880da3",
-                "shasum": ""
-            },
-            "require": {
-                "illuminate/config": "~9|^10|^11.0",
-                "illuminate/session": "~9|^10|^11.0",
-                "illuminate/support": "~9|^10|^11.0"
-            },
-            "require-dev": {
-                "mockery/mockery": "^1.0",
-                "phpunit/phpunit": "^9|^10.5"
-            },
-            "type": "library",
-            "extra": {
-                "laravel": {
-                    "providers": [
-                        "Prologue\\Alerts\\AlertsServiceProvider"
-                    ],
-                    "aliases": {
-                        "Alert": "Prologue\\Alerts\\Facades\\Alert"
-                    }
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "Prologue\\Alerts\\": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Dries Vints",
-                    "email": "dries.vints@gmail.com",
-                    "homepage": "http://driesvints.com",
-                    "role": "Creator"
-                },
-                {
-                    "name": "Cristian Tabacitu",
-                    "email": "hello@tabacitu.ro",
-                    "homepage": "http://tabacitu.ro",
-                    "role": "Maintainer"
-                }
-            ],
-            "description": "Prologue Alerts is a package that handles global site messages.",
-            "keywords": [
-                "alerts",
-                "laravel",
-                "messages"
-            ],
-            "support": {
-                "issues": "https://github.com/prologuephp/alerts/issues",
-                "source": "https://github.com/prologuephp/alerts/tree/1.2.0"
-            },
-            "time": "2024-03-12T11:23:19+00:00"
         },
         {
             "name": "psr/cache",

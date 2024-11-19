@@ -4,6 +4,7 @@ namespace App\Filament\Resources\DatabaseHostResource\RelationManagers;
 
 use App\Models\Database;
 use App\Services\Databases\DatabasePasswordService;
+use App\Tables\Columns\DateTimeColumn;
 use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
@@ -54,7 +55,7 @@ class DatabasesRelationManager extends RelationManager
                     ->icon('tabler-brand-docker')
                     ->url(fn (Database $database) => route('filament.admin.resources.servers.edit', ['record' => $database->server_id])),
                 TextColumn::make('max_connections'),
-                TextColumn::make('created_at')->dateTime(),
+                DateTimeColumn::make('created_at'),
             ])
             ->actions([
                 DeleteAction::make(),
