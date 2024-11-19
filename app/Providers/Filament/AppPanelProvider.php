@@ -2,6 +2,7 @@
 
 namespace App\Providers\Filament;
 
+use App\Filament\Pages\Auth\Login;
 use App\Filament\Resources\UserResource\Pages\EditProfile;
 use Filament\Facades\Filament;
 use Filament\Http\Middleware\Authenticate;
@@ -35,6 +36,7 @@ class AppPanelProvider extends PanelProvider
             ->topNavigation(config('panel.filament.top-navigation', true))
             ->maxContentWidth(MaxWidth::ScreenTwoExtraLarge)
             ->profile(EditProfile::class, false)
+            ->login(Login::class)
             ->userMenuItems([
                 MenuItem::make()
                     ->label('Admin')

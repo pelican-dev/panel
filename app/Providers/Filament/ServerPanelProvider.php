@@ -3,6 +3,7 @@
 namespace App\Providers\Filament;
 
 use App\Filament\App\Resources\ServerResource\Pages\ListServers;
+use App\Filament\Pages\Auth\Login;
 use App\Filament\Resources\UserResource\Pages\EditProfile;
 use App\Models\Server;
 use Filament\Facades\Filament;
@@ -37,6 +38,7 @@ class ServerPanelProvider extends PanelProvider
             ->topNavigation(config('panel.filament.top-navigation', true))
             ->maxContentWidth(MaxWidth::ScreenTwoExtraLarge)
             ->profile(EditProfile::class, true)
+            ->login(Login::class)
             ->userMenuItems([
                 MenuItem::make()
                     ->label('Server List')
