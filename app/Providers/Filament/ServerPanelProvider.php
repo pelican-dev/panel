@@ -29,6 +29,7 @@ class ServerPanelProvider extends PanelProvider
         return $panel
             ->id('server')
             ->path('app/server')
+            ->homeUrl('/app')
             ->spa()
             ->tenant(Server::class)
             ->brandName(config('app.name', 'Pelican'))
