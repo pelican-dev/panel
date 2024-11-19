@@ -12,6 +12,7 @@ use App\Models\Server;
 use App\Repositories\Daemon\DaemonBackupRepository;
 use App\Services\Backups\DownloadLinkService;
 use App\Services\Backups\InitiateBackupService;
+use App\Tables\Columns\BytesColumn;
 use App\Tables\Columns\DateTimeColumn;
 use Filament\Actions;
 use Filament\Facades\Filament;
@@ -62,9 +63,8 @@ class ListBackups extends ListRecords
             ->columns([
                 TextColumn::make('name')
                     ->searchable(),
-                TextColumn::make('bytes')
-                    ->label('Size')
-                    ->formatStateUsing(fn ($state) => convert_bytes_to_readable($state)),
+                BytesColumn::make('bytes')
+                    ->label('Size'),
                 DateTimeColumn::make('created_at')
                     ->label('Created')
                     ->since()

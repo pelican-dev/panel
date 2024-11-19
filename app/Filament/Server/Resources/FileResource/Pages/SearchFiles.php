@@ -5,6 +5,7 @@ namespace App\Filament\Server\Resources\FileResource\Pages;
 use App\Filament\Server\Resources\FileResource;
 use App\Models\File;
 use App\Models\Server;
+use App\Tables\Columns\BytesColumn;
 use App\Tables\Columns\DateTimeColumn;
 use Filament\Facades\Filament;
 use Filament\Resources\Pages\ListRecords;
@@ -55,8 +56,7 @@ class SearchFiles extends ListRecords
                 TextColumn::make('name')
                     ->searchable()
                     ->icon(fn (File $file) => $file->getIcon()),
-                TextColumn::make('size')
-                    ->formatStateUsing(fn ($state, File $file) => $file->is_file ? convert_bytes_to_readable($state) : ''),
+                BytesColumn::make('size'),
                 DateTimeColumn::make('modified_at')
                     ->since()
                     ->sortable(),

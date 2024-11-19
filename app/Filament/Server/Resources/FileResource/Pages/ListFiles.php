@@ -11,6 +11,7 @@ use App\Models\Permission;
 use App\Models\Server;
 use App\Repositories\Daemon\DaemonFileRepository;
 use App\Services\Nodes\NodeJWTService;
+use App\Tables\Columns\BytesColumn;
 use App\Tables\Columns\DateTimeColumn;
 use Carbon\CarbonImmutable;
 use Filament\Actions\Action as HeaderAction;
@@ -86,8 +87,7 @@ class ListFiles extends ListRecords
                 TextColumn::make('name')
                     ->searchable()
                     ->icon(fn (File $file) => $file->getIcon()),
-                TextColumn::make('size')
-                    ->formatStateUsing(fn ($state, File $file) => $file->is_file ? convert_bytes_to_readable($state) : ''),
+                BytesColumn::make('size'),
                 DateTimeColumn::make('modified_at')
                     ->since()
                     ->sortable(),
