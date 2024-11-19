@@ -17,7 +17,7 @@ class CreateSchedule extends CreateRecord
 
     protected static bool $canCreateAnother = false;
 
-    protected function mutateFormDataBeforeSave(array $data): array
+    protected function mutateFormDataBeforeCreate(array $data): array
     {
         if (!isset($data['server_id'])) {
             /** @var Server $server */
