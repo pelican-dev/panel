@@ -23,8 +23,6 @@ use Filament\Notifications\Notification;
 use Filament\Pages\SimplePage;
 use Filament\Support\Enums\MaxWidth;
 use Filament\Support\Exceptions\Halt;
-use Illuminate\Http\RedirectResponse;
-use Illuminate\Routing\Redirector;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\HtmlString;
@@ -91,20 +89,23 @@ class PanelInstaller extends SimplePage implements HasForms
         return 'data';
     }
 
-    public function submit(UserCreationService $userCreationService): Redirector|RedirectResponse
+    public function submit(UserCreationService $userCreationService): void
     {
-        // Disable installer
-        $this->writeToEnvironment(['APP_INSTALLED' => 'true']);
+        try {
+            // Disable installer
+            $this->writeToEnvironment(['APP_INSTALLED' => 'true']);
 
-        // Create admin user & login
-        $user = $this->createAdminUser($userCreationService);
-        auth()->guard()->login($user, true);
+            // Create admin user & login
+            $user = $this->createAdminUser($userCreationService);
+            auth()->guard()->login($user, true);
 
-        // Write session data at the very end to avoid "page expired" errors
-        $this->writeToEnv('env_session');
+            // Write session data at the very end to avoid "page expired" errors
+            $this->writeToEnv('env_session');
 
-        // Redirect to admin panel
-        return redirect(Dashboard::getUrl());
+            // Redirect to admin panel
+            $this->redirect(Dashboard::getUrl());
+        } catch (Halt) {
+        }
     }
 
     public function writeToEnv(string $key): void
