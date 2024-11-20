@@ -243,11 +243,6 @@ class Node extends Model
         return $this->hasMany(Allocation::class);
     }
 
-    public function databaseHosts(): HasMany
-    {
-        return $this->hasMany(DatabaseHost::class);
-    }
-
     /**
      * Returns a boolean if the node is viable for an additional server to be placed on it.
      */
