@@ -33,7 +33,6 @@
         "socialiteproviders/authentik": "^5.2",
         "socialiteproviders/discord": "^4.2",
         "socialiteproviders/steam": "^4.2",
-        "socialiteproviders/whmcs": "^4.1",
         "spatie/laravel-fractal": "^6.2",
         "spatie/laravel-permission": "^6.9",
         "spatie/laravel-query-builder": "^5.8.1",

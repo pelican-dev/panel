@@ -134,17 +134,6 @@ return [
             ],
             'provider' => \SocialiteProviders\Steam\Provider::class,
         ],
-        'whmcs' => [
-            'enabled' => env('OAUTH_WHMCS_ENABLED'),
-            'icon' => null,
-            'color' => Color::hex('#7bc143'),
-            'service' => [
-                'client_id' => env('OAUTH_WHMCS_CLIENT_ID'),
-                'client_secret' => env('OAUTH_WHMCS_CLIENT_SECRET'),
-                'url' => env('OAUTH_WHMCS_URL'),
-            ],
-            'provider' => \SocialiteProviders\Whmcs\Provider::class,
-        ],
     ],
 
 ];

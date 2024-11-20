@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "423a2b81acd486e17e2f969516bf8f45",
+    "content-hash": "d64fe6d5eabb837dcdbc5c2420b03910",
     "packages": [
         {
             "name": "abdelhamiderrahmouni/filament-monaco-editor",
@@ -7036,47 +7036,6 @@
                 "source": "https://github.com/socialiteproviders/providers"
             },
             "time": "2022-03-28T22:38:40+00:00"
-        },
-        {
-            "name": "socialiteproviders/whmcs",
-            "version": "4.1.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/SocialiteProviders/Whmcs.git",
-                "reference": "a384912383d3e1e986ec6e30c81f5d30a618dfe5"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/SocialiteProviders/Whmcs/zipball/a384912383d3e1e986ec6e30c81f5d30a618dfe5",
-                "reference": "a384912383d3e1e986ec6e30c81f5d30a618dfe5",
-                "shasum": ""
-            },
-            "require": {
-                "ext-json": "*",
-                "php": "^7.2 || ^8.0",
-                "socialiteproviders/manager": "~4.0"
-            },
-            "type": "library",
-            "autoload": {
-                "psr-4": {
-                    "SocialiteProviders\\Whmcs\\": ""
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Adnan RIHAN",
-                    "email": "adnan@rihan.fr"
-                }
-            ],
-            "description": "WHMCS OAuth2 Provider for Laravel Socialite",
-            "support": {
-                "source": "https://github.com/SocialiteProviders/Whmcs/tree/4.1.0"
-            },
-            "time": "2020-12-01T23:10:59+00:00"
         },
         {
             "name": "spatie/color",
