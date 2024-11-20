@@ -1,5 +1,7 @@
 <?php
 
+use Filament\Support\Colors\Color;
+
 return [
 
     'lockout' => [
@@ -28,7 +30,7 @@ return [
         'facebook' => [
             'enabled' => env('OAUTH_FACEBOOK_ENABLED'),
             'icon' => 'tabler-brand-facebook',
-            'color' => \Filament\Support\Colors\Color::hex('#1877f2'),
+            'color' => Color::hex('#1877f2'),
             'service' => [
                 'client_id' => env('OAUTH_FACEBOOK_CLIENT_ID'),
                 'client_secret' => env('OAUTH_FACEBOOK_CLIENT_SECRET'),
@@ -37,7 +39,7 @@ return [
         'x' => [
             'enabled' => env('OAUTH_X_ENABLED'),
             'icon' => 'tabler-brand-x',
-            'color' => \Filament\Support\Colors\Color::hex('#1da1f2'),
+            'color' => Color::hex('#1da1f2'),
             'service' => [
                 'client_id' => env('OAUTH_X_CLIENT_ID'),
                 'client_secret' => env('OAUTH_X_CLIENT_SECRET'),
@@ -46,7 +48,7 @@ return [
         'linkedin' => [
             'enabled' => env('OAUTH_LINKEDIN_ENABLED'),
             'icon' => 'tabler-brand-linkedin',
-            'color' => \Filament\Support\Colors\Color::hex('#0a66c2'),
+            'color' => Color::hex('#0a66c2'),
             'service' => [
                 'client_id' => env('OAUTH_LINKEDIN_CLIENT_ID'),
                 'client_secret' => env('OAUTH_LINKEDIN_CLIENT_SECRET'),
@@ -55,7 +57,7 @@ return [
         'google' => [
             'enabled' => env('OAUTH_GOOGLE_ENABLED'),
             'icon' => 'tabler-brand-google',
-            'color' => \Filament\Support\Colors\Color::hex('#4285f4'),
+            'color' => Color::hex('#4285f4'),
             'service' => [
                 'client_id' => env('OAUTH_GOOGLE_CLIENT_ID'),
                 'client_secret' => env('OAUTH_GOOGLE_CLIENT_SECRET'),
@@ -64,7 +66,7 @@ return [
         'github' => [
             'enabled' => env('OAUTH_GITHUB_ENABLED'),
             'icon' => 'tabler-brand-github',
-            'color' => \Filament\Support\Colors\Color::hex('#4078c0'),
+            'color' => Color::hex('#4078c0'),
             'service' => [
                 'client_id' => env('OAUTH_GITHUB_CLIENT_ID'),
                 'client_secret' => env('OAUTH_GITHUB_CLIENT_SECRET'),
@@ -73,7 +75,7 @@ return [
         'gitlab' => [
             'enabled' => env('OAUTH_GITLAB_ENABLED'),
             'icon' => 'tabler-brand-gitlab',
-            'color' => \Filament\Support\Colors\Color::hex('#fca326'),
+            'color' => Color::hex('#fca326'),
             'service' => [
                 'client_id' => env('OAUTH_GITLAB_CLIENT_ID'),
                 'client_secret' => env('OAUTH_GITLAB_CLIENT_SECRET'),
@@ -82,7 +84,7 @@ return [
         'bitbucket' => [
             'enabled' => env('OAUTH_BITBUCKET_ENABLED'),
             'icon' => 'tabler-brand-bitbucket',
-            'color' => \Filament\Support\Colors\Color::hex('#205081'),
+            'color' => Color::hex('#205081'),
             'service' => [
                 'client_id' => env('OAUTH_BITBUCKET_CLIENT_ID'),
                 'client_secret' => env('OAUTH_BITBUCKET_CLIENT_SECRET'),
@@ -91,7 +93,7 @@ return [
         'slack' => [
             'enabled' => env('OAUTH_SLACK_ENABLED'),
             'icon' => 'tabler-brand-slack',
-            'color' => \Filament\Support\Colors\Color::hex('#6ecadc'),
+            'color' => Color::hex('#6ecadc'),
             'service' => [
                 'client_id' => env('OAUTH_SLACK_CLIENT_ID'),
                 'client_secret' => env('OAUTH_SLACK_CLIENT_SECRET'),
@@ -102,7 +104,7 @@ return [
         'authentik' => [
             'enabled' => env('OAUTH_AUTHENTIK_ENABLED'),
             'icon' => null,
-            'color' => \Filament\Support\Colors\Color::hex('#fd4b2d'),
+            'color' => Color::hex('#fd4b2d'),
             'service' => [
                 'base_url' => env('OAUTH_AUTHENTIK_BASE_URL'),
                 'client_id' => env('OAUTH_AUTHENTIK_CLIENT_ID'),
@@ -113,7 +115,7 @@ return [
         'discord' => [
             'enabled' => env('OAUTH_DISCORD_ENABLED'),
             'icon' => 'tabler-brand-discord',
-            'color' => \Filament\Support\Colors\Color::hex('#5865F2'),
+            'color' => Color::hex('#5865F2'),
             'service' => [
                 'client_id' => env('OAUTH_DISCORD_CLIENT_ID'),
                 'client_secret' => env('OAUTH_DISCORD_CLIENT_SECRET'),
@@ -123,7 +125,7 @@ return [
         'steam' => [
             'enabled' => env('OAUTH_STEAM_ENABLED'),
             'icon' => 'tabler-brand-steam',
-            'color' => \Filament\Support\Colors\Color::hex('#00adee'),
+            'color' => Color::hex('#00adee'),
             'service' => [
                 'client_secret' => env('OAUTH_STEAM_CLIENT_SECRET'),
                 'allowed_hosts' => [
@@ -135,7 +137,7 @@ return [
         'whmcs' => [
             'enabled' => env('OAUTH_WHMCS_ENABLED'),
             'icon' => null,
-            'color' => \Filament\Support\Colors\Color::hex('#7bc143'),
+            'color' => Color::hex('#7bc143'),
             'service' => [
                 'client_id' => env('OAUTH_WHMCS_CLIENT_ID'),
                 'client_secret' => env('OAUTH_WHMCS_CLIENT_SECRET'),
