@@ -675,6 +675,9 @@ class EditServer extends EditRecord
                                             if (empty($data['database'])) {
                                                 $data['database'] = $randomWordService->word() . random_int(1, 420);
                                             }
+                                            if (empty($data['remote'])) {
+                                                $data['remote'] = '%';
+                                            }
 
                                             $data['database'] = $service->generateUniqueDatabaseName($data['database'], $server->id);
 
@@ -692,17 +695,21 @@ class EditServer extends EditRecord
                                         ->form([
                                             Select::make('database_host_id')
                                                 ->label('Database Host')
+                                                ->required()
                                                 ->placeholder('Select Database Host')
                                                 ->relationship('node.databaseHosts', 'name'),
                                             TextInput::make('database')
                                                 ->label('Database Name')
+                                                ->alphaDash()
                                                 ->prefix(fn (Server $server) => 's' . $server->id . '_')
                                                 ->hintIcon('tabler-question-mark')
                                                 ->hintIconTooltip('Leaving this blank will auto generate a random name'),
                                             TextInput::make('remote')
                                                 ->columnSpan(1)
+                                                ->regex('/^[\w\-\/.%:]+$/')
                                                 ->label('Connections From')
-                                                ->default('%'),
+                                                ->hintIcon('tabler-question-mark')
+                                                ->hintIconTooltip('Where connections should be allowed from. Leave blank to allow connections from anywhere.'),
                                         ]),
                                 ])->alignCenter()->columnSpanFull(),
                             ]),
