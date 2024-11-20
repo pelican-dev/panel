@@ -628,7 +628,7 @@ class EditServer extends EditRecord
                                                     ->icon('tabler-trash')
                                                     ->action(function (DatabaseManagementService $databaseManagementService, $record) {
                                                         $databaseManagementService->delete($record);
-                                                        $this->refreshForm();
+                                                        $this->fillForm();
                                                     })
                                             ),
                                         TextInput::make('username')
@@ -676,7 +676,8 @@ class EditServer extends EditRecord
                                             }
                                             $data['database'] = 's'. $server->id . '_' . $data['database'];
                                             $service->create($server, $data);
-                                            $this->refreshForm();
+
+                                            $this->fillForm();
                                         })
                                         ->form([
                                             Select::make('database_host_id')
@@ -904,10 +905,5 @@ class EditServer extends EditRecord
 
         $set('password', $newPassword);
         $set('JDBC', $jdbcString);
-    }
-
-    public function refreshForm(): void
-    {
-        $this->fillForm();
     }
 }
