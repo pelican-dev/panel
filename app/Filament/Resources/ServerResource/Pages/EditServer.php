@@ -666,9 +666,10 @@ class EditServer extends EditRecord
                                     ->columnSpan(4),
                                 Forms\Components\Actions::make([
                                     Action::make('createDatabase')
-                                        ->disabled(fn (Server $server) => DatabaseHost::query()->count() < 1 || $server->databases()->count() >= $server->database_limit)
-                                        ->label(fn (Server $server) => $server->databases()->count() >= $server->database_limit ? 'Database Limit Reached' : (DatabaseHost::query()->count() < 1 ? 'No Database Hosts' : 'Create Database'))
-                                        ->color(fn (Server $server) => $server->databases()->count() >= $server->database_limit || DatabaseHost::query()->count() < 1 ? 'danger' : 'primary')
+                                        ->authorize(fn (Server $server) => auth()->user()->can('create database'))
+                                        ->disabled(fn (Server $server) => DatabaseHost::query()->count() < 1)
+                                        ->label(fn (Server $server) => DatabaseHost::query()->count() < 1 ? 'No Database Hosts' : 'Create Database')
+                                        ->color(fn (Server $server) => DatabaseHost::query()->count() < 1 ? 'danger' : 'primary')
                                         ->modalSubmitActionLabel('Create')
                                         ->action(function (array $data, DatabaseManagementService $service, Server $server) {
                                             if (empty($data['database'])) {
