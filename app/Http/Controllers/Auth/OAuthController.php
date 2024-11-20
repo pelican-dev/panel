@@ -55,6 +55,7 @@ class OAuthController extends Controller
 
             $this->updateService->handle($request->user(), ['oauth' => $oauth]);
 
+            // TODO: replace with profile route once new client area is merged
             return redirect()->route('account');
         }
 

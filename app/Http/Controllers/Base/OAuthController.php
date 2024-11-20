@@ -7,7 +7,6 @@ use Illuminate\Http\RedirectResponse;
 use Laravel\Socialite\Facades\Socialite;
 use App\Http\Controllers\Controller;
 use App\Services\Users\UserUpdateService;
-use Illuminate\Http\Response;
 
 class OAuthController extends Controller
 {
@@ -26,6 +25,7 @@ class OAuthController extends Controller
     {
         // Driver is disabled - redirect to account page
         if (!config("auth.oauth.$driver.enabled")) {
+            // TODO: replace with profile route once new client area is merged
             return redirect()->route('account');
         }
 
@@ -35,13 +35,14 @@ class OAuthController extends Controller
     /**
      * Remove a OAuth link
      */
-    protected function unlink(Request $request, string $driver): Response
+    protected function unlink(Request $request, string $driver): RedirectResponse
     {
         $oauth = $request->user()->oauth;
         unset($oauth[$driver]);
 
         $this->updateService->handle($request->user(), ['oauth' => $oauth]);
 
-        return new Response('', Response::HTTP_NO_CONTENT);
+        // TODO: replace with profile route once new client area is merged
+        return redirect()->route('account');
     }
 }
