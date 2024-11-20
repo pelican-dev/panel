@@ -7,6 +7,7 @@ use App\Enums\ServerState;
 use App\Filament\Resources\ServerResource;
 use App\Filament\Resources\ServerResource\RelationManagers\AllocationsRelationManager;
 use App\Models\Database;
+use App\Models\DatabaseHost;
 use App\Models\Egg;
 use App\Models\Mount;
 use App\Models\Server;
@@ -609,6 +610,7 @@ class EditServer extends EditRecord
                             ]),
                         Tab::make('Databases')
                             ->icon('tabler-database')
+                            ->columns(4)
                             ->schema([
                                 Repeater::make('databases')
                                     ->grid()
@@ -624,7 +626,10 @@ class EditServer extends EditRecord
                                                 Action::make('Delete')
                                                     ->color('danger')
                                                     ->icon('tabler-trash')
-                                                    ->action(fn (DatabaseManagementService $databaseManagementService, $record) => $databaseManagementService->delete($record))
+                                                    ->action(function (DatabaseManagementService $databaseManagementService, $record) {
+                                                        $databaseManagementService->delete($record);
+                                                        $this->refreshForm();
+                                                    })
                                             ),
                                         TextInput::make('username')
                                             ->disabled()
@@ -659,7 +664,37 @@ class EditServer extends EditRecord
                                     ->deletable(false)
                                     ->addable(false)
                                     ->columnSpan(4),
-                            ])->columns(4),
+                                Forms\Components\Actions::make([
+                                    Action::make('createDatabase')
+                                        ->disabled(fn (Server $server) => DatabaseHost::query()->count() < 1 || $server->databases()->count() >= $server->database_limit)
+                                        ->label(fn (Server $server) => $server->databases()->count() >= $server->database_limit ? 'Database Limit Reached' : (DatabaseHost::query()->count() < 1 ? 'No Database Hosts' : 'Create Database'))
+                                        ->color(fn (Server $server) => $server->databases()->count() >= $server->database_limit || DatabaseHost::query()->count() < 1 ? 'danger' : 'primary')
+                                        ->modalSubmitActionLabel('Create')
+                                        ->action(function (array $data, DatabaseManagementService $service, Server $server) {
+                                            if (empty($data['database'])) {
+                                                $data['database'] = str_random(12);
+                                            }
+                                            $data['database'] = 's'. $server->id . '_' . $data['database'];
+                                            $service->create($server, $data);
+                                            $this->refreshForm();
+                                        })
+                                        ->form([
+                                            Select::make('database_host_id')
+                                                ->label('Database Host')
+                                                ->placeholder('Select Database Host')
+                                                ->relationship('node.databaseHosts', 'name'),
+                                            TextInput::make('database')
+                                                ->label('Database Name')
+                                                ->prefix(fn (Server $server) => 's' . $server->id . '_')
+                                                ->hintIcon('tabler-question-mark')
+                                                ->hintIconTooltip('Leaving this blank will auto generate a random name'),
+                                            TextInput::make('remote')
+                                                ->columnSpan(1)
+                                                ->label('Connections From')
+                                                ->default('%'),
+                                        ]),
+                                ])->alignCenter()->columnSpanFull(),
+                            ]),
                         Tab::make('Actions')
                             ->icon('tabler-settings')
                             ->schema([
@@ -869,5 +904,10 @@ class EditServer extends EditRecord
 
         $set('password', $newPassword);
         $set('JDBC', $jdbcString);
+    }
+
+    public function refreshForm(): void
+    {
+        $this->fillForm();
     }
 }
