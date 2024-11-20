@@ -671,13 +671,22 @@ class EditServer extends EditRecord
                                         ->label(fn (Server $server) => DatabaseHost::query()->count() < 1 ? 'No Database Hosts' : 'Create Database')
                                         ->color(fn (Server $server) => DatabaseHost::query()->count() < 1 ? 'danger' : 'primary')
                                         ->modalSubmitActionLabel('Create')
-                                        ->action(function (array $data, DatabaseManagementService $service, Server $server) {
+                                        ->action(function (array $data, DatabaseManagementService $service, Server $server, RandomWordService $randomWordService) {
                                             if (empty($data['database'])) {
-                                                $data['database'] = str_random(12);
+                                                $data['database'] = $randomWordService->word() . random_int(1, 420);
                                             }
-                                            $data['database'] = 's'. $server->id . '_' . $data['database'];
-                                            $service->create($server, $data);
 
+                                            $data['database'] = $service->generateUniqueDatabaseName($data['database'], $server->id);
+
+                                            try {
+                                                $service->setValidateDatabaseLimit(false)->create($server, $data);
+                                            } catch (Exception $e) {
+                                                Notification::make()
+                                                    ->title('Failed to Create Database')
+                                                    ->body($e->getMessage())
+                                                    ->danger()
+                                                    ->persistent()->send();
+                                            }
                                             $this->fillForm();
                                         })
                                         ->form([
