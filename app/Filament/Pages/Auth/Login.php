@@ -66,7 +66,7 @@ class Login extends BaseLogin
                 ->label(Str::title($name))
                 ->icon($data['icon'])
                 ->color($data['color'])
-                ->url("/auth/oauth/redirect/$name");
+                ->url(route('auth.oauth.redirect', ['driver' => $name], false));
         }
 
         return Actions::make($actions);

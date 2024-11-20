@@ -131,7 +131,7 @@ class EditProfile extends \Filament\Pages\Auth\EditProfile
                                                 ->label(($unlink ? 'Unlink ' : 'Link ') . Str::title($name))
                                                 ->icon($unlink ? 'tabler-unlink' : 'tabler-link')
                                                 ->color($data['color'])
-                                                ->url('/account/oauth/' . ($unlink ? 'unlink' : 'link') .  "/$name");
+                                                ->url(route('account.oauth.' . ($unlink ? 'unlink' : 'link'), ['driver' => $name], false));
                                         }
 
                                         return [Actions::make($providers)];
