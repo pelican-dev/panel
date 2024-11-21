@@ -91,7 +91,7 @@ class Plugin extends IlluminateModel
 
     public function shouldLoad(string $panelId): bool
     {
-        return !$this->isDisabled() && ($this->panel === 'both' || $this->panel === $panelId);
+        return !$this->isDisabled() && ($this->panel === 'all' || $this->panel === $panelId);
     }
 
     public function isDisabled(): bool

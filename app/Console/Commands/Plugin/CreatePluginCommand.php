@@ -51,8 +51,9 @@ class CreatePluginCommand extends Command
         $url = $this->option('url') ?? $this->ask('URL', 'https://github.com/' . $author . '/' . $id);
         $panel = $this->option('panel') ?? $this->choice('Panel', [
             'admin' => 'Admin Area',
-            'app' => 'Client Area',
-            'both' => 'Both',
+            'server' => 'Client Area',
+            'app' => 'Server List',
+            'all' => 'All',
         ], 'admin');
         $category = $this->option('category') ?? $this->choice('Category', [
             'plugin' => 'Plugin',
