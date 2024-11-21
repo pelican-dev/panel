@@ -203,7 +203,7 @@ class Startup extends ServerFormPage
                 'variable_value' => $state ?? '',
             ]);
 
-            if ($serverVariable->variable_value !== $original) {
+            if ($original !== $state) {
                 Activity::event('server:startup.edit')
                     ->property([
                         'variable' => $serverVariable->variable->env_variable,

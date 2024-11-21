@@ -5,6 +5,7 @@ namespace App\Providers\Filament;
 use App\Filament\App\Resources\ServerResource\Pages\ListServers;
 use App\Filament\Pages\Auth\Login;
 use App\Filament\Resources\UserResource\Pages\EditProfile;
+use App\Http\Middleware\Activity\ServerSubject;
 use App\Models\Server;
 use Filament\Facades\Filament;
 use Filament\Http\Middleware\Authenticate;
@@ -66,6 +67,7 @@ class ServerPanelProvider extends PanelProvider
                 SubstituteBindings::class,
                 DisableBladeIconComponents::class,
                 DispatchServingFilamentEvent::class,
+                ServerSubject::class,
             ])
             ->authMiddleware([
                 Authenticate::class,
