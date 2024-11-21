@@ -35,7 +35,6 @@ class DatabaseHostTransformer extends BaseTransformer
             'host' => $model->host,
             'port' => $model->port,
             'username' => $model->username,
-            'node' => $model->node_id,
             'created_at' => $model->created_at->toAtomString(),
             'updated_at' => $model->updated_at->toAtomString(),
         ];
@@ -58,7 +57,7 @@ class DatabaseHostTransformer extends BaseTransformer
     /**
      * Include the nodes associated with this host.
      */
-    public function includeNodes(DatabaseHost $model): Item|NullResource
+    public function includeNodes(DatabaseHost $model): Collection|NullResource
     {
         if (!$this->authorize(Node::RESOURCE_NAME)) {
             return $this->null();
@@ -66,6 +65,6 @@ class DatabaseHostTransformer extends BaseTransformer
 
         $model->loadMissing('nodes');
 
-        return $this->item($model->getRelation('nodes'), $this->makeTransformer(NodeTransformer::class), Node::RESOURCE_NAME);
+        return $this->collection($model->getRelation('nodes'), $this->makeTransformer(NodeTransformer::class), Node::RESOURCE_NAME);
     }
 }
