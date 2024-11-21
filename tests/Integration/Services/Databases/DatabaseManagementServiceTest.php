@@ -10,6 +10,7 @@ use App\Services\Databases\DatabaseManagementService;
 use App\Exceptions\Repository\DuplicateDatabaseNameException;
 use App\Exceptions\Service\Database\TooManyDatabasesException;
 use App\Exceptions\Service\Database\DatabaseClientFeatureNotEnabledException;
+use Database\Factories\NodeFactory;
 
 class DatabaseManagementServiceTest extends IntegrationTestCase
 {
@@ -118,7 +119,7 @@ class DatabaseManagementServiceTest extends IntegrationTestCase
         $server = $this->createServerModel();
         $name = DatabaseManagementService::generateUniqueDatabaseName('something', $server->id);
 
-        $host = DatabaseHost::factory()->create(['node_id' => $server->node_id]);
+        $host = DatabaseHost::factory()->recycle($server->node)->create();
 
         $username = null;
         $secondUsername = null;
@@ -139,7 +140,7 @@ class DatabaseManagementServiceTest extends IntegrationTestCase
         $this->assertDatabaseHas('databases', ['server_id' => $server->id, 'id' => $response->id]);
     }
 
-    /**
+/**
      * Test that an exception encountered while creating the database leads to the cleanup code
      * being called and any exceptions encountered while cleaning up go unreported.
      */
@@ -155,7 +156,7 @@ class DatabaseManagementServiceTest extends IntegrationTestCase
         $server = $this->createServerModel();
         $name = DatabaseManagementService::generateUniqueDatabaseName('something', $server->id);
 
-        $host = DatabaseHost::factory()->create(['node_id' => $server->node_id]);
+        $host = DatabaseHost::factory()->recycle($server->node)->create();
 
         $this->repository->expects('createDatabase')->with($name)->andThrows(new \BadMethodCallException());
         $this->repository->expects('dropDatabase')->with($name);
