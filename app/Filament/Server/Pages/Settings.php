@@ -49,7 +49,7 @@ class Settings extends ServerFormPage
                             ->schema([
                                 TextInput::make('name')
                                     ->label('Server Name')
-                                    ->disabled(auth()->user()->can(Permission::ACTION_SETTINGS_RENAME))
+                                    ->disabled(!auth()->user()->can(Permission::ACTION_SETTINGS_RENAME))
                                     ->columnSpan([
                                         'default' => 1,
                                         'sm' => 2,
@@ -60,7 +60,7 @@ class Settings extends ServerFormPage
                                     ->afterStateUpdated(fn ($state, Server $server) => $this->updateName($state, $server)),
                                 Textarea::make('description')
                                     ->label('Server Description')
-                                    ->disabled(auth()->user()->can(Permission::ACTION_SETTINGS_RENAME))
+                                    ->disabled(!auth()->user()->can(Permission::ACTION_SETTINGS_RENAME))
                                     ->columnSpan([
                                         'default' => 1,
                                         'sm' => 2,
@@ -160,7 +160,7 @@ class Settings extends ServerFormPage
                     ->footerActions([
                         Action::make('reinstall')
                             ->color('danger')
-                            ->disabled(auth()->user()->can(Permission::ACTION_SETTINGS_REINSTALL))
+                            ->disabled(!auth()->user()->can(Permission::ACTION_SETTINGS_REINSTALL))
                             ->label('Reinstall')
                             ->requiresConfirmation()
                             ->modalHeading('Are you sure you want to reinstall the server?')
