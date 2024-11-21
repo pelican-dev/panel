@@ -4,9 +4,13 @@ namespace App\Filament\Server\Resources;
 
 use App\Filament\Server\Resources\ActivityResource\Pages;
 use App\Models\ActivityLog;
+use App\Models\Role;
 use App\Models\Server;
+use App\Models\User;
 use Filament\Facades\Filament;
 use Filament\Resources\Resource;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Query\JoinClause;
 
 class ActivityResource extends Resource
 {
@@ -16,9 +20,32 @@ class ActivityResource extends Resource
 
     protected static ?string $navigationIcon = 'tabler-stack';
 
-    protected static ?string $tenantOwnershipRelationshipName = 'actor';
+    public static function getEloquentQuery(): Builder
+    {
+        /** @var Server $server */
+        $server = Filament::getTenant();
 
-    protected static ?string $tenantRelationshipName = 'activity'; // TODO: not displaying anything
+        return $server->activity()
+            ->whereNotIn('activity_logs.event', ActivityLog::DISABLED_EVENTS)
+            ->when(config('activity.hide_admin_activity'), function (Builder $builder) use ($server) {
+                // We could do this with a query and a lot of joins, but that gets pretty
+                // painful so for now we'll execute a simpler query.
+                $subusers = $server->subusers()->pluck('user_id')->merge([$server->owner_id]);
+                $rootAdmins = Role::getRootAdmin()->users()->pluck('id');
+
+                $builder->select('activity_logs.*')
+                    ->leftJoin('users', function (JoinClause $join) {
+                        $join->on('users.id', 'activity_logs.actor_id')
+                            ->where('activity_logs.actor_type', (new User())->getMorphClass());
+                    })
+                    ->where(function (Builder $builder) use ($subusers, $rootAdmins) {
+                        $builder->whereNull('users.id')
+                            ->orWhereNotIn('users.id', $rootAdmins)
+                            ->orWhereIn('users.id', $subusers);
+                    });
+            })
+            ->getQuery();
+    }
 
     // TODO: find better way handle server conflict state
     public static function canAccess(): bool
