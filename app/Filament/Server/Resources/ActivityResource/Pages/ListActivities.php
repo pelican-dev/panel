@@ -26,8 +26,8 @@ class ListActivities extends ListRecords
                     ->state(fn (ActivityLog $activityLog) => $activityLog->actor instanceof User ? $activityLog->actor->username : 'System')
                     ->url(fn (ActivityLog $activityLog): string => $activityLog->actor instanceof User ? route('filament.admin.resources.users.edit', ['record' => $activityLog->actor]) : ''),
                 DateTimeColumn::make('timestamp')
-                    ->sortable()
-                    ->formatStateUsing(fn ($state) => $state->diffForHumans()),
+                    ->since()
+                    ->sortable(),
             ])
             ->defaultSort('timestamp', 'desc');
     }

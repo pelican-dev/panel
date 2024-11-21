@@ -26,6 +26,7 @@ class ActivityResource extends Resource
         $server = Filament::getTenant();
 
         return $server->activity()
+            ->getQuery()
             ->whereNotIn('activity_logs.event', ActivityLog::DISABLED_EVENTS)
             ->when(config('activity.hide_admin_activity'), function (Builder $builder) use ($server) {
                 // We could do this with a query and a lot of joins, but that gets pretty
@@ -43,8 +44,7 @@ class ActivityResource extends Resource
                             ->orWhereNotIn('users.id', $rootAdmins)
                             ->orWhereIn('users.id', $subusers);
                     });
-            })
-            ->getQuery();
+            });
     }
 
     // TODO: find better way handle server conflict state
