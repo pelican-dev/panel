@@ -15,7 +15,6 @@ use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
-use Filament\Forms\Set;
 use Filament\Notifications\Notification;
 use Illuminate\Support\Facades\Validator;
 
@@ -45,18 +44,39 @@ class Startup extends ServerFormPage
                     ])
                     ->autosize()
                     ->readOnly(),
-                Select::make('select_image') //TODO: Show Custom Image if Image !== $egg->docker_images
+                TextInput::make('custom_image')
                     ->label('Docker Image')
-                    ->afterStateUpdated(fn (Set $set, $state) => $set('image', $state))
-                    ->options(function (Set $set, Server $server) {
-                        $images = $server->egg->docker_images ?? [];
+                    ->readOnly()
+                    ->visible(fn (Server $server) => !in_array($server->image, $server->egg->docker_images))
+                    ->formatStateUsing(fn (Server $server) => $server->image)
+                    ->columnSpan([
+                        'default' => 1,
+                        'sm' => 1,
+                        'md' => 2,
+                        'lg' => 2,
+                    ]),
+                Select::make('image')
+                    ->label('Docker Image')
+                    ->live()
+                    ->visible(fn (Server $server) => in_array($server->image, $server->egg->docker_images))
+                    ->afterStateUpdated(function ($state, Server $server) {
+                        $original = $server->image;
+                        $server->forceFill(['image' => $state])->saveOrFail();
 
-                        $currentImage = $server->image;
-                        if (!$currentImage && $images) {
-                            $defaultImage = collect($images)->first();
-                            $set('image', $defaultImage);
-                            $set('select_image', $defaultImage);
+                        if ($original !== $server->image) {
+                            Activity::event('server:startup.image')
+                                ->property(['old' => $original, 'new' => $state])
+                                ->log();
                         }
+
+                        Notification::make()
+                            ->title('Docker image updated')
+                            ->body('Restart the server to use the new image.')
+                            ->success()
+                            ->send();
+                    })
+                    ->options(function (Server $server) {
+                        $images = $server->egg->docker_images;
 
                         return array_flip($images);
                     })
