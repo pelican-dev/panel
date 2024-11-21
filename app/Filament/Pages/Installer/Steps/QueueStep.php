@@ -57,8 +57,6 @@ class QueueStep
                     ->hidden(fn () => file_exists('/.dockerenv'))
                     ->columnSpanFull(),
             ])
-            ->afterValidation(function () use ($installer) {
-                $installer->writeToEnv('env_queue');
-            });
+            ->afterValidation(fn () => $installer->writeToEnv('env_queue'));
     }
 }

@@ -95,6 +95,9 @@ class PanelInstaller extends SimplePage implements HasForms
             // Disable installer
             $this->writeToEnvironment(['APP_INSTALLED' => 'true']);
 
+            // Run migrations
+            $this->runMigrations();
+
             // Create admin user & login
             $user = $this->createAdminUser($userCreationService);
             auth()->guard()->login($user, true);
@@ -130,13 +133,12 @@ class PanelInstaller extends SimplePage implements HasForms
         Artisan::call('config:clear');
     }
 
-    public function runMigrations(string $driver): void
+    public function runMigrations(): void
     {
         try {
             Artisan::call('migrate', [
                 '--force' => true,
                 '--seed' => true,
-                '--database' => $driver,
             ]);
         } catch (Exception $exception) {
             report($exception);
