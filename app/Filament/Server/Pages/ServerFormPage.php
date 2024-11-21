@@ -66,4 +66,17 @@ abstract class ServerFormPage extends Page
 
         return $server;
     }
+
+    // TODO: find better way handle server conflict state
+    public static function canAccess(): bool
+    {
+        /** @var Server $server */
+        $server = Filament::getTenant();
+
+        if ($server->isInConflictState()) {
+            return false;
+        }
+
+        return parent::canAccess();
+    }
 }

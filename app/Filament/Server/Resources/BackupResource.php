@@ -4,6 +4,8 @@ namespace App\Filament\Server\Resources;
 
 use App\Filament\Server\Resources\BackupResource\Pages;
 use App\Models\Backup;
+use App\Models\Server;
+use Filament\Facades\Filament;
 use Filament\Resources\Resource;
 
 class BackupResource extends Resource
@@ -15,6 +17,19 @@ class BackupResource extends Resource
     protected static bool $canCreateAnother = false;
 
     protected static ?string $navigationIcon = 'tabler-download';
+
+    // TODO: find better way handle server conflict state
+    public static function canAccess(): bool
+    {
+        /** @var Server $server */
+        $server = Filament::getTenant();
+
+        if ($server->isInConflictState()) {
+            return false;
+        }
+
+        return parent::canAccess();
+    }
 
     public static function getPages(): array
     {

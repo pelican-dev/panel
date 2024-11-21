@@ -4,6 +4,8 @@ namespace App\Filament\Server\Resources;
 
 use App\Filament\Server\Resources\FileResource\Pages;
 use App\Models\File;
+use App\Models\Server;
+use Filament\Facades\Filament;
 use Filament\Resources\Resource;
 
 class FileResource extends Resource
@@ -13,6 +15,19 @@ class FileResource extends Resource
     protected static ?int $navigationSort = 3;
 
     protected static ?string $navigationIcon = 'tabler-files';
+
+    // TODO: find better way handle server conflict state
+    public static function canAccess(): bool
+    {
+        /** @var Server $server */
+        $server = Filament::getTenant();
+
+        if ($server->isInConflictState()) {
+            return false;
+        }
+
+        return parent::canAccess();
+    }
 
     public static function getPages(): array
     {

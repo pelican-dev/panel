@@ -53,15 +53,16 @@ class Console extends Page
         return [
             Action::make('start')
                 ->color('primary')
-                ->action(fn () => $this->dispatch('setServerState', state: 'start')),
-
+                ->action(fn () => $this->dispatch('setServerState', state: 'start'))
+                ->disabled(fn () => Filament::getTenant()->isInConflictState()),
             Action::make('restart')
                 ->color('gray')
-                ->action(fn () => $this->dispatch('setServerState', state: 'restart')),
-
+                ->action(fn () => $this->dispatch('setServerState', state: 'restart'))
+                ->disabled(fn () => Filament::getTenant()->isInConflictState()),
             Action::make('stop')
                 ->color('danger')
-                ->action(fn () => $this->dispatch('setServerState', state: 'stop')),
+                ->action(fn () => $this->dispatch('setServerState', state: 'stop'))
+                ->disabled(fn () => Filament::getTenant()->isInConflictState()),
         ];
     }
 }

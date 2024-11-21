@@ -33,6 +33,19 @@ class UserResource extends Resource
 
     protected static ?string $tenantOwnershipRelationshipName = 'subServers';
 
+    // TODO: find better way handle server conflict state
+    public static function canAccess(): bool
+    {
+        /** @var Server $server */
+        $server = Filament::getTenant();
+
+        if ($server->isInConflictState()) {
+            return false;
+        }
+
+        return parent::canAccess();
+    }
+
     public static function table(Table $table): Table
     {
         return $table

@@ -366,6 +366,11 @@ class Server extends Model
         };
     }
 
+    public function isInConflictState(): bool
+    {
+        return $this->isSuspended() || $this->node->isUnderMaintenance() || !$this->isInstalled() || $this->status === ServerState::RestoringBackup || !is_null($this->transfer);
+    }
+
     /**
      * Checks if the server is currently in a user-accessible state. If not, an
      * exception is raised. This should be called whenever something needs to make
@@ -375,13 +380,7 @@ class Server extends Model
      */
     public function validateCurrentState(): void
     {
-        if (
-            $this->isSuspended() ||
-            $this->node->isUnderMaintenance() ||
-            !$this->isInstalled() ||
-            $this->status === ServerState::RestoringBackup ||
-            !is_null($this->transfer)
-        ) {
+        if ($this->isInConflictState()) {
             throw new ServerStateConflictException($this);
         }
     }

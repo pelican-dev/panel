@@ -5,6 +5,8 @@ namespace App\Filament\Server\Resources;
 use App\Filament\Server\Resources\ScheduleResource\Pages;
 use App\Filament\Server\Resources\ScheduleResource\RelationManagers\TasksRelationManager;
 use App\Models\Schedule;
+use App\Models\Server;
+use Filament\Facades\Filament;
 use Filament\Forms\Components\Actions;
 use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\Section;
@@ -22,6 +24,19 @@ class ScheduleResource extends Resource
     protected static ?int $navigationSort = 6;
 
     protected static ?string $navigationIcon = 'tabler-clock';
+
+    // TODO: find better way handle server conflict state
+    public static function canAccess(): bool
+    {
+        /** @var Server $server */
+        $server = Filament::getTenant();
+
+        if ($server->isInConflictState()) {
+            return false;
+        }
+
+        return parent::canAccess();
+    }
 
     public static function form(Form $form): Form
     {
