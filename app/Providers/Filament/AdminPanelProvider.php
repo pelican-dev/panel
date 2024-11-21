@@ -8,6 +8,7 @@ use App\Http\Middleware\LanguageMiddleware;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
+use Filament\Navigation\MenuItem;
 use Filament\Panel;
 use Filament\PanelProvider;
 use Filament\Support\Enums\MaxWidth;
@@ -45,6 +46,13 @@ class AdminPanelProvider extends PanelProvider
             ->brandLogo(config('app.logo'))
             ->brandLogoHeight('2rem')
             ->profile(EditProfile::class, false)
+            ->userMenuItems([
+                MenuItem::make()
+                    ->label('Exit Admin')
+                    ->url('/')
+                    ->icon('tabler-arrow-back')
+                    ->sort(24),
+            ])
             ->maxContentWidth(MaxWidth::ScreenTwoExtraLarge)
             ->spa()
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\\Filament\\Resources')
