@@ -7,6 +7,7 @@ use App\Filament\Server\Widgets\ServerCpuChart;
 use App\Filament\Server\Widgets\ServerMemoryChart;
 use App\Filament\Server\Widgets\ServerNetworkChart;
 use App\Filament\Server\Widgets\ServerOverview;
+use App\Models\Server;
 use Filament\Actions\Action;
 use Filament\Facades\Filament;
 use Filament\Pages\Page;
@@ -50,19 +51,22 @@ class Console extends Page
 
     protected function getHeaderActions(): array
     {
+        /** @var Server $server */
+        $server = Filament::getTenant();
+
         return [
             Action::make('start')
                 ->color('primary')
                 ->action(fn () => $this->dispatch('setServerState', state: 'start'))
-                ->disabled(fn () => Filament::getTenant()->isInConflictState()),
+                ->disabled(fn () => $server->isInConflictState()),
             Action::make('restart')
                 ->color('gray')
                 ->action(fn () => $this->dispatch('setServerState', state: 'restart'))
-                ->disabled(fn () => Filament::getTenant()->isInConflictState()),
+                ->disabled(fn () => $server->isInConflictState()),
             Action::make('stop')
                 ->color('danger')
                 ->action(fn () => $this->dispatch('setServerState', state: 'stop'))
-                ->disabled(fn () => Filament::getTenant()->isInConflictState()),
+                ->disabled(fn () => $server->isInConflictState()),
         ];
     }
 }
