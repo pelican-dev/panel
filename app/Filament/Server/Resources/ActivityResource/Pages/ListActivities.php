@@ -5,6 +5,7 @@ namespace App\Filament\Server\Resources\ActivityResource\Pages;
 use App\Filament\Server\Resources\ActivityResource;
 use App\Models\ActivityLog;
 use App\Models\User;
+use App\Tables\Columns\DateTimeColumn;
 use Filament\Resources\Pages\ListRecords;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
@@ -18,15 +19,17 @@ class ListActivities extends ListRecords
         return $table
             ->columns([
                 TextColumn::make('event')
-                    ->formatStateUsing(fn ($state, ActivityLog $activityLog) => __('activity.'.str($activityLog->event)->replace(':', '.'), $activityLog->properties?->toArray() ?? []))
+                    ->html()
+                    ->formatStateUsing(fn ($state, ActivityLog $activityLog) => __('activity.'.str($state)->replace(':', '.'), $activityLog->properties?->toArray() ?? []))
                     ->description(fn ($state) => $state),
                 TextColumn::make('user')
                     ->state(fn (ActivityLog $activityLog) => $activityLog->actor instanceof User ? $activityLog->actor->username : 'System')
                     ->url(fn (ActivityLog $activityLog): string => $activityLog->actor instanceof User ? route('filament.admin.resources.users.edit', ['record' => $activityLog->actor]) : ''),
-                TextColumn::make('timestamp')
+                DateTimeColumn::make('timestamp')
                     ->sortable()
                     ->formatStateUsing(fn ($state) => $state->diffForHumans()),
-            ]);
+            ])
+            ->defaultSort('timestamp', 'desc');
     }
 
     public function getBreadcrumbs(): array
