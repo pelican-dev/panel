@@ -4,13 +4,11 @@ namespace App\Tests\Integration\Services\Databases;
 
 use App\Models\Database;
 use App\Models\DatabaseHost;
-use App\Models\Node;
 use App\Tests\Integration\IntegrationTestCase;
 use App\Services\Databases\DatabaseManagementService;
 use App\Exceptions\Repository\DuplicateDatabaseNameException;
 use App\Exceptions\Service\Database\TooManyDatabasesException;
 use App\Exceptions\Service\Database\DatabaseClientFeatureNotEnabledException;
-use Database\Factories\NodeFactory;
 
 class DatabaseManagementServiceTest extends IntegrationTestCase
 {
@@ -140,7 +138,7 @@ class DatabaseManagementServiceTest extends IntegrationTestCase
         $this->assertDatabaseHas('databases', ['server_id' => $server->id, 'id' => $response->id]);
     }
 
-/**
+    /**
      * Test that an exception encountered while creating the database leads to the cleanup code
      * being called and any exceptions encountered while cleaning up go unreported.
      */

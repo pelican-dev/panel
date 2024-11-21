@@ -40,8 +40,7 @@ return new class extends Migration
         foreach (DB::table('database_host_node')->get() as $record) {
             DB::table('database_hosts')
                 ->where('id', $record->database_host_id)
-                ->update(['node_id' => $record->node_id])
-            ;
+                ->update(['node_id' => $record->node_id]);
         }
 
         Schema::drop('database_host_node');
