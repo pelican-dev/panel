@@ -12,14 +12,14 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('servers', function (Blueprint $table) {
-            if (Schema::getConnection()->getDriverName() !== 'sqlite') {
-                $table->dropForeign('servers_node_foreign');
-                $table->dropForeign('servers_owner_foreign');
-                $table->dropForeign('servers_allocation_foreign');
-                $table->dropForeign('servers_service_foreign');
-                $table->dropForeign('servers_option_foreign');
-                $table->dropForeign('servers_pack_foreign');
+            $table->dropForeign(['node']);
+            $table->dropForeign(['owner']);
+            $table->dropForeign(['allocation']);
+            $table->dropForeign(['service']);
+            $table->dropForeign(['option']);
+            $table->dropForeign(['pack']);
 
+            if (Schema::getConnection()->getDriverName() !== 'sqlite') {
                 $table->dropIndex('servers_node_foreign');
                 $table->dropIndex('servers_owner_foreign');
                 $table->dropIndex('servers_allocation_foreign');
@@ -52,13 +52,11 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('servers', function (Blueprint $table) {
-            if (Schema::getConnection()->getDriverName() !== 'sqlite') {
-                $table->dropForeign(['node_id']);
-                $table->dropForeign(['owner_id']);
-                $table->dropForeign(['allocation_id']);
-                $table->dropForeign(['service_id']);
-                $table->dropForeign(['option_id']);
-            }
+            $table->dropForeign(['node_id']);
+            $table->dropForeign(['owner_id']);
+            $table->dropForeign(['allocation_id']);
+            $table->dropForeign(['service_id']);
+            $table->dropForeign(['option_id']);
 
             $table->renameColumn('node_id', 'node');
             $table->renameColumn('owner_id', 'owner');

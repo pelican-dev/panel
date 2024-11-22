@@ -7,9 +7,7 @@ use Illuminate\View\View;
 
 readonly class AssetComposer
 {
-    public function __construct(private AssetHashService $assetHashService)
-    {
-    }
+    public function __construct(private AssetHashService $assetHashService) {}
 
     public function compose(View $view): void
     {

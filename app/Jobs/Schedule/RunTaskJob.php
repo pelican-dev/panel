@@ -23,10 +23,7 @@ class RunTaskJob extends Job implements ShouldQueue
     /**
      * RunTaskJob constructor.
      */
-    public function __construct(public Task $task, public bool $manualRun = false)
-    {
-
-    }
+    public function __construct(public Task $task, public bool $manualRun = false) {}
 
     /**
      * Run the job and send actions to the daemon running the server.

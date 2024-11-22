@@ -15,9 +15,7 @@ class VariableUpdateService
     /**
      * VariableUpdateService constructor.
      */
-    public function __construct(private ValidationFactory $validator)
-    {
-    }
+    public function __construct(private ValidationFactory $validator) {}
 
     /**
      * Return the validation factory instance to be used by rule validation

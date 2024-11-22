@@ -13,8 +13,7 @@ class NodeDeletionService
      */
     public function __construct(
         protected Translator $translator
-    ) {
-    }
+    ) {}
 
     /**
      * Delete a node from the panel if no servers are attached to it.

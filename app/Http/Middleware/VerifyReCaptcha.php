@@ -11,10 +11,7 @@ use Symfony\Component\HttpKernel\Exception\HttpException;
 
 readonly class VerifyReCaptcha
 {
-    public function __construct(private Application $app)
-    {
-
-    }
+    public function __construct(private Application $app) {}
 
     public function handle(Request $request, \Closure $next): mixed
     {
