@@ -641,9 +641,12 @@ class EditServer extends EditRecord
                                         TextInput::make('username')
                                             ->disabled()
                                             ->formatStateUsing(fn ($record) => $record->username)
-                                            ->columnSpan(2),
+                                            ->columnSpan(1),
                                         TextInput::make('password')
                                             ->disabled()
+                                            ->password()
+                                            ->revealable()
+                                            ->columnSpan(1)
                                             ->hintAction(
                                                 Action::make('rotate')
                                                     ->authorize(fn (Server $server) => auth()->user()->can('update database'))
@@ -651,8 +654,7 @@ class EditServer extends EditRecord
                                                     ->requiresConfirmation()
                                                     ->action(fn (DatabasePasswordService $service, $record, $set, $get) => $this->rotatePassword($service, $record, $set, $get))
                                             )
-                                            ->formatStateUsing(fn (Database $database) => $database->password)
-                                            ->columnSpan(2),
+                                            ->formatStateUsing(fn (Database $database) => $database->password),
                                         TextInput::make('remote')
                                             ->disabled()
                                             ->formatStateUsing(fn ($record) => $record->remote)
@@ -664,6 +666,8 @@ class EditServer extends EditRecord
                                             ->columnSpan(1),
                                         TextInput::make('JDBC')
                                             ->disabled()
+                                            ->password()
+                                            ->revealable()
                                             ->label('JDBC Connection String')
                                             ->columnSpan(2)
                                             ->formatStateUsing(fn (Get $get, $record) => 'jdbc:mysql://' . $get('username') . ':' . urlencode($record->password) . '@' . $record->host->host . ':' . $record->host->port . '/' . $get('database')),
