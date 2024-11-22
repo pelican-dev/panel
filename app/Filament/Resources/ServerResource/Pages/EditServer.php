@@ -609,7 +609,7 @@ class EditServer extends EditRecord
                                     ->columnSpanFull(),
                             ]),
                         Tab::make('Databases')
-                            ->hidden(fn (Server $server) => !auth()->user()->can('view database'))
+                            ->hidden(fn () => !auth()->user()->can('viewList database'))
                             ->icon('tabler-database')
                             ->columns(4)
                             ->schema([
@@ -625,7 +625,7 @@ class EditServer extends EditRecord
                                             ->formatStateUsing(fn ($record) => $record->database)
                                             ->hintAction(
                                                 Action::make('Delete')
-                                                    ->authorize(fn (Server $server) => auth()->user()->can('delete database'))
+                                                    ->authorize(fn (Database $database) => auth()->user()->can('delete database', $database))
                                                     ->color('danger')
                                                     ->icon('tabler-trash')
                                                     ->requiresConfirmation()
@@ -649,10 +649,11 @@ class EditServer extends EditRecord
                                             ->columnSpan(1)
                                             ->hintAction(
                                                 Action::make('rotate')
-                                                    ->authorize(fn (Server $server) => auth()->user()->can('update database'))
+                                                    ->authorize(fn (Database $database) => auth()->user()->can('update database', $database))
                                                     ->icon('tabler-refresh')
-                                                    ->requiresConfirmation()
+                                                    ->modalHeading('Change Database Password?')
                                                     ->action(fn (DatabasePasswordService $service, $record, $set, $get) => $this->rotatePassword($service, $record, $set, $get))
+                                                    ->requiresConfirmation()
                                             )
                                             ->formatStateUsing(fn (Database $database) => $database->password),
                                         TextInput::make('remote')
@@ -678,10 +679,10 @@ class EditServer extends EditRecord
                                     ->columnSpan(4),
                                 Forms\Components\Actions::make([
                                     Action::make('createDatabase')
-                                        ->authorize(fn (Server $server) => auth()->user()->can('create database'))
-                                        ->disabled(fn (Server $server) => DatabaseHost::query()->count() < 1)
-                                        ->label(fn (Server $server) => DatabaseHost::query()->count() < 1 ? 'No Database Hosts' : 'Create Database')
-                                        ->color(fn (Server $server) => DatabaseHost::query()->count() < 1 ? 'danger' : 'primary')
+                                        ->authorize(fn (Database $database) => auth()->user()->can('create database', $database))
+                                        ->disabled(fn () => DatabaseHost::query()->count() < 1)
+                                        ->label(fn () => DatabaseHost::query()->count() < 1 ? 'No Database Hosts' : 'Create Database')
+                                        ->color(fn () => DatabaseHost::query()->count() < 1 ? 'danger' : 'primary')
                                         ->modalSubmitActionLabel('Create Database')
                                         ->action(function (array $data, DatabaseManagementService $service, Server $server, RandomWordService $randomWordService) {
                                             if (empty($data['database'])) {
