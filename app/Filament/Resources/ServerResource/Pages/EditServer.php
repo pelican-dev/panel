@@ -682,7 +682,7 @@ class EditServer extends EditRecord
                                         ->disabled(fn (Server $server) => DatabaseHost::query()->count() < 1)
                                         ->label(fn (Server $server) => DatabaseHost::query()->count() < 1 ? 'No Database Hosts' : 'Create Database')
                                         ->color(fn (Server $server) => DatabaseHost::query()->count() < 1 ? 'danger' : 'primary')
-                                        ->modalSubmitActionLabel('Create')
+                                        ->modalSubmitActionLabel('Create Database')
                                         ->action(function (array $data, DatabaseManagementService $service, Server $server, RandomWordService $randomWordService) {
                                             if (empty($data['database'])) {
                                                 $data['database'] = $randomWordService->word() . random_int(1, 420);
@@ -709,7 +709,9 @@ class EditServer extends EditRecord
                                                 ->label('Database Host')
                                                 ->required()
                                                 ->placeholder('Select Database Host')
-                                                ->relationship('node.databaseHosts', 'name'),
+                                                ->relationship('node.databaseHosts', 'name')
+                                                ->default(fn () => (DatabaseHost::query()->first())?->id)
+                                                ->selectablePlaceholder(false),
                                             TextInput::make('database')
                                                 ->label('Database Name')
                                                 ->alphaDash()
