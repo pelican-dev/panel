@@ -609,6 +609,7 @@ class EditServer extends EditRecord
                                     ->columnSpanFull(),
                             ]),
                         Tab::make('Databases')
+                            ->hidden(fn (Server $server) => !auth()->user()->can('view database'))
                             ->icon('tabler-database')
                             ->columns(4)
                             ->schema([
@@ -624,6 +625,7 @@ class EditServer extends EditRecord
                                             ->formatStateUsing(fn ($record) => $record->database)
                                             ->hintAction(
                                                 Action::make('Delete')
+                                                    ->authorize(fn (Server $server) => auth()->user()->can('delete database'))
                                                     ->color('danger')
                                                     ->icon('tabler-trash')
                                                     ->action(function (DatabaseManagementService $databaseManagementService, $record) {
@@ -639,6 +641,7 @@ class EditServer extends EditRecord
                                             ->disabled()
                                             ->hintAction(
                                                 Action::make('rotate')
+                                                    ->authorize(fn (Server $server) => auth()->user()->can('update database'))
                                                     ->icon('tabler-refresh')
                                                     ->requiresConfirmation()
                                                     ->action(fn (DatabasePasswordService $service, $record, $set, $get) => $this->rotatePassword($service, $record, $set, $get))
