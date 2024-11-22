@@ -657,12 +657,12 @@ class EditServer extends EditRecord
                                             ->formatStateUsing(fn (Database $database) => $database->password),
                                         TextInput::make('remote')
                                             ->disabled()
-                                            ->formatStateUsing(fn ($record) => $record->remote)
+                                            ->formatStateUsing(fn ($record) => $record->remote === '%' ? 'Anywhere ( % )' : $record->remote)
                                             ->columnSpan(1)
                                             ->label('Connections From'),
                                         TextInput::make('max_connections')
                                             ->disabled()
-                                            ->formatStateUsing(fn ($record) => $record->max_connections)
+                                            ->formatStateUsing(fn ($record) => $record->max_connections === 0 ? 'Unlimited' : $record->max_connections)
                                             ->columnSpan(1),
                                         TextInput::make('JDBC')
                                             ->disabled()
