@@ -17,7 +17,8 @@ class DispatchWebhooks
             return WebhookConfiguration::query()->whereJsonContains('events', $eventName)->get();
         });
 
-        foreach ($matchingHooks ?? [] as $webhookConfig) {
+        /** @var WebhookConfiguration $webhookConfig */
+        foreach ($matchingHooks as $webhookConfig) {
             if (in_array($eventName, $webhookConfig->events)) {
                 ProcessWebhook::dispatch($webhookConfig, $eventName, $data);
             }

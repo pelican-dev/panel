@@ -20,9 +20,7 @@ class BackupRemoteUploadController extends Controller
     /**
      * BackupRemoteUploadController constructor.
      */
-    public function __construct(private BackupManager $backupManager)
-    {
-    }
+    public function __construct(private BackupManager $backupManager) {}
 
     /**
      * Returns the required presigned urls to upload a backup to S3 cloud storage.

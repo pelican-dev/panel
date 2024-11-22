@@ -13,9 +13,7 @@ class DeployServerDatabaseService
     /**
      * DeployServerDatabaseService constructor.
      */
-    public function __construct(private DatabaseManagementService $managementService)
-    {
-    }
+    public function __construct(private DatabaseManagementService $managementService) {}
 
     /**
      * @throws \Throwable

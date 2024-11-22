@@ -22,9 +22,7 @@ class SftpAuthenticationController extends Controller
 {
     use ThrottlesLogins;
 
-    public function __construct(protected GetUserPermissionsService $permissions)
-    {
-    }
+    public function __construct(protected GetUserPermissionsService $permissions) {}
 
     /**
      * Authenticate a set of credentials and return the associated server details

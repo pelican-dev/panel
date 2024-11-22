@@ -23,8 +23,7 @@ class ServerDetailsController extends Controller
         protected ConnectionInterface $connection,
         private ServerConfigurationStructureService $configurationStructureService,
         private EggConfigurationService $eggConfigurationService
-    ) {
-    }
+    ) {}
 
     /**
      * Returns details about the server that allows daemon to self-recover and ensure

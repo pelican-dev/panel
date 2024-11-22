@@ -5,6 +5,7 @@ use App\Models\Permission;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Support\Facades\DB;
 
 return new class extends Migration
 {
@@ -26,10 +27,12 @@ return new class extends Migration
         });
 
         Schema::table('permissions', function (Blueprint $table) {
+
+            $table->dropForeign(['server_id']);
+            $table->dropForeign(['user_id']);
+
             if (Schema::getConnection()->getDriverName() !== 'sqlite') {
-                $table->dropForeign('permissions_server_id_foreign');
                 $table->dropIndex('permissions_server_id_foreign');
-                $table->dropForeign('permissions_user_id_foreign');
                 $table->dropIndex('permissions_user_id_foreign');
             }
 

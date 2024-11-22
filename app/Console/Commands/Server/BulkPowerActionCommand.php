@@ -65,6 +65,7 @@ class BulkPowerActionCommand extends Command
 
         $bar = $this->output->createProgressBar($count);
         $powerRepository = $this->powerRepository;
+        // @phpstan-ignore-next-line
         $this->getQueryBuilder($servers, $nodes)->each(function (Server $server) use ($action, $powerRepository, &$bar) {
             $bar->clear();
 
