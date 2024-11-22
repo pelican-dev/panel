@@ -13,9 +13,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('tasks', function (Blueprint $table) {
-            if (Schema::getConnection()->getDriverName() !== 'sqlite') {
-                $table->dropForeign(['server']);
-            }
+            $table->dropForeign(['server']);
 
             $table->renameColumn('server', 'server_id');
             $table->unsignedInteger('user_id')->nullable()->after('id');
@@ -38,10 +36,8 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('tasks', function (Blueprint $table) {
-            if (Schema::getConnection()->getDriverName() !== 'sqlite') {
-                $table->dropForeign(['server_id']);
-                $table->dropForeign(['user_id']);
-            }
+            $table->dropForeign(['server_id']);
+            $table->dropForeign(['user_id']);
 
             $table->renameColumn('server_id', 'server');
             $table->dropColumn('user_id');

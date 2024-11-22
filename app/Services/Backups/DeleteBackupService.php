@@ -19,8 +19,7 @@ class DeleteBackupService
         private ConnectionInterface $connection,
         private BackupManager $manager,
         private DaemonBackupRepository $daemonBackupRepository
-    ) {
-    }
+    ) {}
 
     /**
      * Deletes a backup from the system. If the backup is stored in S3 a request

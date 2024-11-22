@@ -22,8 +22,7 @@ class TransferServerService
     public function __construct(
         private ConnectionInterface $connection,
         private NodeJWTService $nodeJWTService,
-    ) {
-    }
+    ) {}
 
     private function notify(Server $server, Plain $token): void
     {

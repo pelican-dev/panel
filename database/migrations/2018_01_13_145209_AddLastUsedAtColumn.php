@@ -16,9 +16,7 @@ return new class extends Migration
             $table->timestamp('last_used_at')->after('memo')->nullable();
             $table->dropColumn('expires_at');
 
-            if (Schema::getConnection()->getDriverName() !== 'sqlite') {
-                $table->dropForeign(['user_id']);
-            }
+            $table->dropForeign(['user_id']);
         });
 
         Schema::table('api_keys', function (Blueprint $table) {
@@ -35,9 +33,7 @@ return new class extends Migration
             $table->timestamp('expires_at')->after('memo')->nullable();
             $table->dropColumn('last_used_at', 'key_type');
 
-            if (Schema::getConnection()->getDriverName() !== 'sqlite') {
-                $table->dropForeign(['user_id']);
-            }
+            $table->dropForeign(['user_id']);
         });
 
         Schema::table('api_keys', function (Blueprint $table) {

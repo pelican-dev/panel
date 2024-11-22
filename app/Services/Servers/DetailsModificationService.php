@@ -16,9 +16,7 @@ class DetailsModificationService
     /**
      * DetailsModificationService constructor.
      */
-    public function __construct(private ConnectionInterface $connection, private DaemonServerRepository $serverRepository)
-    {
-    }
+    public function __construct(private ConnectionInterface $connection, private DaemonServerRepository $serverRepository) {}
 
     /**
      * Update the details for a single server instance.
