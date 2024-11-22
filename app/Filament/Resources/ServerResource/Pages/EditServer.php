@@ -628,6 +628,11 @@ class EditServer extends EditRecord
                                                     ->authorize(fn (Server $server) => auth()->user()->can('delete database'))
                                                     ->color('danger')
                                                     ->icon('tabler-trash')
+                                                    ->requiresConfirmation()
+                                                    ->modalIcon('tabler-database-x')
+                                                    ->modalHeading('Delete Database?')
+                                                    ->modalSubmitActionLabel(fn (Get $get) => 'Delete ' . $get('database') . '?')
+                                                    ->modalDescription(fn (Get $get) => 'Are you sure you want to delete ' . $get('database') . '?')
                                                     ->action(function (DatabaseManagementService $databaseManagementService, $record) {
                                                         $databaseManagementService->delete($record);
                                                         $this->fillForm();
