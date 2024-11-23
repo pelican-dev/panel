@@ -39,9 +39,9 @@ class ServerPanelProvider extends PanelProvider
             ->favicon(config('app.favicon', '/pelican.ico'))
             ->topNavigation(config('panel.filament.top-navigation', true))
             ->maxContentWidth(MaxWidth::ScreenTwoExtraLarge)
-            ->profile(EditProfile::class, true)
             ->login(Login::class)
             ->userMenuItems([
+                'profile' => MenuItem::make()->label('Profile')->url(fn () => EditProfile::getUrl(panel: 'app')),
                 MenuItem::make()
                     ->label('Server List')
                     ->icon('tabler-brand-docker')
