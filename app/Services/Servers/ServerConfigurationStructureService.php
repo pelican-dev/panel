@@ -10,9 +10,7 @@ class ServerConfigurationStructureService
     /**
      * ServerConfigurationStructureService constructor.
      */
-    public function __construct(private EnvironmentService $environment)
-    {
-    }
+    public function __construct(private EnvironmentService $environment) {}
 
     /**
      * Return a configuration array for a specific server when passed a server model.

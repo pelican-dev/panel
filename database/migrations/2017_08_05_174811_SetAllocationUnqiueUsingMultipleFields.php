@@ -22,9 +22,7 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('allocations', function (Blueprint $table) {
-            if (Schema::getConnection()->getDriverName() !== 'sqlite') {
-                $table->dropForeign(['node_id']);
-            }
+            $table->dropForeign(['node_id']);
             $table->dropUnique(['node_id', 'ip', 'port']);
             $table->foreign('node_id')->references('id')->on('nodes');
         });

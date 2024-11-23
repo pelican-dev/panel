@@ -20,8 +20,7 @@ class OAuthController extends Controller
     public function __construct(
         private AuthManager $auth,
         private UserUpdateService $updateService
-    ) {
-    }
+    ) {}
 
     /**
      * Redirect user to the OAuth provider

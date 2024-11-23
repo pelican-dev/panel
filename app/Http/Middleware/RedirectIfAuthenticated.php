@@ -10,9 +10,7 @@ class RedirectIfAuthenticated
     /**
      * RedirectIfAuthenticated constructor.
      */
-    public function __construct(private AuthManager $authManager)
-    {
-    }
+    public function __construct(private AuthManager $authManager) {}
 
     /**
      * Handle an incoming request.

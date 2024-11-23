@@ -16,9 +16,7 @@ return new class extends Migration
         Schema::rename('service_variables', 'egg_variables');
 
         Schema::table('server_variables', function (Blueprint $table) {
-            if (Schema::getConnection()->getDriverName() !== 'sqlite') {
-                $table->dropForeign(['variable_id']);
-            }
+            $table->dropForeign(['variable_id']);
 
             $table->foreign('variable_id')->references('id')->on('egg_variables')->onDelete('CASCADE');
         });
@@ -36,9 +34,7 @@ return new class extends Migration
         Schema::rename('egg_variables', 'service_variables');
 
         Schema::table('server_variables', function (Blueprint $table) {
-            if (Schema::getConnection()->getDriverName() !== 'sqlite') {
-                $table->dropForeign(['variable_id']);
-            }
+            $table->dropForeign(['variable_id']);
 
             $table->foreign('variable_id')->references('id')->on('service_variables')->onDelete('CASCADE');
         });
