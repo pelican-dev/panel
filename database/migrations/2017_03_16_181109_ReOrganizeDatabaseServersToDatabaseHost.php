@@ -11,11 +11,9 @@ return new class extends Migration
      */
     public function up(): void
     {
-        if (Schema::getConnection()->getDriverName() !== 'sqlite') {
-            Schema::table('database_servers', function (Blueprint $table) {
-                $table->dropForeign(['linked_node']);
-            });
-        }
+        Schema::table('database_servers', function (Blueprint $table) {
+            $table->dropForeign(['linked_node']);
+        });
 
         Schema::rename('database_servers', 'database_hosts');
 
@@ -31,11 +29,9 @@ return new class extends Migration
      */
     public function down(): void
     {
-        if (Schema::getConnection()->getDriverName() !== 'sqlite') {
-            Schema::table('database_hosts', function (Blueprint $table) {
-                $table->dropForeign(['node_id']);
-            });
-        }
+        Schema::table('database_hosts', function (Blueprint $table) {
+            $table->dropForeign(['node_id']);
+        });
 
         Schema::rename('database_hosts', 'database_servers');
 

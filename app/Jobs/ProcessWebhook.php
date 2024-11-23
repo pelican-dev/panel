@@ -18,8 +18,7 @@ class ProcessWebhook implements ShouldQueue
         private WebhookConfiguration $webhookConfiguration,
         private string $eventName,
         private array $data
-    ) {
-    }
+    ) {}
 
     public function handle(): void
     {

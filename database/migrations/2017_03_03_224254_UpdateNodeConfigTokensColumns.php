@@ -12,9 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('node_configuration_tokens', function (Blueprint $table) {
-            if (Schema::getConnection()->getDriverName() !== 'sqlite') {
-                $table->dropForeign(['node']);
-            }
+            $table->dropForeign(['node']);
 
             $table->dropColumn('expires_at');
             $table->renameColumn('node', 'node_id');
@@ -29,9 +27,7 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('node_configuration_tokens', function (Blueprint $table) {
-            if (Schema::getConnection()->getDriverName() !== 'sqlite') {
-                $table->dropForeign(['node_id']);
-            }
+            $table->dropForeign(['node_id']);
 
             $table->renameColumn('node_id', 'node');
             $table->timestamp('expires_at')->after('token');

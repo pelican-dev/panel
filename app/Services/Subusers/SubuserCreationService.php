@@ -20,8 +20,7 @@ class SubuserCreationService
     public function __construct(
         private ConnectionInterface $connection,
         private UserCreationService $userCreationService,
-    ) {
-    }
+    ) {}
 
     /**
      * Creates a new user on the system and assigns them access to the provided server.

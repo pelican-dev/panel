@@ -17,9 +17,7 @@ class StartupModificationService
     /**
      * StartupModificationService constructor.
      */
-    public function __construct(private ConnectionInterface $connection, private VariableValidatorService $validatorService)
-    {
-    }
+    public function __construct(private ConnectionInterface $connection, private VariableValidatorService $validatorService) {}
 
     /**
      * Process startup modification for a server.

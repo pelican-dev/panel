@@ -16,7 +16,7 @@ class ServerContainersController extends Controller
     {
         $status = fluent($request->json()->all())->get('data.new_state');
 
-        cache(["servers.$server->uuid.container.status" => $status], now()->addHour());
+        cache()->put("servers.$server->uuid.container.status", $status, now()->addHour());
 
         return new JsonResponse([]);
     }

@@ -1,10 +1,10 @@
 {
     "_comment": "DO NOT EDIT: FILE GENERATED AUTOMATICALLY BY PANEL",
     "meta": {
-        "version": "PTDL_v2",
+        "version": "PLCN_v1",
         "update_url": "https:\/\/github.com\/pelican-dev\/panel\/raw\/main\/database\/Seeders\/eggs\/source-engine\/egg-team-fortress2.json"
     },
-    "exported_at": "2024-07-25T12:05:42+00:00",
+    "exported_at": "2024-11-23T22:22:43+00:00",
     "name": "Team Fortress 2",
     "author": "panel@example.com",
     "uuid": "7f8eb681-b2c8-4bf8-b9f4-d79ff70b6e5d",
@@ -43,8 +43,7 @@
                 "required",
                 "in:232250"
             ],
-            "sort": 1,
-            "field_type": "text"
+            "sort": 1
         },
         {
             "name": "Default Map",
@@ -57,8 +56,7 @@
                 "required",
                 "regex:\/^(\\w{1,20})$\/"
             ],
-            "sort": 2,
-            "field_type": "text"
+            "sort": 2
         },
         {
             "name": "Steam",
@@ -73,8 +71,7 @@
                 "alpha_num",
                 "size:32"
             ],
-            "sort": 3,
-            "field_type": "text"
+            "sort": 3
         }
     ]
 }

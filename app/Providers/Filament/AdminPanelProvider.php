@@ -49,12 +49,12 @@ class AdminPanelProvider extends PanelProvider
             ->userMenuItems([
                 MenuItem::make()
                     ->label('Exit Admin')
-                    ->url('/app')
+                    ->url('/')
                     ->icon('tabler-arrow-back')
                     ->sort(24),
             ])
-            ->spa()
             ->maxContentWidth(MaxWidth::ScreenTwoExtraLarge)
+            ->spa()
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\\Filament\\Resources')
             ->discoverPages(in: app_path('Filament/Pages'), for: 'App\\Filament\\Pages')
             ->discoverClusters(in: app_path('Filament/Clusters'), for: 'App\\Filament\\Clusters')

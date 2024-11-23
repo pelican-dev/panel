@@ -26,8 +26,7 @@ class InitiateBackupService
         private DaemonBackupRepository $daemonBackupRepository,
         private DeleteBackupService $deleteBackupService,
         private BackupManager $backupManager
-    ) {
-    }
+    ) {}
 
     /**
      * Set if the backup should be locked once it is created which will prevent
