@@ -75,7 +75,7 @@ class DatabasesRelationManager extends RelationManager
             ])
             ->actions([
                 DeleteAction::make()
-                    ->authorize(fn () => auth()->user()->can('delete database')),
+                    ->authorize(fn (Database $database) => auth()->user()->can('delete database', $database)),
                 ViewAction::make()
                     ->color('primary')
                     ->hidden(fn () => !auth()->user()->can('viewList database')),
