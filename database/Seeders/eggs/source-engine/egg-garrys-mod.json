@@ -1,10 +1,10 @@
 {
     "_comment": "DO NOT EDIT: FILE GENERATED AUTOMATICALLY BY PANEL",
     "meta": {
-        "version": "PTDL_v2",
+        "version": "PLCN_v1",
         "update_url": "https:\/\/github.com\/pelican-dev\/panel\/raw\/main\/database\/Seeders\/eggs\/source-engine\/egg-garrys-mod.json"
     },
-    "exported_at": "2024-07-25T12:05:02+00:00",
+    "exported_at": "2024-11-23T22:22:41+00:00",
     "name": "Garrys Mod",
     "author": "panel@example.com",
     "uuid": "60ef81d4-30a2-4d98-ab64-f59c69e2f915",
@@ -44,8 +44,7 @@
                 "string",
                 "alpha_dash"
             ],
-            "sort": 1,
-            "field_type": "text"
+            "sort": 1
         },
         {
             "name": "Steam Account Token",
@@ -60,8 +59,7 @@
                 "alpha_num",
                 "size:32"
             ],
-            "sort": 2,
-            "field_type": "text"
+            "sort": 2
         },
         {
             "name": "Source AppID",
@@ -75,8 +73,7 @@
                 "string",
                 "max:20"
             ],
-            "sort": 3,
-            "field_type": "text"
+            "sort": 3
         },
         {
             "name": "Workshop ID",
@@ -89,8 +86,7 @@
                 "nullable",
                 "integer"
             ],
-            "sort": 4,
-            "field_type": "text"
+            "sort": 4
         },
         {
             "name": "Gamemode",
@@ -103,8 +99,7 @@
                 "required",
                 "string"
             ],
-            "sort": 5,
-            "field_type": "text"
+            "sort": 5
         },
         {
             "name": "Max Players",
@@ -118,8 +113,7 @@
                 "integer",
                 "max:128"
             ],
-            "sort": 6,
-            "field_type": "text"
+            "sort": 6
         },
         {
             "name": "Tickrate",
@@ -133,8 +127,7 @@
                 "integer",
                 "max:100"
             ],
-            "sort": 7,
-            "field_type": "text"
+            "sort": 7
         },
         {
             "name": "Lua Refresh",
@@ -147,8 +140,7 @@
                 "required",
                 "boolean"
             ],
-            "sort": 8,
-            "field_type": "text"
+            "sort": 8
         }
     ]
 }
