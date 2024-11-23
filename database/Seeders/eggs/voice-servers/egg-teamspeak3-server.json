@@ -1,10 +1,10 @@
 {
     "_comment": "DO NOT EDIT: FILE GENERATED AUTOMATICALLY BY PANEL",
     "meta": {
-        "version": "PTDL_v2",
+        "version": "PLCN_v1",
         "update_url": "https:\/\/github.com\/pelican-dev\/panel\/raw\/main\/database\/Seeders\/eggs\/voice-servers\/egg-teamspeak3-server.json"
     },
-    "exported_at": "2024-07-25T12:06:05+00:00",
+    "exported_at": "2024-11-23T22:00:44+00:00",
     "name": "Teamspeak3 Server",
     "author": "panel@example.com",
     "uuid": "983b1fac-d322-4d5f-a636-436127326b37",
@@ -30,6 +30,7 @@
     },
     "variables": [
         {
+            "sort": 1,
             "name": "Server Version",
             "description": "The version of Teamspeak 3 to use when running the server.",
             "env_variable": "TS_VERSION",
@@ -40,11 +41,10 @@
                 "required",
                 "string",
                 "max:6"
-            ],
-            "sort": 1,
-            "field_type": "text"
+            ]
         },
         {
+            "sort": 2,
             "name": "File Transfer Port",
             "description": "The Teamspeak file transfer port",
             "env_variable": "FILE_TRANSFER",
@@ -55,11 +55,10 @@
                 "required",
                 "integer",
                 "between:1025,65535"
-            ],
-            "sort": 2,
-            "field_type": "text"
+            ]
         },
         {
+            "sort": 3,
             "name": "Query Port",
             "description": "The Teamspeak Query Port",
             "env_variable": "QUERY_PORT",
@@ -70,11 +69,10 @@
                 "required",
                 "integer",
                 "between:1025,65535"
-            ],
-            "sort": 3,
-            "field_type": "text"
+            ]
         },
         {
+            "sort": 4,
             "name": "Query Protocols",
             "description": "Comma separated list of protocols that can be used to connect to the ServerQuery | \r\nPossible values are raw, ssh and http | \r\nE.g.: raw,ssh,http",
             "env_variable": "QUERY_PROTOCOLS_VAR",
@@ -85,11 +83,10 @@
                 "required",
                 "string",
                 "max:12"
-            ],
-            "sort": 4,
-            "field_type": "text"
+            ]
         },
         {
+            "sort": 5,
             "name": "Query SSH Port",
             "description": "TCP Port opened for ServerQuery connections using SSH",
             "env_variable": "QUERY_SSH",
@@ -100,11 +97,10 @@
                 "required",
                 "integer",
                 "between:1025,65535"
-            ],
-            "sort": 5,
-            "field_type": "text"
+            ]
         },
         {
+            "sort": 6,
             "name": "Query HTTP Port",
             "description": "TCP Port opened for ServerQuery connections using http",
             "env_variable": "QUERY_HTTP",
@@ -115,9 +111,7 @@
                 "required",
                 "integer",
                 "between:1025,65535"
-            ],
-            "sort": 6,
-            "field_type": "text"
+            ]
         }
     ]
 }

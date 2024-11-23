@@ -1,10 +1,10 @@
 {
     "_comment": "DO NOT EDIT: FILE GENERATED AUTOMATICALLY BY PANEL",
     "meta": {
-        "version": "PTDL_v2",
+        "version": "PLCN_v1",
         "update_url": "https:\/\/github.com\/pelican-dev\/panel\/raw\/main\/database\/Seeders\/eggs\/source-engine\/egg-team-fortress2.json"
     },
-    "exported_at": "2024-07-25T12:05:42+00:00",
+    "exported_at": "2024-11-23T22:00:40+00:00",
     "name": "Team Fortress 2",
     "author": "panel@example.com",
     "uuid": "7f8eb681-b2c8-4bf8-b9f4-d79ff70b6e5d",
@@ -33,6 +33,7 @@
     },
     "variables": [
         {
+            "sort": 1,
             "name": "Game ID",
             "description": "The ID corresponding to the game to download and run using SRCDS.",
             "env_variable": "SRCDS_APPID",
@@ -42,11 +43,10 @@
             "rules": [
                 "required",
                 "in:232250"
-            ],
-            "sort": 1,
-            "field_type": "text"
+            ]
         },
         {
+            "sort": 2,
             "name": "Default Map",
             "description": "The default map to use when starting the server.",
             "env_variable": "SRCDS_MAP",
@@ -56,11 +56,10 @@
             "rules": [
                 "required",
                 "regex:\/^(\\w{1,20})$\/"
-            ],
-            "sort": 2,
-            "field_type": "text"
+            ]
         },
         {
+            "sort": 3,
             "name": "Steam",
             "description": "The Steam Game Server Login Token to display servers publicly. Generate one at https:\/\/steamcommunity.com\/dev\/managegameservers",
             "env_variable": "STEAM_ACC",
@@ -72,9 +71,7 @@
                 "string",
                 "alpha_num",
                 "size:32"
-            ],
-            "sort": 3,
-            "field_type": "text"
+            ]
         }
     ]
 }
