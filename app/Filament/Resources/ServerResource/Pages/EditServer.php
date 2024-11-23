@@ -679,7 +679,7 @@ class EditServer extends EditRecord
                                     ->columnSpan(4),
                                 Forms\Components\Actions::make([
                                     Action::make('createDatabase')
-                                        ->authorize(fn (Database $database) => auth()->user()->can('create database', $database))
+                                        ->authorize(fn () => auth()->user()->can('create database'))
                                         ->disabled(fn () => DatabaseHost::query()->count() < 1)
                                         ->label(fn () => DatabaseHost::query()->count() < 1 ? 'No Database Hosts' : 'Create Database')
                                         ->color(fn () => DatabaseHost::query()->count() < 1 ? 'danger' : 'primary')
