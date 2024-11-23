@@ -28,10 +28,7 @@ abstract class ServerFormPage extends Page
         $this->fillForm();
     }
 
-    protected function authorizeAccess(): void
-    {
-
-    }
+    protected function authorizeAccess(): void {}
 
     protected function fillForm(): void
     {
