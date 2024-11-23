@@ -16,7 +16,7 @@ class BackupResource extends Resource
 
     protected static bool $canCreateAnother = false;
 
-    protected static ?string $navigationIcon = 'tabler-download';
+    protected static ?string $navigationIcon = 'tabler-file-zip';
 
     // TODO: find better way handle server conflict state
     public static function canAccess(): bool
