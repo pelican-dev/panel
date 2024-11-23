@@ -35,7 +35,7 @@ class DatabasesRelationManager extends RelationManager
                             ->icon('tabler-refresh')
                             ->requiresConfirmation()
                             ->action(fn (DatabasePasswordService $service, Database $database, $set, $get) => $this->rotatePassword($service, $database, $set, $get))
-                            ->authorize(fn () => auth()->user()->can('update database'))
+                            ->authorize(fn (Database $database) => auth()->user()->can('update database', $database))
                     )
                     ->formatStateUsing(fn (Database $database) => $database->password),
                 TextInput::make('remote')->label('Connections From')
