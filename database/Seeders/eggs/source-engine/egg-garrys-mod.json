@@ -4,7 +4,7 @@
         "version": "PLCN_v1",
         "update_url": "https:\/\/github.com\/pelican-dev\/panel\/raw\/main\/database\/Seeders\/eggs\/source-engine\/egg-garrys-mod.json"
     },
-    "exported_at": "2024-11-23T22:00:42+00:00",
+    "exported_at": "2024-11-23T22:22:41+00:00",
     "name": "Garrys Mod",
     "author": "panel@example.com",
     "uuid": "60ef81d4-30a2-4d98-ab64-f59c69e2f915",
@@ -33,7 +33,6 @@
     },
     "variables": [
         {
-            "sort": 1,
             "name": "Map",
             "description": "The default map for the server.",
             "env_variable": "SRCDS_MAP",
@@ -44,10 +43,10 @@
                 "required",
                 "string",
                 "alpha_dash"
-            ]
+            ],
+            "sort": 1
         },
         {
-            "sort": 2,
             "name": "Steam Account Token",
             "description": "The Steam Account Token required for the server to be displayed publicly.",
             "env_variable": "STEAM_ACC",
@@ -59,10 +58,10 @@
                 "string",
                 "alpha_num",
                 "size:32"
-            ]
+            ],
+            "sort": 2
         },
         {
-            "sort": 3,
             "name": "Source AppID",
             "description": "Required for game to update on server restart. Do not modify this.",
             "env_variable": "SRCDS_APPID",
@@ -73,10 +72,10 @@
                 "required",
                 "string",
                 "max:20"
-            ]
+            ],
+            "sort": 3
         },
         {
-            "sort": 4,
             "name": "Workshop ID",
             "description": "The ID of your workshop collection (the numbers at the end of the URL)",
             "env_variable": "WORKSHOP_ID",
@@ -86,10 +85,10 @@
             "rules": [
                 "nullable",
                 "integer"
-            ]
+            ],
+            "sort": 4
         },
         {
-            "sort": 5,
             "name": "Gamemode",
             "description": "The gamemode of your server.",
             "env_variable": "GAMEMODE",
@@ -99,10 +98,10 @@
             "rules": [
                 "required",
                 "string"
-            ]
+            ],
+            "sort": 5
         },
         {
-            "sort": 6,
             "name": "Max Players",
             "description": "The maximum amount of players allowed on your game server.",
             "env_variable": "MAX_PLAYERS",
@@ -113,10 +112,10 @@
                 "required",
                 "integer",
                 "max:128"
-            ]
+            ],
+            "sort": 6
         },
         {
-            "sort": 7,
             "name": "Tickrate",
             "description": "The tickrate defines how fast the server will update each entity's location.",
             "env_variable": "TICKRATE",
@@ -127,10 +126,10 @@
                 "required",
                 "integer",
                 "max:100"
-            ]
+            ],
+            "sort": 7
         },
         {
-            "sort": 8,
             "name": "Lua Refresh",
             "description": "0 = disable Lua refresh,\r\n1 = enable Lua refresh",
             "env_variable": "LUA_REFRESH",
@@ -140,7 +139,8 @@
             "rules": [
                 "required",
                 "boolean"
-            ]
+            ],
+            "sort": 8
         }
     ]
 }

@@ -4,7 +4,7 @@
         "version": "PLCN_v1",
         "update_url": "https:\/\/github.com\/pelican-dev\/panel\/raw\/main\/database\/Seeders\/eggs\/minecraft\/egg-sponge--sponge-vanilla.json"
     },
-    "exported_at": "2024-11-23T22:00:34+00:00",
+    "exported_at": "2024-11-23T22:22:37+00:00",
     "name": "Sponge (SpongeVanilla)",
     "author": "panel@example.com",
     "uuid": "f0d2f88f-1ff3-42a0-b03f-ac44c5571e6d",
@@ -38,7 +38,6 @@
     },
     "variables": [
         {
-            "sort": 1,
             "name": "Sponge Version",
             "description": "The version of SpongeVanilla to download and use.",
             "env_variable": "SPONGE_VERSION",
@@ -48,10 +47,10 @@
             "rules": [
                 "required",
                 "regex:\/^([a-zA-Z0-9.\\-_]+)$\/"
-            ]
+            ],
+            "sort": 1
         },
         {
-            "sort": 2,
             "name": "Server Jar File",
             "description": "The name of the Jarfile to use when running SpongeVanilla.",
             "env_variable": "SERVER_JARFILE",
@@ -61,7 +60,8 @@
             "rules": [
                 "required",
                 "regex:\/^([\\w\\d._-]+)(\\.jar)$\/"
-            ]
+            ],
+            "sort": 2
         }
     ]
 }

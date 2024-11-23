@@ -4,7 +4,7 @@
         "version": "PLCN_v1",
         "update_url": "https:\/\/github.com\/pelican-dev\/panel\/raw\/main\/database\/Seeders\/eggs\/source-engine\/egg-custom-source-engine-game.json"
     },
-    "exported_at": "2024-11-23T22:00:37+00:00",
+    "exported_at": "2024-11-23T22:22:40+00:00",
     "name": "Custom Source Engine Game",
     "author": "panel@example.com",
     "uuid": "2a42d0c2-c0ba-4067-9a0a-9b95d77a3490",
@@ -32,7 +32,6 @@
     },
     "variables": [
         {
-            "sort": 1,
             "name": "Game ID",
             "description": "The ID corresponding to the game to download and run using SRCDS.",
             "env_variable": "SRCDS_APPID",
@@ -43,10 +42,10 @@
                 "required",
                 "numeric",
                 "digits_between:1,6"
-            ]
+            ],
+            "sort": 1
         },
         {
-            "sort": 2,
             "name": "Game Name",
             "description": "The name corresponding to the game to download and run using SRCDS.",
             "env_variable": "SRCDS_GAME",
@@ -57,10 +56,10 @@
                 "required",
                 "alpha_dash",
                 "between:1,100"
-            ]
+            ],
+            "sort": 2
         },
         {
-            "sort": 3,
             "name": "Map",
             "description": "The default map for the server.",
             "env_variable": "SRCDS_MAP",
@@ -71,10 +70,10 @@
                 "required",
                 "string",
                 "alpha_dash"
-            ]
+            ],
+            "sort": 3
         },
         {
-            "sort": 4,
             "name": "Steam Username",
             "description": "",
             "env_variable": "STEAM_USER",
@@ -84,10 +83,10 @@
             "rules": [
                 "nullable",
                 "string"
-            ]
+            ],
+            "sort": 4
         },
         {
-            "sort": 5,
             "name": "Steam Password",
             "description": "",
             "env_variable": "STEAM_PASS",
@@ -97,10 +96,10 @@
             "rules": [
                 "nullable",
                 "string"
-            ]
+            ],
+            "sort": 5
         },
         {
-            "sort": 6,
             "name": "Steam Auth",
             "description": "",
             "env_variable": "STEAM_AUTH",
@@ -110,7 +109,8 @@
             "rules": [
                 "nullable",
                 "string"
-            ]
+            ],
+            "sort": 6
         }
     ]
 }

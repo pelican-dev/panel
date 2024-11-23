@@ -4,7 +4,7 @@
         "version": "PLCN_v1",
         "update_url": "https:\/\/github.com\/pelican-dev\/panel\/raw\/main\/database\/Seeders\/eggs\/rust\/egg-rust.json"
     },
-    "exported_at": "2024-11-23T22:00:46+00:00",
+    "exported_at": "2024-11-23T22:22:46+00:00",
     "name": "Rust",
     "author": "panel@example.com",
     "uuid": "bace2dfb-209c-452a-9459-7d6f340b07ae",
@@ -32,7 +32,6 @@
     },
     "variables": [
         {
-            "sort": 1,
             "name": "Server Name",
             "description": "The name of your server in the public server list.",
             "env_variable": "HOSTNAME",
@@ -43,10 +42,10 @@
                 "required",
                 "string",
                 "max:60"
-            ]
+            ],
+            "sort": 1
         },
         {
-            "sort": 2,
             "name": "Modding Framework",
             "description": "The modding framework to be used: carbon, oxide, vanilla.\r\nDefaults to \"vanilla\" for a non-modded server installation.",
             "env_variable": "FRAMEWORK",
@@ -56,10 +55,10 @@
             "rules": [
                 "required",
                 "in:vanilla,oxide,carbon"
-            ]
+            ],
+            "sort": 2
         },
         {
-            "sort": 3,
             "name": "Level",
             "description": "The world file for Rust to use.",
             "env_variable": "LEVEL",
@@ -70,10 +69,10 @@
                 "required",
                 "string",
                 "max:20"
-            ]
+            ],
+            "sort": 3
         },
         {
-            "sort": 4,
             "name": "Description",
             "description": "The description under your server title. Commonly used for rules & info. Use \\n for newlines.",
             "env_variable": "DESCRIPTION",
@@ -83,10 +82,10 @@
             "rules": [
                 "required",
                 "string"
-            ]
+            ],
+            "sort": 4
         },
         {
-            "sort": 5,
             "name": "URL",
             "description": "The URL for your server. This is what comes up when clicking the \"Visit Website\" button.",
             "env_variable": "SERVER_URL",
@@ -96,10 +95,10 @@
             "rules": [
                 "nullable",
                 "url"
-            ]
+            ],
+            "sort": 5
         },
         {
-            "sort": 6,
             "name": "World Size",
             "description": "The world size for a procedural map.",
             "env_variable": "WORLD_SIZE",
@@ -109,10 +108,10 @@
             "rules": [
                 "required",
                 "integer"
-            ]
+            ],
+            "sort": 6
         },
         {
-            "sort": 7,
             "name": "World Seed",
             "description": "The seed for a procedural map.",
             "env_variable": "WORLD_SEED",
@@ -122,10 +121,10 @@
             "rules": [
                 "nullable",
                 "string"
-            ]
+            ],
+            "sort": 7
         },
         {
-            "sort": 8,
             "name": "Max Players",
             "description": "The maximum amount of players allowed in the server at once.",
             "env_variable": "MAX_PLAYERS",
@@ -135,10 +134,10 @@
             "rules": [
                 "required",
                 "integer"
-            ]
+            ],
+            "sort": 8
         },
         {
-            "sort": 9,
             "name": "Server Image",
             "description": "The header image for the top of your server listing.",
             "env_variable": "SERVER_IMG",
@@ -148,10 +147,10 @@
             "rules": [
                 "nullable",
                 "url"
-            ]
+            ],
+            "sort": 9
         },
         {
-            "sort": 10,
             "name": "Query Port",
             "description": "Server Query Port. Can't be the same as Game's primary port.",
             "env_variable": "QUERY_PORT",
@@ -161,10 +160,10 @@
             "rules": [
                 "required",
                 "integer"
-            ]
+            ],
+            "sort": 10
         },
         {
-            "sort": 11,
             "name": "RCON Port",
             "description": "Port for RCON connections.",
             "env_variable": "RCON_PORT",
@@ -174,10 +173,10 @@
             "rules": [
                 "required",
                 "integer"
-            ]
+            ],
+            "sort": 11
         },
         {
-            "sort": 12,
             "name": "RCON Password",
             "description": "RCON access password.",
             "env_variable": "RCON_PASS",
@@ -188,10 +187,10 @@
                 "required",
                 "regex:\/^[\\w.-]*$\/",
                 "max:64"
-            ]
+            ],
+            "sort": 12
         },
         {
-            "sort": 13,
             "name": "Save Interval",
             "description": "Sets the server\u2019s auto-save interval in seconds.",
             "env_variable": "SAVEINTERVAL",
@@ -201,10 +200,10 @@
             "rules": [
                 "required",
                 "integer"
-            ]
+            ],
+            "sort": 13
         },
         {
-            "sort": 14,
             "name": "Additional Arguments",
             "description": "Add additional startup parameters to the server.",
             "env_variable": "ADDITIONAL_ARGS",
@@ -214,10 +213,10 @@
             "rules": [
                 "nullable",
                 "string"
-            ]
+            ],
+            "sort": 14
         },
         {
-            "sort": 15,
             "name": "App Port",
             "description": "Port for the Rust+ App. -1 to disable.",
             "env_variable": "APP_PORT",
@@ -227,10 +226,10 @@
             "rules": [
                 "required",
                 "integer"
-            ]
+            ],
+            "sort": 15
         },
         {
-            "sort": 16,
             "name": "Server Logo",
             "description": "The circular server logo for the Rust+ app.",
             "env_variable": "SERVER_LOGO",
@@ -240,10 +239,10 @@
             "rules": [
                 "nullable",
                 "url"
-            ]
+            ],
+            "sort": 16
         },
         {
-            "sort": 17,
             "name": "Custom Map URL",
             "description": "Overwrites the map with the one from the direct download URL. Invalid URLs will cause the server to crash.",
             "env_variable": "MAP_URL",
@@ -253,10 +252,10 @@
             "rules": [
                 "nullable",
                 "url"
-            ]
+            ],
+            "sort": 17
         },
         {
-            "sort": 18,
             "name": "App ID",
             "description": "",
             "env_variable": "SRCDS_APPID",
@@ -267,7 +266,8 @@
                 "required",
                 "string",
                 "in:258550"
-            ]
+            ],
+            "sort": 18
         }
     ]
 }

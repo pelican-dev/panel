@@ -4,7 +4,7 @@
         "version": "PLCN_v1",
         "update_url": "https:\/\/github.com\/pelican-dev\/panel\/raw\/main\/database\/Seeders\/eggs\/source-engine\/egg-insurgency.json"
     },
-    "exported_at": "2024-11-23T22:00:41+00:00",
+    "exported_at": "2024-11-23T22:22:42+00:00",
     "name": "Insurgency",
     "author": "panel@example.com",
     "uuid": "a5702286-655b-4069-bf1e-925c7300b61a",
@@ -32,7 +32,6 @@
     },
     "variables": [
         {
-            "sort": 1,
             "name": "Game ID",
             "description": "The ID corresponding to the game to download and run using SRCDS.",
             "env_variable": "SRCDS_APPID",
@@ -42,10 +41,10 @@
             "rules": [
                 "required",
                 "regex:\/^(237410)$\/"
-            ]
+            ],
+            "sort": 1
         },
         {
-            "sort": 2,
             "name": "Default Map",
             "description": "The default map to use when starting the server.",
             "env_variable": "SRCDS_MAP",
@@ -55,7 +54,8 @@
             "rules": [
                 "required",
                 "regex:\/^(\\w{1,20})$\/"
-            ]
+            ],
+            "sort": 2
         }
     ]
 }

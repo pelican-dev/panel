@@ -4,7 +4,7 @@
         "version": "PLCN_v1",
         "update_url": "https:\/\/github.com\/pelican-dev\/panel\/raw\/main\/database\/Seeders\/eggs\/minecraft\/egg-forge-minecraft.json"
     },
-    "exported_at": "2024-11-23T22:00:36+00:00",
+    "exported_at": "2024-11-23T22:22:35+00:00",
     "name": "Forge Minecraft",
     "author": "panel@example.com",
     "uuid": "ed072427-f209-4603-875c-f540c6dd5a65",
@@ -38,7 +38,6 @@
     },
     "variables": [
         {
-            "sort": 1,
             "name": "Server Jar File",
             "description": "The name of the Jarfile to use when running Forge version below 1.17.",
             "env_variable": "SERVER_JARFILE",
@@ -48,10 +47,10 @@
             "rules": [
                 "required",
                 "regex:\/^([\\w\\d._-]+)(\\.jar)$\/"
-            ]
+            ],
+            "sort": 1
         },
         {
-            "sort": 2,
             "name": "Minecraft Version",
             "description": "The version of minecraft you want to install for.\r\n\r\nLeaving latest will install the latest recommended version.",
             "env_variable": "MC_VERSION",
@@ -62,10 +61,10 @@
                 "required",
                 "string",
                 "max:9"
-            ]
+            ],
+            "sort": 2
         },
         {
-            "sort": 3,
             "name": "Build Type",
             "description": "The type of server jar to download from forge.\r\n\r\nValid types are \"recommended\" and \"latest\".",
             "env_variable": "BUILD_TYPE",
@@ -76,10 +75,10 @@
                 "required",
                 "string",
                 "in:recommended,latest"
-            ]
+            ],
+            "sort": 3
         },
         {
-            "sort": 4,
             "name": "Forge Version",
             "description": "The full exact version.\r\n\r\nEx. 1.15.2-31.2.4\r\n\r\nOverrides MC_VERSION and BUILD_TYPE. If it fails to download the server files it will fail to install.",
             "env_variable": "FORGE_VERSION",
@@ -89,7 +88,8 @@
             "rules": [
                 "nullable",
                 "regex:\/^[0-9\\.\\-]+$\/"
-            ]
+            ],
+            "sort": 4
         }
     ]
 }
