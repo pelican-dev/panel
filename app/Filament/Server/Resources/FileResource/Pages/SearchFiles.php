@@ -44,14 +44,12 @@ class SearchFiles extends ListRecords
 
     public function table(Table $table): Table
     {
+        /** @var Server $server */
+        $server = Filament::getTenant();
+
         return $table
             ->paginated(false)
-            ->query(function () {
-                /** @var Server $server */
-                $server = Filament::getTenant();
-
-                return File::get($server, $this->path, $this->searchTerm)->orderByDesc('is_directory')->orderBy('name');
-            })
+            ->query(fn () => File::get($server, $this->path, $this->searchTerm)->orderByDesc('is_directory')->orderBy('name'))
             ->columns([
                 TextColumn::make('name')
                     ->searchable()

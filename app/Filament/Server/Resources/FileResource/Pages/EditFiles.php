@@ -71,10 +71,7 @@ class EditFiles extends Page
                             ->label('Save Changes')
                             ->icon('tabler-device-floppy')
                             ->keyBindings('mod+s')
-                            ->action(function () {
-                                /** @var Server $server */
-                                $server = Filament::getTenant();
-
+                            ->action(function () use ($server) {
                                 $data = $this->form->getState();
 
                                 // @phpstan-ignore-next-line
@@ -96,10 +93,7 @@ class EditFiles extends Page
                     ->schema([
                         MonacoEditor::make('editor')
                             ->label('')
-                            ->formatStateUsing(function () {
-                                /** @var Server $server */
-                                $server = Filament::getTenant();
-
+                            ->formatStateUsing(function () use ($server) {
                                 // @phpstan-ignore-next-line
                                 return app(DaemonFileRepository::class)
                                     ->setServer($server)

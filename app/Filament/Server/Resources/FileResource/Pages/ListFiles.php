@@ -74,15 +74,13 @@ class ListFiles extends ListRecords
 
     public function table(Table $table): Table
     {
+        /** @var Server $server */
+        $server = Filament::getTenant();
+
         return $table
             ->paginated([15, 25, 50, 100])
             ->defaultPaginationPageOption(15)
-            ->query(function () {
-                /** @var Server $server */
-                $server = Filament::getTenant();
-
-                return File::get($server, $this->path)->orderByDesc('is_directory')->orderBy('name');
-            })
+            ->query(fn () => File::get($server, $this->path)->orderByDesc('is_directory')->orderBy('name'))
             ->columns([
                 TextColumn::make('name')
                     ->searchable()
@@ -101,20 +99,20 @@ class ListFiles extends ListRecords
             })
             ->actions([
                 Action::make('view')
-                    ->authorize(auth()->user()->can(Permission::ACTION_FILE_READ, Filament::getTenant()))
+                    ->authorize(fn () => auth()->user()->can(Permission::ACTION_FILE_READ, $server))
                     ->label('Open')
                     ->icon('tabler-eye')
                     ->visible(fn (File $file) => $file->is_directory)
                     ->url(fn (File $file) => self::getUrl(['path' => join_paths($this->path, $file->name)])),
                 EditAction::make('edit')
-                    ->authorize(auth()->user()->can(Permission::ACTION_FILE_READ_CONTENT, Filament::getTenant()))
+                    ->authorize(fn () => auth()->user()->can(Permission::ACTION_FILE_READ_CONTENT, $server))
                     ->label('Edit')
                     ->icon('tabler-edit')
                     ->visible(fn (File $file) => $file->canEdit())
                     ->url(fn (File $file) => EditFiles::getUrl(['path' => join_paths($this->path, $file->name)])),
                 ActionGroup::make([
                     Action::make('rename')
-                        ->authorize(auth()->user()->can(Permission::ACTION_FILE_UPDATE, Filament::getTenant()))
+                        ->authorize(fn () => auth()->user()->can(Permission::ACTION_FILE_UPDATE, $server))
                         ->label('Rename')
                         ->icon('tabler-forms')
                         ->form([
@@ -123,10 +121,7 @@ class ListFiles extends ListRecords
                                 ->default(fn (File $file) => $file->name)
                                 ->required(),
                         ])
-                        ->action(function ($data, File $file) {
-                            /** @var Server $server */
-                            $server = Filament::getTenant();
-
+                        ->action(function ($data, File $file) use ($server) {
                             // @phpstan-ignore-next-line
                             app(DaemonFileRepository::class)
                                 ->setServer($server)
@@ -143,14 +138,11 @@ class ListFiles extends ListRecords
                                 ->send();
                         }),
                     Action::make('copy')
-                        ->authorize(auth()->user()->can(Permission::ACTION_FILE_CREATE, Filament::getTenant()))
+                        ->authorize(fn () => auth()->user()->can(Permission::ACTION_FILE_CREATE, $server))
                         ->label('Copy')
                         ->icon('tabler-copy')
                         ->visible(fn (File $file) => $file->is_file)
-                        ->action(function (File $file) {
-                            /** @var Server $server */
-                            $server = Filament::getTenant();
-
+                        ->action(function (File $file) use ($server) {
                             // @phpstan-ignore-next-line
                             app(DaemonFileRepository::class)
                                 ->setServer($server)
@@ -166,14 +158,11 @@ class ListFiles extends ListRecords
                                 ->send();
                         }),
                     Action::make('download')
-                        ->authorize(auth()->user()->can(Permission::ACTION_FILE_READ_CONTENT, Filament::getTenant()))
+                        ->authorize(fn () => auth()->user()->can(Permission::ACTION_FILE_READ_CONTENT, $server))
                         ->label('Download')
                         ->icon('tabler-download')
                         ->visible(fn (File $file) => $file->is_file)
-                        ->action(function (File $file) {
-                            /** @var Server $server */
-                            $server = Filament::getTenant();
-
+                        ->action(function (File $file) use ($server) {
                             // @phpstan-ignore-next-line
                             $token = app(NodeJWTService::class)
                                 ->setExpiresAt(CarbonImmutable::now()->addMinutes(15))
@@ -188,10 +177,10 @@ class ListFiles extends ListRecords
                                 ->property('file', join_paths($this->path, $file->name))
                                 ->log();
 
-                            redirect()->away(sprintf('%s/download/file?token=%s', $server->node->getConnectionAddress(), $token->toString())); // TODO: download works, but breaks modals
+                            return redirect()->away(sprintf('%s/download/file?token=%s', $server->node->getConnectionAddress(), $token->toString())); // TODO: download works, but breaks modals
                         }),
                     Action::make('move')
-                        ->authorize(auth()->user()->can(Permission::ACTION_FILE_UPDATE, Filament::getTenant()))
+                        ->authorize(fn () => auth()->user()->can(Permission::ACTION_FILE_UPDATE, $server))
                         ->label('Move')
                         ->icon('tabler-replace')
                         ->form([
@@ -204,10 +193,7 @@ class ListFiles extends ListRecords
                             Placeholder::make('new_location')
                                 ->content(fn (Get $get) => resolve_path('./' . join_paths($this->path, $get('location')))),
                         ])
-                        ->action(function ($data, File $file) {
-                            /** @var Server $server */
-                            $server = Filament::getTenant();
-
+                        ->action(function ($data, File $file) use ($server) {
                             $location = resolve_path(join_paths($this->path, $data('location')));
 
                             // @phpstan-ignore-next-line
@@ -226,7 +212,7 @@ class ListFiles extends ListRecords
                                 ->send();
                         }),
                     Action::make('permissions')
-                        ->authorize(auth()->user()->can(Permission::ACTION_FILE_UPDATE, Filament::getTenant()))
+                        ->authorize(fn () => auth()->user()->can(Permission::ACTION_FILE_UPDATE, $server))
                         ->label('Permissions')
                         ->icon('tabler-license')
                         ->form([
@@ -267,15 +253,12 @@ class ListFiles extends ListRecords
                                     return $this->getPermissionsFromModeBit($mode);
                                 }),
                         ])
-                        ->action(function ($data, File $file) {
+                        ->action(function ($data, File $file) use ($server) {
                             $owner = (in_array('read', $data['owner']) ? 4 : 0) | (in_array('write', $data['owner']) ? 2 : 0) | (in_array('execute', $data['owner']) ? 1 : 0);
                             $group = (in_array('read', $data['group']) ? 4 : 0) | (in_array('write', $data['group']) ? 2 : 0) | (in_array('execute', $data['group']) ? 1 : 0);
                             $public = (in_array('read', $data['public']) ? 4 : 0) | (in_array('write', $data['public']) ? 2 : 0) | (in_array('execute', $data['public']) ? 1 : 0);
 
                             $mode = $owner . $group . $public;
-
-                            /** @var Server $server */
-                            $server = Filament::getTenant();
 
                             // @phpstan-ignore-next-line
                             app(DaemonFileRepository::class)
@@ -288,13 +271,10 @@ class ListFiles extends ListRecords
                                 ->send();
                         }),
                     Action::make('archive')
-                        ->authorize(auth()->user()->can(Permission::ACTION_FILE_ARCHIVE, Filament::getTenant()))
+                        ->authorize(fn () => auth()->user()->can(Permission::ACTION_FILE_ARCHIVE, $server))
                         ->label('Archive')
                         ->icon('tabler-archive')
-                        ->action(function (File $file) {
-                            /** @var Server $server */
-                            $server = Filament::getTenant();
-
+                        ->action(function (File $file) use ($server) {
                             // @phpstan-ignore-next-line
                             app(DaemonFileRepository::class)
                                 ->setServer($server)
@@ -305,22 +285,19 @@ class ListFiles extends ListRecords
                                 ->property('files', [$file->name])
                                 ->log();
 
-                            // TODO: new archive file is not instantly displayed, requires page refresh
-
                             Notification::make()
                                 ->title('Archive created')
                                 ->success()
                                 ->send();
+
+                            return redirect(ListFiles::getUrl(['path' => $this->path]));
                         }),
                     Action::make('unarchive')
-                        ->authorize(auth()->user()->can(Permission::ACTION_FILE_ARCHIVE, Filament::getTenant()))
+                        ->authorize(fn () => auth()->user()->can(Permission::ACTION_FILE_ARCHIVE, $server))
                         ->label('Unarchive')
                         ->icon('tabler-archive')
                         ->visible(fn (File $file) => $file->isArchive())
-                        ->action(function (File $file) {
-                            /** @var Server $server */
-                            $server = Filament::getTenant();
-
+                        ->action(function (File $file) use ($server) {
                             // @phpstan-ignore-next-line
                             app(DaemonFileRepository::class)
                                 ->setServer($server)
@@ -331,25 +308,22 @@ class ListFiles extends ListRecords
                                 ->property('files', $file->name)
                                 ->log();
 
-                            // TODO: new files are not instantly displayed, requires page refresh
-
                             Notification::make()
                                 ->title('Unarchive completed')
                                 ->success()
                                 ->send();
+
+                            return redirect(ListFiles::getUrl(['path' => $this->path]));
                         }),
                 ]),
                 DeleteAction::make()
-                    ->authorize(auth()->user()->can(Permission::ACTION_FILE_DELETE, Filament::getTenant()))
+                    ->authorize(fn () => auth()->user()->can(Permission::ACTION_FILE_DELETE, $server))
                     ->label('')
                     ->icon('tabler-trash')
                     ->requiresConfirmation()
                     ->modalDescription(fn (File $file) => $file->name)
                     ->modalHeading('Delete file?')
-                    ->action(function (File $file) {
-                        /** @var Server $server */
-                        $server = Filament::getTenant();
-
+                    ->action(function (File $file) use ($server) {
                         // @phpstan-ignore-next-line
                         app(DaemonFileRepository::class)
                             ->setServer($server)
@@ -364,7 +338,7 @@ class ListFiles extends ListRecords
             ->bulkActions([
                 BulkActionGroup::make([
                     BulkAction::make('move')
-                        ->authorize(auth()->user()->can(Permission::ACTION_FILE_UPDATE, Filament::getTenant()))
+                        ->authorize(fn () => auth()->user()->can(Permission::ACTION_FILE_UPDATE, $server))
                         ->form([
                             TextInput::make('location')
                                 ->label('File name')
@@ -375,14 +349,11 @@ class ListFiles extends ListRecords
                             Placeholder::make('new_location')
                                 ->content(fn (Get $get) => resolve_path('./' . join_paths($this->path, $get('location') ?? ''))),
                         ])
-                        ->action(function (Collection $files, $data) {
+                        ->action(function (Collection $files, $data) use ($server) {
                             $location = resolve_path(join_paths($this->path, $data('location'))); // TODO: error: Array callback must have exactly two elements
 
                             // @phpstan-ignore-next-line
                             $files = $files->map(fn ($file) => ['to' => $location, 'from' => $file->name])->toArray();
-
-                            /** @var Server $server */
-                            $server = Filament::getTenant();
 
                             // @phpstan-ignore-next-line
                             app(DaemonFileRepository::class)
@@ -400,13 +371,10 @@ class ListFiles extends ListRecords
                                 ->send();
                         }),
                     BulkAction::make('archive')
-                        ->authorize(auth()->user()->can(Permission::ACTION_FILE_ARCHIVE, Filament::getTenant()))
-                        ->action(function (Collection $files) {
+                        ->authorize(fn () => auth()->user()->can(Permission::ACTION_FILE_ARCHIVE, $server))
+                        ->action(function (Collection $files) use ($server) {
                             // @phpstan-ignore-next-line
                             $files = $files->map(fn ($file) => $file->name)->toArray();
-
-                            /** @var Server $server */
-                            $server = Filament::getTenant();
 
                             // @phpstan-ignore-next-line
                             app(DaemonFileRepository::class)
@@ -418,21 +386,18 @@ class ListFiles extends ListRecords
                                 ->property('files', $files)
                                 ->log();
 
-                            // TODO: new archive file is not instantly displayed, requires page refresh
-
                             Notification::make()
                                 ->title('Archive created')
                                 ->success()
                                 ->send();
+
+                            return redirect(ListFiles::getUrl(['path' => $this->path]));
                         }),
                     DeleteBulkAction::make()
-                        ->authorize(auth()->user()->can(Permission::ACTION_FILE_DELETE, Filament::getTenant()))
-                        ->action(function (Collection $files) {
+                        ->authorize(fn () => auth()->user()->can(Permission::ACTION_FILE_DELETE, $server))
+                        ->action(function (Collection $files) use ($server) {
                             // @phpstan-ignore-next-line
                             $files = $files->map(fn ($file) => $file->name)->toArray();
-
-                            /** @var Server $server */
-                            $server = Filament::getTenant();
 
                             // @phpstan-ignore-next-line
                             app(DaemonFileRepository::class)
@@ -455,15 +420,15 @@ class ListFiles extends ListRecords
 
     protected function getHeaderActions(): array
     {
+        /** @var Server $server */
+        $server = Filament::getTenant();
+
         return [
             HeaderAction::make('new_file')
-                ->authorize(auth()->user()->can(Permission::ACTION_FILE_CREATE, Filament::getTenant()))
+                ->authorize(fn () => auth()->user()->can(Permission::ACTION_FILE_CREATE, $server))
                 ->label('New File')
                 ->color('gray')
-                ->action(function ($data) {
-                    /** @var Server $server */
-                    $server = Filament::getTenant();
-
+                ->action(function ($data) use ($server) {
                     // @phpstan-ignore-next-line
                     app(DaemonFileRepository::class)
                         ->setServer($server)
@@ -490,13 +455,10 @@ class ListFiles extends ListRecords
                         ->required(),
                 ]),
             HeaderAction::make('new_folder')
-                ->authorize(auth()->user()->can(Permission::ACTION_FILE_CREATE, Filament::getTenant()))
+                ->authorize(fn () => auth()->user()->can(Permission::ACTION_FILE_CREATE, $server))
                 ->label('New Folder')
                 ->color('gray')
-                ->action(function ($data) {
-                    /** @var Server $server */
-                    $server = Filament::getTenant();
-
+                ->action(function ($data) use ($server) {
                     // @phpstan-ignore-next-line
                     app(DaemonFileRepository::class)
                         ->setServer($server)
@@ -512,12 +474,9 @@ class ListFiles extends ListRecords
                         ->required(),
                 ]),
             HeaderAction::make('upload')
-                ->authorize(auth()->user()->can(Permission::ACTION_FILE_CREATE, Filament::getTenant()))
+                ->authorize(fn () => auth()->user()->can(Permission::ACTION_FILE_CREATE, $server))
                 ->label('Upload')
-                ->action(function ($data) {
-                    /** @var Server $server */
-                    $server = Filament::getTenant();
-
+                ->action(function ($data) use ($server) {
                     if (count($data['files']) > 0 && !isset($data['url'])) {
                         /** @var UploadedFile $file */
                         foreach ($data['files'] as $file) {
@@ -569,7 +528,7 @@ class ListFiles extends ListRecords
                         ]),
                 ]),
             HeaderAction::make('search')
-                ->authorize(auth()->user()->can(Permission::ACTION_FILE_READ, Filament::getTenant()))
+                ->authorize(fn () => auth()->user()->can(Permission::ACTION_FILE_READ, $server))
                 ->label('Global Search')
                 ->modalSubmitActionLabel('Search')
                 ->form([
