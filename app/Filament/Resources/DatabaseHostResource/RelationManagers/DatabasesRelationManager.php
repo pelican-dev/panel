@@ -57,21 +57,17 @@ class DatabasesRelationManager extends RelationManager
             ->recordTitleAttribute('servers')
             ->columns([
                 TextColumn::make('database')
-                    ->hidden(fn () => !auth()->user()->can('viewList database'))
                     ->icon('tabler-database'),
                 TextColumn::make('username')
-                    ->hidden(fn () => !auth()->user()->can('viewList database'))
                     ->icon('tabler-user'),
                 TextColumn::make('remote')
-                    ->hidden(fn () => !auth()->user()->can('viewList database')),
+                    ->formatStateUsing(fn ($record) => $record->remote === '%' ? 'Anywhere ( % )' : $record->remote),
                 TextColumn::make('server.name')
-                    ->hidden(fn () => !auth()->user()->can('viewList database'))
                     ->icon('tabler-brand-docker')
                     ->url(fn (Database $database) => route('filament.admin.resources.servers.edit', ['record' => $database->server_id])),
                 TextColumn::make('max_connections')
-                    ->hidden(fn () => !auth()->user()->can('viewList database')),
-                DateTimeColumn::make('created_at')
-                    ->hidden(fn () => !auth()->user()->can('viewList database')),
+                    ->formatStateUsing(fn ($record) => $record->max_connections === 0 ? 'Unlimited' : $record->max_connections),
+                DateTimeColumn::make('created_at'),
             ])
             ->actions([
                 DeleteAction::make()
