@@ -80,31 +80,25 @@ class ListBackups extends ListRecords
                 ActionGroup::make([
                     Action::make('lock')
                         ->icon(fn (Backup $backup) => !$backup->is_locked ? 'tabler-lock' : 'tabler-lock-open')
-                        ->authorize(auth()->user()->can(Permission::ACTION_BACKUP_DELETE, Filament::getTenant()))
+                        ->authorize(fn () => auth()->user()->can(Permission::ACTION_BACKUP_DELETE, $server))
                         ->label(fn (Backup $backup) => !$backup->is_locked ? 'Lock' : 'Unlock')
                         ->action(fn (BackupController $backupController, Backup $backup, Request $request) => $backupController->toggleLock($request, $server, $backup)),
                     Action::make('download')
                         ->color('primary')
                         ->icon('tabler-download')
-                        ->authorize(auth()->user()->can(Permission::ACTION_BACKUP_DOWNLOAD, Filament::getTenant()))
-                        ->url(function (DownloadLinkService $downloadLinkService, Backup $backup, Request $request) {
-                            return $downloadLinkService->handle($backup, $request->user());
-                        }, true),
+                        ->authorize(fn () => auth()->user()->can(Permission::ACTION_BACKUP_DOWNLOAD, $server))
+                        ->url(fn (DownloadLinkService $downloadLinkService, Backup $backup, Request $request) => $downloadLinkService->handle($backup, $request->user()), true),
                     Action::make('restore')
                         ->color('success')
                         ->icon('tabler-folder-up')
-                        ->authorize(auth()->user()->can(Permission::ACTION_BACKUP_RESTORE, Filament::getTenant()))
+                        ->authorize(fn () => auth()->user()->can(Permission::ACTION_BACKUP_RESTORE, $server))
                         ->form([
                             Placeholder::make('')
                                 ->helperText('Your server will be stopped. You will not be able to control the power state, access the file manager, or create additional backups until this process is completed.'),
                             Checkbox::make('truncate')
                                 ->label('Delete all files before restoring backup?'),
                         ])
-                        ->action(function (Backup $backup, $data, DaemonBackupRepository $daemonRepository, DownloadLinkService $downloadLinkService) {
-
-                            /** @var Server $server */
-                            $server = Filament::getTenant();
-
+                        ->action(function (Backup $backup, $data, DaemonBackupRepository $daemonRepository, DownloadLinkService $downloadLinkService) use ($server) {
                             if (!is_null($server->status)) {
                                 return Notification::make()
                                     ->danger()
@@ -139,7 +133,9 @@ class ListBackups extends ListRecords
                                 $daemonRepository->setServer($server)->restore($backup, $url ?? null, $data['truncate']);
                             });
 
-                            return Notification::make()->title('Restoring Backup')->send();
+                            return Notification::make()
+                                ->title('Restoring Backup')
+                                ->send();
                         }),
                     Action::make('delete')
                         ->color('danger')
@@ -153,12 +149,10 @@ class ListBackups extends ListRecords
                                 ->disabled(),
                         ])
                         ->disabled(fn (Backup $backup): bool => $backup->is_locked)
-                        ->authorize(auth()->user()->can(Permission::ACTION_BACKUP_DELETE, Filament::getTenant()))
+                        ->authorize(fn () => auth()->user()->can(Permission::ACTION_BACKUP_DELETE, $server))
                         ->requiresConfirmation()
                         ->action(fn (BackupController $backupController, Backup $backup, Request $request) => $backupController->delete($request, $server, $backup)),
-                ])
-                    ->button()
-                    ->icon(''),
+                ]),
             ]);
     }
 
@@ -169,18 +163,13 @@ class ListBackups extends ListRecords
 
         return [
             Actions\CreateAction::make()
-                ->authorize(auth()->user()->can(Permission::ACTION_BACKUP_CREATE, Filament::getTenant()))
-                ->label(fn () => $server->backups()->count() >= $server->backup_limit ? 'Backup Limit Reached' : 'Create Backup')
+                ->authorize(fn () => auth()->user()->can(Permission::ACTION_BACKUP_CREATE, $server))
+                ->label(fn () => $server->backups()->count() >= $server->backup_limit ? 'Backup limit reached' : 'Create Backup')
                 ->disabled(fn () => $server->backups()->count() >= $server->backup_limit)
                 ->color(fn () => $server->backups()->count() >= $server->backup_limit ? 'danger' : 'primary')
                 ->createAnother(false)
-                ->action(function (InitiateBackupService $initiateBackupService, $data) {
-
-                    /** @var Server $server */
-                    $server = Filament::getTenant();
-
-                    $action = $initiateBackupService
-                        ->setIgnoredFiles(explode(PHP_EOL, $data['ignored'] ?? ''));
+                ->action(function (InitiateBackupService $initiateBackupService, $data) use ($server) {
+                    $action = $initiateBackupService->setIgnoredFiles(explode(PHP_EOL, $data['ignored'] ?? ''));
 
                     if (auth()->user()->can(Permission::ACTION_BACKUP_DELETE, $server)) {
                         $action->setIsLocked((bool) $data['is_locked']);

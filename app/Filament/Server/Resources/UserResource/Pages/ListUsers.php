@@ -26,11 +26,14 @@ class ListUsers extends ListRecords
 
     protected function getHeaderActions(): array
     {
+        /** @var Server $server */
+        $server = Filament::getTenant();
+
         return [
             Actions\CreateAction::make('invite')
                 ->label('Invite User')
                 ->createAnother(false)
-                ->authorize(auth()->user()->can(Permission::ACTION_USER_CREATE, Filament::getTenant()))
+                ->authorize(fn () => auth()->user()->can(Permission::ACTION_USER_CREATE, $server))
                 ->form([
                     Grid::make()
                         ->columnSpanFull()
@@ -363,12 +366,9 @@ class ListUsers extends ListRecords
                 ])
                 ->modalHeading('Invite User')
                 ->modalSubmitActionLabel('Invite')
-                ->action(function (array $data, SubuserCreationService $service) {
+                ->action(function (array $data, SubuserCreationService $service) use ($server) {
                     $email = $data['email'];
                     $permissions = collect($data)->forget('email')->map(fn ($permissions, $key) => collect($permissions)->map(fn ($permission) => "$key.$permission"))->flatten()->all();
-
-                    /** @var Server $server */
-                    $server = Filament::getTenant();
 
                     $service->handle($server, $email, $permissions);
 
@@ -377,7 +377,7 @@ class ListUsers extends ListRecords
                         ->success()
                         ->send();
 
-                    return redirect()->route('filament.app.resources.users.index', ['tenant' => $server]);
+                    return redirect(self::getUrl(tenant: $server));
                 }),
         ];
     }

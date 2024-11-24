@@ -16,11 +16,11 @@ class ActivityResource extends Resource
 {
     protected static ?string $model = ActivityLog::class;
 
-    protected static ?int $navigationSort = 8;
-
     protected static ?string $label = 'Activity';
 
     protected static ?string $pluralLabel = 'Activity';
+
+    protected static ?int $navigationSort = 8;
 
     protected static ?string $navigationIcon = 'tabler-stack';
 

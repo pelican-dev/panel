@@ -16,7 +16,6 @@ use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Forms\Get;
-use Filament\Forms\Set;
 use Filament\Resources\Pages\ListRecords;
 use Filament\Tables\Actions\DeleteAction;
 use Filament\Tables\Actions\ViewAction;
@@ -32,18 +31,27 @@ class ListDatabases extends ListRecords
     {
         return $form
             ->schema([
-                TextInput::make('database')->columnSpanFull()->suffixAction(CopyAction::make()),
-                TextInput::make('username')->suffixAction(CopyAction::make()),
+                TextInput::make('database')
+                    ->columnSpanFull()
+                    ->suffixAction(CopyAction::make()),
+                TextInput::make('username')
+                    ->suffixAction(CopyAction::make()),
                 TextInput::make('password')
                     ->hintAction(
                         Action::make('rotate')
                             ->icon('tabler-refresh')
                             ->requiresConfirmation()
-                            ->action(fn (DatabasePasswordService $service, Database $database, $set, $get) => $this->rotatePassword($service, $database, $set, $get))
+                            ->action(function (DatabasePasswordService $service, Database $database, $set, $get) {
+                                $newPassword = $service->handle($database);
+
+                                $set('password', $newPassword);
+                                $set('JDBC', 'jdbc:mysql://' . $get('username') . ':' . urlencode($newPassword) . '@' . $database->host->host . ':' . $database->host->port . '/' . $get('database'));
+                            })
                     )
                     ->suffixAction(CopyAction::make())
                     ->formatStateUsing(fn (Database $database) => $database->password),
-                TextInput::make('remote')->label('Connections From'),
+                TextInput::make('remote')
+                    ->label('Connections From'),
                 TextInput::make('max_connections')
                     ->formatStateUsing(fn (Database $database) => $database->max_connections === 0 ? $database->max_connections : 'Unlimited'),
                 TextInput::make('JDBC')
@@ -77,7 +85,7 @@ class ListDatabases extends ListRecords
 
         return [
             CreateAction::make('new')
-                ->label(fn () => $server->databases()->count() >= $server->database_limit ? 'Database Limit Reached' : 'Create Database')
+                ->label(fn () => $server->databases()->count() >= $server->database_limit ? 'Database limit reached' : 'Create Database')
                 ->disabled(fn () => $server->databases()->count() >= $server->database_limit)
                 ->color(fn () => $server->databases()->count() >= $server->database_limit ? 'danger' : 'primary')
                 ->createAnother(false)
@@ -108,15 +116,6 @@ class ListDatabases extends ListRecords
                     $service->create($server, $data);
                 }),
         ];
-    }
-
-    protected function rotatePassword(DatabasePasswordService $service, Database $database, Set $set, Get $get): void
-    {
-        $newPassword = $service->handle($database);
-        $jdbcString = 'jdbc:mysql://' . $get('username') . ':' . urlencode($newPassword) . '@' . $database->host->host . ':' . $database->host->port . '/' . $get('database');
-
-        $set('password', $newPassword);
-        $set('JDBC', $jdbcString);
     }
 
     public function getBreadcrumbs(): array

@@ -22,6 +22,9 @@ class ListAllocations extends ListRecords
 
     public function table(Table $table): Table
     {
+        /** @var Server $server */
+        $server = Filament::getTenant();
+
         return $table
             ->columns([
                 TextColumn::make('ip')
@@ -41,27 +44,16 @@ class ListAllocations extends ListRecords
                         true => 'warning',
                         default => 'gray',
                     })
-                    ->action(fn (Allocation $allocation) => Filament::getTenant()->update(['allocation_id' => $allocation->id]))
-                    ->default(function (Allocation $allocation) {
-                        /** @var Server $server */
-                        $server = Filament::getTenant();
-
-                        return $allocation->id === $server->allocation_id;
-                    })
+                    ->action(fn (Allocation $allocation) => $server->update(['allocation_id' => $allocation->id]))
+                    ->default(fn (Allocation $allocation) => $allocation->id === $server->allocation_id)
                     ->label('Primary'),
             ])
             ->actions([
                 DetachAction::make()
                     ->label('Delete')
                     ->icon('tabler-trash')
-                    ->hidden(function (Allocation $allocation) {
-                        /** @var Server $server */
-                        $server = Filament::getTenant();
-
-                        return $allocation->id === $server->allocation_id;
-                    })
+                    ->hidden(fn (Allocation $allocation) => $allocation->id === $server->allocation_id)
                     ->action(function (Allocation $allocation) {
-
                         Allocation::query()->where('id', $allocation->id)->update([
                             'notes' => null,
                             'server_id' => null,
@@ -77,31 +69,16 @@ class ListAllocations extends ListRecords
 
     protected function getHeaderActions(): array
     {
+        /** @var Server $server */
+        $server = Filament::getTenant();
+
         return [
             Actions\Action::make('addAllocation')
-                ->label(function () {
-                    /** @var Server $server */
-                    $server = Filament::getTenant();
-
-                    return $server->allocations()->count() >= $server->allocation_limit ? 'Allocation Limit Reached' : 'Add Allocation';
-                })
+                ->label(fn () => $server->allocations()->count() >= $server->allocation_limit ? 'Allocation limit reached' : 'Add Allocation')
                 ->hidden(fn () => !config('panel.client_features.allocations.enabled'))
-                ->disabled(function () {
-                    /** @var Server $server */
-                    $server = Filament::getTenant();
-
-                    return $server->allocations()->count() >= $server->allocation_limit;
-                })
-                ->color(function () {
-                    /** @var Server $server */
-                    $server = Filament::getTenant();
-
-                    return $server->allocations()->count() >= $server->allocation_limit ? 'danger' : 'primary';
-                })
-                ->action(function (FindAssignableAllocationService $service) {
-                    /** @var Server $server */
-                    $server = Filament::getTenant();
-
+                ->disabled(fn () => $server->allocations()->count() >= $server->allocation_limit)
+                ->color(fn () => $server->allocations()->count() >= $server->allocation_limit ? 'danger' : 'primary')
+                ->action(function (FindAssignableAllocationService $service) use ($server) {
                     $allocation = $service->handle($server);
 
                     Activity::event('server:allocation.create')

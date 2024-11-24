@@ -8,12 +8,13 @@ use App\Models\Server;
 use App\Models\Subuser;
 use App\Models\User;
 use Filament\Facades\Filament;
-use Filament\Forms\Components\Actions as assignAll;
+use Filament\Forms\Components\Actions;
 use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\CheckboxList;
 use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Tabs;
+use Filament\Forms\Components\Tabs\Tab;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Set;
 use Filament\Tables\Actions\DeleteAction;
@@ -48,6 +49,9 @@ class UserResource extends Resource
 
     public static function table(Table $table): Table
     {
+        /** @var Server $server */
+        $server = Filament::getTenant();
+
         return $table
             ->paginated(false)
             ->searchable(false)
@@ -62,14 +66,7 @@ class UserResource extends Resource
                 TextColumn::make('email')
                     ->searchable(),
                 TextColumn::make('permissions')
-                    ->state(function (User $user) {
-                        /** @var Server $server */
-                        $server = Filament::getTenant();
-
-                        $permissions = Subuser::query()->where('user_id', $user->id)->where('server_id', $server->id)->first()->permissions;
-
-                        return count($permissions);
-                    }),
+                    ->state(fn (User $user) => count(Subuser::query()->where('user_id', $user->id)->where('server_id', $server->id)->first()->permissions)),
             ])
             ->actions([
                 DeleteAction::make()
@@ -77,7 +74,7 @@ class UserResource extends Resource
                     ->requiresConfirmation(),
                 EditAction::make()
                     ->label('Edit User')
-                    ->authorize(auth()->user()->can(Permission::ACTION_USER_UPDATE, Filament::getTenant()))
+                    ->authorize(fn () => auth()->user()->can(Permission::ACTION_USER_UPDATE, $server))
                     ->modalHeading(fn (User $user) => 'Editing ' . $user->email)
                     ->form([
                         Grid::make()
@@ -98,7 +95,7 @@ class UserResource extends Resource
                                         'md' => 4,
                                         'lg' => 5,
                                     ]),
-                                assignAll::make([
+                                Actions::make([
                                     Action::make('assignAll')
                                         ->label('Assign All')
                                         ->action(function (Set $set) {
@@ -178,17 +175,14 @@ class UserResource extends Resource
                                 Tabs::make()
                                     ->columnSpanFull()
                                     ->schema([
-                                        Tabs\Tab::make('Console')
+                                        Tab::make('Console')
                                             ->schema([
                                                 Section::make()
                                                     ->description(trans('server/users.permissions.control_desc'))
                                                     ->icon('tabler-terminal-2')
                                                     ->schema([
                                                         CheckboxList::make('control')
-                                                            ->formatStateUsing(function (User $user, Set $set) {
-                                                                /** @var Server $server */
-                                                                $server = Filament::getTenant();
-
+                                                            ->formatStateUsing(function (User $user, Set $set) use ($server) {
                                                                 $permissionsArray = Subuser::query()
                                                                     ->where('user_id', $user->id)
                                                                     ->where('server_id', $server->id)
@@ -226,7 +220,7 @@ class UserResource extends Resource
                                                             ]),
                                                     ]),
                                             ]),
-                                        Tabs\Tab::make('User')
+                                        Tab::make('User')
                                             ->schema([
                                                 Section::make()
                                                     ->description(trans('server/users.permissions.user_desc'))
@@ -249,7 +243,7 @@ class UserResource extends Resource
                                                             ]),
                                                     ]),
                                             ]),
-                                        Tabs\Tab::make('File')
+                                        Tab::make('File')
                                             ->schema([
                                                 Section::make()
                                                     ->description(trans('server/users.permissions.file_desc'))
@@ -278,7 +272,7 @@ class UserResource extends Resource
                                                             ]),
                                                     ]),
                                             ]),
-                                        Tabs\Tab::make('Backup')
+                                        Tab::make('Backup')
                                             ->schema([
                                                 Section::make()
                                                     ->description(trans('server/users.permissions.backup_desc'))
@@ -303,7 +297,7 @@ class UserResource extends Resource
                                                             ]),
                                                     ]),
                                             ]),
-                                        Tabs\Tab::make('Allocation')
+                                        Tab::make('Allocation')
                                             ->schema([
                                                 Section::make()
                                                     ->description(trans('server/users.permissions.allocation_desc'))
@@ -326,7 +320,7 @@ class UserResource extends Resource
                                                             ]),
                                                     ]),
                                             ]),
-                                        Tabs\Tab::make('Startup')
+                                        Tab::make('Startup')
                                             ->schema([
                                                 Section::make()
                                                     ->description(trans('server/users.permissions.startup_desc'))
@@ -347,7 +341,7 @@ class UserResource extends Resource
                                                             ]),
                                                     ]),
                                             ]),
-                                        Tabs\Tab::make('Database')
+                                        Tab::make('Database')
                                             ->schema([
                                                 Section::make()
                                                     ->description(trans('server/users.permissions.database_desc'))
@@ -372,7 +366,7 @@ class UserResource extends Resource
                                                             ]),
                                                     ]),
                                             ]),
-                                        Tabs\Tab::make('Schedule')
+                                        Tab::make('Schedule')
                                             ->schema([
                                                 Section::make()
                                                     ->description(trans('server/users.permissions.schedule_desc'))
@@ -395,7 +389,7 @@ class UserResource extends Resource
                                                             ]),
                                                     ]),
                                             ]),
-                                        Tabs\Tab::make('Settings')
+                                        Tab::make('Settings')
                                             ->schema([
                                                 Section::make()
                                                     ->description(trans('server/users.permissions.settings_desc'))
