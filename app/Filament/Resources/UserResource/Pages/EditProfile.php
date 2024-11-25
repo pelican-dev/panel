@@ -9,6 +9,7 @@ use App\Models\ApiKey;
 use App\Models\User;
 use App\Services\Users\ToggleTwoFactorService;
 use App\Services\Users\TwoFactorSetupService;
+use App\Services\Users\UserUpdateService;
 use chillerlan\QRCode\Common\EccLevel;
 use chillerlan\QRCode\Common\Version;
 use chillerlan\QRCode\QRCode;
@@ -36,6 +37,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\HtmlString;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rules\Password;
+use Laravel\Socialite\Facades\Socialite;
 
 /**
  * @method User getUser()
@@ -131,7 +133,23 @@ class EditProfile extends \Filament\Pages\Auth\EditProfile
                                                 ->label(($unlink ? 'Unlink ' : 'Link ') . Str::title($name))
                                                 ->icon($unlink ? 'tabler-unlink' : 'tabler-link')
                                                 ->color($data['color'])
-                                                ->url(route('account.oauth.' . ($unlink ? 'unlink' : 'link'), ['driver' => $name], false));
+                                                ->action(function (UserUpdateService $updateService) use ($name, $unlink) {
+                                                    if ($unlink) {
+                                                        $oauth = auth()->user()->oauth;
+                                                        unset($oauth[$name]);
+
+                                                        $updateService->handle(auth()->user(), ['oauth' => $oauth]);
+
+                                                        $this->fillForm();
+
+                                                        Notification::make()
+                                                            ->title("OAuth provider '$name' unlinked")
+                                                            ->success()
+                                                            ->send();
+                                                    } elseif (config("auth.oauth.$name.enabled")) {
+                                                        redirect(Socialite::with($name)->redirect()->getTargetUrl());
+                                                    }
+                                                });
                                         }
 
                                         return [Actions::make($providers)];

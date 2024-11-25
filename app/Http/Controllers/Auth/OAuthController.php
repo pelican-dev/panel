@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Auth;
 
+use App\Filament\Resources\UserResource\Pages\EditProfile;
 use Filament\Notifications\Notification;
 use Illuminate\Auth\AuthManager;
 use Illuminate\Http\RedirectResponse;
@@ -54,8 +55,7 @@ class OAuthController extends Controller
 
             $this->updateService->handle($request->user(), ['oauth' => $oauth]);
 
-            // TODO: replace with profile route once new client area is merged
-            return redirect()->route('account');
+            return redirect(EditProfile::getUrl(['tab' => '-oauth-tab']));
         }
 
         try {
