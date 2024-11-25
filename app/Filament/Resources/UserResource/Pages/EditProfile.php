@@ -119,6 +119,15 @@ class EditProfile extends \Filament\Pages\Auth\EditProfile
 
                                 Tab::make('OAuth')
                                     ->icon('tabler-brand-oauth')
+                                    ->visible(function () {
+                                        foreach (config('auth.oauth') as $name => $data) {
+                                            if ($data['enabled']) {
+                                                return true;
+                                            }
+                                        }
+
+                                        return false;
+                                    })
                                     ->schema(function () {
                                         $providers = [];
 
