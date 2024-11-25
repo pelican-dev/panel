@@ -13,7 +13,7 @@ class ListPluginsCommand extends Command
 
     public function handle(): void
     {
-        $plugins = Plugin::query()->get(['name', 'author', 'status', 'version', 'panel', 'category']);
+        $plugins = Plugin::query()->get(['name', 'author', 'status', 'version', 'panels', 'category']);
 
         if (count($plugins) < 1) {
             $this->warn('No plugins installed');
@@ -21,7 +21,7 @@ class ListPluginsCommand extends Command
             return;
         }
 
-        $this->table(['Name', 'Author', 'Status', 'Version', 'Panel', 'Category'], $plugins->toArray());
+        $this->table(['Name', 'Author', 'Status', 'Version', 'Panels', 'Category'], $plugins->toArray());
 
         $this->output->newLine();
     }

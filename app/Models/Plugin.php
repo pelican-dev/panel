@@ -18,7 +18,7 @@ use Sushi\Sushi;
  * @property string $class
  * @property PluginStatus $status
  * @property string|null $status_message
- * @property string $panel
+ * @property string|null $panels
  * @property string|null $panel_version
  * @property string $category
  */
@@ -45,7 +45,7 @@ class Plugin extends IlluminateModel
             'class' => 'string',
             'status' => 'string',
             'status_message' => 'string',
-            'panel' => 'string',
+            'panels' => 'string',
             'panel_version' => 'string',
             'category' => 'string',
         ];
@@ -91,7 +91,7 @@ class Plugin extends IlluminateModel
 
     public function shouldLoad(string $panelId): bool
     {
-        return !$this->isDisabled() && ($this->panel === 'all' || $this->panel === $panelId);
+        return !$this->isDisabled() && ($this->panels === null || in_array($panelId, explode(',', $this->panels)));
     }
 
     public function isDisabled(): bool

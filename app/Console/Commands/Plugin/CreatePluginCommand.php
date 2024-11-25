@@ -13,7 +13,7 @@ class CreatePluginCommand extends Command
                             {author}
                             {--description=}
                             {--url=}
-                            {--panel=}
+                            {--panels=}
                             {--category=}';
 
     protected $description = 'Create a new plugin';
@@ -49,12 +49,11 @@ class CreatePluginCommand extends Command
 
         $description = $this->option('description') ?? $this->ask('Description');
         $url = $this->option('url') ?? $this->ask('URL', 'https://github.com/' . $author . '/' . $id);
-        $panel = $this->option('panel') ?? $this->choice('Panel', [
+        $panels = $this->option('panels') ?? implode(',', $this->choice('Panels', [
             'admin' => 'Admin Area',
             'server' => 'Client Area',
             'app' => 'Server List',
-            'all' => 'All',
-        ], 'admin');
+        ], 'admin,server', multiple: true));
         $category = $this->option('category') ?? $this->choice('Category', [
             'plugin' => 'Plugin',
             'theme' => 'Theme',
@@ -76,7 +75,7 @@ class CreatePluginCommand extends Command
             'class' => $class,
             'status' => PluginStatus::Enabled,
             'status_message' => null,
-            'panel' => $panel,
+            'panels' => $panels,
             'panel_version' => config('app.version') === 'canary' ? null : config('app.version'),
             'category' => $category,
         ], JSON_THROW_ON_ERROR | JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
