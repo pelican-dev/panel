@@ -101,13 +101,11 @@ class EditDatabaseHost extends EditRecord
 
     public function getRelationManagers(): array
     {
-        if (auth()->user()->cannot('viewList database')) {
-            return [];
+        if (auth()->user()->can('viewList database')) {
+            return [DatabasesRelationManager::class];
         }
 
-        return [
-            DatabasesRelationManager::class,
-        ];
+        return [];
     }
 
     protected function handleRecordUpdate(Model $record, array $data): Model
