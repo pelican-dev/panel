@@ -12,8 +12,10 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('password_resets', function (Blueprint $table) {
-            if (!Schema::hasColumn('password_resets', 'id')) {
-                $table->id()->first();
+            if (Schema::getConnection()->getDriverName() !== 'sqlite') {
+                if (!Schema::hasColumn('password_resets', 'id')) {
+                    $table->id()->first();
+                }
             }
         });
     }
@@ -24,7 +26,9 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('password_resets', function (Blueprint $table) {
-            $table->dropColumn('id');
+            if (Schema::hasColumn('password_resets', 'id')) {
+                $table->dropColumn('id');
+            }
         });
     }
 };
