@@ -24,7 +24,7 @@ class EditUser extends EditRecord
         return $form
             ->schema([
                 Section::make()->schema([
-                    TextInput::make('username')->required()->maxLength(255),
+                    TextInput::make('username')->required()->minLength(3)->maxLength(255),
                     TextInput::make('email')->email()->required()->maxLength(255),
                     TextInput::make('password')
                         ->dehydrateStateUsing(fn (string $state): string => Hash::make($state))
