@@ -9,7 +9,7 @@ use GuzzleHttp\Client;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 
-class SearcadeController extends Controller
+class SearcadeController extends AbstractLoginController
 {
 
     protected function login(Request $request): RedirectResponse
