@@ -167,7 +167,7 @@ class Settings extends ServerFormPage
                             ->modalDescription('Some files may be deleted or modified during this process, please back up your data before continuing.')
                             ->modalSubmitActionLabel('Yes, Reinstall')
                             ->action(function (Server $server) {
-                                abort_unless(!auth()->user()->can(Permission::ACTION_SETTINGS_REINSTALL), 403);
+                                abort_unless(auth()->user()->can(Permission::ACTION_SETTINGS_REINSTALL), 403);
 
                                 $server->fill(['status' => ServerState::Installing])->save();
                                 try {
@@ -200,7 +200,7 @@ class Settings extends ServerFormPage
 
     public function updateName(string $name, Server $server): void
     {
-        abort_unless(!auth()->user()->can(Permission::ACTION_SETTINGS_RENAME), 403);
+        abort_unless(auth()->user()->can(Permission::ACTION_SETTINGS_RENAME), 403);
 
         $original = $server->name;
 
@@ -232,7 +232,7 @@ class Settings extends ServerFormPage
 
     public function updateDescription(string $description, Server $server): void
     {
-        abort_unless(!auth()->user()->can(Permission::ACTION_SETTINGS_RENAME), 403);
+        abort_unless(auth()->user()->can(Permission::ACTION_SETTINGS_RENAME), 403);
 
         $original = $server->description;
 
