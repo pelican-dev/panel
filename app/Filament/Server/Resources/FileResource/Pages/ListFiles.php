@@ -133,7 +133,8 @@ class ListFiles extends ListRecords
                                 ->log();
 
                             Notification::make()
-                                ->title($file->name . ' was renamed to ' . $data['name'])
+                                ->title('File Renamed')
+                                ->body(fn () => $file->name . ' -> ' . $data['name'])
                                 ->success()
                                 ->send();
                         }),
@@ -428,6 +429,7 @@ class ListFiles extends ListRecords
                 ->authorize(fn () => auth()->user()->can(Permission::ACTION_FILE_CREATE, $server))
                 ->label('New File')
                 ->color('gray')
+                ->modalSubmitActionLabel('Create')
                 ->action(function ($data) use ($server) {
                     // @phpstan-ignore-next-line
                     app(DaemonFileRepository::class)
@@ -444,7 +446,7 @@ class ListFiles extends ListRecords
                         ->required(),
                     Select::make('lang')
                         ->live()
-                        ->hidden() //TODO Fix Dis
+                        ->hidden() //TODO: Make file language selection work
                         ->label('Language')
                         ->placeholder('File Language')
                         ->options(EditorLanguages::class),
