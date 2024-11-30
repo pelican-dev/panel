@@ -35,7 +35,7 @@ class Console extends Page
             ServerConsole::class,
             ServerCpuChart::class,
             ServerMemoryChart::class,
-            ServerNetworkChart::class,
+            //ServerNetworkChart::class, TODO: convert units.
         ];
     }
 
@@ -62,11 +62,13 @@ class Console extends Page
             Action::make('restart')
                 ->color('gray')
                 ->action(fn () => $this->dispatch('setServerState', state: 'restart'))
-                ->disabled(fn () => $server->isInConflictState()),
+                ->disabled(fn () => $server->isInConflictState())
+                ->disabled(fn () => $server->retrieveStatus() == 'offline'),
             Action::make('stop')
                 ->color('danger')
                 ->action(fn () => $this->dispatch('setServerState', state: 'stop'))
-                ->disabled(fn () => $server->isInConflictState()),
+                ->disabled(fn () => $server->isInConflictState())
+                ->disabled(fn () => $server->retrieveStatus() == 'offline'),
         ];
     }
 }
