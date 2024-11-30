@@ -12,7 +12,7 @@ use Illuminate\Http\Request;
 class SearcadeController extends AbstractLoginController
 {
 
-    protected function login(Request $request): RedirectResponse
+    public function login(Request $request): RedirectResponse
     {
         if ($request->user()) {
             return redirect('/');
