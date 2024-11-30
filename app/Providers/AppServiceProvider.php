@@ -20,7 +20,6 @@ use Illuminate\Support\Facades\URL;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Str;
 use Laravel\Sanctum\Sanctum;
-use SocialiteProviders\Discord\Provider;
 use SocialiteProviders\Manager\SocialiteWasCalled;
 
 class AppServiceProvider extends ServiceProvider
@@ -69,8 +68,19 @@ class AppServiceProvider extends ServiceProvider
         Scramble::registerApi('client', ['api_path' => 'api/client', 'info' => ['version' => '1.0']])->afterOpenApiGenerated($bearerTokens);
         Scramble::registerApi('remote', ['api_path' => 'api/remote', 'info' => ['version' => '1.0']])->afterOpenApiGenerated($bearerTokens);
 
-        Event::listen(function (SocialiteWasCalled $event) {
-            $event->extendSocialite('discord', Provider::class);
+        $oauthProviders = [];
+        foreach (config('auth.oauth') as $name => $data) {
+            config()->set("services.$name", array_merge($data['service'], ['redirect' => "/auth/oauth/callback/$name"]));
+
+            if (isset($data['provider'])) {
+                $oauthProviders[$name] = $data['provider'];
+            }
+        }
+
+        Event::listen(function (SocialiteWasCalled $event) use ($oauthProviders) {
+            foreach ($oauthProviders as $name => $provider) {
+                $event->extendSocialite($name, $provider);
+            }
         });
 
         FilamentColor::register([

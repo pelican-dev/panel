@@ -9,6 +9,7 @@ use App\Models\ApiKey;
 use App\Models\User;
 use App\Services\Users\ToggleTwoFactorService;
 use App\Services\Users\TwoFactorSetupService;
+use App\Services\Users\UserUpdateService;
 use chillerlan\QRCode\Common\EccLevel;
 use chillerlan\QRCode\Common\Version;
 use chillerlan\QRCode\QRCode;
@@ -16,6 +17,7 @@ use chillerlan\QRCode\QROptions;
 use Closure;
 use DateTimeZone;
 use Exception;
+use Filament\Forms\Components\Actions;
 use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\Placeholder;
@@ -33,7 +35,9 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\HtmlString;
+use Illuminate\Support\Str;
 use Illuminate\Validation\Rules\Password;
+use Laravel\Socialite\Facades\Socialite;
 
 /**
  * @method User getUser()
@@ -112,6 +116,53 @@ class EditProfile extends \Filament\Pages\Auth\EditProfile
                                             )
                                             ->options(fn (User $user) => $user->getAvailableLanguages()),
                                     ]),
+
+                                Tab::make('OAuth')
+                                    ->icon('tabler-brand-oauth')
+                                    ->visible(function () {
+                                        foreach (config('auth.oauth') as $name => $data) {
+                                            if ($data['enabled']) {
+                                                return true;
+                                            }
+                                        }
+
+                                        return false;
+                                    })
+                                    ->schema(function () {
+                                        $providers = [];
+
+                                        foreach (config('auth.oauth') as $name => $data) {
+                                            if (!$data['enabled']) {
+                                                continue;
+                                            }
+
+                                            $unlink = array_key_exists($name, $this->getUser()->oauth);
+
+                                            $providers[] = Action::make("oauth_$name")
+                                                ->label(($unlink ? 'Unlink ' : 'Link ') . Str::title($name))
+                                                ->icon($unlink ? 'tabler-unlink' : 'tabler-link')
+                                                ->color($data['color'])
+                                                ->action(function (UserUpdateService $updateService) use ($name, $unlink) {
+                                                    if ($unlink) {
+                                                        $oauth = auth()->user()->oauth;
+                                                        unset($oauth[$name]);
+
+                                                        $updateService->handle(auth()->user(), ['oauth' => $oauth]);
+
+                                                        $this->fillForm();
+
+                                                        Notification::make()
+                                                            ->title("OAuth provider '$name' unlinked")
+                                                            ->success()
+                                                            ->send();
+                                                    } elseif (config("auth.oauth.$name.enabled")) {
+                                                        redirect(Socialite::with($name)->redirect()->getTargetUrl());
+                                                    }
+                                                });
+                                        }
+
+                                        return [Actions::make($providers)];
+                                    }),
 
                                 Tab::make('2FA')
                                     ->icon('tabler-shield-lock')

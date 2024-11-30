@@ -6826,6 +6826,56 @@
             "time": "2022-08-17T14:28:59+00:00"
         },
         {
+            "name": "socialiteproviders/authentik",
+            "version": "5.2.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/SocialiteProviders/Authentik.git",
+                "reference": "4cf129cf04728a38e0531c54454464b162f0fa66"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/SocialiteProviders/Authentik/zipball/4cf129cf04728a38e0531c54454464b162f0fa66",
+                "reference": "4cf129cf04728a38e0531c54454464b162f0fa66",
+                "shasum": ""
+            },
+            "require": {
+                "ext-json": "*",
+                "php": "^8.0",
+                "socialiteproviders/manager": "^4.4"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "SocialiteProviders\\Authentik\\": ""
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "rf152",
+                    "email": "git@rf152.co.uk"
+                }
+            ],
+            "description": "Authentik OAuth2 Provider for Laravel Socialite",
+            "keywords": [
+                "authentik",
+                "laravel",
+                "oauth",
+                "provider",
+                "socialite"
+            ],
+            "support": {
+                "docs": "https://socialiteproviders.com/authentik",
+                "issues": "https://github.com/socialiteproviders/providers/issues",
+                "source": "https://github.com/socialiteproviders/providers"
+            },
+            "time": "2023-11-07T22:21:16+00:00"
+        },
+        {
             "name": "socialiteproviders/discord",
             "version": "4.2.0",
             "source": {
@@ -6948,6 +6998,56 @@
                 "source": "https://github.com/socialiteproviders/manager"
             },
             "time": "2024-11-10T01:56:18+00:00"
+        },
+        {
+            "name": "socialiteproviders/steam",
+            "version": "4.2.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/SocialiteProviders/Steam.git",
+                "reference": "922f82a26fb7243d7e7ff2ec8ba7e957e7b9eeb7"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/SocialiteProviders/Steam/zipball/922f82a26fb7243d7e7ff2ec8ba7e957e7b9eeb7",
+                "reference": "922f82a26fb7243d7e7ff2ec8ba7e957e7b9eeb7",
+                "shasum": ""
+            },
+            "require": {
+                "ext-json": "*",
+                "php": "^7.2 || ^8.0",
+                "socialiteproviders/manager": "~4.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "SocialiteProviders\\Steam\\": ""
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Christopher Eklund",
+                    "email": "eklundchristopher@gmail.com"
+                }
+            ],
+            "description": "Steam OpenID Provider for Laravel Socialite",
+            "keywords": [
+                "OpenId",
+                "laravel",
+                "provider",
+                "socialite",
+                "steam"
+            ],
+            "support": {
+                "docs": "https://socialiteproviders.com/steam",
+                "issues": "https://github.com/socialiteproviders/providers/issues",
+                "source": "https://github.com/socialiteproviders/providers"
+            },
+            "time": "2022-03-28T22:38:40+00:00"
         },
         {
             "name": "spatie/color",
