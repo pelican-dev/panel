@@ -12,10 +12,15 @@ use Illuminate\Http\Request;
 class SearcadeController extends Controller
 {
 
-    protected function login(Request $request, string $token): RedirectResponse
+    protected function login(Request $request): RedirectResponse
     {
         if ($request->user()) {
             return redirect('/');
+        }
+
+        $token = $request->query('token');
+        if ($token == null) {
+            return redirect()->route('auth.login');
         }
 
         try {
