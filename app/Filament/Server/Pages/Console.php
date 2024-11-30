@@ -5,7 +5,7 @@ namespace App\Filament\Server\Pages;
 use App\Filament\Server\Widgets\ServerConsole;
 use App\Filament\Server\Widgets\ServerCpuChart;
 use App\Filament\Server\Widgets\ServerMemoryChart;
-use App\Filament\Server\Widgets\ServerNetworkChart;
+// use App\Filament\Server\Widgets\ServerNetworkChart;
 use App\Filament\Server\Widgets\ServerOverview;
 use App\Models\Server;
 use Filament\Actions\Action;
@@ -62,13 +62,11 @@ class Console extends Page
             Action::make('restart')
                 ->color('gray')
                 ->action(fn () => $this->dispatch('setServerState', state: 'restart'))
-                ->disabled(fn () => $server->isInConflictState())
-                ->disabled(fn () => $server->retrieveStatus() == 'offline'),
+                ->disabled(fn () => $server->isInConflictState() || $server->retrieveStatus() == 'offline'),
             Action::make('stop')
                 ->color('danger')
                 ->action(fn () => $this->dispatch('setServerState', state: 'stop'))
-                ->disabled(fn () => $server->isInConflictState())
-                ->disabled(fn () => $server->retrieveStatus() == 'offline'),
+                ->disabled(fn () => $server->isInConflictState() || $server->retrieveStatus() == 'offline'),
         ];
     }
 }
