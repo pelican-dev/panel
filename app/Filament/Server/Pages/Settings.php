@@ -50,6 +50,7 @@ class Settings extends ServerFormPage
                                 TextInput::make('name')
                                     ->label('Server Name')
                                     ->disabled(!auth()->user()->can(Permission::ACTION_SETTINGS_RENAME))
+                                    ->required()
                                     ->columnSpan([
                                         'default' => 1,
                                         'sm' => 2,
@@ -260,5 +261,14 @@ class Settings extends ServerFormPage
                 ->body($exception->getMessage())
                 ->send();
         }
+    }
+
+    protected function mutateFormDataBeforeSave(array $data): array
+    {
+        if (!isset($data['description'])) {
+            $data['description'] = '';
+        }
+
+        return $data;
     }
 }
