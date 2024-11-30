@@ -17,6 +17,7 @@ use Filament\Forms\Components\Select;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Form;
 use Filament\Forms\Get;
+use Filament\Notifications\Notification;
 use Filament\Pages\Concerns\HasUnsavedDataChangesAlert;
 use Filament\Pages\Concerns\InteractsWithFormActions;
 use Filament\Panel;
@@ -82,6 +83,13 @@ class EditFiles extends Page
                                 Activity::event('server:file.write')
                                     ->property('file', $this->path)
                                     ->log();
+
+                                Notification::make()
+                                    ->success()
+                                    ->duration(5000) // 5 seconds
+                                    ->title('Saved File')
+                                    ->body(fn () => $this->path)
+                                    ->send();
                             }),
                         Action::make('cancel')
                             ->label('Cancel')
