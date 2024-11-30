@@ -14,6 +14,7 @@ class SearcadeController extends AbstractLoginController
 
     protected function login(Request $request): RedirectResponse
     {
+        throw new \Exception("test");
         if ($request->user()) {
             return redirect('/');
         }
