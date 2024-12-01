@@ -20,7 +20,7 @@ class ListActivities extends ListRecords
             ->columns([
                 TextColumn::make('event')
                     ->html()
-                    ->formatStateUsing(fn ($state, ActivityLog $activityLog) => __('activity.'.str($state)->replace(':', '.'), $activityLog->properties?->toArray() ?? []))
+                    ->formatStateUsing(fn ($state, ActivityLog $activityLog) => __('activity.'.str($state)->replace(':', '.'))) // TODO: convert properties to a format that trans likes, see ActivityLogEntry.tsx - wrapProperties
                     ->description(fn ($state) => $state),
                 TextColumn::make('user')
                     ->state(fn (ActivityLog $activityLog) => $activityLog->actor instanceof User ? $activityLog->actor->username : 'System')
