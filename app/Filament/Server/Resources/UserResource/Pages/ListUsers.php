@@ -368,8 +368,11 @@ class ListUsers extends ListRecords
                 ->modalSubmitActionLabel('Invite')
                 ->action(function (array $data, SubuserCreationService $service) use ($server) {
                     $email = $data['email'];
-                    $permissions = collect($data)->forget('email')->map(fn ($permissions, $key) => collect($permissions)->map(fn ($permission) => "$key.$permission"))->flatten()->all();
 
+                    if (in_array('console', $data['control'])) {
+                        $data['websocket'][0] = 'connect';
+                    }
+                    $permissions = collect($data)->forget('email')->map(fn ($permissions, $key) => collect($permissions)->map(fn ($permission) => "$key.$permission"))->flatten()->all();
                     $service->handle($server, $email, $permissions);
 
                     Notification::make()
