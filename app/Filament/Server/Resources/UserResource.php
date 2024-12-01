@@ -127,7 +127,6 @@ class UserResource extends Resource
                                                     'start',
                                                     'stop',
                                                     'restart',
-                                                    'kill',
                                                 ],
                                                 'user' => [
                                                     'read',
@@ -231,14 +230,12 @@ class UserResource extends Resource
                                                                 'start' => 'Start',
                                                                 'stop' => 'Stop',
                                                                 'restart' => 'Restart',
-                                                                'kill' => 'Kill',
                                                             ])
                                                             ->descriptions([
                                                                 'console' => trans('server/users.permissions.control_console'),
                                                                 'start' => trans('server/users.permissions.control_start'),
                                                                 'stop' => trans('server/users.permissions.control_stop'),
                                                                 'restart' => trans('server/users.permissions.control_restart'),
-                                                                'kill' => trans('server/users.permissions.control_kill'),
                                                             ]),
                                                     ]),
                                             ]),
