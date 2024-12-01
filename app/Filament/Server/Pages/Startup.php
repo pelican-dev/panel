@@ -151,6 +151,11 @@ class Startup extends ServerFormPage
         abort_unless(auth()->user()->can(Permission::ACTION_STARTUP_READ, Filament::getTenant()), 403);
     }
 
+    public static function canAccess(): bool
+    {
+        return auth()->user()->can(Permission::ACTION_STARTUP_READ, Filament::getTenant());
+    }
+
     private function shouldHideComponent(ServerVariable $serverVariable, Component $component): bool
     {
         $containsRuleIn = array_first($serverVariable->variable->rules, fn ($value) => str($value)->startsWith('in:'), false);
