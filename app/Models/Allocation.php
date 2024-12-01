@@ -20,6 +20,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property \Carbon\Carbon|null $updated_at
  * @property string $alias
  * @property bool $has_alias
+ * @property string $address
  * @property \App\Models\Server|null $server
  * @property \App\Models\Node $node
  *

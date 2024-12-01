@@ -19,19 +19,22 @@ class ServerOverview extends StatsOverviewWidget
         return [
             Stat::make('Name', $this->server->name)
                 ->description($this->server->description),
-            Stat::make('Status', Str::title($this->server->condition)),
-            Stat::make('Uptime', $this->uptime()),
+            Stat::make('Status', $this->status()),
+            Stat::make('Address', $this->server->allocation->address),
         ];
     }
 
-    private function uptime(): string
+    private function status(): string
     {
+        $status = Str::title($this->server->condition);
         $uptime = collect(cache()->get("servers.{$this->server->id}.uptime"))->last() ?? 0;
 
         if ($uptime === 0) {
-            return 'Offline';
+            return $status;
         }
 
-        return now()->subMillis($uptime)->diffForHumans(syntax: CarbonInterface::DIFF_ABSOLUTE, short: true, parts: 2);
+        $uptime = now()->subMillis($uptime)->diffForHumans(syntax: CarbonInterface::DIFF_ABSOLUTE, short: true, parts: 2);
+
+        return "$status ($uptime)";
     }
 }
