@@ -65,7 +65,7 @@ class Settings extends ServerFormPage
                                     ->afterStateUpdated(fn ($state, Server $server) => $this->updateName($state, $server)),
                                 Textarea::make('description')
                                     ->label('Server Description')
-                                    ->disabled(!auth()->user()->can(Permission::ACTION_SETTINGS_RENAME, $server))
+                                    ->disabled(!auth()->user()->can(Permission::ACTION_SETTINGS_RENAME, $server) || !config('panel.editable_server_descriptions'))
                                     ->columnSpan([
                                         'default' => 1,
                                         'sm' => 2,
@@ -239,7 +239,7 @@ class Settings extends ServerFormPage
 
     public function updateDescription(string $description, Server $server): void
     {
-        abort_unless(auth()->user()->can(Permission::ACTION_SETTINGS_RENAME, $server), 403);
+        abort_unless(auth()->user()->can(Permission::ACTION_SETTINGS_RENAME, $server) && config('panel.editable_server_descriptions'), 403);
 
         $original = $server->description;
 
