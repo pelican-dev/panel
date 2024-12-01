@@ -70,7 +70,7 @@ class Settings extends ServerFormPage
                                     ])
                                     ->autosize()
                                     ->live(onBlur: true)
-                                    ->afterStateUpdated(fn ($state, Server $server) => $this->updateDescription($state, $server)),
+                                    ->afterStateUpdated(fn ($state, Server $server) => $this->updateDescription($state ?? '', $server)),
                                 TextInput::make('uuid')
                                     ->label('Server UUID')
                                     ->columnSpan([
@@ -261,14 +261,5 @@ class Settings extends ServerFormPage
                 ->body($exception->getMessage())
                 ->send();
         }
-    }
-
-    protected function mutateFormDataBeforeSave(array $data): array
-    {
-        if (!isset($data['description'])) {
-            $data['description'] = '';
-        }
-
-        return $data;
     }
 }
