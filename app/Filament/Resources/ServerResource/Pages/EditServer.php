@@ -7,6 +7,7 @@ use App\Enums\ServerState;
 use App\Filament\Resources\ServerResource;
 use App\Filament\Resources\ServerResource\RelationManagers\AllocationsRelationManager;
 use App\Models\Database;
+use App\Models\DatabaseHost;
 use App\Models\Egg;
 use App\Models\Mount;
 use App\Models\Server;
@@ -608,7 +609,9 @@ class EditServer extends EditRecord
                                     ->columnSpanFull(),
                             ]),
                         Tab::make('Databases')
+                            ->hidden(fn () => !auth()->user()->can('viewList database'))
                             ->icon('tabler-database')
+                            ->columns(4)
                             ->schema([
                                 Repeater::make('databases')
                                     ->grid()
@@ -622,35 +625,50 @@ class EditServer extends EditRecord
                                             ->formatStateUsing(fn ($record) => $record->database)
                                             ->hintAction(
                                                 Action::make('Delete')
+                                                    ->authorize(fn (Database $database) => auth()->user()->can('delete database', $database))
                                                     ->color('danger')
                                                     ->icon('tabler-trash')
-                                                    ->action(fn (DatabaseManagementService $databaseManagementService, $record) => $databaseManagementService->delete($record))
+                                                    ->requiresConfirmation()
+                                                    ->modalIcon('tabler-database-x')
+                                                    ->modalHeading('Delete Database?')
+                                                    ->modalSubmitActionLabel(fn (Get $get) => 'Delete ' . $get('database') . '?')
+                                                    ->modalDescription(fn (Get $get) => 'Are you sure you want to delete ' . $get('database') . '?')
+                                                    ->action(function (DatabaseManagementService $databaseManagementService, $record) {
+                                                        $databaseManagementService->delete($record);
+                                                        $this->fillForm();
+                                                    })
                                             ),
                                         TextInput::make('username')
                                             ->disabled()
                                             ->formatStateUsing(fn ($record) => $record->username)
-                                            ->columnSpan(2),
+                                            ->columnSpan(1),
                                         TextInput::make('password')
                                             ->disabled()
+                                            ->password()
+                                            ->revealable()
+                                            ->columnSpan(1)
                                             ->hintAction(
                                                 Action::make('rotate')
+                                                    ->authorize(fn (Database $database) => auth()->user()->can('update database', $database))
                                                     ->icon('tabler-refresh')
-                                                    ->requiresConfirmation()
+                                                    ->modalHeading('Change Database Password?')
                                                     ->action(fn (DatabasePasswordService $service, $record, $set, $get) => $this->rotatePassword($service, $record, $set, $get))
+                                                    ->requiresConfirmation()
                                             )
-                                            ->formatStateUsing(fn (Database $database) => $database->password)
-                                            ->columnSpan(2),
+                                            ->formatStateUsing(fn (Database $database) => $database->password),
                                         TextInput::make('remote')
                                             ->disabled()
-                                            ->formatStateUsing(fn ($record) => $record->remote)
+                                            ->formatStateUsing(fn ($record) => $record->remote === '%' ? 'Anywhere ( % )' : $record->remote)
                                             ->columnSpan(1)
                                             ->label('Connections From'),
                                         TextInput::make('max_connections')
                                             ->disabled()
-                                            ->formatStateUsing(fn ($record) => $record->max_connections)
+                                            ->formatStateUsing(fn ($record) => $record->max_connections === 0 ? 'Unlimited' : $record->max_connections)
                                             ->columnSpan(1),
                                         TextInput::make('JDBC')
                                             ->disabled()
+                                            ->password()
+                                            ->revealable()
                                             ->label('JDBC Connection String')
                                             ->columnSpan(2)
                                             ->formatStateUsing(fn (Get $get, $record) => 'jdbc:mysql://' . $get('username') . ':' . urlencode($record->password) . '@' . $record->host->host . ':' . $record->host->port . '/' . $get('database')),
@@ -659,7 +677,57 @@ class EditServer extends EditRecord
                                     ->deletable(false)
                                     ->addable(false)
                                     ->columnSpan(4),
-                            ])->columns(4),
+                                Forms\Components\Actions::make([
+                                    Action::make('createDatabase')
+                                        ->authorize(fn () => auth()->user()->can('create database'))
+                                        ->disabled(fn () => DatabaseHost::query()->count() < 1)
+                                        ->label(fn () => DatabaseHost::query()->count() < 1 ? 'No Database Hosts' : 'Create Database')
+                                        ->color(fn () => DatabaseHost::query()->count() < 1 ? 'danger' : 'primary')
+                                        ->modalSubmitActionLabel('Create Database')
+                                        ->action(function (array $data, DatabaseManagementService $service, Server $server, RandomWordService $randomWordService) {
+                                            if (empty($data['database'])) {
+                                                $data['database'] = $randomWordService->word() . random_int(1, 420);
+                                            }
+                                            if (empty($data['remote'])) {
+                                                $data['remote'] = '%';
+                                            }
+
+                                            $data['database'] = $service->generateUniqueDatabaseName($data['database'], $server->id);
+
+                                            try {
+                                                $service->setValidateDatabaseLimit(false)->create($server, $data);
+                                            } catch (Exception $e) {
+                                                Notification::make()
+                                                    ->title('Failed to Create Database')
+                                                    ->body($e->getMessage())
+                                                    ->danger()
+                                                    ->persistent()->send();
+                                            }
+                                            $this->fillForm();
+                                        })
+                                        ->form([
+                                            Select::make('database_host_id')
+                                                ->label('Database Host')
+                                                ->required()
+                                                ->placeholder('Select Database Host')
+                                                ->relationship('node.databaseHosts', 'name')
+                                                ->default(fn () => (DatabaseHost::query()->first())?->id)
+                                                ->selectablePlaceholder(false),
+                                            TextInput::make('database')
+                                                ->label('Database Name')
+                                                ->alphaDash()
+                                                ->prefix(fn (Server $server) => 's' . $server->id . '_')
+                                                ->hintIcon('tabler-question-mark')
+                                                ->hintIconTooltip('Leaving this blank will auto generate a random name'),
+                                            TextInput::make('remote')
+                                                ->columnSpan(1)
+                                                ->regex('/^[\w\-\/.%:]+$/')
+                                                ->label('Connections From')
+                                                ->hintIcon('tabler-question-mark')
+                                                ->hintIconTooltip('Where connections should be allowed from. Leave blank to allow connections from anywhere.'),
+                                        ]),
+                                ])->alignCenter()->columnSpanFull(),
+                            ]),
                         Tab::make('Actions')
                             ->icon('tabler-settings')
                             ->schema([

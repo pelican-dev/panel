@@ -101,9 +101,13 @@ class EditDatabaseHost extends EditRecord
 
     public function getRelationManagers(): array
     {
-        return [
-            DatabasesRelationManager::class,
-        ];
+        if (DatabasesRelationManager::canViewForRecord($this->getRecord(), static::class)) {
+            return [
+                DatabasesRelationManager::class,
+            ];
+        }
+
+        return [];
     }
 
     protected function handleRecordUpdate(Model $record, array $data): Model
