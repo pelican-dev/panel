@@ -31,6 +31,7 @@ use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Get;
 use Filament\Notifications\Notification;
+use Filament\Support\Enums\MaxWidth;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Hash;
@@ -49,6 +50,11 @@ class EditProfile extends \Filament\Pages\Auth\EditProfile
     public function boot(ToggleTwoFactorService $toggleTwoFactorService): void
     {
         $this->toggleTwoFactorService = $toggleTwoFactorService;
+    }
+
+    public function getMaxWidth(): MaxWidth|string
+    {
+        return MaxWidth::SevenExtraLarge;
     }
 
     protected function getForms(): array
@@ -236,7 +242,7 @@ class EditProfile extends \Filament\Pages\Auth\EditProfile
                                                 ->content(fn () => new HtmlString("
                                                 <div style='width: 300px; background-color: rgb(24, 24, 27);'>$image</div>
                                             "))
-                                                ->helperText('Setup Key: '. $secret),
+                                                ->helperText('Setup Key: ' . $secret),
                                             TextInput::make('2facode')
                                                 ->label('Code')
                                                 ->requiredWith('2fapassword')
@@ -367,5 +373,18 @@ class EditProfile extends \Filament\Pages\Auth\EditProfile
 
             $stopPropagation();
         }
+    }
+
+    protected function getFormActions(): array
+    {
+        return [];
+    }
+
+    protected function getHeaderActions(): array
+    {
+        return [
+            $this->getSaveFormAction()->formId('form'),
+        ];
+
     }
 }

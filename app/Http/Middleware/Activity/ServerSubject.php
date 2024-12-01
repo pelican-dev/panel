@@ -20,6 +20,11 @@ class ServerSubject
     public function handle(Request $request, \Closure $next): Response
     {
         $server = $request->route()->parameter('server');
+
+        if ($request->route()->hasParameter('tenant')) {
+            $server = Server::find($request->route()->parameter('tenant'));
+        }
+
         if ($server instanceof Server) {
             LogTarget::setActor($request->user());
             LogTarget::setSubject($server);

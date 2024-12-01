@@ -512,23 +512,19 @@ class EditServer extends EditRecord
                                     ->label('Startup Command')
                                     ->required()
                                     ->columnSpan(6)
-                                    ->rows(function ($state) {
-                                        return str($state)->explode("\n")->reduce(
-                                            fn (int $carry, $line) => $carry + floor(strlen($line) / 125),
-                                            0
-                                        );
-                                    }),
+                                    ->autosize(),
 
                                 Textarea::make('defaultStartup')
                                     ->hintAction(CopyAction::make())
                                     ->label('Default Startup Command')
                                     ->disabled()
+                                    ->autosize()
+                                    ->columnSpan(6)
                                     ->formatStateUsing(function ($state, Get $get) {
                                         $egg = Egg::query()->find($get('egg_id'));
 
                                         return $egg->startup;
-                                    })
-                                    ->columnSpan(6),
+                                    }),
 
                                 Repeater::make('server_variables')
                                     ->relationship('serverVariables', function (Builder $query) {
@@ -868,7 +864,7 @@ class EditServer extends EditRecord
                 ->action(function (Server $server, ServerDeletionService $service) {
                     $service->handle($server);
 
-                    return redirect(ListServers::getUrl());
+                    return redirect(ListServers::getUrl(panel: 'admin'));
                 })
                 ->authorize(fn (Server $server) => auth()->user()->can('delete server', $server)),
             Actions\Action::make('console')
