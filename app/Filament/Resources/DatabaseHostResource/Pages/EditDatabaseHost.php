@@ -101,8 +101,10 @@ class EditDatabaseHost extends EditRecord
 
     public function getRelationManagers(): array
     {
-        if (auth()->user()->can('viewList database')) {
-            return [DatabasesRelationManager::class];
+        if (DatabasesRelationManager::canViewForRecord($this->getRecord(), static::class)) {
+            return [
+                DatabasesRelationManager::class,
+            ];
         }
 
         return [];
