@@ -5,6 +5,7 @@ namespace App\Filament\Server\Resources\AllocationResource\Pages;
 use App\Facades\Activity;
 use App\Filament\Server\Resources\AllocationResource;
 use App\Models\Allocation;
+use App\Models\Permission;
 use App\Models\Server;
 use App\Services\Allocations\FindAssignableAllocationService;
 use Filament\Actions;
@@ -34,6 +35,7 @@ class ListAllocations extends ListRecords
                     ->hidden(),
                 TextColumn::make('port'),
                 TextInputColumn::make('notes')
+                    ->disabled(fn () => !auth()->user()->can(Permission::ACTION_ALLOCATION_UPDATE, $server))
                     ->label('Notes'),
                 IconColumn::make('primary')
                     ->icon(fn ($state) => match ($state) {
@@ -44,12 +46,17 @@ class ListAllocations extends ListRecords
                         true => 'warning',
                         default => 'gray',
                     })
-                    ->action(fn (Allocation $allocation) => $server->update(['allocation_id' => $allocation->id]))
+                    ->action(function (Allocation $allocation) use ($server) {
+                        if (auth()->user()->can(PERMISSION::ACTION_ALLOCATION_UPDATE, $server)) {
+                            return $server->update(['allocation_id' => $allocation->id]);
+                        }
+                    })
                     ->default(fn (Allocation $allocation) => $allocation->id === $server->allocation_id)
                     ->label('Primary'),
             ])
             ->actions([
                 DetachAction::make()
+                    ->authorize(fn () => auth()->user()->can(Permission::ACTION_ALLOCATION_DELETE, $server))
                     ->label('Delete')
                     ->icon('tabler-trash')
                     ->hidden(fn (Allocation $allocation) => $allocation->id === $server->allocation_id)
@@ -74,6 +81,7 @@ class ListAllocations extends ListRecords
 
         return [
             Actions\Action::make('addAllocation')
+                ->authorize(fn () => auth()->user()->can(Permission::ACTION_ALLOCATION_CREATE, $server))
                 ->label(fn () => $server->allocations()->count() >= $server->allocation_limit ? 'Allocation limit reached' : 'Add Allocation')
                 ->hidden(fn () => !config('panel.client_features.allocations.enabled'))
                 ->disabled(fn () => $server->allocations()->count() >= $server->allocation_limit)
