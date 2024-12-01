@@ -162,6 +162,8 @@ class ListFiles extends ListRecords
                                 ->title('File copied')
                                 ->success()
                                 ->send();
+
+                            return redirect(ListFiles::getUrl(['path' => $this->path]));
                         }),
                     Action::make('download')
                         ->authorize(fn () => auth()->user()->can(Permission::ACTION_FILE_READ_CONTENT, $server))
@@ -508,6 +510,8 @@ class ListFiles extends ListRecords
                             ->property('directory', $this->path)
                             ->log();
                     }
+
+                    return redirect(ListFiles::getUrl(['path' => $this->path]));
 
                 })
                 ->form([
