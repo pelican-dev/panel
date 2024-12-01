@@ -21,6 +21,7 @@ class ListServers extends ListRecords
         return $table
             ->paginated(false)
             ->query(fn () => auth()->user()->can('viewList server') ? Server::query() : auth()->user()->accessibleServers())
+            ->poll('15s')
             ->columns([
                 Stack::make([
                     ServerEntryColumn::make('server_entry')
@@ -40,7 +41,7 @@ class ListServers extends ListRecords
     // @phpstan-ignore-next-line
     private function uptime(Server $server): string
     {
-        $uptime = collect(cache()->get("servers.{$server->id}.uptime"))->last() ?? 0;
+        $uptime = $server->resources()['uptime'] ?? 0;
 
         if ($uptime === 0) {
             return 'Offline';
@@ -52,7 +53,7 @@ class ListServers extends ListRecords
     // @phpstan-ignore-next-line
     private function cpu(Server $server): string
     {
-        $cpu = Number::format(collect(cache()->get("servers.{$server->id}.cpu_absolute"))->last() ?? 0, maxPrecision: 2, locale: auth()->user()->language) . '%';
+        $cpu = Number::format($server->resources()['cpu_absolute'] ?? 0, maxPrecision: 2, locale: auth()->user()->language) . '%';
         $max = Number::format($server->cpu, locale: auth()->user()->language) . '%';
 
         return $cpu . ($server->cpu > 0 ? ' Of ' . $max : '');
@@ -61,8 +62,8 @@ class ListServers extends ListRecords
     // @phpstan-ignore-next-line
     private function memory(Server $server): string
     {
-        $latestMemoryUsed = collect(cache()->get("servers.{$server->id}.memory_bytes"))->last() ?? 0;
-        $totalMemory = collect(cache()->get("servers.{$server->id}.memory_limit_bytes"))->last() ?? 0;
+        $latestMemoryUsed = $server->resources()['memory_bytes'] ?? 0;
+        $totalMemory = $server->resources()['memory_limit_bytes'] ?? 0;
 
         $used = config('panel.use_binary_prefix')
             ? Number::format($latestMemoryUsed / 1024 / 1024 / 1024, maxPrecision: 2, locale: auth()->user()->language) .' GiB'
@@ -84,7 +85,7 @@ class ListServers extends ListRecords
     // @phpstan-ignore-next-line
     private function disk(Server $server): string
     {
-        $usedDisk = collect(cache()->get("servers.{$server->id}.disk_bytes"))->last() ?? 0;
+        $usedDisk = $server->resources()['disk_bytes'] ?? 0;
 
         $used = config('panel.use_binary_prefix')
             ? Number::format($usedDisk / 1024 / 1024 / 1024, maxPrecision: 2, locale: auth()->user()->language) .' GiB'

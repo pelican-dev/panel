@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Enums\ContainerStatus;
 use App\Enums\ServerState;
 use App\Exceptions\Http\Connection\DaemonConnectionException;
+use App\Repositories\Daemon\DaemonServerRepository;
 use GuzzleHttp\Exception\GuzzleException;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -429,6 +430,14 @@ class Server extends Model
         $this->node->serverStatuses();
 
         return cache()->get("servers.$this->uuid.container.status") ?? 'missing';
+    }
+
+    public function resources(): array
+    {
+        return cache()->remember("resources:$this->uuid", now()->addSeconds(15), function () {
+            // @phpstan-ignore-next-line
+            return app(DaemonServerRepository::class)->setServer($this)->getDetails()['utilization'] ?? [];
+        });
     }
 
     public function condition(): Attribute
