@@ -10,6 +10,7 @@ use Carbon\CarbonInterface;
 use Filament\Resources\Pages\ListRecords;
 use Filament\Tables\Columns\Layout\Stack;
 use Filament\Tables\Table;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Number;
 
 class ListServers extends ListRecords
@@ -41,7 +42,7 @@ class ListServers extends ListRecords
     // @phpstan-ignore-next-line
     private function uptime(Server $server): string
     {
-        $uptime = $server->resources()['uptime'] ?? 0;
+        $uptime = Arr::get($server->resources(), 'uptime', 0);
 
         if ($uptime === 0) {
             return 'Offline';
@@ -53,7 +54,7 @@ class ListServers extends ListRecords
     // @phpstan-ignore-next-line
     private function cpu(Server $server): string
     {
-        $cpu = Number::format($server->resources()['cpu_absolute'] ?? 0, maxPrecision: 2, locale: auth()->user()->language) . '%';
+        $cpu = Number::format(Arr::get($server->resources(), 'cpu_absolute', 0), maxPrecision: 2, locale: auth()->user()->language) . '%';
         $max = Number::format($server->cpu, locale: auth()->user()->language) . '%';
 
         return $cpu . ($server->cpu > 0 ? ' Of ' . $max : '');
@@ -62,8 +63,8 @@ class ListServers extends ListRecords
     // @phpstan-ignore-next-line
     private function memory(Server $server): string
     {
-        $latestMemoryUsed = $server->resources()['memory_bytes'] ?? 0;
-        $totalMemory = $server->resources()['memory_limit_bytes'] ?? 0;
+        $latestMemoryUsed = Arr::get($server->resources(), 'memory_bytes', 0);
+        $totalMemory = Arr::get($server->resources(), 'memory_limit_bytes', 0);
 
         $used = config('panel.use_binary_prefix')
             ? Number::format($latestMemoryUsed / 1024 / 1024 / 1024, maxPrecision: 2, locale: auth()->user()->language) .' GiB'
@@ -85,7 +86,7 @@ class ListServers extends ListRecords
     // @phpstan-ignore-next-line
     private function disk(Server $server): string
     {
-        $usedDisk = $server->resources()['disk_bytes'] ?? 0;
+        $usedDisk = Arr::get($server->resources(), 'disk_bytes', 0);
 
         $used = config('panel.use_binary_prefix')
             ? Number::format($usedDisk / 1024 / 1024 / 1024, maxPrecision: 2, locale: auth()->user()->language) .' GiB'

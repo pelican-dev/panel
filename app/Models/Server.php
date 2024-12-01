@@ -11,6 +11,7 @@ use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Query\JoinClause;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Http;
 use Psr\Http\Message\ResponseInterface;
 use Illuminate\Database\Eloquent\Relations\HasOne;
@@ -436,7 +437,7 @@ class Server extends Model
     {
         return cache()->remember("resources:$this->uuid", now()->addSeconds(15), function () {
             // @phpstan-ignore-next-line
-            return app(DaemonServerRepository::class)->setServer($this)->getDetails()['utilization'] ?? [];
+            return Arr::get(app(DaemonServerRepository::class)->setServer($this)->getDetails(), 'utilization', []);
         });
     }
 
