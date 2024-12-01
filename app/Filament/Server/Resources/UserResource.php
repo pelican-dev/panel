@@ -92,6 +92,7 @@ class UserResource extends Resource
             ->actions([
                 DeleteAction::make()
                     ->label('Remove User')
+                    ->hidden(fn (User $user) => auth()->user()->id === $user->id)
                     ->requiresConfirmation(),
                 EditAction::make()
                     ->label('Edit User')
