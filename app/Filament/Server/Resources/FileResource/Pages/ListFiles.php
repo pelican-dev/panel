@@ -434,6 +434,7 @@ class ListFiles extends ListRecords
                 ->authorize(fn () => auth()->user()->can(Permission::ACTION_FILE_CREATE, $server))
                 ->label('New File')
                 ->color('gray')
+                ->keyBindings('')
                 ->modalSubmitActionLabel('Create')
                 ->action(function ($data) use ($server) {
                     // @phpstan-ignore-next-line
@@ -458,8 +459,7 @@ class ListFiles extends ListRecords
                     MonacoEditor::make('editor')
                         ->label('')
                         ->view('filament.plugins.monaco-editor')
-                        ->language(fn (Get $get) => $get('lang'))
-                        ->required(),
+                        ->language(fn (Get $get) => $get('lang')),
                 ]),
             HeaderAction::make('new_folder')
                 ->authorize(fn () => auth()->user()->can(Permission::ACTION_FILE_CREATE, $server))
