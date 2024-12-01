@@ -122,6 +122,7 @@ class Settings extends ServerFormPage
                             ->formatStateUsing(fn (Server $server) => $server->node->name)
                             ->disabled(),
                         Fieldset::make('SFTP Information')
+                            ->hidden(fn () => !auth()->user()->can(Permission::ACTION_FILE_SFTP, $server))
                             ->label('SFTP Information')
                             ->columns([
                                 'default' => 1,
@@ -161,6 +162,7 @@ class Settings extends ServerFormPage
                             ]),
                     ]),
                 Section::make('Reinstall Server')
+                    ->hidden(fn () => !auth()->user()->can(Permission::ACTION_SETTINGS_REINSTALL, $server))
                     ->collapsible()->collapsed()
                     ->footerActions([
                         Action::make('reinstall')
