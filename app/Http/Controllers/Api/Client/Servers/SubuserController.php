@@ -11,7 +11,6 @@ use Illuminate\Http\JsonResponse;
 use App\Facades\Activity;
 use App\Models\Permission;
 use App\Services\Subusers\SubuserCreationService;
-use App\Repositories\Daemon\DaemonServerRepository;
 use App\Transformers\Api\Client\SubuserTransformer;
 use App\Http\Controllers\Api\Client\ClientApiController;
 use App\Http\Requests\Api\Client\Servers\Subusers\GetSubuserRequest;
@@ -27,8 +26,7 @@ class SubuserController extends ClientApiController
     public function __construct(
         private SubuserCreationService $creationService,
         private SubuserUpdateService $updateService,
-        private SubuserDeletionService $deletionService,
-        private DaemonServerRepository $serverRepository
+        private SubuserDeletionService $deletionService
     ) {
         parent::__construct();
     }
