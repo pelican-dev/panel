@@ -113,6 +113,7 @@ class CreateServer extends CreateRecord
                                     TextInput::make('username')
                                         ->alphaNum()
                                         ->required()
+                                        ->minLength(3)
                                         ->maxLength(255),
 
                                     TextInput::make('email')

@@ -9,16 +9,4 @@ return [
         'scheme' => 'https',
     ],
 
-    'github' => [
-        'client_id' => env('OAUTH_GITHUB_CLIENT_ID'),
-        'client_secret' => env('OAUTH_GITHUB_CLIENT_SECRET'),
-        'redirect' => '/auth/oauth/callback/github',
-    ],
-
-    'discord' => [
-        'client_id' => env('OAUTH_DISCORD_CLIENT_ID'),
-        'client_secret' => env('OAUTH_DISCORD_CLIENT_SECRET'),
-        'redirect' => '/auth/oauth/callback/discord',
-    ],
-
 ];
