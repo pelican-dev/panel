@@ -105,7 +105,7 @@ class Allocation extends Model
     protected function address(): Attribute
     {
         return Attribute::make(
-            get: fn () => "$this->ip:$this->port",
+            get: fn () => "$this->alias:$this->port",
         );
     }
 
