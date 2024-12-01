@@ -4,9 +4,11 @@ namespace App\Filament\Server\Resources;
 
 use App\Filament\Server\Resources\DatabaseResource\Pages;
 use App\Models\Database;
+use App\Models\Permission;
 use App\Models\Server;
 use Filament\Facades\Filament;
 use Filament\Resources\Resource;
+use Illuminate\Database\Eloquent\Model;
 
 class DatabaseResource extends Resource
 {
@@ -27,6 +29,26 @@ class DatabaseResource extends Resource
         }
 
         return parent::canAccess();
+    }
+
+    public static function canViewAny(): bool
+    {
+        return auth()->user()->can(Permission::ACTION_DATABASE_READ, Filament::getTenant());
+    }
+
+    public static function canCreate(): bool
+    {
+        return auth()->user()->can(Permission::ACTION_DATABASE_CREATE, Filament::getTenant());
+    }
+
+    public static function canEdit(Model $record): bool
+    {
+        return auth()->user()->can(Permission::ACTION_DATABASE_UPDATE, Filament::getTenant());
+    }
+
+    public static function canDelete(Model $record): bool
+    {
+        return auth()->user()->can(Permission::ACTION_DATABASE_DELETE, Filament::getTenant());
     }
 
     public static function getPages(): array

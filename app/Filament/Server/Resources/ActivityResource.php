@@ -4,6 +4,7 @@ namespace App\Filament\Server\Resources;
 
 use App\Filament\Server\Resources\ActivityResource\Pages;
 use App\Models\ActivityLog;
+use App\Models\Permission;
 use App\Models\Role;
 use App\Models\Server;
 use App\Models\User;
@@ -62,6 +63,11 @@ class ActivityResource extends Resource
         }
 
         return parent::canAccess();
+    }
+
+    public static function canViewAny(): bool
+    {
+        return auth()->user()->can(Permission::ACTION_ACTIVITY_READ, Filament::getTenant());
     }
 
     public static function getPages(): array

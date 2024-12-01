@@ -23,6 +23,7 @@ use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Model;
 
 class UserResource extends Resource
 {
@@ -45,6 +46,26 @@ class UserResource extends Resource
         }
 
         return parent::canAccess();
+    }
+
+    public static function canViewAny(): bool
+    {
+        return auth()->user()->can(Permission::ACTION_USER_READ, Filament::getTenant());
+    }
+
+    public static function canCreate(): bool
+    {
+        return auth()->user()->can(Permission::ACTION_USER_CREATE, Filament::getTenant());
+    }
+
+    public static function canEdit(Model $record): bool
+    {
+        return auth()->user()->can(Permission::ACTION_USER_UPDATE, Filament::getTenant());
+    }
+
+    public static function canDelete(Model $record): bool
+    {
+        return auth()->user()->can(Permission::ACTION_USER_DELETE, Filament::getTenant());
     }
 
     public static function table(Table $table): Table

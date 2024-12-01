@@ -4,6 +4,7 @@ namespace App\Filament\Server\Resources;
 
 use App\Filament\Server\Resources\ScheduleResource\Pages;
 use App\Filament\Server\Resources\ScheduleResource\RelationManagers\TasksRelationManager;
+use App\Models\Permission;
 use App\Models\Schedule;
 use App\Models\Server;
 use Filament\Facades\Filament;
@@ -16,6 +17,7 @@ use Filament\Forms\Components\Toggle;
 use Filament\Forms\Form;
 use Filament\Forms\Set;
 use Filament\Resources\Resource;
+use Illuminate\Database\Eloquent\Model;
 
 class ScheduleResource extends Resource
 {
@@ -36,6 +38,26 @@ class ScheduleResource extends Resource
         }
 
         return parent::canAccess();
+    }
+
+    public static function canViewAny(): bool
+    {
+        return auth()->user()->can(Permission::ACTION_SCHEDULE_READ, Filament::getTenant());
+    }
+
+    public static function canCreate(): bool
+    {
+        return auth()->user()->can(Permission::ACTION_SCHEDULE_CREATE, Filament::getTenant());
+    }
+
+    public static function canEdit(Model $record): bool
+    {
+        return auth()->user()->can(Permission::ACTION_SCHEDULE_UPDATE, Filament::getTenant());
+    }
+
+    public static function canDelete(Model $record): bool
+    {
+        return auth()->user()->can(Permission::ACTION_SCHEDULE_DELETE, Filament::getTenant());
     }
 
     public static function form(Form $form): Form
