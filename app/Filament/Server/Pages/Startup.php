@@ -26,6 +26,9 @@ class Startup extends ServerFormPage
 
     public function form(Form $form): Form
     {
+        /** @var Server $server */
+        $server = Filament::getTenant();
+
         return $form
             ->columns([
                 'default' => 1,
@@ -59,7 +62,7 @@ class Startup extends ServerFormPage
                     ->label('Docker Image')
                     ->live()
                     ->visible(fn (Server $server) => in_array($server->image, $server->egg->docker_images))
-                    ->disabled(!auth()->user()->can(Permission::ACTION_STARTUP_DOCKER_IMAGE))
+                    ->disabled(!auth()->user()->can(Permission::ACTION_STARTUP_DOCKER_IMAGE, $server))
                     ->afterStateUpdated(function ($state, Server $server) {
                         $original = $server->image;
                         $server->forceFill(['image' => $state])->saveOrFail();
@@ -94,7 +97,7 @@ class Startup extends ServerFormPage
                             ->label('')
                             ->relationship('viewableServerVariables')
                             ->grid()
-                            ->disabled(!auth()->user()->can(Permission::ACTION_STARTUP_UPDATE))
+                            ->disabled(!auth()->user()->can(Permission::ACTION_STARTUP_UPDATE, $server))
                             ->reorderable(false)->addable(false)->deletable(false)
                             ->schema(function () {
                                 $text = TextInput::make('variable_value')

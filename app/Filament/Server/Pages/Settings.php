@@ -8,6 +8,7 @@ use App\Facades\Activity;
 use App\Models\Permission;
 use App\Models\Server;
 use Exception;
+use Filament\Facades\Filament;
 use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\Fieldset;
 use Filament\Forms\Components\Placeholder;
@@ -28,6 +29,9 @@ class Settings extends ServerFormPage
 
     public function form(Form $form): Form
     {
+        /** @var Server $server */
+        $server = Filament::getTenant();
+
         return $form
             ->columns([
                 'default' => 1,
@@ -49,7 +53,7 @@ class Settings extends ServerFormPage
                             ->schema([
                                 TextInput::make('name')
                                     ->label('Server Name')
-                                    ->disabled(!auth()->user()->can(Permission::ACTION_SETTINGS_RENAME))
+                                    ->disabled(!auth()->user()->can(Permission::ACTION_SETTINGS_RENAME, $server))
                                     ->required()
                                     ->columnSpan([
                                         'default' => 1,
@@ -61,7 +65,7 @@ class Settings extends ServerFormPage
                                     ->afterStateUpdated(fn ($state, Server $server) => $this->updateName($state, $server)),
                                 Textarea::make('description')
                                     ->label('Server Description')
-                                    ->disabled(!auth()->user()->can(Permission::ACTION_SETTINGS_RENAME))
+                                    ->disabled(!auth()->user()->can(Permission::ACTION_SETTINGS_RENAME, $server))
                                     ->columnSpan([
                                         'default' => 1,
                                         'sm' => 2,
@@ -161,14 +165,14 @@ class Settings extends ServerFormPage
                     ->footerActions([
                         Action::make('reinstall')
                             ->color('danger')
-                            ->disabled(!auth()->user()->can(Permission::ACTION_SETTINGS_REINSTALL))
+                            ->disabled(!auth()->user()->can(Permission::ACTION_SETTINGS_REINSTALL, $server))
                             ->label('Reinstall')
                             ->requiresConfirmation()
                             ->modalHeading('Are you sure you want to reinstall the server?')
                             ->modalDescription('Some files may be deleted or modified during this process, please back up your data before continuing.')
                             ->modalSubmitActionLabel('Yes, Reinstall')
                             ->action(function (Server $server) {
-                                abort_unless(auth()->user()->can(Permission::ACTION_SETTINGS_REINSTALL), 403);
+                                abort_unless(auth()->user()->can(Permission::ACTION_SETTINGS_REINSTALL, $server), 403);
 
                                 $server->fill(['status' => ServerState::Installing])->save();
                                 try {
@@ -201,7 +205,7 @@ class Settings extends ServerFormPage
 
     public function updateName(string $name, Server $server): void
     {
-        abort_unless(auth()->user()->can(Permission::ACTION_SETTINGS_RENAME), 403);
+        abort_unless(auth()->user()->can(Permission::ACTION_SETTINGS_RENAME, $server), 403);
 
         $original = $server->name;
 
@@ -233,7 +237,7 @@ class Settings extends ServerFormPage
 
     public function updateDescription(string $description, Server $server): void
     {
-        abort_unless(auth()->user()->can(Permission::ACTION_SETTINGS_RENAME), 403);
+        abort_unless(auth()->user()->can(Permission::ACTION_SETTINGS_RENAME, $server), 403);
 
         $original = $server->description;
 
