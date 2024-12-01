@@ -7,6 +7,8 @@ use App\Models\Permission;
 use App\Models\Server;
 use App\Models\Subuser;
 use App\Models\User;
+use App\Services\Subusers\SubuserDeletionService;
+use App\Services\Subusers\SubuserUpdateService;
 use Filament\Facades\Filament;
 use Filament\Forms\Components\Actions;
 use Filament\Forms\Components\Actions\Action;
@@ -17,6 +19,7 @@ use Filament\Forms\Components\Tabs;
 use Filament\Forms\Components\Tabs\Tab;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Set;
+use Filament\Notifications\Notification;
 use Filament\Tables\Actions\DeleteAction;
 use Filament\Resources\Resource;
 use Filament\Tables\Actions\EditAction;
@@ -93,11 +96,33 @@ class UserResource extends Resource
                 DeleteAction::make()
                     ->label('Remove User')
                     ->hidden(fn (User $user) => auth()->user()->id === $user->id)
-                    ->requiresConfirmation(),
+                    ->action(function (User $user, SubuserDeletionService $subuserDeletionService) use ($server) {
+                        $subuser = Subuser::query()->where('user_id', $user->id)->where('server_id', $server->id)->first();
+                        $subuserDeletionService->handle($subuser, $server);
+
+                    }),
                 EditAction::make()
                     ->label('Edit User')
+
                     ->authorize(fn () => auth()->user()->can(Permission::ACTION_USER_UPDATE, $server))
                     ->modalHeading(fn (User $user) => 'Editing ' . $user->email)
+                    ->action(function (array $data, SubuserUpdateService $subuserUpdateService, User $user) use ($server) {
+                        $subuser = Subuser::query()->where('user_id', $user->id)->where('server_id', $server->id)->first();
+
+                        if (in_array('console', $data['control'])) {
+                            $data['websocket'][0] = 'connect';
+                        }
+
+                        $permissions = collect($data)->forget('email')->map(fn ($permissions, $key) => collect($permissions)->map(fn ($permission) => "$key.$permission"))->flatten()->all();
+                        $subuserUpdateService->handle($subuser, $server, $permissions);
+
+                        Notification::make()
+                            ->title('User Updated!')
+                            ->success()
+                            ->send();
+
+                        return redirect(self::getUrl(tenant: $server));
+                    })
                     ->form([
                         Grid::make()
                             ->columnSpanFull()
@@ -127,7 +152,6 @@ class UserResource extends Resource
                                                     'start',
                                                     'stop',
                                                     'restart',
-                                                    'kill',
                                                 ],
                                                 'user' => [
                                                     'read',
@@ -222,7 +246,7 @@ class UserResource extends Resource
                                                                     $set($key, $value);
                                                                 }
 
-                                                                return $transformedPermissions['control'];
+                                                                return $transformedPermissions['control'] ?? [];
                                                             })
                                                             ->bulkToggleable()
                                                             ->label('')
@@ -231,14 +255,12 @@ class UserResource extends Resource
                                                                 'start' => 'Start',
                                                                 'stop' => 'Stop',
                                                                 'restart' => 'Restart',
-                                                                'kill' => 'Kill',
                                                             ])
                                                             ->descriptions([
                                                                 'console' => trans('server/users.permissions.control_console'),
                                                                 'start' => trans('server/users.permissions.control_start'),
                                                                 'stop' => trans('server/users.permissions.control_stop'),
                                                                 'restart' => trans('server/users.permissions.control_restart'),
-                                                                'kill' => trans('server/users.permissions.control_kill'),
                                                             ]),
                                                     ]),
                                             ]),
