@@ -5,7 +5,6 @@ namespace App\Services\Subusers;
 use App\Exceptions\Http\Connection\DaemonConnectionException;
 use App\Facades\Activity;
 use App\Models\Server;
-use App\Models\User;
 use App\Models\Subuser;
 use App\Repositories\Daemon\DaemonServerRepository;
 
