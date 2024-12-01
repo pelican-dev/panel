@@ -26,6 +26,7 @@ use Filament\Notifications\Notification;
 use Filament\Resources\Pages\ListRecords;
 use Filament\Tables\Actions\Action;
 use Filament\Tables\Actions\ActionGroup;
+use Filament\Tables\Actions\DeleteAction;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
@@ -137,20 +138,10 @@ class ListBackups extends ListRecords
                                 ->title('Restoring Backup')
                                 ->send();
                         }),
-                    Action::make('delete')
-                        ->color('danger')
-                        ->icon('tabler-trash')
-                        ->fillForm(fn (Backup $backup): array => [
-                            'name' => $backup->name,
-                        ])
-                        ->form([
-                            TextInput::make('name')
-                                ->label('Name')
-                                ->disabled(),
-                        ])
+                    DeleteAction::make('delete')
                         ->disabled(fn (Backup $backup): bool => $backup->is_locked)
-                        ->authorize(fn () => auth()->user()->can(Permission::ACTION_BACKUP_DELETE, $server))
-                        ->requiresConfirmation()
+                        ->modalDescription(fn (Backup $backup) => 'Do you wish to delete, ' . $backup->name . '?')
+                        ->modalSubmitActionLabel('Delete Backup')
                         ->action(fn (BackupController $backupController, Backup $backup, Request $request) => $backupController->delete($request, $server, $backup)),
                 ]),
             ]);
