@@ -95,6 +95,10 @@ class ListFiles extends ListRecords
                     return self::getUrl(['path' => join_paths($this->path, $file->name)]);
                 }
 
+                if (!auth()->user()->can(Permission::ACTION_FILE_READ_CONTENT)) {
+                    return null;
+                }
+
                 return $file->canEdit() ? EditFiles::getUrl(['path' => join_paths($this->path, $file->name)]) : null;
             })
             ->actions([
