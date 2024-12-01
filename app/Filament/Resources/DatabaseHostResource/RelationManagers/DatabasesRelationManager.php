@@ -38,7 +38,8 @@ class DatabasesRelationManager extends RelationManager
                             ->authorize(fn (Database $database) => auth()->user()->can('update database', $database))
                     )
                     ->formatStateUsing(fn (Database $database) => $database->password),
-                TextInput::make('remote')->label('Connections From')
+                TextInput::make('remote')
+                ->label('Connections From')
                     ->formatStateUsing(fn ($record) => $record->remote === '%' ? 'Anywhere ( % )' : $record->remote),
                 TextInput::make('max_connections')
                     ->formatStateUsing(fn ($record) => $record->max_connections === 0 ? 'Unlimited' : $record->max_connections),
