@@ -13,4 +13,5 @@ enum RolePermissionModels: string
     case Role = 'role';
     case Server = 'server';
     case User = 'user';
+    case Webhook = 'webhook';
 }
