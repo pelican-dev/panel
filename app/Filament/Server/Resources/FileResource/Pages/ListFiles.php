@@ -200,7 +200,7 @@ class ListFiles extends ListRecords
                                 ->content(fn (Get $get) => resolve_path('./' . join_paths($this->path, $get('location')))),
                         ])
                         ->action(function ($data, File $file) use ($server) {
-                            $location = resolve_path(join_paths($this->path, $data('location')));
+                            $location = resolve_path(join_paths($this->path, $data['location']));
 
                             // @phpstan-ignore-next-line
                             app(DaemonFileRepository::class)
@@ -356,7 +356,7 @@ class ListFiles extends ListRecords
                                 ->content(fn (Get $get) => resolve_path('./' . join_paths($this->path, $get('location') ?? ''))),
                         ])
                         ->action(function (Collection $files, $data) use ($server) {
-                            $location = resolve_path(join_paths($this->path, $data('location'))); // TODO: error: Array callback must have exactly two elements
+                            $location = resolve_path(join_paths($this->path, $data['location']));
 
                             // @phpstan-ignore-next-line
                             $files = $files->map(fn ($file) => ['to' => $location, 'from' => $file->name])->toArray();
