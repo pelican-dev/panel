@@ -90,12 +90,13 @@ class ListFiles extends ListRecords
                     ->since()
                     ->sortable(),
             ])
-            ->recordUrl(function (File $file) {
+            ->recordUrl(function (File $file) use ($server) {
+
                 if ($file->is_directory) {
                     return self::getUrl(['path' => join_paths($this->path, $file->name)]);
                 }
 
-                if (!auth()->user()->can(Permission::ACTION_FILE_READ_CONTENT)) {
+                if (!auth()->user()->can(Permission::ACTION_FILE_READ_CONTENT, $server)) {
                     return null;
                 }
 
