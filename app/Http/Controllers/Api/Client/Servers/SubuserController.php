@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Api\Client\Servers;
 
 use App\Models\User;
-use App\Notifications\RemovedFromServer;
+use App\Services\Subusers\SubuserDeletionService;
 use App\Services\Subusers\SubuserUpdateService;
 use Illuminate\Http\Request;
 use App\Models\Server;
@@ -14,7 +14,6 @@ use App\Services\Subusers\SubuserCreationService;
 use App\Repositories\Daemon\DaemonServerRepository;
 use App\Transformers\Api\Client\SubuserTransformer;
 use App\Http\Controllers\Api\Client\ClientApiController;
-use App\Exceptions\Http\Connection\DaemonConnectionException;
 use App\Http\Requests\Api\Client\Servers\Subusers\GetSubuserRequest;
 use App\Http\Requests\Api\Client\Servers\Subusers\StoreSubuserRequest;
 use App\Http\Requests\Api\Client\Servers\Subusers\DeleteSubuserRequest;
@@ -28,6 +27,7 @@ class SubuserController extends ClientApiController
     public function __construct(
         private SubuserCreationService $creationService,
         private SubuserUpdateService $updateService,
+        private SubuserDeletionService $deletionService,
         private DaemonServerRepository $serverRepository
     ) {
         parent::__construct();
@@ -106,28 +106,7 @@ class SubuserController extends ClientApiController
         /** @var \App\Models\Subuser $subuser */
         $subuser = $request->attributes->get('subuser');
 
-        $log = Activity::event('server:subuser.delete')
-            ->subject($subuser->user)
-            ->property('email', $subuser->user->email)
-            ->property('revoked', true);
-
-        $log->transaction(function ($instance) use ($server, $subuser) {
-            $subuser->delete();
-
-            $subuser->user->notify(new RemovedFromServer([
-                'user' => $subuser->user->name_first,
-                'name' => $subuser->server->name,
-            ]));
-
-            try {
-                $this->serverRepository->setServer($server)->revokeUserJTI($subuser->user_id);
-            } catch (DaemonConnectionException $exception) {
-                // Don't block this request if we can't connect to the daemon instance.
-                logger()->warning($exception, ['user_id' => $subuser->user_id, 'server_id' => $server->id]);
-
-                $instance->property('revoked', false);
-            }
-        });
+        $this->deletionService->handle($subuser, $server);
 
         return new JsonResponse([], JsonResponse::HTTP_NO_CONTENT);
     }
