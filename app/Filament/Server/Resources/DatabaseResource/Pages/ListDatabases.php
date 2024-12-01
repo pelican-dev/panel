@@ -5,6 +5,7 @@ namespace App\Filament\Server\Resources\DatabaseResource\Pages;
 use App\Filament\Server\Resources\DatabaseResource;
 use App\Models\Database;
 use App\Models\DatabaseHost;
+use App\Models\Permission;
 use App\Models\Server;
 use App\Services\Databases\DatabaseManagementService;
 use App\Services\Databases\DatabasePasswordService;
@@ -29,6 +30,9 @@ class ListDatabases extends ListRecords
 
     public function form(Form $form): Form
     {
+        /** @var Server $server */
+        $server = Filament::getTenant();
+
         return $form
             ->schema([
                 TextInput::make('database')
@@ -37,8 +41,11 @@ class ListDatabases extends ListRecords
                 TextInput::make('username')
                     ->suffixAction(CopyAction::make()),
                 TextInput::make('password')
+                    ->password()->revealable()
+                    ->hidden(fn () => !auth()->user()->can(Permission::ACTION_DATABASE_VIEW_PASSWORD, $server))
                     ->hintAction(
                         Action::make('rotate')
+                            ->authorize(fn () => auth()->user()->can(Permission::ACTION_DATABASE_UPDATE, $server))
                             ->icon('tabler-refresh')
                             ->requiresConfirmation()
                             ->action(function (DatabasePasswordService $service, Database $database, $set, $get) {
@@ -56,6 +63,8 @@ class ListDatabases extends ListRecords
                     ->formatStateUsing(fn (Database $database) => $database->max_connections === 0 ? $database->max_connections : 'Unlimited'),
                 TextInput::make('JDBC')
                     ->label('JDBC Connection String')
+                    ->password()->revealable()
+                    ->hidden(!auth()->user()->can(Permission::ACTION_DATABASE_VIEW_PASSWORD, $server))
                     ->suffixAction(CopyAction::make())
                     ->columnSpanFull()
                     ->formatStateUsing(fn (Get $get, Database $database) => 'jdbc:mysql://' . $get('username') . ':' . urlencode($database->password) . '@' . $database->host->host . ':' . $database->host->port . '/' . $get('database')),
@@ -73,7 +82,8 @@ class ListDatabases extends ListRecords
                     ->sortable(),
             ])
             ->actions([
-                ViewAction::make(),
+                ViewAction::make()
+                    ->modalHeading(fn (Database $database) => 'Viewing ' . $database->database),
                 DeleteAction::make(),
             ]);
     }

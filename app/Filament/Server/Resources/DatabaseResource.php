@@ -36,6 +36,11 @@ class DatabaseResource extends Resource
         return auth()->user()->can(Permission::ACTION_DATABASE_READ, Filament::getTenant());
     }
 
+    public static function canView(Model $record): bool
+    {
+        return auth()->user()->can(Permission::ACTION_DATABASE_READ, Filament::getTenant());
+    }
+
     public static function canCreate(): bool
     {
         return auth()->user()->can(Permission::ACTION_DATABASE_CREATE, Filament::getTenant());
