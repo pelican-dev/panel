@@ -52,7 +52,8 @@ class AllocationsRelationManager extends RelationManager
             ->selectCurrentPageOnly() //Prevent people from trying to nuke 30,000 ports at once.... -,-
             ->columns([
                 TextColumn::make('id')
-                    ->hidden(),
+                    ->toggleable()
+                    ->toggledHiddenByDefault(),
                 TextColumn::make('port')
                     ->searchable()
                     ->label('Port'),
