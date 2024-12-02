@@ -65,7 +65,6 @@ class ListUsers extends ListRecords
                                                 'start',
                                                 'stop',
                                                 'restart',
-                                                'kill',
                                             ],
                                             'user' => [
                                                 'read',
