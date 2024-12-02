@@ -6,8 +6,6 @@ use App\Filament\Resources\DatabaseHostResource;
 use App\Filament\Resources\DatabaseHostResource\RelationManagers\DatabasesRelationManager;
 use App\Models\DatabaseHost;
 use App\Services\Databases\Hosts\HostUpdateService;
-use Closure;
-use Exception;
 use Filament\Actions;
 use Filament\Forms;
 use Filament\Forms\Components\Section;
@@ -16,6 +14,7 @@ use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\EditRecord;
+use Filament\Support\Exceptions\Halt;
 use Illuminate\Database\Eloquent\Model;
 use PDOException;
 
@@ -117,21 +116,18 @@ class EditDatabaseHost extends EditRecord
             return $record;
         }
 
-        return $this->hostUpdateService->handle($record, $data);
-    }
-
-    public function exception(Exception $e, Closure $stopPropagation): void
-    {
-        if ($e instanceof PDOException) {
+        try {
+            return $this->hostUpdateService->handle($record, $data);
+        } catch (PDOException $exception) {
             Notification::make()
                 ->title('Error connecting to database host')
-                ->body($e->getMessage())
+                ->body($exception->getMessage())
                 ->color('danger')
                 ->icon('tabler-database')
                 ->danger()
                 ->send();
 
-            $stopPropagation();
+            throw new Halt();
         }
     }
 }

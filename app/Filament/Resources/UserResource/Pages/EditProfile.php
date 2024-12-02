@@ -14,9 +14,7 @@ use chillerlan\QRCode\Common\EccLevel;
 use chillerlan\QRCode\Common\Version;
 use chillerlan\QRCode\QRCode;
 use chillerlan\QRCode\QROptions;
-use Closure;
 use DateTimeZone;
-use Exception;
 use Filament\Forms\Components\Actions;
 use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\Grid;
@@ -32,6 +30,7 @@ use Filament\Forms\Components\TextInput;
 use Filament\Forms\Get;
 use Filament\Notifications\Notification;
 use Filament\Support\Enums\MaxWidth;
+use Filament\Support\Exceptions\Halt;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Hash;
@@ -352,27 +351,24 @@ class EditProfile extends \Filament\Pages\Auth\EditProfile
         }
 
         if ($token = $data['2fa-disable-code'] ?? null) {
-            $this->toggleTwoFactorService->handle($record, $token, false);
+            try {
+                $this->toggleTwoFactorService->handle($record, $token, false);
+            } catch (TwoFactorAuthenticationTokenInvalid $exception) {
+                Notification::make()
+                    ->title('Invalid 2FA Code')
+                    ->body($exception->getMessage())
+                    ->color('danger')
+                    ->icon('tabler-2fa')
+                    ->danger()
+                    ->send();
+
+                throw new Halt();
+            }
 
             cache()->forget("users.$record->id.2fa.state");
         }
 
         return parent::handleRecordUpdate($record, $data);
-    }
-
-    public function exception(Exception $e, Closure $stopPropagation): void
-    {
-        if ($e instanceof TwoFactorAuthenticationTokenInvalid) {
-            Notification::make()
-                ->title('Invalid 2FA Code')
-                ->body($e->getMessage())
-                ->color('danger')
-                ->icon('tabler-2fa')
-                ->danger()
-                ->send();
-
-            $stopPropagation();
-        }
     }
 
     protected function getFormActions(): array
