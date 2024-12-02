@@ -4,8 +4,6 @@ namespace App\Filament\Resources\DatabaseHostResource\Pages;
 
 use App\Filament\Resources\DatabaseHostResource;
 use App\Services\Databases\Hosts\HostCreationService;
-use Closure;
-use Exception;
 use Filament\Forms;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
@@ -104,21 +102,18 @@ class CreateDatabaseHost extends CreateRecord
 
     protected function handleRecordCreation(array $data): Model
     {
-        return $this->service->handle($data);
-    }
-
-    public function exception(Exception $e, Closure $stopPropagation): void
-    {
-        if ($e instanceof PDOException) {
+        try {
+            return $this->service->handle($data);
+        } catch (PDOException $exception) {
             Notification::make()
                 ->title('Error connecting to database host')
-                ->body($e->getMessage())
+                ->body($exception->getMessage())
                 ->color('danger')
                 ->icon('tabler-database')
                 ->danger()
                 ->send();
 
-            $stopPropagation();
+            return null;
         }
     }
 }
