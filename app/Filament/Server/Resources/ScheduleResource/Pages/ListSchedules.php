@@ -33,6 +33,7 @@ class ListSchedules extends ListRecords
                     ->sortable(),
                 DateTimeColumn::make('last_run_at')
                     ->label('Last run')
+                    ->placeholder('Never')
                     ->since()
                     ->sortable(),
                 DateTimeColumn::make('next_run_at')
