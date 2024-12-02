@@ -54,8 +54,7 @@ class ListUsers extends ListRecords
                                     'md' => 4,
                                     'lg' => 5,
                                 ])
-                                ->required()
-                                ->unique(),
+                                ->required(),
                             assignAll::make([
                                 Action::make('assignAll')
                                     ->label('Assign All')
@@ -366,7 +365,7 @@ class ListUsers extends ListRecords
                 ->modalHeading('Invite User')
                 ->modalSubmitActionLabel('Invite')
                 ->action(function (array $data, SubuserCreationService $service) use ($server) {
-                    $email = $data['email'];
+                    $email = strtolower($data['email']);
 
                     if (in_array('console', $data['control'])) {
                         $data['websocket'][0] = 'connect';
