@@ -6,6 +6,7 @@ use App\Filament\Server\Resources\UserResource;
 use App\Models\Permission;
 use App\Models\Server;
 use App\Services\Subusers\SubuserCreationService;
+use Exception;
 use Filament\Actions;
 use Filament\Facades\Filament;
 use Filament\Forms\Components\Actions as assignAll;
@@ -53,8 +54,7 @@ class ListUsers extends ListRecords
                                     'md' => 4,
                                     'lg' => 5,
                                 ])
-                                ->required()
-                                ->unique(),
+                                ->required(),
                             assignAll::make([
                                 Action::make('assignAll')
                                     ->label('Assign All')
@@ -65,7 +65,6 @@ class ListUsers extends ListRecords
                                                 'start',
                                                 'stop',
                                                 'restart',
-                                                'kill',
                                             ],
                                             'user' => [
                                                 'read',
@@ -365,18 +364,28 @@ class ListUsers extends ListRecords
                 ->modalHeading('Invite User')
                 ->modalSubmitActionLabel('Invite')
                 ->action(function (array $data, SubuserCreationService $service) use ($server) {
-                    $email = $data['email'];
+                    $email = strtolower($data['email']);
 
                     if (in_array('console', $data['control'])) {
                         $data['websocket'][0] = 'connect';
                     }
-                    $permissions = collect($data)->forget('email')->map(fn ($permissions, $key) => collect($permissions)->map(fn ($permission) => "$key.$permission"))->flatten()->all();
-                    $service->handle($server, $email, $permissions);
 
-                    Notification::make()
-                        ->title('User Invited!')
-                        ->success()
-                        ->send();
+                    $permissions = collect($data)->forget('email')->map(fn ($permissions, $key) => collect($permissions)->map(fn ($permission) => "$key.$permission"))->flatten()->all();
+
+                    try {
+                        $service->handle($server, $email, $permissions);
+
+                        Notification::make()
+                            ->title('User Invited!')
+                            ->success()
+                            ->send();
+                    } catch (Exception $exception) {
+                        Notification::make()
+                            ->title('Failed')
+                            ->body($exception->getMessage())
+                            ->danger()
+                            ->send();
+                    }
 
                     return redirect(self::getUrl(tenant: $server));
                 }),
