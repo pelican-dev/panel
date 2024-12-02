@@ -113,7 +113,7 @@ class CreateDatabaseHost extends CreateRecord
                 ->danger()
                 ->send();
 
-            return null;
+            $this->halt();
         }
     }
 }

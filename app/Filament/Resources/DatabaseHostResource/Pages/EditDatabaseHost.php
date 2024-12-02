@@ -126,7 +126,7 @@ class EditDatabaseHost extends EditRecord
                 ->danger()
                 ->send();
 
-            return $record;
+            $this->halt();
         }
     }
 }

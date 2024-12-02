@@ -361,7 +361,7 @@ class EditProfile extends \Filament\Pages\Auth\EditProfile
                     ->danger()
                     ->send();
 
-                return $record;
+                $this->halt();
             }
 
             cache()->forget("users.$record->id.2fa.state");
