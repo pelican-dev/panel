@@ -30,6 +30,7 @@ use Filament\Forms\Components\TextInput;
 use Filament\Forms\Get;
 use Filament\Notifications\Notification;
 use Filament\Support\Enums\MaxWidth;
+use Filament\Support\Exceptions\Halt;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Hash;
@@ -361,7 +362,7 @@ class EditProfile extends \Filament\Pages\Auth\EditProfile
                     ->danger()
                     ->send();
 
-                $this->halt();
+                throw new Halt();
             }
 
             cache()->forget("users.$record->id.2fa.state");

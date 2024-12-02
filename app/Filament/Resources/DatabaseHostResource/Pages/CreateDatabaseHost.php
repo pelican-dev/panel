@@ -11,6 +11,7 @@ use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\CreateRecord;
+use Filament\Support\Exceptions\Halt;
 use Illuminate\Database\Eloquent\Model;
 use PDOException;
 
@@ -113,7 +114,7 @@ class CreateDatabaseHost extends CreateRecord
                 ->danger()
                 ->send();
 
-            $this->halt();
+            throw new Halt();
         }
     }
 }
