@@ -6,6 +6,7 @@ use App\Enums\ContainerStatus;
 use App\Enums\ServerState;
 use App\Filament\Resources\ServerResource;
 use App\Filament\Resources\ServerResource\RelationManagers\AllocationsRelationManager;
+use App\Filament\Server\Pages\Console;
 use App\Models\Database;
 use App\Models\DatabaseHost;
 use App\Models\Egg;
@@ -870,7 +871,7 @@ class EditServer extends EditRecord
             Actions\Action::make('console')
                 ->label('Console')
                 ->icon('tabler-terminal')
-                ->url(fn (Server $server) => "/server/$server->uuid_short"),
+                ->url(fn (Server $server) => Console::getUrl(panel: 'server', tenant: $server)),
             $this->getSaveFormAction()->formId('form'),
         ];
 

@@ -36,7 +36,8 @@ class ListAllocations extends ListRecords
                 TextColumn::make('port'),
                 TextInputColumn::make('notes')
                     ->disabled(fn () => !auth()->user()->can(Permission::ACTION_ALLOCATION_UPDATE, $server))
-                    ->label('Notes'),
+                    ->label('Notes')
+                    ->placeholder('No Notes'),
                 IconColumn::make('primary')
                     ->icon(fn ($state) => match ($state) {
                         true => 'tabler-star-filled',

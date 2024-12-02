@@ -111,6 +111,7 @@ class ScheduleResource extends Resource
                     ->default('*')
                     ->required(),
                 Section::make('Presets')
+                    ->hiddenOn('view')
                     ->schema([
                         Actions::make([
                             Action::make('hourly')

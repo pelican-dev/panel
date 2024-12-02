@@ -4,6 +4,7 @@ namespace App\Providers\Filament;
 
 use App\Filament\App\Resources\ServerResource\Pages\ListServers;
 use App\Filament\Pages\Auth\Login;
+use App\Filament\Resources\ServerResource\Pages\EditServer;
 use App\Filament\Resources\UserResource\Pages\EditProfile;
 use App\Http\Middleware\Activity\ServerSubject;
 use App\Models\Server;
@@ -12,6 +13,7 @@ use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
 use Filament\Navigation\MenuItem;
+use Filament\Navigation\NavigationItem;
 use Filament\Panel;
 use Filament\PanelProvider;
 use Filament\Support\Enums\MaxWidth;
@@ -53,6 +55,13 @@ class ServerPanelProvider extends PanelProvider
                     ->url(fn () => Filament::getPanel('admin')->getUrl())
                     ->sort(5)
                     ->visible(fn (): bool => auth()->user()->canAccessPanel(Filament::getPanel('admin'))),
+            ])
+            ->navigationItems([
+                NavigationItem::make('Open in Admin')
+                    ->url(fn () => EditServer::getUrl(['record' => Filament::getTenant()], panel: 'admin', tenant: null), true)
+                    ->visible(fn () => auth()->user()->can('view server', Filament::getTenant()))
+                    ->icon('tabler-arrow-back')
+                    ->sort(99),
             ])
             ->discoverResources(in: app_path('Filament/Server/Resources'), for: 'App\\Filament\\Server\\Resources')
             ->discoverPages(in: app_path('Filament/Server/Pages'), for: 'App\\Filament\\Server\\Pages')
