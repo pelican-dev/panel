@@ -6,6 +6,7 @@ use App\Filament\Server\Resources\UserResource;
 use App\Models\Permission;
 use App\Models\Server;
 use App\Services\Subusers\SubuserCreationService;
+use Exception;
 use Filament\Actions;
 use Filament\Facades\Filament;
 use Filament\Forms\Components\Actions as assignAll;
@@ -370,13 +371,23 @@ class ListUsers extends ListRecords
                     if (in_array('console', $data['control'])) {
                         $data['websocket'][0] = 'connect';
                     }
-                    $permissions = collect($data)->forget('email')->map(fn ($permissions, $key) => collect($permissions)->map(fn ($permission) => "$key.$permission"))->flatten()->all();
-                    $service->handle($server, $email, $permissions);
 
-                    Notification::make()
-                        ->title('User Invited!')
-                        ->success()
-                        ->send();
+                    $permissions = collect($data)->forget('email')->map(fn ($permissions, $key) => collect($permissions)->map(fn ($permission) => "$key.$permission"))->flatten()->all();
+
+                    try {
+                        $service->handle($server, $email, $permissions);
+
+                        Notification::make()
+                            ->title('User Invited!')
+                            ->success()
+                            ->send();
+                    } catch (Exception $exception) {
+                        Notification::make()
+                            ->title('Failed')
+                            ->body($exception->getMessage())
+                            ->danger()
+                            ->send();
+                    }
 
                     return redirect(self::getUrl(tenant: $server));
                 }),
