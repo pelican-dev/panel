@@ -60,7 +60,7 @@ class ServerPanelProvider extends PanelProvider
                 NavigationItem::make('Open in Admin')
                     ->url(fn () => EditServer::getUrl(['record' => Filament::getTenant()], panel: 'admin', tenant: null), true)
                     ->visible(fn () => auth()->user()->can('view server'), Filament::getTenant())
-                    ->icon('tabler-logout-2')
+                    ->icon('tabler-arrow-back')
                     ->sort(99),
             ])
             ->discoverResources(in: app_path('Filament/Server/Resources'), for: 'App\\Filament\\Server\\Resources')
