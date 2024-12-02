@@ -47,16 +47,19 @@ class AllocationsRelationManager extends RelationManager
 
             // All assigned allocations
             ->checkIfRecordIsSelectableUsing(fn (Allocation $allocation) => $allocation->server_id === null)
+            ->paginationPageOptions(['10', '20', '50', '100', '200', '500', '1000'])
             ->searchable()
             ->selectCurrentPageOnly() //Prevent people from trying to nuke 30,000 ports at once.... -,-
             ->columns([
-                TextColumn::make('id'),
+                TextColumn::make('id')
+                    ->hidden(),
                 TextColumn::make('port')
                     ->searchable()
                     ->label('Port'),
                 TextColumn::make('server.name')
                     ->label('Server')
                     ->icon('tabler-brand-docker')
+                    ->visibleFrom('md')
                     ->searchable()
                     ->url(fn (Allocation $allocation): string => $allocation->server ? route('filament.admin.resources.servers.edit', ['record' => $allocation->server]) : ''),
                 TextInputColumn::make('ip_alias')
