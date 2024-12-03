@@ -61,33 +61,8 @@
         const handlePowerChangeEvent = (state) =>
             terminal.writeln(TERMINAL_PRELUDE + 'Server marked as ' + state + '...\u001b[0m');
 
-        @php
-            if ($user->cannot(\App\Models\Permission::ACTION_WEBSOCKET_CONNECT, $server)) {
-                throw new \App\Exceptions\Http\HttpForbiddenException('You do not have permission to connect to this server\'s websocket.');
-            }
-
-            $permissions = app(\App\Services\Servers\GetUserPermissionsService::class)->handle($server, $user);
-
-            $socket = str_replace(['https://', 'http://'], ['wss://', 'ws://'], $server->node->getConnectionAddress());
-            $socket .= sprintf('/api/servers/%s/ws', $server->uuid);
-
-            if (!function_exists('getToken')) {
-                function getToken(): string
-                {
-                    return app(\App\Services\Nodes\NodeJWTService::class)
-                        ->setExpiresAt(now()->addMinutes(10)->toImmutable())
-                        ->setUser($user)
-                        ->setClaims([
-                            'server_uuid' => $server->uuid,
-                            'permissions' => $permissions,
-                        ])
-                        ->handle($server->node, $user->id . $server->uuid);
-                }
-            }
-        @endphp
-
-        const socket = new WebSocket("{{ $socket }}");
-        let token = '{{ getToken() }}';
+        const socket = new WebSocket("{{ $this->getSocket() }}");
+        let token = '{{ $this->getToken() }}';
 
         socket.onmessage = function(websocketMessageEvent) {
             let eventData = JSON.parse(websocketMessageEvent.data);
@@ -116,7 +91,7 @@
             }
 
             if (eventData.event === 'token expiring' || eventData.event === 'token expired') {
-                token = '{{ getToken() }}';
+                token = '{{ $this->getToken() }}';
 
                 socket.send(JSON.stringify({
                     'event': 'auth',
