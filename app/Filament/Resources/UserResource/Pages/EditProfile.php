@@ -141,7 +141,7 @@ class EditProfile extends \Filament\Pages\Auth\EditProfile
                                                 continue;
                                             }
 
-                                            $unlink = array_key_exists($name, $this->getUser()->oauth);
+                                            $unlink = array_key_exists($name, $this->getUser()->oauth ?? []);
 
                                             $providers[] = Action::make("oauth_$name")
                                                 ->label(($unlink ? 'Unlink ' : 'Link ') . Str::title($name))
