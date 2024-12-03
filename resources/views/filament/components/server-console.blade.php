@@ -1,7 +1,11 @@
 <x-filament::widget>
     @assets
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/xterm/5.5.0/xterm.js" integrity="sha512-Gujw5GajF5is3nMoGv9X+tCMqePLL/60qvAv1LofUZTV9jK8ENbM9L+maGmOsNzuZaiuyc/fpph1KT9uR5w3CQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/xterm/5.5.0/xterm.css" integrity="sha512-AbNrj/oSHJaILgcdnkYm+DQ08SqVbZ8jlkJbFyyS1WDcAaXAcAfxJnCH69el7oVgTwVwyA5u5T+RdFyUykrV3Q==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xterm/5.5.0/xterm.js"
+            integrity="sha512-Gujw5GajF5is3nMoGv9X+tCMqePLL/60qvAv1LofUZTV9jK8ENbM9L+maGmOsNzuZaiuyc/fpph1KT9uR5w3CQ=="
+            crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/xterm/5.5.0/xterm.css"
+          integrity="sha512-AbNrj/oSHJaILgcdnkYm+DQ08SqVbZ8jlkJbFyyS1WDcAaXAcAfxJnCH69el7oVgTwVwyA5u5T+RdFyUykrV3Q=="
+          crossorigin="anonymous" referrerpolicy="no-referrer" />
     @endassets
 
     <div id="terminal" wire:ignore></div>
@@ -27,7 +31,7 @@
             cursorStyle: 'underline',
             allowTransparency: true,
             rows: 35,
-            cols: 110,
+            cols: 110
             // theme: theme,
         };
 
@@ -57,28 +61,8 @@
         const handlePowerChangeEvent = (state) =>
             terminal.writeln(TERMINAL_PRELUDE + 'Server marked as ' + state + '...\u001b[0m');
 
-        @php
-            if ($user->cannot(\App\Models\Permission::ACTION_WEBSOCKET_CONNECT, $server)) {
-                throw new \App\Exceptions\Http\HttpForbiddenException('You do not have permission to connect to this server\'s websocket.');
-            }
-
-            $permissions = app(\App\Services\Servers\GetUserPermissionsService::class)->handle($server, $user);
-
-            $socket = str_replace(['https://', 'http://'], ['wss://', 'ws://'], $server->node->getConnectionAddress());
-            $socket .= sprintf('/api/servers/%s/ws', $server->uuid);
-
-            $token = app(\App\Services\Nodes\NodeJWTService::class)
-                ->setExpiresAt(now()->addMinutes(10)->toImmutable())
-                ->setUser($user)
-                ->setClaims([
-                    'server_uuid' => $server->uuid,
-                    'permissions' => $permissions,
-                ])
-                ->handle($server->node, $user->id . $server->uuid);
-        @endphp
-
-        const socket = new WebSocket("{{ $socket }}");
-        const token = '{{ $token->toString() }}';
+        const socket = new WebSocket("{{ $this->getSocket() }}");
+        let token = '{{ $this->getToken() }}';
 
         socket.onmessage = function(websocketMessageEvent) {
             let eventData = JSON.parse(websocketMessageEvent.data);
@@ -106,7 +90,14 @@
                 }));
             }
 
-            // TODO: handle "token expiring" and "token expired"
+            if (eventData.event === 'token expiring' || eventData.event === 'token expired') {
+                token = '{{ $this->getToken() }}';
+
+                socket.send(JSON.stringify({
+                    'event': 'auth',
+                    'args': [token]
+                }));
+            }
         };
 
         socket.onopen = (event) => {
