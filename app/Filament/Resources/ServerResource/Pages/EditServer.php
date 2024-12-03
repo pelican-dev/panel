@@ -12,7 +12,6 @@ use App\Models\Egg;
 use App\Models\Mount;
 use App\Models\Server;
 use App\Models\ServerVariable;
-use App\Models\Subuser;
 use App\Services\Databases\DatabaseManagementService;
 use App\Services\Databases\DatabasePasswordService;
 use App\Services\Servers\RandomWordService;
@@ -21,7 +20,6 @@ use App\Services\Servers\ServerDeletionService;
 use App\Services\Servers\SuspensionService;
 use App\Services\Servers\ToggleInstallService;
 use App\Services\Servers\TransferServerService;
-use App\Services\Subusers\SubuserDeletionService;
 use Closure;
 use Exception;
 use Filament\Actions;
@@ -53,13 +51,6 @@ use Webbingbrasil\FilamentCopyActions\Forms\Actions\CopyAction;
 class EditServer extends EditRecord
 {
     protected static string $resource = ServerResource::class;
-
-    private SubuserDeletionService $subuserDeletionService;
-
-    public function boot(SubuserDeletionService $subuserDeletionService): void
-    {
-        $this->subuserDeletionService = $subuserDeletionService;
-    }
 
     public function form(Form $form): Form
     {
@@ -899,17 +890,6 @@ class EditServer extends EditRecord
         unset($data['docker'], $data['status']);
 
         return $data;
-    }
-
-    protected function afterSave(): void
-    {
-        /** @var Server $server */
-        $server = $this->getRecord();
-
-        $subuser = Subuser::query()->where('user_id', $server->owner_id)->where('server_id', $server->id)->first();
-        if ($subuser) {
-            $this->subuserDeletionService->handle($subuser, $server);
-        }
     }
 
     public function getRelationManagers(): array
