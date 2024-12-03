@@ -67,18 +67,23 @@
             $socket = str_replace(['https://', 'http://'], ['wss://', 'ws://'], $server->node->getConnectionAddress());
             $socket .= sprintf('/api/servers/%s/ws', $server->uuid);
 
-            $token = app(\App\Services\Nodes\NodeJWTService::class)
-                ->setExpiresAt(now()->addMinutes(10)->toImmutable())
-                ->setUser($user)
-                ->setClaims([
-                    'server_uuid' => $server->uuid,
-                    'permissions' => $permissions,
-                ])
-                ->handle($server->node, $user->id . $server->uuid);
+            if (!function_exists('getToken')) {
+                function getToken(): string
+                {
+                    return app(\App\Services\Nodes\NodeJWTService::class)
+                        ->setExpiresAt(now()->addMinutes(10)->toImmutable())
+                        ->setUser($user)
+                        ->setClaims([
+                            'server_uuid' => $server->uuid,
+                            'permissions' => $permissions,
+                        ])
+                        ->handle($server->node, $user->id . $server->uuid);
+                }
+            }
         @endphp
 
         const socket = new WebSocket("{{ $socket }}");
-        const token = '{{ $token->toString() }}';
+        let token = '{{ $this->getToken()->toString() }}';
 
         socket.onmessage = function(websocketMessageEvent) {
             let eventData = JSON.parse(websocketMessageEvent.data);
@@ -106,7 +111,14 @@
                 }));
             }
 
-            // TODO: handle "token expiring" and "token expired"
+            if (eventData.event === 'token expiring' || eventData.event === 'token expired') {
+                token = '{{ $this->getToken()->toString() }}';
+
+                socket.send(JSON.stringify({
+                    'event': 'auth',
+                    'args': [token]
+                }));
+            }
         };
 
         socket.onopen = (event) => {
