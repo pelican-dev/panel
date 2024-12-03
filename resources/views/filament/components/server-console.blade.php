@@ -1,7 +1,11 @@
 <x-filament::widget>
     @assets
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/xterm/5.5.0/xterm.js" integrity="sha512-Gujw5GajF5is3nMoGv9X+tCMqePLL/60qvAv1LofUZTV9jK8ENbM9L+maGmOsNzuZaiuyc/fpph1KT9uR5w3CQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/xterm/5.5.0/xterm.css" integrity="sha512-AbNrj/oSHJaILgcdnkYm+DQ08SqVbZ8jlkJbFyyS1WDcAaXAcAfxJnCH69el7oVgTwVwyA5u5T+RdFyUykrV3Q==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xterm/5.5.0/xterm.js"
+            integrity="sha512-Gujw5GajF5is3nMoGv9X+tCMqePLL/60qvAv1LofUZTV9jK8ENbM9L+maGmOsNzuZaiuyc/fpph1KT9uR5w3CQ=="
+            crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/xterm/5.5.0/xterm.css"
+          integrity="sha512-AbNrj/oSHJaILgcdnkYm+DQ08SqVbZ8jlkJbFyyS1WDcAaXAcAfxJnCH69el7oVgTwVwyA5u5T+RdFyUykrV3Q=="
+          crossorigin="anonymous" referrerpolicy="no-referrer" />
     @endassets
 
     <div id="terminal" wire:ignore></div>
@@ -27,7 +31,7 @@
             cursorStyle: 'underline',
             allowTransparency: true,
             rows: 35,
-            cols: 110,
+            cols: 110
             // theme: theme,
         };
 
@@ -83,7 +87,7 @@
         @endphp
 
         const socket = new WebSocket("{{ $socket }}");
-        let token = '{{ $this->getToken()->toString() }}';
+        let token = '{{ getToken() }}';
 
         socket.onmessage = function(websocketMessageEvent) {
             let eventData = JSON.parse(websocketMessageEvent.data);
@@ -112,7 +116,7 @@
             }
 
             if (eventData.event === 'token expiring' || eventData.event === 'token expired') {
-                token = '{{ $this->getToken()->toString() }}';
+                token = '{{ getToken() }}';
 
                 socket.send(JSON.stringify({
                     'event': 'auth',
