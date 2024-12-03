@@ -146,8 +146,8 @@ class File extends Model
             return array_map(function ($file) {
                 return [
                     'name' => $file['name'],
-                    'created_at' => Carbon::parse($file['created']),
-                    'modified_at' => Carbon::parse($file['modified']),
+                    'created_at' => Carbon::parse($file['created'])->timezone('UTC'),
+                    'modified_at' => Carbon::parse($file['modified'])->timezone('UTC'),
                     'mode' => $file['mode'],
                     'mode_bits' => (int) $file['mode_bits'],
                     'size' => (int) $file['size'],
