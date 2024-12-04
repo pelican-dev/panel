@@ -33,7 +33,7 @@ class AppPanelProvider extends PanelProvider
             ->brandLogo(config('app.logo'))
             ->brandLogoHeight('2rem')
             ->favicon(config('app.favicon', '/pelican.ico'))
-            ->topNavigation(config('panel.filament.top-navigation', true))
+            ->navigation(false)
             ->maxContentWidth(MaxWidth::ScreenTwoExtraLarge)
             ->profile(EditProfile::class, false)
             ->login(Login::class)
