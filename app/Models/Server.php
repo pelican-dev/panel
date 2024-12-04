@@ -19,6 +19,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
 use App\Exceptions\Http\Server\ServerStateConflictException;
+use App\Services\Subusers\SubuserDeletionService;
 
 /**
  * \App\Models\Server.
@@ -201,6 +202,17 @@ class Server extends Model
             'installed_at' => 'datetime',
             'docker_labels' => 'array',
         ];
+    }
+
+    protected static function booted(): void
+    {
+        static::saved(function (self $server) {
+            $subuser = $server->subusers()->where('user_id', $server->owner_id)->first();
+            if ($subuser) {
+                // @phpstan-ignore-next-line
+                app(SubuserDeletionService::class)->handle($subuser, $server);
+            }
+        });
     }
 
     /**

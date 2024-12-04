@@ -2,8 +2,12 @@
 
 namespace App\Filament\Server\Widgets;
 
+use App\Exceptions\Http\HttpForbiddenException;
+use App\Models\Permission;
 use App\Models\Server;
 use App\Models\User;
+use App\Services\Nodes\NodeJWTService;
+use App\Services\Servers\GetUserPermissionsService;
 use Filament\Widgets\Widget;
 use Illuminate\Support\Arr;
 use Livewire\Attributes\On;
@@ -25,6 +29,33 @@ class ServerConsole extends Widget
     public int $historyIndex = 0;
 
     public string $input = '';
+
+    protected function getToken(): string
+    {
+        if (!$this->user || !$this->server || $this->user->cannot(Permission::ACTION_WEBSOCKET_CONNECT, $this->server)) {
+            throw new HttpForbiddenException('You do not have permission to connect to this server\'s websocket.');
+        }
+        // @phpstan-ignore-next-line
+        $permissions = app(GetUserPermissionsService::class)->handle($this->server, $this->user);
+
+        // @phpstan-ignore-next-line
+        return app(NodeJWTService::class)
+            ->setExpiresAt(now()->addMinutes(10)->toImmutable())
+            ->setUser($this->user)
+            ->setClaims([
+                'server_uuid' => $this->server->uuid,
+                'permissions' => $permissions,
+            ])
+            ->handle($this->server->node, $this->user->id . $this->server->uuid)->toString();
+    }
+
+    protected function getSocket(): string
+    {
+        $socket = str_replace(['https://', 'http://'], ['wss://', 'ws://'], $this->server->node->getConnectionAddress());
+        $socket .= sprintf('/api/servers/%s/ws', $this->server->uuid);
+
+        return $socket;
+    }
 
     public function up(): void
     {
