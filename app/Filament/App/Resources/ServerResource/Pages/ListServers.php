@@ -9,7 +9,9 @@ use App\Tables\Columns\ServerEntryColumn;
 use Carbon\CarbonInterface;
 use Filament\Resources\Pages\ListRecords;
 use Filament\Tables\Columns\Layout\Stack;
+use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Number;
 
@@ -36,7 +38,22 @@ class ListServers extends ListRecords
             ->recordUrl(fn (Server $server) => Console::getUrl(panel: 'server', tenant: $server))
             ->emptyStateIcon('tabler-brand-docker')
             ->emptyStateDescription('')
-            ->emptyStateHeading('You don\'t have access to any servers!');
+            ->emptyStateHeading('You don\'t have access to any servers!')
+            ->filters([
+                SelectFilter::make('owner')
+                    ->default('my')
+                    ->options([
+                        'my' => 'My Servers',
+                        'other' => 'Others\' Servers',
+                    ])
+                    ->query(function (Builder $query, $state) {
+                        return match ($state['value']) {
+                            'my' => $query->where('owner_id', auth()->user()->id),
+                            'other' => $query->whereNot('owner_id', auth()->user()->id),
+                            default => $query,
+                        };
+                    }),
+            ]);
     }
 
     // @phpstan-ignore-next-line
