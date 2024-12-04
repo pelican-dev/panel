@@ -10,6 +10,19 @@ class DateTimeColumn extends TextColumn
     {
         parent::setUp();
 
-        $this->dateTime(timezone: auth()->user()?->timezone ?? config('app.timezone', 'UTC'));
+        $this->dateTime();
+    }
+
+    public function since(?string $timezone = null): static
+    {
+        $this->formatStateUsing(fn ($state) => $state->diffForHumans());
+        $this->tooltip(fn ($state) => $state?->timezone($this->getTimezone()));
+
+        return $this;
+    }
+
+    public function getTimezone(): string
+    {
+        return auth()->user()?->timezone ?? config('app.timezone', 'UTC');
     }
 }

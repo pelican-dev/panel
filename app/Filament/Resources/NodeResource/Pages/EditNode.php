@@ -48,7 +48,12 @@ class EditNode extends EditRecord
                     Tab::make('')
                         ->label('Overview')
                         ->icon('tabler-chart-area-line-filled')
-                        ->columns(6)
+                        ->columns([
+                            'default' => 4,
+                            'sm' => 2,
+                            'md' => 4,
+                            'lg' => 4,
+                        ])
                         ->schema([
                             Fieldset::make()
                                 ->label('Node Information')
@@ -67,8 +72,20 @@ class EditNode extends EditRecord
                                         ->label('Kernel')
                                         ->content(fn (Node $node) => $node->systemInformation()['kernel_version'] ?? 'Unknown'),
                                 ]),
-                            View::make('filament.components.node-cpu-chart')->columnSpan(3),
-                            View::make('filament.components.node-memory-chart')->columnSpan(3),
+                            View::make('filament.components.node-cpu-chart')
+                                ->columnSpan([
+                                    'default' => 4,
+                                    'sm' => 1,
+                                    'md' => 2,
+                                    'lg' => 2,
+                                ]),
+                            View::make('filament.components.node-memory-chart')
+                                ->columnSpan([
+                                    'default' => 4,
+                                    'sm' => 1,
+                                    'md' => 2,
+                                    'lg' => 2,
+                                ]),
                             // TODO: Make purdy View::make('filament.components.node-storage-chart')->columnSpan(3),
                         ]),
                     Tab::make('Basic Settings')

@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Filament\Server\Pages\Console;
 use App\Models;
 use App\Models\ApiKey;
 use App\Models\Node;
@@ -11,14 +12,17 @@ use Dedoc\Scramble\Support\Generator\OpenApi;
 use Dedoc\Scramble\Support\Generator\SecurityScheme;
 use Filament\Support\Colors\Color;
 use Filament\Support\Facades\FilamentColor;
+use Filament\Support\Facades\FilamentView;
+use Filament\View\PanelsRenderHook;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\URL;
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Support\Str;
 use Laravel\Sanctum\Sanctum;
-use SocialiteProviders\Discord\Provider;
 use SocialiteProviders\Manager\SocialiteWasCalled;
 
 class AppServiceProvider extends ServiceProvider
@@ -28,6 +32,11 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(Application $app): void
     {
+        // If the APP_URL value is set with https:// make sure we force it here. Theoretically
+        // this should just work with the proxy logic, but there are a lot of cases where it
+        // doesn't, and it triggers a lot of support requests, so lets just head it off here.
+        URL::forceHttps(Str::startsWith(config('app.url') ?? '', 'https://'));
+
         Relation::enforceMorphMap([
             'allocation' => Models\Allocation::class,
             'api_key' => Models\ApiKey::class,
@@ -62,8 +71,19 @@ class AppServiceProvider extends ServiceProvider
         Scramble::registerApi('client', ['api_path' => 'api/client', 'info' => ['version' => '1.0']])->afterOpenApiGenerated($bearerTokens);
         Scramble::registerApi('remote', ['api_path' => 'api/remote', 'info' => ['version' => '1.0']])->afterOpenApiGenerated($bearerTokens);
 
-        Event::listen(function (SocialiteWasCalled $event) {
-            $event->extendSocialite('discord', Provider::class);
+        $oauthProviders = [];
+        foreach (config('auth.oauth') as $name => $data) {
+            config()->set("services.$name", array_merge($data['service'], ['redirect' => "/auth/oauth/callback/$name"]));
+
+            if (isset($data['provider'])) {
+                $oauthProviders[$name] = $data['provider'];
+            }
+        }
+
+        Event::listen(function (SocialiteWasCalled $event) use ($oauthProviders) {
+            foreach ($oauthProviders as $name => $provider) {
+                $event->extendSocialite($name, $provider);
+            }
         });
 
         FilamentColor::register([
@@ -74,6 +94,12 @@ class AppServiceProvider extends ServiceProvider
             'success' => Color::Green,
             'warning' => Color::Amber,
         ]);
+
+        FilamentView::registerRenderHook(
+            PanelsRenderHook::CONTENT_START,
+            fn () => view('filament.server-conflict-banner'),
+            scopes: Console::class,
+        );
 
         Gate::before(function (User $user, $ability) {
             return $user->isRootAdmin() ? true : null;

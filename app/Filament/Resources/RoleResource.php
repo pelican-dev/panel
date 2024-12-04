@@ -91,6 +91,8 @@ class RoleResource extends Resource
             $icon = ('\App\Filament\Resources\\' . $model . 'Resource')::getNavigationIcon();
         } elseif (class_exists('\App\Filament\Pages\\' . $model)) {
             $icon = ('\App\Filament\Pages\\' . $model)::getNavigationIcon();
+        } elseif (class_exists('\App\Filament\Server\Resources\\' . $model . 'Resource')) {
+            $icon = ('\App\Filament\Server\Resources\\' . $model . 'Resource')::getNavigationIcon();
         }
 
         return Section::make(Str::headline(Str::plural($model)))

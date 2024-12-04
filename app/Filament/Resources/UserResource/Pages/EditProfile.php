@@ -9,13 +9,13 @@ use App\Models\ApiKey;
 use App\Models\User;
 use App\Services\Users\ToggleTwoFactorService;
 use App\Services\Users\TwoFactorSetupService;
+use App\Services\Users\UserUpdateService;
 use chillerlan\QRCode\Common\EccLevel;
 use chillerlan\QRCode\Common\Version;
 use chillerlan\QRCode\QRCode;
 use chillerlan\QRCode\QROptions;
-use Closure;
 use DateTimeZone;
-use Exception;
+use Filament\Forms\Components\Actions;
 use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\Placeholder;
@@ -29,11 +29,15 @@ use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Get;
 use Filament\Notifications\Notification;
+use Filament\Support\Enums\MaxWidth;
+use Filament\Support\Exceptions\Halt;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\HtmlString;
+use Illuminate\Support\Str;
 use Illuminate\Validation\Rules\Password;
+use Laravel\Socialite\Facades\Socialite;
 
 /**
  * @method User getUser()
@@ -45,6 +49,11 @@ class EditProfile extends \Filament\Pages\Auth\EditProfile
     public function boot(ToggleTwoFactorService $toggleTwoFactorService): void
     {
         $this->toggleTwoFactorService = $toggleTwoFactorService;
+    }
+
+    public function getMaxWidth(): MaxWidth|string
+    {
+        return MaxWidth::SevenExtraLarge;
     }
 
     protected function getForms(): array
@@ -112,6 +121,53 @@ class EditProfile extends \Filament\Pages\Auth\EditProfile
                                             )
                                             ->options(fn (User $user) => $user->getAvailableLanguages()),
                                     ]),
+
+                                Tab::make('OAuth')
+                                    ->icon('tabler-brand-oauth')
+                                    ->visible(function () {
+                                        foreach (config('auth.oauth') as $name => $data) {
+                                            if ($data['enabled']) {
+                                                return true;
+                                            }
+                                        }
+
+                                        return false;
+                                    })
+                                    ->schema(function () {
+                                        $providers = [];
+
+                                        foreach (config('auth.oauth') as $name => $data) {
+                                            if (!$data['enabled']) {
+                                                continue;
+                                            }
+
+                                            $unlink = array_key_exists($name, $this->getUser()->oauth ?? []);
+
+                                            $providers[] = Action::make("oauth_$name")
+                                                ->label(($unlink ? 'Unlink ' : 'Link ') . Str::title($name))
+                                                ->icon($unlink ? 'tabler-unlink' : 'tabler-link')
+                                                ->color($data['color'])
+                                                ->action(function (UserUpdateService $updateService) use ($name, $unlink) {
+                                                    if ($unlink) {
+                                                        $oauth = auth()->user()->oauth;
+                                                        unset($oauth[$name]);
+
+                                                        $updateService->handle(auth()->user(), ['oauth' => $oauth]);
+
+                                                        $this->fillForm();
+
+                                                        Notification::make()
+                                                            ->title("OAuth provider '$name' unlinked")
+                                                            ->success()
+                                                            ->send();
+                                                    } elseif (config("auth.oauth.$name.enabled")) {
+                                                        redirect(Socialite::with($name)->redirect()->getTargetUrl());
+                                                    }
+                                                });
+                                        }
+
+                                        return [Actions::make($providers)];
+                                    }),
 
                                 Tab::make('2FA')
                                     ->icon('tabler-shield-lock')
@@ -185,7 +241,7 @@ class EditProfile extends \Filament\Pages\Auth\EditProfile
                                                 ->content(fn () => new HtmlString("
                                                 <div style='width: 300px; background-color: rgb(24, 24, 27);'>$image</div>
                                             "))
-                                                ->helperText('Setup Key: '. $secret),
+                                                ->helperText('Setup Key: ' . $secret),
                                             TextInput::make('2facode')
                                                 ->label('Code')
                                                 ->requiredWith('2fapassword')
@@ -295,7 +351,19 @@ class EditProfile extends \Filament\Pages\Auth\EditProfile
         }
 
         if ($token = $data['2fa-disable-code'] ?? null) {
-            $this->toggleTwoFactorService->handle($record, $token, false);
+            try {
+                $this->toggleTwoFactorService->handle($record, $token, false);
+            } catch (TwoFactorAuthenticationTokenInvalid $exception) {
+                Notification::make()
+                    ->title('Invalid 2FA Code')
+                    ->body($exception->getMessage())
+                    ->color('danger')
+                    ->icon('tabler-2fa')
+                    ->danger()
+                    ->send();
+
+                throw new Halt();
+            }
 
             cache()->forget("users.$record->id.2fa.state");
         }
@@ -303,18 +371,16 @@ class EditProfile extends \Filament\Pages\Auth\EditProfile
         return parent::handleRecordUpdate($record, $data);
     }
 
-    public function exception(Exception $e, Closure $stopPropagation): void
+    protected function getFormActions(): array
     {
-        if ($e instanceof TwoFactorAuthenticationTokenInvalid) {
-            Notification::make()
-                ->title('Invalid 2FA Code')
-                ->body($e->getMessage())
-                ->color('danger')
-                ->icon('tabler-2fa')
-                ->danger()
-                ->send();
+        return [];
+    }
 
-            $stopPropagation();
-        }
+    protected function getHeaderActions(): array
+    {
+        return [
+            $this->getSaveFormAction()->formId('form'),
+        ];
+
     }
 }

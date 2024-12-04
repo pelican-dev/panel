@@ -3,17 +3,16 @@
 namespace App\Http\Controllers\Api\Client\Servers;
 
 use App\Models\User;
-use App\Notifications\RemovedFromServer;
+use App\Services\Subusers\SubuserDeletionService;
+use App\Services\Subusers\SubuserUpdateService;
 use Illuminate\Http\Request;
 use App\Models\Server;
 use Illuminate\Http\JsonResponse;
 use App\Facades\Activity;
 use App\Models\Permission;
 use App\Services\Subusers\SubuserCreationService;
-use App\Repositories\Daemon\DaemonServerRepository;
 use App\Transformers\Api\Client\SubuserTransformer;
 use App\Http\Controllers\Api\Client\ClientApiController;
-use App\Exceptions\Http\Connection\DaemonConnectionException;
 use App\Http\Requests\Api\Client\Servers\Subusers\GetSubuserRequest;
 use App\Http\Requests\Api\Client\Servers\Subusers\StoreSubuserRequest;
 use App\Http\Requests\Api\Client\Servers\Subusers\DeleteSubuserRequest;
@@ -26,7 +25,8 @@ class SubuserController extends ClientApiController
      */
     public function __construct(
         private SubuserCreationService $creationService,
-        private DaemonServerRepository $serverRepository
+        private SubuserUpdateService $updateService,
+        private SubuserDeletionService $deletionService
     ) {
         parent::__construct();
     }
@@ -89,40 +89,7 @@ class SubuserController extends ClientApiController
         /** @var \App\Models\Subuser $subuser */
         $subuser = $request->attributes->get('subuser');
 
-        $permissions = $this->getDefaultPermissions($request);
-        $current = $subuser->permissions;
-
-        sort($permissions);
-        sort($current);
-
-        $log = Activity::event('server:subuser.update')
-            ->subject($subuser->user)
-            ->property([
-                'email' => $subuser->user->email,
-                'old' => $current,
-                'new' => $permissions,
-                'revoked' => true,
-            ]);
-
-        // Only update the database and hit up the daemon instance to invalidate JTI's if the permissions
-        // have actually changed for the user.
-        if ($permissions !== $current) {
-            $log->transaction(function ($instance) use ($request, $subuser, $server) {
-                $subuser->update(['permissions' => $this->getDefaultPermissions($request)]);
-
-                try {
-                    $this->serverRepository->setServer($server)->revokeUserJTI($subuser->user_id);
-                } catch (DaemonConnectionException $exception) {
-                    // Don't block this request if we can't connect to the daemon instance. Chances are it is
-                    // offline and the token will be invalid once daemon boots back.
-                    logger()->warning($exception, ['user_id' => $subuser->user_id, 'server_id' => $server->id]);
-
-                    $instance->property('revoked', false);
-                }
-            });
-        }
-
-        $log->reset();
+        $this->updateService->handle($subuser, $server, $this->getDefaultPermissions($request));
 
         return $this->fractal->item($subuser->refresh())
             ->transformWith($this->getTransformer(SubuserTransformer::class))
@@ -137,28 +104,7 @@ class SubuserController extends ClientApiController
         /** @var \App\Models\Subuser $subuser */
         $subuser = $request->attributes->get('subuser');
 
-        $log = Activity::event('server:subuser.delete')
-            ->subject($subuser->user)
-            ->property('email', $subuser->user->email)
-            ->property('revoked', true);
-
-        $log->transaction(function ($instance) use ($server, $subuser) {
-            $subuser->delete();
-
-            $subuser->user->notify(new RemovedFromServer([
-                'user' => $subuser->user->name_first,
-                'name' => $subuser->server->name,
-            ]));
-
-            try {
-                $this->serverRepository->setServer($server)->revokeUserJTI($subuser->user_id);
-            } catch (DaemonConnectionException $exception) {
-                // Don't block this request if we can't connect to the daemon instance.
-                logger()->warning($exception, ['user_id' => $subuser->user_id, 'server_id' => $server->id]);
-
-                $instance->property('revoked', false);
-            }
-        });
+        $this->deletionService->handle($subuser, $server);
 
         return new JsonResponse([], JsonResponse::HTTP_NO_CONTENT);
     }

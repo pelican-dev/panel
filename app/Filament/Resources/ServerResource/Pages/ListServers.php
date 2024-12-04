@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\ServerResource\Pages;
 
+use App\Filament\Server\Pages\Console;
 use App\Filament\Resources\ServerResource;
 use App\Models\Server;
 use Filament\Actions;
@@ -82,8 +83,8 @@ class ListServers extends ListRecords
             ->actions([
                 Action::make('View')
                     ->icon('tabler-terminal')
-                    ->url(fn (Server $server) => "/server/$server->uuid_short")
-                    ->authorize(fn () => auth()->user()->can('view server')),
+                    ->url(fn (Server $server) => Console::getUrl(panel: 'server', tenant: $server))
+                    ->authorize(fn (Server $server) => auth()->user()->canAccessTenant($server)),
                 EditAction::make(),
             ])
             ->emptyStateIcon('tabler-brand-docker')

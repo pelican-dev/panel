@@ -5,11 +5,13 @@ namespace App\Models;
 use App\Enums\ContainerStatus;
 use App\Enums\ServerState;
 use App\Exceptions\Http\Connection\DaemonConnectionException;
+use App\Repositories\Daemon\DaemonServerRepository;
 use GuzzleHttp\Exception\GuzzleException;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Query\JoinClause;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Http;
 use Psr\Http\Message\ResponseInterface;
 use Illuminate\Database\Eloquent\Relations\HasOne;
@@ -17,6 +19,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
 use App\Exceptions\Http\Server\ServerStateConflictException;
+use App\Services\Subusers\SubuserDeletionService;
 
 /**
  * \App\Models\Server.
@@ -44,7 +47,7 @@ use App\Exceptions\Http\Server\ServerStateConflictException;
  * @property string $image
  * @property int|null $allocation_limit
  * @property int|null $database_limit
- * @property int $backup_limit
+ * @property int|null $backup_limit
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property \Illuminate\Support\Carbon|null $installed_at
@@ -201,6 +204,17 @@ class Server extends Model
         ];
     }
 
+    protected static function booted(): void
+    {
+        static::saved(function (self $server) {
+            $subuser = $server->subusers()->where('user_id', $server->owner_id)->first();
+            if ($subuser) {
+                // @phpstan-ignore-next-line
+                app(SubuserDeletionService::class)->handle($subuser, $server);
+            }
+        });
+    }
+
     /**
      * Returns the format for server allocations when communicating with the Daemon.
      */
@@ -287,6 +301,14 @@ class Server extends Model
         return $this->hasMany(ServerVariable::class);
     }
 
+    public function viewableServerVariables(): HasMany
+    {
+        return $this->hasMany(ServerVariable::class)->rightJoin('egg_variables', function (JoinClause $join) {
+            $join->on('egg_variables.id', 'server_variables.variable_id')
+                ->where('egg_variables.user_viewable', true);
+        });
+    }
+
     /**
      * Gets information for the node associated with this server.
      */
@@ -358,6 +380,11 @@ class Server extends Model
         };
     }
 
+    public function isInConflictState(): bool
+    {
+        return $this->isSuspended() || $this->node->isUnderMaintenance() || !$this->isInstalled() || $this->status === ServerState::RestoringBackup || !is_null($this->transfer);
+    }
+
     /**
      * Checks if the server is currently in a user-accessible state. If not, an
      * exception is raised. This should be called whenever something needs to make
@@ -367,13 +394,7 @@ class Server extends Model
      */
     public function validateCurrentState(): void
     {
-        if (
-            $this->isSuspended() ||
-            $this->node->isUnderMaintenance() ||
-            !$this->isInstalled() ||
-            $this->status === ServerState::RestoringBackup ||
-            !is_null($this->transfer)
-        ) {
+        if ($this->isInConflictState()) {
             throw new ServerStateConflictException($this);
         }
     }
@@ -422,6 +443,14 @@ class Server extends Model
         $this->node->serverStatuses();
 
         return cache()->get("servers.$this->uuid.container.status") ?? 'missing';
+    }
+
+    public function resources(): array
+    {
+        return cache()->remember("resources:$this->uuid", now()->addSeconds(15), function () {
+            // @phpstan-ignore-next-line
+            return Arr::get(app(DaemonServerRepository::class)->setServer($this)->getDetails(), 'utilization', []);
+        });
     }
 
     public function condition(): Attribute

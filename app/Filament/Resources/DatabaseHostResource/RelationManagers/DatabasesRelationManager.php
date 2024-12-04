@@ -24,21 +24,30 @@ class DatabasesRelationManager extends RelationManager
     {
         return $form
             ->schema([
-                TextInput::make('database')->columnSpanFull(),
+                TextInput::make('database')
+                    ->columnSpanFull(),
                 TextInput::make('username'),
                 TextInput::make('password')
+                    ->password()
+                    ->revealable()
                     ->hintAction(
                         Action::make('rotate')
                             ->icon('tabler-refresh')
                             ->requiresConfirmation()
                             ->action(fn (DatabasePasswordService $service, Database $database, $set, $get) => $this->rotatePassword($service, $database, $set, $get))
+                            ->authorize(fn (Database $database) => auth()->user()->can('update database', $database))
                     )
                     ->formatStateUsing(fn (Database $database) => $database->password),
-                TextInput::make('remote')->label('Connections From'),
-                TextInput::make('max_connections'),
+                TextInput::make('remote')
+                    ->label('Connections From')
+                    ->formatStateUsing(fn ($record) => $record->remote === '%' ? 'Anywhere ( % )' : $record->remote),
+                TextInput::make('max_connections')
+                    ->formatStateUsing(fn ($record) => $record->max_connections === 0 ? 'Unlimited' : $record->max_connections),
                 TextInput::make('JDBC')
                     ->label('JDBC Connection String')
                     ->columnSpanFull()
+                    ->password()
+                    ->revealable()
                     ->formatStateUsing(fn (Get $get, Database $database) => 'jdbc:mysql://' . $get('username') . ':' . urlencode($database->password) . '@' . $database->host->host . ':' . $database->host->port . '/' . $get('database')),
             ]);
     }
@@ -48,18 +57,25 @@ class DatabasesRelationManager extends RelationManager
         return $table
             ->recordTitleAttribute('servers')
             ->columns([
-                TextColumn::make('database')->icon('tabler-database'),
-                TextColumn::make('username')->icon('tabler-user'),
-                TextColumn::make('remote'),
+                TextColumn::make('database')
+                    ->icon('tabler-database'),
+                TextColumn::make('username')
+                    ->icon('tabler-user'),
+                TextColumn::make('remote')
+                    ->formatStateUsing(fn ($record) => $record->remote === '%' ? 'Anywhere ( % )' : $record->remote),
                 TextColumn::make('server.name')
                     ->icon('tabler-brand-docker')
                     ->url(fn (Database $database) => route('filament.admin.resources.servers.edit', ['record' => $database->server_id])),
-                TextColumn::make('max_connections'),
+                TextColumn::make('max_connections')
+                    ->formatStateUsing(fn ($record) => $record->max_connections === 0 ? 'Unlimited' : $record->max_connections),
                 DateTimeColumn::make('created_at'),
             ])
             ->actions([
-                DeleteAction::make(),
-                ViewAction::make()->color('primary'),
+                DeleteAction::make()
+                    ->authorize(fn (Database $database) => auth()->user()->can('delete database', $database)),
+                ViewAction::make()
+                    ->color('primary')
+                    ->hidden(fn () => !auth()->user()->can('viewList database')),
             ]);
     }
 
