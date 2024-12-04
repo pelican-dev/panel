@@ -21,9 +21,11 @@ class ListServers extends ListRecords
 
     public function table(Table $table): Table
     {
+        $baseQuery = auth()->user()->can('viewList server') ? Server::query() : auth()->user()->accessibleServers();
+
         return $table
             ->paginated(false)
-            ->query(fn () => auth()->user()->can('viewList server') ? Server::query() : auth()->user()->accessibleServers())
+            ->query(fn () => $baseQuery)
             ->poll('15s')
             ->columns([
                 Stack::make([
@@ -53,6 +55,10 @@ class ListServers extends ListRecords
                             default => $query,
                         };
                     }),
+                SelectFilter::make('egg')
+                    ->relationship('egg', 'name', fn (Builder $query) => $query->whereIn('id', $baseQuery->pluck('egg_id')))
+                    ->searchable()
+                    ->preload(),
             ]);
     }
 
