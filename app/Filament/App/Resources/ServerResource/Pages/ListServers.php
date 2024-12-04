@@ -10,6 +10,7 @@ use Carbon\CarbonInterface;
 use Filament\Resources\Pages\ListRecords;
 use Filament\Tables\Columns\Layout\Stack;
 use Filament\Tables\Filters\SelectFilter;
+use Filament\Tables\Filters\TernaryFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Arr;
@@ -42,19 +43,17 @@ class ListServers extends ListRecords
             ->emptyStateDescription('')
             ->emptyStateHeading('You don\'t have access to any servers!')
             ->filters([
-                SelectFilter::make('owner')
-                    ->default('my')
-                    ->options([
-                        'my' => 'My Servers',
-                        'other' => 'Others\' Servers',
-                    ])
-                    ->query(function (Builder $query, $state) {
-                        return match ($state['value']) {
-                            'my' => $query->where('owner_id', auth()->user()->id),
-                            'other' => $query->whereNot('owner_id', auth()->user()->id),
-                            default => $query,
-                        };
-                    }),
+                TernaryFilter::make('only_my_servers')
+                    ->label('Owned by')
+                    ->placeholder('All servers')
+                    ->trueLabel('My Servers')
+                    ->falseLabel('Others\' Servers')
+                    ->default()
+                    ->queries(
+                        true: fn (Builder $query) => $query->where('owner_id', auth()->user()->id),
+                        false: fn (Builder $query) => $query->whereNot('owner_id', auth()->user()->id),
+                        blank: fn (Builder $query) => $query,
+                    ),
                 SelectFilter::make('egg')
                     ->relationship('egg', 'name', fn (Builder $query) => $query->whereIn('id', $baseQuery->pluck('egg_id')))
                     ->searchable()
