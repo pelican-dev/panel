@@ -10,8 +10,8 @@ return new class extends Migration
     {
         Schema::create('database_host_node', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('node_id')->references('id')->on('nodes');
-            $table->foreignId('database_host_id')->references('id')->on('database_hosts');
+            $table->foreignId('node_id')->constrained('nodes', 'id');
+            $table->foreignId('database_host_id')->constrained('database_hosts', 'id');
             $table->timestamps();
         });
 
@@ -23,6 +23,7 @@ return new class extends Migration
             'updated_at' => now(),
         ]);
 
+        
         DB::table('database_host_node')->insert($newJoinEntries->toArray());
 
         Schema::table('database_hosts', function (Blueprint $table) {
