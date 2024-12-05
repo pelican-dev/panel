@@ -119,14 +119,8 @@
         const handleConsoleOutput = (line, prelude = false) =>
             terminal.writeln((prelude ? TERMINAL_PRELUDE : '') + line.replace(/(?:\r\n|\r|\n)$/im, '') + '\u001b[0m');
 
-        const handleTransferStatus = (status) => {
-            switch (status) {
-                // Sent by either the source or target node if a failure occurs.
-                case 'failure':
-                    terminal.writeln(TERMINAL_PRELUDE + 'Transfer has failed.\u001b[0m');
-                    return;
-            }
-        };
+        const handleTransferStatus = (status) =>
+            status === 'failure' && terminal.writeln(TERMINAL_PRELUDE + 'Transfer has failed.\u001b[0m');
 
         const handleDaemonErrorOutput = (line) =>
             terminal.writeln(
