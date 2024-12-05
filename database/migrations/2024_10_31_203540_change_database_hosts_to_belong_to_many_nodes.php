@@ -25,7 +25,6 @@ return new class extends Migration
             'updated_at' => now(),
         ]);
 
-        
         DB::table('database_host_node')->insert($newJoinEntries->toArray());
 
         Schema::table('database_hosts', function (Blueprint $table) {
@@ -37,7 +36,8 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('database_hosts', function (Blueprint $table) {
-            $table->foreignId('node_id')->nullable()->constrained('nodes', 'id');
+            $table->unsignedInteger('node_id')->nullable();
+            $table->foreign('node_id')->references('id')->on('nodes');
         });
 
         foreach (DB::table('database_host_node')->get() as $record) {
