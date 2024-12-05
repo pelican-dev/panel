@@ -134,38 +134,40 @@
         let token = '{{ $this->getToken() }}';
 
         socket.onmessage = function(websocketMessageEvent) {
-            let eventData = JSON.parse(websocketMessageEvent.data);
+            let {event, args} = JSON.parse(websocketMessageEvent.data);
 
-            if (eventData.event === 'console output' || eventData.event === 'install output') {
-                handleConsoleOutput(eventData.args[0]);
-            }
+            switch (event) {
+                case 'console output':
+                case 'install output':
+                    handleConsoleOutput(args[0]);
+                    break;
+                case 'status':
+                    handlePowerChangeEvent(args[0]);
+                    break;
+                case 'transfer status':
+                    handleTransferStatus(args[0]);
+                    break;
+                case 'daemon error':
+                    handleDaemonErrorOutput(args[0]);
+                    break;
+                case 'stats':
+                    $wire.dispatchSelf('storeStats', { data: args[0] });
+                    break;
+                case 'auth success':
+                    socket.send(JSON.stringify({
+                        'event': 'send logs',
+                        'args': [null]
+                    }));
+                    break;
+                case 'token expiring':
+                case 'token expired':
+                    token = '{{ $this->getToken() }}';
 
-            if (eventData.event === 'status') {
-                handlePowerChangeEvent(eventData.args[0]);
-            }
-
-            if (eventData.event === 'daemon error') {
-                handleDaemonErrorOutput(eventData.args[0]);
-            }
-
-            if (eventData.event === 'stats') {
-                $wire.dispatchSelf('storeStats', { data: eventData.args[0] });
-            }
-
-            if (eventData.event === 'auth success') {
-                socket.send(JSON.stringify({
-                    'event': 'send logs',
-                    'args': [null]
-                }));
-            }
-
-            if (eventData.event === 'token expiring' || eventData.event === 'token expired') {
-                token = '{{ $this->getToken() }}';
-
-                socket.send(JSON.stringify({
-                    'event': 'auth',
-                    'args': [token]
-                }));
+                    socket.send(JSON.stringify({
+                        'event': 'auth',
+                        'args': [token]
+                    }));
+                    break;
             }
         };
 
