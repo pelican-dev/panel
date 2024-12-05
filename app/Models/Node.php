@@ -244,9 +244,9 @@ class Node extends Model
         return $this->hasMany(Allocation::class);
     }
 
-    public function databaseHosts(): HasMany
+    public function databaseHosts(): BelongsToMany
     {
-        return $this->hasMany(DatabaseHost::class);
+        return $this->belongsToMany(DatabaseHost::class);
     }
 
     /**
@@ -386,10 +386,5 @@ class Node extends Model
 
             return $ips->all();
         });
-    }
-
-    public function databaseHosts(): BelongsToMany
-    {
-        return $this->belongsToMany(DatabaseHost::class);
     }
 }
