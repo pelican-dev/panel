@@ -10,8 +10,10 @@ return new class extends Migration
     {
         Schema::create('database_host_node', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('node_id')->constrained('nodes', 'id');
-            $table->foreignId('database_host_id')->constrained('database_hosts', 'id');
+            $table->unsignedInteger('node_id');
+            $table->foreign('node_id')->references('id')->on('nodes');
+            $table->unsignedInteger('database_host_id');
+            $table->foreign('database_host_id')->references('id')->on('database_hosts');
             $table->timestamps();
         });
 
@@ -35,7 +37,7 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('database_hosts', function (Blueprint $table) {
-            $table->foreignId('node_id')->nullable()->references('id')->on('nodes');
+            $table->foreignId('node_id')->nullable()->constrained('nodes', 'id');
         });
 
         foreach (DB::table('database_host_node')->get() as $record) {
