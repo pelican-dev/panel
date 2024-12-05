@@ -92,6 +92,7 @@ class ListUsers extends ListRecords
                                 ->alphaNum()
                                 ->required()
                                 ->unique()
+                                ->minLength(3)
                                 ->maxLength(255),
                             TextInput::make('email')
                                 ->email()

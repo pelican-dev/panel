@@ -20,8 +20,7 @@ class SuspensionService
      */
     public function __construct(
         private DaemonServerRepository $daemonServerRepository
-    ) {
-    }
+    ) {}
 
     /**
      * Suspends a server on the system.

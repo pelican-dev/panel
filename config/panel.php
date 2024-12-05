@@ -162,6 +162,7 @@ return [
 
     'filament' => [
         'top-navigation' => env('FILAMENT_TOP_NAVIGATION', false),
+        'display-width' => env('FILAMENT_WIDTH', 'screen-2xl'),
     ],
 
     'use_binary_prefix' => env('PANEL_USE_BINARY_PREFIX', true),

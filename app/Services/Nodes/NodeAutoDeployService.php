@@ -15,8 +15,7 @@ class NodeAutoDeployService
      */
     public function __construct(
         private readonly KeyCreationService $keyCreationService
-    ) {
-    }
+    ) {}
 
     /**
      * Generates a new API key for the logged-in user with only permission to read

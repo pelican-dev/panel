@@ -1,10 +1,10 @@
 {
     "_comment": "DO NOT EDIT: FILE GENERATED AUTOMATICALLY BY PANEL",
     "meta": {
-        "version": "PTDL_v2",
+        "version": "PLCN_v1",
         "update_url": "https:\/\/github.com\/pelican-dev\/panel\/raw\/main\/database\/Seeders\/eggs\/rust\/egg-rust.json"
     },
-    "exported_at": "2024-07-25T12:06:17+00:00",
+    "exported_at": "2024-11-23T22:22:46+00:00",
     "name": "Rust",
     "author": "panel@example.com",
     "uuid": "bace2dfb-209c-452a-9459-7d6f340b07ae",
@@ -43,8 +43,7 @@
                 "string",
                 "max:60"
             ],
-            "sort": 1,
-            "field_type": "text"
+            "sort": 1
         },
         {
             "name": "Modding Framework",
@@ -57,8 +56,7 @@
                 "required",
                 "in:vanilla,oxide,carbon"
             ],
-            "sort": 2,
-            "field_type": "text"
+            "sort": 2
         },
         {
             "name": "Level",
@@ -72,8 +70,7 @@
                 "string",
                 "max:20"
             ],
-            "sort": 3,
-            "field_type": "text"
+            "sort": 3
         },
         {
             "name": "Description",
@@ -86,8 +83,7 @@
                 "required",
                 "string"
             ],
-            "sort": 4,
-            "field_type": "text"
+            "sort": 4
         },
         {
             "name": "URL",
@@ -100,8 +96,7 @@
                 "nullable",
                 "url"
             ],
-            "sort": 5,
-            "field_type": "text"
+            "sort": 5
         },
         {
             "name": "World Size",
@@ -114,8 +109,7 @@
                 "required",
                 "integer"
             ],
-            "sort": 6,
-            "field_type": "text"
+            "sort": 6
         },
         {
             "name": "World Seed",
@@ -128,8 +122,7 @@
                 "nullable",
                 "string"
             ],
-            "sort": 7,
-            "field_type": "text"
+            "sort": 7
         },
         {
             "name": "Max Players",
@@ -142,8 +135,7 @@
                 "required",
                 "integer"
             ],
-            "sort": 8,
-            "field_type": "text"
+            "sort": 8
         },
         {
             "name": "Server Image",
@@ -156,8 +148,7 @@
                 "nullable",
                 "url"
             ],
-            "sort": 9,
-            "field_type": "text"
+            "sort": 9
         },
         {
             "name": "Query Port",
@@ -170,8 +161,7 @@
                 "required",
                 "integer"
             ],
-            "sort": 10,
-            "field_type": "text"
+            "sort": 10
         },
         {
             "name": "RCON Port",
@@ -184,8 +174,7 @@
                 "required",
                 "integer"
             ],
-            "sort": 11,
-            "field_type": "text"
+            "sort": 11
         },
         {
             "name": "RCON Password",
@@ -199,8 +188,7 @@
                 "regex:\/^[\\w.-]*$\/",
                 "max:64"
             ],
-            "sort": 12,
-            "field_type": "text"
+            "sort": 12
         },
         {
             "name": "Save Interval",
@@ -213,8 +201,7 @@
                 "required",
                 "integer"
             ],
-            "sort": 13,
-            "field_type": "text"
+            "sort": 13
         },
         {
             "name": "Additional Arguments",
@@ -227,8 +214,7 @@
                 "nullable",
                 "string"
             ],
-            "sort": 14,
-            "field_type": "text"
+            "sort": 14
         },
         {
             "name": "App Port",
@@ -241,8 +227,7 @@
                 "required",
                 "integer"
             ],
-            "sort": 15,
-            "field_type": "text"
+            "sort": 15
         },
         {
             "name": "Server Logo",
@@ -255,8 +240,7 @@
                 "nullable",
                 "url"
             ],
-            "sort": 16,
-            "field_type": "text"
+            "sort": 16
         },
         {
             "name": "Custom Map URL",
@@ -269,8 +253,7 @@
                 "nullable",
                 "url"
             ],
-            "sort": 17,
-            "field_type": "text"
+            "sort": 17
         },
         {
             "name": "App ID",
@@ -284,8 +267,7 @@
                 "string",
                 "in:258550"
             ],
-            "sort": 18,
-            "field_type": "text"
+            "sort": 18
         }
     ]
 }

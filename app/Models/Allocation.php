@@ -20,6 +20,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property \Carbon\Carbon|null $updated_at
  * @property string $alias
  * @property bool $has_alias
+ * @property string $address
  * @property \App\Models\Server|null $server
  * @property \App\Models\Node $node
  *
@@ -105,7 +106,7 @@ class Allocation extends Model
     protected function address(): Attribute
     {
         return Attribute::make(
-            get: fn () => "$this->ip:$this->port",
+            get: fn () => "$this->alias:$this->port",
         );
     }
 

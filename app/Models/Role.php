@@ -33,6 +33,9 @@ class Role extends BaseRole
             'view',
             'update',
         ],
+        'activity' => [
+            'seeIps',
+        ],
     ];
 
     public function isRootAdmin(): bool

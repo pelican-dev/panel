@@ -9,6 +9,14 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\File;
 
+/**
+ * @property string $endpoint
+ * @property string $description
+ * @property array $events
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property \Illuminate\Support\Carbon|null $deleted_at
+ */
 class WebhookConfiguration extends Model
 {
     use HasFactory, SoftDeletes;

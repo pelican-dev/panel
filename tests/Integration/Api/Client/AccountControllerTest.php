@@ -47,7 +47,7 @@ class AccountControllerTest extends ClientApiIntegrationTestCase
         $user = User::factory()->create();
 
         $response = $this->actingAs($user)->putJson('/api/client/account/email', [
-            'email' => $email = Str::random() . '@example.com',
+            'email' => $email = mb_strtolower(Str::random() . '@example.com'),
             'password' => 'password',
         ]);
 

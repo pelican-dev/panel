@@ -1,10 +1,10 @@
 {
     "_comment": "DO NOT EDIT: FILE GENERATED AUTOMATICALLY BY PANEL",
     "meta": {
-        "version": "PTDL_v2",
+        "version": "PLCN_v1",
         "update_url": "https:\/\/github.com\/pelican-dev\/panel\/raw\/main\/database\/Seeders\/eggs\/source-engine\/egg-custom-source-engine-game.json"
     },
-    "exported_at": "2024-07-25T12:03:27+00:00",
+    "exported_at": "2024-11-23T22:22:40+00:00",
     "name": "Custom Source Engine Game",
     "author": "panel@example.com",
     "uuid": "2a42d0c2-c0ba-4067-9a0a-9b95d77a3490",
@@ -43,8 +43,7 @@
                 "numeric",
                 "digits_between:1,6"
             ],
-            "sort": 1,
-            "field_type": "text"
+            "sort": 1
         },
         {
             "name": "Game Name",
@@ -58,8 +57,7 @@
                 "alpha_dash",
                 "between:1,100"
             ],
-            "sort": 2,
-            "field_type": "text"
+            "sort": 2
         },
         {
             "name": "Map",
@@ -73,8 +71,7 @@
                 "string",
                 "alpha_dash"
             ],
-            "sort": 3,
-            "field_type": "text"
+            "sort": 3
         },
         {
             "name": "Steam Username",
@@ -87,8 +84,7 @@
                 "nullable",
                 "string"
             ],
-            "sort": 4,
-            "field_type": "text"
+            "sort": 4
         },
         {
             "name": "Steam Password",
@@ -101,8 +97,7 @@
                 "nullable",
                 "string"
             ],
-            "sort": 5,
-            "field_type": "text"
+            "sort": 5
         },
         {
             "name": "Steam Auth",
@@ -115,8 +110,7 @@
                 "nullable",
                 "string"
             ],
-            "sort": 6,
-            "field_type": "text"
+            "sort": 6
         }
     ]
 }

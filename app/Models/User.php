@@ -9,7 +9,10 @@ use DateTimeZone;
 use Filament\Models\Contracts\FilamentUser;
 use Filament\Models\Contracts\HasAvatar;
 use Filament\Models\Contracts\HasName;
+use Filament\Models\Contracts\HasTenants;
 use Filament\Panel;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rules\In;
 use Illuminate\Auth\Authenticatable;
@@ -86,7 +89,7 @@ use Spatie\Permission\Traits\HasRoles;
  * @method static Builder|User whereUsername($value)
  * @method static Builder|User whereUuid($value)
  */
-class User extends Model implements AuthenticatableContract, AuthorizableContract, CanResetPasswordContract, FilamentUser, HasAvatar, HasName
+class User extends Model implements AuthenticatableContract, AuthorizableContract, CanResetPasswordContract, FilamentUser, HasAvatar, HasName, HasTenants
 {
     use Authenticatable;
     use Authorizable {can as protected canned; }
@@ -188,6 +191,8 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
         static::creating(function (self $user) {
             $user->uuid = Str::uuid()->toString();
 
+            $user->timezone = env('APP_TIMEZONE', 'UTC');
+
             return true;
         });
 
@@ -253,6 +258,14 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
     }
 
     /**
+     * Store the email as a lowercase string.
+     */
+    public function setEmailAttribute(string $value): void
+    {
+        $this->attributes['email'] = mb_strtolower($value);
+    }
+
+    /**
      * Return a concatenated result for the accounts full name.
      */
     public function getNameAttribute(): string
@@ -313,6 +326,11 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
         return $this->hasMany(Subuser::class);
     }
 
+    public function subServers(): BelongsToMany
+    {
+        return $this->belongsToMany(Server::class, 'subusers');
+    }
+
     protected function checkPermission(Server $server, string $permission = ''): bool
     {
         if ($this->isRootAdmin() || $server->owner_id === $this->id) {
@@ -367,7 +385,11 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
             return true;
         }
 
-        return $this->roles()->count() >= 1 && $this->getAllPermissions()->count() >= 1;
+        if ($panel->getId() === 'admin') {
+            return $this->roles()->count() >= 1 && $this->getAllPermissions()->count() >= 1;
+        }
+
+        return true;
     }
 
     public function getFilamentName(): string
@@ -387,5 +409,25 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
         }
 
         return $user instanceof User && !$user->isRootAdmin();
+    }
+
+    public function getTenants(Panel $panel): array|Collection
+    {
+        return $this->accessibleServers()->get();
+    }
+
+    public function canAccessTenant(IlluminateModel $tenant): bool
+    {
+        if ($tenant instanceof Server) {
+            if ($this->isRootAdmin() || $tenant->owner_id === $this->id) {
+                return true;
+            }
+
+            $subuser = $tenant->subusers->where('user_id', $this->id)->first();
+
+            return $subuser !== null;
+        }
+
+        return false;
     }
 }

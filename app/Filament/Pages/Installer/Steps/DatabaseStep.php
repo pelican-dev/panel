@@ -97,8 +97,6 @@ class DatabaseStep
                 }
 
                 $installer->writeToEnv('env_database');
-
-                $installer->runMigrations($driver);
             });
     }
 

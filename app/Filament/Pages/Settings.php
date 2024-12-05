@@ -10,6 +10,7 @@ use Filament\Actions\Action;
 use Filament\Forms\Components\Actions\Action as FormAction;
 use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\Section;
+use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Tabs;
 use Filament\Forms\Components\Tabs\Tab;
 use Filament\Forms\Components\TagsInput;
@@ -25,6 +26,7 @@ use Filament\Notifications\Notification;
 use Filament\Pages\Concerns\HasUnsavedDataChangesAlert;
 use Filament\Pages\Concerns\InteractsWithHeaderActions;
 use Filament\Pages\Page;
+use Filament\Support\Enums\MaxWidth;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\GuzzleException;
 use Illuminate\Support\Facades\Artisan;
@@ -185,6 +187,11 @@ class Settings extends Page implements HasForms
                             $set('TRUSTED_PROXIES', $ips->values()->all());
                         }),
                 ]),
+            Select::make('FILAMENT_WIDTH')
+                ->label('Display Width')
+                ->native(false)
+                ->options(MaxWidth::class)
+                ->default(env('FILAMENT_WIDTH', config('panel.filament.display-width'))),
         ];
     }
 
