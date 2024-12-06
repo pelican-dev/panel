@@ -29,6 +29,7 @@ use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Get;
 use Filament\Notifications\Notification;
+use Filament\Pages\Auth\EditProfile as BaseEditProfile;
 use Filament\Support\Enums\MaxWidth;
 use Filament\Support\Exceptions\Halt;
 use Illuminate\Database\Eloquent\Builder;
@@ -42,7 +43,7 @@ use Laravel\Socialite\Facades\Socialite;
 /**
  * @method User getUser()
  */
-class EditProfile extends \Filament\Pages\Auth\EditProfile
+class EditProfile extends BaseEditProfile
 {
     private ToggleTwoFactorService $toggleTwoFactorService;
 
@@ -53,7 +54,7 @@ class EditProfile extends \Filament\Pages\Auth\EditProfile
 
     public function getMaxWidth(): MaxWidth|string
     {
-        return MaxWidth::SevenExtraLarge;
+        return config('panel.filament.display-width', 'screen-2xl');
     }
 
     protected function getForms(): array
