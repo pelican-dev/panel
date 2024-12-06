@@ -50,12 +50,13 @@ class ListUsers extends ListRecords
                     ->label('2FA')
                     ->visibleFrom('lg')
                     ->icon(fn (User $user) => $user->use_totp ? 'tabler-lock' : 'tabler-lock-open-off')
-                    ->boolean()->sortable(),
-                TextColumn::make('roles_count')
-                    ->counts('roles')
-                    ->icon('tabler-users-group')
+                    ->boolean()
+                    ->sortable(),
+                TextColumn::make('roles.name')
                     ->label('Roles')
-                    ->formatStateUsing(fn (User $user, $state) => $state . ($user->isRootAdmin() ? ' (Root Admin)' : '')),
+                    ->badge()
+                    ->icon('tabler-users-group')
+                    ->placeholder('No roles'),
                 TextColumn::make('servers_count')
                     ->counts('servers')
                     ->icon('tabler-server')
@@ -65,7 +66,6 @@ class ListUsers extends ListRecords
                     ->label('Subusers')
                     ->counts('subusers')
                     ->icon('tabler-users'),
-                // ->formatStateUsing(fn (string $state, $record): string => (string) ($record->servers_count + $record->subusers_count))
             ])
             ->actions([
                 EditAction::make(),
