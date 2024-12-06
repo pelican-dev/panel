@@ -57,6 +57,11 @@ class ServerConsole extends Widget
         return $socket;
     }
 
+    protected function canSendCommand(): bool
+    {
+        return !$this->server->isInConflictState() && $this->server->retrieveStatus() === 'running';
+    }
+
     public function up(): void
     {
         $this->historyIndex = min($this->historyIndex + 1, count($this->history) - 1);
@@ -73,7 +78,7 @@ class ServerConsole extends Widget
 
     public function enter(): void
     {
-        if (!empty($this->input)) {
+        if (!empty($this->input) && $this->canSendCommand()) {
             $this->dispatch('sendServerCommand', command: $this->input);
 
             $this->history = Arr::prepend($this->history, $this->input);

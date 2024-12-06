@@ -1,19 +1,37 @@
 <x-filament::widget>
     @assets
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/xterm/5.5.0/xterm.js"
-            integrity="sha512-Gujw5GajF5is3nMoGv9X+tCMqePLL/60qvAv1LofUZTV9jK8ENbM9L+maGmOsNzuZaiuyc/fpph1KT9uR5w3CQ=="
-            crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/xterm/5.5.0/xterm.css"
-          integrity="sha512-AbNrj/oSHJaILgcdnkYm+DQ08SqVbZ8jlkJbFyyS1WDcAaXAcAfxJnCH69el7oVgTwVwyA5u5T+RdFyUykrV3Q=="
-          crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xterm/xterm/css/xterm.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/@xterm/xterm/lib/xterm.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@xterm/addon-fit/lib/addon-fit.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@xterm/addon-web-links/lib/addon-web-links.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@xterm/addon-search/lib/addon-search.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/xterm-addon-search-bar/lib/xterm-addon-search-bar.min.js"></script>
+    <style>
+        #terminal {
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .xterm .xterm-rows > div {
+            padding-left: 10px;
+            padding-top: 2px;
+            padding-right: 10px;
+        }
+    </style>
     @endassets
 
     <div id="terminal" wire:ignore></div>
 
-    <div>
+    <div class="flex items-center w-full bg-transparent border rounded">
+        <x-filament::icon
+            icon="tabler-chevrons-right"
+        />
         <input
-            class="w-full bg-transparent"
+            class="w-full bg-transparent p-2 focus:outline-none focus:ring-0 border-none"
             type="text"
+            title="{{ $this->canSendCommand() ? '' : 'Can\'t send command when the server is Offline' }}"
+            :readonly="{{ !$this->canSendCommand() }}"
             placeholder="Type a command..."
             wire:model="input"
             wire:keydown.enter="enter"
@@ -24,39 +42,85 @@
 
     @script
     <script>
+        let theme = {
+            background: 'rgba(19,26,32,0.7)',
+            cursor: 'transparent',
+            black: '#000000',
+            red: '#E54B4B',
+            green: '#9ECE58',
+            yellow: '#FAED70',
+            blue: '#396FE2',
+            magenta: '#BB80B3',
+            cyan: '#2DDAFD',
+            white: '#d0d0d0',
+            brightBlack: 'rgba(255, 255, 255, 0.2)',
+            brightRed: '#FF5370',
+            brightGreen: '#C3E88D',
+            brightYellow: '#FFCB6B',
+            brightBlue: '#82AAFF',
+            brightMagenta: '#C792EA',
+            brightCyan: '#89DDFF',
+            brightWhite: '#ffffff',
+            selection: '#FAF089'
+        };
+
         let options = {
-            fontSize: 18,
-            // fontFamily: th('fontFamily.mono'),
+            fontSize: 16,
             disableStdin: true,
             cursorStyle: 'underline',
+            cursorInactiveStyle: 'none',
             allowTransparency: true,
+            letterSpacing: 0.75,
+            lineHeight: 1,
             rows: 35,
-            cols: 110
-            // theme: theme,
+            cols: 110,
+            theme: theme
         };
 
         const terminal = new Terminal(options);
-        // TODO: load addons
+        const fitAddon = new FitAddon.FitAddon();
+        const webLinksAddon = new WebLinksAddon.WebLinksAddon();
+        const searchAddon = new SearchAddon.SearchAddon();
+        const searchAddonBar = new SearchBarAddon.SearchBarAddon({ searchAddon });
+
+        terminal.loadAddon(fitAddon);
+        terminal.loadAddon(webLinksAddon);
+        terminal.loadAddon(searchAddon);
+        terminal.loadAddon(searchAddonBar);
+
+
         terminal.open(document.getElementById('terminal'));
+
+        fitAddon.fit(); //Fit on first load
+
+        window.addEventListener('resize', () => {
+            fitAddon.fit();
+        });
+
+        terminal.attachCustomKeyEventHandler((event) => {
+            if ((event.ctrlKey || event.metaKey) && event.key === 'c') {
+                document.execCommand('copy'); // navigator.clipboard.writeText() only works on ssl..
+                return false;
+            } else if ((event.ctrlKey || event.metaKey) && event.key === 'f') {
+                event.preventDefault();
+                searchAddonBar.show();
+                return false;
+            } else if (event.key === 'Escape') {
+                searchAddonBar.hidden();
+            }
+            return true;
+        });
 
         const TERMINAL_PRELUDE = '\u001b[1m\u001b[33mpelican@' + '{{ \Filament\Facades\Filament::getTenant()->name }}' + ' ~ \u001b[0m';
 
         const handleConsoleOutput = (line, prelude = false) =>
             terminal.writeln((prelude ? TERMINAL_PRELUDE : '') + line.replace(/(?:\r\n|\r|\n)$/im, '') + '\u001b[0m');
 
-        const handleTransferStatus = (status) => {
-            switch (status) {
-                // Sent by either the source or target node if a failure occurs.
-                case 'failure':
-                    terminal.writeln(TERMINAL_PRELUDE + 'Transfer has failed.\u001b[0m');
-                    return;
-            }
-        };
+        const handleTransferStatus = (status) =>
+            status === 'failure' && terminal.writeln(TERMINAL_PRELUDE + 'Transfer has failed.\u001b[0m');
 
         const handleDaemonErrorOutput = (line) =>
-            terminal.writeln(
-                TERMINAL_PRELUDE + '\u001b[1m\u001b[41m' + line.replace(/(?:\r\n|\r|\n)$/im, '') + '\u001b[0m'
-            );
+            terminal.writeln(TERMINAL_PRELUDE + '\u001b[1m\u001b[41m' + line.replace(/(?:\r\n|\r|\n)$/im, '') + '\u001b[0m');
 
         const handlePowerChangeEvent = (state) =>
             terminal.writeln(TERMINAL_PRELUDE + 'Server marked as ' + state + '...\u001b[0m');
@@ -65,38 +129,40 @@
         let token = '{{ $this->getToken() }}';
 
         socket.onmessage = function(websocketMessageEvent) {
-            let eventData = JSON.parse(websocketMessageEvent.data);
+            let {event, args} = JSON.parse(websocketMessageEvent.data);
 
-            if (eventData.event === 'console output' || eventData.event === 'install output') {
-                handleConsoleOutput(eventData.args[0]);
-            }
+            switch (event) {
+                case 'console output':
+                case 'install output':
+                    handleConsoleOutput(args[0]);
+                    break;
+                case 'status':
+                    handlePowerChangeEvent(args[0]);
+                    break;
+                case 'transfer status':
+                    handleTransferStatus(args[0]);
+                    break;
+                case 'daemon error':
+                    handleDaemonErrorOutput(args[0]);
+                    break;
+                case 'stats':
+                    $wire.dispatchSelf('storeStats', { data: args[0] });
+                    break;
+                case 'auth success':
+                    socket.send(JSON.stringify({
+                        'event': 'send logs',
+                        'args': [null]
+                    }));
+                    break;
+                case 'token expiring':
+                case 'token expired':
+                    token = '{{ $this->getToken() }}';
 
-            if (eventData.event === 'status') {
-                handlePowerChangeEvent(eventData.args[0]);
-            }
-
-            if (eventData.event === 'daemon error') {
-                handleDaemonErrorOutput(eventData.args[0]);
-            }
-
-            if (eventData.event === 'stats') {
-                $wire.dispatchSelf('storeStats', { data: eventData.args[0] });
-            }
-
-            if (eventData.event === 'auth success') {
-                socket.send(JSON.stringify({
-                    'event': 'send logs',
-                    'args': [null]
-                }));
-            }
-
-            if (eventData.event === 'token expiring' || eventData.event === 'token expired') {
-                token = '{{ $this->getToken() }}';
-
-                socket.send(JSON.stringify({
-                    'event': 'auth',
-                    'args': [token]
-                }));
+                    socket.send(JSON.stringify({
+                        'event': 'auth',
+                        'args': [token]
+                    }));
+                    break;
             }
         };
 
