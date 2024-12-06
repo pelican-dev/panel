@@ -272,16 +272,25 @@ class EditProfile extends BaseEditProfile
                                             ])->headerActions([
                                                 Action::make('Create')
                                                     ->disabled(fn (Get $get) => $get('description') === null)
-                                                    ->successRedirectUrl(route('filament.admin.auth.profile', ['tab' => '-api-keys-tab']))
+                                                    ->successRedirectUrl(self::getUrl(['tab' => '-api-keys-tab']))
                                                     ->action(function (Get $get, Action $action, User $user) {
                                                         $token = $user->createToken(
                                                             $get('description'),
                                                             $get('allowed_ips'),
                                                         );
+
                                                         Activity::event('user:api-key.create')
                                                             ->subject($token->accessToken)
                                                             ->property('identifier', $token->accessToken->identifier)
                                                             ->log();
+
+                                                        Notification::make()
+                                                            ->title('API Key created')
+                                                            ->body($token->accessToken->identifier . $token->plainTextToken)
+                                                            ->persistent()
+                                                            ->success()
+                                                            ->send();
+
                                                         $action->success();
                                                     }),
                                             ]),
