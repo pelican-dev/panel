@@ -278,10 +278,19 @@ class EditProfile extends BaseEditProfile
                                                             $get('description'),
                                                             $get('allowed_ips'),
                                                         );
+
                                                         Activity::event('user:api-key.create')
                                                             ->subject($token->accessToken)
                                                             ->property('identifier', $token->accessToken->identifier)
                                                             ->log();
+
+                                                        Notification::make()
+                                                            ->title('API Key created')
+                                                            ->body($token->accessToken->identifier . $token->plainTextToken)
+                                                            ->persistent()
+                                                            ->success()
+                                                            ->send();
+
                                                         $action->success();
                                                     }),
                                             ]),
