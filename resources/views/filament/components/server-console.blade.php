@@ -23,7 +23,7 @@
 
     <div id="terminal" wire:ignore></div>
 
-    <div class="flex items-center w-full bg-transparent border rounded">
+    <div class="flex items-center w-full bg-transparent border">
         <x-filament::icon
             icon="tabler-chevrons-right"
         />
@@ -70,10 +70,9 @@
             cursorStyle: 'underline',
             cursorInactiveStyle: 'none',
             allowTransparency: true,
-            letterSpacing: 0.75,
-            lineHeight: 1,
-            rows: 35,
-            cols: 110,
+            letterSpacing: 0.15,
+            lineHeight: 0.50,
+            rows: 30,
             theme: theme
         };
 
@@ -129,7 +128,7 @@
         let token = '{{ $this->getToken() }}';
 
         socket.onmessage = function(websocketMessageEvent) {
-            let {event, args} = JSON.parse(websocketMessageEvent.data);
+            let { event, args } = JSON.parse(websocketMessageEvent.data);
 
             switch (event) {
                 case 'console output':
