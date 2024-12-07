@@ -6,24 +6,7 @@
     <script src="https://cdn.jsdelivr.net/npm/@xterm/addon-web-links/lib/addon-web-links.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@xterm/addon-search/lib/addon-search.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/xterm-addon-search-bar/lib/xterm-addon-search-bar.min.js"></script>
-    <style>
-        #terminal {
-            border-top-left-radius: 10px;
-            border-top-right-radius: 10px;
-            overflow: hidden;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-        }
-
-        .xterm .xterm-rows > div {
-            padding-left: 10px;
-            padding-top: 2px;
-            padding-right: 10px;
-        }
-
-        input:read-only {
-            cursor: not-allowed;
-        }
-    </style>
+    <link rel="stylesheet" href="{{ asset('/css/filament/server/console.css') }}">
     @endassets
 
     <div id="terminal" wire:ignore></div>
