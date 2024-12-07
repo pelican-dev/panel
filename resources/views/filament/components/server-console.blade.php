@@ -19,6 +19,10 @@
             padding-top: 2px;
             padding-right: 10px;
         }
+
+        input:read-only {
+            cursor: not-allowed;
+        }
     </style>
     @endassets
 
