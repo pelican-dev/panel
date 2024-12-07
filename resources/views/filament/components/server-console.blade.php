@@ -176,10 +176,6 @@
                 'event': 'set state',
                 'args': [state]
             }));
-
-            if (state === 'stop') {
-                input.state = '';
-            }
         });
 
         Livewire.on('sendServerCommand', ({ command }) => {
