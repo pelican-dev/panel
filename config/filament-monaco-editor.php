@@ -18,7 +18,7 @@ return [
             'inherit' => true,
             'rules' => [
                 [
-                    'background' => '0C1021',
+                    'background' => '161F27',
                     'token' => '',
                 ],
                 [
@@ -139,8 +139,8 @@ return [
             ],
             'colors' => [
                 'editor.foreground' => '#F8F8F8',
-                'editor.background' => '#0C1021',
-                'editor.selectionBackground' => '#253B76',
+                'editor.background' => '#101519',
+                'editor.selectionBackground' => '#5a5f63',
                 'editor.lineHighlightBackground' => '#FFFFFF0F',
                 'editorCursor.foreground' => '#FFFFFFA6',
                 'editorWhitespace.foreground' => '#FFFFFF40',
