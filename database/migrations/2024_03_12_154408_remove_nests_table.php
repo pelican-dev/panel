@@ -33,6 +33,7 @@ return new class extends Migration
             } else {
                 $table->dropForeign(['nest_id']);
             }
+
             $table->dropColumn('nest_id');
         });
 

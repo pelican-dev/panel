@@ -34,6 +34,9 @@ return new class extends Migration
             if (Schema::getConnection()->getDriverName() !== 'sqlite') {
                 $table->dropIndex('permissions_server_id_foreign');
                 $table->dropIndex('permissions_user_id_foreign');
+            } else {
+                $table->dropForeign(['server_id']);
+                $table->dropForeign(['user_id']);
             }
 
             $table->dropColumn('server_id');
