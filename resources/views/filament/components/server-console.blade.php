@@ -8,7 +8,8 @@
     <script src="https://cdn.jsdelivr.net/npm/xterm-addon-search-bar/lib/xterm-addon-search-bar.min.js"></script>
     <style>
         #terminal {
-            border-radius: 10px;
+            border-top-left-radius: 10px;
+            border-top-right-radius: 10px;
             overflow: hidden;
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
         }
@@ -23,12 +24,13 @@
 
     <div id="terminal" wire:ignore></div>
 
-    <div class="flex items-center w-full bg-transparent border">
+    <div class="flex items-center w-full border-top" style="background-color: #202A32">
         <x-filament::icon
             icon="tabler-chevrons-right"
         />
         <input
-            class="w-full bg-transparent p-2 focus:outline-none focus:ring-0 border-none"
+            class=" w-full focus:outline-none focus:ring-0 border-none"
+            style="background-color: #202A32;"
             type="text"
             autofocus
             :readonly="{{ $this->canSendCommand() ? 'false' : 'true' }}"
