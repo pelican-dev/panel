@@ -14,6 +14,7 @@ use Filament\Actions\CreateAction;
 use Filament\Facades\Filament;
 use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\Grid;
+use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Forms\Get;
@@ -103,6 +104,11 @@ class ListDatabases extends ListRecords
                     Grid::make()
                         ->columns(3)
                         ->schema([
+                            Select::make('database_host_id')
+                                ->label('Database Host')
+                                ->required()
+                                ->placeholder('Select Database Host')
+                                ->options(fn () => $server->node->databaseHosts->mapWithKeys(fn (DatabaseHost $databaseHost) => [$databaseHost->id => $databaseHost->name])),
                             TextInput::make('database')
                                 ->columnSpan(2)
                                 ->label('Database Name')
@@ -119,8 +125,6 @@ class ListDatabases extends ListRecords
                     if (empty($data['database'])) {
                         $data['database'] = str_random(12);
                     }
-
-                    $data['database_host_id'] = DatabaseHost::where('node_id', $server->node_id)->first()->id;
                     $data['database'] = 's'. $server->id . '_' . $data['database'];
 
                     $service->create($server, $data);
