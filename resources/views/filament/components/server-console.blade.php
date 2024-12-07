@@ -31,7 +31,6 @@
             class="w-full bg-transparent p-2 focus:outline-none focus:ring-0 border-none"
             type="text"
             autofocus
-            title="{{ $this->canSendCommand() ? '' : 'Can\'t send command when the server is Offline' }}"
             :readonly="{{ $this->canSendCommand() ? 'false' : 'true' }}"
             title="{{ $this->canSendCommand() ? '' : 'Can\'t send command when the server is Offline' }}"
             placeholder="{{ $this->canSendCommand() ? 'Type a command...' : 'Server Offline...' }}"
