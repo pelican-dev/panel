@@ -30,7 +30,11 @@
         <input
             class="w-full bg-transparent p-2 focus:outline-none focus:ring-0 border-none"
             type="text"
-            placeholder="Type a command..."
+            autofocus
+            title="{{ $this->canSendCommand() ? '' : 'Can\'t send command when the server is Offline' }}"
+            :readonly="{{ $this->canSendCommand() ? 'false' : 'true' }}"
+            title="{{ $this->canSendCommand() ? '' : 'Can\'t send command when the server is Offline' }}"
+            placeholder="{{ $this->canSendCommand() ? 'Type a command...' : 'Server Offline...' }}"
             wire:model="input"
             wire:keydown.enter="enter"
             wire:keydown.up.prevent="up"
@@ -173,6 +177,10 @@
                 'event': 'set state',
                 'args': [state]
             }));
+
+            if (state === 'stop') {
+                input.state = '';
+            }
         });
 
         Livewire.on('sendServerCommand', ({ command }) => {
