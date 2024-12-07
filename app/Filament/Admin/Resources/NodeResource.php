@@ -2,8 +2,8 @@
 
 namespace App\Filament\Admin\Resources;
 
-use App\Filament\Admin\Resources\NodeResource\RelationManagers\AllocationsRelationManager;
-use App\Filament\Admin\Resources\NodeResource\RelationManagers\NodesRelationManager;
+use App\Filament\Admin\Resources\NodeResource\Pages;
+use App\Filament\Admin\Resources\NodeResource\RelationManagers;
 use App\Models\Node;
 use Filament\Resources\Resource;
 
@@ -23,17 +23,17 @@ class NodeResource extends Resource
     public static function getRelations(): array
     {
         return [
-            AllocationsRelationManager::class,
-            NodesRelationManager::class,
+            RelationManagers\AllocationsRelationManager::class,
+            RelationManagers\NodesRelationManager::class,
         ];
     }
 
     public static function getPages(): array
     {
         return [
-            'index' => \App\Filament\Admin\Resources\NodeResource\Pages\ListNodes::route('/'),
-            'create' => \App\Filament\Admin\Resources\NodeResource\Pages\CreateNode::route('/create'),
-            'edit' => \App\Filament\Admin\Resources\NodeResource\Pages\EditNode::route('/{record}/edit'),
+            'index' => Pages\ListNodes::route('/'),
+            'create' => Pages\CreateNode::route('/create'),
+            'edit' => Pages\EditNode::route('/{record}/edit'),
         ];
     }
 }

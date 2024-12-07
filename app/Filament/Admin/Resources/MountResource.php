@@ -2,6 +2,7 @@
 
 namespace App\Filament\Admin\Resources;
 
+use App\Filament\Admin\Resources\MountResource\Pages;
 use App\Models\Mount;
 use Filament\Resources\Resource;
 
@@ -21,9 +22,9 @@ class MountResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => \App\Filament\Admin\Resources\MountResource\Pages\ListMounts::route('/'),
-            'create' => \App\Filament\Admin\Resources\MountResource\Pages\CreateMount::route('/create'),
-            'edit' => \App\Filament\Admin\Resources\MountResource\Pages\EditMount::route('/{record}/edit'),
+            'index' => Pages\ListMounts::route('/'),
+            'create' => Pages\CreateMount::route('/create'),
+            'edit' => Pages\EditMount::route('/{record}/edit'),
         ];
     }
 }

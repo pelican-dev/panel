@@ -2,6 +2,7 @@
 
 namespace App\Filament\Admin\Resources;
 
+use App\Filament\Admin\Resources\EggResource\Pages;
 use App\Models\Egg;
 use Filament\Resources\Resource;
 
@@ -28,9 +29,9 @@ class EggResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => \App\Filament\Admin\Resources\EggResource\Pages\ListEggs::route('/'),
-            'create' => \App\Filament\Admin\Resources\EggResource\Pages\CreateEgg::route('/create'),
-            'edit' => \App\Filament\Admin\Resources\EggResource\Pages\EditEgg::route('/{record}/edit'),
+            'index' => Pages\ListEggs::route('/'),
+            'create' => Pages\CreateEgg::route('/create'),
+            'edit' => Pages\EditEgg::route('/{record}/edit'),
         ];
     }
 }

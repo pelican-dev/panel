@@ -4,6 +4,7 @@ namespace App\Filament\Admin\Resources;
 
 use App\Enums\RolePermissionModels;
 use App\Enums\RolePermissionPrefixes;
+use App\Filament\Admin\Resources\RoleResource\Pages;
 use App\Models\Role;
 use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\CheckboxList;
@@ -138,9 +139,9 @@ class RoleResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => \App\Filament\Admin\Resources\RoleResource\Pages\ListRoles::route('/'),
-            'create' => \App\Filament\Admin\Resources\RoleResource\Pages\CreateRole::route('/create'),
-            'edit' => \App\Filament\Admin\Resources\RoleResource\Pages\EditRole::route('/{record}/edit'),
+            'index' => Pages\ListRoles::route('/'),
+            'create' => Pages\CreateRole::route('/create'),
+            'edit' => Pages\EditRole::route('/{record}/edit'),
         ];
     }
 }

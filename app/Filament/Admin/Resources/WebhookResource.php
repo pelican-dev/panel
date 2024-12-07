@@ -2,6 +2,7 @@
 
 namespace App\Filament\Admin\Resources;
 
+use App\Filament\Admin\Resources\WebhookResource\Pages;
 use App\Models\WebhookConfiguration;
 use Filament\Resources\Resource;
 
@@ -23,9 +24,9 @@ class WebhookResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => \App\Filament\Admin\Resources\WebhookResource\Pages\ListWebhookConfigurations::route('/'),
-            'create' => \App\Filament\Admin\Resources\WebhookResource\Pages\CreateWebhookConfiguration::route('/create'),
-            'edit' => \App\Filament\Admin\Resources\WebhookResource\Pages\EditWebhookConfiguration::route('/{record}/edit'),
+            'index' => Pages\ListWebhookConfigurations::route('/'),
+            'create' => Pages\CreateWebhookConfiguration::route('/create'),
+            'edit' => Pages\EditWebhookConfiguration::route('/{record}/edit'),
         ];
     }
 }

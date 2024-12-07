@@ -2,6 +2,7 @@
 
 namespace App\Filament\Admin\Resources;
 
+use App\Filament\Admin\Resources\ApiKeyResource\Pages;
 use App\Models\ApiKey;
 use Filament\Resources\Resource;
 use Illuminate\Database\Eloquent\Model;
@@ -29,8 +30,8 @@ class ApiKeyResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => \App\Filament\Admin\Resources\ApiKeyResource\Pages\ListApiKeys::route('/'),
-            'create' => \App\Filament\Admin\Resources\ApiKeyResource\Pages\CreateApiKey::route('/create'),
+            'index' => Pages\ListApiKeys::route('/'),
+            'create' => Pages\CreateApiKey::route('/create'),
         ];
     }
 }

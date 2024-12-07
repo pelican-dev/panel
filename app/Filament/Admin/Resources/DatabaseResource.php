@@ -2,6 +2,7 @@
 
 namespace App\Filament\Admin\Resources;
 
+use App\Filament\Admin\Resources\DatabaseResource\Pages;
 use App\Models\Database;
 use Filament\Resources\Resource;
 
@@ -23,9 +24,9 @@ class DatabaseResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => \App\Filament\Admin\Resources\DatabaseResource\Pages\ListDatabases::route('/'),
-            'create' => \App\Filament\Admin\Resources\DatabaseResource\Pages\CreateDatabase::route('/create'),
-            'edit' => \App\Filament\Admin\Resources\DatabaseResource\Pages\EditDatabase::route('/{record}/edit'),
+            'index' => Pages\ListDatabases::route('/'),
+            'create' => Pages\CreateDatabase::route('/create'),
+            'edit' => Pages\EditDatabase::route('/{record}/edit'),
         ];
     }
 }

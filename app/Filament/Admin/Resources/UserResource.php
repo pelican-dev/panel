@@ -2,7 +2,8 @@
 
 namespace App\Filament\Admin\Resources;
 
-use App\Filament\Admin\Resources\UserResource\RelationManagers\ServersRelationManager;
+use App\Filament\Admin\Resources\UserResource\Pages;
+use App\Filament\Admin\Resources\UserResource\RelationManagers;
 use App\Models\User;
 use Filament\Resources\Resource;
 
@@ -22,15 +23,15 @@ class UserResource extends Resource
     public static function getRelations(): array
     {
         return [
-            ServersRelationManager::class,
+            RelationManagers\ServersRelationManager::class,
         ];
     }
 
     public static function getPages(): array
     {
         return [
-            'index' => \App\Filament\Admin\Resources\UserResource\Pages\ListUsers::route('/'),
-            'edit' => \App\Filament\Admin\Resources\UserResource\Pages\EditUser::route('/{record}/edit'),
+            'index' => Pages\ListUsers::route('/'),
+            'edit' => Pages\EditUser::route('/{record}/edit'),
         ];
     }
 }

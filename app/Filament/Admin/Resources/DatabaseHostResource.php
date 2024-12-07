@@ -2,6 +2,7 @@
 
 namespace App\Filament\Admin\Resources;
 
+use App\Filament\Admin\Resources\DatabaseHostResource\Pages;
 use App\Models\DatabaseHost;
 use Filament\Resources\Resource;
 
@@ -23,9 +24,9 @@ class DatabaseHostResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => \App\Filament\Admin\Resources\DatabaseHostResource\Pages\ListDatabaseHosts::route('/'),
-            'create' => \App\Filament\Admin\Resources\DatabaseHostResource\Pages\CreateDatabaseHost::route('/create'),
-            'edit' => \App\Filament\Admin\Resources\DatabaseHostResource\Pages\EditDatabaseHost::route('/{record}/edit'),
+            'index' => Pages\ListDatabaseHosts::route('/'),
+            'create' => Pages\CreateDatabaseHost::route('/create'),
+            'edit' => Pages\EditDatabaseHost::route('/{record}/edit'),
         ];
     }
 }

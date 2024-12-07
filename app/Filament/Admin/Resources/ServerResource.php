@@ -2,6 +2,7 @@
 
 namespace App\Filament\Admin\Resources;
 
+use App\Filament\Admin\Resources\ServerResource\Pages;
 use App\Models\Server;
 use Filament\Resources\Resource;
 
@@ -21,9 +22,9 @@ class ServerResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => \App\Filament\Admin\Resources\ServerResource\Pages\ListServers::route('/'),
-            'create' => \App\Filament\Admin\Resources\ServerResource\Pages\CreateServer::route('/create'),
-            'edit' => \App\Filament\Admin\Resources\ServerResource\Pages\EditServer::route('/{record}/edit'),
+            'index' => Pages\ListServers::route('/'),
+            'create' => Pages\CreateServer::route('/create'),
+            'edit' => Pages\EditServer::route('/{record}/edit'),
         ];
     }
 }
