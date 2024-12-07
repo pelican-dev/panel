@@ -12,7 +12,7 @@ class ServerCpuChart extends ChartWidget
 {
     protected static ?string $pollingInterval = '1s';
 
-    protected static ?string $maxHeight = '300px';
+    protected static ?string $maxHeight = '200px';
 
     public ?Server $server = null;
 

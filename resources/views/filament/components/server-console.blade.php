@@ -30,8 +30,6 @@
         <input
             class="w-full bg-transparent p-2 focus:outline-none focus:ring-0 border-none"
             type="text"
-            title="{{ $this->canSendCommand() ? '' : 'Can\'t send command when the server is Offline' }}"
-            :readonly="{{ !$this->canSendCommand() }}"
             placeholder="Type a command..."
             wire:model="input"
             wire:keydown.enter="enter"
@@ -70,8 +68,6 @@
             cursorStyle: 'underline',
             cursorInactiveStyle: 'none',
             allowTransparency: true,
-            letterSpacing: 0.15,
-            lineHeight: 0.50,
             rows: 30,
             theme: theme
         };
