@@ -23,7 +23,6 @@ use Filament\Forms\Form;
 use Filament\Forms\Get;
 use Filament\Forms\Set;
 use Filament\Notifications\Notification;
-use Filament\Pages\Concerns\HasUnsavedDataChangesAlert;
 use Filament\Pages\Concerns\InteractsWithHeaderActions;
 use Filament\Pages\Page;
 use Filament\Support\Enums\MaxWidth;
@@ -39,7 +38,6 @@ use Illuminate\Support\HtmlString;
 class Settings extends Page implements HasForms
 {
     use EnvironmentWriterTrait;
-    use HasUnsavedDataChangesAlert;
     use InteractsWithForms;
     use InteractsWithHeaderActions;
 
@@ -590,11 +588,6 @@ class Settings extends Page implements HasForms
         return 'data';
     }
 
-    protected function hasUnsavedDataChangesAlert(): bool
-    {
-        return true;
-    }
-
     public function save(): void
     {
         try {
@@ -607,8 +600,6 @@ class Settings extends Page implements HasForms
 
             Artisan::call('config:clear');
             Artisan::call('queue:restart');
-
-            $this->rememberData();
 
             $this->redirect($this->getUrl());
 
