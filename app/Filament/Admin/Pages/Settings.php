@@ -588,11 +588,6 @@ class Settings extends Page implements HasForms
         return 'data';
     }
 
-    protected function hasUnsavedDataChangesAlert(): bool
-    {
-        return true;
-    }
-
     public function save(): void
     {
         try {
@@ -605,8 +600,6 @@ class Settings extends Page implements HasForms
 
             Artisan::call('config:clear');
             Artisan::call('queue:restart');
-
-            $this->rememberData();
 
             $this->redirect($this->getUrl());
 
