@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\Auth;
 
-use App\Filament\Resources\UserResource\Pages\EditProfile;
+use App\Filament\Pages\Auth\EditProfile;
 use Filament\Notifications\Notification;
 use Illuminate\Auth\AuthManager;
 use Illuminate\Http\RedirectResponse;
