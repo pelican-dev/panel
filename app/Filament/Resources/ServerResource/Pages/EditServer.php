@@ -707,7 +707,8 @@ class EditServer extends EditRecord
                                                 ->label('Database Host')
                                                 ->required()
                                                 ->placeholder('Select Database Host')
-                                                ->relationship('node.databaseHosts', 'name')
+                                                ->relationship('node.databaseHosts', 'name',
+                                                    fn (Builder $query, Server $server) => $query->whereRelation('nodes', 'nodes.id', $server->node_id))
                                                 ->default(fn () => (DatabaseHost::query()->first())?->id)
                                                 ->selectablePlaceholder(false),
                                             TextInput::make('database')
