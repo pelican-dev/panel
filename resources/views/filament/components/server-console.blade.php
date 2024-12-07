@@ -28,12 +28,13 @@
 
     <div id="terminal" wire:ignore></div>
 
-    <div class="flex items-center w-full border-top" style="background-color: #202A32">
+    <div class="flex items-center w-full border-top overflow-hidden"
+         style="background-color: #202A32; border-bottom-right-radius: 10px; border-bottom-left-radius: 10px;">
         <x-filament::icon
             icon="tabler-chevrons-right"
         />
         <input
-            class=" w-full focus:outline-none focus:ring-0 border-none"
+            class="w-full focus:outline-none focus:ring-0 border-none"
             style="background-color: #202A32;"
             type="text"
             autofocus
