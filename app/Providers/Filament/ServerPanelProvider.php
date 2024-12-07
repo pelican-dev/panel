@@ -4,8 +4,8 @@ namespace App\Providers\Filament;
 
 use App\Filament\App\Resources\ServerResource\Pages\ListServers;
 use App\Filament\Pages\Auth\Login;
-use App\Filament\Resources\ServerResource\Pages\EditServer;
-use App\Filament\Resources\UserResource\Pages\EditProfile;
+use App\Filament\Admin\Resources\ServerResource\Pages\EditServer;
+use App\Filament\Pages\Auth\EditProfile;
 use App\Http\Middleware\Activity\ServerSubject;
 use App\Models\Server;
 use Filament\Facades\Filament;

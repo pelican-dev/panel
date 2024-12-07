@@ -13,7 +13,6 @@ return new class extends Migration
     {
         Schema::table('servers', function (Blueprint $table) {
             $table->dropForeign(['pack_id']);
-
             $table->dropColumn('pack_id');
         });
     }

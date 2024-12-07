@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Exceptions\Service\HasActiveServersException;
 use App\Repositories\Daemon\DaemonConfigurationRepository;
 use Exception;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Notifications\Notifiable;
@@ -243,9 +244,9 @@ class Node extends Model
         return $this->hasMany(Allocation::class);
     }
 
-    public function databaseHosts(): HasMany
+    public function databaseHosts(): BelongsToMany
     {
-        return $this->hasMany(DatabaseHost::class);
+        return $this->belongsToMany(DatabaseHost::class);
     }
 
     /**
