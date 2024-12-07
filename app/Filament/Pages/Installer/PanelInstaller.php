@@ -2,7 +2,7 @@
 
 namespace App\Filament\Pages\Installer;
 
-use App\Filament\Pages\Dashboard;
+use App\Filament\Admin\Pages\Dashboard;
 use App\Filament\Pages\Installer\Steps\CacheStep;
 use App\Filament\Pages\Installer\Steps\DatabaseStep;
 use App\Filament\Pages\Installer\Steps\EnvironmentStep;
