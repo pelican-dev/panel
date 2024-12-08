@@ -5,6 +5,7 @@ namespace App\Filament\Admin\Resources\ServerResource\RelationManagers;
 use App\Models\Allocation;
 use App\Models\Server;
 use App\Services\Allocations\AssignmentService;
+use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TagsInput;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
@@ -71,8 +72,8 @@ class AllocationsRelationManager extends RelationManager
                 CreateAction::make()->label('Create Allocation')
                     ->createAnother(false)
                     ->form(fn () => [
-                        TextInput::make('allocation_ip')
-                            ->datalist($this->getOwnerRecord()->node->ipAddresses())
+                        Select::make('allocation_ip')
+                            ->options(collect($this->getOwnerRecord()->node->ipAddresses())->mapWithKeys(fn (string $ip) => [$ip => $ip]))
                             ->label('IP Address')
                             ->inlineLabel()
                             ->ipv4()

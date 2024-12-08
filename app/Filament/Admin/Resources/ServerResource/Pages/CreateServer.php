@@ -192,13 +192,12 @@ class CreateServer extends CreateRecord
                                         ->whereNull('server_id'),
                                 )
                                 ->createOptionForm(fn (Get $get) => [
-                                    TextInput::make('allocation_ip')
-                                        ->datalist(Node::find($get('node_id'))?->ipAddresses() ?? [])
+                                    Select::make('allocation_ip')
+                                        ->options(collect(Node::find($get('node_id'))?->ipAddresses())->mapWithKeys(fn (string $ip) => [$ip => $ip]))
                                         ->label('IP Address')
                                         ->inlineLabel()
                                         ->ipv4()
                                         ->helperText("Usually your machine's public IP unless you are port forwarding.")
-                                        // ->selectablePlaceholder(false)
                                         ->required(),
                                     TextInput::make('allocation_alias')
                                         ->label('Alias')
