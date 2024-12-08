@@ -151,6 +151,7 @@ class AllocationsRelationManager extends RelationManager
                     ->associateAnother(false)
                     ->preloadRecordSelect()
                     ->recordSelectOptionsQuery(fn ($query) => $query->whereBelongsTo($this->getOwnerRecord()->node)->whereNull('server_id'))
+                    ->recordSelectSearchColumns(['ip', 'port'])
                     ->label('Add Allocation'),
             ])
             ->bulkActions([
