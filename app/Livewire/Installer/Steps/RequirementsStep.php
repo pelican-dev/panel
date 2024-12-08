@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Filament\Pages\Installer\Steps;
+namespace App\Livewire\Installer\Steps;
 
 use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\Section;
