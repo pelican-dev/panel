@@ -6,33 +6,24 @@
     <script src="https://cdn.jsdelivr.net/npm/@xterm/addon-web-links/lib/addon-web-links.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@xterm/addon-search/lib/addon-search.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/xterm-addon-search-bar/lib/xterm-addon-search-bar.min.js"></script>
-    <style>
-        #terminal {
-            border-radius: 10px;
-            overflow: hidden;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-        }
-
-        .xterm .xterm-rows > div {
-            padding-left: 10px;
-            padding-top: 2px;
-            padding-right: 10px;
-        }
-    </style>
+    <link rel="stylesheet" href="{{ asset('/css/filament/server/console.css') }}">
     @endassets
 
     <div id="terminal" wire:ignore></div>
 
-    <div class="flex items-center w-full bg-transparent border">
+    <div class="flex items-center w-full border-top overflow-hidden"
+         style="background-color: #202A32; border-bottom-right-radius: 10px; border-bottom-left-radius: 10px;">
         <x-filament::icon
             icon="tabler-chevrons-right"
         />
         <input
-            class="w-full bg-transparent p-2 focus:outline-none focus:ring-0 border-none"
+            class="w-full focus:outline-none focus:ring-0 border-none"
+            style="background-color: #202A32;"
             type="text"
+            autofocus
+            :readonly="{{ $this->canSendCommand() ? 'false' : 'true' }}"
             title="{{ $this->canSendCommand() ? '' : 'Can\'t send command when the server is Offline' }}"
-            :readonly="{{ !$this->canSendCommand() }}"
-            placeholder="Type a command..."
+            placeholder="{{ $this->canSendCommand() ? 'Type a command...' : 'Server Offline...' }}"
             wire:model="input"
             wire:keydown.enter="enter"
             wire:keydown.up.prevent="up"
@@ -70,8 +61,6 @@
             cursorStyle: 'underline',
             cursorInactiveStyle: 'none',
             allowTransparency: true,
-            letterSpacing: 0.15,
-            lineHeight: 0.50,
             rows: 30,
             theme: theme
         };
