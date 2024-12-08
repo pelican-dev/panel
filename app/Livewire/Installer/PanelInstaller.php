@@ -42,7 +42,7 @@ class PanelInstaller extends SimplePage implements HasForms
 
     public function getMaxWidth(): MaxWidth|string
     {
-        return config('panel.filament.display-width', 'screen-2xl');
+        return MaxWidth::SevenExtraLarge;
     }
 
     public static function isInstalled(): bool
