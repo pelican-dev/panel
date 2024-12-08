@@ -545,6 +545,7 @@ class ListFiles extends ListRecords
                 ->form([
                     TextInput::make('searchTerm')
                         ->placeholder('Enter a search term, e.g. *.txt')
+                        ->regex('/^[^*]*\*?[^*]*$/')
                         ->minLength(3),
                 ])
                 ->action(fn ($data) => redirect(SearchFiles::getUrl([
