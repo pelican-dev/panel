@@ -160,7 +160,7 @@
             }));
         };
 
-        $wire.$on('setServerState', ({ state }) => {
+        Livewire.on('setServerState', ({ state }) => {
             socket.send(JSON.stringify({
                 'event': 'set state',
                 'args': [state]
