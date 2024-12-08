@@ -125,6 +125,8 @@
                     break;
                 case 'status':
                     handlePowerChangeEvent(args[0]);
+
+                    $wire.dispatch('powerChanged', {state: args[0]})
                     break;
                 case 'transfer status':
                     handleTransferStatus(args[0]);
