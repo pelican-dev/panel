@@ -42,6 +42,7 @@ class ListServers extends ListRecords
             ->emptyStateIcon('tabler-brand-docker')
             ->emptyStateDescription('')
             ->emptyStateHeading('You don\'t have access to any servers!')
+            ->persistFiltersInSession()
             ->filters([
                 TernaryFilter::make('only_my_servers')
                     ->label('Owned by')
