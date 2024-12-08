@@ -1,14 +1,14 @@
 <?php
 
-namespace App\Filament\Pages\Installer;
+namespace App\Livewire\Installer;
 
 use App\Filament\Admin\Pages\Dashboard;
-use App\Filament\Pages\Installer\Steps\CacheStep;
-use App\Filament\Pages\Installer\Steps\DatabaseStep;
-use App\Filament\Pages\Installer\Steps\EnvironmentStep;
-use App\Filament\Pages\Installer\Steps\QueueStep;
-use App\Filament\Pages\Installer\Steps\RequirementsStep;
-use App\Filament\Pages\Installer\Steps\SessionStep;
+use App\Livewire\Installer\Steps\CacheStep;
+use App\Livewire\Installer\Steps\DatabaseStep;
+use App\Livewire\Installer\Steps\EnvironmentStep;
+use App\Livewire\Installer\Steps\QueueStep;
+use App\Livewire\Installer\Steps\RequirementsStep;
+use App\Livewire\Installer\Steps\SessionStep;
 use App\Models\User;
 use App\Services\Users\UserCreationService;
 use App\Traits\CheckMigrationsTrait;

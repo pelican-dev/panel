@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Filament\Pages\Installer\Steps;
+namespace App\Livewire\Installer\Steps;
 
-use App\Filament\Pages\Installer\PanelInstaller;
+use App\Livewire\Installer\PanelInstaller;
 use Filament\Forms\Components\Fieldset;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Wizard\Step;
