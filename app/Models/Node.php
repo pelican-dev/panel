@@ -384,7 +384,7 @@ class Node extends Model
                 // pass
             }
 
-            return $ips->all();
+            return $ips->unique()->all();
         });
     }
 }
