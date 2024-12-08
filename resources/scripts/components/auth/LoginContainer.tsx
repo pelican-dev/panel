@@ -51,7 +51,8 @@ const LoginContainer = ({ history }: RouteComponentProps) => {
                 history.replace('/auth/login/checkpoint', { token: response.confirmationToken });
             })
             .catch((error) => {
-                console.error(error);
+                setSubmitting(false);
+                addError({ message: 'Invalid login, please try again.' });
 
                 setToken('');
                 turnstile.reset();
