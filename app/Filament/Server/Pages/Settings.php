@@ -113,7 +113,7 @@ class Settings extends ServerFormPage
                                     ->label('Allocation Limit')
                                     ->columnSpan(1)
                                     ->disabled()
-                                    ->formatStateUsing(fn ($state, Server $server) => !$state ? 'No additional Allocations can be created' : $server->allocations->count() . ' of ' . ($state + 1)),
+                                    ->formatStateUsing(fn ($state, Server $server) => !$state ? 'No additional Allocations can be created' : $server->allocations->count() . ' of ' . $state),
                             ]),
                     ]),
                 Section::make('Node Information')
