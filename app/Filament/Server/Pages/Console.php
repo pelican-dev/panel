@@ -73,6 +73,10 @@ class Console extends Page
                 ->disabled(fn () => $server->isInConflictState() || $server->retrieveStatus() == 'offline'),
             Action::make('kill')
                 ->color('danger')
+                ->requiresConfirmation()
+                ->modalHeading('Do you wish to kill this server?')
+                ->modalDescription('This can result in data corruption and/or data loss!')
+                ->modalSubmitActionLabel('Kill Server')
                 ->size(ActionSize::ExtraLarge)
                 ->action(fn () => $this->dispatch('setServerState', state: 'kill'))
                 ->disabled(fn () => $server->isInConflictState() || $server->retrieveStatus() == 'offline'),
