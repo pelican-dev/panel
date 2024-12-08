@@ -229,6 +229,7 @@ class EditEgg extends EditRecord
                                 ->default('ash'),
                             MonacoEditor::make('script_install')
                                 ->label('Install Script')
+                                ->placeholderText('')
                                 ->columnSpanFull()
                                 ->fontSize('16px')
                                 ->language('shell')
