@@ -102,6 +102,7 @@ class EditFiles extends Page
                     ->schema([
                         MonacoEditor::make('editor')
                             ->label('')
+                            ->placeholderText('')
                             ->formatStateUsing(function () use ($server) {
                                 // @phpstan-ignore-next-line
                                 return app(DaemonFileRepository::class)
