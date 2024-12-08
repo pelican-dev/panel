@@ -384,7 +384,10 @@ class Node extends Model
                 // pass
             }
 
-            return $ips->all();
+            // Only IPV4
+            $ips = $ips->filter(fn (string $ip) => filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4) !== false);
+
+            return $ips->unique()->all();
         });
     }
 }
