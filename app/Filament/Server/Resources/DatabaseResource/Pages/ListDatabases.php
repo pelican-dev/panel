@@ -102,15 +102,16 @@ class ListDatabases extends ListRecords
                 ->createAnother(false)
                 ->form([
                     Grid::make()
-                        ->columns(3)
+                        ->columns(2)
                         ->schema([
                             Select::make('database_host_id')
                                 ->label('Database Host')
+                                ->columnSpan(2)
                                 ->required()
                                 ->placeholder('Select Database Host')
                                 ->options(fn () => $server->node->databaseHosts->mapWithKeys(fn (DatabaseHost $databaseHost) => [$databaseHost->id => $databaseHost->name])),
                             TextInput::make('database')
-                                ->columnSpan(2)
+                                ->columnSpan(1)
                                 ->label('Database Name')
                                 ->prefix('s'. $server->id . '_')
                                 ->hintIcon('tabler-question-mark')
