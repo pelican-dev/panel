@@ -71,6 +71,11 @@ class Console extends Page
                 ->size(ActionSize::ExtraLarge)
                 ->action(fn () => $this->dispatch('setServerState', state: 'stop'))
                 ->disabled(fn () => $server->isInConflictState() || $server->retrieveStatus() == 'offline'),
+            Action::make('kill')
+                ->color('danger')
+                ->size(ActionSize::ExtraLarge)
+                ->action(fn () => $this->dispatch('setServerState', state: 'kill'))
+                ->disabled(fn () => $server->isInConflictState() || $server->retrieveStatus() == 'offline'),
         ];
     }
 }
