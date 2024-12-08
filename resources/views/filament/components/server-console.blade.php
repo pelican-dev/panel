@@ -76,7 +76,6 @@
         terminal.loadAddon(searchAddon);
         terminal.loadAddon(searchAddonBar);
 
-
         terminal.open(document.getElementById('terminal'));
 
         fitAddon.fit(); //Fit on first load
@@ -161,14 +160,14 @@
             }));
         };
 
-        Livewire.on('setServerState', ({ state }) => {
+        $wire.$on('setServerState', ({ state }) => {
             socket.send(JSON.stringify({
                 'event': 'set state',
                 'args': [state]
             }));
         });
 
-        Livewire.on('sendServerCommand', ({ command }) => {
+        $wire.$on('sendServerCommand', ({ command }) => {
             socket.send(JSON.stringify({
                 'event': 'send command',
                 'args': [command]
