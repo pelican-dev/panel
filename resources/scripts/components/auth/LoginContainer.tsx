@@ -55,7 +55,9 @@ const LoginContainer = ({ history }: RouteComponentProps) => {
                 addError({ message: 'Invalid login, please try again.' });
 
                 setToken('');
-                turnstile.reset();
+                if (turnstile) {
+                    turnstile.reset();
+                }
 
                 setSubmitting(false);
                 clearAndAddHttpError({ error });
