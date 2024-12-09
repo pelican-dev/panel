@@ -4,6 +4,7 @@ namespace App\Livewire;
 
 use App\Models\Server;
 use Filament\Facades\Filament;
+use Illuminate\View\View;
 use Livewire\Attributes\On;
 use Livewire\Component;
 
@@ -13,7 +14,9 @@ class ServerConflictBanner extends Component
 
     public function mount(): void
     {
-        $this->server = Filament::getTenant();
+        /** @var Server $server */
+        $server = Filament::getTenant();
+        $this->server = $server;
     }
 
     #[On('power-changed')]
@@ -22,7 +25,7 @@ class ServerConflictBanner extends Component
         $this->server->fresh();
     }
 
-    public function render()
+    public function render(): View
     {
         return view('livewire.server-conflict-banner');
     }
