@@ -15,5 +15,7 @@ class EventServiceProvider extends ServiceProvider
         'eloquent.created*' => [DispatchWebhooks::class],
         'eloquent.deleted*' => [DispatchWebhooks::class],
         'eloquent.updated*' => [DispatchWebhooks::class],
+        'Illuminate\\Auth\\Events\\*' => [DispatchWebhooks::class],
+        'Illuminate\\Queue\\Events\\*' => [DispatchWebhooks::class],
     ];
 }
