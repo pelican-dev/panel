@@ -22,10 +22,10 @@ class InitiateBackupService
      * InitiateBackupService constructor.
      */
     public function __construct(
-        private readonly ConnectionInterface    $connection,
+        private readonly ConnectionInterface $connection,
         private readonly DaemonBackupRepository $daemonBackupRepository,
-        private readonly DeleteBackupService    $deleteBackupService,
-        private readonly BackupManager          $backupManager
+        private readonly DeleteBackupService $deleteBackupService,
+        private readonly BackupManager $backupManager
     ) {}
 
     /**

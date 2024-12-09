@@ -32,7 +32,7 @@ class ForbiddenGlobalFunctionsRule implements Rule
                     RuleErrorBuilder::message(sprintf(
                         'Usage of global function "%s" is forbidden.',
                         $functionName,
-                    ))->identifier('myCustomRules.forbiddenGlobalFunctions')->build()
+                    ))->identifier('myCustomRules.forbiddenGlobalFunctions')->build(),
                 ];
             }
         }

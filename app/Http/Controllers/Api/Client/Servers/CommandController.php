@@ -5,7 +5,6 @@ namespace App\Http\Controllers\Api\Client\Servers;
 use Illuminate\Http\Response;
 use App\Models\Server;
 use App\Facades\Activity;
-use Psr\Http\Message\ResponseInterface;
 use GuzzleHttp\Exception\BadResponseException;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 use App\Http\Controllers\Api\Client\ClientApiController;

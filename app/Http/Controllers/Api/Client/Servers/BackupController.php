@@ -24,9 +24,9 @@ class BackupController extends ClientApiController
 {
     public function __construct(
         private readonly DaemonBackupRepository $daemonRepository,
-        private readonly DeleteBackupService    $deleteBackupService,
-        private readonly InitiateBackupService  $initiateBackupService,
-        private readonly DownloadLinkService    $downloadLinkService,
+        private readonly DeleteBackupService $deleteBackupService,
+        private readonly InitiateBackupService $initiateBackupService,
+        private readonly DownloadLinkService $downloadLinkService,
     ) {
         parent::__construct();
     }
