@@ -19,8 +19,7 @@ parameters:
 
         # We are getting and setting environment variables directly
         -
-            path: app/Filament/Admin/Pages/Settings.php
             identifier: larastan.noEnvCallsOutsideOfConfig
-        -
-            path: app/Console/Commands/Environment/*.php
-            identifier: larastan.noEnvCallsOutsideOfConfig
+            paths:
+                - app/Console/Commands/Environment/*.php
+                - app/Filament/Admin/Pages/Settings.php
