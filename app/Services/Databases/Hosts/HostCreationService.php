@@ -16,8 +16,7 @@ class HostCreationService
         private ConnectionInterface $connection,
         private DatabaseManager $databaseManager,
         private DynamicDatabaseConnection $dynamic,
-    ) {
-    }
+    ) {}
 
     /**
      * Create a new database host on the Panel.
@@ -34,8 +33,9 @@ class HostCreationService
                 'port' => array_get($data, 'port'),
                 'username' => array_get($data, 'username'),
                 'max_databases' => array_get($data, 'max_databases'),
-                'node_id' => array_get($data, 'node_id'),
             ]);
+
+            $host->nodes()->sync(array_get($data, 'node_ids', []));
 
             // Confirm access using the provided credentials before saving data.
             $this->dynamic->set('dynamic', $host);

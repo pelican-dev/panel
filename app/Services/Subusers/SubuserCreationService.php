@@ -20,8 +20,7 @@ class SubuserCreationService
     public function __construct(
         private ConnectionInterface $connection,
         private UserCreationService $userCreationService,
-    ) {
-    }
+    ) {}
 
     /**
      * Creates a new user on the system and assigns them access to the provided server.
@@ -45,8 +44,6 @@ class SubuserCreationService
                 $user = $this->userCreationService->handle([
                     'email' => $email,
                     'username' => $username,
-                    'name_first' => 'Server',
-                    'name_last' => 'Subuser',
                     'root_admin' => false,
                 ]);
             }

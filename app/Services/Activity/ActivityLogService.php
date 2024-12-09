@@ -9,6 +9,8 @@ use App\Models\ActivityLog;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Request;
 use App\Models\ActivityLogSubject;
+use App\Models\Server;
+use Filament\Facades\Filament;
 use Illuminate\Database\ConnectionInterface;
 use Illuminate\Contracts\Auth\Factory as AuthFactory;
 
@@ -23,8 +25,7 @@ class ActivityLogService
         protected ActivityLogBatchService $batch,
         protected ActivityLogTargetableService $targetable,
         protected ConnectionInterface $connection
-    ) {
-    }
+    ) {}
 
     /**
      * Sets the activity logger as having been caused by an anonymous
@@ -206,6 +207,10 @@ class ActivityLogService
 
         if ($subject = $this->targetable->subject()) {
             $this->subject($subject);
+        } elseif ($tenant = Filament::getTenant()) {
+            if ($tenant instanceof Server) {
+                $this->subject($tenant);
+            }
         }
 
         if ($actor = $this->targetable->actor()) {

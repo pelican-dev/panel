@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Exceptions\Service\HasActiveServersException;
 use App\Repositories\Daemon\DaemonConfigurationRepository;
 use Exception;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Notifications\Notifiable;
@@ -243,6 +244,11 @@ class Node extends Model
         return $this->hasMany(Allocation::class);
     }
 
+    public function databaseHosts(): BelongsToMany
+    {
+        return $this->belongsToMany(DatabaseHost::class);
+    }
+
     /**
      * Returns a boolean if the node is viable for an additional server to be placed on it.
      */
@@ -378,7 +384,10 @@ class Node extends Model
                 // pass
             }
 
-            return $ips->all();
+            // Only IPV4
+            $ips = $ips->filter(fn (string $ip) => filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4) !== false);
+
+            return $ips->unique()->all();
         });
     }
 }
