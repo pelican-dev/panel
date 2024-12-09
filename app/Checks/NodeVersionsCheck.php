@@ -22,7 +22,7 @@ class NodeVersionsCheck extends Check
         }
 
         // @phpstan-ignore-next-line
-        $latestVersion = app(SoftwareVersionService::class)->getDaemon();
+        $latestVersion = app(SoftwareVersionService::class)->latestWingsVersion();
 
         $outdated = Node::query()->get()
             ->filter(fn (Node $node) => !isset($node->systemInformation()['exception']) && $node->systemInformation()['version'] !== $latestVersion)
