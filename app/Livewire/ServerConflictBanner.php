@@ -16,7 +16,7 @@ class ServerConflictBanner extends Component
         $this->server = Filament::getTenant();
     }
 
-    #[On('powerChanged')]
+    #[On('power-changed')]
     public function refresh(): void
     {
         $this->server->fresh();

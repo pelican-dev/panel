@@ -54,7 +54,7 @@ class Console extends Page
         return 3;
     }
 
-    #[On('powerChanged')]
+    #[On('power-changed')]
     public function powerChanged(string $state): void
     {
         $this->status = ContainerStatus::from($state);

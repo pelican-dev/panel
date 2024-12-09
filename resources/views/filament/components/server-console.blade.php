@@ -126,7 +126,7 @@
                 case 'status':
                     handlePowerChangeEvent(args[0]);
 
-                    $wire.dispatch('powerChanged', {state: args[0]})
+                    $wire.dispatch('power-changed', {state: args[0]})
                     break;
                 case 'transfer status':
                     handleTransferStatus(args[0]);
@@ -135,7 +135,7 @@
                     handleDaemonErrorOutput(args[0]);
                     break;
                 case 'stats':
-                    $wire.dispatchSelf('storeStats', { data: args[0] });
+                    $wire.dispatchSelf('store-stats', { data: args[0] });
                     break;
                 case 'auth success':
                     socket.send(JSON.stringify({
