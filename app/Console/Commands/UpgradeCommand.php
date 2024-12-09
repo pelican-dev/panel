@@ -39,7 +39,9 @@ class UpgradeCommand extends Command
             $this->line($this->getUrl());
         }
 
-        if (version_compare(PHP_VERSION, '7.4.0') < 0) {
+        /** @var -1|0|1|false|true $compare */
+        $compare = version_compare(PHP_VERSION, '7.4.0');
+        if ($compare < 0) {
             $this->error(__('commands.upgrade.php_version') . ' [' . PHP_VERSION . '].');
         }
 

@@ -20,6 +20,7 @@ use Symfony\Component\HttpKernel\Exception\HttpException;
 use Symfony\Component\Mailer\Exception\TransportException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Symfony\Component\HttpKernel\Exception\HttpExceptionInterface;
+use Throwable;
 
 class Handler extends ExceptionHandler
 {
@@ -251,15 +252,12 @@ class Handler extends ExceptionHandler
      * Extracts all the previous exceptions that lead to the one passed into this
      * function being thrown.
      *
-     * @return \Throwable[]
+     * @return Throwable[]
      */
-    protected function extractPrevious(\Throwable $e): array
+    protected function extractPrevious(Throwable $e): array
     {
         $previous = [];
         while ($value = $e->getPrevious()) {
-            if (!$value instanceof \Throwable) {
-                break;
-            }
             $previous[] = $value;
             $e = $value;
         }

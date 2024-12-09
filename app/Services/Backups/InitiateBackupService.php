@@ -14,7 +14,7 @@ use Symfony\Component\HttpKernel\Exception\TooManyRequestsHttpException;
 
 class InitiateBackupService
 {
-    private ?array $ignoredFiles;
+    private array $ignoredFiles;
 
     private bool $isLocked = false;
 
@@ -22,10 +22,10 @@ class InitiateBackupService
      * InitiateBackupService constructor.
      */
     public function __construct(
-        private ConnectionInterface $connection,
-        private DaemonBackupRepository $daemonBackupRepository,
-        private DeleteBackupService $deleteBackupService,
-        private BackupManager $backupManager
+        private readonly ConnectionInterface    $connection,
+        private readonly DaemonBackupRepository $daemonBackupRepository,
+        private readonly DeleteBackupService    $deleteBackupService,
+        private readonly BackupManager          $backupManager
     ) {}
 
     /**
@@ -74,6 +74,7 @@ class InitiateBackupService
         $limit = config('backups.throttles.limit');
         $period = config('backups.throttles.period');
         if ($period > 0) {
+            // @phpstan-ignore method.notFound
             $previous = $server
                 ->backups()
                 ->where('created_at', '>=', now()->subSeconds($period))
@@ -90,6 +91,7 @@ class InitiateBackupService
 
         // Check if the server has reached or exceeded its backup limit.
         // completed_at == null will cover any ongoing backups, while is_successful == true will cover any completed backups.
+        // @phpstan-ignore method.notFound
         $successful = $server->backups()->nonFailed();
         if (!$server->backup_limit || $successful->count() >= $server->backup_limit) {
             // Do not allow the user to continue if this server is already at its limit and can't override.

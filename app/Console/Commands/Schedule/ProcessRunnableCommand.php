@@ -6,6 +6,7 @@ use Illuminate\Console\Command;
 use App\Models\Schedule;
 use Illuminate\Database\Eloquent\Builder;
 use App\Services\Schedules\ProcessScheduleService;
+use Throwable;
 
 class ProcessRunnableCommand extends Command
 {
@@ -60,7 +61,7 @@ class ProcessRunnableCommand extends Command
                 'schedule' => $schedule->name,
                 'id' => $schedule->id,
             ]));
-        } catch (\Throwable|\Exception $exception) {
+        } catch (Throwable $exception) {
             logger()->error($exception, ['schedule_id' => $schedule->id]);
 
             $this->error(__('commands.schedule.process.no_tasks') . " #$schedule->id: " . $exception->getMessage());

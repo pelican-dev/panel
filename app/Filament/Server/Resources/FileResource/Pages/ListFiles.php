@@ -352,7 +352,8 @@ class ListFiles extends ListRecords
                         ->action(function (Collection $files, $data, DaemonFileRepository $daemonFileRepository) use ($server) {
                             $location = resolve_path(join_paths($this->path, $data['location']));
 
-                            $files = $files->map(fn ($file) => ['to' => $location, 'from' => $file->name])->toArray();
+                            // @phpstan-ignore argument.type
+                            $files = $files->map(fn (File $file) => ['to' => $location, 'from' => $file->name])->toArray();
 
                             $daemonFileRepository
                                 ->setServer($server)

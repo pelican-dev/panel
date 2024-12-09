@@ -68,7 +68,6 @@ use App\Services\Subusers\SubuserDeletionService;
  * @property int|null $notifications_count
  * @property \Illuminate\Database\Eloquent\Collection|\App\Models\Schedule[] $schedules
  * @property int|null $schedules_count
- * @property \Illuminate\Database\Eloquent\Collection|\App\Models\Subuser[] $subusers
  * @property int|null $subusers_count
  * @property \App\Models\ServerTransfer|null $transfer
  * @property \App\Models\User $user
@@ -456,7 +455,7 @@ class Server extends Model
     public function condition(): Attribute
     {
         return Attribute::make(
-            get: fn () => $this->status?->value ?? $this->retrieveStatus(),
+            get: fn () => $this->status->value ?? $this->retrieveStatus(),
         );
     }
 

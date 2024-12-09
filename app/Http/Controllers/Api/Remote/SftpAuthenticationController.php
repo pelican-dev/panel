@@ -158,6 +158,6 @@ class SftpAuthenticationController extends Controller
     {
         $username = explode('.', strrev($request->input('username', '')));
 
-        return strtolower(strrev($username[0] ?? '') . '|' . $request->ip());
+        return strtolower(strrev($username[0]) . '|' . $request->ip());
     }
 }

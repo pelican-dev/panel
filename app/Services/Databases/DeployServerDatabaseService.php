@@ -8,18 +8,10 @@ use App\Models\Database;
 use App\Models\DatabaseHost;
 use App\Exceptions\Service\Database\NoSuitableDatabaseHostException;
 
-class DeployServerDatabaseService
+readonly class DeployServerDatabaseService
 {
-    /**
-     * DeployServerDatabaseService constructor.
-     */
     public function __construct(private DatabaseManagementService $managementService) {}
 
-    /**
-     * @throws \Throwable
-     * @throws \App\Exceptions\Service\Database\TooManyDatabasesException
-     * @throws \App\Exceptions\Service\Database\DatabaseClientFeatureNotEnabledException
-     */
     public function handle(Server $server, array $data): Database
     {
         Assert::notEmpty($data['database'] ?? null);

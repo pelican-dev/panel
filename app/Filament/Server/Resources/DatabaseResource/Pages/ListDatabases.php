@@ -109,6 +109,7 @@ class ListDatabases extends ListRecords
                                 ->columnSpan(2)
                                 ->required()
                                 ->placeholder('Select Database Host')
+                                // @phpstan-ignore argument.type
                                 ->options(fn () => $server->node->databaseHosts->mapWithKeys(fn (DatabaseHost $databaseHost) => [$databaseHost->id => $databaseHost->name])),
                             TextInput::make('database')
                                 ->columnSpan(1)
