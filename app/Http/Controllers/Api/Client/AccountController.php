@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api\Client;
 
+use Illuminate\Auth\SessionGuard;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Auth\AuthManager;
@@ -63,7 +64,9 @@ class AccountController extends ClientApiController
         // other devices functionality to work.
         $guard->setUser($user);
 
-        $guard->logoutOtherDevices($request->input('password'));
+        if ($guard instanceof SessionGuard) {
+            $guard->logoutOtherDevices($request->input('password'));
+        }
 
         Activity::event('user:account.password-changed')->log();
 
