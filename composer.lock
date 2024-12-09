@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "d3b70b68927bf912d19adea9705d70ff",
+    "content-hash": "2fddfe7f5db269cdf9e906b83c815756",
     "packages": [
         {
             "name": "abdelhamiderrahmouni/filament-monaco-editor",
@@ -7441,16 +7441,16 @@
         },
         {
             "name": "spatie/laravel-health",
-            "version": "1.29.1",
+            "version": "1.30.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/spatie/laravel-health.git",
-                "reference": "1ea1950776038c94e225902fe71b063593e6539d"
+                "reference": "98e91b8a4b5ffc9086cf5d9cd2e7fa9cf1be0661"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/spatie/laravel-health/zipball/1ea1950776038c94e225902fe71b063593e6539d",
-                "reference": "1ea1950776038c94e225902fe71b063593e6539d",
+                "url": "https://api.github.com/repos/spatie/laravel-health/zipball/98e91b8a4b5ffc9086cf5d9cd2e7fa9cf1be0661",
+                "reference": "98e91b8a4b5ffc9086cf5d9cd2e7fa9cf1be0661",
                 "shasum": ""
             },
             "require": {
@@ -7523,7 +7523,7 @@
                 "spatie"
             ],
             "support": {
-                "source": "https://github.com/spatie/laravel-health/tree/1.29.1"
+                "source": "https://github.com/spatie/laravel-health/tree/1.30.1"
             },
             "funding": [
                 {
@@ -7531,7 +7531,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2024-06-27T07:11:39+00:00"
+            "time": "2024-08-02T14:01:48+00:00"
         },
         {
             "name": "spatie/laravel-package-tools",
@@ -13989,5 +13989,5 @@
         "ext-zip": "*"
     },
     "platform-dev": [],
-    "plugin-api-version": "2.3.0"
+    "plugin-api-version": "2.6.0"
 }
