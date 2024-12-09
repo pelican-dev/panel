@@ -2,11 +2,11 @@
     if(! function_exists('backgroundColor')) {
         function backgroundColor($status) {
             return match ($status) {
-                Spatie\Health\Enums\Status::ok()->value => 'text-success-100',
-                Spatie\Health\Enums\Status::warning()->value => 'text-warning-100',
-                Spatie\Health\Enums\Status::skipped()->value => 'text-primary-100',
-                Spatie\Health\Enums\Status::failed()->value, Spatie\Health\Enums\Status::crashed()->value => 'text-danger-100',
-                default => 'text-gray-100'
+                Spatie\Health\Enums\Status::ok()->value => 'background-color: rgb(209 250 229);', // bg-emerald-100
+                Spatie\Health\Enums\Status::warning()->value => 'background-color: rgb(254 249 195);', // bg-yellow-100
+                Spatie\Health\Enums\Status::skipped()->value => 'background-color: rgb(219 234 254);', // bg-blue-100
+                Spatie\Health\Enums\Status::failed()->value, Spatie\Health\Enums\Status::crashed()->value => 'background-color: rgb(254 226 226);', // bg-red-100
+                default => 'background-color: rgb(243 244 246);' // bg-gray-100
             };
         }
     }
@@ -15,11 +15,11 @@
         function iconColor($status)
         {
             return match ($status) {
-                Spatie\Health\Enums\Status::ok()->value => 'text-success-500',
-                Spatie\Health\Enums\Status::warning()->value => 'text-warning-500',
-                Spatie\Health\Enums\Status::skipped()->value => 'text-primary-500',
-                Spatie\Health\Enums\Status::failed()->value, Spatie\Health\Enums\Status::crashed()->value => 'text-danger-500',
-                default => 'text-gray-500'
+                Spatie\Health\Enums\Status::ok()->value => 'color: rgb(16 185 129);', // text-emerald-500
+                Spatie\Health\Enums\Status::warning()->value => 'color: rgb(234 179 8);', // text-yellow-500
+                Spatie\Health\Enums\Status::skipped()->value => 'color: rgb(59 130 246);', // text-blue-500
+                Spatie\Health\Enums\Status::failed()->value, Spatie\Health\Enums\Status::crashed()->value => 'color: rgb(239 68 68);', // text-red-500
+                default => 'color: rgb(107 114 128);' // text-gray-500
             };
         }
     }
@@ -43,14 +43,14 @@
 		<x-filament::grid default="1" sm="2" class="gap-6 mb-5">
 			@foreach ($checkResults->storedCheckResults as $result)
 				<div class="flex items-start px-4 space-x-2 overflow-hidden py-5 text-opacity-0 transition transform bg-white shadow-md shadow-gray-200 dark:shadow-black/25 dark:shadow-md dark:bg-gray-800 rounded-xl sm:p-6 md:space-x-3 md:min-h-[130px] dark:border-t dark:border-gray-700">
-					<div class="flex justify-center items-center rounded-full p-2 {{ backgroundColor($result->status) }}">
-						@svg(icon($result->status), "h-6 w-6 {{ iconColor($result->status) }}")
+					<div class="flex justify-center items-center rounded-full p-2" style="margin-right: 0.5rem; {{ backgroundColor($result->status) }}">
+                        <x-filament::icon icon="{{ icon($result->status) }}" class="h-6 w-6" style="{{ iconColor($result->status) }}" />
 					</div>
 					<div>
-						<dd class="-mt-1 font-bold text-gray-900 dark:text-white md:mt-1 md:text-xl">
+						<dd class="-mt-1 font-bold md:mt-1 md:text-xl" style="color: light-dark(rgb(17 24 39), rgb(255 255 255));">
 							{{ $result->label }}
 						</dd>
-						<dt class="mt-0 text-sm font-medium text-gray-600 dark:text-gray-300 md:mt-1">
+						<dt class="mt-0 text-sm font-medium md:mt-1" style="color: light-dark(rgb(75 85 99), rgb(209 213 219));">
 							@if (!empty($result->notificationMessage))
 								{{ $result->notificationMessage }}
 							@else
@@ -64,7 +64,7 @@
     @endif
 
     @if ($lastRanAt)
-        <div class="{{ $lastRanAt->diffInMinutes() > 5 ? 'text-danger-500' : 'text-gray-400 dark:text-gray-200' }} text-md text-center font-medium">
+        <div class="text-md text-center font-medium" style="{{ $lastRanAt->diffInMinutes() > 5 ? 'color: rgb(239 68 68);' : 'color: light-dark(rgb(156 163 175), rgb(229 231 235));' }}">
             Check results from {{ $lastRanAt->diffForHumans() }}
         </div>
     @endif
