@@ -2,6 +2,11 @@
 
 namespace App\Providers;
 
+use App\Checks\NodeVersionsCheck;
+use App\Checks\PanelVersionCheck;
+use App\Checks\UsedDiskSpaceCheck;
+use App\Filament\Pages\Health;
+use App\Filament\Server\Pages\Console;
 use App\Models;
 use App\Models\ApiKey;
 use App\Models\Node;
@@ -11,6 +16,8 @@ use Dedoc\Scramble\Support\Generator\OpenApi;
 use Dedoc\Scramble\Support\Generator\SecurityScheme;
 use Filament\Support\Colors\Color;
 use Filament\Support\Facades\FilamentColor;
+use Filament\Support\Facades\FilamentView;
+use Filament\View\PanelsRenderHook;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Event;
@@ -21,6 +28,11 @@ use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Str;
 use Laravel\Sanctum\Sanctum;
 use SocialiteProviders\Manager\SocialiteWasCalled;
+use Spatie\Health\Checks\Checks\CacheCheck;
+use Spatie\Health\Checks\Checks\DatabaseCheck;
+use Spatie\Health\Checks\Checks\DebugModeCheck;
+use Spatie\Health\Checks\Checks\EnvironmentCheck;
+use Spatie\Health\Checks\Checks\ScheduleCheck;
 
 class AppServiceProvider extends ServiceProvider
 {
