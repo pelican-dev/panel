@@ -23,7 +23,7 @@ class Console extends Page
 
     protected static string $view = 'filament.server.pages.console';
 
-    public ContainerStatus $status = ContainerStatus::Missing;
+    public ContainerStatus $status = ContainerStatus::Offline;
 
     public function getWidgetData(): array
     {
@@ -74,18 +74,18 @@ class Console extends Page
                 ->color('primary')
                 ->size(ActionSize::ExtraLarge)
                 ->action(fn () => $this->dispatch('setServerState', state: 'start'))
-                ->disabled(fn () => $server->isInConflictState() || in_array($this->status, [ContainerStatus::Running, ContainerStatus::Starting, ContainerStatus::Stopping, ContainerStatus::Restarting])),
+                ->disabled(fn () => $server->isInConflictState() || !$this->status->isStartable()),
             Action::make('restart')
                 ->color('gray')
                 ->size(ActionSize::ExtraLarge)
                 ->action(fn () => $this->dispatch('setServerState', state: 'restart'))
-                ->disabled(fn () => $server->isInConflictState() || $this->status !== ContainerStatus::Running),
+                ->disabled(fn () => $server->isInConflictState() || !$this->status->isRestartable()),
             Action::make('stop')
                 ->color('danger')
                 ->size(ActionSize::ExtraLarge)
                 ->action(fn () => $this->dispatch('setServerState', state: 'stop'))
-                ->hidden(fn () => in_array($this->status, [ContainerStatus::Stopping, ContainerStatus::Restarting, ContainerStatus::Starting]))
-                ->disabled(fn () => $server->isInConflictState() || in_array($this->status, [ContainerStatus::Starting, ContainerStatus::Stopping, ContainerStatus::Restarting, ContainerStatus::Exited, ContainerStatus::Offline])),
+                ->hidden(fn () => $this->status->isStartingOrStopping() || $this->status->isKillable())
+                ->disabled(fn () => $server->isInConflictState() || !$this->status->isStoppable()),
             Action::make('kill')
                 ->color('danger')
                 ->requiresConfirmation()
@@ -94,8 +94,8 @@ class Console extends Page
                 ->modalSubmitActionLabel('Kill Server')
                 ->size(ActionSize::ExtraLarge)
                 ->action(fn () => $this->dispatch('setServerState', state: 'kill'))
-                ->hidden(fn () => $server->isInConflictState() || in_array($this->status, [ContainerStatus::Running, ContainerStatus::Restarting, ContainerStatus::Offline, ContainerStatus::Removing, ContainerStatus::Dead, ContainerStatus::Exited, ContainerStatus::Created]))
-                ->disabled(fn () => $server->isInConflictState() || $this->status === ContainerStatus::Offline),
+                ->hidden(fn () => $server->isInConflictState() || !$this->status->isKillable())
+                ->disabled(fn () => $server->isInConflictState() || !$this->status->isKillable()),
         ];
     }
 }
