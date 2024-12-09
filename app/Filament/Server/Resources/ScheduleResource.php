@@ -14,6 +14,7 @@ use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
+use Filament\Forms\Components\ToggleButtons;
 use Filament\Forms\Form;
 use Filament\Forms\Set;
 use Filament\Resources\Resource;
@@ -66,15 +67,26 @@ class ScheduleResource extends Resource
             ->columns(10)
             ->schema([
                 TextInput::make('name')
-                    ->columnSpan(10)
+                    ->columnSpan(fn ($operation) => $operation === 'create' ? 10 : 5)
                     ->label('Schedule Name')
                     ->placeholder('A human readable identifier for this schedule.')
                     ->autocomplete(false)
                     ->required(),
+                ToggleButtons::make('Status')
+                    ->formatStateUsing(fn (Schedule $schedule) => !$schedule->is_active ? 'inactive' : ($schedule->is_processing ? 'processing' : 'active'))
+                    ->options(fn (Schedule $schedule) => !$schedule->is_active ? ['inactive' => 'Inactive'] : ($schedule->is_processing ? ['processing' => 'Processing'] : ['active' => 'Active']))
+                    ->colors([
+                        'inactive' => 'danger',
+                        'processing' => 'warning',
+                        'active' => 'success',
+                    ])
+                    ->hiddenOn('create')
+                    ->columnSpan(5),
                 Toggle::make('only_when_online')
                     ->label('Only when Server is Online?')
                     ->hintIconTooltip('Only execute this schedule when the server is in a running state.')
                     ->hintIcon('tabler-question-mark')
+                    ->inline(false)
                     ->columnSpan(5)
                     ->required()
                     ->default(1),
@@ -82,6 +94,7 @@ class ScheduleResource extends Resource
                     ->label('Enable Schedule?')
                     ->hintIconTooltip('This schedule will be executed automatically if enabled.')
                     ->hintIcon('tabler-question-mark')
+                    ->inline(false)
                     ->columnSpan(5)
                     ->required()
                     ->default(1),
