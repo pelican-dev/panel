@@ -19,26 +19,13 @@ class BulkPowerActionCommand extends Command
 
     protected $description = 'Perform bulk power management on large groupings of servers or nodes at once.';
 
-    /**
-     * BulkPowerActionCommand constructor.
-     */
-    public function __construct(private DaemonPowerRepository $powerRepository, private ValidatorFactory $validator)
-    {
-        parent::__construct();
-    }
-
-    /**
-     * Handle the bulk power request.
-     *
-     * @throws \Illuminate\Validation\ValidationException
-     */
-    public function handle(): void
+    public function handle(DaemonPowerRepository $powerRepository, ValidatorFactory $validator): void
     {
         $action = $this->argument('action');
         $nodes = empty($this->option('nodes')) ? [] : explode(',', $this->option('nodes'));
         $servers = empty($this->option('servers')) ? [] : explode(',', $this->option('servers'));
 
-        $validator = $this->validator->make([
+        $validator = $validator->make([
             'action' => $action,
             'nodes' => $nodes,
             'servers' => $servers,
@@ -64,9 +51,8 @@ class BulkPowerActionCommand extends Command
         }
 
         $bar = $this->output->createProgressBar($count);
-        $powerRepository = $this->powerRepository;
-        // @phpstan-ignore-next-line
-        $this->getQueryBuilder($servers, $nodes)->each(function (Server $server) use ($action, $powerRepository, &$bar) {
+
+        $this->getQueryBuilder($servers, $nodes)->get()->each(function (Server $server, int $index) use ($action, $powerRepository, &$bar): mixed {
             $bar->clear();
 
             try {

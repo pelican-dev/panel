@@ -13,10 +13,7 @@ class ProcessRunnableCommand extends Command
 
     protected $description = 'Process schedules in the database and determine which are ready to run.';
 
-    /**
-     * Handle command execution.
-     */
-    public function handle(): int
+    public function handle(ProcessScheduleService $processScheduleService): int
     {
         $schedules = Schedule::query()
             ->with('tasks')
@@ -35,7 +32,7 @@ class ProcessRunnableCommand extends Command
         $bar = $this->output->createProgressBar(count($schedules));
         foreach ($schedules as $schedule) {
             $bar->clear();
-            $this->processSchedule($schedule);
+            $this->processSchedule($processScheduleService, $schedule);
             $bar->advance();
             $bar->display();
         }
@@ -50,14 +47,14 @@ class ProcessRunnableCommand extends Command
      * never throw an exception out, otherwise you'll end up killing the entire run group causing
      * any other schedules to not process correctly.
      */
-    protected function processSchedule(Schedule $schedule): void
+    protected function processSchedule(ProcessScheduleService $processScheduleService, Schedule $schedule): void
     {
         if ($schedule->tasks->isEmpty()) {
             return;
         }
 
         try {
-            $this->getLaravel()->make(ProcessScheduleService::class)->handle($schedule);
+            $processScheduleService->handle($schedule);
 
             $this->line(trans('command/messages.schedule.output_line', [
                 'schedule' => $schedule->name,

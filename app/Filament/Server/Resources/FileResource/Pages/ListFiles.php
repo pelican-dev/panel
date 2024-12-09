@@ -126,9 +126,8 @@ class ListFiles extends ListRecords
                                 ->default(fn (File $file) => $file->name)
                                 ->required(),
                         ])
-                        ->action(function ($data, File $file) use ($server) {
-                            // @phpstan-ignore-next-line
-                            app(DaemonFileRepository::class)
+                        ->action(function ($data, File $file, DaemonFileRepository $daemonFileRepository) use ($server) {
+                            $daemonFileRepository
                                 ->setServer($server)
                                 ->renameFiles($this->path, [['to' => $data['name'], 'from' => $file->name]]);
 
@@ -148,9 +147,8 @@ class ListFiles extends ListRecords
                         ->label('Copy')
                         ->icon('tabler-copy')
                         ->visible(fn (File $file) => $file->is_file)
-                        ->action(function (File $file) use ($server) {
-                            // @phpstan-ignore-next-line
-                            app(DaemonFileRepository::class)
+                        ->action(function (File $file, DaemonFileRepository $daemonFileRepository) use ($server) {
+                            $daemonFileRepository
                                 ->setServer($server)
                                 ->copyFile(join_paths($this->path, $file->name));
 
@@ -170,9 +168,8 @@ class ListFiles extends ListRecords
                         ->label('Download')
                         ->icon('tabler-download')
                         ->visible(fn (File $file) => $file->is_file)
-                        ->action(function (File $file) use ($server) {
-                            // @phpstan-ignore-next-line
-                            $token = app(NodeJWTService::class)
+                        ->action(function (File $file, NodeJWTService $nodeJWTService) use ($server) {
+                            $token = $nodeJWTService
                                 ->setExpiresAt(CarbonImmutable::now()->addMinutes(15))
                                 ->setUser(auth()->user())
                                 ->setClaims([
@@ -201,11 +198,10 @@ class ListFiles extends ListRecords
                             Placeholder::make('new_location')
                                 ->content(fn (Get $get) => resolve_path('./' . join_paths($this->path, $get('location')))),
                         ])
-                        ->action(function ($data, File $file) use ($server) {
+                        ->action(function ($data, File $file, DaemonFileRepository $daemonFileRepository) use ($server) {
                             $location = resolve_path(join_paths($this->path, $data['location']));
 
-                            // @phpstan-ignore-next-line
-                            app(DaemonFileRepository::class)
+                            $daemonFileRepository
                                 ->setServer($server)
                                 ->renameFiles($this->path, [['to' => $location, 'from' => $file->name]]);
 
@@ -261,15 +257,14 @@ class ListFiles extends ListRecords
                                     return $this->getPermissionsFromModeBit($mode);
                                 }),
                         ])
-                        ->action(function ($data, File $file) use ($server) {
+                        ->action(function ($data, File $file, DaemonFileRepository $daemonFileRepository) use ($server) {
                             $owner = (in_array('read', $data['owner']) ? 4 : 0) | (in_array('write', $data['owner']) ? 2 : 0) | (in_array('execute', $data['owner']) ? 1 : 0);
                             $group = (in_array('read', $data['group']) ? 4 : 0) | (in_array('write', $data['group']) ? 2 : 0) | (in_array('execute', $data['group']) ? 1 : 0);
                             $public = (in_array('read', $data['public']) ? 4 : 0) | (in_array('write', $data['public']) ? 2 : 0) | (in_array('execute', $data['public']) ? 1 : 0);
 
                             $mode = $owner . $group . $public;
 
-                            // @phpstan-ignore-next-line
-                            app(DaemonFileRepository::class)
+                            $daemonFileRepository
                                 ->setServer($server)
                                 ->chmodFiles($this->path, [['file' => $file->name, 'mode' => $mode]]);
 
@@ -282,9 +277,8 @@ class ListFiles extends ListRecords
                         ->authorize(fn () => auth()->user()->can(Permission::ACTION_FILE_ARCHIVE, $server))
                         ->label('Archive')
                         ->icon('tabler-archive')
-                        ->action(function (File $file) use ($server) {
-                            // @phpstan-ignore-next-line
-                            app(DaemonFileRepository::class)
+                        ->action(function (File $file, DaemonFileRepository $daemonFileRepository) use ($server) {
+                            $daemonFileRepository
                                 ->setServer($server)
                                 ->compressFiles($this->path, [$file->name]);
 
@@ -305,9 +299,8 @@ class ListFiles extends ListRecords
                         ->label('Unarchive')
                         ->icon('tabler-archive')
                         ->visible(fn (File $file) => $file->isArchive())
-                        ->action(function (File $file) use ($server) {
-                            // @phpstan-ignore-next-line
-                            app(DaemonFileRepository::class)
+                        ->action(function (File $file, DaemonFileRepository $daemonFileRepository) use ($server) {
+                            $daemonFileRepository
                                 ->setServer($server)
                                 ->decompressFile($this->path, $file->name);
 
@@ -331,9 +324,8 @@ class ListFiles extends ListRecords
                     ->requiresConfirmation()
                     ->modalDescription(fn (File $file) => $file->name)
                     ->modalHeading('Delete file?')
-                    ->action(function (File $file) use ($server) {
-                        // @phpstan-ignore-next-line
-                        app(DaemonFileRepository::class)
+                    ->action(function (File $file, DaemonFileRepository $daemonFileRepository) use ($server) {
+                        $daemonFileRepository
                             ->setServer($server)
                             ->deleteFiles($this->path, [$file->name]);
 
@@ -357,14 +349,12 @@ class ListFiles extends ListRecords
                             Placeholder::make('new_location')
                                 ->content(fn (Get $get) => resolve_path('./' . join_paths($this->path, $get('location') ?? ''))),
                         ])
-                        ->action(function (Collection $files, $data) use ($server) {
+                        ->action(function (Collection $files, $data, DaemonFileRepository $daemonFileRepository) use ($server) {
                             $location = resolve_path(join_paths($this->path, $data['location']));
 
-                            // @phpstan-ignore-next-line
                             $files = $files->map(fn ($file) => ['to' => $location, 'from' => $file->name])->toArray();
 
-                            // @phpstan-ignore-next-line
-                            app(DaemonFileRepository::class)
+                            $daemonFileRepository
                                 ->setServer($server)
                                 ->renameFiles($this->path, $files);
 
@@ -380,12 +370,10 @@ class ListFiles extends ListRecords
                         }),
                     BulkAction::make('archive')
                         ->authorize(fn () => auth()->user()->can(Permission::ACTION_FILE_ARCHIVE, $server))
-                        ->action(function (Collection $files) use ($server) {
-                            // @phpstan-ignore-next-line
+                        ->action(function (Collection $files, DaemonFileRepository $daemonFileRepository) use ($server) {
                             $files = $files->map(fn ($file) => $file->name)->toArray();
 
-                            // @phpstan-ignore-next-line
-                            app(DaemonFileRepository::class)
+                            $daemonFileRepository
                                 ->setServer($server)
                                 ->compressFiles($this->path, $files);
 
@@ -403,12 +391,10 @@ class ListFiles extends ListRecords
                         }),
                     DeleteBulkAction::make()
                         ->authorize(fn () => auth()->user()->can(Permission::ACTION_FILE_DELETE, $server))
-                        ->action(function (Collection $files) use ($server) {
-                            // @phpstan-ignore-next-line
+                        ->action(function (Collection $files, DaemonFileRepository $daemonFileRepository) use ($server) {
                             $files = $files->map(fn ($file) => $file->name)->toArray();
 
-                            // @phpstan-ignore-next-line
-                            app(DaemonFileRepository::class)
+                            $daemonFileRepository
                                 ->setServer($server)
                                 ->deleteFiles($this->path, $files);
 
@@ -438,9 +424,8 @@ class ListFiles extends ListRecords
                 ->color('gray')
                 ->keyBindings('')
                 ->modalSubmitActionLabel('Create')
-                ->action(function ($data) use ($server) {
-                    // @phpstan-ignore-next-line
-                    app(DaemonFileRepository::class)
+                ->action(function ($data, DaemonFileRepository $daemonFileRepository) use ($server) {
+                    $daemonFileRepository
                         ->setServer($server)
                         ->putContent(join_paths($this->path, $data['name']), $data['editor'] ?? '');
 
@@ -467,9 +452,8 @@ class ListFiles extends ListRecords
                 ->authorize(fn () => auth()->user()->can(Permission::ACTION_FILE_CREATE, $server))
                 ->label('New Folder')
                 ->color('gray')
-                ->action(function ($data) use ($server) {
-                    // @phpstan-ignore-next-line
-                    app(DaemonFileRepository::class)
+                ->action(function ($data, DaemonFileRepository $daemonFileRepository) use ($server) {
+                    $daemonFileRepository
                         ->setServer($server)
                         ->createDirectory($data['name'], $this->path);
 
@@ -485,12 +469,11 @@ class ListFiles extends ListRecords
             HeaderAction::make('upload')
                 ->authorize(fn () => auth()->user()->can(Permission::ACTION_FILE_CREATE, $server))
                 ->label('Upload')
-                ->action(function ($data) use ($server) {
+                ->action(function ($data, DaemonFileRepository $daemonFileRepository) use ($server) {
                     if (count($data['files']) > 0 && !isset($data['url'])) {
                         /** @var UploadedFile $file */
                         foreach ($data['files'] as $file) {
-                            // @phpstan-ignore-next-line
-                            app(DaemonFileRepository::class)
+                            $daemonFileRepository
                                 ->setServer($server)
                                 ->putContent(join_paths($this->path, $file->getClientOriginalName()), $file->getContent());
 
@@ -500,8 +483,7 @@ class ListFiles extends ListRecords
                                 ->log();
                         }
                     } elseif ($data['url'] !== null) {
-                        // @phpstan-ignore-next-line
-                        app(DaemonFileRepository::class)
+                        $daemonFileRepository
                             ->setServer($server)
                             ->pull($data['url'], $this->path);
 
