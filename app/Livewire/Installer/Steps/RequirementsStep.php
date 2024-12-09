@@ -14,7 +14,9 @@ class RequirementsStep
 
     public static function make(): Step
     {
-        $correctPhpVersion = version_compare(PHP_VERSION, self::MIN_PHP_VERSION) >= 0;
+        /** @var -1|0|1|false|true $compare */
+        $compare = version_compare(PHP_VERSION, self::MIN_PHP_VERSION);
+        $correctPhpVersion = $compare >= 0;
 
         $fields = [
             Section::make('PHP Version')

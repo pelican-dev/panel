@@ -73,11 +73,10 @@ class EditFiles extends Page
                             ->authorize(fn () => auth()->user()->can(Permission::ACTION_FILE_UPDATE, $server))
                             ->icon('tabler-device-floppy')
                             ->keyBindings('mod+s')
-                            ->action(function () use ($server) {
+                            ->action(function (DaemonFileRepository $daemonFileRepository) use ($server) {
                                 $data = $this->form->getState();
 
-                                // @phpstan-ignore-next-line
-                                app(DaemonFileRepository::class)
+                                $daemonFileRepository
                                     ->setServer($server)
                                     ->putContent($this->path, $data['editor'] ?? '');
 
@@ -103,9 +102,8 @@ class EditFiles extends Page
                         MonacoEditor::make('editor')
                             ->label('')
                             ->placeholderText('')
-                            ->formatStateUsing(function () use ($server) {
-                                // @phpstan-ignore-next-line
-                                return app(DaemonFileRepository::class)
+                            ->formatStateUsing(function (DaemonFileRepository $daemonFileRepository) use ($server) {
+                                return $daemonFileRepository
                                     ->setServer($server)
                                     ->getContent($this->path, config('panel.files.max_edit_size'));
                             })

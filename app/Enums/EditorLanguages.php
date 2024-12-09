@@ -91,7 +91,7 @@ enum EditorLanguages: string implements HasLabel
     case yaml = 'yaml';
     case json = 'json';
 
-    public function getLabel(): ?string
+    public function getLabel(): string
     {
         return $this->name;
     }
