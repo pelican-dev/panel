@@ -67,7 +67,7 @@ class ScheduleResource extends Resource
             ->columns(10)
             ->schema([
                 TextInput::make('name')
-                    ->columnSpan(fn ($operation) => $operation === 'create' ? 10 : 5)
+                    ->columnSpan(fn ($operation) => $operation !== 'view' ? 10 : 5)
                     ->label('Schedule Name')
                     ->placeholder('A human readable identifier for this schedule.')
                     ->autocomplete(false)
@@ -80,7 +80,7 @@ class ScheduleResource extends Resource
                         'processing' => 'warning',
                         'active' => 'success',
                     ])
-                    ->hiddenOn('create')
+                    ->visibleOn('view')
                     ->columnSpan(5),
                 Toggle::make('only_when_online')
                     ->label('Only when Server is Online?')
