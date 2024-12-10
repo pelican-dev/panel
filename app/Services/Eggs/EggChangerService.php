@@ -8,7 +8,7 @@ use App\Models\ServerVariable;
 
 class EggChangerService
 {
-    public function handle(Server $server, Egg|int $newEgg): void
+    public function handle(Server $server, Egg|int $newEgg, bool $keepOldVariables = true): void
     {
         if (!$newEgg instanceof Egg) {
             $newEgg = Egg::findOrFail($newEgg);
@@ -25,10 +25,12 @@ class EggChangerService
             'startup' => $newEgg->startup,
         ])->saveOrFail();
 
-        // Keep copy of old server variables
         $oldVariables = [];
-        foreach ($server->serverVariables as $serverVariable) {
-            $oldVariables[$serverVariable->variable->env_variable] = $serverVariable->variable_value;
+        if ($keepOldVariables) {
+            // Keep copy of old server variables
+            foreach ($server->serverVariables as $serverVariable) {
+                $oldVariables[$serverVariable->variable->env_variable] = $serverVariable->variable_value;
+            }
         }
 
         // Delete old server variables
