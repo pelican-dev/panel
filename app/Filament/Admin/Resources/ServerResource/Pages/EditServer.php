@@ -15,6 +15,7 @@ use App\Models\Server;
 use App\Models\ServerVariable;
 use App\Services\Databases\DatabaseManagementService;
 use App\Services\Databases\DatabasePasswordService;
+use App\Services\Eggs\EggChangerService;
 use App\Services\Servers\RandomWordService;
 use App\Services\Servers\ReinstallServerService;
 use App\Services\Servers\ServerDeletionService;
@@ -38,6 +39,7 @@ use Filament\Forms\Components\Tabs\Tab;
 use Filament\Forms\Components\TagsInput;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Toggle;
 use Filament\Forms\Components\ToggleButtons;
 use Filament\Forms\Form;
 use Filament\Forms\Get;
@@ -474,7 +476,7 @@ class EditServer extends EditRecord
                             ])
                             ->schema([
                                 Select::make('egg_id')
-                                    ->disabledOn('edit')
+                                    ->disabled()
                                     ->prefixIcon('tabler-egg')
                                     ->columnSpan([
                                         'default' => 6,
@@ -485,7 +487,28 @@ class EditServer extends EditRecord
                                     ->relationship('egg', 'name')
                                     ->searchable()
                                     ->preload()
-                                    ->required(),
+                                    ->required()
+                                    ->hintAction(
+                                        Action::make('change_egg')
+                                            ->action(function (array $data, Server $server, EggChangerService $service) {
+                                                $service->handle($server, $data['egg_id'], $data['keepOldVariables']);
+
+                                                // Use redirect instead of fillForm to prevent server variables from duplicating
+                                                $this->redirect($this->getUrl(['record' => $server, 'tab' => '-egg-tab']), true);
+                                            })
+                                            ->form(fn (Server $server) => [
+                                                Select::make('egg_id')
+                                                    ->label('New Egg')
+                                                    ->prefixIcon('tabler-egg')
+                                                    ->options(fn () => Egg::all()->filter(fn (Egg $egg) => $egg->id !== $server->egg->id)->mapWithKeys(fn (Egg $egg) => [$egg->id => $egg->name]))
+                                                    ->searchable()
+                                                    ->preload()
+                                                    ->required(),
+                                                Toggle::make('keepOldVariables')
+                                                    ->label('Keep old variables if possible?')
+                                                    ->default(true),
+                                            ])
+                                    ),
 
                                 ToggleButtons::make('skip_scripts')
                                     ->label('Run Egg Install Script?')->inline()
