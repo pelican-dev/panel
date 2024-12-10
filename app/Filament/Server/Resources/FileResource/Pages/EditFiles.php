@@ -69,7 +69,7 @@ class EditFiles extends Page
                 Section::make('Editing: ' . $this->path)
                     ->footerActions([
                         Action::make('save')
-                            ->label('Save Changes')
+                            ->label('Save')
                             ->authorize(fn () => auth()->user()->can(Permission::ACTION_FILE_UPDATE, $server))
                             ->icon('tabler-device-floppy')
                             ->keyBindings('mod+s')
