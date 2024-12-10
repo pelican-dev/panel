@@ -1,7 +1,7 @@
 @props([
 'code' => '500',
 'title' => 'Server Error',
-'subtitle' => 'Something went wrong.',
+'subtitle' => fn () => auth()->user()?->isRootAdmin() ? $exception->getMessage() : 'Something went wrong.',
 'icon' => 'tabler-bug'
 ])
 
