@@ -88,7 +88,7 @@ class ServerConsole extends Widget
         }
     }
 
-    #[On('storeStats')]
+    #[On('store-stats')]
     public function storeStats(string $data): void
     {
         $data = json_decode($data);
