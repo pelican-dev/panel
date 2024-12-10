@@ -8,7 +8,7 @@
     <link rel="icon" href="{{ config('app.favicon', '/pelican.ico') }}" />
 
     <title>
-        {{ $title }} - {{ config('app.name', 'Pelican') }}
+        {{ $title }} - {{ config('app.name') }}
     </title>
 
     @filamentStyles
