@@ -13,6 +13,8 @@ use App\Models\Webhook;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Database\Console\PruneCommand;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
+use Spatie\Health\Commands\RunHealthChecksCommand;
+use Spatie\Health\Commands\ScheduleCheckHeartbeatCommand;
 
 class Kernel extends ConsoleKernel
 {
@@ -53,5 +55,8 @@ class Kernel extends ConsoleKernel
         if (config('panel.webhook.prune_days')) {
             $schedule->command(PruneCommand::class, ['--model' => [Webhook::class]])->daily();
         }
+
+        $schedule->command(ScheduleCheckHeartbeatCommand::class)->everyMinute();
+        $schedule->command(RunHealthChecksCommand::class)->everyFiveMinutes();
     }
 }
