@@ -97,7 +97,6 @@ class Console extends Page
                 ->size(ActionSize::ExtraLarge)
                 ->action(fn () => $this->dispatch('setServerState', state: 'kill'))
                 ->hidden(fn () => $server->isInConflictState() || !$this->status->isKillable())
-                ->disabled(fn () => $server->isInConflictState() || !$this->status->isKillable()),
         ];
     }
 }
