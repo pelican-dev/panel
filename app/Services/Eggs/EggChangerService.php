@@ -8,8 +8,16 @@ use App\Models\ServerVariable;
 
 class EggChangerService
 {
-    public function handle(Server $server, Egg $newEgg): void
+    public function handle(Server $server, Egg|int $newEgg): void
     {
+        if (!$newEgg instanceof Egg) {
+            $newEgg = Egg::findOrFail($newEgg);
+        }
+
+        if ($server->egg->id === $newEgg->id) {
+            return;
+        }
+
         // Change egg id, default image and startup command
         $server->forceFill([
             'egg_id' => $newEgg->id,
