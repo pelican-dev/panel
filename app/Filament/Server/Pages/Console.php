@@ -96,7 +96,7 @@ class Console extends Page
                 ->modalSubmitActionLabel('Kill Server')
                 ->size(ActionSize::ExtraLarge)
                 ->action(fn () => $this->dispatch('setServerState', state: 'kill'))
-                ->hidden(fn () => $server->isInConflictState() || !$this->status->isKillable())
+                ->hidden(fn () => $server->isInConflictState() || !$this->status->isKillable()),
         ];
     }
 }
