@@ -80,12 +80,15 @@ class ListFiles extends ListRecords
         return $table
             ->paginated([15, 25, 50, 100])
             ->defaultPaginationPageOption(15)
-            ->query(fn () => File::get($server, $this->path)->orderByDesc('is_directory')->orderBy('name'))
+            ->query(fn () => File::get($server, $this->path)->orderByDesc('is_directory'))
+            ->defaultSort('name')
             ->columns([
                 TextColumn::make('name')
                     ->searchable()
+                    ->sortable()
                     ->icon(fn (File $file) => $file->getIcon()),
-                BytesColumn::make('size'),
+                BytesColumn::make('size')
+                    ->sortable(),
                 DateTimeColumn::make('modified_at')
                     ->since()
                     ->sortable(),
