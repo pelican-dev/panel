@@ -35,13 +35,11 @@ class ServerInstallController extends Controller
     {
         $status = null;
 
-        // Make sure the type of failure is accurate
-        if (!$request->boolean('successful')) {
-            $status = ServerState::InstallFailed;
+        $successful = $request->boolean('successful');
 
-            if ($request->boolean('reinstall')) {
-                $status = ServerState::ReinstallFailed;
-            }
+        // Make sure the type of failure is accurate
+        if (!$successful) {
+            $status = $request->boolean('reinstall') ? ServerState::ReinstallFailed : ServerState::InstallFailed;
         }
 
         // Keep the server suspended if it's already suspended
@@ -59,11 +57,11 @@ class ServerInstallController extends Controller
         // This logic allows individually disabling install and reinstall notifications separately.
         $isInitialInstall = is_null($previouslyInstalledAt);
         if ($isInitialInstall && config()->get('panel.email.send_install_notification', true)) {
-            event(new ServerInstalled($server));
+            event(new ServerInstalled($server, $successful));
         }
 
         if (!$isInitialInstall && config()->get('panel.email.send_reinstall_notification', true)) {
-            event(new ServerInstalled($server));
+            event(new ServerInstalled($server, $successful));
         }
 
         return new JsonResponse([], Response::HTTP_NO_CONTENT);
