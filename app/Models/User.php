@@ -189,9 +189,8 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
     protected static function booted(): void
     {
         static::creating(function (self $user) {
-            $user->uuid = Str::uuid()->toString();
-
-            $user->timezone = env('APP_TIMEZONE', 'UTC');
+            $user->uuid ??= Str::uuid()->toString();
+            $user->timezone ??= config('app.timezone');
 
             return true;
         });
@@ -217,7 +216,7 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
         $rules = parent::getRules();
 
         $rules['language'][] = new In(array_keys((new self())->getAvailableLanguages()));
-        $rules['timezone'][] = new In(array_values(DateTimeZone::listIdentifiers()));
+        $rules['timezone'][] = new In(DateTimeZone::listIdentifiers());
         $rules['username'][] = new Username();
 
         return $rules;

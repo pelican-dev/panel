@@ -134,6 +134,7 @@ class ListEggs extends ListRecords
                 ->action(function (array $data, EggImporterService $eggImportService): void {
                     if (!empty($data['egg'])) {
                         /** @var TemporaryUploadedFile[] $eggFile */
+                        // @phpstan-ignore varTag.nativeType
                         $eggFile = $data['egg'];
 
                         foreach ($eggFile as $file) {

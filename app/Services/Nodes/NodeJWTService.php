@@ -3,6 +3,7 @@
 namespace App\Services\Nodes;
 
 use Carbon\CarbonImmutable;
+use DateTimeImmutable;
 use Illuminate\Support\Str;
 use App\Models\Node;
 use App\Models\User;
@@ -18,7 +19,7 @@ class NodeJWTService
 
     private ?User $user = null;
 
-    private ?\DateTimeImmutable $expiresAt;
+    private DateTimeImmutable $expiresAt;
 
     private ?string $subject = null;
 
@@ -73,9 +74,7 @@ class NodeJWTService
             ->issuedAt(CarbonImmutable::now())
             ->canOnlyBeUsedAfter(CarbonImmutable::now()->subMinutes(5));
 
-        if ($this->expiresAt) {
-            $builder = $builder->expiresAt($this->expiresAt);
-        }
+        $builder = $builder->expiresAt($this->expiresAt);
 
         if (!empty($this->subject)) {
             $builder = $builder->relatedTo($this->subject)->withHeader('sub', $this->subject);
