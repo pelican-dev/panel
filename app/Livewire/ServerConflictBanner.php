@@ -20,21 +20,12 @@ class ServerConflictBanner extends Component
         $this->server = $server;
     }
 
-    #[On('power-changed')]
-    public function refresh(): void
+    #[On('console-install-completed')]
+    #[On('console-install-started')]
+    #[On('console-status')]
+    public function refresh(?string $state = null): void
     {
-        $secondsToKeepRefreshing = 5;
-        for ($i = 0; $i < $secondsToKeepRefreshing; $i++) {
-            $serverState = $this->server->status;
-            $this->server->fresh();
-
-            // If we find what we're looking for, break early
-            if ($serverState !== $this->server->status) {
-                break;
-            }
-
-            Sleep::sleep(1);
-        }
+        $this->server->fresh();
     }
 
     public function render(): View

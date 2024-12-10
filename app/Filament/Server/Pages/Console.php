@@ -54,10 +54,12 @@ class Console extends Page
         return 3;
     }
 
-    #[On('power-changed')]
-    public function powerChanged(string $state): void
+    #[On('console-status')]
+    public function receivedConsoleUpdate(?string $state = null): void
     {
-        $this->status = ContainerStatus::from($state);
+        if ($state) {
+            $this->status = ContainerStatus::from($state);
+        }
 
         $this->cachedHeaderActions = [];
 
