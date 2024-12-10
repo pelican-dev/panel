@@ -126,7 +126,7 @@
                 case 'status':
                     handlePowerChangeEvent(args[0]);
 
-                    $wire.dispatch('powerChanged', {state: args[0]})
+                    $wire.dispatch('console-status', {state: args[0]})
                     break;
                 case 'transfer status':
                     handleTransferStatus(args[0]);
@@ -135,13 +135,19 @@
                     handleDaemonErrorOutput(args[0]);
                     break;
                 case 'stats':
-                    $wire.dispatchSelf('storeStats', { data: args[0] });
+                    $wire.dispatchSelf('store-stats', { data: args[0] });
                     break;
                 case 'auth success':
                     socket.send(JSON.stringify({
                         'event': 'send logs',
                         'args': [null]
                     }));
+                    break;
+                case 'install started':
+                    $wire.dispatch('console-install-started');
+                    break;
+                case 'install completed':
+                    $wire.dispatch('console-install-completed');
                     break;
                 case 'token expiring':
                 case 'token expired':
