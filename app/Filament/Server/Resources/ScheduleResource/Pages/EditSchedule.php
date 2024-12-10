@@ -14,7 +14,7 @@ class EditSchedule extends EditRecord
     {
         return [
             Actions\DeleteAction::make(),
-            $this->getSaveFormAction()->formId('form'),
+            $this->getSaveFormAction()->formId('form')->label('Save'),
             $this->getCancelFormAction()->formId('form'),
         ];
     }
