@@ -28,11 +28,11 @@
                 <div class="fi-simple-page">
                     <section class="grid auto-cols-fr gap-y-6">
                         <header class="fi-simple-header flex flex-col items-center">
-                            @if(filled($icon))
-								<x-filament::icon icon="{{ $icon }}" />
-                            @endif
-
                             <h1 class="fi-simple-header-heading flex text-center text-2xl font-bold tracking-tight text-gray-950 dark:text-white">
+                                @if(filled($icon))
+                                    <x-filament::icon icon="{{ $icon }}" class="h-8 w-8" />
+                                @endif
+
                                 {{$code}} | {{ $title }}
                             </h1>
 
