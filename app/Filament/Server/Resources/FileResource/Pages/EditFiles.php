@@ -91,6 +91,8 @@ class EditFiles extends Page
                                     ->title('Saved File')
                                     ->body(fn () => $this->path)
                                     ->send();
+
+                                $this->redirect(ListFiles::getUrl(['path' => dirname($this->path)]));
                             }),
                         Action::make('cancel')
                             ->label('Cancel')
