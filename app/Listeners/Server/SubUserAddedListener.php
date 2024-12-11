@@ -16,7 +16,7 @@ class SubUserAddedListener
 
         Notification::make()
             ->title('Added to Server')
-            ->body('You have been added to ' . $event->subuser->server->name . '.')
+            ->body('You have been added as a subuser to ' . $event->subuser->server->name . '.')
             ->actions([
                 Action::make('view')
                     ->button()
