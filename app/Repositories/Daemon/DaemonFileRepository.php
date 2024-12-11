@@ -3,6 +3,7 @@
 namespace App\Repositories\Daemon;
 
 use Carbon\CarbonInterval;
+use Illuminate\Contracts\Filesystem\FileNotFoundException;
 use Illuminate\Http\Client\Response;
 use Webmozart\Assert\Assert;
 use App\Models\Server;
@@ -21,6 +22,7 @@ class DaemonFileRepository extends DaemonRepository
      * @throws \GuzzleHttp\Exception\TransferException
      * @throws \App\Exceptions\Http\Server\FileSizeTooLargeException
      * @throws \App\Exceptions\Http\Connection\DaemonConnectionException
+     * @throws FileNotFoundException
      */
     public function getContent(string $path, ?int $notLargerThan = null): string
     {
@@ -38,6 +40,10 @@ class DaemonFileRepository extends DaemonRepository
         $length = $response->header('Content-Length');
         if ($notLargerThan && $length > $notLargerThan) {
             throw new FileSizeTooLargeException();
+        }
+
+        if ($response->getStatusCode() === 404) {
+            throw new FileNotFoundException();
         }
 
         return $response;
