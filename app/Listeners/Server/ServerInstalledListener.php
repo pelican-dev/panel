@@ -11,9 +11,11 @@ class ServerInstalledListener
 {
     public function handle(Installed $event): void
     {
+        $event->server->loadMissing('user');
+
         Notification::make()
             ->status($event->successful ? 'success' : 'danger')
-            ->title('Server Installation ' . ($event->successful ? 'completed' : 'failed'))
+            ->title('Server ' . ($event->initialInstall ? 'Installation' : 'Reinstallation') . ' ' . ($event->successful ? 'completed' : 'failed'))
             ->body($event->server->name)
             ->actions([
                 Action::make('view')

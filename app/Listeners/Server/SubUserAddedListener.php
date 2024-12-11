@@ -11,6 +11,9 @@ class SubUserAddedListener
 {
     public function handle(SubUserAdded $event): void
     {
+        $event->subuser->loadMissing('server');
+        $event->subuser->loadMissing('user');
+
         Notification::make()
             ->title('Added to Server')
             ->body('You have been added to ' . $event->subuser->server->name . '.')

@@ -26,14 +26,24 @@ class ServerInstalled extends Notification implements ShouldQueue
      */
     public function handle(Installed $event): void
     {
-        $event->server->loadMissing('user');
+        if ($event->initialInstall && !config()->get('panel.email.send_install_notification', true)) {
+            return;
+        }
 
-        $this->server = $event->server;
-        $this->user = $event->server->user;
+        if (!$event->initialInstall && !config()->get('panel.email.send_reinstall_notification', true)) {
+            return;
+        }
 
-        // Since we are calling this notification directly from an event listener we need to fire off the dispatcher
-        // to send the email now. Don't use send() or you'll end up firing off two different events.
-        Container::getInstance()->make(Dispatcher::class)->sendNow($this->user, $this);
+        if ($event->successful) {
+            $event->server->loadMissing('user');
+
+            $this->server = $event->server;
+            $this->user = $event->server->user;
+
+            // Since we are calling this notification directly from an event listener we need to fire off the dispatcher
+            // to send the email now. Don't use send() or you'll end up firing off two different events.
+            Container::getInstance()->make(Dispatcher::class)->sendNow($this->user, $this);
+        }
     }
 
     /**

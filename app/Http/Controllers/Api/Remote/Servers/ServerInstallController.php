@@ -53,16 +53,8 @@ class ServerInstallController extends Controller
         $server->installed_at = now();
         $server->save();
 
-        // If the server successfully installed, fire installed event.
-        // This logic allows individually disabling install and reinstall notifications separately.
         $isInitialInstall = is_null($previouslyInstalledAt);
-        if ($isInitialInstall && config()->get('panel.email.send_install_notification', true)) {
-            event(new ServerInstalled($server, $successful));
-        }
-
-        if (!$isInitialInstall && config()->get('panel.email.send_reinstall_notification', true)) {
-            event(new ServerInstalled($server, $successful));
-        }
+        event(new ServerInstalled($server, $successful, $isInitialInstall));
 
         return new JsonResponse([], Response::HTTP_NO_CONTENT);
     }
