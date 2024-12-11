@@ -4,7 +4,6 @@ namespace App\Notifications;
 
 use App\Models\User;
 use Illuminate\Bus\Queueable;
-use App\Events\Event;
 use App\Models\Server;
 use Illuminate\Container\Container;
 use App\Events\Server\Installed;
