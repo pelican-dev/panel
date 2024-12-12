@@ -66,9 +66,9 @@ class ListEggs extends ListRecords
     protected function getHeaderActions(): array
     {
         return [
+            ImportEggHeaderAction::make(),
             CreateHeaderAction::make()
                 ->label('Create Egg'),
-            ImportEggHeaderAction::make(),
         ];
     }
 }
