@@ -5,17 +5,14 @@ namespace App\Filament\Admin\Resources\EggResource\Pages;
 use AbdelhamidErrahmouni\FilamentMonacoEditor\MonacoEditor;
 use App\Filament\Admin\Resources\EggResource;
 use App\Filament\Admin\Resources\EggResource\RelationManagers\ServersRelationManager;
+use App\Filament\Components\Actions\ExportEggAction;
+use App\Filament\Components\Actions\ImportEggAction;
 use App\Models\Egg;
-use App\Services\Eggs\Sharing\EggExporterService;
-use App\Services\Eggs\Sharing\EggImporterService;
-use Exception;
-use Filament\Actions;
+use Filament\Actions\DeleteAction;
 use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\Fieldset;
-use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\KeyValue;
-use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Tabs;
@@ -26,7 +23,6 @@ use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Form;
 use Filament\Forms\Set;
-use Filament\Notifications\Notification;
 use Filament\Resources\Pages\EditRecord;
 
 class EditEgg extends EditRecord
@@ -242,83 +238,11 @@ class EditEgg extends EditRecord
     protected function getHeaderActions(): array
     {
         return [
-            Actions\DeleteAction::make('deleteEgg')
+            DeleteAction::make()
                 ->disabled(fn (Egg $egg): bool => $egg->servers()->count() > 0)
                 ->label(fn (Egg $egg): string => $egg->servers()->count() <= 0 ? 'Delete' : 'In Use'),
-            Actions\Action::make('exportEgg')
-                ->label('Export')
-                ->color('primary')
-                ->action(fn (EggExporterService $service, Egg $egg) => response()->streamDownload(function () use ($service, $egg) {
-                    echo $service->handle($egg->id);
-                }, 'egg-' . $egg->getKebabName() . '.json'))
-                ->authorize(fn () => auth()->user()->can('export egg')),
-            Actions\Action::make('importEgg')
-                ->label('Import')
-                ->form([
-                    Placeholder::make('warning')
-                        ->label('This will overwrite the current egg to the one you upload.'),
-                    Tabs::make('Tabs')
-                        ->tabs([
-                            Tab::make('From File')
-                                ->icon('tabler-file-upload')
-                                ->schema([
-                                    FileUpload::make('egg')
-                                        ->label('Egg')
-                                        ->hint('eg. minecraft.json')
-                                        ->acceptedFileTypes(['application/json'])
-                                        ->storeFiles(false),
-                                ]),
-                            Tab::make('From URL')
-                                ->icon('tabler-world-upload')
-                                ->schema([
-                                    TextInput::make('url')
-                                        ->label('URL')
-                                        ->default(fn (Egg $egg): ?string => $egg->update_url)
-                                        ->hint('Link to the egg file (eg. minecraft.json)')
-                                        ->url(),
-                                ]),
-                        ])
-                        ->contained(false),
-
-                ])
-                ->action(function (array $data, Egg $egg, EggImporterService $eggImportService): void {
-                    if (!empty($data['egg'])) {
-                        try {
-                            $eggImportService->fromFile($data['egg'], $egg);
-                        } catch (Exception $exception) {
-                            Notification::make()
-                                ->title('Import Failed')
-                                ->body($exception->getMessage())
-                                ->danger() // Will Robinson
-                                ->send();
-
-                            report($exception);
-
-                            return;
-                        }
-                    } elseif (!empty($data['url'])) {
-                        try {
-                            $eggImportService->fromUrl($data['url'], $egg);
-                        } catch (Exception $exception) {
-                            Notification::make()
-                                ->title('Import Failed')
-                                ->body($exception->getMessage())
-                                ->danger()
-                                ->send();
-
-                            report($exception);
-
-                            return;
-                        }
-                    }
-
-                    $this->refreshForm();
-                    Notification::make()
-                        ->title('Import Success')
-                        ->success()
-                        ->send();
-                })
-                ->authorize(fn () => auth()->user()->can('import egg')),
+            ExportEggAction::make(),
+            ImportEggAction::make(),
             $this->getSaveFormAction()->formId('form'),
         ];
     }
