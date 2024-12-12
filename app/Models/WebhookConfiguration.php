@@ -116,7 +116,6 @@ class WebhookConfiguration extends Model
             ->after('eloquent.')
             ->replace('App\\Models\\', '')
             ->replace('App\\Events\\', 'event: ')
-//            ->replace('Illuminate\\', 'framework: ')
             ->replaceMatches('/Illuminate\\\\([A-z]+)\\\\Events\\\\/', function (array $matches) {
                 return strtolower($matches[1]) . ': ';
             })
