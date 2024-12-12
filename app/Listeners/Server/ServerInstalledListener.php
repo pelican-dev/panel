@@ -16,7 +16,7 @@ class ServerInstalledListener
         Notification::make()
             ->status($event->successful ? 'success' : 'danger')
             ->title('Server ' . ($event->initialInstall ? 'Installation' : 'Reinstallation') . ' ' . ($event->successful ? 'completed' : 'failed'))
-            ->body($event->server->name)
+            ->body('Server Name: ' . $event->server->name)
             ->actions([
                 Action::make('view')
                     ->button()
