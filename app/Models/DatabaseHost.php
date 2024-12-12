@@ -16,6 +16,10 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property int|null $node_id
  * @property \Carbon\CarbonImmutable $created_at
  * @property \Carbon\CarbonImmutable $updated_at
+ * @property \Illuminate\Database\Eloquent\Collection|\App\Models\Node[] $nodes
+ * @property int|null $nodes_count
+ * @property \Illuminate\Database\Eloquent\Collection|\App\Models\Database[] $databases
+ * @property int|null $databases_count
  */
 class DatabaseHost extends Model
 {

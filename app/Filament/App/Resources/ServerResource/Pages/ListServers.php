@@ -3,9 +3,9 @@
 namespace App\Filament\App\Resources\ServerResource\Pages;
 
 use App\Filament\App\Resources\ServerResource;
+use App\Filament\Components\Tables\Columns\ServerEntryColumn;
 use App\Filament\Server\Pages\Console;
 use App\Models\Server;
-use App\Tables\Columns\ServerEntryColumn;
 use Carbon\CarbonInterface;
 use Filament\Resources\Pages\ListRecords;
 use Filament\Tables\Columns\Layout\Stack;

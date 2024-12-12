@@ -24,6 +24,7 @@ use Filament\Panel;
 use Filament\Resources\Pages\Page;
 use Filament\Resources\Pages\PageRegistration;
 use Filament\Support\Enums\Alignment;
+use Illuminate\Contracts\Filesystem\FileNotFoundException;
 use Illuminate\Routing\Route;
 use Illuminate\Support\Facades\Route as RouteFacade;
 use Livewire\Attributes\Locked;
@@ -73,11 +74,10 @@ class EditFiles extends Page
                             ->authorize(fn () => auth()->user()->can(Permission::ACTION_FILE_UPDATE, $server))
                             ->icon('tabler-device-floppy')
                             ->keyBindings('mod+s')
-                            ->action(function () use ($server) {
+                            ->action(function (DaemonFileRepository $fileRepository) use ($server) {
                                 $data = $this->form->getState();
 
-                                // @phpstan-ignore-next-line
-                                app(DaemonFileRepository::class)
+                                $fileRepository
                                     ->setServer($server)
                                     ->putContent($this->path, $data['editor'] ?? '');
 
@@ -105,11 +105,14 @@ class EditFiles extends Page
                         MonacoEditor::make('editor')
                             ->label('')
                             ->placeholderText('')
-                            ->formatStateUsing(function () use ($server) {
-                                // @phpstan-ignore-next-line
-                                return app(DaemonFileRepository::class)
-                                    ->setServer($server)
-                                    ->getContent($this->path, config('panel.files.max_edit_size'));
+                            ->formatStateUsing(function (DaemonFileRepository $fileRepository) use ($server) {
+                                try {
+                                    return $fileRepository
+                                        ->setServer($server)
+                                        ->getContent($this->path, config('panel.files.max_edit_size'));
+                                } catch (FileNotFoundException) {
+                                    abort(404, $this->path . ' not found.');
+                                }
                             })
                             ->language(fn (Get $get) => $get('lang') ?? 'plaintext')
                             ->view('filament.plugins.monaco-editor'),

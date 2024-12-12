@@ -3,8 +3,8 @@
 namespace App\Filament\Admin\Resources\DatabaseHostResource\RelationManagers;
 
 use App\Filament\Components\Forms\Actions\RotateDatabasePasswordAction;
+use App\Filament\Components\Tables\Columns\DateTimeColumn;
 use App\Models\Database;
-use App\Tables\Columns\DateTimeColumn;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Resources\RelationManagers\RelationManager;

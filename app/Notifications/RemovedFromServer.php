@@ -2,7 +2,12 @@
 
 namespace App\Notifications;
 
+use App\Events\Server\SubUserRemoved;
+use App\Models\Server;
+use App\Models\User;
 use Illuminate\Bus\Queueable;
+use Illuminate\Container\Container;
+use Illuminate\Contracts\Notifications\Dispatcher;
 use Illuminate\Notifications\Notification;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
@@ -11,14 +16,22 @@ class RemovedFromServer extends Notification implements ShouldQueue
 {
     use Queueable;
 
-    public object $server;
+    public Server $server;
+
+    public User $user;
 
     /**
-     * Create a new notification instance.
+     * Handle a direct call to this notification from the subuser removed event. This is configured
+     * in the event service provider.
      */
-    public function __construct(array $server)
+    public function handle(SubUserRemoved $event): void
     {
-        $this->server = (object) $server;
+        $this->server = $event->server;
+        $this->user = $event->user;
+
+        // Since we are calling this notification directly from an event listener we need to fire off the dispatcher
+        // to send the email now. Don't use send() or you'll end up firing off two different events.
+        Container::getInstance()->make(Dispatcher::class)->sendNow($this->user, $this);
     }
 
     /**
@@ -36,7 +49,7 @@ class RemovedFromServer extends Notification implements ShouldQueue
     {
         return (new MailMessage())
             ->error()
-            ->greeting('Hello ' . $this->server->user . '.')
+            ->greeting('Hello ' . $this->user->username . '.')
             ->line('You have been removed as a subuser for the following server.')
             ->line('Server Name: ' . $this->server->name)
             ->action('Visit Panel', route('index'));

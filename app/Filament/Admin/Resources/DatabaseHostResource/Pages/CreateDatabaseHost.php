@@ -17,15 +17,11 @@ use PDOException;
 
 class CreateDatabaseHost extends CreateRecord
 {
-    private HostCreationService $service;
-
     protected static string $resource = DatabaseHostResource::class;
-
-    protected ?string $heading = 'Database Hosts';
 
     protected static bool $canCreateAnother = false;
 
-    protected ?string $subheading = '(database servers that can have individual databases)';
+    private HostCreationService $service;
 
     public function boot(HostCreationService $service): void
     {

@@ -17,9 +17,9 @@ class ActivityResource extends Resource
 {
     protected static ?string $model = ActivityLog::class;
 
-    protected static ?string $label = 'Activity';
+    protected static ?string $modelLabel = 'Activity';
 
-    protected static ?string $pluralLabel = 'Activity';
+    protected static ?string $pluralModelLabel = 'Activity';
 
     protected static ?int $navigationSort = 8;
 
