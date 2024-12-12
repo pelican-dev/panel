@@ -10,11 +10,11 @@ class DatabaseHostResource extends Resource
 {
     protected static ?string $model = DatabaseHost::class;
 
-    protected static ?string $label = 'Database Host';
-
     protected static ?string $navigationIcon = 'tabler-database';
 
     protected static ?string $navigationGroup = 'Advanced';
+
+    protected static ?string $recordTitleAttribute = 'name';
 
     public static function getNavigationBadge(): ?string
     {
