@@ -2,9 +2,9 @@
 
 namespace App\Filament\Admin\Resources\DatabaseHostResource\RelationManagers;
 
+use App\Filament\Components\Tables\Columns\DateTimeColumn;
 use App\Models\Database;
 use App\Services\Databases\DatabasePasswordService;
-use App\Tables\Columns\DateTimeColumn;
 use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
