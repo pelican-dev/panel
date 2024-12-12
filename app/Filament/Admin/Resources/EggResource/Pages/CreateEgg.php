@@ -28,6 +28,18 @@ class CreateEgg extends CreateRecord
 
     protected static bool $canCreateAnother = false;
 
+    protected function getHeaderActions(): array
+    {
+        return [
+            $this->getCreateFormAction()->formId('form'),
+        ];
+    }
+
+    protected function getFormActions(): array
+    {
+        return [];
+    }
+
     public function form(Form $form): Form
     {
         return $form

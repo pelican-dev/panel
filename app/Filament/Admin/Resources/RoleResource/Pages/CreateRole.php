@@ -14,11 +14,23 @@ use Spatie\Permission\Models\Permission;
  */
 class CreateRole extends CreateRecord
 {
+    public Collection $permissions;
+
     protected static string $resource = RoleResource::class;
 
     protected static bool $canCreateAnother = false;
 
-    public Collection $permissions;
+    protected function getHeaderActions(): array
+    {
+        return [
+            $this->getCreateFormAction()->formId('form'),
+        ];
+    }
+
+    protected function getFormActions(): array
+    {
+        return [];
+    }
 
     protected function mutateFormDataBeforeCreate(array $data): array
     {

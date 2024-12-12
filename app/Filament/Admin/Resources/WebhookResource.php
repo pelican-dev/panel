@@ -10,11 +10,15 @@ class WebhookResource extends Resource
 {
     protected static ?string $model = WebhookConfiguration::class;
 
+    protected static ?string $modelLabel = 'Webhook';
+
+    protected static ?string $pluralModelLabel = 'Webhooks';
+
     protected static ?string $navigationIcon = 'tabler-webhook';
 
     protected static ?string $navigationGroup = 'Advanced';
 
-    protected static ?string $label = 'Webhooks';
+    protected static ?string $recordTitleAttribute = 'description';
 
     public static function getNavigationBadge(): ?string
     {
