@@ -1,0 +1,17 @@
+<?php
+
+namespace App\Filament\Components\Tables\Columns;
+
+use Filament\Tables\Columns\IconColumn;
+
+class NodeHealthColumn extends IconColumn
+{
+    protected string $view = 'livewire.columns.version-column';
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        $this->alignCenter();
+    }
+}
