@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Tables\Columns;
+namespace App\Filament\Components\Tables\Columns;
 
 use Filament\Tables\Columns\Column;
 
