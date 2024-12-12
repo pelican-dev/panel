@@ -3,8 +3,8 @@
 namespace App\Filament\Admin\Resources\ApiKeyResource\Pages;
 
 use App\Filament\Admin\Resources\ApiKeyResource;
+use App\Filament\Components\Tables\Columns\DateTimeColumn;
 use App\Models\ApiKey;
-use App\Tables\Columns\DateTimeColumn;
 use Filament\Actions;
 use Filament\Resources\Pages\ListRecords;
 use Filament\Tables\Actions\CreateAction;

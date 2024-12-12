@@ -2,6 +2,7 @@
 
 namespace App\Filament\Server\Resources\DatabaseResource\Pages;
 
+use App\Filament\Components\Tables\Columns\DateTimeColumn;
 use App\Filament\Server\Resources\DatabaseResource;
 use App\Models\Database;
 use App\Models\DatabaseHost;
@@ -9,7 +10,6 @@ use App\Models\Permission;
 use App\Models\Server;
 use App\Services\Databases\DatabaseManagementService;
 use App\Services\Databases\DatabasePasswordService;
-use App\Tables\Columns\DateTimeColumn;
 use Filament\Actions\CreateAction;
 use Filament\Facades\Filament;
 use Filament\Forms\Components\Actions\Action;
