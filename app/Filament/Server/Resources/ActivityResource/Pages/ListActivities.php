@@ -5,7 +5,7 @@ namespace App\Filament\Server\Resources\ActivityResource\Pages;
 use App\Filament\Server\Resources\ActivityResource;
 use App\Models\ActivityLog;
 use App\Models\User;
-use App\Tables\Columns\DateTimeColumn;
+use App\Filament\Components\Tables\Columns\DateTimeColumn;
 use Filament\Resources\Pages\ListRecords;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
