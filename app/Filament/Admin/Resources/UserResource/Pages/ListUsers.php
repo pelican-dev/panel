@@ -3,14 +3,8 @@
 namespace App\Filament\Admin\Resources\UserResource\Pages;
 
 use App\Filament\Admin\Resources\UserResource;
-use App\Models\Role;
 use App\Models\User;
-use App\Services\Users\UserCreationService;
 use Filament\Actions\CreateAction;
-use Filament\Forms\Components\CheckboxList;
-use Filament\Forms\Components\Grid;
-use Filament\Forms\Components\TextInput;
-use Filament\Notifications\Notification;
 use Filament\Resources\Pages\ListRecords;
 use Filament\Tables\Actions\BulkActionGroup;
 use Filament\Tables\Actions\DeleteBulkAction;
@@ -82,53 +76,8 @@ class ListUsers extends ListRecords
     protected function getHeaderActions(): array
     {
         return [
-            CreateAction::make('create')
-                ->label('Create User')
-                ->createAnother(false)
-                ->form([
-                    Grid::make()
-                        ->schema([
-                            TextInput::make('username')
-                                ->alphaNum()
-                                ->required()
-                                ->unique()
-                                ->minLength(3)
-                                ->maxLength(255),
-                            TextInput::make('email')
-                                ->email()
-                                ->required()
-                                ->unique()
-                                ->maxLength(255),
-                            TextInput::make('password')
-                                ->hintIcon('tabler-question-mark')
-                                ->hintIconTooltip('Providing a user password is optional. New user email will prompt users to create a password the first time they login.')
-                                ->password(),
-                            CheckboxList::make('roles')
-                                ->disableOptionWhen(fn (string $value): bool => $value == Role::getRootAdmin()->id)
-                                ->relationship('roles', 'name')
-                                ->dehydrated()
-                                ->label('Admin Roles')
-                                ->columnSpanFull()
-                                ->bulkToggleable(false),
-                        ]),
-                ])
-                ->successRedirectUrl(route('filament.admin.resources.users.index'))
-                ->action(function (array $data, UserCreationService $creationService) {
-                    $roles = $data['roles'];
-                    $roles = collect($roles)->map(fn ($role) => Role::findById($role));
-                    unset($data['roles']);
-
-                    $user = $creationService->handle($data);
-
-                    $user->syncRoles($roles);
-
-                    Notification::make()
-                        ->title('User Created!')
-                        ->success()
-                        ->send();
-
-                    return redirect()->route('filament.admin.resources.users.index');
-                }),
+            CreateAction::make()
+                ->label('Create User'),
         ];
     }
 }
