@@ -46,6 +46,7 @@ class AppPanelProvider extends PanelProvider
                     ->visible(fn (): bool => auth()->user()->canAccessPanel(Filament::getPanel('admin'))),
             ])
             ->discoverResources(in: app_path('Filament/App/Resources'), for: 'App\\Filament\\App\\Resources')
+            ->databaseNotifications()
             ->middleware([
                 EncryptCookies::class,
                 AddQueuedCookiesToResponse::class,

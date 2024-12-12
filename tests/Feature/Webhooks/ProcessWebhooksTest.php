@@ -185,7 +185,7 @@ class ProcessWebhooksTest extends TestCase
 
         $server = $this->createServer();
 
-        event(new Installed($server));
+        event(new Installed($server, true, true));
 
         $this->assertDatabaseCount(Webhook::class, 1);
         $this->assertDatabaseHas(Webhook::class, [

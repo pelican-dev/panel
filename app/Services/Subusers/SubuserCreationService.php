@@ -2,8 +2,8 @@
 
 namespace App\Services\Subusers;
 
+use App\Events\Server\SubUserAdded;
 use App\Models\User;
-use App\Notifications\AddedToServer;
 use Illuminate\Support\Str;
 use App\Models\Server;
 use App\Models\Subuser;
@@ -63,11 +63,7 @@ class SubuserCreationService
                 'permissions' => array_unique($permissions),
             ]);
 
-            $subuser->user->notify(new AddedToServer([
-                'user' => $subuser->user->name_first,
-                'name' => $subuser->server->name,
-                'uuid_short' => $subuser->server->uuid_short,
-            ]));
+            event(new SubUserAdded($subuser));
 
             return $subuser;
         });
