@@ -1,8 +1,8 @@
 @php
     use Filament\Tables\Columns\IconColumn\IconColumnSize;
 
-    $node = $getState();
-    $size = $getSize($state) ?? IconColumnSize::Large;
+    $node = $getRecord();
+    $size = $getSize($node) ?? IconColumnSize::Large;
 
     $sizeClasses = match ($size) {
         IconColumnSize::ExtraSmall, 'xs' => 'fi-ta-icon-item-size-xs h-3 w-3',
