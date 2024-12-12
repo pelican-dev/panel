@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Facades\DB;
 
@@ -14,6 +15,7 @@ use Illuminate\Support\Facades\DB;
  * @property string $remote
  * @property string $password
  * @property int $max_connections
+ * @property string $jdbc
  * @property \Carbon\Carbon $created_at
  * @property \Carbon\Carbon $updated_at
  * @property \App\Models\Server $server
@@ -85,6 +87,13 @@ class Database extends Model
     public function server(): BelongsTo
     {
         return $this->belongsTo(Server::class);
+    }
+
+    protected function jdbc(): Attribute
+    {
+        return Attribute::make(
+            get: fn () => 'jdbc:mysql://' . $this->username . ':' . urlencode($this->password) . '@' . $this->host->host . ':' . $this->host->port . '/' . $this->database,
+        );
     }
 
     /**

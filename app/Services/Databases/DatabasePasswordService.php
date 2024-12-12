@@ -20,7 +20,7 @@ class DatabasePasswordService
     /**
      * Updates a password for a given database.
      */
-    public function handle(Database|int $database): string
+    public function handle(Database|int $database): void
     {
         if (is_int($database)) {
             $database = Database::query()->findOrFail($database);
@@ -40,7 +40,5 @@ class DatabasePasswordService
             $database->assignUserToDatabase($database->database, $database->username, $database->remote);
             $database->flush();
         });
-
-        return $password;
     }
 }

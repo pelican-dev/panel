@@ -6,6 +6,7 @@ use App\Enums\ContainerStatus;
 use App\Enums\ServerState;
 use App\Filament\Admin\Resources\ServerResource;
 use App\Filament\Admin\Resources\ServerResource\RelationManagers\AllocationsRelationManager;
+use App\Filament\Components\Forms\Actions\RotateDatabasePasswordAction;
 use App\Filament\Server\Pages\Console;
 use App\Models\Database;
 use App\Models\DatabaseHost;
@@ -14,7 +15,6 @@ use App\Models\Mount;
 use App\Models\Server;
 use App\Models\ServerVariable;
 use App\Services\Databases\DatabaseManagementService;
-use App\Services\Databases\DatabasePasswordService;
 use App\Services\Eggs\EggChangerService;
 use App\Services\Servers\RandomWordService;
 use App\Services\Servers\ReinstallServerService;
@@ -667,31 +667,24 @@ class EditServer extends EditRecord
                                             ->password()
                                             ->revealable()
                                             ->columnSpan(1)
-                                            ->hintAction(
-                                                Action::make('rotate')
-                                                    ->authorize(fn (Database $database) => auth()->user()->can('update database', $database))
-                                                    ->icon('tabler-refresh')
-                                                    ->modalHeading('Change Database Password?')
-                                                    ->action(fn (DatabasePasswordService $service, $record, $set, $get) => $this->rotatePassword($service, $record, $set, $get))
-                                                    ->requiresConfirmation()
-                                            )
+                                            ->hintAction(RotateDatabasePasswordAction::make())
                                             ->formatStateUsing(fn (Database $database) => $database->password),
                                         TextInput::make('remote')
                                             ->disabled()
-                                            ->formatStateUsing(fn ($record) => $record->remote === '%' ? 'Anywhere ( % )' : $record->remote)
+                                            ->formatStateUsing(fn (Database $record) => $record->remote === '%' ? 'Anywhere ( % )' : $record->remote)
                                             ->columnSpan(1)
                                             ->label('Connections From'),
                                         TextInput::make('max_connections')
                                             ->disabled()
-                                            ->formatStateUsing(fn ($record) => $record->max_connections === 0 ? 'Unlimited' : $record->max_connections)
+                                            ->formatStateUsing(fn (Database $record) => $record->max_connections === 0 ? 'Unlimited' : $record->max_connections)
                                             ->columnSpan(1),
-                                        TextInput::make('JDBC')
+                                        TextInput::make('jdbc')
                                             ->disabled()
                                             ->password()
                                             ->revealable()
                                             ->label('JDBC Connection String')
                                             ->columnSpan(2)
-                                            ->formatStateUsing(fn (Get $get, $record) => 'jdbc:mysql://' . $get('username') . ':' . urlencode($record->password) . '@' . $record->host->host . ':' . $record->host->port . '/' . $get('database')),
+                                            ->formatStateUsing(fn (Database $record) => $record->jdbc),
                                     ])
                                     ->relationship('databases')
                                     ->deletable(false)
@@ -949,14 +942,5 @@ class EditServer extends EditRecord
             ->each(fn ($value) => str($value)->trim())
             ->mapWithKeys(fn ($value) => [$value => $value])
             ->all();
-    }
-
-    protected function rotatePassword(DatabasePasswordService $service, Database $record, Set $set, Get $get): void
-    {
-        $newPassword = $service->handle($record);
-        $jdbcString = 'jdbc:mysql://' . $get('username') . ':' . urlencode($newPassword) . '@' . $record->host->host . ':' . $record->host->port . '/' . $get('database');
-
-        $set('password', $newPassword);
-        $set('JDBC', $jdbcString);
     }
 }
