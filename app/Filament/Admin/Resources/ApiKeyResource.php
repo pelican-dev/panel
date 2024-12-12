@@ -5,7 +5,6 @@ namespace App\Filament\Admin\Resources;
 use App\Filament\Admin\Resources\ApiKeyResource\Pages;
 use App\Models\ApiKey;
 use Filament\Resources\Resource;
-use Illuminate\Database\Eloquent\Model;
 
 class ApiKeyResource extends Resource
 {

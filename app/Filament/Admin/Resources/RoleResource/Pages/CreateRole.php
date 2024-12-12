@@ -15,7 +15,7 @@ use Spatie\Permission\Models\Permission;
 class CreateRole extends CreateRecord
 {
     public Collection $permissions;
-    
+
     protected static string $resource = RoleResource::class;
 
     protected static bool $canCreateAnother = false;
