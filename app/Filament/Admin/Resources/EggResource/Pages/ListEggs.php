@@ -5,11 +5,13 @@ namespace App\Filament\Admin\Resources\EggResource\Pages;
 use App\Filament\Admin\Resources\EggResource;
 use App\Filament\Components\Actions\ImportEggAction as ImportEggHeaderAction;
 use App\Filament\Components\Tables\Actions\ExportEggAction;
+use App\Filament\Components\Tables\Actions\ImportEggAction;
 use App\Filament\Components\Tables\Actions\UpdateEggAction;
 use App\Models\Egg;
 use Filament\Actions\CreateAction as CreateHeaderAction;
 use Filament\Resources\Pages\ListRecords;
 use Filament\Tables\Actions\BulkActionGroup;
+use Filament\Tables\Actions\CreateAction;
 use Filament\Tables\Actions\DeleteBulkAction;
 use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Columns\TextColumn;
@@ -50,6 +52,14 @@ class ListEggs extends ListRecords
                     DeleteBulkAction::make()
                         ->authorize(fn () => auth()->user()->can('delete egg')),
                 ]),
+            ])
+            ->emptyStateIcon('tabler-eggs')
+            ->emptyStateDescription('')
+            ->emptyStateHeading('No Eggs')
+            ->emptyStateActions([
+                CreateAction::make()
+                    ->label('Create Egg'),
+                ImportEggAction::make(),
             ]);
     }
 
