@@ -7,6 +7,7 @@ use App\Facades\Activity;
 use App\Models\Server;
 use App\Models\Subuser;
 use App\Repositories\Daemon\DaemonServerRepository;
+use Illuminate\Http\Client\ConnectionException;
 
 class SubuserUpdateService
 {
@@ -38,7 +39,7 @@ class SubuserUpdateService
 
                 try {
                     $this->serverRepository->setServer($server)->revokeUserJTI($subuser->user_id);
-                } catch (DaemonConnectionException $exception) {
+                } catch (ConnectionException|DaemonConnectionException $exception) {
                     // Don't block this request if we can't connect to the daemon instance. Chances are it is
                     // offline and the token will be invalid once daemon boots back.
                     logger()->warning($exception, ['user_id' => $subuser->user_id, 'server_id' => $server->id]);

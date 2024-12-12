@@ -10,7 +10,6 @@ use Illuminate\Http\Client\RequestException;
 use Webmozart\Assert\Assert;
 use App\Models\Server;
 use GuzzleHttp\Exception\GuzzleException;
-use GuzzleHttp\Exception\TransferException;
 use App\Exceptions\Http\Connection\DaemonConnectionException;
 
 class DaemonServerRepository extends DaemonRepository
@@ -97,7 +96,7 @@ class DaemonServerRepository extends DaemonRepository
 
         try {
             $this->getHttpClient()->delete('/api/servers/' . $this->server->uuid);
-        } catch (TransferException $exception) {
+        } catch (GuzzleException $exception) {
             throw new DaemonConnectionException($exception);
         }
     }
@@ -116,7 +115,7 @@ class DaemonServerRepository extends DaemonRepository
                 '/api/servers/%s/reinstall',
                 $this->server->uuid
             ));
-        } catch (TransferException $exception) {
+        } catch (GuzzleException $exception) {
             throw new DaemonConnectionException($exception);
         }
     }
@@ -136,7 +135,7 @@ class DaemonServerRepository extends DaemonRepository
                 '/api/servers/%s/archive',
                 $this->server->uuid
             ));
-        } catch (TransferException $exception) {
+        } catch (GuzzleException $exception) {
             throw new DaemonConnectionException($exception);
         }
     }
@@ -159,7 +158,7 @@ class DaemonServerRepository extends DaemonRepository
                     '/api/servers/%s/transfer',
                     $this->server->uuid
                 ));
-            } catch (TransferException $exception) {
+            } catch (GuzzleException $exception) {
                 throw new DaemonConnectionException($exception);
             }
 
@@ -175,7 +174,7 @@ class DaemonServerRepository extends DaemonRepository
                         ],
                     ],
                 ]);
-            } catch (TransferException $exception) {
+            } catch (GuzzleException $exception) {
                 throw new DaemonConnectionException($exception);
             }
         }
@@ -210,7 +209,7 @@ class DaemonServerRepository extends DaemonRepository
                 ->post(sprintf('/api/servers/%s/ws/deny', $this->server->uuid), [
                     'jtis' => $jtis,
                 ]);
-        } catch (TransferException $exception) {
+        } catch (GuzzleException $exception) {
             throw new DaemonConnectionException($exception);
         }
     }
