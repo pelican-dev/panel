@@ -14,9 +14,9 @@ class AllocationResource extends Resource
 {
     protected static ?string $model = Allocation::class;
 
-    protected static ?string $label = 'Network';
+    protected static ?string $modelLabel = 'Network';
 
-    protected static ?string $pluralLabel = 'Network';
+    protected static ?string $pluralModelLabel = 'Network';
 
     protected static ?int $navigationSort = 7;
 
