@@ -119,7 +119,6 @@ class WebhookConfiguration extends Model
             ->replaceMatches('/Illuminate\\\\([A-z]+)\\\\Events\\\\/', function (array $matches) {
                 return strtolower($matches[1]) . ': ';
             })
-            // ->replace('Illuminate\\(capture)\\Events', '(capture): ')
             ->toString();
     }
 
