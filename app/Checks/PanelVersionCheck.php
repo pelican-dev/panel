@@ -8,14 +8,13 @@ use Spatie\Health\Checks\Result;
 
 class PanelVersionCheck extends Check
 {
+    public function __construct(private SoftwareVersionService $versionService) {}
+
     public function run(): Result
     {
-        /** @var SoftwareVersionService $versionService */
-        $versionService = app(SoftwareVersionService::class); // @phpstan-ignore-line
-
-        $isLatest = $versionService->isLatestPanel();
-        $currentVersion = $versionService->currentPanelVersion();
-        $latestVersion = $versionService->latestPanelVersion();
+        $isLatest = $this->versionService->isLatestPanel();
+        $currentVersion = $this->versionService->currentPanelVersion();
+        $latestVersion = $this->versionService->latestPanelVersion();
 
         $result = Result::make()
             ->meta([
@@ -26,7 +25,7 @@ class PanelVersionCheck extends Check
             ->shortSummary($isLatest ? 'up-to-date' : 'outdated');
 
         return $isLatest
-            ? $result->ok('Panel is up-to-date')
-            : $result->failed("Installed version is `{$currentVersion}` but latest is `{$latestVersion}`");
+            ? $result->ok('Panel is up-to-date.')
+            : $result->failed('Installed version is `:currentVersion` but latest is `:latestVersion`.');
     }
 }

@@ -10,6 +10,8 @@ use Spatie\Health\Enums\Status;
 
 class NodeVersionsCheck extends Check
 {
+    public function __construct(private SoftwareVersionService $versionService) {}
+
     public function run(): Result
     {
         $all = Node::query()->count();
@@ -21,8 +23,7 @@ class NodeVersionsCheck extends Check
             return $result;
         }
 
-        // @phpstan-ignore-next-line
-        $latestVersion = app(SoftwareVersionService::class)->latestWingsVersion();
+        $latestVersion = $this->versionService->latestWingsVersion();
 
         $outdated = Node::query()->get()
             ->filter(fn (Node $node) => !isset($node->systemInformation()['exception']) && $node->systemInformation()['version'] !== $latestVersion)
@@ -36,7 +37,7 @@ class NodeVersionsCheck extends Check
             ->shortSummary($outdated === 0 ? 'All up-to-date' : "{$outdated}/{$all} outdated");
 
         return $outdated === 0
-            ? $result->ok('All Nodes are up-to-date')
-            : $result->failed("`{$outdated}`/`{$all}` Nodes are outdated");
+            ? $result->ok('All Nodes are up-to-date.')
+            : $result->failed(':outdated/:all Nodes are outdated.');
     }
 }
