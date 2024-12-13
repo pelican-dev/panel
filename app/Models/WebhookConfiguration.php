@@ -34,6 +34,24 @@ class WebhookConfiguration extends Model
         'events',
     ];
 
+    public static function getEventClassesFromDirectory(string $directory, string $after): array
+    {
+        $events = [];
+        foreach (File::allFiles($directory) as $file) {
+            $namespace = str($file->getPath())
+                ->after($after)
+                ->replace(DIRECTORY_SEPARATOR, '\\')
+                ->after('\\')
+                ->replaceFirst('app', 'App')
+                ->toString();
+
+            $events[] = $namespace.'\\'.str($file->getFilename())
+                ->replace([DIRECTORY_SEPARATOR, '.php'], ['\\', '']);
+        }
+
+        return $events;
+    }
+
     protected function casts(): array
     {
         return [
@@ -75,6 +93,7 @@ class WebhookConfiguration extends Model
     {
         return collect(static::discoverCustomEvents())
             ->merge(static::allModelEvents())
+            ->merge(static::discoverFrameworkEvents())
             ->unique()
             ->filter(fn ($event) => !in_array($event, static::$eventBlacklist))
             ->all();
@@ -97,6 +116,7 @@ class WebhookConfiguration extends Model
             ->after('eloquent.')
             ->replace('App\\Models\\', '')
             ->replace('App\\Events\\', 'event: ')
+            ->replaceMatches('/Illuminate\\\\([A-z]+)\\\\Events\\\\/', fn (array $matches) => strtolower($matches[1]) . ': ')
             ->toString();
     }
 
@@ -133,16 +153,23 @@ class WebhookConfiguration extends Model
     {
         $directory = app_path('Events');
 
-        $events = [];
-        foreach (File::allFiles($directory) as $file) {
-            $namespace = str($file->getPath())
-                ->after(base_path())
-                ->replace(DIRECTORY_SEPARATOR, '\\')
-                ->replace('\\app\\', 'App\\')
-                ->toString();
+        return self::getEventClassesFromDirectory($directory, base_path());
+    }
 
-            $events[] = $namespace . '\\' . str($file->getFilename())
-                ->replace([DIRECTORY_SEPARATOR, '.php'], ['\\', '']);
+    public static function discoverFrameworkEvents(): array
+    {
+        $frameworkDirectory = 'vendor/laravel/framework/src/';
+
+        $eventDirectories = [
+            'Illuminate/Auth/Events',
+            'Illuminate/Queue/Events',
+        ];
+
+        $events = [];
+        foreach ($eventDirectories as $eventDirectory) {
+            $directory = base_path("$frameworkDirectory/$eventDirectory");
+
+            $events = array_merge($events, static::getEventClassesFromDirectory($directory, $frameworkDirectory));
         }
 
         return $events;
