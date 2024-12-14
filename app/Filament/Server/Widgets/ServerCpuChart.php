@@ -21,8 +21,8 @@ class ServerCpuChart extends ChartWidget
         $cpu = collect(cache()->get("servers.{$this->server->id}.cpu_absolute"))
             ->slice(-10)
             ->map(fn ($value, $key) => [
-                'cpu' => Number::format($value, maxPrecision: 2, locale: auth()->user()->language),
-                'timestamp' => Carbon::createFromTimestamp($key, (auth()->user()->timezone ?? 'UTC'))->format('H:i:s'),
+                'cpu' => Number::format($value, maxPrecision: 2),
+                'timestamp' => Carbon::createFromTimestamp($key, auth()->user()->timezone ?? 'UTC')->format('H:i:s'),
             ])
             ->all();
 
@@ -38,6 +38,7 @@ class ServerCpuChart extends ChartWidget
                 ],
             ],
             'labels' => array_column($cpu, 'timestamp'),
+            'locale' => auth()->user()->language ?? 'en',
         ];
     }
 
