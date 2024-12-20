@@ -62,7 +62,7 @@ class DeployServerDatabaseServiceTest extends IntegrationTestCase
         $server = $this->createServerModel();
 
         $node = Node::factory()->create();
-        DatabaseHost::factory()->create(['node_id' => $node->id]);
+        DatabaseHost::factory()->recycle($node)->create();
 
         config()->set('panel.client_features.databases.allow_random', false);
 
@@ -95,10 +95,7 @@ class DeployServerDatabaseServiceTest extends IntegrationTestCase
     public function testDatabaseHostOnSameNodeIsPreferred(): void
     {
         $server = $this->createServerModel();
-
-        $node = Node::factory()->create();
-        DatabaseHost::factory()->create(['node_id' => $node->id]);
-        $host = DatabaseHost::factory()->create(['node_id' => $server->node_id]);
+        $host = DatabaseHost::factory()->recycle($server->node)->create();
 
         $this->managementService->expects('create')->with($server, [
             'database_host_id' => $host->id,
@@ -124,7 +121,7 @@ class DeployServerDatabaseServiceTest extends IntegrationTestCase
         $server = $this->createServerModel();
 
         $node = Node::factory()->create();
-        $host = DatabaseHost::factory()->create(['node_id' => $node->id]);
+        $host = DatabaseHost::factory()->recycle($node)->create();
 
         $this->managementService->expects('create')->with($server, [
             'database_host_id' => $host->id,

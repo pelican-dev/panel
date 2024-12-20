@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Exceptions\Service\HasActiveServersException;
 use App\Repositories\Daemon\DaemonConfigurationRepository;
 use Exception;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Notifications\Notifiable;
@@ -40,8 +41,11 @@ use Symfony\Component\Yaml\Yaml;
  * @property \Carbon\Carbon $created_at
  * @property \Carbon\Carbon $updated_at
  * @property \App\Models\Mount[]|\Illuminate\Database\Eloquent\Collection $mounts
+ * @property int|null $mounts_count
  * @property \App\Models\Server[]|\Illuminate\Database\Eloquent\Collection $servers
+ * @property int|null $servers_count
  * @property \App\Models\Allocation[]|\Illuminate\Database\Eloquent\Collection $allocations
+ * @property int|null $allocations_count
  */
 class Node extends Model
 {
@@ -243,9 +247,9 @@ class Node extends Model
         return $this->hasMany(Allocation::class);
     }
 
-    public function databaseHosts(): HasMany
+    public function databaseHosts(): BelongsToMany
     {
-        return $this->hasMany(DatabaseHost::class);
+        return $this->belongsToMany(DatabaseHost::class);
     }
 
     /**
@@ -383,7 +387,10 @@ class Node extends Model
                 // pass
             }
 
-            return $ips->all();
+            // Only IPV4
+            $ips = $ips->filter(fn (string $ip) => filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4) !== false);
+
+            return $ips->unique()->all();
         });
     }
 }

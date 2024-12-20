@@ -1,6 +1,6 @@
 <?php
 
-use App\Filament\Pages\Installer\PanelInstaller;
+use App\Livewire\Installer\PanelInstaller;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Base;
 use App\Http\Middleware\RequireTwoFactorAuthentication;

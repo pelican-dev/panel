@@ -18,9 +18,15 @@ class ServerOverview extends StatsOverviewWidget
     {
         return [
             Stat::make('Name', $this->server->name)
-                ->description($this->server->description),
+                ->description($this->server->description)
+                ->extraAttributes([
+                    'class' => 'overflow-x-auto',
+                ]),
             Stat::make('Status', $this->status()),
-            Stat::make('Address', $this->server->allocation->address),
+            Stat::make('Address', $this->server->allocation->address)
+                ->extraAttributes([
+                    'class' => 'overflow-x-auto',
+                ]),
         ];
     }
 

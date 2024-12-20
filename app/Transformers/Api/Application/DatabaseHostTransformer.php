@@ -5,7 +5,6 @@ namespace App\Transformers\Api\Application;
 use App\Models\Node;
 use App\Models\Database;
 use App\Models\DatabaseHost;
-use League\Fractal\Resource\Item;
 use League\Fractal\Resource\Collection;
 use League\Fractal\Resource\NullResource;
 
@@ -13,7 +12,7 @@ class DatabaseHostTransformer extends BaseTransformer
 {
     protected array $availableIncludes = [
         'databases',
-        'node',
+        'nodes',
     ];
 
     /**
@@ -35,7 +34,6 @@ class DatabaseHostTransformer extends BaseTransformer
             'host' => $model->host,
             'port' => $model->port,
             'username' => $model->username,
-            'node' => $model->node_id,
             'created_at' => $model->created_at->toAtomString(),
             'updated_at' => $model->updated_at->toAtomString(),
         ];
@@ -56,16 +54,16 @@ class DatabaseHostTransformer extends BaseTransformer
     }
 
     /**
-     * Include the node associated with this host.
+     * Include the nodes associated with this host.
      */
-    public function includeNode(DatabaseHost $model): Item|NullResource
+    public function includeNodes(DatabaseHost $model): Collection|NullResource
     {
         if (!$this->authorize(Node::RESOURCE_NAME)) {
             return $this->null();
         }
 
-        $model->loadMissing('node');
+        $model->loadMissing('nodes');
 
-        return $this->item($model->getRelation('node'), $this->makeTransformer(NodeTransformer::class), Node::RESOURCE_NAME);
+        return $this->collection($model->getRelation('nodes'), $this->makeTransformer(NodeTransformer::class), Node::RESOURCE_NAME);
     }
 }

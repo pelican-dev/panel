@@ -1,5 +1,14 @@
-<div class="w-full grid gap-y-2">
-    <div class="flex items-center gap-x-2">
+<head>
+    <style>
+        .inline-flex {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+    </style>
+</head>
+<div class="w-full grid gap-y-2 overflow-x-auto">
+    <div class="flex items-center gap-x-1">
         <x-filament::icon-button
             :icon="$getRecord()->conditionIcon()"
             :color="$getRecord()->conditionColor()"
@@ -12,26 +21,45 @@
     </div>
 
     <div class="flex">
-        <div class="flex-1 text-sm font-medium text-gray-850 dark:text-white">
-            <strong>Allocation:</strong> {{ $getRecord()->allocation->address }}
+        <div class="flex-1 text-md font-medium text-gray-850 dark:text-white inline-flex" title="Egg Name">
+            <x-filament::icon
+                icon="tabler-egg"
+            />
+            {{ $getRecord()->egg->name }}
         </div>
-        <div class="flex-1 text-sm font-medium text-gray-850 dark:text-white">
-            <strong>Egg:</strong> {{ $getRecord()->egg->name }}
+        <div class="flex-1 text-md font-medium text-gray-850 dark:text-white inline-flex" title="Owner">
+            <x-filament::icon
+                icon="tabler-user"
+            />
+            {{ $getRecord()->user->username }}
         </div>
-        <div class="flex-1 text-sm font-medium text-gray-850 dark:text-white">
-            <strong>Owner:</strong> {{ $getRecord()->user->username }}
+        <div class="flex-1 text-md font-medium text-gray-850 dark:text-white inline-flex" title="Primary Allocation">
+            <x-filament::icon
+                icon="tabler-network"
+            />
+            {{ $getRecord()->allocation->address }}
         </div>
     </div>
 
+
     <div class="flex">
-        <div class="flex-1 text-sm font-medium text-gray-850 dark:text-white">
-            <strong>CPU:</strong> {{ $this->cpu($getRecord()) }}
+        <div class="flex-1 text-md font-medium text-gray-850 dark:text-white inline-flex" title="CPU Usage">
+            <x-filament::icon
+                icon="tabler-cpu"
+            />
+            {{ $this->cpu($getRecord()) }}
         </div>
-        <div class="flex-1 text-sm font-medium text-gray-850 dark:text-white">
-            <strong>RAM:</strong> {{ $this->memory($getRecord()) }}
+        <div class="flex-1 text-md font-medium text-gray-850 dark:text-white inline-flex" title="Memory Usage">
+            <x-filament::icon
+                icon="tabler-device-desktop-analytics"
+            />
+            {{ $this->memory($getRecord()) }}
         </div>
-        <div class="flex-1 text-sm font-medium text-gray-850 dark:text-white">
-            <strong>Disk:</strong> {{ $this->disk($getRecord()) }}
+        <div class="flex-1 text-md font-medium text-gray-850 dark:text-white inline-flex" title="Disk Usage">
+            <x-filament::icon
+                icon="tabler-packages"
+            />
+             {{ $this->disk($getRecord()) }}
         </div>
     </div>
 </div>

@@ -4,9 +4,12 @@ namespace App\Tests\Feature\Webhooks;
 
 use App\Jobs\ProcessWebhook;
 use App\Models\Server;
+use App\Models\User;
 use App\Models\WebhookConfiguration;
 use App\Tests\TestCase;
+use Illuminate\Auth\Events\Authenticated;
 use Illuminate\Foundation\Testing\LazilyRefreshDatabase;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Queue;
 
 class DispatchWebhooksTest extends TestCase
@@ -86,6 +89,18 @@ class DispatchWebhooksTest extends TestCase
         $this->createServer();
 
         Queue::assertNothingPushed();
+    }
+
+    public function test_it_listens_to_framework_events()
+    {
+        WebhookConfiguration::factory()->create([
+            'events' => [Authenticated::class],
+        ]);
+
+        $user = User::factory()->create();
+        Auth::login($user);
+
+        Queue::assertPushed(ProcessWebhook::class, 1);
     }
 
     public function createServer(): Server

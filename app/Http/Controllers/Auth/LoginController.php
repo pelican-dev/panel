@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\Auth;
 
-use App\Filament\Pages\Installer\PanelInstaller;
+use App\Livewire\Installer\PanelInstaller;
 use Carbon\CarbonImmutable;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Str;

@@ -4,8 +4,8 @@ namespace App\Providers\Filament;
 
 use App\Filament\App\Resources\ServerResource\Pages\ListServers;
 use App\Filament\Pages\Auth\Login;
-use App\Filament\Resources\ServerResource\Pages\EditServer;
-use App\Filament\Resources\UserResource\Pages\EditProfile;
+use App\Filament\Admin\Resources\ServerResource\Pages\EditServer;
+use App\Filament\Pages\Auth\EditProfile;
 use App\Http\Middleware\Activity\ServerSubject;
 use App\Models\Server;
 use Filament\Facades\Filament;
@@ -16,7 +16,6 @@ use Filament\Navigation\MenuItem;
 use Filament\Navigation\NavigationItem;
 use Filament\Panel;
 use Filament\PanelProvider;
-use Filament\Support\Enums\MaxWidth;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
 use Illuminate\Cookie\Middleware\EncryptCookies;
 use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
@@ -40,7 +39,7 @@ class ServerPanelProvider extends PanelProvider
             ->brandLogoHeight('2rem')
             ->favicon(config('app.favicon', '/pelican.ico'))
             ->topNavigation(config('panel.filament.top-navigation', true))
-            ->maxContentWidth(MaxWidth::ScreenTwoExtraLarge)
+            ->maxContentWidth(config('panel.filament.display-width', 'screen-2xl'))
             ->login(Login::class)
             ->userMenuItems([
                 'profile' => MenuItem::make()->label('Profile')->url(fn () => EditProfile::getUrl(panel: 'app')),
@@ -66,6 +65,7 @@ class ServerPanelProvider extends PanelProvider
             ->discoverResources(in: app_path('Filament/Server/Resources'), for: 'App\\Filament\\Server\\Resources')
             ->discoverPages(in: app_path('Filament/Server/Pages'), for: 'App\\Filament\\Server\\Pages')
             ->discoverWidgets(in: app_path('Filament/Server/Widgets'), for: 'App\\Filament\\Server\\Widgets')
+            ->databaseNotifications()
             ->middleware([
                 EncryptCookies::class,
                 AddQueuedCookiesToResponse::class,
