@@ -481,4 +481,11 @@ class Server extends Model
 
         return $this->status->color();
     }
+
+    public function conditionColorHex(): string
+    {
+        $containerStatus = ContainerStatus::from($this->retrieveStatus());
+
+        return $containerStatus->colorHex();
+    }
 }

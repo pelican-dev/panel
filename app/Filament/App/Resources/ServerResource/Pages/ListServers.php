@@ -31,12 +31,13 @@ class ListServers extends ListRecords
             ->columns([
                 Stack::make([
                     ServerEntryColumn::make('server_entry')
+                        ->label(fn (Server $server) => $server->name)
                         ->searchable(['name']),
                 ]),
             ])
             ->contentGrid([
                 'default' => 1,
-                'xl' => 2,
+                'md' => 2,
             ])
             ->recordUrl(fn (Server $server) => Console::getUrl(panel: 'server', tenant: $server))
             ->emptyStateIcon('tabler-brand-docker')
@@ -77,33 +78,39 @@ class ListServers extends ListRecords
     // @phpstan-ignore-next-line
     private function cpu(Server $server): string
     {
-        $cpu = Number::format(Arr::get($server->resources(), 'cpu_absolute', 0), maxPrecision: 2, locale: auth()->user()->language) . '%';
-        $max = Number::format($server->cpu, locale: auth()->user()->language) . '%';
+        return Number::format(Arr::get($server->resources(), 'cpu_absolute', 0), maxPrecision: 2, locale: auth()->user()->language) . '%';
+    }
 
-        return $cpu . ($server->cpu > 0 ? ' Of ' . $max : '');
+    // @phpstan-ignore-next-line
+    private function cpuLimit(Server $server): string
+    {
+        if ($server->cpu === 0) {
+            return 'Unlimited';
+        }
+
+        return Number::format($server->cpu, locale: auth()->user()->language) . '%';
     }
 
     // @phpstan-ignore-next-line
     private function memory(Server $server): string
     {
         $latestMemoryUsed = Arr::get($server->resources(), 'memory_bytes', 0);
-        $totalMemory = Arr::get($server->resources(), 'memory_limit_bytes', 0);
 
-        $used = config('panel.use_binary_prefix')
+        return config('panel.use_binary_prefix')
             ? Number::format($latestMemoryUsed / 1024 / 1024 / 1024, maxPrecision: 2, locale: auth()->user()->language) .' GiB'
             : Number::format($latestMemoryUsed / 1000 / 1000 / 1000, maxPrecision: 2, locale: auth()->user()->language) . ' GB';
+    }
 
-        if ($totalMemory === 0) {
-            $total = config('panel.use_binary_prefix')
-                ? Number::format($server->memory / 1024, maxPrecision: 2, locale: auth()->user()->language) .' GiB'
-                : Number::format($server->memory / 1000, maxPrecision: 2, locale: auth()->user()->language) . ' GB';
-        } else {
-            $total = config('panel.use_binary_prefix')
-                ? Number::format($totalMemory / 1024 / 1024 / 1024, maxPrecision: 2, locale: auth()->user()->language) .' GiB'
-                : Number::format($totalMemory / 1000 / 1000 / 1000, maxPrecision: 2, locale: auth()->user()->language) . ' GB';
+    // @phpstan-ignore-next-line
+    private function memoryLimit(Server $server): string
+    {
+        if ($server->memory === 0) {
+            return 'Unlimited';
         }
 
-        return $used . ($server->memory > 0 ? ' Of ' . $total : '');
+        return config('panel.use_binary_prefix')
+            ? Number::format($server->memory / 1024, maxPrecision: 2, locale: auth()->user()->language) .' GiB'
+            : Number::format($server->memory / 1000, maxPrecision: 2, locale: auth()->user()->language) . ' GB';
     }
 
     // @phpstan-ignore-next-line
@@ -111,14 +118,20 @@ class ListServers extends ListRecords
     {
         $usedDisk = Arr::get($server->resources(), 'disk_bytes', 0);
 
-        $used = config('panel.use_binary_prefix')
+        return config('panel.use_binary_prefix')
             ? Number::format($usedDisk / 1024 / 1024 / 1024, maxPrecision: 2, locale: auth()->user()->language) .' GiB'
             : Number::format($usedDisk / 1000 / 1000 / 1000, maxPrecision: 2, locale: auth()->user()->language) . ' GB';
+    }
 
-        $total = config('panel.use_binary_prefix')
+    // @phpstan-ignore-next-line
+    private function diskLimit(Server $server): string
+    {
+        if ($server->disk === 0) {
+            return 'Unlimited';
+        }
+
+        return config('panel.use_binary_prefix')
             ? Number::format($server->disk / 1024, maxPrecision: 2, locale: auth()->user()->language) .' GiB'
             : Number::format($server->disk / 1000, maxPrecision: 2, locale: auth()->user()->language) . ' GB';
-
-        return $used . ($server->disk > 0 ? ' Of ' . $total : '');
     }
 }
