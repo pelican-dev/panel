@@ -35,6 +35,7 @@ class ListAllocations extends ListRecords
                     ->hidden(),
                 TextColumn::make('port'),
                 TextInputColumn::make('notes')
+                    ->visibleFrom('sm')
                     ->disabled(fn () => !auth()->user()->can(Permission::ACTION_ALLOCATION_UPDATE, $server))
                     ->label('Notes')
                     ->placeholder('No Notes'),

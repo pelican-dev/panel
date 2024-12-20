@@ -42,6 +42,8 @@ class EditFiles extends Page
 
     protected static string $view = 'filament.server.pages.edit-file';
 
+    protected static ?string $title = '';
+
     #[Locked]
     public string $path;
 
@@ -64,6 +66,10 @@ class EditFiles extends Page
                     ->hidden() //TODO Fix Dis
                     ->default(function () {
                         $split = explode('.', $this->path);
+
+                        if (end($split) === 'yml') { //TODO: Temp fix for yaml...
+                            return 'yaml';
+                        }
 
                         return end($split);
                     }),

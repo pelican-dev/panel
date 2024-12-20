@@ -20,7 +20,6 @@
             class="w-full focus:outline-none focus:ring-0 border-none"
             style="background-color: #202A32;"
             type="text"
-            autofocus
             :readonly="{{ $this->canSendCommand() ? 'false' : 'true' }}"
             title="{{ $this->canSendCommand() ? '' : 'Can\'t send command when the server is Offline' }}"
             placeholder="{{ $this->canSendCommand() ? 'Type a command...' : 'Server Offline...' }}"
@@ -126,7 +125,7 @@
                 case 'status':
                     handlePowerChangeEvent(args[0]);
 
-                    $wire.dispatch('console-status', {state: args[0]})
+                    $wire.dispatch('console-status', { state: args[0] });
                     break;
                 case 'transfer status':
                     handleTransferStatus(args[0]);

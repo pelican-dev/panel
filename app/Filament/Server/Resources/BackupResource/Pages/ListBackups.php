@@ -74,6 +74,7 @@ class ListBackups extends ListRecords
                     ->label('Successful')
                     ->boolean(),
                 IconColumn::make('is_locked')
+                    ->visibleFrom('md')
                     ->label('Lock Status')
                     ->icon(fn (Backup $backup) => !$backup->is_locked ? 'tabler-lock-open' : 'tabler-lock'),
             ])

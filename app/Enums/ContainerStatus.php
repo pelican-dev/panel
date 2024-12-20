@@ -53,6 +53,16 @@ enum ContainerStatus: string
         };
     }
 
+    public function colorHex(): string
+    {
+        return match ($this) {
+            self::Created, self::Restarting => '#2563EB',
+            self::Starting, self::Paused, self::Removing, self::Stopping => '#D97706',
+            self::Running => '#22C55E',
+            self::Exited, self::Missing, self::Dead, self::Offline => '#EF4444',
+        };
+    }
+
     public function isStartingOrStopping(): bool
     {
         return in_array($this, [ContainerStatus::Starting, ContainerStatus::Stopping, ContainerStatus::Restarting]);

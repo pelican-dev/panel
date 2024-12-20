@@ -88,8 +88,10 @@ class ListFiles extends ListRecords
                     ->sortable()
                     ->icon(fn (File $file) => $file->getIcon()),
                 BytesColumn::make('size')
+                    ->visibleFrom('md')
                     ->sortable(),
                 DateTimeColumn::make('modified_at')
+                    ->visibleFrom('md')
                     ->since()
                     ->sortable(),
             ])
