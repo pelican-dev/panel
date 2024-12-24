@@ -65,13 +65,13 @@ class EditFiles extends Page
                     ->options(EditorLanguages::class)
                     ->hidden() //TODO Fix Dis
                     ->default(function () {
-                        $split = explode('.', $this->path);
+                        $ext = pathinfo($this->path, PATHINFO_EXTENSION);
 
-                        if (end($split) === 'yml') { //TODO: Temp fix for yaml...
+                        if ($ext === 'yml') {
                             return 'yaml';
                         }
 
-                        return end($split);
+                        return $ext;
                     }),
                 Section::make('Editing: ' . $this->path)
                     ->footerActions([
