@@ -495,7 +495,7 @@ class Settings extends Page implements HasForms
                         ->formatStateUsing(fn ($state): bool => (bool) $state)
                         ->afterStateUpdated(fn ($state, Set $set) => $set('OAUTH_AUTHENTIK_ENABLED', (bool) $state))
                         ->default(env('OAUTH_AUTHENTIK_ENABLED')),
-                    TextInput::make('Base URL')
+                    TextInput::make('OAUTH_AUTHENTIK_BASE_URL')
                         ->label('Base URL')
                         ->columnSpan(2)
                         ->hidden(fn (Get $get) => !$get('OAUTH_AUTHENTIK_ENABLED'))
