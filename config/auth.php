@@ -29,7 +29,7 @@ return [
         // Default providers
         'facebook' => [
             'enabled' => env('OAUTH_FACEBOOK_ENABLED'),
-            'icon' => 'tabler-brand-facebook',
+            'icon' => 'tabler-brand-facebook-f',
             'color' => Color::hex('#1877f2'),
             'service' => [
                 'client_id' => env('OAUTH_FACEBOOK_CLIENT_ID'),
@@ -38,7 +38,7 @@ return [
         ],
         'x' => [
             'enabled' => env('OAUTH_X_ENABLED'),
-            'icon' => 'tabler-brand-x',
+            'icon' => 'tabler-brand-x-f',
             'color' => Color::hex('#1da1f2'),
             'service' => [
                 'client_id' => env('OAUTH_X_CLIENT_ID'),
@@ -47,7 +47,7 @@ return [
         ],
         'linkedin' => [
             'enabled' => env('OAUTH_LINKEDIN_ENABLED'),
-            'icon' => 'tabler-brand-linkedin',
+            'icon' => 'tabler-brand-linkedin-f',
             'color' => Color::hex('#0a66c2'),
             'service' => [
                 'client_id' => env('OAUTH_LINKEDIN_CLIENT_ID'),
@@ -56,7 +56,7 @@ return [
         ],
         'google' => [
             'enabled' => env('OAUTH_GOOGLE_ENABLED'),
-            'icon' => 'tabler-brand-google',
+            'icon' => 'tabler-brand-google-f',
             'color' => Color::hex('#4285f4'),
             'service' => [
                 'client_id' => env('OAUTH_GOOGLE_CLIENT_ID'),
@@ -65,7 +65,7 @@ return [
         ],
         'github' => [
             'enabled' => env('OAUTH_GITHUB_ENABLED'),
-            'icon' => 'tabler-brand-github',
+            'icon' => 'tabler-brand-github-f',
             'color' => Color::hex('#4078c0'),
             'service' => [
                 'client_id' => env('OAUTH_GITHUB_CLIENT_ID'),
@@ -83,7 +83,7 @@ return [
         ],
         'bitbucket' => [
             'enabled' => env('OAUTH_BITBUCKET_ENABLED'),
-            'icon' => 'tabler-brand-bitbucket',
+            'icon' => 'tabler-brand-bitbucket-f',
             'color' => Color::hex('#205081'),
             'service' => [
                 'client_id' => env('OAUTH_BITBUCKET_CLIENT_ID'),
@@ -114,7 +114,7 @@ return [
         ],
         'discord' => [
             'enabled' => env('OAUTH_DISCORD_ENABLED'),
-            'icon' => 'tabler-brand-discord',
+            'icon' => 'tabler-brand-discord-f',
             'color' => Color::hex('#5865F2'),
             'service' => [
                 'client_id' => env('OAUTH_DISCORD_CLIENT_ID'),
@@ -124,7 +124,7 @@ return [
         ],
         'steam' => [
             'enabled' => env('OAUTH_STEAM_ENABLED'),
-            'icon' => 'tabler-brand-steam',
+            'icon' => 'tabler-brand-steam-f',
             'color' => Color::hex('#00adee'),
             'service' => [
                 'client_secret' => env('OAUTH_STEAM_CLIENT_SECRET'),
