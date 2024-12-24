@@ -60,6 +60,7 @@ else
 fi
 
 chown -R www-data:www-data /pelican-data/.env /pelican-data/database
+chown -R www-data:www-data /var/www/html/storage
 
 echo "Starting Supervisord"
 exec "$@"
