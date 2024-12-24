@@ -6,6 +6,7 @@ use App\Enums\ContainerStatus;
 use App\Enums\ServerState;
 use App\Exceptions\Http\Connection\DaemonConnectionException;
 use App\Repositories\Daemon\DaemonServerRepository;
+use Carbon\CarbonInterface;
 use GuzzleHttp\Exception\GuzzleException;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -13,6 +14,7 @@ use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Query\JoinClause;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Number;
 use Psr\Http\Message\ResponseInterface;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -451,6 +453,49 @@ class Server extends Model
             // @phpstan-ignore-next-line
             return Arr::get(app(DaemonServerRepository::class)->setServer($this)->getDetails(), 'utilization', []);
         });
+    }
+
+    public function formatResource(string $resourceKey, bool $percentage = false, bool $limit = false, bool $time = false): string
+    {
+        $resourceAmount = $this->{$resourceKey} ?? 0;
+
+        if (!$limit) {
+            $resourceAmount = $this->resources()[$resourceKey] ?? 0;
+        }
+
+        if ($time) {
+            return self::timeFormatter($resourceAmount);
+        }
+
+        return self::byteFormatter($resourceAmount, percentage: $percentage, limit: $limit);
+    }
+
+    public static function timeFormatter(int $amount): string
+    {
+        if ($amount === 0) {
+            return 'Offline';
+        }
+
+        return now()->subMillis($amount)->diffForHumans(syntax: CarbonInterface::DIFF_ABSOLUTE, short: true, parts: 2);
+    }
+
+    public static function byteFormatter(int $amount, int $precision = 3, bool $percentage = false, bool $limit = false): string
+    {
+        $bits = config('panel.use_binary_prefix') ? 1024 : 1000;
+        $unitLetters = ['', 'K', 'M', 'G', 'T', 'P', 'E', 'Z', 'Y', 'B'];
+        $unitLetter = $unitLetters[$precision];
+        $unitSuffix = config('panel.use_binary_suffix') ? 'i' : '';
+        $unit = ' ' . $unitLetter . $unitSuffix . 'B';
+
+        if ($amount === 0 & $limit) {
+            return 'Unlimited';
+        }
+
+        if ($percentage) {
+            $unit = '%';
+        }
+
+        return Number::format($amount / $bits ** $precision, maxPrecision: 2, locale: auth()->user()->language) . $unit;
     }
 
     public function condition(): Attribute

@@ -1,3 +1,4 @@
+@php /** @var \App\Models\Server $server */ $server = $getRecord(); @endphp
 <head>
     <style>
         hr {
@@ -11,7 +12,7 @@
         <!-- Status Strip Outside the Box -->
         <div
             class="absolute left-0 top-1 bottom-0 w-1 rounded-lg"
-            style="background-color: {{ $getRecord()->conditionColorHex() }};">
+            style="background-color: {{ $server->conditionColorHex() }};">
         </div>
 
         <!-- Card Component -->
@@ -20,13 +21,13 @@
             <div class="flex items-center mb-3 ml-1">
                 <div class="flex items-center gap-2">
                     <x-filament::icon-button
-                        :icon="$getRecord()->conditionIcon()"
-                        :color="$getRecord()->conditionColor()"
-                        :tooltip="\Illuminate\Support\Str::title($getRecord()->condition)" size="xl"
+                        :icon="$server->conditionIcon()"
+                        :color="$server->conditionColor()"
+                        :tooltip="\Illuminate\Support\Str::title($server->condition)" size="xl"
                     />
                     <h2 class="text-xl font-bold">
-                        {{ $getRecord()->name }}
-                        <span class="text-gray-400">({{ $this->uptime($getRecord()) }})</span>
+                        {{ $server->name }}
+                        <span class="text-gray-400">({{ $server->formatResource('uptime', time: true) }})</span>
                     </h2>
                 </div>
             </div>
@@ -35,25 +36,25 @@
             <div class="flex justify-between text-center">
                 <div>
                     <p class="text-sm text-gray-400">CPU</p>
-                    <p class="text-md font-semibold">{{ $this->cpu($getRecord()) }}</p>
+                    <p class="text-md font-semibold">{{ $server->formatResource('cpu_absolute', percentage: true) }}</p>
                     <hr class="p-0.5">
-                    <p class="text-xs text-gray-400">{{ $this->cpuLimit($getRecord()) }}</p>
+                    <p class="text-xs text-gray-400">{{ $server->formatResource('cpu', percentage: true, limit: true) }}</p>
                 </div>
                 <div>
                     <p class="text-sm text-gray-400">Memory</p>
-                    <p class="text-md font-semibold">{{ $this->memory($getRecord()) }}</p>
+                    <p class="text-md font-semibold">{{ $server->formatResource('memory_bytes') }}</p>
                     <hr class="p-0.5">
-                    <p class="text-xs text-gray-400">{{ $this->memoryLimit($getRecord()) }}</p>
+                    <p class="text-xs text-gray-400">{{ $server->formatResource('memory', limit: true) }}</p>
                 </div>
                 <div>
                     <p class="text-sm text-gray-400">Disk</p>
-                    <p class="text-md font-semibold">{{ $this->disk($getRecord()) }}</p>
+                    <p class="text-md font-semibold">{{ $server->formatResource('disk_bytes') }}</p>
                     <hr class="p-0.5">
-                    <p class="text-xs text-gray-400">{{ $this->diskLimit($getRecord()) }}</p>
+                    <p class="text-xs text-gray-400">{{ $server->formatResource('disk', limit: true) }}</p>
                 </div>
                 <div class="hidden sm:block">
                     <p class="text-sm text-gray-400">Network</p>
-                    <p class="text-md font-semibold">{{ $getRecord()->allocation->address }} </p>
+                    <p class="text-md font-semibold">{{ $server->allocation->address }} </p>
                 </div>
             </div>
         </div>

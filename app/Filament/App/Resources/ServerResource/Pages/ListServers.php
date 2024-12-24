@@ -13,6 +13,7 @@ use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Filters\TernaryFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Number;
 
@@ -61,77 +62,5 @@ class ListServers extends ListRecords
                     ->searchable()
                     ->preload(),
             ]);
-    }
-
-    // @phpstan-ignore-next-line
-    private function uptime(Server $server): string
-    {
-        $uptime = Arr::get($server->resources(), 'uptime', 0);
-
-        if ($uptime === 0) {
-            return 'Offline';
-        }
-
-        return now()->subMillis($uptime)->diffForHumans(syntax: CarbonInterface::DIFF_ABSOLUTE, short: true, parts: 2);
-    }
-
-    // @phpstan-ignore-next-line
-    private function cpu(Server $server): string
-    {
-        return Number::format(Arr::get($server->resources(), 'cpu_absolute', 0), maxPrecision: 2, locale: auth()->user()->language) . '%';
-    }
-
-    // @phpstan-ignore-next-line
-    private function cpuLimit(Server $server): string
-    {
-        if ($server->cpu === 0) {
-            return 'Unlimited';
-        }
-
-        return Number::format($server->cpu, locale: auth()->user()->language) . '%';
-    }
-
-    // @phpstan-ignore-next-line
-    private function memory(Server $server): string
-    {
-        $latestMemoryUsed = Arr::get($server->resources(), 'memory_bytes', 0);
-
-        return config('panel.use_binary_prefix')
-            ? Number::format($latestMemoryUsed / 1024 / 1024 / 1024, maxPrecision: 2, locale: auth()->user()->language) .' GiB'
-            : Number::format($latestMemoryUsed / 1000 / 1000 / 1000, maxPrecision: 2, locale: auth()->user()->language) . ' GB';
-    }
-
-    // @phpstan-ignore-next-line
-    private function memoryLimit(Server $server): string
-    {
-        if ($server->memory === 0) {
-            return 'Unlimited';
-        }
-
-        return config('panel.use_binary_prefix')
-            ? Number::format($server->memory / 1024, maxPrecision: 2, locale: auth()->user()->language) .' GiB'
-            : Number::format($server->memory / 1000, maxPrecision: 2, locale: auth()->user()->language) . ' GB';
-    }
-
-    // @phpstan-ignore-next-line
-    private function disk(Server $server): string
-    {
-        $usedDisk = Arr::get($server->resources(), 'disk_bytes', 0);
-
-        return config('panel.use_binary_prefix')
-            ? Number::format($usedDisk / 1024 / 1024 / 1024, maxPrecision: 2, locale: auth()->user()->language) .' GiB'
-            : Number::format($usedDisk / 1000 / 1000 / 1000, maxPrecision: 2, locale: auth()->user()->language) . ' GB';
-    }
-
-    // @phpstan-ignore-next-line
-    private function diskLimit(Server $server): string
-    {
-        if ($server->disk === 0) {
-            return 'Unlimited';
-        }
-
-        return config('panel.use_binary_prefix')
-            ? Number::format($server->disk / 1024, maxPrecision: 2, locale: auth()->user()->language) .' GiB'
-            : Number::format($server->disk / 1000, maxPrecision: 2, locale: auth()->user()->language) . ' GB';
     }
 }
