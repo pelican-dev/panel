@@ -29,6 +29,7 @@ use Filament\Support\Enums\MaxWidth;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\GuzzleException;
 use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Notification as MailNotification;
 use Illuminate\Support\HtmlString;
 
@@ -417,338 +418,70 @@ class Settings extends Page implements HasForms
 
     private function oauthSettings(): array
     {
-        return [
-            Section::make('Discord')
-                ->collapsed(fn (Get $get) => !$get('OAUTH_DISCORD_ENABLED'))
+        $oauthProviders = Config::get('auth.oauth');
+
+        $formFields = [];
+
+        foreach ($oauthProviders as $providerName => $providerConfig) {
+            $providerEnvPrefix = strtoupper($providerName);
+
+            $fields = [
+                Toggle::make("OAUTH_{$providerEnvPrefix}_ENABLED")
+                    ->onColor('success')
+                    ->offColor('danger')
+                    ->onIcon('tabler-check')
+                    ->offIcon('tabler-x')
+                    ->live()
+                    ->columnSpan(1)
+                    ->label('Enabled')
+                    ->default(env("OAUTH_{$providerEnvPrefix}_ENABLED", false)),
+            ];
+
+            if (array_key_exists('client_id', $providerConfig['service'] ?? [])) {
+                $fields[] = TextInput::make("OAUTH_{$providerEnvPrefix}_CLIENT_ID")
+                    ->label('Client ID')
+                    ->columnSpan(2)
+                    ->required()
+                    ->password()
+                    ->revealable()
+                    ->autocomplete(false)
+                    ->hidden(fn (Get $get) => !$get("OAUTH_{$providerEnvPrefix}_ENABLED"))
+                    ->default(env("OAUTH_{$providerEnvPrefix}_CLIENT_ID", $providerConfig['service']['client_id'] ?? ''))
+                    ->placeholder('Client ID');
+            }
+
+            if (array_key_exists('client_secret', $providerConfig['service'] ?? [])) {
+                $fields[] = TextInput::make("OAUTH_{$providerEnvPrefix}_CLIENT_SECRET")
+                    ->label('Client Secret')
+                    ->columnSpan(2)
+                    ->required()
+                    ->password()
+                    ->revealable()
+                    ->autocomplete(false)
+                    ->hidden(fn (Get $get) => !$get("OAUTH_{$providerEnvPrefix}_ENABLED"))
+                    ->default(env("OAUTH_{$providerEnvPrefix}_CLIENT_SECRET", $providerConfig['service']['client_secret'] ?? ''))
+                    ->placeholder('Client Secret');
+            }
+
+            if (array_key_exists('base_url', $providerConfig['service'] ?? [])) {
+                $fields[] = TextInput::make("OAUTH_{$providerEnvPrefix}_BASE_URL")
+                    ->label('Base URL')
+                    ->columnSpanFull()
+                    ->autocomplete(false)
+                    ->hidden(fn (Get $get) => !$get("OAUTH_{$providerEnvPrefix}_ENABLED"))
+                    ->default(env("OAUTH_{$providerEnvPrefix}_BASE_URL", ''))
+                    ->placeholder('Base URL');
+            }
+
+            $formFields[] = Section::make(ucfirst($providerName))
                 ->columns(5)
-                ->icon(config('auth.oauth.discord.icon'))
-                ->schema([
-                    Toggle::make('OAUTH_DISCORD_ENABLED')
-                        ->label('Enabled')
-                        ->inline(false)
-                        ->onIcon('tabler-check')
-                        ->offIcon('tabler-x')
-                        ->onColor('success')
-                        ->offColor('danger')
-                        ->live()
-                        ->columnSpan(1)
-                        ->formatStateUsing(fn ($state): bool => (bool) $state)
-                        ->afterStateUpdated(fn ($state, Set $set) => $set('OAUTH_DISCORD_ENABLED', (bool) $state))
-                        ->default(env('OAUTH_DISCORD_ENABLED')),
-                    TextInput::make('OAUTH_DISCORD_CLIENT_ID')
-                        ->label('Client ID')
-                        ->columnSpan(2)
-                        ->hidden(fn (Get $get) => !$get('OAUTH_DISCORD_ENABLED'))
-                        ->required()
-                        ->default(env('OAUTH_DISCORD_CLIENT_ID')),
-                    TextInput::make('OAUTH_DISCORD_CLIENT_SECRET')
-                        ->label('Client Secret')
-                        ->columnSpan(2)
-                        ->hidden(fn (Get $get) => !$get('OAUTH_DISCORD_ENABLED'))
-                        ->required()
-                        ->default(env('OAUTH_DISCORD_CLIENT_SECRET')),
-                ]),
-            Section::make('Google')
-                ->collapsed(fn (Get $get) => !$get('OAUTH_GOOGLE_ENABLED'))
-                ->columns(5)
-                ->icon(config('auth.oauth.google.icon'))
-                ->schema([
-                    Toggle::make('OAUTH_GOOGLE_ENABLED')
-                        ->label('Enabled')
-                        ->inline(false)
-                        ->onIcon('tabler-check')
-                        ->offIcon('tabler-x')
-                        ->onColor('success')
-                        ->offColor('danger')
-                        ->live()
-                        ->columnSpan(1)
-                        ->formatStateUsing(fn ($state): bool => (bool) $state)
-                        ->afterStateUpdated(fn ($state, Set $set) => $set('OAUTH_GOOGLE_ENABLED', (bool) $state))
-                        ->default(env('OAUTH_GOOGLE_ENABLED')),
-                    TextInput::make('OAUTH_GOOGLE_CLIENT_ID')
-                        ->label('Client ID')
-                        ->columnSpan(2)
-                        ->hidden(fn (Get $get) => !$get('OAUTH_GOOGLE_ENABLED'))
-                        ->required()
-                        ->default(env('OAUTH_GOOGLE_CLIENT_ID')),
-                    TextInput::make('OAUTH_GOOGLE_CLIENT_SECRET')
-                        ->label('Client Secret')
-                        ->columnSpan(2)
-                        ->hidden(fn (Get $get) => !$get('OAUTH_GOOGLE_ENABLED'))
-                        ->required()
-                        ->default(env('OAUTH_GOOGLE_CLIENT_SECRET')),
-                ]),
-            Section::make('Authentik')
-                ->collapsed(fn (Get $get) => !$get('OAUTH_AUTHENTIK_ENABLED'))
-                ->columns(7)
-                ->icon('tabler-brand-oauth')
-                ->schema([
-                    Toggle::make('OAUTH_AUTHENTIK_ENABLED')
-                        ->label('Enabled')
-                        ->inline(false)
-                        ->onIcon('tabler-check')
-                        ->offIcon('tabler-x')
-                        ->onColor('success')
-                        ->offColor('danger')
-                        ->live()
-                        ->columnSpan(1)
-                        ->formatStateUsing(fn ($state): bool => (bool) $state)
-                        ->afterStateUpdated(fn ($state, Set $set) => $set('OAUTH_AUTHENTIK_ENABLED', (bool) $state))
-                        ->default(env('OAUTH_AUTHENTIK_ENABLED')),
-                    TextInput::make('OAUTH_AUTHENTIK_BASE_URL')
-                        ->label('Base URL')
-                        ->columnSpan(2)
-                        ->hidden(fn (Get $get) => !$get('OAUTH_AUTHENTIK_ENABLED'))
-                        ->required()
-                        ->default(env('OAUTH_AUTHENTIK_BASE_URL')),
-                    TextInput::make('OAUTH_AUTHENTIK_CLIENT_ID')
-                        ->label('Client ID')
-                        ->columnSpan(2)
-                        ->hidden(fn (Get $get) => !$get('OAUTH_AUTHENTIK_ENABLED'))
-                        ->required()
-                        ->default(env('OAUTH_AUTHENTIK_CLIENT_ID')),
-                    TextInput::make('OAUTH_AUTHENTIK_CLIENT_SECRET')
-                        ->label('Client Secret')
-                        ->columnSpan(2)
-                        ->hidden(fn (Get $get) => !$get('OAUTH_AUTHENTIK_ENABLED'))
-                        ->required()
-                        ->default(env('OAUTH_AUTHENTIK_CLIENT_SECRET')),
-                ]),
-            Section::make('GitHub')
-                ->collapsed(fn (Get $get) => !$get('OAUTH_GITHUB_ENABLED'))
-                ->columns(5)
-                ->icon(config('auth.oauth.github.icon'))
-                ->schema([
-                    Toggle::make('OAUTH_GITHUB_ENABLED')
-                        ->label('Enabled')
-                        ->inline(false)
-                        ->onIcon('tabler-check')
-                        ->offIcon('tabler-x')
-                        ->onColor('success')
-                        ->offColor('danger')
-                        ->live()
-                        ->columnSpan(1)
-                        ->formatStateUsing(fn ($state): bool => (bool) $state)
-                        ->afterStateUpdated(fn ($state, Set $set) => $set('OAUTH_GITHUB_ENABLED', (bool) $state))
-                        ->default(env('OAUTH_GITHUB_ENABLED')),
-                    TextInput::make('OAUTH_GITHUB_CLIENT_ID')
-                        ->label('Client ID')
-                        ->columnSpan(2)
-                        ->hidden(fn (Get $get) => !$get('OAUTH_GITHUB_ENABLED'))
-                        ->required()
-                        ->default(env('OAUTH_GITHUB_CLIENT_ID')),
-                    TextInput::make('OAUTH_GITHUB_CLIENT_SECRET')
-                        ->label('Client Secret')
-                        ->columnSpan(2)
-                        ->hidden(fn (Get $get) => !$get('OAUTH_GITHUB_ENABLED'))
-                        ->required()
-                        ->default(env('OAUTH_GITHUB_CLIENT_SECRET')),
-                ]),
-            Section::make('Steam')
-                ->collapsed(fn (Get $get) => !$get('OAUTH_STEAM_ENABLED'))
-                ->columns(5)
-                ->icon(config('auth.oauth.steam.icon'))
-                ->schema([
-                    Toggle::make('OAUTH_STEAM_ENABLED')
-                        ->label('Enabled')
-                        ->inline(false)
-                        ->onIcon('tabler-check')
-                        ->offIcon('tabler-x')
-                        ->onColor('success')
-                        ->offColor('danger')
-                        ->live()
-                        ->columnSpan(1)
-                        ->formatStateUsing(fn ($state): bool => (bool) $state)
-                        ->afterStateUpdated(fn ($state, Set $set) => $set('OAUTH_STEAM_ENABLED', (bool) $state))
-                        ->default(env('OAUTH_STEAM_ENABLED')),
-                    TextInput::make('OAUTH_STEAM_CLIENT_SECRET')
-                        ->label('Client Secret')
-                        ->columnSpan(4)
-                        ->hidden(fn (Get $get) => !$get('OAUTH_STEAM_ENABLED'))
-                        ->required()
-                        ->default(env('OAUTH_STEAM_CLIENT_SECRET')),
-                ]),
-            Section::make('Facebook')
-                ->collapsed(fn (Get $get) => !$get('OAUTH_FACEBOOK_ENABLED'))
-                ->columns(5)
-                ->icon(config('auth.oauth.facebook.icon'))
-                ->schema([
-                    Toggle::make('OAUTH_FACEBOOK_ENABLED')
-                        ->label('Enabled')
-                        ->inline(false)
-                        ->onIcon('tabler-check')
-                        ->offIcon('tabler-x')
-                        ->onColor('success')
-                        ->offColor('danger')
-                        ->live()
-                        ->columnSpan(1)
-                        ->formatStateUsing(fn ($state): bool => (bool) $state)
-                        ->afterStateUpdated(fn ($state, Set $set) => $set('OAUTH_FACEBOOK_ENABLED', (bool) $state))
-                        ->default(env('OAUTH_FACEBOOK_ENABLED')),
-                    TextInput::make('OAUTH_FACEBOOK_CLIENT_ID')
-                        ->label('Client ID')
-                        ->columnSpan(2)
-                        ->hidden(fn (Get $get) => !$get('OAUTH_FACEBOOK_ENABLED'))
-                        ->required()
-                        ->default(env('OAUTH_FACEBOOK_CLIENT_ID')),
-                    TextInput::make('OAUTH_FACEBOOK_CLIENT_SECRET')
-                        ->label('Client Secret')
-                        ->columnSpan(2)
-                        ->hidden(fn (Get $get) => !$get('OAUTH_FACEBOOK_ENABLED'))
-                        ->required()
-                        ->default(env('OAUTH_FACEBOOK_CLIENT_SECRET')),
-                ]),
-            Section::make('X')
-                ->collapsed(fn (Get $get) => !$get('OAUTH_X_ENABLED'))
-                ->columns(5)
-                ->icon(config('auth.oauth.x.icon'))
-                ->schema([
-                    Toggle::make('OAUTH_X_ENABLED')
-                        ->label('Enabled')
-                        ->inline(false)
-                        ->onIcon('tabler-check')
-                        ->offIcon('tabler-x')
-                        ->onColor('success')
-                        ->offColor('danger')
-                        ->live()
-                        ->columnSpan(1)
-                        ->formatStateUsing(fn ($state): bool => (bool) $state)
-                        ->afterStateUpdated(fn ($state, Set $set) => $set('OAUTH_X_ENABLED', (bool) $state))
-                        ->default(env('OAUTH_X_ENABLED')),
-                    TextInput::make('OAUTH_X_CLIENT_ID')
-                        ->label('Client ID')
-                        ->columnSpan(2)
-                        ->hidden(fn (Get $get) => !$get('OAUTH_X_ENABLED'))
-                        ->required()
-                        ->default(env('OAUTH_X_CLIENT_ID')),
-                    TextInput::make('OAUTH_X_CLIENT_SECRET')
-                        ->label('Client Secret')
-                        ->columnSpan(2)
-                        ->hidden(fn (Get $get) => !$get('OAUTH_X_ENABLED'))
-                        ->required()
-                        ->default(env('OAUTH_X_CLIENT_SECRET')),
-                ]),
-            Section::make('LinkedIn')
-                ->collapsed(fn (Get $get) => !$get('OAUTH_LINKEDIN_ENABLED'))
-                ->columns(5)
-                ->icon(config('auth.oauth.linkedin.icon'))
-                ->schema([
-                    Toggle::make('OAUTH_LINKEDIN_ENABLED')
-                        ->label('Enabled')
-                        ->inline(false)
-                        ->onIcon('tabler-check')
-                        ->offIcon('tabler-x')
-                        ->onColor('success')
-                        ->offColor('danger')
-                        ->live()
-                        ->columnSpan(1)
-                        ->formatStateUsing(fn ($state): bool => (bool) $state)
-                        ->afterStateUpdated(fn ($state, Set $set) => $set('OAUTH_LINKEDIN_ENABLED', (bool) $state))
-                        ->default(env('OAUTH_LINKEDIN_ENABLED')),
-                    TextInput::make('OAUTH_LINKEDIN_CLIENT_ID')
-                        ->label('Client ID')
-                        ->columnSpan(2)
-                        ->hidden(fn (Get $get) => !$get('OAUTH_LINKEDIN_ENABLED'))
-                        ->required()
-                        ->default(env('OAUTH_LINKEDIN_CLIENT_ID')),
-                    TextInput::make('OAUTH_LINKEDIN_CLIENT_SECRET')
-                        ->label('Client Secret')
-                        ->columnSpan(2)
-                        ->hidden(fn (Get $get) => !$get('OAUTH_LINKEDIN_ENABLED'))
-                        ->required()
-                        ->default(env('OAUTH_LINKEDIN_CLIENT_SECRET')),
-                ]),
-            Section::make('GitLab')
-                ->collapsed(fn (Get $get) => !$get('OAUTH_GITLAB_ENABLED'))
-                ->columns(5)
-                ->icon(config('auth.oauth.gitlab.icon'))
-                ->schema([
-                    Toggle::make('OAUTH_GITLAB_ENABLED')
-                        ->label('Enabled')
-                        ->inline(false)
-                        ->onIcon('tabler-check')
-                        ->offIcon('tabler-x')
-                        ->onColor('success')
-                        ->offColor('danger')
-                        ->live()
-                        ->columnSpan(1)
-                        ->formatStateUsing(fn ($state): bool => (bool) $state)
-                        ->afterStateUpdated(fn ($state, Set $set) => $set('OAUTH_GITLAB_ENABLED', (bool) $state))
-                        ->default(env('OAUTH_GITLAB_ENABLED')),
-                    TextInput::make('OAUTH_GITLAB_CLIENT_ID')
-                        ->label('Client ID')
-                        ->columnSpan(2)
-                        ->hidden(fn (Get $get) => !$get('OAUTH_GITLAB_ENABLED'))
-                        ->required()
-                        ->default(env('OAUTH_GITLAB_CLIENT_ID')),
-                    TextInput::make('OAUTH_GITLAB_CLIENT_SECRET')
-                        ->label('Client Secret')
-                        ->columnSpan(2)
-                        ->hidden(fn (Get $get) => !$get('OAUTH_GITLAB_ENABLED'))
-                        ->required()
-                        ->default(env('OAUTH_GITLAB_CLIENT_SECRET')),
-                ]),
-            Section::make('Bitbucket')
-                ->collapsed(fn (Get $get) => !$get('OAUTH_BITBUCKET_ENABLED'))
-                ->columns(5)
-                ->icon(config('auth.oauth.bitbucket.icon'))
-                ->schema([
-                    Toggle::make('OAUTH_BITBUCKET_ENABLED')
-                        ->label('Enabled')
-                        ->inline(false)
-                        ->onIcon('tabler-check')
-                        ->offIcon('tabler-x')
-                        ->onColor('success')
-                        ->offColor('danger')
-                        ->live()
-                        ->columnSpan(1)
-                        ->formatStateUsing(fn ($state): bool => (bool) $state)
-                        ->afterStateUpdated(fn ($state, Set $set) => $set('OAUTH_BITBUCKET_ENABLED', (bool) $state))
-                        ->default(env('OAUTH_BITBUCKET_ENABLED')),
-                    TextInput::make('OAUTH_BITBUCKET_CLIENT_ID')
-                        ->label('Client ID')
-                        ->columnSpan(2)
-                        ->hidden(fn (Get $get) => !$get('OAUTH_BITBUCKET_ENABLED'))
-                        ->required()
-                        ->default(env('OAUTH_BITBUCKET_CLIENT_ID')),
-                    TextInput::make('OAUTH_BITBUCKET_CLIENT_SECRET')
-                        ->label('Client Secret')
-                        ->columnSpan(2)
-                        ->hidden(fn (Get $get) => !$get('OAUTH_BITBUCKET_ENABLED'))
-                        ->required()
-                        ->default(env('OAUTH_BITBUCKET_CLIENT_SECRET')),
-                ]),
-            Section::make('Slack')
-                ->collapsed(fn (Get $get) => !$get('OAUTH_SLACK_ENABLED'))
-                ->columns(5)
-                ->icon(config('auth.oauth.slack.icon'))
-                ->schema([
-                    Toggle::make('OAUTH_SLACK_ENABLED')
-                        ->label('Enabled')
-                        ->inline(false)
-                        ->onIcon('tabler-check')
-                        ->offIcon('tabler-x')
-                        ->onColor('success')
-                        ->offColor('danger')
-                        ->live()
-                        ->columnSpan(1)
-                        ->formatStateUsing(fn ($state): bool => (bool) $state)
-                        ->afterStateUpdated(fn ($state, Set $set) => $set('OAUTH_SLACK_ENABLED', (bool) $state))
-                        ->default(env('OAUTH_SLACK_ENABLED')),
-                    TextInput::make('OAUTH_SLACK_CLIENT_ID')
-                        ->label('Client ID')
-                        ->columnSpan(2)
-                        ->hidden(fn (Get $get) => !$get('OAUTH_SLACK_ENABLED'))
-                        ->required()
-                        ->default(env('OAUTH_SLACK_CLIENT_ID')),
-                    TextInput::make('OAUTH_SLACK_CLIENT_SECRET')
-                        ->label('Client Secret')
-                        ->columnSpan(2)
-                        ->hidden(fn (Get $get) => !$get('OAUTH_SLACK_ENABLED'))
-                        ->required()
-                        ->default(env('OAUTH_SLACK_CLIENT_SECRET')),
-                ]),
-        ];
+                ->icon($providerConfig['icon'] ?? 'tabler-brand-oauth')
+                ->collapsed(fn () => !env("OAUTH_{$providerEnvPrefix}_ENABLED", false))
+                ->collapsible()
+                ->schema($fields);
+        }
+
+        return $formFields;
     }
 
     private function miscSettings(): array
