@@ -457,6 +457,7 @@ class Server extends Model
 
     public function formatResource(string $resourceKey, bool $percentage = false, bool $limit = false, bool $time = false): string
     {
+        $precision = 2;
         $resourceAmount = $this->{$resourceKey} ?? 0;
 
         if (!$limit) {
@@ -464,38 +465,22 @@ class Server extends Model
         }
 
         if ($time) {
-            return self::timeFormatter($resourceAmount);
+            if ($resourceAmount === 0) {
+                return 'Offline';
+            }
+
+            return now()->subMillis($resourceAmount)->diffForHumans(syntax: CarbonInterface::DIFF_ABSOLUTE, short: true, parts: 2);
         }
 
-        return self::byteFormatter($resourceAmount, percentage: $percentage, limit: $limit);
-    }
-
-    public static function timeFormatter(int $amount): string
-    {
-        if ($amount === 0) {
-            return 'Offline';
-        }
-
-        return now()->subMillis($amount)->diffForHumans(syntax: CarbonInterface::DIFF_ABSOLUTE, short: true, parts: 2);
-    }
-
-    public static function byteFormatter(int $amount, int $precision = 3, bool $percentage = false, bool $limit = false): string
-    {
-        $bits = config('panel.use_binary_prefix') ? 1024 : 1000;
-        $unitLetters = ['', 'K', 'M', 'G', 'T', 'P', 'E', 'Z', 'Y', 'B'];
-        $unitLetter = $unitLetters[$precision];
-        $unitSuffix = config('panel.use_binary_suffix') ? 'i' : '';
-        $unit = ' ' . $unitLetter . $unitSuffix . 'B';
-
-        if ($amount === 0 & $limit) {
+        if ($resourceAmount === 0 & $limit) {
             return 'Unlimited';
         }
 
         if ($percentage) {
-            $unit = '%';
+            return Number::format($resourceAmount, precision: $precision, locale: auth()->user()->language ?? 'en') . '%';
         }
 
-        return Number::format($amount / $bits ** $precision, maxPrecision: 2, locale: auth()->user()->language) . $unit;
+        return convert_bytes_to_readable($resourceAmount, decimals: $precision, base: 3);
     }
 
     public function condition(): Attribute
