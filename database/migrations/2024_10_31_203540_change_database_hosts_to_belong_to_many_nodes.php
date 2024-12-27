@@ -8,7 +8,7 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::create('', function (Blueprint $table) {
+        Schema::create('database_host_node', function (Blueprint $table) {
             $table->id();
             $table->unsignedInteger('node_id');
             $table->foreign('node_id')->references('id')->on('nodes');
