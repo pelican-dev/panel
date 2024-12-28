@@ -18,18 +18,17 @@
         <!-- Card Component -->
         <div class="flex-1 bg-gray-800 text-white rounded-lg overflow-hidden p-3">
             <!-- Header -->
-            <div class="flex items-center mb-3 ml-1">
-                <div class="flex items-center gap-2">
-                    <x-filament::icon-button
-                        :icon="$server->conditionIcon()"
-                        :color="$server->conditionColor()"
-                        :tooltip="\Illuminate\Support\Str::title($server->condition)" size="xl"
-                    />
-                    <h2 class="text-xl font-bold">
-                        {{ $server->name }}
-                        <span class="text-gray-400">({{ $server->formatResource('uptime', time: true) }})</span>
-                    </h2>
-                </div>
+            <div class="flex items-center mb-5 gap-2">
+                <x-filament::icon-button
+                    :icon="$server->conditionIcon()"
+                    :color="$server->conditionColor()"
+                    :tooltip="\Illuminate\Support\Str::title($server->condition)"
+                    size="xl"
+                />
+                <h2 class="text-xl font-bold">
+                    {{ $server->name }}
+                    <span class="text-gray-400">({{ $server->formatResource('uptime', time: true) }})</span>
+                </h2>
             </div>
 
             <!-- Resource Usage -->
