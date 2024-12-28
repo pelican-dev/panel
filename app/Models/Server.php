@@ -3,9 +3,11 @@
 namespace App\Models;
 
 use App\Enums\ContainerStatus;
+use App\Enums\ServerResourceType;
 use App\Enums\ServerState;
 use App\Exceptions\Http\Connection\DaemonConnectionException;
 use App\Repositories\Daemon\DaemonServerRepository;
+use Carbon\CarbonInterface;
 use GuzzleHttp\Exception\GuzzleException;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -13,6 +15,7 @@ use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Query\JoinClause;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Number;
 use Psr\Http\Message\ResponseInterface;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -453,6 +456,32 @@ class Server extends Model
         });
     }
 
+    public function formatResource(string $resourceKey, bool $limit = false, ServerResourceType $type = ServerResourceType::Unit, int $precision = 2): string
+    {
+        $resourceAmount = $this->{$resourceKey} ?? 0;
+        if (!$limit) {
+            $resourceAmount = $this->resources()[$resourceKey] ?? 0;
+        }
+
+        if ($type === ServerResourceType::Time) {
+            if ($resourceAmount === 0) {
+                return 'Offline';
+            }
+
+            return now()->subMillis($resourceAmount)->diffForHumans(syntax: CarbonInterface::DIFF_ABSOLUTE, short: true, parts: 4);
+        }
+
+        if ($resourceAmount === 0 & $limit) {
+            return 'Unlimited';
+        }
+
+        if ($type === ServerResourceType::Percentage) {
+            return Number::format($resourceAmount, precision: $precision, locale: auth()->user()->language ?? 'en') . '%';
+        }
+
+        return convert_bytes_to_readable($resourceAmount, decimals: $precision, base: 3);
+    }
+
     public function condition(): Attribute
     {
         return Attribute::make(
@@ -480,5 +509,10 @@ class Server extends Model
         }
 
         return $this->status->color();
+    }
+
+    public function conditionColorHex(): string
+    {
+        return ContainerStatus::from($this->retrieveStatus())->colorHex();
     }
 }

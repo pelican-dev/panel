@@ -42,6 +42,8 @@ class EditFiles extends Page
 
     protected static string $view = 'filament.server.pages.edit-file';
 
+    protected static ?string $title = '';
+
     #[Locked]
     public string $path;
 
@@ -63,9 +65,13 @@ class EditFiles extends Page
                     ->options(EditorLanguages::class)
                     ->hidden() //TODO Fix Dis
                     ->default(function () {
-                        $split = explode('.', $this->path);
+                        $ext = pathinfo($this->path, PATHINFO_EXTENSION);
 
-                        return end($split);
+                        if ($ext === 'yml') {
+                            return 'yaml';
+                        }
+
+                        return $ext;
                     }),
                 Section::make('Editing: ' . $this->path)
                     ->footerActions([
