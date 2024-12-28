@@ -1,4 +1,10 @@
-@php /** @var \App\Models\Server $server */ $server = $getRecord(); @endphp
+@php
+    use App\Enums\ServerResourceType;
+
+    /** @var \App\Models\Server $server */
+    $server = $getRecord();
+@endphp
+
 <head>
     <style>
         hr {
@@ -27,7 +33,7 @@
                 />
                 <h2 class="text-xl font-bold">
                     {{ $server->name }}
-                    <span class="text-gray-400">({{ $server->formatResource('uptime', time: true) }})</span>
+                    <span class="text-gray-400">({{ $server->formatResource('uptime', type: ServerResourceType::Time) }})</span>
                 </h2>
             </div>
 
@@ -35,9 +41,9 @@
             <div class="flex justify-between text-center">
                 <div>
                     <p class="text-sm text-gray-400">CPU</p>
-                    <p class="text-md font-semibold">{{ $server->formatResource('cpu_absolute', percentage: true) }}</p>
+                    <p class="text-md font-semibold">{{ $server->formatResource('cpu_absolute', type: ServerResourceType::Percentage) }}</p>
                     <hr class="p-0.5">
-                    <p class="text-xs text-gray-400">{{ $server->formatResource('cpu', percentage: true, limit: true) }}</p>
+                    <p class="text-xs text-gray-400">{{ $server->formatResource('cpu', type: ServerResourceType::Percentage, limit: true) }}</p>
                 </div>
                 <div>
                     <p class="text-sm text-gray-400">Memory</p>

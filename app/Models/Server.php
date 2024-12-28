@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Enums\ContainerStatus;
+use App\Enums\ServerResourceType;
 use App\Enums\ServerState;
 use App\Exceptions\Http\Connection\DaemonConnectionException;
 use App\Repositories\Daemon\DaemonServerRepository;
@@ -455,28 +456,26 @@ class Server extends Model
         });
     }
 
-    public function formatResource(string $resourceKey, bool $percentage = false, bool $limit = false, bool $time = false): string
+    public function formatResource(string $resourceKey, bool $limit = false, ServerResourceType $type = ServerResourceType::Unit, int $precision = 2): string
     {
-        $precision = 2;
         $resourceAmount = $this->{$resourceKey} ?? 0;
-
         if (!$limit) {
             $resourceAmount = $this->resources()[$resourceKey] ?? 0;
         }
 
-        if ($time) {
+        if ($type === ServerResourceType::Time) {
             if ($resourceAmount === 0) {
                 return 'Offline';
             }
 
-            return now()->subMillis($resourceAmount)->diffForHumans(syntax: CarbonInterface::DIFF_ABSOLUTE, short: true, parts: 2);
+            return now()->subMillis($resourceAmount)->diffForHumans(syntax: CarbonInterface::DIFF_ABSOLUTE, short: true, parts: 4);
         }
 
         if ($resourceAmount === 0 & $limit) {
             return 'Unlimited';
         }
 
-        if ($percentage) {
+        if ($type === ServerResourceType::Percentage) {
             return Number::format($resourceAmount, precision: $precision, locale: auth()->user()->language ?? 'en') . '%';
         }
 
