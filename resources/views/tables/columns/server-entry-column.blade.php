@@ -1,4 +1,7 @@
-@php /** @var \App\Models\Server $server */ $server = $getRecord(); @endphp
+@php
+    /** @var \App\Models\Server $server */
+    $server = $getRecord();
+@endphp
 <head>
     <style>
         hr {
