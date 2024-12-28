@@ -28,7 +28,6 @@ class ListServers extends ListRecords
             ->columns([
                 Stack::make([
                     ServerEntryColumn::make('server_entry')
-                        ->label(fn (Server $server) => $server->name)
                         ->searchable(['name']),
                 ]),
             ])
