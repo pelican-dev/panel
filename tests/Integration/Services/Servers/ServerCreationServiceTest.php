@@ -5,20 +5,16 @@ namespace App\Tests\Integration\Services\Servers;
 use Illuminate\Http\Client\ConnectionException;
 use Mockery\MockInterface;
 use App\Models\Egg;
-use GuzzleHttp\Psr7\Request;
 use App\Models\Node;
 use App\Models\User;
-use GuzzleHttp\Psr7\Response;
 use App\Models\Server;
 use App\Models\Allocation;
 use Illuminate\Foundation\Testing\WithFaker;
-use GuzzleHttp\Exception\BadResponseException;
 use Illuminate\Validation\ValidationException;
 use App\Models\Objects\DeploymentObject;
 use App\Tests\Integration\IntegrationTestCase;
 use App\Services\Servers\ServerCreationService;
 use App\Repositories\Daemon\DaemonServerRepository;
-use App\Exceptions\Http\Connection\DaemonConnectionException;
 
 class ServerCreationServiceTest extends IntegrationTestCase
 {
