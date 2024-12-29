@@ -2,6 +2,7 @@
 
 namespace App\Tests\Integration\Services\Servers;
 
+use Illuminate\Http\Client\ConnectionException;
 use Mockery\MockInterface;
 use App\Models\Egg;
 use GuzzleHttp\Psr7\Request;
@@ -181,15 +182,11 @@ class ServerCreationServiceTest extends IntegrationTestCase
             ],
         ];
 
-        $this->daemonServerRepository->expects('setServer->create')->andThrows(
-            new DaemonConnectionException(
-                new BadResponseException('Bad request', new Request('POST', '/create'), new Response(500))
-            )
-        );
+        $this->daemonServerRepository->expects('setServer->create')->andThrows(new ConnectionException());
 
         $this->daemonServerRepository->expects('setServer->delete')->andReturnUndefined();
 
-        $this->expectException(DaemonConnectionException::class);
+        $this->expectException(ConnectionException::class);
 
         $this->getService()->handle($data);
 
