@@ -5,12 +5,11 @@ namespace App\Models;
 use App\Enums\ContainerStatus;
 use App\Enums\ServerResourceType;
 use App\Enums\ServerState;
-use App\Exceptions\Http\Connection\DaemonConnectionException;
 use App\Repositories\Daemon\DaemonServerRepository;
 use Carbon\CarbonInterface;
-use GuzzleHttp\Exception\GuzzleException;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Query\JoinClause;
 use Illuminate\Support\Arr;
@@ -422,17 +421,13 @@ class Server extends Model
     /**
      * Sends a command or multiple commands to a running server instance.
      *
-     * @throws DaemonConnectionException|GuzzleException
+     * @throws ConnectionException
      */
     public function send(array|string $command): ResponseInterface
     {
-        try {
-            return Http::daemon($this->node)->post("/api/servers/{$this->uuid}/commands", [
-                'commands' => is_array($command) ? $command : [$command],
-            ])->toPsrResponse();
-        } catch (GuzzleException $exception) {
-            throw new DaemonConnectionException($exception);
-        }
+        return Http::daemon($this->node)->post("/api/servers/{$this->uuid}/commands", [
+            'commands' => is_array($command) ? $command : [$command],
+        ])->toPsrResponse();
     }
 
     public function retrieveStatus(): string

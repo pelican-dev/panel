@@ -2,8 +2,8 @@
 
 namespace App\Exceptions\Http\Connection;
 
+use Exception;
 use Illuminate\Http\Response;
-use GuzzleHttp\Exception\GuzzleException;
 use App\Exceptions\DisplayException;
 use Illuminate\Support\Facades\Context;
 
@@ -22,7 +22,7 @@ class DaemonConnectionException extends DisplayException
     /**
      * Throw a displayable exception caused by a daemon connection error.
      */
-    public function __construct(GuzzleException $previous, bool $useStatusCode = true)
+    public function __construct(?Exception $previous, bool $useStatusCode = true)
     {
         /** @var \GuzzleHttp\Psr7\Response|null $response */
         $response = method_exists($previous, 'getResponse') ? $previous->getResponse() : null;
