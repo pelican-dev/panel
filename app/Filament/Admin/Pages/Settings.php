@@ -179,7 +179,8 @@ class Settings extends Page implements HasForms
                                     }
                                     $ips->unique();
                                 }
-                            } catch (Exception) {}
+                            } catch (Exception) {
+                            }
 
                             $set('TRUSTED_PROXIES', $ips->values()->all());
                         }),

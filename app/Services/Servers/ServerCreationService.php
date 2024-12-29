@@ -96,8 +96,7 @@ class ServerCreationService
         try {
             $this->daemonServerRepository
                 ->setServer($server)
-                ->create($data['start_on_completion'] ?? false)
-            ;
+                ->create($data['start_on_completion'] ?? false);
         } catch (ConnectionException $exception) {
             $this->serverDeletionService->withForce()->handle($server);
 
