@@ -52,19 +52,6 @@ class ActivityResource extends Resource
             });
     }
 
-    // TODO: find better way handle server conflict state
-    public static function canAccess(): bool
-    {
-        /** @var Server $server */
-        $server = Filament::getTenant();
-
-        if ($server->isInConflictState()) {
-            return false;
-        }
-
-        return parent::canAccess();
-    }
-
     public static function canViewAny(): bool
     {
         return auth()->user()->can(Permission::ACTION_ACTIVITY_READ, Filament::getTenant());
