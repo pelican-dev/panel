@@ -167,14 +167,19 @@
             }));
         };
 
-        Livewire.on('setServerState', ({ state }) => {
+        Livewire.on('setServerState', ({ state, uuid }) => {
+            const serverUuid = "{{ $this->server->uuid }}";
+            if (uuid !== serverUuid) {
+                return;
+            }
+
             socket.send(JSON.stringify({
                 'event': 'set state',
                 'args': [state]
             }));
         });
 
-        $wire.$on('sendServerCommand', ({ command }) => {
+        $wire.on('sendServerCommand', ({ command }) => {
             socket.send(JSON.stringify({
                 'event': 'send command',
                 'args': [command]
