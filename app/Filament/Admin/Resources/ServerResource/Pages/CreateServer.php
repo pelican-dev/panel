@@ -34,7 +34,9 @@ use Filament\Forms\Components\Wizard\Step;
 use Filament\Forms\Form;
 use Filament\Forms\Get;
 use Filament\Forms\Set;
+use Filament\Notifications\Notification;
 use Filament\Resources\Pages\CreateRecord;
+use Filament\Support\Exceptions\Halt;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Blade;
@@ -873,7 +875,18 @@ class CreateServer extends CreateRecord
     {
         $data['allocation_additional'] = collect($data['allocation_additional'])->filter()->all();
 
-        return $this->serverCreationService->handle($data);
+        try {
+            return $this->serverCreationService->handle($data);
+        } catch (Exception $exception) {
+            Notification::make()
+                ->title('Error connecting to the node')
+                ->body($exception->getMessage())
+                ->color('danger')
+                ->danger()
+                ->send();
+
+            throw new Halt();
+        }
     }
 
     private function shouldHideComponent(Get $get, Component $component): bool
