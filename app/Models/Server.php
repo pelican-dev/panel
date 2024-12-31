@@ -306,10 +306,9 @@ class Server extends Model
 
     public function viewableServerVariables(): HasMany
     {
-        return $this->hasMany(ServerVariable::class)->rightJoin('egg_variables', function (JoinClause $join) {
-            $join->on('egg_variables.id', 'server_variables.variable_id')
-                ->where('egg_variables.user_viewable', true);
-        });
+        return $this->serverVariables()
+            ->join('egg_variables', 'egg_variables.id', '=', 'server_variables.variable_id')
+            ->where('egg_variables.user_viewable', true);
     }
 
     /**
