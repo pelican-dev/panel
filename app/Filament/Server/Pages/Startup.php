@@ -153,14 +153,7 @@ class Startup extends ServerFormPage
 
     public static function canAccess(): bool
     {
-        /** @var Server $server */
-        $server = Filament::getTenant();
-
-        if ($server->isInConflictState()) {
-            return false;
-        }
-
-        return auth()->user()->can(Permission::ACTION_STARTUP_READ, $server);
+        return parent::canAccess() && auth()->user()->can(Permission::ACTION_STARTUP_READ, Filament::getTenant());
     }
 
     private function shouldHideComponent(ServerVariable $serverVariable, Component $component): bool
