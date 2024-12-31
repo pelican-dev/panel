@@ -879,7 +879,7 @@ class CreateServer extends CreateRecord
             return $this->serverCreationService->handle($data);
         } catch (Exception $exception) {
             Notification::make()
-                ->title('Error connecting to the node')
+                ->title('Could not create server')
                 ->body($exception->getMessage())
                 ->color('danger')
                 ->danger()
