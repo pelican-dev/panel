@@ -44,8 +44,7 @@ class ListBackups extends ListRecords
             ->schema([
                 TextInput::make('name')
                     ->label('Name')
-                    ->columnSpanFull()
-                    ->required(),
+                    ->columnSpanFull(),
                 TextArea::make('ignored')
                     ->columnSpanFull()
                     ->label('Ignored Files & Directories'),
