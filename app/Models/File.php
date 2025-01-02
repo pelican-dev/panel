@@ -167,6 +167,16 @@ class File extends Model
                 throw new Exception($contents['error']);
             }
 
+            // No files found, for example
+            if (isset($contents['message'])) {
+                Notification::make()
+                    ->title($contents['message'])
+                    ->warning()
+                    ->send();
+
+                return [];
+            }
+
             return array_map(function ($file) {
                 return [
                     'name' => $file['name'],
