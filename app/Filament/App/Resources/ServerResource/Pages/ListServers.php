@@ -62,28 +62,6 @@ class ListServers extends ListRecords
             ]);
     }
 
-    // @phpstan-ignore-next-line
-    private function uptime(Server $server): string
-    {
-        $uptime = Arr::get($server->resources(), 'uptime', 0);
-
-        if ($uptime === 0) {
-            return 'Offline';
-        }
-
-        return now()->subMillis($uptime)->diffForHumans(syntax: CarbonInterface::DIFF_ABSOLUTE, short: true, parts: 2);
-    }
-
-    // @phpstan-ignore-next-line
-    private function cpu(Server $server): string
-    {
-        $cpu = Number::format(Arr::get($server->resources(), 'cpu_absolute', 0), maxPrecision: 2, locale: auth()->user()->language) . '%';
-        $max = Number::format($server->cpu, locale: auth()->user()->language) . '%';
-
-        return $cpu . ($server->cpu > 0 ? ' Of ' . $max : '');
-    }
-
-    // @phpstan-ignore-next-line
     private function memory(Server $server): string
     {
         $latestMemoryUsed = Arr::get($server->resources(), 'memory_bytes', 0);
@@ -106,14 +84,9 @@ class ListServers extends ListRecords
         return $used . ($server->memory > 0 ? ' Of ' . $total : '');
     }
 
-    // @phpstan-ignore-next-line
     private function disk(Server $server): string
     {
-        $usedDisk = Arr::get($server->resources(), 'disk_bytes', 0);
-
-        $used = config('panel.use_binary_prefix')
-            ? Number::format($usedDisk / 1024 / 1024 / 1024, maxPrecision: 2, locale: auth()->user()->language) .' GiB'
-            : Number::format($usedDisk / 1000 / 1000 / 1000, maxPrecision: 2, locale: auth()->user()->language) . ' GB';
+        $used = convert_bytes_to_readable($server->resources()['disk_bytes'] ?? 0);
 
         $total = config('panel.use_binary_prefix')
             ? Number::format($server->disk / 1024, maxPrecision: 2, locale: auth()->user()->language) .' GiB'
