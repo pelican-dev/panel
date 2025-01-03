@@ -307,8 +307,7 @@ class Node extends Model
     {
         return once(function () {
             try {
-                // @phpstan-ignore-next-line
-                return resolve(DaemonConfigurationRepository::class)
+                return (new DaemonConfigurationRepository())
                     ->setNode($this)
                     ->getSystemInformation(connectTimeout: 3);
             } catch (Exception $exception) {

@@ -436,8 +436,7 @@ class Server extends Model
     public function resources(): array
     {
         return cache()->remember("resources:$this->uuid", now()->addSeconds(15), function () {
-            // @phpstan-ignore-next-line
-            return Arr::get(app(DaemonServerRepository::class)->setServer($this)->getDetails(), 'utilization', []);
+            return (new DaemonServerRepository())->setServer($this)->getDetails()['utilization'] ?? [];
         });
     }
 
