@@ -24,7 +24,7 @@ abstract class BaseTransformer extends TransformerAbstract
     /**
      * BaseTransformer constructor.
      */
-    public function __construct()
+    final public function __construct()
     {
         // Transformers allow for dependency injection on the handle method.
         if (method_exists($this, 'handle')) {
@@ -40,7 +40,7 @@ abstract class BaseTransformer extends TransformerAbstract
     /**
      * Sets the request on the instance.
      */
-    public function setRequest(Request $request): self
+    public function setRequest(Request $request): static
     {
         $this->request = $request;
 
@@ -49,13 +49,10 @@ abstract class BaseTransformer extends TransformerAbstract
 
     /**
      * Returns a new transformer instance with the request set on the instance.
-     *
-     * @return static
      */
-    public static function fromRequest(Request $request): self
+    public static function fromRequest(Request $request): static
     {
-        // @phpstan-ignore-next-line
-        return app(static::class)->setRequest($request);
+        return (new static())->setRequest($request);
     }
 
     /**

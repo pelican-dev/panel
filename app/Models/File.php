@@ -130,8 +130,7 @@ class File extends Model
     public function getRows(): array
     {
         try {
-            /** @var DaemonFileRepository $fileRepository */
-            $fileRepository = app(DaemonFileRepository::class)->setServer(self::$server); // @phpstan-ignore-line
+            $fileRepository = (new DaemonFileRepository())->setServer(self::$server);
 
             if (!is_null(self::$searchTerm)) {
                 $contents = cache()->remember('file_search_' . self::$path . '_' . self::$searchTerm, now()->addMinute(), fn () => $fileRepository->search(self::$searchTerm, self::$path));

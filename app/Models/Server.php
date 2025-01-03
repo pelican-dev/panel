@@ -12,7 +12,6 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Query\JoinClause;
-use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Number;
 use Psr\Http\Message\ResponseInterface;
@@ -21,7 +20,6 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
 use App\Exceptions\Http\Server\ServerStateConflictException;
-use App\Services\Subusers\SubuserDeletionService;
 
 /**
  * \App\Models\Server.
@@ -70,7 +68,6 @@ use App\Services\Subusers\SubuserDeletionService;
  * @property int|null $notifications_count
  * @property \Illuminate\Database\Eloquent\Collection|\App\Models\Schedule[] $schedules
  * @property int|null $schedules_count
- * @property \Illuminate\Database\Eloquent\Collection|\App\Models\Subuser[] $subusers
  * @property int|null $subusers_count
  * @property \App\Models\ServerTransfer|null $transfer
  * @property \App\Models\User $user
@@ -206,17 +203,6 @@ class Server extends Model
         ];
     }
 
-    protected static function booted(): void
-    {
-        static::saved(function (self $server) {
-            $subuser = $server->subusers()->where('user_id', $server->owner_id)->first();
-            if ($subuser) {
-                // @phpstan-ignore-next-line
-                app(SubuserDeletionService::class)->handle($subuser, $server);
-            }
-        });
-    }
-
     /**
      * Returns the format for server allocations when communicating with the Daemon.
      */
@@ -342,6 +328,9 @@ class Server extends Model
         return $this->hasOne(ServerTransfer::class)->whereNull('successful')->orderByDesc('id');
     }
 
+    /**
+     * @return HasMany<Backup, $this>
+     */
     public function backups(): HasMany
     {
         return $this->hasMany(Backup::class);
@@ -445,8 +434,7 @@ class Server extends Model
     public function resources(): array
     {
         return cache()->remember("resources:$this->uuid", now()->addSeconds(15), function () {
-            // @phpstan-ignore-next-line
-            return Arr::get(app(DaemonServerRepository::class)->setServer($this)->getDetails(), 'utilization', []);
+            return (new DaemonServerRepository())->setServer($this)->getDetails()['utilization'] ?? [];
         });
     }
 
@@ -479,7 +467,7 @@ class Server extends Model
     public function condition(): Attribute
     {
         return Attribute::make(
-            get: fn () => $this->status?->value ?? $this->retrieveStatus(),
+            get: fn () => $this->status->value ?? $this->retrieveStatus(),
         );
     }
 

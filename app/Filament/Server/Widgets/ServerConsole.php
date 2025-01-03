@@ -30,16 +30,25 @@ class ServerConsole extends Widget
 
     public string $input = '';
 
+    private GetUserPermissionsService $getUserPermissionsService;
+
+    private NodeJWTService $nodeJWTService;
+
+    public function mount(GetUserPermissionsService $getUserPermissionsService, NodeJWTService $nodeJWTService): void
+    {
+        $this->getUserPermissionsService = $getUserPermissionsService;
+        $this->nodeJWTService = $nodeJWTService;
+    }
+
     protected function getToken(): string
     {
         if (!$this->user || !$this->server || $this->user->cannot(Permission::ACTION_WEBSOCKET_CONNECT, $this->server)) {
             throw new HttpForbiddenException('You do not have permission to connect to this server\'s websocket.');
         }
-        // @phpstan-ignore-next-line
-        $permissions = app(GetUserPermissionsService::class)->handle($this->server, $this->user);
 
-        // @phpstan-ignore-next-line
-        return app(NodeJWTService::class)
+        $permissions = $this->getUserPermissionsService->handle($this->server, $this->user);
+
+        return $this->nodeJWTService
             ->setExpiresAt(now()->addMinutes(10)->toImmutable())
             ->setUser($this->user)
             ->setClaims([

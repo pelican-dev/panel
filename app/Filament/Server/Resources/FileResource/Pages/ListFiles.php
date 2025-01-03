@@ -357,8 +357,7 @@ class ListFiles extends ListRecords
                         ->action(function (Collection $files, $data, DaemonFileRepository $fileRepository) use ($server) {
                             $location = resolve_path(join_paths($this->path, $data['location']));
 
-                            // @phpstan-ignore-next-line
-                            $files = $files->map(fn ($file) => ['to' => $location, 'from' => $file->name])->toArray();
+                            $files = $files->map(fn ($file) => ['to' => $location, 'from' => $file['name']])->toArray();
                             $fileRepository
                                 ->setServer($server)
                                 ->renameFiles($this->path, $files);
@@ -376,8 +375,7 @@ class ListFiles extends ListRecords
                     BulkAction::make('archive')
                         ->authorize(fn () => auth()->user()->can(Permission::ACTION_FILE_ARCHIVE, $server))
                         ->action(function (Collection $files, DaemonFileRepository $fileRepository) use ($server) {
-                            // @phpstan-ignore-next-line
-                            $files = $files->map(fn ($file) => $file->name)->toArray();
+                            $files = $files->map(fn ($file) => $file['name'])->toArray();
 
                             $fileRepository
                                 ->setServer($server)
@@ -398,8 +396,7 @@ class ListFiles extends ListRecords
                     DeleteBulkAction::make()
                         ->authorize(fn () => auth()->user()->can(Permission::ACTION_FILE_DELETE, $server))
                         ->action(function (Collection $files, DaemonFileRepository $fileRepository) use ($server) {
-                            // @phpstan-ignore-next-line
-                            $files = $files->map(fn ($file) => $file->name)->toArray();
+                            $files = $files->map(fn ($file) => $file['name'])->toArray();
                             $fileRepository
                                 ->setServer($server)
                                 ->deleteFiles($this->path, $files);

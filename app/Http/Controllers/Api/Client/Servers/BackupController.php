@@ -22,14 +22,11 @@ use App\Http\Requests\Api\Client\Servers\Backups\RestoreBackupRequest;
 
 class BackupController extends ClientApiController
 {
-    /**
-     * BackupController constructor.
-     */
     public function __construct(
-        private DaemonBackupRepository $daemonRepository,
-        private DeleteBackupService $deleteBackupService,
-        private InitiateBackupService $initiateBackupService,
-        private DownloadLinkService $downloadLinkService,
+        private readonly DaemonBackupRepository $daemonRepository,
+        private readonly DeleteBackupService $deleteBackupService,
+        private readonly InitiateBackupService $initiateBackupService,
+        private readonly DownloadLinkService $downloadLinkService,
     ) {
         parent::__construct();
     }
@@ -38,7 +35,7 @@ class BackupController extends ClientApiController
      * Returns all the backups for a given server instance in a paginated
      * result set.
      *
-     * @throws \Illuminate\Auth\Access\AuthorizationException
+     * @throws AuthorizationException
      */
     public function index(Request $request, Server $server): array
     {

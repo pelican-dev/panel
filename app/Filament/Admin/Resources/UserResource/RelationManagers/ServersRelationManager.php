@@ -11,6 +11,7 @@ use Filament\Tables\Actions;
 use Filament\Tables\Columns\SelectColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Collection;
 
 class ServersRelationManager extends RelationManager
 {
@@ -33,7 +34,9 @@ class ServersRelationManager extends RelationManager
                     ->label('Suspend All Servers')
                     ->color('warning')
                     ->action(function (SuspensionService $suspensionService) use ($user) {
-                        foreach ($user->servers()->whereNot('status', ServerState::Suspended)->get() as $server) {
+                        /** @var Collection<Server> $servers */
+                        $servers = $user->servers()->whereNot('status', ServerState::Suspended)->get();
+                        foreach ($servers as $server) {
                             $suspensionService->toggle($server);
                         }
                     }),
@@ -42,7 +45,9 @@ class ServersRelationManager extends RelationManager
                     ->label('Unsuspend All Servers')
                     ->color('primary')
                     ->action(function (SuspensionService $suspensionService) use ($user) {
-                        foreach ($user->servers()->where('status', ServerState::Suspended)->get() as $server) {
+                        /** @var Collection<Server> $servers */
+                        $servers = $user->servers()->where('status', ServerState::Suspended)->get();
+                        foreach ($servers as $server) {
                             $suspensionService->toggle($server, SuspensionService::ACTION_UNSUSPEND);
                         }
                     }),
