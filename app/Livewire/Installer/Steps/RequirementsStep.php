@@ -14,8 +14,7 @@ class RequirementsStep
 
     public static function make(): Step
     {
-        /** @var -1|0|1|false|true $compare */
-        $compare = version_compare(PHP_VERSION, self::MIN_PHP_VERSION);
+        $compare = version_compare(phpversion(), self::MIN_PHP_VERSION);
         $correctPhpVersion = $compare >= 0;
 
         $fields = [
