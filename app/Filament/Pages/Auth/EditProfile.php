@@ -7,6 +7,7 @@ use App\Facades\Activity;
 use App\Models\ActivityLog;
 use App\Models\ApiKey;
 use App\Models\User;
+use App\Services\Helpers\LanguageService;
 use App\Services\Users\ToggleTwoFactorService;
 use App\Services\Users\TwoFactorSetupService;
 use App\Services\Users\UserUpdateService;
@@ -114,13 +115,12 @@ class EditProfile extends BaseEditProfile
                                             ->prefixIcon('tabler-flag')
                                             ->live()
                                             ->default('en')
-                                            ->helperText(fn (User $user, $state) => new HtmlString($user->isLanguageTranslated($state) ? '' : "
+                                            ->helperText(fn ($state, LanguageService $languageService) => new HtmlString($languageService->isLanguageTranslated($state) ? '' : "
                                                 Your language ($state) has not been translated yet!
                                                 But never fear, you can help fix that by
                                                 <a style='color: rgb(56, 189, 248)' href='https://crowdin.com/project/pelican-dev'>contributing directly here</a>.
-                                            ")
-                                            )
-                                            ->options(fn (User $user) => $user->getAvailableLanguages()),
+                                            "))
+                                            ->options(fn (LanguageService $languageService) => $languageService->getAvailableLanguages()),
                                     ]),
 
                                 Tab::make('OAuth')
