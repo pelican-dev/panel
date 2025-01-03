@@ -132,9 +132,9 @@ class ListEggs extends ListRecords
 
                 ])
                 ->action(function (array $data, EggImporterService $eggImportService): void {
+                    $noErrors = true;
+
                     if (!empty($data['egg'])) {
-                        /** @var TemporaryUploadedFile[] $eggFile */
-                        // @phpstan-ignore varTag.nativeType
                         $eggFile = $data['egg'];
 
                         foreach ($eggFile as $file) {
@@ -148,8 +148,9 @@ class ListEggs extends ListRecords
                                     ->send();
 
                                 report($exception);
+                                $noErrors = false;
 
-                                return;
+                                continue;
                             }
                         }
                     }
@@ -165,15 +166,16 @@ class ListEggs extends ListRecords
                                 ->send();
 
                             report($exception);
-
-                            return;
+                            $noErrors = false;
                         }
                     }
 
-                    Notification::make()
-                        ->title('Import Success')
-                        ->success()
-                        ->send();
+                    if ($noErrors) {
+                        Notification::make()
+                            ->title('Import Success')
+                            ->success()
+                            ->send();
+                    }
                 })
                 ->authorize(fn () => auth()->user()->can('import egg')),
         ];
