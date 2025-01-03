@@ -52,9 +52,12 @@ class BulkPowerActionCommand extends Command
 
         $bar = $this->output->createProgressBar($count);
 
-        // @phpstan-ignore argument.type
-        $this->getQueryBuilder($servers, $nodes)->get()->each(function (Server $server, int $index) use ($action, $powerRepository, &$bar): mixed {
+        $this->getQueryBuilder($servers, $nodes)->get()->each(function ($server, int $index) use ($action, $powerRepository, &$bar): mixed {
             $bar->clear();
+
+            if (!$server instanceof Server) {
+                return null;
+            }
 
             try {
                 $powerRepository->setServer($server)->send($action);
@@ -69,6 +72,8 @@ class BulkPowerActionCommand extends Command
 
             $bar->advance();
             $bar->display();
+
+            return null;
         });
 
         $this->line('');
