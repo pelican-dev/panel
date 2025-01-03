@@ -11,8 +11,6 @@ return [
         'ask_admin' => 'Onko tämä käyttäjä järjestelmänvalvoja?',
         'ask_email' => 'Sähköpostiosoite',
         'ask_username' => 'Käyttäjänimi',
-        'ask_name_first' => 'Etunimi',
-        'ask_name_last' => 'Sukunimi',
         'ask_password' => 'Salasana',
         'ask_password_tip' => 'Mikäli haluat luoda tilin satunnaisella salasanalla, joka lähetetään sähköpostitse käyttäjälle, suorita tämä komento uudelleen (CTRL+C) ja lisää --no-password tunniste.',
         'ask_password_help' => 'Salasanan on oltava vähintään 8 merkkiä pitkä ja siinä on oltava vähintään yksi iso kirjain ja numero.',
