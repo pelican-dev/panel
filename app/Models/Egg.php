@@ -43,7 +43,9 @@ use Illuminate\Support\Str;
  * @property string $inherit_file_denylist
  * @property array|null $inherit_features
  * @property \Illuminate\Database\Eloquent\Collection|\App\Models\Server[] $servers
+ * @property int|null $servers_count
  * @property \Illuminate\Database\Eloquent\Collection|\App\Models\EggVariable[] $variables
+ * @property int|null $variables_count
  * @property \App\Models\Egg|null $scriptFrom
  * @property \App\Models\Egg|null $configFrom
  */

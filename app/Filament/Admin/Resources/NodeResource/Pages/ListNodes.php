@@ -3,6 +3,7 @@
 namespace App\Filament\Admin\Resources\NodeResource\Pages;
 
 use App\Filament\Admin\Resources\NodeResource;
+use App\Filament\Components\Tables\Columns\NodeHealthColumn;
 use App\Models\Node;
 use Filament\Actions;
 use Filament\Resources\Pages\ListRecords;
@@ -27,10 +28,7 @@ class ListNodes extends ListRecords
                     ->label('UUID')
                     ->searchable()
                     ->hidden(),
-                IconColumn::make('health')
-                    ->alignCenter()
-                    ->state(fn (Node $node) => $node)
-                    ->view('livewire.columns.version-column'),
+                NodeHealthColumn::make('health'),
                 TextColumn::make('name')
                     ->icon('tabler-server-2')
                     ->sortable()

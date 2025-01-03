@@ -52,4 +52,45 @@ enum ContainerStatus: string
             self::Offline => 'gray',
         };
     }
+
+    public function colorHex(): string
+    {
+        return match ($this) {
+            self::Created, self::Restarting => '#2563EB',
+            self::Starting, self::Paused, self::Removing, self::Stopping => '#D97706',
+            self::Running => '#22C55E',
+            self::Exited, self::Missing, self::Dead, self::Offline => '#EF4444',
+        };
+    }
+
+    public function isStartingOrStopping(): bool
+    {
+        return in_array($this, [ContainerStatus::Starting, ContainerStatus::Stopping, ContainerStatus::Restarting]);
+    }
+
+    public function isStartable(): bool
+    {
+        return !in_array($this, [ContainerStatus::Running, ContainerStatus::Starting, ContainerStatus::Stopping, ContainerStatus::Restarting]);
+    }
+
+    public function isRestartable(): bool
+    {
+        if ($this->isStartable()) {
+            return true;
+        }
+
+        return !in_array($this, [ContainerStatus::Offline]);
+    }
+
+    public function isStoppable(): bool
+    {
+        return !in_array($this, [ContainerStatus::Starting, ContainerStatus::Stopping, ContainerStatus::Restarting, ContainerStatus::Exited, ContainerStatus::Offline]);
+    }
+
+    public function isKillable(): bool
+    {
+        // [ContainerStatus::Restarting, ContainerStatus::Removing, ContainerStatus::Dead, ContainerStatus::Created]
+
+        return !in_array($this, [ContainerStatus::Offline, ContainerStatus::Running, ContainerStatus::Exited]);
+    }
 }

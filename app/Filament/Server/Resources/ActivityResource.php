@@ -17,9 +17,9 @@ class ActivityResource extends Resource
 {
     protected static ?string $model = ActivityLog::class;
 
-    protected static ?string $label = 'Activity';
+    protected static ?string $modelLabel = 'Activity';
 
-    protected static ?string $pluralLabel = 'Activity';
+    protected static ?string $pluralModelLabel = 'Activity';
 
     protected static ?int $navigationSort = 8;
 
@@ -50,19 +50,6 @@ class ActivityResource extends Resource
                             ->orWhereIn('users.id', $subusers);
                     });
             });
-    }
-
-    // TODO: find better way handle server conflict state
-    public static function canAccess(): bool
-    {
-        /** @var Server $server */
-        $server = Filament::getTenant();
-
-        if ($server->isInConflictState()) {
-            return false;
-        }
-
-        return parent::canAccess();
     }
 
     public static function canViewAny(): bool

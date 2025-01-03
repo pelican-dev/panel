@@ -6,6 +6,7 @@ use App\Enums\ContainerStatus;
 use App\Enums\ServerState;
 use App\Filament\Admin\Resources\ServerResource;
 use App\Filament\Admin\Resources\ServerResource\RelationManagers\AllocationsRelationManager;
+use App\Filament\Components\Forms\Actions\RotateDatabasePasswordAction;
 use App\Filament\Server\Pages\Console;
 use App\Models\Database;
 use App\Models\DatabaseHost;
@@ -14,7 +15,7 @@ use App\Models\Mount;
 use App\Models\Server;
 use App\Models\ServerVariable;
 use App\Services\Databases\DatabaseManagementService;
-use App\Services\Databases\DatabasePasswordService;
+use App\Services\Eggs\EggChangerService;
 use App\Services\Servers\RandomWordService;
 use App\Services\Servers\ReinstallServerService;
 use App\Services\Servers\ServerDeletionService;
@@ -38,6 +39,7 @@ use Filament\Forms\Components\Tabs\Tab;
 use Filament\Forms\Components\TagsInput;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Toggle;
 use Filament\Forms\Components\ToggleButtons;
 use Filament\Forms\Form;
 use Filament\Forms\Get;
@@ -186,6 +188,35 @@ class EditServer extends EditRecord
                                             ->columns(4)
                                             ->columnSpanFull()
                                             ->schema([
+                                                ToggleButtons::make('unlimited_cpu')
+                                                    ->label('CPU')->inlineLabel()->inline()
+                                                    ->afterStateUpdated(fn (Set $set) => $set('cpu', 0))
+                                                    ->formatStateUsing(fn (Get $get) => $get('cpu') == 0)
+                                                    ->live()
+                                                    ->options([
+                                                        true => 'Unlimited',
+                                                        false => 'Limited',
+                                                    ])
+                                                    ->colors([
+                                                        true => 'primary',
+                                                        false => 'warning',
+                                                    ])
+                                                    ->columnSpan(2),
+
+                                                TextInput::make('cpu')
+                                                    ->dehydratedWhenHidden()
+                                                    ->hidden(fn (Get $get) => $get('unlimited_cpu'))
+                                                    ->label('CPU Limit')->inlineLabel()
+                                                    ->suffix('%')
+                                                    ->required()
+                                                    ->columnSpan(2)
+                                                    ->numeric()
+                                                    ->minValue(0),
+                                            ]),
+                                        Grid::make()
+                                            ->columns(4)
+                                            ->columnSpanFull()
+                                            ->schema([
                                                 ToggleButtons::make('unlimited_mem')
                                                     ->label('Memory')->inlineLabel()->inline()
                                                     ->afterStateUpdated(fn (Set $set) => $set('memory', 0))
@@ -241,36 +272,6 @@ class EditServer extends EditRecord
                                                     ->numeric()
                                                     ->minValue(0),
                                             ]),
-
-                                        Grid::make()
-                                            ->columns(4)
-                                            ->columnSpanFull()
-                                            ->schema([
-                                                ToggleButtons::make('unlimited_cpu')
-                                                    ->label('CPU')->inlineLabel()->inline()
-                                                    ->afterStateUpdated(fn (Set $set) => $set('cpu', 0))
-                                                    ->formatStateUsing(fn (Get $get) => $get('cpu') == 0)
-                                                    ->live()
-                                                    ->options([
-                                                        true => 'Unlimited',
-                                                        false => 'Limited',
-                                                    ])
-                                                    ->colors([
-                                                        true => 'primary',
-                                                        false => 'warning',
-                                                    ])
-                                                    ->columnSpan(2),
-
-                                                TextInput::make('cpu')
-                                                    ->dehydratedWhenHidden()
-                                                    ->hidden(fn (Get $get) => $get('unlimited_cpu'))
-                                                    ->label('CPU Limit')->inlineLabel()
-                                                    ->suffix('%')
-                                                    ->required()
-                                                    ->columnSpan(2)
-                                                    ->numeric()
-                                                    ->minValue(0),
-                                            ]),
                                     ]),
 
                                 Fieldset::make('Advanced Limits')
@@ -285,6 +286,36 @@ class EditServer extends EditRecord
                                             ->columns(4)
                                             ->columnSpanFull()
                                             ->schema([
+                                                Grid::make()
+                                                    ->columns(4)
+                                                    ->columnSpanFull()
+                                                    ->schema([
+                                                        ToggleButtons::make('cpu_pinning')
+                                                            ->label('CPU Pinning')->inlineLabel()->inline()
+                                                            ->default(false)
+                                                            ->afterStateUpdated(fn (Set $set) => $set('threads', []))
+                                                            ->formatStateUsing(fn (Get $get) => !empty($get('threads')))
+                                                            ->live()
+                                                            ->options([
+                                                                false => 'Disabled',
+                                                                true => 'Enabled',
+                                                            ])
+                                                            ->colors([
+                                                                false => 'success',
+                                                                true => 'warning',
+                                                            ])
+                                                            ->columnSpan(2),
+
+                                                        TagsInput::make('threads')
+                                                            ->dehydratedWhenHidden()
+                                                            ->hidden(fn (Get $get) => !$get('cpu_pinning'))
+                                                            ->label('Pinned Threads')->inlineLabel()
+                                                            ->required(fn (Get $get) => $get('cpu_pinning'))
+                                                            ->columnSpan(2)
+                                                            ->separator()
+                                                            ->splitKeys([','])
+                                                            ->placeholder('Add pinned thread, e.g. 0 or 2-4'),
+                                                    ]),
                                                 ToggleButtons::make('swap_support')
                                                     ->live()
                                                     ->label('Swap Memory')->inlineLabel()->inline()
@@ -340,37 +371,6 @@ class EditServer extends EditRecord
                                             ->columns(4)
                                             ->columnSpanFull()
                                             ->schema([
-                                                ToggleButtons::make('cpu_pinning')
-                                                    ->label('CPU Pinning')->inlineLabel()->inline()
-                                                    ->default(false)
-                                                    ->afterStateUpdated(fn (Set $set) => $set('threads', []))
-                                                    ->formatStateUsing(fn (Get $get) => !empty($get('threads')))
-                                                    ->live()
-                                                    ->options([
-                                                        false => 'Disabled',
-                                                        true => 'Enabled',
-                                                    ])
-                                                    ->colors([
-                                                        false => 'success',
-                                                        true => 'warning',
-                                                    ])
-                                                    ->columnSpan(2),
-
-                                                TagsInput::make('threads')
-                                                    ->dehydratedWhenHidden()
-                                                    ->hidden(fn (Get $get) => !$get('cpu_pinning'))
-                                                    ->label('Pinned Threads')->inlineLabel()
-                                                    ->required(fn (Get $get) => $get('cpu_pinning'))
-                                                    ->columnSpan(2)
-                                                    ->separator()
-                                                    ->splitKeys([','])
-                                                    ->placeholder('Add pinned thread, e.g. 0 or 2-4'),
-                                            ]),
-
-                                        Grid::make()
-                                            ->columns(4)
-                                            ->columnSpanFull()
-                                            ->schema([
                                                 ToggleButtons::make('oom_killer')
                                                     ->label('OOM Killer')->inlineLabel()->inline()
                                                     ->columnSpan(2)
@@ -398,16 +398,19 @@ class EditServer extends EditRecord
                                     ])
                                     ->schema([
                                         TextInput::make('allocation_limit')
+                                            ->label('Allocations')
                                             ->suffixIcon('tabler-network')
                                             ->required()
                                             ->minValue(0)
                                             ->numeric(),
                                         TextInput::make('database_limit')
+                                            ->label('Databases')
                                             ->suffixIcon('tabler-database')
                                             ->required()
                                             ->minValue(0)
                                             ->numeric(),
                                         TextInput::make('backup_limit')
+                                            ->label('Backups')
                                             ->suffixIcon('tabler-copy-check')
                                             ->required()
                                             ->minValue(0)
@@ -418,7 +421,7 @@ class EditServer extends EditRecord
                                         'default' => 1,
                                         'sm' => 2,
                                         'md' => 3,
-                                        'lg' => 3,
+                                        'lg' => 4,
                                     ])
                                     ->schema([
                                         Select::make('select_image')
@@ -439,7 +442,12 @@ class EditServer extends EditRecord
                                                 return array_flip($images) + ['ghcr.io/custom-image' => 'Custom Image'];
                                             })
                                             ->selectablePlaceholder(false)
-                                            ->columnSpan(1),
+                                            ->columnSpan([
+                                                'default' => 1,
+                                                'sm' => 2,
+                                                'md' => 3,
+                                                'lg' => 2,
+                                            ]),
 
                                         TextInput::make('image')
                                             ->label('Image')
@@ -455,7 +463,12 @@ class EditServer extends EditRecord
                                                 }
                                             })
                                             ->placeholder('Enter a custom Image')
-                                            ->columnSpan(2),
+                                            ->columnSpan([
+                                                'default' => 1,
+                                                'sm' => 2,
+                                                'md' => 3,
+                                                'lg' => 2,
+                                            ]),
 
                                         KeyValue::make('docker_labels')
                                             ->label('Container Labels')
@@ -474,7 +487,7 @@ class EditServer extends EditRecord
                             ])
                             ->schema([
                                 Select::make('egg_id')
-                                    ->disabledOn('edit')
+                                    ->disabled()
                                     ->prefixIcon('tabler-egg')
                                     ->columnSpan([
                                         'default' => 6,
@@ -485,7 +498,28 @@ class EditServer extends EditRecord
                                     ->relationship('egg', 'name')
                                     ->searchable()
                                     ->preload()
-                                    ->required(),
+                                    ->required()
+                                    ->hintAction(
+                                        Action::make('change_egg')
+                                            ->action(function (array $data, Server $server, EggChangerService $service) {
+                                                $service->handle($server, $data['egg_id'], $data['keepOldVariables']);
+
+                                                // Use redirect instead of fillForm to prevent server variables from duplicating
+                                                $this->redirect($this->getUrl(['record' => $server, 'tab' => '-egg-tab']), true);
+                                            })
+                                            ->form(fn (Server $server) => [
+                                                Select::make('egg_id')
+                                                    ->label('New Egg')
+                                                    ->prefixIcon('tabler-egg')
+                                                    ->options(fn () => Egg::all()->filter(fn (Egg $egg) => $egg->id !== $server->egg->id)->mapWithKeys(fn (Egg $egg) => [$egg->id => $egg->name]))
+                                                    ->searchable()
+                                                    ->preload()
+                                                    ->required(),
+                                                Toggle::make('keepOldVariables')
+                                                    ->label('Keep old variables if possible?')
+                                                    ->default(true),
+                                            ])
+                                    ),
 
                                 ToggleButtons::make('skip_scripts')
                                     ->label('Run Egg Install Script?')->inline()
@@ -644,31 +678,24 @@ class EditServer extends EditRecord
                                             ->password()
                                             ->revealable()
                                             ->columnSpan(1)
-                                            ->hintAction(
-                                                Action::make('rotate')
-                                                    ->authorize(fn (Database $database) => auth()->user()->can('update database', $database))
-                                                    ->icon('tabler-refresh')
-                                                    ->modalHeading('Change Database Password?')
-                                                    ->action(fn (DatabasePasswordService $service, $record, $set, $get) => $this->rotatePassword($service, $record, $set, $get))
-                                                    ->requiresConfirmation()
-                                            )
+                                            ->hintAction(RotateDatabasePasswordAction::make())
                                             ->formatStateUsing(fn (Database $database) => $database->password),
                                         TextInput::make('remote')
                                             ->disabled()
-                                            ->formatStateUsing(fn ($record) => $record->remote === '%' ? 'Anywhere ( % )' : $record->remote)
+                                            ->formatStateUsing(fn (Database $record) => $record->remote === '%' ? 'Anywhere ( % )' : $record->remote)
                                             ->columnSpan(1)
                                             ->label('Connections From'),
                                         TextInput::make('max_connections')
                                             ->disabled()
-                                            ->formatStateUsing(fn ($record) => $record->max_connections === 0 ? 'Unlimited' : $record->max_connections)
+                                            ->formatStateUsing(fn (Database $record) => $record->max_connections === 0 ? 'Unlimited' : $record->max_connections)
                                             ->columnSpan(1),
-                                        TextInput::make('JDBC')
+                                        TextInput::make('jdbc')
                                             ->disabled()
                                             ->password()
                                             ->revealable()
                                             ->label('JDBC Connection String')
                                             ->columnSpan(2)
-                                            ->formatStateUsing(fn (Get $get, $record) => 'jdbc:mysql://' . $get('username') . ':' . urlencode($record->password) . '@' . $record->host->host . ':' . $record->host->port . '/' . $get('database')),
+                                            ->formatStateUsing(fn (Database $record) => $record->jdbc),
                                     ])
                                     ->relationship('databases')
                                     ->deletable(false)
@@ -707,8 +734,10 @@ class EditServer extends EditRecord
                                                 ->label('Database Host')
                                                 ->required()
                                                 ->placeholder('Select Database Host')
-                                                ->relationship('node.databaseHosts', 'name',
-                                                    fn (Builder $query, Server $server) => $query->whereRelation('nodes', 'nodes.id', $server->node_id))
+                                                ->options(fn (Server $server) => DatabaseHost::query()
+                                                    ->whereHas('nodes', fn ($query) => $query->where('nodes.id', $server->node_id))
+                                                    ->pluck('name', 'id')
+                                                )
                                                 ->default(fn () => (DatabaseHost::query()->first())?->id)
                                                 ->selectablePlaceholder(false),
                                             TextInput::make('database')
@@ -926,14 +955,5 @@ class EditServer extends EditRecord
             ->each(fn ($value) => str($value)->trim())
             ->mapWithKeys(fn ($value) => [$value => $value])
             ->all();
-    }
-
-    protected function rotatePassword(DatabasePasswordService $service, Database $record, Set $set, Get $get): void
-    {
-        $newPassword = $service->handle($record);
-        $jdbcString = 'jdbc:mysql://' . $get('username') . ':' . urlencode($newPassword) . '@' . $record->host->host . ':' . $record->host->port . '/' . $get('database');
-
-        $set('password', $newPassword);
-        $set('JDBC', $jdbcString);
     }
 }

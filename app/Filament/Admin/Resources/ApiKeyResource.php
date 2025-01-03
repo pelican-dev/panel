@@ -5,13 +5,16 @@ namespace App\Filament\Admin\Resources;
 use App\Filament\Admin\Resources\ApiKeyResource\Pages;
 use App\Models\ApiKey;
 use Filament\Resources\Resource;
-use Illuminate\Database\Eloquent\Model;
 
 class ApiKeyResource extends Resource
 {
     protected static ?string $model = ApiKey::class;
 
-    protected static ?string $label = 'API Key';
+    protected static ?string $modelLabel = 'Application API Key';
+
+    protected static ?string $pluralModelLabel = 'Application API Keys';
+
+    protected static ?string $navigationLabel = 'API Keys';
 
     protected static ?string $navigationIcon = 'tabler-key';
 
@@ -20,11 +23,6 @@ class ApiKeyResource extends Resource
     public static function getNavigationBadge(): ?string
     {
         return static::getModel()::where('key_type', ApiKey::TYPE_APPLICATION)->count() ?: null;
-    }
-
-    public static function canEdit(Model $record): bool
-    {
-        return false;
     }
 
     public static function getPages(): array

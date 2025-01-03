@@ -13,12 +13,18 @@ class EditSchedule extends EditRecord
     protected function getHeaderActions(): array
     {
         return [
-            Actions\ViewAction::make(),
             Actions\DeleteAction::make(),
+            $this->getSaveFormAction()->formId('form')->label('Save'),
+            $this->getCancelFormAction()->formId('form'),
         ];
     }
 
     public function getBreadcrumbs(): array
+    {
+        return [];
+    }
+
+    protected function getFormActions(): array
     {
         return [];
     }

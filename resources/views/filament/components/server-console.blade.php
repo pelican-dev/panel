@@ -20,7 +20,6 @@
             class="w-full focus:outline-none focus:ring-0 border-none"
             style="background-color: #202A32;"
             type="text"
-            autofocus
             :readonly="{{ $this->canSendCommand() ? 'false' : 'true' }}"
             title="{{ $this->canSendCommand() ? '' : 'Can\'t send command when the server is Offline' }}"
             placeholder="{{ $this->canSendCommand() ? 'Type a command...' : 'Server Offline...' }}"
@@ -126,7 +125,7 @@
                 case 'status':
                     handlePowerChangeEvent(args[0]);
 
-                    $wire.dispatch('powerChanged', {state: args[0]})
+                    $wire.dispatch('console-status', { state: args[0] });
                     break;
                 case 'transfer status':
                     handleTransferStatus(args[0]);
@@ -135,13 +134,19 @@
                     handleDaemonErrorOutput(args[0]);
                     break;
                 case 'stats':
-                    $wire.dispatchSelf('storeStats', { data: args[0] });
+                    $wire.dispatchSelf('store-stats', { data: args[0] });
                     break;
                 case 'auth success':
                     socket.send(JSON.stringify({
                         'event': 'send logs',
                         'args': [null]
                     }));
+                    break;
+                case 'install started':
+                    $wire.dispatch('console-install-started');
+                    break;
+                case 'install completed':
+                    $wire.dispatch('console-install-completed');
                     break;
                 case 'token expiring':
                 case 'token expired':
@@ -162,14 +167,19 @@
             }));
         };
 
-        Livewire.on('setServerState', ({ state }) => {
+        Livewire.on('setServerState', ({ state, uuid }) => {
+            const serverUuid = "{{ $this->server->uuid }}";
+            if (uuid !== serverUuid) {
+                return;
+            }
+
             socket.send(JSON.stringify({
                 'event': 'set state',
                 'args': [state]
             }));
         });
 
-        $wire.$on('sendServerCommand', ({ command }) => {
+        $wire.on('sendServerCommand', ({ command }) => {
             socket.send(JSON.stringify({
                 'event': 'send command',
                 'args': [command]

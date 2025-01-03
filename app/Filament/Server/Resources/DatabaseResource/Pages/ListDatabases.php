@@ -2,22 +2,20 @@
 
 namespace App\Filament\Server\Resources\DatabaseResource\Pages;
 
+use App\Filament\Components\Forms\Actions\RotateDatabasePasswordAction;
+use App\Filament\Components\Tables\Columns\DateTimeColumn;
 use App\Filament\Server\Resources\DatabaseResource;
 use App\Models\Database;
 use App\Models\DatabaseHost;
 use App\Models\Permission;
 use App\Models\Server;
 use App\Services\Databases\DatabaseManagementService;
-use App\Services\Databases\DatabasePasswordService;
-use App\Tables\Columns\DateTimeColumn;
 use Filament\Actions\CreateAction;
 use Filament\Facades\Filament;
-use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
-use Filament\Forms\Get;
 use Filament\Resources\Pages\ListRecords;
 use Filament\Tables\Actions\DeleteAction;
 use Filament\Tables\Actions\ViewAction;
@@ -45,16 +43,8 @@ class ListDatabases extends ListRecords
                     ->password()->revealable()
                     ->hidden(fn () => !auth()->user()->can(Permission::ACTION_DATABASE_VIEW_PASSWORD, $server))
                     ->hintAction(
-                        Action::make('rotate')
+                        RotateDatabasePasswordAction::make()
                             ->authorize(fn () => auth()->user()->can(Permission::ACTION_DATABASE_UPDATE, $server))
-                            ->icon('tabler-refresh')
-                            ->requiresConfirmation()
-                            ->action(function (DatabasePasswordService $service, Database $database, $set, $get) {
-                                $newPassword = $service->handle($database);
-
-                                $set('password', $newPassword);
-                                $set('JDBC', 'jdbc:mysql://' . $get('username') . ':' . urlencode($newPassword) . '@' . $database->host->host . ':' . $database->host->port . '/' . $get('database'));
-                            })
                     )
                     ->suffixAction(CopyAction::make())
                     ->formatStateUsing(fn (Database $database) => $database->password),
@@ -62,13 +52,13 @@ class ListDatabases extends ListRecords
                     ->label('Connections From'),
                 TextInput::make('max_connections')
                     ->formatStateUsing(fn (Database $database) => $database->max_connections === 0 ? $database->max_connections : 'Unlimited'),
-                TextInput::make('JDBC')
+                TextInput::make('jdbc')
                     ->label('JDBC Connection String')
                     ->password()->revealable()
                     ->hidden(!auth()->user()->can(Permission::ACTION_DATABASE_VIEW_PASSWORD, $server))
                     ->suffixAction(CopyAction::make())
                     ->columnSpanFull()
-                    ->formatStateUsing(fn (Get $get, Database $database) => 'jdbc:mysql://' . $get('username') . ':' . urlencode($database->password) . '@' . $database->host->host . ':' . $database->host->port . '/' . $get('database')),
+                    ->formatStateUsing(fn (Database $database) => $database->jdbc),
             ]);
     }
 

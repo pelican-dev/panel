@@ -41,8 +41,11 @@ use Symfony\Component\Yaml\Yaml;
  * @property \Carbon\Carbon $created_at
  * @property \Carbon\Carbon $updated_at
  * @property \App\Models\Mount[]|\Illuminate\Database\Eloquent\Collection $mounts
+ * @property int|null $mounts_count
  * @property \App\Models\Server[]|\Illuminate\Database\Eloquent\Collection $servers
+ * @property int|null $servers_count
  * @property \App\Models\Allocation[]|\Illuminate\Database\Eloquent\Collection $allocations
+ * @property int|null $allocations_count
  */
 class Node extends Model
 {

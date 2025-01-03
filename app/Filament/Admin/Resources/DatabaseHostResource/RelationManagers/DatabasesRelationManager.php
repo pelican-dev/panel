@@ -2,14 +2,11 @@
 
 namespace App\Filament\Admin\Resources\DatabaseHostResource\RelationManagers;
 
+use App\Filament\Components\Forms\Actions\RotateDatabasePasswordAction;
+use App\Filament\Components\Tables\Columns\DateTimeColumn;
 use App\Models\Database;
-use App\Services\Databases\DatabasePasswordService;
-use App\Tables\Columns\DateTimeColumn;
-use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
-use Filament\Forms\Get;
-use Filament\Forms\Set;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables\Actions\DeleteAction;
 use Filament\Tables\Actions\ViewAction;
@@ -30,25 +27,19 @@ class DatabasesRelationManager extends RelationManager
                 TextInput::make('password')
                     ->password()
                     ->revealable()
-                    ->hintAction(
-                        Action::make('rotate')
-                            ->icon('tabler-refresh')
-                            ->requiresConfirmation()
-                            ->action(fn (DatabasePasswordService $service, Database $database, $set, $get) => $this->rotatePassword($service, $database, $set, $get))
-                            ->authorize(fn (Database $database) => auth()->user()->can('update database', $database))
-                    )
+                    ->hintAction(RotateDatabasePasswordAction::make())
                     ->formatStateUsing(fn (Database $database) => $database->password),
                 TextInput::make('remote')
                     ->label('Connections From')
-                    ->formatStateUsing(fn ($record) => $record->remote === '%' ? 'Anywhere ( % )' : $record->remote),
+                    ->formatStateUsing(fn (Database $record) => $record->remote === '%' ? 'Anywhere ( % )' : $record->remote),
                 TextInput::make('max_connections')
-                    ->formatStateUsing(fn ($record) => $record->max_connections === 0 ? 'Unlimited' : $record->max_connections),
-                TextInput::make('JDBC')
+                    ->formatStateUsing(fn (Database $record) => $record->max_connections === 0 ? 'Unlimited' : $record->max_connections),
+                TextInput::make('jdbc')
                     ->label('JDBC Connection String')
                     ->columnSpanFull()
                     ->password()
                     ->revealable()
-                    ->formatStateUsing(fn (Get $get, Database $database) => 'jdbc:mysql://' . $get('username') . ':' . urlencode($database->password) . '@' . $database->host->host . ':' . $database->host->port . '/' . $get('database')),
+                    ->formatStateUsing(fn (Database $database) => $database->jdbc),
             ]);
     }
 
@@ -62,7 +53,7 @@ class DatabasesRelationManager extends RelationManager
                 TextColumn::make('username')
                     ->icon('tabler-user'),
                 TextColumn::make('remote')
-                    ->formatStateUsing(fn ($record) => $record->remote === '%' ? 'Anywhere ( % )' : $record->remote),
+                    ->formatStateUsing(fn (Database $record) => $record->remote === '%' ? 'Anywhere ( % )' : $record->remote),
                 TextColumn::make('server.name')
                     ->icon('tabler-brand-docker')
                     ->url(fn (Database $database) => route('filament.admin.resources.servers.edit', ['record' => $database->server_id])),
@@ -77,14 +68,5 @@ class DatabasesRelationManager extends RelationManager
                     ->color('primary')
                     ->hidden(fn () => !auth()->user()->can('viewList database')),
             ]);
-    }
-
-    protected function rotatePassword(DatabasePasswordService $service, Database $database, Set $set, Get $get): void
-    {
-        $newPassword = $service->handle($database);
-        $jdbcString = 'jdbc:mysql://' . $get('username') . ':' . urlencode($newPassword) . '@' . $database->host->host . ':' . $database->host->port . '/' . $get('database');
-
-        $set('password', $newPassword);
-        $set('JDBC', $jdbcString);
     }
 }

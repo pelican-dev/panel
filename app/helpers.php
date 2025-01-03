@@ -19,7 +19,7 @@ if (!function_exists('is_ip')) {
 }
 
 if (!function_exists('convert_bytes_to_readable')) {
-    function convert_bytes_to_readable(int $bytes, int $decimals = 2): string
+    function convert_bytes_to_readable(int $bytes, int $decimals = 2, ?int $base = null): string
     {
         $conversionUnit = config('panel.use_binary_prefix') ? 1024 : 1000;
         $suffix = config('panel.use_binary_prefix') ? ['Bytes', 'KiB', 'MiB', 'GiB', 'TiB'] : ['Bytes', 'KB', 'MB', 'GB', 'TB'];
@@ -28,10 +28,10 @@ if (!function_exists('convert_bytes_to_readable')) {
             return '0 ' . $suffix[0];
         }
 
-        $base = log($bytes) / log($conversionUnit);
-        $f_base = floor($base);
+        $fromBase = log($bytes) / log($conversionUnit);
+        $base ??= floor($fromBase);
 
-        return round(pow($conversionUnit, $base - $f_base), $decimals) . ' ' . $suffix[$f_base];
+        return round(pow($conversionUnit, $fromBase - $base), $decimals) . ' ' . $suffix[$base];
     }
 }
 

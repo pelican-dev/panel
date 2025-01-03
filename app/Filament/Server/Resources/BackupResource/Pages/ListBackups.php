@@ -12,8 +12,8 @@ use App\Models\Server;
 use App\Repositories\Daemon\DaemonBackupRepository;
 use App\Services\Backups\DownloadLinkService;
 use App\Services\Backups\InitiateBackupService;
-use App\Tables\Columns\BytesColumn;
-use App\Tables\Columns\DateTimeColumn;
+use App\Filament\Components\Tables\Columns\BytesColumn;
+use App\Filament\Components\Tables\Columns\DateTimeColumn;
 use Filament\Actions;
 use Filament\Facades\Filament;
 use Filament\Forms\Components\Checkbox;
@@ -44,8 +44,7 @@ class ListBackups extends ListRecords
             ->schema([
                 TextInput::make('name')
                     ->label('Name')
-                    ->columnSpanFull()
-                    ->required(),
+                    ->columnSpanFull(),
                 TextArea::make('ignored')
                     ->columnSpanFull()
                     ->label('Ignored Files & Directories'),
@@ -74,6 +73,7 @@ class ListBackups extends ListRecords
                     ->label('Successful')
                     ->boolean(),
                 IconColumn::make('is_locked')
+                    ->visibleFrom('md')
                     ->label('Lock Status')
                     ->icon(fn (Backup $backup) => !$backup->is_locked ? 'tabler-lock-open' : 'tabler-lock'),
             ])

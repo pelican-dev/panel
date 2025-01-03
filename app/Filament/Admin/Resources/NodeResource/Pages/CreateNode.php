@@ -23,8 +23,6 @@ class CreateNode extends CreateRecord
 
     protected static bool $canCreateAnother = false;
 
-    protected ?string $subheading = 'which is a machine that runs your Servers';
-
     public function form(Forms\Form $form): Forms\Form
     {
         return $form

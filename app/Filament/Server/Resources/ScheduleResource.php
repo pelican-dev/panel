@@ -14,6 +14,7 @@ use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
+use Filament\Forms\Components\ToggleButtons;
 use Filament\Forms\Form;
 use Filament\Forms\Set;
 use Filament\Resources\Resource;
@@ -63,55 +64,100 @@ class ScheduleResource extends Resource
     public static function form(Form $form): Form
     {
         return $form
-            ->columns(10)
+            ->columns([
+                'default' => 4,
+                'lg' => 5,
+            ])
             ->schema([
                 TextInput::make('name')
-                    ->columnSpan(10)
+                    ->columnSpan([
+                        'default' => 4,
+                        'md' => 3,
+                        'lg' => 4,
+                    ])
                     ->label('Schedule Name')
                     ->placeholder('A human readable identifier for this schedule.')
                     ->autocomplete(false)
                     ->required(),
+                ToggleButtons::make('Status')
+                    ->formatStateUsing(fn (Schedule $schedule) => !$schedule->is_active ? 'inactive' : ($schedule->is_processing ? 'processing' : 'active'))
+                    ->options(fn (Schedule $schedule) => !$schedule->is_active ? ['inactive' => 'Inactive'] : ($schedule->is_processing ? ['processing' => 'Processing'] : ['active' => 'Active']))
+                    ->colors([
+                        'inactive' => 'danger',
+                        'processing' => 'warning',
+                        'active' => 'success',
+                    ])
+                    ->visibleOn('view')
+                    ->columnSpan([
+                        'default' => 4,
+                        'md' => 1,
+                        'lg' => 1,
+                    ]),
                 Toggle::make('only_when_online')
                     ->label('Only when Server is Online?')
                     ->hintIconTooltip('Only execute this schedule when the server is in a running state.')
                     ->hintIcon('tabler-question-mark')
-                    ->columnSpan(5)
+                    ->inline(false)
+                    ->columnSpan([
+                        'default' => 2,
+                        'lg' => 3,
+                    ])
                     ->required()
                     ->default(1),
                 Toggle::make('is_active')
                     ->label('Enable Schedule?')
                     ->hintIconTooltip('This schedule will be executed automatically if enabled.')
                     ->hintIcon('tabler-question-mark')
-                    ->columnSpan(5)
+                    ->inline(false)
+                    ->columnSpan([
+                        'default' => 2,
+                        'lg' => 2,
+                    ])
                     ->required()
                     ->default(1),
                 TextInput::make('cron_minute')
-                    ->columnSpan(2)
+                    ->columnSpan([
+                        'default' => 2,
+                        'lg' => 1,
+                    ])
                     ->label('Minute')
                     ->default('*/5')
                     ->required(),
                 TextInput::make('cron_hour')
-                    ->columnSpan(2)
+                    ->columnSpan([
+                        'default' => 2,
+                        'lg' => 1,
+                    ])
                     ->label('Hour')
                     ->default('*')
                     ->required(),
                 TextInput::make('cron_day_of_month')
-                    ->columnSpan(2)
+                    ->columnSpan([
+                        'default' => 2,
+                        'lg' => 1,
+                    ])
                     ->label('Day of Month')
                     ->default('*')
                     ->required(),
                 TextInput::make('cron_month')
-                    ->columnSpan(2)
+                    ->columnSpan([
+                        'default' => 2,
+                        'lg' => 1,
+                    ])
                     ->label('Month')
                     ->default('*')
                     ->required(),
                 TextInput::make('cron_day_of_week')
-                    ->columnSpan(2)
+                    ->columnSpan([
+                        'default' => 2,
+                        'lg' => 1,
+                    ])
                     ->label('Day of Week')
                     ->default('*')
                     ->required(),
                 Section::make('Presets')
                     ->hiddenOn('view')
+                    ->columns(1)
                     ->schema([
                         Actions::make([
                             Action::make('hourly')

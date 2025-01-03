@@ -2,11 +2,15 @@
 
 namespace App\Providers;
 
+use App\Checks\NodeVersionsCheck;
+use App\Checks\PanelVersionCheck;
+use App\Checks\UsedDiskSpaceCheck;
 use App\Filament\Server\Pages\Console;
 use App\Models;
 use App\Models\ApiKey;
 use App\Models\Node;
 use App\Models\User;
+use App\Services\Helpers\SoftwareVersionService;
 use Dedoc\Scramble\Scramble;
 use Dedoc\Scramble\Support\Generator\OpenApi;
 use Dedoc\Scramble\Support\Generator\SecurityScheme;
@@ -16,6 +20,7 @@ use Filament\Support\Facades\FilamentView;
 use Filament\View\PanelsRenderHook;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Foundation\Application;
+use Illuminate\Foundation\Console\AboutCommand;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Http;
@@ -24,13 +29,19 @@ use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Str;
 use Laravel\Sanctum\Sanctum;
 use SocialiteProviders\Manager\SocialiteWasCalled;
+use Spatie\Health\Checks\Checks\CacheCheck;
+use Spatie\Health\Checks\Checks\DatabaseCheck;
+use Spatie\Health\Checks\Checks\DebugModeCheck;
+use Spatie\Health\Checks\Checks\EnvironmentCheck;
+use Spatie\Health\Checks\Checks\ScheduleCheck;
+use Spatie\Health\Facades\Health;
 
 class AppServiceProvider extends ServiceProvider
 {
     /**
      * Bootstrap any application services.
      */
-    public function boot(Application $app): void
+    public function boot(Application $app, SoftwareVersionService $versionService): void
     {
         // If the APP_URL value is set with https:// make sure we force it here. Theoretically
         // this should just work with the proxy logic, but there are a lot of cases where it
@@ -101,9 +112,33 @@ class AppServiceProvider extends ServiceProvider
             scopes: Console::class,
         );
 
+        // Don't run any health checks during tests
+        if (!$app->runningUnitTests()) {
+            Health::checks([
+                DebugModeCheck::new()->if($app->isProduction()),
+                EnvironmentCheck::new(),
+                CacheCheck::new(),
+                DatabaseCheck::new(),
+                ScheduleCheck::new(),
+                UsedDiskSpaceCheck::new(),
+                PanelVersionCheck::new(),
+                NodeVersionsCheck::new(),
+            ]);
+        }
+
         Gate::before(function (User $user, $ability) {
             return $user->isRootAdmin() ? true : null;
         });
+
+        AboutCommand::add('Pelican', [
+            'Panel Version' => $versionService->currentPanelVersion(),
+            'Latest Version' => $versionService->latestPanelVersion(),
+            'Up-to-Date' => $versionService->isLatestPanel() ? '<fg=green;options=bold>Yes</>' : '<fg=red;options=bold>No</>',
+        ]);
+
+        AboutCommand::add('Drivers', 'Backups', config('backups.default'));
+
+        AboutCommand::add('Environment', 'Installation Directory', base_path());
     }
 
     /**

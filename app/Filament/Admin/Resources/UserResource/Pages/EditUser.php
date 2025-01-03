@@ -5,7 +5,6 @@ namespace App\Filament\Admin\Resources\UserResource\Pages;
 use App\Filament\Admin\Resources\UserResource;
 use App\Models\Role;
 use App\Models\User;
-use App\Services\Helpers\LanguageService;
 use Filament\Actions\DeleteAction;
 use Filament\Forms\Components\CheckboxList;
 use Filament\Forms\Components\Hidden;
@@ -25,19 +24,25 @@ class EditUser extends EditRecord
         return $form
             ->schema([
                 Section::make()->schema([
-                    TextInput::make('username')->required()->minLength(3)->maxLength(255),
-                    TextInput::make('email')->email()->required()->maxLength(255),
+                    TextInput::make('username')
+                        ->required()
+                        ->minLength(3)
+                        ->maxLength(255),
+                    TextInput::make('email')
+                        ->email()
+                        ->required()
+                        ->maxLength(255),
                     TextInput::make('password')
                         ->dehydrateStateUsing(fn (string $state): string => Hash::make($state))
                         ->dehydrated(fn (?string $state): bool => filled($state))
-                        ->required(fn (string $operation): bool => $operation === 'create')
                         ->password(),
                     Select::make('language')
                         ->required()
                         ->hidden()
                         ->default('en')
-                        ->options(fn (LanguageService $languageService) => $languageService->getAvailableLanguages()),
-                    Hidden::make('skipValidation')->default(true),
+                        ->options(fn (User $user) => $user->getAvailableLanguages()),
+                    Hidden::make('skipValidation')
+                        ->default(true),
                     CheckboxList::make('roles')
                         ->disabled(fn (User $user) => $user->id === auth()->user()->id)
                         ->disableOptionWhen(fn (string $value): bool => $value == Role::getRootAdmin()->id)
@@ -45,7 +50,8 @@ class EditUser extends EditRecord
                         ->label('Admin Roles')
                         ->columnSpanFull()
                         ->bulkToggleable(false),
-                ])->columns(),
+                ])
+                    ->columns(['default' => 1, 'lg' => 3]),
             ]);
     }
 
