@@ -25,8 +25,6 @@ class UserTransformer extends BaseClientTransformer
             'uuid' => $user->uuid,
             'username' => $user->username,
             'email' => $user->email,
-            'first_name' => $user->name_first,
-            'last_name' => $user->name_last,
             'language' => $user->language,
             'image' => 'https://gravatar.com/avatar/' . md5(Str::lower($user->email)), // deprecated
             'admin' => $user->isRootAdmin(), // deprecated, use "root_admin"

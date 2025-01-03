@@ -40,8 +40,6 @@ use Spatie\Permission\Traits\HasRoles;
  * @property string $uuid
  * @property string $username
  * @property string $email
- * @property string|null $name_first
- * @property string|null $name_last
  * @property string $password
  * @property string|null $remember_token
  * @property string $language
@@ -78,8 +76,6 @@ use Spatie\Permission\Traits\HasRoles;
  * @method static Builder|User whereId($value)
  * @method static Builder|User whereLanguage($value)
  * @method static Builder|User whereTimezone($value)
- * @method static Builder|User whereNameFirst($value)
- * @method static Builder|User whereNameLast($value)
  * @method static Builder|User wherePassword($value)
  * @method static Builder|User whereRememberToken($value)
  * @method static Builder|User whereTotpAuthenticatedAt($value)
@@ -126,8 +122,6 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
         'external_id',
         'username',
         'email',
-        'name_first',
-        'name_last',
         'password',
         'language',
         'timezone',
@@ -152,8 +146,6 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
         'timezone' => 'UTC',
         'use_totp' => false,
         'totp_secret' => null,
-        'name_first' => '',
-        'name_last' => '',
         'oauth' => '[]',
     ];
 
@@ -165,8 +157,6 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
         'email' => 'required|email|between:1,255|unique:users,email',
         'external_id' => 'sometimes|nullable|string|max:255|unique:users,external_id',
         'username' => 'required|between:1,255|unique:users,username',
-        'name_first' => 'nullable|string|between:0,255',
-        'name_last' => 'nullable|string|between:0,255',
         'password' => 'sometimes|nullable|string',
         'language' => 'string',
         'timezone' => 'string',
@@ -263,14 +253,6 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
     public function setEmailAttribute(string $value): void
     {
         $this->attributes['email'] = mb_strtolower($value);
-    }
-
-    /**
-     * Return a concatenated result for the accounts full name.
-     */
-    public function getNameAttribute(): string
-    {
-        return trim($this->name_first . ' ' . $this->name_last);
     }
 
     /**
@@ -394,7 +376,7 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
 
     public function getFilamentName(): string
     {
-        return $this->name_first ?: $this->username;
+        return $this->username;
     }
 
     public function getFilamentAvatarUrl(): ?string
