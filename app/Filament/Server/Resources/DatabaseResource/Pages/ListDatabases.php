@@ -6,7 +6,6 @@ use App\Filament\Components\Forms\Actions\RotateDatabasePasswordAction;
 use App\Filament\Components\Tables\Columns\DateTimeColumn;
 use App\Filament\Server\Resources\DatabaseResource;
 use App\Models\Database;
-use App\Models\DatabaseHost;
 use App\Models\Permission;
 use App\Models\Server;
 use App\Services\Databases\DatabaseManagementService;

@@ -81,8 +81,7 @@ class Backup extends Model
     }
 
     /**
-     * @param \Illuminate\Database\Query\Builder $query
-     *
+     * @param  \Illuminate\Database\Query\Builder  $query
      * @return BackupQueryBuilder<\Illuminate\Database\Eloquent\Model>
      */
     public function newEloquentBuilder($query): BackupQueryBuilder

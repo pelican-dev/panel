@@ -25,8 +25,7 @@ class LanguageService
         'tr',
     ];
 
-    public function __construct(#[Storage('local')] protected Filesystem $filesystem)
-    { }
+    public function __construct(#[Storage('local')] protected Filesystem $filesystem) {}
 
     public function isLanguageTranslated(string $countryCode = 'en'): bool
     {

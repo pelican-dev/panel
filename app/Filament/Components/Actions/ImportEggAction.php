@@ -10,7 +10,6 @@ use Filament\Forms\Components\Tabs;
 use Filament\Forms\Components\Tabs\Tab;
 use Filament\Forms\Components\TextInput;
 use Filament\Notifications\Notification;
-use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 
 class ImportEggAction extends Action
 {

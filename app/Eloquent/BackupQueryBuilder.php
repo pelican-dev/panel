@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Builder;
 
 /**
  * @template TModel of \Illuminate\Database\Eloquent\Model
+ *
  * @extends Builder<TModel>
  */
 class BackupQueryBuilder extends Builder

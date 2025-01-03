@@ -49,8 +49,6 @@ abstract class BaseTransformer extends TransformerAbstract
 
     /**
      * Returns a new transformer instance with the request set on the instance.
-     *
-     * @return static
      */
     public static function fromRequest(Request $request): static
     {

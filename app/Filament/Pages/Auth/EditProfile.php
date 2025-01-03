@@ -211,7 +211,7 @@ class EditProfile extends BaseEditProfile
                                             'connectPaths' => true,
                                             'drawCircularModules' => true,
                                             // 'circleRadius' => 0.45,
-                                            'svgDefs'=> '
+                                            'svgDefs' => '
                                                 <linearGradient id="gradient" x1="100%" y2="100%">
                                                     <stop stop-color="#7dd4fc" offset="0"/>
                                                     <stop stop-color="#38bdf8" offset="0.5"/>
@@ -225,7 +225,7 @@ class EditProfile extends BaseEditProfile
                                         ]);
 
                                         // https://github.com/chillerlan/php-qrcode/blob/main/examples/svgWithLogo.php
-                                        
+
                                         $image = (new QRCode($options))->render($url);
 
                                         return [
