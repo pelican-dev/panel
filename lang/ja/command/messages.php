@@ -11,8 +11,6 @@ return [
         'ask_admin' => 'このユーザーは管理者ですか？',
         'ask_email' => 'メールアドレス',
         'ask_username' => 'ユーザー名',
-        'ask_name_first' => '名',
-        'ask_name_last' => '姓',
         'ask_password' => 'パスワード',
         'ask_password_tip' => 'ランダムなパスワードでアカウントを作成したい場合は、コマンド「CTRL+C」を実行し、フラグ「--no-password」を設定してください。',
         'ask_password_help' => 'パスワードは8文字以上で、1文字以上の大文字、数字が必要です。',

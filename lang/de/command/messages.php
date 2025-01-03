@@ -11,8 +11,6 @@ return [
         'ask_admin' => 'Ist dieses Benutzerkonto ein Administratorkonto?',
         'ask_email' => 'E-Mail Adresse',
         'ask_username' => 'Benutzername',
-        'ask_name_first' => 'Vorname',
-        'ask_name_last' => 'Nachname',
         'ask_password' => 'Passwort',
         'ask_password_tip' => 'Wenn du ein Benutzerkonto mit einem zufälligen Passwort erstellen möchtest, führe diesen Befehl (CTRL+C) erneut aus und gebe die `--no-password` Flag an.',
         'ask_password_help' => 'Passwörter müssen mindestens 8 Zeichen lang sein und mindestens einen Großbuchstaben und eine Zahl enthalten.',

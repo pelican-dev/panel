@@ -11,8 +11,6 @@ return [
         'ask_admin' => 'Is deze gebruiker een beheerder?',
         'ask_email' => 'E-mailadres',
         'ask_username' => 'Gebruikersnaam',
-        'ask_name_first' => 'Voornaam',
-        'ask_name_last' => 'Achternaam',
         'ask_password' => 'Wachtwoord',
         'ask_password_tip' => 'Als je een account wilt aanmaken met een willekeurig wachtwoord dat naar de gebruiker wordt gestuurd, voer dit commando opnieuw uit (CTRL+C) en geef de `--no-password` parameter op.',
         'ask_password_help' => 'Wachtwoorden moeten minstens 8 tekens lang zijn en minstens één hoofdletter en één cijfer bevatten.',

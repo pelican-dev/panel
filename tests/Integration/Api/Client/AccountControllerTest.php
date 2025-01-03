@@ -25,8 +25,6 @@ class AccountControllerTest extends ClientApiIntegrationTestCase
                 'uuid' => $user->uuid,
                 'username' => $user->username,
                 'email' => $user->email,
-                'first_name' => $user->name_first,
-                'last_name' => $user->name_last,
                 'language' => 'en',
                 'image' => 'https://gravatar.com/avatar/' . md5(Str::lower($user->email)),
                 'admin' => false,
