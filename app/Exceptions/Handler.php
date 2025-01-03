@@ -180,10 +180,7 @@ class Handler extends ExceptionHandler
         return response()->json(['errors' => $errors], $exception->status);
     }
 
-    /**
-     * Return the exception as a JSONAPI representation for use on API requests.
-     */
-    protected function convertExceptionToArray(\Throwable $e, array $override = []): array
+    public static function exceptionToArray(Throwable $e, array $override = []): array
     {
         $match = self::$exceptionResponseCodes[get_class($e)] ?? null;
 
@@ -215,7 +212,7 @@ class Handler extends ExceptionHandler
                     'trace' => Collection::make($e->getTrace())
                         ->map(fn ($trace) => Arr::except($trace, ['args']))
                         ->all(),
-                    'previous' => Collection::make($this->extractPrevious($e))
+                    'previous' => Collection::make(self::extractPrevious($e))
                         ->map(fn ($exception) => $exception->getTrace())
                         ->map(fn ($trace) => Arr::except($trace, ['args']))
                         ->all(),
@@ -224,6 +221,14 @@ class Handler extends ExceptionHandler
         }
 
         return ['errors' => [array_merge($error, $override)]];
+    }
+
+    /**
+     * Return the exception as a JSONAPI representation for use on API requests.
+     */
+    protected function convertExceptionToArray(Throwable $e, array $override = []): array
+    {
+        return self::exceptionToArray($e, $override);
     }
 
     /**
@@ -254,7 +259,7 @@ class Handler extends ExceptionHandler
      *
      * @return Throwable[]
      */
-    protected function extractPrevious(Throwable $e): array
+    public static function extractPrevious(Throwable $e): array
     {
         $previous = [];
         while ($value = $e->getPrevious()) {
@@ -271,7 +276,6 @@ class Handler extends ExceptionHandler
      */
     public static function toArray(\Throwable $e): array
     {
-        // @phpstan-ignore-next-line
-        return (new self(app()))->convertExceptionToArray($e);
+        return self::exceptionToArray($e);
     }
 }
