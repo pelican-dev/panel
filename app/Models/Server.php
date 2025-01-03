@@ -203,17 +203,6 @@ class Server extends Model
         ];
     }
 
-    protected static function booted(): void
-    {
-        static::saved(function (self $server) {
-            $subuser = $server->subusers()->where('user_id', $server->owner_id)->first();
-            if ($subuser) {
-                // @phpstan-ignore-next-line
-                app(SubuserDeletionService::class)->handle($subuser, $server);
-            }
-        });
-    }
-
     /**
      * Returns the format for server allocations when communicating with the Daemon.
      */
