@@ -8,7 +8,7 @@ use Filament\Notifications\Notification;
 use Filament\Pages\Page;
 use Illuminate\Support\Facades\Artisan;
 use Spatie\Health\Commands\RunHealthChecksCommand;
-use Spatie\Health\ResultStores\ResultStore;
+use Facades\Spatie\Health\ResultStores\ResultStore;
 
 class Health extends Page
 {
@@ -18,10 +18,12 @@ class Health extends Page
 
     protected static string $view = 'filament.pages.health';
 
-    // @phpstan-ignore-next-line
-    protected $listeners = [
-        'refresh-component' => '$refresh',
-    ];
+    protected function getListeners(): array
+    {
+        return [
+            'refresh-component' => '$refresh',
+        ];
+    }
 
     protected function getActions(): array
     {
@@ -34,8 +36,7 @@ class Health extends Page
 
     protected function getViewData(): array
     {
-        // @phpstan-ignore-next-line
-        $checkResults = app(ResultStore::class)->latestResults();
+        $checkResults = ResultStore::latestResults();
 
         if ($checkResults === null) {
             Artisan::call(RunHealthChecksCommand::class);
@@ -63,8 +64,7 @@ class Health extends Page
 
     public static function getNavigationBadge(): ?string
     {
-        // @phpstan-ignore-next-line
-        $results = app(ResultStore::class)->latestResults();
+        $results = ResultStore::latestResults();
 
         if ($results === null) {
             return null;
@@ -86,8 +86,7 @@ class Health extends Page
 
     public static function getNavigationBadgeTooltip(): ?string
     {
-        // @phpstan-ignore-next-line
-        $results = app(ResultStore::class)->latestResults();
+        $results = ResultStore::latestResults();
 
         if ($results === null) {
             return null;
@@ -108,8 +107,7 @@ class Health extends Page
 
     public static function getNavigationIcon(): string
     {
-        // @phpstan-ignore-next-line
-        $results = app(ResultStore::class)->latestResults();
+        $results = ResultStore::latestResults();
 
         if ($results === null) {
             return 'tabler-heart-question';
