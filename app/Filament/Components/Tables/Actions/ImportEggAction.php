@@ -55,7 +55,6 @@ class ImportEggAction extends Action
         $this->action(function (array $data, EggImporterService $eggImportService): void {
             try {
                 if (!empty($data['egg'])) {
-                    /** @var TemporaryUploadedFile[] $eggFile */
                     $eggFile = $data['egg'];
 
                     foreach ($eggFile as $file) {
