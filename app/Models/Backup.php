@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Builder;
+use App\Eloquent\BackupQueryBuilder;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
@@ -81,10 +81,12 @@ class Backup extends Model
     }
 
     /**
-     * Returns a query filtering only non-failed backups for a specific server.
+     * @param \Illuminate\Database\Query\Builder $query
+     *
+     * @return BackupQueryBuilder<\Illuminate\Database\Eloquent\Model>
      */
-    public function scopeNonFailed(Builder $query): void
+    public function newEloquentBuilder($query): BackupQueryBuilder
     {
-        $query->whereNull('completed_at')->orWhere('is_successful', true);
+        return new BackupQueryBuilder($query);
     }
 }

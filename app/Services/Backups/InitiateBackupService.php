@@ -74,7 +74,6 @@ class InitiateBackupService
         $limit = config('backups.throttles.limit');
         $period = config('backups.throttles.period');
         if ($period > 0) {
-            // @phpstan-ignore method.notFound
             $previous = $server
                 ->backups()
                 ->where('created_at', '>=', now()->subSeconds($period))
@@ -91,7 +90,6 @@ class InitiateBackupService
 
         // Check if the server has reached or exceeded its backup limit.
         // completed_at == null will cover any ongoing backups, while is_successful == true will cover any completed backups.
-        // @phpstan-ignore method.notFound
         $successful = $server->backups()->nonFailed();
         if (!$server->backup_limit || $successful->count() >= $server->backup_limit) {
             // Do not allow the user to continue if this server is already at its limit and can't override.
