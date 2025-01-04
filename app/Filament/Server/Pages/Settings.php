@@ -113,18 +113,14 @@ class Settings extends ServerFormPage
                                     ->prefixIcon('tabler-device-desktop-analytics')
                                     ->columnSpan(1)
                                     ->disabled()
-                                    ->formatStateUsing(fn ($state, Server $server) => !$state ? 'Unlimited' : (config('panel.use_binary_prefix')
-                                        ? Number::format($server->memory / 1024, maxPrecision: 2, locale: auth()->user()->language) .' GiB'
-                                        : Number::format($server->memory / 1000, maxPrecision: 2, locale: auth()->user()->language) . ' GB')),
+                                    ->formatStateUsing(fn ($state, Server $server) => !$state ? 'Unlimited' : convert_bytes_to_readable($server->memory * 2 ** 20)),
                                 TextInput::make('disk')
                                     ->label('')
                                     ->prefix('Disk Space')
                                     ->prefixIcon('tabler-device-sd-card')
                                     ->columnSpan(1)
                                     ->disabled()
-                                    ->formatStateUsing(fn ($state, Server $server) => !$state ? 'Unlimited' : (config('panel.use_binary_prefix')
-                                        ? Number::format($server->disk / 1024, maxPrecision: 2, locale: auth()->user()->language) .' GiB'
-                                        : Number::format($server->disk / 1000, maxPrecision: 2, locale: auth()->user()->language) . ' GB')),
+                                    ->formatStateUsing(fn ($state, Server $server) => !$state ? 'Unlimited' : convert_bytes_to_readable($server->disk * 2 ** 20)),
                                 TextInput::make('backup_limit')
                                     ->label('')
                                     ->prefix('Backups')
