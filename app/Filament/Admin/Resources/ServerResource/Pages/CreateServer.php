@@ -108,7 +108,7 @@ class CreateServer extends CreateRecord
                                 ->unique()
                                 ->maxLength(255),
 
-                                Select::make('node_id')
+                            Select::make('node_id')
                                 ->disabledOn('edit')
                                 ->prefixIcon('tabler-server-2')
                                 ->default(fn () => ($this->node = Node::query()->latest()->first())?->id)
