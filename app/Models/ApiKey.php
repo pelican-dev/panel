@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Services\Acl\Api\AdminAcl;
 use Illuminate\Support\Str;
+use Laravel\Sanctum\PersonalAccessToken;
 use Webmozart\Assert\Assert;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
@@ -47,7 +48,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @method static \Illuminate\Database\Eloquent\Builder|ApiKey whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|ApiKey whereUserId($value)
  */
-class ApiKey extends Model
+class ApiKey extends PersonalAccessToken
 {
     /**
      * The resource name for this model when it is transformed into an
@@ -149,16 +150,6 @@ class ApiKey extends Model
     }
 
     /**
-     * Required for support with Laravel Sanctum.
-     *
-     * @see \Laravel\Sanctum\Guard::supportsTokens()
-     */
-    public function tokenable(): BelongsTo
-    {
-        return $this->user();
-    }
-
-    /**
      * Returns the permission for the given resource.
      */
     public function getPermission(string $resource): int
@@ -195,11 +186,14 @@ class ApiKey extends Model
 
     /**
      * Finds the model matching the provided token.
+     *
+     * @param string $token
      */
-    public static function findToken(string $token): ?self
+    public static function findToken($token): ?self
     {
         $identifier = substr($token, 0, self::IDENTIFIER_LENGTH);
 
+        /** @var static|null $model */
         $model = static::where('identifier', $identifier)->first();
         if (!is_null($model) && $model->token === substr($token, strlen($identifier))) {
             return $model;
