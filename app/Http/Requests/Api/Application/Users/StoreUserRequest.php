@@ -29,11 +29,6 @@ class StoreUserRequest extends ApplicationApiRequest
         ])->toArray();
     }
 
-    public function validated($key = null, $default = null): array
-    {
-        return parent::validated();
-    }
-
     /**
      * Rename some fields to be more user friendly.
      */
