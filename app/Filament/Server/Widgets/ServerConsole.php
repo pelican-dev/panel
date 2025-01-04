@@ -34,7 +34,7 @@ class ServerConsole extends Widget
 
     private NodeJWTService $nodeJWTService;
 
-    public function mount(GetUserPermissionsService $getUserPermissionsService, NodeJWTService $nodeJWTService): void
+    public function boot(GetUserPermissionsService $getUserPermissionsService, NodeJWTService $nodeJWTService): void
     {
         $this->getUserPermissionsService = $getUserPermissionsService;
         $this->nodeJWTService = $nodeJWTService;
