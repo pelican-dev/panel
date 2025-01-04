@@ -70,9 +70,8 @@ class CreateServer extends CreateRecord
                         ->completedIcon('tabler-check')
                         ->columns([
                             'default' => 1,
-                            'sm' => 1,
+                            'sm' => 4,
                             'md' => 4,
-                            'lg' => 6,
                         ])
                         ->schema([
                             TextInput::make('name')
@@ -89,10 +88,9 @@ class CreateServer extends CreateRecord
                                         $set('name', $prefix . $word);
                                     }))
                                 ->columnSpan([
-                                    'default' => 2,
-                                    'sm' => 3,
+                                    'default' => 1,
+                                    'sm' => 2,
                                     'md' => 2,
-                                    'lg' => 3,
                                 ])
                                 ->required()
                                 ->maxLength(255),
@@ -100,10 +98,9 @@ class CreateServer extends CreateRecord
                             TextInput::make('external_id')
                                 ->label('External ID')
                                 ->columnSpan([
-                                    'default' => 2,
-                                    'sm' => 3,
-                                    'md' => 3,
-                                    'lg' => 3,
+                                    'default' => 1,
+                                    'sm' => 2,
+                                    'md' => 2,
                                 ])
                                 ->unique()
                                 ->maxLength(255),
@@ -113,10 +110,9 @@ class CreateServer extends CreateRecord
                                 ->prefixIcon('tabler-server-2')
                                 ->default(fn () => ($this->node = Node::query()->latest()->first())?->id)
                                 ->columnSpan([
-                                    'default' => 2,
-                                    'sm' => 3,
-                                    'md' => 3,
-                                    'lg' => 3,
+                                    'default' => 1,
+                                    'sm' => 2,
+                                    'md' => 2,
                                 ])
                                 ->live()
                                 ->relationship('node', 'name')
@@ -134,10 +130,9 @@ class CreateServer extends CreateRecord
                                 ->default(auth()->user()->id)
                                 ->label('Owner')
                                 ->columnSpan([
-                                    'default' => 2,
-                                    'sm' => 3,
-                                    'md' => 3,
-                                    'lg' => 3,
+                                    'default' => 1,
+                                    'sm' => 2,
+                                    'md' => 2,
                                 ])
                                 ->relationship('user', 'username')
                                 ->searchable(['username', 'email'])
@@ -173,10 +168,9 @@ class CreateServer extends CreateRecord
                                 ->prefixIcon('tabler-network')
                                 ->label('Primary Allocation')
                                 ->columnSpan([
-                                    'default' => 2,
-                                    'sm' => 3,
+                                    'default' => 1,
+                                    'sm' => 2,
                                     'md' => 2,
-                                    'lg' => 3,
                                 ])
                                 ->disabled(fn (Get $get) => $get('node_id') === null)
                                 ->searchable(['ip', 'port', 'ip_alias'])
@@ -294,10 +288,9 @@ class CreateServer extends CreateRecord
                             Repeater::make('allocation_additional')
                                 ->label('Additional Allocations')
                                 ->columnSpan([
-                                    'default' => 2,
-                                    'sm' => 3,
-                                    'md' => 3,
-                                    'lg' => 3,
+                                    'default' => 1,
+                                    'sm' => 2,
+                                    'md' => 2,
                                 ])
                                 ->addActionLabel('Add Allocation')
                                 ->disabled(fn (Get $get) => $get('allocation_id') === null)
@@ -333,10 +326,9 @@ class CreateServer extends CreateRecord
                                 ->placeholder('Description')
                                 ->rows(3)
                                 ->columnSpan([
-                                    'default' => 2,
-                                    'sm' => 6,
-                                    'md' => 6,
-                                    'lg' => 6,
+                                    'default' => 1,
+                                    'sm' => 4,
+                                    'md' => 4,
                                 ])
                                 ->label('Description'),
                         ]),
