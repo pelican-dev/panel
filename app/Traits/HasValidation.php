@@ -90,17 +90,7 @@ trait HasValidation
             return;
         }
 
-        //        $data = $this->addCastAttributesToArray(
-        //            $this->getAttributes(),
-        //            $this->getMutatedAttributes()
-        //        );
-        //        $rules = $this->exists ? static::getRulesForUpdate($this) : static::getRules();
-        //        $validator = \Illuminate\Support\Facades\Validator::make($data, $rules);
-
-        //        dump('a');
-
         $validator = $this->getValidator();
-        //        dump('b');
         $validator->setData(
             // Trying to do self::toArray() here will leave out keys based on the whitelist/blacklist
             // for that model. Doing this will return all the attributes in a format that can
@@ -111,12 +101,8 @@ trait HasValidation
             )
         );
 
-        //        dump('c');
-
         if (!$validator->passes()) {
             throw new ValidationException($validator);
         }
-
-        //        dump('d');
     }
 }
