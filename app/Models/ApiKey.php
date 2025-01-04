@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Services\Acl\Api\AdminAcl;
+use App\Traits\Validation;
 use Illuminate\Support\Str;
 use Laravel\Sanctum\PersonalAccessToken;
 use Webmozart\Assert\Assert;
@@ -50,6 +51,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  */
 class ApiKey extends PersonalAccessToken
 {
+    use Validation;
+
     /**
      * The resource name for this model when it is transformed into an
      * API representation using fractal.
