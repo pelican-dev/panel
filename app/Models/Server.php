@@ -473,6 +473,11 @@ class Server extends Model
             return Number::format($resourceAmount, precision: $precision, locale: auth()->user()->language ?? 'en') . '%';
         }
 
+        // Our current limits are set in MB
+        if ($limit) {
+            $resourceAmount *= 2 ** 20;
+        }
+
         return convert_bytes_to_readable($resourceAmount, decimals: $precision, base: 3);
     }
 
