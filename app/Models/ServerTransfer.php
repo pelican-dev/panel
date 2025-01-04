@@ -2,6 +2,9 @@
 
 namespace App\Models;
 
+use App\Contracts\Validatable;
+use App\Traits\HasValidation;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
@@ -22,18 +25,15 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property \App\Models\Node $oldNode
  * @property \App\Models\Node $newNode
  */
-class ServerTransfer extends Model
+class ServerTransfer extends Model implements Validatable
 {
+    use HasValidation;
+
     /**
      * The resource name for this model when it is transformed into an
      * API representation using fractal.
      */
     public const RESOURCE_NAME = 'server_transfer';
-
-    /**
-     * The table associated with the model.
-     */
-    protected $table = 'server_transfers';
 
     /**
      * Fields that are not mass assignable.

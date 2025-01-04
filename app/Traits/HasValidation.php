@@ -2,9 +2,10 @@
 
 namespace App\Traits;
 
-use App\Exceptions\Model\DataValidationException;
-use App\Models\Model;
+use App\Observers\ValidationObserver;
 use Illuminate\Container\Container;
+use Illuminate\Database\Eloquent\Attributes\ObservedBy;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Factory as ValidationFactory;
@@ -12,41 +13,9 @@ use Illuminate\Validation\Rule;
 use Illuminate\Validation\ValidationException;
 use Illuminate\Validation\Validator;
 
-trait Validation
+#[ObservedBy([ValidationObserver::class])]
+trait HasValidation
 {
-    /**
-     * Determines if the model should undergo data validation before it is saved
-     * to the database.
-     */
-    protected bool $skipValidation = false;
-
-    protected static ValidationFactory $validatorFactory;
-
-    public static array $validationRules = [];
-
-    /**
-     * Listen for the model saving event and fire off the validation
-     * function before it is saved.
-     *
-     * @throws \Illuminate\Contracts\Container\BindingResolutionException
-     */
-    protected static function boot(): void
-    {
-        parent::boot();
-
-        static::$validatorFactory = Container::getInstance()->make(ValidationFactory::class);
-
-        static::saving(function (Model $model) {
-            try {
-                $model->validate();
-            } catch (ValidationException $exception) {
-                throw new DataValidationException($exception->validator, $model);
-            }
-
-            return true;
-        });
-    }
-
     /**
      * Returns the validator instance used by this model.
      */
@@ -54,7 +23,9 @@ trait Validation
     {
         $rules = $this->exists ? static::getRulesForUpdate($this) : static::getRules();
 
-        return static::$validatorFactory->make([], $rules);
+        $validatorFactory = Container::getInstance()->make(ValidationFactory::class);
+
+        return $validatorFactory->make([], $rules);
     }
 
     /**
@@ -115,23 +86,37 @@ trait Validation
      */
     public function validate(): void
     {
-        if ($this->skipValidation) {
+        if (isset($this->skipValidation)) {
             return;
         }
 
+        //        $data = $this->addCastAttributesToArray(
+        //            $this->getAttributes(),
+        //            $this->getMutatedAttributes()
+        //        );
+        //        $rules = $this->exists ? static::getRulesForUpdate($this) : static::getRules();
+        //        $validator = \Illuminate\Support\Facades\Validator::make($data, $rules);
+
+        //        dump('a');
+
         $validator = $this->getValidator();
+        //        dump('b');
         $validator->setData(
-        // Trying to do self::toArray() here will leave out keys based on the whitelist/blacklist
-        // for that model. Doing this will return all the attributes in a format that can
-        // properly be validated.
+            // Trying to do self::toArray() here will leave out keys based on the whitelist/blacklist
+            // for that model. Doing this will return all the attributes in a format that can
+            // properly be validated.
             $this->addCastAttributesToArray(
                 $this->getAttributes(),
                 $this->getMutatedAttributes()
             )
         );
 
+        //        dump('c');
+
         if (!$validator->passes()) {
             throw new ValidationException($validator);
         }
+
+        //        dump('d');
     }
 }

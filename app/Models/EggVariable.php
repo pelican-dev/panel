@@ -2,6 +2,10 @@
 
 namespace App\Models;
 
+use App\Contracts\Validatable;
+use App\Traits\HasValidation;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
@@ -26,8 +30,11 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * using the server relationship.
  * @property string|null $server_value
  */
-class EggVariable extends Model
+class EggVariable extends Model implements Validatable
 {
+    use HasFactory;
+    use HasValidation;
+
     /**
      * The resource name for this model when it is transformed into an
      * API representation using fractal.
@@ -38,11 +45,6 @@ class EggVariable extends Model
      * Reserved environment variable names.
      */
     public const RESERVED_ENV_NAMES = 'SERVER_MEMORY,SERVER_IP,SERVER_PORT,ENV,HOME,USER,STARTUP,SERVER_UUID,UUID';
-
-    /**
-     * The table associated with the model.
-     */
-    protected $table = 'egg_variables';
 
     /**
      * Fields that are not mass assignable.

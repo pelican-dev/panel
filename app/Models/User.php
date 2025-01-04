@@ -2,15 +2,19 @@
 
 namespace App\Models;
 
+use App\Contracts\Validatable;
 use App\Exceptions\DisplayException;
 use App\Rules\Username;
 use App\Facades\Activity;
+use App\Traits\HasValidation;
 use DateTimeZone;
 use Filament\Models\Contracts\FilamentUser;
 use Filament\Models\Contracts\HasAvatar;
 use Filament\Models\Contracts\HasName;
 use Filament\Models\Contracts\HasTenants;
 use Filament\Panel;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
@@ -29,7 +33,6 @@ use Illuminate\Contracts\Auth\Access\Authorizable as AuthorizableContract;
 use Illuminate\Contracts\Auth\CanResetPassword as CanResetPasswordContract;
 use App\Notifications\SendPasswordReset as ResetPasswordNotification;
 use Filament\Facades\Filament;
-use Illuminate\Database\Eloquent\Model as IlluminateModel;
 use Spatie\Permission\Traits\HasRoles;
 
 /**
@@ -89,14 +92,16 @@ use Spatie\Permission\Traits\HasRoles;
  * @method static Builder|User whereUsername($value)
  * @method static Builder|User whereUuid($value)
  */
-class User extends Model implements AuthenticatableContract, AuthorizableContract, CanResetPasswordContract, FilamentUser, HasAvatar, HasName, HasTenants
+class User extends Model implements AuthenticatableContract, AuthorizableContract, CanResetPasswordContract, FilamentUser, HasAvatar, HasName, HasTenants, Validatable
 {
     use Authenticatable;
-    use Authorizable {can as protected canned; }
+    use Authorizable { can as protected canned; }
     use AvailableLanguages;
     use CanResetPassword;
     use HasAccessTokens;
+    use HasFactory;
     use HasRoles;
+    use HasValidation { getRules as getValidationRules; }
     use Notifiable;
 
     public const USER_LEVEL_USER = 0;
@@ -108,16 +113,6 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
      * API representation using fractal. Also used as name for api key permissions.
      */
     public const RESOURCE_NAME = 'user';
-
-    /**
-     * Level of servers to display when using access() on a user.
-     */
-    protected string $accessLevel = 'all';
-
-    /**
-     * The table associated with the model.
-     */
-    protected $table = 'users';
 
     /**
      * A list of mass-assignable variables.
@@ -189,9 +184,8 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
     protected static function booted(): void
     {
         static::creating(function (self $user) {
-            $user->uuid = Str::uuid()->toString();
-
-            $user->timezone = env('APP_TIMEZONE', 'UTC');
+            $user->uuid ??= Str::uuid()->toString();
+            $user->timezone ??= config('app.timezone', 'UTC');
 
             return true;
         });
@@ -203,18 +197,13 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
         });
     }
 
-    public function getRouteKeyName(): string
-    {
-        return 'id';
-    }
-
     /**
      * Implement language verification by overriding Eloquence's gather
      * rules function.
      */
     public static function getRules(): array
     {
-        $rules = parent::getRules();
+        $rules = self::getValidationRules();
 
         $rules['language'][] = new In(array_keys((new self())->getAvailableLanguages()));
         $rules['timezone'][] = new In(array_values(DateTimeZone::listIdentifiers()));
@@ -402,7 +391,7 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
         return 'https://gravatar.com/avatar/' . md5(strtolower($this->email));
     }
 
-    public function canTarget(IlluminateModel $user): bool
+    public function canTarget(Model $user): bool
     {
         if ($this->isRootAdmin()) {
             return true;
@@ -416,7 +405,7 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
         return $this->accessibleServers()->get();
     }
 
-    public function canAccessTenant(IlluminateModel $tenant): bool
+    public function canAccessTenant(Model $tenant): bool
     {
         if ($tenant instanceof Server) {
             if ($this->isRootAdmin() || $tenant->owner_id === $this->id) {

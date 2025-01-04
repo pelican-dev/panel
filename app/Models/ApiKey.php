@@ -3,7 +3,8 @@
 namespace App\Models;
 
 use App\Services\Acl\Api\AdminAcl;
-use App\Traits\Validation;
+use App\Traits\HasValidation;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Support\Str;
 use Laravel\Sanctum\PersonalAccessToken;
 use Webmozart\Assert\Assert;
@@ -51,7 +52,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  */
 class ApiKey extends PersonalAccessToken
 {
-    use Validation;
+    use HasFactory;
+    use HasValidation;
 
     /**
      * The resource name for this model when it is transformed into an
@@ -78,11 +80,6 @@ class ApiKey extends PersonalAccessToken
      * in the database.
      */
     public const KEY_LENGTH = 32;
-
-    /**
-     * The table associated with the model.
-     */
-    protected $table = 'api_keys';
 
     /**
      * Fields that are mass assignable.
@@ -152,6 +149,12 @@ class ApiKey extends PersonalAccessToken
         return $this->belongsTo(User::class);
     }
 
+    public function tokenable()
+    {
+        // @phpstan-ignore-next-line
+        return $this->user();
+    }
+
     /**
      * Returns the permission for the given resource.
      */
@@ -185,7 +188,7 @@ class ApiKey extends PersonalAccessToken
     /**
      * Finds the model matching the provided token.
      *
-     * @param string $token
+     * @param  string  $token
      */
     public static function findToken($token): ?self
     {

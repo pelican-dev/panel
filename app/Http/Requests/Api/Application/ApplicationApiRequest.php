@@ -4,7 +4,6 @@ namespace App\Http\Requests\Api\Application;
 
 use Webmozart\Assert\Assert;
 use App\Models\ApiKey;
-use Laravel\Sanctum\TransientToken;
 use Illuminate\Validation\Validator;
 use Illuminate\Database\Eloquent\Model;
 use App\Services\Acl\Api\AdminAcl;
