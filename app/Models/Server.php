@@ -3,16 +3,18 @@
 namespace App\Models;
 
 use App\Enums\ContainerStatus;
+use App\Enums\ServerResourceType;
 use App\Enums\ServerState;
-use App\Exceptions\Http\Connection\DaemonConnectionException;
 use App\Repositories\Daemon\DaemonServerRepository;
-use GuzzleHttp\Exception\GuzzleException;
+use Carbon\CarbonInterface;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Query\JoinClause;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Number;
 use Psr\Http\Message\ResponseInterface;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -303,10 +305,9 @@ class Server extends Model
 
     public function viewableServerVariables(): HasMany
     {
-        return $this->hasMany(ServerVariable::class)->rightJoin('egg_variables', function (JoinClause $join) {
-            $join->on('egg_variables.id', 'server_variables.variable_id')
-                ->where('egg_variables.user_viewable', true);
-        });
+        return $this->serverVariables()
+            ->join('egg_variables', 'egg_variables.id', '=', 'server_variables.variable_id')
+            ->where('egg_variables.user_viewable', true);
     }
 
     /**
@@ -419,17 +420,13 @@ class Server extends Model
     /**
      * Sends a command or multiple commands to a running server instance.
      *
-     * @throws DaemonConnectionException|GuzzleException
+     * @throws ConnectionException
      */
     public function send(array|string $command): ResponseInterface
     {
-        try {
-            return Http::daemon($this->node)->post("/api/servers/{$this->uuid}/commands", [
-                'commands' => is_array($command) ? $command : [$command],
-            ])->toPsrResponse();
-        } catch (GuzzleException $exception) {
-            throw new DaemonConnectionException($exception);
-        }
+        return Http::daemon($this->node)->post("/api/servers/{$this->uuid}/commands", [
+            'commands' => is_array($command) ? $command : [$command],
+        ])->toPsrResponse();
     }
 
     public function retrieveStatus(): string
@@ -451,6 +448,32 @@ class Server extends Model
             // @phpstan-ignore-next-line
             return Arr::get(app(DaemonServerRepository::class)->setServer($this)->getDetails(), 'utilization', []);
         });
+    }
+
+    public function formatResource(string $resourceKey, bool $limit = false, ServerResourceType $type = ServerResourceType::Unit, int $precision = 2): string
+    {
+        $resourceAmount = $this->{$resourceKey} ?? 0;
+        if (!$limit) {
+            $resourceAmount = $this->resources()[$resourceKey] ?? 0;
+        }
+
+        if ($type === ServerResourceType::Time) {
+            if ($resourceAmount === 0) {
+                return 'Offline';
+            }
+
+            return now()->subMillis($resourceAmount)->diffForHumans(syntax: CarbonInterface::DIFF_ABSOLUTE, short: true, parts: 4);
+        }
+
+        if ($resourceAmount === 0 & $limit) {
+            return 'Unlimited';
+        }
+
+        if ($type === ServerResourceType::Percentage) {
+            return Number::format($resourceAmount, precision: $precision, locale: auth()->user()->language ?? 'en') . '%';
+        }
+
+        return convert_bytes_to_readable($resourceAmount, decimals: $precision, base: 3);
     }
 
     public function condition(): Attribute
@@ -480,5 +503,10 @@ class Server extends Model
         }
 
         return $this->status->color();
+    }
+
+    public function conditionColorHex(): string
+    {
+        return ContainerStatus::from($this->retrieveStatus())->colorHex();
     }
 }

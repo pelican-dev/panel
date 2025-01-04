@@ -1,65 +1,67 @@
+@php
+    use App\Enums\ServerResourceType;
+
+    /** @var \App\Models\Server $server */
+    $server = $getRecord();
+@endphp
+
 <head>
     <style>
-        .inline-flex {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.75rem;
+        hr {
+            border-color: #9ca3af;
         }
     </style>
 </head>
-<div class="w-full grid gap-y-2 overflow-x-auto">
-    <div class="flex items-center gap-x-1">
-        <x-filament::icon-button
-            :icon="$getRecord()->conditionIcon()"
-            :color="$getRecord()->conditionColor()"
-            :tooltip="\Illuminate\Support\Str::title($getRecord()->condition)" size="xl"
-        />
+<div class="w-full">
+    <!-- Wrapper for Positioning -->
+    <div class="relative flex">
+        <!-- Status Strip Outside the Box -->
+        <div
+            class="absolute left-0 top-1 bottom-0 w-1 rounded-lg"
+            style="background-color: {{ $server->conditionColorHex() }};">
+        </div>
 
-        <span class="text-2xl font-semibold text-gray-500 dark:text-gray-400">
-            {{ $getRecord()->name }} ({{ $this->uptime($getRecord()) }})
-        </span>
-    </div>
+        <!-- Card Component -->
+        <div class="flex-1 bg-gray-800 text-white rounded-lg overflow-hidden p-3">
+            <!-- Header -->
+            <div class="flex items-center mb-5 gap-2">
+                <x-filament::icon-button
+                    :icon="$server->conditionIcon()"
+                    :color="$server->conditionColor()"
+                    :tooltip="\Illuminate\Support\Str::title($server->condition)"
+                    size="xl"
+                />
+                <h2 class="text-xl font-bold">
+                    {{ $server->name }}
+                    <span class="text-gray-400">({{ $server->formatResource('uptime', type: ServerResourceType::Time) }})</span>
+                </h2>
+            </div>
 
-    <div class="flex">
-        <div class="flex-1 text-md font-medium text-gray-850 dark:text-white inline-flex" title="Egg Name">
-            <x-filament::icon
-                icon="tabler-egg"
-            />
-            {{ $getRecord()->egg->name }}
-        </div>
-        <div class="flex-1 text-md font-medium text-gray-850 dark:text-white inline-flex" title="Owner">
-            <x-filament::icon
-                icon="tabler-user"
-            />
-            {{ $getRecord()->user->username }}
-        </div>
-        <div class="flex-1 text-md font-medium text-gray-850 dark:text-white inline-flex" title="Primary Allocation">
-            <x-filament::icon
-                icon="tabler-network"
-            />
-            {{ $getRecord()->allocation->address }}
-        </div>
-    </div>
-
-
-    <div class="flex">
-        <div class="flex-1 text-md font-medium text-gray-850 dark:text-white inline-flex" title="CPU Usage">
-            <x-filament::icon
-                icon="tabler-cpu"
-            />
-            {{ $this->cpu($getRecord()) }}
-        </div>
-        <div class="flex-1 text-md font-medium text-gray-850 dark:text-white inline-flex" title="Memory Usage">
-            <x-filament::icon
-                icon="tabler-device-desktop-analytics"
-            />
-            {{ $this->memory($getRecord()) }}
-        </div>
-        <div class="flex-1 text-md font-medium text-gray-850 dark:text-white inline-flex" title="Disk Usage">
-            <x-filament::icon
-                icon="tabler-packages"
-            />
-             {{ $this->disk($getRecord()) }}
+            <!-- Resource Usage -->
+            <div class="flex justify-between text-center">
+                <div>
+                    <p class="text-sm text-gray-400">CPU</p>
+                    <p class="text-md font-semibold">{{ $server->formatResource('cpu_absolute', type: ServerResourceType::Percentage) }}</p>
+                    <hr class="p-0.5">
+                    <p class="text-xs text-gray-400">{{ $server->formatResource('cpu', type: ServerResourceType::Percentage, limit: true) }}</p>
+                </div>
+                <div>
+                    <p class="text-sm text-gray-400">Memory</p>
+                    <p class="text-md font-semibold">{{ $server->formatResource('memory_bytes') }}</p>
+                    <hr class="p-0.5">
+                    <p class="text-xs text-gray-400">{{ $server->formatResource('memory', limit: true) }}</p>
+                </div>
+                <div>
+                    <p class="text-sm text-gray-400">Disk</p>
+                    <p class="text-md font-semibold">{{ $server->formatResource('disk_bytes') }}</p>
+                    <hr class="p-0.5">
+                    <p class="text-xs text-gray-400">{{ $server->formatResource('disk', limit: true) }}</p>
+                </div>
+                <div class="hidden sm:block">
+                    <p class="text-sm text-gray-400">Network</p>
+                    <p class="text-md font-semibold">{{ $server->allocation->address }} </p>
+                </div>
+            </div>
         </div>
     </div>
 </div>

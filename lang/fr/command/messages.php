@@ -11,8 +11,6 @@ return [
         'ask_admin' => 'Cet utilisateur est-il un administrateur ?',
         'ask_email' => 'Adresse e-mail',
         'ask_username' => 'Nom d\'utilisateur',
-        'ask_name_first' => 'Prénom',
-        'ask_name_last' => 'Nom',
         'ask_password' => 'Mot de passe',
         'ask_password_tip' => 'Si vous souhaitez créer un compte avec un mot de passe aléatoire envoyé à l\'utilisateur, ré-exécutez cette commande (CTRL+C) et passez le paramètre `--no-password`.',
         'ask_password_help' => 'Les mots de passe doivent comporter au moins 8 caractères et contenir au moins une lettre majuscule et un chiffre.',

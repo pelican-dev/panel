@@ -75,17 +75,17 @@ class Console extends Page
             Action::make('start')
                 ->color('primary')
                 ->size(ActionSize::ExtraLarge)
-                ->action(fn () => $this->dispatch('setServerState', state: 'start'))
+                ->action(fn () => $this->dispatch('setServerState', state: 'start', uuid: $server->uuid))
                 ->disabled(fn () => $server->isInConflictState() || !$this->status->isStartable()),
             Action::make('restart')
                 ->color('gray')
                 ->size(ActionSize::ExtraLarge)
-                ->action(fn () => $this->dispatch('setServerState', state: 'restart'))
+                ->action(fn () => $this->dispatch('setServerState', state: 'restart', uuid: $server->uuid))
                 ->disabled(fn () => $server->isInConflictState() || !$this->status->isRestartable()),
             Action::make('stop')
                 ->color('danger')
                 ->size(ActionSize::ExtraLarge)
-                ->action(fn () => $this->dispatch('setServerState', state: 'stop'))
+                ->action(fn () => $this->dispatch('setServerState', state: 'stop', uuid: $server->uuid))
                 ->hidden(fn () => $this->status->isStartingOrStopping() || $this->status->isKillable())
                 ->disabled(fn () => $server->isInConflictState() || !$this->status->isStoppable()),
             Action::make('kill')
@@ -95,7 +95,7 @@ class Console extends Page
                 ->modalDescription('This can result in data corruption and/or data loss!')
                 ->modalSubmitActionLabel('Kill Server')
                 ->size(ActionSize::ExtraLarge)
-                ->action(fn () => $this->dispatch('setServerState', state: 'kill'))
+                ->action(fn () => $this->dispatch('setServerState', state: 'kill', uuid: $server->uuid))
                 ->hidden(fn () => $server->isInConflictState() || !$this->status->isKillable()),
         ];
     }

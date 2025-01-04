@@ -4,6 +4,7 @@ namespace App\Services\Servers;
 
 use App\Enums\ServerState;
 use App\Models\ServerVariable;
+use Illuminate\Http\Client\ConnectionException;
 use Ramsey\Uuid\Uuid;
 use Illuminate\Support\Arr;
 use App\Models\User;
@@ -16,7 +17,6 @@ use App\Models\Objects\DeploymentObject;
 use App\Repositories\Daemon\DaemonServerRepository;
 use App\Services\Deployment\FindViableNodesService;
 use App\Services\Deployment\AllocationSelectionService;
-use App\Exceptions\Http\Connection\DaemonConnectionException;
 use App\Models\Egg;
 
 class ServerCreationService
@@ -94,10 +94,10 @@ class ServerCreationService
         }, 5);
 
         try {
-            $this->daemonServerRepository->setServer($server)->create(
-                Arr::get($data, 'start_on_completion', false) ?? false
-            );
-        } catch (DaemonConnectionException $exception) {
+            $this->daemonServerRepository
+                ->setServer($server)
+                ->create($data['start_on_completion'] ?? false);
+        } catch (ConnectionException $exception) {
             $this->serverDeletionService->withForce()->handle($server);
 
             throw $exception;

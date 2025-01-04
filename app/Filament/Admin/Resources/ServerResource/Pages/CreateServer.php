@@ -34,7 +34,9 @@ use Filament\Forms\Components\Wizard\Step;
 use Filament\Forms\Form;
 use Filament\Forms\Get;
 use Filament\Forms\Set;
+use Filament\Notifications\Notification;
 use Filament\Resources\Pages\CreateRecord;
+use Filament\Support\Exceptions\Halt;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Blade;
@@ -538,6 +540,37 @@ class CreateServer extends CreateRecord
                                         ->columns(4)
                                         ->columnSpanFull()
                                         ->schema([
+                                            ToggleButtons::make('unlimited_cpu')
+                                                ->label('CPU')->inlineLabel()->inline()
+                                                ->default(true)
+                                                ->afterStateUpdated(fn (Set $set) => $set('cpu', 0))
+                                                ->live()
+                                                ->options([
+                                                    true => 'Unlimited',
+                                                    false => 'Limited',
+                                                ])
+                                                ->colors([
+                                                    true => 'primary',
+                                                    false => 'warning',
+                                                ])
+                                                ->columnSpan(2),
+
+                                            TextInput::make('cpu')
+                                                ->dehydratedWhenHidden()
+                                                ->hidden(fn (Get $get) => $get('unlimited_cpu'))
+                                                ->label('CPU Limit')->inlineLabel()
+                                                ->suffix('%')
+                                                ->default(0)
+                                                ->required()
+                                                ->columnSpan(2)
+                                                ->numeric()
+                                                ->minValue(0)
+                                                ->helperText('100% equals one CPU core.'),
+                                        ]),
+                                    Grid::make()
+                                        ->columns(4)
+                                        ->columnSpanFull()
+                                        ->schema([
                                             ToggleButtons::make('unlimited_mem')
                                                 ->label('Memory')->inlineLabel()->inline()
                                                 ->default(true)
@@ -564,7 +597,6 @@ class CreateServer extends CreateRecord
                                                 ->numeric()
                                                 ->minValue(0),
                                         ]),
-
                                     Grid::make()
                                         ->columns(4)
                                         ->columnSpanFull()
@@ -596,37 +628,6 @@ class CreateServer extends CreateRecord
                                                 ->minValue(0),
                                         ]),
 
-                                    Grid::make()
-                                        ->columns(4)
-                                        ->columnSpanFull()
-                                        ->schema([
-                                            ToggleButtons::make('unlimited_cpu')
-                                                ->label('CPU')->inlineLabel()->inline()
-                                                ->default(true)
-                                                ->afterStateUpdated(fn (Set $set) => $set('cpu', 0))
-                                                ->live()
-                                                ->options([
-                                                    true => 'Unlimited',
-                                                    false => 'Limited',
-                                                ])
-                                                ->colors([
-                                                    true => 'primary',
-                                                    false => 'warning',
-                                                ])
-                                                ->columnSpan(2),
-
-                                            TextInput::make('cpu')
-                                                ->dehydratedWhenHidden()
-                                                ->hidden(fn (Get $get) => $get('unlimited_cpu'))
-                                                ->label('CPU Limit')->inlineLabel()
-                                                ->suffix('%')
-                                                ->default(0)
-                                                ->required()
-                                                ->columnSpan(2)
-                                                ->numeric()
-                                                ->minValue(0)
-                                                ->helperText('100% equals one CPU core.'),
-                                        ]),
                                 ]),
 
                             Fieldset::make('Advanced Limits')
@@ -638,6 +639,40 @@ class CreateServer extends CreateRecord
                                     'lg' => 3,
                                 ])
                                 ->schema([
+                                    Hidden::make('io')
+                                        ->helperText('The IO performance relative to other running containers')
+                                        ->label('Block IO Proportion')
+                                        ->default(500),
+
+                                    Grid::make()
+                                        ->columns(4)
+                                        ->columnSpanFull()
+                                        ->schema([
+                                            ToggleButtons::make('cpu_pinning')
+                                                ->label('CPU Pinning')->inlineLabel()->inline()
+                                                ->default(false)
+                                                ->afterStateUpdated(fn (Set $set) => $set('threads', []))
+                                                ->live()
+                                                ->options([
+                                                    false => 'Disabled',
+                                                    true => 'Enabled',
+                                                ])
+                                                ->colors([
+                                                    false => 'success',
+                                                    true => 'warning',
+                                                ])
+                                                ->columnSpan(2),
+
+                                            TagsInput::make('threads')
+                                                ->dehydratedWhenHidden()
+                                                ->hidden(fn (Get $get) => !$get('cpu_pinning'))
+                                                ->label('Pinned Threads')->inlineLabel()
+                                                ->required(fn (Get $get) => $get('cpu_pinning'))
+                                                ->columnSpan(2)
+                                                ->separator()
+                                                ->splitKeys([','])
+                                                ->placeholder('Add pinned thread, e.g. 0 or 2-4'),
+                                        ]),
                                     Grid::make()
                                         ->columns(4)
                                         ->columnSpanFull()
@@ -684,41 +719,6 @@ class CreateServer extends CreateRecord
                                                 ->inlineLabel()
                                                 ->required()
                                                 ->integer(),
-                                        ]),
-
-                                    Hidden::make('io')
-                                        ->helperText('The IO performance relative to other running containers')
-                                        ->label('Block IO Proportion')
-                                        ->default(500),
-
-                                    Grid::make()
-                                        ->columns(4)
-                                        ->columnSpanFull()
-                                        ->schema([
-                                            ToggleButtons::make('cpu_pinning')
-                                                ->label('CPU Pinning')->inlineLabel()->inline()
-                                                ->default(false)
-                                                ->afterStateUpdated(fn (Set $set) => $set('threads', []))
-                                                ->live()
-                                                ->options([
-                                                    false => 'Disabled',
-                                                    true => 'Enabled',
-                                                ])
-                                                ->colors([
-                                                    false => 'success',
-                                                    true => 'warning',
-                                                ])
-                                                ->columnSpan(2),
-
-                                            TagsInput::make('threads')
-                                                ->dehydratedWhenHidden()
-                                                ->hidden(fn (Get $get) => !$get('cpu_pinning'))
-                                                ->label('Pinned Threads')->inlineLabel()
-                                                ->required(fn (Get $get) => $get('cpu_pinning'))
-                                                ->columnSpan(2)
-                                                ->separator()
-                                                ->splitKeys([','])
-                                                ->placeholder('Add pinned thread, e.g. 0 or 2-4'),
                                         ]),
 
                                     Grid::make()
@@ -875,7 +875,18 @@ class CreateServer extends CreateRecord
     {
         $data['allocation_additional'] = collect($data['allocation_additional'])->filter()->all();
 
-        return $this->serverCreationService->handle($data);
+        try {
+            return $this->serverCreationService->handle($data);
+        } catch (Exception $exception) {
+            Notification::make()
+                ->title('Could not create server')
+                ->body($exception->getMessage())
+                ->color('danger')
+                ->danger()
+                ->send();
+
+            throw new Halt();
+        }
     }
 
     private function shouldHideComponent(Get $get, Component $component): bool

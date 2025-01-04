@@ -11,8 +11,6 @@ return [
         'ask_admin' => 'Czy ten użytkownik jest administratorem?',
         'ask_email' => 'Adres E-mail',
         'ask_username' => 'Nazwa Użytkownika',
-        'ask_name_first' => 'Imię',
-        'ask_name_last' => 'Nazwisko',
         'ask_password' => 'Hasło',
         'ask_password_tip' => 'Jeśli chcesz utworzyć konto z losowym hasłem wysłanym e-mailem do użytkownika, ponownie uruchom tę komendę (CTRL+C) i przekaż flagę `--no-password`.',
         'ask_password_help' => 'Hasła muszą mieć co najmniej 8 znaków i zawierać co najmniej jedną wielką literę oraz cyfrę.',

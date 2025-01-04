@@ -26,8 +26,7 @@ use Filament\Notifications\Notification;
 use Filament\Pages\Concerns\InteractsWithHeaderActions;
 use Filament\Pages\Page;
 use Filament\Support\Enums\MaxWidth;
-use GuzzleHttp\Client;
-use GuzzleHttp\Exception\GuzzleException;
+use Illuminate\Http\Client\Factory;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Notification as MailNotification;
@@ -169,22 +168,23 @@ class Settings extends Page implements HasForms
                         ->label('Set to Cloudflare IPs')
                         ->icon('tabler-brand-cloudflare')
                         ->authorize(fn () => auth()->user()->can('update settings'))
-                        ->action(function (Client $client, Set $set) {
+                        ->action(function (Factory $client, Set $set) {
                             $ips = collect();
+
                             try {
-                                $response = $client->request(
-                                    'GET',
-                                    'https://api.cloudflare.com/client/v4/ips',
-                                    config('panel.guzzle')
-                                );
+                                $response = $client
+                                    ->timeout(3)
+                                    ->connectTimeout(3)
+                                    ->get('https://api.cloudflare.com/client/v4/ips');
+
                                 if ($response->getStatusCode() === 200) {
-                                    $result = json_decode($response->getBody(), true)['result'];
+                                    $result = $response->json('result');
                                     foreach (['ipv4_cidrs', 'ipv6_cidrs'] as $value) {
                                         $ips->push(...data_get($result, $value));
                                     }
                                     $ips->unique();
                                 }
-                            } catch (GuzzleException $e) {
+                            } catch (Exception) {
                             }
 
                             $set('TRUSTED_PROXIES', $ips->values()->all());
@@ -250,12 +250,12 @@ class Settings extends Page implements HasForms
                 ->columnSpanFull()
                 ->inline()
                 ->options([
-                    'log' => 'Print mails to Log',
+                    'log' => '/storage/logs Directory',
                     'smtp' => 'SMTP Server',
-                    'sendmail' => 'sendmail Binary',
                     'mailgun' => 'Mailgun',
                     'mandrill' => 'Mandrill',
                     'postmark' => 'Postmark',
+                    'sendmail' => 'sendmail (PHP)',
                 ])
                 ->live()
                 ->default(env('MAIL_MAILER', config('mail.default')))
