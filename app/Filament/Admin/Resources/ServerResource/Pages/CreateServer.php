@@ -97,6 +97,37 @@ class CreateServer extends CreateRecord
                                 ->required()
                                 ->maxLength(255),
 
+                            TextInput::make('external_id')
+                                ->label('External ID')
+                                ->columnSpan([
+                                    'default' => 2,
+                                    'sm' => 3,
+                                    'md' => 3,
+                                    'lg' => 3,
+                                ])
+                                ->unique()
+                                ->maxLength(255),
+
+                                Select::make('node_id')
+                                ->disabledOn('edit')
+                                ->prefixIcon('tabler-server-2')
+                                ->default(fn () => ($this->node = Node::query()->latest()->first())?->id)
+                                ->columnSpan([
+                                    'default' => 2,
+                                    'sm' => 1,
+                                    'md' => 2,
+                                    'lg' => 3,
+                                ])
+                                ->live()
+                                ->relationship('node', 'name')
+                                ->searchable()
+                                ->preload()
+                                ->afterStateUpdated(function (Set $set, $state) {
+                                    $set('allocation_id', null);
+                                    $this->node = Node::find($state);
+                                })
+                                ->required(),
+
                             Select::make('owner_id')
                                 ->preload()
                                 ->prefixIcon('tabler-user')
@@ -104,8 +135,8 @@ class CreateServer extends CreateRecord
                                 ->label('Owner')
                                 ->columnSpan([
                                     'default' => 2,
-                                    'sm' => 3,
-                                    'md' => 3,
+                                    'sm' => 1,
+                                    'md' => 2,
                                     'lg' => 3,
                                 ])
                                 ->relationship('user', 'username')
@@ -133,26 +164,6 @@ class CreateServer extends CreateRecord
                                     $service->handle($data);
 
                                     $this->refreshForm();
-                                })
-                                ->required(),
-
-                            Select::make('node_id')
-                                ->disabledOn('edit')
-                                ->prefixIcon('tabler-server-2')
-                                ->default(fn () => ($this->node = Node::query()->latest()->first())?->id)
-                                ->columnSpan([
-                                    'default' => 2,
-                                    'sm' => 3,
-                                    'md' => 6,
-                                    'lg' => 6,
-                                ])
-                                ->live()
-                                ->relationship('node', 'name')
-                                ->searchable()
-                                ->preload()
-                                ->afterStateUpdated(function (Set $set, $state) {
-                                    $set('allocation_id', null);
-                                    $this->node = Node::find($state);
                                 })
                                 ->required(),
 
