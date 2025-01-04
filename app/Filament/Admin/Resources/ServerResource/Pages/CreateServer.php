@@ -114,8 +114,8 @@ class CreateServer extends CreateRecord
                                 ->default(fn () => ($this->node = Node::query()->latest()->first())?->id)
                                 ->columnSpan([
                                     'default' => 2,
-                                    'sm' => 1,
-                                    'md' => 2,
+                                    'sm' => 3,
+                                    'md' => 3,
                                     'lg' => 3,
                                 ])
                                 ->live()
@@ -135,8 +135,8 @@ class CreateServer extends CreateRecord
                                 ->label('Owner')
                                 ->columnSpan([
                                     'default' => 2,
-                                    'sm' => 1,
-                                    'md' => 2,
+                                    'sm' => 3,
+                                    'md' => 3,
                                     'lg' => 3,
                                 ])
                                 ->relationship('user', 'username')
