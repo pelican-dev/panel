@@ -97,14 +97,9 @@ class AllocationsRelationManager extends RelationManager
                             ->label('Ports')
                             ->inlineLabel()
                             ->live()
-                            ->afterStateUpdated(function ($state, Set $set, Get $get) {
-                                $server = $this->getOwnerRecord();
-                                $ports = CreateServer::retrieveValidPorts($server->node, $state, $get('allocation_ip'));
-
-                                if ($ports !== null) {
-                                    $set('allocation_ports', $ports);
-                                }
-                            })
+                            ->afterStateUpdated(fn ($state, Set $set, Get $get) => $set('allocation_ports',
+                                CreateServer::retrieveValidPorts($this->getOwnerRecord()->node, $state, $get('allocation_ip')))
+                            )
                             ->splitKeys(['Tab', ' ', ','])
                             ->required(),
                     ])

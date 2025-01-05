@@ -231,15 +231,9 @@ class CreateServer extends CreateRecord
                                             ->inlineLabel()
                                             ->live()
                                             ->disabled(fn (Get $get) => empty($get('allocation_ip')))
-                                            ->afterStateUpdated(function ($state, Set $set, Get $get) use ($getPage) {
-                                                $node = Node::find($getPage('node_id'));
-                                                $ip = $get('allocation_ip');
-
-                                                $ports = self::retrieveValidPorts($node, $state, $ip);
-                                                if ($ports !== null) {
-                                                    $set('allocation_ports', $ports);
-                                                }
-                                            })
+                                            ->afterStateUpdated(fn ($state, Set $set, Get $get) => $set('allocation_ports',
+                                                CreateServer::retrieveValidPorts(Node::find($getPage('node_id')), $state, $get('allocation_ip')))
+                                            )
                                             ->splitKeys(['Tab', ' ', ','])
                                             ->required(),
                                     ];
@@ -889,14 +883,13 @@ class CreateServer extends CreateRecord
             ->all();
     }
 
-    public static function retrieveValidPorts(Node $node, array $portEntries, string $ip): ?array
+    public static function retrieveValidPorts(Node $node, array $portEntries, string $ip): array
     {
         $portRangeLimit = AssignmentService::PORT_RANGE_LIMIT;
         $portFloor = AssignmentService::PORT_FLOOR;
         $portCeil = AssignmentService::PORT_CEIL;
 
         $ports = collect();
-        $update = false;
 
         $existingPorts = $node
             ->allocations()
@@ -905,30 +898,11 @@ class CreateServer extends CreateRecord
             ->all();
 
         foreach ($portEntries as $portEntry) {
-            if (!str_contains($portEntry, '-')) {
-                if (is_numeric($portEntry)) {
-                    $portEntry = (int) $portEntry;
-                    if (!in_array($portEntry, $existingPorts)) {
-                        $ports->push($portEntry);
-
-                        continue;
-                    } else {
-                        Notification::make()
-                            ->title('Port already in use')
-                            ->danger()
-                            ->body("$portEntry is already with an allocation")
-                            ->send();
-                    }
-                }
-
-                // Do not add non-numerical ports
-                $update = true;
-
-                continue;
+            $start = $end = $portEntry;
+            if (str_contains($portEntry, '-')) {
+                [$start, $end] = explode('-', $portEntry);
             }
 
-            $update = true;
-            [$start, $end] = explode('-', $portEntry);
             if (!is_numeric($start) || !is_numeric($end)) {
                 Notification::make()
                     ->title('Invalid Port Range')
@@ -950,15 +924,7 @@ class CreateServer extends CreateRecord
                     ->body("The current limit is $portRangeLimit number of ports at one time.")
                     ->send();
 
-                break;
-            }
-
-            if (empty($range)) {
-                Notification::make()
-                    ->title('Invalid Port Range')
-                    ->danger()
-                    ->body("The current limit is $portRangeLimit number of ports at one time.")
-                    ->send();
+                continue;
             }
 
             foreach ($range as $i) {
@@ -990,20 +956,14 @@ class CreateServer extends CreateRecord
 
         $uniquePorts = $ports->unique()->values();
         if ($ports->count() > $uniquePorts->count()) {
-            $update = true;
             $ports = $uniquePorts;
         }
 
         $sortedPorts = $ports->sort()->values();
         if ($sortedPorts->all() !== $ports->all()) {
-            $update = true;
             $ports = $sortedPorts;
         }
 
-        if ($update) {
-            return $ports->all();
-        }
-
-        return null;
+        return $ports->all();
     }
 }
