@@ -912,6 +912,12 @@ class CreateServer extends CreateRecord
                         $ports->push($portEntry);
 
                         continue;
+                    } else {
+                        Notification::make()
+                            ->title('Port already in use')
+                            ->danger()
+                            ->body("$portEntry is already with an allocation")
+                            ->send();
                     }
                 }
 
