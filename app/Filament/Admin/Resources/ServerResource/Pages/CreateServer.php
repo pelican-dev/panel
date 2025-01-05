@@ -918,12 +918,6 @@ class CreateServer extends CreateRecord
                 // Do not add non-numerical ports
                 $update = true;
 
-                Notification::make()
-                    ->title('Invalid Port')
-                    ->danger()
-                    ->body('Your port must be a number!')
-                    ->send();
-
                 continue;
             }
 
