@@ -914,8 +914,8 @@ class CreateServer extends CreateRecord
                 continue;
             }
 
-            $start = max((int) $start, 0);
-            $end = min((int) $end, 2 ** 16 - 1);
+            $start = (int) $start;
+            $end = (int) $end;
             $range = $start <= $end ? range($start, $end) : range($end, $start);
 
             if (count($range) > $portRangeLimit) {
