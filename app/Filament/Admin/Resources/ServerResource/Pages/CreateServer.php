@@ -919,9 +919,9 @@ class CreateServer extends CreateRecord
                 $update = true;
 
                 Notification::make()
-                    ->title("Invalid Port")
+                    ->title('Invalid Port')
                     ->danger()
-                    ->body("Your port must be a number!")
+                    ->body('Your port must be a number!')
                     ->send();
 
                 continue;
@@ -931,7 +931,7 @@ class CreateServer extends CreateRecord
             [$start, $end] = explode('-', $portEntry);
             if (!is_numeric($start) || !is_numeric($end)) {
                 Notification::make()
-                    ->title("Invalid Port Range")
+                    ->title('Invalid Port Range')
                     ->danger()
                     ->body("Your port range are not valid integers: $portEntry")
                     ->send();
