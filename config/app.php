@@ -5,7 +5,7 @@ return [
     'name' => env('APP_NAME', 'Pelican'),
     'favicon' => env('APP_FAVICON', '/pelican.ico'),
 
-    'version' => 'canary',
+    'version' => '1.0.0-beta17',
 
     'timezone' => 'UTC',
 
