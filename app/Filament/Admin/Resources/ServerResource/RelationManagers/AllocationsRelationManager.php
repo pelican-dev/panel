@@ -2,6 +2,7 @@
 
 namespace App\Filament\Admin\Resources\ServerResource\RelationManagers;
 
+use App\Filament\Admin\Resources\ServerResource\Pages\CreateServer;
 use App\Models\Allocation;
 use App\Models\Server;
 use App\Services\Allocations\AssignmentService;
@@ -98,84 +99,11 @@ class AllocationsRelationManager extends RelationManager
                             ->inlineLabel()
                             ->live()
                             ->afterStateUpdated(function ($state, Set $set, Get $get) {
-                                $ports = collect();
-                                $update = false;
-                                $existingPorts = Allocation::query()
-                                    ->where('ip', $get('allocation_ip'))
-                                    ->pluck('port')
-                                    ->toArray();
+                                $server = $this->getOwnerRecord();
+                                $ports = CreateServer::retrieveValidPorts($server->node, $state, $get('allocation_ip'));
 
-                                foreach ($state as $portEntry) {
-                                    if (!str_contains($portEntry, '-')) {
-                                        if (is_numeric($portEntry)) {
-                                            $portEntry = (int) $portEntry;
-                                            if (in_array($portEntry, $existingPorts)) {
-                                                Notification::make()
-                                                    ->title('Port Already Exists')
-                                                    ->danger()
-                                                    ->body('Port ' . $portEntry . ' already exists.')
-                                                    ->send();
-                                            } else {
-                                                $ports->push($portEntry);
-
-                                                continue;
-                                            }
-                                        }
-
-                                        // Do not add non-numerical ports
-                                        $update = true;
-
-                                        continue;
-                                    }
-
-                                    $update = true;
-                                    [$start, $end] = explode('-', $portEntry);
-                                    if (!is_numeric($start) || !is_numeric($end)) {
-                                        continue;
-                                    }
-
-                                    $start = max((int) $start, 0);
-                                    $end = min((int) $end, 2 ** 16 - 1);
-                                    $range = $start <= $end ? range($start, $end) : range($end, $start);
-
-                                    if (count($range) > 1001) {
-                                        Notification::make()
-                                            ->title('Port Range Too High')
-                                            ->danger()
-                                            ->body('Port range ' . $portEntry . ' is too high. Please keep it under 1000.')
-                                            ->send();
-                                        break;
-                                    }
-
-                                    foreach ($range as $i) {
-                                        if ($i > 1024 && $i <= 65535) {
-                                            if (in_array($i, $existingPorts)) {
-                                                Notification::make()
-                                                    ->title('Port Already Exists')
-                                                    ->danger()
-                                                    ->body('Port ' . $i . ' already exists for ' . $get('allocation_ip'))
-                                                    ->send();
-                                            } else {
-                                                $ports->push($i);
-                                            }
-                                        }
-                                    }
-                                }
-
-                                $uniquePorts = $ports->unique()->values();
-                                if ($ports->count() > $uniquePorts->count()) {
-                                    $update = true;
-                                    $ports = $uniquePorts;
-                                }
-
-                                $sortedPorts = $ports->sort()->values();
-                                if ($sortedPorts->all() !== $ports->all()) {
-                                    $update = true;
-                                    $ports = $sortedPorts;
-                                }
-
-                                if ($update) {
-                                    $set('allocation_ports', $ports->all());
+                                if ($ports !== null) {
+                                    $set('allocation_ports', $ports);
                                 }
                             })
                             ->splitKeys(['Tab', ' ', ','])
