@@ -71,7 +71,7 @@ class AllocationsRelationManager extends RelationManager
                     ->searchable()
                     ->label('Alias'),
                 SelectColumn::make('ip')
-                    ->options(collect($this->getOwnerRecord()->ipAddresses())->mapWithKeys(fn (string $ip) => [$ip => $ip]))
+                    ->options(fn (Allocation $allocation) => collect($this->getOwnerRecord()->ipAddresses())->merge([$allocation->ip])->mapWithKeys(fn (string $ip) => [$ip => $ip]))
                     ->selectablePlaceholder(false)
                     ->searchable()
                     ->label('IP'),

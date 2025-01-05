@@ -372,8 +372,8 @@ class Node extends Model
 
     public function ipAddresses(): array
     {
-        return cache()->remember("nodes.$this->id.ips", now()->addHour(), function () {
-            $ips = collect();
+        $ips = cache()->remember("nodes.$this->id.ips", now()->addHour(), function () {
+            $ips = collect(['0.0.0.0']);
             if (is_ip($this->fqdn)) {
                 $ips = $ips->push($this->fqdn);
             } elseif ($dnsRecords = gethostbynamel($this->fqdn)) {
@@ -384,15 +384,15 @@ class Node extends Model
                 $addresses = Http::daemon($this)->connectTimeout(1)->timeout(1)->get('/api/system/ips')->json();
                 $ips = $ips->concat(fluent($addresses)->get('ip_addresses'));
             } catch (Exception) {
-                // pass
+                return null;
             }
-
-            $ips->push('0.0.0.0');
 
             // Only IPV4
             $ips = $ips->filter(fn (string $ip) => filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4) !== false);
 
             return $ips->unique()->all();
         });
+
+        return $ips ?? [];
     }
 }
