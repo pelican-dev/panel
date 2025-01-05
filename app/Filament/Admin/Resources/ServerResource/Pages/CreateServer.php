@@ -205,9 +205,10 @@ class CreateServer extends CreateRecord
                                         Select::make('allocation_ip')
                                             ->options(collect(Node::find($get('node_id'))?->ipAddresses())->mapWithKeys(fn (string $ip) => [$ip => $ip]))
                                             ->label('IP Address')
+                                            ->helperText("Usually your machine's public IP unless you are port forwarding.")
+                                            ->afterStateUpdated(fn (Set $set) => $set('allocation_ports', []))
                                             ->inlineLabel()
                                             ->ipv4()
-                                            ->helperText("Usually your machine's public IP unless you are port forwarding.")
                                             ->live()
                                             ->required(),
                                         TextInput::make('allocation_alias')

@@ -80,6 +80,7 @@ class AllocationsRelationManager extends RelationManager
                             ->inlineLabel()
                             ->ipv4()
                             ->helperText("Usually your machine's public IP unless you are port forwarding.")
+                            ->afterStateUpdated(fn (Set $set) => $set('allocation_ports', []))
                             ->required(),
                         TextInput::make('allocation_alias')
                             ->label('Alias')
