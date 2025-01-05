@@ -203,7 +203,7 @@ class CreateServer extends CreateRecord
 
                                     return [
                                         Select::make('allocation_ip')
-                                            ->options(collect(Node::find($get('node_id'))?->ipAddresses())->mapWithKeys(fn(string $ip) => [$ip => $ip]))
+                                            ->options(collect(Node::find($get('node_id'))?->ipAddresses())->mapWithKeys(fn (string $ip) => [$ip => $ip]))
                                             ->label('IP Address')
                                             ->inlineLabel()
                                             ->ipv4()
