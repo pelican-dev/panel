@@ -38,6 +38,10 @@ class WebhookConfiguration extends Model
     {
         $events = [];
         foreach (File::allFiles($directory) as $file) {
+            if($file->getExtension() !== 'php') {
+                continue;
+            }
+
             $namespace = str($file->getPath())
                 ->after($after)
                 ->replace(DIRECTORY_SEPARATOR, '\\')
@@ -142,6 +146,10 @@ class WebhookConfiguration extends Model
 
         $models = [];
         foreach (File::allFiles($directory) as $file) {
+            if($file->getExtension() !== 'php') {
+                continue;
+            }
+
             $models[] = $namespace . str($file->getFilename())
                 ->replace([DIRECTORY_SEPARATOR, '.php'], ['\\', '']);
         }
