@@ -889,7 +889,7 @@ class CreateServer extends CreateRecord
             ->all();
     }
 
-    public static function retrieveValidPorts(Node $node, array $portEntries, string $ip, $maxPorts = 1000): ?array
+    public static function retrieveValidPorts(Node $node, array $portEntries, string $ip, int $maxPorts = 1000): ?array
     {
         $ports = collect();
         $update = false;
