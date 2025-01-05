@@ -889,8 +889,12 @@ class CreateServer extends CreateRecord
             ->all();
     }
 
-    public static function retrieveValidPorts(Node $node, array $portEntries, string $ip, int $maxPorts = 1000): ?array
+    public static function retrieveValidPorts(Node $node, array $portEntries, string $ip): ?array
     {
+        $portRangeLimit = AssignmentService::PORT_RANGE_LIMIT;
+        $portFloor = AssignmentService::PORT_FLOOR;
+        $portCeil = AssignmentService::PORT_CEIL;
+
         $ports = collect();
         $update = false;
 
@@ -914,12 +918,24 @@ class CreateServer extends CreateRecord
                 // Do not add non-numerical ports
                 $update = true;
 
+                Notification::make()
+                    ->title("Invalid Port")
+                    ->danger()
+                    ->body("Your port must be a number!")
+                    ->send();
+
                 continue;
             }
 
             $update = true;
             [$start, $end] = explode('-', $portEntry);
             if (!is_numeric($start) || !is_numeric($end)) {
+                Notification::make()
+                    ->title("Invalid Port Range")
+                    ->danger()
+                    ->body("Your port range are not valid integers: $portEntry")
+                    ->send();
+
                 continue;
             }
 
@@ -927,24 +943,44 @@ class CreateServer extends CreateRecord
             $end = min((int) $end, 2 ** 16 - 1);
             $range = $start <= $end ? range($start, $end) : range($end, $start);
 
-            if (count($range) > $maxPorts) {
+            if (count($range) > $portRangeLimit) {
                 Notification::make()
                     ->title('Too many ports at one time!')
                     ->danger()
-                    ->body("The current limit is $maxPorts number of ports at one time.")
+                    ->body("The current limit is $portRangeLimit number of ports at one time.")
                     ->send();
 
                 break;
             }
 
+            if (empty($range)) {
+                Notification::make()
+                    ->title('Invalid Port Range')
+                    ->danger()
+                    ->body("The current limit is $portRangeLimit number of ports at one time.")
+                    ->send();
+            }
+
             foreach ($range as $i) {
                 // Invalid port number
-                if ($i <= AssignmentService::PORT_FLOOR || $i > AssignmentService::PORT_CEIL) {
+                if ($i <= $portFloor || $i > $portCeil) {
+                    Notification::make()
+                        ->title('Port not in valid range')
+                        ->danger()
+                        ->body("$i is not in the valid port range between $portFloor-$portCeil")
+                        ->send();
+
                     continue;
                 }
 
                 // Already exists
                 if (in_array($i, $existingPorts)) {
+                    Notification::make()
+                        ->title('Port already in use')
+                        ->danger()
+                        ->body("$i is already with an allocation")
+                        ->send();
+
                     continue;
                 }
 
