@@ -226,15 +226,29 @@ class CreateServer extends CreateRecord
                                         ->label('Ports')
                                         ->inlineLabel()
                                         ->live()
-                                        ->afterStateUpdated(function ($state, Set $set) {
+                                        ->afterStateUpdated(function ($state, Set $set, Get $get) {
                                             $ports = collect();
                                             $update = false;
+                                            $existingPorts = Allocation::query()
+                                                ->where('ip', $get('allocation_ip'))
+                                                ->pluck('port')
+                                                ->toArray();
+
                                             foreach ($state as $portEntry) {
                                                 if (!str_contains($portEntry, '-')) {
                                                     if (is_numeric($portEntry)) {
-                                                        $ports->push((int) $portEntry);
+                                                        $portEntry = (int) $portEntry;
+                                                        if (in_array($portEntry, $existingPorts)) {
+                                                            Notification::make()
+                                                                ->title('Port Already Exists')
+                                                                ->danger()
+                                                                ->body('Port ' . $portEntry . ' already exists.')
+                                                                ->send();
+                                                        } else {
+                                                            $ports->push($portEntry);
 
-                                                        continue;
+                                                            continue;
+                                                        }
                                                     }
 
                                                     // Do not add non-numerical ports
@@ -252,9 +266,27 @@ class CreateServer extends CreateRecord
                                                 $start = max((int) $start, 0);
                                                 $end = min((int) $end, 2 ** 16 - 1);
                                                 $range = $start <= $end ? range($start, $end) : range($end, $start);
+
+                                                if (count($range) > 1001) {
+                                                    Notification::make()
+                                                        ->title('Port Range Too High')
+                                                        ->danger()
+                                                        ->body('Port range ' . $portEntry . ' is too high. Please keep it under 1000.')
+                                                        ->send();
+                                                    break;
+                                                }
+
                                                 foreach ($range as $i) {
                                                     if ($i > 1024 && $i <= 65535) {
-                                                        $ports->push($i);
+                                                        if (in_array($i, $existingPorts)) {
+                                                            Notification::make()
+                                                                ->title('Port Already Exists')
+                                                                ->danger()
+                                                                ->body('Port ' . $i . ' already exists for ' . $get('allocation_ip'))
+                                                                ->send();
+                                                        } else {
+                                                            $ports->push($i);
+                                                        }
                                                     }
                                                 }
                                             }
