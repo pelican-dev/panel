@@ -387,6 +387,8 @@ class Node extends Model
                 // pass
             }
 
+            $ips->push('0.0.0.0');
+
             // Only IPV4
             $ips = $ips->filter(fn (string $ip) => filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4) !== false);
 

@@ -198,86 +198,47 @@ class CreateServer extends CreateRecord
                                         ->where('node_id', $get('node_id'))
                                         ->whereNull('server_id'),
                                 )
-                                ->createOptionForm(fn (Get $get) => [
-                                    Select::make('allocation_ip')
-                                        ->options(collect(Node::find($get('node_id'))?->ipAddresses())->mapWithKeys(fn (string $ip) => [$ip => $ip]))
-                                        ->label('IP Address')
-                                        ->inlineLabel()
-                                        ->ipv4()
-                                        ->helperText("Usually your machine's public IP unless you are port forwarding.")
-                                        ->required(),
-                                    TextInput::make('allocation_alias')
-                                        ->label('Alias')
-                                        ->inlineLabel()
-                                        ->default(null)
-                                        ->datalist([
-                                            $get('name'),
-                                            Egg::find($get('egg_id'))?->name,
-                                        ])
-                                        ->helperText('Optional display name to help you remember what these are.')
-                                        ->required(false),
-                                    TagsInput::make('allocation_ports')
-                                        ->placeholder('Examples: 27015, 27017-27019')
-                                        ->helperText(new HtmlString('
-                                These are the ports that users can connect to this Server through.
-                                <br />
-                                You would have to port forward these on your home network.
-                            '))
-                                        ->label('Ports')
-                                        ->inlineLabel()
-                                        ->live()
-                                        ->afterStateUpdated(function ($state, Set $set) {
-                                            $ports = collect();
-                                            $update = false;
-                                            foreach ($state as $portEntry) {
-                                                if (!str_contains($portEntry, '-')) {
-                                                    if (is_numeric($portEntry)) {
-                                                        $ports->push((int) $portEntry);
+                                ->createOptionForm(function (Get $get) {
+                                    $getPage = $get;
 
-                                                        continue;
-                                                    }
-
-                                                    // Do not add non-numerical ports
-                                                    $update = true;
-
-                                                    continue;
-                                                }
-
-                                                $update = true;
-                                                [$start, $end] = explode('-', $portEntry);
-                                                if (!is_numeric($start) || !is_numeric($end)) {
-                                                    continue;
-                                                }
-
-                                                $start = max((int) $start, 0);
-                                                $end = min((int) $end, 2 ** 16 - 1);
-                                                $range = $start <= $end ? range($start, $end) : range($end, $start);
-                                                foreach ($range as $i) {
-                                                    if ($i > 1024 && $i <= 65535) {
-                                                        $ports->push($i);
-                                                    }
-                                                }
-                                            }
-
-                                            $uniquePorts = $ports->unique()->values();
-                                            if ($ports->count() > $uniquePorts->count()) {
-                                                $update = true;
-                                                $ports = $uniquePorts;
-                                            }
-
-                                            $sortedPorts = $ports->sort()->values();
-                                            if ($sortedPorts->all() !== $ports->all()) {
-                                                $update = true;
-                                                $ports = $sortedPorts;
-                                            }
-
-                                            if ($update) {
-                                                $set('allocation_ports', $ports->all());
-                                            }
-                                        })
-                                        ->splitKeys(['Tab', ' ', ','])
-                                        ->required(),
-                                ])
+                                    return [
+                                        Select::make('allocation_ip')
+                                            ->options(collect(Node::find($get('node_id'))?->ipAddresses())->mapWithKeys(fn (string $ip) => [$ip => $ip]))
+                                            ->label('IP Address')
+                                            ->helperText("Usually your machine's public IP unless you are port forwarding.")
+                                            ->afterStateUpdated(fn (Set $set) => $set('allocation_ports', []))
+                                            ->inlineLabel()
+                                            ->ipv4()
+                                            ->live()
+                                            ->required(),
+                                        TextInput::make('allocation_alias')
+                                            ->label('Alias')
+                                            ->inlineLabel()
+                                            ->default(null)
+                                            ->datalist([
+                                                $get('name'),
+                                                Egg::find($get('egg_id'))?->name,
+                                            ])
+                                            ->helperText('Optional display name to help you remember what these are.')
+                                            ->required(false),
+                                        TagsInput::make('allocation_ports')
+                                            ->placeholder('Examples: 27015, 27017-27019')
+                                            ->helperText(new HtmlString('
+                                            These are the ports that users can connect to this Server through.
+                                            <br />
+                                            You would have to port forward these on your home network.
+                                        '))
+                                            ->label('Ports')
+                                            ->inlineLabel()
+                                            ->live()
+                                            ->disabled(fn (Get $get) => empty($get('allocation_ip')))
+                                            ->afterStateUpdated(fn ($state, Set $set, Get $get) => $set('allocation_ports',
+                                                CreateServer::retrieveValidPorts(Node::find($getPage('node_id')), $state, $get('allocation_ip')))
+                                            )
+                                            ->splitKeys(['Tab', ' ', ','])
+                                            ->required(),
+                                    ];
+                                })
                                 ->createOptionUsing(function (array $data, Get $get, AssignmentService $assignmentService): int {
                                     return collect(
                                         $assignmentService->handle(Node::find($get('node_id')), $data)
@@ -921,5 +882,89 @@ class CreateServer extends CreateRecord
             ->each(fn ($value) => str($value)->trim())
             ->mapWithKeys(fn ($value) => [$value => $value])
             ->all();
+    }
+
+    public static function retrieveValidPorts(Node $node, array $portEntries, string $ip): array
+    {
+        $portRangeLimit = AssignmentService::PORT_RANGE_LIMIT;
+        $portFloor = AssignmentService::PORT_FLOOR;
+        $portCeil = AssignmentService::PORT_CEIL;
+
+        $ports = collect();
+
+        $existingPorts = $node
+            ->allocations()
+            ->where('ip', $ip)
+            ->pluck('port')
+            ->all();
+
+        foreach ($portEntries as $portEntry) {
+            $start = $end = $portEntry;
+            if (str_contains($portEntry, '-')) {
+                [$start, $end] = explode('-', $portEntry);
+            }
+
+            if (!is_numeric($start) || !is_numeric($end)) {
+                Notification::make()
+                    ->title('Invalid Port Range')
+                    ->danger()
+                    ->body("Your port range are not valid integers: $portEntry")
+                    ->send();
+
+                continue;
+            }
+
+            $start = (int) $start;
+            $end = (int) $end;
+            $range = $start <= $end ? range($start, $end) : range($end, $start);
+
+            if (count($range) > $portRangeLimit) {
+                Notification::make()
+                    ->title('Too many ports at one time!')
+                    ->danger()
+                    ->body("The current limit is $portRangeLimit number of ports at one time.")
+                    ->send();
+
+                continue;
+            }
+
+            foreach ($range as $i) {
+                // Invalid port number
+                if ($i <= $portFloor || $i > $portCeil) {
+                    Notification::make()
+                        ->title('Port not in valid range')
+                        ->danger()
+                        ->body("$i is not in the valid port range between $portFloor-$portCeil")
+                        ->send();
+
+                    continue;
+                }
+
+                // Already exists
+                if (in_array($i, $existingPorts)) {
+                    Notification::make()
+                        ->title('Port already in use')
+                        ->danger()
+                        ->body("$i is already with an allocation")
+                        ->send();
+
+                    continue;
+                }
+
+                $ports->push($i);
+            }
+        }
+
+        $uniquePorts = $ports->unique()->values();
+        if ($ports->count() > $uniquePorts->count()) {
+            $ports = $uniquePorts;
+        }
+
+        $sortedPorts = $ports->sort()->values();
+        if ($sortedPorts->all() !== $ports->all()) {
+            $ports = $sortedPorts;
+        }
+
+        return $ports->all();
     }
 }
