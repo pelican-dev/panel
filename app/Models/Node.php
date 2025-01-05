@@ -373,7 +373,7 @@ class Node extends Model
     public function ipAddresses(): array
     {
         $ips = cache()->remember("nodes.$this->id.ips", now()->addHour(), function () {
-            $ips = collect(['0.0.0.0']);
+            $ips = collect();
             if (is_ip($this->fqdn)) {
                 $ips = $ips->push($this->fqdn);
             } elseif ($dnsRecords = gethostbynamel($this->fqdn)) {
@@ -390,9 +390,9 @@ class Node extends Model
             // Only IPV4
             $ips = $ips->filter(fn (string $ip) => filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4) !== false);
 
-            return $ips->unique()->all();
+            return $ips;
         });
 
-        return $ips ?? [];
+        return $ips->push('0.0.0.0')->unique()->all();
     }
 }
