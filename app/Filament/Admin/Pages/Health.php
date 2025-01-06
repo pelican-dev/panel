@@ -23,6 +23,11 @@ class Health extends Page
         'refresh-component' => '$refresh',
     ];
 
+    public static function canAccess(): bool
+    {
+        return auth()->user()->can('view health');
+    }
+
     protected function getActions(): array
     {
         return [
