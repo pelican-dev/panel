@@ -18,7 +18,7 @@ class RedirectIfAuthenticated
     public function handle(Request $request, \Closure $next, ?string $guard = null): mixed
     {
         if ($this->authManager->guard($guard)->check()) {
-            return redirect()->route('index');
+            return redirect()->route('filament.app.resources...index');
         }
 
         return $next($request);

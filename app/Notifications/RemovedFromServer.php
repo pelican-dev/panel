@@ -52,6 +52,6 @@ class RemovedFromServer extends Notification implements ShouldQueue
             ->greeting('Hello ' . $this->user->username . '.')
             ->line('You have been removed as a subuser for the following server.')
             ->line('Server Name: ' . $this->server->name)
-            ->action('Visit Panel', route('index'));
+            ->action('Visit Panel', route('filament.app.resources...index'));
     }
 }
