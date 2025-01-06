@@ -458,6 +458,9 @@ class Server extends Model
         }
 
         if ($type === ServerResourceType::Time) {
+            if ($this->isSuspended()) {
+                return 'Suspended';
+            }
             if ($resourceAmount === 0) {
                 return 'Offline';
             }
@@ -484,7 +487,7 @@ class Server extends Model
     public function condition(): Attribute
     {
         return Attribute::make(
-            get: fn () => $this->status?->value ?? $this->retrieveStatus(),
+            get: fn () => $this->isSuspended() ? 'Suspended' : $this->status?->value ?? $this->retrieveStatus(),
         );
     }
 
