@@ -29,11 +29,11 @@ class SuspensionServiceTest extends IntegrationTestCase
 
         $this->repository->expects('setServer->sync')->twice()->andReturnSelf();
 
-        $this->getService()->toggle($server);
+        $this->getService()->handle($server);
 
         $this->assertTrue($server->refresh()->isSuspended());
 
-        $this->getService()->toggle($server, SuspensionService::ACTION_UNSUSPEND);
+        $this->getService()->handle($server, SuspensionService::ACTION_UNSUSPEND);
 
         $this->assertFalse($server->refresh()->isSuspended());
     }
@@ -42,13 +42,13 @@ class SuspensionServiceTest extends IntegrationTestCase
     {
         $server = $this->createServerModel();
 
-        $this->getService()->toggle($server, SuspensionService::ACTION_UNSUSPEND);
+        $this->getService()->handle($server, SuspensionService::ACTION_UNSUSPEND);
 
         $server->refresh();
         $this->assertFalse($server->isSuspended());
 
         $server->update(['status' => ServerState::Suspended]);
-        $this->getService()->toggle($server);
+        $this->getService()->handle($server);
 
         $server->refresh();
         $this->assertTrue($server->isSuspended());
@@ -61,7 +61,7 @@ class SuspensionServiceTest extends IntegrationTestCase
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('Expected one of: "suspend", "unsuspend". Got: "foo"');
 
-        $this->getService()->toggle($server, 'foo');
+        $this->getService()->handle($server, 'foo');
     }
 
     private function getService(): SuspensionService

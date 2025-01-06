@@ -792,7 +792,7 @@ class EditServer extends EditRecord
                                                         ->color('warning')
                                                         ->hidden(fn (Server $server) => $server->isSuspended())
                                                         ->action(function (SuspensionService $suspensionService, Server $server) {
-                                                            $suspensionService->toggle($server, 'suspend');
+                                                            $suspensionService->handle($server, SuspensionService::ACTION_SUSPEND);
                                                             Notification::make()->success()->title('Server Suspended!')->send();
 
                                                             $this->refreshFormData(['status', 'docker']);
@@ -802,7 +802,7 @@ class EditServer extends EditRecord
                                                         ->color('success')
                                                         ->hidden(fn (Server $server) => !$server->isSuspended())
                                                         ->action(function (SuspensionService $suspensionService, Server $server) {
-                                                            $suspensionService->toggle($server, 'unsuspend');
+                                                            $suspensionService->handle($server, SuspensionService::ACTION_UNSUSPEND);
                                                             Notification::make()->success()->title('Server Unsuspended!')->send();
 
                                                             $this->refreshFormData(['status', 'docker']);

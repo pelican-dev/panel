@@ -32,7 +32,7 @@ class ServerManagementController extends ApplicationApiController
      */
     public function suspend(ServerWriteRequest $request, Server $server): Response
     {
-        $this->suspensionService->toggle($server);
+        $this->suspensionService->handle($server);
 
         return $this->returnNoContent();
     }
@@ -44,7 +44,7 @@ class ServerManagementController extends ApplicationApiController
      */
     public function unsuspend(ServerWriteRequest $request, Server $server): Response
     {
-        $this->suspensionService->toggle($server, SuspensionService::ACTION_UNSUSPEND);
+        $this->suspensionService->handle($server, SuspensionService::ACTION_UNSUSPEND);
 
         return $this->returnNoContent();
     }

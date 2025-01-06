@@ -27,7 +27,7 @@ class SuspensionService
      *
      * @throws \Throwable
      */
-    public function toggle(Server $server, string $action = self::ACTION_SUSPEND): void
+    public function handle(Server $server, string $action = self::ACTION_SUSPEND): void
     {
         Assert::oneOf($action, [self::ACTION_SUSPEND, self::ACTION_UNSUSPEND]);
 

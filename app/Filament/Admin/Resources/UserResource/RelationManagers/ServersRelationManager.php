@@ -34,7 +34,7 @@ class ServersRelationManager extends RelationManager
                     ->color('warning')
                     ->action(function (SuspensionService $suspensionService) use ($user) {
                         foreach ($user->servers()->whereNot('status', ServerState::Suspended)->get() as $server) {
-                            $suspensionService->toggle($server);
+                            $suspensionService->handle($server);
                         }
                     }),
                 Actions\Action::make('toggleUnsuspend')
@@ -43,7 +43,7 @@ class ServersRelationManager extends RelationManager
                     ->color('primary')
                     ->action(function (SuspensionService $suspensionService) use ($user) {
                         foreach ($user->servers()->where('status', ServerState::Suspended)->get() as $server) {
-                            $suspensionService->toggle($server, SuspensionService::ACTION_UNSUSPEND);
+                            $suspensionService->handle($server, SuspensionService::ACTION_UNSUSPEND);
                         }
                     }),
             ])
