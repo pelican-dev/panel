@@ -34,7 +34,7 @@
     <script>
         let theme = {
             background: 'rgba(19,26,32,0.7)',
-            cursor: 'transparent',
+            cursor: 'rgba(19,26,32,0.7)',
             black: '#000000',
             red: '#E54B4B',
             green: '#9ECE58',
