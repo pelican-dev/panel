@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-22.04
     permissions:
       contents: write
-      
+
     steps:
       - name: Code checkout
         uses: actions/checkout@v4
@@ -26,7 +26,7 @@ jobs:
         run: yarn install --frozen-lockfile
 
       - name: Build
-        run: yarn build:production
+        run: yarn build
 
       - name: Create release branch and bump version
         env:
