@@ -792,7 +792,11 @@ class EditServer extends EditRecord
                                                         ->color('warning')
                                                         ->hidden(fn (Server $server) => $server->isSuspended())
                                                         ->action(function (SuspensionService $suspensionService, Server $server) {
-                                                            $suspensionService->handle($server, SuspensionService::ACTION_SUSPEND);
+                                                            try {
+                                                                $suspensionService->handle($server, SuspensionService::ACTION_SUSPEND);
+                                                            } catch (\Exception $exception) {
+                                                                Notification::make()->warning()->title('Server Suspension')->body($exception->getMessage())->send();
+                                                            }
                                                             Notification::make()->success()->title('Server Suspended!')->send();
 
                                                             $this->refreshFormData(['status', 'docker']);
@@ -802,7 +806,11 @@ class EditServer extends EditRecord
                                                         ->color('success')
                                                         ->hidden(fn (Server $server) => !$server->isSuspended())
                                                         ->action(function (SuspensionService $suspensionService, Server $server) {
-                                                            $suspensionService->handle($server, SuspensionService::ACTION_UNSUSPEND);
+                                                            try {
+                                                                $suspensionService->handle($server, SuspensionService::ACTION_UNSUSPEND);
+                                                            } catch (\Exception $exception) {
+                                                                Notification::make()->warning()->title('Server Suspension')->body($exception->getMessage())->send();
+                                                            }
                                                             Notification::make()->success()->title('Server Unsuspended!')->send();
 
                                                             $this->refreshFormData(['status', 'docker']);
