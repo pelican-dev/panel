@@ -4,6 +4,7 @@ namespace App\Filament\Admin\Resources\ServerResource\Pages;
 
 use App\Enums\ContainerStatus;
 use App\Enums\ServerState;
+use App\Enums\SuspendAction;
 use App\Filament\Admin\Resources\ServerResource;
 use App\Filament\Admin\Resources\ServerResource\RelationManagers\AllocationsRelationManager;
 use App\Filament\Components\Forms\Actions\RotateDatabasePasswordAction;
@@ -792,7 +793,11 @@ class EditServer extends EditRecord
                                                         ->color('warning')
                                                         ->hidden(fn (Server $server) => $server->isSuspended())
                                                         ->action(function (SuspensionService $suspensionService, Server $server) {
-                                                            $suspensionService->toggle($server, 'suspend');
+                                                            try {
+                                                                $suspensionService->handle($server, SuspendAction::Suspend);
+                                                            } catch (\Exception $exception) {
+                                                                Notification::make()->warning()->title('Server Suspension')->body($exception->getMessage())->send();
+                                                            }
                                                             Notification::make()->success()->title('Server Suspended!')->send();
 
                                                             $this->refreshFormData(['status', 'docker']);
@@ -802,7 +807,11 @@ class EditServer extends EditRecord
                                                         ->color('success')
                                                         ->hidden(fn (Server $server) => !$server->isSuspended())
                                                         ->action(function (SuspensionService $suspensionService, Server $server) {
-                                                            $suspensionService->toggle($server, 'unsuspend');
+                                                            try {
+                                                                $suspensionService->handle($server, SuspendAction::Unsuspend);
+                                                            } catch (\Exception $exception) {
+                                                                Notification::make()->warning()->title('Server Suspension')->body($exception->getMessage())->send();
+                                                            }
                                                             Notification::make()->success()->title('Server Unsuspended!')->send();
 
                                                             $this->refreshFormData(['status', 'docker']);

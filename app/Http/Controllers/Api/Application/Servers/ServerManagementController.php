@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api\Application\Servers;
 
+use App\Enums\SuspendAction;
 use App\Http\Controllers\Api\Application\ApplicationApiController;
 use App\Http\Requests\Api\Application\Servers\ServerWriteRequest;
 use App\Models\Server;
@@ -32,7 +33,7 @@ class ServerManagementController extends ApplicationApiController
      */
     public function suspend(ServerWriteRequest $request, Server $server): Response
     {
-        $this->suspensionService->toggle($server);
+        $this->suspensionService->handle($server, SuspendAction::Suspend);
 
         return $this->returnNoContent();
     }
@@ -44,7 +45,7 @@ class ServerManagementController extends ApplicationApiController
      */
     public function unsuspend(ServerWriteRequest $request, Server $server): Response
     {
-        $this->suspensionService->toggle($server, SuspensionService::ACTION_UNSUSPEND);
+        $this->suspensionService->handle($server, SuspendAction::Unsuspend);
 
         return $this->returnNoContent();
     }
