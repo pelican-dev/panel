@@ -24,7 +24,7 @@ class RoleResource extends Resource
 
     protected static ?string $navigationIcon = 'tabler-users-group';
 
-    protected static ?string $navigationGroup = 'Advanced';
+    protected static ?string $navigationGroup = 'User';
 
     protected static ?string $recordTitleAttribute = 'name';
 
