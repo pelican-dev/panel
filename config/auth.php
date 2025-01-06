@@ -127,6 +127,7 @@ return [
             'icon' => 'tabler-brand-steam-f',
             'color' => Color::hex('#00adee'),
             'service' => [
+                'client_id' => null,
                 'client_secret' => env('OAUTH_STEAM_CLIENT_SECRET'),
                 'allowed_hosts' => [
                     env('APP_URL'),
