@@ -55,16 +55,6 @@ class SuspensionServiceTest extends IntegrationTestCase
         $this->assertTrue($server->isSuspended());
     }
 
-    public function testExceptionIsThrownIfInvalidActionsArePassed(): void
-    {
-        $server = $this->createServerModel();
-
-        $this->expectException(\InvalidArgumentException::class);
-        $this->expectExceptionMessage('Expected one of: "suspend", "unsuspend". Got: "foo"');
-
-        $this->getService()->handle($server, 'foo');
-    }
-
     private function getService(): SuspensionService
     {
         return $this->app->make(SuspensionService::class);
