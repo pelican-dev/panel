@@ -89,10 +89,10 @@ class RoleResource extends Resource
     {
         $icon = null;
 
-        if (class_exists('\App\Filament\Resources\\' . $model . 'Resource')) {
-            $icon = ('\App\Filament\Resources\\' . $model . 'Resource')::getNavigationIcon();
-        } elseif (class_exists('\App\Filament\Pages\\' . $model)) {
-            $icon = ('\App\Filament\Pages\\' . $model)::getNavigationIcon();
+        if (class_exists('\App\Filament\Admin\Resources\\' . $model . 'Resource')) {
+            $icon = ('\App\Filament\Admin\Resources\\' . $model . 'Resource')::getNavigationIcon();
+        } elseif (class_exists('\App\Filament\Admin\Pages\\' . $model)) {
+            $icon = ('\App\Filament\Admin\Pages\\' . $model)::getNavigationIcon();
         } elseif (class_exists('\App\Filament\Server\Resources\\' . $model . 'Resource')) {
             $icon = ('\App\Filament\Server\Resources\\' . $model . 'Resource')::getNavigationIcon();
         }
