@@ -97,7 +97,7 @@ class RoleResource extends Resource
             $icon = ('\App\Filament\Server\Resources\\' . $model . 'Resource')::getNavigationIcon();
         }
 
-        return Section::make(Str::headline(Str::plural($model)))
+        return Section::make(Str::headline($model))
             ->columnSpan(1)
             ->collapsible()
             ->collapsed()

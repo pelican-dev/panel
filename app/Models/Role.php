@@ -33,6 +33,9 @@ class Role extends BaseRole
             'view',
             'update',
         ],
+        'health' => [
+            'view',
+        ],
         'activity' => [
             'seeIps',
         ],
