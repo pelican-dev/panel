@@ -201,7 +201,7 @@ class Node extends Model
                 ],
             ],
             'allowed_mounts' => $this->mounts->pluck('source')->toArray(),
-            'remote' => route('filament.app.resources...index'),
+            'remote' => config('app.url'),
         ];
     }
 
