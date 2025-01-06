@@ -25,7 +25,7 @@ class AppPanelProvider extends PanelProvider
     {
         return $panel
             ->id('app')
-            ->path('app')
+            ->path('')
             ->spa()
             ->breadcrumbs(false)
             ->brandName(config('app.name', 'Pelican'))
