@@ -16,6 +16,7 @@ use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables;
 use Filament\Tables\Actions\BulkActionGroup;
 use Filament\Tables\Actions\DeleteBulkAction;
+use Filament\Tables\Columns\SelectColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Columns\TextInputColumn;
 use Filament\Tables\Table;
@@ -69,7 +70,9 @@ class AllocationsRelationManager extends RelationManager
                 TextInputColumn::make('ip_alias')
                     ->searchable()
                     ->label('Alias'),
-                TextInputColumn::make('ip')
+                SelectColumn::make('ip')
+                    ->options(fn (Allocation $allocation) => collect($this->getOwnerRecord()->ipAddresses())->merge([$allocation->ip])->mapWithKeys(fn (string $ip) => [$ip => $ip]))
+                    ->selectablePlaceholder(false)
                     ->searchable()
                     ->label('IP'),
             ])
