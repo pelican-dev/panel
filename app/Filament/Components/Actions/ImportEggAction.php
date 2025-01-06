@@ -36,7 +36,7 @@ class ImportEggAction extends Action
                         ->schema([
                             FileUpload::make('egg')
                                 ->label('Egg')
-                                ->hint('This should be the json file ( egg-minecraft.json )')
+                                ->hint('This should be the JSON file ( egg-minecraft.json )')
                                 ->acceptedFileTypes(['application/json'])
                                 ->storeFiles(false)
                                 ->multiple(),
@@ -46,7 +46,7 @@ class ImportEggAction extends Action
                         ->schema([
                             TextInput::make('url')
                                 ->label('URL')
-                                ->hint('This URL should point to a single json file')
+                                ->hint('This URL should point to a single JSON file')
                                 ->url(),
                         ]),
                 ]),
