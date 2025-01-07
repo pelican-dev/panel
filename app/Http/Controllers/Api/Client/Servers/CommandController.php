@@ -28,7 +28,7 @@ class CommandController extends ClientApiController
             $previous = $exception->getPrevious();
 
             if ($previous instanceof BadResponseException) {
-                if ($previous->getResponse() instanceof ResponseInterface && $previous->getResponse()->getStatusCode() === Response::HTTP_BAD_GATEWAY) {
+                if ($previous->getResponse()->getStatusCode() === Response::HTTP_BAD_GATEWAY) {
                     throw new HttpException(Response::HTTP_BAD_GATEWAY, 'Server must be online in order to send commands.', $exception);
                 }
             }
