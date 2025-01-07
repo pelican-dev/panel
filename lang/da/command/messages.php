@@ -11,8 +11,6 @@ return [
         'ask_admin' => 'Er denne bruger en administrator?',
         'ask_email' => 'E-mailadresse',
         'ask_username' => 'Brugernavn',
-        'ask_name_first' => 'Fornavn',
-        'ask_name_last' => 'Efternavn',
         'ask_password' => 'Adgangskode',
         'ask_password_tip' => 'Hvis du vil oprette en konto med en tilfældig adgangskode sendt til brugeren, skal du køre denne kommando igen (CTRL+C) og tilføje `--no-password` flaget.',
         'ask_password_help' => 'Adgangskoder skal være mindst 8 tegn og indeholde mindst et stort bogstav og et tal.',

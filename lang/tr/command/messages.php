@@ -11,8 +11,6 @@ return [
         'ask_admin' => 'Kullanıcı yönetici olarak mı eklensin?',
         'ask_email' => 'E-Posta',
         'ask_username' => 'Kullanıcı Adı',
-        'ask_name_first' => 'Adı',
-        'ask_name_last' => 'Soyadı',
         'ask_password' => 'Parola',
         'ask_password_tip' => 'Kullanıcıya e-postayla gönderilen rastgele bir parolayla bir hesap oluşturmak istiyorsanız, bu komutu (CTRL+C) yeniden çalıştırın ve "--no-password" işaretini iletin.',
         'ask_password_help' => 'Şifreler en az 8 karakter uzunluğunda olmalı ve en az bir büyük harf ve rakam içermelidir.',

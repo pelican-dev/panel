@@ -13,6 +13,8 @@ class NodeResource extends Resource
 
     protected static ?string $navigationIcon = 'tabler-server-2';
 
+    protected static ?string $navigationGroup = 'Server';
+
     protected static ?string $recordTitleAttribute = 'name';
 
     public static function getNavigationBadge(): ?string

@@ -3,6 +3,7 @@
 namespace App\Filament\Admin\Resources\UserResource\RelationManagers;
 
 use App\Enums\ServerState;
+use App\Enums\SuspendAction;
 use App\Models\Server;
 use App\Models\User;
 use App\Services\Servers\SuspensionService;
@@ -11,7 +12,6 @@ use Filament\Tables\Actions;
 use Filament\Tables\Columns\SelectColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Collection;
 
 class ServersRelationManager extends RelationManager
 {
@@ -34,10 +34,8 @@ class ServersRelationManager extends RelationManager
                     ->label('Suspend All Servers')
                     ->color('warning')
                     ->action(function (SuspensionService $suspensionService) use ($user) {
-                        /** @var Collection<Server> $servers */
-                        $servers = $user->servers()->whereNot('status', ServerState::Suspended)->get();
-                        foreach ($servers as $server) {
-                            $suspensionService->toggle($server);
+                        foreach ($user->servers()->whereNot('status', ServerState::Suspended)->get() as $server) {
+                            $suspensionService->handle($server, SuspendAction::Suspend);
                         }
                     }),
                 Actions\Action::make('toggleUnsuspend')
@@ -45,10 +43,8 @@ class ServersRelationManager extends RelationManager
                     ->label('Unsuspend All Servers')
                     ->color('primary')
                     ->action(function (SuspensionService $suspensionService) use ($user) {
-                        /** @var Collection<Server> $servers */
-                        $servers = $user->servers()->where('status', ServerState::Suspended)->get();
-                        foreach ($servers as $server) {
-                            $suspensionService->toggle($server, SuspensionService::ACTION_UNSUSPEND);
+                        foreach ($user->servers()->where('status', ServerState::Suspended)->get() as $server) {
+                            $suspensionService->handle($server, SuspendAction::Unsuspend);
                         }
                     }),
             ])

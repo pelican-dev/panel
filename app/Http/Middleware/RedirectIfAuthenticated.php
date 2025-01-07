@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Filament\App\Resources\ServerResource\Pages\ListServers;
 use Illuminate\Http\Request;
 use Illuminate\Auth\AuthManager;
 
@@ -18,7 +19,7 @@ class RedirectIfAuthenticated
     public function handle(Request $request, \Closure $next, ?string $guard = null): mixed
     {
         if ($this->authManager->guard($guard)->check()) {
-            return redirect()->route('index');
+            return redirect(ListServers::getUrl());
         }
 
         return $next($request);

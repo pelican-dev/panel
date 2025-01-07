@@ -11,8 +11,6 @@ return [
         'ask_admin' => 'Er denne brukeren en administrator?',
         'ask_email' => 'E-postadresse',
         'ask_username' => 'Brukernavn',
-        'ask_name_first' => 'Fornavn',
-        'ask_name_last' => 'Etternavn',
         'ask_password' => 'Passord',
         'ask_password_tip' => 'If you would like to create an account with a random password emailed to the user, re-run this command (CTRL+C) and pass the `--no-password` flag.',
         'ask_password_help' => 'Passwords must be at least 8 characters in length and contain at least one capital letter and number.',
