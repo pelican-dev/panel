@@ -487,7 +487,7 @@ class Server extends Model
     public function condition(): Attribute
     {
         return Attribute::make(
-            get: fn () => $this->isSuspended() ? 'Suspended' : $this->status?->value ?? $this->retrieveStatus(),
+            get: fn () => $this->isSuspended() ? 'Suspended' : $this->status->value ?? $this->retrieveStatus(),
         );
     }
 

@@ -46,7 +46,9 @@ class ServersRelationManager extends RelationManager
                     ->label('Unsuspend All Servers')
                     ->color('primary')
                     ->action(function (SuspensionService $suspensionService) use ($user) {
-                        foreach ($user->servers()->where('status', ServerState::Suspended)->get() as $server) {
+                        /** @var Collection<Server> $servers */
+                        $servers = $user->servers()->where('status', ServerState::Suspended)->get();
+                        foreach ($servers as $server) {
                             $suspensionService->handle($server, SuspendAction::Unsuspend);
                         }
                     }),
