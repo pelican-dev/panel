@@ -8,7 +8,7 @@ use App\Models\Allocation;
 use Illuminate\Database\ConnectionInterface;
 use App\Exceptions\DisplayException;
 use App\Repositories\Daemon\DaemonServerRepository;
-use App\Exceptions\Http\Connection\DaemonConnectionException;
+use Illuminate\Http\Client\ConnectionException;
 
 class BuildModificationService
 {
@@ -64,7 +64,7 @@ class BuildModificationService
         if (!empty($updateData['build'])) {
             try {
                 $this->daemonServerRepository->setServer($server)->sync();
-            } catch (DaemonConnectionException $exception) {
+            } catch (ConnectionException $exception) {
                 logger()->warning($exception, ['server_id' => $server->id]);
             }
         }
