@@ -9,9 +9,9 @@ use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
 use Filament\Navigation\MenuItem;
+use Filament\Navigation\NavigationGroup;
 use Filament\Panel;
 use Filament\PanelProvider;
-use Filament\Support\Facades\FilamentAsset;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
 use Illuminate\Cookie\Middleware\EncryptCookies;
 use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
@@ -22,28 +22,24 @@ use Illuminate\View\Middleware\ShareErrorsFromSession;
 
 class AdminPanelProvider extends PanelProvider
 {
-    public function boot(): void
-    {
-        FilamentAsset::registerCssVariables([
-            'sidebar-width' => '16rem !important',
-        ]);
-    }
-
     public function panel(Panel $panel): Panel
     {
         return $panel
             ->default()
             ->id('admin')
             ->path('admin')
-            ->topNavigation(config('panel.filament.top-navigation', true))
-            ->login(Login::class)
-            ->breadcrumbs(false)
             ->homeUrl('/')
-            ->favicon(config('app.favicon', '/pelican.ico'))
+            ->spa()
+            ->databaseNotifications()
+            ->breadcrumbs(false)
             ->brandName(config('app.name', 'Pelican'))
             ->brandLogo(config('app.logo'))
             ->brandLogoHeight('2rem')
+            ->favicon(config('app.favicon', '/pelican.ico'))
+            ->topNavigation(config('panel.filament.top-navigation', true))
+            ->maxContentWidth(config('panel.filament.display-width', 'screen-2xl'))
             ->profile(EditProfile::class, false)
+            ->login(Login::class)
             ->userMenuItems([
                 MenuItem::make()
                     ->label('Exit Admin')
@@ -51,11 +47,16 @@ class AdminPanelProvider extends PanelProvider
                     ->icon('tabler-arrow-back')
                     ->sort(24),
             ])
-            ->maxContentWidth(config('panel.filament.display-width', 'screen-2xl'))
-            ->spa()
+            ->navigationGroups([
+                NavigationGroup::make('Server')
+                    ->collapsible(false),
+                NavigationGroup::make('User')
+                    ->collapsible(false),
+                NavigationGroup::make('Advanced'),
+            ])
+            ->sidebarCollapsibleOnDesktop()
             ->discoverResources(in: app_path('Filament/Admin/Resources'), for: 'App\\Filament\\Admin\\Resources')
             ->discoverPages(in: app_path('Filament/Admin/Pages'), for: 'App\\Filament\\Admin\\Pages')
-            ->databaseNotifications()
             ->middleware([
                 EncryptCookies::class,
                 AddQueuedCookiesToResponse::class,
