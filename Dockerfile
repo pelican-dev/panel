@@ -9,7 +9,7 @@ COPY . ./
 
 RUN yarn config set network-timeout 300000 \
     && yarn install --frozen-lockfile \
-    && yarn run build:production
+    && yarn run build
 
 FROM php:8.3-fpm-alpine
 # FROM --platform=$TARGETOS/$TARGETARCH php:8.3-fpm-alpine
