@@ -63,12 +63,11 @@ class EditEgg extends EditRecord
                                 ->columnSpan(['default' => 1, 'sm' => 1, 'md' => 2, 'lg' => 2])
                                 ->helperText('The author of this version of the Egg. Uploading a new Egg configuration from a different author will change this.'),
                             Textarea::make('startup')
-                                ->rows(2)
+                                ->rows(3)
                                 ->columnSpanFull()
                                 ->required()
                                 ->helperText('The default startup command that should be used for new servers using this Egg.'),
                             TagsInput::make('file_denylist')
-                                ->hidden() // latest wings breaks it.
                                 ->placeholder('denied-file.txt')
                                 ->helperText('A list of files that the end user is not allowed to edit.')
                                 ->columnSpan(['default' => 1, 'sm' => 1, 'md' => 2, 'lg' => 2]),

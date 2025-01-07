@@ -454,6 +454,9 @@ class Server extends Model implements Validatable
         }
 
         if ($type === ServerResourceType::Time) {
+            if ($this->isSuspended()) {
+                return 'Suspended';
+            }
             if ($resourceAmount === 0) {
                 return 'Offline';
             }
@@ -469,13 +472,18 @@ class Server extends Model implements Validatable
             return Number::format($resourceAmount, precision: $precision, locale: auth()->user()->language ?? 'en') . '%';
         }
 
+        // Our current limits are set in MB
+        if ($limit) {
+            $resourceAmount *= 2 ** 20;
+        }
+
         return convert_bytes_to_readable($resourceAmount, decimals: $precision, base: 3);
     }
 
     public function condition(): Attribute
     {
         return Attribute::make(
-            get: fn () => $this->status?->value ?? $this->retrieveStatus(),
+            get: fn () => $this->isSuspended() ? 'Suspended' : $this->status?->value ?? $this->retrieveStatus(),
         );
     }
 

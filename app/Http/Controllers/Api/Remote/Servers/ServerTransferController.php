@@ -11,7 +11,7 @@ use App\Models\ServerTransfer;
 use Illuminate\Database\ConnectionInterface;
 use App\Http\Controllers\Controller;
 use Symfony\Component\HttpKernel\Exception\ConflictHttpException;
-use App\Exceptions\Http\Connection\DaemonConnectionException;
+use Illuminate\Http\Client\ConnectionException;
 
 class ServerTransferController extends Controller
 {
@@ -75,7 +75,7 @@ class ServerTransferController extends Controller
                 ->setServer($server)
                 ->setNode($transfer->oldNode)
                 ->delete();
-        } catch (DaemonConnectionException $exception) {
+        } catch (ConnectionException $exception) {
             logger()->warning($exception, ['transfer_id' => $server->transfer->id]);
         }
 

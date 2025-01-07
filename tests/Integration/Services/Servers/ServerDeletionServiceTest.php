@@ -3,16 +3,13 @@
 namespace App\Tests\Integration\Services\Servers;
 
 use Mockery\MockInterface;
-use GuzzleHttp\Psr7\Request;
-use GuzzleHttp\Psr7\Response;
 use App\Models\Database;
 use App\Models\DatabaseHost;
-use GuzzleHttp\Exception\BadResponseException;
 use App\Tests\Integration\IntegrationTestCase;
 use App\Services\Servers\ServerDeletionService;
 use App\Repositories\Daemon\DaemonServerRepository;
 use App\Services\Databases\DatabaseManagementService;
-use App\Exceptions\Http\Connection\DaemonConnectionException;
+use Illuminate\Http\Client\ConnectionException;
 
 class ServerDeletionServiceTest extends IntegrationTestCase
 {
@@ -59,11 +56,9 @@ class ServerDeletionServiceTest extends IntegrationTestCase
     {
         $server = $this->createServerModel();
 
-        $this->expectException(DaemonConnectionException::class);
+        $this->expectException(ConnectionException::class);
 
-        $this->daemonServerRepository->expects('setServer->delete')->withNoArgs()->andThrows(
-            new DaemonConnectionException(new BadResponseException('Bad request', new Request('GET', '/test'), new Response()))
-        );
+        $this->daemonServerRepository->expects('setServer->delete')->withNoArgs()->andThrows(new ConnectionException());
 
         $this->getService()->handle($server);
 
@@ -77,9 +72,7 @@ class ServerDeletionServiceTest extends IntegrationTestCase
     {
         $server = $this->createServerModel();
 
-        $this->daemonServerRepository->expects('setServer->delete')->withNoArgs()->andThrows(
-            new DaemonConnectionException(new BadResponseException('Bad request', new Request('GET', '/test'), new Response(404)))
-        );
+        $this->daemonServerRepository->expects('setServer->delete')->withNoArgs()->andThrows(new ConnectionException(code: 404));
 
         $this->getService()->handle($server);
 
@@ -94,9 +87,7 @@ class ServerDeletionServiceTest extends IntegrationTestCase
     {
         $server = $this->createServerModel();
 
-        $this->daemonServerRepository->expects('setServer->delete')->withNoArgs()->andThrows(
-            new DaemonConnectionException(new BadResponseException('Bad request', new Request('GET', '/test'), new Response(500)))
-        );
+        $this->daemonServerRepository->expects('setServer->delete')->withNoArgs()->andThrows(new ConnectionException());
 
         $this->getService()->withForce()->handle($server);
 

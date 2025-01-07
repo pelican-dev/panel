@@ -11,8 +11,6 @@ return [
         'ask_admin' => 'Is this user an administrator?',
         'ask_email' => 'Email Address',
         'ask_username' => 'Username',
-        'ask_name_first' => 'First Name',
-        'ask_name_last' => 'Last Name',
         'ask_password' => 'Password',
         'ask_password_tip' => 'If you would like to create an account with a random password emailed to the user, re-run this command (CTRL+C) and pass the `--no-password` flag.',
         'ask_password_help' => 'Passwords must be at least 8 characters in length and contain at least one capital letter and number.',

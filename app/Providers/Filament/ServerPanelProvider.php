@@ -30,9 +30,10 @@ class ServerPanelProvider extends PanelProvider
     {
         return $panel
             ->id('server')
-            ->path('app/server')
-            ->homeUrl('/app')
+            ->path('server')
+            ->homeUrl('/')
             ->spa()
+            ->databaseNotifications()
             ->tenant(Server::class)
             ->brandName(config('app.name', 'Pelican'))
             ->brandLogo(config('app.logo'))
@@ -65,7 +66,6 @@ class ServerPanelProvider extends PanelProvider
             ->discoverResources(in: app_path('Filament/Server/Resources'), for: 'App\\Filament\\Server\\Resources')
             ->discoverPages(in: app_path('Filament/Server/Pages'), for: 'App\\Filament\\Server\\Pages')
             ->discoverWidgets(in: app_path('Filament/Server/Widgets'), for: 'App\\Filament\\Server\\Widgets')
-            ->databaseNotifications()
             ->middleware([
                 EncryptCookies::class,
                 AddQueuedCookiesToResponse::class,

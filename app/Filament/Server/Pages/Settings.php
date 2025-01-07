@@ -3,10 +3,10 @@
 namespace App\Filament\Server\Pages;
 
 use App\Enums\ServerState;
-use App\Exceptions\Http\Connection\DaemonConnectionException;
 use App\Facades\Activity;
 use App\Models\Permission;
 use App\Models\Server;
+use App\Repositories\Daemon\DaemonServerRepository;
 use Exception;
 use Filament\Facades\Filament;
 use Filament\Forms\Components\Actions\Action;
@@ -18,8 +18,7 @@ use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Notifications\Notification;
 use Filament\Support\Enums\Alignment;
-use GuzzleHttp\Exception\TransferException;
-use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Number;
 
 class Settings extends ServerFormPage
 {
@@ -99,21 +98,48 @@ class Settings extends ServerFormPage
                                 'lg' => 3,
                             ])
                             ->schema([
+                                TextInput::make('cpu')
+                                    ->label('')
+                                    ->prefix('CPU')
+                                    ->prefixIcon('tabler-cpu')
+                                    ->columnSpan(1)
+                                    ->disabled()
+                                    ->formatStateUsing(fn ($state, Server $server) => !$state ? 'Unlimited' : Number::format($server->cpu, locale: auth()->user()->language) . '%'),
+                                TextInput::make('memory')
+                                    ->label('')
+                                    ->prefix('Memory')
+                                    ->prefixIcon('tabler-device-desktop-analytics')
+                                    ->columnSpan(1)
+                                    ->disabled()
+                                    ->formatStateUsing(fn ($state, Server $server) => !$state ? 'Unlimited' : convert_bytes_to_readable($server->memory * 2 ** 20)),
+                                TextInput::make('disk')
+                                    ->label('')
+                                    ->prefix('Disk Space')
+                                    ->prefixIcon('tabler-device-sd-card')
+                                    ->columnSpan(1)
+                                    ->disabled()
+                                    ->formatStateUsing(fn ($state, Server $server) => !$state ? 'Unlimited' : convert_bytes_to_readable($server->disk * 2 ** 20)),
                                 TextInput::make('backup_limit')
-                                    ->label('Backup Limit')
+                                    ->label('')
+                                    ->prefix('Backups')
+                                    ->prefixIcon('tabler-file-zip')
                                     ->columnSpan(1)
                                     ->disabled()
-                                    ->formatStateUsing(fn ($state, Server $server) => !$state ? 'No Backups can be created' : $server->backups->count() . ' of ' . $state),
+                                    ->formatStateUsing(fn ($state, Server $server) => !$state ? 'No Backups' : $server->backups->count() . ' of ' . $state),
                                 TextInput::make('database_limit')
-                                    ->label('Database Limit')
+                                    ->label('')
+                                    ->prefix('Databases')
+                                    ->prefixIcon('tabler-database')
                                     ->columnSpan(1)
                                     ->disabled()
-                                    ->formatStateUsing(fn ($state, Server $server) => !$state ? 'No Databases can be created' : $server->databases->count() . ' of ' . $state),
+                                    ->formatStateUsing(fn ($state, Server $server) => !$state ? 'No Databases' : $server->databases->count() . ' of ' . $state),
                                 TextInput::make('allocation_limit')
-                                    ->label('Allocation Limit')
+                                    ->label('')
+                                    ->prefix('Allocations')
+                                    ->prefixIcon('tabler-network')
                                     ->columnSpan(1)
                                     ->disabled()
-                                    ->formatStateUsing(fn ($state, Server $server) => !$state ? 'No additional Allocations can be created' : $server->allocations->count() . ' of ' . $state),
+                                    ->formatStateUsing(fn ($state, Server $server) => !$state ? 'No Additional Allocations' : $server->allocations->count() . ' of ' . $state),
                             ]),
                     ]),
                 Section::make('Node Information')
@@ -174,17 +200,23 @@ class Settings extends ServerFormPage
                             ->modalHeading('Are you sure you want to reinstall the server?')
                             ->modalDescription('Some files may be deleted or modified during this process, please back up your data before continuing.')
                             ->modalSubmitActionLabel('Yes, Reinstall')
-                            ->action(function (Server $server) {
+                            ->action(function (Server $server, DaemonServerRepository $serverRepository) {
                                 abort_unless(auth()->user()->can(Permission::ACTION_SETTINGS_REINSTALL, $server), 403);
 
                                 $server->fill(['status' => ServerState::Installing])->save();
+
                                 try {
-                                    Http::daemon($server->node)->post(sprintf(
-                                        '/api/servers/%s/reinstall',
-                                        $server->uuid
-                                    ));
-                                } catch (TransferException $exception) {
-                                    throw new DaemonConnectionException($exception);
+                                    $serverRepository->reinstall();
+                                } catch (Exception $exception) {
+                                    report($exception);
+
+                                    Notification::make()
+                                        ->danger()
+                                        ->title('Server Reinstall failed')
+                                        ->body($exception->getMessage())
+                                        ->send();
+
+                                    return;
                                 }
 
                                 Activity::event('server:settings.reinstall')
@@ -192,7 +224,7 @@ class Settings extends ServerFormPage
 
                                 Notification::make()
                                     ->success()
-                                    ->title('Server Reinstall Started')
+                                    ->title('Server Reinstall started')
                                     ->send();
                             }),
                     ])

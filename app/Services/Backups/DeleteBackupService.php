@@ -11,7 +11,7 @@ use Illuminate\Database\ConnectionInterface;
 use App\Extensions\Backups\BackupManager;
 use App\Repositories\Daemon\DaemonBackupRepository;
 use App\Exceptions\Service\Backup\BackupLockedException;
-use App\Exceptions\Http\Connection\DaemonConnectionException;
+use Illuminate\Http\Client\ConnectionException;
 
 class DeleteBackupService
 {
@@ -48,8 +48,9 @@ class DeleteBackupService
         $this->connection->transaction(function () use ($backup) {
             try {
                 $this->daemonBackupRepository->setServer($backup->server)->delete($backup);
-            } catch (DaemonConnectionException $exception) {
+            } catch (ConnectionException $exception) {
                 $previous = $exception->getPrevious();
+
                 // Don't fail the request if the Daemon responds with a 404, just assume the backup
                 // doesn't actually exist and remove its reference from the Panel as well.
                 if (!$previous instanceof ClientException || $previous->getResponse()->getStatusCode() !== Response::HTTP_NOT_FOUND) {

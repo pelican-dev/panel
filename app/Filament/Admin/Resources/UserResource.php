@@ -13,6 +13,8 @@ class UserResource extends Resource
 
     protected static ?string $navigationIcon = 'tabler-users';
 
+    protected static ?string $navigationGroup = 'User';
+
     protected static ?string $recordTitleAttribute = 'username';
 
     public static function getNavigationBadge(): ?string

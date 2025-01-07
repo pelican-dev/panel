@@ -3,6 +3,7 @@
 namespace App\Filament\Admin\Resources\UserResource\RelationManagers;
 
 use App\Enums\ServerState;
+use App\Enums\SuspendAction;
 use App\Models\Server;
 use App\Models\User;
 use App\Services\Servers\SuspensionService;
@@ -34,7 +35,7 @@ class ServersRelationManager extends RelationManager
                     ->color('warning')
                     ->action(function (SuspensionService $suspensionService) use ($user) {
                         foreach ($user->servers()->whereNot('status', ServerState::Suspended)->get() as $server) {
-                            $suspensionService->toggle($server);
+                            $suspensionService->handle($server, SuspendAction::Suspend);
                         }
                     }),
                 Actions\Action::make('toggleUnsuspend')
@@ -43,7 +44,7 @@ class ServersRelationManager extends RelationManager
                     ->color('primary')
                     ->action(function (SuspensionService $suspensionService) use ($user) {
                         foreach ($user->servers()->where('status', ServerState::Suspended)->get() as $server) {
-                            $suspensionService->toggle($server, SuspensionService::ACTION_UNSUSPEND);
+                            $suspensionService->handle($server, SuspendAction::Unsuspend);
                         }
                     }),
             ])

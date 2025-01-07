@@ -11,10 +11,21 @@ jobs:
     runs-on: ubuntu-22.04
     permissions:
       contents: write
-      
+
     steps:
       - name: Code checkout
         uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+          extensions: bcmath, curl, gd, mbstring, mysql, openssl, pdo, tokenizer, xml, zip
+          tools: composer:v2
+          coverage: none
+
+      - name: Install PHP dependencies
+        run: composer install --no-interaction --no-suggest --prefer-dist
 
       - name: Setup Node
         uses: actions/setup-node@v4
@@ -22,11 +33,11 @@ jobs:
           node-version: 20
           cache: "yarn"
 
-      - name: Install dependencies
+      - name: Install JS dependencies
         run: yarn install --frozen-lockfile
 
       - name: Build
-        run: yarn build:production
+        run: yarn build
 
       - name: Create release branch and bump version
         env:

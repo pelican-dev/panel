@@ -17,9 +17,7 @@ class DaemonServerRepository extends DaemonRepository
     public function getDetails(): array
     {
         try {
-            return $this->getHttpClient()->get(
-                sprintf('/api/servers/%s', $this->server->uuid)
-            )->throw()->json();
+            return $this->getHttpClient()->get("/api/servers/{$this->server->uuid}")->throw()->json();
         } catch (RequestException $exception) {
             $cfId = $exception->response->header('Cf-Ray');
             $cfCache = $exception->response->header('Cf-Cache-Status');

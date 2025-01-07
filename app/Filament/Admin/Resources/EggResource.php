@@ -12,6 +12,8 @@ class EggResource extends Resource
 
     protected static ?string $navigationIcon = 'tabler-eggs';
 
+    protected static ?string $navigationGroup = 'Server';
+
     protected static ?string $recordTitleAttribute = 'name';
 
     public static function getNavigationBadge(): ?string

@@ -9,6 +9,7 @@ use App\Transformers\Api\Client\StatsTransformer;
 use App\Repositories\Daemon\DaemonServerRepository;
 use App\Http\Controllers\Api\Client\ClientApiController;
 use App\Http\Requests\Api\Client\Servers\GetServerRequest;
+use Illuminate\Http\Client\ConnectionException;
 
 class ResourceUtilizationController extends ClientApiController
 {
@@ -25,7 +26,7 @@ class ResourceUtilizationController extends ClientApiController
      * 20 seconds at a time to ensure that repeated requests to this endpoint do not cause
      * a flood of unnecessary API calls.
      *
-     * @throws \App\Exceptions\Http\Connection\DaemonConnectionException
+     * @throws ConnectionException
      */
     public function __invoke(GetServerRequest $request, Server $server): array
     {

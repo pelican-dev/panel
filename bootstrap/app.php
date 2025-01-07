@@ -10,7 +10,7 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware) {
-        $middleware->redirectGuestsTo(fn () => route('auth.login'));
+        $middleware->redirectGuestsTo(fn () => route('filament.app.auth.login'));
 
         $middleware->web(\App\Http\Middleware\LanguageMiddleware::class);
 

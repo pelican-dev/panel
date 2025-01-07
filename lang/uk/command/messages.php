@@ -11,8 +11,6 @@ return [
         'ask_admin' => 'Цей користувач є адміністратором?',
         'ask_email' => 'Адрес електронної пошти',
         'ask_username' => 'Ім\'я користувача',
-        'ask_name_first' => 'Ім’я',
-        'ask_name_last' => 'Прізвище',
         'ask_password' => 'Пароль',
         'ask_password_tip' => 'If you would like to create an account with a random password emailed to the user, re-run this command (CTRL+C) and pass the `--no-password` flag.',
         'ask_password_help' => 'Passwords must be at least 8 characters in length and contain at least one capital letter and number.',
