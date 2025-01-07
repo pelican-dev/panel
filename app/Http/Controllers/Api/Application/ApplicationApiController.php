@@ -70,4 +70,12 @@ abstract class ApplicationApiController extends Controller
     {
         return new Response('', Response::HTTP_NO_CONTENT);
     }
+
+    /**
+     * Return an HTTP/406 response for the API.
+     */
+    protected function returnNotAcceptable(): Response
+    {
+        return new Response('', Response::HTTP_NOT_ACCEPTABLE);
+    }
 }

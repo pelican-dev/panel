@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Validation\ValidationException;
 use Illuminate\Validation\Factory as ValidatorFactory;
 use App\Repositories\Daemon\DaemonPowerRepository;
-use App\Exceptions\Http\Connection\DaemonConnectionException;
+use Exception;
 
 class BulkPowerActionCommand extends Command
 {
@@ -71,7 +71,7 @@ class BulkPowerActionCommand extends Command
 
             try {
                 $powerRepository->setServer($server)->send($action);
-            } catch (DaemonConnectionException $exception) {
+            } catch (Exception $exception) {
                 $this->output->error(trans('command/messages.server.power.action_failed', [
                     'name' => $server->name,
                     'id' => $server->id,

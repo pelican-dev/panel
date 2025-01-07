@@ -10,8 +10,8 @@ use App\Models\Server;
 use App\Models\Permission;
 use GuzzleHttp\Exception\BadResponseException;
 use GuzzleHttp\Psr7\Response as GuzzleResponse;
-use App\Exceptions\Http\Connection\DaemonConnectionException;
 use App\Tests\Integration\Api\Client\ClientApiIntegrationTestCase;
+use Illuminate\Http\Client\ConnectionException;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 
 class CommandControllerTest extends ClientApiIntegrationTestCase
@@ -77,11 +77,7 @@ class CommandControllerTest extends ClientApiIntegrationTestCase
         [$user, $server] = $this->generateTestAccount();
 
         $server = \Mockery::mock($server)->makePartial();
-        $server->expects('send')->andThrows(
-            new DaemonConnectionException(
-                new BadResponseException('', new Request('GET', 'test'), new GuzzleResponse(Response::HTTP_BAD_GATEWAY))
-            )
-        );
+        $server->expects('send')->andThrows(new ConnectionException(previous: new BadResponseException('', new Request('GET', 'test'), new GuzzleResponse(Response::HTTP_BAD_GATEWAY))));
 
         $this->instance(Server::class, $server);
 
