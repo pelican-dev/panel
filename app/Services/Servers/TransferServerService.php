@@ -2,14 +2,12 @@
 
 namespace App\Services\Servers;
 
-use App\Exceptions\Http\Connection\DaemonConnectionException;
 use App\Models\Allocation;
 use App\Models\Node;
 use App\Models\Server;
 use App\Models\ServerTransfer;
 use App\Services\Nodes\NodeJWTService;
 use Carbon\CarbonImmutable;
-use GuzzleHttp\Exception\TransferException;
 use Illuminate\Database\ConnectionInterface;
 use Illuminate\Support\Facades\Http;
 use Lcobucci\JWT\Token\Plain;
@@ -26,21 +24,17 @@ class TransferServerService
 
     private function notify(Server $server, Plain $token): void
     {
-        try {
-            Http::daemon($server->node)->post('/api/transfer', [
-                'json' => [
-                    'server_id' => $server->uuid,
-                    'url' => $server->node->getConnectionAddress() . "/api/servers/$server->uuid/archive",
-                    'token' => 'Bearer ' . $token->toString(),
-                    'server' => [
-                        'uuid' => $server->uuid,
-                        'start_on_completion' => false,
-                    ],
+        Http::daemon($server->node)->post('/api/transfer', [
+            'json' => [
+                'server_id' => $server->uuid,
+                'url' => $server->node->getConnectionAddress() . "/api/servers/$server->uuid/archive",
+                'token' => 'Bearer ' . $token->toString(),
+                'server' => [
+                    'uuid' => $server->uuid,
+                    'start_on_completion' => false,
                 ],
-            ])->toPsrResponse();
-        } catch (TransferException $exception) {
-            throw new DaemonConnectionException($exception);
-        }
+            ],
+        ])->toPsrResponse();
     }
 
     /**

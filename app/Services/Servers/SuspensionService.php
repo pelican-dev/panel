@@ -7,7 +7,6 @@ use App\Enums\SuspendAction;
 use Filament\Notifications\Notification;
 use App\Models\Server;
 use App\Repositories\Daemon\DaemonServerRepository;
-use Doctrine\DBAL\Exception\ConnectionException;
 use Symfony\Component\HttpKernel\Exception\ConflictHttpException;
 
 class SuspensionService
@@ -47,11 +46,7 @@ class SuspensionService
             'status' => $isSuspending ? ServerState::Suspended : null,
         ]);
 
-        try {
-            // Tell daemon to re-sync the server state.
-            $this->daemonServerRepository->setServer($server)->sync();
-        } catch (ConnectionException $exception) {
-            throw $exception;
-        }
+        // Tell daemon to re-sync the server state.
+        $this->daemonServerRepository->setServer($server)->sync();
     }
 }

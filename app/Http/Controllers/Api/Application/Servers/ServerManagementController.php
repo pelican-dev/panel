@@ -10,6 +10,7 @@ use App\Repositories\Daemon\DaemonServerRepository;
 use App\Services\Servers\ReinstallServerService;
 use App\Services\Servers\SuspensionService;
 use App\Services\Servers\TransferServerService;
+use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Http\Response;
 
 class ServerManagementController extends ApplicationApiController
@@ -80,19 +81,19 @@ class ServerManagementController extends ApplicationApiController
         }
 
         // Node was not viable
-        return new Response('', Response::HTTP_NOT_ACCEPTABLE);
+        return $this->returnNotAcceptable();
     }
 
     /**
      * Cancels a transfer of a server to a new node.
      *
-     * @throws \App\Exceptions\Http\Connection\DaemonConnectionException
+     * @throws ConnectionException
      */
     public function cancelTransfer(ServerWriteRequest $request, Server $server): Response
     {
         if (!$transfer = $server->transfer) {
             // Server is not transferring
-            return new Response('', Response::HTTP_NOT_ACCEPTABLE);
+            return $this->returnNotAcceptable();
         }
 
         $transfer->successful = true;

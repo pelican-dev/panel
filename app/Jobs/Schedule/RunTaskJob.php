@@ -11,8 +11,9 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\DispatchesJobs;
 use App\Services\Backups\InitiateBackupService;
 use App\Repositories\Daemon\DaemonPowerRepository;
-use App\Exceptions\Http\Connection\DaemonConnectionException;
 use App\Services\Files\DeleteFilesService;
+use Exception;
+use Illuminate\Http\Client\ConnectionException;
 
 class RunTaskJob extends Job implements ShouldQueue
 {
@@ -72,10 +73,10 @@ class RunTaskJob extends Job implements ShouldQueue
                 default:
                     throw new \InvalidArgumentException('Invalid task action provided: ' . $this->task->action);
             }
-        } catch (\Exception $exception) {
-            // If this isn't a DaemonConnectionException on a task that allows for failures
+        } catch (Exception $exception) {
+            // If this isn't a ConnectionException on a task that allows for failures
             // throw the exception back up the chain so that the task is stopped.
-            if (!($this->task->continue_on_failure && $exception instanceof DaemonConnectionException)) {
+            if (!($this->task->continue_on_failure && $exception instanceof ConnectionException)) {
                 throw $exception;
             }
         }
@@ -87,7 +88,7 @@ class RunTaskJob extends Job implements ShouldQueue
     /**
      * Handle a failure while sending the action to the daemon or otherwise processing the job.
      */
-    public function failed(?\Exception $exception = null): void
+    public function failed(): void
     {
         $this->markTaskNotQueued();
         $this->markScheduleComplete();

@@ -9,7 +9,6 @@ use App\Jobs\Schedule\RunTaskJob;
 use Illuminate\Database\ConnectionInterface;
 use App\Exceptions\DisplayException;
 use App\Repositories\Daemon\DaemonServerRepository;
-use App\Exceptions\Http\Connection\DaemonConnectionException;
 
 class ProcessScheduleService
 {
@@ -53,13 +52,7 @@ class ProcessScheduleService
 
                     return;
                 }
-            } catch (\Exception $exception) {
-                if (!$exception instanceof DaemonConnectionException) {
-                    // If we encountered some exception during this process that wasn't just an
-                    // issue connecting to daemon run the failed sequence for a job. Otherwise we
-                    // can just quietly mark the task as completed without actually running anything.
-                    $job->failed($exception);
-                }
+            } catch (Exception) {
                 $job->failed();
 
                 return;
@@ -73,8 +66,8 @@ class ProcessScheduleService
             // so we need to manually trigger it and then continue with the exception throw.
             try {
                 $this->dispatcher->dispatchNow($job);
-            } catch (\Exception $exception) {
-                $job->failed($exception);
+            } catch (Exception $exception) {
+                $job->failed();
 
                 throw $exception;
             }
