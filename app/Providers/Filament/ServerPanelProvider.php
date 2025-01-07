@@ -30,7 +30,7 @@ class ServerPanelProvider extends PanelProvider
     {
         return $panel
             ->id('server')
-            ->path('app/server')
+            ->path('server')
             ->homeUrl('/')
             ->spa()
             ->databaseNotifications()
