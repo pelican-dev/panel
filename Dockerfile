@@ -8,8 +8,7 @@ WORKDIR /build
 COPY . ./
 
 RUN yarn config set network-timeout 300000 \
-    && yarn install --frozen-lockfile \
-    && yarn run build
+    && yarn install --frozen-lockfile
 
 FROM php:8.3-fpm-alpine
 # FROM --platform=$TARGETOS/$TARGETARCH php:8.3-fpm-alpine
@@ -36,6 +35,12 @@ COPY --from=yarn /build/public/assets ./public/assets
 RUN touch .env
 
 RUN composer install --no-dev --optimize-autoloader
+
+WORKDIR /build
+
+RUN yarn run build
+
+WORKDIR /var/www/html
 
 # Set file permissions
 RUN chmod -R 755 storage bootstrap/cache \
