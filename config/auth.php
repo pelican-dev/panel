@@ -130,7 +130,7 @@ return [
                 'client_id' => null,
                 'client_secret' => env('OAUTH_STEAM_CLIENT_SECRET'),
                 'allowed_hosts' => [
-                    str_replace(env('APP_URL'), ['http://', 'https://'], ''),
+                    str_replace(['http://', 'https://'], '', env('APP_URL')),
                 ],
             ],
             'provider' => \SocialiteProviders\Steam\Provider::class,
