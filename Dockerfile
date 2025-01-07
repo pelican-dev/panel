@@ -30,8 +30,6 @@ COPY Caddyfile /etc/caddy/Caddyfile
 # Copy the application code to the container
 COPY . .
 
-COPY --from=yarn /build/public/assets ./public/assets
-
 RUN touch .env
 
 RUN composer install --no-dev --optimize-autoloader
@@ -41,6 +39,8 @@ WORKDIR /build
 RUN yarn run build
 
 WORKDIR /var/www/html
+
+COPY --from=yarn /build/public/assets ./public/assets
 
 # Set file permissions
 RUN chmod -R 755 storage bootstrap/cache \
