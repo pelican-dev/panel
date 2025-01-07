@@ -21,6 +21,7 @@ use Filament\View\PanelsRenderHook;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Console\AboutCommand;
+use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Http;
@@ -107,9 +108,25 @@ class AppServiceProvider extends ServiceProvider
         ]);
 
         FilamentView::registerRenderHook(
+            PanelsRenderHook::HEAD_START,
+            fn (): string => Blade::render(<<<'HTML'
+                @vite(['resources/css/app.css', 'resources/js/app.js'])
+                @livewireStyles
+            HTML),
+        );
+
+        FilamentView::registerRenderHook(
             PanelsRenderHook::CONTENT_START,
             fn () => view('filament.server-conflict-banner'),
             scopes: Console::class,
+        );
+
+        FilamentView::registerRenderHook(
+            PanelsRenderHook::BODY_END,
+            fn (): string => Blade::render(<<<'HTML'
+                @livewireScripts
+                @vite(['resources/js/app.js'])
+            HTML),
         );
 
         // Don't run any health checks during tests
