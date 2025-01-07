@@ -15,12 +15,9 @@ use Illuminate\Http\Request;
 
 class OAuthController extends Controller
 {
-    /**
-     * OAuthController constructor.
-     */
     public function __construct(
-        private AuthManager $auth,
-        private UserUpdateService $updateService
+        private readonly AuthManager $auth,
+        private readonly UserUpdateService $updateService
     ) {}
 
     /**
