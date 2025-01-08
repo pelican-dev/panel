@@ -15,6 +15,7 @@
         "coderflex/filament-turnstile": "^2.2",
         "dedoc/scramble": "^0.10.0",
         "doctrine/dbal": "~3.6.0",
+        "filament/actions": "^3.2",
         "filament/filament": "^3.2",
         "guzzlehttp/guzzle": "^7.8.1",
         "laravel/framework": "^11.7",

@@ -1,25 +1,13 @@
 # Pelican Production Dockerfile
 
-FROM node:20-alpine AS yarn
-#FROM --platform=$TARGETOS/$TARGETARCH node:20-alpine AS yarn
-
-WORKDIR /build
-
-COPY package.json yarn.lock ./
-
-RUN yarn config set network-timeout 300000 \
-    && yarn install --frozen-lockfile
-
-COPY . ./
-
-RUN yarn run build:production
-
 FROM php:8.3-fpm-alpine
 # FROM --platform=$TARGETOS/$TARGETARCH php:8.3-fpm-alpine
 
 COPY --from=composer:latest /usr/bin/composer /usr/local/bin/composer
 
 WORKDIR /var/www/html
+
+RUN touch .env
 
 # Install dependencies
 RUN apk update && apk add --no-cache \
@@ -28,17 +16,23 @@ RUN apk update && apk add --no-cache \
     caddy ca-certificates supervisor \
     && docker-php-ext-install bcmath gd intl zip opcache pcntl posix pdo_mysql
 
-# Copy the Caddyfile to the container
-COPY Caddyfile /etc/caddy/Caddyfile
+# Install dependencies with Composer
+COPY composer.json composer.lock ./
+COPY app/helpers.php ./app/
+
+RUN composer install --no-dev --optimize-autoloader
+
+# Install dependencies with Composer
+COPY package.json yarn.lock ./
+RUN apk add --no-cache yarn
+RUN yarn config set network-timeout 300000 \
+    && yarn install --frozen-lockfile
 
 # Copy the application code to the container
 COPY . .
 
-COPY --from=yarn /build/public/assets ./public/assets
-
-RUN touch .env
-
-RUN composer install --no-dev --optimize-autoloader
+# Yarn build
+RUN yarn run build
 
 # Set file permissions
 RUN chmod -R 755 storage bootstrap/cache \
@@ -46,6 +40,9 @@ RUN chmod -R 755 storage bootstrap/cache \
 
 # Add scheduler to cron
 RUN echo "* * * * * php /var/www/html/artisan schedule:run >> /dev/null 2>&1" | crontab -u www-data -
+
+# Copy the Caddyfile to the container
+COPY Caddyfile /etc/caddy/Caddyfile
 
 ## supervisord config and log dir
 RUN cp .github/docker/supervisord.conf /etc/supervisord.conf && \

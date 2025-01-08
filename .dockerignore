@@ -8,3 +8,16 @@ storage/framework/cache/data/*
 storage/framework/sessions/*
 storage/framework/testing
 storage/framework/views/*.php
+Dockerfile
+compose.yml
+readme.md
+.editorconfig
+.env.example
+.gitignore
+.prettierrc.json
+bounties.md
+contributing.md
+contributor_license_agreement.md
+crowdin.yml
+license
+security.md
