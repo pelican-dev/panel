@@ -11,14 +11,13 @@
 
     <div id="terminal" wire:ignore></div>
 
-    <div class="flex items-center w-full border-top overflow-hidden"
-         style="background-color: #202A32; border-bottom-right-radius: 10px; border-bottom-left-radius: 10px;">
+    <div class="flex items-center w-full border-top overflow-hidden dark:bg-gray-900"
+         style="border-bottom-right-radius: 10px; border-bottom-left-radius: 10px;">
         <x-filament::icon
             icon="tabler-chevrons-right"
         />
         <input
-            class="w-full focus:outline-none focus:ring-0 border-none"
-            style="background-color: #202A32;"
+            class="w-full focus:outline-none focus:ring-0 border-none dark:bg-gray-900"
             type="text"
             :readonly="{{ $this->canSendCommand() ? 'false' : 'true' }}"
             title="{{ $this->canSendCommand() ? '' : 'Can\'t send command when the server is Offline' }}"
