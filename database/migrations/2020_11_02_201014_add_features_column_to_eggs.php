@@ -12,7 +12,16 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('eggs', function (Blueprint $table) {
-            $table->json('features')->after('description')->nullable();
+            switch (Schema::getConnection()->getDriverName()) {
+                case 'mysql':
+                case 'mariadb':
+                case 'sqlite':
+                    $table->json('features')->after('description')->nullable();
+                    break;
+                case 'pgsql':
+                    $table->jsonb('features')->after('description')->nullable();
+                    break;
+            }
         });
     }
 

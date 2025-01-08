@@ -26,6 +26,19 @@ x-common:
 #
 
 services:
+  pgsql:
+    image: postgres:17
+    restart: always
+    networks:
+      - default
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_PASSWORD: password
+      POSTGRES_USER: pelican
+      POSTGRES_DB: panel
+    volumes:
+      - pelican-pgsql:/var/lib/postgresql/data
   panel:
     image: ghcr.io/pelican-dev/panel:latest
     restart: always
@@ -48,6 +61,7 @@ services:
 volumes:
   pelican-data:
   pelican-logs:
+  pelican-pgsql:
 
 networks:
   default:

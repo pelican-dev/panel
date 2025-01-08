@@ -35,10 +35,18 @@ class DatabasePasswordService
                 'password' => $password,
             ]);
 
-            $database->dropUser($database->username, $database->remote);
-            $database->createUser($database->username, $database->remote, $password, $database->max_connections);
-            $database->assignUserToDatabase($database->database, $database->username, $database->remote);
-            $database->flush();
+            switch ($database->host->driver) {
+                case 'mysql':
+                case 'mariadb':
+                    $database->dropUser($database->username, $database->remote);
+                    $database->createUser($database->database, $database->username, $database->remote, $password, $database->max_connections);
+                    $database->assignUserToDatabase($database->database, $database->username, $database->remote);
+                    $database->flush();
+                    break;
+                case 'pgsql':
+                    $database->updateUserPassword($database->database, $database->username, $database->remote, $password);
+                    break;
+            }
         });
     }
 }

@@ -31,12 +31,16 @@ return new class extends Migration
             $table->dropForeign(['server_id']);
             $table->dropForeign(['user_id']);
 
-            if (Schema::getConnection()->getDriverName() !== 'sqlite') {
-                $table->dropIndex('permissions_server_id_foreign');
-                $table->dropIndex('permissions_user_id_foreign');
-            } else {
-                $table->dropForeign(['server_id']);
-                $table->dropForeign(['user_id']);
+            switch (Schema::getConnection()->getDriverName()) {
+                case 'mariadb':
+                case 'mysql':
+                    $table->dropIndex('permissions_server_id_foreign');
+                    $table->dropIndex('permissions_user_id_foreign');
+                    break;
+                case 'sqlite':
+                    $table->dropForeign(['server_id']);
+                    $table->dropForeign(['user_id']);
+                    break;
             }
 
             $table->dropColumn('server_id');
@@ -68,9 +72,12 @@ return new class extends Migration
         });
 
         Schema::table('permissions', function (Blueprint $table) {
-            if (Schema::getConnection()->getDriverName() !== 'sqlite') {
-                $table->dropForeign('permissions_subuser_id_foreign');
-                $table->dropIndex('permissions_subuser_id_foreign');
+            switch (Schema::getConnection()->getDriverName()) {
+                case 'mariadb':
+                case 'mysql':
+                    $table->dropForeign('permissions_subuser_id_foreign');
+                    $table->dropIndex('permissions_subuser_id_foreign');
+                    break;
             }
             $table->dropColumn('subuser_id');
 

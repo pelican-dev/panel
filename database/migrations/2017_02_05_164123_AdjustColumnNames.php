@@ -14,8 +14,11 @@ return new class extends Migration
         Schema::table('service_options', function (Blueprint $table) {
             $table->dropForeign(['parent_service']);
 
-            if (Schema::getConnection()->getDriverName() !== 'sqlite') {
-                $table->dropIndex('service_options_parent_service_foreign');
+            switch (Schema::getConnection()->getDriverName()) {
+                case 'mariadb':
+                case 'mysql':
+                    $table->dropIndex('service_options_parent_service_foreign');
+                    break;
             }
 
             $table->renameColumn('parent_service', 'service_id');
@@ -31,8 +34,11 @@ return new class extends Migration
         Schema::table('service_options', function (Blueprint $table) {
             $table->dropForeign(['service_id']);
 
-            if (Schema::getConnection()->getDriverName() !== 'sqlite') {
-                $table->dropIndex('service_options_service_id_foreign');
+            switch (Schema::getConnection()->getDriverName()) {
+                case 'mariadb':
+                case 'mysql':
+                    $table->dropIndex('service_options_service_id_foreign');
+                    break;
             }
 
             $table->renameColumn('service_id', 'parent_service');

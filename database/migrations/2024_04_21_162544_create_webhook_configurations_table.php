@@ -15,7 +15,16 @@ return new class extends Migration
             $table->id();
             $table->string('endpoint');
             $table->string('description');
-            $table->json('events');
+            switch (Schema::getConnection()->getDriverName()) {
+                case 'mysql':
+                case 'mariadb':
+                case 'sqlite':
+                    $table->json('events');
+                    break;
+                case 'pgsql':
+                    $table->jsonb('events');
+                    break;
+            }
             $table->timestamps();
         });
     }

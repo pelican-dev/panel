@@ -19,8 +19,18 @@ return new class extends Migration
             $table->unsignedInteger('server_id')->nullable();
             $table->string('action');
             $table->string('subaction')->nullable();
-            $table->json('device');
-            $table->json('metadata');
+            switch (Schema::getConnection()->getDriverName()) {
+                case 'mysql':
+                case 'mariadb':
+                case 'sqlite':
+                    $table->json('device');
+                    $table->json('metadata');
+                    break;
+                case 'pgsql':
+                    $table->jsonb('device');
+                    $table->jsonb('metadata');
+                    break;
+            }
             $table->timestamp('created_at', 0);
 
             $table->foreign('user_id')->references('id')->on('users')->onDelete('set null');

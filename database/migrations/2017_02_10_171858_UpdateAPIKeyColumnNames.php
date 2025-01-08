@@ -12,9 +12,12 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('api_keys', function (Blueprint $table) {
-            if (Schema::getConnection()->getDriverName() !== 'sqlite') {
-                $table->dropForeign('api_keys_user_foreign');
-                $table->dropIndex('api_keys_user_foreign');
+            switch (Schema::getConnection()->getDriverName()) {
+                case 'mariadb':
+                case 'mysql':
+                    $table->dropForeign('api_keys_user_foreign');
+                    $table->dropIndex('api_keys_user_foreign');
+                    break;
             }
 
             $table->renameColumn('user', 'user_id');
@@ -28,9 +31,12 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('api_keys', function (Blueprint $table) {
-            if (Schema::getConnection()->getDriverName() !== 'sqlite') {
-                $table->dropForeign('api_keys_user_id_foreign');
-                $table->dropIndex('api_keys_user_id_foreign');
+            switch (Schema::getConnection()->getDriverName()) {
+                case 'mariadb':
+                case 'mysql':
+                    $table->dropForeign('api_keys_user_id_foreign');
+                    $table->dropIndex('api_keys_user_id_foreign');
+                    break;
             }
 
             $table->renameColumn('user_id', 'user');

@@ -15,6 +15,7 @@ class DatabaseSettingsCommand extends Command
         'sqlite' => 'SQLite (recommended)',
         'mariadb' => 'MariaDB',
         'mysql' => 'MySQL',
+        'pgsql' => 'PostgreSQL',
     ];
 
     protected $description = 'Configure database settings for the Panel.';
@@ -181,6 +182,66 @@ class DatabaseSettingsCommand extends Command
                 'Database Path',
                 env('DB_DATABASE', 'database.sqlite')
             );
+        } elseif ($this->variables['DB_CONNECTION'] === 'pgsql') {
+            $this->output->note(__('commands.database_settings.DB_HOST_note'));
+            $this->variables['DB_HOST'] = $this->option('host') ?? $this->ask(
+                'Database Host',
+                config('database.connections.pgsql.host', '127.0.0.1')
+            );
+
+            $this->variables['DB_PORT'] = $this->option('port') ?? $this->ask(
+                'Database Port',
+                config('database.connections.pgsql.port', 5432)
+            );
+
+            $this->variables['DB_DATABASE'] = $this->option('database') ?? $this->ask(
+                'Database Name',
+                config('database.connections.pgsql.database', 'panel')
+            );
+
+            $this->output->note(__('commands.database_settings.DB_USERNAME_note'));
+            $this->variables['DB_USERNAME'] = $this->option('username') ?? $this->ask(
+                'Database Username',
+                config('database.connections.pgsql.username', 'pelican')
+            );
+
+            $askForPGSQLPassword = true;
+            if (!empty(config('database.connections.pgsql.password')) && $this->input->isInteractive()) {
+                $this->variables['DB_PASSWORD'] = config('database.connections.pgsql.password');
+                $askForPGSQLPassword = $this->confirm(__('commands.database_settings.DB_PASSWORD_note'));
+            }
+
+            if ($askForPGSQLPassword) {
+                $this->variables['DB_PASSWORD'] = $this->option('password') ?? $this->secret('Database Password');
+            }
+
+            try {
+                // Test connection
+                config()->set('database.connections._panel_command_test', [
+                    'driver' => 'pgsql',
+                    'host' => $this->variables['DB_HOST'],
+                    'port' => $this->variables['DB_PORT'],
+                    'database' => $this->variables['DB_DATABASE'],
+                    'username' => $this->variables['DB_USERNAME'],
+                    'password' => $this->variables['DB_PASSWORD'],
+                    'charset' => 'UTF8',
+                    'collation' => 'en_US.UTF-8',
+                    'strict' => true,
+                ]);
+
+                $this->database->connection('_panel_command_test')->getPdo();
+            } catch (\PDOException $exception) {
+                $this->output->error(sprintf('Unable to connect to the PostgreSQL server using the provided credentials. The error returned was "%s".', $exception->getMessage()));
+                $this->output->error(__('commands.database_settings.DB_error_2'));
+
+                if ($this->confirm(__('commands.database_settings.go_back'))) {
+                    $this->database->disconnect('_panel_command_test');
+
+                    return $this->handle();
+                }
+
+                return 1;
+            }
         }
 
         $this->writeToEnvironment($this->variables);

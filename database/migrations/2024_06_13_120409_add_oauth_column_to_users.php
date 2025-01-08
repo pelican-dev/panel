@@ -12,7 +12,16 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('users', function (Blueprint $table) {
-            $table->json('oauth')->nullable()->after('totp_authenticated_at');
+            switch (Schema::getConnection()->getDriverName()) {
+                case 'mysql':
+                case 'mariadb':
+                case 'sqlite':
+                    $table->json('oauth')->nullable()->after('totp_authenticated_at');
+                    break;
+                case 'pgsql':
+                    $table->jsonb('oauth')->nullable()->after('totp_authenticated_at');
+                    break;
+            }
         });
     }
 

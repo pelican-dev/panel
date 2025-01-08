@@ -21,9 +21,9 @@ WORKDIR /var/www/html
 # Install dependencies
 RUN apk update && apk add --no-cache \
     libpng-dev libjpeg-turbo-dev freetype-dev libzip-dev icu-dev \
-    zip unzip curl \
+    zip unzip curl libpq-dev postgresql \
     caddy ca-certificates supervisor \
-    && docker-php-ext-install bcmath gd intl zip opcache pcntl posix pdo_mysql
+    && docker-php-ext-install bcmath gd intl zip opcache pcntl posix pdo_mysql pdo_pgsql
 
 # Copy the Caddyfile to the container
 COPY Caddyfile /etc/caddy/Caddyfile

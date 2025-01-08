@@ -18,7 +18,16 @@ return new class extends Migration
 
         // Update archived to all be true on existing transfers.
         Schema::table('server_transfers', function (Blueprint $table) {
-            DB::statement('UPDATE `server_transfers` SET `archived` = 1 WHERE `successful` = 1');
+            switch (Schema::getConnection()->getDriverName()) {
+                case 'sqlite':
+                case 'mariadb':
+                case 'mysql':
+                    DB::statement('UPDATE `server_transfers` SET `archived` = 1 WHERE `successful` = 1');
+                    break;
+                case 'pgsql':
+                    DB::statement('UPDATE server_transfers SET archived = true WHERE successful = true');
+                    break;
+            }
         });
     }
 

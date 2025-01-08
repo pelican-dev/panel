@@ -14,8 +14,11 @@ return new class extends Migration
         Schema::table('nodes', function (Blueprint $table) {
             $table->dropForeign(['location']);
 
-            if (Schema::getConnection()->getDriverName() !== 'sqlite') {
-                $table->dropIndex('nodes_location_foreign');
+            switch (Schema::getConnection()->getDriverName()) {
+                case 'mariadb':
+                case 'mysql':
+                    $table->dropIndex('nodes_location_foreign');
+                    break;
             }
 
             $table->renameColumn('location', 'location_id');
@@ -31,8 +34,11 @@ return new class extends Migration
         Schema::table('nodes', function (Blueprint $table) {
             $table->dropForeign(['location_id']);
 
-            if (Schema::getConnection()->getDriverName() !== 'sqlite') {
-                $table->dropIndex('nodes_location_id_foreign');
+            switch (Schema::getConnection()->getDriverName()) {
+                case 'mariadb':
+                case 'mysql':
+                    $table->dropIndex('nodes_location_id_foreign');
+                    break;
             }
 
             $table->renameColumn('location_id', 'location');

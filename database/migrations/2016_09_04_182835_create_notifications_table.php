@@ -14,7 +14,16 @@ return new class extends Migration
             $table->string('id')->primary();
             $table->string('type');
             $table->morphs('notifiable');
-            $table->text('data');
+            switch (Schema::getConnection()->getDriverName()) {
+                case 'sqlite':
+                case 'mysql':
+                case 'mariadb':
+                    $table->text('data');
+                    break;
+                case 'pgsql':
+                    $table->jsonb('data');
+                    break;
+            }
             $table->timestamp('read_at')->nullable();
             $table->timestamps();
         });

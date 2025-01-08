@@ -8,6 +8,7 @@ use Filament\Forms;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\ToggleButtons;
 use Filament\Forms\Form;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\CreateRecord;
@@ -40,6 +41,15 @@ class CreateDatabaseHost extends CreateRecord
                         'lg' => 4,
                     ])
                     ->schema([
+                        ToggleButtons::make('driver')
+                            ->label('Database Driver')
+                            ->inline()
+                            ->options([
+                                'mariadb' => 'MariaDB',
+                                'mysql' => 'MySQL',
+                                'pgsql' => 'PostgreSQL',
+                            ])
+                            ->default('mariadb'),
                         TextInput::make('host')
                             ->columnSpan(2)
                             ->helperText('The IP address or Domain name that should be used when attempting to connect to this MySQL host from this Panel to create new databases.')

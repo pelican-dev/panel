@@ -19,13 +19,16 @@ return new class extends Migration
             $table->dropForeign(['option']);
             $table->dropForeign(['pack']);
 
-            if (Schema::getConnection()->getDriverName() !== 'sqlite') {
-                $table->dropIndex('servers_node_foreign');
-                $table->dropIndex('servers_owner_foreign');
-                $table->dropIndex('servers_allocation_foreign');
-                $table->dropIndex('servers_service_foreign');
-                $table->dropIndex('servers_option_foreign');
-                $table->dropIndex('servers_pack_foreign');
+            switch (Schema::getConnection()->getDriverName()) {
+                case 'mariadb':
+                case 'mysql':
+                    $table->dropIndex('servers_node_foreign');
+                    $table->dropIndex('servers_owner_foreign');
+                    $table->dropIndex('servers_allocation_foreign');
+                    $table->dropIndex('servers_service_foreign');
+                    $table->dropIndex('servers_option_foreign');
+                    $table->dropIndex('servers_pack_foreign');
+                    break;
             }
 
             $table->renameColumn('node', 'node_id');
