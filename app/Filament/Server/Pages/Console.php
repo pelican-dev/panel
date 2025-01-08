@@ -29,7 +29,7 @@ class Console extends Page
 
     public function mount(): void
     {
-        /* @var Server $server */
+        /** @var Server $server */
         $server = Filament::getTenant();
 
         try {
