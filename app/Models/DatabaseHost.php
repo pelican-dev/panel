@@ -44,7 +44,13 @@ class DatabaseHost extends Model
      * Fields that are mass assignable.
      */
     protected $fillable = [
-        'name', 'host', 'port', 'username', 'password', 'max_databases', 'driver',
+        'name',
+        'host',
+        'port',
+        'username',
+        'password',
+        'max_databases',
+        'driver',
     ];
 
     /**
@@ -58,7 +64,7 @@ class DatabaseHost extends Model
         'password' => 'nullable|string',
         'node_ids' => 'nullable|array',
         'node_ids.*' => 'required|integer,exists:nodes,id',
-        'driver' => 'required|string'
+        'driver' => 'required|string',
     ];
 
     protected function casts(): array

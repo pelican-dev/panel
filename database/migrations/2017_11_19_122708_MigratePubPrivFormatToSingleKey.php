@@ -55,7 +55,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-
         switch (Schema::getConnection()->getDriverName()) {
             case 'sqlite':
             case 'mariadb':
@@ -66,7 +65,6 @@ return new class extends Migration
                 DB::statement('ALTER TABLE api_keys RENAME COLUMN token TO secret, ALTER COLUMN secret SET DATA TYPE TEXT, DROP CONSTRAINT api_keys_token_unique');
                 break;
         }
-
 
         Schema::table('api_keys', function (Blueprint $table) {
             $table->char('public', 16)->after('user_id');

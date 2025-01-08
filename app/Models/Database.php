@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use BadMethodCallException;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Facades\DB;
@@ -53,7 +54,13 @@ class Database extends Model
      * Fields that are mass assignable.
      */
     protected $fillable = [
-        'server_id', 'database_host_id', 'database', 'username', 'password', 'remote', 'max_connections',
+        'server_id',
+        'database_host_id',
+        'database',
+        'username',
+        'password',
+        'remote',
+        'max_connections',
     ];
 
     public static array $validationRules = [
@@ -178,8 +185,8 @@ class Database extends Model
                 } finally {
                     DB::disconnect(self::DATABASE_SETUP_CONNECTION_NAME);
                 }
-                return false;
         }
+        return false;
     }
 
     /**
@@ -196,7 +203,6 @@ class Database extends Model
                 } finally {
                     DB::disconnect(self::DATABASE_SETUP_CONNECTION_NAME);
                 }
-                return false;
             default:
                 throw new BadMethodCallException('updateUserPassword only implemented for PostgreSQL');
         }
@@ -230,8 +236,8 @@ class Database extends Model
                 } finally {
                     DB::disconnect(self::DATABASE_SETUP_CONNECTION_NAME);
                 }
-                return false;
         }
+        return false;
     }
 
     /**
@@ -243,9 +249,8 @@ class Database extends Model
             case 'mysql':
             case 'mariadb':
                 return $this->run('FLUSH PRIVILEGES');
-            case 'pgsql':
-                return true;
         }
+        return true;
     }
 
     /**
@@ -262,6 +267,7 @@ class Database extends Model
                 $success = $success && $this->run(sprintf('DROP DATABASE IF EXISTS "%s"', $database));
                 return $success;
         }
+        return false;
     }
 
     /**
@@ -276,5 +282,6 @@ class Database extends Model
             case 'pgsql':
                 return $this->run(sprintf('DROP USER IF EXISTS "%s"', $username));
         }
+        return false;
     }
 }
