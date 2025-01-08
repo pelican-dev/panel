@@ -33,17 +33,17 @@ ln -s /pelican-data/database/database.sqlite /var/www/html/database/
 
 if ! grep -q "APP_KEY=" .env || grep -q "APP_KEY=$" .env; then
   echo "Generating APP_KEY..."
-  php artisan key:generate --force
+  su -s /bin/ash -c "php artisan key:generate --force" www-data
 else
   echo "APP_KEY is already set."
 fi
 
 ## make sure the db is set up
 echo -e "Migrating Database"
-php artisan migrate --force
+su -s /bin/ash -c "php artisan migrate --force" www-data
 
 echo -e "Optimizing Filament"
-php artisan filament:optimize
+su -s /bin/ash -c "php artisan filament:optimize" www-data
 
 ## start cronjobs for the queue
 echo -e "Starting cron jobs."

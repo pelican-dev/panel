@@ -28,6 +28,8 @@ x-common:
 services:
   panel:
     image: ghcr.io/pelican-dev/panel:latest
+    build:
+      dockerfile: ./Dockerfile
     restart: always
     networks:
       - default

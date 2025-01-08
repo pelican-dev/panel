@@ -5,11 +5,14 @@ FROM node:20-alpine AS yarn
 
 WORKDIR /build
 
-COPY . ./
+COPY package.json yarn.lock ./
 
 RUN yarn config set network-timeout 300000 \
-    && yarn install --frozen-lockfile \
-    && yarn run build:production
+    && yarn install --frozen-lockfile
+
+COPY . ./
+
+RUN yarn run build:production
 
 FROM php:8.3-fpm-alpine
 # FROM --platform=$TARGETOS/$TARGETARCH php:8.3-fpm-alpine
@@ -49,7 +52,7 @@ RUN cp .github/docker/supervisord.conf /etc/supervisord.conf && \
     mkdir /var/log/supervisord/
 
 HEALTHCHECK --interval=5m --timeout=10s --start-period=5s --retries=3 \
-  CMD curl -f http://localhost/up || exit 1
+    CMD curl -f http://localhost/up || exit 1
 
 EXPOSE 80 443
 
