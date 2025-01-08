@@ -27,7 +27,7 @@ class DynamicDatabaseConnection
     /**
      * Adds a dynamic database connection entry to the runtime config.
      */
-    public function set(string $connection, DatabaseHost|int $host, string $database = ""): void
+    public function set(string $connection, DatabaseHost|int $host, string $database = ''): void
     {
         if (!$host instanceof DatabaseHost) {
             $host = DatabaseHost::query()->findOrFail($host);

@@ -150,6 +150,7 @@ class Database extends Model
             case 'pgsql':
                 return $this->run(sprintf('CREATE DATABASE "%s"', $database));
         }
+
         return false;
     }
 
@@ -170,6 +171,7 @@ class Database extends Model
                     $args[] = $max_connections;
                     $command .= ' WITH MAX_USER_CONNECTIONS %s';
                 }
+
                 return $this->run(sprintf($command, ...$args));
             case 'pgsql':
                 try {
@@ -181,11 +183,13 @@ class Database extends Model
                         $args[] = $max_connections;
                         $command .= ' CONNECTION LIMIT %s';
                     }
+
                     return DB::connection(self::DATABASE_SETUP_CONNECTION_NAME)->statement(sprintf($command, ...$args));
                 } finally {
                     DB::disconnect(self::DATABASE_SETUP_CONNECTION_NAME);
                 }
         }
+
         return false;
     }
 
@@ -199,6 +203,7 @@ class Database extends Model
             case 'pgsql':
                 try {
                     $this->setConfigDatabase($database);
+
                     return DB::connection(self::DATABASE_SETUP_CONNECTION_NAME)->statement(sprintf('ALTER USER "%s" WITH PASSWORD \'%s\'', $username, $password));
                 } finally {
                     DB::disconnect(self::DATABASE_SETUP_CONNECTION_NAME);
@@ -232,11 +237,13 @@ class Database extends Model
                         'CREATE SCHEMA AUTHORIZATION "%s"',
                         $username
                     ));
+
                     return $success;
                 } finally {
                     DB::disconnect(self::DATABASE_SETUP_CONNECTION_NAME);
                 }
         }
+
         return false;
     }
 
@@ -250,6 +257,7 @@ class Database extends Model
             case 'mariadb':
                 return $this->run('FLUSH PRIVILEGES');
         }
+
         return true;
     }
 
@@ -265,8 +273,10 @@ class Database extends Model
             case 'pgsql':
                 $success = $this->run(sprintf('SELECT pg_terminate_backend(pg_stat_activity.pid) FROM pg_stat_activity WHERE pg_stat_activity.datname = \'%s\' AND pid <> pg_backend_pid()', $database));
                 $success = $success && $this->run(sprintf('DROP DATABASE IF EXISTS "%s"', $database));
+
                 return $success;
         }
+
         return false;
     }
 
@@ -282,6 +292,7 @@ class Database extends Model
             case 'pgsql':
                 return $this->run(sprintf('DROP USER IF EXISTS "%s"', $username));
         }
+
         return false;
     }
 }
