@@ -27,14 +27,9 @@ class ProcessWebhook implements ShouldQueue
     public function handle(): void
     {
         try {
-            $client = new Client();
-            $client->post($this->webhookConfiguration->endpoint, [
-                "json" => $this->data,
-                "headers" => [
-                    "User-Agent" => "pelican/panel",
-                    "X-Webhook-Event" => $this->eventName,
-                ]
-            ]);
+            Http::withHeader("X-Webhook-Event", $this->eventName)
+                ->post($this->webhookConfiguration->endpoint, $this->data)
+                ->throw();
             $successful = now();
         } catch (\Exception) {
             $successful = null;
