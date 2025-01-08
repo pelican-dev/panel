@@ -3,11 +3,13 @@
 namespace App\Filament\Server\Pages;
 
 use App\Enums\ContainerStatus;
+use App\Exceptions\Http\Server\ServerStateConflictException;
 use App\Filament\Server\Widgets\ServerConsole;
 use App\Filament\Server\Widgets\ServerCpuChart;
 use App\Filament\Server\Widgets\ServerMemoryChart;
 // use App\Filament\Server\Widgets\ServerNetworkChart;
 use App\Filament\Server\Widgets\ServerOverview;
+use App\Livewire\AlertBanner;
 use App\Models\Server;
 use Filament\Actions\Action;
 use Filament\Facades\Filament;
@@ -24,6 +26,22 @@ class Console extends Page
     protected static string $view = 'filament.server.pages.console';
 
     public ContainerStatus $status = ContainerStatus::Offline;
+
+    public function mount(): void
+    {
+        /* @var Server $server */
+        $server = Filament::getTenant();
+
+        try {
+            $server->validateCurrentState();
+        } catch (ServerStateConflictException $exception) {
+            AlertBanner::make()
+                ->warning()
+                ->title('Warning')
+                ->body($exception->getMessage())
+                ->send();
+        }
+    }
 
     public function getWidgetData(): array
     {
