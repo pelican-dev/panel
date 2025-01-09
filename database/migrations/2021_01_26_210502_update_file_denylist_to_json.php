@@ -16,16 +16,7 @@ return new class extends Migration
         });
 
         Schema::table('eggs', function (Blueprint $table) {
-            switch (Schema::getConnection()->getDriverName()) {
-                case 'mysql':
-                case 'mariadb':
-                case 'sqlite':
-                    $table->json('file_denylist')->nullable()->after('docker_images');
-                    break;
-                case 'pgsql':
-                    $table->jsonb('file_denylist')->nullable()->after('docker_images');
-                    break;
-            }
+            $table->json('file_denylist')->nullable()->after('docker_images');
         });
     }
 

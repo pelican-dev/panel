@@ -13,7 +13,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('schedules', function (Blueprint $table) {
-            DB::update("UPDATE schedules SET cron_month = '*' WHERE cron_month = ''");
+            DB::update("UPDATE `schedules` SET `cron_month` = '*' WHERE `cron_month` = ''");
         });
     }
 

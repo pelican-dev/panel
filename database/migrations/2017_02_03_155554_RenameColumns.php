@@ -15,12 +15,9 @@ return new class extends Migration
             $table->dropForeign(['node']);
             $table->dropForeign(['assigned_to']);
 
-            switch (Schema::getConnection()->getDriverName()) {
-                case 'mariadb':
-                case 'mysql':
-                    $table->dropIndex('allocations_node_foreign');
-                    $table->dropIndex('allocations_assigned_to_foreign');
-                    break;
+            if (Schema::getConnection()->getDriverName() !== 'sqlite') {
+                $table->dropIndex('allocations_node_foreign');
+                $table->dropIndex('allocations_assigned_to_foreign');
             }
 
             $table->renameColumn('node', 'node_id');
@@ -39,12 +36,9 @@ return new class extends Migration
             $table->dropForeign(['node_id']);
             $table->dropForeign(['server_id']);
 
-            switch (Schema::getConnection()->getDriverName()) {
-                case 'mariadb':
-                case 'mysql':
-                    $table->dropIndex('allocations_node_id_foreign');
-                    $table->dropIndex('allocations_server_id_foreign');
-                    break;
+            if (Schema::getConnection()->getDriverName() !== 'sqlite') {
+                $table->dropIndex('allocations_node_id_foreign');
+                $table->dropIndex('allocations_server_id_foreign');
             }
 
             $table->renameColumn('node_id', 'node');

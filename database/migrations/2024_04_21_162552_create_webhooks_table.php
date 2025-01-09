@@ -17,16 +17,7 @@ return new class extends Migration
             $table->string('event');
             $table->string('endpoint');
             $table->timestamp('successful_at')->nullable();
-            switch (Schema::getConnection()->getDriverName()) {
-                case 'mysql':
-                case 'mariadb':
-                case 'sqlite':
-                    $table->json('payload');
-                    break;
-                case 'pgsql':
-                    $table->jsonb('payload');
-                    break;
-            }
+            $table->json('payload');
             $table->timestamps();
         });
     }

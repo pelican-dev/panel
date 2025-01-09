@@ -28,26 +28,17 @@ return new class extends Migration
             });
         });
 
-        switch (Schema::getConnection()->getDriverName()) {
-            case 'sqlite':
-                Schema::table('api_keys', function (Blueprint $table) {
-                    $table->dropColumn('public');
-                    $table->char('secret', 32)->change();
-                    $table->renameColumn('secret', 'token');
-                    $table->string('token', 32)->unique()->change();
-                });
-                break;
-            case 'mariadb':
-            case 'mysql':
-                DB::statement('ALTER TABLE `api_keys` DROP COLUMN `public`');
-                DB::statement('ALTER TABLE `api_keys` CHANGE `secret` `token` CHAR(32) NOT NULL, ADD UNIQUE INDEX `api_keys_token_unique` (`token`(32))');
-                break;
-            case 'pgsql':
-                DB::statement('ALTER TABLE api_keys DROP COLUMN public');
-                DB::statement('ALTER TABLE api_keys RENAME COLUMN secret TO token');
-                DB::statement('ALTER TABLE api_keys ALTER COLUMN token SET DATA TYPE CHAR(32), ADD CONSTRAINT api_keys_token_unique UNIQUE (token)');
-                break;
+        if (Schema::getConnection()->getDriverName() === 'sqlite') {
+            Schema::table('api_keys', function (Blueprint $table) {
+                $table->dropColumn('public');
+                $table->char('secret', 32)->change();
+                $table->renameColumn('secret', 'token');
+                $table->string('token', 32)->unique()->change();
+            });
+        } else {
+            DB::statement('ALTER TABLE `api_keys` CHANGE `secret` `token` CHAR(32) NOT NULL, ADD UNIQUE INDEX `api_keys_token_unique` (`token`(32))');
         }
+
     }
 
     /**

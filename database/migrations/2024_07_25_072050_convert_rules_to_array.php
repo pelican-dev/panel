@@ -16,18 +16,9 @@ return new class extends Migration
             DB::table('egg_variables')->where('id', $eggVariable->id)->update(['rules' => explode('|', $eggVariable->rules)]);
         });
 
-        switch (Schema::getConnection()->getDriverName()) {
-            case 'sqlite':
-            case 'mysql':
-            case 'mariadb':
-                Schema::table('egg_variables', function (Blueprint $table) {
-                    $table->json('rules')->change();
-                });
-                break;
-            case 'pgsql':
-                DB::statement('ALTER TABLE egg_variables ALTER COLUMN rules TYPE jsonb USING to_jsonb(rules)');
-                break;
-        }
+        Schema::table('egg_variables', function (Blueprint $table) {
+            $table->json('rules')->change();
+        });
     }
 
     /**

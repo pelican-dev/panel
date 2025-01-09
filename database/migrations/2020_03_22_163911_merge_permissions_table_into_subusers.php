@@ -65,21 +65,12 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('subusers', function (Blueprint $table) {
-            switch (Schema::getConnection()->getDriverName()) {
-                case 'mysql':
-                case 'mariadb':
-                case 'sqlite':
-                    $table->json('permissions')->nullable()->after('server_id');
-                    break;
-                case 'pgsql':
-                    $table->jsonb('permissions')->nullable()->after('server_id');
-                    break;
-            }
+            $table->json('permissions')->nullable()->after('server_id');
         });
 
         $cursor = DB::table('permissions')
             ->select(['subuser_id'])
-            ->selectRaw(Schema::getConnection()->getDriverName() === 'pgsql' ? 'STRING_AGG(permission,\',\') AS permissions' : 'GROUP_CONCAT(permission) as permissions')
+            ->selectRaw('GROUP_CONCAT(permission) as permissions')
             ->from('permissions')
             ->groupBy(['subuser_id'])
             ->cursor();

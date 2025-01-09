@@ -13,30 +13,12 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('eggs', function (Blueprint $table) {
-            switch (Schema::getConnection()->getDriverName()) {
-                case 'mysql':
-                case 'mariadb':
-                case 'sqlite':
-                    $table->json('docker_images')->after('docker_image')->nullable();
-                    break;
-                case 'pgsql':
-                    $table->jsonb('docker_images')->after('docker_image')->nullable();
-                    break;
-            }
+            $table->json('docker_images')->after('docker_image')->nullable();
             $table->text('update_url')->after('docker_images')->nullable();
         });
 
         Schema::table('eggs', function (Blueprint $table) {
-            switch (Schema::getConnection()->getDriverName()) {
-                case 'sqlite':
-                case 'mariadb':
-                case 'mysql':
-                    DB::statement('UPDATE `eggs` SET `docker_images` = JSON_ARRAY(docker_image)');
-                    break;
-                case 'pgsql':
-                    DB::statement('UPDATE eggs SET docker_images = to_jsonb(ARRAY[docker_image])');
-                    break;
-            }
+            DB::statement('UPDATE `eggs` SET `docker_images` = JSON_ARRAY(docker_image)');
         });
 
         Schema::table('eggs', function (Blueprint $table) {
@@ -54,16 +36,7 @@ return new class extends Migration
         });
 
         Schema::table('eggs', function (Blueprint $table) {
-            switch (Schema::getConnection()->getDriverName()) {
-                case 'sqlite':
-                case 'mariadb':
-                case 'mysql':
-                    DB::statement('UPDATE `eggs` SET `docker_image` = JSON_UNQUOTE(JSON_EXTRACT(docker_images, "$[0]"))');
-                    break;
-                case 'pgsql':
-                    DB::statement('UPDATE eggs SET docker_image = (docker_images->>0)::text');
-                    break;
-            }
+            DB::statement('UPDATE `eggs` SET `docker_image` = JSON_UNQUOTE(JSON_EXTRACT(docker_images, "$[0]"))');
         });
 
         Schema::table('eggs', function (Blueprint $table) {

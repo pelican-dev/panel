@@ -18,16 +18,7 @@ return new class extends Migration
             $table->string('ip');
             $table->text('description')->nullable();
             $table->nullableNumericMorphs('actor');
-            switch (Schema::getConnection()->getDriverName()) {
-                case 'mysql':
-                case 'mariadb':
-                case 'sqlite':
-                    $table->json('properties');
-                    break;
-                case 'pgsql':
-                    $table->jsonb('properties');
-                    break;
-            }
+            $table->json('properties');
             $table->timestamp('timestamp')->useCurrent()->onUpdate(null);
         });
     }

@@ -22,16 +22,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('api_keys', function (Blueprint $table) {
-            switch (Schema::getConnection()->getDriverName()) {
-                case 'mysql':
-                case 'mariadb':
-                case 'sqlite':
-                    $table->json('permissions');
-                    break;
-                case 'pgsql':
-                    $table->jsonb('permissions');
-                    break;
-            }
+            $table->json('permissions');
         });
 
         foreach (ApiKey::query() as $apiKey) {
