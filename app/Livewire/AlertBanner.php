@@ -6,7 +6,7 @@ use Filament\Notifications\Concerns;
 use Filament\Support\Concerns\EvaluatesClosures;
 use Illuminate\Contracts\Support\Arrayable;
 
-class AlertBanner implements Arrayable
+final class AlertBanner implements Arrayable
 {
     use Concerns\HasBody;
     use Concerns\HasIcon;
@@ -16,8 +16,7 @@ class AlertBanner implements Arrayable
 
     public static function make(): static
     {
-        // @phpstan-ignore-next-line
-        return app(static::class);
+        return new self();
     }
 
     public function toArray(): array
