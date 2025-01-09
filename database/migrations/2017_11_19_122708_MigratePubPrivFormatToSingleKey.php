@@ -46,16 +46,7 @@ return new class extends Migration
      */
     public function down(): void
     {
-        switch (Schema::getConnection()->getDriverName()) {
-            case 'sqlite':
-            case 'mariadb':
-            case 'mysql':
-                DB::statement('ALTER TABLE `api_keys` CHANGE `token` `secret` TEXT, DROP INDEX `api_keys_token_unique`');
-                break;
-            case 'pgsql':
-                DB::statement('ALTER TABLE api_keys RENAME COLUMN token TO secret, ALTER COLUMN secret SET DATA TYPE TEXT, DROP CONSTRAINT api_keys_token_unique');
-                break;
-        }
+        DB::statement('ALTER TABLE `api_keys` CHANGE `token` `secret` TEXT, DROP INDEX `api_keys_token_unique`');
 
         Schema::table('api_keys', function (Blueprint $table) {
             $table->char('public', 16)->after('user_id');
