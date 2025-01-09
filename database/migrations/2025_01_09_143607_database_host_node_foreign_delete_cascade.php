@@ -22,9 +22,5 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('database_host_node', function (Blueprint $table) {
-            $table->dropForeign(['database_host_id']);
-            $table->foreign('database_host_id')->references('id')->on('database_hosts')->noActionOnDelete();
-        });
     }
 };
