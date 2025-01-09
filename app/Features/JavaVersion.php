@@ -7,18 +7,22 @@ use Filament\Actions\Action;
 use Filament\Forms\Components\Placeholder;
 use Filament\Notifications\Notification;
 
-class MinecraftEula extends Feature
+class JavaVersion extends Feature
 {
     public static function listeners(): array
     {
         return [
-            'you need to agree to the eula in order to run the server',
+            'minecraft 1.17 requires running the server with java 16 or above',
+            'minecraft 1.18 requires running the server with java 17 or above',
+            'java.lang.unsupportedclassversionerror',
+            'unsupported major.minor version',
+            'has been compiled by a more recent version of the java runtime',
         ];
     }
 
     public static function featureName(): string
     {
-        return 'eula';
+        return 'java_version';
     }
 
     public static function action(): Action
