@@ -1,7 +1,7 @@
 @props(['alertBanner'])
 
-@php
-    if ($alertBanner) {
+@isset ($alertBanner)
+    @php
         $status = $alertBanner['status'];
 
         $title = $alertBanner['title'];
@@ -20,12 +20,9 @@
             "danger" => "text-danger-600 dark:text-danger-500",
             default => "text-info-600 dark:text-info-500",
         };
-    }
-@endphp
+    @endphp
 
-@isset ($alertBanner)
-    <div
-        class="{{$colorClasses}} flex p-4 rounded-xl shadow-lg bg-white dark:bg-gray-900 ring-1 ring-gray-950/5 dark:ring-white/10">
+    <div class="{{$colorClasses}} flex p-4 rounded-xl shadow-lg bg-white dark:bg-gray-900 ring-1 ring-gray-950/5 dark:ring-white/10">
         @if (filled($icon))
             <x-filament::icon :icon="$icon" class="h-8 w-8 mr-2" color="{{$status}}" />
         @endif
