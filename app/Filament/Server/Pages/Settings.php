@@ -206,7 +206,7 @@ class Settings extends ServerFormPage
                                 $server->fill(['status' => ServerState::Installing])->save();
 
                                 try {
-                                    $serverRepository->reinstall();
+                                    $serverRepository->setServer($server)->reinstall();
                                 } catch (Exception $exception) {
                                     report($exception);
 
