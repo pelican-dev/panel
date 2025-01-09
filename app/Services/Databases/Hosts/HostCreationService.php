@@ -15,7 +15,6 @@ class HostCreationService
     public function __construct(
         private ConnectionInterface $connection,
         private DatabaseManager $databaseManager,
-        private DynamicDatabaseConnection $dynamic,
     ) {}
 
     /**
@@ -38,7 +37,7 @@ class HostCreationService
             $host->nodes()->sync(array_get($data, 'node_ids', []));
 
             // Confirm access using the provided credentials before saving data.
-            $this->dynamic->set('dynamic', $host);
+            DynamicDatabaseConnection::set('dynamic', $host);
             $this->databaseManager->connection('dynamic')->getPdo();
 
             return $host;

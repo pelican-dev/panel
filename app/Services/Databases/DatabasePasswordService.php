@@ -14,7 +14,6 @@ class DatabasePasswordService
      */
     public function __construct(
         private ConnectionInterface $connection,
-        private DynamicDatabaseConnection $dynamic,
     ) {}
 
     /**
@@ -29,7 +28,7 @@ class DatabasePasswordService
         $password = Utilities::randomStringWithSpecialCharacters(24);
 
         $this->connection->transaction(function () use ($database, $password) {
-            $this->dynamic->set('dynamic', $database->database_host_id);
+            DynamicDatabaseConnection::set('dynamic', $database->database_host_id);
 
             $database->update([
                 'password' => $password,
