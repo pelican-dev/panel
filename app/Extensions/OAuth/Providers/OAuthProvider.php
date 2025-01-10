@@ -2,7 +2,6 @@
 
 namespace App\Extensions\OAuth\Providers;
 
-use Exception;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Wizard\Step;
 use Illuminate\Support\Facades\Event;
@@ -18,13 +17,12 @@ abstract class OAuthProvider
         return $id ? static::$providers[$id] : static::$providers;
     }
 
-    /**
-     * @throws Exception
-     */
     protected function __construct()
     {
         if (array_key_exists($this->getId(), static::$providers)) {
-            throw new Exception("Tried to create duplicate OAuth provider with id '{$this->getId()}'");
+            logger()->warning("Tried to create duplicate OAuth provider with id '{$this->getId()}'");
+
+            return;
         }
 
         config()->set('services.' . $this->getId(), array_merge($this->getServiceConfig(), ['redirect' => '/auth/oauth/callback/' . $this->getId()]));
