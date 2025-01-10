@@ -167,6 +167,9 @@ class EditEgg extends EditRecord
                                         ->columnSpanFull()
                                         ->afterStateUpdated(fn (Set $set, $state) => $set('env_variable', str($state)->trim()->snake()->upper()->toString()))
                                         ->unique(modifyRuleUsing: fn (Unique $rule, Get $get) => $rule->where('egg_id', $get('../../id')), ignoreRecord: true)
+                                        ->validationMessages([
+                                            'unique' => 'A variable with this name already exists.',
+                                        ])
                                         ->required(),
                                     Textarea::make('description')->columnSpanFull(),
                                     TextInput::make('env_variable')
@@ -177,6 +180,9 @@ class EditEgg extends EditRecord
                                         ->hintIcon('tabler-code')
                                         ->hintIconTooltip(fn ($state) => "{{{$state}}}")
                                         ->unique(modifyRuleUsing: fn (Unique $rule, Get $get) => $rule->where('egg_id', $get('../../id')), ignoreRecord: true)
+                                        ->validationMessages([
+                                            'unique' => 'A variable with this name already exists.',
+                                        ])
                                         ->required(),
                                     TextInput::make('default_value')->maxLength(255),
                                     Fieldset::make('User Permissions')
