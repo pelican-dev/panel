@@ -6,24 +6,6 @@ use App\Models\DatabaseHost;
 
 class DynamicDatabaseConnection
 {
-    public const DB_DEFAULTS = [
-        'mysql' => [
-            'DB_CHARSET' => 'utf8',
-            'DB_COLLATION' => 'utf8_unicode_ci',
-            'DEFAULT_DB' => 'mysql',
-        ],
-        'mariadb' => [
-            'DB_CHARSET' => 'utf8',
-            'DB_COLLATION' => 'utf8_unicode_ci',
-            'DEFAULT_DB' => 'mysql',
-        ],
-        'pgsql' => [
-            'DB_CHARSET' => 'utf8',
-            'DB_COLLATION' => 'en_US',
-            'DEFAULT_DB' => 'postgres',
-        ],
-    ];
-
     /**
      * Adds a dynamic database connection entry to the runtime config.
      */
@@ -34,14 +16,14 @@ class DynamicDatabaseConnection
         }
 
         config()->set('database.connections.' . $connection, [
-            'driver' => $host->driver,
+            'driver' => $host->driver->value,
             'host' => $host->host,
             'port' => $host->port,
-            'database' => $database !== '' ? self::DB_DEFAULTS[$host->driver]['DEFAULT_DB'] : $database,
+            'database' => $database !== '' ? $database : $host->driver->getDefaultOption('test_database'),
             'username' => $host->username,
             'password' => $host->password,
-            'charset' => self::DB_DEFAULTS[$host->driver]['DB_CHARSET'],
-            'collation' => self::DB_DEFAULTS[$host->driver]['DB_COLLATION'],
+            'charset' => $host->driver->getDefaultOption('charset'),
+            'collation' => $host->driver->getDefaultOption('collation'),
         ]);
     }
 }

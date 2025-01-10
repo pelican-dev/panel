@@ -1228,7 +1228,7 @@ CREATE TABLE public.users (
     email character varying(255) NOT NULL,
     password text NOT NULL,
     remember_token character varying(255),
-    language character(5) DEFAULT 'en'::bpchar NOT NULL,
+    language character varying(5) DEFAULT 'en'::character varying NOT NULL,
     use_totp smallint NOT NULL,
     totp_secret text,
     created_at timestamp(0) without time zone,

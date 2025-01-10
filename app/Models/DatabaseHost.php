@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\DatabaseDriver;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
@@ -20,7 +21,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property int|null $nodes_count
  * @property \Illuminate\Database\Eloquent\Collection|\App\Models\Database[] $databases
  * @property int|null $databases_count
- * @property string $driver
+ * @property DatabaseDriver $driver
  */
 class DatabaseHost extends Model
 {
@@ -75,6 +76,7 @@ class DatabaseHost extends Model
             'password' => 'encrypted',
             'created_at' => 'immutable_datetime',
             'updated_at' => 'immutable_datetime',
+            'driver' => DatabaseDriver::class,
         ];
     }
 

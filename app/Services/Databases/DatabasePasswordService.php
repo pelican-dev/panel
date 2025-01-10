@@ -2,6 +2,7 @@
 
 namespace App\Services\Databases;
 
+use App\Enums\DatabaseDriver;
 use App\Models\Database;
 use App\Helpers\Utilities;
 use Illuminate\Database\ConnectionInterface;
@@ -36,14 +37,14 @@ class DatabasePasswordService
             ]);
 
             switch ($database->host->driver) {
-                case 'mysql':
-                case 'mariadb':
+                case DatabaseDriver::Mysql:
+                case DatabaseDriver::Mariadb:
                     $database->dropUser($database->username, $database->remote);
                     $database->createUser($database->database, $database->username, $database->remote, $password, $database->max_connections);
                     $database->assignUserToDatabase($database->database, $database->username, $database->remote);
                     $database->flush();
                     break;
-                case 'pgsql':
+                case DatabaseDriver::Postgresql:
                     $database->updateUserPassword($database->database, $database->username, $database->remote, $password);
                     break;
             }

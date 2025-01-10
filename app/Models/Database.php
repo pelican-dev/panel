@@ -2,7 +2,9 @@
 
 namespace App\Models;
 
+use App\Enums\DatabaseDriver;
 use BadMethodCallException;
+use Illuminate\Database\ConnectionInterface;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Facades\DB;
@@ -32,13 +34,7 @@ class Database extends Model
 
     public const DEFAULT_CONNECTION_NAME = 'dynamic';
 
-    public const DATABASE_SETUP_CONNECTION_NAME = '_panel_setup_database';
-
-    public const JDBC_DRIVER_MAPPING = [
-        'mysql' => 'mysql',
-        'mariadb' => 'mariadb',
-        'pgsql' => 'postgresql',
-    ];
+    public const DEFAULT_CONNECTION_NAME_USER_DB = '_panel_setup_database';
 
     /**
      * The table associated with the model.
@@ -107,7 +103,7 @@ class Database extends Model
     protected function jdbc(): Attribute
     {
         return Attribute::make(
-            get: fn () => 'jdbc:' . self::JDBC_DRIVER_MAPPING[$this->host->driver] . '://' . $this->username . ':' . urlencode($this->password) . '@' . $this->host->host . ':' . $this->host->port . '/' . $this->database,
+            get: fn () => 'jdbc:' . $this->host->driver->getJDBCDriver() . '://' . $this->username . ':' . urlencode($this->password) . '@' . $this->host->host . ':' . $this->host->port . '/' . $this->database,
         );
     }
 
@@ -121,19 +117,18 @@ class Database extends Model
 
     /**
      * Setup a temporary database connection.
-     * Needed for PostgreSQL connections.
      */
-    private function setConfigDatabase(string $database): void
+    private function getDatabaseConnection(string $database): ConnectionInterface
     {
-        config()->set('database.connections.' . self::DATABASE_SETUP_CONNECTION_NAME, [
-            'driver' => $this->host->driver,
+        return DB::build([
+            'driver' => $this->host->driver->value,
             'host' => $this->host->host,
             'port' => $this->host->port,
             'database' => $database,
             'username' => $this->host->username,
             'password' => $this->host->password,
-            'charset' => 'UTF8',
-            'collation' => 'en_US.UTF-8',
+            'charset' => $this->host->driver->getDefaultOption('charset', true),
+            'collation' => $this->host->driver->getDefaultOption('collation', true),
             'strict' => true,
         ]);
     }
@@ -143,15 +138,10 @@ class Database extends Model
      */
     public function createDatabase(string $database): bool
     {
-        switch ($this->host->driver) {
-            case 'mysql':
-            case 'mariadb':
-                return $this->run(sprintf('CREATE DATABASE IF NOT EXISTS `%s`', $database));
-            case 'pgsql':
-                return $this->run(sprintf('CREATE DATABASE "%s"', $database));
-        }
-
-        return false;
+        return match ($this->host->driver) {
+            DatabaseDriver::Mysql, DatabaseDriver::Mariadb => $this->run(sprintf('CREATE DATABASE IF NOT EXISTS `%s`', $database)),
+            DatabaseDriver::Postgresql => $this->run(sprintf('CREATE DATABASE "%s"', $database)),
+        };
     }
 
     /**
@@ -162,8 +152,8 @@ class Database extends Model
         $args = [];
         $command = '';
         switch ($this->host->driver) {
-            case 'mysql':
-            case 'mariadb':
+            case DatabaseDriver::Mysql:
+            case DatabaseDriver::Mariadb:
                 $args = [$username, $remote, $password];
                 $command = 'CREATE USER `%s`@`%s` IDENTIFIED BY \'%s\'';
 
@@ -173,21 +163,18 @@ class Database extends Model
                 }
 
                 return $this->run(sprintf($command, ...$args));
-            case 'pgsql':
-                try {
-                    $this->setConfigDatabase($database);
-                    $args = [$username, $password];
-                    $command = 'CREATE USER "%s" WITH PASSWORD \'%s\'';
+            case DatabaseDriver::Postgresql:
+                $args = [$username, $password];
+                $command = 'CREATE USER "%s" WITH PASSWORD \'%s\'';
 
-                    if (!empty($max_connections)) {
-                        $args[] = $max_connections;
-                        $command .= ' CONNECTION LIMIT %s';
-                    }
-
-                    return DB::connection(self::DATABASE_SETUP_CONNECTION_NAME)->statement(sprintf($command, ...$args));
-                } finally {
-                    DB::disconnect(self::DATABASE_SETUP_CONNECTION_NAME);
+                if (!empty($max_connections)) {
+                    $args[] = $max_connections;
+                    $command .= ' CONNECTION LIMIT %s';
                 }
+
+                return $this->getDatabaseConnection($database)->statement(sprintf($command, ...$args));
+            default:
+                throw new BadMethodCallException(sprintf('Not implemented for driver %s', $this->host->driver));
         }
 
         return false;
@@ -199,18 +186,10 @@ class Database extends Model
      */
     public function updateUserPassword(string $database, string $username, string $remote, string $password): bool
     {
-        switch ($this->host->driver) {
-            case 'pgsql':
-                try {
-                    $this->setConfigDatabase($database);
-
-                    return DB::connection(self::DATABASE_SETUP_CONNECTION_NAME)->statement(sprintf('ALTER USER "%s" WITH PASSWORD \'%s\'', $username, $password));
-                } finally {
-                    DB::disconnect(self::DATABASE_SETUP_CONNECTION_NAME);
-                }
-            default:
-                throw new BadMethodCallException('updateUserPassword only implemented for PostgreSQL');
-        }
+        return match ($this->host->driver) {
+            DatabaseDriver::Postgresql => $this->getDatabaseConnection($database)->statement(sprintf('ALTER USER "%s" WITH PASSWORD \'%s\'', $username, $password)),
+            default => throw new BadMethodCallException(sprintf('Not implemented for driver %s', $this->host->driver)),
+        };
     }
 
     /**
@@ -219,32 +198,24 @@ class Database extends Model
     public function assignUserToDatabase(string $database, string $username, string $remote): bool
     {
         switch ($this->host->driver) {
-            case 'mysql':
-            case 'mariadb':
+            case DatabaseDriver::Mysql:
+            case DatabaseDriver::Mariadb:
                 return $this->run(sprintf(
                     'GRANT SELECT, INSERT, UPDATE, DELETE, CREATE, DROP, ALTER, REFERENCES, INDEX, LOCK TABLES, CREATE ROUTINE, ALTER ROUTINE, EXECUTE, CREATE TEMPORARY TABLES, CREATE VIEW, SHOW VIEW, EVENT, TRIGGER ON `%s`.* TO `%s`@`%s`',
                     $database,
                     $username,
                     $remote
                 ));
-            case 'pgsql':
-                try {
-                    $this->setConfigDatabase($database);
-                    $success = DB::connection(self::DATABASE_SETUP_CONNECTION_NAME)->statement(sprintf('REVOKE CONNECT ON DATABASE "%s" FROM public', $database));
-                    $success = DB::connection(self::DATABASE_SETUP_CONNECTION_NAME)->statement(sprintf('GRANT CONNECT ON DATABASE "%s" TO "%s"', $database, $username));
-                    $success = DB::connection(self::DATABASE_SETUP_CONNECTION_NAME)->statement('DROP SCHEMA public');
-                    $success = $success && DB::connection(self::DATABASE_SETUP_CONNECTION_NAME)->statement(sprintf(
-                        'CREATE SCHEMA AUTHORIZATION "%s"',
-                        $username
-                    ));
+            case DatabaseDriver::Postgresql:
+                $conn = $this->getDatabaseConnection($database);
 
-                    return $success;
-                } finally {
-                    DB::disconnect(self::DATABASE_SETUP_CONNECTION_NAME);
-                }
+                return $conn->statement(sprintf('REVOKE CONNECT ON DATABASE "%s" FROM public', $database))
+                    && $conn->statement(sprintf('GRANT CONNECT ON DATABASE "%s" TO "%s"', $database, $username))
+                    && $conn->statement('DROP SCHEMA public')
+                    && $conn->statement(sprintf('CREATE SCHEMA AUTHORIZATION "%s"', $username));
+            default:
+                throw new BadMethodCallException(sprintf('Not implemented for driver %s', $this->host->driver));
         }
-
-        return false;
     }
 
     /**
@@ -252,13 +223,10 @@ class Database extends Model
      */
     public function flush(): bool
     {
-        switch ($this->host->driver) {
-            case 'mysql':
-            case 'mariadb':
-                return $this->run('FLUSH PRIVILEGES');
-        }
-
-        return true;
+        return match ($this->host->driver) {
+            DatabaseDriver::Mysql, DatabaseDriver::Mariadb => $this->run('FLUSH PRIVILEGES'),
+            default => true,
+        };
     }
 
     /**
@@ -266,18 +234,11 @@ class Database extends Model
      */
     public function dropDatabase(string $database): bool
     {
-        switch ($this->host->driver) {
-            case 'mysql':
-            case 'mariadb':
-                return $this->run(sprintf('DROP DATABASE IF EXISTS `%s`', $database));
-            case 'pgsql':
-                $success = $this->run(sprintf('SELECT pg_terminate_backend(pg_stat_activity.pid) FROM pg_stat_activity WHERE pg_stat_activity.datname = \'%s\' AND pid <> pg_backend_pid()', $database));
-                $success = $success && $this->run(sprintf('DROP DATABASE IF EXISTS "%s"', $database));
-
-                return $success;
-        }
-
-        return false;
+        return match ($this->host->driver) {
+            DatabaseDriver::Mysql, DatabaseDriver::Mariadb => $this->run(sprintf('DROP DATABASE IF EXISTS `%s`', $database)),
+            DatabaseDriver::Postgresql => $this->run(sprintf('SELECT pg_terminate_backend(pg_stat_activity.pid) FROM pg_stat_activity WHERE pg_stat_activity.datname = \'%s\' AND pid <> pg_backend_pid()', $database))
+                && $this->run(sprintf('DROP DATABASE IF EXISTS "%s"', $database)),
+        };
     }
 
     /**
@@ -285,14 +246,9 @@ class Database extends Model
      */
     public function dropUser(string $username, string $remote): bool
     {
-        switch ($this->host->driver) {
-            case 'mysql':
-            case 'mariadb':
-                return $this->run(sprintf('DROP USER IF EXISTS `%s`@`%s`', $username, $remote));
-            case 'pgsql':
-                return $this->run(sprintf('DROP USER IF EXISTS "%s"', $username));
-        }
-
-        return false;
+        return match ($this->host->driver) {
+            DatabaseDriver::Mysql, DatabaseDriver::Mariadb => $this->run(sprintf('DROP USER IF EXISTS `%s`@`%s`', $username, $remote)),
+            DatabaseDriver::Postgresql => $this->run(sprintf('DROP USER IF EXISTS "%s"', $username)),
+        };
     }
 }

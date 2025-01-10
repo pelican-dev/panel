@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Installer\Steps;
 
+use App\Enums\DatabaseDriver;
 use App\Livewire\Installer\PanelInstaller;
 use Exception;
 use Filament\Forms\Components\TextInput;
@@ -15,13 +16,6 @@ use Illuminate\Support\Facades\DB;
 
 class DatabaseStep
 {
-    public const DATABASE_DRIVERS = [
-        'sqlite' => 'SQLite',
-        'mariadb' => 'MariaDB',
-        'mysql' => 'MySQL',
-        'pgsql' => 'PostgreSQL',
-    ];
-
     public static function make(PanelInstaller $installer): Step
     {
         return Step::make('database')
@@ -34,28 +28,23 @@ class DatabaseStep
                     ->hintIconTooltip('The driver used for the panel database. We recommend "SQLite".')
                     ->required()
                     ->inline()
-                    ->options(self::DATABASE_DRIVERS)
+                    ->options(DatabaseDriver::getFriendlyNameArray(DatabaseDriver::Sqlite))
                     ->default(config('database.default'))
                     ->live()
                     ->afterStateUpdated(function ($state, Set $set, Get $get) {
-                        $set('env_database.DB_DATABASE', $state === 'sqlite' ? 'database.sqlite' : 'panel');
+                        $driver = DatabaseDriver::from($state);
+                        $set('env_database.DB_DATABASE', $driver === DatabaseDriver::Sqlite ? 'database.sqlite' : 'panel');
 
-                        switch ($state) {
-                            case 'sqlite':
+                        switch ($driver) {
+                            case DatabaseDriver::Sqlite:
                                 $set('env_database.DB_HOST', null);
                                 $set('env_database.DB_PORT', null);
                                 $set('env_database.DB_USERNAME', null);
                                 $set('env_database.DB_PASSWORD', null);
                                 break;
-                            case 'mariadb':
-                            case 'mysql':
-                                $set('env_database.DB_HOST', $get('env_database.DB_HOST') ?? '127.0.0.1');
-                                $set('env_database.DB_PORT', $get('env_database.DB_PORT') ?? '3306');
-                                $set('env_database.DB_USERNAME', $get('env_database.DB_USERNAME') ?? 'pelican');
-                                break;
-                            case 'pgsql':
-                                $set('env_database.DB_HOST', $get('env_database.DB_HOST') ?? '127.0.0.1');
-                                $set('env_database.DB_PORT', $get('env_database.DB_PORT') ?? '5432');
+                            default:
+                                $set('env_database.DB_HOST', $get('env_database.DB_HOST') ?? $driver->getDefaultOption('host'));
+                                $set('env_database.DB_PORT', $get('env_database.DB_PORT') ?? $driver->getDefaultOption('port'));
                                 $set('env_database.DB_USERNAME', $get('env_database.DB_USERNAME') ?? 'pelican');
                                 break;
                         }
@@ -76,7 +65,7 @@ class DatabaseStep
                     ->hidden(fn (Get $get) => $get('env_database.DB_CONNECTION') === 'sqlite'),
                 TextInput::make('env_database.DB_PORT')
                     ->label('Database Port')
-                    ->placeholder('3306')
+                    ->placeholder(fn (Get $get) => DatabaseDriver::from($get('env_database.DB_CONNECTION'))->getDefaultOption('port', '3306'))
                     ->hintIcon('tabler-question-mark')
                     ->hintIconTooltip('The port of your database.')
                     ->numeric()
@@ -100,7 +89,7 @@ class DatabaseStep
                     ->hidden(fn (Get $get) => $get('env_database.DB_CONNECTION') === 'sqlite'),
             ])
             ->afterValidation(function (Get $get) use ($installer) {
-                $driver = $get('env_database.DB_CONNECTION');
+                $driver = DatabaseDriver::from($get('env_database.DB_CONNECTION'));
 
                 if (!self::testConnection($driver, $get('env_database.DB_HOST'), $get('env_database.DB_PORT'), $get('env_database.DB_DATABASE'), $get('env_database.DB_USERNAME'), $get('env_database.DB_PASSWORD'))) {
                     throw new Halt('Database connection failed');
@@ -110,70 +99,31 @@ class DatabaseStep
             });
     }
 
-    private static function testConnection(string $driver, ?string $host, null|string|int $port, ?string $database, ?string $username, ?string $password): bool
+    private static function testConnection(DatabaseDriver $driver, ?string $host, null|string|int $port, ?string $database, ?string $username, ?string $password): bool
     {
-        switch ($driver) {
-            case 'sqlite':
-                return true;
-
-            case 'mariadb':
-            case 'mysql':
-                try {
-                    config()->set('database.connections._panel_install_test', [
-                        'driver' => $driver,
-                        'host' => $host,
-                        'port' => $port,
-                        'database' => $database,
-                        'username' => $username,
-                        'password' => $password,
-                        'charset' => 'utf8mb4',
-                        'collation' => 'utf8mb4_unicode_ci',
-                        'strict' => true,
-                    ]);
-
-                    DB::connection('_panel_install_test')->getPdo();
-                } catch (Exception $exception) {
-                    DB::disconnect('_panel_install_test');
-
-                    Notification::make()
-                        ->title('Database connection failed')
-                        ->body($exception->getMessage())
-                        ->danger()
-                        ->send();
-
-                    return false;
-                }
-                break;
-
-            case 'pgsql':
-                try {
-                    config()->set('database.connections._panel_install_test', [
-                        'driver' => $driver,
-                        'host' => $host,
-                        'port' => $port,
-                        'database' => $database,
-                        'username' => $username,
-                        'password' => $password,
-                        'charset' => 'UTF8',
-                        'collation' => 'en_US.UTF-8',
-                        'strict' => true,
-                    ]);
-
-                    DB::connection('_panel_install_test')->getPdo();
-                } catch (Exception $exception) {
-                    DB::disconnect('_panel_install_test');
-
-                    Notification::make()
-                        ->title('Database connection failed')
-                        ->body($exception->getMessage())
-                        ->danger()
-                        ->send();
-
-                    return false;
-                }
-                break;
+        if ($driver === DatabaseDriver::Sqlite) {
+            return true;
         }
+        try {
+            DB::build([
+                'driver' => $driver->value,
+                'host' => $host,
+                'port' => $port,
+                'database' => $database !== '' ? $database : $driver->getDefaultOption('database'),
+                'username' => $username,
+                'password' => $password,
+                'charset' => $driver->getDefaultOption('charset'),
+                'collation' => $driver->getDefaultOption('collation'),
+            ])->beginTransaction();
+        } catch (Exception $exception) {
+            Notification::make()
+                ->title('Database connection failed')
+                ->body($exception->getMessage())
+                ->danger()
+                ->send();
 
+            return false;
+        }
         return true;
     }
 }

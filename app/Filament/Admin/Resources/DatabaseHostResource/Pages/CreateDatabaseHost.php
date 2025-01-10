@@ -2,6 +2,7 @@
 
 namespace App\Filament\Admin\Resources\DatabaseHostResource\Pages;
 
+use App\Enums\DatabaseDriver;
 use App\Filament\Admin\Resources\DatabaseHostResource;
 use App\Services\Databases\Hosts\HostCreationService;
 use Filament\Forms;
@@ -10,6 +11,7 @@ use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\ToggleButtons;
 use Filament\Forms\Form;
+use Filament\Forms\Set;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\CreateRecord;
 use Filament\Support\Exceptions\Halt;
@@ -44,22 +46,23 @@ class CreateDatabaseHost extends CreateRecord
                         ToggleButtons::make('driver')
                             ->label('Database Driver')
                             ->inline()
-                            ->options([
-                                'mariadb' => 'MariaDB',
-                                'mysql' => 'MySQL',
-                                'pgsql' => 'PostgreSQL',
-                            ])
-                            ->default('mariadb'),
+                            ->options(DatabaseDriver::getFriendlyNameArrayRemote())
+                            ->default('mariadb')
+                            ->live()
+                            ->afterStateUpdated(function ($state, Set $set) {
+                                $driver = DatabaseDriver::from($state);
+                                $set('port', $driver->getDefaultOption('port'));
+                            }),
                         TextInput::make('host')
                             ->columnSpan(2)
-                            ->helperText('The IP address or Domain name that should be used when attempting to connect to this MySQL host from this Panel to create new databases.')
+                            ->helperText('The IP address or Domain name that should be used when attempting to connect to this database host from this Panel to create new databases.')
                             ->required()
                             ->live(onBlur: true)
                             ->afterStateUpdated(fn ($state, Forms\Set $set) => $set('name', $state))
                             ->maxLength(255),
                         TextInput::make('port')
                             ->columnSpan(1)
-                            ->helperText('The port that MySQL is running on for this host.')
+                            ->helperText('The port that the database is running on for this host.')
                             ->required()
                             ->numeric()
                             ->default(3306)
