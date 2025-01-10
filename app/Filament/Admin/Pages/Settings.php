@@ -449,7 +449,7 @@ class Settings extends Page implements HasForms
                         FormAction::make("enable_{$id}")
                             ->label('Enable')
                             ->color('success')
-                            ->form($oauthProvider->getSetupForm())
+                            ->steps($oauthProvider->getSetupSteps())
                             ->modalHeading("Enable $name")
                             ->modalSubmitActionLabel('Enable')
                             ->modalCancelAction(false)
@@ -457,6 +457,8 @@ class Settings extends Page implements HasForms
                                 $data = array_merge([
                                     "OAUTH_{$id}_ENABLED" => 'true',
                                 ], $data);
+
+                                $data = array_filter($data, fn ($value) => !Str::startsWith($value, '_noenv'));
 
                                 $this->writeToEnvironment($data);
 

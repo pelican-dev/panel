@@ -2,7 +2,9 @@
 
 namespace App\Extensions\OAuth\Providers;
 
+use Exception;
 use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Wizard\Step;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Str;
 use SocialiteProviders\Manager\SocialiteWasCalled;
@@ -18,6 +20,10 @@ abstract class OAuthProvider
 
     protected function __construct()
     {
+        if (array_key_exists($this->getId(), static::$providers)) {
+            throw new Exception("Tried to create duplicate OAuth provider with id '{$this->getId()}'");
+        }
+
         config()->set('services.' . $this->getId(), array_merge($this->getServiceConfig(), ['redirect' => '/auth/oauth/callback/' . $this->getId()]));
 
         if ($this->getProviderClass()) {
@@ -31,7 +37,10 @@ abstract class OAuthProvider
 
     abstract public function getId(): string;
 
-    abstract public function getProviderClass(): ?string;
+    public function getProviderClass(): ?string
+    {
+        return null;
+    }
 
     public function getServiceConfig(): array
     {
@@ -69,9 +78,13 @@ abstract class OAuthProvider
         ];
     }
 
-    public function getSetupForm(): array
+    public function getSetupSteps(): array
     {
-        return $this->getSettingsForm();
+        return [
+            Step::make('OAuth Config')
+                ->columns(4)
+                ->schema($this->getSettingsForm()),
+        ];
     }
 
     public function getName(): string

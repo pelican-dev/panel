@@ -2,7 +2,10 @@
 
 namespace App\Extensions\OAuth\Providers;
 
+use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Wizard\Step;
+use Illuminate\Support\HtmlString;
 
 final class SteamProvider extends OAuthProvider
 {
@@ -42,12 +45,23 @@ final class SteamProvider extends OAuthProvider
         ];
     }
 
-    public function getIcon(): ?string
+    public function getSetupSteps(): array
+    {
+        return array_merge([
+            Step::make('Create API Key')
+                ->schema([
+                    Placeholder::make('')
+                        ->content(new HtmlString('Visit <u><a href="https://steamcommunity.com/dev/apikey" target="_blank">https://steamcommunity.com/dev/apikey</a></u> to generate an API key.')),
+                ]),
+        ], parent::getSetupSteps());
+    }
+
+    public function getIcon(): string
     {
         return 'tabler-brand-steam-f';
     }
 
-    public function getHexColor(): ?string
+    public function getHexColor(): string
     {
         return '#00adee';
     }

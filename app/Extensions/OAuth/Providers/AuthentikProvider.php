@@ -55,7 +55,7 @@ final class AuthentikProvider extends OAuthProvider
         return env('OAUTH_AUTHENTIK_DISPLAY_NAME') ?? 'Authentik';
     }
 
-    public function getHexColor(): ?string
+    public function getHexColor(): string
     {
         return '#fd4b2d';
     }

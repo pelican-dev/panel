@@ -7,6 +7,7 @@ use App\Checks\PanelVersionCheck;
 use App\Checks\UsedDiskSpaceCheck;
 use App\Extensions\OAuth\Providers\AuthentikProvider;
 use App\Extensions\OAuth\Providers\CommonProvider;
+use App\Extensions\OAuth\Providers\GithubProvider;
 use App\Extensions\OAuth\Providers\SteamProvider;
 use App\Filament\Server\Pages\Console;
 use App\Models;
@@ -89,7 +90,7 @@ class AppServiceProvider extends ServiceProvider
         CommonProvider::register('x', null, 'tabler-brand-x-f', '#1da1f2');
         CommonProvider::register('linkedin', null, 'tabler-brand-linkedin-f', '#0a66c2');
         CommonProvider::register('google', null, 'tabler-brand-google-f', '#4285f4');
-        CommonProvider::register('github', null, 'tabler-brand-github-f', '#4078c0');
+        GithubProvider::register();
         CommonProvider::register('gitlab', null, 'tabler-brand-gitlab', '#fca326');
         CommonProvider::register('bitbucket', null, 'tabler-brand-bitbucket-f', '#205081');
         CommonProvider::register('slack', null, 'tabler-brand-slack', '#6ecadc');
