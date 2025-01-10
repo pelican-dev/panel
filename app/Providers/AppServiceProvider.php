@@ -7,6 +7,7 @@ use App\Checks\PanelVersionCheck;
 use App\Checks\UsedDiskSpaceCheck;
 use App\Extensions\OAuth\Providers\AuthentikProvider;
 use App\Extensions\OAuth\Providers\CommonProvider;
+use App\Extensions\OAuth\Providers\DiscordProvider;
 use App\Extensions\OAuth\Providers\GithubProvider;
 use App\Extensions\OAuth\Providers\SteamProvider;
 use App\Filament\Server\Pages\Console;
@@ -97,7 +98,7 @@ class AppServiceProvider extends ServiceProvider
 
         // Additional OAuth providers from socialiteproviders.com
         AuthentikProvider::register();
-        CommonProvider::register('discord', \SocialiteProviders\Discord\Provider::class, 'tabler-brand-discord-f', '#5865F2');
+        DiscordProvider::register();
         SteamProvider::register();
 
         FilamentColor::register([

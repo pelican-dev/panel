@@ -27,7 +27,7 @@ final class GithubProvider extends OAuthProvider
                         ->label('Authorization callback URL')
                         ->disabled()
                         ->hintAction(CopyAction::make())
-                        ->formatStateUsing(fn () => config('app.url') . (Str::endsWith(config('app.url'), '/') ? '' : '/') . 'auth/oauth/callback/github'),
+                        ->default(fn () => config('app.url') . (Str::endsWith(config('app.url'), '/') ? '' : '/') . 'auth/oauth/callback/github'),
                     Placeholder::make('')
                         ->content(new HtmlString('<p>When you filled all fields click on <b>Register application</b>.</p>')),
                 ]),
