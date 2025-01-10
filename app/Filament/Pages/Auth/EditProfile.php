@@ -3,6 +3,7 @@
 namespace App\Filament\Pages\Auth;
 
 use App\Exceptions\Service\User\TwoFactorAuthenticationTokenInvalid;
+use App\Extensions\OAuth\Providers\OAuthProvider;
 use App\Facades\Activity;
 use App\Models\ActivityLog;
 use App\Models\ApiKey;
@@ -161,7 +162,7 @@ class EditProfile extends BaseEditProfile
                                                             ->title("OAuth provider '$name' unlinked")
                                                             ->success()
                                                             ->send();
-                                                    } elseif (config("auth.oauth.$name.enabled")) {
+                                                    } elseif (OAuthProvider::get($name)->isEnabled()) {
                                                         redirect(Socialite::with($name)->redirect()->getTargetUrl());
                                                     }
                                                 });

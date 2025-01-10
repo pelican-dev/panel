@@ -5,6 +5,9 @@ namespace App\Providers;
 use App\Checks\NodeVersionsCheck;
 use App\Checks\PanelVersionCheck;
 use App\Checks\UsedDiskSpaceCheck;
+use App\Extensions\OAuth\Providers\AuthentikProvider;
+use App\Extensions\OAuth\Providers\CommonProvider;
+use App\Extensions\OAuth\Providers\SteamProvider;
 use App\Filament\Server\Pages\Console;
 use App\Models;
 use App\Models\ApiKey;
@@ -22,14 +25,12 @@ use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Console\AboutCommand;
 use Illuminate\Support\Facades\Blade;
-use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Str;
 use Laravel\Sanctum\Sanctum;
-use SocialiteProviders\Manager\SocialiteWasCalled;
 use Spatie\Health\Checks\Checks\CacheCheck;
 use Spatie\Health\Checks\Checks\DatabaseCheck;
 use Spatie\Health\Checks\Checks\DebugModeCheck;
@@ -83,20 +84,20 @@ class AppServiceProvider extends ServiceProvider
         Scramble::registerApi('client', ['api_path' => 'api/client', 'info' => ['version' => '1.0']])->afterOpenApiGenerated($bearerTokens);
         Scramble::registerApi('remote', ['api_path' => 'api/remote', 'info' => ['version' => '1.0']])->afterOpenApiGenerated($bearerTokens);
 
-        $oauthProviders = [];
-        foreach (config('auth.oauth') as $name => $data) {
-            config()->set("services.$name", array_merge($data['service'], ['redirect' => "/auth/oauth/callback/$name"]));
+        // Default OAuth providers included with Socialite
+        CommonProvider::register('facebook', null, 'tabler-brand-facebook-f', '#1877f2');
+        CommonProvider::register('x', null, 'tabler-brand-x-f', '#1da1f2');
+        CommonProvider::register('linkedin', null, 'tabler-brand-linkedin-f', '#0a66c2');
+        CommonProvider::register('google', null, 'tabler-brand-google-f', '#4285f4');
+        CommonProvider::register('github', null, 'tabler-brand-github-f', '#4078c0');
+        CommonProvider::register('gitlab', null, 'tabler-brand-gitlab', '#fca326');
+        CommonProvider::register('bitbucket', null, 'tabler-brand-bitbucket-f', '#205081');
+        CommonProvider::register('slack', null, 'tabler-brand-slack', '#6ecadc');
 
-            if (isset($data['provider'])) {
-                $oauthProviders[$name] = $data['provider'];
-            }
-        }
-
-        Event::listen(function (SocialiteWasCalled $event) use ($oauthProviders) {
-            foreach ($oauthProviders as $name => $provider) {
-                $event->extendSocialite($name, $provider);
-            }
-        });
+        // Additional OAuth providers from socialiteproviders.com
+        AuthentikProvider::register();
+        CommonProvider::register('discord', \SocialiteProviders\Discord\Provider::class, 'tabler-brand-discord-f', '#5865F2');
+        SteamProvider::register();
 
         FilamentColor::register([
             'danger' => Color::Red,

@@ -2,6 +2,7 @@
 
 namespace App\Filament\Admin\Pages;
 
+use App\Extensions\OAuth\Providers\OAuthProvider;
 use App\Models\Backup;
 use App\Notifications\MailTested;
 use App\Traits\EnvironmentWriterTrait;
@@ -28,9 +29,9 @@ use Filament\Pages\Page;
 use Filament\Support\Enums\MaxWidth;
 use Illuminate\Http\Client\Factory;
 use Illuminate\Support\Facades\Artisan;
-use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Notification as MailNotification;
 use Illuminate\Support\HtmlString;
+use Illuminate\Support\Str;
 
 /**
  * @property Form $form
@@ -416,67 +417,18 @@ class Settings extends Page implements HasForms
 
     private function oauthSettings(): array
     {
-        $oauthProviders = Config::get('auth.oauth');
-
         $formFields = [];
 
-        foreach ($oauthProviders as $providerName => $providerConfig) {
-            $providerEnvPrefix = strtoupper($providerName);
+        $oauthProviders = OAuthProvider::get();
+        foreach ($oauthProviders as $oauthProvider) {
+            $id = Str::upper($oauthProvider->getId());
 
-            $fields = [
-                Toggle::make("OAUTH_{$providerEnvPrefix}_ENABLED")
-                    ->onColor('success')
-                    ->offColor('danger')
-                    ->onIcon('tabler-check')
-                    ->offIcon('tabler-x')
-                    ->live()
-                    ->columnSpan(1)
-                    ->label('Enabled')
-                    ->default(env("OAUTH_{$providerEnvPrefix}_ENABLED", false)),
-            ];
-
-            if (array_key_exists('client_id', $providerConfig['service'] ?? [])) {
-                $fields[] = TextInput::make("OAUTH_{$providerEnvPrefix}_CLIENT_ID")
-                    ->label('Client ID')
-                    ->columnSpan(2)
-                    ->required()
-                    ->password()
-                    ->revealable()
-                    ->autocomplete(false)
-                    ->hidden(fn (Get $get) => !$get("OAUTH_{$providerEnvPrefix}_ENABLED"))
-                    ->default(env("OAUTH_{$providerEnvPrefix}_CLIENT_ID", $providerConfig['service']['client_id'] ?? ''))
-                    ->placeholder('Client ID');
-            }
-
-            if (array_key_exists('client_secret', $providerConfig['service'] ?? [])) {
-                $fields[] = TextInput::make("OAUTH_{$providerEnvPrefix}_CLIENT_SECRET")
-                    ->label('Client Secret')
-                    ->columnSpan(2)
-                    ->required()
-                    ->password()
-                    ->revealable()
-                    ->autocomplete(false)
-                    ->hidden(fn (Get $get) => !$get("OAUTH_{$providerEnvPrefix}_ENABLED"))
-                    ->default(env("OAUTH_{$providerEnvPrefix}_CLIENT_SECRET", $providerConfig['service']['client_secret'] ?? ''))
-                    ->placeholder('Client Secret');
-            }
-
-            if (array_key_exists('base_url', $providerConfig['service'] ?? [])) {
-                $fields[] = TextInput::make("OAUTH_{$providerEnvPrefix}_BASE_URL")
-                    ->label('Base URL')
-                    ->columnSpanFull()
-                    ->autocomplete(false)
-                    ->hidden(fn (Get $get) => !$get("OAUTH_{$providerEnvPrefix}_ENABLED"))
-                    ->default(env("OAUTH_{$providerEnvPrefix}_BASE_URL", ''))
-                    ->placeholder('Base URL');
-            }
-
-            $formFields[] = Section::make(ucfirst($providerName))
+            $formFields[] = Section::make($oauthProvider->getName())
                 ->columns(5)
-                ->icon($providerConfig['icon'] ?? 'tabler-brand-oauth')
-                ->collapsed(fn () => !env("OAUTH_{$providerEnvPrefix}_ENABLED", false))
+                ->icon($oauthProvider->getIcon() ?? 'tabler-brand-oauth')
+                ->collapsed(fn () => !env("OAUTH_{$id}_ENABLED", false))
                 ->collapsible()
-                ->schema($fields);
+                ->schema($oauthProvider->getSettingsForm());
         }
 
         return $formFields;
