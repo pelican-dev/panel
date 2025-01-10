@@ -10,6 +10,8 @@ use Exception;
 use Filament\Actions\Action;
 use Filament\Forms\Components\Actions;
 use Filament\Forms\Components\Actions\Action as FormAction;
+use Filament\Forms\Components\Group;
+use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
@@ -425,60 +427,48 @@ class Settings extends Page implements HasForms
             $id = Str::upper($oauthProvider->getId());
             $name = Str::title($oauthProvider->getId());
 
-            $fields = [];
-
-            if (env("OAUTH_{$id}_ENABLED", false)) {
-                $fields = array_merge([
+            $formFields[] = Section::make($name)
+                ->columns(5)
+                ->icon($oauthProvider->getIcon() ?? 'tabler-brand-oauth')
+                ->collapsed(fn () => !env("OAUTH_{$id}_ENABLED", false))
+                ->collapsible()
+                ->schema([
+                    Hidden::make("OAUTH_{$id}_ENABLED")
+                        ->live()
+                        ->default(env("OAUTH_{$id}_ENABLED")),
                     Actions::make([
-                        FormAction::make("disable_{$id}")
+                        FormAction::make("disable_oauth_$id")
+                            ->visible(fn (Get $get) => $get("OAUTH_{$id}_ENABLED"))
                             ->label('Disable')
                             ->color('danger')
-                            ->action(function (Set $set) use ($id, $name) {
+                            ->action(function (Set $set) use ($id) {
                                 $set("OAUTH_{$id}_ENABLED", false);
-
-                                Notification::make()
-                                    ->title("OAuth '$name' disabled")
-                                    ->success()
-                                    ->send();
                             }),
-                    ]),
-                ], $oauthProvider->getSettingsForm());
-            } else {
-                $fields = [
-                    Actions::make([
-                        FormAction::make("enable_{$id}")
+                        FormAction::make("enable_oauth_$id")
+                            ->visible(fn (Get $get) => !$get("OAUTH_{$id}_ENABLED"))
                             ->label('Enable')
                             ->color('success')
                             ->steps($oauthProvider->getSetupSteps())
                             ->modalHeading("Enable $name")
                             ->modalSubmitActionLabel('Enable')
                             ->modalCancelAction(false)
-                            ->action(function ($data) use ($id, $name) {
+                            ->action(function ($data, Set $set) use ($id) {
                                 $data = array_merge([
                                     "OAUTH_{$id}_ENABLED" => 'true',
                                 ], $data);
 
                                 $data = array_filter($data, fn ($value) => !Str::startsWith($value, '_noenv'));
 
-                                $this->writeToEnvironment($data);
-
-                                $this->form->fill($data);
-
-                                Notification::make()
-                                    ->title("OAuth '$name' enabled")
-                                    ->success()
-                                    ->send();
+                                foreach ($data as $key => $value) {
+                                    $set($key, $value);
+                                }
                             }),
-                    ]),
-                ];
-            }
-
-            $formFields[] = Section::make($name)
-                ->columns(5)
-                ->icon($oauthProvider->getIcon() ?? 'tabler-brand-oauth')
-                ->collapsed(fn () => !env("OAUTH_{$id}_ENABLED", false))
-                ->collapsible()
-                ->schema($fields);
+                    ])->columnSpan(1),
+                    Group::make($oauthProvider->getSettingsForm())
+                        ->visible(fn (Get $get) => $get("OAUTH_{$id}_ENABLED"))
+                        ->columns(4)
+                        ->columnSpan(4),
+                ]);
         }
 
         return $formFields;

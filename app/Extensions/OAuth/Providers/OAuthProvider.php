@@ -11,13 +11,16 @@ use SocialiteProviders\Manager\SocialiteWasCalled;
 
 abstract class OAuthProvider
 {
-    private static array $providers = [];
+    protected static array $providers = [];
 
     public static function get(?string $id = null): array|self
     {
         return $id ? static::$providers[$id] : static::$providers;
     }
 
+    /**
+     * @throws Exception
+     */
     protected function __construct()
     {
         if (array_key_exists($this->getId(), static::$providers)) {

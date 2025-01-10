@@ -2,7 +2,6 @@
 
 namespace App\Extensions\OAuth\Providers;
 
-use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\TextInput;
 
 final class AuthentikProvider extends OAuthProvider
@@ -31,8 +30,6 @@ final class AuthentikProvider extends OAuthProvider
     public function getSettingsForm(): array
     {
         return array_merge(parent::getSettingsForm(), [
-            Placeholder::make('')
-                ->columnSpan(1),
             TextInput::make('OAUTH_AUTHENTIK_BASE_URL')
                 ->label('Base URL')
                 ->placeholder('Base URL')
