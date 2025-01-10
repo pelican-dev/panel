@@ -8,6 +8,7 @@ use App\Notifications\MailTested;
 use App\Traits\EnvironmentWriterTrait;
 use Exception;
 use Filament\Actions\Action;
+use Filament\Forms\Components\Actions;
 use Filament\Forms\Components\Actions\Action as FormAction;
 use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\Section;
@@ -422,13 +423,60 @@ class Settings extends Page implements HasForms
         $oauthProviders = OAuthProvider::get();
         foreach ($oauthProviders as $oauthProvider) {
             $id = Str::upper($oauthProvider->getId());
+            $name = Str::title($oauthProvider->getId());
 
-            $formFields[] = Section::make($oauthProvider->getName())
+            $fields = [];
+
+            if (env("OAUTH_{$id}_ENABLED", false)) {
+                $fields = array_merge([
+                    Actions::make([
+                        FormAction::make("disable_{$id}")
+                            ->label('Disable')
+                            ->color('danger')
+                            ->action(function (Set $set) use ($id, $name) {
+                                $set("OAUTH_{$id}_ENABLED", false);
+
+                                Notification::make()
+                                    ->title("OAuth '$name' disabled")
+                                    ->success()
+                                    ->send();
+                            }),
+                    ]),
+                ], $oauthProvider->getSettingsForm());
+            } else {
+                $fields = [
+                    Actions::make([
+                        FormAction::make("enable_{$id}")
+                            ->label('Enable')
+                            ->color('success')
+                            ->form($oauthProvider->getSetupForm())
+                            ->modalHeading("Enable $name")
+                            ->modalSubmitActionLabel('Enable')
+                            ->modalCancelAction(false)
+                            ->action(function ($data) use ($id, $name) {
+                                $data = array_merge([
+                                    "OAUTH_{$id}_ENABLED" => 'true',
+                                ], $data);
+
+                                $this->writeToEnvironment($data);
+
+                                $this->form->fill($data);
+
+                                Notification::make()
+                                    ->title("OAuth '$name' enabled")
+                                    ->success()
+                                    ->send();
+                            }),
+                    ]),
+                ];
+            }
+
+            $formFields[] = Section::make($name)
                 ->columns(5)
                 ->icon($oauthProvider->getIcon() ?? 'tabler-brand-oauth')
                 ->collapsed(fn () => !env("OAUTH_{$id}_ENABLED", false))
                 ->collapsible()
-                ->schema($oauthProvider->getSettingsForm());
+                ->schema($fields);
         }
 
         return $formFields;

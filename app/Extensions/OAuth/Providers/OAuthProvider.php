@@ -3,8 +3,6 @@
 namespace App\Extensions\OAuth\Providers;
 
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Components\Toggle;
-use Filament\Forms\Get;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Str;
 use SocialiteProviders\Manager\SocialiteWasCalled;
@@ -50,16 +48,6 @@ abstract class OAuthProvider
         $id = Str::upper($this->getId());
 
         return [
-            Toggle::make("OAUTH_{$id}_ENABLED")
-                ->label('Enabled')
-                ->inline(false)
-                ->live()
-                ->columnSpan(1)
-                ->onColor('success')
-                ->offColor('danger')
-                ->onIcon('tabler-check')
-                ->offIcon('tabler-x')
-                ->default(env("OAUTH_{$id}_ENABLED", false)),
             TextInput::make("OAUTH_{$id}_CLIENT_ID")
                 ->label('Client ID')
                 ->placeholder('Client ID')
@@ -68,7 +56,6 @@ abstract class OAuthProvider
                 ->password()
                 ->revealable()
                 ->autocomplete(false)
-                ->hidden(fn (Get $get) => !$get("OAUTH_{$id}_ENABLED"))
                 ->default(env("OAUTH_{$id}_CLIENT_ID")),
             TextInput::make("OAUTH_{$id}_CLIENT_SECRET")
                 ->label('Client Secret')
@@ -78,9 +65,13 @@ abstract class OAuthProvider
                 ->password()
                 ->revealable()
                 ->autocomplete(false)
-                ->hidden(fn (Get $get) => !$get("OAUTH_{$id}_ENABLED"))
                 ->default(env("OAUTH_{$id}_CLIENT_SECRET")),
         ];
+    }
+
+    public function getSetupForm(): array
+    {
+        return $this->getSettingsForm();
     }
 
     public function getName(): string

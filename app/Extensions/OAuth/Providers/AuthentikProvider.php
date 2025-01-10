@@ -4,7 +4,6 @@ namespace App\Extensions\OAuth\Providers;
 
 use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Get;
 
 final class AuthentikProvider extends OAuthProvider
 {
@@ -41,14 +40,12 @@ final class AuthentikProvider extends OAuthProvider
                 ->required()
                 ->url()
                 ->autocomplete(false)
-                ->hidden(fn (Get $get) => !$get('OAUTH_AUTHENTIK_ENABLED'))
                 ->default(env('OAUTH_AUTHENTIK_BASE_URL')),
             TextInput::make('OAUTH_AUTHENTIK_DISPLAY_NAME')
                 ->label('Display Name')
                 ->placeholder('Display Name')
                 ->columnSpan(2)
                 ->autocomplete(false)
-                ->hidden(fn (Get $get) => !$get('OAUTH_AUTHENTIK_ENABLED'))
                 ->default(env('OAUTH_AUTHENTIK_DISPLAY_NAME', 'Authentik')),
         ]);
     }
