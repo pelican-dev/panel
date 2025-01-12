@@ -116,7 +116,6 @@ class ListFiles extends ListRecords
                     ->url(fn (File $file) => self::getUrl(['path' => join_paths($this->path, $file->name)])),
                 EditAction::make('edit')
                     ->authorize(fn () => auth()->user()->can(Permission::ACTION_FILE_READ_CONTENT, $server))
-                    ->label('Edit')
                     ->icon('tabler-edit')
                     ->visible(fn (File $file) => $file->canEdit())
                     ->url(fn (File $file) => EditFiles::getUrl(['path' => join_paths($this->path, $file->name)])),
