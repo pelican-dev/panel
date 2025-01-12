@@ -39,8 +39,8 @@ class NodeStorageChart extends ChartWidget
 
     protected function getData(): array
     {
-        $total = Number::format(($this->node->statistics()['disk_total']) / 1024 / 1024 / 1024, maxPrecision: 2, locale: auth()->user()->language);
-        $used = Number::format(($this->node->statistics()['disk_used']) / 1024 / 1024 / 1024, maxPrecision: 2, locale: auth()->user()->language);
+        $total = Number::format(($this->node->statistics()['disk_total'] ?? 0) / 1024 / 1024 / 1024, maxPrecision: 2);
+        $used = Number::format(($this->node->statistics()['disk_used'] ?? 0) / 1024 / 1024 / 1024, maxPrecision: 2);
 
         $unused = $total - $used;
 
@@ -66,6 +66,6 @@ class NodeStorageChart extends ChartWidget
 
     public function getHeading(): string
     {
-        return 'Storage - ' . convert_bytes_to_readable($this->node->statistics()['disk_used']) . ' Of ' . convert_bytes_to_readable($this->node->statistics()['disk_total']);
+        return 'Storage - ' . convert_bytes_to_readable($this->node->statistics()['disk_used'] ?? 0) . ' Of ' . convert_bytes_to_readable($this->node->statistics()['disk_total'] ?? 0);
     }
 }
