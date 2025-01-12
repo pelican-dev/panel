@@ -107,6 +107,6 @@ abstract class OAuthProvider
     {
         $id = Str::upper($this->getId());
 
-        return env("OAUTH_{$id}_ENABLED");
+        return env("OAUTH_{$id}_ENABLED", false);
     }
 }
