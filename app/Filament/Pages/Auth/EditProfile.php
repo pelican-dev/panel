@@ -39,6 +39,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\HtmlString;
 use Illuminate\Validation\Rules\Password;
+use Laravel\Socialite\Facades\Socialite;
 
 /**
  * @method User getUser()
@@ -166,6 +167,8 @@ class EditProfile extends BaseEditProfile
                                                             ->title("OAuth provider '$name' unlinked")
                                                             ->success()
                                                             ->send();
+                                                    } else {
+                                                        redirect(Socialite::with($name)->redirect()->getTargetUrl());
                                                     }
                                                 });
                                         }
