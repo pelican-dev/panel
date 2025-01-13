@@ -52,7 +52,7 @@ return [
         'backup' => [
             'download' => 'Downloaded the <b>:name</b> backup',
             'delete' => 'Deleted the <b>:name</b> backup',
-            'restore' => 'Restored the <b>:name</b> backup (deleted files: :truncate)',
+            'restore' => 'Restored the <b>:name</b> backup (deleted files: <b>:truncate</b>)',
             'restore-complete' => 'Completed restoration of the <b>:name</b> backup',
             'restore-failed' => 'Failed to complete restoration of the <b>:name</b> backup',
             'start' => 'Started a new backup <b>:name</b>',
@@ -85,14 +85,14 @@ return [
             'create' => 'Created <b>:file</b>|Created <b>:count</b> new files',
             'write' => 'Modified the contents of <b>:file</b>|Modified the contents of <b>:count</b> files',
             'delete' => 'Deleted <b>:file</b>|Deleted <b>:count</b> files',
-            'create-directory' => 'Created the :file</b> directory|Created <b>:count</b> directories',
+            'create-directory' => 'Created the <b>:file</b> directory|Created <b>:count</b> directories',
             'rename' => 'Renamed <b>:from</b> to <b>:to</b>|Renamed or moved <b>:count</b> files',
         ],
         'allocation' => [
-            'create' => 'Added :allocation to the server',
+            'create' => 'Added <b>:allocation</b> to the server',
             'notes' => 'Updated the notes for <b>:allocation</b> from "<b>:old</b>" to "<b>:new</b>"',
             'primary' => 'Set <b>:allocation</b> as the primary server allocation',
-            'delete' => 'Deleted the :allocation allocation',
+            'delete' => 'Deleted the <b>:allocation</b> allocation',
         ],
         'schedule' => [
             'create' => 'Created the <b>:name</b> schedule',
@@ -106,8 +106,8 @@ return [
             'delete' => 'Deleted a task for the <b>:name</b> schedule',
         ],
         'settings' => [
-            'rename' => 'Renamed the server from <b>:old</b> to <b>:new</b>',
-            'description' => 'Changed the server description from <b>:old</b> to <b>:new</b>',
+            'rename' => 'Renamed the server from "<b>:old</b>" to "<b>:new</b>"',
+            'description' => 'Changed the server description from "<b>:old</b>" to "<b>:new</b>"',
         ],
         'startup' => [
             'edit' => 'Changed the <b>:variable</b> variable from "<b>:old</b>" to "<b>:new</b>"',
