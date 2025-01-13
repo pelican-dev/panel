@@ -212,7 +212,8 @@ class ListFiles extends ListRecords
 
                             Activity::event('server:file.rename')
                                 ->property('directory', $this->path)
-                                ->property('files', [['to' => $location, 'from' => $file->name]])
+                                ->property('to', $location)
+                                ->property('from', $file->name)
                                 ->log();
 
                             Notification::make()

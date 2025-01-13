@@ -2,7 +2,6 @@
 
 namespace App\Transformers\Api\Client;
 
-use Illuminate\Support\Str;
 use App\Models\User;
 use App\Models\ActivityLog;
 use Illuminate\Database\Eloquent\Model;
@@ -29,7 +28,7 @@ class ActivityLogTransformer extends BaseClientTransformer
             'is_api' => !is_null($model->api_key_id),
             'ip' => $this->canViewIP($model->actor) ? $model->ip : null,
             'description' => $model->description,
-            'properties' => $this->properties($model),
+            'properties' => $model->wrapProperties(),
             'has_additional_metadata' => $this->hasAdditionalMetadata($model),
             'timestamp' => $model->timestamp->toAtomString(),
         ];
@@ -42,42 +41,6 @@ class ActivityLogTransformer extends BaseClientTransformer
         }
 
         return $this->item($model->actor, $this->makeTransformer(UserTransformer::class), User::RESOURCE_NAME);
-    }
-
-    /**
-     * Transforms any array values in the properties into a countable field for easier
-     * use within the translation outputs.
-     */
-    protected function properties(ActivityLog $model): object
-    {
-        if (!$model->properties || $model->properties->isEmpty()) {
-            return (object) [];
-        }
-
-        $properties = $model->properties
-            ->mapWithKeys(function ($value, $key) use ($model) {
-                if ($key === 'ip' && $model->actor instanceof User && !$model->actor->is($this->request->user())) {
-                    return [$key => '[hidden]'];
-                }
-
-                if (!is_array($value)) {
-                    // Perform some directory normalization at this point.
-                    if ($key === 'directory') {
-                        $value = str_replace('//', '/', '/' . trim($value, '/') . '/');
-                    }
-
-                    return [$key => $value];
-                }
-
-                return [$key => $value, "{$key}_count" => count($value)];
-            });
-
-        $keys = $properties->keys()->filter(fn ($key) => Str::endsWith($key, '_count'))->values();
-        if ($keys->containsOneItem()) {
-            $properties = $properties->merge(['count' => $properties->get($keys[0])])->except([$keys[0]]);
-        }
-
-        return (object) $properties->toArray();
     }
 
     /**
