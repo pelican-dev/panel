@@ -23,7 +23,7 @@ class ImportEggAction extends Action
     {
         parent::setUp();
 
-        $this->label('Import');
+        $this->label(trans('filament-actions::import.modal.actions.import.label'));
 
         $this->authorize(fn () => auth()->user()->can('import egg'));
 

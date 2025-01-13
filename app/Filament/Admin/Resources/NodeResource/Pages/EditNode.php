@@ -593,7 +593,7 @@ class EditNode extends EditRecord
         return [
             Actions\DeleteAction::make()
                 ->disabled(fn (Node $node) => $node->servers()->count() > 0)
-                ->label(fn (Node $node) => $node->servers()->count() > 0 ? 'Node Has Servers' : 'Delete'),
+                ->label(fn (Node $node) => $node->servers()->count() > 0 ? 'Node Has Servers' : trans('filament-actions::delete.single.label')),
             $this->getSaveFormAction()->formId('form'),
         ];
     }
