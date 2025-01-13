@@ -25,7 +25,6 @@ use Filament\Forms\Set;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\EditRecord;
 use Filament\Support\Enums\Alignment;
-use Illuminate\Support\Facades\Lang;
 use Illuminate\Support\HtmlString;
 use Webbingbrasil\FilamentCopyActions\Forms\Actions\CopyAction;
 
@@ -593,7 +592,7 @@ class EditNode extends EditRecord
         return [
             Actions\DeleteAction::make()
                 ->disabled(fn (Node $node) => $node->servers()->count() > 0)
-                ->label(fn (Node $node) => $node->servers()->count() > 0 ? 'Node Has Servers' : Lang::get('filament-actions::delete.single.label')),
+                ->label(fn (Node $node) => $node->servers()->count() > 0 ? 'Node Has Servers' : trans('filament-actions::delete.single.label')),
             $this->getSaveFormAction()->formId('form'),
         ];
     }

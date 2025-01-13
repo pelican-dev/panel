@@ -5,7 +5,6 @@ namespace App\Filament\Components\Actions;
 use App\Models\Egg;
 use App\Services\Eggs\Sharing\EggExporterService;
 use Filament\Actions\Action;
-use Illuminate\Support\Facades\Lang;
 
 class ExportEggAction extends Action
 {
@@ -18,7 +17,7 @@ class ExportEggAction extends Action
     {
         parent::setUp();
 
-        $this->label(Lang::get('filament-actions::export.modal.actions.export.label'));
+        $this->label(trans('filament-actions::export.modal.actions.export.label'));
 
         $this->authorize(fn () => auth()->user()->can('export egg'));
 

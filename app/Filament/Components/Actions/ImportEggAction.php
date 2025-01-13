@@ -10,7 +10,6 @@ use Filament\Forms\Components\Tabs;
 use Filament\Forms\Components\Tabs\Tab;
 use Filament\Forms\Components\TextInput;
 use Filament\Notifications\Notification;
-use Illuminate\Support\Facades\Lang;
 use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 
 class ImportEggAction extends Action
@@ -24,7 +23,7 @@ class ImportEggAction extends Action
     {
         parent::setUp();
 
-        $this->label(Lang::get('filament-actions::import.modal.actions.import.label'));
+        $this->label(trans('filament-actions::import.modal.actions.import.label'));
 
         $this->authorize(fn () => auth()->user()->can('import egg'));
 

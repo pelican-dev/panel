@@ -25,7 +25,6 @@ use Filament\Forms\Form;
 use Filament\Forms\Get;
 use Filament\Forms\Set;
 use Filament\Resources\Pages\EditRecord;
-use Illuminate\Support\Facades\Lang;
 use Illuminate\Validation\Rules\Unique;
 
 class EditEgg extends EditRecord
@@ -249,7 +248,7 @@ class EditEgg extends EditRecord
         return [
             DeleteAction::make()
                 ->disabled(fn (Egg $egg): bool => $egg->servers()->count() > 0)
-                ->label(fn (Egg $egg): string => $egg->servers()->count() <= 0 ? Lang::get('filament-actions::delete.single.label') : 'In Use'),
+                ->label(fn (Egg $egg): string => $egg->servers()->count() <= 0 ? trans('filament-actions::delete.single.label') : 'In Use'),
             ExportEggAction::make(),
             ImportEggAction::make(),
             $this->getSaveFormAction()->formId('form'),
