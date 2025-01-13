@@ -78,8 +78,8 @@ class ListFiles extends ListRecords
         $server = Filament::getTenant();
 
         return $table
-            ->paginated([15, 25, 50, 100])
-            ->defaultPaginationPageOption(15)
+            ->paginated([25, 50, 100, 250])
+            ->defaultPaginationPageOption(50)
             ->query(fn () => File::get($server, $this->path)->orderByDesc('is_directory'))
             ->defaultSort('name')
             ->columns([
