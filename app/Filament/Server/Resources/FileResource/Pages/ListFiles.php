@@ -312,7 +312,7 @@ class ListFiles extends ListRecords
 
                             Activity::event('server:file.decompress')
                                 ->property('directory', $this->path)
-                                ->property('files', $file->name)
+                                ->property('file', $file->name)
                                 ->log();
 
                             Notification::make()

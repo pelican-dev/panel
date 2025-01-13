@@ -196,7 +196,7 @@ class ActivityLog extends Model
                 return ["{$key}_count" => count($value)];
             }
 
-            return [Str::singular($key) => $first, "{$key}_count" => count($value)];
+            return [$key => $first, "{$key}_count" => count($value)];
         });
 
         $keys = $properties->keys()->filter(fn ($key) => Str::endsWith($key, '_count'))->values();

@@ -214,7 +214,7 @@ class FileController extends ClientApiController
 
         Activity::event('server:file.decompress')
             ->property('directory', $request->input('root'))
-            ->property('files', $request->input('file'))
+            ->property('file', $request->input('file'))
             ->log();
 
         return new JsonResponse([], JsonResponse::HTTP_NO_CONTENT);
