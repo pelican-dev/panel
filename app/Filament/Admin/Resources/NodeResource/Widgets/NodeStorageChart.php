@@ -56,6 +56,7 @@ class NodeStorageChart extends ChartWidget
                 ],
             ],
             'labels' => ['Used', 'Unused'],
+            'locale' => auth()->user()->language ?? 'en',
         ];
     }
 
