@@ -86,7 +86,8 @@ class EditNode extends EditRecord
                                     'md' => 2,
                                     'lg' => 2,
                                 ]),
-                            // TODO: Make purdy View::make('filament.components.node-storage-chart')->columnSpan(3),
+                            View::make('filament.components.node-storage-chart')
+                                ->columnSpanFull(),
                         ]),
                     Tab::make('Basic Settings')
                         ->icon('tabler-server')
