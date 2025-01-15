@@ -255,6 +255,8 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
 
     /**
      * Returns all servers that a user owns.
+     *
+     * @return HasMany<Server, $this>
      */
     public function servers(): HasMany
     {

@@ -22,4 +22,5 @@ parameters:
             identifier: larastan.noEnvCallsOutsideOfConfig
             paths:
                 - app/Console/Commands/Environment/*.php
+                - app/Extensions/OAuth/Providers/*.php
                 - app/Filament/Admin/Pages/Settings.php
