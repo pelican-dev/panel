@@ -264,7 +264,6 @@ class Settings extends Page implements HasForms
                         ->hidden(fn (Get $get) => $get('MAIL_MAILER') === 'log')
                         ->authorize(fn () => auth()->user()->can('update settings'))
                         ->action(function (Get $get) {
-
                             // Store original mail configuration
                             $originalConfig = [
                                 'mail.default' => config('mail.default'),
