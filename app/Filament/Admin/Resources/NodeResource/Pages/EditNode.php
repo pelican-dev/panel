@@ -230,22 +230,7 @@ class EditNode extends EditRecord
                                     'http' => 'tabler-lock-open-off',
                                     'https' => 'tabler-lock',
                                 ])
-                                ->default(fn () => request()->isSecure() ? 'https' : 'http'),
-                            ToggleButtons::make('behind_proxy')
-                                ->helperText('If you are running the daemon behind a proxy such as Cloudflare, select this to have the daemon skip looking for certificates on boot.')
-                                ->inline()
-                                ->default(false)
-                                ->live()
-                                ->options([
-                                    false => 'No',
-                                    true => 'Yes',
-                                ])
-                                ->colors([
-                                    false => 'danger',
-                                    true => 'primary',
-                                ])
-                                ->columnSpan(1),
-                        ]),
+                                ->default(fn () => request()->isSecure() ? 'https' : 'http'), ]),
                     Tab::make('Advanced Settings')
                         ->columns([
                             'default' => 1,
@@ -526,7 +511,7 @@ class EditNode extends EditRecord
                             Textarea::make('config')
                                 ->label('/etc/pelican/config.yml')
                                 ->disabled()
-                                ->rows(20)
+                                ->rows(19)
                                 ->hintAction(CopyAction::make())
                                 ->columnSpanFull(),
                             Grid::make()
