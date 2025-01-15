@@ -78,8 +78,8 @@ class ListFiles extends ListRecords
         $server = Filament::getTenant();
 
         return $table
-            ->paginated([15, 25, 50, 100])
-            ->defaultPaginationPageOption(15)
+            ->paginated([25, 50, 100, 250])
+            ->defaultPaginationPageOption(50)
             ->query(fn () => File::get($server, $this->path)->orderByDesc('is_directory'))
             ->defaultSort('name')
             ->columns([
@@ -96,7 +96,6 @@ class ListFiles extends ListRecords
                     ->sortable(),
             ])
             ->recordUrl(function (File $file) use ($server) {
-
                 if ($file->is_directory) {
                     return self::getUrl(['path' => join_paths($this->path, $file->name)]);
                 }
@@ -116,7 +115,6 @@ class ListFiles extends ListRecords
                     ->url(fn (File $file) => self::getUrl(['path' => join_paths($this->path, $file->name)])),
                 EditAction::make('edit')
                     ->authorize(fn () => auth()->user()->can(Permission::ACTION_FILE_READ_CONTENT, $server))
-                    ->label('Edit')
                     ->icon('tabler-edit')
                     ->visible(fn (File $file) => $file->canEdit())
                     ->url(fn (File $file) => EditFiles::getUrl(['path' => join_paths($this->path, $file->name)])),

@@ -10,7 +10,6 @@ use App\Extensions\OAuth\Providers\CommonProvider;
 use App\Extensions\OAuth\Providers\DiscordProvider;
 use App\Extensions\OAuth\Providers\GithubProvider;
 use App\Extensions\OAuth\Providers\SteamProvider;
-use App\Filament\Server\Pages\Console;
 use App\Models;
 use App\Models\ApiKey;
 use App\Models\Node;
@@ -120,8 +119,7 @@ class AppServiceProvider extends ServiceProvider
 
         FilamentView::registerRenderHook(
             PanelsRenderHook::CONTENT_START,
-            fn () => view('filament.server-conflict-banner'),
-            scopes: Console::class,
+            fn () => view('filament.alerts.alert-banner-container'),
         );
 
         FilamentView::registerRenderHook(
