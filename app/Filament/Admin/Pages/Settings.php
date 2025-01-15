@@ -263,8 +263,39 @@ class Settings extends Page implements HasForms
                         ->icon('tabler-send')
                         ->hidden(fn (Get $get) => $get('MAIL_MAILER') === 'log')
                         ->authorize(fn () => auth()->user()->can('update settings'))
-                        ->action(function () {
+                        ->action(function (Get $get) {
+
+                            // Store original mail configuration
+                            $originalConfig = [
+                                'mail.default' => config('mail.default'),
+                                'mail.mailers.smtp.host' => config('mail.mailers.smtp.host'),
+                                'mail.mailers.smtp.port' => config('mail.mailers.smtp.port'),
+                                'mail.mailers.smtp.username' => config('mail.mailers.smtp.username'),
+                                'mail.mailers.smtp.password' => config('mail.mailers.smtp.password'),
+                                'mail.mailers.smtp.encryption' => config('mail.mailers.smtp.encryption'),
+                                'mail.from.address' => config('mail.from.address'),
+                                'mail.from.name' => config('mail.from.name'),
+                                'services.mailgun.domain' => config('services.mailgun.domain'),
+                                'services.mailgun.secret' => config('services.mailgun.secret'),
+                                'services.mailgun.endpoint' => config('services.mailgun.endpoint'),
+                            ];
+
                             try {
+                                // Update mail configuration dynamically
+                                config([
+                                    'mail.default' => $get('MAIL_MAILER'),
+                                    'mail.mailers.smtp.host' => $get('MAIL_HOST'),
+                                    'mail.mailers.smtp.port' => $get('MAIL_PORT'),
+                                    'mail.mailers.smtp.username' => $get('MAIL_USERNAME'),
+                                    'mail.mailers.smtp.password' => $get('MAIL_PASSWORD'),
+                                    'mail.mailers.smtp.encryption' => $get('MAIL_ENCRYPTION'),
+                                    'mail.from.address' => $get('MAIL_FROM_ADDRESS'),
+                                    'mail.from.name' => $get('MAIL_FROM_NAME'),
+                                    'services.mailgun.domain' => $get('MAILGUN_DOMAIN'),
+                                    'services.mailgun.secret' => $get('MAILGUN_SECRET'),
+                                    'services.mailgun.endpoint' => $get('MAILGUN_ENDPOINT'),
+                                ]);
+
                                 MailNotification::route('mail', auth()->user()->email)
                                     ->notify(new MailTested(auth()->user()));
 
@@ -272,7 +303,10 @@ class Settings extends Page implements HasForms
                                     ->title('Test Mail sent')
                                     ->success()
                                     ->send();
+
+                                config($originalConfig);
                             } catch (Exception $exception) {
+                                config($originalConfig);
                                 Notification::make()
                                     ->title('Test Mail failed')
                                     ->body($exception->getMessage())
