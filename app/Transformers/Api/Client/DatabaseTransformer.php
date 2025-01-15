@@ -21,6 +21,7 @@ class DatabaseTransformer extends BaseClientTransformer
         $model->loadMissing('host');
 
         return [
+            'driver' => $model->getRelation('host')->driver,
             'id' => $model->id,
             'host' => [
                 'address' => $model->getRelation('host')->host,

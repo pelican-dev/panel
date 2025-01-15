@@ -61,7 +61,7 @@ jobs:
         uses: shivammathur/setup-php@v2
         with:
           php-version: ${{ matrix.php }}
-          extensions: bcmath, curl, gd, mbstring, mysql, openssl, pdo, tokenizer, xml, zip
+          extensions: bcmath, curl, gd, mbstring, mysql, openssl, pdo, pgsql, tokenizer, xml, zip
           tools: composer:v2
           coverage: none
 
@@ -134,7 +134,7 @@ jobs:
         uses: shivammathur/setup-php@v2
         with:
           php-version: ${{ matrix.php }}
-          extensions: bcmath, curl, gd, mbstring, mysql, openssl, pdo, tokenizer, xml, zip
+          extensions: bcmath, curl, gd, mbstring, mysql, openssl, pdo, pgsql, tokenizer, xml, zip
           tools: composer:v2
           coverage: none
 
@@ -195,7 +195,7 @@ jobs:
         uses: shivammathur/setup-php@v2
         with:
           php-version: ${{ matrix.php }}
-          extensions: bcmath, curl, gd, mbstring, mysql, openssl, pdo, tokenizer, xml, zip
+          extensions: bcmath, curl, gd, mbstring, mysql, openssl, pdo, pgsql, tokenizer, xml, zip
           tools: composer:v2
           coverage: none
 

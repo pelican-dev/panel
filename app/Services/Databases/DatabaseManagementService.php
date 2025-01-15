@@ -95,6 +95,7 @@ class DatabaseManagementService
 
             $database->createDatabase($database->database);
             $database->createUser(
+                $database->database,
                 $database->username,
                 $database->remote,
                 $database->password,

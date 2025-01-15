@@ -27,6 +27,7 @@ class HostCreationService
     {
         return $this->connection->transaction(function () use ($data) {
             $host = DatabaseHost::query()->create([
+                'driver' => array_get($data, 'driver'),
                 'password' => array_get($data, 'password'),
                 'name' => array_get($data, 'name'),
                 'host' => array_get($data, 'host'),

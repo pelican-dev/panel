@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\DatabaseDriver;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
@@ -20,6 +21,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property int|null $nodes_count
  * @property \Illuminate\Database\Eloquent\Collection|\App\Models\Database[] $databases
  * @property int|null $databases_count
+ * @property DatabaseDriver $driver
  */
 class DatabaseHost extends Model
 {
@@ -43,7 +45,13 @@ class DatabaseHost extends Model
      * Fields that are mass assignable.
      */
     protected $fillable = [
-        'name', 'host', 'port', 'username', 'password', 'max_databases',
+        'name',
+        'host',
+        'port',
+        'username',
+        'password',
+        'max_databases',
+        'driver',
     ];
 
     /**
@@ -57,6 +65,7 @@ class DatabaseHost extends Model
         'password' => 'nullable|string',
         'node_ids' => 'nullable|array',
         'node_ids.*' => 'required|integer,exists:nodes,id',
+        'driver' => 'required|string',
     ];
 
     protected function casts(): array
@@ -67,6 +76,7 @@ class DatabaseHost extends Model
             'password' => 'encrypted',
             'created_at' => 'immutable_datetime',
             'updated_at' => 'immutable_datetime',
+            'driver' => DatabaseDriver::class,
         ];
     }
 

@@ -34,6 +34,7 @@ class RequirementsStep
             'intl' => extension_loaded('intl'),
             'mbstring' => extension_loaded('mbstring'),
             'MySQL' => extension_loaded('pdo_mysql'),
+            'PGSQL' => extension_loaded('pdo_pgsql'),
             'SQLite3' => extension_loaded('pdo_sqlite'),
             'XML' => extension_loaded('xml'),
             'Zip' => extension_loaded('zip'),

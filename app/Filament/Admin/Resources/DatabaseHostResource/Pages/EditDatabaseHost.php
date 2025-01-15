@@ -43,14 +43,14 @@ class EditDatabaseHost extends EditRecord
                     ->schema([
                         TextInput::make('host')
                             ->columnSpan(2)
-                            ->helperText('The IP address or Domain name that should be used when attempting to connect to this MySQL host from this Panel to create new databases.')
+                            ->helperText('The IP address or Domain name that should be used when attempting to connect to this database host from this Panel to create new databases.')
                             ->required()
                             ->live(onBlur: true)
                             ->afterStateUpdated(fn ($state, Forms\Set $set) => $set('name', $state))
                             ->maxLength(255),
                         TextInput::make('port')
                             ->columnSpan(1)
-                            ->helperText('The port that MySQL is running on for this host.')
+                            ->helperText('The port that database is running on for this host.')
                             ->required()
                             ->numeric()
                             ->minValue(0)
