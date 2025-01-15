@@ -202,6 +202,7 @@ class Node extends Model
             ],
             'allowed_mounts' => $this->mounts->pluck('source')->toArray(),
             'remote' => route('filament.app.resources...index'),
+            'ignore_panel_config_updates' => $this->behind_proxy,
         ];
     }
 
