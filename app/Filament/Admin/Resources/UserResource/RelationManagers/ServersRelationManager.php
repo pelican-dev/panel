@@ -12,7 +12,6 @@ use Filament\Tables\Actions;
 use Filament\Tables\Columns\SelectColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Collection;
 
 class ServersRelationManager extends RelationManager
 {
