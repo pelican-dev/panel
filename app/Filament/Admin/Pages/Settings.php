@@ -355,8 +355,21 @@ class Settings extends Page implements HasForms
                     ToggleButtons::make('MAIL_ENCRYPTION')
                         ->label('Encryption')
                         ->inline()
-                        ->options(['tls' => 'TLS', 'ssl' => 'SSL', '' => 'None'])
-                        ->default(env('MAIL_ENCRYPTION', config('mail.mailers.smtp.encryption', 'tls'))),
+                        ->options([
+                            'tls' => 'TLS',
+                            'ssl' => 'SSL',
+                            '' => 'None'
+                        ])
+                        ->default(env('MAIL_ENCRYPTION', config('mail.mailers.smtp.encryption', 'tls')))
+                        ->live()
+                        ->afterStateUpdated(function ($state, Set $set) {
+                            $port = match ($state) {
+                                'tls' => 587,
+                                'ssl' => 465,
+                                default => 25,
+                            };
+                            $set('MAIL_PORT', $port);
+                        }),
                 ]),
             Section::make('Mailgun Configuration')
                 ->columns()
