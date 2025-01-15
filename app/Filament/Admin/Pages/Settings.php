@@ -303,15 +303,14 @@ class Settings extends Page implements HasForms
                                     ->title('Test Mail sent')
                                     ->success()
                                     ->send();
-
-                                config($originalConfig);
                             } catch (Exception $exception) {
-                                config($originalConfig);
                                 Notification::make()
                                     ->title('Test Mail failed')
                                     ->body($exception->getMessage())
                                     ->danger()
                                     ->send();
+                            } finally {
+                                config($originalConfig);
                             }
                         })
                 ),
