@@ -26,7 +26,6 @@ use Filament\Forms\Set;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\EditRecord;
 use Filament\Support\Enums\Alignment;
-use Filament\Support\Exceptions\Halt;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\HtmlString;
 use Webbingbrasil\FilamentCopyActions\Forms\Actions\CopyAction;
@@ -626,7 +625,7 @@ class EditNode extends EditRecord
                 ->warning()
                 ->send();
 
-            throw new Halt();
+            return parent::handleRecordUpdate($record, $data);
         }
     }
 
