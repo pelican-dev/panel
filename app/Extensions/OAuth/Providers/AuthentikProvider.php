@@ -3,6 +3,7 @@
 namespace App\Extensions\OAuth\Providers;
 
 use Filament\Forms\Components\TextInput;
+use SocialiteProviders\Authentik\Provider;
 
 final class AuthentikProvider extends OAuthProvider
 {
@@ -13,7 +14,7 @@ final class AuthentikProvider extends OAuthProvider
 
     public function getProviderClass(): string
     {
-        return \SocialiteProviders\Authentik\Provider::class;
+        return Provider::class;
     }
 
     public function getServiceConfig(): array

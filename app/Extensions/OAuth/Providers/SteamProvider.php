@@ -6,6 +6,7 @@ use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Wizard\Step;
 use Illuminate\Support\HtmlString;
+use SocialiteProviders\Steam\Provider;
 
 final class SteamProvider extends OAuthProvider
 {
@@ -16,7 +17,7 @@ final class SteamProvider extends OAuthProvider
 
     public function getProviderClass(): string
     {
-        return \SocialiteProviders\Steam\Provider::class;
+        return Provider::class;
     }
 
     public function getServiceConfig(): array

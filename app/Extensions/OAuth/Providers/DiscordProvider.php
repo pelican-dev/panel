@@ -7,6 +7,7 @@ use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Wizard\Step;
 use Illuminate\Support\HtmlString;
 use Illuminate\Support\Str;
+use SocialiteProviders\Discord\Provider;
 use Webbingbrasil\FilamentCopyActions\Forms\Actions\CopyAction;
 
 final class DiscordProvider extends OAuthProvider
@@ -18,7 +19,7 @@ final class DiscordProvider extends OAuthProvider
 
     public function getProvider(): string
     {
-        return \SocialiteProviders\Discord\Provider::class;
+        return Provider::class;
     }
 
     public function getSetupSteps(): array
