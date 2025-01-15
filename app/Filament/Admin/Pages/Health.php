@@ -8,7 +8,8 @@ use Filament\Notifications\Notification;
 use Filament\Pages\Page;
 use Illuminate\Support\Facades\Artisan;
 use Spatie\Health\Commands\RunHealthChecksCommand;
-use Facades\Spatie\Health\ResultStores\ResultStore;
+use Spatie\Health\Enums\Status;
+use Spatie\Health\ResultStores\ResultStore;
 
 class Health extends Page
 {
@@ -18,12 +19,10 @@ class Health extends Page
 
     protected static string $view = 'filament.pages.health';
 
-    protected function getListeners(): array
-    {
-        return [
-            'refresh-component' => '$refresh',
-        ];
-    }
+    // @phpstan-ignore-next-line
+    protected $listeners = [
+        'refresh-component' => '$refresh',
+    ];
 
     public static function canAccess(): bool
     {
@@ -41,7 +40,8 @@ class Health extends Page
 
     protected function getViewData(): array
     {
-        $checkResults = ResultStore::latestResults();
+        // @phpstan-ignore-next-line
+        $checkResults = app(ResultStore::class)->latestResults();
 
         if ($checkResults === null) {
             Artisan::call(RunHealthChecksCommand::class);
@@ -69,7 +69,8 @@ class Health extends Page
 
     public static function getNavigationBadge(): ?string
     {
-        $results = ResultStore::latestResults();
+        // @phpstan-ignore-next-line
+        $results = app(ResultStore::class)->latestResults();
 
         if ($results === null) {
             return null;
@@ -91,7 +92,8 @@ class Health extends Page
 
     public static function getNavigationBadgeTooltip(): ?string
     {
-        $results = ResultStore::latestResults();
+        // @phpstan-ignore-next-line
+        $results = app(ResultStore::class)->latestResults();
 
         if ($results === null) {
             return null;
@@ -112,12 +114,46 @@ class Health extends Page
 
     public static function getNavigationIcon(): string
     {
-        $results = ResultStore::latestResults();
+        // @phpstan-ignore-next-line
+        $results = app(ResultStore::class)->latestResults();
 
         if ($results === null) {
             return 'tabler-heart-question';
         }
 
         return $results->containsFailingCheck() ? 'tabler-heart-exclamation' : 'tabler-heart-check';
+    }
+
+    public function backgroundColor(string $str): string
+    {
+        return match ($str) {
+            Status::ok()->value => 'bg-success-100 dark:bg-success-200',
+            Status::warning()->value => 'bg-warning-100 dark:bg-warning-200',
+            Status::skipped()->value => 'bg-info-100 dark:bg-info-200',
+            Status::failed()->value, Status::crashed()->value => 'bg-danger-100 dark:bg-danger-200',
+            default => 'bg-gray-100 dark:bg-gray-200'
+        };
+    }
+
+    public function iconColor(string $str): string
+    {
+        return match ($str) {
+            Status::ok()->value => 'text-success-500 dark:text-success-600',
+            Status::warning()->value => 'text-warning-500 dark:text-warning-600',
+            Status::skipped()->value => 'text-info-500 dark:text-info-600',
+            Status::failed()->value, Status::crashed()->value => 'text-danger-500 dark:text-danger-600',
+            default => 'text-gray-500 dark:text-gray-600'
+        };
+    }
+
+    public function icon(string $str): string
+    {
+        return match ($str) {
+            Status::ok()->value => 'tabler-circle-check',
+            Status::warning()->value => 'tabler-exclamation-circle',
+            Status::skipped()->value => 'tabler-circle-chevron-right',
+            Status::failed()->value, Status::crashed()->value => 'tabler-circle-x',
+            default => 'tabler-help-circle'
+        };
     }
 }

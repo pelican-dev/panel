@@ -2,13 +2,14 @@
 
 namespace App\Filament\Pages\Auth;
 
+use App\Extensions\OAuth\Providers\OAuthProvider;
 use Coderflex\FilamentTurnstile\Forms\Components\Turnstile;
 use Filament\Forms\Components\Actions;
 use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\Component;
 use Filament\Forms\Components\TextInput;
 use Filament\Pages\Auth\Login as BaseLogin;
-use Illuminate\Support\Str;
+use Filament\Support\Colors\Color;
 use Illuminate\Validation\ValidationException;
 
 class Login extends BaseLogin
@@ -57,16 +58,19 @@ class Login extends BaseLogin
     {
         $actions = [];
 
-        foreach (config('auth.oauth') as $name => $data) {
-            if (!$data['enabled']) {
+        $oauthProviders = OAuthProvider::get();
+        foreach ($oauthProviders as $oauthProvider) {
+            if (!$oauthProvider->isEnabled()) {
                 continue;
             }
 
-            $actions[] = Action::make("oauth_$name")
-                ->label(Str::title($name))
-                ->icon($data['icon'])
-                ->color($data['color'])
-                ->url(route('auth.oauth.redirect', ['driver' => $name], false));
+            $id = $oauthProvider->getId();
+
+            $actions[] = Action::make("oauth_$id")
+                ->label($oauthProvider->getName())
+                ->icon($oauthProvider->getIcon())
+                ->color(Color::hex($oauthProvider->getHexColor()))
+                ->url(route('auth.oauth.redirect', ['driver' => $id], false));
         }
 
         return Actions::make($actions);

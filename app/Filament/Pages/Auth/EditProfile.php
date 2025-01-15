@@ -3,6 +3,7 @@
 namespace App\Filament\Pages\Auth;
 
 use App\Exceptions\Service\User\TwoFactorAuthenticationTokenInvalid;
+use App\Extensions\OAuth\Providers\OAuthProvider;
 use App\Facades\Activity;
 use App\Models\ActivityLog;
 use App\Models\ApiKey;
@@ -31,13 +32,13 @@ use Filament\Forms\Components\TextInput;
 use Filament\Forms\Get;
 use Filament\Notifications\Notification;
 use Filament\Pages\Auth\EditProfile as BaseEditProfile;
+use Filament\Support\Colors\Color;
 use Filament\Support\Enums\MaxWidth;
 use Filament\Support\Exceptions\Halt;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\HtmlString;
-use Illuminate\Support\Str;
 use Illuminate\Validation\Rules\Password;
 use Laravel\Socialite\Facades\Socialite;
 
@@ -126,8 +127,9 @@ class EditProfile extends BaseEditProfile
                                 Tab::make('OAuth')
                                     ->icon('tabler-brand-oauth')
                                     ->visible(function () {
-                                        foreach (config('auth.oauth') as $name => $data) {
-                                            if ($data['enabled']) {
+                                        $oauthProviders = OAuthProvider::get();
+                                        foreach ($oauthProviders as $oauthProvider) {
+                                            if ($oauthProvider->isEnabled()) {
                                                 return true;
                                             }
                                         }
@@ -135,23 +137,27 @@ class EditProfile extends BaseEditProfile
                                         return false;
                                     })
                                     ->schema(function () {
-                                        $providers = [];
+                                        $actions = [];
 
-                                        foreach (config('auth.oauth') as $name => $data) {
-                                            if (!$data['enabled']) {
+                                        $oauthProviders = OAuthProvider::get();
+                                        foreach ($oauthProviders as $oauthProvider) {
+                                            if (!$oauthProvider->isEnabled()) {
                                                 continue;
                                             }
 
-                                            $unlink = array_key_exists($name, $this->getUser()->oauth ?? []);
+                                            $id = $oauthProvider->getId();
+                                            $name = $oauthProvider->getName();
 
-                                            $providers[] = Action::make("oauth_$name")
-                                                ->label(($unlink ? 'Unlink ' : 'Link ') . Str::title($name))
+                                            $unlink = array_key_exists($id, $this->getUser()->oauth ?? []);
+
+                                            $actions[] = Action::make("oauth_$id")
+                                                ->label(($unlink ? 'Unlink ' : 'Link ') . $name)
                                                 ->icon($unlink ? 'tabler-unlink' : 'tabler-link')
-                                                ->color($data['color'])
-                                                ->action(function (UserUpdateService $updateService) use ($name, $unlink) {
+                                                ->color(Color::hex($oauthProvider->getHexColor()))
+                                                ->action(function (UserUpdateService $updateService) use ($id, $name, $unlink) {
                                                     if ($unlink) {
                                                         $oauth = auth()->user()->oauth;
-                                                        unset($oauth[$name]);
+                                                        unset($oauth[$id]);
 
                                                         $updateService->handle(auth()->user(), ['oauth' => $oauth]);
 
@@ -161,13 +167,13 @@ class EditProfile extends BaseEditProfile
                                                             ->title("OAuth provider '$name' unlinked")
                                                             ->success()
                                                             ->send();
-                                                    } elseif (config("auth.oauth.$name.enabled")) {
+                                                    } else {
                                                         redirect(Socialite::with($name)->redirect()->getTargetUrl());
                                                     }
                                                 });
                                         }
 
-                                        return [Actions::make($providers)];
+                                        return [Actions::make($actions)];
                                     }),
 
                                 Tab::make('2FA')

@@ -11,14 +11,13 @@
 
     <div id="terminal" wire:ignore></div>
 
-    <div class="flex items-center w-full border-top overflow-hidden"
-         style="background-color: #202A32; border-bottom-right-radius: 10px; border-bottom-left-radius: 10px;">
+    <div class="flex items-center w-full border-top overflow-hidden dark:bg-gray-900"
+         style="border-bottom-right-radius: 10px; border-bottom-left-radius: 10px;">
         <x-filament::icon
             icon="tabler-chevrons-right"
         />
         <input
-            class="w-full focus:outline-none focus:ring-0 border-none"
-            style="background-color: #202A32;"
+            class="w-full focus:outline-none focus:ring-0 border-none dark:bg-gray-900"
             type="text"
             :readonly="{{ $this->canSendCommand() ? 'false' : 'true' }}"
             title="{{ $this->canSendCommand() ? '' : 'Can\'t send command when the server is Offline' }}"
@@ -114,6 +113,19 @@
         const socket = new WebSocket("{{ $this->getSocket() }}");
         let token = '{{ $this->getToken() }}';
 
+        socket.onerror = function(websocketErrorEvent) {
+            @php
+                $alerts = session()->get('alert-banners', []);
+                $alerts[] = [
+                    'title' => 'Could not connect to websocket!',
+                    'body' => 'Check your browser console for more details.',
+                    'status' => 'danger',
+                ];
+
+                session()->flash('alert-banners', $alerts);
+            @endphp
+        };
+
         socket.onmessage = function(websocketMessageEvent) {
             let { event, args } = JSON.parse(websocketMessageEvent.data);
 
@@ -141,12 +153,6 @@
                         'event': 'send logs',
                         'args': [null]
                     }));
-                    break;
-                case 'install started':
-                    $wire.dispatch('console-install-started');
-                    break;
-                case 'install completed':
-                    $wire.dispatch('console-install-completed');
                     break;
                 case 'token expiring':
                 case 'token expired':
