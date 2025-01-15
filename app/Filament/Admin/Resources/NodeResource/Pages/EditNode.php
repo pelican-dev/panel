@@ -34,6 +34,8 @@ class EditNode extends EditRecord
 {
     protected static string $resource = NodeResource::class;
 
+    private bool $errored = false;
+
     private NodeUpdateService $nodeUpdateService;
 
     public function boot(NodeUpdateService $nodeUpdateService): void
@@ -617,6 +619,7 @@ class EditNode extends EditRecord
 
             return $this->nodeUpdateService->handle($record, $data);
         } catch (Exception $exception) {
+            $this->errored = true;
             Notification::make()
                 ->title('Error connecting to the node')
                 ->body('The configuration could not be automatically updated on Wings, you will need to manually update the configuration file.')
@@ -627,6 +630,15 @@ class EditNode extends EditRecord
 
             return parent::handleRecordUpdate($record, $data);
         }
+    }
+
+    protected function getSavedNotification(): ?Notification
+    {
+        if ($this->errored) {
+            return null;
+        }
+
+        return parent::getSavedNotification();
     }
 
     protected function getFormActions(): array
