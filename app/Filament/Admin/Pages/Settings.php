@@ -358,7 +358,7 @@ class Settings extends Page implements HasForms
                         ->options([
                             'tls' => 'TLS',
                             'ssl' => 'SSL',
-                            '' => 'None'
+                            '' => 'None',
                         ])
                         ->default(env('MAIL_ENCRYPTION', config('mail.mailers.smtp.encryption', 'tls')))
                         ->live()
