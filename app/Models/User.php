@@ -298,6 +298,15 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
             return Server::query();
         }
 
+        return $this->directAccessibleServers();
+    }
+
+    /**
+     * Returns all the servers that a user can access "directly".
+     * This means either because they are the owner or a subuser of the server.
+     */
+    public function directAccessibleServers(): Builder
+    {
         return Server::query()
             ->select('servers.*')
             ->leftJoin('subusers', 'subusers.server_id', '=', 'servers.id')

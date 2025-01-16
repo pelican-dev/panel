@@ -53,12 +53,12 @@ class ClientController extends ClientApiController
             } else {
                 $builder = $type === 'admin-all'
                     ? $builder
-                    : $builder->whereNotIn('servers.id', $user->accessibleServers()->pluck('id')->all());
+                    : $builder->whereNotIn('servers.id', $user->directAccessibleServers()->pluck('id')->all());
             }
         } elseif ($type === 'owner') {
             $builder = $builder->where('servers.owner_id', $user->id);
         } else {
-            $builder = $builder->whereIn('servers.id', $user->accessibleServers()->pluck('id')->all());
+            $builder = $builder->whereIn('servers.id', $user->directAccessibleServers()->pluck('id')->all());
         }
 
         $servers = $builder->paginate(min($request->query('per_page', '50'), 100))->appends($request->query());
