@@ -379,6 +379,11 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
         return $this->hasRole(Role::ROOT_ADMIN);
     }
 
+    public function isAdmin(): bool
+    {
+        return $this->isRootAdmin() || ($this->roles()->count() >= 1 && $this->getAllPermissions()->count() >= 1);
+    }
+
     public function canAccessPanel(Panel $panel): bool
     {
         if ($this->isRootAdmin()) {
@@ -386,7 +391,7 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
         }
 
         if ($panel->getId() === 'admin') {
-            return $this->roles()->count() >= 1 && $this->getAllPermissions()->count() >= 1;
+            return $this->isAdmin();
         }
 
         return true;
