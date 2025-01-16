@@ -14,8 +14,8 @@ class GetUserPermissionsService
      */
     public function handle(Server $server, User $user): array
     {
-        if ($user->can('view server', $server) || $user->can('edit server', $server)) {
-            $permissions = $user->can('edit server', $server) ? ['*'] : ['websocket.connect', 'backup.read'];
+        if ($user->can('view server', $server) || $user->can('update server', $server)) {
+            $permissions = $user->can('update server', $server) ? ['*'] : ['websocket.connect', 'backup.read'];
 
             $permissions[] = 'admin.websocket.errors';
             $permissions[] = 'admin.websocket.install';

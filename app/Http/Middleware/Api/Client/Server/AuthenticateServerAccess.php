@@ -37,7 +37,7 @@ class AuthenticateServerAccess
         // At the very least, ensure that the user trying to make this request is the
         // server owner, a subuser, or an admin. We'll leave it up to the controllers
         // to authenticate more detailed permissions if needed.
-        if ($user->id !== $server->owner_id && $user->cannot('edit server', $server)) {
+        if ($user->id !== $server->owner_id && $user->cannot('update server', $server)) {
             // Check for subuser status.
             if (!$server->subusers->contains('user_id', $user->id)) {
                 throw new NotFoundHttpException(trans('exceptions.api.resource_not_found'));
@@ -53,7 +53,7 @@ class AuthenticateServerAccess
                 if (($server->isSuspended() || $server->node->isUnderMaintenance()) && !$request->routeIs('api:client:server.resources')) {
                     throw $exception;
                 }
-                if ($user->cannot('edit server', $server) || !$request->routeIs($this->except)) {
+                if ($user->cannot('update server', $server) || !$request->routeIs($this->except)) {
                     throw $exception;
                 }
             }

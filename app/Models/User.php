@@ -328,7 +328,7 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
 
     protected function checkPermission(Server $server, string $permission = ''): bool
     {
-        if ($this->canned('edit server', $server) || $server->owner_id === $this->id) {
+        if ($this->canned('update server', $server) || $server->owner_id === $this->id) {
             return true;
         }
 
