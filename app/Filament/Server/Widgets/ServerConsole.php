@@ -57,9 +57,14 @@ class ServerConsole extends Widget
         return $socket;
     }
 
+    protected function authorizeSendCommand(): bool
+    {
+        return $this->user->can(Permission::ACTION_CONTROL_CONSOLE, $this->server);
+    }
+
     protected function canSendCommand(): bool
     {
-        return !$this->server->isInConflictState() && $this->server->retrieveStatus() === 'running';
+        return $this->authorizeSendCommand() && !$this->server->isInConflictState() && $this->server->retrieveStatus() === 'running';
     }
 
     public function up(): void
