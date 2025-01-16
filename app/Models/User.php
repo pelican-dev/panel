@@ -328,7 +328,7 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
 
     protected function checkPermission(Server $server, string $permission = ''): bool
     {
-        if ($this->isRootAdmin() || $this->canned('edit server', $server) || $server->owner_id === $this->id) {
+        if ($this->canned('edit server', $server) || $server->owner_id === $this->id) {
             return true;
         }
 
@@ -419,7 +419,7 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
     public function canAccessTenant(IlluminateModel $tenant): bool
     {
         if ($tenant instanceof Server) {
-            if ($this->isRootAdmin() || $this->canned('view server', $tenant) || $tenant->owner_id === $this->id) {
+            if ($this->canned('view server', $tenant) || $tenant->owner_id === $this->id) {
                 return true;
             }
 
