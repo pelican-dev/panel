@@ -289,11 +289,15 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
     }
 
     /**
-     * Returns all the servers that a user can access by way of being the owner of the
-     * server, or because they are assigned as a subuser for that server.
+     * Returns all the servers that a user can access.
+     * Either because they are an admin or because they are the owner/ a subuser of the server.
      */
     public function accessibleServers(): Builder
     {
+        if ($this->canned('viewList server')) {
+            return Server::query();
+        }
+
         return Server::query()
             ->select('servers.*')
             ->leftJoin('subusers', 'subusers.server_id', '=', 'servers.id')
@@ -315,7 +319,12 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
 
     protected function checkPermission(Server $server, string $permission = ''): bool
     {
-        if ($this->isRootAdmin() || $server->owner_id === $this->id) {
+        if ($this->isRootAdmin() || $this->canned('edit server', $server) || $server->owner_id === $this->id) {
+            return true;
+        }
+
+        // If the user only has "view" permissions allow viewing the console
+        if ($permission === Permission::ACTION_WEBSOCKET_CONNECT && $this->canned('view server', $server)) {
             return true;
         }
 
@@ -401,7 +410,7 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
     public function canAccessTenant(IlluminateModel $tenant): bool
     {
         if ($tenant instanceof Server) {
-            if ($this->isRootAdmin() || $tenant->owner_id === $this->id) {
+            if ($this->isRootAdmin() || $this->canned('view server', $tenant) || $tenant->owner_id === $this->id) {
                 return true;
             }
 
