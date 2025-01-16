@@ -14,8 +14,7 @@ COPY --from=composer:latest /usr/bin/composer /usr/local/bin/composer
 RUN apk update && apk add --no-cache \
     libpng-dev libjpeg-turbo-dev freetype-dev libzip-dev icu-dev \
     zip unzip curl \
-    && docker-php-ext-install \
-    bcmath gd intl zip opcache pcntl posix pdo_mysql
+    && docker-php-ext-install bcmath gd intl zip opcache pcntl posix pdo_mysql
 
 RUN composer install --no-dev --optimize-autoloader
 
@@ -41,11 +40,14 @@ WORKDIR /var/www/html
 
 COPY --from=composer:latest /usr/bin/composer /usr/local/bin/composer
 
-# Install required libraries and PHP extensions
+# Install additional required libraries
 RUN apk update && apk add --no-cache \
     libpng-dev libjpeg-turbo-dev freetype-dev libzip-dev icu-dev \
-    zip unzip curl caddy ca-certificates supervisor \
-    && docker-php-ext-install bcmath gd intl zip opcache pcntl posix pdo_mysql
+    zip unzip curl caddy ca-certificates supervisor
+
+# Copy PHP extensions and configuration from Composer stage
+COPY --from=composer /usr/local/lib/php/extensions/ /usr/local/lib/php/extensions/
+COPY --from=composer /usr/local/etc/php/conf.d/ /usr/local/etc/php/conf.d/
 
 COPY Caddyfile /etc/caddy/Caddyfile
 COPY --from=yarn /build .
