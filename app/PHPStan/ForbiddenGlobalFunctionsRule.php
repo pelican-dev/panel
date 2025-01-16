@@ -6,6 +6,7 @@ use PhpParser\Node;
 use PhpParser\Node\Expr\FuncCall;
 use PHPStan\Analyser\Scope;
 use PHPStan\Rules\Rule;
+use PHPStan\Rules\RuleErrorBuilder;
 
 class ForbiddenGlobalFunctionsRule implements Rule
 {
@@ -28,7 +29,10 @@ class ForbiddenGlobalFunctionsRule implements Rule
             $functionName = (string) $node->name;
             if (in_array($functionName, $this->forbiddenFunctions, true)) {
                 return [
-                    sprintf('Usage of global function "%s" is forbidden.', $functionName),
+                    RuleErrorBuilder::message(sprintf(
+                        'Usage of global function "%s" is forbidden.',
+                        $functionName,
+                    ))->identifier('myCustomRules.forbiddenGlobalFunctions')->build(),
                 ];
             }
         }

@@ -342,6 +342,9 @@ class Server extends Model
         return $this->hasOne(ServerTransfer::class)->whereNull('successful')->orderByDesc('id');
     }
 
+    /**
+     * @return HasMany<Backup, $this>
+     */
     public function backups(): HasMany
     {
         return $this->hasMany(Backup::class);
@@ -487,7 +490,7 @@ class Server extends Model
     public function condition(): Attribute
     {
         return Attribute::make(
-            get: fn () => $this->isSuspended() ? ServerState::Suspended : $this->status?->value ?? $this->retrieveStatus(),
+            get: fn () => $this->isSuspended() ? ServerState::Suspended : $this->status->value ?? $this->retrieveStatus(),
         );
     }
 

@@ -47,8 +47,7 @@ class PanelInstaller extends SimplePage implements HasForms
 
     public static function isInstalled(): bool
     {
-        // This defaults to true so existing panels count as "installed"
-        return env('APP_INSTALLED', true);
+        return config('app.installed');
     }
 
     public function mount(): void
