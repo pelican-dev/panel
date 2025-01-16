@@ -9,7 +9,7 @@ use Filament\Notifications\Notification;
 
 class JavaVersion extends Feature
 {
-    public static function listeners(): array
+    public function listeners(): array
     {
         return [
             'minecraft 1.17 requires running the server with java 16 or above',
@@ -20,12 +20,12 @@ class JavaVersion extends Feature
         ];
     }
 
-    public static function featureName(): string
+    public function featureName(): string
     {
         return 'java_version';
     }
 
-    public static function action(): Action
+    public function action(): Action
     {
         return Action::make('eula')
             ->form([

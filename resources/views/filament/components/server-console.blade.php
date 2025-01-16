@@ -1,3 +1,4 @@
+@php use App\Features\CustomModal; @endphp
 <x-filament::widget>
     @assets
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xterm/xterm/css/xterm.min.css">
@@ -108,7 +109,7 @@
         }
 
         const checkListeners = (line) => {
-            $dispatch('line-to-check', { line })
+            $dispatch('line-to-check', { line });
         }
 
         const handleTransferStatus = (status) =>
@@ -192,4 +193,7 @@
         });
     </script>
     @endscript
+
+    {{ $this->modal()->render() }}
+
 </x-filament::widget>

@@ -9,21 +9,21 @@ use Filament\Notifications\Notification;
 
 class MinecraftEula extends Feature
 {
-    public static function listeners(): array
+    public function listeners(): array
     {
         return [
             'you need to agree to the eula in order to run the server',
         ];
     }
 
-    public static function featureName(): string
+    public function featureName(): string
     {
         return 'eula';
     }
 
-    public static function action(): Action
+    public function action(): Action
     {
-        return Action::make('eula')
+        return Action::make($this->featureName())
             ->form([
                 Placeholder::make('eula')
                     ->label('By pressing I Accept below you are indicating your agreement to the Minecraft® EULA.'),

@@ -3,6 +3,7 @@
 namespace App\Filament\Server\Widgets;
 
 use App\Exceptions\Http\HttpForbiddenException;
+use App\Features\Feature;
 use App\Livewire\AlertBanner;
 use App\Models\Permission;
 use App\Models\Server;
@@ -11,10 +12,9 @@ use App\Services\Nodes\NodeJWTService;
 use App\Services\Servers\GetUserPermissionsService;
 use Filament\Widgets\Widget;
 use Illuminate\Support\Arr;
-use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\Log;
 use Livewire\Attributes\On;
 use App\Features;
+use App\Features\CustomModal;
 
 class ServerConsole extends Widget
 {
@@ -34,6 +34,14 @@ class ServerConsole extends Widget
     public int $historyIndex = 0;
 
     public string $input = '';
+
+    public function modal(): CustomModal
+    {
+        return CustomModal::make('modal-eula')
+            ->heading('Info!')
+            ->description('Description')
+            ->registerActions([/* if neccessary */]);
+    }
 
     private GetUserPermissionsService $getUserPermissionsService;
 
@@ -130,18 +138,23 @@ class ServerConsole extends Widget
         }
     }
 
+    /**
+     * @return Feature[]
+     */
     public function getActiveFeatures(): array
     {
         return [new Features\MinecraftEula(), new Features\JavaVersion()];
     }
 
     #[On('line-to-check')]
-    public function lineToCheck(string $line)
+    public function lineToCheck(string $line): void
     {
         foreach ($this->getActiveFeatures() as $feature) {
-          if ($feature->matchesListeners($line)) {
-             Log::info('Feature listens for this', compact(['feature', 'line']));
-          }
+            if ($feature->matchesListeners($line)) {
+                logger()->info('Feature listens for this', compact(['feature', 'line']));
+
+                $this->dispatch('open-modal', id: "modal-{$feature->featureName()}");
+            }
         }
     }
 

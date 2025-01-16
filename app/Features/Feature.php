@@ -7,12 +7,12 @@ use Filament\Actions\Action;
 abstract class Feature
 {
     /** you need to agree to the eula in order to run the server */
-    abstract static public function listeners(): array;
+    abstract public function listeners(): array;
 
     /** eula */
-    abstract static public function featureName(): string;
+    abstract public function featureName(): string;
 
-    abstract static public function action(): Action;
+    abstract public function action(): Action;
 
     public function matchesListeners(string $line): bool
     {
