@@ -114,16 +114,7 @@
         let token = '{{ $this->getToken() }}';
 
         socket.onerror = function(websocketErrorEvent) {
-            @php
-                $alerts = session()->get('alert-banners', []);
-                $alerts[] = [
-                    'title' => 'Could not connect to websocket!',
-                    'body' => 'Check your browser console for more details.',
-                    'status' => 'danger',
-                ];
-
-                session()->flash('alert-banners', $alerts);
-            @endphp
+            $wire.dispatch('websocket-error', { error: websocketErrorEvent });
         };
 
         socket.onmessage = function(websocketMessageEvent) {

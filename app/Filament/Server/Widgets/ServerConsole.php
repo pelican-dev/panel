@@ -113,4 +113,17 @@ class ServerConsole extends Widget
             cache()->put($cacheKey, $data, now()->addMinute());
         }
     }
+
+    #[On('websocket-error')]
+    public function websocketError(array $error): void
+    {
+        $alerts = session()->get('alert-banners', []);
+        $alerts[] = [
+            'title' => 'Could not connect to websocket!',
+            'body' => 'Check your browser console for more details.',
+            'status' => 'danger',
+        ];
+
+        session()->flash('alert-banners', $alerts);
+    }
 }
