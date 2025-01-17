@@ -5,6 +5,7 @@ namespace App\Filament\Admin\Resources\UserResource\Pages;
 use App\Filament\Admin\Resources\UserResource;
 use App\Models\Role;
 use App\Models\User;
+use App\Services\Helpers\LanguageService;
 use Filament\Actions\DeleteAction;
 use Filament\Forms\Components\CheckboxList;
 use Filament\Forms\Components\Hidden;
@@ -40,7 +41,7 @@ class EditUser extends EditRecord
                         ->required()
                         ->hidden()
                         ->default('en')
-                        ->options(fn (User $user) => $user->getAvailableLanguages()),
+                        ->options(fn (LanguageService $languageService) => $languageService->getAvailableLanguages()),
                     Hidden::make('skipValidation')
                         ->default(true),
                     CheckboxList::make('roles')

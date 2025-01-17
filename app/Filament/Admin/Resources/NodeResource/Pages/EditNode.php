@@ -7,6 +7,7 @@ use App\Models\Node;
 use App\Services\Helpers\SoftwareVersionService;
 use App\Services\Nodes\NodeAutoDeployService;
 use App\Services\Nodes\NodeUpdateService;
+use Exception;
 use Filament\Actions;
 use Filament\Forms;
 use Filament\Forms\Components\Actions as FormActions;
@@ -25,12 +26,22 @@ use Filament\Forms\Set;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\EditRecord;
 use Filament\Support\Enums\Alignment;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\HtmlString;
 use Webbingbrasil\FilamentCopyActions\Forms\Actions\CopyAction;
 
 class EditNode extends EditRecord
 {
     protected static string $resource = NodeResource::class;
+
+    private bool $errored = false;
+
+    private NodeUpdateService $nodeUpdateService;
+
+    public function boot(NodeUpdateService $nodeUpdateService): void
+    {
+        $this->nodeUpdateService = $nodeUpdateService;
+    }
 
     public function form(Forms\Form $form): Forms\Form
     {
@@ -552,8 +563,8 @@ class EditNode extends EditRecord
                                             ->requiresConfirmation()
                                             ->modalHeading('Reset Daemon Token?')
                                             ->modalDescription('Resetting the daemon token will void any request coming from the old token. This token is used for all sensitive operations on the daemon including server creation and deletion. We suggest changing this token regularly for security.')
-                                            ->action(function (NodeUpdateService $nodeUpdateService, Node $node) {
-                                                $nodeUpdateService->handle($node, [], true);
+                                            ->action(function (Node $node) {
+                                                $this->nodeUpdateService->handle($node, [], true);
                                                 Notification::make()->success()->title('Daemon Key Reset')->send();
                                                 $this->fillForm();
                                             }),
@@ -581,6 +592,39 @@ class EditNode extends EditRecord
         }
 
         return $data;
+    }
+
+    protected function handleRecordUpdate(Model $record, array $data): Model
+    {
+        if (!$record instanceof Node) {
+            return $record;
+        }
+
+        try {
+            unset($data['unlimited_mem'], $data['unlimited_disk'], $data['unlimited_cpu']);
+
+            return $this->nodeUpdateService->handle($record, $data);
+        } catch (Exception $exception) {
+            $this->errored = true;
+            Notification::make()
+                ->title('Error connecting to the node')
+                ->body('The configuration could not be automatically updated on Wings, you will need to manually update the configuration file.')
+                ->color('warning')
+                ->icon('tabler-database')
+                ->warning()
+                ->send();
+
+            return parent::handleRecordUpdate($record, $data);
+        }
+    }
+
+    protected function getSavedNotification(): ?Notification
+    {
+        if ($this->errored) {
+            return null;
+        }
+
+        return parent::getSavedNotification();
     }
 
     protected function getFormActions(): array

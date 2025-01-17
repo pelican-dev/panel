@@ -8,6 +8,7 @@ use App\Facades\Activity;
 use App\Models\ActivityLog;
 use App\Models\ApiKey;
 use App\Models\User;
+use App\Services\Helpers\LanguageService;
 use App\Services\Users\ToggleTwoFactorService;
 use App\Services\Users\TwoFactorSetupService;
 use App\Services\Users\UserUpdateService;
@@ -115,13 +116,12 @@ class EditProfile extends BaseEditProfile
                                             ->prefixIcon('tabler-flag')
                                             ->live()
                                             ->default('en')
-                                            ->helperText(fn (User $user, $state) => new HtmlString($user->isLanguageTranslated($state) ? '' : "
+                                            ->helperText(fn ($state, LanguageService $languageService) => new HtmlString($languageService->isLanguageTranslated($state) ? '' : "
                                                 Your language ($state) has not been translated yet!
                                                 But never fear, you can help fix that by
                                                 <a style='color: rgb(56, 189, 248)' href='https://crowdin.com/project/pelican-dev'>contributing directly here</a>.
-                                            ")
-                                            )
-                                            ->options(fn (User $user) => $user->getAvailableLanguages()),
+                                            "))
+                                            ->options(fn (LanguageService $languageService) => $languageService->getAvailableLanguages()),
                                     ]),
 
                                 Tab::make('OAuth')
@@ -208,37 +208,29 @@ class EditProfile extends BaseEditProfile
                                             'addLogoSpace' => true,
                                             'logoSpaceWidth' => 13,
                                             'logoSpaceHeight' => 13,
+                                            'version' => Version::AUTO,
+                                            // 'outputInterface' => QRSvgWithLogo::class,
+                                            'outputBase64' => false,
+                                            'eccLevel' => EccLevel::H, // ECC level H is necessary when using logos
+                                            'addQuietzone' => true,
+                                            // 'drawLightModules' => true,
+                                            'connectPaths' => true,
+                                            'drawCircularModules' => true,
+                                            // 'circleRadius' => 0.45,
+                                            'svgDefs' => '
+                                                <linearGradient id="gradient" x1="100%" y2="100%">
+                                                    <stop stop-color="#7dd4fc" offset="0"/>
+                                                    <stop stop-color="#38bdf8" offset="0.5"/>
+                                                    <stop stop-color="#0369a1" offset="1"/>
+                                                </linearGradient>
+                                                <style><![CDATA[
+                                                    .dark{fill: url(#gradient);}
+                                                    .light{fill: #000;}
+                                                ]]></style>
+                                            ',
                                         ]);
 
                                         // https://github.com/chillerlan/php-qrcode/blob/main/examples/svgWithLogo.php
-
-                                        // QROptions
-                                        // @phpstan-ignore property.protected
-                                        $options->version = Version::AUTO;
-                                        // $options->outputInterface     = QRSvgWithLogo::class;
-                                        // @phpstan-ignore property.protected
-                                        $options->outputBase64 = false;
-                                        // @phpstan-ignore property.protected
-                                        $options->eccLevel = EccLevel::H; // ECC level H is necessary when using logos
-                                        // @phpstan-ignore property.protected
-                                        $options->addQuietzone = true;
-                                        // $options->drawLightModules    = true;
-                                        // @phpstan-ignore property.protected
-                                        $options->connectPaths = true;
-                                        // @phpstan-ignore property.protected
-                                        $options->drawCircularModules = true;
-                                        // $options->circleRadius        = 0.45;
-
-                                        // @phpstan-ignore property.protected
-                                        $options->svgDefs = '<linearGradient id="gradient" x1="100%" y2="100%">
-                                            <stop stop-color="#7dd4fc" offset="0"/>
-                                            <stop stop-color="#38bdf8" offset="0.5"/>
-                                            <stop stop-color="#0369a1" offset="1"/>
-                                        </linearGradient>
-                                        <style><![CDATA[
-                                            .dark{fill: url(#gradient);}
-                                            .light{fill: #000;}
-                                        ]]></style>';
 
                                         $image = (new QRCode($options))->render($url);
 

@@ -20,7 +20,6 @@ use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\Builder;
 use App\Models\Traits\HasAccessTokens;
 use Illuminate\Auth\Passwords\CanResetPassword;
-use App\Traits\Helpers\AvailableLanguages;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\Access\Authorizable;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
@@ -30,6 +29,7 @@ use Illuminate\Contracts\Auth\CanResetPassword as CanResetPasswordContract;
 use App\Notifications\SendPasswordReset as ResetPasswordNotification;
 use Filament\Facades\Filament;
 use Illuminate\Database\Eloquent\Model as IlluminateModel;
+use ResourceBundle;
 use Spatie\Permission\Traits\HasRoles;
 
 /**
@@ -89,7 +89,6 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
 {
     use Authenticatable;
     use Authorizable {can as protected canned; }
-    use AvailableLanguages;
     use CanResetPassword;
     use HasAccessTokens;
     use HasRoles;
@@ -179,9 +178,8 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
     protected static function booted(): void
     {
         static::creating(function (self $user) {
-            $user->uuid = Str::uuid()->toString();
-
-            $user->timezone = env('APP_TIMEZONE', 'UTC');
+            $user->uuid ??= Str::uuid()->toString();
+            $user->timezone ??= config('app.timezone');
 
             return true;
         });
@@ -206,8 +204,8 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
     {
         $rules = parent::getRules();
 
-        $rules['language'][] = new In(array_keys((new self())->getAvailableLanguages()));
-        $rules['timezone'][] = new In(array_values(DateTimeZone::listIdentifiers()));
+        $rules['language'][] = new In(array_values(array_filter(ResourceBundle::getLocales(''), fn ($lang) => preg_match('/^[a-z]{2}$/', $lang))));
+        $rules['timezone'][] = new In(DateTimeZone::listIdentifiers());
         $rules['username'][] = new Username();
 
         return $rules;
@@ -257,6 +255,8 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
 
     /**
      * Returns all servers that a user owns.
+     *
+     * @return HasMany<Server, $this>
      */
     public function servers(): HasMany
     {

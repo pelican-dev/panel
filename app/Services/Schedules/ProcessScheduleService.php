@@ -2,6 +2,7 @@
 
 namespace App\Services\Schedules;
 
+use App\Models\Task;
 use Exception;
 use App\Models\Schedule;
 use Illuminate\Contracts\Bus\Dispatcher;
@@ -12,18 +13,14 @@ use App\Repositories\Daemon\DaemonServerRepository;
 
 class ProcessScheduleService
 {
-    /**
-     * ProcessScheduleService constructor.
-     */
     public function __construct(private ConnectionInterface $connection, private Dispatcher $dispatcher, private DaemonServerRepository $serverRepository) {}
 
     /**
      * Process a schedule and push the first task onto the queue worker.
-     *
-     * @throws \Throwable
      */
     public function handle(Schedule $schedule, bool $now = false): void
     {
+        /** @var ?Task $task */
         $task = $schedule->tasks()->orderBy('sequence_id')->first();
 
         if (!$task) {

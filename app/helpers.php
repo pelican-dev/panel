@@ -49,8 +49,7 @@ if (!function_exists('join_paths')) {
 if (!function_exists('resolve_path')) {
     function resolve_path(string $path): string
     {
-        // @phpstan-ignore-next-line
-        $parts = array_filter(explode('/', $path), 'strlen');
+        $parts = array_filter(explode('/', $path), fn (string $p) => strlen($p) > 0);
 
         $absolutes = [];
         foreach ($parts as $part) {
