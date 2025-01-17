@@ -12,6 +12,15 @@ parameters:
     level: 6
 
     ignoreErrors:
-        - '#no value type specified in iterable#'
-        - '#Unable to resolve the template type#'
-        - '#does not specify its types#'
+        - identifier: argument.templateType
+        - identifier: missingType.generics
+        - identifier: missingType.iterableValue
+        - identifier: property.notFound
+
+        # We are getting and setting environment variables directly
+        -
+            identifier: larastan.noEnvCallsOutsideOfConfig
+            paths:
+                - app/Console/Commands/Environment/*.php
+                - app/Extensions/OAuth/Providers/*.php
+                - app/Filament/Admin/Pages/Settings.php

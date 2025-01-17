@@ -6,7 +6,6 @@ use App\Filament\Components\Forms\Actions\RotateDatabasePasswordAction;
 use App\Filament\Components\Tables\Columns\DateTimeColumn;
 use App\Filament\Server\Resources\DatabaseResource;
 use App\Models\Database;
-use App\Models\DatabaseHost;
 use App\Models\Permission;
 use App\Models\Server;
 use App\Services\Databases\DatabaseManagementService;
@@ -99,7 +98,7 @@ class ListDatabases extends ListRecords
                                 ->columnSpan(2)
                                 ->required()
                                 ->placeholder('Select Database Host')
-                                ->options(fn () => $server->node->databaseHosts->mapWithKeys(fn (DatabaseHost $databaseHost) => [$databaseHost->id => $databaseHost->name])),
+                                ->options(fn () => $server->node->databaseHosts->mapWithKeys(fn ($databaseHost) => [$databaseHost->id => $databaseHost->name])),
                             TextInput::make('database')
                                 ->columnSpan(1)
                                 ->label('Database Name')
