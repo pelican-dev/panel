@@ -29,12 +29,21 @@ final class AlertBanner implements Arrayable
         ];
     }
 
+    public static function fromArray(array $data): static
+    {
+        $static = static::make();
+
+        $static->title($data['title']);
+        $static->body($data['body']);
+        $static->status($data['status']);
+        $static->icon($data['icon']);
+
+        return $static;
+    }
+
     public function send(): static
     {
-        $alerts = session()->get('alert-banners', []);
-        $alerts[] = $this->toArray();
-
-        session()->flash('alert-banners', $alerts);
+        session()->push('alert-banners', $this->toArray());
 
         return $this;
     }

@@ -22,7 +22,7 @@
         };
     @endphp
 
-    <div class="{{$colorClasses}} flex p-4 rounded-xl shadow-lg bg-white dark:bg-gray-900 ring-1 ring-gray-950/5 dark:ring-white/10">
+    <div class="{{$colorClasses}} flex p-4 mt-3 rounded-xl shadow-lg bg-white dark:bg-gray-900 ring-1 ring-gray-950/5 dark:ring-white/10">
         @if (filled($icon))
             <x-filament::icon :icon="$icon" class="h-8 w-8 mr-2" color="{{$status}}" />
         @endif
