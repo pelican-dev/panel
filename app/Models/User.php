@@ -289,10 +289,23 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
     }
 
     /**
-     * Returns all the servers that a user can access by way of being the owner of the
-     * server, or because they are assigned as a subuser for that server.
+     * Returns all the servers that a user can access.
+     * Either because they are an admin or because they are the owner/ a subuser of the server.
      */
     public function accessibleServers(): Builder
+    {
+        if ($this->canned('viewList server')) {
+            return Server::query();
+        }
+
+        return $this->directAccessibleServers();
+    }
+
+    /**
+     * Returns all the servers that a user can access "directly".
+     * This means either because they are the owner or a subuser of the server.
+     */
+    public function directAccessibleServers(): Builder
     {
         return Server::query()
             ->select('servers.*')
@@ -315,7 +328,12 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
 
     protected function checkPermission(Server $server, string $permission = ''): bool
     {
-        if ($this->isRootAdmin() || $server->owner_id === $this->id) {
+        if ($this->canned('update server', $server) || $server->owner_id === $this->id) {
+            return true;
+        }
+
+        // If the user only has "view" permissions allow viewing the console
+        if ($permission === Permission::ACTION_WEBSOCKET_CONNECT && $this->canned('view server', $server)) {
             return true;
         }
 
@@ -361,6 +379,11 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
         return $this->hasRole(Role::ROOT_ADMIN);
     }
 
+    public function isAdmin(): bool
+    {
+        return $this->isRootAdmin() || ($this->roles()->count() >= 1 && $this->getAllPermissions()->count() >= 1);
+    }
+
     public function canAccessPanel(Panel $panel): bool
     {
         if ($this->isRootAdmin()) {
@@ -368,7 +391,7 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
         }
 
         if ($panel->getId() === 'admin') {
-            return $this->roles()->count() >= 1 && $this->getAllPermissions()->count() >= 1;
+            return $this->isAdmin();
         }
 
         return true;
@@ -401,7 +424,7 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
     public function canAccessTenant(IlluminateModel $tenant): bool
     {
         if ($tenant instanceof Server) {
-            if ($this->isRootAdmin() || $tenant->owner_id === $this->id) {
+            if ($this->canned('view server', $tenant) || $tenant->owner_id === $this->id) {
                 return true;
             }
 
