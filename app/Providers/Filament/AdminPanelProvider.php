@@ -78,6 +78,6 @@ class AdminPanelProvider extends PanelProvider
             ->authMiddleware([
                 Authenticate::class,
             ])
-            ->plugin(TwoFactorAuthPlugin::make());
+            ->plugin(TwoFactorAuthPlugin::make()->showInUserMenu(false));
     }
 }
