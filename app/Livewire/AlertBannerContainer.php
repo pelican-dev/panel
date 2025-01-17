@@ -18,7 +18,8 @@ class AlertBannerContainer extends Component
     public function pullFromSession(): void
     {
         foreach (session()->pull('alert-banners', []) as $alertBanner) {
-            $this->alertBanners[$alertBanner['id']] = $alertBanner;
+            $alertBanner = AlertBanner::fromLivewire($alertBanner);
+            $this->alertBanners[$alertBanner->getId()] = $alertBanner;
         }
     }
 
