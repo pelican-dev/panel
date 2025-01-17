@@ -118,8 +118,8 @@ class AppServiceProvider extends ServiceProvider
         );
 
         FilamentView::registerRenderHook(
-            PanelsRenderHook::CONTENT_START,
-            fn () => view('filament.alerts.alert-banner-container'),
+            PanelsRenderHook::PAGE_START,
+            fn () => Blade::render('@livewire(\App\Livewire\AlertBannerContainer::class)'),
         );
 
         FilamentView::registerRenderHook(
