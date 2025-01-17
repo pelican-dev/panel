@@ -2,7 +2,6 @@
 
 namespace App\Providers\Filament;
 
-use App\Filament\Pages\Auth\Login;
 use App\Filament\Pages\Auth\EditProfile;
 use Filament\Facades\Filament;
 use Filament\Http\Middleware\Authenticate;
@@ -18,6 +17,9 @@ use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\AuthenticateSession;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
+use App\Filament\Pages\Auth\Login;
+use Vormkracht10\TwoFactorAuth\Pages\TwoFactor;
+use Vormkracht10\TwoFactorAuth\TwoFactorAuthPlugin;
 
 class AppPanelProvider extends PanelProvider
 {
@@ -39,6 +41,10 @@ class AppPanelProvider extends PanelProvider
             ->login(Login::class)
             ->userMenuItems([
                 MenuItem::make()
+                    ->icon('tabler-auth-2fa')
+                    ->label(('Two-Factor Auth'))
+                    ->url(fn (): string => TwoFactor::getUrl()),
+                MenuItem::make()
                     ->label('Admin')
                     ->url('/admin')
                     ->icon('tabler-arrow-forward')
@@ -59,6 +65,7 @@ class AppPanelProvider extends PanelProvider
             ])
             ->authMiddleware([
                 Authenticate::class,
-            ]);
+            ])
+            ->plugin(TwoFactorAuthPlugin::make());
     }
 }

@@ -29,8 +29,10 @@ use Illuminate\Contracts\Auth\CanResetPassword as CanResetPasswordContract;
 use App\Notifications\SendPasswordReset as ResetPasswordNotification;
 use Filament\Facades\Filament;
 use Illuminate\Database\Eloquent\Model as IlluminateModel;
+use Laravel\Fortify\TwoFactorAuthenticatable;
 use ResourceBundle;
 use Spatie\Permission\Traits\HasRoles;
+use Vormkracht10\TwoFactorAuth\Enums\TwoFactorType;
 
 /**
  * App\Models\User.
@@ -44,9 +46,6 @@ use Spatie\Permission\Traits\HasRoles;
  * @property string|null $remember_token
  * @property string $language
  * @property string $timezone
- * @property bool $use_totp
- * @property string|null $totp_secret
- * @property \Illuminate\Support\Carbon|null $totp_authenticated_at
  * @property array|null $oauth
  * @property bool $gravatar
  * @property \Illuminate\Support\Carbon|null $created_at
@@ -78,10 +77,7 @@ use Spatie\Permission\Traits\HasRoles;
  * @method static Builder|User whereTimezone($value)
  * @method static Builder|User wherePassword($value)
  * @method static Builder|User whereRememberToken($value)
- * @method static Builder|User whereTotpAuthenticatedAt($value)
- * @method static Builder|User whereTotpSecret($value)
  * @method static Builder|User whereUpdatedAt($value)
- * @method static Builder|User whereUseTotp($value)
  * @method static Builder|User whereUsername($value)
  * @method static Builder|User whereUuid($value)
  */
@@ -93,6 +89,7 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
     use HasAccessTokens;
     use HasRoles;
     use Notifiable;
+    use TwoFactorAuthenticatable;
 
     public const USER_LEVEL_USER = 0;
 
@@ -124,9 +121,6 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
         'password',
         'language',
         'timezone',
-        'use_totp',
-        'totp_secret',
-        'totp_authenticated_at',
         'gravatar',
         'oauth',
     ];
@@ -134,7 +128,7 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
     /**
      * The attributes excluded from the model's JSON form.
      */
-    protected $hidden = ['password', 'remember_token', 'totp_secret', 'totp_authenticated_at', 'oauth'];
+    protected $hidden = ['password', 'remember_token', 'oauth'];
 
     /**
      * Default values for specific fields in the database.
@@ -143,8 +137,6 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
         'external_id' => null,
         'language' => 'en',
         'timezone' => 'UTC',
-        'use_totp' => false,
-        'totp_secret' => null,
         'oauth' => '[]',
     ];
 
@@ -159,19 +151,15 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
         'password' => 'sometimes|nullable|string',
         'language' => 'string',
         'timezone' => 'string',
-        'use_totp' => 'boolean',
-        'totp_secret' => 'nullable|string',
         'oauth' => 'array|nullable',
     ];
 
     protected function casts(): array
     {
         return [
-            'use_totp' => 'boolean',
             'gravatar' => 'boolean',
-            'totp_authenticated_at' => 'datetime',
-            'totp_secret' => 'encrypted',
             'oauth' => 'array',
+            'two_factor_type' => TwoFactorType::class,
         ];
     }
 
@@ -267,11 +255,6 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
     {
         return $this->hasMany(ApiKey::class)
             ->where('key_type', ApiKey::TYPE_ACCOUNT);
-    }
-
-    public function recoveryTokens(): HasMany
-    {
-        return $this->hasMany(RecoveryToken::class);
     }
 
     public function sshKeys(): HasMany

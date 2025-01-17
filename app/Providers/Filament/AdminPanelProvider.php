@@ -2,7 +2,6 @@
 
 namespace App\Providers\Filament;
 
-use App\Filament\Pages\Auth\Login;
 use App\Filament\Pages\Auth\EditProfile;
 use App\Http\Middleware\LanguageMiddleware;
 use Filament\Http\Middleware\Authenticate;
@@ -10,6 +9,7 @@ use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
 use Filament\Navigation\MenuItem;
 use Filament\Navigation\NavigationGroup;
+use App\Filament\Pages\Auth\Login;
 use Filament\Panel;
 use Filament\PanelProvider;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
@@ -19,6 +19,8 @@ use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\AuthenticateSession;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
+use Vormkracht10\TwoFactorAuth\Pages\TwoFactor;
+use Vormkracht10\TwoFactorAuth\TwoFactorAuthPlugin;
 
 class AdminPanelProvider extends PanelProvider
 {
@@ -46,6 +48,10 @@ class AdminPanelProvider extends PanelProvider
                     ->url('/')
                     ->icon('tabler-arrow-back')
                     ->sort(24),
+                MenuItem::make()
+                    ->icon('tabler-auth-2fa')
+                    ->label(('Two-Factor Auth'))
+                    ->url(fn (): string => TwoFactor::getUrl()),
             ])
             ->navigationGroups([
                 NavigationGroup::make('Server')
@@ -71,6 +77,7 @@ class AdminPanelProvider extends PanelProvider
             ])
             ->authMiddleware([
                 Authenticate::class,
-            ]);
+            ])
+            ->plugin(TwoFactorAuthPlugin::make());
     }
 }

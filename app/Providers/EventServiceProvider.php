@@ -4,6 +4,9 @@ namespace App\Providers;
 
 use App\Listeners\DispatchWebhooks;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
+use Laravel\Fortify\Events\TwoFactorAuthenticationChallenged;
+use Laravel\Fortify\Events\TwoFactorAuthenticationEnabled;
+use Vormkracht10\TwoFactorAuth\Listeners\SendTwoFactorCodeListener;
 
 class EventServiceProvider extends ServiceProvider
 {
@@ -15,5 +18,7 @@ class EventServiceProvider extends ServiceProvider
         'eloquent.created*' => [DispatchWebhooks::class],
         'eloquent.deleted*' => [DispatchWebhooks::class],
         'eloquent.updated*' => [DispatchWebhooks::class],
+        TwoFactorAuthenticationChallenged::class => [SendTwoFactorCodeListener::class],
+        TwoFactorAuthenticationEnabled::class => [SendTwoFactorCodeListener::class],
     ];
 }

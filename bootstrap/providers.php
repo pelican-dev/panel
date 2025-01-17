@@ -8,6 +8,7 @@ return [
     App\Providers\Filament\AdminPanelProvider::class,
     App\Providers\Filament\AppPanelProvider::class,
     App\Providers\Filament\ServerPanelProvider::class,
+    App\Providers\FortifyServiceProvider::class,
     App\Providers\RouteServiceProvider::class,
     SocialiteProviders\Manager\ServiceProvider::class,
 ];

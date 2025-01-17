@@ -54,7 +54,7 @@
         };
 
         let options = {
-            fontSize: 16,
+            fontSize: 14,
             disableStdin: true,
             cursorStyle: 'underline',
             cursorInactiveStyle: 'none',

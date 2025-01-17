@@ -3,7 +3,6 @@
 namespace App\Providers\Filament;
 
 use App\Filament\App\Resources\ServerResource\Pages\ListServers;
-use App\Filament\Pages\Auth\Login;
 use App\Filament\Admin\Resources\ServerResource\Pages\EditServer;
 use App\Filament\Pages\Auth\EditProfile;
 use App\Http\Middleware\Activity\ServerSubject;
@@ -23,6 +22,9 @@ use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\AuthenticateSession;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
+use App\Filament\Pages\Auth\Login;
+use Vormkracht10\TwoFactorAuth\Pages\TwoFactor;
+use Vormkracht10\TwoFactorAuth\TwoFactorAuthPlugin;
 
 class ServerPanelProvider extends PanelProvider
 {
@@ -49,6 +51,10 @@ class ServerPanelProvider extends PanelProvider
                     ->icon('tabler-brand-docker')
                     ->url(fn () => ListServers::getUrl(panel: 'app'))
                     ->sort(6),
+                MenuItem::make()
+                    ->icon('tabler-auth-2fa')
+                    ->label(('Two-Factor Auth'))
+                    ->url(fn (): string => TwoFactor::getUrl()),
                 MenuItem::make()
                     ->label('Admin')
                     ->icon('tabler-arrow-forward')
@@ -80,6 +86,7 @@ class ServerPanelProvider extends PanelProvider
             ])
             ->authMiddleware([
                 Authenticate::class,
-            ]);
+            ])
+            ->plugin(TwoFactorAuthPlugin::make());
     }
 }
