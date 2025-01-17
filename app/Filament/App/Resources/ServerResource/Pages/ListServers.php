@@ -25,6 +25,8 @@ class ListServers extends ListRecords
             ->paginated(false)
             ->query(fn () => $baseQuery)
             ->poll('15s')
+            ->reorderable('sort')
+            ->defaultSort('sort')
             ->columns([
                 Stack::make([
                     ServerEntryColumn::make('server_entry')
