@@ -17,7 +17,14 @@ class AlertBannerContainer extends Component
 
     public function pullFromSession(): void
     {
-        $this->alertBanners = array_merge($this->alertBanners, session()->pull('alert-banners', []));
+        foreach (session()->pull('alert-banners', []) as $alertBanner) {
+            $this->alertBanners[$alertBanner['id']] = $alertBanner;
+        }
+    }
+
+    public function remove(string $id): void
+    {
+        unset($this->alertBanners[$id]);
     }
 
     public function render(): View

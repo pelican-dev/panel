@@ -5,23 +5,29 @@ namespace App\Livewire;
 use Filament\Notifications\Concerns;
 use Filament\Support\Concerns\EvaluatesClosures;
 use Illuminate\Contracts\Support\Arrayable;
+use Illuminate\Support\Str;
 
 final class AlertBanner implements Arrayable
 {
     use Concerns\HasBody;
     use Concerns\HasIcon;
+    use Concerns\HasId;
     use Concerns\HasStatus;
     use Concerns\HasTitle;
     use EvaluatesClosures;
 
-    public static function make(): static
+    public static function make(?string $id = null): static
     {
-        return new self();
+        $static = new self();
+        $static->id($id ?? Str::orderedUuid());
+
+        return $static;
     }
 
     public function toArray(): array
     {
         return [
+            'id' => $this->getId(),
             'title' => $this->getTitle(),
             'body' => $this->getBody(),
             'status' => $this->getStatus(),
@@ -33,6 +39,7 @@ final class AlertBanner implements Arrayable
     {
         $static = static::make();
 
+        $static->id($data['id']);
         $static->title($data['title']);
         $static->body($data['body']);
         $static->status($data['status']);
