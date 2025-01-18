@@ -15,6 +15,7 @@ use App\Models\Egg;
 use App\Models\Mount;
 use App\Models\Server;
 use App\Models\ServerVariable;
+use App\Models\User;
 use App\Services\Databases\DatabaseManagementService;
 use App\Services\Eggs\EggChangerService;
 use App\Services\Servers\RandomWordService;
@@ -105,7 +106,8 @@ class EditServer extends EditRecord
                                         'lg' => 2,
                                     ])
                                     ->relationship('user', 'username')
-                                    ->searchable()
+                                    ->searchable(['username', 'email'])
+                                    ->getOptionLabelFromRecordUsing(fn (User $user) => "$user->email | $user->username " . ($user->isRootAdmin() ? '(admin)' : ''))
                                     ->preload()
                                     ->required(),
 
