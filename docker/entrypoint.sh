@@ -45,10 +45,6 @@ php artisan migrate --force
 echo -e "Optimizing Filament"
 php artisan filament:optimize
 
-## start cronjobs for the queue
-echo -e "Starting cron jobs."
-crond -L /var/log/crond -l 5
-
 export SUPERVISORD_CADDY=false
 
 ## disable caddy if SKIP_CADDY is set
