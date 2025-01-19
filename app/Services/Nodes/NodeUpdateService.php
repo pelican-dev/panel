@@ -61,6 +61,6 @@ class NodeUpdateService
             throw new ConfigurationNotPersistedException(trans('exceptions.node.daemon_off_config_updated'));
         }
 
-        return $updated->refresh();
+        return $updated;
     }
 }
