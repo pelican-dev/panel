@@ -10,6 +10,8 @@ ADD --chmod=0755 https://github.com/mlocati/docker-php-extension-installer/relea
 
 RUN install-php-extensions bcmath gd intl zip opcache pcntl posix pdo_mysql
 
+RUN rm /usr/local/bin/install-php-extensions
+
 # ================================
 # Stage 2-1: Composer Install
 # ================================
@@ -63,7 +65,7 @@ RUN yarn run build
 # ================================
 # Stage 4: Build Final Application Image
 # ================================
-FROM --platform=$TARGETOS/$TARGETARCH base
+FROM --platform=$TARGETOS/$TARGETARCH base AS final
 
 WORKDIR /var/www/html
 
