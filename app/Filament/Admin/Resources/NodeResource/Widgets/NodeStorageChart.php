@@ -39,14 +39,17 @@ class NodeStorageChart extends ChartWidget
 
     protected function getData(): array
     {
-        $total = Number::format(config('panel.use_binary_prefix')
+        $total = config('panel.use_binary_prefix')
             ? ($this->node->statistics()['disk_total'] ?? 0) / 1024 / 1024 / 1024
-            : ($this->node->statistics()['disk_total'] ?? 0) / 1000 / 1000 / 1000, maxPrecision: 2);
-        $used = Number::format(config('panel.use_binary_prefix')
+            : ($this->node->statistics()['disk_total'] ?? 0) / 1000 / 1000 / 1000;
+        $used = config('panel.use_binary_prefix')
             ? ($this->node->statistics()['disk_used'] ?? 0) / 1024 / 1024 / 1024
-            : ($this->node->statistics()['disk_used'] ?? 0) / 1000 / 1000 / 1000, maxPrecision: 2);
+            : ($this->node->statistics()['disk_used'] ?? 0) / 1000 / 1000 / 1000;
 
         $unused = $total - $used;
+
+        $used = Number::format($used, maxPrecision: 2);
+        $unused = Number::format($unused, maxPrecision: 2);
 
         return [
             'datasets' => [
