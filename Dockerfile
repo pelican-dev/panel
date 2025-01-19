@@ -73,22 +73,22 @@ WORKDIR /var/www/html
 RUN apk update && apk add --no-cache \
     caddy ca-certificates supervisor supercronic
 
-COPY Caddyfile /etc/caddy/Caddyfile
 COPY --from=composerbuild /build .
 COPY --from=yarnbuild /build/public ./public
 
-# Set permissions for Laravel directories
+# Set permissions for Laravel/Caddy/Supervisord directories
 RUN mkdir -p /pelican-data /var/run/supervisord /etc/supercronic \
     && chmod -R 755 /pelican-data storage bootstrap/cache /var/run/supervisord \
     && chown -R www-data:www-data /pelican-data storage bootstrap/cache /var/run/supervisord \
     # Only database folder permissions are needed to link to sqlite database, no deeper
     && chmod 755 database \
-    && chown www-data:www-data database \
-    # Add Laravel scheduler to crontab
-    && echo "* * * * * php /var/www/html/artisan schedule:run" > /etc/supercronic/crontab
+    && chown www-data:www-data database
 
 # Configure Supervisor
 COPY docker/supervisord.conf /etc/supervisord.conf
+COPY docker/Caddyfile /etc/caddy/Caddyfile
+# Add Laravel scheduler to crontab
+COPY docker/crontab /etc/supercronic/crontab
 
 COPY docker/entrypoint.sh ./docker/entrypoint.sh
 

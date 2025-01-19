@@ -1,7 +1,5 @@
 #!/bin/ash -e
 
-#mkdir -p /var/log/supervisord/ /var/log/php8/ \
-
 ## check for .env file and generate app keys if missing
 if [ -f /pelican-data/.env ]; then
   echo "external vars exist."
