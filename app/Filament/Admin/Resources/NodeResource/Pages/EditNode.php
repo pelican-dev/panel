@@ -603,9 +603,12 @@ class EditNode extends EditRecord
         try {
             unset($data['unlimited_mem'], $data['unlimited_disk'], $data['unlimited_cpu']);
 
-            return $this->nodeUpdateService->handle($record, $data);
+            $this->record = $this->nodeUpdateService->handle($record, $data);
+
+            return $this->record;
         } catch (Exception $exception) {
             $this->errored = true;
+
             Notification::make()
                 ->title('Error connecting to the node')
                 ->body('The configuration could not be automatically updated on Wings, you will need to manually update the configuration file.')
