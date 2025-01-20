@@ -11,6 +11,7 @@
 .vscode
 Dockerfile
 bounties.md
+compose.yml
 contributing.md
 contributor_license_agreement.md
 database/database.sqlite

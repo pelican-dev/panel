@@ -73,16 +73,23 @@ WORKDIR /var/www/html
 RUN apk update && apk add --no-cache \
     caddy ca-certificates supervisor supercronic
 
-COPY --from=composerbuild /build .
-COPY --from=yarnbuild /build/public ./public
+COPY --chown=root:www-data --chmod=640 --from=composerbuild /build .
+COPY --chown=root:www-data --chmod=640 --from=yarnbuild /build/public ./public
 
-# Set permissions for Laravel/Caddy/Supervisord directories
-RUN mkdir -p /pelican-data /var/run/supervisord /etc/supercronic \
-    && chmod -R 755 /pelican-data storage bootstrap/cache /var/run/supervisord \
-    && chown -R www-data:www-data /pelican-data storage bootstrap/cache /var/run/supervisord \
-    # Only database folder permissions are needed to link to sqlite database, no deeper
-    && chmod 755 database \
-    && chown www-data:www-data database
+# Set permissions
+# First ensure all files are owned by root and restrict www-data to read access
+RUN chown root:www-data ./ \
+    && chmod 750 ./ \
+    # Files should not have execute set, but directories need it
+    && find ./ -type d -exec chmod 750 {} \; \
+    # Symlink to env/database path, as www-data won't be able to write to webroot
+    && ln -s /pelican-data/.env ./.env \
+    && ln -s /pelican-data/database/database.sqlite ./database/database.sqlite \
+    # Create necessary directories
+    && mkdir -p /pelican-data /var/run/supervisord /etc/supercronic \
+    # Finally allow www-data write permissions where necessary
+    && chown -R www-data:www-data /pelican-data ./storage ./bootstrap/cache /var/run/supervisord \
+    && chmod -R u+rwX,g+rwX,o-rwx /pelican-data ./storage ./bootstrap/cache /var/run/supervisord
 
 # Configure Supervisor
 COPY docker/supervisord.conf /etc/supervisord.conf
