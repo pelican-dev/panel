@@ -107,7 +107,7 @@ class EditServer extends EditRecord
                                     ])
                                     ->relationship('user', 'username')
                                     ->searchable(['username', 'email'])
-                                    ->getOptionLabelFromRecordUsing(fn (User $user) => "$user->email | $user->username " . ($user->isRootAdmin() ? '(admin)' : ''))
+                                    ->getOptionLabelFromRecordUsing(fn (User $user) => "$user->email | $user->username " . (blank($user->roles) ? '' : '(' . $user->roles->map(fn ($role) => $role->name)->join(', ') . ')'))
                                     ->preload()
                                     ->required(),
 
