@@ -10,10 +10,8 @@ use App\Models\File;
 use App\Models\Permission;
 use App\Models\Server;
 use App\Repositories\Daemon\DaemonFileRepository;
-use App\Services\Nodes\NodeJWTService;
 use App\Filament\Components\Tables\Columns\BytesColumn;
 use App\Filament\Components\Tables\Columns\DateTimeColumn;
-use Carbon\CarbonImmutable;
 use Filament\Actions\Action as HeaderAction;
 use Filament\Facades\Filament;
 use Filament\Forms\Components\CheckboxList;
@@ -175,22 +173,7 @@ class ListFiles extends ListRecords
                         ->label('Download')
                         ->icon('tabler-download')
                         ->visible(fn (File $file) => $file->is_file)
-                        ->action(function (File $file, NodeJWTService $service) use ($server) {
-                            $token = $service
-                                ->setExpiresAt(CarbonImmutable::now()->addMinutes(15))
-                                ->setUser(auth()->user())
-                                ->setClaims([
-                                    'file_path' => rawurldecode(join_paths($this->path, $file->name)),
-                                    'server_uuid' => $server->uuid,
-                                ])
-                                ->handle($server->node, auth()->user()->id . $server->uuid);
-
-                            Activity::event('server:file.download')
-                                ->property('file', join_paths($this->path, $file->name))
-                                ->log();
-
-                            return redirect()->away(sprintf('%s/download/file?token=%s', $server->node->getConnectionAddress(), $token->toString())); // TODO: download works, but breaks modals
-                        }),
+                        ->url(fn () => DownloadFiles::getUrl(['path' => $this->path]), true),
                     Action::make('move')
                         ->authorize(fn () => auth()->user()->can(Permission::ACTION_FILE_UPDATE, $server))
                         ->label('Move')
