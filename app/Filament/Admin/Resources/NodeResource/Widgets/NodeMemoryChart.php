@@ -6,7 +6,6 @@ use App\Models\Node;
 use Carbon\Carbon;
 use Filament\Support\RawJs;
 use Filament\Widgets\ChartWidget;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Number;
 
 class NodeMemoryChart extends ChartWidget
@@ -15,14 +14,11 @@ class NodeMemoryChart extends ChartWidget
 
     protected static ?string $maxHeight = '300px';
 
-    public ?Model $record = null;
+    public Node $node;
 
     protected function getData(): array
     {
-        /** @var Node $node */
-        $node = $this->record;
-
-        $memUsed = collect(cache()->get("nodes.$node->id.memory_used"))->slice(-10)
+        $memUsed = collect(cache()->get("nodes.{$this->node->id}.memory_used"))->slice(-10)
             ->map(fn ($value, $key) => [
                 'memory' => Number::format(config('panel.use_binary_prefix') ? $value / 1024 / 1024 / 1024 : $value / 1000 / 1000 / 1000, maxPrecision: 2),
                 'timestamp' => Carbon::createFromTimestamp($key, auth()->user()->timezone ?? 'UTC')->format('H:i:s'),
@@ -70,10 +66,8 @@ class NodeMemoryChart extends ChartWidget
 
     public function getHeading(): string
     {
-        /** @var Node $node */
-        $node = $this->record;
-        $latestMemoryUsed = collect(cache()->get("nodes.$node->id.memory_used"))->last();
-        $totalMemory = collect(cache()->get("nodes.$node->id.memory_total"))->last();
+        $latestMemoryUsed = collect(cache()->get("nodes.{$this->node->id}.memory_used"))->last();
+        $totalMemory = collect(cache()->get("nodes.{$this->node->id}.memory_total"))->last();
 
         $used = config('panel.use_binary_prefix')
             ? Number::format($latestMemoryUsed / 1024 / 1024 / 1024, maxPrecision: 2, locale: auth()->user()->language) .' GiB'

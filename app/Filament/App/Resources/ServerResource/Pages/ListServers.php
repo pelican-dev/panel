@@ -19,7 +19,7 @@ class ListServers extends ListRecords
 
     public function table(Table $table): Table
     {
-        $baseQuery = auth()->user()->can('viewList server') ? Server::query() : auth()->user()->accessibleServers();
+        $baseQuery = auth()->user()->accessibleServers();
 
         return $table
             ->paginated(false)

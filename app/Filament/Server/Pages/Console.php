@@ -3,11 +3,14 @@
 namespace App\Filament\Server\Pages;
 
 use App\Enums\ContainerStatus;
+use App\Exceptions\Http\Server\ServerStateConflictException;
 use App\Filament\Server\Widgets\ServerConsole;
 use App\Filament\Server\Widgets\ServerCpuChart;
 use App\Filament\Server\Widgets\ServerMemoryChart;
 // use App\Filament\Server\Widgets\ServerNetworkChart;
 use App\Filament\Server\Widgets\ServerOverview;
+use App\Livewire\AlertBanner;
+use App\Models\Permission;
 use App\Models\Server;
 use Filament\Actions\Action;
 use Filament\Facades\Filament;
@@ -24,6 +27,22 @@ class Console extends Page
     protected static string $view = 'filament.server.pages.console';
 
     public ContainerStatus $status = ContainerStatus::Offline;
+
+    public function mount(): void
+    {
+        /** @var Server $server */
+        $server = Filament::getTenant();
+
+        try {
+            $server->validateCurrentState();
+        } catch (ServerStateConflictException $exception) {
+            AlertBanner::make()
+                ->warning()
+                ->title('Warning')
+                ->body($exception->getMessage())
+                ->send();
+        }
+    }
 
     public function getWidgetData(): array
     {
@@ -76,16 +95,19 @@ class Console extends Page
                 ->color('primary')
                 ->size(ActionSize::ExtraLarge)
                 ->action(fn () => $this->dispatch('setServerState', state: 'start', uuid: $server->uuid))
+                ->authorize(fn () => auth()->user()->can(Permission::ACTION_CONTROL_START, $server))
                 ->disabled(fn () => $server->isInConflictState() || !$this->status->isStartable()),
             Action::make('restart')
                 ->color('gray')
                 ->size(ActionSize::ExtraLarge)
                 ->action(fn () => $this->dispatch('setServerState', state: 'restart', uuid: $server->uuid))
+                ->authorize(fn () => auth()->user()->can(Permission::ACTION_CONTROL_RESTART, $server))
                 ->disabled(fn () => $server->isInConflictState() || !$this->status->isRestartable()),
             Action::make('stop')
                 ->color('danger')
                 ->size(ActionSize::ExtraLarge)
                 ->action(fn () => $this->dispatch('setServerState', state: 'stop', uuid: $server->uuid))
+                ->authorize(fn () => auth()->user()->can(Permission::ACTION_CONTROL_STOP, $server))
                 ->hidden(fn () => $this->status->isStartingOrStopping() || $this->status->isKillable())
                 ->disabled(fn () => $server->isInConflictState() || !$this->status->isStoppable()),
             Action::make('kill')
@@ -96,6 +118,7 @@ class Console extends Page
                 ->modalSubmitActionLabel('Kill Server')
                 ->size(ActionSize::ExtraLarge)
                 ->action(fn () => $this->dispatch('setServerState', state: 'kill', uuid: $server->uuid))
+                ->authorize(fn () => auth()->user()->can(Permission::ACTION_CONTROL_STOP, $server))
                 ->hidden(fn () => $server->isInConflictState() || !$this->status->isKillable()),
         ];
     }

@@ -1,1 +1,0 @@
-<livewire:server-conflict-banner />
