@@ -2,6 +2,7 @@
 
 namespace App\Filament\Server\Resources\ActivityResource\Pages;
 
+use App\Filament\Admin\Resources\UserResource\Pages\EditUser;
 use App\Filament\Server\Resources\ActivityResource;
 use App\Models\ActivityLog;
 use App\Models\User;
@@ -20,12 +21,16 @@ class ListActivities extends ListRecords
             ->columns([
                 TextColumn::make('event')
                     ->html()
-                    ->formatStateUsing(fn ($state, ActivityLog $activityLog) => __('activity.'.str($state)->replace(':', '.'))) // TODO: convert properties to a format that trans likes, see ActivityLogEntry.tsx - wrapProperties
-                    ->description(fn ($state) => $state),
+                    ->description(fn ($state) => $state)
+                    ->formatStateUsing(function ($state, ActivityLog $activityLog) {
+                        $properties = $activityLog->wrapProperties();
+
+                        return trans_choice('activity.'.str($state)->replace(':', '.'), array_get($properties, 'count', 1), $properties);
+                    }),
                 TextColumn::make('user')
                     ->state(fn (ActivityLog $activityLog) => $activityLog->actor instanceof User ? $activityLog->actor->username : 'System')
                     ->tooltip(fn (ActivityLog $activityLog) => auth()->user()->can('seeIps activityLog') ? $activityLog->ip : '')
-                    ->url(fn (ActivityLog $activityLog): string => $activityLog->actor instanceof User ? route('filament.admin.resources.users.edit', ['record' => $activityLog->actor]) : ''),
+                    ->url(fn (ActivityLog $activityLog): string => $activityLog->actor instanceof User ? EditUser::getUrl(['record' => $activityLog->actor], panel: 'admin', tenant: null) : ''),
                 DateTimeColumn::make('timestamp')
                     ->since()
                     ->sortable(),

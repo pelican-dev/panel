@@ -146,13 +146,17 @@ class FileController extends ClientApiController
      */
     public function rename(RenameFileRequest $request, Server $server): JsonResponse
     {
+        $files = $request->input('files');
+
         $this->fileRepository
             ->setServer($server)
-            ->renameFiles($request->input('root'), $request->input('files'));
+            ->renameFiles($request->input('root'), $files);
 
         Activity::event('server:file.rename')
             ->property('directory', $request->input('root'))
-            ->property('files', $request->input('files'))
+            ->property('files', $files)
+            ->property('to', $files['to'])
+            ->property('from', $files['from'])
             ->log();
 
         return new JsonResponse([], Response::HTTP_NO_CONTENT);
@@ -210,7 +214,7 @@ class FileController extends ClientApiController
 
         Activity::event('server:file.decompress')
             ->property('directory', $request->input('root'))
-            ->property('files', $request->input('file'))
+            ->property('file', $request->input('file'))
             ->log();
 
         return new JsonResponse([], JsonResponse::HTTP_NO_CONTENT);

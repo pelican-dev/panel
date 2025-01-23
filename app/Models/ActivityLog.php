@@ -11,6 +11,7 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\Model as IlluminateModel;
+use Illuminate\Support\Str;
 
 /**
  * \App\Models\ActivityLog.
@@ -151,8 +152,8 @@ class ActivityLog extends Model
                 'username' => 'system',
             ]);
         }
-
-        $event = __('activity.'.str($this->event)->replace(':', '.'));
+        $properties = $this->wrapProperties();
+        $event = trans_choice('activity.'.str($this->event)->replace(':', '.'), array_key_exists('count', $properties) ? $properties['count'] : 1, $properties);
 
         return "
             <div style='display: flex; align-items: center;'>
@@ -165,5 +166,39 @@ class ActivityLog extends Model
                 </div>
             </div>
         ";
+    }
+
+    public function wrapProperties(): array
+    {
+        if (!$this->properties || $this->properties->isEmpty()) {
+            return [];
+        }
+
+        $properties = $this->properties->mapWithKeys(function ($value, $key) {
+            if (!is_array($value)) {
+                // Perform some directory normalization at this point.
+                if ($key === 'directory') {
+                    $value = str_replace('//', '/', '/' . trim($value, '/') . '/');
+                }
+
+                return [$key => $value];
+            }
+
+            $first = array_first($value);
+
+            // Backwards compatibility for old logs
+            if (is_array($first)) {
+                return ["{$key}_count" => count($value)];
+            }
+
+            return [$key => $first, "{$key}_count" => count($value)];
+        });
+
+        $keys = $properties->keys()->filter(fn ($key) => Str::endsWith($key, '_count'))->values();
+        if ($keys->containsOneItem()) {
+            $properties = $properties->merge(['count' => $properties->get($keys[0])])->except([$keys[0]]);
+        }
+
+        return $properties->toArray();
     }
 }

@@ -130,13 +130,17 @@ class ListFiles extends ListRecords
                                 ->required(),
                         ])
                         ->action(function ($data, File $file, DaemonFileRepository $fileRepository) use ($server) {
+                            $files = [['to' => $data['name'], 'from' => $file->name]];
+
                             $fileRepository
                                 ->setServer($server)
-                                ->renameFiles($this->path, [['to' => $data['name'], 'from' => $file->name]]);
+                                ->renameFiles($this->path, $files);
 
                             Activity::event('server:file.rename')
                                 ->property('directory', $this->path)
-                                ->property('files', [['to' => $data['name'], 'from' => $file->name]])
+                                ->property('files', $files)
+                                ->property('to', $data['name'])
+                                ->property('from', $file->name)
                                 ->log();
 
                             Notification::make()
@@ -204,13 +208,17 @@ class ListFiles extends ListRecords
                         ->action(function ($data, File $file, DaemonFileRepository $fileRepository) use ($server) {
                             $location = resolve_path(join_paths($this->path, $data['location']));
 
+                            $files = [['to' => $location, 'from' => $file->name]];
+
                             $fileRepository
                                 ->setServer($server)
-                                ->renameFiles($this->path, [['to' => $location, 'from' => $file->name]]);
+                                ->renameFiles($this->path, $files);
 
                             Activity::event('server:file.rename')
                                 ->property('directory', $this->path)
-                                ->property('files', [['to' => $location, 'from' => $file->name]])
+                                ->property('files', $files)
+                                ->property('to', $location)
+                                ->property('from', $file->name)
                                 ->log();
 
                             Notification::make()
@@ -309,7 +317,7 @@ class ListFiles extends ListRecords
 
                             Activity::event('server:file.decompress')
                                 ->property('directory', $this->path)
-                                ->property('files', $file->name)
+                                ->property('file', $file->name)
                                 ->log();
 
                             Notification::make()
@@ -342,6 +350,7 @@ class ListFiles extends ListRecords
                 BulkActionGroup::make([
                     BulkAction::make('move')
                         ->authorize(fn () => auth()->user()->can(Permission::ACTION_FILE_UPDATE, $server))
+                        ->hidden() // TODO
                         ->form([
                             TextInput::make('location')
                                 ->label('File name')
@@ -366,7 +375,7 @@ class ListFiles extends ListRecords
                                 ->log();
 
                             Notification::make()
-                                ->title(count($files) . ' Files were moved from to ' . $location)
+                                ->title(count($files) . ' Files were moved from ' . $location)
                                 ->success()
                                 ->send();
                         }),
