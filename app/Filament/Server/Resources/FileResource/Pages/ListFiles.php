@@ -448,15 +448,15 @@ class ListFiles extends ListRecords
                         ->label('File Name')
                         ->required(),
                     Select::make('lang')
-                        ->live()
-                        ->hidden() //TODO: Make file language selection work
                         ->label('Language')
                         ->placeholder('File Language')
-                        ->options(EditorLanguages::class),
+                        ->options(EditorLanguages::class)
+                        ->live()
+                        ->afterStateUpdated(fn ($state) => $this->dispatch('setLanguage', lang: $state)),
                     MonacoEditor::make('editor')
                         ->label('')
                         ->view('filament.plugins.monaco-editor')
-                        ->language(fn (Get $get) => $get('lang')),
+                        ->language(fn (Get $get) => $get('lang') ?? 'plaintext'),
                 ]),
             HeaderAction::make('new_folder')
                 ->authorize(fn () => auth()->user()->can(Permission::ACTION_FILE_CREATE, $server))

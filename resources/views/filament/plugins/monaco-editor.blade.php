@@ -1,3 +1,11 @@
+@script
+<script>
+    $wire.on('setLanguage', ({ lang }) => {
+        monaco.editor.setModelLanguage(document.getElementById('{{ $getId() }}').editor.getModel(), lang);
+    });
+</script>
+@endscript
+
 <x-dynamic-component :component="$getFieldWrapperView()" :field="$field" class="overflow-hidden">
 
     <div x-data="{
@@ -12,7 +20,7 @@
         monacoFontSize: '{{ $getFontSize() }}',
         lineNumbersMinChars: {{ $getLineNumbersMinChars() }},
         automaticLayout: {{ (int) $getAutomaticLayout() }},
-        monacoId: $id('monaco-editor'),
+        monacoId: '{{ $getId() }}',
 
         toggleFullScreenMode() {
             this.fullScreenModeEnabled = !this.fullScreenModeEnabled;

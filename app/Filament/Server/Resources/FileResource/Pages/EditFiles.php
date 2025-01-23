@@ -59,11 +59,11 @@ class EditFiles extends Page
         return $form
             ->schema([
                 Select::make('lang')
-                    ->live()
                     ->label('')
                     ->placeholder('File Language')
                     ->options(EditorLanguages::class)
-                    ->hidden() //TODO Fix Dis
+                    ->live()
+                    ->afterStateUpdated(fn ($state) => $this->dispatch('setLanguage', lang: $state))
                     ->default(function () {
                         $ext = pathinfo($this->path, PATHINFO_EXTENSION);
 
