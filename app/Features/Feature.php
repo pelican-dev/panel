@@ -2,7 +2,8 @@
 
 namespace App\Features;
 
-use Filament\Actions\Action;
+use Filament\Forms\Components\Actions\Action;
+use Filament\Forms\Components\Field;
 
 abstract class Feature
 {
@@ -12,7 +13,8 @@ abstract class Feature
     /** eula */
     abstract public function featureName(): string;
 
-    abstract public function action(): Action;
+    //    abstract public function action(): Action;
+    abstract public function modal(): Field;
 
     public function matchesListeners(string $line): bool
     {

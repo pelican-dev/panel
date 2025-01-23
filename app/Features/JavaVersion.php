@@ -25,6 +25,14 @@ class JavaVersion extends Feature
         return 'java_version';
     }
 
+    public function modal(): \Filament\Forms\Components\Field
+    {
+        return CustomModal::make('modal-java-version')
+            ->heading('Java Version')
+            ->description('bla bla')
+            ->registerActions([/* if neccessary */]);
+    }
+
     public function action(): Action
     {
         return Action::make('eula')

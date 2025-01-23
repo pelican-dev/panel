@@ -10,14 +10,23 @@ use App\Models\Server;
 use App\Models\User;
 use App\Services\Nodes\NodeJWTService;
 use App\Services\Servers\GetUserPermissionsService;
+use Filament\Forms\Components\Actions;
+use Filament\Forms\Components\Placeholder;
+use Filament\Forms\Concerns\InteractsWithForms;
+use Filament\Forms\Contracts\HasForms;
+use Filament\Forms\Form;
+use Filament\Forms\Get;
 use Filament\Widgets\Widget;
 use Illuminate\Support\Arr;
 use Livewire\Attributes\On;
 use App\Features;
 use App\Features\CustomModal;
+use Filament\Forms\Components\TextInput;
 
-class ServerConsole extends Widget
+class ServerConsole extends Widget implements HasForms
 {
+    use InteractsWithForms;
+
     protected static string $view = 'filament.components.server-console';
 
     protected int|string|array $columnSpan = 'full';
@@ -41,6 +50,39 @@ class ServerConsole extends Widget
             ->heading('Info!')
             ->description('Description')
             ->registerActions([/* if neccessary */]);
+    }
+
+    protected function getUserModal(): Form
+    {
+        return $this->makeForm()
+            ->schema([
+                Placeholder::make('see me'),
+                TextInput::make('name'),
+                Actions::make([
+                    Actions\Action::make('closeUserModal')
+                        ->label('Close')
+                        ->color('secondary')
+                        ->extraAttributes([
+                            'x-on:click' => 'isOpen = false',  // close modal [FASTER]
+                        ]),
+                    Actions\Action::make('saveUserModal')
+                        ->label('Save')
+                        ->color('primary')
+                        ->action(function (Get $get) {
+                            logger($get('name'));
+                        }),
+                ])->fullWidth(),
+            ]);
+    }
+
+    public function getModals(): array
+    {
+        $modals = [];
+        foreach ($this->getActiveFeatures() as $feature) {
+            $modals[] = $feature->modal();
+        }
+
+        return $modals;
     }
 
     private GetUserPermissionsService $getUserPermissionsService;
@@ -153,7 +195,8 @@ class ServerConsole extends Widget
             if ($feature->matchesListeners($line)) {
                 logger()->info('Feature listens for this', compact(['feature', 'line']));
 
-                $this->dispatch('open-modal', id: "modal-{$feature->featureName()}");
+                // $this->dispatch('open-modal', id: "modal-{$feature->featureName()}");
+                $this->dispatch('open-modal', id: 'edit-user');
             }
         }
     }

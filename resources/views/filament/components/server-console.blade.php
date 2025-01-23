@@ -194,6 +194,10 @@
     </script>
     @endscript
 
-    {{ $this->modal()->render() }}
+
+    <x-filament::modal id="edit-user" :close-by-clicking-away="false">
+        {{ $this->getUserModal() }}
+    </x-filament::modal>
+
 
 </x-filament::widget>

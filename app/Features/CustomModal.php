@@ -10,8 +10,8 @@ use Filament\Support\Concerns\HasHeading;
 class CustomModal extends Field
 {
     use HasActions;
-    use HasHeading;
     use HasDescription;
+    use HasHeading;
 
     protected string $view = 'livewire.custom-modal';
 }
