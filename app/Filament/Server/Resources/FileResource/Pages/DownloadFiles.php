@@ -5,6 +5,7 @@ namespace App\Filament\Server\Resources\FileResource\Pages;
 use App\Facades\Activity;
 use App\Filament\Server\Resources\FileResource;
 use App\Models\Permission;
+use App\Models\Server;
 use App\Services\Nodes\NodeJWTService;
 use Carbon\CarbonImmutable;
 use Filament\Facades\Filament;
