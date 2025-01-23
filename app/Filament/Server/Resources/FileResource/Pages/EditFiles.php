@@ -6,6 +6,7 @@ use AbdelhamidErrahmouni\FilamentMonacoEditor\MonacoEditor;
 use App\Enums\EditorLanguages;
 use App\Facades\Activity;
 use App\Filament\Server\Resources\FileResource;
+use App\Livewire\AlertBanner;
 use App\Models\File;
 use App\Models\Permission;
 use App\Models\Server;
@@ -155,6 +156,15 @@ class EditFiles extends Page
         $this->path = $path;
 
         $this->form->fill();
+
+        if (str($path)->endsWith('.pelicanignore')) {
+            AlertBanner::make()
+                ->title('You\'re editing a <code>.pelicanignore</code> file!')
+                ->body('Any files or directories listed in here will be excluded from backups. Wildcards are supported by using an asterisk (<code>*</code>).<br>You can negate a prior rule by prepending an exclamation point (<code>!</code>).')
+                ->info()
+                ->closable()
+                ->send();
+        }
     }
 
     protected function authorizeAccess(): void
