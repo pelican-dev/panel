@@ -93,7 +93,6 @@ class EditFiles extends Page
 
                                 Notification::make()
                                     ->success()
-                                    ->duration(5000)
                                     ->title('File saved')
                                     ->body(fn () => $this->path)
                                     ->send();
@@ -118,7 +117,6 @@ class EditFiles extends Page
 
                                 Notification::make()
                                     ->success()
-                                    ->duration(5000)
                                     ->title('File saved')
                                     ->body(fn () => $this->path)
                                     ->send();

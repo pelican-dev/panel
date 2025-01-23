@@ -19,6 +19,7 @@ use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Tabs;
+use Filament\Forms\Components\Tabs\Tab;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Get;
 use Filament\Notifications\Notification;
@@ -487,13 +488,12 @@ class ListFiles extends ListRecords
                     }
 
                     return redirect(ListFiles::getUrl(['path' => $this->path]));
-
                 })
                 ->form([
                     Tabs::make()
                         ->contained(false)
                         ->schema([
-                            Tabs\Tab::make('Upload Files')
+                            Tab::make('Upload Files')
                                 ->live()
                                 ->schema([
                                     FileUpload::make('files')
@@ -503,7 +503,7 @@ class ListFiles extends ListRecords
                                         ->preserveFilenames()
                                         ->multiple(),
                                 ]),
-                            Tabs\Tab::make('Upload From URL')
+                            Tab::make('Upload From URL')
                                 ->live()
                                 ->disabled(fn (Get $get) => count($get('files')) > 0)
                                 ->schema([
