@@ -4,7 +4,11 @@ namespace App\Features;
 
 use App\Repositories\Daemon\DaemonFileRepository;
 use Filament\Actions\Action;
+use Filament\Forms\Components\Actions;
 use Filament\Forms\Components\Placeholder;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Form;
+use Filament\Forms\Get;
 use Filament\Notifications\Notification;
 
 class JavaVersion extends Feature
@@ -25,12 +29,27 @@ class JavaVersion extends Feature
         return 'java_version';
     }
 
-    public function modal(): \Filament\Forms\Components\Field
+    public function modal(): Form
     {
-        return CustomModal::make('modal-java-version')
-            ->heading('Java Version')
-            ->description('bla bla')
-            ->registerActions([/* if neccessary */]);
+        return $this->makeForm()
+            ->schema([
+                Placeholder::make('see me bitches'),
+                TextInput::make('name'),
+                Actions::make([
+                    Actions\Action::make('closeUserModal')
+                        ->label('Close')
+                        ->color('secondary')
+                        ->extraAttributes([
+                            'x-on:click' => 'isOpen = false',  // close modal [FASTER]
+                        ]),
+                    Actions\Action::make('saveUserModal')
+                        ->label('Save')
+                        ->color('primary')
+                        ->action(function (Get $get) {
+                            logger($get('name'));
+                        }),
+                ])->fullWidth(),
+            ]);
     }
 
     public function action(): Action

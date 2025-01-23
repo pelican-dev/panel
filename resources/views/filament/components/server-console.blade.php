@@ -195,9 +195,11 @@
     @endscript
 
 
-    <x-filament::modal id="edit-user" :close-by-clicking-away="false">
-        {{ $this->getUserModal() }}
+    @foreach ($this->getActiveFeatures() as $feature)
+    <x-filament::modal id="modal-{{ $feature->featureName() }}" :close-by-clicking-away="false">
+        {{ $feature->modal() }}
     </x-filament::modal>
+    @endforeach
 
 
 </x-filament::widget>

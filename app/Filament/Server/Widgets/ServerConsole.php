@@ -195,8 +195,8 @@ class ServerConsole extends Widget implements HasForms
             if ($feature->matchesListeners($line)) {
                 logger()->info('Feature listens for this', compact(['feature', 'line']));
 
-                // $this->dispatch('open-modal', id: "modal-{$feature->featureName()}");
-                $this->dispatch('open-modal', id: 'edit-user');
+                 $this->dispatch('open-modal', id: "modal-{$feature->featureName()}");
+//                $this->dispatch('open-modal', id: 'edit-user');
             }
         }
     }
