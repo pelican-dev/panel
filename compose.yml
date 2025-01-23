@@ -28,6 +28,7 @@ x-common:
 services:
   panel:
     image: ghcr.io/pelican-dev/panel:latest
+    build: .
     restart: always
     networks:
       - default

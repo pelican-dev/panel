@@ -71,6 +71,8 @@ jobs:
             VERSION=${{ steps.build_info.outputs.version_tag }}
           labels: ${{ steps.docker_meta.outputs.labels }}
           tags: ${{ steps.docker_meta.outputs.tags }}
+          cache-from: type=gha,scope=tagged${{ matrix.os }}
+          cache-to: type=gha,scope=tagged${{ matrix.os }},mode=max
 
       - name: Build and Push (main)
         uses: docker/build-push-action@v6
@@ -84,5 +86,5 @@ jobs:
             VERSION=dev-${{ steps.build_info.outputs.short_sha }}
           labels: ${{ steps.docker_meta.outputs.labels }}
           tags: ${{ steps.docker_meta.outputs.tags }}
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
+          cache-from: type=gha,scope=${{ matrix.os }}
+          cache-to: type=gha,scope=${{ matrix.os }},mode=max
