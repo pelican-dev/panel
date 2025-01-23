@@ -75,6 +75,30 @@ class EditFiles extends Page
                     }),
                 Section::make('Editing: ' . $this->path)
                     ->footerActions([
+                        Action::make('save_and_close')
+                            ->label('Save & Close')
+                            ->authorize(fn () => auth()->user()->can(Permission::ACTION_FILE_UPDATE, $server))
+                            ->icon('tabler-device-floppy')
+                            ->action(function (DaemonFileRepository $fileRepository) use ($server) {
+                                $data = $this->form->getState();
+
+                                $fileRepository
+                                    ->setServer($server)
+                                    ->putContent($this->path, $data['editor'] ?? '');
+
+                                Activity::event('server:file.write')
+                                    ->property('file', $this->path)
+                                    ->log();
+
+                                Notification::make()
+                                    ->success()
+                                    ->duration(5000)
+                                    ->title('File saved')
+                                    ->body(fn () => $this->path)
+                                    ->send();
+
+                                $this->redirect(ListFiles::getUrl(['path' => dirname($this->path)]));
+                            }),
                         Action::make('save')
                             ->label('Save')
                             ->authorize(fn () => auth()->user()->can(Permission::ACTION_FILE_UPDATE, $server))
@@ -93,12 +117,10 @@ class EditFiles extends Page
 
                                 Notification::make()
                                     ->success()
-                                    ->duration(5000) // 5 seconds
-                                    ->title('Saved File')
+                                    ->duration(5000)
+                                    ->title('File saved')
                                     ->body(fn () => $this->path)
                                     ->send();
-
-                                $this->redirect(ListFiles::getUrl(['path' => dirname($this->path)]));
                             }),
                         Action::make('cancel')
                             ->label('Cancel')
