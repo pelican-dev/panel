@@ -136,7 +136,7 @@ class CreateServer extends CreateRecord
                                 ])
                                 ->relationship('user', 'username')
                                 ->searchable(['username', 'email'])
-                                ->getOptionLabelFromRecordUsing(fn (User $user) => "$user->email | $user->username " . (blank($user->roles) ? '' : '(' . $user->roles->map(fn ($role) => $role->name)->join(', ') . ')'))
+                                ->getOptionLabelFromRecordUsing(fn (User $user) => "$user->email | $user->username " . (blank($user->roles) ? '' : '(' . $user->roles->first()->name . ')'))
                                 ->createOptionForm([
                                     TextInput::make('username')
                                         ->alphaNum()
