@@ -26,6 +26,11 @@ class ListActivities extends ListRecords
                         $properties = $activityLog->wrapProperties();
 
                         return trans_choice('activity.'.str($state)->replace(':', '.'), array_get($properties, 'count', 1), $properties);
+                    })
+                    ->tooltip(function (ActivityLog $activityLog) {
+                        $files = array_get($activityLog->properties, 'files', []);
+
+                        return is_array($files) ? implode(',', $files) : null;
                     }),
                 TextColumn::make('user')
                     ->state(fn (ActivityLog $activityLog) => $activityLog->actor instanceof User ? $activityLog->actor->username : 'System')
