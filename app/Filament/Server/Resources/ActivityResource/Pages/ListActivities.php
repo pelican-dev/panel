@@ -33,7 +33,7 @@ class ListActivities extends ListRecords
                     ->icon(fn (ActivityLog $activityLog) => $activityLog->getIcon())
                     ->formatStateUsing(fn (ActivityLog $activityLog) => $activityLog->getLabel()),
                 TextColumn::make('user')
-                    ->state(fn (ActivityLog $activityLog) => $activityLog->actor instanceof User ? $activityLog->actor->username : 'System')
+                    ->state(fn (ActivityLog $activityLog) => $activityLog->actor instanceof User ? "{$activityLog->actor->username} ({$activityLog->actor->email})" : 'System')
                     ->tooltip(fn (ActivityLog $activityLog) => auth()->user()->can('seeIps activityLog') ? $activityLog->ip : '')
                     ->url(fn (ActivityLog $activityLog) => $activityLog->actor instanceof User ? EditUser::getUrl(['record' => $activityLog->actor], panel: 'admin') : '')
                     ->grow(false),
