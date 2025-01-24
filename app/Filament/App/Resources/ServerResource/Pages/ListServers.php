@@ -6,10 +6,10 @@ use App\Filament\App\Resources\ServerResource;
 use App\Filament\Components\Tables\Columns\ServerEntryColumn;
 use App\Filament\Server\Pages\Console;
 use App\Models\Server;
+use Filament\Resources\Components\Tab;
 use Filament\Resources\Pages\ListRecords;
 use Filament\Tables\Columns\Layout\Stack;
 use Filament\Tables\Filters\SelectFilter;
-use Filament\Tables\Filters\TernaryFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 
@@ -41,21 +41,28 @@ class ListServers extends ListRecords
             ->emptyStateHeading('You don\'t have access to any servers!')
             ->persistFiltersInSession()
             ->filters([
-                TernaryFilter::make('only_my_servers')
-                    ->label('Owned by')
-                    ->placeholder('All servers')
-                    ->trueLabel('My Servers')
-                    ->falseLabel('Others\' Servers')
-                    ->default()
-                    ->queries(
-                        true: fn (Builder $query) => $query->where('owner_id', auth()->user()->id),
-                        false: fn (Builder $query) => $query->whereNot('owner_id', auth()->user()->id),
-                        blank: fn (Builder $query) => $query,
-                    ),
                 SelectFilter::make('egg')
                     ->relationship('egg', 'name', fn (Builder $query) => $query->whereIn('id', $baseQuery->pluck('egg_id')))
                     ->searchable()
                     ->preload(),
             ]);
+    }
+
+    public function getTabs(): array
+    {
+        $baseQuery = auth()->user()->accessibleServers();
+
+        return [
+            'my' => Tab::make('My Servers')
+                ->badge(fn () => $baseQuery->where('owner_id', auth()->user()->id)->count())
+                ->modifyQueryUsing(fn (Builder $query) => $query->where('owner_id', auth()->user()->id)),
+
+            'other' => Tab::make('Others\' Servers')
+                ->badge(fn () => $baseQuery->whereNot('owner_id', auth()->user()->id)->count())
+                ->modifyQueryUsing(fn (Builder $query) => $query->whereNot('owner_id', auth()->user()->id)),
+
+            'all' => Tab::make('All Servers')
+                ->badge($baseQuery->count()),
+        ];
     }
 }
