@@ -230,7 +230,7 @@ class ActivityLog extends Model implements HasIcon, HasLabel
     public function hasAdditionalMetadata(): bool
     {
         if (!$this->properties || $this->properties->isEmpty()) {
-            return [];
+            return false;
         }
 
         $properties = $this->wrapProperties();
