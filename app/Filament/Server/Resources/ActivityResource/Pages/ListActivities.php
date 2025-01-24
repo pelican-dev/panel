@@ -28,9 +28,13 @@ class ListActivities extends ListRecords
                         return trans_choice('activity.'.str($state)->replace(':', '.'), array_get($properties, 'count', 1), $properties);
                     })
                     ->tooltip(function (ActivityLog $activityLog) {
-                        $files = array_get($activityLog->properties, 'files', []);
+                        if ($files = array_get($activityLog->properties, 'files')) {
+                            return is_array($files) ? implode(',', $files) : null;
+                        }
 
-                        return is_array($files) ? implode(',', $files) : null;
+                        if ($logs = array_get($activityLog->properties, 'logs')) {
+                            return $logs;
+                        }
                     }),
                 TextColumn::make('user')
                     ->state(fn (ActivityLog $activityLog) => $activityLog->actor instanceof User ? $activityLog->actor->username : 'System')

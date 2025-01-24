@@ -118,5 +118,6 @@ return [
             'update' => 'Updated the subuser permissions for <b>:email</b>',
             'delete' => 'Removed <b>:email</b> as a subuser',
         ],
+        'crashed' => 'Server crashed',
     ],
 ];
