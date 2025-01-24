@@ -5,11 +5,18 @@ namespace App\Filament\Server\Resources\ActivityResource\Pages;
 use App\Filament\Admin\Resources\UserResource\Pages\EditUser;
 use App\Filament\Server\Resources\ActivityResource;
 use App\Models\ActivityLog;
-use App\Models\User;
 use App\Filament\Components\Tables\Columns\DateTimeColumn;
+use App\Models\User;
+use Filament\Forms\Components\Actions\Action;
+use Filament\Forms\Components\DateTimePicker;
+use Filament\Forms\Components\KeyValue;
+use Filament\Forms\Components\Placeholder;
+use Filament\Forms\Components\TextInput;
 use Filament\Resources\Pages\ListRecords;
+use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
+use Illuminate\Support\HtmlString;
 
 class ListActivities extends ListRecords
 {
@@ -22,29 +29,45 @@ class ListActivities extends ListRecords
                 TextColumn::make('event')
                     ->html()
                     ->description(fn ($state) => $state)
-                    ->formatStateUsing(function ($state, ActivityLog $activityLog) {
-                        $properties = $activityLog->wrapProperties();
-
-                        return trans_choice('activity.'.str($state)->replace(':', '.'), array_get($properties, 'count', 1), $properties);
-                    })
-                    ->tooltip(function (ActivityLog $activityLog) {
-                        if ($files = array_get($activityLog->properties, 'files')) {
-                            return is_array($files) ? implode(',', $files) : null;
-                        }
-
-                        if ($logs = array_get($activityLog->properties, 'logs')) {
-                            return $logs;
-                        }
-                    }),
+                    ->icon(fn (ActivityLog $activityLog) => $activityLog->getIcon())
+                    ->formatStateUsing(fn (ActivityLog $activityLog) => $activityLog->getLabel()),
                 TextColumn::make('user')
                     ->state(fn (ActivityLog $activityLog) => $activityLog->actor instanceof User ? $activityLog->actor->username : 'System')
                     ->tooltip(fn (ActivityLog $activityLog) => auth()->user()->can('seeIps activityLog') ? $activityLog->ip : '')
-                    ->url(fn (ActivityLog $activityLog): string => $activityLog->actor instanceof User ? EditUser::getUrl(['record' => $activityLog->actor], panel: 'admin', tenant: null) : ''),
+                    ->url(fn (ActivityLog $activityLog) => $activityLog->actor instanceof User ? EditUser::getUrl(['record' => $activityLog->actor], panel: 'admin') : '')
+                    ->grow(false),
                 DateTimeColumn::make('timestamp')
                     ->since()
-                    ->sortable(),
+                    ->sortable()
+                    ->grow(false),
             ])
-            ->defaultSort('timestamp', 'desc');
+            ->defaultSort('timestamp', 'desc')
+            ->actions([
+                ViewAction::make()
+                    //->visible(fn (ActivityLog $activityLog) => $activityLog->hasAdditionalMetadata())
+                    ->form([
+                        Placeholder::make('event')
+                            ->content(fn (ActivityLog $activityLog) => new HtmlString($activityLog->getLabel())),
+                        TextInput::make('user')
+                            ->formatStateUsing(function (ActivityLog $activityLog) {
+                                if (!$activityLog->actor instanceof User) {
+                                    return 'System';
+                                }
+
+                                return "{$activityLog->actor->username} ({$activityLog->actor->email})" . (auth()->user()->can('seeIps activityLog') ? " - {$activityLog->ip}" : '');
+                            })
+                            ->hintAction(
+                                Action::make('edit')
+                                    ->label(__('filament-actions::edit.single.label'))
+                                    ->icon('tabler-edit')
+                                    ->visible(fn (ActivityLog $activityLog) => $activityLog->actor instanceof User && auth()->user()->can('update user'))
+                                    ->url(fn (ActivityLog $activityLog) => EditUser::getUrl(['record' => $activityLog->actor], panel: 'admin'))
+                            ),
+                        DateTimePicker::make('timestamp'),
+                        KeyValue::make('properties')
+                            ->label('Metadata'),
+                    ]),
+            ]);
     }
 
     public function getBreadcrumbs(): array
