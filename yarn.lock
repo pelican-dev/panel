@@ -634,8 +634,9 @@ jiti@^1.21.6:
   resolved "https://registry.yarnpkg.com/jiti/-/jiti-1.21.7.tgz#9dd81043424a3d28458b193d965f0d18a2300ba9"
 
 laravel-vite-plugin@^1.0:
-  version "1.1.1"
-  resolved "https://registry.yarnpkg.com/laravel-vite-plugin/-/laravel-vite-plugin-1.1.1.tgz#e909a2df7cad7275dca3f7717f5e3075891045d4"
+  version "1.2.0"
+  resolved "https://registry.yarnpkg.com/laravel-vite-plugin/-/laravel-vite-plugin-1.2.0.tgz#7a82e850fba9ca2359fa64f70e0647478ea5fde3"
+  integrity sha512-R0pJ+IcTVeqEMoKz/B2Ij57QVq3sFTABiFmb06gAwFdivbOgsUtuhX6N2MGLEArajrS3U5JbberzwOe7uXHMHQ==
   dependencies:
     picocolors "^1.0.0"
     vite-plugin-full-reload "^1.1.0"
@@ -1080,6 +1081,7 @@ util-deprecate@^1.0.2:
 vite-plugin-full-reload@^1.1.0:
   version "1.2.0"
   resolved "https://registry.yarnpkg.com/vite-plugin-full-reload/-/vite-plugin-full-reload-1.2.0.tgz#bc4bfdc842abb4d24309ca802be8b955fce1c0c6"
+  integrity sha512-kz18NW79x0IHbxRSHm0jttP4zoO9P9gXh+n6UTwlNKnviTTEpOlum6oS9SmecrTtSr+muHEn5TUuC75UovQzcA==
   dependencies:
     picocolors "^1.0.0"
     picomatch "^2.3.1"
