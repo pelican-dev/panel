@@ -15,6 +15,7 @@ use Filament\Forms\Components\TextInput;
 use Filament\Resources\Pages\ListRecords;
 use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use Illuminate\Support\HtmlString;
 
@@ -67,6 +68,12 @@ class ListActivities extends ListRecords
                         KeyValue::make('properties')
                             ->label('Metadata'),
                     ]),
+            ])
+            ->filters([
+                SelectFilter::make('event')
+                    ->options(fn (Table $table) => $table->getQuery()->pluck('event', 'event')->unique()->sort())
+                    ->searchable()
+                    ->preload(),
             ]);
     }
 
