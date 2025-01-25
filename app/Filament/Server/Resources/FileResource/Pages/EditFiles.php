@@ -116,15 +116,7 @@ class EditFiles extends Page
                             ->options(EditorLanguages::class)
                             ->selectablePlaceholder(false)
                             ->afterStateUpdated(fn ($state) => $this->dispatch('setLanguage', lang: $state))
-                            ->default(function () {
-                                $ext = pathinfo($this->path, PATHINFO_EXTENSION);
-
-                                if ($ext === 'yml') {
-                                    return 'yaml';
-                                }
-
-                                return EditorLanguages::tryFrom($ext) ?? 'plaintext';
-                            }),
+                            ->default(fn () => EditorLanguages::fromWithAlias(pathinfo($this->path, PATHINFO_EXTENSION))),
                         MonacoEditor::make('editor')
                             ->label('')
                             ->placeholderText('')
