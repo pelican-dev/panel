@@ -432,11 +432,12 @@ class ListFiles extends ListRecords
                         ->label('File Name')
                         ->required(),
                     Select::make('lang')
-                        ->label('Language')
-                        ->placeholder('File Language')
-                        ->options(EditorLanguages::class)
+                        ->label('Syntax Highlighting')
                         ->live()
-                        ->afterStateUpdated(fn ($state) => $this->dispatch('setLanguage', lang: $state)),
+                        ->options(EditorLanguages::class)
+                        ->selectablePlaceholder(false)
+                        ->afterStateUpdated(fn ($state) => $this->dispatch('setLanguage', lang: $state))
+                        ->default(EditorLanguages::plaintext->value),
                     MonacoEditor::make('editor')
                         ->label('')
                         ->view('filament.plugins.monaco-editor')

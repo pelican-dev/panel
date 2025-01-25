@@ -36,6 +36,7 @@ enum EditorLanguages: string implements HasLabel
     case java = 'java';
     case javascript = 'javascript';
     case julia = 'julia';
+    case json = 'json';
     case kotlin = 'kotlin';
     case less = 'less';
     case lexon = 'lexon';
@@ -89,7 +90,6 @@ enum EditorLanguages: string implements HasLabel
     case wgsl = 'wgsl';
     case xml = 'xml';
     case yaml = 'yaml';
-    case json = 'json';
 
     public function getLabel(): string
     {

@@ -117,8 +117,9 @@ class EditFiles extends Page
                     ->schema([
                         Select::make('lang')
                             ->label('Syntax Highlighting')
-                            ->options(EditorLanguages::class)
                             ->live()
+                            ->options(EditorLanguages::class)
+                            ->selectablePlaceholder(false)
                             ->afterStateUpdated(fn ($state) => $this->dispatch('setLanguage', lang: $state))
                             ->default(function () {
                                 $ext = pathinfo($this->path, PATHINFO_EXTENSION);
@@ -127,11 +128,7 @@ class EditFiles extends Page
                                     return 'yaml';
                                 }
 
-                                if (!in_array($ext, (array) EditorLanguages::class)) {
-                                    return 'plaintext';
-                                }
-
-                                return $ext;
+                                return EditorLanguages::tryFrom($ext) ?? 'plaintext';
                             }),
                         MonacoEditor::make('editor')
                             ->label('')
