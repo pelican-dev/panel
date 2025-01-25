@@ -149,21 +149,13 @@
                     break;
                 case 'token expiring':
                 case 'token expired':
-                    token = '{{ $this->getToken() }}';
-
-                    socket.send(JSON.stringify({
-                        'event': 'auth',
-                        'args': [token]
-                    }));
+                    $wire.dispatchSelf('token-request');
                     break;
             }
         };
 
         socket.onopen = (event) => {
-            socket.send(JSON.stringify({
-                'event': 'auth',
-                'args': [token]
-            }));
+            $wire.dispatchSelf('token-request');
         };
 
         Livewire.on('setServerState', ({ state, uuid }) => {
@@ -175,6 +167,13 @@
             socket.send(JSON.stringify({
                 'event': 'set state',
                 'args': [state]
+            }));
+        });
+
+        $wire.on('sendAuthRequest', ({ token }) => {
+            socket.send(JSON.stringify({
+                'event': 'auth',
+                'args': [token]
             }));
         });
 

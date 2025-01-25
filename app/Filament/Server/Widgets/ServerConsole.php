@@ -103,6 +103,12 @@ class ServerConsole extends Widget
         }
     }
 
+    #[On('token-request')]
+    public function tokenRequest(): void
+    {
+        $this->dispatch('sendAuthRequest', token: $this->getToken());
+    }
+
     #[On('store-stats')]
     public function storeStats(string $data): void
     {
