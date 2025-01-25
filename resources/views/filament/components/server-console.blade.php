@@ -113,7 +113,6 @@
             terminal.writeln(TERMINAL_PRELUDE + 'Server marked as ' + state + '...\u001b[0m');
 
         const socket = new WebSocket("{{ $this->getSocket() }}");
-        let token = '{{ $this->getToken() }}';
 
         socket.onerror = (event) => {
             $wire.dispatchSelf('websocket-error');
@@ -149,21 +148,13 @@
                     break;
                 case 'token expiring':
                 case 'token expired':
-                    token = '{{ $this->getToken() }}';
-
-                    socket.send(JSON.stringify({
-                        'event': 'auth',
-                        'args': [token]
-                    }));
+                    $wire.dispatchSelf('token-request');
                     break;
             }
         };
 
         socket.onopen = (event) => {
-            socket.send(JSON.stringify({
-                'event': 'auth',
-                'args': [token]
-            }));
+            $wire.dispatchSelf('token-request');
         };
 
         Livewire.on('setServerState', ({ state, uuid }) => {
@@ -175,6 +166,13 @@
             socket.send(JSON.stringify({
                 'event': 'set state',
                 'args': [state]
+            }));
+        });
+
+        $wire.on('sendAuthRequest', ({ token }) => {
+            socket.send(JSON.stringify({
+                'event': 'auth',
+                'args': [token]
             }));
         });
 
