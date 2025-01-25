@@ -24,7 +24,6 @@ use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\Builder;
 use App\Models\Traits\HasAccessTokens;
 use Illuminate\Auth\Passwords\CanResetPassword;
-use App\Traits\Helpers\AvailableLanguages;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\Access\Authorizable;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
@@ -33,6 +32,7 @@ use Illuminate\Contracts\Auth\Access\Authorizable as AuthorizableContract;
 use Illuminate\Contracts\Auth\CanResetPassword as CanResetPasswordContract;
 use App\Notifications\SendPasswordReset as ResetPasswordNotification;
 use Filament\Facades\Filament;
+use ResourceBundle;
 use Spatie\Permission\Traits\HasRoles;
 
 /**
@@ -92,7 +92,6 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
 {
     use Authenticatable;
     use Authorizable { can as protected canned; }
-    use AvailableLanguages;
     use CanResetPassword;
     use HasAccessTokens;
     use HasFactory;
@@ -175,7 +174,7 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
     {
         static::creating(function (self $user) {
             $user->uuid ??= Str::uuid()->toString();
-            $user->timezone ??= config('app.timezone', 'UTC');
+            $user->timezone ??= config('app.timezone');
 
             return true;
         });
@@ -195,8 +194,8 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
     {
         $rules = self::getValidationRules();
 
-        $rules['language'][] = new In(array_keys((new self())->getAvailableLanguages()));
-        $rules['timezone'][] = new In(array_values(DateTimeZone::listIdentifiers()));
+        $rules['language'][] = new In(array_values(array_filter(ResourceBundle::getLocales(''), fn ($lang) => preg_match('/^[a-z]{2}$/', $lang))));
+        $rules['timezone'][] = new In(DateTimeZone::listIdentifiers());
         $rules['username'][] = new Username();
 
         return $rules;
@@ -246,6 +245,8 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
 
     /**
      * Returns all servers that a user owns.
+     *
+     * @return HasMany<Server, $this>
      */
     public function servers(): HasMany
     {
@@ -278,10 +279,23 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
     }
 
     /**
-     * Returns all the servers that a user can access by way of being the owner of the
-     * server, or because they are assigned as a subuser for that server.
+     * Returns all the servers that a user can access.
+     * Either because they are an admin or because they are the owner/ a subuser of the server.
      */
     public function accessibleServers(): Builder
+    {
+        if ($this->canned('viewList server')) {
+            return Server::query();
+        }
+
+        return $this->directAccessibleServers();
+    }
+
+    /**
+     * Returns all the servers that a user can access "directly".
+     * This means either because they are the owner or a subuser of the server.
+     */
+    public function directAccessibleServers(): Builder
     {
         return Server::query()
             ->select('servers.*')
@@ -304,7 +318,12 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
 
     protected function checkPermission(Server $server, string $permission = ''): bool
     {
-        if ($this->isRootAdmin() || $server->owner_id === $this->id) {
+        if ($this->canned('update server', $server) || $server->owner_id === $this->id) {
+            return true;
+        }
+
+        // If the user only has "view" permissions allow viewing the console
+        if ($permission === Permission::ACTION_WEBSOCKET_CONNECT && $this->canned('view server', $server)) {
             return true;
         }
 
@@ -350,6 +369,11 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
         return $this->hasRole(Role::ROOT_ADMIN);
     }
 
+    public function isAdmin(): bool
+    {
+        return $this->isRootAdmin() || ($this->roles()->count() >= 1 && $this->getAllPermissions()->count() >= 1);
+    }
+
     public function canAccessPanel(Panel $panel): bool
     {
         if ($this->isRootAdmin()) {
@@ -357,7 +381,7 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
         }
 
         if ($panel->getId() === 'admin') {
-            return $this->roles()->count() >= 1 && $this->getAllPermissions()->count() >= 1;
+            return $this->isAdmin();
         }
 
         return true;
@@ -390,7 +414,7 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
     public function canAccessTenant(Model $tenant): bool
     {
         if ($tenant instanceof Server) {
-            if ($this->isRootAdmin() || $tenant->owner_id === $this->id) {
+            if ($this->canned('view server', $tenant) || $tenant->owner_id === $this->id) {
                 return true;
             }
 

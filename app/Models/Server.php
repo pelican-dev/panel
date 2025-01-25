@@ -343,6 +343,9 @@ class Server extends Model implements Validatable
         return $this->hasOne(ServerTransfer::class)->whereNull('successful')->orderByDesc('id');
     }
 
+    /**
+     * @return HasMany<Backup, $this>
+     */
     public function backups(): HasMany
     {
         return $this->hasMany(Backup::class);
@@ -483,7 +486,7 @@ class Server extends Model implements Validatable
     public function condition(): Attribute
     {
         return Attribute::make(
-            get: fn () => $this->isSuspended() ? 'Suspended' : $this->status?->value ?? $this->retrieveStatus(),
+            get: fn () => $this->isSuspended() ? ServerState::Suspended->value : $this->status->value ?? $this->retrieveStatus(),
         );
     }
 

@@ -98,7 +98,7 @@ class Permission extends Model implements Validatable
 
     public const ACTION_SETTINGS_REINSTALL = 'settings.reinstall';
 
-    public const ACTION_ACTIVITY_READ = 'settings.activity';
+    public const ACTION_ACTIVITY_READ = 'activity.read';
 
     public $timestamps = false;
 

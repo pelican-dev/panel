@@ -4,9 +4,9 @@ namespace App\Models;
 
 use App\Contracts\Validatable;
 use App\Traits\HasValidation;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Eloquent\BackupQueryBuilder;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
@@ -85,10 +85,11 @@ class Backup extends Model implements Validatable
     }
 
     /**
-     * Returns a query filtering only non-failed backups for a specific server.
+     * @param  \Illuminate\Database\Query\Builder  $query
+     * @return BackupQueryBuilder<\Illuminate\Database\Eloquent\Model>
      */
-    public function scopeNonFailed(Builder $query): void
+    public function newEloquentBuilder($query): BackupQueryBuilder
     {
-        $query->whereNull('completed_at')->orWhere('is_successful', true);
+        return new BackupQueryBuilder($query);
     }
 }

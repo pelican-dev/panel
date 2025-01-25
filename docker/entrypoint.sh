@@ -1,14 +1,11 @@
 #!/bin/ash -e
 
-#mkdir -p /var/log/supervisord/ /var/log/php8/ \
-
-## check for .env file and generate app keys if missing
-if [ -f /pelican-data/.env ]; then
+## check for .env file or symlink and generate app keys if missing
+if [ -f /var/www/html/.env ]; then
   echo "external vars exist."
-  rm -rf /var/www/html/.env
 else
   echo "external vars don't exist."
-  rm -rf /var/www/html/.env
+  # webroot .env is symlinked to this path
   touch /pelican-data/.env
 
   ## manually generate a key because key generate --force fails
@@ -26,10 +23,7 @@ else
   echo -e "APP_INSTALLED=false" >> /pelican-data/.env
 fi
 
-mkdir /pelican-data/database
-ln -s /pelican-data/.env /var/www/html/
-chown -h www-data:www-data /var/www/html/.env
-ln -s /pelican-data/database/database.sqlite /var/www/html/database/
+mkdir /pelican-data/database /var/www/html/storage/logs/supervisord 2>/dev/null
 
 if ! grep -q "APP_KEY=" .env || grep -q "APP_KEY=$" .env; then
   echo "Generating APP_KEY..."
@@ -45,10 +39,6 @@ php artisan migrate --force
 echo -e "Optimizing Filament"
 php artisan filament:optimize
 
-## start cronjobs for the queue
-echo -e "Starting cron jobs."
-crond -L /var/log/crond -l 5
-
 export SUPERVISORD_CADDY=false
 
 ## disable caddy if SKIP_CADDY is set
@@ -58,8 +48,6 @@ else
   echo "Starting PHP-FPM and Caddy"
   export SUPERVISORD_CADDY=true
 fi
-
-chown -R www-data:www-data /pelican-data/.env /pelican-data/database
 
 echo "Starting Supervisord"
 exec "$@"

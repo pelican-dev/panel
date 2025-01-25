@@ -2,10 +2,10 @@
 
 namespace App\Models;
 
+use App\Livewire\AlertBanner;
 use App\Repositories\Daemon\DaemonFileRepository;
 use Carbon\Carbon;
 use Exception;
-use Filament\Notifications\Notification;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Sushi\Sushi;
@@ -131,8 +131,7 @@ class File extends Model
     public function getRows(): array
     {
         try {
-            /** @var DaemonFileRepository $fileRepository */
-            $fileRepository = app(DaemonFileRepository::class)->setServer(self::$server); // @phpstan-ignore-line
+            $fileRepository = (new DaemonFileRepository())->setServer(self::$server);
 
             if (!is_null(self::$searchTerm)) {
                 $contents = cache()->remember('file_search_' . self::$path . '_' . self::$searchTerm, now()->addMinute(), fn () => $fileRepository->search(self::$searchTerm, self::$path));
@@ -161,9 +160,14 @@ class File extends Model
         } catch (Exception $exception) {
             report($exception);
 
-            Notification::make()
-                ->title('Error loading files')
-                ->body($exception->getMessage())
+            $message = str($exception->getMessage());
+            if ($message->startsWith('cURL error 7: ')) {
+                $message = $message->after('cURL error 7: ')->before(' after ');
+            }
+
+            AlertBanner::make()
+                ->title('Could not load files')
+                ->body($message->toString())
                 ->danger()
                 ->send();
 

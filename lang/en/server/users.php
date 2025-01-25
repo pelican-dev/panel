@@ -2,8 +2,9 @@
 
 return [
     'permissions' => [
+        'activity_desc' => 'Permissions that control a user\'s access to the server activity logs.',
         'startup_desc' => 'Permissions that control a user\'s ability to view this server\'s startup parameters.',
-        'settings_desc' => 'Permissions that control a user\'s access to the schedule management for this server.',
+        'settings_desc' => 'Permissions that control a user\'s ability to modify this server\'s settings.',
         'control_desc' => 'Permissions that control a user\'s ability to control the power state of a server, or send commands.',
         'user_desc' => 'Permissions that allow a user to manage other subusers on a server. They will never be able to edit their own account, or assign permissions they do not have themselves.',
         'file_desc' => 'Permissions that control a user\'s ability to modify the filesystem for this server.',
@@ -16,7 +17,7 @@ return [
         'startup_docker_image' => 'Allows a user to modify the Docker image used when running the server.',
         'setting_reinstall' => 'Allows a user to trigger a reinstall of this server.',
         'setting_rename' => 'Allows a user to rename this server and change the description of it.',
-        'setting_activity' => 'Allows a user to view the activity logs for the server.',
+        'activity_read' => 'Allows a user to view the activity logs for the server.',
         'websocket_*' => 'Allows a user access to the websocket for this server.',
         'control_console' => 'Allows a user to send data to the server console.',
         'control_start' => 'Allows a user to start the server instance.',

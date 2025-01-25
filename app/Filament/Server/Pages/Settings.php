@@ -2,11 +2,10 @@
 
 namespace App\Filament\Server\Pages;
 
-use App\Enums\ServerState;
 use App\Facades\Activity;
 use App\Models\Permission;
 use App\Models\Server;
-use App\Repositories\Daemon\DaemonServerRepository;
+use App\Services\Servers\ReinstallServerService;
 use Exception;
 use Filament\Facades\Filament;
 use Filament\Forms\Components\Actions\Action;
@@ -200,13 +199,11 @@ class Settings extends ServerFormPage
                             ->modalHeading('Are you sure you want to reinstall the server?')
                             ->modalDescription('Some files may be deleted or modified during this process, please back up your data before continuing.')
                             ->modalSubmitActionLabel('Yes, Reinstall')
-                            ->action(function (Server $server, DaemonServerRepository $serverRepository) {
+                            ->action(function (Server $server, ReinstallServerService $reinstallService) {
                                 abort_unless(auth()->user()->can(Permission::ACTION_SETTINGS_REINSTALL, $server), 403);
 
-                                $server->fill(['status' => ServerState::Installing])->save();
-
                                 try {
-                                    $serverRepository->reinstall();
+                                    $reinstallService->handle($server);
                                 } catch (Exception $exception) {
                                     report($exception);
 

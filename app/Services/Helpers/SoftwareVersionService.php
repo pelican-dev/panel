@@ -9,7 +9,12 @@ class SoftwareVersionService
 {
     public function latestPanelVersion(): string
     {
-        return cache()->remember('panel:latest_version', now()->addMinutes(config('panel.cdn.cache_time', 60)), function () {
+        $key = 'panel:latest_version';
+        if (cache()->get($key) === 'error') {
+            cache()->forget($key);
+        }
+
+        return cache()->remember($key, now()->addMinutes(config('panel.cdn.cache_time', 60)), function () {
             try {
                 $response = Http::timeout(5)->connectTimeout(1)->get('https://api.github.com/repos/pelican-dev/panel/releases/latest')->throw()->json();
 
@@ -22,7 +27,12 @@ class SoftwareVersionService
 
     public function latestWingsVersion(): string
     {
-        return cache()->remember('wings:latest_version', now()->addMinutes(config('panel.cdn.cache_time', 60)), function () {
+        $key = 'wings:latest_version';
+        if (cache()->get($key) === 'error') {
+            cache()->forget($key);
+        }
+
+        return cache()->remember($key, now()->addMinutes(config('panel.cdn.cache_time', 60)), function () {
             try {
                 $response = Http::timeout(5)->connectTimeout(1)->get('https://api.github.com/repos/pelican-dev/wings/releases/latest')->throw()->json();
 
