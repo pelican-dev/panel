@@ -44,6 +44,7 @@ enum EditorLanguages: string implements HasLabel
     case liquid = 'liquid';
     case m3 = 'm3';
     case markdown = 'markdown';
+    case mdx = 'mdx';
     case mips = 'mips';
     case msdax = 'msdax';
     case mysql = 'mysql';
@@ -107,7 +108,7 @@ enum EditorLanguages: string implements HasLabel
 
             'kt', 'kts' => self::kotlin,
 
-            'md', 'mdx' => self::markdown,
+            'md' => self::markdown,
 
             'm' => self::objectivec,
 
