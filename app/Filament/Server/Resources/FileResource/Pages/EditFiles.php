@@ -7,7 +7,6 @@ use App\Enums\EditorLanguages;
 use App\Facades\Activity;
 use App\Filament\Server\Resources\FileResource;
 use App\Livewire\AlertBanner;
-use App\Models\File;
 use App\Models\Permission;
 use App\Models\Server;
 use App\Repositories\Daemon\DaemonFileRepository;
@@ -19,7 +18,6 @@ use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Form;
 use Filament\Forms\Get;
 use Filament\Notifications\Notification;
-use Filament\Pages\Concerns\HasUnsavedDataChangesAlert;
 use Filament\Pages\Concerns\InteractsWithFormActions;
 use Filament\Panel;
 use Filament\Resources\Pages\Page;
@@ -35,7 +33,6 @@ use Livewire\Attributes\Locked;
  */
 class EditFiles extends Page
 {
-    use HasUnsavedDataChangesAlert;
     use InteractsWithFormActions;
     use InteractsWithForms;
 
@@ -54,8 +51,6 @@ class EditFiles extends Page
     {
         /** @var Server $server */
         $server = Filament::getTenant();
-
-        File::get($server, dirname($this->path))->orderByDesc('is_directory')->orderBy('name');
 
         return $form
             ->schema([
@@ -133,7 +128,7 @@ class EditFiles extends Page
                         MonacoEditor::make('editor')
                             ->label('')
                             ->placeholderText('')
-                            ->formatStateUsing(function (DaemonFileRepository $fileRepository) use ($server) {
+                            ->default(function (DaemonFileRepository $fileRepository) use ($server) {
                                 try {
                                     return $fileRepository
                                         ->setServer($server)
