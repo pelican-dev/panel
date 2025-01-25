@@ -6,7 +6,9 @@ use App\Filament\Admin\Resources\UserResource\Pages\EditUser;
 use App\Filament\Server\Resources\ActivityResource;
 use App\Models\ActivityLog;
 use App\Filament\Components\Tables\Columns\DateTimeColumn;
+use App\Models\Server;
 use App\Models\User;
+use Filament\Facades\Filament;
 use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\KeyValue;
@@ -25,6 +27,9 @@ class ListActivities extends ListRecords
 
     public function table(Table $table): Table
     {
+        /** @var Server $server */
+        $server = Filament::getTenant();
+
         return $table
             ->columns([
                 TextColumn::make('event')
@@ -50,12 +55,23 @@ class ListActivities extends ListRecords
                         Placeholder::make('event')
                             ->content(fn (ActivityLog $activityLog) => new HtmlString($activityLog->getLabel())),
                         TextInput::make('user')
-                            ->formatStateUsing(function (ActivityLog $activityLog) {
+                            ->formatStateUsing(function (ActivityLog $activityLog) use ($server) {
                                 if (!$activityLog->actor instanceof User) {
                                     return 'System';
                                 }
 
-                                return "{$activityLog->actor->username} ({$activityLog->actor->email})" . (auth()->user()->can('seeIps activityLog') ? " - {$activityLog->ip}" : '');
+                                $user = $activityLog->actor->username;
+
+                                // Only show the email if the actor is the server owner/ a subuser or if the viewing user is an admin
+                                if (auth()->user()->isAdmin() || $server->owner_id === $activityLog->actor->id || $server->subusers->where('user_id', $activityLog->actor->id)->first()) {
+                                    $user .= " ({$activityLog->actor->email})";
+                                }
+
+                                if (auth()->user()->can('seeIps activityLog')) {
+                                    $user .= " - $activityLog->ip";
+                                }
+
+                                return $user;
                             })
                             ->hintAction(
                                 Action::make('edit')
