@@ -65,6 +65,7 @@ class EditFiles extends Page
                             ->label('Save & Close')
                             ->authorize(fn () => auth()->user()->can(Permission::ACTION_FILE_UPDATE, $server))
                             ->icon('tabler-device-floppy')
+                            ->keyBindings('mod+shift+f')
                             ->action(function (DaemonFileRepository $fileRepository) use ($server) {
                                 $data = $this->form->getState();
 
