@@ -59,21 +59,6 @@ class EditFiles extends Page
 
         return $form
             ->schema([
-                Select::make('lang')
-                    ->label('')
-                    ->placeholder('File Language')
-                    ->options(EditorLanguages::class)
-                    ->live()
-                    ->afterStateUpdated(fn ($state) => $this->dispatch('setLanguage', lang: $state))
-                    ->default(function () {
-                        $ext = pathinfo($this->path, PATHINFO_EXTENSION);
-
-                        if ($ext === 'yml') {
-                            return 'yaml';
-                        }
-
-                        return $ext;
-                    }),
                 Section::make('Editing: ' . $this->path)
                     ->footerActions([
                         Action::make('save_and_close')
@@ -129,6 +114,24 @@ class EditFiles extends Page
                     ])
                     ->footerActionsAlignment(Alignment::End)
                     ->schema([
+                        Select::make('lang')
+                            ->label('Syntax Highlighting')
+                            ->options(EditorLanguages::class)
+                            ->live()
+                            ->afterStateUpdated(fn ($state) => $this->dispatch('setLanguage', lang: $state))
+                            ->default(function () {
+                                $ext = pathinfo($this->path, PATHINFO_EXTENSION);
+
+                                if ($ext === 'yml') {
+                                    return 'yaml';
+                                }
+
+                                if (!in_array($ext, (array) EditorLanguages::class)) {
+                                    return 'plaintext';
+                                }
+
+                                return $ext;
+                            }),
                         MonacoEditor::make('editor')
                             ->label('')
                             ->placeholderText('')
@@ -141,7 +144,7 @@ class EditFiles extends Page
                                     abort(404, $this->path . ' not found.');
                                 }
                             })
-                            ->language(fn (Get $get) => $get('lang') ?? 'plaintext')
+                            ->language(fn (Get $get) => $get('lang'))
                             ->view('filament.plugins.monaco-editor'),
                     ]),
             ]);
