@@ -113,7 +113,6 @@
             terminal.writeln(TERMINAL_PRELUDE + 'Server marked as ' + state + '...\u001b[0m');
 
         const socket = new WebSocket("{{ $this->getSocket() }}");
-        let token = '{{ $this->getToken() }}';
 
         socket.onerror = (event) => {
             $wire.dispatchSelf('websocket-error');
