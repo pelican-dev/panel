@@ -31,6 +31,7 @@ class ListActivities extends ListRecords
         $server = Filament::getTenant();
 
         return $table
+            ->paginationPageOptions(['10', '20', '50', '100', '200', '500'])
             ->columns([
                 TextColumn::make('event')
                     ->html()
