@@ -38,9 +38,22 @@ class ListActivities extends ListRecords
                     ->icon(fn (ActivityLog $activityLog) => $activityLog->getIcon())
                     ->formatStateUsing(fn (ActivityLog $activityLog) => $activityLog->getLabel()),
                 TextColumn::make('user')
-                    ->state(fn (ActivityLog $activityLog) => $activityLog->actor instanceof User ? "{$activityLog->actor->username} ({$activityLog->actor->email})" : 'System')
+                    ->state(function (ActivityLog $activityLog) use ($server) {
+                        if (!$activityLog->actor instanceof User) {
+                            return 'System';
+                        }
+
+                        $user = $activityLog->actor->username;
+
+                        // Only show the email if the actor is the server owner/ a subuser or if the viewing user is an admin
+                        if (auth()->user()->isAdmin() || $server->owner_id === $activityLog->actor->id || $server->subusers->where('user_id', $activityLog->actor->id)->first()) {
+                            $user .= " ({$activityLog->actor->email})";
+                        }
+
+                        return $user;
+                    })
                     ->tooltip(fn (ActivityLog $activityLog) => auth()->user()->can('seeIps activityLog') ? $activityLog->ip : '')
-                    ->url(fn (ActivityLog $activityLog) => $activityLog->actor instanceof User ? EditUser::getUrl(['record' => $activityLog->actor], panel: 'admin') : '')
+                    ->url(fn (ActivityLog $activityLog) => $activityLog->actor instanceof User && auth()->user()->isAdmin() ? EditUser::getUrl(['record' => $activityLog->actor], panel: 'admin') : '')
                     ->grow(false),
                 DateTimeColumn::make('timestamp')
                     ->since()
