@@ -37,7 +37,7 @@ class EggVariable extends Model
     /**
      * Reserved environment variable names.
      */
-    public const RESERVED_ENV_NAMES = 'SERVER_MEMORY,SERVER_IP,SERVER_PORT,ENV,HOME,USER,STARTUP,SERVER_UUID,UUID';
+    public const RESERVED_ENV_NAMES = 'P_SERVER_UUID,P_SERVER_ALLOCATION_LIMIT,SERVER_MEMORY,SERVER_IP,SERVER_PORT,ENV,HOME,USER,STARTUP,MODIFIED_STARTUP,SERVER_UUID,UUID,INTERNAL_IP';
 
     /**
      * The table associated with the model.

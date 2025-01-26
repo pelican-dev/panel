@@ -4,6 +4,7 @@ namespace App\Filament\Admin\Resources\EggResource\Pages;
 
 use AbdelhamidErrahmouni\FilamentMonacoEditor\MonacoEditor;
 use App\Filament\Admin\Resources\EggResource;
+use App\Models\EggVariable;
 use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\Fieldset;
 use Filament\Forms\Components\Hidden;
@@ -176,6 +177,7 @@ class CreateEgg extends CreateRecord
                                         ->columnSpanFull()
                                         ->afterStateUpdated(fn (Set $set, $state) => $set('env_variable', str($state)->trim()->snake()->upper()->toString()))
                                         ->unique(modifyRuleUsing: fn (Unique $rule, Get $get) => $rule->where('egg_id', $get('../../id')), ignoreRecord: true)
+                                        ->rules(EggVariable::$validationRules['env_variable'])
                                         ->validationMessages([
                                             'unique' => 'A variable with this name already exists.',
                                         ])

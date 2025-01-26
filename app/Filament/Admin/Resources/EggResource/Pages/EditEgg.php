@@ -8,6 +8,7 @@ use App\Filament\Admin\Resources\EggResource\RelationManagers\ServersRelationMan
 use App\Filament\Components\Actions\ExportEggAction;
 use App\Filament\Components\Actions\ImportEggAction;
 use App\Models\Egg;
+use App\Models\EggVariable;
 use Filament\Actions\DeleteAction;
 use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\Fieldset;
@@ -180,6 +181,7 @@ class EditEgg extends EditRecord
                                         ->hintIcon('tabler-code')
                                         ->hintIconTooltip(fn ($state) => "{{{$state}}}")
                                         ->unique(modifyRuleUsing: fn (Unique $rule, Get $get) => $rule->where('egg_id', $get('../../id')), ignoreRecord: true)
+                                        ->rules(EggVariable::$validationRules['env_variable'])
                                         ->validationMessages([
                                             'unique' => 'A variable with this name already exists.',
                                         ])
