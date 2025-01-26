@@ -193,6 +193,7 @@ class CreateEgg extends CreateRecord
                                         ->rules(EggVariable::$validationRules['env_variable'])
                                         ->validationMessages([
                                             'unique' => 'A variable with this name already exists.',
+                                            '*' => 'This environment variable is reserved and cannot be used.',
                                         ])
                                         ->required(),
                                     TextInput::make('default_value')->maxLength(255),
