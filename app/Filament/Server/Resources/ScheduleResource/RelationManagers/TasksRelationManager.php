@@ -78,13 +78,9 @@ class TasksRelationManager extends RelationManager
                 TextColumn::make('action')
                     ->state(fn (Task $task) => $this->getActionOptions()[$task->action] ?? $task->action),
                 TextColumn::make('payload')
-                    ->state(function (Task $task) {
-                        $payload = match ($task->payload) {
-                            'start', 'restart', 'stop', 'kill' => mb_ucfirst($task->payload),
-                            default => $task->payload
-                        };
-
-                        return explode(PHP_EOL, $payload);
+                    ->state(fn (Task $task) => match ($task->payload) {
+                        'start', 'restart', 'stop', 'kill' => mb_ucfirst($task->payload),
+                        default => explode(PHP_EOL, $task->payload)
                     })
                     ->badge(),
                 TextColumn::make('time_offset')
