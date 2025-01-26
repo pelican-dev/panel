@@ -264,7 +264,7 @@ class ScheduleResource extends Resource
                                 ->action(function (Set $set, $data) {
                                     $set('cron_minute', '0');
                                     $set('cron_hour', '0');
-                                    $set('cron_day_of_month', '*');
+                                    $set('cron_day_of_month', '1');
                                     $set('cron_month', '*/' . $data['x']);
                                     $set('cron_day_of_week', '*');
                                 }),
