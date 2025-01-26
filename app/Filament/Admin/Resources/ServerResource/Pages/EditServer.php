@@ -136,7 +136,7 @@ class EditServer extends EditRecord
                                     ->columnSpanFull(),
 
                                 TextInput::make('uuid')
-                                    ->hintAction(CopyAction::make())
+                                    ->suffixAction(CopyAction::make())
                                     ->columnSpan([
                                         'default' => 2,
                                         'sm' => 1,
@@ -147,7 +147,7 @@ class EditServer extends EditRecord
                                     ->dehydrated(false),
                                 TextInput::make('uuid_short')
                                     ->label('Short UUID')
-                                    ->hintAction(CopyAction::make())
+                                    ->suffixAction(CopyAction::make())
                                     ->columnSpan([
                                         'default' => 2,
                                         'sm' => 1,
