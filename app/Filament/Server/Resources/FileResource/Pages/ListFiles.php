@@ -474,7 +474,7 @@ class ListFiles extends ListRecords
 
                             Activity::event('server:file.uploaded')
                                 ->property('directory', $this->path)
-                                ->property('file', $file->getFilename())
+                                ->property('file', $file->getClientOriginalName())
                                 ->log();
                         }
                     } elseif ($data['url'] !== null) {
