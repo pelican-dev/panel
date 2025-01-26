@@ -40,7 +40,8 @@ class TasksRelationManager extends RelationManager
                 ->live()
                 ->disableOptionWhen(fn (string $value): bool => $value === Task::ACTION_BACKUP && $schedule->server->backup_limit === 0)
                 ->options($this->getActionOptions())
-                ->selectablePlaceholder(false),
+                ->selectablePlaceholder(false)
+                ->default(Task::ACTION_POWER),
             Textarea::make('payload')
                 ->hidden(fn (Get $get) => $get('action') === Task::ACTION_POWER)
                 ->label(fn (Get $get) => $this->getActionOptions(false)[$get('action')] ?? 'Payload'),
@@ -94,7 +95,11 @@ class TasksRelationManager extends RelationManager
             ])
             ->actions([
                 EditAction::make()
-                    ->form($this->getTaskForm($schedule)),
+                    ->form($this->getTaskForm($schedule))
+                    ->mutateFormDataUsing(function ($data) {
+                        $data['payload'] ??= '';
+                        return $data;
+                    }),
                 DeleteAction::make(),
             ])
             ->headerActions([
