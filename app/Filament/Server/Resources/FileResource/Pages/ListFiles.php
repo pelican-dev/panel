@@ -10,10 +10,8 @@ use App\Models\File;
 use App\Models\Permission;
 use App\Models\Server;
 use App\Repositories\Daemon\DaemonFileRepository;
-use App\Services\Nodes\NodeJWTService;
 use App\Filament\Components\Tables\Columns\BytesColumn;
 use App\Filament\Components\Tables\Columns\DateTimeColumn;
-use Carbon\CarbonImmutable;
 use Filament\Actions\Action as HeaderAction;
 use Filament\Facades\Filament;
 use Filament\Forms\Components\CheckboxList;
@@ -21,6 +19,7 @@ use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Tabs;
+use Filament\Forms\Components\Tabs\Tab;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Get;
 use Filament\Notifications\Notification;
@@ -175,22 +174,7 @@ class ListFiles extends ListRecords
                         ->label('Download')
                         ->icon('tabler-download')
                         ->visible(fn (File $file) => $file->is_file)
-                        ->action(function (File $file, NodeJWTService $service) use ($server) {
-                            $token = $service
-                                ->setExpiresAt(CarbonImmutable::now()->addMinutes(15))
-                                ->setUser(auth()->user())
-                                ->setClaims([
-                                    'file_path' => rawurldecode(join_paths($this->path, $file->name)),
-                                    'server_uuid' => $server->uuid,
-                                ])
-                                ->handle($server->node, auth()->user()->id . $server->uuid);
-
-                            Activity::event('server:file.download')
-                                ->property('file', join_paths($this->path, $file->name))
-                                ->log();
-
-                            return redirect()->away(sprintf('%s/download/file?token=%s', $server->node->getConnectionAddress(), $token->toString())); // TODO: download works, but breaks modals
-                        }),
+                        ->url(fn () => DownloadFiles::getUrl(['path' => $this->path]), true),
                     Action::make('move')
                         ->authorize(fn () => auth()->user()->can(Permission::ACTION_FILE_UPDATE, $server))
                         ->label('Move')
@@ -448,15 +432,16 @@ class ListFiles extends ListRecords
                         ->label('File Name')
                         ->required(),
                     Select::make('lang')
+                        ->label('Syntax Highlighting')
                         ->live()
-                        ->hidden() //TODO: Make file language selection work
-                        ->label('Language')
-                        ->placeholder('File Language')
-                        ->options(EditorLanguages::class),
+                        ->options(EditorLanguages::class)
+                        ->selectablePlaceholder(false)
+                        ->afterStateUpdated(fn ($state) => $this->dispatch('setLanguage', lang: $state))
+                        ->default(EditorLanguages::plaintext->value),
                     MonacoEditor::make('editor')
                         ->label('')
                         ->view('filament.plugins.monaco-editor')
-                        ->language(fn (Get $get) => $get('lang')),
+                        ->language(fn (Get $get) => $get('lang') ?? 'plaintext'),
                 ]),
             HeaderAction::make('new_folder')
                 ->authorize(fn () => auth()->user()->can(Permission::ACTION_FILE_CREATE, $server))
@@ -504,13 +489,12 @@ class ListFiles extends ListRecords
                     }
 
                     return redirect(ListFiles::getUrl(['path' => $this->path]));
-
                 })
                 ->form([
                     Tabs::make()
                         ->contained(false)
                         ->schema([
-                            Tabs\Tab::make('Upload Files')
+                            Tab::make('Upload Files')
                                 ->live()
                                 ->schema([
                                     FileUpload::make('files')
@@ -520,7 +504,7 @@ class ListFiles extends ListRecords
                                         ->preserveFilenames()
                                         ->multiple(),
                                 ]),
-                            Tabs\Tab::make('Upload From URL')
+                            Tab::make('Upload From URL')
                                 ->live()
                                 ->disabled(fn (Get $get) => count($get('files')) > 0)
                                 ->schema([
