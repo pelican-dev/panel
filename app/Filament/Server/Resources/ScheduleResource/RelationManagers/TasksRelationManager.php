@@ -98,6 +98,7 @@ class TasksRelationManager extends RelationManager
                     ->form($this->getTaskForm($schedule))
                     ->mutateFormDataUsing(function ($data) {
                         $data['payload'] ??= '';
+
                         return $data;
                     }),
                 DeleteAction::make(),
