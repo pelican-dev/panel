@@ -502,7 +502,7 @@ class ListFiles extends ListRecords
                                         ->storeFiles(false)
                                         ->previewable(false)
                                         ->preserveFilenames()
-                                        ->maxSize($server->node->upload_size * (config('panel.use_binary_prefix') ? 1024 : 1000))
+                                        ->maxSize($server->node->upload_size * config('panel.use_binary_prefix') ? 1024 : 1000)
                                         ->multiple(),
                                 ]),
                             Tab::make('Upload From URL')

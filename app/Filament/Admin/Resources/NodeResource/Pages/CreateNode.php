@@ -232,6 +232,8 @@ class CreateNode extends CreateRecord
                             TextInput::make('upload_size')
                                 ->label('Upload Limit')
                                 ->helperText('Enter the maximum size of files that can be uploaded through the web-based file manager.')
+                                ->hintIcon('tabler-question-mark')
+                                ->hintIconTooltip('Make sure you change client_max_body_size, client_body_timeout, upload_max_filesize = 100M & post_max_size=100M in your webserver config')
                                 ->columnSpan(1)
                                 ->numeric()->required()
                                 ->default(256)
