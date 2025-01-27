@@ -31,7 +31,8 @@ class ListActivities extends ListRecords
         $server = Filament::getTenant();
 
         return $table
-            ->paginationPageOptions(['10', '20', '50', '100', '200', '500'])
+            ->paginated([25, 50, 100, 250])
+            ->defaultPaginationPageOption(25)
             ->columns([
                 TextColumn::make('event')
                     ->html()
@@ -54,7 +55,7 @@ class ListActivities extends ListRecords
                         return $user;
                     })
                     ->tooltip(fn (ActivityLog $activityLog) => auth()->user()->can('seeIps activityLog') ? $activityLog->ip : '')
-                    ->url(fn (ActivityLog $activityLog) => $activityLog->actor instanceof User && auth()->user()->isAdmin() ? EditUser::getUrl(['record' => $activityLog->actor], panel: 'admin') : '')
+                    ->url(fn (ActivityLog $activityLog) => $activityLog->actor instanceof User && auth()->user()->can('update user') ? EditUser::getUrl(['record' => $activityLog->actor], panel: 'admin') : '')
                     ->grow(false),
                 DateTimeColumn::make('timestamp')
                     ->since()
