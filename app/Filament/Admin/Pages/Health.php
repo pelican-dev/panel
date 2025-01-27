@@ -24,6 +24,16 @@ class Health extends Page
         'refresh-component' => '$refresh',
     ];
 
+    public function getTitle(): string
+    {
+        return trans('admin/health.title');
+    }
+
+    public static function getNavigationLabel(): string
+    {
+        return trans('admin/health.title');
+    }
+
     public static function canAccess(): bool
     {
         return auth()->user()->can('view health');
@@ -62,7 +72,7 @@ class Health extends Page
         $this->dispatch('refresh-component');
 
         Notification::make()
-            ->title('Health check results refreshed')
+            ->title(trans('admin/health.results_refreshed'))
             ->success()
             ->send();
     }
@@ -109,7 +119,7 @@ class Health extends Page
             return $carry;
         }, []);
 
-        return 'Failed: ' . implode(', ', $failedNames);
+        return trans('admin/health.checks.failed') . implode(', ', $failedNames);
     }
 
     public static function getNavigationIcon(): string

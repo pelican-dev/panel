@@ -27,8 +27,6 @@ class Dashboard extends Page
 
     protected static ?string $slug = '/';
 
-    public string $activeTab = 'nodes';
-
     private SoftwareVersionService $softwareVersionService;
 
     public function mount(SoftwareVersionService $softwareVersionService): void
@@ -51,13 +49,13 @@ class Dashboard extends Page
 
             'devActions' => [
                 CreateAction::make()
-                    ->label('Bugs & Features')
+                    ->label(trans('dashboard/index.sections.intro-developers.button_issues'))
                     ->icon('tabler-brand-github')
-                    ->url('https://github.com/pelican-dev/panel/discussions', true),
+                    ->url('https://github.com/pelican-dev/panel/issues', true),
             ],
             'updateActions' => [
                 CreateAction::make()
-                    ->label('Read Documentation')
+                    ->label(trans('dashboard/index.sections.intro-update-available.heading'))
                     ->icon('tabler-clipboard-text')
                     ->url('https://pelican.dev/docs/panel/update', true)
                     ->color('warning'),

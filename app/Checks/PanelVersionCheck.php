@@ -25,7 +25,10 @@ class PanelVersionCheck extends Check
             ->shortSummary($isLatest ? 'up-to-date' : 'outdated');
 
         return $isLatest
-            ? $result->ok('Panel is up-to-date.')
-            : $result->failed('Installed version is `:currentVersion` but latest is `:latestVersion`.');
+            ? $result->ok(trans('admin/health.results.panelversion.ok'))
+            : $result->failed(trans('admin/health.results.panelversion.failed', [
+                'currentVersion' => $currentVersion,
+                'latestVersion' => $latestVersion,
+            ]));
     }
 }
