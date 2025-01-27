@@ -23,15 +23,16 @@ class EditMount extends EditRecord
             ->schema([
                 Section::make()->schema([
                     TextInput::make('name')
+                        ->label(trans('admin/mounts.edit.name'))
                         ->required()
-                        ->helperText('Unique name used to separate this mount from another.')
+                        ->helperText(trans('admin/mounts.edit.name_help', ['mount' => 'mount']))
                         ->maxLength(64),
                     ToggleButtons::make('read_only')
-                        ->label('Read only?')
-                        ->helperText('Is the mount read only inside the container?')
+                        ->label(trans('admin/mounts.edit.read_only'))
+                        ->helperText(trans('admin/mounts.edit.read_only_help', ['mount' => 'mount']))
                         ->options([
-                            false => 'Writeable',
-                            true => 'Read only',
+                            false => trans('admin/mounts.edit.toggles.writable'),
+                            true => trans('admin/mounts.edit.toggles.read_only'),
                         ])
                         ->icons([
                             false => 'tabler-writing',
@@ -45,12 +46,14 @@ class EditMount extends EditRecord
                         ->default(false)
                         ->required(),
                     TextInput::make('source')
+                        ->label(trans('admin/mounts.edit.source'))
                         ->required()
-                        ->helperText('File path on the host system to mount to a container.')
+                        ->helperText(trans('admin/mounts.edit.source_help', ['mount' => 'mount']))
                         ->maxLength(255),
                     TextInput::make('target')
+                        ->label(trans('admin/mounts.edit.target'))
                         ->required()
-                        ->helperText('Where the mount will be accessible inside a container.')
+                        ->helperText(trans('admin/mounts.edit.target_help', ['mount' => 'mount']))
                         ->maxLength(255),
                     ToggleButtons::make('user_mountable')
                         ->hidden()
@@ -71,7 +74,8 @@ class EditMount extends EditRecord
                         ->inline()
                         ->required(),
                     Textarea::make('description')
-                        ->helperText('A longer description for this mount.')
+                        ->label(trans('admin/mounts.edit.description'))
+                        ->helperText(trans('admin/mounts.edit.description_help', ['mount' => 'mount.']))
                         ->columnSpanFull(),
                 ])->columnSpan(1)->columns([
                     'default' => 1,
