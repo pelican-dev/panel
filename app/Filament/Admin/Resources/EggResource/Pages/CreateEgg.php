@@ -193,7 +193,7 @@ class CreateEgg extends CreateRecord
                                         ->rules(EggVariable::$validationRules['env_variable'])
                                         ->validationMessages([
                                             'unique' => 'A variable with this name already exists.',
-                                            'required' => ' The environment variable field is required. ',
+                                            'required' => ' The environment variable field is required.',
                                             '*' => 'This environment variable is reserved and cannot be used.',
                                         ])
                                         ->required(),
