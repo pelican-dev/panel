@@ -2,6 +2,9 @@
 
 namespace App\Models;
 
+use App\Contracts\Validatable;
+use App\Traits\HasValidation;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
@@ -14,15 +17,15 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property \App\Models\EggVariable $variable
  * @property \App\Models\Server $server
  */
-class ServerVariable extends Model
+class ServerVariable extends Model implements Validatable
 {
+    use HasValidation;
+
     /**
      * The resource name for this model when it is transformed into an
      * API representation using fractal.
      */
     public const RESOURCE_NAME = 'server_variable';
-
-    protected $table = 'server_variables';
 
     protected $guarded = ['id', 'created_at', 'updated_at'];
 

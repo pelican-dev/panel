@@ -1,69 +1,21 @@
 <?php
 
-namespace App\Models;
+namespace App\Traits;
 
+use App\Observers\ValidationObserver;
+use Illuminate\Container\Container;
+use Illuminate\Database\Eloquent\Attributes\ObservedBy;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
-use Illuminate\Validation\Rule;
-use Illuminate\Container\Container;
-use Illuminate\Validation\ValidationException;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use App\Exceptions\Model\DataValidationException;
-use Illuminate\Database\Eloquent\Model as IlluminateModel;
 use Illuminate\Validation\Factory as ValidationFactory;
+use Illuminate\Validation\Rule;
+use Illuminate\Validation\ValidationException;
 use Illuminate\Validation\Validator;
 
-abstract class Model extends IlluminateModel
+#[ObservedBy([ValidationObserver::class])]
+trait HasValidation
 {
-    use HasFactory;
-
-    /**
-     * Determines if the model should undergo data validation before it is saved
-     * to the database.
-     */
-    protected bool $skipValidation = false;
-
-    protected static ValidationFactory $validatorFactory;
-
-    public static array $validationRules = [];
-
-    /**
-     * Listen for the model saving event and fire off the validation
-     * function before it is saved.
-     *
-     * @throws \Illuminate\Contracts\Container\BindingResolutionException
-     */
-    protected static function boot(): void
-    {
-        parent::boot();
-
-        static::$validatorFactory = Container::getInstance()->make(ValidationFactory::class);
-
-        static::saving(function (Model $model) {
-            try {
-                $model->validate();
-            } catch (ValidationException $exception) {
-                throw new DataValidationException($exception->validator, $model);
-            }
-
-            return true;
-        });
-    }
-
-    /**
-     * Returns the model key to use for route model binding. By default, we'll
-     * assume every model uses a UUID field for this. If the model does not have
-     * a UUID and is using a different key it should be specified on the model
-     * itself.
-     *
-     * You may also optionally override this on a per-route basis by declaring
-     * the key name in the URL definition, like "{user:id}".
-     */
-    public function getRouteKeyName(): string
-    {
-        return 'uuid';
-    }
-
     /**
      * Returns the validator instance used by this model.
      */
@@ -71,7 +23,9 @@ abstract class Model extends IlluminateModel
     {
         $rules = $this->exists ? static::getRulesForUpdate($this) : static::getRules();
 
-        return static::$validatorFactory->make([], $rules);
+        $validatorFactory = Container::getInstance()->make(ValidationFactory::class);
+
+        return $validatorFactory->make([], $rules);
     }
 
     /**
@@ -132,7 +86,7 @@ abstract class Model extends IlluminateModel
      */
     public function validate(): void
     {
-        if ($this->skipValidation) {
+        if (isset($this->skipValidation)) {
             return;
         }
 

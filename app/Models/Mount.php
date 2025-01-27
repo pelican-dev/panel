@@ -2,6 +2,9 @@
 
 namespace App\Models;
 
+use App\Contracts\Validatable;
+use App\Traits\HasValidation;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Validation\Rules\NotIn;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
@@ -18,18 +21,15 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
  * @property \App\Models\Node[]|\Illuminate\Database\Eloquent\Collection $nodes
  * @property \App\Models\Server[]|\Illuminate\Database\Eloquent\Collection $servers
  */
-class Mount extends Model
+class Mount extends Model implements Validatable
 {
+    use HasValidation { getRules as getValidationRules; }
+
     /**
      * The resource name for this model when it is transformed into an
      * API representation using fractal.
      */
     public const RESOURCE_NAME = 'mount';
-
-    /**
-     * The table associated with the model.
-     */
-    protected $table = 'mounts';
 
     /**
      * Fields that are not mass assignable.
@@ -54,7 +54,7 @@ class Mount extends Model
      */
     public static function getRules(): array
     {
-        $rules = parent::getRules();
+        $rules = self::getValidationRules();
 
         $rules['source'][] = new NotIn(Mount::$invalidSourcePaths);
         $rules['target'][] = new NotIn(Mount::$invalidTargetPaths);
@@ -114,10 +114,5 @@ class Mount extends Model
     public function servers(): BelongsToMany
     {
         return $this->belongsToMany(Server::class);
-    }
-
-    public function getRouteKeyName(): string
-    {
-        return 'id';
     }
 }

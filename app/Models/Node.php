@@ -2,9 +2,13 @@
 
 namespace App\Models;
 
+use App\Contracts\Validatable;
 use App\Exceptions\Service\HasActiveServersException;
 use App\Repositories\Daemon\DaemonConfigurationRepository;
+use App\Traits\HasValidation;
 use Exception;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
@@ -47,8 +51,10 @@ use Symfony\Component\Yaml\Yaml;
  * @property \App\Models\Allocation[]|\Illuminate\Database\Eloquent\Collection $allocations
  * @property int|null $allocations_count
  */
-class Node extends Model
+class Node extends Model implements Validatable
 {
+    use HasFactory;
+    use HasValidation;
     use Notifiable;
 
     /**
@@ -60,11 +66,6 @@ class Node extends Model
     public const DAEMON_TOKEN_ID_LENGTH = 16;
 
     public const DAEMON_TOKEN_LENGTH = 64;
-
-    /**
-     * The table associated with the model.
-     */
-    protected $table = 'nodes';
 
     /**
      * The attributes excluded from the model's JSON form.
@@ -145,11 +146,6 @@ class Node extends Model
     public int $servers_sum_disk = 0;
 
     public int $servers_sum_cpu = 0;
-
-    public function getRouteKeyName(): string
-    {
-        return 'id';
-    }
 
     protected static function booted(): void
     {

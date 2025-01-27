@@ -2,6 +2,10 @@
 
 namespace App\Models;
 
+use App\Contracts\Validatable;
+use App\Traits\HasValidation;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
@@ -21,18 +25,16 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property \Illuminate\Database\Eloquent\Collection|\App\Models\Database[] $databases
  * @property int|null $databases_count
  */
-class DatabaseHost extends Model
+class DatabaseHost extends Model implements Validatable
 {
+    use HasFactory;
+    use HasValidation;
+
     /**
      * The resource name for this model when it is transformed into an
      * API representation using fractal. Also used as name for api key permissions.
      */
     public const RESOURCE_NAME = 'database_host';
-
-    /**
-     * The table associated with the model.
-     */
-    protected $table = 'database_hosts';
 
     /**
      * The attributes excluded from the model's JSON form.
@@ -68,11 +70,6 @@ class DatabaseHost extends Model
             'created_at' => 'immutable_datetime',
             'updated_at' => 'immutable_datetime',
         ];
-    }
-
-    public function getRouteKeyName(): string
-    {
-        return 'id';
     }
 
     public function nodes(): BelongsToMany

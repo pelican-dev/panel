@@ -25,7 +25,7 @@ return new class extends Migration
             $table->json('permissions');
         });
 
-        foreach (ApiKey::query() as $apiKey) {
+        foreach (ApiKey::all() as $apiKey) {
             $permissions = [
                 Server::RESOURCE_NAME => intval($apiKey->r_servers ?? 0),
                 Node::RESOURCE_NAME => intval($apiKey->r_nodes ?? 0),

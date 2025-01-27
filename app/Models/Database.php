@@ -2,7 +2,11 @@
 
 namespace App\Models;
 
+use App\Contracts\Validatable;
+use App\Traits\HasValidation;
 use Illuminate\Database\Eloquent\Casts\Attribute;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Facades\DB;
 
@@ -21,8 +25,11 @@ use Illuminate\Support\Facades\DB;
  * @property \App\Models\Server $server
  * @property \App\Models\DatabaseHost $host
  */
-class Database extends Model
+class Database extends Model implements Validatable
 {
+    use HasFactory;
+    use HasValidation;
+
     /**
      * The resource name for this model when it is transformed into an
      * API representation using fractal. Also used as name for api key permissions.
@@ -30,11 +37,6 @@ class Database extends Model
     public const RESOURCE_NAME = 'server_database';
 
     public const DEFAULT_CONNECTION_NAME = 'dynamic';
-
-    /**
-     * The table associated with the model.
-     */
-    protected $table = 'databases';
 
     /**
      * The attributes excluded from the model's JSON form.
@@ -66,11 +68,6 @@ class Database extends Model
             'max_connections' => 'integer',
             'password' => 'encrypted',
         ];
-    }
-
-    public function getRouteKeyName(): string
-    {
-        return $this->getKeyName();
     }
 
     /**

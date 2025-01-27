@@ -13,7 +13,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        php: [8.2, 8.3]
+        php: [8.2, 8.3, 8.4]
         database: ["mysql:8"]
     services:
       database:
@@ -86,7 +86,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        php: [8.2, 8.3]
+        php: [8.2, 8.3, 8.4]
         database: ["mariadb:10.6", "mariadb:10.11", "mariadb:11.4"]
     services:
       database:
@@ -159,7 +159,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        php: [8.2, 8.3]
+        php: [8.2, 8.3, 8.4]
     env:
       APP_ENV: testing
       APP_DEBUG: "false"
