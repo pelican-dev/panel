@@ -8,14 +8,7 @@ use App\Facades\Activity;
 use App\Models\ActivityLog;
 use App\Models\ApiKey;
 use App\Models\User;
-use App\Services\Helpers\LanguageService;
-use App\Services\Users\ToggleTwoFactorService;
-use App\Services\Users\TwoFactorSetupService;
 use App\Services\Users\UserUpdateService;
-use chillerlan\QRCode\Common\EccLevel;
-use chillerlan\QRCode\Common\Version;
-use chillerlan\QRCode\QRCode;
-use chillerlan\QRCode\QROptions;
 use DateTimeZone;
 use Filament\Forms\Components\Actions;
 use Filament\Forms\Components\Actions\Action;
@@ -27,7 +20,6 @@ use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Tabs;
 use Filament\Forms\Components\Tabs\Tab;
 use Filament\Forms\Components\TagsInput;
-use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Get;
 use Filament\Notifications\Notification;
@@ -47,13 +39,6 @@ use Laravel\Socialite\Facades\Socialite;
  */
 class EditProfile extends BaseEditProfile
 {
-    private ToggleTwoFactorService $toggleTwoFactorService;
-
-    public function boot(ToggleTwoFactorService $toggleTwoFactorService): void
-    {
-        $this->toggleTwoFactorService = $toggleTwoFactorService;
-    }
-
     public function getMaxWidth(): MaxWidth|string
     {
         return config('panel.filament.display-width', 'screen-2xl');
@@ -174,84 +159,6 @@ class EditProfile extends BaseEditProfile
                                         }
 
                                         return [Actions::make($actions)];
-                                    }),
-
-                                Tab::make('2FA')
-                                    ->icon('tabler-shield-lock')
-                                    ->schema(function (TwoFactorSetupService $setupService) {
-                                        if ($this->getUser()->use_totp) {
-                                            return [
-                                                Placeholder::make('2fa-already-enabled')
-                                                    ->label('Two Factor Authentication is currently enabled!'),
-                                                Textarea::make('backup-tokens')
-                                                    ->hidden(fn () => !cache()->get("users.{$this->getUser()->id}.2fa.tokens"))
-                                                    ->rows(10)
-                                                    ->readOnly()
-                                                    ->dehydrated(false)
-                                                    ->formatStateUsing(fn () => cache()->get("users.{$this->getUser()->id}.2fa.tokens"))
-                                                    ->helperText('These will not be shown again!')
-                                                    ->label('Backup Tokens:'),
-                                                TextInput::make('2fa-disable-code')
-                                                    ->label('Disable 2FA')
-                                                    ->helperText('Enter your current 2FA code to disable Two Factor Authentication'),
-                                            ];
-                                        }
-
-                                        ['image_url_data' => $url, 'secret' => $secret] = cache()->remember(
-                                            "users.{$this->getUser()->id}.2fa.state",
-                                            now()->addMinutes(5), fn () => $setupService->handle($this->getUser())
-                                        );
-
-                                        $options = new QROptions([
-                                            'svgLogo' => public_path('pelican.svg'),
-                                            'svgLogoScale' => 0.05,
-                                            'addLogoSpace' => true,
-                                            'logoSpaceWidth' => 13,
-                                            'logoSpaceHeight' => 13,
-                                            'version' => Version::AUTO,
-                                            // 'outputInterface' => QRSvgWithLogo::class,
-                                            'outputBase64' => false,
-                                            'eccLevel' => EccLevel::H, // ECC level H is necessary when using logos
-                                            'addQuietzone' => true,
-                                            // 'drawLightModules' => true,
-                                            'connectPaths' => true,
-                                            'drawCircularModules' => true,
-                                            // 'circleRadius' => 0.45,
-                                            'svgDefs' => '
-                                                <linearGradient id="gradient" x1="100%" y2="100%">
-                                                    <stop stop-color="#7dd4fc" offset="0"/>
-                                                    <stop stop-color="#38bdf8" offset="0.5"/>
-                                                    <stop stop-color="#0369a1" offset="1"/>
-                                                </linearGradient>
-                                                <style><![CDATA[
-                                                    .dark{fill: url(#gradient);}
-                                                    .light{fill: #000;}
-                                                ]]></style>
-                                            ',
-                                        ]);
-
-                                        // https://github.com/chillerlan/php-qrcode/blob/main/examples/svgWithLogo.php
-
-                                        $image = (new QRCode($options))->render($url);
-
-                                        return [
-                                            Placeholder::make('qr')
-                                                ->label('Scan QR Code')
-                                                ->content(fn () => new HtmlString("
-                                                <div style='width: 300px; background-color: rgb(24, 24, 27);'>$image</div>
-                                            "))
-                                                ->helperText('Setup Key: ' . $secret),
-                                            TextInput::make('2facode')
-                                                ->label('Code')
-                                                ->requiredWith('2fapassword')
-                                                ->helperText('Scan the QR code above using your two-step authentication app, then enter the code generated.'),
-                                            TextInput::make('2fapassword')
-                                                ->label('Current Password')
-                                                ->requiredWith('2facode')
-                                                ->currentPassword()
-                                                ->password()
-                                                ->helperText('Enter your current password to verify.'),
-                                        ];
                                     }),
                                 Tab::make('API Keys')
                                     ->icon('tabler-key')

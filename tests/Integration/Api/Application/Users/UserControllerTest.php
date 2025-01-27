@@ -25,8 +25,8 @@ class UserControllerTest extends ApplicationApiIntegrationTestCase
         $response->assertJsonStructure([
             'object',
             'data' => [
-                ['object', 'attributes' => ['id', 'external_id', 'uuid', 'username', 'email', 'language', 'root_admin', '2fa_enabled', '2fa', 'created_at', 'updated_at']],
-                ['object', 'attributes' => ['id', 'external_id', 'uuid', 'username', 'email', 'language', 'root_admin', '2fa_enabled', '2fa', 'created_at', 'updated_at']],
+                ['object', 'attributes' => ['id', 'external_id', 'uuid', 'username', 'email', 'language', 'root_admin', 'created_at', 'updated_at']],
+                ['object', 'attributes' => ['id', 'external_id', 'uuid', 'username', 'email', 'language', 'root_admin', 'created_at', 'updated_at']],
             ],
             'meta' => ['pagination' => ['total', 'count', 'per_page', 'current_page', 'total_pages']],
         ]);
@@ -55,8 +55,6 @@ class UserControllerTest extends ApplicationApiIntegrationTestCase
                     'email' => $this->getApiUser()->email,
                     'language' => $this->getApiUser()->language,
                     'root_admin' => $this->getApiUser()->isRootAdmin(),
-                    '2fa_enabled' => (bool) $this->getApiUser()->totp_enabled,
-                    '2fa' => (bool) $this->getApiUser()->totp_enabled,
                     'created_at' => $this->formatTimestamp($this->getApiUser()->created_at),
                     'updated_at' => $this->formatTimestamp($this->getApiUser()->updated_at),
                 ],
@@ -71,8 +69,6 @@ class UserControllerTest extends ApplicationApiIntegrationTestCase
                     'email' => $user->email,
                     'language' => $user->language,
                     'root_admin' => (bool) $user->isRootAdmin(),
-                    '2fa_enabled' => (bool) $user->totp_enabled,
-                    '2fa' => (bool) $user->totp_enabled,
                     'created_at' => $this->formatTimestamp($user->created_at),
                     'updated_at' => $this->formatTimestamp($user->updated_at),
                 ],
@@ -91,7 +87,7 @@ class UserControllerTest extends ApplicationApiIntegrationTestCase
         $response->assertJsonCount(2);
         $response->assertJsonStructure([
             'object',
-            'attributes' => ['id', 'external_id', 'uuid', 'username', 'email', 'language', 'root_admin', '2fa', 'created_at', 'updated_at'],
+            'attributes' => ['id', 'external_id', 'uuid', 'username', 'email', 'language', 'root_admin', 'created_at', 'updated_at'],
         ]);
 
         $response->assertJson([
@@ -104,7 +100,6 @@ class UserControllerTest extends ApplicationApiIntegrationTestCase
                 'email' => $user->email,
                 'language' => $user->language,
                 'root_admin' => (bool) $user->root_admin,
-                '2fa' => (bool) $user->totp_enabled,
                 'created_at' => $this->formatTimestamp($user->created_at),
                 'updated_at' => $this->formatTimestamp($user->updated_at),
             ],
@@ -125,7 +120,7 @@ class UserControllerTest extends ApplicationApiIntegrationTestCase
         $response->assertJsonStructure([
             'object',
             'attributes' => [
-                'id', 'external_id', 'uuid', 'username', 'email', 'language', 'root_admin', '2fa', 'created_at', 'updated_at',
+                'id', 'external_id', 'uuid', 'username', 'email', 'language', 'root_admin', 'created_at', 'updated_at',
                 'relationships' => ['servers' => ['object', 'data' => [['object', 'attributes' => []]]]],
             ],
         ]);
@@ -243,7 +238,7 @@ class UserControllerTest extends ApplicationApiIntegrationTestCase
         $response->assertJsonCount(2);
         $response->assertJsonStructure([
             'object',
-            'attributes' => ['id', 'external_id', 'uuid', 'username', 'email', 'language', 'root_admin', '2fa', 'created_at', 'updated_at'],
+            'attributes' => ['id', 'external_id', 'uuid', 'username', 'email', 'language', 'root_admin', 'created_at', 'updated_at'],
         ]);
 
         $this->assertDatabaseHas('users', ['username' => 'new.test.name', 'email' => 'new@emailtest.com']);

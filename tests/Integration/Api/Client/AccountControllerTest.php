@@ -29,7 +29,6 @@ class AccountControllerTest extends ClientApiIntegrationTestCase
                 'image' => 'https://gravatar.com/avatar/' . md5(Str::lower($user->email)),
                 'admin' => false,
                 'root_admin' => false,
-                '2fa_enabled' => false,
                 'created_at' => $this->formatTimestamp($user->created_at),
                 'updated_at' => $this->formatTimestamp($user->updated_at),
             ],

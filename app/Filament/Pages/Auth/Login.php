@@ -8,11 +8,11 @@ use Filament\Forms\Components\Actions;
 use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\Component;
 use Filament\Forms\Components\TextInput;
-use Filament\Pages\Auth\Login as BaseLogin;
+use Vormkracht10\TwoFactorAuth\Http\Livewire\Auth\Login as TwoFactorLogin;
 use Filament\Support\Colors\Color;
 use Illuminate\Validation\ValidationException;
 
-class Login extends BaseLogin
+class Login extends TwoFactorLogin
 {
     protected function getForms(): array
     {

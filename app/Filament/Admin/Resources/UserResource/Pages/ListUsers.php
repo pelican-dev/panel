@@ -9,7 +9,6 @@ use Filament\Resources\Pages\ListRecords;
 use Filament\Tables\Actions\BulkActionGroup;
 use Filament\Tables\Actions\DeleteBulkAction;
 use Filament\Tables\Actions\EditAction;
-use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
@@ -40,12 +39,6 @@ class ListUsers extends ListRecords
                 TextColumn::make('email')
                     ->searchable()
                     ->icon('tabler-mail'),
-                IconColumn::make('use_totp')
-                    ->label('2FA')
-                    ->visibleFrom('lg')
-                    ->icon(fn (User $user) => $user->use_totp ? 'tabler-lock' : 'tabler-lock-open-off')
-                    ->boolean()
-                    ->sortable(),
                 TextColumn::make('roles.name')
                     ->label('Roles')
                     ->badge()
