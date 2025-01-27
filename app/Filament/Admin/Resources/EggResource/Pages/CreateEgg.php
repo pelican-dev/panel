@@ -4,6 +4,7 @@ namespace App\Filament\Admin\Resources\EggResource\Pages;
 
 use AbdelhamidErrahmouni\FilamentMonacoEditor\MonacoEditor;
 use App\Filament\Admin\Resources\EggResource;
+use App\Models\EggVariable;
 use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\Fieldset;
 use Filament\Forms\Components\Hidden;
@@ -189,8 +190,11 @@ class CreateEgg extends CreateRecord
                                         ->hintIcon('tabler-code')
                                         ->hintIconTooltip(fn ($state) => "{{{$state}}}")
                                         ->unique(modifyRuleUsing: fn (Unique $rule, Get $get) => $rule->where('egg_id', $get('../../id')), ignoreRecord: true)
+                                        ->rules(EggVariable::$validationRules['env_variable'])
                                         ->validationMessages([
                                             'unique' => 'A variable with this name already exists.',
+                                            'required' => ' The environment variable field is required.',
+                                            '*' => 'This environment variable is reserved and cannot be used.',
                                         ])
                                         ->required(),
                                     TextInput::make('default_value')->maxLength(255),
