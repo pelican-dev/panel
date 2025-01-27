@@ -162,7 +162,7 @@ class Settings extends ServerFormPage
                                     ->label('Connection')
                                     ->columnSpan(1)
                                     ->disabled()
-                                    ->suffixAction(CopyAction::make())
+                                    ->suffixAction(fn () => request()->isSecure() ? CopyAction::make() : null)
                                     ->hintAction(
                                         Action::make('connect_sftp')
                                             ->label('Connect to SFTP')
@@ -182,7 +182,7 @@ class Settings extends ServerFormPage
                                 TextInput::make('username')
                                     ->label('Username')
                                     ->columnSpan(1)
-                                    ->suffixAction(CopyAction::make())
+                                    ->suffixAction(fn () => request()->isSecure() ? CopyAction::make() : null)
                                     ->disabled()
                                     ->formatStateUsing(fn (Server $server) => auth()->user()->username . '.' . $server->uuid_short),
                                 Placeholder::make('password')

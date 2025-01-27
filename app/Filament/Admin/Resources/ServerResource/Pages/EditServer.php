@@ -136,7 +136,7 @@ class EditServer extends EditRecord
                                     ->columnSpanFull(),
 
                                 TextInput::make('uuid')
-                                    ->suffixAction(CopyAction::make())
+                                    ->suffixAction(fn () => request()->isSecure() ? CopyAction::make() : null)
                                     ->columnSpan([
                                         'default' => 2,
                                         'sm' => 1,
@@ -147,7 +147,7 @@ class EditServer extends EditRecord
                                     ->dehydrated(false),
                                 TextInput::make('uuid_short')
                                     ->label('Short UUID')
-                                    ->suffixAction(CopyAction::make())
+                                    ->suffixAction(fn () => request()->isSecure() ? CopyAction::make() : null)
                                     ->columnSpan([
                                         'default' => 2,
                                         'sm' => 1,
@@ -554,7 +554,7 @@ class EditServer extends EditRecord
                                     ->autosize(),
 
                                 Textarea::make('defaultStartup')
-                                    ->hintAction(CopyAction::make())
+                                    ->hintAction(fn () => request()->isSecure() ? CopyAction::make() : null)
                                     ->label('Default Startup Command')
                                     ->disabled()
                                     ->autosize()
