@@ -34,7 +34,7 @@ final class DiscordProvider extends OAuthProvider
                     TextInput::make('_noenv_redirect')
                         ->label('Redirect URL')
                         ->disabled()
-                        ->hintAction(CopyAction::make())
+                        ->hintAction(fn () => request()->isSecure() ? CopyAction::make() : null)
                         ->formatStateUsing(fn () => config('app.url') . (Str::endsWith(config('app.url'), '/') ? '' : '/') . 'auth/oauth/callback/discord'),
                 ]),
         ], parent::getSetupSteps());
