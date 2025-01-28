@@ -72,11 +72,12 @@ class EditServer extends EditRecord
                     ->columnSpanFull()
                     ->tabs([
                         Tab::make('Information')
+                            ->label(trans('admin/server.tabs.information'))
                             ->icon('tabler-info-circle')
                             ->schema([
                                 TextInput::make('name')
                                     ->prefixIcon('tabler-server')
-                                    ->label('Display Name')
+                                    ->label(trans('admin/server.name'))
                                     ->suffixAction(Action::make('random')
                                         ->icon('tabler-dice-' . random_int(1, 6))
                                         ->action(function (Set $set, Get $get) {
@@ -98,7 +99,7 @@ class EditServer extends EditRecord
 
                                 Select::make('owner_id')
                                     ->prefixIcon('tabler-user')
-                                    ->label('Owner')
+                                    ->label(trans('admin/server.owner'))
                                     ->columnSpan([
                                         'default' => 2,
                                         'sm' => 1,
@@ -112,7 +113,7 @@ class EditServer extends EditRecord
                                     ->required(),
 
                                 ToggleButtons::make('condition')
-                                    ->label('Server Status')
+                                    ->label(trans('admin/server.edit_server.server_status'))
                                     ->formatStateUsing(fn (Server $server) => $server->condition)
                                     ->options(fn ($state) => collect(array_merge(ContainerStatus::cases(), ServerState::cases()))
                                         ->filter(fn ($condition) => $condition->value === $state)
@@ -132,10 +133,11 @@ class EditServer extends EditRecord
                                     ]),
 
                                 Textarea::make('description')
-                                    ->label('Description')
+                                    ->label(trans('admin/server.description'))
                                     ->columnSpanFull(),
 
                                 TextInput::make('uuid')
+                                    ->label(trans('admin/server.edit_server.uuid'))
                                     ->suffixAction(fn () => request()->isSecure() ? CopyAction::make() : null)
                                     ->columnSpan([
                                         'default' => 2,
@@ -146,7 +148,7 @@ class EditServer extends EditRecord
                                     ->readOnly()
                                     ->dehydrated(false),
                                 TextInput::make('uuid_short')
-                                    ->label('Short UUID')
+                                    ->label(trans('admin/server.edit_server.short_uuid'))
                                     ->suffixAction(fn () => request()->isSecure() ? CopyAction::make() : null)
                                     ->columnSpan([
                                         'default' => 2,
@@ -157,7 +159,7 @@ class EditServer extends EditRecord
                                     ->readOnly()
                                     ->dehydrated(false),
                                 TextInput::make('external_id')
-                                    ->label('External ID')
+                                    ->label(trans('admin/server.external_id'))
                                     ->columnSpan([
                                         'default' => 2,
                                         'sm' => 1,
@@ -178,6 +180,7 @@ class EditServer extends EditRecord
                                     ->disabled(),
                             ]),
                         Tab::make('Environment')
+                            ->label(trans('admin/server.tabs.environment_configuration'))
                             ->icon('tabler-brand-docker')
                             ->schema([
                                 Fieldset::make('Resource Limits')
@@ -193,13 +196,13 @@ class EditServer extends EditRecord
                                             ->columnSpanFull()
                                             ->schema([
                                                 ToggleButtons::make('unlimited_cpu')
-                                                    ->label('CPU')->inlineLabel()->inline()
+                                                    ->label(trans('admin/server.cpu'))->inlineLabel()->inline()
                                                     ->afterStateUpdated(fn (Set $set) => $set('cpu', 0))
                                                     ->formatStateUsing(fn (Get $get) => $get('cpu') == 0)
                                                     ->live()
                                                     ->options([
-                                                        true => 'Unlimited',
-                                                        false => 'Limited',
+                                                        true => trans('admin/server.unlimited'),
+                                                        false => trans('admin/server.limited'),
                                                     ])
                                                     ->colors([
                                                         true => 'primary',
@@ -210,7 +213,7 @@ class EditServer extends EditRecord
                                                 TextInput::make('cpu')
                                                     ->dehydratedWhenHidden()
                                                     ->hidden(fn (Get $get) => $get('unlimited_cpu'))
-                                                    ->label('CPU Limit')->inlineLabel()
+                                                    ->label(trans('admin/server.cpu_limit'))->inlineLabel()
                                                     ->suffix('%')
                                                     ->required()
                                                     ->columnSpan(2)
@@ -222,13 +225,13 @@ class EditServer extends EditRecord
                                             ->columnSpanFull()
                                             ->schema([
                                                 ToggleButtons::make('unlimited_mem')
-                                                    ->label('Memory')->inlineLabel()->inline()
+                                                    ->label(trans('admin/server.memory'))->inlineLabel()->inline()
                                                     ->afterStateUpdated(fn (Set $set) => $set('memory', 0))
                                                     ->formatStateUsing(fn (Get $get) => $get('memory') == 0)
                                                     ->live()
                                                     ->options([
-                                                        true => 'Unlimited',
-                                                        false => 'Limited',
+                                                        true => trans('admin/server.unlimited'),
+                                                        false => trans('admin/server.limited'),
                                                     ])
                                                     ->colors([
                                                         true => 'primary',
@@ -239,7 +242,7 @@ class EditServer extends EditRecord
                                                 TextInput::make('memory')
                                                     ->dehydratedWhenHidden()
                                                     ->hidden(fn (Get $get) => $get('unlimited_mem'))
-                                                    ->label('Memory Limit')->inlineLabel()
+                                                    ->label(trans('admin/server.memory_limit'))->inlineLabel()
                                                     ->suffix(config('panel.use_binary_prefix') ? 'MiB' : 'MB')
                                                     ->required()
                                                     ->columnSpan(2)
@@ -252,13 +255,13 @@ class EditServer extends EditRecord
                                             ->columnSpanFull()
                                             ->schema([
                                                 ToggleButtons::make('unlimited_disk')
-                                                    ->label('Disk Space')->inlineLabel()->inline()
+                                                    ->label(trans('admin/server.disk'))->inlineLabel()->inline()
                                                     ->live()
                                                     ->afterStateUpdated(fn (Set $set) => $set('disk', 0))
                                                     ->formatStateUsing(fn (Get $get) => $get('disk') == 0)
                                                     ->options([
-                                                        true => 'Unlimited',
-                                                        false => 'Limited',
+                                                        true => trans('admin/server.unlimited'),
+                                                        false => trans('admin/server.limited'),
                                                     ])
                                                     ->colors([
                                                         true => 'primary',
@@ -269,7 +272,7 @@ class EditServer extends EditRecord
                                                 TextInput::make('disk')
                                                     ->dehydratedWhenHidden()
                                                     ->hidden(fn (Get $get) => $get('unlimited_disk'))
-                                                    ->label('Disk Space Limit')->inlineLabel()
+                                                    ->label(trans('admin/server.disk_limit'))->inlineLabel()
                                                     ->suffix(config('panel.use_binary_prefix') ? 'MiB' : 'MB')
                                                     ->required()
                                                     ->columnSpan(2)
@@ -279,6 +282,7 @@ class EditServer extends EditRecord
                                     ]),
 
                                 Fieldset::make('Advanced Limits')
+                                    ->label(trans('admin/server.advanced_limits'))
                                     ->columns([
                                         'default' => 1,
                                         'sm' => 2,
@@ -295,14 +299,14 @@ class EditServer extends EditRecord
                                                     ->columnSpanFull()
                                                     ->schema([
                                                         ToggleButtons::make('cpu_pinning')
-                                                            ->label('CPU Pinning')->inlineLabel()->inline()
+                                                            ->label(trans('admin/server.cpu_pin'))->inlineLabel()->inline()
                                                             ->default(false)
                                                             ->afterStateUpdated(fn (Set $set) => $set('threads', []))
                                                             ->formatStateUsing(fn (Get $get) => !empty($get('threads')))
                                                             ->live()
                                                             ->options([
-                                                                false => 'Disabled',
-                                                                true => 'Enabled',
+                                                                false => trans('admin/server.disabled'),
+                                                                true => trans('admin/server.enabled'),
                                                             ])
                                                             ->colors([
                                                                 false => 'success',
@@ -313,16 +317,16 @@ class EditServer extends EditRecord
                                                         TagsInput::make('threads')
                                                             ->dehydratedWhenHidden()
                                                             ->hidden(fn (Get $get) => !$get('cpu_pinning'))
-                                                            ->label('Pinned Threads')->inlineLabel()
+                                                            ->label(trans('admin/server.threads'))->inlineLabel()
                                                             ->required(fn (Get $get) => $get('cpu_pinning'))
                                                             ->columnSpan(2)
                                                             ->separator()
                                                             ->splitKeys([','])
-                                                            ->placeholder('Add pinned thread, e.g. 0 or 2-4'),
+                                                            ->placeholder(trans('admin/server.pin_help')),
                                                     ]),
                                                 ToggleButtons::make('swap_support')
                                                     ->live()
-                                                    ->label('Swap Memory')->inlineLabel()->inline()
+                                                    ->label(trans('admin/server.swap'))->inlineLabel()->inline()
                                                     ->columnSpan(2)
                                                     ->afterStateUpdated(function ($state, Set $set) {
                                                         $value = match ($state) {
@@ -343,9 +347,9 @@ class EditServer extends EditRecord
                                                         };
                                                     })
                                                     ->options([
-                                                        'unlimited' => 'Unlimited',
-                                                        'limited' => 'Limited',
-                                                        'disabled' => 'Disabled',
+                                                        'unlimited' => trans('admin/server.unlimited'),
+                                                        'limited' => trans('admin/server.limited'),
+                                                        'disabled' => trans('admin/server.disabled'),
                                                     ])
                                                     ->colors([
                                                         'unlimited' => 'primary',
@@ -359,7 +363,7 @@ class EditServer extends EditRecord
                                                         'disabled', 'unlimited', true => true,
                                                         default => false,
                                                     })
-                                                    ->label('Swap Memory')->inlineLabel()
+                                                    ->label(trans('admin/server.swap'))->inlineLabel()
                                                     ->suffix(config('panel.use_binary_prefix') ? 'MiB' : 'MB')
                                                     ->minValue(-1)
                                                     ->columnSpan(2)
@@ -376,11 +380,11 @@ class EditServer extends EditRecord
                                             ->columnSpanFull()
                                             ->schema([
                                                 ToggleButtons::make('oom_killer')
-                                                    ->label('OOM Killer')->inlineLabel()->inline()
+                                                    ->label(trans('admin/server.oom'))->inlineLabel()->inline()
                                                     ->columnSpan(2)
                                                     ->options([
-                                                        false => 'Disabled',
-                                                        true => 'Enabled',
+                                                        false => trans('admin/server.disabled'),
+                                                        true => trans('admin/server.enabled'),
                                                     ])
                                                     ->colors([
                                                         false => 'success',
@@ -393,7 +397,7 @@ class EditServer extends EditRecord
                                     ]),
 
                                 Fieldset::make('Feature Limits')
-                                    ->inlineLabel()
+                                    ->label(trans('admin/server.feature_limits'))->inlineLabel()
                                     ->columns([
                                         'default' => 1,
                                         'sm' => 2,
@@ -421,6 +425,7 @@ class EditServer extends EditRecord
                                             ->numeric(),
                                     ]),
                                 Fieldset::make('Docker Settings')
+                                    ->label(trans('admin/server.docker_settings'))
                                     ->columns([
                                         'default' => 1,
                                         'sm' => 2,
@@ -429,7 +434,7 @@ class EditServer extends EditRecord
                                     ])
                                     ->schema([
                                         Select::make('select_image')
-                                            ->label('Image Name')
+                                            ->label(trans('admin/server.image_name'))
                                             ->live()
                                             ->afterStateUpdated(fn (Set $set, $state) => $set('image', $state))
                                             ->options(function ($state, Get $get, Set $set) {
@@ -454,7 +459,7 @@ class EditServer extends EditRecord
                                             ]),
 
                                         TextInput::make('image')
-                                            ->label('Image')
+                                            ->label(trans('admin/server.image'))
                                             ->required()
                                             ->afterStateUpdated(function ($state, Get $get, Set $set) {
                                                 $egg = Egg::query()->find($get('egg_id'));
@@ -466,7 +471,7 @@ class EditServer extends EditRecord
                                                     $set('select_image', 'ghcr.io/custom-image');
                                                 }
                                             })
-                                            ->placeholder('Enter a custom Image')
+                                            ->placeholder(trans('admin/server.image_placeholder'))
                                             ->columnSpan([
                                                 'default' => 1,
                                                 'sm' => 2,
@@ -475,9 +480,9 @@ class EditServer extends EditRecord
                                             ]),
 
                                         KeyValue::make('docker_labels')
-                                            ->label('Container Labels')
-                                            ->keyLabel('Label Name')
-                                            ->valueLabel('Label Description')
+                                            ->label(trans('admin/server.container_labels'))
+                                            ->keyLabel(trans('admin/server.title'))
+                                            ->valueLabel(trans('admin/server.value'))
                                             ->columnSpanFull(),
                                     ]),
                             ]),
@@ -526,7 +531,7 @@ class EditServer extends EditRecord
                                     ),
 
                                 ToggleButtons::make('skip_scripts')
-                                    ->label('Run Egg Install Script?')->inline()
+                                    ->label(trans('admin/server.install_script'))->inline()
                                     ->columnSpan([
                                         'default' => 6,
                                         'sm' => 1,
@@ -534,8 +539,8 @@ class EditServer extends EditRecord
                                         'lg' => 2,
                                     ])
                                     ->options([
-                                        false => 'Yes',
-                                        true => 'Skip',
+                                        false => trans('admin/server.yes'),
+                                        true => trans('admin/server.skip'),
                                     ])
                                     ->colors([
                                         false => 'primary',
@@ -548,14 +553,14 @@ class EditServer extends EditRecord
                                     ->required(),
 
                                 Textarea::make('startup')
-                                    ->label('Startup Command')
+                                    ->label(trans('admin/server.startup_cmd'))
                                     ->required()
                                     ->columnSpan(6)
                                     ->autosize(),
 
                                 Textarea::make('defaultStartup')
                                     ->hintAction(fn () => request()->isSecure() ? CopyAction::make() : null)
-                                    ->label('Default Startup Command')
+                                    ->label(trans('admin/server.default_startup'))
                                     ->disabled()
                                     ->autosize()
                                     ->columnSpan(6)
@@ -674,10 +679,12 @@ class EditServer extends EditRecord
                                                     })
                                             ),
                                         TextInput::make('username')
+                                            ->label(trans('admin/databasehost.edit.table.username'))
                                             ->disabled()
                                             ->formatStateUsing(fn ($record) => $record->username)
                                             ->columnSpan(1),
                                         TextInput::make('password')
+                                            ->label(trans('admin/databasehost.edit.table.password'))
                                             ->disabled()
                                             ->password()
                                             ->revealable()
@@ -688,8 +695,9 @@ class EditServer extends EditRecord
                                             ->disabled()
                                             ->formatStateUsing(fn (Database $record) => $record->remote === '%' ? 'Anywhere ( % )' : $record->remote)
                                             ->columnSpan(1)
-                                            ->label('Connections From'),
+                                            ->label(trans('admin/databasehost.edit.table.remote')),
                                         TextInput::make('max_connections')
+                                            ->label(trans('admin/databasehost.edit.table.max_connections'))
                                             ->disabled()
                                             ->formatStateUsing(fn (Database $record) => $record->max_connections === 0 ? 'Unlimited' : $record->max_connections)
                                             ->columnSpan(1),
@@ -697,7 +705,7 @@ class EditServer extends EditRecord
                                             ->disabled()
                                             ->password()
                                             ->revealable()
-                                            ->label('JDBC Connection String')
+                                            ->label(trans('admin/databasehost.edit.table.connection_string'))
                                             ->columnSpan(2)
                                             ->formatStateUsing(fn (Database $record) => $record->jdbc),
                                     ])
@@ -749,13 +757,13 @@ class EditServer extends EditRecord
                                                 ->alphaDash()
                                                 ->prefix(fn (Server $server) => 's' . $server->id . '_')
                                                 ->hintIcon('tabler-question-mark')
-                                                ->hintIconTooltip('Leaving this blank will auto generate a random name'),
+                                                ->hintIconTooltip(trans('admin/databasehost.edit.table.name_helper')),
                                             TextInput::make('remote')
                                                 ->columnSpan(1)
                                                 ->regex('/^[\w\-\/.%:]+$/')
-                                                ->label('Connections From')
+                                                ->label(trans('admin/databasehost.edit.table.remote'))
                                                 ->hintIcon('tabler-question-mark')
-                                                ->hintIconTooltip('Where connections should be allowed from. Leave blank to allow connections from anywhere.'),
+                                                ->hintIconTooltip(trans('admin/databasehost.edit.table.remote_helper')),
                                         ]),
                                 ])->alignCenter()->columnSpanFull(),
                             ]),
@@ -775,7 +783,7 @@ class EditServer extends EditRecord
                                             ->schema([
                                                 Forms\Components\Actions::make([
                                                     Action::make('toggleInstall')
-                                                        ->label('Toggle Install Status')
+                                                        ->label(trans('admin/server.toggle_install'))
                                                         ->disabled(fn (Server $server) => $server->isSuspended())
                                                         ->action(function (ToggleInstallService $service, Server $server) {
                                                             $service->handle($server);
@@ -784,47 +792,47 @@ class EditServer extends EditRecord
                                                         }),
                                                 ])->fullWidth(),
                                                 ToggleButtons::make('')
-                                                    ->hint('If you need to change the install status from uninstalled to installed, or vice versa, you may do so with this button.'),
+                                                    ->hint(trans('admin/server.edit_server.toggle_install_help')),
                                             ]),
                                         Grid::make()
                                             ->columnSpan(3)
                                             ->schema([
                                                 Forms\Components\Actions::make([
                                                     Action::make('toggleSuspend')
-                                                        ->label('Suspend')
+                                                        ->label(trans('admin/server.suspend'))
                                                         ->color('warning')
                                                         ->hidden(fn (Server $server) => $server->isSuspended())
                                                         ->action(function (SuspensionService $suspensionService, Server $server) {
                                                             try {
                                                                 $suspensionService->handle($server, SuspendAction::Suspend);
                                                             } catch (\Exception $exception) {
-                                                                Notification::make()->warning()->title('Server Suspension')->body($exception->getMessage())->send();
+                                                                Notification::make()->warning()->title(trans('admin/server.notifications.server_suspension', ['server' => 'Server']))->body($exception->getMessage())->send();
                                                             }
-                                                            Notification::make()->success()->title('Server Suspended!')->send();
+                                                            Notification::make()->success()->title(trans('admin/server.notifications.server_suspended', ['server' => 'Server']))->send();
 
                                                             $this->refreshFormData(['status', 'docker']);
                                                         }),
                                                     Action::make('toggleUnsuspend')
-                                                        ->label('Unsuspend')
+                                                        ->label(trans('admin/server.unsuspend'))
                                                         ->color('success')
                                                         ->hidden(fn (Server $server) => !$server->isSuspended())
                                                         ->action(function (SuspensionService $suspensionService, Server $server) {
                                                             try {
                                                                 $suspensionService->handle($server, SuspendAction::Unsuspend);
                                                             } catch (\Exception $exception) {
-                                                                Notification::make()->warning()->title('Server Suspension')->body($exception->getMessage())->send();
+                                                                Notification::make()->warning()->title(trans('admin/server.notifications.server_suspension', ['server' => 'Server']))->body($exception->getMessage())->send();
                                                             }
-                                                            Notification::make()->success()->title('Server Unsuspended!')->send();
+                                                            Notification::make()->success()->title(trans('admin/server.notifications.server_unsuspended', ['server' => 'Server']))->send();
 
                                                             $this->refreshFormData(['status', 'docker']);
                                                         }),
                                                 ])->fullWidth(),
                                                 ToggleButtons::make('')
                                                     ->hidden(fn (Server $server) => $server->isSuspended())
-                                                    ->hint('This will suspend the server, stop any running processes, and immediately block the user from being able to access their files or otherwise manage the server through the panel or API.'),
+                                                    ->hint(trans('admin/server.notifications.server_suspend_help')),
                                                 ToggleButtons::make('')
                                                     ->hidden(fn (Server $server) => !$server->isSuspended())
-                                                    ->hint('This will unsuspend the server and restore normal user access.'),
+                                                    ->hint(trans('admin/server.notifications.server_unsuspend_help')),
                                             ]),
                                         Grid::make()
                                             ->columnSpan(3)
@@ -869,13 +877,13 @@ class EditServer extends EditRecord
                                                         ->label('Reinstall')
                                                         ->color('danger')
                                                         ->requiresConfirmation()
-                                                        ->modalHeading('Are you sure you want to reinstall this server?')
-                                                        ->modalDescription('!! This can result in unrecoverable data loss !!')
+                                                        ->modalHeading(trans('admin/server.edit_server.reinstall_modal_heading'))
+                                                        ->modalDescription(trans('admin/server.edit_server.reinstall_modal_description'))
                                                         ->disabled(fn (Server $server) => $server->isSuspended())
                                                         ->action(fn (ReinstallServerService $service, Server $server) => $service->handle($server)),
                                                 ])->fullWidth(),
                                                 ToggleButtons::make('')
-                                                    ->hint('This will reinstall the server with the assigned egg install script.'),
+                                                    ->hint(trans('admin/server.edit_server.reinstall_help')),
                                             ]),
                                     ]),
                             ]),
@@ -902,7 +910,7 @@ class EditServer extends EditRecord
             Actions\Action::make('Delete')
                 ->successRedirectUrl(route('filament.admin.resources.servers.index'))
                 ->color('danger')
-                ->label('Delete')
+                ->label(trans('filament-actions::delete.single.modal.actions.delete.label'))
                 ->requiresConfirmation()
                 ->action(function (Server $server, ServerDeletionService $service) {
                     $service->handle($server);
@@ -911,7 +919,7 @@ class EditServer extends EditRecord
                 })
                 ->authorize(fn (Server $server) => auth()->user()->can('delete server', $server)),
             Actions\Action::make('console')
-                ->label('Console')
+                ->label(trans('admin/server.edit_server.console'))
                 ->icon('tabler-terminal')
                 ->url(fn (Server $server) => Console::getUrl(panel: 'server', tenant: $server)),
             $this->getSaveFormAction()->formId('form'),

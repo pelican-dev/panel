@@ -26,9 +26,11 @@ return [
         'linked_nodes_help' => 'This setting only defaults to this :databasehost when adding a :database to a :server on the selected :node.',
         'connection_error' => 'Error connecting to :databasehost',
         'table' => [
+            'name_helper' => 'Leaving this blank will auto generate a random name',
             'username' => 'Username',
             'password' => 'Password',
             'remote' => 'Connections From',
+            'remote_helper' => 'Where connections should be allowed from. Leave blank to allow connections from anywhere.',
             'max_connections' => 'Max Connections',
             'created_at' => 'Created At',
             'connection_string' => 'JDBC Connection String',
