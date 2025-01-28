@@ -8,7 +8,7 @@ use App\Models\Server;
 use Illuminate\Database\ConnectionInterface;
 use App\Repositories\Daemon\DaemonServerRepository;
 use App\Services\Databases\DatabaseManagementService;
-use App\Exceptions\Http\Connection\DaemonConnectionException;
+use Illuminate\Http\Client\ConnectionException;
 
 class ServerDeletionService
 {
@@ -43,12 +43,12 @@ class ServerDeletionService
     {
         try {
             $this->daemonServerRepository->setServer($server)->delete();
-        } catch (DaemonConnectionException $exception) {
+        } catch (ConnectionException $exception) {
             // If there is an error not caused a 404 error and this isn't a forced delete,
             // go ahead and bail out. We specifically ignore a 404 since that can be assumed
             // to be a safe error, meaning the server doesn't exist at all on daemon so there
             // is no reason we need to bail out from that.
-            if (!$this->force && $exception->getStatusCode() !== Response::HTTP_NOT_FOUND) {
+            if (!$this->force && $exception->getCode() !== Response::HTTP_NOT_FOUND) {
                 throw $exception;
             }
 
@@ -61,7 +61,7 @@ class ServerDeletionService
             foreach ($server->databases as $database) {
                 try {
                     $this->databaseManagementService->delete($database);
-                } catch (\Exception $exception) {
+                } catch (Exception $exception) {
                     if (!$this->force) {
                         throw $exception;
                     }

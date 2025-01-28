@@ -3,16 +3,13 @@
 namespace App\Tests\Integration\Services\Servers;
 
 use Mockery\MockInterface;
-use GuzzleHttp\Psr7\Request;
-use GuzzleHttp\Psr7\Response;
 use App\Models\Server;
 use App\Models\Allocation;
-use GuzzleHttp\Exception\RequestException;
 use App\Exceptions\DisplayException;
 use App\Tests\Integration\IntegrationTestCase;
 use App\Repositories\Daemon\DaemonServerRepository;
 use App\Services\Servers\BuildModificationService;
-use App\Exceptions\Http\Connection\DaemonConnectionException;
+use Illuminate\Http\Client\ConnectionException;
 
 class BuildModificationServiceTest extends IntegrationTestCase
 {
@@ -149,11 +146,7 @@ class BuildModificationServiceTest extends IntegrationTestCase
 
         $server = $this->createServerModel();
 
-        $this->daemonServerRepository->expects('setServer->sync')->andThrows(
-            new DaemonConnectionException(
-                new RequestException('Bad request', new Request('GET', '/test'), new Response())
-            )
-        );
+        $this->daemonServerRepository->expects('setServer->sync')->andThrows(new ConnectionException());
 
         $response = $this->getService()->handle($server, ['memory' => 256, 'disk' => 10240]);
 

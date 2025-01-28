@@ -2,6 +2,7 @@
 
 namespace App\Filament\Admin\Resources\ServerResource\RelationManagers;
 
+use App\Filament\Admin\Resources\ServerResource\Pages\CreateServer;
 use App\Models\Allocation;
 use App\Models\Server;
 use App\Services\Allocations\AssignmentService;
@@ -9,6 +10,7 @@ use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TagsInput;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
+use Filament\Forms\Get;
 use Filament\Forms\Set;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables;
@@ -78,6 +80,7 @@ class AllocationsRelationManager extends RelationManager
                             ->inlineLabel()
                             ->ipv4()
                             ->helperText("Usually your machine's public IP unless you are port forwarding.")
+                            ->afterStateUpdated(fn (Set $set) => $set('allocation_ports', []))
                             ->required(),
                         TextInput::make('allocation_alias')
                             ->label('Alias')
@@ -95,54 +98,9 @@ class AllocationsRelationManager extends RelationManager
                             ->label('Ports')
                             ->inlineLabel()
                             ->live()
-                            ->afterStateUpdated(function ($state, Set $set) {
-                                $ports = collect();
-                                $update = false;
-                                foreach ($state as $portEntry) {
-                                    if (!str_contains($portEntry, '-')) {
-                                        if (is_numeric($portEntry)) {
-                                            $ports->push((int) $portEntry);
-
-                                            continue;
-                                        }
-
-                                        // Do not add non numerical ports
-                                        $update = true;
-
-                                        continue;
-                                    }
-
-                                    $update = true;
-                                    [$start, $end] = explode('-', $portEntry);
-                                    if (!is_numeric($start) || !is_numeric($end)) {
-                                        continue;
-                                    }
-
-                                    $start = max((int) $start, 0);
-                                    $end = min((int) $end, 2 ** 16 - 1);
-                                    foreach (range($start, $end) as $i) {
-                                        $ports->push($i);
-                                    }
-                                }
-
-                                $uniquePorts = $ports->unique()->values();
-                                if ($ports->count() > $uniquePorts->count()) {
-                                    $update = true;
-                                    $ports = $uniquePorts;
-                                }
-
-                                $sortedPorts = $ports->sort()->values();
-                                if ($sortedPorts->all() !== $ports->all()) {
-                                    $update = true;
-                                    $ports = $sortedPorts;
-                                }
-
-                                $ports = $ports->filter(fn ($port) => $port > 1024 && $port < 65535)->values();
-
-                                if ($update) {
-                                    $set('allocation_ports', $ports->all());
-                                }
-                            })
+                            ->afterStateUpdated(fn ($state, Set $set, Get $get) => $set('allocation_ports',
+                                CreateServer::retrieveValidPorts($this->getOwnerRecord()->node, $state, $get('allocation_ip')))
+                            )
                             ->splitKeys(['Tab', ' ', ','])
                             ->required(),
                     ])

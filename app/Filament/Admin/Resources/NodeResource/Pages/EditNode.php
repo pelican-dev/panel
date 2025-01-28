@@ -7,6 +7,7 @@ use App\Models\Node;
 use App\Services\Helpers\SoftwareVersionService;
 use App\Services\Nodes\NodeAutoDeployService;
 use App\Services\Nodes\NodeUpdateService;
+use Exception;
 use Filament\Actions;
 use Filament\Forms;
 use Filament\Forms\Components\Actions as FormActions;
@@ -25,12 +26,22 @@ use Filament\Forms\Set;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\EditRecord;
 use Filament\Support\Enums\Alignment;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\HtmlString;
 use Webbingbrasil\FilamentCopyActions\Forms\Actions\CopyAction;
 
 class EditNode extends EditRecord
 {
     protected static string $resource = NodeResource::class;
+
+    private bool $errored = false;
+
+    private NodeUpdateService $nodeUpdateService;
+
+    public function boot(NodeUpdateService $nodeUpdateService): void
+    {
+        $this->nodeUpdateService = $nodeUpdateService;
+    }
 
     public function form(Forms\Form $form): Forms\Form
     {
@@ -86,7 +97,8 @@ class EditNode extends EditRecord
                                     'md' => 2,
                                     'lg' => 2,
                                 ]),
-                            // TODO: Make purdy View::make('filament.components.node-storage-chart')->columnSpan(3),
+                            View::make('filament.components.node-storage-chart')
+                                ->columnSpanFull(),
                         ]),
                     Tab::make('Basic Settings')
                         ->icon('tabler-server')
@@ -246,7 +258,7 @@ class EditNode extends EditRecord
                                     'lg' => 2,
                                 ])
                                 ->label('Node UUID')
-                                ->hintAction(CopyAction::make())
+                                ->hintAction(fn () => request()->isSecure() ? CopyAction::make() : null)
                                 ->disabled(),
                             TagsInput::make('tags')
                                 ->columnSpan([
@@ -501,7 +513,7 @@ class EditNode extends EditRecord
                                 ->label('/etc/pelican/config.yml')
                                 ->disabled()
                                 ->rows(19)
-                                ->hintAction(CopyAction::make())
+                                ->hintAction(fn () => request()->isSecure() ? CopyAction::make() : null)
                                 ->columnSpanFull(),
                             Grid::make()
                                 ->columns()
@@ -536,7 +548,7 @@ class EditNode extends EditRecord
                                                     ->label('To auto-configure your node run the following command:')
                                                     ->readOnly()
                                                     ->autosize()
-                                                    ->hintAction(fn (string $state) => CopyAction::make()->copyable($state))
+                                                    ->hintAction(fn (string $state) => request()->isSecure() ? CopyAction::make()->copyable($state) : null)
                                                     ->formatStateUsing(fn (NodeAutoDeployService $service, Node $node, Set $set, Get $get) => $set('generatedToken', $service->handle(request(), $node, $get('docker')))),
                                             ])
                                             ->mountUsing(function (Forms\Form $form) {
@@ -551,8 +563,8 @@ class EditNode extends EditRecord
                                             ->requiresConfirmation()
                                             ->modalHeading('Reset Daemon Token?')
                                             ->modalDescription('Resetting the daemon token will void any request coming from the old token. This token is used for all sensitive operations on the daemon including server creation and deletion. We suggest changing this token regularly for security.')
-                                            ->action(function (NodeUpdateService $nodeUpdateService, Node $node) {
-                                                $nodeUpdateService->handle($node, [], true);
+                                            ->action(function (Node $node) {
+                                                $this->nodeUpdateService->handle($node, [], true);
                                                 Notification::make()->success()->title('Daemon Key Reset')->send();
                                                 $this->fillForm();
                                             }),
@@ -582,6 +594,42 @@ class EditNode extends EditRecord
         return $data;
     }
 
+    protected function handleRecordUpdate(Model $record, array $data): Model
+    {
+        if (!$record instanceof Node) {
+            return $record;
+        }
+
+        try {
+            unset($data['unlimited_mem'], $data['unlimited_disk'], $data['unlimited_cpu']);
+
+            $this->record = $this->nodeUpdateService->handle($record, $data);
+
+            return $this->record;
+        } catch (Exception $exception) {
+            $this->errored = true;
+
+            Notification::make()
+                ->title('Error connecting to the node')
+                ->body('The configuration could not be automatically updated on Wings, you will need to manually update the configuration file.')
+                ->color('warning')
+                ->icon('tabler-database')
+                ->warning()
+                ->send();
+
+            return parent::handleRecordUpdate($record, $data);
+        }
+    }
+
+    protected function getSavedNotification(): ?Notification
+    {
+        if ($this->errored) {
+            return null;
+        }
+
+        return parent::getSavedNotification();
+    }
+
     protected function getFormActions(): array
     {
         return [];
@@ -592,7 +640,7 @@ class EditNode extends EditRecord
         return [
             Actions\DeleteAction::make()
                 ->disabled(fn (Node $node) => $node->servers()->count() > 0)
-                ->label(fn (Node $node) => $node->servers()->count() > 0 ? 'Node Has Servers' : 'Delete'),
+                ->label(fn (Node $node) => $node->servers()->count() > 0 ? 'Node Has Servers' : trans('filament-actions::delete.single.label')),
             $this->getSaveFormAction()->formId('form'),
         ];
     }

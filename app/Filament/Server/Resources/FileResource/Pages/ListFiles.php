@@ -10,10 +10,8 @@ use App\Models\File;
 use App\Models\Permission;
 use App\Models\Server;
 use App\Repositories\Daemon\DaemonFileRepository;
-use App\Services\Nodes\NodeJWTService;
 use App\Filament\Components\Tables\Columns\BytesColumn;
 use App\Filament\Components\Tables\Columns\DateTimeColumn;
-use Carbon\CarbonImmutable;
 use Filament\Actions\Action as HeaderAction;
 use Filament\Facades\Filament;
 use Filament\Forms\Components\CheckboxList;
@@ -21,6 +19,7 @@ use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Tabs;
+use Filament\Forms\Components\Tabs\Tab;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Get;
 use Filament\Notifications\Notification;
@@ -78,8 +77,8 @@ class ListFiles extends ListRecords
         $server = Filament::getTenant();
 
         return $table
-            ->paginated([15, 25, 50, 100])
-            ->defaultPaginationPageOption(15)
+            ->paginated([25, 50, 100, 250])
+            ->defaultPaginationPageOption(50)
             ->query(fn () => File::get($server, $this->path)->orderByDesc('is_directory'))
             ->defaultSort('name')
             ->columns([
@@ -88,13 +87,14 @@ class ListFiles extends ListRecords
                     ->sortable()
                     ->icon(fn (File $file) => $file->getIcon()),
                 BytesColumn::make('size')
+                    ->visibleFrom('md')
                     ->sortable(),
                 DateTimeColumn::make('modified_at')
+                    ->visibleFrom('md')
                     ->since()
                     ->sortable(),
             ])
             ->recordUrl(function (File $file) use ($server) {
-
                 if ($file->is_directory) {
                     return self::getUrl(['path' => join_paths($this->path, $file->name)]);
                 }
@@ -114,7 +114,6 @@ class ListFiles extends ListRecords
                     ->url(fn (File $file) => self::getUrl(['path' => join_paths($this->path, $file->name)])),
                 EditAction::make('edit')
                     ->authorize(fn () => auth()->user()->can(Permission::ACTION_FILE_READ_CONTENT, $server))
-                    ->label('Edit')
                     ->icon('tabler-edit')
                     ->visible(fn (File $file) => $file->canEdit())
                     ->url(fn (File $file) => EditFiles::getUrl(['path' => join_paths($this->path, $file->name)])),
@@ -130,13 +129,17 @@ class ListFiles extends ListRecords
                                 ->required(),
                         ])
                         ->action(function ($data, File $file, DaemonFileRepository $fileRepository) use ($server) {
+                            $files = [['to' => $data['name'], 'from' => $file->name]];
+
                             $fileRepository
                                 ->setServer($server)
-                                ->renameFiles($this->path, [['to' => $data['name'], 'from' => $file->name]]);
+                                ->renameFiles($this->path, $files);
 
                             Activity::event('server:file.rename')
                                 ->property('directory', $this->path)
-                                ->property('files', [['to' => $data['name'], 'from' => $file->name]])
+                                ->property('files', $files)
+                                ->property('to', $data['name'])
+                                ->property('from', $file->name)
                                 ->log();
 
                             Notification::make()
@@ -171,22 +174,7 @@ class ListFiles extends ListRecords
                         ->label('Download')
                         ->icon('tabler-download')
                         ->visible(fn (File $file) => $file->is_file)
-                        ->action(function (File $file, NodeJWTService $service) use ($server) {
-                            $token = $service
-                                ->setExpiresAt(CarbonImmutable::now()->addMinutes(15))
-                                ->setUser(auth()->user())
-                                ->setClaims([
-                                    'file_path' => rawurldecode(join_paths($this->path, $file->name)),
-                                    'server_uuid' => $server->uuid,
-                                ])
-                                ->handle($server->node, auth()->user()->id . $server->uuid);
-
-                            Activity::event('server:file.download')
-                                ->property('file', join_paths($this->path, $file->name))
-                                ->log();
-
-                            return redirect()->away(sprintf('%s/download/file?token=%s', $server->node->getConnectionAddress(), $token->toString())); // TODO: download works, but breaks modals
-                        }),
+                        ->url(fn () => DownloadFiles::getUrl(['path' => $this->path]), true),
                     Action::make('move')
                         ->authorize(fn () => auth()->user()->can(Permission::ACTION_FILE_UPDATE, $server))
                         ->label('Move')
@@ -204,13 +192,17 @@ class ListFiles extends ListRecords
                         ->action(function ($data, File $file, DaemonFileRepository $fileRepository) use ($server) {
                             $location = resolve_path(join_paths($this->path, $data['location']));
 
+                            $files = [['to' => $location, 'from' => $file->name]];
+
                             $fileRepository
                                 ->setServer($server)
-                                ->renameFiles($this->path, [['to' => $location, 'from' => $file->name]]);
+                                ->renameFiles($this->path, $files);
 
                             Activity::event('server:file.rename')
                                 ->property('directory', $this->path)
-                                ->property('files', [['to' => $location, 'from' => $file->name]])
+                                ->property('files', $files)
+                                ->property('to', $location)
+                                ->property('from', $file->name)
                                 ->log();
 
                             Notification::make()
@@ -309,7 +301,7 @@ class ListFiles extends ListRecords
 
                             Activity::event('server:file.decompress')
                                 ->property('directory', $this->path)
-                                ->property('files', $file->name)
+                                ->property('file', $file->name)
                                 ->log();
 
                             Notification::make()
@@ -342,6 +334,7 @@ class ListFiles extends ListRecords
                 BulkActionGroup::make([
                     BulkAction::make('move')
                         ->authorize(fn () => auth()->user()->can(Permission::ACTION_FILE_UPDATE, $server))
+                        ->hidden() // TODO
                         ->form([
                             TextInput::make('location')
                                 ->label('File name')
@@ -355,8 +348,7 @@ class ListFiles extends ListRecords
                         ->action(function (Collection $files, $data, DaemonFileRepository $fileRepository) use ($server) {
                             $location = resolve_path(join_paths($this->path, $data['location']));
 
-                            // @phpstan-ignore-next-line
-                            $files = $files->map(fn ($file) => ['to' => $location, 'from' => $file->name])->toArray();
+                            $files = $files->map(fn ($file) => ['to' => $location, 'from' => $file['name']])->toArray();
                             $fileRepository
                                 ->setServer($server)
                                 ->renameFiles($this->path, $files);
@@ -367,15 +359,14 @@ class ListFiles extends ListRecords
                                 ->log();
 
                             Notification::make()
-                                ->title(count($files) . ' Files were moved from to ' . $location)
+                                ->title(count($files) . ' Files were moved from ' . $location)
                                 ->success()
                                 ->send();
                         }),
                     BulkAction::make('archive')
                         ->authorize(fn () => auth()->user()->can(Permission::ACTION_FILE_ARCHIVE, $server))
                         ->action(function (Collection $files, DaemonFileRepository $fileRepository) use ($server) {
-                            // @phpstan-ignore-next-line
-                            $files = $files->map(fn ($file) => $file->name)->toArray();
+                            $files = $files->map(fn ($file) => $file['name'])->toArray();
 
                             $fileRepository
                                 ->setServer($server)
@@ -396,8 +387,7 @@ class ListFiles extends ListRecords
                     DeleteBulkAction::make()
                         ->authorize(fn () => auth()->user()->can(Permission::ACTION_FILE_DELETE, $server))
                         ->action(function (Collection $files, DaemonFileRepository $fileRepository) use ($server) {
-                            // @phpstan-ignore-next-line
-                            $files = $files->map(fn ($file) => $file->name)->toArray();
+                            $files = $files->map(fn ($file) => $file['name'])->toArray();
                             $fileRepository
                                 ->setServer($server)
                                 ->deleteFiles($this->path, $files);
@@ -442,15 +432,16 @@ class ListFiles extends ListRecords
                         ->label('File Name')
                         ->required(),
                     Select::make('lang')
+                        ->label('Syntax Highlighting')
                         ->live()
-                        ->hidden() //TODO: Make file language selection work
-                        ->label('Language')
-                        ->placeholder('File Language')
-                        ->options(EditorLanguages::class),
+                        ->options(EditorLanguages::class)
+                        ->selectablePlaceholder(false)
+                        ->afterStateUpdated(fn ($state) => $this->dispatch('setLanguage', lang: $state))
+                        ->default(EditorLanguages::plaintext->value),
                     MonacoEditor::make('editor')
                         ->label('')
                         ->view('filament.plugins.monaco-editor')
-                        ->language(fn (Get $get) => $get('lang')),
+                        ->language(fn (Get $get) => $get('lang') ?? 'plaintext'),
                 ]),
             HeaderAction::make('new_folder')
                 ->authorize(fn () => auth()->user()->can(Permission::ACTION_FILE_CREATE, $server))
@@ -498,13 +489,12 @@ class ListFiles extends ListRecords
                     }
 
                     return redirect(ListFiles::getUrl(['path' => $this->path]));
-
                 })
                 ->form([
                     Tabs::make()
                         ->contained(false)
                         ->schema([
-                            Tabs\Tab::make('Upload Files')
+                            Tab::make('Upload Files')
                                 ->live()
                                 ->schema([
                                     FileUpload::make('files')
@@ -514,7 +504,7 @@ class ListFiles extends ListRecords
                                         ->preserveFilenames()
                                         ->multiple(),
                                 ]),
-                            Tabs\Tab::make('Upload From URL')
+                            Tab::make('Upload From URL')
                                 ->live()
                                 ->disabled(fn (Get $get) => count($get('files')) > 0)
                                 ->schema([

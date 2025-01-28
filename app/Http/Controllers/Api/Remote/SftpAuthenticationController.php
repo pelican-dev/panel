@@ -138,7 +138,7 @@ class SftpAuthenticationController extends Controller
      */
     protected function validateSftpAccess(User $user, Server $server): void
     {
-        if (!$user->isRootAdmin() && $server->owner_id !== $user->id) {
+        if ($user->cannot('update server', $server) && $server->owner_id !== $user->id) {
             $permissions = $this->permissions->handle($server, $user);
 
             if (!in_array(Permission::ACTION_FILE_SFTP, $permissions)) {
@@ -158,6 +158,6 @@ class SftpAuthenticationController extends Controller
     {
         $username = explode('.', strrev($request->input('username', '')));
 
-        return strtolower(strrev($username[0] ?? '') . '|' . $request->ip());
+        return strtolower(strrev($username[0]) . '|' . $request->ip());
     }
 }

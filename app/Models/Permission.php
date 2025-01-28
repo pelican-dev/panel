@@ -93,7 +93,7 @@ class Permission extends Model
 
     public const ACTION_SETTINGS_REINSTALL = 'settings.reinstall';
 
-    public const ACTION_ACTIVITY_READ = 'settings.activity';
+    public const ACTION_ACTIVITY_READ = 'activity.read';
 
     /**
      * Should timestamps be used on this model.

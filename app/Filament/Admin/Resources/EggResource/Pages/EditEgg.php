@@ -8,6 +8,7 @@ use App\Filament\Admin\Resources\EggResource\RelationManagers\ServersRelationMan
 use App\Filament\Components\Actions\ExportEggAction;
 use App\Filament\Components\Actions\ImportEggAction;
 use App\Models\Egg;
+use App\Models\EggVariable;
 use Filament\Actions\DeleteAction;
 use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\Fieldset;
@@ -22,8 +23,10 @@ use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Form;
+use Filament\Forms\Get;
 use Filament\Forms\Set;
 use Filament\Resources\Pages\EditRecord;
+use Illuminate\Validation\Rules\Unique;
 
 class EditEgg extends EditRecord
 {
@@ -63,12 +66,11 @@ class EditEgg extends EditRecord
                                 ->columnSpan(['default' => 1, 'sm' => 1, 'md' => 2, 'lg' => 2])
                                 ->helperText('The author of this version of the Egg. Uploading a new Egg configuration from a different author will change this.'),
                             Textarea::make('startup')
-                                ->rows(2)
+                                ->rows(3)
                                 ->columnSpanFull()
                                 ->required()
                                 ->helperText('The default startup command that should be used for new servers using this Egg.'),
                             TagsInput::make('file_denylist')
-                                ->hidden() // latest wings breaks it.
                                 ->placeholder('denied-file.txt')
                                 ->helperText('A list of files that the end user is not allowed to edit.')
                                 ->columnSpan(['default' => 1, 'sm' => 1, 'md' => 2, 'lg' => 2]),
@@ -164,8 +166,11 @@ class EditEgg extends EditRecord
                                         ->debounce(750)
                                         ->maxLength(255)
                                         ->columnSpanFull()
-                                        ->afterStateUpdated(fn (Set $set, $state) => $set('env_variable', str($state)->trim()->snake()->upper()->toString())
-                                        )
+                                        ->afterStateUpdated(fn (Set $set, $state) => $set('env_variable', str($state)->trim()->snake()->upper()->toString()))
+                                        ->unique(modifyRuleUsing: fn (Unique $rule, Get $get) => $rule->where('egg_id', $get('../../id')), ignoreRecord: true)
+                                        ->validationMessages([
+                                            'unique' => 'A variable with this name already exists.',
+                                        ])
                                         ->required(),
                                     Textarea::make('description')->columnSpanFull(),
                                     TextInput::make('env_variable')
@@ -175,6 +180,13 @@ class EditEgg extends EditRecord
                                         ->suffix('}}')
                                         ->hintIcon('tabler-code')
                                         ->hintIconTooltip(fn ($state) => "{{{$state}}}")
+                                        ->unique(modifyRuleUsing: fn (Unique $rule, Get $get) => $rule->where('egg_id', $get('../../id')), ignoreRecord: true)
+                                        ->rules(EggVariable::$validationRules['env_variable'])
+                                        ->validationMessages([
+                                            'unique' => 'A variable with this name already exists.',
+                                            'required' => ' The environment variable field is required.',
+                                            '*' => 'This environment variable is reserved and cannot be used.',
+                                        ])
                                         ->required(),
                                     TextInput::make('default_value')->maxLength(255),
                                     Fieldset::make('User Permissions')
@@ -240,7 +252,7 @@ class EditEgg extends EditRecord
         return [
             DeleteAction::make()
                 ->disabled(fn (Egg $egg): bool => $egg->servers()->count() > 0)
-                ->label(fn (Egg $egg): string => $egg->servers()->count() <= 0 ? 'Delete' : 'In Use'),
+                ->label(fn (Egg $egg): string => $egg->servers()->count() <= 0 ? trans('filament-actions::delete.single.label') : 'In Use'),
             ExportEggAction::make(),
             ImportEggAction::make(),
             $this->getSaveFormAction()->formId('form'),

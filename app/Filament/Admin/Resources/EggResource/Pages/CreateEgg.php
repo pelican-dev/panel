@@ -4,6 +4,7 @@ namespace App\Filament\Admin\Resources\EggResource\Pages;
 
 use AbdelhamidErrahmouni\FilamentMonacoEditor\MonacoEditor;
 use App\Filament\Admin\Resources\EggResource;
+use App\Models\EggVariable;
 use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\Fieldset;
 use Filament\Forms\Components\Hidden;
@@ -17,10 +18,12 @@ use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Form;
+use Filament\Forms\Get;
 use Filament\Forms\Set;
 use Filament\Resources\Pages\CreateRecord;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
+use Illuminate\Validation\Rules\Unique;
 
 class CreateEgg extends CreateRecord
 {
@@ -71,6 +74,10 @@ class CreateEgg extends CreateRecord
                                     'java -Xms128M -XX:MaxRAMPercentage=95.0 -jar {{SERVER_JARFILE}}',
                                 ]))
                                 ->helperText('The default startup command that should be used for new servers using this Egg.'),
+                            TagsInput::make('file_denylist')
+                                ->placeholder('denied-file.txt')
+                                ->helperText('A list of files that the end user is not allowed to edit.')
+                                ->columnSpan(['default' => 1, 'sm' => 1, 'md' => 2, 'lg' => 2]),
                             TagsInput::make('features')
                                 ->placeholder('Add Feature')
                                 ->helperText('')
@@ -168,8 +175,11 @@ class CreateEgg extends CreateRecord
                                         ->debounce(750)
                                         ->maxLength(255)
                                         ->columnSpanFull()
-                                        ->afterStateUpdated(fn (Set $set, $state) => $set('env_variable', str($state)->trim()->snake()->upper()->toString())
-                                        )
+                                        ->afterStateUpdated(fn (Set $set, $state) => $set('env_variable', str($state)->trim()->snake()->upper()->toString()))
+                                        ->unique(modifyRuleUsing: fn (Unique $rule, Get $get) => $rule->where('egg_id', $get('../../id')), ignoreRecord: true)
+                                        ->validationMessages([
+                                            'unique' => 'A variable with this name already exists.',
+                                        ])
                                         ->required(),
                                     Textarea::make('description')->columnSpanFull(),
                                     TextInput::make('env_variable')
@@ -179,6 +189,13 @@ class CreateEgg extends CreateRecord
                                         ->suffix('}}')
                                         ->hintIcon('tabler-code')
                                         ->hintIconTooltip(fn ($state) => "{{{$state}}}")
+                                        ->unique(modifyRuleUsing: fn (Unique $rule, Get $get) => $rule->where('egg_id', $get('../../id')), ignoreRecord: true)
+                                        ->rules(EggVariable::$validationRules['env_variable'])
+                                        ->validationMessages([
+                                            'unique' => 'A variable with this name already exists.',
+                                            'required' => ' The environment variable field is required.',
+                                            '*' => 'This environment variable is reserved and cannot be used.',
+                                        ])
                                         ->required(),
                                     TextInput::make('default_value')->maxLength(255),
                                     Fieldset::make('User Permissions')

@@ -11,8 +11,6 @@ return [
         'ask_admin' => '¿Es este usuario un administrador?',
         'ask_email' => 'Dirección de correo electrónico',
         'ask_username' => 'Nombre de usuario',
-        'ask_name_first' => 'Nombre',
-        'ask_name_last' => 'Apellido',
         'ask_password' => 'Contraseña',
         'ask_password_tip' => 'Si deseas crear una cuenta con una contraseña aleatoria enviada por correo electrónico al usuario, vuelve a ejecutar este comando (CTRL+C) y pasa la bandera `--no-password`.',
         'ask_password_help' => 'Las contraseñas deben tener al menos 8 caracteres de longitud y contener al menos una letra mayúscula y un número.',

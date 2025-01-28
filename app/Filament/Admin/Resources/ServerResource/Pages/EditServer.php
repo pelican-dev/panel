@@ -4,6 +4,7 @@ namespace App\Filament\Admin\Resources\ServerResource\Pages;
 
 use App\Enums\ContainerStatus;
 use App\Enums\ServerState;
+use App\Enums\SuspendAction;
 use App\Filament\Admin\Resources\ServerResource;
 use App\Filament\Admin\Resources\ServerResource\RelationManagers\AllocationsRelationManager;
 use App\Filament\Components\Forms\Actions\RotateDatabasePasswordAction;
@@ -14,6 +15,7 @@ use App\Models\Egg;
 use App\Models\Mount;
 use App\Models\Server;
 use App\Models\ServerVariable;
+use App\Models\User;
 use App\Services\Databases\DatabaseManagementService;
 use App\Services\Eggs\EggChangerService;
 use App\Services\Servers\RandomWordService;
@@ -104,7 +106,8 @@ class EditServer extends EditRecord
                                         'lg' => 2,
                                     ])
                                     ->relationship('user', 'username')
-                                    ->searchable()
+                                    ->searchable(['username', 'email'])
+                                    ->getOptionLabelFromRecordUsing(fn (User $user) => "$user->email | $user->username " . (blank($user->roles) ? '' : '(' . $user->roles->first()->name . ')'))
                                     ->preload()
                                     ->required(),
 
@@ -133,7 +136,7 @@ class EditServer extends EditRecord
                                     ->columnSpanFull(),
 
                                 TextInput::make('uuid')
-                                    ->hintAction(CopyAction::make())
+                                    ->suffixAction(fn () => request()->isSecure() ? CopyAction::make() : null)
                                     ->columnSpan([
                                         'default' => 2,
                                         'sm' => 1,
@@ -144,7 +147,7 @@ class EditServer extends EditRecord
                                     ->dehydrated(false),
                                 TextInput::make('uuid_short')
                                     ->label('Short UUID')
-                                    ->hintAction(CopyAction::make())
+                                    ->suffixAction(fn () => request()->isSecure() ? CopyAction::make() : null)
                                     ->columnSpan([
                                         'default' => 2,
                                         'sm' => 1,
@@ -161,6 +164,7 @@ class EditServer extends EditRecord
                                         'md' => 2,
                                         'lg' => 3,
                                     ])
+                                    ->unique()
                                     ->maxLength(255),
                                 Select::make('node_id')
                                     ->label('Node')
@@ -184,6 +188,35 @@ class EditServer extends EditRecord
                                         'lg' => 3,
                                     ])
                                     ->schema([
+                                        Grid::make()
+                                            ->columns(4)
+                                            ->columnSpanFull()
+                                            ->schema([
+                                                ToggleButtons::make('unlimited_cpu')
+                                                    ->label('CPU')->inlineLabel()->inline()
+                                                    ->afterStateUpdated(fn (Set $set) => $set('cpu', 0))
+                                                    ->formatStateUsing(fn (Get $get) => $get('cpu') == 0)
+                                                    ->live()
+                                                    ->options([
+                                                        true => 'Unlimited',
+                                                        false => 'Limited',
+                                                    ])
+                                                    ->colors([
+                                                        true => 'primary',
+                                                        false => 'warning',
+                                                    ])
+                                                    ->columnSpan(2),
+
+                                                TextInput::make('cpu')
+                                                    ->dehydratedWhenHidden()
+                                                    ->hidden(fn (Get $get) => $get('unlimited_cpu'))
+                                                    ->label('CPU Limit')->inlineLabel()
+                                                    ->suffix('%')
+                                                    ->required()
+                                                    ->columnSpan(2)
+                                                    ->numeric()
+                                                    ->minValue(0),
+                                            ]),
                                         Grid::make()
                                             ->columns(4)
                                             ->columnSpanFull()
@@ -243,36 +276,6 @@ class EditServer extends EditRecord
                                                     ->numeric()
                                                     ->minValue(0),
                                             ]),
-
-                                        Grid::make()
-                                            ->columns(4)
-                                            ->columnSpanFull()
-                                            ->schema([
-                                                ToggleButtons::make('unlimited_cpu')
-                                                    ->label('CPU')->inlineLabel()->inline()
-                                                    ->afterStateUpdated(fn (Set $set) => $set('cpu', 0))
-                                                    ->formatStateUsing(fn (Get $get) => $get('cpu') == 0)
-                                                    ->live()
-                                                    ->options([
-                                                        true => 'Unlimited',
-                                                        false => 'Limited',
-                                                    ])
-                                                    ->colors([
-                                                        true => 'primary',
-                                                        false => 'warning',
-                                                    ])
-                                                    ->columnSpan(2),
-
-                                                TextInput::make('cpu')
-                                                    ->dehydratedWhenHidden()
-                                                    ->hidden(fn (Get $get) => $get('unlimited_cpu'))
-                                                    ->label('CPU Limit')->inlineLabel()
-                                                    ->suffix('%')
-                                                    ->required()
-                                                    ->columnSpan(2)
-                                                    ->numeric()
-                                                    ->minValue(0),
-                                            ]),
                                     ]),
 
                                 Fieldset::make('Advanced Limits')
@@ -287,6 +290,36 @@ class EditServer extends EditRecord
                                             ->columns(4)
                                             ->columnSpanFull()
                                             ->schema([
+                                                Grid::make()
+                                                    ->columns(4)
+                                                    ->columnSpanFull()
+                                                    ->schema([
+                                                        ToggleButtons::make('cpu_pinning')
+                                                            ->label('CPU Pinning')->inlineLabel()->inline()
+                                                            ->default(false)
+                                                            ->afterStateUpdated(fn (Set $set) => $set('threads', []))
+                                                            ->formatStateUsing(fn (Get $get) => !empty($get('threads')))
+                                                            ->live()
+                                                            ->options([
+                                                                false => 'Disabled',
+                                                                true => 'Enabled',
+                                                            ])
+                                                            ->colors([
+                                                                false => 'success',
+                                                                true => 'warning',
+                                                            ])
+                                                            ->columnSpan(2),
+
+                                                        TagsInput::make('threads')
+                                                            ->dehydratedWhenHidden()
+                                                            ->hidden(fn (Get $get) => !$get('cpu_pinning'))
+                                                            ->label('Pinned Threads')->inlineLabel()
+                                                            ->required(fn (Get $get) => $get('cpu_pinning'))
+                                                            ->columnSpan(2)
+                                                            ->separator()
+                                                            ->splitKeys([','])
+                                                            ->placeholder('Add pinned thread, e.g. 0 or 2-4'),
+                                                    ]),
                                                 ToggleButtons::make('swap_support')
                                                     ->live()
                                                     ->label('Swap Memory')->inlineLabel()->inline()
@@ -342,37 +375,6 @@ class EditServer extends EditRecord
                                             ->columns(4)
                                             ->columnSpanFull()
                                             ->schema([
-                                                ToggleButtons::make('cpu_pinning')
-                                                    ->label('CPU Pinning')->inlineLabel()->inline()
-                                                    ->default(false)
-                                                    ->afterStateUpdated(fn (Set $set) => $set('threads', []))
-                                                    ->formatStateUsing(fn (Get $get) => !empty($get('threads')))
-                                                    ->live()
-                                                    ->options([
-                                                        false => 'Disabled',
-                                                        true => 'Enabled',
-                                                    ])
-                                                    ->colors([
-                                                        false => 'success',
-                                                        true => 'warning',
-                                                    ])
-                                                    ->columnSpan(2),
-
-                                                TagsInput::make('threads')
-                                                    ->dehydratedWhenHidden()
-                                                    ->hidden(fn (Get $get) => !$get('cpu_pinning'))
-                                                    ->label('Pinned Threads')->inlineLabel()
-                                                    ->required(fn (Get $get) => $get('cpu_pinning'))
-                                                    ->columnSpan(2)
-                                                    ->separator()
-                                                    ->splitKeys([','])
-                                                    ->placeholder('Add pinned thread, e.g. 0 or 2-4'),
-                                            ]),
-
-                                        Grid::make()
-                                            ->columns(4)
-                                            ->columnSpanFull()
-                                            ->schema([
                                                 ToggleButtons::make('oom_killer')
                                                     ->label('OOM Killer')->inlineLabel()->inline()
                                                     ->columnSpan(2)
@@ -400,16 +402,19 @@ class EditServer extends EditRecord
                                     ])
                                     ->schema([
                                         TextInput::make('allocation_limit')
+                                            ->label('Allocations')
                                             ->suffixIcon('tabler-network')
                                             ->required()
                                             ->minValue(0)
                                             ->numeric(),
                                         TextInput::make('database_limit')
+                                            ->label('Databases')
                                             ->suffixIcon('tabler-database')
                                             ->required()
                                             ->minValue(0)
                                             ->numeric(),
                                         TextInput::make('backup_limit')
+                                            ->label('Backups')
                                             ->suffixIcon('tabler-copy-check')
                                             ->required()
                                             ->minValue(0)
@@ -420,7 +425,7 @@ class EditServer extends EditRecord
                                         'default' => 1,
                                         'sm' => 2,
                                         'md' => 3,
-                                        'lg' => 3,
+                                        'lg' => 4,
                                     ])
                                     ->schema([
                                         Select::make('select_image')
@@ -441,7 +446,12 @@ class EditServer extends EditRecord
                                                 return array_flip($images) + ['ghcr.io/custom-image' => 'Custom Image'];
                                             })
                                             ->selectablePlaceholder(false)
-                                            ->columnSpan(1),
+                                            ->columnSpan([
+                                                'default' => 1,
+                                                'sm' => 2,
+                                                'md' => 3,
+                                                'lg' => 2,
+                                            ]),
 
                                         TextInput::make('image')
                                             ->label('Image')
@@ -457,7 +467,12 @@ class EditServer extends EditRecord
                                                 }
                                             })
                                             ->placeholder('Enter a custom Image')
-                                            ->columnSpan(2),
+                                            ->columnSpan([
+                                                'default' => 1,
+                                                'sm' => 2,
+                                                'md' => 3,
+                                                'lg' => 2,
+                                            ]),
 
                                         KeyValue::make('docker_labels')
                                             ->label('Container Labels')
@@ -539,7 +554,7 @@ class EditServer extends EditRecord
                                     ->autosize(),
 
                                 Textarea::make('defaultStartup')
-                                    ->hintAction(CopyAction::make())
+                                    ->hintAction(fn () => request()->isSecure() ? CopyAction::make() : null)
                                     ->label('Default Startup Command')
                                     ->disabled()
                                     ->autosize()
@@ -723,8 +738,10 @@ class EditServer extends EditRecord
                                                 ->label('Database Host')
                                                 ->required()
                                                 ->placeholder('Select Database Host')
-                                                ->relationship('node.databaseHosts', 'name',
-                                                    fn (Builder $query, Server $server) => $query->whereRelation('nodes', 'nodes.id', $server->node_id))
+                                                ->options(fn (Server $server) => DatabaseHost::query()
+                                                    ->whereHas('nodes', fn ($query) => $query->where('nodes.id', $server->node_id))
+                                                    ->pluck('name', 'id')
+                                                )
                                                 ->default(fn () => (DatabaseHost::query()->first())?->id)
                                                 ->selectablePlaceholder(false),
                                             TextInput::make('database')
@@ -778,7 +795,11 @@ class EditServer extends EditRecord
                                                         ->color('warning')
                                                         ->hidden(fn (Server $server) => $server->isSuspended())
                                                         ->action(function (SuspensionService $suspensionService, Server $server) {
-                                                            $suspensionService->toggle($server, 'suspend');
+                                                            try {
+                                                                $suspensionService->handle($server, SuspendAction::Suspend);
+                                                            } catch (\Exception $exception) {
+                                                                Notification::make()->warning()->title('Server Suspension')->body($exception->getMessage())->send();
+                                                            }
                                                             Notification::make()->success()->title('Server Suspended!')->send();
 
                                                             $this->refreshFormData(['status', 'docker']);
@@ -788,7 +809,11 @@ class EditServer extends EditRecord
                                                         ->color('success')
                                                         ->hidden(fn (Server $server) => !$server->isSuspended())
                                                         ->action(function (SuspensionService $suspensionService, Server $server) {
-                                                            $suspensionService->toggle($server, 'unsuspend');
+                                                            try {
+                                                                $suspensionService->handle($server, SuspendAction::Unsuspend);
+                                                            } catch (\Exception $exception) {
+                                                                Notification::make()->warning()->title('Server Suspension')->body($exception->getMessage())->send();
+                                                            }
                                                             Notification::make()->success()->title('Server Unsuspended!')->send();
 
                                                             $this->refreshFormData(['status', 'docker']);

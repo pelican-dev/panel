@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Auth;
 
+use App\Extensions\OAuth\Providers\OAuthProvider;
 use App\Filament\Pages\Auth\EditProfile;
 use Filament\Notifications\Notification;
 use Illuminate\Auth\AuthManager;
@@ -15,12 +16,9 @@ use Illuminate\Http\Request;
 
 class OAuthController extends Controller
 {
-    /**
-     * OAuthController constructor.
-     */
     public function __construct(
-        private AuthManager $auth,
-        private UserUpdateService $updateService
+        private readonly AuthManager $auth,
+        private readonly UserUpdateService $updateService
     ) {}
 
     /**
@@ -29,7 +27,7 @@ class OAuthController extends Controller
     protected function redirect(string $driver): RedirectResponse
     {
         // Driver is disabled - redirect to normal login
-        if (!config("auth.oauth.$driver.enabled")) {
+        if (!OAuthProvider::get($driver)->isEnabled()) {
             return redirect()->route('auth.login');
         }
 
@@ -42,7 +40,7 @@ class OAuthController extends Controller
     protected function callback(Request $request, string $driver): RedirectResponse
     {
         // Driver is disabled - redirect to normal login
-        if (!config("auth.oauth.$driver.enabled")) {
+        if (!OAuthProvider::get($driver)->isEnabled()) {
             return redirect()->route('auth.login');
         }
 

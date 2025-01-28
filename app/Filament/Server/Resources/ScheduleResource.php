@@ -64,10 +64,17 @@ class ScheduleResource extends Resource
     public static function form(Form $form): Form
     {
         return $form
-            ->columns(10)
+            ->columns([
+                'default' => 4,
+                'lg' => 5,
+            ])
             ->schema([
                 TextInput::make('name')
-                    ->columnSpan(fn ($operation) => $operation !== 'view' ? 10 : 5)
+                    ->columnSpan([
+                        'default' => 4,
+                        'md' => 3,
+                        'lg' => 4,
+                    ])
                     ->label('Schedule Name')
                     ->placeholder('A human readable identifier for this schedule.')
                     ->autocomplete(false)
@@ -81,13 +88,20 @@ class ScheduleResource extends Resource
                         'active' => 'success',
                     ])
                     ->visibleOn('view')
-                    ->columnSpan(5),
+                    ->columnSpan([
+                        'default' => 4,
+                        'md' => 1,
+                        'lg' => 1,
+                    ]),
                 Toggle::make('only_when_online')
                     ->label('Only when Server is Online?')
                     ->hintIconTooltip('Only execute this schedule when the server is in a running state.')
                     ->hintIcon('tabler-question-mark')
                     ->inline(false)
-                    ->columnSpan(5)
+                    ->columnSpan([
+                        'default' => 2,
+                        'lg' => 3,
+                    ])
                     ->required()
                     ->default(1),
                 Toggle::make('is_active')
@@ -95,36 +109,55 @@ class ScheduleResource extends Resource
                     ->hintIconTooltip('This schedule will be executed automatically if enabled.')
                     ->hintIcon('tabler-question-mark')
                     ->inline(false)
-                    ->columnSpan(5)
+                    ->columnSpan([
+                        'default' => 2,
+                        'lg' => 2,
+                    ])
                     ->required()
                     ->default(1),
                 TextInput::make('cron_minute')
-                    ->columnSpan(2)
+                    ->columnSpan([
+                        'default' => 2,
+                        'lg' => 1,
+                    ])
                     ->label('Minute')
                     ->default('*/5')
                     ->required(),
                 TextInput::make('cron_hour')
-                    ->columnSpan(2)
+                    ->columnSpan([
+                        'default' => 2,
+                        'lg' => 1,
+                    ])
                     ->label('Hour')
                     ->default('*')
                     ->required(),
                 TextInput::make('cron_day_of_month')
-                    ->columnSpan(2)
+                    ->columnSpan([
+                        'default' => 2,
+                        'lg' => 1,
+                    ])
                     ->label('Day of Month')
                     ->default('*')
                     ->required(),
                 TextInput::make('cron_month')
-                    ->columnSpan(2)
+                    ->columnSpan([
+                        'default' => 2,
+                        'lg' => 1,
+                    ])
                     ->label('Month')
                     ->default('*')
                     ->required(),
                 TextInput::make('cron_day_of_week')
-                    ->columnSpan(2)
+                    ->columnSpan([
+                        'default' => 2,
+                        'lg' => 1,
+                    ])
                     ->label('Day of Week')
                     ->default('*')
                     ->required(),
                 Section::make('Presets')
                     ->hiddenOn('view')
+                    ->columns(1)
                     ->schema([
                         Actions::make([
                             Action::make('hourly')
@@ -231,7 +264,7 @@ class ScheduleResource extends Resource
                                 ->action(function (Set $set, $data) {
                                     $set('cron_minute', '0');
                                     $set('cron_hour', '0');
-                                    $set('cron_day_of_month', '0');
+                                    $set('cron_day_of_month', '1');
                                     $set('cron_month', '*/' . $data['x']);
                                     $set('cron_day_of_week', '*');
                                 }),
@@ -242,13 +275,13 @@ class ScheduleResource extends Resource
                                         ->label('')
                                         ->prefix('Every')
                                         ->options([
-                                            '0' => 'Sunday',
                                             '1' => 'Monday',
                                             '2' => 'Tuesday',
                                             '3' => 'Wednesday',
                                             '4' => 'Thursday',
                                             '5' => 'Friday',
                                             '6' => 'Saturday',
+                                            '0' => 'Sunday',
                                         ]),
                                 ])
                                 ->action(function (Set $set, $data) {

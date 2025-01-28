@@ -5,7 +5,11 @@ namespace App\Providers;
 use App\Checks\NodeVersionsCheck;
 use App\Checks\PanelVersionCheck;
 use App\Checks\UsedDiskSpaceCheck;
-use App\Filament\Server\Pages\Console;
+use App\Extensions\OAuth\Providers\AuthentikProvider;
+use App\Extensions\OAuth\Providers\CommonProvider;
+use App\Extensions\OAuth\Providers\DiscordProvider;
+use App\Extensions\OAuth\Providers\GithubProvider;
+use App\Extensions\OAuth\Providers\SteamProvider;
 use App\Models;
 use App\Models\ApiKey;
 use App\Models\Node;
@@ -21,14 +25,13 @@ use Filament\View\PanelsRenderHook;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Console\AboutCommand;
-use Illuminate\Support\Facades\Event;
+use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Str;
 use Laravel\Sanctum\Sanctum;
-use SocialiteProviders\Manager\SocialiteWasCalled;
 use Spatie\Health\Checks\Checks\CacheCheck;
 use Spatie\Health\Checks\Checks\DatabaseCheck;
 use Spatie\Health\Checks\Checks\DebugModeCheck;
@@ -82,20 +85,20 @@ class AppServiceProvider extends ServiceProvider
         Scramble::registerApi('client', ['api_path' => 'api/client', 'info' => ['version' => '1.0']])->afterOpenApiGenerated($bearerTokens);
         Scramble::registerApi('remote', ['api_path' => 'api/remote', 'info' => ['version' => '1.0']])->afterOpenApiGenerated($bearerTokens);
 
-        $oauthProviders = [];
-        foreach (config('auth.oauth') as $name => $data) {
-            config()->set("services.$name", array_merge($data['service'], ['redirect' => "/auth/oauth/callback/$name"]));
+        // Default OAuth providers included with Socialite
+        CommonProvider::register('facebook', null, 'tabler-brand-facebook-f', '#1877f2');
+        CommonProvider::register('x', null, 'tabler-brand-x-f', '#1da1f2');
+        CommonProvider::register('linkedin', null, 'tabler-brand-linkedin-f', '#0a66c2');
+        CommonProvider::register('google', null, 'tabler-brand-google-f', '#4285f4');
+        GithubProvider::register();
+        CommonProvider::register('gitlab', null, 'tabler-brand-gitlab', '#fca326');
+        CommonProvider::register('bitbucket', null, 'tabler-brand-bitbucket-f', '#205081');
+        CommonProvider::register('slack', null, 'tabler-brand-slack', '#6ecadc');
 
-            if (isset($data['provider'])) {
-                $oauthProviders[$name] = $data['provider'];
-            }
-        }
-
-        Event::listen(function (SocialiteWasCalled $event) use ($oauthProviders) {
-            foreach ($oauthProviders as $name => $provider) {
-                $event->extendSocialite($name, $provider);
-            }
-        });
+        // Additional OAuth providers from socialiteproviders.com
+        AuthentikProvider::register();
+        DiscordProvider::register();
+        SteamProvider::register();
 
         FilamentColor::register([
             'danger' => Color::Red,
@@ -107,9 +110,24 @@ class AppServiceProvider extends ServiceProvider
         ]);
 
         FilamentView::registerRenderHook(
-            PanelsRenderHook::CONTENT_START,
-            fn () => view('filament.server-conflict-banner'),
-            scopes: Console::class,
+            PanelsRenderHook::HEAD_START,
+            fn (): string => Blade::render(<<<'HTML'
+                @vite(['resources/css/app.css', 'resources/js/app.js'])
+                @livewireStyles
+            HTML),
+        );
+
+        FilamentView::registerRenderHook(
+            PanelsRenderHook::PAGE_START,
+            fn () => Blade::render('@livewire(\App\Livewire\AlertBannerContainer::class)'),
+        );
+
+        FilamentView::registerRenderHook(
+            PanelsRenderHook::BODY_END,
+            fn (): string => Blade::render(<<<'HTML'
+                @livewireScripts
+                @vite(['resources/js/app.js'])
+            HTML),
         );
 
         // Don't run any health checks during tests

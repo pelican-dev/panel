@@ -3,11 +3,8 @@
 namespace App\Repositories\Daemon;
 
 use Illuminate\Http\Client\Response;
-use Webmozart\Assert\Assert;
 use App\Models\Backup;
-use App\Models\Server;
-use GuzzleHttp\Exception\TransferException;
-use App\Exceptions\Http\Connection\DaemonConnectionException;
+use Illuminate\Http\Client\ConnectionException;
 
 class DaemonBackupRepository extends DaemonRepository
 {
@@ -26,64 +23,42 @@ class DaemonBackupRepository extends DaemonRepository
     /**
      * Tells the remote Daemon to begin generating a backup for the server.
      *
-     * @throws \App\Exceptions\Http\Connection\DaemonConnectionException
+     * @throws ConnectionException
      */
     public function backup(Backup $backup): Response
     {
-        Assert::isInstanceOf($this->server, Server::class);
-
-        try {
-            return $this->getHttpClient()->post(
-                sprintf('/api/servers/%s/backup', $this->server->uuid),
-                [
-                    'adapter' => $this->adapter ?? config('backups.default'),
-                    'uuid' => $backup->uuid,
-                    'ignore' => implode("\n", $backup->ignored_files),
-                ]
-            );
-        } catch (TransferException $exception) {
-            throw new DaemonConnectionException($exception);
-        }
+        return $this->getHttpClient()->post("/api/servers/{$this->server->uuid}/backup",
+            [
+                'adapter' => $this->adapter ?? config('backups.default'),
+                'uuid' => $backup->uuid,
+                'ignore' => implode("\n", $backup->ignored_files),
+            ]
+        );
     }
 
     /**
      * Sends a request to daemon to begin restoring a backup for a server.
      *
-     * @throws \App\Exceptions\Http\Connection\DaemonConnectionException
+     * @throws ConnectionException
      */
     public function restore(Backup $backup, ?string $url = null, bool $truncate = false): Response
     {
-        Assert::isInstanceOf($this->server, Server::class);
-
-        try {
-            return $this->getHttpClient()->post(
-                sprintf('/api/servers/%s/backup/%s/restore', $this->server->uuid, $backup->uuid),
-                [
-                    'adapter' => $backup->disk,
-                    'truncate_directory' => $truncate,
-                    'download_url' => $url ?? '',
-                ]
-            );
-        } catch (TransferException $exception) {
-            throw new DaemonConnectionException($exception);
-        }
+        return $this->getHttpClient()->post("/api/servers/{$this->server->uuid}/backup/$backup->uuid/restore",
+            [
+                'adapter' => $backup->disk,
+                'truncate_directory' => $truncate,
+                'download_url' => $url ?? '',
+            ]
+        );
     }
 
     /**
      * Deletes a backup from the daemon.
      *
-     * @throws \App\Exceptions\Http\Connection\DaemonConnectionException
+     * @throws ConnectionException
      */
     public function delete(Backup $backup): Response
     {
-        Assert::isInstanceOf($this->server, Server::class);
-
-        try {
-            return $this->getHttpClient()->delete(
-                sprintf('/api/servers/%s/backup/%s', $this->server->uuid, $backup->uuid)
-            );
-        } catch (TransferException $exception) {
-            throw new DaemonConnectionException($exception);
-        }
+        return $this->getHttpClient()->delete("/api/servers/{$this->server->uuid}/backup/$backup->uuid");
     }
 }

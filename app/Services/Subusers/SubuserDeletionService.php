@@ -3,7 +3,6 @@
 namespace App\Services\Subusers;
 
 use App\Events\Server\SubUserRemoved;
-use App\Exceptions\Http\Connection\DaemonConnectionException;
 use App\Facades\Activity;
 use App\Models\Server;
 use App\Models\Subuser;
@@ -30,7 +29,7 @@ class SubuserDeletionService
 
             try {
                 $this->serverRepository->setServer($server)->revokeUserJTI($subuser->user_id);
-            } catch (ConnectionException|DaemonConnectionException $exception) {
+            } catch (ConnectionException $exception) {
                 // Don't block this request if we can't connect to the daemon instance.
                 logger()->warning($exception, ['user_id' => $subuser->user_id, 'server_id' => $server->id]);
 

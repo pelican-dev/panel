@@ -1,6 +1,5 @@
 name: Docker
 
-
 on:
   push:
     branches:
@@ -15,17 +14,23 @@ env:
 
 jobs:
   build-and-push:
-    name: Build and Push
-    runs-on: ubuntu-latest
+    name: Build and Push ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
     permissions:
       contents: read
       packages: write
+
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-24.04, ubuntu-24.04-arm]
     # Always run against a tag, even if the commit into the tag has [docker skip] within the commit message.
     if: "!contains(github.ref, 'main') || (!contains(github.event.head_commit.message, 'skip docker') && !contains(github.event.head_commit.message, 'docker skip'))"
+
     steps:
       - name: Code checkout
         uses: actions/checkout@v4
-        
+
       - name: Docker metadata
         id: docker_meta
         uses: docker/metadata-action@v5
@@ -37,9 +42,6 @@ jobs:
             type=raw,value=latest,enable=${{ github.event_name == 'release' && github.event.action == 'published' && github.event.release.prerelease == false }}
             type=ref,event=tag
             type=ref,event=branch
-
-      - name: Setup QEMU
-        uses: docker/setup-qemu-action@v3
 
       - name: Setup Docker buildx
         uses: docker/setup-buildx-action@v3
@@ -58,29 +60,31 @@ jobs:
           echo "short_sha=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
 
       - name: Build and Push (tag)
-        uses: docker/build-push-action@v5
+        uses: docker/build-push-action@v6
         if: "github.event_name == 'release' && github.event.action == 'published'"
         with:
           context: .
           file: ./Dockerfile
           push: true
-          platforms: linux/amd64,linux/arm64
+          platforms: ${{ matrix.os == 'ubuntu-24.04' && 'linux/amd64' || 'linux/arm64' }}
           build-args: |
             VERSION=${{ steps.build_info.outputs.version_tag }}
           labels: ${{ steps.docker_meta.outputs.labels }}
           tags: ${{ steps.docker_meta.outputs.tags }}
+          cache-from: type=gha,scope=tagged${{ matrix.os }}
+          cache-to: type=gha,scope=tagged${{ matrix.os }},mode=max
 
       - name: Build and Push (main)
-        uses: docker/build-push-action@v5
+        uses: docker/build-push-action@v6
         if: "github.event_name == 'push' && contains(github.ref, 'main')"
         with:
           context: .
           file: ./Dockerfile
           push: ${{ github.event_name != 'pull_request' }}
-          platforms: linux/amd64,linux/arm64
+          platforms: ${{ matrix.os == 'ubuntu-24.04' && 'linux/amd64' || 'linux/arm64' }}
           build-args: |
             VERSION=dev-${{ steps.build_info.outputs.short_sha }}
           labels: ${{ steps.docker_meta.outputs.labels }}
           tags: ${{ steps.docker_meta.outputs.tags }}
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
+          cache-from: type=gha,scope=${{ matrix.os }}
+          cache-to: type=gha,scope=${{ matrix.os }},mode=max

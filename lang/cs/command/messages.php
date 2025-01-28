@@ -11,8 +11,6 @@ return [
         'ask_admin' => 'Je tento uživatel správcem?',
         'ask_email' => 'Emailová adresa',
         'ask_username' => 'Uživatelské jméno',
-        'ask_name_first' => 'Jméno',
-        'ask_name_last' => 'Příjmení',
         'ask_password' => 'Heslo',
         'ask_password_tip' => 'Pokud chcete vytvořit účet s náhodným heslem zaslaným uživateli, spusťte znovu tento příkaz (CTRL+C) a přejděte do proměnné `--no-password`.',
         'ask_password_help' => 'Heslo musí mít délku nejméně 8 znaků a obsahovat alespoň jedno velké písmeno a číslo.',

@@ -12,6 +12,8 @@ class ServerResource extends Resource
 
     protected static ?string $navigationIcon = 'tabler-brand-docker';
 
+    protected static ?string $navigationGroup = 'Server';
+
     protected static ?string $recordTitleAttribute = 'name';
 
     public static function getNavigationBadge(): ?string

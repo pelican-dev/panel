@@ -56,6 +56,7 @@ class FileResource extends Resource
         return [
             'edit' => Pages\EditFiles::route('/edit/{path}'),
             'search' => Pages\SearchFiles::route('/search/{searchTerm}'), // TODO: find better way?
+            'download' => Pages\DownloadFiles::route('/download/{path}'),
             'index' => Pages\ListFiles::route('/{path?}'),
         ];
     }

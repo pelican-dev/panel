@@ -7,6 +7,7 @@ use Illuminate\Bus\Queueable;
 use App\Models\Server;
 use Illuminate\Container\Container;
 use App\Events\Server\Installed;
+use App\Filament\App\Resources\ServerResource\Pages\ListServers;
 use Illuminate\Notifications\Notification;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Contracts\Notifications\Dispatcher;
@@ -63,6 +64,6 @@ class ServerInstalled extends Notification implements ShouldQueue
             ->greeting('Hello ' . $this->user->username . '.')
             ->line('Your server has finished installing and is now ready for you to use.')
             ->line('Server Name: ' . $this->server->name)
-            ->action('Login and Begin Using', route('index'));
+            ->action('Login and Begin Using', ListServers::getUrl());
     }
 }

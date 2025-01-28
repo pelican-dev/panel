@@ -20,7 +20,6 @@ use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\Builder;
 use App\Models\Traits\HasAccessTokens;
 use Illuminate\Auth\Passwords\CanResetPassword;
-use App\Traits\Helpers\AvailableLanguages;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\Access\Authorizable;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
@@ -30,6 +29,7 @@ use Illuminate\Contracts\Auth\CanResetPassword as CanResetPasswordContract;
 use App\Notifications\SendPasswordReset as ResetPasswordNotification;
 use Filament\Facades\Filament;
 use Illuminate\Database\Eloquent\Model as IlluminateModel;
+use ResourceBundle;
 use Spatie\Permission\Traits\HasRoles;
 
 /**
@@ -40,8 +40,6 @@ use Spatie\Permission\Traits\HasRoles;
  * @property string $uuid
  * @property string $username
  * @property string $email
- * @property string|null $name_first
- * @property string|null $name_last
  * @property string $password
  * @property string|null $remember_token
  * @property string $language
@@ -78,8 +76,6 @@ use Spatie\Permission\Traits\HasRoles;
  * @method static Builder|User whereId($value)
  * @method static Builder|User whereLanguage($value)
  * @method static Builder|User whereTimezone($value)
- * @method static Builder|User whereNameFirst($value)
- * @method static Builder|User whereNameLast($value)
  * @method static Builder|User wherePassword($value)
  * @method static Builder|User whereRememberToken($value)
  * @method static Builder|User whereTotpAuthenticatedAt($value)
@@ -93,7 +89,6 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
 {
     use Authenticatable;
     use Authorizable {can as protected canned; }
-    use AvailableLanguages;
     use CanResetPassword;
     use HasAccessTokens;
     use HasRoles;
@@ -126,8 +121,6 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
         'external_id',
         'username',
         'email',
-        'name_first',
-        'name_last',
         'password',
         'language',
         'timezone',
@@ -152,8 +145,6 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
         'timezone' => 'UTC',
         'use_totp' => false,
         'totp_secret' => null,
-        'name_first' => '',
-        'name_last' => '',
         'oauth' => '[]',
     ];
 
@@ -165,8 +156,6 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
         'email' => 'required|email|between:1,255|unique:users,email',
         'external_id' => 'sometimes|nullable|string|max:255|unique:users,external_id',
         'username' => 'required|between:1,255|unique:users,username',
-        'name_first' => 'nullable|string|between:0,255',
-        'name_last' => 'nullable|string|between:0,255',
         'password' => 'sometimes|nullable|string',
         'language' => 'string',
         'timezone' => 'string',
@@ -189,9 +178,8 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
     protected static function booted(): void
     {
         static::creating(function (self $user) {
-            $user->uuid = Str::uuid()->toString();
-
-            $user->timezone = env('APP_TIMEZONE', 'UTC');
+            $user->uuid ??= Str::uuid()->toString();
+            $user->timezone ??= config('app.timezone');
 
             return true;
         });
@@ -216,8 +204,8 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
     {
         $rules = parent::getRules();
 
-        $rules['language'][] = new In(array_keys((new self())->getAvailableLanguages()));
-        $rules['timezone'][] = new In(array_values(DateTimeZone::listIdentifiers()));
+        $rules['language'][] = new In(array_values(array_filter(ResourceBundle::getLocales(''), fn ($lang) => preg_match('/^[a-z]{2}$/', $lang))));
+        $rules['timezone'][] = new In(DateTimeZone::listIdentifiers());
         $rules['username'][] = new Username();
 
         return $rules;
@@ -266,15 +254,9 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
     }
 
     /**
-     * Return a concatenated result for the accounts full name.
-     */
-    public function getNameAttribute(): string
-    {
-        return trim($this->name_first . ' ' . $this->name_last);
-    }
-
-    /**
      * Returns all servers that a user owns.
+     *
+     * @return HasMany<Server, $this>
      */
     public function servers(): HasMany
     {
@@ -307,10 +289,23 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
     }
 
     /**
-     * Returns all the servers that a user can access by way of being the owner of the
-     * server, or because they are assigned as a subuser for that server.
+     * Returns all the servers that a user can access.
+     * Either because they are an admin or because they are the owner/ a subuser of the server.
      */
     public function accessibleServers(): Builder
+    {
+        if ($this->canned('viewList server')) {
+            return Server::query();
+        }
+
+        return $this->directAccessibleServers();
+    }
+
+    /**
+     * Returns all the servers that a user can access "directly".
+     * This means either because they are the owner or a subuser of the server.
+     */
+    public function directAccessibleServers(): Builder
     {
         return Server::query()
             ->select('servers.*')
@@ -333,7 +328,12 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
 
     protected function checkPermission(Server $server, string $permission = ''): bool
     {
-        if ($this->isRootAdmin() || $server->owner_id === $this->id) {
+        if ($this->canned('update server', $server) || $server->owner_id === $this->id) {
+            return true;
+        }
+
+        // If the user only has "view" permissions allow viewing the console
+        if ($permission === Permission::ACTION_WEBSOCKET_CONNECT && $this->canned('view server', $server)) {
             return true;
         }
 
@@ -379,6 +379,11 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
         return $this->hasRole(Role::ROOT_ADMIN);
     }
 
+    public function isAdmin(): bool
+    {
+        return $this->isRootAdmin() || ($this->roles()->count() >= 1 && $this->getAllPermissions()->count() >= 1);
+    }
+
     public function canAccessPanel(Panel $panel): bool
     {
         if ($this->isRootAdmin()) {
@@ -386,7 +391,7 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
         }
 
         if ($panel->getId() === 'admin') {
-            return $this->roles()->count() >= 1 && $this->getAllPermissions()->count() >= 1;
+            return $this->isAdmin();
         }
 
         return true;
@@ -394,7 +399,7 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
 
     public function getFilamentName(): string
     {
-        return $this->name_first ?: $this->username;
+        return $this->username;
     }
 
     public function getFilamentAvatarUrl(): ?string
@@ -419,7 +424,7 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
     public function canAccessTenant(IlluminateModel $tenant): bool
     {
         if ($tenant instanceof Server) {
-            if ($this->isRootAdmin() || $tenant->owner_id === $this->id) {
+            if ($this->canned('view server', $tenant) || $tenant->owner_id === $this->id) {
                 return true;
             }
 

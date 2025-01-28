@@ -3,6 +3,7 @@
 namespace App\Tests\Integration\Services\Servers;
 
 use App\Enums\ServerState;
+use App\Enums\SuspendAction;
 use Mockery\MockInterface;
 use App\Services\Servers\SuspensionService;
 use App\Tests\Integration\IntegrationTestCase;
@@ -29,11 +30,11 @@ class SuspensionServiceTest extends IntegrationTestCase
 
         $this->repository->expects('setServer->sync')->twice()->andReturnSelf();
 
-        $this->getService()->toggle($server);
+        $this->getService()->handle($server, SuspendAction::Suspend);
 
         $this->assertTrue($server->refresh()->isSuspended());
 
-        $this->getService()->toggle($server, SuspensionService::ACTION_UNSUSPEND);
+        $this->getService()->handle($server, SuspendAction::Unsuspend);
 
         $this->assertFalse($server->refresh()->isSuspended());
     }
@@ -42,26 +43,16 @@ class SuspensionServiceTest extends IntegrationTestCase
     {
         $server = $this->createServerModel();
 
-        $this->getService()->toggle($server, SuspensionService::ACTION_UNSUSPEND);
+        $this->getService()->handle($server, SuspendAction::Unsuspend);
 
         $server->refresh();
         $this->assertFalse($server->isSuspended());
 
         $server->update(['status' => ServerState::Suspended]);
-        $this->getService()->toggle($server);
+        $this->getService()->handle($server, SuspendAction::Suspend);
 
         $server->refresh();
         $this->assertTrue($server->isSuspended());
-    }
-
-    public function testExceptionIsThrownIfInvalidActionsArePassed(): void
-    {
-        $server = $this->createServerModel();
-
-        $this->expectException(\InvalidArgumentException::class);
-        $this->expectExceptionMessage('Expected one of: "suspend", "unsuspend". Got: "foo"');
-
-        $this->getService()->toggle($server, 'foo');
     }
 
     private function getService(): SuspensionService

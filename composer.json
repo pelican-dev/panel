@@ -29,8 +29,8 @@
         "phpseclib/phpseclib": "~3.0.18",
         "pragmarx/google2fa": "~8.0.0",
         "predis/predis": "~2.1.1",
-        "ryangjchandler/blade-tabler-icons": "^2.3",
         "s1lentium/iptools": "~1.2.0",
+        "secondnetwork/blade-tabler-icons": "^3.26",
         "socialiteproviders/authentik": "^5.2",
         "socialiteproviders/discord": "^4.2",
         "socialiteproviders/steam": "^4.2",
@@ -49,7 +49,7 @@
     "require-dev": {
         "barryvdh/laravel-ide-helper": "^3.0",
         "fakerphp/faker": "^1.23.1",
-        "larastan/larastan": "^2.9.6",
+        "larastan/larastan": "^3.0",
         "laravel/pint": "^1.15.3",
         "laravel/sail": "^1.29.1",
         "mockery/mockery": "^1.6.11",

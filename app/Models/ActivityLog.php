@@ -5,12 +5,15 @@ namespace App\Models;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Event;
 use App\Events\ActivityLogged;
+use Filament\Support\Contracts\HasIcon;
+use Filament\Support\Contracts\HasLabel;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\MassPrunable;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\Model as IlluminateModel;
+use Illuminate\Support\Str;
 
 /**
  * \App\Models\ActivityLog.
@@ -46,7 +49,7 @@ use Illuminate\Database\Eloquent\Model as IlluminateModel;
  * @method static Builder|ActivityLog whereProperties($value)
  * @method static Builder|ActivityLog whereTimestamp($value)
  */
-class ActivityLog extends Model
+class ActivityLog extends Model implements HasIcon, HasLabel
 {
     use MassPrunable;
 
@@ -85,12 +88,7 @@ class ActivityLog extends Model
 
     public function actor(): MorphTo
     {
-        $morph = $this->morphTo();
-        if (method_exists($morph, 'withTrashed')) {
-            return $morph->withTrashed();
-        }
-
-        return $morph;
+        return $this->morphTo()->withTrashed();
     }
 
     public function subjects(): HasMany
@@ -147,6 +145,22 @@ class ActivityLog extends Model
         });
     }
 
+    public function getIcon(): string
+    {
+        if ($this->apiKey) {
+            return 'tabler-api';
+        }
+
+        return $this->actor instanceof User ? 'tabler-user' : 'tabler-device-desktop';
+    }
+
+    public function getLabel(): string
+    {
+        $properties = $this->wrapProperties();
+
+        return trans_choice('activity.'.str($this->event)->replace(':', '.'), array_key_exists('count', $properties) ? $properties['count'] : 1, $properties);
+    }
+
     public function htmlable(): string
     {
         $user = $this->actor;
@@ -157,18 +171,80 @@ class ActivityLog extends Model
             ]);
         }
 
-        $event = __('activity.'.str($this->event)->replace(':', '.'));
-
         return "
             <div style='display: flex; align-items: center;'>
                 <img width='50px' height='50px' src='{$user->getFilamentAvatarUrl()}' style='margin-right: 15px' />
 
                 <div>
                     <p>$user->username — $this->event</p>
-                    <p>$event</p>
+                    <p>{$this->getLabel()}</p>
                     <p>$this->ip — <span title='{$this->timestamp->format('M j, Y g:ia')}'>{$this->timestamp->diffForHumans()}</span></p>
                 </div>
             </div>
         ";
+    }
+
+    public function wrapProperties(): array
+    {
+        if (!$this->properties || $this->properties->isEmpty()) {
+            return [];
+        }
+
+        $properties = $this->properties->mapWithKeys(function ($value, $key) {
+            if (!is_array($value)) {
+                // Perform some directory normalization at this point.
+                if ($key === 'directory') {
+                    $value = str_replace('//', '/', '/' . trim($value, '/') . '/');
+                }
+
+                return [$key => $value];
+            }
+
+            $first = array_first($value);
+
+            // Backwards compatibility for old logs
+            if (is_array($first)) {
+                return ["{$key}_count" => count($value)];
+            }
+
+            return [$key => $first, "{$key}_count" => count($value)];
+        });
+
+        $keys = $properties->keys()->filter(fn ($key) => Str::endsWith($key, '_count'))->values();
+        if ($keys->containsOneItem()) {
+            $properties = $properties->merge(['count' => $properties->get($keys[0])])->except([$keys[0]]);
+        }
+
+        return $properties->toArray();
+    }
+
+    /**
+     * Determines if there are any log properties that we've not already exposed
+     * in the response language string and that are not just the IP address or
+     * the browser useragent.
+     *
+     * This is used by the front-end to selectively display an "additional metadata"
+     * button that is pointless if there is nothing the user can't already see from
+     * the event description.
+     */
+    public function hasAdditionalMetadata(): bool
+    {
+        if (!$this->properties || $this->properties->isEmpty()) {
+            return false;
+        }
+
+        $properties = $this->wrapProperties();
+        $event = trans_choice('activity.'.str($this->event)->replace(':', '.'), array_key_exists('count', $properties) ? $properties['count'] : 1);
+
+        preg_match_all('/:(?<key>[\w.-]+\w)(?:[^\w:]?|$)/', $event, $matches);
+
+        $exclude = array_merge($matches['key'], ['ip', 'useragent', 'using_sftp']);
+        foreach ($this->properties->keys() as $key) {
+            if (!in_array($key, $exclude, true)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }

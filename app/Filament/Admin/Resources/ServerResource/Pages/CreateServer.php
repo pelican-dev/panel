@@ -34,7 +34,9 @@ use Filament\Forms\Components\Wizard\Step;
 use Filament\Forms\Form;
 use Filament\Forms\Get;
 use Filament\Forms\Set;
+use Filament\Notifications\Notification;
 use Filament\Resources\Pages\CreateRecord;
+use Filament\Support\Exceptions\Halt;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Blade;
@@ -68,9 +70,8 @@ class CreateServer extends CreateRecord
                         ->completedIcon('tabler-check')
                         ->columns([
                             'default' => 1,
-                            'sm' => 1,
+                            'sm' => 4,
                             'md' => 4,
-                            'lg' => 6,
                         ])
                         ->schema([
                             TextInput::make('name')
@@ -87,13 +88,41 @@ class CreateServer extends CreateRecord
                                         $set('name', $prefix . $word);
                                     }))
                                 ->columnSpan([
-                                    'default' => 2,
-                                    'sm' => 3,
+                                    'default' => 1,
+                                    'sm' => 2,
                                     'md' => 2,
-                                    'lg' => 3,
                                 ])
                                 ->required()
                                 ->maxLength(255),
+
+                            TextInput::make('external_id')
+                                ->label('External ID')
+                                ->columnSpan([
+                                    'default' => 1,
+                                    'sm' => 2,
+                                    'md' => 2,
+                                ])
+                                ->unique()
+                                ->maxLength(255),
+
+                            Select::make('node_id')
+                                ->disabledOn('edit')
+                                ->prefixIcon('tabler-server-2')
+                                ->default(fn () => ($this->node = Node::query()->latest()->first())?->id)
+                                ->columnSpan([
+                                    'default' => 1,
+                                    'sm' => 2,
+                                    'md' => 2,
+                                ])
+                                ->live()
+                                ->relationship('node', 'name')
+                                ->searchable()
+                                ->preload()
+                                ->afterStateUpdated(function (Set $set, $state) {
+                                    $set('allocation_id', null);
+                                    $this->node = Node::find($state);
+                                })
+                                ->required(),
 
                             Select::make('owner_id')
                                 ->preload()
@@ -101,14 +130,13 @@ class CreateServer extends CreateRecord
                                 ->default(auth()->user()->id)
                                 ->label('Owner')
                                 ->columnSpan([
-                                    'default' => 2,
-                                    'sm' => 3,
-                                    'md' => 3,
-                                    'lg' => 3,
+                                    'default' => 1,
+                                    'sm' => 2,
+                                    'md' => 2,
                                 ])
                                 ->relationship('user', 'username')
                                 ->searchable(['username', 'email'])
-                                ->getOptionLabelFromRecordUsing(fn (User $user) => "$user->email | $user->username " . ($user->isRootAdmin() ? '(admin)' : ''))
+                                ->getOptionLabelFromRecordUsing(fn (User $user) => "$user->email | $user->username " . (blank($user->roles) ? '' : '(' . $user->roles->first()->name . ')'))
                                 ->createOptionForm([
                                     TextInput::make('username')
                                         ->alphaNum()
@@ -134,36 +162,15 @@ class CreateServer extends CreateRecord
                                 })
                                 ->required(),
 
-                            Select::make('node_id')
-                                ->disabledOn('edit')
-                                ->prefixIcon('tabler-server-2')
-                                ->default(fn () => ($this->node = Node::query()->latest()->first())?->id)
-                                ->columnSpan([
-                                    'default' => 2,
-                                    'sm' => 3,
-                                    'md' => 6,
-                                    'lg' => 6,
-                                ])
-                                ->live()
-                                ->relationship('node', 'name')
-                                ->searchable()
-                                ->preload()
-                                ->afterStateUpdated(function (Set $set, $state) {
-                                    $set('allocation_id', null);
-                                    $this->node = Node::find($state);
-                                })
-                                ->required(),
-
                             Select::make('allocation_id')
                                 ->preload()
                                 ->live()
                                 ->prefixIcon('tabler-network')
                                 ->label('Primary Allocation')
                                 ->columnSpan([
-                                    'default' => 2,
-                                    'sm' => 3,
+                                    'default' => 1,
+                                    'sm' => 2,
                                     'md' => 2,
-                                    'lg' => 3,
                                 ])
                                 ->disabled(fn (Get $get) => $get('node_id') === null)
                                 ->searchable(['ip', 'port', 'ip_alias'])
@@ -191,86 +198,47 @@ class CreateServer extends CreateRecord
                                         ->where('node_id', $get('node_id'))
                                         ->whereNull('server_id'),
                                 )
-                                ->createOptionForm(fn (Get $get) => [
-                                    Select::make('allocation_ip')
-                                        ->options(collect(Node::find($get('node_id'))?->ipAddresses())->mapWithKeys(fn (string $ip) => [$ip => $ip]))
-                                        ->label('IP Address')
-                                        ->inlineLabel()
-                                        ->ipv4()
-                                        ->helperText("Usually your machine's public IP unless you are port forwarding.")
-                                        ->required(),
-                                    TextInput::make('allocation_alias')
-                                        ->label('Alias')
-                                        ->inlineLabel()
-                                        ->default(null)
-                                        ->datalist([
-                                            $get('name'),
-                                            Egg::find($get('egg_id'))?->name,
-                                        ])
-                                        ->helperText('Optional display name to help you remember what these are.')
-                                        ->required(false),
-                                    TagsInput::make('allocation_ports')
-                                        ->placeholder('Examples: 27015, 27017-27019')
-                                        ->helperText(new HtmlString('
-                                These are the ports that users can connect to this Server through.
-                                <br />
-                                You would have to port forward these on your home network.
-                            '))
-                                        ->label('Ports')
-                                        ->inlineLabel()
-                                        ->live()
-                                        ->afterStateUpdated(function ($state, Set $set) {
-                                            $ports = collect();
-                                            $update = false;
-                                            foreach ($state as $portEntry) {
-                                                if (!str_contains($portEntry, '-')) {
-                                                    if (is_numeric($portEntry)) {
-                                                        $ports->push((int) $portEntry);
+                                ->createOptionForm(function (Get $get) {
+                                    $getPage = $get;
 
-                                                        continue;
-                                                    }
-
-                                                    // Do not add non-numerical ports
-                                                    $update = true;
-
-                                                    continue;
-                                                }
-
-                                                $update = true;
-                                                [$start, $end] = explode('-', $portEntry);
-                                                if (!is_numeric($start) || !is_numeric($end)) {
-                                                    continue;
-                                                }
-
-                                                $start = max((int) $start, 0);
-                                                $end = min((int) $end, 2 ** 16 - 1);
-                                                $range = $start <= $end ? range($start, $end) : range($end, $start);
-                                                foreach ($range as $i) {
-                                                    if ($i > 1024 && $i <= 65535) {
-                                                        $ports->push($i);
-                                                    }
-                                                }
-                                            }
-
-                                            $uniquePorts = $ports->unique()->values();
-                                            if ($ports->count() > $uniquePorts->count()) {
-                                                $update = true;
-                                                $ports = $uniquePorts;
-                                            }
-
-                                            $sortedPorts = $ports->sort()->values();
-                                            if ($sortedPorts->all() !== $ports->all()) {
-                                                $update = true;
-                                                $ports = $sortedPorts;
-                                            }
-
-                                            if ($update) {
-                                                $set('allocation_ports', $ports->all());
-                                            }
-                                        })
-                                        ->splitKeys(['Tab', ' ', ','])
-                                        ->required(),
-                                ])
+                                    return [
+                                        Select::make('allocation_ip')
+                                            ->options(collect(Node::find($get('node_id'))?->ipAddresses())->mapWithKeys(fn (string $ip) => [$ip => $ip]))
+                                            ->label('IP Address')
+                                            ->helperText("Usually your machine's public IP unless you are port forwarding.")
+                                            ->afterStateUpdated(fn (Set $set) => $set('allocation_ports', []))
+                                            ->inlineLabel()
+                                            ->ipv4()
+                                            ->live()
+                                            ->required(),
+                                        TextInput::make('allocation_alias')
+                                            ->label('Alias')
+                                            ->inlineLabel()
+                                            ->default(null)
+                                            ->datalist([
+                                                $get('name'),
+                                                Egg::find($get('egg_id'))?->name,
+                                            ])
+                                            ->helperText('Optional display name to help you remember what these are.')
+                                            ->required(false),
+                                        TagsInput::make('allocation_ports')
+                                            ->placeholder('Examples: 27015, 27017-27019')
+                                            ->helperText(new HtmlString('
+                                            These are the ports that users can connect to this Server through.
+                                            <br />
+                                            You would have to port forward these on your home network.
+                                        '))
+                                            ->label('Ports')
+                                            ->inlineLabel()
+                                            ->live()
+                                            ->disabled(fn (Get $get) => empty($get('allocation_ip')))
+                                            ->afterStateUpdated(fn ($state, Set $set, Get $get) => $set('allocation_ports',
+                                                CreateServer::retrieveValidPorts(Node::find($getPage('node_id')), $state, $get('allocation_ip')))
+                                            )
+                                            ->splitKeys(['Tab', ' ', ','])
+                                            ->required(),
+                                    ];
+                                })
                                 ->createOptionUsing(function (array $data, Get $get, AssignmentService $assignmentService): int {
                                     return collect(
                                         $assignmentService->handle(Node::find($get('node_id')), $data)
@@ -281,10 +249,9 @@ class CreateServer extends CreateRecord
                             Repeater::make('allocation_additional')
                                 ->label('Additional Allocations')
                                 ->columnSpan([
-                                    'default' => 2,
-                                    'sm' => 3,
-                                    'md' => 3,
-                                    'lg' => 3,
+                                    'default' => 1,
+                                    'sm' => 2,
+                                    'md' => 2,
                                 ])
                                 ->addActionLabel('Add Allocation')
                                 ->disabled(fn (Get $get) => $get('allocation_id') === null)
@@ -320,10 +287,9 @@ class CreateServer extends CreateRecord
                                 ->placeholder('Description')
                                 ->rows(3)
                                 ->columnSpan([
-                                    'default' => 2,
-                                    'sm' => 6,
-                                    'md' => 6,
-                                    'lg' => 6,
+                                    'default' => 1,
+                                    'sm' => 4,
+                                    'md' => 4,
                                 ])
                                 ->label('Description'),
                         ]),
@@ -538,6 +504,37 @@ class CreateServer extends CreateRecord
                                         ->columns(4)
                                         ->columnSpanFull()
                                         ->schema([
+                                            ToggleButtons::make('unlimited_cpu')
+                                                ->label('CPU')->inlineLabel()->inline()
+                                                ->default(true)
+                                                ->afterStateUpdated(fn (Set $set) => $set('cpu', 0))
+                                                ->live()
+                                                ->options([
+                                                    true => 'Unlimited',
+                                                    false => 'Limited',
+                                                ])
+                                                ->colors([
+                                                    true => 'primary',
+                                                    false => 'warning',
+                                                ])
+                                                ->columnSpan(2),
+
+                                            TextInput::make('cpu')
+                                                ->dehydratedWhenHidden()
+                                                ->hidden(fn (Get $get) => $get('unlimited_cpu'))
+                                                ->label('CPU Limit')->inlineLabel()
+                                                ->suffix('%')
+                                                ->default(0)
+                                                ->required()
+                                                ->columnSpan(2)
+                                                ->numeric()
+                                                ->minValue(0)
+                                                ->helperText('100% equals one CPU core.'),
+                                        ]),
+                                    Grid::make()
+                                        ->columns(4)
+                                        ->columnSpanFull()
+                                        ->schema([
                                             ToggleButtons::make('unlimited_mem')
                                                 ->label('Memory')->inlineLabel()->inline()
                                                 ->default(true)
@@ -564,7 +561,6 @@ class CreateServer extends CreateRecord
                                                 ->numeric()
                                                 ->minValue(0),
                                         ]),
-
                                     Grid::make()
                                         ->columns(4)
                                         ->columnSpanFull()
@@ -596,37 +592,6 @@ class CreateServer extends CreateRecord
                                                 ->minValue(0),
                                         ]),
 
-                                    Grid::make()
-                                        ->columns(4)
-                                        ->columnSpanFull()
-                                        ->schema([
-                                            ToggleButtons::make('unlimited_cpu')
-                                                ->label('CPU')->inlineLabel()->inline()
-                                                ->default(true)
-                                                ->afterStateUpdated(fn (Set $set) => $set('cpu', 0))
-                                                ->live()
-                                                ->options([
-                                                    true => 'Unlimited',
-                                                    false => 'Limited',
-                                                ])
-                                                ->colors([
-                                                    true => 'primary',
-                                                    false => 'warning',
-                                                ])
-                                                ->columnSpan(2),
-
-                                            TextInput::make('cpu')
-                                                ->dehydratedWhenHidden()
-                                                ->hidden(fn (Get $get) => $get('unlimited_cpu'))
-                                                ->label('CPU Limit')->inlineLabel()
-                                                ->suffix('%')
-                                                ->default(0)
-                                                ->required()
-                                                ->columnSpan(2)
-                                                ->numeric()
-                                                ->minValue(0)
-                                                ->helperText('100% equals one CPU core.'),
-                                        ]),
                                 ]),
 
                             Fieldset::make('Advanced Limits')
@@ -638,6 +603,40 @@ class CreateServer extends CreateRecord
                                     'lg' => 3,
                                 ])
                                 ->schema([
+                                    Hidden::make('io')
+                                        ->helperText('The IO performance relative to other running containers')
+                                        ->label('Block IO Proportion')
+                                        ->default(500),
+
+                                    Grid::make()
+                                        ->columns(4)
+                                        ->columnSpanFull()
+                                        ->schema([
+                                            ToggleButtons::make('cpu_pinning')
+                                                ->label('CPU Pinning')->inlineLabel()->inline()
+                                                ->default(false)
+                                                ->afterStateUpdated(fn (Set $set) => $set('threads', []))
+                                                ->live()
+                                                ->options([
+                                                    false => 'Disabled',
+                                                    true => 'Enabled',
+                                                ])
+                                                ->colors([
+                                                    false => 'success',
+                                                    true => 'warning',
+                                                ])
+                                                ->columnSpan(2),
+
+                                            TagsInput::make('threads')
+                                                ->dehydratedWhenHidden()
+                                                ->hidden(fn (Get $get) => !$get('cpu_pinning'))
+                                                ->label('Pinned Threads')->inlineLabel()
+                                                ->required(fn (Get $get) => $get('cpu_pinning'))
+                                                ->columnSpan(2)
+                                                ->separator()
+                                                ->splitKeys([','])
+                                                ->placeholder('Add pinned thread, e.g. 0 or 2-4'),
+                                        ]),
                                     Grid::make()
                                         ->columns(4)
                                         ->columnSpanFull()
@@ -684,41 +683,6 @@ class CreateServer extends CreateRecord
                                                 ->inlineLabel()
                                                 ->required()
                                                 ->integer(),
-                                        ]),
-
-                                    Hidden::make('io')
-                                        ->helperText('The IO performance relative to other running containers')
-                                        ->label('Block IO Proportion')
-                                        ->default(500),
-
-                                    Grid::make()
-                                        ->columns(4)
-                                        ->columnSpanFull()
-                                        ->schema([
-                                            ToggleButtons::make('cpu_pinning')
-                                                ->label('CPU Pinning')->inlineLabel()->inline()
-                                                ->default(false)
-                                                ->afterStateUpdated(fn (Set $set) => $set('threads', []))
-                                                ->live()
-                                                ->options([
-                                                    false => 'Disabled',
-                                                    true => 'Enabled',
-                                                ])
-                                                ->colors([
-                                                    false => 'success',
-                                                    true => 'warning',
-                                                ])
-                                                ->columnSpan(2),
-
-                                            TagsInput::make('threads')
-                                                ->dehydratedWhenHidden()
-                                                ->hidden(fn (Get $get) => !$get('cpu_pinning'))
-                                                ->label('Pinned Threads')->inlineLabel()
-                                                ->required(fn (Get $get) => $get('cpu_pinning'))
-                                                ->columnSpan(2)
-                                                ->separator()
-                                                ->splitKeys([','])
-                                                ->placeholder('Add pinned thread, e.g. 0 or 2-4'),
                                         ]),
 
                                     Grid::make()
@@ -875,7 +839,18 @@ class CreateServer extends CreateRecord
     {
         $data['allocation_additional'] = collect($data['allocation_additional'])->filter()->all();
 
-        return $this->serverCreationService->handle($data);
+        try {
+            return $this->serverCreationService->handle($data);
+        } catch (Exception $exception) {
+            Notification::make()
+                ->title('Could not create server')
+                ->body($exception->getMessage())
+                ->color('danger')
+                ->danger()
+                ->send();
+
+            throw new Halt();
+        }
     }
 
     private function shouldHideComponent(Get $get, Component $component): bool
@@ -907,5 +882,89 @@ class CreateServer extends CreateRecord
             ->each(fn ($value) => str($value)->trim())
             ->mapWithKeys(fn ($value) => [$value => $value])
             ->all();
+    }
+
+    public static function retrieveValidPorts(Node $node, array $portEntries, string $ip): array
+    {
+        $portRangeLimit = AssignmentService::PORT_RANGE_LIMIT;
+        $portFloor = AssignmentService::PORT_FLOOR;
+        $portCeil = AssignmentService::PORT_CEIL;
+
+        $ports = collect();
+
+        $existingPorts = $node
+            ->allocations()
+            ->where('ip', $ip)
+            ->pluck('port')
+            ->all();
+
+        foreach ($portEntries as $portEntry) {
+            $start = $end = $portEntry;
+            if (str_contains($portEntry, '-')) {
+                [$start, $end] = explode('-', $portEntry);
+            }
+
+            if (!is_numeric($start) || !is_numeric($end)) {
+                Notification::make()
+                    ->title('Invalid Port Range')
+                    ->danger()
+                    ->body("Your port range are not valid integers: $portEntry")
+                    ->send();
+
+                continue;
+            }
+
+            $start = (int) $start;
+            $end = (int) $end;
+            $range = $start <= $end ? range($start, $end) : range($end, $start);
+
+            if (count($range) > $portRangeLimit) {
+                Notification::make()
+                    ->title('Too many ports at one time!')
+                    ->danger()
+                    ->body("The current limit is $portRangeLimit number of ports at one time.")
+                    ->send();
+
+                continue;
+            }
+
+            foreach ($range as $i) {
+                // Invalid port number
+                if ($i <= $portFloor || $i > $portCeil) {
+                    Notification::make()
+                        ->title('Port not in valid range')
+                        ->danger()
+                        ->body("$i is not in the valid port range between $portFloor-$portCeil")
+                        ->send();
+
+                    continue;
+                }
+
+                // Already exists
+                if (in_array($i, $existingPorts)) {
+                    Notification::make()
+                        ->title('Port already in use')
+                        ->danger()
+                        ->body("$i is already with an allocation")
+                        ->send();
+
+                    continue;
+                }
+
+                $ports->push($i);
+            }
+        }
+
+        $uniquePorts = $ports->unique()->values();
+        if ($ports->count() > $uniquePorts->count()) {
+            $ports = $uniquePorts;
+        }
+
+        $sortedPorts = $ports->sort()->values();
+        if ($sortedPorts->all() !== $ports->all()) {
+            $ports = $sortedPorts;
+        }
+
+        return $ports->all();
     }
 }
