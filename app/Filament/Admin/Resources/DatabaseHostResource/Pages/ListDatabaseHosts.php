@@ -25,16 +25,16 @@ class ListDatabaseHosts extends ListRecords
             ->searchable(false)
             ->columns([
                 TextColumn::make('name')
-                    ->label(trans('admin/databasehosts.table.name'))
+                    ->label(trans('admin/databasehost.table.name'))
                     ->searchable(),
                 TextColumn::make('host')
-                    ->label(trans('admin/databasehosts.table.host'))
+                    ->label(trans('admin/databasehost.table.host'))
                     ->searchable(),
                 TextColumn::make('port')
-                    ->label(trans('admin/databasehosts.table.port'))
+                    ->label(trans('admin/databasehost.table.port'))
                     ->sortable(),
                 TextColumn::make('username')
-                    ->label(trans('admin/databasehosts.table.username'))
+                    ->label(trans('admin/databasehost.table.username'))
                     ->searchable(),
                 TextColumn::make('databases_count')
                     ->counts('databases')
@@ -61,7 +61,7 @@ class ListDatabaseHosts extends ListRecords
             ->emptyStateHeading('No Database Hosts')
             ->emptyStateActions([
                 CreateAction::make('create')
-                    ->label(trans('admin/databasehosts.create_action', ['action' => trans('filament-actions::create.single.modal.actions.create.label')]))
+                    ->label(trans('admin/databasehost.create_action', ['action' => trans('filament-actions::create.single.modal.actions.create.label')]))
                     ->button(),
             ]);
     }

@@ -57,10 +57,10 @@ class CreateApiKey extends CreateRecord
                         collect(ApiKey::getPermissionList())->map(fn ($resource) => ToggleButtons::make('permissions_' . $resource)
                             ->label(str($resource)->replace('_', ' ')->title())->inline()
                             ->options([
-                                0 => trans('admin/apikeys.permissions.none'),
-                                1 => trans('admin/apikeys.permissions.read'),
+                                0 => trans('admin/apikey.permissions.none'),
+                                1 => trans('admin/apikey.permissions.read'),
                                 // 2 => 'Write', // Makes no sense to have write-only permissions when you can't read it?
-                                3 => trans('admin/apikeys.permissions.read_write'),
+                                3 => trans('admin/apikey.permissions.read_write'),
                             ])
                             ->icons([
                                 0 => 'tabler-book-off',
@@ -86,14 +86,14 @@ class CreateApiKey extends CreateRecord
 
                 TagsInput::make('allowed_ips')
                     ->placeholder('127.0.0.1 or 192.168.1.1')
-                    ->label(trans('admin/apikeys.whitelist'))
-                    ->helperText(trans('admin/apikeys.whitelist_help'))
+                    ->label(trans('admin/apikey.whitelist'))
+                    ->helperText(trans('admin/apikey.whitelist_help'))
                     ->columnSpanFull(),
 
                 Textarea::make('memo')
                     ->required()
-                    ->label(trans('admin/apikeys.description'))
-                    ->helperText(trans('admin/apikeys.description_help'))
+                    ->label(trans('admin/apikey.description'))
+                    ->helperText(trans('admin/apikey.description_help'))
                     ->columnSpanFull(),
             ]);
     }
