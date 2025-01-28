@@ -474,7 +474,7 @@ class ListFiles extends ListRecords
 
                             Activity::event('server:file.uploaded')
                                 ->property('directory', $this->path)
-                                ->property('file', $file->getFilename())
+                                ->property('file', $file->getClientOriginalName())
                                 ->log();
                         }
                     } elseif ($data['url'] !== null) {
@@ -502,6 +502,7 @@ class ListFiles extends ListRecords
                                         ->storeFiles(false)
                                         ->previewable(false)
                                         ->preserveFilenames()
+                                        ->maxSize($server->node->upload_size * config('panel.use_binary_prefix') ? 1024 : 1000)
                                         ->multiple(),
                                 ]),
                             Tab::make('Upload From URL')
