@@ -482,7 +482,7 @@ class EditServer extends EditRecord
                                         KeyValue::make('docker_labels')
                                             ->label(trans('admin/server.container_labels'))
                                             ->keyLabel(trans('admin/server.title'))
-                                            ->valueLabel(trans('admin/server.value'))
+                                            ->valueLabel(trans('admin/server.description'))
                                             ->columnSpanFull(),
                                     ]),
                             ]),
@@ -783,7 +783,7 @@ class EditServer extends EditRecord
                                             ->schema([
                                                 Forms\Components\Actions::make([
                                                     Action::make('toggleInstall')
-                                                        ->label(trans('admin/server.toggle_install'))
+                                                        ->label(trans('admin/server.edit_server.toggle_install'))
                                                         ->disabled(fn (Server $server) => $server->isSuspended())
                                                         ->action(function (ToggleInstallService $service, Server $server) {
                                                             $service->handle($server);
@@ -799,7 +799,7 @@ class EditServer extends EditRecord
                                             ->schema([
                                                 Forms\Components\Actions::make([
                                                     Action::make('toggleSuspend')
-                                                        ->label(trans('admin/server.suspend'))
+                                                        ->label(trans('admin/server.edit_server.suspend'))
                                                         ->color('warning')
                                                         ->hidden(fn (Server $server) => $server->isSuspended())
                                                         ->action(function (SuspensionService $suspensionService, Server $server) {
@@ -813,7 +813,7 @@ class EditServer extends EditRecord
                                                             $this->refreshFormData(['status', 'docker']);
                                                         }),
                                                     Action::make('toggleUnsuspend')
-                                                        ->label(trans('admin/server.unsuspend'))
+                                                        ->label(trans('admin/server.edit_server.unsuspend'))
                                                         ->color('success')
                                                         ->hidden(fn (Server $server) => !$server->isSuspended())
                                                         ->action(function (SuspensionService $suspensionService, Server $server) {
@@ -874,7 +874,7 @@ class EditServer extends EditRecord
                                             ->schema([
                                                 Forms\Components\Actions::make([
                                                     Action::make('reinstall')
-                                                        ->label('Reinstall')
+                                                        ->label(trans('admin/server.edit_server.reinstall'))
                                                         ->color('danger')
                                                         ->requiresConfirmation()
                                                         ->modalHeading(trans('admin/server.edit_server.reinstall_modal_heading'))

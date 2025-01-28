@@ -36,6 +36,7 @@ return [
     'threads' => 'Pinned Threads',
     'pin_help' => 'Add pinned thread, e.g. 0 or 2-4',
     'swap' => 'Swap Memory',
+    'swap_limit' => 'Swap Memory Limit',
     'oom' => 'OOM Killer',
     'feature_limits' => 'Feature Limits',
     'docker_settings' => 'Docker Settings',
