@@ -277,10 +277,7 @@ class EditNode extends EditRecord
                                 ])
                                 ->label('Upload Limit')
                                 ->hintIcon('tabler-question-mark')
-                                ->hintIconTooltip('
-                                    Enter the maximum size of files that can be uploaded through the web-based file manager.
-                                    Make sure you change client_max_body_size, client_body_timeout, upload_max_filesize = 100M & post_max_size=100M in your webserver config
-                                ')
+                                ->hintIconTooltip('Enter the maximum size of files that can be uploaded through the web-based file manager. Make sure your webserver supports file uploads of this size!')
                                 ->numeric()->required()
                                 ->minValue(1)
                                 ->maxValue(1024)
