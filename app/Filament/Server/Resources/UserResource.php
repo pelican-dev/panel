@@ -38,7 +38,7 @@ class UserResource extends Resource
 
     protected static ?string $tenantOwnershipRelationshipName = 'subServers';
 
-    public static function getNavigationBadge(): ?string
+    public static function getNavigationBadge(): string
     {
         /** @var Server $server */
         $server = Filament::getTenant();

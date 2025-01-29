@@ -18,25 +18,31 @@ class DatabaseResource extends Resource
 
     protected static ?string $navigationIcon = 'tabler-database';
 
-    public static function getNavigationBadge(): ?string
+    public static function getNavigationBadge(): string
     {
         /** @var Server $server */
         $server = Filament::getTenant();
 
-        if ($server->database_limit === 0) {
+        $limit = $server->database_limit;
+
+        return $server->databases->count() . ($limit === 0 ? '' : ' / ' . $limit);
+    }
+
+    public static function getNavigationBadgeColor(): ?string
+    {
+        /** @var Server $server */
+        $server = Filament::getTenant();
+
+        $limit = $server->database_limit;
+        if ($limit === 0) {
             return null;
         }
 
-        return $server->databases->count() . ' / ' . $server->database_limit;
-    }
+        $count = $server->databases->count();
 
-    public static function getNavigationBadgeColor(): string|array|null
-    {
-        /** @var Server $server */
-        $server = Filament::getTenant();
-
-        return $server->databases->count() >= $server->database_limit ? 'danger'
-            : ($server->databases->count() >= $server->database_limit * 0.7 ? 'warning' : 'success');
+        return $count >= $limit
+            ? 'danger'
+            : ($count >= $limit * 0.7 ? 'warning' : 'success');
     }
 
     // TODO: find better way handle server conflict state
