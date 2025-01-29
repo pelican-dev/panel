@@ -4,13 +4,19 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use App\Services\Users\UserUpdateService;
 use Filament\Notifications\Notification;
 use GuzzleHttp\Client;
+use Illuminate\Auth\AuthManager;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 
-class SearcadeController extends AbstractLoginController
+class SearcadeController extends Controller
 {
+
+    public function __construct(
+        private readonly AuthManager $auth
+    ) {}
 
     public function login(Request $request): RedirectResponse
     {
