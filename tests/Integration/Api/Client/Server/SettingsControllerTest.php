@@ -8,14 +8,14 @@ use App\Models\Server;
 use App\Models\Permission;
 use App\Repositories\Daemon\DaemonServerRepository;
 use App\Tests\Integration\Api\Client\ClientApiIntegrationTestCase;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 class SettingsControllerTest extends ClientApiIntegrationTestCase
 {
     /**
      * Test that the server's name can be changed.
-     *
-     * @dataProvider renamePermissionsDataProvider
      */
+    #[DataProvider('renamePermissionsDataProvider')]
     public function testServerNameCanBeChanged(array $permissions): void
     {
         /** @var \App\Models\Server $server */
@@ -69,9 +69,8 @@ class SettingsControllerTest extends ClientApiIntegrationTestCase
     /**
      * Test that a server can be reinstalled. Honestly this test doesn't do much of anything other
      * than make sure the endpoint works since.
-     *
-     * @dataProvider reinstallPermissionsDataProvider
      */
+    #[DataProvider('reinstallPermissionsDataProvider')]
     public function testServerCanBeReinstalled(array $permissions): void
     {
         /** @var \App\Models\Server $server */

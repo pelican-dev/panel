@@ -6,14 +6,14 @@ use Illuminate\Http\Response;
 use App\Models\Schedule;
 use App\Models\Permission;
 use App\Tests\Integration\Api\Client\ClientApiIntegrationTestCase;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 class CreateServerScheduleTest extends ClientApiIntegrationTestCase
 {
     /**
      * Test that a schedule can be created for the server.
-     *
-     * @dataProvider permissionsDataProvider
      */
+    #[DataProvider('permissionsDataProvider')]
     public function testScheduleCanBeCreatedForServer(array $permissions): void
     {
         [$user, $server] = $this->generateTestAccount($permissions);

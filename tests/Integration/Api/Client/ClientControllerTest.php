@@ -8,6 +8,7 @@ use App\Models\Subuser;
 use App\Models\Allocation;
 use App\Models\Permission;
 use App\Models\Role;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 class ClientControllerTest extends ClientApiIntegrationTestCase
 {
@@ -286,9 +287,8 @@ class ClientControllerTest extends ClientApiIntegrationTestCase
     /**
      * Test that no servers get returned if the user requests all admin level servers by using
      * ?type=admin or ?type=admin-all in the request.
-     *
-     * @dataProvider filterTypeDataProvider
      */
+    #[DataProvider('filterTypeDataProvider')]
     public function testNoServersAreReturnedIfAdminFilterIsPassedByRegularUser(string $type): void
     {
         /** @var \App\Models\User[] $users */

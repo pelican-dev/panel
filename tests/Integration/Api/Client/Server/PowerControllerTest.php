@@ -6,6 +6,7 @@ use Illuminate\Http\Response;
 use App\Models\Permission;
 use App\Repositories\Daemon\DaemonPowerRepository;
 use App\Tests\Integration\Api\Client\ClientApiIntegrationTestCase;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 class PowerControllerTest extends ClientApiIntegrationTestCase
 {
@@ -15,9 +16,8 @@ class PowerControllerTest extends ClientApiIntegrationTestCase
      * the command to the server.
      *
      * @param  string[]  $permissions
-     *
-     * @dataProvider invalidPermissionDataProvider
      */
+    #[DataProvider('invalidPermissionDataProvider')]
     public function testSubuserWithoutPermissionsReceivesError(string $action, array $permissions): void
     {
         [$user, $server] = $this->generateTestAccount($permissions);
@@ -45,9 +45,8 @@ class PowerControllerTest extends ClientApiIntegrationTestCase
 
     /**
      * Test that sending a valid power actions works.
-     *
-     * @dataProvider validPowerActionDataProvider
      */
+    #[DataProvider('validPowerActionDataProvider')]
     public function testActionCanBeSentToServer(string $action, string $permission): void
     {
         $service = \Mockery::mock(DaemonPowerRepository::class);
