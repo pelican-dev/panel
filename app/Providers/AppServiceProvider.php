@@ -49,7 +49,7 @@ class AppServiceProvider extends ServiceProvider
         // If the APP_URL value is set with https:// make sure we force it here. Theoretically
         // this should just work with the proxy logic, but there are a lot of cases where it
         // doesn't, and it triggers a lot of support requests, so lets just head it off here.
-        URL::forceHttps(Str::startsWith(config('app.url') ?? '', 'https://'));
+        URL::forceHttps(true);
 
         Relation::enforceMorphMap([
             'allocation' => Models\Allocation::class,
