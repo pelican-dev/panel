@@ -20,6 +20,8 @@ class BackupResource extends Resource
 
     protected static bool $canCreateAnother = false;
 
+    public const WARNING_THRESHOLD = 0.7;
+
     public static function getNavigationBadge(): string
     {
         /** @var Server $server */
@@ -36,15 +38,14 @@ class BackupResource extends Resource
         $server = Filament::getTenant();
 
         $limit = $server->backup_limit;
+        $count = $server->backups->count();
 
         if ($limit === 0) {
             return null;
         }
 
-        $count = $server->backups->count();
-
         return $count >= $limit ? 'danger'
-            : ($count >= $limit * 0.7 ? 'warning' : 'success');
+            : ($count >= $limit * self::WARNING_THRESHOLD ? 'warning' : 'success');
     }
 
     // TODO: find better way handle server conflict state

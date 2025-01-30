@@ -18,6 +18,8 @@ class DatabaseResource extends Resource
 
     protected static ?string $navigationIcon = 'tabler-database';
 
+    public const WARNING_THRESHOLD = 0.7;
+
     public static function getNavigationBadge(): string
     {
         /** @var Server $server */
@@ -34,15 +36,15 @@ class DatabaseResource extends Resource
         $server = Filament::getTenant();
 
         $limit = $server->database_limit;
+        $count = $server->databases->count();
+
         if ($limit === 0) {
             return null;
         }
 
-        $count = $server->databases->count();
-
         return $count >= $limit
             ? 'danger'
-            : ($count >= $limit * 0.7 ? 'warning' : 'success');
+            : ($count >= $limit * self::WARNING_THRESHOLD ? 'warning' : 'success');
     }
 
     // TODO: find better way handle server conflict state
