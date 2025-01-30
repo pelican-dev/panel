@@ -38,6 +38,14 @@ class UserResource extends Resource
 
     protected static ?string $tenantOwnershipRelationshipName = 'subServers';
 
+    public static function getNavigationBadge(): string
+    {
+        /** @var Server $server */
+        $server = Filament::getTenant();
+
+        return (string) $server->subusers->count();
+    }
+
     // TODO: find better way handle server conflict state
     public static function canAccess(): bool
     {
