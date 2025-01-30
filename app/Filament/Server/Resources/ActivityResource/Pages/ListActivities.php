@@ -97,7 +97,8 @@ class ListActivities extends ListRecords
                             ),
                         DateTimePicker::make('timestamp'),
                         KeyValue::make('properties')
-                            ->label('Metadata'),
+                            ->label('Metadata')
+                            ->formatStateUsing(fn ($state) => collect($state)->filter(fn ($item) => !is_array($item))->all()),
                     ]),
             ])
             ->filters([
