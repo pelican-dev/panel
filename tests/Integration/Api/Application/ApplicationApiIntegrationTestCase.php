@@ -16,7 +16,6 @@ use App\Models\Server;
 use App\Models\Role;
 use App\Services\Acl\Api\AdminAcl;
 use App\Tests\Integration\IntegrationTestCase;
-use Illuminate\Foundation\Testing\DatabaseTransactions;
 use App\Tests\Traits\Integration\CreatesTestModels;
 use App\Transformers\Api\Application\BaseTransformer;
 use App\Transformers\Api\Client\BaseClientTransformer;
@@ -25,7 +24,6 @@ use App\Tests\Traits\Http\IntegrationJsonRequestAssertions;
 abstract class ApplicationApiIntegrationTestCase extends IntegrationTestCase
 {
     use CreatesTestModels;
-    use DatabaseTransactions;
     use IntegrationJsonRequestAssertions;
 
     private ApiKey $key;
