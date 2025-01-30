@@ -9,6 +9,7 @@ use App\Services\Databases\DatabaseManagementService;
 use App\Exceptions\Repository\DuplicateDatabaseNameException;
 use App\Exceptions\Service\Database\TooManyDatabasesException;
 use App\Exceptions\Service\Database\DatabaseClientFeatureNotEnabledException;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 class DatabaseManagementServiceTest extends IntegrationTestCase
 {
@@ -63,9 +64,8 @@ class DatabaseManagementServiceTest extends IntegrationTestCase
 
     /**
      * Test that a missing or invalid database name format causes an exception to be thrown.
-     *
-     * @dataProvider invalidDataDataProvider
      */
+    #[DataProvider('invalidDataDataProvider')]
     public function testEmptyDatabaseNameOrInvalidNameTriggersAnException(array $data): void
     {
         $server = $this->createServerModel();

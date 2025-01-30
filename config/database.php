@@ -2,7 +2,8 @@
 
 $database = env('DB_DATABASE', 'database.sqlite');
 $datapasePath = database_path($database);
-if (str($database)->startsWith('/')) {
+
+if (str_starts_with($database, '/') || $database === ':memory:') {
     $databasePath = $database;
 }
 

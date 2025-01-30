@@ -12,6 +12,7 @@ use App\Jobs\Schedule\RunTaskJob;
 use App\Exceptions\DisplayException;
 use App\Tests\Integration\IntegrationTestCase;
 use App\Services\Schedules\ProcessScheduleService;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 class ProcessScheduleServiceTest extends IntegrationTestCase
 {
@@ -55,9 +56,8 @@ class ProcessScheduleServiceTest extends IntegrationTestCase
 
     /**
      * Test that a job is dispatched as expected using the initial delay.
-     *
-     * @dataProvider dispatchNowDataProvider
      */
+    #[DataProvider('dispatchNowDataProvider')]
     public function testJobCanBeDispatchedWithExpectedInitialDelay(bool $now): void
     {
         Bus::fake();

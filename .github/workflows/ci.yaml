@@ -69,13 +69,13 @@ jobs:
         run: composer install --no-interaction --no-suggest --prefer-dist
 
       - name: Unit tests
-        run: vendor/bin/phpunit tests/Unit
+        run: vendor/bin/pest tests/Unit
         env:
           DB_HOST: UNIT_NO_DB
           SKIP_MIGRATIONS: true
 
       - name: Integration tests
-        run: vendor/bin/phpunit tests/Integration
+        run: vendor/bin/pest tests/Integration
         env:
           DB_PORT: ${{ job.services.database.ports[3306] }}
           DB_USERNAME: root
@@ -142,13 +142,13 @@ jobs:
         run: composer install --no-interaction --no-suggest --prefer-dist
 
       - name: Unit tests
-        run: vendor/bin/phpunit tests/Unit
+        run: vendor/bin/pest tests/Unit
         env:
           DB_HOST: UNIT_NO_DB
           SKIP_MIGRATIONS: true
 
       - name: Integration tests
-        run: vendor/bin/phpunit tests/Integration
+        run: vendor/bin/pest tests/Integration
         env:
           DB_PORT: ${{ job.services.database.ports[3306] }}
           DB_USERNAME: root
@@ -206,10 +206,10 @@ jobs:
         run: touch database/testing.sqlite
 
       - name: Unit tests
-        run: vendor/bin/phpunit tests/Unit
+        run: vendor/bin/pest tests/Unit
         env:
           DB_HOST: UNIT_NO_DB
           SKIP_MIGRATIONS: true
 
       - name: Integration tests
-        run: vendor/bin/phpunit tests/Integration
+        run: vendor/bin/pest tests/Integration
