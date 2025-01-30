@@ -177,6 +177,11 @@ class ApiKey extends PersonalAccessToken
 
     private static array $customResourceNames = [];
 
+    public static function registerCustomResourceName(string $resourceName): void
+    {
+        static::$customResourceNames[] = $resourceName;
+    }
+
     /**
      * Returns a list of all possible permission keys.
      */
