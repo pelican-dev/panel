@@ -115,11 +115,11 @@ Route::prefix('/servers/{server:uuid}')->middleware([ServerSubject::class, Authe
     Route::prefix('/backups')->group(function () {
         Route::get('/', [Client\Servers\BackupController::class, 'index']);
         Route::post('/', [Client\Servers\BackupController::class, 'store']);
-        Route::get('/{backup}', [Client\Servers\BackupController::class, 'view']);
-        Route::get('/{backup}/download', [Client\Servers\BackupController::class, 'download']);
-        Route::post('/{backup}/lock', [Client\Servers\BackupController::class, 'toggleLock']);
-        Route::post('/{backup}/restore', [Client\Servers\BackupController::class, 'restore']);
-        Route::delete('/{backup}', [Client\Servers\BackupController::class, 'delete']);
+        Route::get('/{backup:uuid}', [Client\Servers\BackupController::class, 'view']);
+        Route::get('/{backup:uuid}/download', [Client\Servers\BackupController::class, 'download']);
+        Route::post('/{backup:uuid}/lock', [Client\Servers\BackupController::class, 'toggleLock']);
+        Route::post('/{backup:uuid}/restore', [Client\Servers\BackupController::class, 'restore']);
+        Route::delete('/{backup:uuid}', [Client\Servers\BackupController::class, 'delete']);
     });
 
     Route::prefix('/startup')->group(function () {

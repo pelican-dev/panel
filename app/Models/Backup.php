@@ -2,6 +2,10 @@
 
 namespace App\Models;
 
+use App\Contracts\Validatable;
+use App\Traits\HasValidation;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 use App\Eloquent\BackupQueryBuilder;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -25,8 +29,10 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property \App\Models\Server $server
  * @property \App\Models\AuditLog[] $audits
  */
-class Backup extends Model
+class Backup extends Model implements Validatable
 {
+    use HasFactory;
+    use HasValidation;
     use SoftDeletes;
 
     public const RESOURCE_NAME = 'backup';
@@ -34,8 +40,6 @@ class Backup extends Model
     public const ADAPTER_DAEMON = 'wings';
 
     public const ADAPTER_AWS_S3 = 's3';
-
-    protected $table = 'backups';
 
     protected $attributes = [
         'is_successful' => false,

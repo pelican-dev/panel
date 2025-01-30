@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Traits\HasValidation;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Event;
 use App\Events\ActivityLogged;
@@ -12,7 +13,7 @@ use Illuminate\Database\Eloquent\MassPrunable;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
-use Illuminate\Database\Eloquent\Model as IlluminateModel;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
 
 /**
@@ -28,12 +29,12 @@ use Illuminate\Support\Str;
  * @property int|null $api_key_id
  * @property \Illuminate\Support\Collection|null $properties
  * @property \Carbon\Carbon $timestamp
- * @property IlluminateModel|\Eloquent $actor
+ * @property Model|\Eloquent $actor
  * @property \Illuminate\Database\Eloquent\Collection|\App\Models\ActivityLogSubject[] $subjects
  * @property int|null $subjects_count
  * @property \App\Models\ApiKey|null $apiKey
  *
- * @method static Builder|ActivityLog forActor(\Illuminate\Database\Eloquent\Model $actor)
+ * @method static Builder|ActivityLog forActor(Model $actor)
  * @method static Builder|ActivityLog forEvent(string $action)
  * @method static Builder|ActivityLog newModelQuery()
  * @method static Builder|ActivityLog newQuery()
@@ -51,6 +52,7 @@ use Illuminate\Support\Str;
  */
 class ActivityLog extends Model implements HasIcon, HasLabel
 {
+    use HasValidation;
     use MassPrunable;
 
     public const RESOURCE_NAME = 'activity_log';
@@ -109,7 +111,7 @@ class ActivityLog extends Model implements HasIcon, HasLabel
     /**
      * Scopes a query to only return results where the actor is a given model.
      */
-    public function scopeForActor(Builder $builder, IlluminateModel $actor): Builder
+    public function scopeForActor(Builder $builder, Model $actor): Builder
     {
         return $builder->whereMorphedTo('actor', $actor);
     }

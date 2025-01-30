@@ -2,8 +2,12 @@
 
 namespace App\Models;
 
+use App\Contracts\Validatable;
 use App\Exceptions\Service\Egg\HasChildrenException;
 use App\Exceptions\Service\HasActiveServersException;
+use App\Traits\HasValidation;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Str;
@@ -49,8 +53,11 @@ use Illuminate\Support\Str;
  * @property \App\Models\Egg|null $scriptFrom
  * @property \App\Models\Egg|null $configFrom
  */
-class Egg extends Model
+class Egg extends Model implements Validatable
 {
+    use HasFactory;
+    use HasValidation;
+
     /**
      * The resource name for this model when it is transformed into an
      * API representation using fractal. Also used as name for api key permissions.
@@ -74,11 +81,6 @@ class Egg extends Model
     public const FEATURE_EULA_POPUP = 'eula';
 
     public const FEATURE_FASTDL = 'fastdl';
-
-    /**
-     * The table associated with the model.
-     */
-    protected $table = 'eggs';
 
     /**
      * Fields that are not mass assignable.
@@ -165,11 +167,6 @@ class Egg extends Model
 
             throw_if($egg->children()->count(), new HasChildrenException(trans('exceptions.egg.has_children')));
         });
-    }
-
-    public function getRouteKeyName(): string
-    {
-        return 'id';
     }
 
     /**

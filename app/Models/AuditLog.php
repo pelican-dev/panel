@@ -2,6 +2,10 @@
 
 namespace App\Models;
 
+use App\Contracts\Validatable;
+use App\Traits\HasValidation;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 use Ramsey\Uuid\Uuid;
 use Illuminate\Http\Request;
 use Illuminate\Container\Container;
@@ -10,8 +14,11 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 /**
  * @deprecated — this class will be dropped in a future version, use the activity log
  */
-class AuditLog extends Model
+class AuditLog extends Model implements Validatable
 {
+    use HasFactory;
+    use HasValidation;
+
     public const UPDATED_AT = null;
 
     public static array $validationRules = [
@@ -23,8 +30,6 @@ class AuditLog extends Model
         'device.user_agent' => 'string',
         'metadata' => 'array',
     ];
-
-    protected $table = 'audit_logs';
 
     protected $guarded = [
         'id',

@@ -2,7 +2,7 @@
     "name": "pelican-dev/panel",
     "description": "The free, open-source game management panel. Supporting Minecraft, Spigot, BungeeCord, and SRCDS servers.",
     "require": {
-        "php": "^8.2 || ^8.3",
+        "php": "^8.2 || ^8.3 || ^8.4",
         "ext-intl": "*",
         "ext-json": "*",
         "ext-mbstring": "*",
