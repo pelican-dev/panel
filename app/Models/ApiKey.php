@@ -175,7 +175,7 @@ class ApiKey extends PersonalAccessToken
         Role::RESOURCE_NAME,
     ];
 
-    private static array $customResourceNames = [];
+    protected static array $customResourceNames = [];
 
     public static function registerCustomResourceName(string $resourceName): void
     {
