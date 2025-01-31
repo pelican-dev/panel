@@ -23,16 +23,16 @@ class EditMount extends EditRecord
             ->schema([
                 Section::make()->schema([
                     TextInput::make('name')
-                        ->label(trans('admin/mount.edit.name'))
+                        ->label(trans('admin/mount.name'))
                         ->required()
-                        ->helperText(trans('admin/mount.edit.name_help', ['mount' => 'mount']))
+                        ->helperText(trans('admin/mount.name_help', ['mount' => 'mount']))
                         ->maxLength(64),
                     ToggleButtons::make('read_only')
-                        ->label(trans('admin/mount.edit.read_only'))
-                        ->helperText(trans('admin/mount.edit.read_only_help', ['mount' => 'mount']))
+                        ->label(trans('admin/mount.read_only'))
+                        ->helperText(trans('admin/mount.read_only_help', ['mount' => 'mount']))
                         ->options([
-                            false => trans('admin/mount.edit.toggles.writable'),
-                            true => trans('admin/mount.edit.toggles.read_only'),
+                            false => trans('admin/mount.toggles.writable'),
+                            true => trans('admin/mount.toggles.read_only'),
                         ])
                         ->icons([
                             false => 'tabler-writing',
@@ -46,14 +46,14 @@ class EditMount extends EditRecord
                         ->default(false)
                         ->required(),
                     TextInput::make('source')
-                        ->label(trans('admin/mount.edit.source'))
+                        ->label(trans('admin/mount.source'))
                         ->required()
-                        ->helperText(trans('admin/mount.edit.source_help', ['mount' => 'mount']))
+                        ->helperText(trans('admin/mount.source_help', ['mount' => 'mount']))
                         ->maxLength(255),
                     TextInput::make('target')
-                        ->label(trans('admin/mount.edit.target'))
+                        ->label(trans('admin/mount.target'))
                         ->required()
-                        ->helperText(trans('admin/mount.edit.target_help', ['mount' => 'mount']))
+                        ->helperText(trans('admin/mount.target_help', ['mount' => 'mount']))
                         ->maxLength(255),
                     ToggleButtons::make('user_mountable')
                         ->hidden()
@@ -74,8 +74,8 @@ class EditMount extends EditRecord
                         ->inline()
                         ->required(),
                     Textarea::make('description')
-                        ->label(trans('admin/mount.edit.description'))
-                        ->helperText(trans('admin/mount.edit.description_help', ['mount' => 'mount.']))
+                        ->label(trans('admin/mount.description'))
+                        ->helperText(trans('admin/mount.description_help', ['mount' => 'mount.']))
                         ->columnSpanFull(),
                 ])->columnSpan(1)->columns([
                     'default' => 1,

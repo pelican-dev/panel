@@ -39,15 +39,16 @@ class CreateMount extends CreateRecord
             ->schema([
                 Section::make()->schema([
                     TextInput::make('name')
+                        ->label(trans('admin/mount.name'))
                         ->required()
-                        ->helperText('Unique name used to separate this mount from another.')
+                        ->helperText(trans('admin/mount.name_help', ['mount' => 'mount']))
                         ->maxLength(64),
                     ToggleButtons::make('read_only')
-                        ->label('Read only?')
-                        ->helperText('Is the mount read only inside the container?')
+                        ->label(trans('admin/mount.read_only'))
+                        ->helperText(trans('admin/mount.read_only_help', ['mount' => 'mount']))
                         ->options([
-                            false => 'Writeable',
-                            true => 'Read only',
+                            false => trans('admin/mount.toggles.writable'),
+                            true => trans('admin/mount.toggles.read_only'),
                         ])
                         ->icons([
                             false => 'tabler-writing',
@@ -61,12 +62,14 @@ class CreateMount extends CreateRecord
                         ->default(false)
                         ->required(),
                     TextInput::make('source')
+                        ->label(trans('admin/mount.source'))
                         ->required()
-                        ->helperText('File path on the host system to mount to a container.')
+                        ->helperText(trans('admin/mount.source_help', ['mount' => 'mount']))
                         ->maxLength(255),
                     TextInput::make('target')
+                        ->label(trans('admin/mount.target'))
                         ->required()
-                        ->helperText('Where the mount will be accessible inside a container.')
+                        ->helperText(trans('admin/mount.target_help', ['mount' => 'mount']))
                         ->maxLength(255),
                     ToggleButtons::make('user_mountable')
                         ->hidden()
@@ -87,7 +90,8 @@ class CreateMount extends CreateRecord
                         ->inline()
                         ->required(),
                     Textarea::make('description')
-                        ->helperText('A longer description for this mount.')
+                        ->label(trans('admin/mount.description'))
+                        ->helperText(trans('admin/mount.description_help', ['mount' => 'mount.']))
                         ->columnSpanFull(),
                     Hidden::make('user_mountable')->default(1),
                 ])->columnSpan(1)->columns([
