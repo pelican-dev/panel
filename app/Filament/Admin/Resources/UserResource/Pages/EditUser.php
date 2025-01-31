@@ -37,6 +37,10 @@ class EditUser extends EditRecord
 
     protected function handleRecordUpdate(Model $record, array $data): Model
     {
+        if (!$record instanceof User) {
+            return $record;
+        }
+
         return $this->service->handle($record, $data);
     }
 }
