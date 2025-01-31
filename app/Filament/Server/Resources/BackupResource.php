@@ -20,6 +20,34 @@ class BackupResource extends Resource
 
     protected static bool $canCreateAnother = false;
 
+    public const WARNING_THRESHOLD = 0.7;
+
+    public static function getNavigationBadge(): string
+    {
+        /** @var Server $server */
+        $server = Filament::getTenant();
+
+        $limit = $server->backup_limit;
+
+        return $server->backups->count() . ($limit === 0 ? '' : ' / ' . $limit);
+    }
+
+    public static function getNavigationBadgeColor(): ?string
+    {
+        /** @var Server $server */
+        $server = Filament::getTenant();
+
+        $limit = $server->backup_limit;
+        $count = $server->backups->count();
+
+        if ($limit === 0) {
+            return null;
+        }
+
+        return $count >= $limit ? 'danger'
+            : ($count >= $limit * self::WARNING_THRESHOLD ? 'warning' : 'success');
+    }
+
     // TODO: find better way handle server conflict state
     public static function canAccess(): bool
     {

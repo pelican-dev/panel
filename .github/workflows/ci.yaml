@@ -13,7 +13,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        php: [8.2, 8.3]
+        php: [8.2, 8.3, 8.4]
         database: ["mysql:8"]
     services:
       database:
@@ -69,13 +69,13 @@ jobs:
         run: composer install --no-interaction --no-suggest --prefer-dist
 
       - name: Unit tests
-        run: vendor/bin/phpunit tests/Unit
+        run: vendor/bin/pest tests/Unit
         env:
           DB_HOST: UNIT_NO_DB
           SKIP_MIGRATIONS: true
 
       - name: Integration tests
-        run: vendor/bin/phpunit tests/Integration
+        run: vendor/bin/pest tests/Integration
         env:
           DB_PORT: ${{ job.services.database.ports[3306] }}
           DB_USERNAME: root
@@ -86,7 +86,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        php: [8.2, 8.3]
+        php: [8.2, 8.3, 8.4]
         database: ["mariadb:10.6", "mariadb:10.11", "mariadb:11.4"]
     services:
       database:
@@ -142,13 +142,13 @@ jobs:
         run: composer install --no-interaction --no-suggest --prefer-dist
 
       - name: Unit tests
-        run: vendor/bin/phpunit tests/Unit
+        run: vendor/bin/pest tests/Unit
         env:
           DB_HOST: UNIT_NO_DB
           SKIP_MIGRATIONS: true
 
       - name: Integration tests
-        run: vendor/bin/phpunit tests/Integration
+        run: vendor/bin/pest tests/Integration
         env:
           DB_PORT: ${{ job.services.database.ports[3306] }}
           DB_USERNAME: root
@@ -159,7 +159,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        php: [8.2, 8.3]
+        php: [8.2, 8.3, 8.4]
     env:
       APP_ENV: testing
       APP_DEBUG: "false"
@@ -206,10 +206,10 @@ jobs:
         run: touch database/testing.sqlite
 
       - name: Unit tests
-        run: vendor/bin/phpunit tests/Unit
+        run: vendor/bin/pest tests/Unit
         env:
           DB_HOST: UNIT_NO_DB
           SKIP_MIGRATIONS: true
 
       - name: Integration tests
-        run: vendor/bin/phpunit tests/Integration
+        run: vendor/bin/pest tests/Integration

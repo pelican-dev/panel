@@ -48,7 +48,7 @@ abstract class TestCase extends BaseTestCase
     }
 
     /**
-     * Handles the known UUID handling in certain unit tests. Use the "KnownUuid" trait
+     * Handles the known UUID handling in certain unit tests. Use the "MocksUuid" trait
      * in order to enable this ability.
      */
     public function setKnownUuidFactory()

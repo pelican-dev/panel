@@ -9,6 +9,7 @@ use App\Models\Subuser;
 use App\Models\Permission;
 use Illuminate\Foundation\Testing\WithFaker;
 use App\Tests\Integration\Api\Client\ClientApiIntegrationTestCase;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 class CreateServerSubuserTest extends ClientApiIntegrationTestCase
 {
@@ -16,9 +17,8 @@ class CreateServerSubuserTest extends ClientApiIntegrationTestCase
 
     /**
      * Test that a subuser can be created for a server.
-     *
-     * @dataProvider permissionsDataProvider
      */
+    #[DataProvider('permissionsDataProvider')]
     public function testSubuserCanBeCreated(array $permissions): void
     {
         [$user, $server] = $this->generateTestAccount($permissions);

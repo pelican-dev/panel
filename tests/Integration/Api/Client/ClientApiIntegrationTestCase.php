@@ -2,17 +2,13 @@
 
 namespace App\Tests\Integration\Api\Client;
 
-use App\Models\Node;
 use App\Models\Task;
-use App\Models\User;
 use App\Models\Model;
 use App\Models\Backup;
 use App\Models\Server;
-use App\Models\Database;
 use App\Models\Schedule;
 use Illuminate\Support\Collection;
 use App\Models\Allocation;
-use App\Models\DatabaseHost;
 use App\Tests\Integration\TestResponse;
 use App\Tests\Integration\IntegrationTestCase;
 use Illuminate\Database\Eloquent\Model as EloquentModel;
@@ -20,21 +16,6 @@ use App\Transformers\Api\Client\BaseClientTransformer;
 
 abstract class ClientApiIntegrationTestCase extends IntegrationTestCase
 {
-    /**
-     * Cleanup after running tests.
-     */
-    protected function tearDown(): void
-    {
-        Database::query()->forceDelete();
-        DatabaseHost::query()->forceDelete();
-        Backup::query()->forceDelete();
-        Server::query()->forceDelete();
-        Node::query()->forceDelete();
-        User::query()->forceDelete();
-
-        parent::tearDown();
-    }
-
     /**
      * Override the default createTestResponse from Illuminate so that we can
      * just dump 500-level errors to the screen in the tests without having

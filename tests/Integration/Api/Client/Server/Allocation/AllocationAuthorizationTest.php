@@ -5,12 +5,11 @@ namespace App\Tests\Integration\Api\Client\Server\Allocation;
 use App\Models\Subuser;
 use App\Models\Allocation;
 use App\Tests\Integration\Api\Client\ClientApiIntegrationTestCase;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 class AllocationAuthorizationTest extends ClientApiIntegrationTestCase
 {
-    /**
-     * @dataProvider methodDataProvider
-     */
+    #[DataProvider('methodDataProvider')]
     public function testAccessToAServersAllocationsIsRestrictedProperly(string $method, string $endpoint): void
     {
         // The API $user is the owner of $server1.

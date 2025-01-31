@@ -7,14 +7,14 @@ use Illuminate\Http\Response;
 use App\Models\Permission;
 use App\Models\EggVariable;
 use App\Tests\Integration\Api\Client\ClientApiIntegrationTestCase;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 class UpdateStartupVariableTest extends ClientApiIntegrationTestCase
 {
     /**
      * Test that a startup variable can be edited successfully for a server.
-     *
-     * @dataProvider permissionsDataProvider
      */
+    #[DataProvider('permissionsDataProvider')]
     public function testStartupVariableCanBeUpdated(array $permissions): void
     {
         /** @var \App\Models\Server $server */
@@ -47,9 +47,8 @@ class UpdateStartupVariableTest extends ClientApiIntegrationTestCase
     /**
      * Test that variables that are either not user_viewable, or not user_editable, cannot be
      * updated via this endpoint.
-     *
-     * @dataProvider permissionsDataProvider
      */
+    #[DataProvider('permissionsDataProvider')]
     public function testStartupVariableCannotBeUpdatedIfNotUserViewableOrEditable(array $permissions): void
     {
         /** @var \App\Models\Server $server */

@@ -6,9 +6,6 @@ use App\Models\Server;
 use App\Contracts\Http\ClientPermissionsRequest;
 use App\Http\Requests\Api\Application\ApplicationApiRequest;
 
-/**
- * @method \App\Models\User user($guard = null)
- */
 class ClientApiRequest extends ApplicationApiRequest
 {
     /**
@@ -23,7 +20,7 @@ class ClientApiRequest extends ApplicationApiRequest
                 return $this->user()->can($this->permission(), $server);
             }
 
-            // If there is no server available on the reqest, trigger a failure since
+            // If there is no server available on the request, trigger a failure since
             // we expect there to be one at this point.
             return false;
         }
