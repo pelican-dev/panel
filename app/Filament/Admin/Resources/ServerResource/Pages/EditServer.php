@@ -767,10 +767,11 @@ class EditServer extends EditRecord
                                         ]),
                                 ])->alignCenter()->columnSpanFull(),
                             ]),
-                        Tab::make('Actions')
+                        Tab::make(trans('admin/server.edit_server.actions'))
                             ->icon('tabler-settings')
                             ->schema([
-                                Fieldset::make('Server Actions')
+                                Fieldset::make()
+                                    ->label(trans('admin/server.edit_server.actions'))
                                     ->columns([
                                         'default' => 1,
                                         'sm' => 2,
@@ -839,7 +840,7 @@ class EditServer extends EditRecord
                                             ->schema([
                                                 Forms\Components\Actions::make([
                                                     Action::make('transfer')
-                                                        ->label('Transfer Soon™')
+                                                        ->label(trans('admin/server.edit_server.transfer'))
                                                         ->action(fn (TransferServerService $transfer, Server $server) => $transfer->handle($server, []))
                                                         ->disabled() //TODO!
                                                         ->form([ //TODO!
@@ -864,10 +865,10 @@ class EditServer extends EditRecord
                                                                     false => 'off',
                                                                 ]),
                                                         ])
-                                                        ->modalHeading('Transfer'),
+                                                        ->modalheading(trans('admin/server.edit_server.transfer')),
                                                 ])->fullWidth(),
                                                 ToggleButtons::make('')
-                                                    ->hint('Transfer this server to another node connected to this panel. Warning! This feature has not been fully tested and may have bugs.'),
+                                                    ->hint(trans('admin/server.edit_server.transfer_help')),
                                             ]),
                                         Grid::make()
                                             ->columnSpan(3)
