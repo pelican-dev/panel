@@ -30,25 +30,28 @@ class CreateUser extends CreateRecord
             ->columns(['default' => 1, 'lg' => 3])
             ->schema([
                 TextInput::make('username')
+                    ->label(trans('admin/user.username'))
                     ->alphaNum()
                     ->required()
                     ->unique()
                     ->minLength(3)
                     ->maxLength(255),
                 TextInput::make('email')
+                    ->label(trans('admin/user.email'))
                     ->email()
                     ->required()
                     ->unique()
                     ->maxLength(255),
                 TextInput::make('password')
+                    ->label(trans('admin/user.password'))
                     ->hintIcon('tabler-question-mark')
-                    ->hintIconTooltip('Providing a user password is optional. New user email will prompt users to create a password the first time they login.')
+                    ->hintIconTooltip(trans('admin/user.password_help'))
                     ->password(),
                 CheckboxList::make('roles')
                     ->disableOptionWhen(fn (string $value): bool => $value == Role::getRootAdmin()->id)
                     ->relationship('roles', 'name')
                     ->dehydrated()
-                    ->label('Admin Roles')
+                    ->label(trans('admin/user.admin_roles'))
                     ->columnSpanFull()
                     ->bulkToggleable(false),
             ]);

@@ -36,8 +36,10 @@ class ListUsers extends ListRecords
                     ->hidden()
                     ->searchable(),
                 TextColumn::make('username')
+                    ->label(trans('admin/user.username'))
                     ->searchable(),
                 TextColumn::make('email')
+                    ->label(trans('admin/user.email'))
                     ->searchable()
                     ->icon('tabler-mail'),
                 IconColumn::make('use_totp')
@@ -77,7 +79,7 @@ class ListUsers extends ListRecords
     {
         return [
             CreateAction::make()
-                ->label('Create User'),
+                ->label(trans('admin/user.create_action', ['action' => trans('filament-actions::create.single.modal.actions.create.label')])),
         ];
     }
 }

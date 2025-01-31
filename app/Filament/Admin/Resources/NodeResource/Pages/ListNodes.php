@@ -29,12 +29,13 @@ class ListNodes extends ListRecords
                     ->hidden(),
                 NodeHealthColumn::make('health'),
                 TextColumn::make('name')
+                    ->label(trans('admin/node.table.name'))
                     ->icon('tabler-server-2')
                     ->sortable()
                     ->searchable(),
                 TextColumn::make('fqdn')
                     ->visibleFrom('md')
-                    ->label('Address')
+                    ->label(trans('admin/node.table.address'))
                     ->icon('tabler-network')
                     ->sortable()
                     ->searchable(),
@@ -45,6 +46,7 @@ class ListNodes extends ListRecords
                     ->falseIcon('tabler-lock-open-off')
                     ->state(fn (Node $node) => $node->scheme === 'https'),
                 IconColumn::make('public')
+                    ->label(trans('admin/node.table.public'))
                     ->visibleFrom('lg')
                     ->trueIcon('tabler-eye-check')
                     ->falseIcon('tabler-eye-cancel'),
@@ -63,7 +65,7 @@ class ListNodes extends ListRecords
             ->emptyStateHeading('No Nodes')
             ->emptyStateActions([
                 CreateAction::make('create')
-                    ->label('Create Node')
+                    ->label(trans('admin/node.create_action', ['action' => trans('filament-actions::create.single.modal.actions.create.label')]))
                     ->button(),
             ]);
     }
@@ -72,7 +74,7 @@ class ListNodes extends ListRecords
     {
         return [
             Actions\CreateAction::make()
-                ->label('Create Node')
+                ->label(trans('admin/node.create_action', ['action' => trans('filament-actions::create.single.modal.actions.create.label')]))
                 ->hidden(fn () => Node::count() <= 0),
         ];
     }
