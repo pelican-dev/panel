@@ -16,6 +16,12 @@ use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Forms\Get;
 use Filament\Resources\Resource;
+use Filament\Tables\Actions\CreateAction;
+use Filament\Tables\Actions\DeleteBulkAction;
+use Filament\Tables\Actions\EditAction;
+use Filament\Tables\Actions\ViewAction;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Table;
 use Illuminate\Support\Str;
 
 class RoleResource extends Resource
@@ -31,6 +37,43 @@ class RoleResource extends Resource
     public static function getNavigationBadge(): ?string
     {
         return static::getModel()::count() ?: null;
+    }
+
+    public static function table(Table $table): Table
+    {
+        return $table
+            ->columns([
+                TextColumn::make('name')
+                    ->sortable()
+                    ->searchable(),
+                TextColumn::make('permissions_count')
+                    ->label('Permissions')
+                    ->badge()
+                    ->counts('permissions')
+                    ->formatStateUsing(fn (Role $role, $state) => $role->isRootAdmin() ? 'All' : $state),
+                TextColumn::make('users_count')
+                    ->label('Users')
+                    ->counts('users')
+                    ->icon('tabler-users'),
+            ])
+            ->actions([
+                ViewAction::make()
+                    ->hidden(fn ($record) => static::canEdit($record)),
+                EditAction::make(),
+            ])
+            ->checkIfRecordIsSelectableUsing(fn (Role $role) => !$role->isRootAdmin() && $role->users_count <= 0)
+            ->groupedBulkActions([
+                DeleteBulkAction::make()
+                    ->authorize(fn () => auth()->user()->can('delete role')),
+            ])
+            ->emptyStateIcon('tabler-users-group')
+            ->emptyStateDescription('')
+            ->emptyStateHeading('No Roles')
+            ->emptyStateActions([
+                CreateAction::make('create')
+                    ->label('Create Role')
+                    ->button(),
+            ]);
     }
 
     public static function form(Form $form): Form
@@ -143,6 +186,7 @@ class RoleResource extends Resource
         return [
             'index' => Pages\ListRoles::route('/'),
             'create' => Pages\CreateRole::route('/create'),
+            'view' => Pages\ViewRole::route('/{record}'),
             'edit' => Pages\EditRole::route('/{record}/edit'),
         ];
     }
