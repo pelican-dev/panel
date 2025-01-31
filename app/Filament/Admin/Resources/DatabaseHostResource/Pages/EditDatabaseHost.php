@@ -43,37 +43,37 @@ class EditDatabaseHost extends EditRecord
                     ->schema([
                         TextInput::make('host')
                             ->columnSpan(2)
-                            ->label(trans('admin/databasehost.edit.host'))
-                            ->helperText(trans('admin/databasehost.edit.host_help'))
+                            ->label(trans('admin/databasehost.host'))
+                            ->helperText(trans('admin/databasehost.host_help'))
                             ->required()
                             ->live(onBlur: true)
                             ->afterStateUpdated(fn ($state, Forms\Set $set) => $set('name', $state))
                             ->maxLength(255),
                         TextInput::make('port')
                             ->columnSpan(1)
-                            ->label(trans('admin/databasehost.edit.port'))
-                            ->helperText(trans('admin/databasehost.edit.port_help'))
+                            ->label(trans('admin/databasehost.port'))
+                            ->helperText(trans('admin/databasehost.port_help'))
                             ->required()
                             ->numeric()
                             ->minValue(0)
                             ->maxValue(65535),
                         TextInput::make('max_databases')
-                            ->label(trans('admin/databasehost.edit.max_database', ['databases' => 'Databases']))
-                            ->helpertext(trans('admin/databasehost.edit.max_databases_help'))
+                            ->label(trans('admin/databasehost.max_database', ['databases' => 'Databases']))
+                            ->helpertext(trans('admin/databasehost.max_databases_help'))
                             ->numeric(),
                         TextInput::make('name')
-                            ->label(trans('admin/databasehost.edit.display_name'))
-                            ->helperText(trans('admin/databasehost.edit.display_name_help'))
+                            ->label(trans('admin/databasehost.display_name'))
+                            ->helperText(trans('admin/databasehost.display_name_help'))
                             ->required()
                             ->maxLength(60),
                         TextInput::make('username')
-                            ->label(trans('admin/databasehost.edit.username'))
-                            ->helperText(trans('admin/databasehost.edit.username_help'))
+                            ->label(trans('admin/databasehost.username'))
+                            ->helperText(trans('admin/databasehost.username_help'))
                             ->required()
                             ->maxLength(255),
                         TextInput::make('password')
-                            ->label(trans('admin/databasehost.edit.password'))
-                            ->helperText(trans('admin/databasehost.edit.password_help'))
+                            ->label(trans('admin/databasehost.password'))
+                            ->helperText(trans('admin/databasehost.password_help'))
                             ->password()
                             ->revealable()
                             ->maxLength(255),
@@ -81,8 +81,8 @@ class EditDatabaseHost extends EditRecord
                             ->multiple()
                             ->searchable()
                             ->preload()
-                            ->helperText(trans('admin/databasehost.edit.linked_nodes_help', ['databasehost' => 'Database Host', 'database' => 'Database', 'server' => 'Server', 'node' => 'Node']))
-                            ->label(trans('admin/databasehost.edit.linked_nodes', ['nodes' => 'Nodes']))
+                            ->helperText(trans('admin/databasehost.linked_nodes_help', ['databasehost' => 'Database Host', 'database' => 'Database', 'server' => 'Server', 'node' => 'Node']))
+                            ->label(trans('admin/databasehost.linked_nodes', ['nodes' => 'Nodes']))
                             ->relationship('nodes', 'name'),
                     ]),
             ]);
@@ -124,7 +124,7 @@ class EditDatabaseHost extends EditRecord
             return $this->hostUpdateService->handle($record, $data);
         } catch (PDOException $exception) {
             Notification::make()
-                ->title(trans('admin/databasehost.edit.connection_error', ['databasehost' => 'Database Host']))
+                ->title(trans('admin/databasehost.connection_error', ['databasehost' => 'Database Host']))
                 ->body($exception->getMessage())
                 ->color('danger')
                 ->icon('tabler-database')

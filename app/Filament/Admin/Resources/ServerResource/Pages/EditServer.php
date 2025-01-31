@@ -679,12 +679,12 @@ class EditServer extends EditRecord
                                                     })
                                             ),
                                         TextInput::make('username')
-                                            ->label(trans('admin/databasehost.edit.table.username'))
+                                            ->label(trans('admin/databasehost.table.username'))
                                             ->disabled()
                                             ->formatStateUsing(fn ($record) => $record->username)
                                             ->columnSpan(1),
                                         TextInput::make('password')
-                                            ->label(trans('admin/databasehost.edit.table.password'))
+                                            ->label(trans('admin/databasehost.table.password'))
                                             ->disabled()
                                             ->password()
                                             ->revealable()
@@ -695,9 +695,9 @@ class EditServer extends EditRecord
                                             ->disabled()
                                             ->formatStateUsing(fn (Database $record) => $record->remote === '%' ? 'Anywhere ( % )' : $record->remote)
                                             ->columnSpan(1)
-                                            ->label(trans('admin/databasehost.edit.table.remote')),
+                                            ->label(trans('admin/databasehost.table.remote')),
                                         TextInput::make('max_connections')
-                                            ->label(trans('admin/databasehost.edit.table.max_connections'))
+                                            ->label(trans('admin/databasehost.table.max_connections'))
                                             ->disabled()
                                             ->formatStateUsing(fn (Database $record) => $record->max_connections === 0 ? 'Unlimited' : $record->max_connections)
                                             ->columnSpan(1),
@@ -705,7 +705,7 @@ class EditServer extends EditRecord
                                             ->disabled()
                                             ->password()
                                             ->revealable()
-                                            ->label(trans('admin/databasehost.edit.table.connection_string'))
+                                            ->label(trans('admin/databasehost.table.connection_string'))
                                             ->columnSpan(2)
                                             ->formatStateUsing(fn (Database $record) => $record->jdbc),
                                     ])
@@ -757,13 +757,13 @@ class EditServer extends EditRecord
                                                 ->alphaDash()
                                                 ->prefix(fn (Server $server) => 's' . $server->id . '_')
                                                 ->hintIcon('tabler-question-mark')
-                                                ->hintIconTooltip(trans('admin/databasehost.edit.table.name_helper')),
+                                                ->hintIconTooltip(trans('admin/databasehost.table.name_helper')),
                                             TextInput::make('remote')
                                                 ->columnSpan(1)
                                                 ->regex('/^[\w\-\/.%:]+$/')
-                                                ->label(trans('admin/databasehost.edit.table.remote'))
+                                                ->label(trans('admin/databasehost.table.remote'))
                                                 ->hintIcon('tabler-question-mark')
-                                                ->hintIconTooltip(trans('admin/databasehost.edit.table.remote_helper')),
+                                                ->hintIconTooltip(trans('admin/databasehost.table.remote_helper')),
                                         ]),
                                 ])->alignCenter()->columnSpanFull(),
                             ]),

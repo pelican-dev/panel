@@ -24,21 +24,21 @@ class DatabasesRelationManager extends RelationManager
                 TextInput::make('database')
                     ->columnSpanFull(),
                 TextInput::make('username')
-                    ->label(trans('admin/databasehost.edit.table.username')),
+                    ->label(trans('admin/databasehost.table.username')),
                 TextInput::make('password')
-                    ->label(trans('admin/databasehost.edit.table.password'))
+                    ->label(trans('admin/databasehost.table.password'))
                     ->password()
                     ->revealable()
                     ->hintAction(RotateDatabasePasswordAction::make())
                     ->formatStateUsing(fn (Database $database) => $database->password),
                 TextInput::make('remote')
-                    ->label(trans('admin/databasehost.edit.table.remote'))
+                    ->label(trans('admin/databasehost.table.remote'))
                     ->formatStateUsing(fn (Database $record) => $record->remote === '%' ? 'Anywhere ( % )' : $record->remote),
                 TextInput::make('max_connections')
-                    ->label(trans('admin/databasehost.edit.table.max_connections'))
+                    ->label(trans('admin/databasehost.table.max_connections'))
                     ->formatStateUsing(fn (Database $record) => $record->max_connections === 0 ? 'Unlimited' : $record->max_connections),
                 TextInput::make('jdbc')
-                    ->label(trans('admin/databasehost.edit.table.connection_string'))
+                    ->label(trans('admin/databasehost.table.connection_string'))
                     ->columnSpanFull()
                     ->password()
                     ->revealable()
@@ -54,19 +54,19 @@ class DatabasesRelationManager extends RelationManager
                 TextColumn::make('database')
                     ->icon('tabler-database'),
                 TextColumn::make('username')
-                    ->label(trans('admin/databasehost.edit.table.username'))
+                    ->label(trans('admin/databasehost.table.username'))
                     ->icon('tabler-user'),
                 TextColumn::make('remote')
-                    ->label(trans('admin/databasehost.edit.table.remote'))
+                    ->label(trans('admin/databasehost.table.remote'))
                     ->formatStateUsing(fn (Database $record) => $record->remote === '%' ? 'Anywhere ( % )' : $record->remote),
                 TextColumn::make('server.name')
                     ->icon('tabler-brand-docker')
                     ->url(fn (Database $database) => route('filament.admin.resources.servers.edit', ['record' => $database->server_id])),
                 TextColumn::make('max_connections')
-                    ->label(trans('admin/databasehost.edit.table.max_connections'))
+                    ->label(trans('admin/databasehost.table.max_connections'))
                     ->formatStateUsing(fn ($record) => $record->max_connections === 0 ? 'Unlimited' : $record->max_connections),
                 DateTimeColumn::make('created_at')
-                    ->label(trans('admin/databasehost.edit.table.created_at')),
+                    ->label(trans('admin/databasehost.table.created_at')),
             ])
             ->actions([
                 DeleteAction::make()
