@@ -24,17 +24,17 @@ class EditUser extends EditRecord
             ->schema([
                 Section::make()->schema([
                     TextInput::make('username')
-                        ->label(trans('admin/user.edit.username'))
+                        ->label(trans('admin/user.username'))
                         ->required()
                         ->minLength(3)
                         ->maxLength(255),
                     TextInput::make('email')
-                        ->label(trans('admin/user.edit.email'))
+                        ->label(trans('admin/user.email'))
                         ->email()
                         ->required()
                         ->maxLength(255),
                     TextInput::make('password')
-                        ->label(trans('admin/user.edit.password'))
+                        ->label(trans('admin/user.password'))
                         ->dehydrateStateUsing(fn (string $state): string => Hash::make($state))
                         ->dehydrated(fn (?string $state): bool => filled($state))
                         ->password(),
@@ -44,7 +44,7 @@ class EditUser extends EditRecord
                         ->disabled(fn (User $user) => $user->id === auth()->user()->id)
                         ->disableOptionWhen(fn (string $value): bool => $value == Role::getRootAdmin()->id)
                         ->relationship('roles', 'name')
-                        ->label(trans('admin/user.edit.admin_roles'))
+                        ->label(trans('admin/user.admin_roles'))
                         ->columnSpanFull()
                         ->bulkToggleable(false),
                 ])
@@ -56,7 +56,7 @@ class EditUser extends EditRecord
     {
         return [
             DeleteAction::make()
-                ->label(fn (User $user) => auth()->user()->id === $user->id ? trans('admin/user.delete_yourself') : ($user->servers()->count() > 0 ? trans('admin/user.has_servers', ['servers' => 'Servers']) : trans('filament-actions::delete.single.modal.actions.delete.label')))
+                ->label(fn (User $user) => auth()->user()->id === $user->id ? trans('admin/user.self_delete') : ($user->servers()->count() > 0 ? trans('admin/user.has_servers', ['servers' => 'Servers']) : trans('filament-actions::delete.single.modal.actions.delete.label')))
                 ->disabled(fn (User $user) => auth()->user()->id === $user->id || $user->servers()->count() > 0),
             $this->getSaveFormAction()->formId('form'),
         ];

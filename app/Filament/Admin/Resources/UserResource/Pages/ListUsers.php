@@ -36,14 +36,14 @@ class ListUsers extends ListRecords
                     ->hidden()
                     ->searchable(),
                 TextColumn::make('username')
-                    ->label(trans('admin/user.table.username'))
+                    ->label(trans('admin/user.username'))
                     ->searchable(),
                 TextColumn::make('email')
-                    ->label(trans('admin/user.table.email'))
+                    ->label(trans('admin/user.email'))
                     ->searchable()
                     ->icon('tabler-mail'),
                 IconColumn::make('use_totp')
-                    ->label(trans('admin/user.table.2FA'))
+                    ->label('2FA')
                     ->visibleFrom('lg')
                     ->icon(fn (User $user) => $user->use_totp ? 'tabler-lock' : 'tabler-lock-open-off')
                     ->boolean()
