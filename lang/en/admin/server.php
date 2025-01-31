@@ -45,7 +45,7 @@ return [
     'image_placeholder' => 'Enter a custom image',
     'container_labels' => 'Container Labels',
     'title' => 'Title',
-    'edit_server' => [
+    'edit' => [
         'actions' => 'Actions',
         'console' => 'Console',
         'suspend' => 'Suspend',
@@ -60,7 +60,7 @@ return [
         'toggle_install' => 'Toggle Install Status',
         'toggle_install_help' => 'If you need to change the install status from uninstalled to installed, or vice versa, you may do so with this button.',
         'transfer' => 'Transfer',
-        'transfer_help' => 'Transfer this server to another node connected to this panel. Warning! This feature has not been fully tested and may have bugs.'
+        'transfer_help' => 'Transfer this server to another node connected to this panel. Warning! This feature has not been fully tested and may have bugs.',
     ],
     'table' => [
         'condition' => 'Condition',
