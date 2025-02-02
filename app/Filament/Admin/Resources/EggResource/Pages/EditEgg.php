@@ -73,7 +73,7 @@ class EditEgg extends EditRecord
                                 ->rows(3)
                                 ->columnSpanFull()
                                 ->required()
-                                ->helperText(trans('admin/egg.startup_help')),
+                                ->helperText(trans('admin/egg.startup_help', ['resource' => 'Egg'])),
                             TagsInput::make('file_denylist')
                                 ->label(trans('admin/egg.file_denylist'))
                                 ->placeholder('denied-file.txt')
