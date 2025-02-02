@@ -40,6 +40,7 @@ class ListServers extends ListRecords
                     ->label('UUID')
                     ->searchable(),
                 TextColumn::make('name')
+                    ->label(trans('admin/server.name'))
                     ->icon('tabler-brand-docker')
                     ->searchable()
                     ->sortable(),
@@ -57,7 +58,7 @@ class ListServers extends ListRecords
                     ->searchable(),
                 TextColumn::make('user.username')
                     ->icon('tabler-user')
-                    ->label('Owner')
+                    ->label(trans('admin/user.username'))
                     ->url(fn (Server $server): string => route('filament.admin.resources.users.edit', ['record' => $server->user]))
                     ->hidden(fn (Table $table) => $table->getGrouping()?->getId() === 'user.username')
                     ->sortable()
@@ -93,7 +94,7 @@ class ListServers extends ListRecords
             ->emptyStateHeading('No Servers')
             ->emptyStateActions([
                 CreateAction::make('create')
-                    ->label('Create Server')
+                    ->label(trans('admin/server.create_action', ['action' => trans('filament-actions::create.single.modal.actions.create.label'), 'resource' => 'Server']))
                     ->button(),
             ]);
     }
@@ -102,7 +103,7 @@ class ListServers extends ListRecords
     {
         return [
             Actions\CreateAction::make()
-                ->label('Create Server')
+                ->label(trans('admin/server.create_action', ['action' => trans('filament-actions::create.single.modal.actions.create.label'), 'resource' => 'Server']))
                 ->hidden(fn () => Server::count() <= 0),
         ];
     }

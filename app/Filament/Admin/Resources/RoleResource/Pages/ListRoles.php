@@ -54,7 +54,7 @@ class ListRoles extends ListRecords
             ->emptyStateHeading('No Roles')
             ->emptyStateActions([
                 CreateActionTable::make('create')
-                    ->label(trans('admin/role.create_action', ['action' => trans('filament-actions::create.single.modal.actions.create.label')]))
+                    ->label(trans('admin/role.create_action', ['action' => trans('filament-actions::create.single.modal.actions.create.label'), 'resource' => 'Role']))
                     ->button(),
             ]);
     }
@@ -63,7 +63,7 @@ class ListRoles extends ListRecords
     {
         return [
             CreateAction::make()
-                ->label(trans('admin/role.create_action', ['action' => trans('filament-actions::create.single.modal.actions.create.label')])),
+                ->label(trans('admin/role.create_action', ['action' => trans('filament-actions::create.single.modal.actions.create.label'), 'resource' => 'Role'])),
         ];
     }
 }

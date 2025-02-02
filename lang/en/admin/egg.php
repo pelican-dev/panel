@@ -18,7 +18,7 @@ return [
     ],
     'export' => 'Export',
     'in_use' => 'In Use',
-    'create_action' => ':action Egg',
+    'create_action' => ':action :resource',
     'name' => 'Name',
     'name_help' => 'A simple, human-readable name to use as an identifier for this Egg.',
     'author' => 'Author',

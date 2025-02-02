@@ -79,7 +79,7 @@ class ListUsers extends ListRecords
     {
         return [
             CreateAction::make()
-                ->label(trans('admin/user.create_action', ['action' => trans('filament-actions::create.single.modal.actions.create.label')])),
+                ->label(trans('admin/user.create_action', ['action' => trans('filament-actions::create.single.modal.actions.create.label'), 'resource' => 'User'])),
         ];
     }
 }

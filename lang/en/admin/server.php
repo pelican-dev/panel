@@ -1,7 +1,7 @@
 <?php
 
 return [
-    'create_action' => ':action Server',
+    'create_action' => ':action :resource',
     'next_step' => 'Next Step',
     'ip_address' => 'IP Address',
     'ip_address_helper' => 'Usually your machine\'s public IP unless you are port forwarding.',

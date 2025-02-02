@@ -1,7 +1,7 @@
 <?php
 
 return [
-    'create_action' => ':action Webhook',
+    'create_action' => ':action :resource',
     'endpoint' => 'Endpoint',
     'description' => 'Description',
     'events' => 'Events',

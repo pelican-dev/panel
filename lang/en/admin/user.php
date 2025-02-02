@@ -1,7 +1,7 @@
 <?php
 
 return [
-    'create_action' => ':action User',
+    'create_action' => ':action :resource',
     'self_delete' => 'Can\'t Delete Yourself',
     'has_servers' => 'User Has :servers',
     'email' => 'Email',

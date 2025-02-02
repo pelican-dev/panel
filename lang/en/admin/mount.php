@@ -1,7 +1,7 @@
 <?php
 
 return [
-    'create_action' => ':action Mount',
+    'create_action' => ':action :resource',
     'name' => 'Name',
     'name_help' => 'Unique name used to separate this :mount from another.',
     'source' => 'Source',

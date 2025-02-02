@@ -8,7 +8,7 @@ return [
     'description' => 'Description',
     'description_help' => 'A brief description of what this key is for.',
     'nav_title' => 'API Keys',
-    'create_action' => ':action API Key',
+    'create_action' => ':action :resource',
     'table' => [
         'key' => 'Key',
         'description' => 'Description',

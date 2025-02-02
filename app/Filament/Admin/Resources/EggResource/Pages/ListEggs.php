@@ -59,7 +59,7 @@ class ListEggs extends ListRecords
             ->emptyStateHeading('No Eggs')
             ->emptyStateActions([
                 CreateAction::make()
-                    ->label(trans('admin/egg.create_action', ['action' => trans('filament-actions::create.single.modal.actions.create.label')])),
+                    ->label(trans('admin/egg.create_action', ['action' => trans('filament-actions::create.single.modal.actions.create.label'), 'resource' => 'Egg'])),
                 ImportEggAction::make(),
             ]);
     }
@@ -69,7 +69,7 @@ class ListEggs extends ListRecords
         return [
             ImportEggHeaderAction::make(),
             CreateHeaderAction::make()
-                ->label(trans('admin/egg.create_action', ['action' => trans('filament-actions::create.single.modal.actions.create.label')])),
+                ->label(trans('admin/egg.create_action', ['action' => trans('filament-actions::create.single.modal.actions.create.label'), 'resource' => 'Egg'])),
         ];
     }
 }

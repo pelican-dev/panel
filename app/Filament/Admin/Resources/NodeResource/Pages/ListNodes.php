@@ -65,7 +65,7 @@ class ListNodes extends ListRecords
             ->emptyStateHeading('No Nodes')
             ->emptyStateActions([
                 CreateAction::make('create')
-                    ->label(trans('admin/node.create_action', ['action' => trans('filament-actions::create.single.modal.actions.create.label')]))
+                    ->label(trans('admin/node.create_action', ['action' => trans('filament-actions::create.single.modal.actions.create.label'), 'resource' => 'Node']))
                     ->button(),
             ]);
     }
@@ -74,7 +74,7 @@ class ListNodes extends ListRecords
     {
         return [
             Actions\CreateAction::make()
-                ->label(trans('admin/node.create_action', ['action' => trans('filament-actions::create.single.modal.actions.create.label')]))
+                ->label(trans('admin/node.create_action', ['action' => trans('filament-actions::create.single.modal.actions.create.label'), 'resource' => 'Node']))
                 ->hidden(fn () => Node::count() <= 0),
         ];
     }

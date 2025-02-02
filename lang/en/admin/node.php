@@ -1,7 +1,7 @@
 <?php
 
 return [
-    'create_action' => ':action Node',
+    'create_action' => ':action :resource',
     'tabs' => [
         'overview' => 'Overview',
         'basic_settings' => 'Basic Settings',

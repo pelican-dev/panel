@@ -52,7 +52,7 @@ class ListMounts extends ListRecords
             ->emptyStateHeading('No Mounts')
             ->emptyStateActions([
                 CreateAction::make('create')
-                    ->label(trans('admin/mount.create_action', ['action' => trans('filament-actions::create.single.modal.actions.create.label')]))
+                    ->label(trans('admin/mount.create_action', ['action' => trans('filament-actions::create.single.modal.actions.create.label'), 'resource' => 'Mount']))
                     ->button(),
             ]);
     }
@@ -61,7 +61,7 @@ class ListMounts extends ListRecords
     {
         return [
             Actions\CreateAction::make()
-                ->label(trans('admin/mount.create_action', ['action' => trans('filament-actions::create.single.modal.actions.create.label')]))
+                ->label(trans('admin/mount.create_action', ['action' => trans('filament-actions::create.single.modal.actions.create.label'), 'resource' => 'Mount']))
                 ->hidden(fn () => Mount::count() <= 0),
         ];
     }

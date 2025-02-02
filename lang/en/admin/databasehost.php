@@ -1,7 +1,7 @@
 <?php
 
 return [
-    'create_action' => ':action Database Host',
+    'create_action' => ':action :resource',
     'table' => [
         'name' => 'Name',
         'host' => 'Host',
