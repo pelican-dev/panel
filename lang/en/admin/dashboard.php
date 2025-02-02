@@ -1,16 +1,11 @@
 <?php
 
 return [
-    'title' => 'Dashboard',
-    'showing-your-servers' => 'Showing your servers',
-    'showing-others-servers' => "Showing other's servers",
-    'no-other-servers' => 'There are no other servers to display.',
-    'no-servers-associated' => 'There are no servers associated with your account.',
-
-    'content_tabs' => 'Content tabs',
+    'dashboard' => 'Dashboard',
     'overview' => 'Overview',
     'heading' => 'Welcome to Pelican!',
     'expand_sections' => 'You can expand the following sections:',
+    'version' => 'Version: :version',
     'sections' => [
         'intro-developers' => [
             'heading' => 'Information for Developers',
@@ -47,9 +42,4 @@ return [
             'button_discord' => 'Get Help in Discord',
         ],
     ],
-
-    'search' => 'Search for servers...',
-    'no_matches' => 'There were no servers found matching the search criteria provided.',
-    'cpu_title' => 'CPU',
-    'memory_title' => 'Memory',
 ];
