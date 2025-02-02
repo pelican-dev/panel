@@ -55,7 +55,7 @@ class ListApiKeys extends ListRecords
             ])
             ->emptyStateIcon('tabler-key')
             ->emptyStateDescription('')
-            ->emptyStateHeading(trans('admin/apikey.emptytable'))
+            ->emptyStateHeading(trans('admin/apikey.empty_table'))
             ->emptyStateActions([
                 CreateAction::make('create')
                     ->label(trans('admin/apikey.create_action', ['action' => trans('filament-actions::create.single.modal.actions.create.label')]))

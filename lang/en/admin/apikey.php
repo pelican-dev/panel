@@ -2,7 +2,7 @@
 
 return [
     'title' => 'Application API Keys',
-    'emptytable' => 'No API keys.',
+    'empty_table' => 'No API keys.',
     'whitelist' => 'Whitelisted IPv4 Addresses',
     'whitelist_help' => 'API keys can be restricted to only work from specific IPv4 addresses. Enter each address on a new line.',
     'description' => 'Description',
