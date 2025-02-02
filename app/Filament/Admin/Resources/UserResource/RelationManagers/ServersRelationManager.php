@@ -31,7 +31,7 @@ class ServersRelationManager extends RelationManager
                         ->orWhereNull('status')
                         ->count() === 0
                     )
-                    ->label('Suspend All Servers')
+                    ->label(trans('admin/server.suspend_all', ['servers' => 'Servers']))
                     ->color('warning')
                     ->action(function (SuspensionService $suspensionService) use ($user) {
                         collect($user->servers)->filter(fn ($server) => !$server->isSuspended())
@@ -39,7 +39,7 @@ class ServersRelationManager extends RelationManager
                     }),
                 Actions\Action::make('toggleUnsuspend')
                     ->hidden(fn () => $user->servers()->where('status', ServerState::Suspended)->count() === 0)
-                    ->label('Unsuspend All Servers')
+                    ->label(trans('admin/server.unsuspend_all', ['servers' => 'Servers']))
                     ->color('primary')
                     ->action(function (SuspensionService $suspensionService) use ($user) {
                         collect($user->servers()->get())->filter(fn ($server) => $server->isSuspended())
@@ -53,7 +53,7 @@ class ServersRelationManager extends RelationManager
                     ->searchable(),
                 TextColumn::make('name')
                     ->icon('tabler-brand-docker')
-                    ->label(trans('strings.name'))
+                    ->label(trans('admin/server.name'))
                     ->url(fn (Server $server): string => route('filament.admin.resources.servers.edit', ['record' => $server]))
                     ->searchable()
                     ->sortable(),

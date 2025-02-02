@@ -110,6 +110,5 @@ return [
         'title' => 'Access Denied',
         'message' => 'You do not have permission to access this page.',
     ],
-    'version' => 'Version: :version',
     'coming_soon' => 'Coming soon!',
 ];

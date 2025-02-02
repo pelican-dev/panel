@@ -113,7 +113,7 @@ class EditServer extends EditRecord
                                     ->required(),
 
                                 ToggleButtons::make('condition')
-                                    ->label(trans('admin/server.edit.server_status'))
+                                    ->label(trans('admin/server.server_status'))
                                     ->formatStateUsing(fn (Server $server) => $server->condition)
                                     ->options(fn ($state) => collect(array_merge(ContainerStatus::cases(), ServerState::cases()))
                                         ->filter(fn ($condition) => $condition->value === $state)
@@ -137,7 +137,7 @@ class EditServer extends EditRecord
                                     ->columnSpanFull(),
 
                                 TextInput::make('uuid')
-                                    ->label(trans('admin/server.edit.uuid'))
+                                    ->label(trans('admin/server.uuid'))
                                     ->suffixAction(fn () => request()->isSecure() ? CopyAction::make() : null)
                                     ->columnSpan([
                                         'default' => 2,
@@ -148,7 +148,7 @@ class EditServer extends EditRecord
                                     ->readOnly()
                                     ->dehydrated(false),
                                 TextInput::make('uuid_short')
-                                    ->label(trans('admin/server.edit.short_uuid'))
+                                    ->label(trans('admin/server.short_uuid'))
                                     ->suffixAction(fn () => request()->isSecure() ? CopyAction::make() : null)
                                     ->columnSpan([
                                         'default' => 2,
@@ -767,11 +767,11 @@ class EditServer extends EditRecord
                                         ]),
                                 ])->alignCenter()->columnSpanFull(),
                             ]),
-                        Tab::make(trans('admin/server.edit.actions'))
+                        Tab::make(trans('admin/server.actions'))
                             ->icon('tabler-settings')
                             ->schema([
                                 Fieldset::make()
-                                    ->label(trans('admin/server.edit.actions'))
+                                    ->label(trans('admin/server.actions'))
                                     ->columns([
                                         'default' => 1,
                                         'sm' => 2,
@@ -784,7 +784,7 @@ class EditServer extends EditRecord
                                             ->schema([
                                                 Forms\Components\Actions::make([
                                                     Action::make('toggleInstall')
-                                                        ->label(trans('admin/server.edit.toggle_install'))
+                                                        ->label(trans('admin/server.toggle_install'))
                                                         ->disabled(fn (Server $server) => $server->isSuspended())
                                                         ->action(function (ToggleInstallService $service, Server $server) {
                                                             $service->handle($server);
@@ -793,14 +793,14 @@ class EditServer extends EditRecord
                                                         }),
                                                 ])->fullWidth(),
                                                 ToggleButtons::make('')
-                                                    ->hint(trans('admin/server.edit.toggle_install_help')),
+                                                    ->hint(trans('admin/server.toggle_install_help')),
                                             ]),
                                         Grid::make()
                                             ->columnSpan(3)
                                             ->schema([
                                                 Forms\Components\Actions::make([
                                                     Action::make('toggleSuspend')
-                                                        ->label(trans('admin/server.edit.suspend'))
+                                                        ->label(trans('admin/server.suspend'))
                                                         ->color('warning')
                                                         ->hidden(fn (Server $server) => $server->isSuspended())
                                                         ->action(function (SuspensionService $suspensionService, Server $server) {
@@ -814,7 +814,7 @@ class EditServer extends EditRecord
                                                             $this->refreshFormData(['status', 'docker']);
                                                         }),
                                                     Action::make('toggleUnsuspend')
-                                                        ->label(trans('admin/server.edit.unsuspend'))
+                                                        ->label(trans('admin/server.unsuspend'))
                                                         ->color('success')
                                                         ->hidden(fn (Server $server) => !$server->isSuspended())
                                                         ->action(function (SuspensionService $suspensionService, Server $server) {
@@ -840,7 +840,7 @@ class EditServer extends EditRecord
                                             ->schema([
                                                 Forms\Components\Actions::make([
                                                     Action::make('transfer')
-                                                        ->label(trans('admin/server.edit.transfer'))
+                                                        ->label(trans('admin/server.transfer'))
                                                         ->action(fn (TransferServerService $transfer, Server $server) => $transfer->handle($server, []))
                                                         ->disabled() //TODO!
                                                         ->form([ //TODO!
@@ -865,26 +865,26 @@ class EditServer extends EditRecord
                                                                     false => 'off',
                                                                 ]),
                                                         ])
-                                                        ->modalheading(trans('admin/server.edit.transfer')),
+                                                        ->modalheading(trans('admin/server.transfer')),
                                                 ])->fullWidth(),
                                                 ToggleButtons::make('')
-                                                    ->hint(trans('admin/server.edit.transfer_help')),
+                                                    ->hint(trans('admin/server.transfer_help')),
                                             ]),
                                         Grid::make()
                                             ->columnSpan(3)
                                             ->schema([
                                                 Forms\Components\Actions::make([
                                                     Action::make('reinstall')
-                                                        ->label(trans('admin/server.edit.reinstall'))
+                                                        ->label(trans('admin/server.reinstall'))
                                                         ->color('danger')
                                                         ->requiresConfirmation()
-                                                        ->modalHeading(trans('admin/server.edit.reinstall_modal_heading'))
-                                                        ->modalDescription(trans('admin/server.edit.reinstall_modal_description'))
+                                                        ->modalHeading(trans('admin/server.reinstall_modal_heading'))
+                                                        ->modalDescription(trans('admin/server.reinstall_modal_description'))
                                                         ->disabled(fn (Server $server) => $server->isSuspended())
                                                         ->action(fn (ReinstallServerService $service, Server $server) => $service->handle($server)),
                                                 ])->fullWidth(),
                                                 ToggleButtons::make('')
-                                                    ->hint(trans('admin/server.edit.reinstall_help')),
+                                                    ->hint(trans('admin/server.reinstall_help')),
                                             ]),
                                     ]),
                             ]),
@@ -920,7 +920,7 @@ class EditServer extends EditRecord
                 })
                 ->authorize(fn (Server $server) => auth()->user()->can('delete server', $server)),
             Actions\Action::make('console')
-                ->label(trans('admin/server.edit.console'))
+                ->label(trans('admin/server.console'))
                 ->icon('tabler-terminal')
                 ->url(fn (Server $server) => Console::getUrl(panel: 'server', tenant: $server)),
             $this->getSaveFormAction()->formId('form'),
