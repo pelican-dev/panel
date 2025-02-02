@@ -227,7 +227,7 @@ class Settings extends Page implements HasForms
                 ->default(env('TURNSTILE_ENABLED', config('turnstile.turnstile_enabled'))),
             Placeholder::make('info')
                 ->columnSpan(2)
-                ->content(new HtmlString(trans('admin/setting.captcha.info'))),
+                ->content(new HtmlString('<u><a href="https://developers.cloudflare.com/turnstile/get-started/#get-a-sitekey-and-secret-key" target="_blank">Link to Cloudflare Dashboard</a></u><br> ' . trans('admin/setting.captcha.info'))),
             TextInput::make('TURNSTILE_SITE_KEY')
                 ->label(trans('admin/setting.captcha.site_key'))
                 ->required()

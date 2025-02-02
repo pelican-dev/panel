@@ -35,7 +35,7 @@ return [
     ],
     'captcha' => [
         'enable' => 'Enable Turnstile Captcha?',
-        'info' => '<p>You can generate the keys on your <u><a href="https://developers.cloudflare.com/turnstile/get-started/#get-a-sitekey-and-secret-key" target="_blank">Cloudflare Dashboard</a></u>. A Cloudflare account is required.</p>',
+        'info' => 'You can generate the keys on your Cloudflare Dashboard. A Cloudflare account is required.',
         'site_key' => 'Site Key',
         'secret_key' => 'Secret Key',
         'verify' => 'Verify Domain?',
@@ -84,7 +84,7 @@ return [
             'use_path_style_endpoint' => 'Use Path Style Endpoint',
         ],
     ],
-    'oauth' => [  //to do All the helper text
+    'oauth' => [
         'enable' => 'Enable',
         'disable' => 'Disable',
         'client_id' => 'Client ID',
@@ -131,8 +131,8 @@ return [
             'rpm' => 'Requests per Minute',
         ],
         'server' => [
-            'helper' => 'Settings for Servers.',
-            'edit_server_desc' => 'Allow Users to edit Server Descriptions?',
+            'helper' => 'Settings for Servers',
+            'edit_server_desc' => 'Allow Users to edit Descriptions?',
         ],
         'webhook' => [
             'helper' => 'Configure how often old webhook logs should be pruned.',
