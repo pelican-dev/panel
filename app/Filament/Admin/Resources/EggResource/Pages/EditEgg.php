@@ -46,12 +46,12 @@ class EditEgg extends EditRecord
                                 ->required()
                                 ->maxLength(255)
                                 ->columnSpan(['default' => 1, 'sm' => 1, 'md' => 2, 'lg' => 1])
-                                ->helperText(trans('admin/egg.name_help')),
+                                ->helperText(trans('admin/egg.name_help', ['resource' => 'Egg'])),
                             TextInput::make('uuid')
                                 ->label('Egg UUID')
                                 ->disabled()
                                 ->columnSpan(['default' => 1, 'sm' => 1, 'md' => 1, 'lg' => 2])
-                                ->helperText('This is the globally unique identifier for this Egg which Wings uses as an identifier.'),
+                                ->helperText(trans('admin/egg.uuid_help', ['resource' => 'Egg', 'wings' => 'Wings'])),
                             TextInput::make('id')
                                 ->label('Egg ID')
                                 ->disabled(),
@@ -59,7 +59,7 @@ class EditEgg extends EditRecord
                                 ->label(trans('admin/egg.description'))
                                 ->rows(3)
                                 ->columnSpan(['default' => 1, 'sm' => 1, 'md' => 2, 'lg' => 2])
-                                ->helperText(trans('admin/egg.description_help')),
+                                ->helperText(trans('admin/egg.description_help', ['resource' => 'Egg'])),
                             TextInput::make('author')
                                 ->label(trans('admin/egg.author'))
                                 ->required()
@@ -67,7 +67,7 @@ class EditEgg extends EditRecord
                                 ->email()
                                 ->disabled()
                                 ->columnSpan(['default' => 1, 'sm' => 1, 'md' => 2, 'lg' => 2])
-                                ->helperText('The author of this version of the Egg. Uploading a new Egg configuration from a different author will change this.'),
+                                ->helperText(trans('admin/egg.author_help_edit', ['resource' => 'Egg'])),
                             Textarea::make('startup')
                                 ->label(trans('admin/egg.startup'))
                                 ->rows(3)
@@ -106,7 +106,7 @@ class EditEgg extends EditRecord
                                 ->addActionLabel(trans('admin/egg.add_image'))
                                 ->keyLabel(trans('admin/egg.docker_name'))
                                 ->valueLabel(trans('admin/egg.docker_uri'))
-                                ->helperText(trans('admin/egg.docker_help')),
+                                ->helperText(trans('admin/egg.docker_help', ['resource' => 'Egg'])),
                         ]),
                     Tab::make(trans('admin/egg.tabs.process_management'))
                         ->columns()
@@ -131,7 +131,7 @@ class EditEgg extends EditRecord
                                 ->label(trans('admin/egg.log_config'))
                                 ->helperText(trans('admin/egg.log_config_help')),
                         ]),
-                    Tab::make(trans('admin/egg.tabs.egg_variables'))
+                    Tab::make(trans('admin/egg.tabs.egg_variables', ['resource' => 'Egg']))
                         ->columnSpanFull()
                         ->icon('tabler-variable')
                         ->schema([
