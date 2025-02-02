@@ -22,6 +22,7 @@ class ListRoles extends ListRecords
         return $table
             ->columns([
                 TextColumn::make('name')
+                    ->label(trans('admin/role.name'))
                     ->sortable()
                     ->searchable(),
                 TextColumn::make('guard_name')
@@ -29,10 +30,10 @@ class ListRoles extends ListRecords
                     ->sortable()
                     ->searchable(),
                 TextColumn::make('permissions_count')
-                    ->label('Permissions')
+                    ->label(trans('admin/role.permissions'))
                     ->badge()
                     ->counts('permissions')
-                    ->formatStateUsing(fn (Role $role, $state) => $role->isRootAdmin() ? 'All' : $state),
+                    ->formatStateUsing(fn (Role $role, $state) => $role->isRootAdmin() ? trans('admin/role.all') : $state),
                 TextColumn::make('users_count')
                     ->label('Users')
                     ->counts('users')
@@ -53,7 +54,7 @@ class ListRoles extends ListRecords
             ->emptyStateHeading('No Roles')
             ->emptyStateActions([
                 CreateActionTable::make('create')
-                    ->label('Create Role')
+                    ->label(trans('admin/role.create_action', ['action' => trans('filament-actions::create.single.modal.actions.create.label')]))
                     ->button(),
             ]);
     }
@@ -62,7 +63,7 @@ class ListRoles extends ListRecords
     {
         return [
             CreateAction::make()
-                ->label('Create Role'),
+                ->label(trans('admin/role.create_action', ['action' => trans('filament-actions::create.single.modal.actions.create.label')])),
         ];
     }
 }
