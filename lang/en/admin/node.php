@@ -7,8 +7,6 @@ return [
         'basic_settings' => 'Basic Settings',
         'advanced_settings' => 'Advanced Settings',
         'config_file' => 'Configuration File',
-        'basic_settings' => 'Basic Settings',
-
     ],
     'table' => [
         'health' => 'Health',
@@ -22,6 +20,7 @@ return [
     'architecture' => 'Architecture',
     'kernel' => 'Kernel',
     'unknown' => 'Unknown',
+    'latest' => 'Latest',
 
     'ip_address' => 'IP Address',
     'domain' => 'Domain Name',
@@ -46,7 +45,7 @@ return [
     'sftp_alias_help' => 'Display alias for the SFTP address. Leave empty to use the Node FQDN.',
     'use_for_deploy' => 'Use for Deployments?',
     'maintenance_mode' => 'Maintenance Mode',
-    'maintenance_mode_help' => 'If the node is marke \'Under Maintenance\' users won\'t be able to access servers that are on that node',
+    'maintenance_mode_help' => 'If the node is marked \'Under Maintenance\' users won\'t be able to access servers that are on that node',
 
     'cpu' => 'CPU',
     'cpu_limit' => 'CPU Limit',
@@ -63,7 +62,7 @@ return [
     'no' => 'No',
 
     'instructions' => 'Instructions',
-    'instructions_help' => 'Save this file to your daemon\'s root directory, named <code>config.yml</code>',
+    'instructions_help' => 'Save this file to your daemon\'s root directory, named config.yml',
 
     'auto_deploy' => 'Auto Deploy Command',
     'auto_question' => 'Choose between Standalone and Docker install.',
@@ -73,5 +72,10 @@ return [
     'reset_token' => 'Reset Authorization Token',
     'token_reset' => 'The daemon token has been reset.',
     'reset_help' => 'Resetting the daemon token will void any request coming from the old token. This token is used for all sensitive operations on the daemon including server creation and deletion. We suggest changing this token regularly for security.',
+
+    'no_nodes' => 'No :resource',
+    'cpu_chart' => 'CPU - :cpu% of :max%',
+    'memory_chart' => 'Memory - :used of :total',
+    'disk_chart' => 'Storage - :used of :total',
 
 ];

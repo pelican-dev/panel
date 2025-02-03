@@ -45,6 +45,9 @@ return [
 
     'stop_command' => 'Stop Command',
     'stop_command_help' => 'The command that should be sent to server processes to stop them gracefully. If you need to send a SIGINT you should enter ^C here.',
+    'copy_from' => 'Copy Settings From',
+    'copy_from_help' => 'If you would like to default to settings from another :resource select it from the menu above.',
+    'none' => 'None',
     'start_config' => 'Start Configuration',
     'start_config_help' => 'List of values the daemon should be looking for when booting a server to determine completion.',
     'config_files' => 'Configuration Files',
@@ -64,7 +67,11 @@ return [
     'error_required' => 'The environment variable field is required.',
     'error_reserved' => 'This environment variable is reserved and cannot be used.',
 
+    'script_from' => 'Script From',
     'script_container' => 'Script Container',
     'script_entry' => 'Script Entry',
     'script_install' => 'Install Script',
+
+    'no_servers' => 'No :resource',
+    'no_servers_help' => 'No :resource are assigned to this :resource2.',
 ];
