@@ -17,7 +17,9 @@ class NodeVersionsCheck extends Check
         $all = Node::query()->count();
 
         if ($all === 0) {
-            $result = Result::make()->notificationMessage(trans('admin/health.results.nodeversions.no_nodes_created', ['resource' => 'Nodes'])->shortSummary(trans('admin/health.results.node_version.no_nodes', ['resource' => 'Nodes'])));
+            $result = Result::make()
+                ->notificationMessage(trans('admin/health.results.nodeversions.no_nodes_created', ['resource' => 'Nodes']))
+                ->shortSummary(trans('admin/health.results.node_version.no_nodes', ['resource' => 'Nodes']));
             $result->status = Status::skipped();
 
             return $result;

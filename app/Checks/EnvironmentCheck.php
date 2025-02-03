@@ -2,10 +2,9 @@
 
 namespace App\Checks;
 
+use Illuminate\Support\Facades\App;
 use Spatie\Health\Checks\Check;
 use Spatie\Health\Checks\Result;
-
-use function app;
 
 class EnvironmentCheck extends Check
 {
@@ -20,7 +19,7 @@ class EnvironmentCheck extends Check
 
     public function run(): Result
     {
-        $actualEnvironment = (string) app()->environment();
+        $actualEnvironment = (string) App::environment();
 
         $result = Result::make()
             ->meta([
