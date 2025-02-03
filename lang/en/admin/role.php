@@ -6,4 +6,5 @@ return [
     'permissions' => 'Permissions',
     'in_use' => 'In Use',
     'all' => 'All',
+    'root_admin' => 'The :role has all permissions.',
 ];
