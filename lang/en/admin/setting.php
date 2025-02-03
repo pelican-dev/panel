@@ -35,6 +35,7 @@ return [
     ],
     'captcha' => [
         'enable' => 'Enable Turnstile Captcha?',
+        'info_label' => 'Info',
         'info' => 'You can generate the keys on your Cloudflare Dashboard. A Cloudflare account is required.',
         'site_key' => 'Site Key',
         'secret_key' => 'Secret Key',
