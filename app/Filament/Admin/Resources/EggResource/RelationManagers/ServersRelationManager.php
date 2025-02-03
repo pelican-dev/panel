@@ -16,7 +16,8 @@ class ServersRelationManager extends RelationManager
     {
         return $table
             ->recordTitleAttribute('servers')
-            ->emptyStateDescription('No Servers')->emptyStateHeading('No servers are assigned to this Egg.')
+            ->emptyStateDescription(trans('admin/egg.no_servers', ['resource' => 'Servers']))
+            ->emptyStateHeading(trans('admin/egg.no_servers_help', ['resource' => 'Servers', 'resource2' => 'Egg']))
             ->searchable(false)
             ->columns([
                 TextColumn::make('user.username')

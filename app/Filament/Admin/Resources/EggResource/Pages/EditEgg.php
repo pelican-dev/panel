@@ -113,16 +113,16 @@ class EditEgg extends EditRecord
                         ->icon('tabler-server-cog')
                         ->schema([
                             Select::make('config_from')
-                                ->label('Copy Settings From')
-                                ->placeholder('None')
+                                ->label(trans('admin/egg.copy_from'))
+                                ->placeholder(trans('admin/egg.none'))
                                 ->relationship('configFrom', 'name', ignoreRecord: true)
-                                ->helperText('If you would like to default to settings from another Egg select it from the menu above.'),
+                                ->helperText(trans('admin/egg.copy_from_help', ['resource' => 'Egg'])),
                             TextInput::make('config_stop')
                                 ->label(trans('admin/egg.stop_command'))
                                 ->maxLength(255)
                                 ->helperText(trans('admin/egg.stop_command_help')),
                             Textarea::make('config_startup')->rows(10)->json()
-                                ->label('Start Configuration')
+                                ->label(trans('admin/egg.start_config'))
                                 ->helperText(trans('admin/egg.start_config_help')),
                             Textarea::make('config_files')->rows(10)->json()
                                 ->label(trans('admin/egg.config_files'))
@@ -230,7 +230,8 @@ class EditEgg extends EditRecord
                         ->icon('tabler-file-download')
                         ->schema([
                             Select::make('copy_script_from')
-                                ->placeholder('None')
+                                ->label(trans('admin/egg.script_from'))
+                                ->placeholder(trans('admin/egg.none'))
                                 ->relationship('scriptFrom', 'name', ignoreRecord: true),
                             TextInput::make('script_container')
                                 ->label(trans('admin/egg.script_container'))

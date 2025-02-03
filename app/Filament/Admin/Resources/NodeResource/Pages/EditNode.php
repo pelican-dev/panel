@@ -72,7 +72,7 @@ class EditNode extends EditRecord
                                 ->schema([
                                     Placeholder::make('')
                                         ->label(trans('admin/node.wings_version'))
-                                        ->content(fn (Node $node, SoftwareVersionService $versionService) => ($node->systemInformation()['version'] ?? trans('admin/node.unknown')) . ' (Latest: ' . $versionService->latestWingsVersion() . ')'),
+                                        ->content(fn (Node $node, SoftwareVersionService $versionService) => ($node->systemInformation()['version'] ?? trans('admin/node.unknown')) . ' (' . trans('admin/node.latest') . ': ' . $versionService->latestWingsVersion() . ')'),
                                     Placeholder::make('')
                                         ->label(trans('admin/node.cpu_threads'))
                                         ->content(fn (Node $node) => $node->systemInformation()['cpu_count'] ?? 0),
