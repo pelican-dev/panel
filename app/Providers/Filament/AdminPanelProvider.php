@@ -52,7 +52,7 @@ class AdminPanelProvider extends PanelProvider
                     ->collapsible(false),
                 NavigationGroup::make('User')
                     ->collapsible(false),
-                NavigationGroup::make('Advanced'),
+                NavigationGroup::make(trans('admin/dashboard.advanced')),
             ])
             ->sidebarCollapsibleOnDesktop()
             ->discoverResources(in: app_path('Filament/Admin/Resources'), for: 'App\\Filament\\Admin\\Resources')

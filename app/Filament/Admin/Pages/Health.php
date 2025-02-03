@@ -15,8 +15,6 @@ class Health extends Page
 {
     protected static ?string $navigationIcon = 'tabler-heart';
 
-    protected static ?string $navigationGroup = 'Advanced';
-
     protected static string $view = 'filament.pages.health';
 
     // @phpstan-ignore-next-line
@@ -32,6 +30,11 @@ class Health extends Page
     public static function getNavigationLabel(): string
     {
         return trans('admin/health.title');
+    }
+
+    public static function getNavigationGroup(): ?string
+    {
+        return trans('admin/dashboard.advanced');
     }
 
     public static function canAccess(): bool

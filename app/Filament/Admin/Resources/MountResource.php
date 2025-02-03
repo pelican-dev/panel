@@ -12,13 +12,16 @@ class MountResource extends Resource
 
     protected static ?string $navigationIcon = 'tabler-layers-linked';
 
-    protected static ?string $navigationGroup = 'Advanced';
-
     protected static ?string $recordTitleAttribute = 'name';
 
     public static function getNavigationBadge(): ?string
     {
         return static::getModel()::count() ?: null;
+    }
+
+    public static function getNavigationGroup(): ?string
+    {
+        return trans('admin/dashboard.advanced');
     }
 
     public static function getPages(): array

@@ -100,12 +100,6 @@
         :header-actions="$helpActions"
     >
         <x-slot name="heading">{{ trans('admin/dashboard.sections.intro-help.heading') }}</x-slot>
-
-        <p>
-            Check out the documentation first!
-            If you still need assistance then, fly onto our
-            <a class="underline" href="https://discord.gg/pelican-panel">Discord server</a>!
-        </p>
-
+        <p>{{ trans('admin/dashboard.sections.intro-help.content') }}</p>
     </x-filament::section>
 </x-filament-panels::page>

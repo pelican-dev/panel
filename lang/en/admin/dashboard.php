@@ -6,6 +6,7 @@ return [
     'heading' => 'Welcome to Pelican!',
     'expand_sections' => 'You can expand the following sections:',
     'version' => 'Version: :version',
+    'advanced' => 'Advanced',
     'sections' => [
         'intro-developers' => [
             'heading' => 'Information for Developers',
@@ -37,9 +38,8 @@ return [
         ],
         'intro-help' => [
             'heading' => 'Need Help?',
-            'content' => 'Check out the documentation first! If you still need assistance then, fly onto our Discord server!',
+            'content' => 'Check out the documentation first! If you still need help head on over to our discord server!',
             'button_docs' => 'Read Documentation',
-            'button_discord' => 'Get Help in Discord',
         ],
     ],
 ];

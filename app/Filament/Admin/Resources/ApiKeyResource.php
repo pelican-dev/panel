@@ -18,11 +18,14 @@ class ApiKeyResource extends Resource
 
     protected static ?string $navigationIcon = 'tabler-key';
 
-    protected static ?string $navigationGroup = 'Advanced';
-
     public static function getNavigationBadge(): ?string
     {
         return static::getModel()::where('key_type', ApiKey::TYPE_APPLICATION)->count() ?: null;
+    }
+
+    public static function getNavigationGroup(): ?string
+    {
+        return trans('admin/dashboard.advanced');
     }
 
     public static function getPages(): array
