@@ -31,6 +31,7 @@ class ListServers extends ListRecords
             ])
             ->columns([
                 TextColumn::make('condition')
+                    ->label(trans('admin/server.condition'))
                     ->default('unknown')
                     ->badge()
                     ->icon(fn (Server $server) => $server->conditionIcon())

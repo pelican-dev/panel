@@ -71,8 +71,7 @@ class EditServer extends EditRecord
                     ])
                     ->columnSpanFull()
                     ->tabs([
-                        Tab::make('Information')
-                            ->label(trans('admin/server.tabs.information'))
+                        Tab::make(trans('admin/server.tabs.information'))
                             ->icon('tabler-info-circle')
                             ->schema([
                                 TextInput::make('name')
