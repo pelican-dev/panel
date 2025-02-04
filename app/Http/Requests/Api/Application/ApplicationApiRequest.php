@@ -4,6 +4,7 @@ namespace App\Http\Requests\Api\Application;
 
 use Webmozart\Assert\Assert;
 use App\Models\ApiKey;
+use Laravel\Sanctum\TransientToken;
 use Illuminate\Validation\Validator;
 use Illuminate\Database\Eloquent\Model;
 use App\Services\Acl\Api\AdminAcl;
@@ -37,6 +38,10 @@ abstract class ApplicationApiRequest extends FormRequest
         }
 
         $token = $this->user()->currentAccessToken();
+
+        if ($token instanceof TransientToken) {
+            return true;
+        }
 
         /** @var ApiKey $token */
         if ($token->key_type === ApiKey::TYPE_ACCOUNT) {
