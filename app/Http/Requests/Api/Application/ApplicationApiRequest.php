@@ -4,6 +4,7 @@ namespace App\Http\Requests\Api\Application;
 
 use Webmozart\Assert\Assert;
 use App\Models\ApiKey;
+use Laravel\Sanctum\TransientToken;
 use Illuminate\Validation\Validator;
 use Illuminate\Database\Eloquent\Model;
 use App\Services\Acl\Api\AdminAcl;
@@ -36,9 +37,13 @@ abstract class ApplicationApiRequest extends FormRequest
             throw new PanelException('An ACL resource must be defined on API requests.');
         }
 
+        /** @var TransientToken|ApiKey $token */
         $token = $this->user()->currentAccessToken();
 
-        /** @var ApiKey $token */
+        if ($token instanceof TransientToken) {
+            return true;
+        }
+
         if ($token->key_type === ApiKey::TYPE_ACCOUNT) {
             return true;
         }
