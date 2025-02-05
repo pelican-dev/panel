@@ -14,7 +14,6 @@ class DaemonFileRepository extends DaemonRepository
      *
      * @param  int|null  $notLargerThan  the maximum content length in bytes
      *
-     * @throws ConnectionException
      * @throws FileSizeTooLargeException
      * @throws ConnectionException
      * @throws FileNotFoundException
