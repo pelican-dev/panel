@@ -2,7 +2,6 @@
 
 namespace App\Notifications;
 
-use App\Filament\App\Resources\ServerResource\Pages\ListServers;
 use App\Models\Server;
 use App\Models\User;
 use Illuminate\Bus\Queueable;
@@ -28,6 +27,6 @@ class RemovedFromServer extends Notification implements ShouldQueue
             ->greeting('Hello ' . $notifiable->username . '.')
             ->line('You have been removed as a subuser for the following server.')
             ->line('Server Name: ' . $this->server->name)
-            ->action('Visit Panel', ListServers::getUrl());
+            ->action('Visit Panel', config('app.url'));
     }
 }
