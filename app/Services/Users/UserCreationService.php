@@ -42,6 +42,7 @@ class UserCreationService
         $isRootAdmin = array_key_exists('root_admin', $data) && $data['root_admin'];
         unset($data['root_admin']);
 
+        /** @var User $user */
         $user = User::query()->forceCreate(array_merge($data, [
             'uuid' => Uuid::uuid4()->toString(),
         ]));
@@ -55,7 +56,8 @@ class UserCreationService
         }
 
         $this->connection->commit();
-        $user->notify(new AccountCreated($user, $token ?? null));
+
+        $user->notify(new AccountCreated($token ?? null));
 
         return $user;
     }
