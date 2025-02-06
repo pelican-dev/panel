@@ -236,7 +236,7 @@ class EditNode extends EditRecord
                         ->icon('tabler-server-cog')
                         ->schema([
                             TextInput::make('id')
-                                ->label('Node ID')
+                                ->label(trans('admin/node.node_id'))
                                 ->columnSpan([
                                     'default' => 1,
                                     'sm' => 1,
@@ -251,18 +251,18 @@ class EditNode extends EditRecord
                                     'md' => 2,
                                     'lg' => 2,
                                 ])
-                                ->label('Node UUID')
+                                ->label(trans('admin/node.node_uuid'))
                                 ->hintAction(fn () => request()->isSecure() ? CopyAction::make() : null)
                                 ->disabled(),
                             TagsInput::make('tags')
                                 ->label(trans('admin/node.tags'))
+                                ->placeholder('')
                                 ->columnSpan([
                                     'default' => 1,
                                     'sm' => 1,
                                     'md' => 2,
                                     'lg' => 2,
-                                ])
-                                ->placeholder('Add Tags'),
+                                ]),
                             TextInput::make('upload_size')
                                 ->columnSpan([
                                     'default' => 1,

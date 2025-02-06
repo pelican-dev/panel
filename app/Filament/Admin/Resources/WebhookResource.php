@@ -18,6 +18,7 @@ class WebhookResource extends Resource
     {
         return trans('admin/webhook.nav_title');
     }
+
     public static function getModelLabel(): string
     {
         return trans('admin/webhook.model_label');

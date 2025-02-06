@@ -29,6 +29,8 @@ return [
     'kernel' => 'Kernel',
     'unknown' => 'Unknown',
     'latest' => 'Latest',
+    'node_uuid' => 'Node UUID',
+    'node_id' => 'Node ID',
 
     'ip_address' => 'IP Address',
     'ip_help' => 'Usually your machine\'s public IP unless you are port forwarding.',

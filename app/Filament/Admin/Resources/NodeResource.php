@@ -19,6 +19,7 @@ class NodeResource extends Resource
     {
         return trans('admin/node.nav_title');
     }
+
     public static function getModelLabel(): string
     {
         return trans('admin/node.model_label');
@@ -28,6 +29,7 @@ class NodeResource extends Resource
     {
         return trans('admin/node.model_label_plural');
     }
+
     public static function getNavigationGroup(): ?string
     {
         return trans('admin/dashboard.server');

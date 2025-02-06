@@ -28,6 +28,7 @@ class EggResource extends Resource
     {
         return trans('admin/egg.nav_title');
     }
+
     public static function getModelLabel(): string
     {
         return trans('admin/egg.model_label');

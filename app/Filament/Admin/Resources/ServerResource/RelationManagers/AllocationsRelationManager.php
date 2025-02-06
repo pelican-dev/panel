@@ -9,7 +9,6 @@ use App\Services\Allocations\AssignmentService;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TagsInput;
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Form;
 use Filament\Forms\Get;
 use Filament\Forms\Set;
 use Filament\Resources\RelationManagers\RelationManager;
@@ -21,7 +20,6 @@ use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Columns\TextInputColumn;
 use Filament\Tables\Table;
-use Illuminate\Support\HtmlString;
 
 /**
  * @method Server getOwnerRecord()
@@ -29,16 +27,6 @@ use Illuminate\Support\HtmlString;
 class AllocationsRelationManager extends RelationManager
 {
     protected static string $relationship = 'allocations';
-
-    public function form(Form $form): Form
-    {
-        return $form
-            ->schema([
-                TextInput::make('ip')
-                    ->required()
-                    ->maxLength(255),
-            ]);
-    }
 
     public function table(Table $table): Table
     {
@@ -48,6 +36,7 @@ class AllocationsRelationManager extends RelationManager
             ->recordTitle(fn (Allocation $allocation) => "$allocation->ip:$allocation->port")
             ->checkIfRecordIsSelectableUsing(fn (Allocation $record) => $record->id !== $this->getOwnerRecord()->allocation_id)
             ->inverseRelationship('server')
+            ->heading(trans('admin/server.allocations'))
             ->columns([
                 TextColumn::make('ip')->label(trans('admin/server.ip_address')),
                 TextColumn::make('port')->label(trans('admin/server.port')),

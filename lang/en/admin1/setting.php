@@ -132,10 +132,12 @@ return [
             'rpm' => 'Requests per Minute',
         ],
         'server' => [
+            'title' => 'Servers',
             'helper' => 'Settings for Servers',
             'edit_server_desc' => 'Allow Users to edit Descriptions?',
         ],
         'webhook' => [
+            'title' => 'Webhooks',
             'helper' => 'Configure how often old webhook logs should be pruned.',
             'prune_age' => 'Prune Age',
             'days' => 'Days',

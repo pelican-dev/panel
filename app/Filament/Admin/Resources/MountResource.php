@@ -18,6 +18,7 @@ class MountResource extends Resource
     {
         return trans('admin/mount.nav_title');
     }
+
     public static function getModelLabel(): string
     {
         return trans('admin/mount.model_label');

@@ -9,7 +9,6 @@ use App\Services\Allocations\AssignmentService;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TagsInput;
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Form;
 use Filament\Forms\Get;
 use Filament\Forms\Set;
 use Filament\Resources\RelationManagers\RelationManager;
@@ -20,7 +19,6 @@ use Filament\Tables\Columns\SelectColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Columns\TextInputColumn;
 use Filament\Tables\Table;
-use Illuminate\Support\HtmlString;
 
 /**
  * @method Node getOwnerRecord()
@@ -30,16 +28,6 @@ class AllocationsRelationManager extends RelationManager
     protected static string $relationship = 'allocations';
 
     protected static ?string $icon = 'tabler-plug-connected';
-
-    public function form(Form $form): Form
-    {
-        return $form
-            ->schema([
-                TextInput::make('ip')
-                    ->required()
-                    ->maxLength(255),
-            ]);
-    }
 
     public function table(Table $table): Table
     {
@@ -53,6 +41,7 @@ class AllocationsRelationManager extends RelationManager
             ->checkIfRecordIsSelectableUsing(fn (Allocation $allocation) => $allocation->server_id === null)
             ->paginationPageOptions(['10', '20', '50', '100', '200', '500'])
             ->searchable()
+            ->heading('')
             ->selectCurrentPageOnly() //Prevent people from trying to nuke 30,000 ports at once.... -,-
             ->columns([
                 TextColumn::make('id')

@@ -22,7 +22,10 @@ return [
     'export' => 'Export',
     'in_use' => 'In Use',
     'create_action' => ':action Egg',
+    'servers' => 'Servers',
     'name' => 'Name',
+    'egg_uuid' => 'Egg UUID',
+    'egg_id' => 'Egg ID',
     'name_help' => 'A simple, human-readable name to use as an identifier for this Egg.',
     'author' => 'Author',
     'uuid_help' => 'This is the globally unique identifier for this Egg which Wings uses as an identifier.',
@@ -74,7 +77,7 @@ return [
     'script_container' => 'Script Container',
     'script_entry' => 'Script Entry',
     'script_install' => 'Install Script',
-
+    'no_eggs' => 'No Eggs',
     'no_servers' => 'No Servers',
     'no_servers_help' => 'No Servers are assigned to this Egg.',
 ];

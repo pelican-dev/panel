@@ -18,6 +18,7 @@ class ServerResource extends Resource
     {
         return trans('admin/server.nav_title');
     }
+
     public static function getModelLabel(): string
     {
         return trans('admin/server.model_label');

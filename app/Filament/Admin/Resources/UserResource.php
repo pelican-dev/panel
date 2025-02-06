@@ -19,6 +19,7 @@ class UserResource extends Resource
     {
         return trans('admin/user.nav_title');
     }
+
     public static function getModelLabel(): string
     {
         return trans('admin/user.model_label');

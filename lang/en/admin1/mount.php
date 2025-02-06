@@ -15,7 +15,9 @@ return [
     'read_only_help' => 'Is the mount read only inside the container?',
     'description' => 'Description',
     'description_help' => 'A longer description for this Mount',
-    'no_mounts' => 'No Mounts.',
+    'no_mounts' => 'No Mounts',
+    'eggs' => 'Eggs',
+    'nodes' => 'Nodes',
     'toggles' => [
         'writable' => 'Writable',
         'read_only' => 'Read Only',

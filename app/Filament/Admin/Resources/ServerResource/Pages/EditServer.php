@@ -507,6 +507,7 @@ class EditServer extends EditRecord
                                     ->required()
                                     ->hintAction(
                                         Action::make('change_egg')
+                                            ->label('admin/server.change_egg')
                                             ->action(function (array $data, Server $server, EggChangerService $service) {
                                                 $service->handle($server, $data['egg_id'], $data['keepOldVariables']);
 
@@ -515,14 +516,14 @@ class EditServer extends EditRecord
                                             })
                                             ->form(fn (Server $server) => [
                                                 Select::make('egg_id')
-                                                    ->label('New Egg')
+                                                    ->label(trans('admin/server.new_egg'))
                                                     ->prefixIcon('tabler-egg')
                                                     ->options(fn () => Egg::all()->filter(fn (Egg $egg) => $egg->id !== $server->egg->id)->mapWithKeys(fn (Egg $egg) => [$egg->id => $egg->name]))
                                                     ->searchable()
                                                     ->preload()
                                                     ->required(),
                                                 Toggle::make('keepOldVariables')
-                                                    ->label('Keep old variables if possible?')
+                                                    ->label(trans('admin/server.keep_old_variables'))
                                                     ->default(true),
                                             ])
                                     ),
@@ -568,6 +569,7 @@ class EditServer extends EditRecord
                                     }),
 
                                 Repeater::make('server_variables')
+                                    ->label('')
                                     ->relationship('serverVariables', function (Builder $query) {
                                         /** @var Server $server */
                                         $server = $this->getRecord();
@@ -642,7 +644,6 @@ class EditServer extends EditRecord
                                     ->relationship('mounts')
                                     ->options(fn (Server $server) => $server->node->mounts->filter(fn (Mount $mount) => $mount->eggs->contains($server->egg))->mapWithKeys(fn (Mount $mount) => [$mount->id => $mount->name]))
                                     ->descriptions(fn (Server $server) => $server->node->mounts->mapWithKeys(fn (Mount $mount) => [$mount->id => "$mount->source -> $mount->target"]))
-                                    ->label('Mounts')
                                     ->helperText(fn (Server $server) => $server->node->mounts->isNotEmpty() ? '' : trans('admin/server.no_mounts'))
                                     ->columnSpanFull(),
                             ]),

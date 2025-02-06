@@ -50,6 +50,7 @@ class DatabasesRelationManager extends RelationManager
     {
         return $table
             ->recordTitleAttribute('servers')
+            ->heading('')
             ->columns([
                 TextColumn::make('database')
                     ->icon('tabler-database'),

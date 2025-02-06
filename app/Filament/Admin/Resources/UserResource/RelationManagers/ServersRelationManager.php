@@ -24,6 +24,7 @@ class ServersRelationManager extends RelationManager
 
         return $table
             ->searchable(false)
+            ->heading(trans('admin/user.servers'))
             ->headerActions([
                 Actions\Action::make('toggleSuspend')
                     ->hidden(fn () => $user->servers()

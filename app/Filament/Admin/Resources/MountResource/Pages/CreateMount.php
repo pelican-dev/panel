@@ -101,9 +101,11 @@ class CreateMount extends CreateRecord
                 Group::make()->schema([
                     Section::make()->schema([
                         Select::make('eggs')->multiple()
+                            ->label(trans('admin/mount.eggs'))
                             ->relationship('eggs', 'name')
                             ->preload(),
                         Select::make('nodes')->multiple()
+                            ->label(trans('admin/mount.nodes'))
                             ->relationship('nodes', 'name')
                             ->searchable(['name', 'fqdn'])
                             ->preload(),

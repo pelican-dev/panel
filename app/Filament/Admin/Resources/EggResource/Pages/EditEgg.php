@@ -48,12 +48,12 @@ class EditEgg extends EditRecord
                                 ->columnSpan(['default' => 1, 'sm' => 1, 'md' => 2, 'lg' => 1])
                                 ->helperText(trans('admin/egg.name_help')),
                             TextInput::make('uuid')
-                                ->label('Egg UUID')
+                                ->label(trans('admin/egg.egg_uuid'))
                                 ->disabled()
                                 ->columnSpan(['default' => 1, 'sm' => 1, 'md' => 1, 'lg' => 2])
                                 ->helperText(trans('admin/egg.uuid_help')),
                             TextInput::make('id')
-                                ->label('Egg ID')
+                                ->label(trans('admin/egg.egg_id'))
                                 ->disabled(),
                             Textarea::make('description')
                                 ->label(trans('admin/egg.description'))

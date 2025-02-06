@@ -30,6 +30,7 @@ class RoleResource extends Resource
     {
         return trans('admin/role.nav_title');
     }
+
     public static function getModelLabel(): string
     {
         return trans('admin/role.model_label');

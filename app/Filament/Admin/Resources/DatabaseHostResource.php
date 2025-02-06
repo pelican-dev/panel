@@ -23,6 +23,7 @@ class DatabaseHostResource extends Resource
     {
         return trans('admin/databasehost.nav_title');
     }
+
     public static function getModelLabel(): string
     {
         return trans('admin/databasehost.model_label');

@@ -19,6 +19,7 @@ class ServersRelationManager extends RelationManager
             ->emptyStateDescription(trans('admin/egg.no_servers'))
             ->emptyStateHeading(trans('admin/egg.no_servers_help'))
             ->searchable(false)
+            ->heading(trans('admin/egg.servers'))
             ->columns([
                 TextColumn::make('user.username')
                     ->label('Owner')

@@ -666,7 +666,7 @@ class Settings extends Page implements HasForms
                         ->suffix(trans('admin/setting.misc.api.rpm'))
                         ->default(env('APP_API_APPLICATION_RATELIMIT', config('http.rate_limit.application'))),
                 ]),
-            Section::make('Servers')
+            Section::make(trans('admin/setting.misc.server.title'))
                 ->description(trans('admin/setting.misc.server.helper'))
                 ->columns()
                 ->collapsible()
@@ -684,7 +684,7 @@ class Settings extends Page implements HasForms
                         ->afterStateUpdated(fn ($state, Set $set) => $set('PANEL_EDITABLE_SERVER_DESCRIPTIONS', (bool) $state))
                         ->default(env('PANEL_EDITABLE_SERVER_DESCRIPTIONS', config('panel.editable_server_descriptions'))),
                 ]),
-            Section::make('Webhooks')
+            Section::make(trans('admin/setting.misc.webhook.title'))
                 ->description(trans('admin/setting.misc.webhook.helper'))
                 ->columns()
                 ->collapsible()

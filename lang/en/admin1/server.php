@@ -92,6 +92,9 @@ return [
     'create_database' => 'Create Database',
     'no_db_hosts' => 'No Database Hosts',
     'failed_to_create' => 'Failed to create Database',
+    'change_egg' => 'Change Egg',
+    'new_egg' => 'New Egg',
+    'keep_old_variables' => 'Keep old variables if possible?',
     'tabs' => [
         'information' => 'Information',
         'egg_configuration' => 'Egg Configuration',

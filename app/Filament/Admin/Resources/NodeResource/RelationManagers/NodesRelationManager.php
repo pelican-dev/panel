@@ -18,6 +18,7 @@ class NodesRelationManager extends RelationManager
     {
         return $table
             ->searchable(false)
+            ->heading('')
             ->columns([
                 TextColumn::make('user.username')
                     ->label(trans('admin/node.table.owner'))
