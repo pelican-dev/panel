@@ -50,13 +50,14 @@
         "barryvdh/laravel-ide-helper": "^3.5",
         "fakerphp/faker": "^1.23.1",
         "larastan/larastan": "^3.1",
+        "laravel/pail": "^1.2.2",
         "laravel/pint": "^1.15.3",
         "laravel/sail": "^1.41",
         "mockery/mockery": "^1.6.11",
         "nunomaduro/collision": "^8.6",
         "pestphp/pest": "^3.7",
-        "spatie/laravel-ignition": "^2.9",
-        "laravel/pail": "^1.2.2"
+        "pestphp/pest-plugin-faker": "^3.0",
+        "spatie/laravel-ignition": "^2.9"
     },
     "autoload": {
         "files": [
