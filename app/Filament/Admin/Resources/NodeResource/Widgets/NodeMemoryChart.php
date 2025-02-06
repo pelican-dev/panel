@@ -77,6 +77,6 @@ class NodeMemoryChart extends ChartWidget
             ? Number::format($totalMemory / 1024 / 1024 / 1024, maxPrecision: 2, locale: auth()->user()->language) .' GiB'
             : Number::format($totalMemory / 1000 / 1000 / 1000, maxPrecision: 2, locale: auth()->user()->language) . ' GB';
 
-        return 'Memory - ' . $used . ' Of ' . $total;
+        return trans('admin/node.memory_chart', ['used' => $used, 'total' => $total]);
     }
 }

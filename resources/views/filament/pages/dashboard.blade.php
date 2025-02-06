@@ -2,11 +2,11 @@
     <x-filament-panels::header
         :actions="$this->getCachedHeaderActions()"
         :breadcrumbs="filament()->hasBreadcrumbs() ? $this->getBreadcrumbs() : []"
-        :heading=" trans('dashboard/index.heading')"
-        :subheading="trans('strings.version', ['version' => $version])"
+        :heading=" trans('admin/dashboard.heading')"
+        :subheading="trans('admin/dashboard.version', ['version' => $version])"
     ></x-filament-panels::header>
 
-    <p>{{ trans('dashboard/index.expand_sections') }}</p>
+    <p>{{ trans('admin/dashboard.expand_sections') }}</p>
 
     @if (!$isLatest)
         <x-filament::section
@@ -15,9 +15,9 @@
             id="intro-update-available"
             :header-actions="$updateActions"
         >
-            <x-slot name="heading">{{ trans('dashboard/index.sections.intro-update-available.heading') }}</x-slot>
+            <x-slot name="heading">{{ trans('admin/dashboard.sections.intro-update-available.heading') }}</x-slot>
 
-            <p>{{ trans('dashboard/index.sections.intro-update-available.content', ['latestVersion' => $latestVersion]) }}</p>
+            <p>{{ trans('admin/dashboard.sections.intro-update-available.content', ['latestVersion' => $latestVersion]) }}</p>
 
         </x-filament::section>
     @else
@@ -26,9 +26,9 @@
             icon-color="success"
             id="intro-no-update"
         >
-            <x-slot name="heading">{{ trans('dashboard/index.sections.intro-no-update.heading') }}</x-slot>
+            <x-slot name="heading">{{ trans('admin/dashboard.sections.intro-no-update.heading') }}</x-slot>
 
-            <p>{{ trans('dashboard/index.sections.intro-no-update.content', ['version' => $version]) }}</p>
+            <p>{{ trans('admin/dashboard.sections.intro-no-update.content', ['version' => $version]) }}</p>
         </x-filament::section>
     @endif
 
@@ -41,15 +41,15 @@
             collapsible
             persist-collapsed
             collapsed
-           :header-actions="$devActions"
+            :header-actions="$devActions"
         >
-            <x-slot name="heading">{{ trans('dashboard/index.sections.intro-developers.heading') }}</x-slot>
+            <x-slot name="heading">{{ trans('admin/dashboard.sections.intro-developers.heading') }}</x-slot>
 
-            <p>{{ trans('dashboard/index.sections.intro-developers.content') }}</p>
+            <p>{{ trans('admin/dashboard.sections.intro-developers.content') }}</p>
 
             <p><br /></p>
 
-            <p>{{ trans('dashboard/index.sections.intro-developers.extra_note') }}</p>
+            <p>{{ trans('admin/dashboard.sections.intro-developers.extra_note') }}</p>
 
         </x-filament::section>
     @endif
@@ -64,9 +64,9 @@
             persist-collapsed
             :header-actions="$nodeActions"
         >
-            <x-slot name="heading">{{ trans('dashboard/index.sections.intro-first-node.heading') }}</x-slot>
+            <x-slot name="heading">{{ trans('admin/dashboard.sections.intro-first-node.heading') }}</x-slot>
 
-            <p>{{ trans('dashboard/index.sections.intro-first-node.content') }}</p>
+            <p>{{ trans('admin/dashboard.sections.intro-first-node.content') }}</p>
 
         </x-filament::section>
     @endif
@@ -81,13 +81,13 @@
         persist-collapsed
         :header-actions="$supportActions"
     >
-        <x-slot name="heading">{{ trans('dashboard/index.sections.intro-support.heading') }}</x-slot>
+        <x-slot name="heading">{{ trans('admin/dashboard.sections.intro-support.heading') }}</x-slot>
 
-        <p>{{ trans('dashboard/index.sections.intro-support.content') }}</p>
+        <p>{{ trans('admin/dashboard.sections.intro-support.content') }}</p>
 
         <p><br /></p>
 
-        <p>{{ trans('dashboard/index.sections.intro-support.extra_note') }}</p>
+        <p>{{ trans('admin/dashboard.sections.intro-support.extra_note') }}</p>
 
     </x-filament::section>
 
@@ -99,13 +99,7 @@
         persist-collapsed
         :header-actions="$helpActions"
     >
-        <x-slot name="heading">{{ trans('dashboard/index.sections.intro-help.heading') }}</x-slot>
-
-        <p>
-            Check out the documentation first!
-            If you still need assistance then, fly onto our
-            <a class="underline" href="https://discord.gg/pelican-panel">Discord server</a>!
-        </p>
-
+        <x-slot name="heading">{{ trans('admin/dashboard.sections.intro-help.heading') }}</x-slot>
+        <p>{{ trans('admin/dashboard.sections.intro-help.content') }}</p>
     </x-filament::section>
 </x-filament-panels::page>

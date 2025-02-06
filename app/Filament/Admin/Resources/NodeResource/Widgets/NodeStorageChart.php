@@ -74,6 +74,9 @@ class NodeStorageChart extends ChartWidget
 
     public function getHeading(): string
     {
-        return 'Storage - ' . convert_bytes_to_readable($this->node->statistics()['disk_used'] ?? 0) . ' Of ' . convert_bytes_to_readable($this->node->statistics()['disk_total'] ?? 0);
+        $used = convert_bytes_to_readable($this->node->statistics()['disk_used'] ?? 0);
+        $total = convert_bytes_to_readable($this->node->statistics()['disk_total'] ?? 0);
+
+        return trans('admin/node.disk_chart', ['used' => $used, 'total' => $total]);
     }
 }

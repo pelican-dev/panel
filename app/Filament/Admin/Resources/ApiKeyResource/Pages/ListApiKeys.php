@@ -23,12 +23,13 @@ class ListApiKeys extends ListRecords
             ->modifyQueryUsing(fn ($query) => $query->where('key_type', ApiKey::TYPE_APPLICATION))
             ->columns([
                 TextColumn::make('key')
+                    ->label(trans('admin/apikey.table.key'))
                     ->copyable()
                     ->icon('tabler-clipboard-text')
                     ->state(fn (ApiKey $key) => $key->identifier . $key->token),
 
                 TextColumn::make('memo')
-                    ->label('Description')
+                    ->label(trans('admin/apikey.table.description'))
                     ->wrap()
                     ->limit(50),
 
@@ -37,16 +38,16 @@ class ListApiKeys extends ListRecords
                     ->searchable(),
 
                 DateTimeColumn::make('last_used_at')
-                    ->label('Last Used')
-                    ->placeholder('Not Used')
+                    ->label(trans('admin/apikey.table.last_used'))
+                    ->placeholder(trans('admin/apikey.table.never_used'))
                     ->sortable(),
 
                 DateTimeColumn::make('created_at')
-                    ->label('Created')
+                    ->label(trans('admin/apikey.table.created'))
                     ->sortable(),
 
                 TextColumn::make('user.username')
-                    ->label('Created By')
+                    ->label(trans('admin/apikey.table.created_by'))
                     ->url(fn (ApiKey $apiKey): string => route('filament.admin.resources.users.edit', ['record' => $apiKey->user])),
             ])
             ->actions([
@@ -54,10 +55,10 @@ class ListApiKeys extends ListRecords
             ])
             ->emptyStateIcon('tabler-key')
             ->emptyStateDescription('')
-            ->emptyStateHeading('No API Keys')
+            ->emptyStateHeading(trans('admin/apikey.empty_table'))
             ->emptyStateActions([
                 CreateAction::make('create')
-                    ->label('Create API Key')
+                    ->label(trans('admin/apikey.create_action', ['action' => trans('filament-actions::create.single.modal.actions.create.label')]))
                     ->button(),
             ]);
     }
@@ -66,7 +67,7 @@ class ListApiKeys extends ListRecords
     {
         return [
             Actions\CreateAction::make()
-                ->label('Create API Key')
+                ->label(trans('admin/apikey.create_action', ['action' => trans('filament-actions::create.single.modal.actions.create.label')]))
                 ->hidden(fn () => ApiKey::where('key_type', ApiKey::TYPE_APPLICATION)->count() <= 0),
         ];
     }

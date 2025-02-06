@@ -25,12 +25,16 @@ class ListDatabaseHosts extends ListRecords
             ->searchable(false)
             ->columns([
                 TextColumn::make('name')
+                    ->label(trans('admin/databasehost.table.name'))
                     ->searchable(),
                 TextColumn::make('host')
+                    ->label(trans('admin/databasehost.table.host'))
                     ->searchable(),
                 TextColumn::make('port')
+                    ->label(trans('admin/databasehost.table.port'))
                     ->sortable(),
                 TextColumn::make('username')
+                    ->label(trans('admin/databasehost.table.username'))
                     ->searchable(),
                 TextColumn::make('databases_count')
                     ->counts('databases')
@@ -39,7 +43,7 @@ class ListDatabaseHosts extends ListRecords
                 TextColumn::make('nodes.name')
                     ->icon('tabler-server-2')
                     ->badge()
-                    ->placeholder('No Nodes')
+                    ->placeholder(trans('admin/databasehost.no_nodes'))
                     ->sortable(),
             ])
             ->checkIfRecordIsSelectableUsing(fn (DatabaseHost $databaseHost) => !$databaseHost->databases_count)
@@ -54,10 +58,10 @@ class ListDatabaseHosts extends ListRecords
             ])
             ->emptyStateIcon('tabler-database')
             ->emptyStateDescription('')
-            ->emptyStateHeading('No Database Hosts')
+            ->emptyStateHeading(trans('admin/databasehost.no_database_hosts'))
             ->emptyStateActions([
                 CreateAction::make('create')
-                    ->label('Create Database Host')
+                    ->label(trans('admin/databasehost.create_action', ['action' => trans('filament-actions::create.single.modal.actions.create.label')]))
                     ->button(),
             ]);
     }
@@ -66,7 +70,7 @@ class ListDatabaseHosts extends ListRecords
     {
         return [
             Actions\CreateAction::make('create')
-                ->label('Create Database Host')
+                ->label(trans('admin/databasehost.create_action', ['action' => trans('filament-actions::create.single.modal.actions.create.label')]))
                 ->hidden(fn () => DatabaseHost::count() <= 0),
         ];
     }

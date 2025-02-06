@@ -57,10 +57,10 @@ class CreateApiKey extends CreateRecord
                         collect(ApiKey::getPermissionList())->map(fn ($resource) => ToggleButtons::make('permissions_' . $resource)
                             ->label(str($resource)->replace('_', ' ')->title())->inline()
                             ->options([
-                                0 => 'None',
-                                1 => 'Read',
-                                // 2 => 'Write',
-                                3 => 'Read & Write',
+                                0 => trans('admin/apikey.permissions.none'),
+                                1 => trans('admin/apikey.permissions.read'),
+                                // 2 => 'Write', // Makes no sense to have write-only permissions when you can't read it?
+                                3 => trans('admin/apikey.permissions.read_write'),
                             ])
                             ->icons([
                                 0 => 'tabler-book-off',
@@ -85,18 +85,15 @@ class CreateApiKey extends CreateRecord
                     ),
 
                 TagsInput::make('allowed_ips')
-                    ->placeholder('Example: 127.0.0.1 or 192.168.1.1')
-                    ->label('Whitelisted IPv4 Addresses')
-                    ->helperText('Press enter to add a new IP address or leave blank to allow any IP address')
+                    ->placeholder('127.0.0.1 or 192.168.1.1')
+                    ->label(trans('admin/apikey.whitelist'))
+                    ->helperText(trans('admin/apikey.whitelist_help'))
                     ->columnSpanFull(),
 
                 Textarea::make('memo')
                     ->required()
-                    ->label('Description')
-                    ->helperText('
-                        Once you have assigned permissions and created this set of credentials you will be unable to come back and edit it.
-                        If you need to make changes down the road you will need to create a new set of credentials.
-                    ')
+                    ->label(trans('admin/apikey.description'))
+                    ->helperText(trans('admin/apikey.description_help'))
                     ->columnSpanFull(),
             ]);
     }

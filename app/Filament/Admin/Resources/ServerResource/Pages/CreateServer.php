@@ -65,7 +65,7 @@ class CreateServer extends CreateRecord
             ->schema([
                 Wizard::make([
                     Step::make('Information')
-                        ->label('Information')
+                        ->label(trans('admin/server.tabs.information'))
                         ->icon('tabler-info-circle')
                         ->completedIcon('tabler-check')
                         ->columns([
@@ -76,7 +76,7 @@ class CreateServer extends CreateRecord
                         ->schema([
                             TextInput::make('name')
                                 ->prefixIcon('tabler-server')
-                                ->label('Name')
+                                ->label(trans('admin/server.name'))
                                 ->suffixAction(Forms\Components\Actions\Action::make('random')
                                     ->icon('tabler-dice-' . random_int(1, 6))
                                     ->action(function (Set $set, Get $get) {
@@ -96,7 +96,7 @@ class CreateServer extends CreateRecord
                                 ->maxLength(255),
 
                             TextInput::make('external_id')
-                                ->label('External ID')
+                                ->label(trans('admin/server.external_id'))
                                 ->columnSpan([
                                     'default' => 1,
                                     'sm' => 2,
@@ -128,7 +128,7 @@ class CreateServer extends CreateRecord
                                 ->preload()
                                 ->prefixIcon('tabler-user')
                                 ->default(auth()->user()->id)
-                                ->label('Owner')
+                                ->label(trans('admin/server.owner'))
                                 ->columnSpan([
                                     'default' => 1,
                                     'sm' => 2,
@@ -139,20 +139,23 @@ class CreateServer extends CreateRecord
                                 ->getOptionLabelFromRecordUsing(fn (User $user) => "$user->email | $user->username " . (blank($user->roles) ? '' : '(' . $user->roles->first()->name . ')'))
                                 ->createOptionForm([
                                     TextInput::make('username')
+                                        ->label(trans('admin/user.edit.username'))
                                         ->alphaNum()
                                         ->required()
                                         ->minLength(3)
                                         ->maxLength(255),
 
                                     TextInput::make('email')
+                                        ->label(trans('admin/user.edit.email'))
                                         ->email()
                                         ->required()
                                         ->unique()
                                         ->maxLength(255),
 
                                     TextInput::make('password')
+                                        ->label(trans('admin/user.edit.password'))
                                         ->hintIcon('tabler-question-mark')
-                                        ->hintIconTooltip('Providing a user password is optional. New user email will prompt users to create a password the first time they login.')
+                                        ->hintIconTooltip(trans('admin/user.password_help'))
                                         ->password(),
                                 ])
                                 ->createOptionUsing(function ($data, UserCreationService $service) {
@@ -166,7 +169,7 @@ class CreateServer extends CreateRecord
                                 ->preload()
                                 ->live()
                                 ->prefixIcon('tabler-network')
-                                ->label('Primary Allocation')
+                                ->label(trans('admin/server.primary_allocation'))
                                 ->columnSpan([
                                     'default' => 1,
                                     'sm' => 2,
@@ -186,10 +189,10 @@ class CreateServer extends CreateRecord
                                     $node = Node::find($get('node_id'));
 
                                     if ($node?->allocations) {
-                                        return 'Select an Allocation';
+                                        return trans('admin/server.select_allocation');
                                     }
 
-                                    return 'Create a New Allocation';
+                                    return trans('admin/server.new_allocation');
                                 })
                                 ->relationship(
                                     'allocation',
@@ -204,32 +207,23 @@ class CreateServer extends CreateRecord
                                     return [
                                         Select::make('allocation_ip')
                                             ->options(collect(Node::find($get('node_id'))?->ipAddresses())->mapWithKeys(fn (string $ip) => [$ip => $ip]))
-                                            ->label('IP Address')
-                                            ->helperText("Usually your machine's public IP unless you are port forwarding.")
+                                            ->label(trans('admin/server.ip_address'))->inlineLabel()
+                                            ->helperText(trans('admin/server.ip_address_helper'))
                                             ->afterStateUpdated(fn (Set $set) => $set('allocation_ports', []))
-                                            ->inlineLabel()
                                             ->ipv4()
                                             ->live()
                                             ->required(),
                                         TextInput::make('allocation_alias')
-                                            ->label('Alias')
-                                            ->inlineLabel()
+                                            ->label(trans('admin/server.alias'))->inlineLabel()
                                             ->default(null)
                                             ->datalist([
                                                 $get('name'),
                                                 Egg::find($get('egg_id'))?->name,
                                             ])
-                                            ->helperText('Optional display name to help you remember what these are.')
-                                            ->required(false),
+                                            ->helperText(trans('admin/server.alias_helper')),
                                         TagsInput::make('allocation_ports')
-                                            ->placeholder('Examples: 27015, 27017-27019')
-                                            ->helperText(new HtmlString('
-                                            These are the ports that users can connect to this Server through.
-                                            <br />
-                                            You would have to port forward these on your home network.
-                                        '))
-                                            ->label('Ports')
-                                            ->inlineLabel()
+                                            ->label(trans('admin/server.port'))->inlineLabel()
+                                            ->placeholder('27015, 27017-27019')
                                             ->live()
                                             ->disabled(fn (Get $get) => empty($get('allocation_ip')))
                                             ->afterStateUpdated(fn ($state, Set $set, Get $get) => $set('allocation_ports',
@@ -247,7 +241,7 @@ class CreateServer extends CreateRecord
                                 ->required(),
 
                             Repeater::make('allocation_additional')
-                                ->label('Additional Allocations')
+                                ->label(trans('admin/server.additional_allocations'))
                                 ->columnSpan([
                                     'default' => 1,
                                     'sm' => 2,
@@ -271,7 +265,7 @@ class CreateServer extends CreateRecord
                                             fn (Allocation $allocation) => "$allocation->ip:$allocation->port" .
                                                 ($allocation->ip_alias ? " ($allocation->ip_alias)" : '')
                                         )
-                                        ->placeholder('Select additional Allocations')
+                                        ->placeholder(trans('admin/server.select_additional'))
                                         ->disableOptionsWhenSelectedInSiblingRepeaterItems()
                                         ->relationship(
                                             'allocations',
@@ -284,18 +278,16 @@ class CreateServer extends CreateRecord
                                 ),
 
                             Textarea::make('description')
-                                ->placeholder('Description')
+                                ->label(trans('admin/server.description'))
                                 ->rows(3)
                                 ->columnSpan([
                                     'default' => 1,
                                     'sm' => 4,
                                     'md' => 4,
-                                ])
-                                ->label('Description'),
+                                ]),
                         ]),
 
-                    Step::make('Egg Configuration')
-                        ->label('Egg Configuration')
+                    Step::make(trans('admin/server.tabs.egg_configuration'))
                         ->icon('tabler-egg')
                         ->completedIcon('tabler-check')
                         ->columns([
@@ -306,6 +298,7 @@ class CreateServer extends CreateRecord
                         ])
                         ->schema([
                             Select::make('egg_id')
+                                ->label(trans('admin/server.name'))
                                 ->prefixIcon('tabler-egg')
                                 ->relationship('egg', 'name')
                                 ->columnSpan([
@@ -346,7 +339,7 @@ class CreateServer extends CreateRecord
                                 ->required(),
 
                             ToggleButtons::make('skip_scripts')
-                                ->label('Run Egg Install Script?')
+                                ->label(trans('admin/server.install_script'))
                                 ->default(false)
                                 ->columnSpan([
                                     'default' => 1,
@@ -355,8 +348,8 @@ class CreateServer extends CreateRecord
                                     'lg' => 1,
                                 ])
                                 ->options([
-                                    false => 'Yes',
-                                    true => 'Skip',
+                                    false => trans('admin/server.yes'),
+                                    true => trans('admin/server.skip'),
                                 ])
                                 ->colors([
                                     false => 'primary',
@@ -370,7 +363,7 @@ class CreateServer extends CreateRecord
                                 ->required(),
 
                             ToggleButtons::make('start_on_completion')
-                                ->label('Start Server After Install?')
+                                ->label(trans('admin/server.start_after'))
                                 ->default(true)
                                 ->required()
                                 ->columnSpan([
@@ -380,8 +373,8 @@ class CreateServer extends CreateRecord
                                     'lg' => 1,
                                 ])
                                 ->options([
-                                    true => 'Yes',
-                                    false => 'No',
+                                    true => trans('admin/server.yes'),
+                                    false => trans('admin/server.no'),
                                 ])
                                 ->colors([
                                     true => 'primary',
@@ -395,7 +388,7 @@ class CreateServer extends CreateRecord
 
                             Textarea::make('startup')
                                 ->hintIcon('tabler-code')
-                                ->label('Startup Command')
+                                ->label(trans('admin/server.startup_cmd'))
                                 ->hidden(fn (Get $get) => $get('egg_id') === null)
                                 ->required()
                                 ->live()
@@ -414,17 +407,17 @@ class CreateServer extends CreateRecord
 
                             Hidden::make('environment')->default([]),
 
-                            Section::make('Variables')
+                            Section::make(trans('admin/server.variables'))
                                 ->icon('tabler-eggs')
                                 ->iconColor('primary')
                                 ->hidden(fn (Get $get) => $get('egg_id') === null)
                                 ->collapsible()
                                 ->columnSpanFull()
                                 ->schema([
-                                    Placeholder::make('Select an egg first to show its variables!')
+                                    Placeholder::make(trans('admin/server.select_egg'))
                                         ->hidden(fn (Get $get) => $get('egg_id')),
 
-                                    Placeholder::make('The selected egg has no variables!')
+                                    Placeholder::make(trans('admin/server.no_variables'))
                                         ->hidden(fn (Get $get) => !$get('egg_id') ||
                                             Egg::query()->find($get('egg_id'))?->variables()?->count()
                                         ),
@@ -486,12 +479,11 @@ class CreateServer extends CreateRecord
                                         ->columnSpan(2),
                                 ]),
                         ]),
-                    Step::make('Environment Configuration')
-                        ->label('Environment Configuration')
+                    Step::make(trans('admin/server.tabs.environment_configuration'))
                         ->icon('tabler-brand-docker')
                         ->completedIcon('tabler-check')
                         ->schema([
-                            Fieldset::make('Resource Limits')
+                            Fieldset::make(trans('admin/server.resource_limits'))
                                 ->columnSpan(6)
                                 ->columns([
                                     'default' => 1,
@@ -505,13 +497,13 @@ class CreateServer extends CreateRecord
                                         ->columnSpanFull()
                                         ->schema([
                                             ToggleButtons::make('unlimited_cpu')
-                                                ->label('CPU')->inlineLabel()->inline()
+                                                ->label(trans('admin/server.cpu'))->inlineLabel()->inline()
                                                 ->default(true)
                                                 ->afterStateUpdated(fn (Set $set) => $set('cpu', 0))
                                                 ->live()
                                                 ->options([
-                                                    true => 'Unlimited',
-                                                    false => 'Limited',
+                                                    true => trans('admin/server.unlimited'),
+                                                    false => trans('admin/server.limited'),
                                                 ])
                                                 ->colors([
                                                     true => 'primary',
@@ -522,27 +514,27 @@ class CreateServer extends CreateRecord
                                             TextInput::make('cpu')
                                                 ->dehydratedWhenHidden()
                                                 ->hidden(fn (Get $get) => $get('unlimited_cpu'))
-                                                ->label('CPU Limit')->inlineLabel()
+                                                ->label(trans('admin/server.cpu_limit'))->inlineLabel()
                                                 ->suffix('%')
                                                 ->default(0)
                                                 ->required()
                                                 ->columnSpan(2)
                                                 ->numeric()
                                                 ->minValue(0)
-                                                ->helperText('100% equals one CPU core.'),
+                                                ->helperText(trans('admin/server.cpu_helper')),
                                         ]),
                                     Grid::make()
                                         ->columns(4)
                                         ->columnSpanFull()
                                         ->schema([
                                             ToggleButtons::make('unlimited_mem')
-                                                ->label('Memory')->inlineLabel()->inline()
+                                                ->label(trans('admin/server.memory'))->inlineLabel()->inline()
                                                 ->default(true)
                                                 ->afterStateUpdated(fn (Set $set) => $set('memory', 0))
                                                 ->live()
                                                 ->options([
-                                                    true => 'Unlimited',
-                                                    false => 'Limited',
+                                                    true => trans('admin/server.unlimited'),
+                                                    false => trans('admin/server.limited'),
                                                 ])
                                                 ->colors([
                                                     true => 'primary',
@@ -553,7 +545,7 @@ class CreateServer extends CreateRecord
                                             TextInput::make('memory')
                                                 ->dehydratedWhenHidden()
                                                 ->hidden(fn (Get $get) => $get('unlimited_mem'))
-                                                ->label('Memory Limit')->inlineLabel()
+                                                ->label(trans('admin/server.memory_limit'))->inlineLabel()
                                                 ->suffix(config('panel.use_binary_prefix') ? 'MiB' : 'MB')
                                                 ->default(0)
                                                 ->required()
@@ -566,13 +558,13 @@ class CreateServer extends CreateRecord
                                         ->columnSpanFull()
                                         ->schema([
                                             ToggleButtons::make('unlimited_disk')
-                                                ->label('Disk Space')->inlineLabel()->inline()
+                                                ->label(trans('admin/server.disk'))->inlineLabel()->inline()
                                                 ->default(true)
                                                 ->live()
                                                 ->afterStateUpdated(fn (Set $set) => $set('disk', 0))
                                                 ->options([
-                                                    true => 'Unlimited',
-                                                    false => 'Limited',
+                                                    true => trans('admin/server.unlimited'),
+                                                    false => trans('admin/server.limited'),
                                                 ])
                                                 ->colors([
                                                     true => 'primary',
@@ -583,7 +575,7 @@ class CreateServer extends CreateRecord
                                             TextInput::make('disk')
                                                 ->dehydratedWhenHidden()
                                                 ->hidden(fn (Get $get) => $get('unlimited_disk'))
-                                                ->label('Disk Space Limit')->inlineLabel()
+                                                ->label(trans('admin/server.disk_limit'))->inlineLabel()
                                                 ->suffix(config('panel.use_binary_prefix') ? 'MiB' : 'MB')
                                                 ->default(0)
                                                 ->required()
@@ -594,7 +586,7 @@ class CreateServer extends CreateRecord
 
                                 ]),
 
-                            Fieldset::make('Advanced Limits')
+                            Fieldset::make(trans('admin/server.advanced_limits'))
                                 ->columnSpan(6)
                                 ->columns([
                                     'default' => 1,
@@ -613,13 +605,13 @@ class CreateServer extends CreateRecord
                                         ->columnSpanFull()
                                         ->schema([
                                             ToggleButtons::make('cpu_pinning')
-                                                ->label('CPU Pinning')->inlineLabel()->inline()
+                                                ->label(trans('admin/server.cpu_pin'))->inlineLabel()->inline()
                                                 ->default(false)
                                                 ->afterStateUpdated(fn (Set $set) => $set('threads', []))
                                                 ->live()
                                                 ->options([
-                                                    false => 'Disabled',
-                                                    true => 'Enabled',
+                                                    false => trans('admin/server.disabled'),
+                                                    true => trans('admin/server.enabled'),
                                                 ])
                                                 ->colors([
                                                     false => 'success',
@@ -630,12 +622,12 @@ class CreateServer extends CreateRecord
                                             TagsInput::make('threads')
                                                 ->dehydratedWhenHidden()
                                                 ->hidden(fn (Get $get) => !$get('cpu_pinning'))
-                                                ->label('Pinned Threads')->inlineLabel()
+                                                ->label(trans('admin/server.threads'))->inlineLabel()
                                                 ->required(fn (Get $get) => $get('cpu_pinning'))
                                                 ->columnSpan(2)
                                                 ->separator()
                                                 ->splitKeys([','])
-                                                ->placeholder('Add pinned thread, e.g. 0 or 2-4'),
+                                                ->placeholder(trans('admin/server.pin_help')),
                                         ]),
                                     Grid::make()
                                         ->columns(4)
@@ -643,7 +635,7 @@ class CreateServer extends CreateRecord
                                         ->schema([
                                             ToggleButtons::make('swap_support')
                                                 ->live()
-                                                ->label('Swap Memory')
+                                                ->label(trans('admin/server.swap'))
                                                 ->inlineLabel()
                                                 ->inline()
                                                 ->columnSpan(2)
@@ -659,9 +651,9 @@ class CreateServer extends CreateRecord
                                                     $set('swap', $value);
                                                 })
                                                 ->options([
-                                                    'unlimited' => 'Unlimited',
-                                                    'limited' => 'Limited',
-                                                    'disabled' => 'Disabled',
+                                                    'unlimited' => trans('admin/server.unlimited'),
+                                                    'limited' => trans('admin/server.limited'),
+                                                    'disabled' => trans('admin/server.disabled'),
                                                 ])
                                                 ->colors([
                                                     'unlimited' => 'primary',
@@ -675,7 +667,7 @@ class CreateServer extends CreateRecord
                                                     'disabled', 'unlimited' => true,
                                                     default => false,
                                                 })
-                                                ->label('Swap Memory')
+                                                ->label(trans('admin/server.swap_limit'))
                                                 ->default(0)
                                                 ->suffix(config('panel.use_binary_prefix') ? 'MiB' : 'MB')
                                                 ->minValue(-1)
@@ -690,13 +682,13 @@ class CreateServer extends CreateRecord
                                         ->columnSpanFull()
                                         ->schema([
                                             ToggleButtons::make('oom_killer')
-                                                ->label('OOM Killer')
+                                                ->label(trans('admin/server.oom'))
                                                 ->inlineLabel()->inline()
                                                 ->default(false)
                                                 ->columnSpan(2)
                                                 ->options([
-                                                    false => 'Disabled',
-                                                    true => 'Enabled',
+                                                    false => trans('admin/server.disabled'),
+                                                    true => trans('admin/server.enabled'),
                                                 ])
                                                 ->colors([
                                                     false => 'success',
@@ -708,7 +700,7 @@ class CreateServer extends CreateRecord
                                         ]),
                                 ]),
 
-                            Fieldset::make('Feature Limits')
+                            Fieldset::make(trans('admin/server.feature_limits'))
                                 ->inlineLabel()
                                 ->columnSpan(6)
                                 ->columns([
@@ -719,28 +711,28 @@ class CreateServer extends CreateRecord
                                 ])
                                 ->schema([
                                     TextInput::make('allocation_limit')
-                                        ->label('Allocations')
+                                        ->label(trans('admin/server.allocations'))
                                         ->suffixIcon('tabler-network')
                                         ->required()
                                         ->numeric()
                                         ->minValue(0)
                                         ->default(0),
                                     TextInput::make('database_limit')
-                                        ->label('Databases')
+                                        ->label(trans('admin/server.databases'))
                                         ->suffixIcon('tabler-database')
                                         ->required()
                                         ->numeric()
                                         ->minValue(0)
                                         ->default(0),
                                     TextInput::make('backup_limit')
-                                        ->label('Backups')
+                                        ->label(trans('admin/server.backups'))
                                         ->suffixIcon('tabler-copy-check')
                                         ->required()
                                         ->numeric()
                                         ->minValue(0)
                                         ->default(0),
                                 ]),
-                            Fieldset::make('Docker Settings')
+                            Fieldset::make(trans('admin/server.docker_settings'))
                                 ->columns([
                                     'default' => 1,
                                     'sm' => 2,
@@ -750,7 +742,7 @@ class CreateServer extends CreateRecord
                                 ->columnSpan(6)
                                 ->schema([
                                     Select::make('select_image')
-                                        ->label('Image Name')
+                                        ->label(trans('admin/server.image_name'))
                                         ->live()
                                         ->afterStateUpdated(fn (Set $set, $state) => $set('image', $state))
                                         ->options(function ($state, Get $get, Set $set) {
@@ -775,7 +767,7 @@ class CreateServer extends CreateRecord
                                         ]),
 
                                     TextInput::make('image')
-                                        ->label('Image')
+                                        ->label(trans('admin/server.image'))
                                         ->required()
                                         ->afterStateUpdated(function ($state, Get $get, Set $set) {
                                             $egg = Egg::query()->find($get('egg_id'));
@@ -787,7 +779,7 @@ class CreateServer extends CreateRecord
                                                 $set('select_image', 'ghcr.io/custom-image');
                                             }
                                         })
-                                        ->placeholder('Enter a custom Image')
+                                        ->placeholder(trans('admin/server.image_placeholder'))
                                         ->columnSpan([
                                             'default' => 1,
                                             'sm' => 2,
@@ -797,23 +789,23 @@ class CreateServer extends CreateRecord
 
                                     KeyValue::make('docker_labels')
                                         ->label('Container Labels')
-                                        ->keyLabel('Title')
-                                        ->valueLabel('Description')
+                                        ->keyLabel(trans('admin/server.title'))
+                                        ->valueLabel(trans('admin/server.description'))
                                         ->columnSpanFull(),
 
                                     CheckboxList::make('mounts')
+                                        ->label('Mounts')
                                         ->live()
                                         ->relationship('mounts')
                                         ->options(fn () => $this->node?->mounts->mapWithKeys(fn ($mount) => [$mount->id => $mount->name]) ?? [])
                                         ->descriptions(fn () => $this->node?->mounts->mapWithKeys(fn ($mount) => [$mount->id => "$mount->source -> $mount->target"]) ?? [])
-                                        ->label('Mounts')
                                         ->helperText(fn () => $this->node?->mounts->isNotEmpty() ? '' : 'No Mounts exist for this Node')
                                         ->columnSpanFull(),
                                 ]),
                         ]),
                 ])
                     ->columnSpanFull()
-                    ->nextAction(fn (Action $action) => $action->label('Next Step'))
+                    ->nextAction(fn (Action $action) => $action->label(trans('admin/server.next_step')))
                     ->submitAction(new HtmlString(Blade::render(<<<'BLADE'
                                         <x-filament::button
                                                 type="submit"
@@ -843,7 +835,7 @@ class CreateServer extends CreateRecord
             return $this->serverCreationService->handle($data);
         } catch (Exception $exception) {
             Notification::make()
-                ->title('Could not create server')
+                ->title(trans('admin/server.notifications.create_failed'))
                 ->body($exception->getMessage())
                 ->color('danger')
                 ->danger()
@@ -906,9 +898,9 @@ class CreateServer extends CreateRecord
 
             if (!is_numeric($start) || !is_numeric($end)) {
                 Notification::make()
-                    ->title('Invalid Port Range')
+                    ->title(trans('admin/server.notifications.invalid_port_range'))
                     ->danger()
-                    ->body("Your port range are not valid integers: $portEntry")
+                    ->body(trans('admin/server.notifications.invalid_port_range_body', ['port' => $portEntry]))
                     ->send();
 
                 continue;
@@ -920,9 +912,9 @@ class CreateServer extends CreateRecord
 
             if (count($range) > $portRangeLimit) {
                 Notification::make()
-                    ->title('Too many ports at one time!')
+                    ->title(trans('admin/server.notifications.too_many_ports'))
                     ->danger()
-                    ->body("The current limit is $portRangeLimit number of ports at one time.")
+                    ->body(trans('admin/server.notifications.too_many_ports_body', ['limit' => $portRangeLimit]))
                     ->send();
 
                 continue;
@@ -932,9 +924,9 @@ class CreateServer extends CreateRecord
                 // Invalid port number
                 if ($i <= $portFloor || $i > $portCeil) {
                     Notification::make()
-                        ->title('Port not in valid range')
+                        ->title(trans('admin/server.notifications.invalid_port'))
                         ->danger()
-                        ->body("$i is not in the valid port range between $portFloor-$portCeil")
+                        ->body(trans('admin/server.notifications.invalid_port_body', ['i' => $i, 'portFloor' => $portFloor, 'portCeil' => $portCeil]))
                         ->send();
 
                     continue;
@@ -943,9 +935,9 @@ class CreateServer extends CreateRecord
                 // Already exists
                 if (in_array($i, $existingPorts)) {
                     Notification::make()
-                        ->title('Port already in use')
+                        ->title(trans('admin/server.notifications.already_exists'))
                         ->danger()
-                        ->body("$i is already with an allocation")
+                        ->body(trans('admin/server.notifications.already_exists_body', ['i' => $i]))
                         ->send();
 
                     continue;

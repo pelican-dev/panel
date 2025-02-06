@@ -24,17 +24,16 @@ class ListMounts extends ListRecords
             ->searchable(false)
             ->columns([
                 TextColumn::make('name')
+                    ->label(trans('admin/mount.table.name'))
                     ->searchable(),
                 TextColumn::make('source')
+                    ->label(trans('admin/mount.table.source'))
                     ->searchable(),
                 TextColumn::make('target')
+                    ->label(trans('admin/mount.table.target'))
                     ->searchable(),
                 IconColumn::make('read_only')
-                    ->icon(fn (bool $state) => $state ? 'tabler-circle-check-filled' : 'tabler-circle-x-filled')
-                    ->color(fn (bool $state) => $state ? 'success' : 'danger')
-                    ->sortable(),
-                IconColumn::make('user_mountable')
-                    ->hidden()
+                    ->label(trans('admin/mount.table.read_only'))
                     ->icon(fn (bool $state) => $state ? 'tabler-circle-check-filled' : 'tabler-circle-x-filled')
                     ->color(fn (bool $state) => $state ? 'success' : 'danger')
                     ->sortable(),
@@ -50,10 +49,10 @@ class ListMounts extends ListRecords
             ])
             ->emptyStateIcon('tabler-layers-linked')
             ->emptyStateDescription('')
-            ->emptyStateHeading('No Mounts')
+            ->emptyStateHeading(trans('admin/mount.no_mounts'))
             ->emptyStateActions([
                 CreateAction::make('create')
-                    ->label('Create Mount')
+                    ->label(trans('admin/mount.create_action', ['action' => trans('filament-actions::create.single.modal.actions.create.label')]))
                     ->button(),
             ]);
     }
@@ -62,7 +61,7 @@ class ListMounts extends ListRecords
     {
         return [
             Actions\CreateAction::make()
-                ->label('Create Mount')
+                ->label(trans('admin/mount.create_action', ['action' => trans('filament-actions::create.single.modal.actions.create.label')]))
                 ->hidden(fn () => Mount::count() <= 0),
         ];
     }
