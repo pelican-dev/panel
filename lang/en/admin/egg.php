@@ -11,7 +11,6 @@ return [
         'install_script' => 'Install Script',
     ],
     'import' => [
-        'title' => 'Import',
         'file' => 'File',
         'url' => 'URL',
         'egg_help' => 'This should be the raw .json file ( egg-minecraft.json )',
@@ -19,7 +18,6 @@ return [
         'import_failed' => 'Import Failed',
         'import_success' => 'Import Success',
     ],
-    'export' => 'Export',
     'in_use' => 'In Use',
     'create_action' => ':action Egg',
     'servers' => 'Servers',
@@ -80,4 +78,10 @@ return [
     'no_eggs' => 'No Eggs',
     'no_servers' => 'No Servers',
     'no_servers_help' => 'No Servers are assigned to this Egg.',
+
+    'update' => 'Update',
+    'updated' => 'Egg updated',
+    'update_failed' => 'Egg Update Failed',
+    'update_question' => 'Are you sure you want to update this egg?',
+    'update_description' => 'If you made any changes to the egg they will be overwritten!',
 ];

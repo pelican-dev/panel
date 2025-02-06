@@ -39,4 +39,9 @@ return [
     'delete_help' => 'Database Host Has Databases',
     'unlimited' => 'Unlimited',
     'anywhere' => 'Anywhere',
+
+    'rotate' => 'Rotate',
+    'rotate_password' => 'Rotate Password',
+    'rotated' => 'Password Rotated',
+    'rotate_error' => 'Password Rotation Failed',
 ];
