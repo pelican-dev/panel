@@ -7,6 +7,8 @@ return [
     'expand_sections' => 'You can expand the following sections:',
     'version' => 'Version: :version',
     'advanced' => 'Advanced',
+    'server' => 'Server',
+    'user' => 'User',
     'sections' => [
         'intro-developers' => [
             'heading' => 'Information for Developers',

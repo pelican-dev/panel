@@ -24,9 +24,26 @@ class RoleResource extends Resource
 
     protected static ?string $navigationIcon = 'tabler-users-group';
 
-    protected static ?string $navigationGroup = 'User';
-
     protected static ?string $recordTitleAttribute = 'name';
+
+    public static function getNavigationLabel(): string
+    {
+        return trans('admin/role.nav_title');
+    }
+    public static function getModelLabel(): string
+    {
+        return trans('admin/role.model_label');
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return trans('admin/role.model_label_plural');
+    }
+
+    public static function getNavigationGroup(): ?string
+    {
+        return trans('admin/dashboard.user');
+    }
 
     public static function getNavigationBadge(): ?string
     {

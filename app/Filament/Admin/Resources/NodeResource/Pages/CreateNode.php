@@ -367,7 +367,7 @@ class CreateNode extends CreateRecord
                                 ]),
                         ]),
                 ])->columnSpanFull()
-                    ->nextAction(fn (Action $action) => $action->label('Next Step'))
+                    ->nextAction(fn (Action $action) => $action->label(trans('admin/node.next_step')))
                     ->submitAction(new HtmlString(Blade::render(<<<'BLADE'
                                         <x-filament::button
                                                 type="submit"

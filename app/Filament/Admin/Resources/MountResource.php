@@ -14,6 +14,20 @@ class MountResource extends Resource
 
     protected static ?string $recordTitleAttribute = 'name';
 
+    public static function getNavigationLabel(): string
+    {
+        return trans('admin/mount.nav_title');
+    }
+    public static function getModelLabel(): string
+    {
+        return trans('admin/mount.model_label');
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return trans('admin/mount.model_label_plural');
+    }
+
     public static function getNavigationBadge(): ?string
     {
         return static::getModel()::count() ?: null;

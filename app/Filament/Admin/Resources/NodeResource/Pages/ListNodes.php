@@ -53,7 +53,7 @@ class ListNodes extends ListRecords
                 TextColumn::make('servers_count')
                     ->visibleFrom('sm')
                     ->counts('servers')
-                    ->label('Servers')
+                    ->label(trans('admin/node.table.servers'))
                     ->sortable()
                     ->icon('tabler-brand-docker'),
             ])
@@ -62,10 +62,10 @@ class ListNodes extends ListRecords
             ])
             ->emptyStateIcon('tabler-server-2')
             ->emptyStateDescription('')
-            ->emptyStateHeading(trans('admin/node.no_nodes', ['resource' => 'Nodes']))
+            ->emptyStateHeading(trans('admin/node.no_nodes'))
             ->emptyStateActions([
                 CreateAction::make('create')
-                    ->label(trans('admin/node.create_action', ['action' => trans('filament-actions::create.single.modal.actions.create.label'), 'resource' => 'Node']))
+                    ->label(trans('admin/node.create_action', ['action' => trans('filament-actions::create.single.modal.actions.create.label')]))
                     ->button(),
             ]);
     }
@@ -74,7 +74,7 @@ class ListNodes extends ListRecords
     {
         return [
             Actions\CreateAction::make()
-                ->label(trans('admin/node.create_action', ['action' => trans('filament-actions::create.single.modal.actions.create.label'), 'resource' => 'Node']))
+                ->label(trans('admin/node.create_action', ['action' => trans('filament-actions::create.single.modal.actions.create.label')]))
                 ->hidden(fn () => Node::count() <= 0),
         ];
     }

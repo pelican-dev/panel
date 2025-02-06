@@ -31,7 +31,7 @@ class ServersRelationManager extends RelationManager
                         ->orWhereNull('status')
                         ->count() === 0
                     )
-                    ->label(trans('admin/server.suspend_all', ['servers' => 'Servers']))
+                    ->label(trans('admin/server.suspend_all'))
                     ->color('warning')
                     ->action(function (SuspensionService $suspensionService) use ($user) {
                         collect($user->servers)->filter(fn ($server) => !$server->isSuspended())
@@ -39,7 +39,7 @@ class ServersRelationManager extends RelationManager
                     }),
                 Actions\Action::make('toggleUnsuspend')
                     ->hidden(fn () => $user->servers()->where('status', ServerState::Suspended)->count() === 0)
-                    ->label(trans('admin/server.unsuspend_all', ['servers' => 'Servers']))
+                    ->label(trans('admin/server.unsuspend_all'))
                     ->color('primary')
                     ->action(function (SuspensionService $suspensionService) use ($user) {
                         collect($user->servers()->get())->filter(fn ($server) => $server->isSuspended())
@@ -58,28 +58,30 @@ class ServersRelationManager extends RelationManager
                     ->searchable()
                     ->sortable(),
                 TextColumn::make('node.name')
+                    ->label('admin/server.node')
                     ->icon('tabler-server-2')
                     ->url(fn (Server $server): string => route('filament.admin.resources.nodes.edit', ['record' => $server->node]))
                     ->sortable(),
                 TextColumn::make('egg.name')
+                    ->label(trans('admin/server.egg'))
                     ->icon('tabler-egg')
                     ->url(fn (Server $server): string => route('filament.admin.resources.eggs.edit', ['record' => $server->egg]))
                     ->sortable(),
                 SelectColumn::make('allocation.id')
-                    ->label('Primary Allocation')
+                    ->label(trans('admin/server.primary_allocation'))
                     ->options(fn (Server $server) => [$server->allocation->id => $server->allocation->address])
                     ->selectablePlaceholder(false)
                     ->sortable(),
                 TextColumn::make('image')->hidden(),
                 TextColumn::make('databases_count')
                     ->counts('databases')
-                    ->label('Databases')
+                    ->label(trans('admin/server.databases'))
                     ->icon('tabler-database')
                     ->numeric()
                     ->sortable(),
                 TextColumn::make('backups_count')
                     ->counts('backups')
-                    ->label('Backups')
+                    ->label(trans('admin/server.backups'))
                     ->icon('tabler-file-download')
                     ->numeric()
                     ->sortable(),

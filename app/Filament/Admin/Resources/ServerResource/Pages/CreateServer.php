@@ -155,7 +155,7 @@ class CreateServer extends CreateRecord
                                     TextInput::make('password')
                                         ->label(trans('admin/user.edit.password'))
                                         ->hintIcon('tabler-question-mark')
-                                        ->hintIconTooltip('Providing a user password is optional. New user email will prompt users to create a password the first time they login.')
+                                        ->hintIconTooltip(trans('admin/user.password_help'))
                                         ->password(),
                                 ])
                                 ->createOptionUsing(function ($data, UserCreationService $service) {
@@ -169,7 +169,7 @@ class CreateServer extends CreateRecord
                                 ->preload()
                                 ->live()
                                 ->prefixIcon('tabler-network')
-                                ->label('Primary Allocation')
+                                ->label(trans('admin/server.primary_allocation'))
                                 ->columnSpan([
                                     'default' => 1,
                                     'sm' => 2,
@@ -189,10 +189,10 @@ class CreateServer extends CreateRecord
                                     $node = Node::find($get('node_id'));
 
                                     if ($node?->allocations) {
-                                        return 'Select an Allocation';
+                                        return trans('admin/server.select_allocation');
                                     }
 
-                                    return 'Create a New Allocation';
+                                    return trans('admin/server.new_allocation');
                                 })
                                 ->relationship(
                                     'allocation',
@@ -241,7 +241,7 @@ class CreateServer extends CreateRecord
                                 ->required(),
 
                             Repeater::make('allocation_additional')
-                                ->label('Additional Allocations')
+                                ->label(trans('admin/server.additional_allocations'))
                                 ->columnSpan([
                                     'default' => 1,
                                     'sm' => 2,
@@ -265,7 +265,7 @@ class CreateServer extends CreateRecord
                                             fn (Allocation $allocation) => "$allocation->ip:$allocation->port" .
                                                 ($allocation->ip_alias ? " ($allocation->ip_alias)" : '')
                                         )
-                                        ->placeholder('Select additional Allocations')
+                                        ->placeholder(trans('admin/server.select_additional'))
                                         ->disableOptionsWhenSelectedInSiblingRepeaterItems()
                                         ->relationship(
                                             'allocations',
@@ -287,8 +287,7 @@ class CreateServer extends CreateRecord
                                 ]),
                         ]),
 
-                    Step::make('Egg Configuration')
-                        ->label(trans('admin/server.tabs.egg_configuration', ['egg' => 'Egg']))
+                    Step::make(trans('admin/server.tabs.egg_configuration'))
                         ->icon('tabler-egg')
                         ->completedIcon('tabler-check')
                         ->columns([
@@ -299,6 +298,7 @@ class CreateServer extends CreateRecord
                         ])
                         ->schema([
                             Select::make('egg_id')
+                                ->label(trans('admin/server.name'))
                                 ->prefixIcon('tabler-egg')
                                 ->relationship('egg', 'name')
                                 ->columnSpan([
@@ -407,18 +407,17 @@ class CreateServer extends CreateRecord
 
                             Hidden::make('environment')->default([]),
 
-                            Section::make('Variables')
-                                ->heading(trans('admin/server.variables'))
+                            Section::make(trans('admin/server.variables'))
                                 ->icon('tabler-eggs')
                                 ->iconColor('primary')
                                 ->hidden(fn (Get $get) => $get('egg_id') === null)
                                 ->collapsible()
                                 ->columnSpanFull()
                                 ->schema([
-                                    Placeholder::make('Select an egg first to show its variables!')
+                                    Placeholder::make(trans('admin/server.select_egg'))
                                         ->hidden(fn (Get $get) => $get('egg_id')),
 
-                                    Placeholder::make('The selected egg has no variables!')
+                                    Placeholder::make(trans('admin/server.no_variables'))
                                         ->hidden(fn (Get $get) => !$get('egg_id') ||
                                             Egg::query()->find($get('egg_id'))?->variables()?->count()
                                         ),
@@ -480,12 +479,11 @@ class CreateServer extends CreateRecord
                                         ->columnSpan(2),
                                 ]),
                         ]),
-                    Step::make('Environment Configuration')
-                        ->label(trans('admin/server.tabs.environment_configuration'))
+                    Step::make(trans('admin/server.tabs.environment_configuration'))
                         ->icon('tabler-brand-docker')
                         ->completedIcon('tabler-check')
                         ->schema([
-                            Fieldset::make('Resource Limits')
+                            Fieldset::make(trans('admin/server.resource_limits'))
                                 ->columnSpan(6)
                                 ->columns([
                                     'default' => 1,
@@ -523,7 +521,7 @@ class CreateServer extends CreateRecord
                                                 ->columnSpan(2)
                                                 ->numeric()
                                                 ->minValue(0)
-                                                ->helperText('100% equals one CPU core.'),
+                                                ->helperText(trans('admin/server.cpu_helper')),
                                         ]),
                                     Grid::make()
                                         ->columns(4)
@@ -588,8 +586,7 @@ class CreateServer extends CreateRecord
 
                                 ]),
 
-                            Fieldset::make('Advanced Limits')
-                                ->label(trans('admin/server.advanced_limits'))
+                            Fieldset::make(trans('admin/server.advanced_limits'))
                                 ->columnSpan(6)
                                 ->columns([
                                     'default' => 1,
@@ -703,8 +700,7 @@ class CreateServer extends CreateRecord
                                         ]),
                                 ]),
 
-                            Fieldset::make('Feature Limits')
-                                ->label(trans('admin/server.feature_limits'))
+                            Fieldset::make(trans('admin/server.feature_limits'))
                                 ->inlineLabel()
                                 ->columnSpan(6)
                                 ->columns([
@@ -715,29 +711,28 @@ class CreateServer extends CreateRecord
                                 ])
                                 ->schema([
                                     TextInput::make('allocation_limit')
-                                        ->label('Allocations')
+                                        ->label(trans('admin/server.allocations'))
                                         ->suffixIcon('tabler-network')
                                         ->required()
                                         ->numeric()
                                         ->minValue(0)
                                         ->default(0),
                                     TextInput::make('database_limit')
-                                        ->label('Databases')
+                                        ->label(trans('admin/server.databases'))
                                         ->suffixIcon('tabler-database')
                                         ->required()
                                         ->numeric()
                                         ->minValue(0)
                                         ->default(0),
                                     TextInput::make('backup_limit')
-                                        ->label('Backups')
+                                        ->label(trans('admin/server.backups'))
                                         ->suffixIcon('tabler-copy-check')
                                         ->required()
                                         ->numeric()
                                         ->minValue(0)
                                         ->default(0),
                                 ]),
-                            Fieldset::make('Docker Settings')
-                                ->label(trans('admin/server.docker_settings'))
+                            Fieldset::make(trans('admin/server.docker_settings'))
                                 ->columns([
                                     'default' => 1,
                                     'sm' => 2,

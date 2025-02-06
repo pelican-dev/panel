@@ -49,9 +49,9 @@ class AllocationsRelationManager extends RelationManager
             ->checkIfRecordIsSelectableUsing(fn (Allocation $record) => $record->id !== $this->getOwnerRecord()->allocation_id)
             ->inverseRelationship('server')
             ->columns([
-                TextColumn::make('ip')->label('IP'),
-                TextColumn::make('port')->label('Port'),
-                TextInputColumn::make('ip_alias')->label('Alias'),
+                TextColumn::make('ip')->label(trans('admin/server.ip_address')),
+                TextColumn::make('port')->label(trans('admin/server.port')),
+                TextInputColumn::make('ip_alias')->label(trans('admin/server.alias')),
                 IconColumn::make('primary')
                     ->icon(fn ($state) => match ($state) {
                         true => 'tabler-star-filled',
@@ -63,39 +63,33 @@ class AllocationsRelationManager extends RelationManager
                     })
                     ->action(fn (Allocation $allocation) => $this->getOwnerRecord()->update(['allocation_id' => $allocation->id]) && $this->deselectAllTableRecords())
                     ->default(fn (Allocation $allocation) => $allocation->id === $this->getOwnerRecord()->allocation_id)
-                    ->label('Primary'),
+                    ->label(trans('admin/server.primary')),
             ])
             ->actions([
                 Action::make('make-primary')
                     ->action(fn (Allocation $allocation) => $this->getOwnerRecord()->update(['allocation_id' => $allocation->id]) && $this->deselectAllTableRecords())
-                    ->label(fn (Allocation $allocation) => $allocation->id === $this->getOwnerRecord()->allocation_id ? '' : 'Make Primary'),
+                    ->label(fn (Allocation $allocation) => $allocation->id === $this->getOwnerRecord()->allocation_id ? '' : trans('admin/server.make_primary')),
             ])
             ->headerActions([
-                CreateAction::make()->label('Create Allocation')
+                CreateAction::make()->label(trans('admin/node.create_allocations'))
                     ->createAnother(false)
                     ->form(fn () => [
                         Select::make('allocation_ip')
                             ->options(collect($this->getOwnerRecord()->node->ipAddresses())->mapWithKeys(fn (string $ip) => [$ip => $ip]))
-                            ->label('IP Address')
+                            ->label(trans('admin/server.ip_address'))
                             ->inlineLabel()
                             ->ipv4()
-                            ->helperText("Usually your machine's public IP unless you are port forwarding.")
                             ->afterStateUpdated(fn (Set $set) => $set('allocation_ports', []))
                             ->required(),
                         TextInput::make('allocation_alias')
-                            ->label('Alias')
+                            ->label(trans('admin/server.alias'))
                             ->inlineLabel()
                             ->default(null)
-                            ->helperText('Optional display name to help you remember what these are.')
+                            ->helperText(trans('admin/server.alias_helper'))
                             ->required(false),
                         TagsInput::make('allocation_ports')
-                            ->placeholder('Examples: 27015, 27017-27019')
-                            ->helperText(new HtmlString('
-                                These are the ports that users can connect to this Server through.
-                                <br />
-                                You would have to port forward these on your home network.
-                            '))
-                            ->label('Ports')
+                            ->placeholder('27015, 27017-27019')
+                            ->label(trans('admin/server.ports'))
                             ->inlineLabel()
                             ->live()
                             ->afterStateUpdated(fn ($state, Set $set, Get $get) => $set('allocation_ports',
@@ -111,7 +105,7 @@ class AllocationsRelationManager extends RelationManager
                     ->preloadRecordSelect()
                     ->recordSelectOptionsQuery(fn ($query) => $query->whereBelongsTo($this->getOwnerRecord()->node)->whereNull('server_id'))
                     ->recordSelectSearchColumns(['ip', 'port'])
-                    ->label('Add Allocation'),
+                    ->label(trans('admin/node.create_allocations')),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([

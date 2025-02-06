@@ -16,8 +16,8 @@ class ServersRelationManager extends RelationManager
     {
         return $table
             ->recordTitleAttribute('servers')
-            ->emptyStateDescription(trans('admin/egg.no_servers', ['resource' => 'Servers']))
-            ->emptyStateHeading(trans('admin/egg.no_servers_help', ['resource' => 'Servers', 'resource2' => 'Egg']))
+            ->emptyStateDescription(trans('admin/egg.no_servers'))
+            ->emptyStateHeading(trans('admin/egg.no_servers_help'))
             ->searchable(false)
             ->columns([
                 TextColumn::make('user.username')
@@ -26,6 +26,7 @@ class ServersRelationManager extends RelationManager
                     ->url(fn (Server $server): string => route('filament.admin.resources.users.edit', ['record' => $server->user]))
                     ->sortable(),
                 TextColumn::make('name')
+                    ->label(trans('admin/server.name'))
                     ->icon('tabler-brand-docker')
                     ->url(fn (Server $server): string => route('filament.admin.resources.servers.edit', ['record' => $server]))
                     ->sortable(),
@@ -33,9 +34,9 @@ class ServersRelationManager extends RelationManager
                     ->icon('tabler-server-2')
                     ->url(fn (Server $server): string => route('filament.admin.resources.nodes.edit', ['record' => $server->node])),
                 TextColumn::make('image')
-                    ->label('Docker Image'),
+                    ->label(trans('admin/server.docker_image')),
                 SelectColumn::make('allocation.id')
-                    ->label('Primary Allocation')
+                    ->label(trans('admin/server.primary_allocation'))
                     ->options(fn (Server $server) => [$server->allocation->id => $server->allocation->address])
                     ->selectablePlaceholder(false)
                     ->sortable(),

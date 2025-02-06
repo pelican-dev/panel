@@ -56,7 +56,7 @@ class EditUser extends EditRecord
     {
         return [
             DeleteAction::make()
-                ->label(fn (User $user) => auth()->user()->id === $user->id ? trans('admin/user.self_delete') : ($user->servers()->count() > 0 ? trans('admin/user.has_servers', ['servers' => 'Servers']) : trans('filament-actions::delete.single.modal.actions.delete.label')))
+                ->label(fn (User $user) => auth()->user()->id === $user->id ? trans('admin/user.self_delete') : ($user->servers()->count() > 0 ? trans('admin/user.has_servers') : trans('filament-actions::delete.single.modal.actions.delete.label')))
                 ->disabled(fn (User $user) => auth()->user()->id === $user->id || $user->servers()->count() > 0),
             $this->getSaveFormAction()->formId('form'),
         ];

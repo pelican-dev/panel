@@ -46,12 +46,12 @@ class EditEgg extends EditRecord
                                 ->required()
                                 ->maxLength(255)
                                 ->columnSpan(['default' => 1, 'sm' => 1, 'md' => 2, 'lg' => 1])
-                                ->helperText(trans('admin/egg.name_help', ['resource' => 'Egg'])),
+                                ->helperText(trans('admin/egg.name_help')),
                             TextInput::make('uuid')
                                 ->label('Egg UUID')
                                 ->disabled()
                                 ->columnSpan(['default' => 1, 'sm' => 1, 'md' => 1, 'lg' => 2])
-                                ->helperText(trans('admin/egg.uuid_help', ['resource' => 'Egg', 'wings' => 'Wings'])),
+                                ->helperText(trans('admin/egg.uuid_help')),
                             TextInput::make('id')
                                 ->label('Egg ID')
                                 ->disabled(),
@@ -59,7 +59,7 @@ class EditEgg extends EditRecord
                                 ->label(trans('admin/egg.description'))
                                 ->rows(3)
                                 ->columnSpan(['default' => 1, 'sm' => 1, 'md' => 2, 'lg' => 2])
-                                ->helperText(trans('admin/egg.description_help', ['resource' => 'Egg'])),
+                                ->helperText(trans('admin/egg.description_help')),
                             TextInput::make('author')
                                 ->label(trans('admin/egg.author'))
                                 ->required()
@@ -67,13 +67,13 @@ class EditEgg extends EditRecord
                                 ->email()
                                 ->disabled()
                                 ->columnSpan(['default' => 1, 'sm' => 1, 'md' => 2, 'lg' => 2])
-                                ->helperText(trans('admin/egg.author_help_edit', ['resource' => 'Egg'])),
+                                ->helperText(trans('admin/egg.author_help_edit')),
                             Textarea::make('startup')
                                 ->label(trans('admin/egg.startup'))
                                 ->rows(3)
                                 ->columnSpanFull()
                                 ->required()
-                                ->helperText(trans('admin/egg.startup_help', ['resource' => 'Egg'])),
+                                ->helperText(trans('admin/egg.startup_help')),
                             TagsInput::make('file_denylist')
                                 ->label(trans('admin/egg.file_denylist'))
                                 ->placeholder('denied-file.txt')
@@ -106,7 +106,7 @@ class EditEgg extends EditRecord
                                 ->addActionLabel(trans('admin/egg.add_image'))
                                 ->keyLabel(trans('admin/egg.docker_name'))
                                 ->valueLabel(trans('admin/egg.docker_uri'))
-                                ->helperText(trans('admin/egg.docker_help', ['resource' => 'Egg'])),
+                                ->helperText(trans('admin/egg.docker_help')),
                         ]),
                     Tab::make(trans('admin/egg.tabs.process_management'))
                         ->columns()
@@ -116,7 +116,7 @@ class EditEgg extends EditRecord
                                 ->label(trans('admin/egg.copy_from'))
                                 ->placeholder(trans('admin/egg.none'))
                                 ->relationship('configFrom', 'name', ignoreRecord: true)
-                                ->helperText(trans('admin/egg.copy_from_help', ['resource' => 'Egg'])),
+                                ->helperText(trans('admin/egg.copy_from_help')),
                             TextInput::make('config_stop')
                                 ->label(trans('admin/egg.stop_command'))
                                 ->maxLength(255)
@@ -131,7 +131,7 @@ class EditEgg extends EditRecord
                                 ->label(trans('admin/egg.log_config'))
                                 ->helperText(trans('admin/egg.log_config_help')),
                         ]),
-                    Tab::make(trans('admin/egg.tabs.egg_variables', ['resource' => 'Egg']))
+                    Tab::make(trans('admin/egg.tabs.egg_variables'))
                         ->columnSpanFull()
                         ->icon('tabler-variable')
                         ->schema([

@@ -46,6 +46,7 @@ class ListServers extends ListRecords
                     ->searchable()
                     ->sortable(),
                 TextColumn::make('node.name')
+                    ->label(trans('admin/server.node'))
                     ->icon('tabler-server-2')
                     ->url(fn (Server $server): string => route('filament.admin.resources.nodes.edit', ['record' => $server->node]))
                     ->hidden(fn (Table $table) => $table->getGrouping()?->getId() === 'node.name')
@@ -53,6 +54,7 @@ class ListServers extends ListRecords
                     ->searchable(),
                 TextColumn::make('egg.name')
                     ->icon('tabler-egg')
+                    ->label(trans('admin/server.egg'))
                     ->url(fn (Server $server): string => route('filament.admin.resources.eggs.edit', ['record' => $server->egg]))
                     ->hidden(fn (Table $table) => $table->getGrouping()?->getId() === 'egg.name')
                     ->sortable()
@@ -65,19 +67,19 @@ class ListServers extends ListRecords
                     ->sortable()
                     ->searchable(),
                 SelectColumn::make('allocation_id')
-                    ->label('Primary Allocation')
+                    ->label(trans('admin/server.primary_allocation'))
                     ->hidden(!auth()->user()->can('update server'))
                     ->options(fn (Server $server) => $server->allocations->mapWithKeys(fn ($allocation) => [$allocation->id => $allocation->address]))
                     ->selectablePlaceholder(false)
                     ->sortable(),
                 TextColumn::make('allocation_id_readonly')
-                    ->label('Primary Allocation')
+                    ->label(trans('admin/server.primary_allocation'))
                     ->hidden(auth()->user()->can('update server'))
                     ->state(fn (Server $server) => $server->allocation->address),
                 TextColumn::make('image')->hidden(),
                 TextColumn::make('backups_count')
                     ->counts('backups')
-                    ->label('Backups')
+                    ->label(trans('admin/server.backups'))
                     ->icon('tabler-file-download')
                     ->numeric()
                     ->sortable(),
@@ -92,10 +94,10 @@ class ListServers extends ListRecords
             ->emptyStateIcon('tabler-brand-docker')
             ->searchable()
             ->emptyStateDescription('')
-            ->emptyStateHeading('No Servers')
+            ->emptyStateHeading(trans('admin/server.no_servers'))
             ->emptyStateActions([
                 CreateAction::make('create')
-                    ->label(trans('admin/server.create_action', ['action' => trans('filament-actions::create.single.modal.actions.create.label'), 'resource' => 'Server']))
+                    ->label(trans('admin/server.create_action', ['action' => trans('filament-actions::create.single.modal.actions.create.label')]))
                     ->button(),
             ]);
     }
@@ -104,7 +106,7 @@ class ListServers extends ListRecords
     {
         return [
             Actions\CreateAction::make()
-                ->label(trans('admin/server.create_action', ['action' => trans('filament-actions::create.single.modal.actions.create.label'), 'resource' => 'Server']))
+                ->label(trans('admin/server.create_action', ['action' => trans('filament-actions::create.single.modal.actions.create.label')]))
                 ->hidden(fn () => Server::count() <= 0),
         ];
     }

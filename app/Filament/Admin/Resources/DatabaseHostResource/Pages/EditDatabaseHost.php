@@ -58,7 +58,7 @@ class EditDatabaseHost extends EditRecord
                             ->minValue(0)
                             ->maxValue(65535),
                         TextInput::make('max_databases')
-                            ->label(trans('admin/databasehost.max_database', ['databases' => 'Databases']))
+                            ->label(trans('admin/databasehost.max_database'))
                             ->helpertext(trans('admin/databasehost.max_databases_help'))
                             ->numeric(),
                         TextInput::make('name')
@@ -81,8 +81,8 @@ class EditDatabaseHost extends EditRecord
                             ->multiple()
                             ->searchable()
                             ->preload()
-                            ->helperText(trans('admin/databasehost.linked_nodes_help', ['databasehost' => 'Database Host', 'database' => 'Database', 'server' => 'Server', 'node' => 'Node']))
-                            ->label(trans('admin/databasehost.linked_nodes', ['nodes' => 'Nodes']))
+                            ->helperText(trans('admin/databasehost.linked_nodes_help'))
+                            ->label(trans('admin/databasehost.linked_nodes'))
                             ->relationship('nodes', 'name'),
                     ]),
             ]);
@@ -92,7 +92,7 @@ class EditDatabaseHost extends EditRecord
     {
         return [
             Actions\DeleteAction::make()
-                ->label(fn (DatabaseHost $databaseHost) => $databaseHost->databases()->count() > 0 ? 'Database Host Has Databases' : trans('filament-actions::delete.single.modal.actions.delete.label'))
+                ->label(fn (DatabaseHost $databaseHost) => $databaseHost->databases()->count() > 0 ? trans('admin/databasehost.delete_help') : trans('filament-actions::delete.single.modal.actions.delete.label'))
                 ->disabled(fn (DatabaseHost $databaseHost) => $databaseHost->databases()->count() > 0),
             $this->getSaveFormAction()->formId('form'),
         ];
@@ -124,7 +124,7 @@ class EditDatabaseHost extends EditRecord
             return $this->hostUpdateService->handle($record, $data);
         } catch (PDOException $exception) {
             Notification::make()
-                ->title(trans('admin/databasehost.connection_error', ['databasehost' => 'Database Host']))
+                ->title(trans('admin/databasehost.connection_error'))
                 ->body($exception->getMessage())
                 ->color('danger')
                 ->icon('tabler-database')

@@ -35,7 +35,7 @@ class ListRoles extends ListRecords
                     ->counts('permissions')
                     ->formatStateUsing(fn (Role $role, $state) => $role->isRootAdmin() ? trans('admin/role.all') : $state),
                 TextColumn::make('users_count')
-                    ->label('Users')
+                    ->label(trans('admin/role.users'))
                     ->counts('users')
                     ->icon('tabler-users'),
             ])
@@ -48,14 +48,6 @@ class ListRoles extends ListRecords
                     DeleteBulkAction::make()
                         ->authorize(fn () => auth()->user()->can('delete role')),
                 ]),
-            ])
-            ->emptyStateIcon('tabler-users-group')
-            ->emptyStateDescription('')
-            ->emptyStateHeading('No Roles')
-            ->emptyStateActions([
-                CreateActionTable::make('create')
-                    ->label(trans('admin/role.create_action', ['action' => trans('filament-actions::create.single.modal.actions.create.label'), 'resource' => 'Role']))
-                    ->button(),
             ]);
     }
 
@@ -63,7 +55,7 @@ class ListRoles extends ListRecords
     {
         return [
             CreateAction::make()
-                ->label(trans('admin/role.create_action', ['action' => trans('filament-actions::create.single.modal.actions.create.label'), 'resource' => 'Role'])),
+                ->label(trans('admin/role.create_action', ['action' => trans('filament-actions::create.single.modal.actions.create.label')])),
         ];
     }
 }

@@ -33,10 +33,10 @@ class DatabasesRelationManager extends RelationManager
                     ->formatStateUsing(fn (Database $database) => $database->password),
                 TextInput::make('remote')
                     ->label(trans('admin/databasehost.table.remote'))
-                    ->formatStateUsing(fn (Database $record) => $record->remote === '%' ? 'Anywhere ( % )' : $record->remote),
+                    ->formatStateUsing(fn (Database $record) => $record->remote === '%' ? trans('admin/databasehost.anywhere'). ' ( % )' : $record->remote),
                 TextInput::make('max_connections')
                     ->label(trans('admin/databasehost.table.max_connections'))
-                    ->formatStateUsing(fn (Database $record) => $record->max_connections === 0 ? 'Unlimited' : $record->max_connections),
+                    ->formatStateUsing(fn (Database $record) => $record->max_connections === 0 ? trans('admin/databasehost.unlimited') : $record->max_connections),
                 TextInput::make('jdbc')
                     ->label(trans('admin/databasehost.table.connection_string'))
                     ->columnSpanFull()
@@ -58,13 +58,13 @@ class DatabasesRelationManager extends RelationManager
                     ->icon('tabler-user'),
                 TextColumn::make('remote')
                     ->label(trans('admin/databasehost.table.remote'))
-                    ->formatStateUsing(fn (Database $record) => $record->remote === '%' ? 'Anywhere ( % )' : $record->remote),
+                    ->formatStateUsing(fn (Database $record) => $record->remote === '%' ? trans('admin/databasehost.anywhere'). ' ( % )' : $record->remote),
                 TextColumn::make('server.name')
                     ->icon('tabler-brand-docker')
                     ->url(fn (Database $database) => route('filament.admin.resources.servers.edit', ['record' => $database->server_id])),
                 TextColumn::make('max_connections')
                     ->label(trans('admin/databasehost.table.max_connections'))
-                    ->formatStateUsing(fn ($record) => $record->max_connections === 0 ? 'Unlimited' : $record->max_connections),
+                    ->formatStateUsing(fn ($record) => $record->max_connections === 0 ? trans('admin/databasehost.unlimited') : $record->max_connections),
                 DateTimeColumn::make('created_at')
                     ->label(trans('admin/databasehost.table.created_at')),
             ])

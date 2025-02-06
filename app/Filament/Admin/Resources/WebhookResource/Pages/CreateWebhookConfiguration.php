@@ -32,11 +32,14 @@ class CreateWebhookConfiguration extends CreateRecord
         return $form
             ->schema([
                 TextInput::make('endpoint')
+                    ->label(trans('admin/webhooks.endpoint'))
                     ->activeUrl()
                     ->required(),
                 TextInput::make('description')
+                    ->label(trans('admin/webhooks.description'))
                     ->required(),
                 CheckboxList::make('events')
+                    ->label(trans('admin/webhooks.events'))
                     ->lazy()
                     ->options(fn () => WebhookConfiguration::filamentCheckboxList())
                     ->searchable()

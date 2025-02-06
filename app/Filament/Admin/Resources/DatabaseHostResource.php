@@ -19,6 +19,20 @@ class DatabaseHostResource extends Resource
         return static::getModel()::count() ?: null;
     }
 
+    public static function getNavigationLabel(): string
+    {
+        return trans('admin/databasehost.nav_title');
+    }
+    public static function getModelLabel(): string
+    {
+        return trans('admin/databasehost.model_label');
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return trans('admin/databasehost.model_label_plural');
+    }
+
     public static function getNavigationGroup(): ?string
     {
         return trans('admin/dashboard.advanced');

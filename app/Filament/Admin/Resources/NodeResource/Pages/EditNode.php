@@ -596,8 +596,8 @@ class EditNode extends EditRecord
             $this->errored = true;
 
             Notification::make()
-                ->title('Error connecting to the node')
-                ->body('The configuration could not be automatically updated on Wings, you will need to manually update the configuration file.')
+                ->title(trans('admin/node.error_connecting'))
+                ->body(trans('admin/node.error_connecting_description'))
                 ->color('warning')
                 ->icon('tabler-database')
                 ->warning()
@@ -626,7 +626,7 @@ class EditNode extends EditRecord
         return [
             Actions\DeleteAction::make()
                 ->disabled(fn (Node $node) => $node->servers()->count() > 0)
-                ->label(fn (Node $node) => $node->servers()->count() > 0 ? 'Node Has Servers' : trans('filament-actions::delete.single.label')),
+                ->label(fn (Node $node) => $node->servers()->count() > 0 ? trans('admin/node.node_has_servers') : trans('filament-actions::delete.single.label')),
             $this->getSaveFormAction()->formId('form'),
         ];
     }

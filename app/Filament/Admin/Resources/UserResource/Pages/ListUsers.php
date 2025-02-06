@@ -49,17 +49,17 @@ class ListUsers extends ListRecords
                     ->boolean()
                     ->sortable(),
                 TextColumn::make('roles.name')
-                    ->label('Roles')
+                    ->label(trans('admin/user.roles'))
                     ->badge()
                     ->icon('tabler-users-group')
-                    ->placeholder('No roles'),
+                    ->placeholder(trans('admin/user.no_roles')),
                 TextColumn::make('servers_count')
                     ->counts('servers')
                     ->icon('tabler-server')
-                    ->label('Servers'),
+                    ->label(trans('admin/user.servers')),
                 TextColumn::make('subusers_count')
                     ->visibleFrom('sm')
-                    ->label('Subusers')
+                    ->label(trans('admin/user.subusers'))
                     ->counts('subusers')
                     ->icon('tabler-users'),
             ])
@@ -79,7 +79,7 @@ class ListUsers extends ListRecords
     {
         return [
             CreateAction::make()
-                ->label(trans('admin/user.create_action', ['action' => trans('filament-actions::create.single.modal.actions.create.label'), 'resource' => 'User'])),
+                ->label(trans('admin/user.create_action', ['action' => trans('filament-actions::create.single.modal.actions.create.label')])),
         ];
     }
 }

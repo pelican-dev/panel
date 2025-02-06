@@ -168,7 +168,7 @@ class EditServer extends EditRecord
                                     ->unique()
                                     ->maxLength(255),
                                 Select::make('node_id')
-                                    ->label('Node')
+                                    ->label(trans('admin/server.node'))
                                     ->relationship('node', 'name')
                                     ->columnSpan([
                                         'default' => 2,
@@ -178,11 +178,10 @@ class EditServer extends EditRecord
                                     ])
                                     ->disabled(),
                             ]),
-                        Tab::make('Environment')
-                            ->label(trans('admin/server.tabs.environment_configuration'))
+                        Tab::make(trans('admin/server.tabs.environment_configuration'))
                             ->icon('tabler-brand-docker')
                             ->schema([
-                                Fieldset::make('Resource Limits')
+                                Fieldset::make(trans('admin/server.resource_limits'))
                                     ->columns([
                                         'default' => 1,
                                         'sm' => 2,
@@ -280,8 +279,7 @@ class EditServer extends EditRecord
                                             ]),
                                     ]),
 
-                                Fieldset::make('Advanced Limits')
-                                    ->label(trans('admin/server.advanced_limits'))
+                                Fieldset::make(trans('admin/server.advanced_limits'))
                                     ->columns([
                                         'default' => 1,
                                         'sm' => 2,
@@ -395,8 +393,8 @@ class EditServer extends EditRecord
                                             ]),
                                     ]),
 
-                                Fieldset::make('Feature Limits')
-                                    ->label(trans('admin/server.feature_limits'))->inlineLabel()
+                                Fieldset::make(trans('admin/server.feature_limits'))
+                                    ->inlineLabel()
                                     ->columns([
                                         'default' => 1,
                                         'sm' => 2,
@@ -405,26 +403,25 @@ class EditServer extends EditRecord
                                     ])
                                     ->schema([
                                         TextInput::make('allocation_limit')
-                                            ->label('Allocations')
+                                            ->label(trans('admin/server.allocations'))
                                             ->suffixIcon('tabler-network')
                                             ->required()
                                             ->minValue(0)
                                             ->numeric(),
                                         TextInput::make('database_limit')
-                                            ->label('Databases')
+                                            ->label(trans('admin/server.databases'))
                                             ->suffixIcon('tabler-database')
                                             ->required()
                                             ->minValue(0)
                                             ->numeric(),
                                         TextInput::make('backup_limit')
-                                            ->label('Backups')
+                                            ->label(trans('admin/server.backups'))
                                             ->suffixIcon('tabler-copy-check')
                                             ->required()
                                             ->minValue(0)
                                             ->numeric(),
                                     ]),
-                                Fieldset::make('Docker Settings')
-                                    ->label(trans('admin/server.docker_settings'))
+                                Fieldset::make(trans('admin/server.docker_settings'))
                                     ->columns([
                                         'default' => 1,
                                         'sm' => 2,
@@ -485,7 +482,7 @@ class EditServer extends EditRecord
                                             ->columnSpanFull(),
                                     ]),
                             ]),
-                        Tab::make('Egg')
+                        Tab::make(trans('admin/server.egg'))
                             ->icon('tabler-egg')
                             ->columns([
                                 'default' => 1,
@@ -504,6 +501,7 @@ class EditServer extends EditRecord
                                         'lg' => 4,
                                     ])
                                     ->relationship('egg', 'name')
+                                    ->label(trans('admin/server.name'))
                                     ->searchable()
                                     ->preload()
                                     ->required()
@@ -636,42 +634,45 @@ class EditServer extends EditRecord
                                     })
                                     ->columnSpan(6),
                             ]),
-                        Tab::make('Mounts')
+                        Tab::make(trans('admin/server.mounts'))
                             ->icon('tabler-layers-linked')
                             ->schema([
                                 CheckboxList::make('mounts')
+                                    ->label('')
                                     ->relationship('mounts')
                                     ->options(fn (Server $server) => $server->node->mounts->filter(fn (Mount $mount) => $mount->eggs->contains($server->egg))->mapWithKeys(fn (Mount $mount) => [$mount->id => $mount->name]))
                                     ->descriptions(fn (Server $server) => $server->node->mounts->mapWithKeys(fn (Mount $mount) => [$mount->id => "$mount->source -> $mount->target"]))
                                     ->label('Mounts')
-                                    ->helperText(fn (Server $server) => $server->node->mounts->isNotEmpty() ? '' : 'No Mounts exist for this Node')
+                                    ->helperText(fn (Server $server) => $server->node->mounts->isNotEmpty() ? '' : trans('admin/server.no_mounts'))
                                     ->columnSpanFull(),
                             ]),
-                        Tab::make('Databases')
+                        Tab::make(trans('admin/server.databases'))
                             ->hidden(fn () => !auth()->user()->can('viewList database'))
                             ->icon('tabler-database')
                             ->columns(4)
                             ->schema([
                                 Repeater::make('databases')
+                                    ->label('')
                                     ->grid()
-                                    ->helperText(fn (Server $server) => $server->databases->isNotEmpty() ? '' : 'No Databases exist for this Server')
+                                    ->helperText(fn (Server $server) => $server->databases->isNotEmpty() ? '' : trans('admin/server.no_databases'))
                                     ->columns(2)
                                     ->schema([
                                         TextInput::make('database')
                                             ->columnSpan(2)
-                                            ->label('Database Name')
+                                            ->label(trans('admin/server.name'))
                                             ->disabled()
                                             ->formatStateUsing(fn ($record) => $record->database)
                                             ->hintAction(
                                                 Action::make('Delete')
+                                                    ->label(trans('filament-actions::delete.single.modal.actions.delete.label'))
                                                     ->authorize(fn (Database $database) => auth()->user()->can('delete database', $database))
                                                     ->color('danger')
                                                     ->icon('tabler-trash')
                                                     ->requiresConfirmation()
                                                     ->modalIcon('tabler-database-x')
-                                                    ->modalHeading('Delete Database?')
+                                                    ->modalHeading(trans('admin/server.delete_db_heading'))
                                                     ->modalSubmitActionLabel(fn (Get $get) => 'Delete ' . $get('database') . '?')
-                                                    ->modalDescription(fn (Get $get) => 'Are you sure you want to delete ' . $get('database') . '?')
+                                                    ->modalDescription(fn (Get $get) => trans('admin/server.delete_db') . $get('database') . '?')
                                                     ->action(function (DatabaseManagementService $databaseManagementService, $record) {
                                                         $databaseManagementService->delete($record);
                                                         $this->fillForm();
@@ -716,9 +717,9 @@ class EditServer extends EditRecord
                                     Action::make('createDatabase')
                                         ->authorize(fn () => auth()->user()->can('create database'))
                                         ->disabled(fn () => DatabaseHost::query()->count() < 1)
-                                        ->label(fn () => DatabaseHost::query()->count() < 1 ? 'No Database Hosts' : 'Create Database')
+                                        ->label(fn () => DatabaseHost::query()->count() < 1 ? trans('admin/server.no_db_hosts') : trans('admin/server.create_database'))
                                         ->color(fn () => DatabaseHost::query()->count() < 1 ? 'danger' : 'primary')
-                                        ->modalSubmitActionLabel('Create Database')
+                                        ->modalSubmitActionLabel(trans('admin/server.create_database'))
                                         ->action(function (array $data, DatabaseManagementService $service, Server $server, RandomWordService $randomWordService) {
                                             if (empty($data['database'])) {
                                                 $data['database'] = $randomWordService->word() . random_int(1, 420);
@@ -733,7 +734,7 @@ class EditServer extends EditRecord
                                                 $service->setValidateDatabaseLimit(false)->create($server, $data);
                                             } catch (Exception $e) {
                                                 Notification::make()
-                                                    ->title('Failed to Create Database')
+                                                    ->title(trans('admin/server.failed_to_create'))
                                                     ->body($e->getMessage())
                                                     ->danger()
                                                     ->persistent()->send();
@@ -742,7 +743,7 @@ class EditServer extends EditRecord
                                         })
                                         ->form([
                                             Select::make('database_host_id')
-                                                ->label('Database Host')
+                                                ->label(trans('admin/databasehost.table.name'))
                                                 ->required()
                                                 ->placeholder('Select Database Host')
                                                 ->options(fn (Server $server) => DatabaseHost::query()
@@ -752,7 +753,7 @@ class EditServer extends EditRecord
                                                 ->default(fn () => (DatabaseHost::query()->first())?->id)
                                                 ->selectablePlaceholder(false),
                                             TextInput::make('database')
-                                                ->label('Database Name')
+                                                ->label(trans('admin/server.name'))
                                                 ->alphaDash()
                                                 ->prefix(fn (Server $server) => 's' . $server->id . '_')
                                                 ->hintIcon('tabler-question-mark')
@@ -769,8 +770,7 @@ class EditServer extends EditRecord
                         Tab::make(trans('admin/server.actions'))
                             ->icon('tabler-settings')
                             ->schema([
-                                Fieldset::make()
-                                    ->label(trans('admin/server.actions'))
+                                Fieldset::make(trans('admin/server.actions'))
                                     ->columns([
                                         'default' => 1,
                                         'sm' => 2,
@@ -806,9 +806,9 @@ class EditServer extends EditRecord
                                                             try {
                                                                 $suspensionService->handle($server, SuspendAction::Suspend);
                                                             } catch (\Exception $exception) {
-                                                                Notification::make()->warning()->title(trans('admin/server.notifications.server_suspension', ['server' => 'Server']))->body($exception->getMessage())->send();
+                                                                Notification::make()->warning()->title(trans('admin/server.notifications.server_suspension'))->body($exception->getMessage())->send();
                                                             }
-                                                            Notification::make()->success()->title(trans('admin/server.notifications.server_suspended', ['server' => 'Server']))->send();
+                                                            Notification::make()->success()->title(trans('admin/server.notifications.server_suspended'))->send();
 
                                                             $this->refreshFormData(['status', 'docker']);
                                                         }),
@@ -820,9 +820,9 @@ class EditServer extends EditRecord
                                                             try {
                                                                 $suspensionService->handle($server, SuspendAction::Unsuspend);
                                                             } catch (\Exception $exception) {
-                                                                Notification::make()->warning()->title(trans('admin/server.notifications.server_suspension', ['server' => 'Server']))->body($exception->getMessage())->send();
+                                                                Notification::make()->warning()->title(trans('admin/server.notifications.server_suspension'))->body($exception->getMessage())->send();
                                                             }
-                                                            Notification::make()->success()->title(trans('admin/server.notifications.server_unsuspended', ['server' => 'Server']))->send();
+                                                            Notification::make()->success()->title(trans('admin/server.notifications.server_unsuspended'))->send();
 
                                                             $this->refreshFormData(['status', 'docker']);
                                                         }),

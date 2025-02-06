@@ -43,7 +43,7 @@ class ListDatabaseHosts extends ListRecords
                 TextColumn::make('nodes.name')
                     ->icon('tabler-server-2')
                     ->badge()
-                    ->placeholder('No Nodes')
+                    ->placeholder(trans('admin/databasehost.no_nodes'))
                     ->sortable(),
             ])
             ->checkIfRecordIsSelectableUsing(fn (DatabaseHost $databaseHost) => !$databaseHost->databases_count)
@@ -58,7 +58,7 @@ class ListDatabaseHosts extends ListRecords
             ])
             ->emptyStateIcon('tabler-database')
             ->emptyStateDescription('')
-            ->emptyStateHeading('No Database Hosts')
+            ->emptyStateHeading(trans('admin/databasehost.no_database_hosts'))
             ->emptyStateActions([
                 CreateAction::make('create')
                     ->label(trans('admin/databasehost.create_action', ['action' => trans('filament-actions::create.single.modal.actions.create.label')]))
@@ -70,7 +70,7 @@ class ListDatabaseHosts extends ListRecords
     {
         return [
             Actions\CreateAction::make('create')
-                ->label('Create Database Host')
+                ->label(trans('admin/databasehost.create_action', ['action' => trans('filament-actions::create.single.modal.actions.create.label')]))
                 ->hidden(fn () => DatabaseHost::count() <= 0),
         ];
     }

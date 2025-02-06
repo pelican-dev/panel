@@ -1,7 +1,10 @@
 <?php
 
 return [
-    'create_action' => ':action :resource',
+    'nav_title' => 'Nodes',
+    'model_label' => 'Node',
+    'model_label_plural' => 'Nodes',
+    'create_action' => ':action Node',
     'tabs' => [
         'overview' => 'Overview',
         'basic_settings' => 'Basic Settings',
@@ -13,6 +16,11 @@ return [
         'name' => 'Name',
         'address' => 'Address',
         'public' => 'Public',
+        'servers' => 'Servers',
+        'alias' => 'Alias',
+        'ip' => 'IP',
+        'egg' => 'Egg',
+        'owner' => 'Owner',
     ],
     'node_info' => 'Node Information',
     'wings_version' => 'Wings Version',
@@ -23,6 +31,8 @@ return [
     'latest' => 'Latest',
 
     'ip_address' => 'IP Address',
+    'ip_help' => 'Usually your machine\'s public IP unless you are port forwarding.',
+    'alias_help' => 'Optional display name to help you remember what these are.',
     'domain' => 'Domain Name',
     'ssl_ip' => 'You cannot connect to an IP Address over SSL',
     'error' => 'This is the domain name that points to your node\'s IP Address. If you\'ve already set up this, you can verify it by checking the next field!',
@@ -32,6 +42,7 @@ return [
     'valid' => 'Valid',
     'invalid' => 'Invalid',
     'port' => 'Port',
+    'ports' => 'Ports',
     'port_help' => 'If you are running the daemon behind Cloudflare you should set the daemon port to 8443 to allow websocket proxying over SSL.',
     'display_name' => 'Display Name',
     'ssl' => 'Communicate over SSL',
@@ -73,9 +84,18 @@ return [
     'token_reset' => 'The daemon token has been reset.',
     'reset_help' => 'Resetting the daemon token will void any request coming from the old token. This token is used for all sensitive operations on the daemon including server creation and deletion. We suggest changing this token regularly for security.',
 
-    'no_nodes' => 'No :resource',
+    'no_nodes' => 'No Nodes',
     'cpu_chart' => 'CPU - :cpu% of :max%',
     'memory_chart' => 'Memory - :used of :total',
     'disk_chart' => 'Storage - :used of :total',
 
+    'next_step' => 'Next Step',
+    'node_has_servers' => 'Node Has Servers',
+    'create_allocations' => 'Create Allocations',
+    'primary_allocation' => 'Primary Allocation',
+    'databases' => 'Databases',
+    'backups' => 'Backups',
+
+    'error_connecting' => 'Error connecting to the node',
+    'error_connecting_description' => 'The configuration could not be automatically updated on Wings, you will need to manually update the configuration file.',
 ];

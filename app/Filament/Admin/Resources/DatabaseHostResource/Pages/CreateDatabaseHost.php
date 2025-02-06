@@ -57,7 +57,7 @@ class CreateDatabaseHost extends CreateRecord
                             ->minValue(0)
                             ->maxValue(65535),
                         TextInput::make('max_databases')
-                            ->label(trans('admin/databasehost.max_database', ['databases' => 'Databases']))
+                            ->label(trans('admin/databasehost.max_database'))
                             ->helpertext(trans('admin/databasehost.max_databases_help'))
                             ->numeric(),
                         TextInput::make('name')
@@ -81,8 +81,8 @@ class CreateDatabaseHost extends CreateRecord
                             ->multiple()
                             ->searchable()
                             ->preload()
-                            ->helperText(trans('admin/databasehost.linked_nodes_help', ['databasehost' => 'Database Host', 'database' => 'Database', 'server' => 'Server', 'node' => 'Node']))
-                            ->label(trans('admin/databasehost.linked_nodes', ['nodes' => 'Nodes']))
+                            ->helperText(trans('admin/databasehost.linked_nodes_help'))
+                            ->label(trans('admin/databasehost.linked_nodes'))
                             ->relationship('nodes', 'name'),
                     ]),
             ]);
