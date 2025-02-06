@@ -94,7 +94,7 @@ class AllocationsRelationManager extends RelationManager
                     ->preloadRecordSelect()
                     ->recordSelectOptionsQuery(fn ($query) => $query->whereBelongsTo($this->getOwnerRecord()->node)->whereNull('server_id'))
                     ->recordSelectSearchColumns(['ip', 'port'])
-                    ->label(trans('admin/node.create_allocations')),
+                    ->label(trans('admin/server.add_allocations')),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
