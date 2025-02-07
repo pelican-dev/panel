@@ -168,7 +168,7 @@ class EditProfile extends BaseEditProfile
                                                             ->success()
                                                             ->send();
                                                     } else {
-                                                        redirect(Socialite::with($name)->redirect()->getTargetUrl());
+                                                        redirect(Socialite::with($id)->redirect()->getTargetUrl());
                                                     }
                                                 });
                                         }

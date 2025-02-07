@@ -17,7 +17,7 @@ final class DiscordProvider extends OAuthProvider
         return 'discord';
     }
 
-    public function getProvider(): string
+    public function getProviderClass(): string
     {
         return Provider::class;
     }

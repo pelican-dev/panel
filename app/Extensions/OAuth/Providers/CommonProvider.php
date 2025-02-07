@@ -4,7 +4,7 @@ namespace App\Extensions\OAuth\Providers;
 
 final class CommonProvider extends OAuthProvider
 {
-    protected function __construct(private string $id, private ?string $providerClass, private ?string $icon, private ?string $hexColor)
+    protected function __construct(private string $id, private ?string $icon, private ?string $hexColor)
     {
         parent::__construct();
     }
@@ -14,9 +14,9 @@ final class CommonProvider extends OAuthProvider
         return $this->id;
     }
 
-    public function getProviderClass(): ?string
+    public function getProviderClass(): null
     {
-        return $this->providerClass;
+        return null;
     }
 
     public function getIcon(): ?string
@@ -29,8 +29,8 @@ final class CommonProvider extends OAuthProvider
         return $this->hexColor;
     }
 
-    public static function register(string $id, ?string $providerClass = null, ?string $icon = null, ?string $hexColor = null): static
+    public static function register(string $id, ?string $icon = null, ?string $hexColor = null): static
     {
-        return new self($id, $providerClass, $icon, $hexColor);
+        return new self($id, $icon, $hexColor);
     }
 }
