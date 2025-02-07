@@ -54,12 +54,12 @@ class ListServers extends ListRecords
 
         return [
             'my' => Tab::make('My Servers')
-                ->badge(fn () => $baseQuery->where('owner_id', auth()->user()->id)->count())
-                ->modifyQueryUsing(fn (Builder $query) => $query->where('owner_id', auth()->user()->id)),
+                ->badge(fn () => $baseQuery->where('owner_id', auth()->id())->count())
+                ->modifyQueryUsing(fn (Builder $query) => $query->where('owner_id', auth()->id())),
 
             'other' => Tab::make('Others\' Servers')
-                ->badge(fn (Builder $query) => $query->whereNot('owner_id', auth()->user()->id)->count())
-                ->modifyQueryUsing(fn (Builder $query) => $query->whereNot('owner_id', auth()->user()->id)),
+                ->badge(fn (Builder $query) => $query->whereNot('owner_id', auth()->id())->count())
+                ->modifyQueryUsing(fn (Builder $query) => $query->whereNot('owner_id', auth()->id())),
 
             'all' => Tab::make('All Servers')
                 ->badge($baseQuery->count()),

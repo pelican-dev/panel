@@ -45,7 +45,7 @@ class EditUser extends EditRecord
                     Hidden::make('skipValidation')
                         ->default(true),
                     CheckboxList::make('roles')
-                        ->disabled(fn (User $user) => $user->id === auth()->user()->id)
+                        ->disabled(fn (User $user) => $user->id === auth()->id())
                         ->disableOptionWhen(fn (string $value): bool => $value == Role::getRootAdmin()->id)
                         ->relationship('roles', 'name')
                         ->label('Admin Roles')
@@ -60,8 +60,8 @@ class EditUser extends EditRecord
     {
         return [
             DeleteAction::make()
-                ->label(fn (User $user) => auth()->user()->id === $user->id ? 'Can\'t Delete Yourself' : ($user->servers()->count() > 0 ? 'User Has Servers' : 'Delete'))
-                ->disabled(fn (User $user) => auth()->user()->id === $user->id || $user->servers()->count() > 0),
+                ->label(fn (User $user) => auth()->id() === $user->id ? 'Can\'t Delete Yourself' : ($user->servers()->count() > 0 ? 'User Has Servers' : 'Delete'))
+                ->disabled(fn (User $user) => auth()->id() === $user->id || $user->servers()->count() > 0),
             $this->getSaveFormAction()->formId('form'),
         ];
     }
