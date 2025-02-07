@@ -2,6 +2,7 @@
 
 namespace App\Filament\Components\Actions;
 
+use App\Models\Egg;
 use App\Services\Eggs\Sharing\EggImporterService;
 use Exception;
 use Filament\Actions\Action;
@@ -46,6 +47,7 @@ class ImportEggAction extends Action
                             TextInput::make('url')
                                 ->label('URL')
                                 ->hint('This URL should point to a single json file')
+                                ->default(fn (Egg $egg) => $egg->update_url)
                                 ->url(),
                         ]),
                 ]),
