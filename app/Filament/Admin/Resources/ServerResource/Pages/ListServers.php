@@ -86,6 +86,7 @@ class ListServers extends ListRecords
             ])
             ->actions([
                 Action::make('View')
+                    ->label(trans('admin/server.view'))
                     ->icon('tabler-terminal')
                     ->url(fn (Server $server) => Console::getUrl(panel: 'server', tenant: $server))
                     ->authorize(fn (Server $server) => auth()->user()->canAccessTenant($server)),

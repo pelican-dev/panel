@@ -17,7 +17,6 @@ class ListDatabaseHosts extends ListRecords
 {
     protected static string $resource = DatabaseHostResource::class;
 
-    protected ?string $heading = 'Database Hosts';
 
     public function table(Table $table): Table
     {
@@ -39,7 +38,7 @@ class ListDatabaseHosts extends ListRecords
                 TextColumn::make('databases_count')
                     ->counts('databases')
                     ->icon('tabler-database')
-                    ->label('Databases'),
+                    ->label(trans('admin/databasehost.databases')),
                 TextColumn::make('nodes.name')
                     ->icon('tabler-server-2')
                     ->badge()

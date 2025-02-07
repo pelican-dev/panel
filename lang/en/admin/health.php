@@ -4,6 +4,7 @@ return [
     'title' => 'Health',
     'results_refreshed' => 'Health check results updated',
     'checked' => 'Checked results from :time',
+    'refresh' => 'Refresh',
     'results' => [
         'cache' => [
             'label' => 'Cache',

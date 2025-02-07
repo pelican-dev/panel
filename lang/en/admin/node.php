@@ -90,6 +90,8 @@ return [
     'cpu_chart' => 'CPU - :cpu% of :max%',
     'memory_chart' => 'Memory - :used of :total',
     'disk_chart' => 'Storage - :used of :total',
+    'used' => 'Used',
+    'unused' => 'Unused',
 
     'next_step' => 'Next Step',
     'node_has_servers' => 'Node Has Servers',

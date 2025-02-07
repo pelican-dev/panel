@@ -8,8 +8,6 @@ use Illuminate\Support\Number;
 
 class NodeStorageChart extends ChartWidget
 {
-    protected static ?string $heading = 'Storage';
-
     protected static ?string $pollingInterval = '360s';
 
     protected static ?string $maxHeight = '200px';
@@ -62,7 +60,7 @@ class NodeStorageChart extends ChartWidget
                     ],
                 ],
             ],
-            'labels' => ['Used', 'Unused'],
+            'labels' => [trans('admin/node.used'), trans('admin/node.unused')],
             'locale' => auth()->user()->language ?? 'en',
         ];
     }

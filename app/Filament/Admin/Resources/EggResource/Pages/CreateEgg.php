@@ -211,7 +211,6 @@ class CreateEgg extends CreateRecord
                                     TagsInput::make('rules')
                                         ->label(trans('admin/egg.rules'))
                                         ->columnSpanFull()
-                                        ->placeholder('Add Rule')
                                         ->reorderable()
                                         ->suggestions([
                                             'required',

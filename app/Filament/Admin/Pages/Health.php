@@ -46,6 +46,7 @@ class Health extends Page
     {
         return [
             Action::make('refresh')
+                ->label(trans('admin/health.refresh'))
                 ->button()
                 ->action('refresh'),
         ];

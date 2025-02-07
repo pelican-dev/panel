@@ -31,7 +31,7 @@ class DatabaseCheck extends Check
 
             return $result->ok(trans('admin/health.results.database.ok'));
         } catch (Exception $exception) {
-            return $result->failed("Could not connect to the database: `{$exception->getMessage()}`");
+            return $result->failed(trans('admin/health.results.database.failed', ['error' => $exception->getMessage()]));
         }
     }
 

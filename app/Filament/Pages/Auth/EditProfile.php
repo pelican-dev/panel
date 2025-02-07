@@ -67,8 +67,7 @@ class EditProfile extends BaseEditProfile
                     ->schema([
                         Tabs::make()->persistTabInQueryString()
                             ->schema([
-                                Tab::make('Account')
-                                    ->label(trans('profile.tabs.account'))
+                                Tab::make(trans('profile.tabs.account'))
                                     ->icon('tabler-user')
                                     ->schema([
                                         TextInput::make('username')
@@ -117,16 +116,11 @@ class EditProfile extends BaseEditProfile
                                             ->prefixIcon('tabler-flag')
                                             ->live()
                                             ->default('en')
-                                            ->helperText(fn ($state, LanguageService $languageService) => new HtmlString($languageService->isLanguageTranslated($state) ? '' : "
-                                                Your language ($state) has not been translated yet!
-                                                But never fear, you can help fix that by
-                                                <a style='color: rgb(56, 189, 248)' href='https://crowdin.com/project/pelican-dev'>contributing directly here</a>.
-                                            "))
+                                            ->helperText(fn ($state, LanguageService $languageService) => new HtmlString($languageService->isLanguageTranslated($state) ? '' : trans('profile.language_helper', ['state' => $state])))
                                             ->options(fn (LanguageService $languageService) => $languageService->getAvailableLanguages()),
                                     ]),
 
-                                Tab::make('OAuth')
-                                    ->label(trans('profile.tabs.oauth'))
+                                Tab::make(trans('profile.tabs.oauth'))
                                     ->icon('tabler-brand-oauth')
                                     ->visible(function () {
                                         $oauthProviders = OAuthProvider::get();
@@ -178,7 +172,7 @@ class EditProfile extends BaseEditProfile
                                         return [Actions::make($actions)];
                                     }),
 
-                                Tab::make('2FA')
+                                Tab::make(trans('profile.tabs.2fa'))
                                     ->icon('tabler-shield-lock')
                                     ->schema(function (TwoFactorSetupService $setupService) {
                                         if ($this->getUser()->use_totp) {
@@ -242,7 +236,7 @@ class EditProfile extends BaseEditProfile
                                                 ->content(fn () => new HtmlString("
                                                 <div style='width: 300px; background-color: rgb(24, 24, 27);'>$image</div>
                                             "))
-                                                ->helperText('Setup Key: ' . $secret),
+                                                ->helperText(trans('profile.setup_key') .': '. $secret),
                                             TextInput::make('2facode')
                                                 ->label(trans('profile.code'))
                                                 ->requiredWith('2fapassword')
@@ -254,11 +248,11 @@ class EditProfile extends BaseEditProfile
                                                 ->password(),
                                         ];
                                     }),
-                                Tab::make('API Keys')
+                                Tab::make(trans('profile.tabs.api_keys'))
                                     ->icon('tabler-key')
                                     ->schema([
                                         Grid::make('name')->columns(5)->schema([
-                                            Section::make('Create API Key')->columnSpan(3)->schema([
+                                            Section::make(trans('profile.create_key'))->columnSpan(3)->schema([
                                                 TextInput::make('description')
                                                     ->label(trans('profile.description'))
                                                     ->live(),
@@ -266,11 +260,12 @@ class EditProfile extends BaseEditProfile
                                                     ->label(trans('profile.allowed_ips'))
                                                     ->live()
                                                     ->splitKeys([',', ' ', 'Tab'])
-                                                    ->placeholder('Example: 127.0.0.1 or 192.168.1.1')
+                                                    ->placeholder('127.0.0.1 or 192.168.1.1')
                                                     ->helperText(trans('profile.allowed_ips_help'))
                                                     ->columnSpanFull(),
                                             ])->headerActions([
                                                 Action::make('Create')
+                                                    ->label(trans('filament-actions::create.single.modal.actions.create.label'))
                                                     ->disabled(fn (Get $get) => $get('description') === null)
                                                     ->successRedirectUrl(self::getUrl(['tab' => '-api-keys-tab']))
                                                     ->action(function (Get $get, Action $action, User $user) {
@@ -294,7 +289,7 @@ class EditProfile extends BaseEditProfile
                                                         $action->success();
                                                     }),
                                             ]),
-                                            Section::make('Keys')->label(trans('profile.keys'))->columnSpan(2)->schema([
+                                            Section::make(trans('profile.keys'))->label(trans('profile.keys'))->columnSpan(2)->schema([
                                                 Repeater::make('keys')
                                                     ->label('')
                                                     ->relationship('apiKeys')
@@ -319,16 +314,14 @@ class EditProfile extends BaseEditProfile
                                             ]),
                                         ]),
                                     ]),
-                                Tab::make('SSH Keys')
+                                Tab::make(trans('profile.tabs.ssh_keys'))
                                     ->icon('tabler-lock-code')
-                                    ->schema([
-                                        Placeholder::make('Coming soon!'),
-                                    ]),
-                                Tab::make('Activity')
-                                    ->label(trans('profile.tabs.activity'))
+                                    ->hidden(),
+                                Tab::make(trans('profile.tabs.activity'))
                                     ->icon('tabler-history')
                                     ->schema([
                                         Repeater::make('activity')
+                                            ->label('')
                                             ->deletable(false)
                                             ->addable(false)
                                             ->relationship(null, function (Builder $query) {

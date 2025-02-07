@@ -44,4 +44,5 @@ return [
     'rotate_password' => 'Rotate Password',
     'rotated' => 'Password Rotated',
     'rotate_error' => 'Password Rotation Failed',
+    'databases' => 'Databases',
 ];
