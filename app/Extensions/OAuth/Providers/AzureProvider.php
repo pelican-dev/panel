@@ -6,8 +6,6 @@ use Filament\Forms\Components\ColorPicker;
 use Filament\Forms\Components\TextInput;
 use SocialiteProviders\Azure\Provider;
 
-
-
 final class AzureProvider extends OAuthProvider
 {
     public function getId(): string
@@ -33,8 +31,8 @@ final class AzureProvider extends OAuthProvider
     {
         return array_merge(parent::getSettingsForm(), [
             TextInput::make('OAUTH_AZURE_REDIRECT_URI')
-                ->label('Redirect URL')
-                ->placeholder('Redirect URL')
+                ->label('Authorization URL')
+                ->placeholder('Authorization URL')
                 ->columnSpan(2)
                 ->required()
                 ->url()
@@ -52,8 +50,8 @@ final class AzureProvider extends OAuthProvider
                 ->required()
                 ->hex(),
             TextInput::make("OAUTH_AZURE_TENANT_ID")
-                ->label('Tentant ID')
-                ->placeholder('Tentant ID')
+                ->label('Tenant ID')
+                ->placeholder('Tenant ID')
                 ->columnSpan(2)
                 ->required()
                 ->password()
