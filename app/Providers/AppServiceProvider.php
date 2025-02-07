@@ -10,6 +10,7 @@ use App\Extensions\OAuth\Providers\CommonProvider;
 use App\Extensions\OAuth\Providers\DiscordProvider;
 use App\Extensions\OAuth\Providers\GithubProvider;
 use App\Extensions\OAuth\Providers\SteamProvider;
+use App\Extensions\OAuth\Providers\AzureProvider;
 use App\Models;
 use App\Models\ApiKey;
 use App\Models\Node;
@@ -96,6 +97,7 @@ class AppServiceProvider extends ServiceProvider
         CommonProvider::register('slack', null, 'tabler-brand-slack', '#6ecadc');
 
         // Additional OAuth providers from socialiteproviders.com
+        AzureProvider::register();
         AuthentikProvider::register();
         DiscordProvider::register();
         SteamProvider::register();
