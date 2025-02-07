@@ -23,6 +23,7 @@ yarn-error.log
 
 public/assets/manifest.json
 /database/*.sqlite
+/database/*.sqlite-journal
 filament-monaco-editor/
 _ide_helper*
 /.phpstorm.meta.php
