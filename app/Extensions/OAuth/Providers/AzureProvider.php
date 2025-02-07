@@ -21,7 +21,6 @@ final class AzureProvider extends OAuthProvider
     public function getServiceConfig(): array
     {
         return [
-            'redirect' => env('OAUTH_AZURE_REDIRECT_URI'),
             'client_id' => env('OAUTH_AZURE_CLIENT_ID'),
             'client_secret' => env('OAUTH_AZURE_CLIENT_SECRET'),
             'tenant' => env('OAUTH_AZURE_TENANT_ID'),
@@ -30,25 +29,11 @@ final class AzureProvider extends OAuthProvider
     public function getSettingsForm(): array
     {
         return array_merge(parent::getSettingsForm(), [
-            TextInput::make('OAUTH_AZURE_REDIRECT_URI')
-                ->label('Authorization URL')
-                ->placeholder('Authorization URL')
-                ->columnSpan(2)
-                ->required()
-                ->url()
-                ->autocomplete(false)
-                ->default(env('OAUTH_AZURE_REDIRECT_URI')),
             TextInput::make('OAUTH_AZURE_DISPLAY_NAME')
                 ->label('Display Name')
                 ->placeholder('Display Name')
                 ->autocomplete(false)
                 ->default(env('OAUTH_AZURE_DISPLAY_NAME', 'Azure')),
-            ColorPicker::make('OAUTH_AZURE_DISPLAY_COLOR')
-                ->label('Display Color')
-                ->placeholder('#fd4b2d')
-                ->default(env('OAUTH_AZURE_DISPLAY_COLOR', '#03c6fc'))
-                ->required()
-                ->hex(),
             TextInput::make("OAUTH_AZURE_TENANT_ID")
                 ->label('Tenant ID')
                 ->placeholder('Tenant ID')
