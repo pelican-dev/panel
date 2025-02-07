@@ -73,7 +73,7 @@ final class AzureProvider extends OAuthProvider
 
     public function getHexColor(): string
     {
-        return env('OAUTH_AZURE_DISPLAY_COLOR') ?? '#03c6fc';
+        return '#03c6fc';
     }
 
     public static function register(): self
