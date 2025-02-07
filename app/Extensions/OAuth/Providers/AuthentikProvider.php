@@ -2,6 +2,7 @@
 
 namespace App\Extensions\OAuth\Providers;
 
+use Filament\Forms\Components\ColorPicker;
 use Filament\Forms\Components\TextInput;
 use SocialiteProviders\Authentik\Provider;
 
@@ -20,11 +21,9 @@ final class AuthentikProvider extends OAuthProvider
     public function getServiceConfig(): array
     {
         return [
-            'client_id' => null,
-            'client_secret' => env('OAUTH_STEAM_CLIENT_SECRET'),
-            'allowed_hosts' => [
-                str_replace(['http://', 'https://'], '', env('APP_URL')),
-            ],
+            'base_url' => env('OAUTH_AUTHENTIK_BASE_URL'),
+            'client_id' => env('OAUTH_AUTHENTIK_CLIENT_ID'),
+            'client_secret' => env('OAUTH_AUTHENTIK_CLIENT_SECRET'),
         ];
     }
 
@@ -42,9 +41,13 @@ final class AuthentikProvider extends OAuthProvider
             TextInput::make('OAUTH_AUTHENTIK_DISPLAY_NAME')
                 ->label('Display Name')
                 ->placeholder('Display Name')
-                ->columnSpan(2)
                 ->autocomplete(false)
                 ->default(env('OAUTH_AUTHENTIK_DISPLAY_NAME', 'Authentik')),
+            ColorPicker::make('OAUTH_AUTHENTIK_DISPLAY_COLOR')
+                ->label('Display Color')
+                ->placeholder('#fd4b2d')
+                ->default(env('OAUTH_AUTHENTIK_DISPLAY_COLOR', '#fd4b2d'))
+                ->hex(),
         ]);
     }
 
@@ -55,7 +58,7 @@ final class AuthentikProvider extends OAuthProvider
 
     public function getHexColor(): string
     {
-        return '#fd4b2d';
+        return env('OAUTH_AUTHENTIK_DISPLAY_COLOR') ?? '#fd4b2d';
     }
 
     public static function register(): self
