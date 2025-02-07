@@ -14,6 +14,11 @@ class NodesRelationManager extends RelationManager
 
     protected static ?string $icon = 'tabler-brand-docker';
 
+    public function setTitle(): string
+    {
+        return trans('admin/node.table.servers');
+    }
+
     public function table(Table $table): Table
     {
         return $table

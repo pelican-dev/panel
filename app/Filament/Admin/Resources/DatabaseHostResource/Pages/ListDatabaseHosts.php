@@ -17,7 +17,6 @@ class ListDatabaseHosts extends ListRecords
 {
     protected static string $resource = DatabaseHostResource::class;
 
-
     public function table(Table $table): Table
     {
         return $table

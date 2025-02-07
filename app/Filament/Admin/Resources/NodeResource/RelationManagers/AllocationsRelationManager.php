@@ -29,6 +29,12 @@ class AllocationsRelationManager extends RelationManager
 
     protected static ?string $icon = 'tabler-plug-connected';
 
+    public function setTitle(): string
+    {
+        return trans('admin/server.allocations');
+
+    }
+
     public function table(Table $table): Table
     {
         return $table
