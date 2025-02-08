@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Filament\Resources;
+namespace App\Filament\Admin\Resources;
 
-use App\Filament\Resources\PluginResource\Pages;
+use App\Filament\Admin\Resources\PluginResource\Pages\ListPlugins;
 use App\Models\Plugin;
 use Filament\Resources\Resource;
 
@@ -22,7 +22,7 @@ class PluginResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListPlugins::route('/'),
+            'index' => ListPlugins::route('/'),
         ];
     }
 }
