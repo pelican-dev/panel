@@ -50,19 +50,21 @@ class ListServers extends ListRecords
 
     public function getTabs(): array
     {
-        $baseQuery = auth()->user()->accessibleServers();
+        $all = auth()->user()->accessibleServers();
+        $my = (clone $all)->where('owner_id', auth()->user()->id);
+        $other = (clone $all)->whereNot('owner_id', auth()->user()->id);
 
         return [
             'my' => Tab::make('My Servers')
-                ->badge(fn () => $baseQuery->where('owner_id', auth()->user()->id)->count())
-                ->modifyQueryUsing(fn (Builder $query) => $query->where('owner_id', auth()->user()->id)),
+                ->badge(fn () => $my->count())
+                ->modifyQueryUsing(fn () => $my),
 
             'other' => Tab::make('Others\' Servers')
-                ->badge(fn (Builder $query) => $query->whereNot('owner_id', auth()->user()->id)->count())
-                ->modifyQueryUsing(fn (Builder $query) => $query->whereNot('owner_id', auth()->user()->id)),
+                ->badge(fn () => $other->count())
+                ->modifyQueryUsing(fn () => $other),
 
             'all' => Tab::make('All Servers')
-                ->badge($baseQuery->count()),
+                ->badge($all->count()),
         ];
     }
 }
