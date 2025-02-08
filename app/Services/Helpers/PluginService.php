@@ -15,9 +15,7 @@ use Illuminate\Support\ServiceProvider;
 
 class PluginService
 {
-    public function __construct(private Filesystem $fileSystem)
-    {
-    }
+    public function __construct(private Filesystem $fileSystem) {}
 
     public function loadPlugins(Application $app): void
     {
