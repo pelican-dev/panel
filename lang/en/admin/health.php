@@ -20,7 +20,7 @@ return [
         'debugmode' => [
             'label' => 'Debug Mode',
             'ok' => 'Debug mode is disabled',
-            'failed' => 'The debug mode was expected to be :actual, but actually was :expected',
+            'failed' => 'The debug mode was expected to be :expected, but actually was :actual',
         ],
         'environment' => [
             'label' => 'Environment',
