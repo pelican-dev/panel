@@ -61,22 +61,23 @@ class ApiKeyResource extends Resource
         return $table
             ->columns([
                 TextColumn::make('key')
+                    ->label(trans('admin/apikey.table.key'))
                     ->icon('tabler-clipboard-text')
                     ->state(fn (ApiKey $key) => $key->identifier . $key->token)
                     ->copyable(),
                 TextColumn::make('memo')
-                    ->label('Description')
+                    ->label(trans('admin/apikey.table.description'))
                     ->wrap()
                     ->limit(50),
                 DateTimeColumn::make('last_used_at')
-                    ->label('Last Used')
-                    ->placeholder('Not Used')
+                    ->label(trans('admin/apikey.table.last_used'))
+                    ->placeholder(trans('admin/apikey.table.never_used'))
                     ->sortable(),
                 DateTimeColumn::make('created_at')
-                    ->label('Created')
+                    ->label(trans('admin/apikey.table.created'))
                     ->sortable(),
                 TextColumn::make('user.username')
-                    ->label('Created By')
+                    ->label(trans('admin/apikey.table.created_by'))
                     ->icon('tabler-user')
                     ->url(fn (ApiKey $apiKey) => auth()->user()->can('update user', $apiKey->user) ? EditUser::getUrl(['record' => $apiKey->user]) : null),
             ])
@@ -85,10 +86,10 @@ class ApiKeyResource extends Resource
             ])
             ->emptyStateIcon('tabler-key')
             ->emptyStateDescription('')
-            ->emptyStateHeading('No API Keys')
+            ->emptyStateHeading(trans('admin/apikey.empty_table'))
             ->emptyStateActions([
-                CreateAction::make('create')
-                    ->label('Create API Key')
+                CreateAction::make()
+                    ->label(trans('admin/apikey.create_action', ['action' => trans('filament-actions::create.single.modal.actions.create.label')]))
                     ->button(),
             ]);
     }
@@ -109,19 +110,16 @@ class ApiKeyResource extends Resource
                             ->options([
                                 0 => 'None',
                                 1 => 'Read',
-                                // 2 => 'Write',
                                 3 => 'Read & Write',
                             ])
                             ->icons([
                                 0 => 'tabler-book-off',
                                 1 => 'tabler-book',
-                                2 => 'tabler-writing',
                                 3 => 'tabler-writing',
                             ])
                             ->colors([
                                 0 => 'success',
                                 1 => 'warning',
-                                2 => 'danger',
                                 3 => 'danger',
                             ])
                             ->required()
@@ -134,17 +132,14 @@ class ApiKeyResource extends Resource
                         )->all(),
                     ),
                 TagsInput::make('allowed_ips')
-                    ->placeholder('Example: 127.0.0.1 or 192.168.1.1')
-                    ->label('Whitelisted IPv4 Addresses')
-                    ->helperText('Press enter to add a new IP address or leave blank to allow any IP address')
+                    ->placeholder(trans('admin/apikey.whitelist_placeholder'))
+                    ->label(trans('admin/apikey.whitelist'))
+                    ->helperText(trans('admin/apikey.whitelist_help'))
                     ->columnSpanFull(),
                 Textarea::make('memo')
                     ->required()
-                    ->label('Description')
-                    ->helperText('
-                        Once you have assigned permissions and created this set of credentials you will be unable to come back and edit it.
-                        If you need to make changes down the road you will need to create a new set of credentials.
-                    ')
+                    ->label(trans('admin/apikey.description'))
+                    ->helperText(trans('admin/apikey.description_help'))
                     ->columnSpanFull(),
             ]);
     }

@@ -15,7 +15,7 @@ class ListMounts extends ListRecords
     {
         return [
             CreateAction::make()
-                ->label('Create Mount')
+                ->label(trans('admin/mount.create_action', ['action' => trans('filament-actions::create.single.modal.actions.create.label')]))
                 ->hidden(fn () => Mount::count() <= 0),
         ];
     }

@@ -53,8 +53,10 @@ class WebhookResource extends Resource
     {
         return $table
             ->columns([
-                TextColumn::make('description'),
-                TextColumn::make('endpoint'),
+                TextColumn::make('description')
+                    ->label(trans('admin/webhook.table.description')),
+                TextColumn::make('endpoint')
+                    ->label(trans('admin/webhook.table.endpoint')),
             ])
             ->actions([
                 ViewAction::make()
@@ -68,10 +70,10 @@ class WebhookResource extends Resource
             ])
             ->emptyStateIcon('tabler-webhook')
             ->emptyStateDescription('')
-            ->emptyStateHeading('No Webhooks')
+            ->emptyStateHeading(trans('admin/webhook.no_webhooks'))
             ->emptyStateActions([
-                CreateAction::make('create')
-                    ->label('Create Webhook')
+                CreateAction::make()
+                    ->label(trans('admin/webhook.create_action', ['action' => trans('filament-actions::create.single.modal.actions.create.label')]))
                     ->button(),
             ]);
     }
@@ -81,9 +83,11 @@ class WebhookResource extends Resource
         return $form
             ->schema([
                 TextInput::make('endpoint')
+                    ->label(trans('admin/webhook.endpoint'))
                     ->activeUrl()
                     ->required(),
                 TextInput::make('description')
+                    ->label(trans('admin/webhook.description'))
                     ->required(),
                 CheckboxList::make('events')
                     ->lazy()

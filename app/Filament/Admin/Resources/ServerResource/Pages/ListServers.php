@@ -97,7 +97,7 @@ class ListServers extends ListRecords
             ->emptyStateDescription('')
             ->emptyStateHeading(trans('admin/server.no_servers'))
             ->emptyStateActions([
-                CreateAction::make('create')
+                CreateAction::make()
                     ->label(trans('admin/server.create_action', ['action' => trans('filament-actions::create.single.modal.actions.create.label')]))
                     ->button(),
             ]);

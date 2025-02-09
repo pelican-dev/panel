@@ -54,43 +54,34 @@ class UserResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
-            ->searchable(false)
             ->columns([
                 ImageColumn::make('picture')
                     ->visibleFrom('lg')
                     ->label('')
                     ->extraImgAttributes(['class' => 'rounded-full'])
                     ->defaultImageUrl(fn (User $user) => 'https://gravatar.com/avatar/' . md5(strtolower($user->email))),
-                TextColumn::make('external_id')
-                    ->searchable()
-                    ->hidden(),
-                TextColumn::make('uuid')
-                    ->label('UUID')
-                    ->hidden()
-                    ->searchable(),
                 TextColumn::make('username')
-                    ->searchable(),
+                    ->label(trans('admin/user.username')),
                 TextColumn::make('email')
-                    ->searchable()
+                    ->label(trans('admin/user.email'))
                     ->icon('tabler-mail'),
                 IconColumn::make('use_totp')
                     ->label('2FA')
                     ->visibleFrom('lg')
                     ->icon(fn (User $user) => $user->use_totp ? 'tabler-lock' : 'tabler-lock-open-off')
-                    ->boolean()
-                    ->sortable(),
+                    ->boolean(),
                 TextColumn::make('roles.name')
-                    ->label('Roles')
+                    ->label(trans('admin/user.roles'))
                     ->badge()
                     ->icon('tabler-users-group')
-                    ->placeholder('No roles'),
+                    ->placeholder(trans('admin/user.no_roles')),
                 TextColumn::make('servers_count')
                     ->counts('servers')
                     ->icon('tabler-server')
-                    ->label('Servers'),
+                    ->label(trans('admin/user.servers')),
                 TextColumn::make('subusers_count')
                     ->visibleFrom('sm')
-                    ->label('Subusers')
+                    ->label(trans('admin/user.subusers'))
                     ->counts('subusers')
                     ->icon('tabler-users'),
             ])
@@ -112,25 +103,28 @@ class UserResource extends Resource
             ->columns(['default' => 1, 'lg' => 3])
             ->schema([
                 TextInput::make('username')
+                    ->label(trans('admin/user.username'))
                     ->alphaNum()
                     ->required()
                     ->unique()
                     ->minLength(3)
                     ->maxLength(255),
                 TextInput::make('email')
+                    ->label(trans('admin/user.email'))
                     ->email()
                     ->required()
                     ->unique()
                     ->maxLength(255),
                 TextInput::make('password')
+                    ->label(trans('admin/user.password'))
                     ->hintIcon(fn ($operation) => $operation === 'create' ? 'tabler-question-mark' : null)
-                    ->hintIconTooltip(fn ($operation) => $operation === 'create' ? 'Providing a user password is optional. New user email will prompt users to create a password the first time they login.' : null)
+                    ->hintIconTooltip(fn ($operation) => $operation === 'create' ? trans('admin/user.password_help') : null)
                     ->password(),
                 CheckboxList::make('roles')
                     ->disableOptionWhen(fn (string $value): bool => $value == Role::getRootAdmin()->id)
                     ->relationship('roles', 'name')
                     ->dehydrated()
-                    ->label('Admin Roles')
+                    ->label(trans('admin/user.admin_roles'))
                     ->columnSpanFull()
                     ->bulkToggleable(false),
             ]);

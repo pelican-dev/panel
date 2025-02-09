@@ -57,24 +57,25 @@ class MountResource extends Resource
         return $table
             ->columns([
                 TextColumn::make('name')
+                    ->label(trans('admin/mount.table.name'))
                     ->description(fn (Mount $mount) => "$mount->source -> $mount->target")
                     ->sortable(),
                 TextColumn::make('eggs.name')
                     ->icon('tabler-eggs')
-                    ->label('Eggs')
+                    ->label(trans('admin/mount.eggs'))
                     ->badge()
-                    ->placeholder('All eggs'),
+                    ->placeholder(trans('admin/mount.table.all_eggs')),
                 TextColumn::make('nodes.name')
                     ->icon('tabler-server-2')
-                    ->label('Nodes')
+                    ->label(trans('admin/mount.nodes'))
                     ->badge()
-                    ->placeholder('All nodes'),
+                    ->placeholder(trans('admin/mount.table.all_nodes')),
                 TextColumn::make('read_only')
-                    ->label('Read only?')
+                    ->label(trans('admin/mount.table.read_only'))
                     ->badge()
                     ->icon(fn ($state) => $state ? 'tabler-writing-off' : 'tabler-writing')
                     ->color(fn ($state) => $state ? 'success' : 'warning')
-                    ->formatStateUsing(fn ($state) => $state ? 'Read only' : 'Writeable'),
+                    ->formatStateUsing(fn ($state) => $state ? trans('admin/mount.toggles.read_only') : trans('admin/mount.toggles.writeable')),
             ])
             ->actions([
                 ViewAction::make()
@@ -87,10 +88,10 @@ class MountResource extends Resource
             ])
             ->emptyStateIcon('tabler-layers-linked')
             ->emptyStateDescription('')
-            ->emptyStateHeading('No Mounts')
+            ->emptyStateHeading(trans('admin/mount.no_mounts'))
             ->emptyStateActions([
-                CreateAction::make('create')
-                    ->label('Create Mount')
+                CreateAction::make()
+                    ->label(trans('admin/mount.create_action', ['action' => trans('filament-actions::create.single.modal.actions.create.label')]))
                     ->button(),
             ]);
     }
@@ -101,15 +102,16 @@ class MountResource extends Resource
             ->schema([
                 Section::make()->schema([
                     TextInput::make('name')
+                        ->label(trans('admin/mount.name'))
                         ->required()
-                        ->helperText('Unique name used to separate this mount from another.')
+                        ->helperText(trans('admin/mount.name_help'))
                         ->maxLength(64),
                     ToggleButtons::make('read_only')
-                        ->label('Read only?')
-                        ->helperText('Is the mount read only inside the container?')
+                        ->label(trans('admin/mount.read_only'))
+                        ->helperText(trans('admin/mount.read_only_help'))
                         ->options([
-                            false => 'Writeable',
-                            true => 'Read only',
+                            false => trans('admin/mount.toggles.writable'),
+                            true => trans('admin/mount.toggles.read_only'),
                         ])
                         ->icons([
                             false => 'tabler-writing',
@@ -123,12 +125,14 @@ class MountResource extends Resource
                         ->default(false)
                         ->required(),
                     TextInput::make('source')
+                        ->label(trans('admin/mount.source'))
                         ->required()
-                        ->helperText('File path on the host system to mount to a container.')
+                        ->helperText(trans('admin/mount.source_help'))
                         ->maxLength(255),
                     TextInput::make('target')
+                        ->label(trans('admin/mount.target'))
                         ->required()
-                        ->helperText('Where the mount will be accessible inside a container.')
+                        ->helperText(trans('admin/mount.target_help'))
                         ->maxLength(255),
                     ToggleButtons::make('user_mountable')
                         ->hidden()
@@ -149,7 +153,8 @@ class MountResource extends Resource
                         ->inline()
                         ->required(),
                     Textarea::make('description')
-                        ->helperText('A longer description for this mount.')
+                        ->label(trans('admin/mount.description'))
+                        ->helperText(trans('admin/mount.description_help'))
                         ->columnSpanFull(),
                 ])->columnSpan(1)->columns([
                     'default' => 1,
@@ -158,9 +163,11 @@ class MountResource extends Resource
                 Group::make()->schema([
                     Section::make()->schema([
                         Select::make('eggs')->multiple()
+                            ->label(trans('admin/mount.eggs'))
                             ->relationship('eggs', 'name')
                             ->preload(),
                         Select::make('nodes')->multiple()
+                            ->label(trans('admin/mount.nodes'))
                             ->relationship('nodes', 'name')
                             ->searchable(['name', 'fqdn'])
                             ->preload(),

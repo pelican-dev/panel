@@ -15,7 +15,7 @@ class ListWebhookConfigurations extends ListRecords
     {
         return [
             CreateAction::make()
-                ->label('Create Webhook')
+                ->label(trans('admin/webhook.create_action', ['action' => trans('filament-actions::create.single.modal.actions.create.label')]))
                 ->hidden(fn () => WebhookConfiguration::count() <= 0),
         ];
     }

@@ -14,7 +14,7 @@ class ListRoles extends ListRecords
     {
         return [
             CreateAction::make()
-                ->label('Create Role'),
+                ->label(trans('admin/role.create_action', ['action' => trans('filament-actions::create.single.modal.actions.create.label')])),
         ];
     }
 }

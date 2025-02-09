@@ -15,7 +15,7 @@ class ListApiKeys extends ListRecords
     {
         return [
             CreateAction::make()
-                ->label('Create API Key')
+                ->label(trans('admin/apikey.create_action', ['action' => trans('filament-actions::create.single.modal.actions.create.label')]))
                 ->hidden(fn () => ApiKey::where('key_type', ApiKey::TYPE_APPLICATION)->count() <= 0),
         ];
     }
