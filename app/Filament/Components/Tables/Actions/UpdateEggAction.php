@@ -20,7 +20,7 @@ class UpdateEggAction extends Action
     {
         parent::setUp();
 
-        $this->label('Update');
+        $this->label(trans('admin/egg.update'));
 
         $this->icon('tabler-cloud-download');
 
@@ -28,9 +28,9 @@ class UpdateEggAction extends Action
 
         $this->requiresConfirmation();
 
-        $this->modalHeading('Are you sure you want to update this egg?');
+        $this->modalHeading(trans('admin/egg.update_question'));
 
-        $this->modalDescription('If you made any changes to the egg they will be overwritten!');
+        $this->modalDescription(trans('admin/egg.update_description'));
 
         $this->modalIconColor('danger');
 
@@ -43,7 +43,7 @@ class UpdateEggAction extends Action
                 cache()->forget("eggs.$egg->uuid.update");
             } catch (Exception $exception) {
                 Notification::make()
-                    ->title('Egg Update failed')
+                    ->title(trans('admin/egg.update_failed'))
                     ->body($exception->getMessage())
                     ->danger()
                     ->send();
@@ -54,7 +54,7 @@ class UpdateEggAction extends Action
             }
 
             Notification::make()
-                ->title('Egg updated')
+                ->title(trans('admin/egg.updated'))
                 ->body($egg->name)
                 ->success()
                 ->send();

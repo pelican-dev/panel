@@ -21,13 +21,13 @@ class RotateDatabasePasswordAction extends Action
     {
         parent::setUp();
 
-        $this->label('Rotate');
+        $this->label(trans('admin/databasehost.rotate'));
 
         $this->icon('tabler-refresh');
 
         $this->authorize(fn (Database $database) => auth()->user()->can('update database', $database));
 
-        $this->modalHeading('Rotate Password');
+        $this->modalHeading(trans('admin/databasehost.rotate_password'));
 
         $this->modalIconColor('warning');
 
@@ -45,12 +45,12 @@ class RotateDatabasePasswordAction extends Action
                 $set('jdbc', $database->jdbc);
 
                 Notification::make()
-                    ->title('Password rotated')
+                    ->title(trans('admin/databasehost.rotated'))
                     ->success()
                     ->send();
             } catch (Exception $exception) {
                 Notification::make()
-                    ->title('Password rotation failed')
+                    ->title(trans('admin/databasehost.rotate_error'))
                     ->body($exception->getMessage())
                     ->danger()
                     ->send();
