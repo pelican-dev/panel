@@ -42,44 +42,47 @@ class CreateDatabaseHost extends CreateRecord
                     ->schema([
                         TextInput::make('host')
                             ->columnSpan(2)
-                            ->helperText('The IP address or Domain name that should be used when attempting to connect to this MySQL host from this Panel to create new databases.')
+                            ->label(trans('admin/databasehost.host'))
+                            ->helperText(trans('admin/databasehost.host_help'))
                             ->required()
                             ->live(onBlur: true)
                             ->afterStateUpdated(fn ($state, Forms\Set $set) => $set('name', $state))
                             ->maxLength(255),
                         TextInput::make('port')
                             ->columnSpan(1)
-                            ->helperText('The port that MySQL is running on for this host.')
+                            ->label(trans('admin/databasehost.port'))
+                            ->helperText(trans('admin/databasehost.port_help'))
                             ->required()
                             ->numeric()
-                            ->default(3306)
                             ->minValue(0)
                             ->maxValue(65535),
                         TextInput::make('max_databases')
-                            ->label('Max databases')
-                            ->helpertext('Blank is unlimited.')
+                            ->label(trans('admin/databasehost.max_database'))
+                            ->helpertext(trans('admin/databasehost.max_databases_help'))
                             ->numeric(),
                         TextInput::make('name')
-                            ->label('Display Name')
-                            ->helperText('A short identifier used to distinguish this location from others. Must be between 1 and 60 characters, for example, us.nyc.lvl3.')
+                            ->label(trans('admin/databasehost.display_name'))
+                            ->helperText(trans('admin/databasehost.display_name_help'))
                             ->required()
                             ->maxLength(60),
                         TextInput::make('username')
-                            ->helperText('The username of an account that has enough permissions to create new users and databases on the system.')
+                            ->label(trans('admin/databasehost.username'))
+                            ->helperText(trans('admin/databasehost.username_help'))
                             ->required()
                             ->maxLength(255),
                         TextInput::make('password')
-                            ->helperText('The password for the database user.')
+                            ->label(trans('admin/databasehost.password'))
+                            ->helperText(trans('admin/databasehost.password_help'))
                             ->password()
                             ->revealable()
-                            ->maxLength(255)
-                            ->required(),
-                        Select::make('node_ids')
+                            ->required()
+                            ->maxLength(255),
+                        Select::make('nodes')
                             ->multiple()
                             ->searchable()
                             ->preload()
-                            ->helperText('This setting only defaults to this database host when adding a database to a server on the selected node.')
-                            ->label('Linked Nodes')
+                            ->helperText(trans('admin/databasehost.linked_nodes_help'))
+                            ->label(trans('admin/databasehost.linked_nodes'))
                             ->relationship('nodes', 'name'),
                     ]),
             ]);
@@ -103,7 +106,7 @@ class CreateDatabaseHost extends CreateRecord
             return $this->service->handle($data);
         } catch (PDOException $exception) {
             Notification::make()
-                ->title('Error connecting to database host')
+                ->title(trans('admin/databasehost.error'))
                 ->body($exception->getMessage())
                 ->color('danger')
                 ->icon('tabler-database')

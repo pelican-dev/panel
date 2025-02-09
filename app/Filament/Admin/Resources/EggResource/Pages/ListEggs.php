@@ -32,6 +32,7 @@ class ListEggs extends ListRecords
                     ->label('Id')
                     ->hidden(),
                 TextColumn::make('name')
+                    ->label(trans('admin/egg.name'))
                     ->icon('tabler-egg')
                     ->description(fn ($record): ?string => (strlen($record->description) > 120) ? substr($record->description, 0, 120).'...' : $record->description)
                     ->wrap()
@@ -40,7 +41,7 @@ class ListEggs extends ListRecords
                 TextColumn::make('servers_count')
                     ->counts('servers')
                     ->icon('tabler-server')
-                    ->label('Servers'),
+                    ->label(trans('admin/egg.servers')),
             ])
             ->actions([
                 EditAction::make(),
@@ -55,10 +56,10 @@ class ListEggs extends ListRecords
             ])
             ->emptyStateIcon('tabler-eggs')
             ->emptyStateDescription('')
-            ->emptyStateHeading('No Eggs')
+            ->emptyStateHeading(trans('admin/egg.no_eggs'))
             ->emptyStateActions([
                 CreateAction::make()
-                    ->label('Create Egg'),
+                    ->label(trans('admin/egg.create_action', ['action' => trans('filament-actions::create.single.modal.actions.create.label')])),
                 ImportEggAction::make(),
             ]);
     }
@@ -68,7 +69,7 @@ class ListEggs extends ListRecords
         return [
             ImportEggHeaderAction::make(),
             CreateHeaderAction::make()
-                ->label('Create Egg'),
+                ->label(trans('admin/egg.create_action', ['action' => trans('filament-actions::create.single.modal.actions.create.label')])),
         ];
     }
 }

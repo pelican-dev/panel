@@ -22,12 +22,15 @@ class Dashboard extends Page
 
     public function getTitle(): string
     {
-        return trans('strings.dashboard');
+        return trans('admin/dashboard.title');
+    }
+
+    public static function getNavigationLabel(): string
+    {
+        return trans('admin/dashboard.title');
     }
 
     protected static ?string $slug = '/';
-
-    public string $activeTab = 'nodes';
 
     private SoftwareVersionService $softwareVersionService;
 
@@ -51,33 +54,33 @@ class Dashboard extends Page
 
             'devActions' => [
                 CreateAction::make()
-                    ->label('Bugs & Features')
+                    ->label(trans('admin/dashboard.sections.intro-developers.button_issues'))
                     ->icon('tabler-brand-github')
-                    ->url('https://github.com/pelican-dev/panel/discussions', true),
+                    ->url('https://github.com/pelican-dev/panel/issues', true),
             ],
             'updateActions' => [
                 CreateAction::make()
-                    ->label('Read Documentation')
+                    ->label(trans('admin/dashboard.sections.intro-update-available.heading'))
                     ->icon('tabler-clipboard-text')
                     ->url('https://pelican.dev/docs/panel/update', true)
                     ->color('warning'),
             ],
             'nodeActions' => [
                 CreateAction::make()
-                    ->label(trans('dashboard/index.sections.intro-first-node.button_label'))
+                    ->label(trans('admin/dashboard.sections.intro-first-node.button_label'))
                     ->icon('tabler-server-2')
                     ->url(CreateNode::getUrl()),
             ],
             'supportActions' => [
                 CreateAction::make()
-                    ->label(trans('dashboard/index.sections.intro-support.button_donate'))
+                    ->label(trans('admin/dashboard.sections.intro-support.button_donate'))
                     ->icon('tabler-cash')
                     ->url('https://pelican.dev/donate', true)
                     ->color('success'),
             ],
             'helpActions' => [
                 CreateAction::make()
-                    ->label(trans('dashboard/index.sections.intro-help.button_docs'))
+                    ->label(trans('admin/dashboard.sections.intro-help.button_docs'))
                     ->icon('tabler-speedboat')
                     ->url('https://pelican.dev/docs', true),
             ],
