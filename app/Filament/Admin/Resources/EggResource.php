@@ -12,13 +12,31 @@ class EggResource extends Resource
 
     protected static ?string $navigationIcon = 'tabler-eggs';
 
-    protected static ?string $navigationGroup = 'Server';
-
     protected static ?string $recordTitleAttribute = 'name';
 
     public static function getNavigationBadge(): ?string
     {
         return static::getModel()::count() ?: null;
+    }
+
+    public static function getNavigationGroup(): ?string
+    {
+        return trans('admin/dashboard.server');
+    }
+
+    public static function getNavigationLabel(): string
+    {
+        return trans('admin/egg.nav_title');
+    }
+
+    public static function getModelLabel(): string
+    {
+        return trans('admin/egg.model_label');
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return trans('admin/egg.model_label_plural');
     }
 
     public static function getGloballySearchableAttributes(): array

@@ -8,20 +8,7 @@ use Locale;
 class LanguageService
 {
     public const TRANSLATED_COMPLETELY = [
-        'ar',
-        'cz',
-        'da',
-        'de',
-        'dk',
         'en',
-        'es',
-        'fi',
-        'ja',
-        'nl',
-        'pl',
-        'sk',
-        'ru',
-        'tr',
     ];
 
     public function isLanguageTranslated(string $countryCode = 'en'): bool
