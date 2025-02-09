@@ -18,7 +18,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property int $key_type
  * @property string $identifier
  * @property string $token
- * @property array $permissions
+ * @property array|null $permissions
  * @property array $allowed_ips
  * @property string|null $memo
  * @property \Illuminate\Support\Carbon|null $last_used_at
