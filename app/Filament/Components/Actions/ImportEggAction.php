@@ -2,6 +2,7 @@
 
 namespace App\Filament\Components\Actions;
 
+use App\Models\Egg;
 use App\Services\Eggs\Sharing\EggImporterService;
 use Exception;
 use Filament\Actions\Action;
@@ -44,6 +45,7 @@ class ImportEggAction extends Action
                         ->icon('tabler-world-upload')
                         ->schema([
                             TextInput::make('url')
+                                ->default(fn (Egg $egg) => $egg->update_url)
                                 ->label(trans('admin/egg.import.url'))
                                 ->hint(trans('admin/egg.import.url_help'))
                                 ->url(),
