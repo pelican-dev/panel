@@ -51,6 +51,11 @@ class ApiKeyResource extends Resource
         return $query->where('key_type', ApiKey::TYPE_APPLICATION);
     }
 
+    public static function getNavigationGroup(): ?string
+    {
+        return trans('admin/dashboard.advanced');
+    }
+
     public static function table(Table $table): Table
     {
         return $table
@@ -142,11 +147,6 @@ class ApiKeyResource extends Resource
                     ')
                     ->columnSpanFull(),
             ]);
-    }
-
-    public static function getNavigationGroup(): ?string
-    {
-        return trans('admin/dashboard.advanced');
     }
 
     public static function getPages(): array
