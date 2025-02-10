@@ -35,6 +35,11 @@ use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Notification as MailNotification;
 use Illuminate\Support\HtmlString;
 use Illuminate\Support\Str;
+use Filament\Forms;
+use Filament\Pages\SettingsPage;
+use App\Models\AlertBanner;
+use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\Config;
 
 /**
  * @property Form $form
@@ -105,6 +110,30 @@ class Settings extends Page implements HasForms
                         ->icon('tabler-tool')
                         ->schema($this->miscSettings()),
                 ]),
+            Forms\Components\Section::make('Alert Banner Settings')
+                ->schema([
+                    Forms\Components\Toggle::make('alert_banner_active')
+                        ->label('Enable Alert Banner')
+                        ->default(env('ALERT_BANNER_ACTIVE', false))
+                        ->live(),
+                    
+                    Forms\Components\TextInput::make('alert_banner_message')
+                        ->label('Alert Message')
+                        ->default(env('ALERT_BANNER_MESSAGE', ''))
+                        ->live(),
+
+                    Forms\Components\Select::make('alert_banner_color')
+                        ->label('Alert Color')
+                        ->options([
+                            'blue' => 'Blue',
+                            'red' => 'Red',
+                            'green' => 'Green',
+                            'yellow' => 'Yellow',
+                        ])
+                        ->default(env('ALERT_BANNER_COLOR', 'blue'))
+                        ->live(),
+                ])
+                ->columns(2),
         ];
     }
 
@@ -744,5 +773,29 @@ class Settings extends Page implements HasForms
                 ->keyBindings(['mod+s']),
         ];
 
+    }
+
+    public static function boot(): void {
+        parent::boot();
+
+        static::saved(function ($record) {
+            // Update .env file when settings are changed
+            file_put_contents(app()->environmentFilePath(), preg_replace(
+                [
+                    "/^ALERT_BANNER_ACTIVE=.*/m",
+                    "/^ALERT_BANNER_MESSAGE=.*/m",
+                    "/^ALERT_BANNER_COLOR=.*/m",
+                ],
+                [
+                    "ALERT_BANNER_ACTIVE=" . ($record->alert_banner_active ? 'true' : 'false'),
+                    "ALERT_BANNER_MESSAGE='{$record->alert_banner_message}'",
+                    "ALERT_BANNER_COLOR={$record->alert_banner_color}",
+                ],
+                file_get_contents(app()->environmentFilePath())
+            ));
+
+            // Clear config cache
+            Artisan::call('config:clear');
+        });
     }
 }
