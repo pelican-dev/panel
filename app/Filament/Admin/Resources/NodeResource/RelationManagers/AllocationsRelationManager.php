@@ -107,7 +107,7 @@ class AllocationsRelationManager extends RelationManager
             ->bulkActions([
                 BulkActionGroup::make([
                     DeleteBulkAction::make()
-                        ->authorize(fn () => auth()->user()->can('delete allocation')),
+                        ->authorize(fn () => auth()->user()->can('update node')),
                 ]),
             ]);
     }
