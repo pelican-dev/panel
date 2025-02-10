@@ -16,7 +16,6 @@
         "dedoc/scramble": "^0.10.0",
         "doctrine/dbal": "~3.6.0",
         "filament/filament": "^3.2",
-        "guava/filament-icon-picker": "^2.0",
         "guzzlehttp/guzzle": "^7.8.1",
         "laravel/framework": "^11.7",
         "laravel/helpers": "^1.7",
@@ -44,6 +43,7 @@
         "symfony/mailgun-mailer": "^7.1",
         "symfony/postmark-mailer": "^7.0.7",
         "symfony/yaml": "^7.0.7",
+        "tomatophp/filament-icons": "^1.1",
         "webbingbrasil/filament-copyactions": "^3.0.1",
         "webmozart/assert": "~1.11.0"
     },

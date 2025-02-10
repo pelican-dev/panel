@@ -30,12 +30,12 @@ use Filament\Notifications\Notification;
 use Filament\Pages\Concerns\InteractsWithHeaderActions;
 use Filament\Pages\Page;
 use Filament\Support\Enums\MaxWidth;
-use Guava\FilamentIconPicker\Forms\IconPicker;
 use Illuminate\Http\Client\Factory;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Notification as MailNotification;
 use Illuminate\Support\HtmlString;
 use Illuminate\Support\Str;
+use TomatoPHP\FilamentIcons\Components\IconPicker;
 
 /**
  * @property Form $form
