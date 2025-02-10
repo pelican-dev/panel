@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "faf9c1aaa681f473eab3088e9cb44aed",
+    "content-hash": "388b99bf41dca0c83a2b710c6a8d871c",
     "packages": [
         {
             "name": "abdelhamiderrahmouni/filament-monaco-editor",
@@ -2474,6 +2474,64 @@
                 }
             ],
             "time": "2024-07-20T21:45:45+00:00"
+        },
+        {
+            "name": "guava/filament-icon-picker",
+            "version": "2.2.4",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/lukas-frey/filament-icon-picker.git",
+                "reference": "ed309fee35e9566356d67635176af2f312fa687b"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/lukas-frey/filament-icon-picker/zipball/ed309fee35e9566356d67635176af2f312fa687b",
+                "reference": "ed309fee35e9566356d67635176af2f312fa687b",
+                "shasum": ""
+            },
+            "require": {
+                "filament/filament": "^3.0@stable",
+                "illuminate/contracts": "^9.0|^10.0|^11.0",
+                "php": "^8.0"
+            },
+            "require-dev": {
+                "orchestra/testbench": "^7.0|^8.0|^9.0"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Guava\\FilamentIconPicker\\FilamentIconPickerServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Guava\\FilamentIconPicker\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Lukas Frey",
+                    "email": "mail@lukasfrey.cz"
+                }
+            ],
+            "description": "A filament plugin that adds an icon picker field.",
+            "support": {
+                "issues": "https://github.com/lukas-frey/filament-icon-picker/issues",
+                "source": "https://github.com/lukas-frey/filament-icon-picker/tree/2.2.4"
+            },
+            "funding": [
+                {
+                    "url": "https://github.com/LukasFreyCZ",
+                    "type": "github"
+                }
+            ],
+            "time": "2024-06-27T07:07:31+00:00"
         },
         {
             "name": "guzzlehttp/guzzle",
@@ -14694,17 +14752,17 @@
     ],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": [],
+    "stability-flags": {},
     "prefer-stable": true,
     "prefer-lowest": false,
     "platform": {
-        "php": "^8.2 || ^8.3",
+        "php": "^8.2 || ^8.3 || ^8.4",
         "ext-intl": "*",
         "ext-json": "*",
         "ext-mbstring": "*",
         "ext-pdo": "*",
         "ext-zip": "*"
     },
-    "platform-dev": [],
+    "platform-dev": {},
     "plugin-api-version": "2.6.0"
 }

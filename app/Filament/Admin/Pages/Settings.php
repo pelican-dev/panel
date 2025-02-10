@@ -30,6 +30,7 @@ use Filament\Notifications\Notification;
 use Filament\Pages\Concerns\InteractsWithHeaderActions;
 use Filament\Pages\Page;
 use Filament\Support\Enums\MaxWidth;
+use Guava\FilamentIconPicker\Forms\IconPicker;
 use Illuminate\Http\Client\Factory;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Notification as MailNotification;
@@ -265,7 +266,7 @@ class Settings extends Page implements HasForms
                 ->visible(fn (Get $get) => $get('ALERT_BANNER_ENABLED'))
                 ->default(env('ALERT_BANNER_STATUS', config('panel.alert_banner.status')))
                 ->native(false),
-            TextInput::make('alert_banner_icon')
+            IconPicker::make('alert_banner_icon')
                 ->label(trans('admin/setting.alert_banner.icon'))
                 ->visible(fn (Get $get) => $get('ALERT_BANNER_ENABLED'))
                 ->default(env('ALERT_BANNER_ICON', config('panel.alert_banner.icon'))),

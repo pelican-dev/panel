@@ -16,6 +16,7 @@
         "dedoc/scramble": "^0.10.0",
         "doctrine/dbal": "~3.6.0",
         "filament/filament": "^3.2",
+        "guava/filament-icon-picker": "^2.0",
         "guzzlehttp/guzzle": "^7.8.1",
         "laravel/framework": "^11.7",
         "laravel/helpers": "^1.7",
