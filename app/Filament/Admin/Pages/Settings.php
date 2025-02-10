@@ -240,7 +240,6 @@ class Settings extends Page implements HasForms
                 ->offColor('danger')
                 ->formatStateUsing(fn ($state): bool => (bool) $state)
                 ->afterStateUpdated(fn ($state, Set $set) => $set('ALERT_BANNER_CLOSEABLE', (bool) $state))
-                ->required()
                 ->visible(fn (Get $get) => $get('ALERT_BANNER_ENABLED'))
                 ->default(env('ALERT_BANNER_CLOSEABLE', config('panel.alert_banner.closeable'))),
             TextInput::make('alert_banner_title')
