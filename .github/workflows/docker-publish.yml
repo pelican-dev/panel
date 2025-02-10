@@ -60,27 +60,22 @@ jobs:
 
 
   build-and-push:
-    name: Build and Push ${{ matrix.os }}
-    runs-on: ${{ matrix.os }}
+    name: Build and Push ubuntu-24.04
+    runs-on: ubuntu-24.04
     needs: build-php-base
     permissions:
       contents: read
-      packages: write 
-
+      packages: write
+    strategy:
+      fail-fast: false
     # Start a temp local registry because workflow can not pull from localy loaded images
     services:
       registry:
         image: registry:2
         ports:
           - 5000:5000 
-
-    strategy:
-      fail-fast: false
-      matrix:
-        os: [ubuntu-24.04]
     # Always run against a tag, even if the commit into the tag has [docker skip] within the commit message.
     if: "!contains(github.ref, 'main') || (!contains(github.event.head_commit.message, 'skip docker') && !contains(github.event.head_commit.message, 'docker skip'))"
-
     steps:
       - name: Code checkout
         uses: actions/checkout@v4
