@@ -35,11 +35,6 @@ use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Notification as MailNotification;
 use Illuminate\Support\HtmlString;
 use Illuminate\Support\Str;
-use Filament\Forms;
-use Filament\Pages\SettingsPage;
-use App\Models\AlertBanner;
-use Illuminate\Support\Facades\Artisan;
-use Illuminate\Support\Facades\Config;
 
 /**
  * @property Form $form
@@ -88,6 +83,10 @@ class Settings extends Page implements HasForms
                         ->label(trans('admin/setting.navigation.general'))
                         ->icon('tabler-home')
                         ->schema($this->generalSettings()),
+                    Tab::make('alert_banner')
+                        ->label(trans('admin/setting.navigation.alert_banner'))
+                        ->icon('tabler-bell')
+                        ->schema($this->alertBannerSettings()),
                     Tab::make('captcha')
                         ->label(trans('admin/setting.navigation.captcha'))
                         ->icon('tabler-shield')
@@ -110,30 +109,6 @@ class Settings extends Page implements HasForms
                         ->icon('tabler-tool')
                         ->schema($this->miscSettings()),
                 ]),
-            Forms\Components\Section::make('Alert Banner Settings')
-                ->schema([
-                    Forms\Components\Toggle::make('alert_banner_active')
-                        ->label('Enable Alert Banner')
-                        ->default(env('ALERT_BANNER_ACTIVE', false))
-                        ->live(),
-                    
-                    Forms\Components\TextInput::make('alert_banner_message')
-                        ->label('Alert Message')
-                        ->default(env('ALERT_BANNER_MESSAGE', ''))
-                        ->live(),
-
-                    Forms\Components\Select::make('alert_banner_color')
-                        ->label('Alert Color')
-                        ->options([
-                            'blue' => 'Blue',
-                            'red' => 'Red',
-                            'green' => 'Green',
-                            'yellow' => 'Yellow',
-                        ])
-                        ->default(env('ALERT_BANNER_COLOR', 'blue'))
-                        ->live(),
-                ])
-                ->columns(2),
         ];
     }
 
@@ -236,6 +211,64 @@ class Settings extends Page implements HasForms
                 ->native(false)
                 ->options(MaxWidth::class)
                 ->default(env('FILAMENT_WIDTH', config('panel.filament.display-width'))),
+        ];
+    }
+
+    private function alertBannerSettings(): array
+    {
+        return [
+            Toggle::make('ALERT_BANNER_ENABLED')
+                ->label(trans('admin/setting.alert_banner.enable'))
+                ->inline(false)
+                ->columnSpan(1)
+                ->onIcon('tabler-check')
+                ->offIcon('tabler-x')
+                ->onColor('success')
+                ->offColor('danger')
+                ->live()
+                ->formatStateUsing(fn ($state): bool => (bool) $state)
+                ->afterStateUpdated(fn ($state, Set $set) => $set('ALERT_BANNER_ENABLED', (bool) $state))
+                ->default(env('ALERT_BANNER_ENABLED', config('panel.alert_banner.enabled'))),
+            Toggle::make('ALERT_BANNER_CLOSEABLE')
+                ->label(trans('admin/setting.alert_banner.closeable'))
+                ->inline(false)
+                ->columnSpan(1)
+                ->onIcon('tabler-check')
+                ->offIcon('tabler-x')
+                ->onColor('success')
+                ->offColor('danger')
+                ->formatStateUsing(fn ($state): bool => (bool) $state)
+                ->afterStateUpdated(fn ($state, Set $set) => $set('ALERT_BANNER_CLOSEABLE', (bool) $state))
+                ->required()
+                ->visible(fn (Get $get) => $get('ALERT_BANNER_ENABLED'))
+                ->default(env('ALERT_BANNER_CLOSEABLE', config('panel.alert_banner.closeable'))),
+            TextInput::make('alert_banner_title')
+                ->label(trans('admin/setting.alert_banner.title'))
+                ->required()
+                ->visible(fn (Get $get) => $get('ALERT_BANNER_ENABLED'))
+                ->default(env('ALERT_BANNER_TITLE', config('panel.alert_banner.title'))),
+            TextInput::make('alert_banner_message')
+                ->label(trans('admin/setting.alert_banner.message'))
+                ->required()
+                ->visible(fn (Get $get) => $get('ALERT_BANNER_ENABLED'))
+                ->default(env('ALERT_BANNER_MESSAGE', config('panel.alert_banner.message'))),
+            Select::make('alert_banner_status')
+                ->label(trans('admin/setting.alert_banner.status'))
+                ->options([
+                    'info' => '<span class="text-info-600 dark:text-info-500">Info</span>',
+                    'warning' => '<span class="text-warning-600 dark:text-warning-500">Warning</span>',
+                    'danger' => '<span class="text-danger-600 dark:text-danger-500">Danger</span>',
+                    'success' => '<span class="text-success-600 dark:text-success-500">Success</span>',
+                ])
+                ->allowHtml()
+                ->required()
+                ->visible(fn (Get $get) => $get('ALERT_BANNER_ENABLED'))
+                ->default(env('ALERT_BANNER_STATUS', config('panel.alert_banner.status')))
+                ->native(false),
+            TextInput::make('alert_banner_icon')
+                ->label(trans('admin/setting.alert_banner.icon'))
+                ->visible(fn (Get $get) => $get('ALERT_BANNER_ENABLED'))
+                ->default(env('ALERT_BANNER_ICON', config('panel.alert_banner.icon'))),
         ];
     }
 
@@ -773,29 +806,5 @@ class Settings extends Page implements HasForms
                 ->keyBindings(['mod+s']),
         ];
 
-    }
-
-    public static function boot(): void {
-        parent::boot();
-
-        static::saved(function ($record) {
-            // Update .env file when settings are changed
-            file_put_contents(app()->environmentFilePath(), preg_replace(
-                [
-                    "/^ALERT_BANNER_ACTIVE=.*/m",
-                    "/^ALERT_BANNER_MESSAGE=.*/m",
-                    "/^ALERT_BANNER_COLOR=.*/m",
-                ],
-                [
-                    "ALERT_BANNER_ACTIVE=" . ($record->alert_banner_active ? 'true' : 'false'),
-                    "ALERT_BANNER_MESSAGE='{$record->alert_banner_message}'",
-                    "ALERT_BANNER_COLOR={$record->alert_banner_color}",
-                ],
-                file_get_contents(app()->environmentFilePath())
-            ));
-
-            // Clear config cache
-            Artisan::call('config:clear');
-        });
     }
 }

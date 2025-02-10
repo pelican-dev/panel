@@ -12,6 +12,15 @@ class AlertBannerContainer extends Component
     public function mount(): void
     {
         $this->alertBanners = [];
+        if (config('panel.alert_banner.enabled')) {
+            AlertBanner::make()
+                ->status(config('panel.alert_banner.status'))
+                ->title(config('panel.alert_banner.title'))
+                ->body(config('panel.alert_banner.message'))
+                ->icon(config('panel.alert_banner.icon'))
+                ->closable(config('panel.alert_banner.closeable'))
+                ->send();
+        }
         $this->pullFromSession();
     }
 
