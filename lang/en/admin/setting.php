@@ -2,7 +2,7 @@
 
 return [
     'title' => 'Settings',
-    'saved' => 'Settings saved',
+    'save_success' => 'Settings saved',
     'save_failed' => 'Failed to save Settings',
     'navigation' => [
         'general' => 'General',
