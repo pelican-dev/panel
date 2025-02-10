@@ -6,6 +6,7 @@ use App\Models\Schedule;
 use App\Helpers\Utilities;
 use App\Models\Permission;
 use App\Tests\Integration\Api\Client\ClientApiIntegrationTestCase;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 class UpdateServerScheduleTest extends ClientApiIntegrationTestCase
 {
@@ -24,9 +25,8 @@ class UpdateServerScheduleTest extends ClientApiIntegrationTestCase
 
     /**
      * Test that a schedule can be updated.
-     *
-     * @dataProvider permissionsDataProvider
      */
+    #[DataProvider('permissionsDataProvider')]
     public function testScheduleCanBeUpdated(array $permissions): void
     {
         [$user, $server] = $this->generateTestAccount($permissions);

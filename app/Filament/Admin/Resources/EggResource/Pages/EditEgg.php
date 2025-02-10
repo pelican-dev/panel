@@ -37,98 +37,101 @@ class EditEgg extends EditRecord
         return $form
             ->schema([
                 Tabs::make()->tabs([
-                    Tab::make('Configuration')
+                    Tab::make(trans('admin/egg.tabs.configuration'))
                         ->columns(['default' => 1, 'sm' => 1, 'md' => 2, 'lg' => 4])
                         ->icon('tabler-egg')
                         ->schema([
                             TextInput::make('name')
+                                ->label(trans('admin/egg.name'))
                                 ->required()
                                 ->maxLength(255)
                                 ->columnSpan(['default' => 1, 'sm' => 1, 'md' => 2, 'lg' => 1])
-                                ->helperText('A simple, human-readable name to use as an identifier for this Egg.'),
+                                ->helperText(trans('admin/egg.name_help')),
                             TextInput::make('uuid')
-                                ->label('Egg UUID')
+                                ->label(trans('admin/egg.egg_uuid'))
                                 ->disabled()
                                 ->columnSpan(['default' => 1, 'sm' => 1, 'md' => 1, 'lg' => 2])
-                                ->helperText('This is the globally unique identifier for this Egg which Wings uses as an identifier.'),
+                                ->helperText(trans('admin/egg.uuid_help')),
                             TextInput::make('id')
-                                ->label('Egg ID')
+                                ->label(trans('admin/egg.egg_id'))
                                 ->disabled(),
                             Textarea::make('description')
+                                ->label(trans('admin/egg.description'))
                                 ->rows(3)
                                 ->columnSpan(['default' => 1, 'sm' => 1, 'md' => 2, 'lg' => 2])
-                                ->helperText('A description of this Egg that will be displayed throughout the Panel as needed.'),
+                                ->helperText(trans('admin/egg.description_help')),
                             TextInput::make('author')
+                                ->label(trans('admin/egg.author'))
                                 ->required()
                                 ->maxLength(255)
                                 ->email()
                                 ->disabled()
                                 ->columnSpan(['default' => 1, 'sm' => 1, 'md' => 2, 'lg' => 2])
-                                ->helperText('The author of this version of the Egg. Uploading a new Egg configuration from a different author will change this.'),
+                                ->helperText(trans('admin/egg.author_help_edit')),
                             Textarea::make('startup')
+                                ->label(trans('admin/egg.startup'))
                                 ->rows(3)
                                 ->columnSpanFull()
                                 ->required()
-                                ->helperText('The default startup command that should be used for new servers using this Egg.'),
+                                ->helperText(trans('admin/egg.startup_help')),
                             TagsInput::make('file_denylist')
+                                ->label(trans('admin/egg.file_denylist'))
                                 ->placeholder('denied-file.txt')
-                                ->helperText('A list of files that the end user is not allowed to edit.')
+                                ->helperText(trans('admin/egg.file_denylist_help'))
                                 ->columnSpan(['default' => 1, 'sm' => 1, 'md' => 2, 'lg' => 2]),
                             TagsInput::make('features')
-                                ->placeholder('Add Feature')
-                                ->helperText('')
-                                ->columnSpan(['default' => 1, 'sm' => 1, 'md' => 2, 'lg' => 2]),
+                                ->label(trans('admin/egg.features'))
+                                ->columnSpan(['default' => 1, 'sm' => 1, 'md' => 1, 'lg' => 1]),
                             Toggle::make('force_outgoing_ip')
                                 ->inline(false)
+                                ->label(trans('admin/egg.force_ip'))
                                 ->hintIcon('tabler-question-mark')
-                                ->hintIconTooltip("Forces all outgoing network traffic to have its Source IP NATed to the IP of the server's primary allocation IP.
-                                    Required for certain games to work properly when the Node has multiple public IP addresses.
-                                    Enabling this option will disable internal networking for any servers using this egg, causing them to be unable to internally access other servers on the same node."),
+                                ->hintIconTooltip(trans('admin/egg.force_ip_help')),
                             Hidden::make('script_is_privileged')
                                 ->helperText('The docker images available to servers using this egg.'),
                             TagsInput::make('tags')
-                                ->placeholder('Add Tags')
-                                ->helperText('')
+                                ->label(trans('admin/egg.tags'))
                                 ->columnSpan(['default' => 1, 'sm' => 1, 'md' => 2, 'lg' => 2]),
                             TextInput::make('update_url')
-                                ->label('Update URL')
+                                ->label(trans('admin/egg.update_url'))
                                 ->url()
                                 ->hintIcon('tabler-question-mark')
-                                ->hintIconTooltip('URLs must point directly to the raw .json file.')
+                                ->hintIconTooltip(trans('admin/egg.update_url_help'))
                                 ->columnSpan(['default' => 1, 'sm' => 1, 'md' => 2, 'lg' => 2]),
                             KeyValue::make('docker_images')
+                                ->label(trans('admin/egg.docker_images'))
                                 ->live()
                                 ->columnSpanFull()
                                 ->required()
-                                ->addActionLabel('Add Image')
-                                ->keyLabel('Name')
-                                ->valueLabel('Image URI')
-                                ->helperText('The docker images available to servers using this egg.'),
+                                ->addActionLabel(trans('admin/egg.add_image'))
+                                ->keyLabel(trans('admin/egg.docker_name'))
+                                ->valueLabel(trans('admin/egg.docker_uri'))
+                                ->helperText(trans('admin/egg.docker_help')),
                         ]),
-                    Tab::make('Process Management')
+                    Tab::make(trans('admin/egg.tabs.process_management'))
                         ->columns()
                         ->icon('tabler-server-cog')
                         ->schema([
                             Select::make('config_from')
-                                ->label('Copy Settings From')
-                                ->placeholder('None')
+                                ->label(trans('admin/egg.copy_from'))
+                                ->placeholder(trans('admin/egg.none'))
                                 ->relationship('configFrom', 'name', ignoreRecord: true)
-                                ->helperText('If you would like to default to settings from another Egg select it from the menu above.'),
+                                ->helperText(trans('admin/egg.copy_from_help')),
                             TextInput::make('config_stop')
+                                ->label(trans('admin/egg.stop_command'))
                                 ->maxLength(255)
-                                ->label('Stop Command')
-                                ->helperText('The command that should be sent to server processes to stop them gracefully. If you need to send a SIGINT you should enter ^C here.'),
+                                ->helperText(trans('admin/egg.stop_command_help')),
                             Textarea::make('config_startup')->rows(10)->json()
-                                ->label('Start Configuration')
-                                ->helperText('List of values the daemon should be looking for when booting a server to determine completion.'),
+                                ->label(trans('admin/egg.start_config'))
+                                ->helperText(trans('admin/egg.start_config_help')),
                             Textarea::make('config_files')->rows(10)->json()
-                                ->label('Configuration Files')
-                                ->helperText('This should be a JSON representation of configuration files to modify and what parts should be changed.'),
+                                ->label(trans('admin/egg.config_files'))
+                                ->helperText(trans('admin/egg.config_files_help')),
                             Textarea::make('config_logs')->rows(10)->json()
-                                ->label('Log Configuration')
-                                ->helperText('This should be a JSON representation of where log files are stored, and whether or not the daemon should be creating custom logs.'),
+                                ->label(trans('admin/egg.log_config'))
+                                ->helperText(trans('admin/egg.log_config_help')),
                         ]),
-                    Tab::make('Egg Variables')
+                    Tab::make(trans('admin/egg.tabs.egg_variables'))
                         ->columnSpanFull()
                         ->icon('tabler-variable')
                         ->schema([
@@ -140,7 +143,7 @@ class EditEgg extends EditRecord
                                 ->reorderable()
                                 ->collapsible()->collapsed()
                                 ->orderColumn()
-                                ->addActionLabel('New Variable')
+                                ->addActionLabel(trans('admin/egg.add_new_variable'))
                                 ->itemLabel(fn (array $state) => $state['name'])
                                 ->mutateRelationshipDataBeforeCreateUsing(function (array $data): array {
                                     $data['default_value'] ??= '';
@@ -162,6 +165,7 @@ class EditEgg extends EditRecord
                                 })
                                 ->schema([
                                     TextInput::make('name')
+                                        ->label(trans('admin/egg.name'))
                                         ->live()
                                         ->debounce(750)
                                         ->maxLength(255)
@@ -169,12 +173,12 @@ class EditEgg extends EditRecord
                                         ->afterStateUpdated(fn (Set $set, $state) => $set('env_variable', str($state)->trim()->snake()->upper()->toString()))
                                         ->unique(modifyRuleUsing: fn (Unique $rule, Get $get) => $rule->where('egg_id', $get('../../id')), ignoreRecord: true)
                                         ->validationMessages([
-                                            'unique' => 'A variable with this name already exists.',
+                                            'unique' => trans('admin/egg.error_unique'),
                                         ])
                                         ->required(),
-                                    Textarea::make('description')->columnSpanFull(),
+                                    Textarea::make('description')->label(trans('admin/egg.description'))->columnSpanFull(),
                                     TextInput::make('env_variable')
-                                        ->label('Environment Variable')
+                                        ->label(trans('admin/egg.environment_variable'))
                                         ->maxLength(255)
                                         ->prefix('{{')
                                         ->suffix('}}')
@@ -183,20 +187,20 @@ class EditEgg extends EditRecord
                                         ->unique(modifyRuleUsing: fn (Unique $rule, Get $get) => $rule->where('egg_id', $get('../../id')), ignoreRecord: true)
                                         ->rules(EggVariable::$validationRules['env_variable'])
                                         ->validationMessages([
-                                            'unique' => 'A variable with this name already exists.',
-                                            'required' => ' The environment variable field is required.',
-                                            '*' => 'This environment variable is reserved and cannot be used.',
+                                            'unique' => trans('admin/egg.error_unique'),
+                                            'required' => trans('admin/egg.error_required'),
+                                            '*' => trans('admin/egg.error_reserved'),
                                         ])
                                         ->required(),
-                                    TextInput::make('default_value')->maxLength(255),
-                                    Fieldset::make('User Permissions')
+                                    TextInput::make('default_value')->label(trans('admin/egg.default_value'))->maxLength(255),
+                                    Fieldset::make(trans('admin/egg.user_permissions'))
                                         ->schema([
-                                            Checkbox::make('user_viewable')->label('Viewable'),
-                                            Checkbox::make('user_editable')->label('Editable'),
+                                            Checkbox::make('user_viewable')->label(trans('admin/egg.viewable')),
+                                            Checkbox::make('user_editable')->label(trans('admin/egg.editable')),
                                         ]),
                                     TagsInput::make('rules')
+                                        ->label(trans('admin/egg.rules'))
                                         ->columnSpanFull()
-                                        ->placeholder('Add Rule')
                                         ->reorderable()
                                         ->suggestions([
                                             'required',
@@ -220,23 +224,26 @@ class EditEgg extends EditRecord
                                         ]),
                                 ]),
                         ]),
-                    Tab::make('Install Script')
+                    Tab::make(trans('admin/egg.tabs.install_script'))
                         ->columns(3)
                         ->icon('tabler-file-download')
                         ->schema([
                             Select::make('copy_script_from')
-                                ->placeholder('None')
+                                ->label(trans('admin/egg.script_from'))
+                                ->placeholder(trans('admin/egg.none'))
                                 ->relationship('scriptFrom', 'name', ignoreRecord: true),
                             TextInput::make('script_container')
+                                ->label(trans('admin/egg.script_container'))
                                 ->required()
                                 ->maxLength(255)
                                 ->default('alpine:3.4'),
                             TextInput::make('script_entry')
+                                ->label(trans('admin/egg.script_entry'))
                                 ->required()
                                 ->maxLength(255)
                                 ->default('ash'),
                             MonacoEditor::make('script_install')
-                                ->label('Install Script')
+                                ->label(trans('admin/egg.script_install'))
                                 ->placeholderText('')
                                 ->columnSpanFull()
                                 ->fontSize('16px')
@@ -252,7 +259,7 @@ class EditEgg extends EditRecord
         return [
             DeleteAction::make()
                 ->disabled(fn (Egg $egg): bool => $egg->servers()->count() > 0)
-                ->label(fn (Egg $egg): string => $egg->servers()->count() <= 0 ? trans('filament-actions::delete.single.label') : 'In Use'),
+                ->label(fn (Egg $egg): string => $egg->servers()->count() <= 0 ? trans('filament-actions::delete.single.label') : trans('admin/egg.in_use')),
             ExportEggAction::make(),
             ImportEggAction::make(),
             $this->getSaveFormAction()->formId('form'),

@@ -67,12 +67,11 @@ class EditProfile extends BaseEditProfile
                     ->schema([
                         Tabs::make()->persistTabInQueryString()
                             ->schema([
-                                Tab::make('Account')
-                                    ->label(trans('strings.account'))
+                                Tab::make(trans('profile.tabs.account'))
                                     ->icon('tabler-user')
                                     ->schema([
                                         TextInput::make('username')
-                                            ->label(trans('strings.username'))
+                                            ->label(trans('profile.username'))
                                             ->disabled()
                                             ->readOnly()
                                             ->dehydrated(false)
@@ -81,13 +80,13 @@ class EditProfile extends BaseEditProfile
                                             ->autofocus(),
                                         TextInput::make('email')
                                             ->prefixIcon('tabler-mail')
-                                            ->label(trans('strings.email'))
+                                            ->label(trans('profile.email'))
                                             ->email()
                                             ->required()
                                             ->maxLength(255)
                                             ->unique(ignoreRecord: true),
                                         TextInput::make('password')
-                                            ->label(trans('strings.password'))
+                                            ->label(trans('profile.password'))
                                             ->password()
                                             ->prefixIcon('tabler-password')
                                             ->revealable(filament()->arePasswordsRevealable())
@@ -98,7 +97,7 @@ class EditProfile extends BaseEditProfile
                                             ->live(debounce: 500)
                                             ->same('passwordConfirmation'),
                                         TextInput::make('passwordConfirmation')
-                                            ->label(trans('strings.password_confirmation'))
+                                            ->label(trans('profile.password_confirmation'))
                                             ->password()
                                             ->prefixIcon('tabler-password-fingerprint')
                                             ->revealable(filament()->arePasswordsRevealable())
@@ -106,25 +105,22 @@ class EditProfile extends BaseEditProfile
                                             ->visible(fn (Get $get): bool => filled($get('password')))
                                             ->dehydrated(false),
                                         Select::make('timezone')
+                                            ->label(trans('profile.timezone'))
                                             ->required()
                                             ->prefixIcon('tabler-clock-pin')
                                             ->options(fn () => collect(DateTimeZone::listIdentifiers())->mapWithKeys(fn ($tz) => [$tz => $tz]))
                                             ->searchable(),
                                         Select::make('language')
-                                            ->label(trans('strings.language'))
+                                            ->label(trans('profile.language'))
                                             ->required()
                                             ->prefixIcon('tabler-flag')
                                             ->live()
                                             ->default('en')
-                                            ->helperText(fn ($state, LanguageService $languageService) => new HtmlString($languageService->isLanguageTranslated($state) ? '' : "
-                                                Your language ($state) has not been translated yet!
-                                                But never fear, you can help fix that by
-                                                <a style='color: rgb(56, 189, 248)' href='https://crowdin.com/project/pelican-dev'>contributing directly here</a>.
-                                            "))
+                                            ->helperText(fn ($state, LanguageService $languageService) => new HtmlString($languageService->isLanguageTranslated($state) ? '' : trans('profile.language_help', ['state' => $state])))
                                             ->options(fn (LanguageService $languageService) => $languageService->getAvailableLanguages()),
                                     ]),
 
-                                Tab::make('OAuth')
+                                Tab::make(trans('profile.tabs.oauth'))
                                     ->icon('tabler-brand-oauth')
                                     ->visible(function () {
                                         $oauthProviders = OAuthProvider::get();
@@ -151,7 +147,7 @@ class EditProfile extends BaseEditProfile
                                             $unlink = array_key_exists($id, $this->getUser()->oauth ?? []);
 
                                             $actions[] = Action::make("oauth_$id")
-                                                ->label(($unlink ? 'Unlink ' : 'Link ') . $name)
+                                                ->label(($unlink ? trans('profile.unlink') : trans('profile.link')) . $name)
                                                 ->icon($unlink ? 'tabler-unlink' : 'tabler-link')
                                                 ->color(Color::hex($oauthProvider->getHexColor()))
                                                 ->action(function (UserUpdateService $updateService) use ($id, $name, $unlink) {
@@ -164,11 +160,11 @@ class EditProfile extends BaseEditProfile
                                                         $this->fillForm();
 
                                                         Notification::make()
-                                                            ->title("OAuth provider '$name' unlinked")
+                                                            ->title(trans('profile.unlinked', ['name' => $name]))
                                                             ->success()
                                                             ->send();
                                                     } else {
-                                                        redirect(Socialite::with($name)->redirect()->getTargetUrl());
+                                                        redirect(Socialite::with($id)->redirect()->getTargetUrl());
                                                     }
                                                 });
                                         }
@@ -176,24 +172,24 @@ class EditProfile extends BaseEditProfile
                                         return [Actions::make($actions)];
                                     }),
 
-                                Tab::make('2FA')
+                                Tab::make(trans('profile.tabs.2fa'))
                                     ->icon('tabler-shield-lock')
                                     ->schema(function (TwoFactorSetupService $setupService) {
                                         if ($this->getUser()->use_totp) {
                                             return [
                                                 Placeholder::make('2fa-already-enabled')
-                                                    ->label('Two Factor Authentication is currently enabled!'),
+                                                    ->label(trans('profile.2fa_enabled')),
                                                 Textarea::make('backup-tokens')
                                                     ->hidden(fn () => !cache()->get("users.{$this->getUser()->id}.2fa.tokens"))
                                                     ->rows(10)
                                                     ->readOnly()
                                                     ->dehydrated(false)
                                                     ->formatStateUsing(fn () => cache()->get("users.{$this->getUser()->id}.2fa.tokens"))
-                                                    ->helperText('These will not be shown again!')
-                                                    ->label('Backup Tokens:'),
+                                                    ->helperText(trans('profile.backup_help'))
+                                                    ->label(trans('profile.backup_codes')),
                                                 TextInput::make('2fa-disable-code')
-                                                    ->label('Disable 2FA')
-                                                    ->helperText('Enter your current 2FA code to disable Two Factor Authentication'),
+                                                    ->label(trans('profile.disable_2fa'))
+                                                    ->helperText(trans('profile.disable_2fa_help')),
                                             ];
                                         }
 
@@ -236,39 +232,40 @@ class EditProfile extends BaseEditProfile
 
                                         return [
                                             Placeholder::make('qr')
-                                                ->label('Scan QR Code')
+                                                ->label(trans('profile.scan_qr'))
                                                 ->content(fn () => new HtmlString("
                                                 <div style='width: 300px; background-color: rgb(24, 24, 27);'>$image</div>
                                             "))
-                                                ->helperText('Setup Key: ' . $secret),
+                                                ->helperText(trans('profile.setup_key') .': '. $secret),
                                             TextInput::make('2facode')
-                                                ->label('Code')
+                                                ->label(trans('profile.code'))
                                                 ->requiredWith('2fapassword')
-                                                ->helperText('Scan the QR code above using your two-step authentication app, then enter the code generated.'),
+                                                ->helperText(trans('profile.code_help')),
                                             TextInput::make('2fapassword')
-                                                ->label('Current Password')
+                                                ->label(trans('profile.current_password'))
                                                 ->requiredWith('2facode')
                                                 ->currentPassword()
-                                                ->password()
-                                                ->helperText('Enter your current password to verify.'),
+                                                ->password(),
                                         ];
                                     }),
-                                Tab::make('API Keys')
+                                Tab::make(trans('profile.tabs.api_keys'))
                                     ->icon('tabler-key')
                                     ->schema([
-                                        Grid::make('asdf')->columns(5)->schema([
-                                            Section::make('Create API Key')->columnSpan(3)->schema([
+                                        Grid::make('name')->columns(5)->schema([
+                                            Section::make(trans('profile.create_key'))->columnSpan(3)->schema([
                                                 TextInput::make('description')
+                                                    ->label(trans('profile.description'))
                                                     ->live(),
                                                 TagsInput::make('allowed_ips')
+                                                    ->label(trans('profile.allowed_ips'))
                                                     ->live()
                                                     ->splitKeys([',', ' ', 'Tab'])
-                                                    ->placeholder('Example: 127.0.0.1 or 192.168.1.1')
-                                                    ->label('Whitelisted IP\'s')
-                                                    ->helperText('Press enter to add a new IP address or leave blank to allow any IP address')
+                                                    ->placeholder('127.0.0.1 or 192.168.1.1')
+                                                    ->helperText(trans('profile.allowed_ips_help'))
                                                     ->columnSpanFull(),
                                             ])->headerActions([
                                                 Action::make('Create')
+                                                    ->label(trans('filament-actions::create.single.modal.actions.create.label'))
                                                     ->disabled(fn (Get $get) => $get('description') === null)
                                                     ->successRedirectUrl(self::getUrl(['tab' => '-api-keys-tab']))
                                                     ->action(function (Get $get, Action $action, User $user) {
@@ -283,7 +280,7 @@ class EditProfile extends BaseEditProfile
                                                             ->log();
 
                                                         Notification::make()
-                                                            ->title('API Key created')
+                                                            ->title(trans('profile.key_created'))
                                                             ->body($token->accessToken->identifier . $token->plainTextToken)
                                                             ->persistent()
                                                             ->success()
@@ -292,7 +289,7 @@ class EditProfile extends BaseEditProfile
                                                         $action->success();
                                                     }),
                                             ]),
-                                            Section::make('Keys')->columnSpan(2)->schema([
+                                            Section::make(trans('profile.keys'))->label(trans('profile.keys'))->columnSpan(2)->schema([
                                                 Repeater::make('keys')
                                                     ->label('')
                                                     ->relationship('apiKeys')
@@ -317,15 +314,14 @@ class EditProfile extends BaseEditProfile
                                             ]),
                                         ]),
                                     ]),
-                                Tab::make('SSH Keys')
+                                Tab::make(trans('profile.tabs.ssh_keys'))
                                     ->icon('tabler-lock-code')
-                                    ->schema([
-                                        Placeholder::make('Coming soon!'),
-                                    ]),
-                                Tab::make('Activity')
+                                    ->hidden(),
+                                Tab::make(trans('profile.tabs.activity'))
                                     ->icon('tabler-history')
                                     ->schema([
                                         Repeater::make('activity')
+                                            ->label('')
                                             ->deletable(false)
                                             ->addable(false)
                                             ->relationship(null, function (Builder $query) {
@@ -363,7 +359,7 @@ class EditProfile extends BaseEditProfile
                 $this->toggleTwoFactorService->handle($record, $token, false);
             } catch (TwoFactorAuthenticationTokenInvalid $exception) {
                 Notification::make()
-                    ->title('Invalid 2FA Code')
+                    ->title(trans('profile.invalid_code'))
                     ->body($exception->getMessage())
                     ->color('danger')
                     ->icon('tabler-2fa')

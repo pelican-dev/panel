@@ -13,6 +13,7 @@ use App\Jobs\Schedule\RunTaskJob;
 use App\Tests\Integration\IntegrationTestCase;
 use App\Repositories\Daemon\DaemonPowerRepository;
 use Illuminate\Http\Client\ConnectionException;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 class RunTaskJobTest extends IntegrationTestCase
 {
@@ -62,9 +63,7 @@ class RunTaskJobTest extends IntegrationTestCase
         Bus::dispatchSync($job);
     }
 
-    /**
-     * @dataProvider isManualRunDataProvider
-     */
+    #[DataProvider('isManualRunDataProvider')]
     public function testJobIsExecuted(bool $isManualRun): void
     {
         $server = $this->createServerModel();
@@ -103,9 +102,7 @@ class RunTaskJobTest extends IntegrationTestCase
         $this->assertTrue(CarbonImmutable::now()->isSameAs(\DateTimeInterface::ATOM, $schedule->last_run_at));
     }
 
-    /**
-     * @dataProvider isManualRunDataProvider
-     */
+    #[DataProvider('isManualRunDataProvider')]
     public function testExceptionDuringRunIsHandledCorrectly(bool $continueOnFailure): void
     {
         $server = $this->createServerModel();

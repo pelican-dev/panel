@@ -5,6 +5,7 @@ namespace App\Tests\Integration;
 use Carbon\CarbonImmutable;
 use Carbon\CarbonInterface;
 use App\Tests\TestCase;
+use Illuminate\Foundation\Testing\DatabaseTruncation;
 use Illuminate\Support\Facades\Event;
 use App\Events\ActivityLogged;
 use App\Tests\Assertions\AssertsActivityLogged;
@@ -16,6 +17,9 @@ abstract class IntegrationTestCase extends TestCase
 {
     use AssertsActivityLogged;
     use CreatesTestModels;
+    use DatabaseTruncation;
+
+    protected $seed = true;
 
     protected $defaultHeaders = [
         'Accept' => 'application/json',
