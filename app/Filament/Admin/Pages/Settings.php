@@ -56,6 +56,8 @@ class Settings extends Page implements HasForms
     public function mount(): void
     {
         $this->form->fill();
+        $this->data['alert_banner_message_length'] = strlen($this->data['alert_banner_message'] ?? '');
+        $this->data['alert_banner_title_length'] = strlen($this->data['alert_banner_title'] ?? '');
     }
 
     public static function canAccess(): bool
@@ -244,17 +246,21 @@ class Settings extends Page implements HasForms
                 ->visible(fn (Get $get) => $get('ALERT_BANNER_ENABLED'))
                 ->default(env('ALERT_BANNER_CLOSEABLE', config('panel.alert_banner.closeable'))),
             TextInput::make('alert_banner_title')
-                ->label(trans('admin/setting.alert_banner.title'))
+                ->label(fn (Get $get) => trans('admin/setting.alert_banner.title') . " ({$get('alert_banner_title_length')}/32 characters)")
                 ->required()
                 ->maxLength(32)
                 ->visible(fn (Get $get) => $get('ALERT_BANNER_ENABLED'))
-                ->default(env('ALERT_BANNER_TITLE', config('panel.alert_banner.title'))),
+                ->default(env('ALERT_BANNER_TITLE', config('panel.alert_banner.title')))
+                ->reactive()
+                ->afterStateUpdated(fn ($state, Set $set) => $set('alert_banner_title_length', strlen($state))),
             TextArea::make('alert_banner_message')
-                ->label(trans('admin/setting.alert_banner.message'))
+                ->label(fn (Get $get) => trans('admin/setting.alert_banner.message') . " ({$get('alert_banner_message_length')}/114 characters)")
                 ->required()
                 ->maxLength(114)
                 ->visible(fn (Get $get) => $get('ALERT_BANNER_ENABLED'))
-                ->default(env('ALERT_BANNER_MESSAGE', config('panel.alert_banner.message'))),
+                ->default(env('ALERT_BANNER_MESSAGE', config('panel.alert_banner.message')))
+                ->reactive()
+                ->afterStateUpdated(fn ($state, Set $set) => $set('alert_banner_message_length', strlen($state))),
             Select::make('alert_banner_status')
                 ->label(trans('admin/setting.alert_banner.status'))
                 ->options([
