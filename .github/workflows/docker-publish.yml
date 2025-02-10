@@ -7,7 +7,6 @@ on:
   release:
     types:
       - published
-  workflow_dispatch:
 
 env:
   REGISTRY: ghcr.io
@@ -16,7 +15,7 @@ env:
 jobs:
   build-php-base:
     name: Build PHP base image on ${{ matrix.os }}
-    runs-on: ${{ matrix.os}}
+    runs-on: ${{ matrix.os }}
     permissions:
       contents: read
       packages: write
