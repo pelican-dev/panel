@@ -513,8 +513,6 @@ class Settings extends Page implements HasForms
                                     "OAUTH_{$id}_ENABLED" => 'true',
                                 ], $data);
 
-                                $data = array_filter($data, fn ($value) => !Str::startsWith($value, '_noenv'));
-
                                 foreach ($data as $key => $value) {
                                     $set($key, $value);
                                 }

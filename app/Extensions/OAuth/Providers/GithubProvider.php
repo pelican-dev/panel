@@ -25,6 +25,7 @@ final class GithubProvider extends OAuthProvider
                         ->content(new HtmlString('<p>Visit the <u><a href="https://github.com/settings/developers" target="_blank">Github Developer Dashboard</a></u>, go to <b>OAuth Apps</b> and click on <b>New OAuth App</b>.</p><p>Enter an <b>Application name</b> (e.g. your panel name), set <b>Homepage URL</b> to your panel url and enter the below url as <b>Authorization callback URL</b>.</p>')),
                     TextInput::make('_noenv_callback')
                         ->label('Authorization callback URL')
+                        ->dehydrated()
                         ->disabled()
                         ->hintAction(fn () => request()->isSecure() ? CopyAction::make() : null)
                         ->default(fn () => config('app.url') . (Str::endsWith(config('app.url'), '/') ? '' : '/') . 'auth/oauth/callback/github'),

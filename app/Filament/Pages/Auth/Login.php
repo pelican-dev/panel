@@ -58,11 +58,9 @@ class Login extends BaseLogin
     {
         $actions = [];
 
-        $oauthProviders = OAuthProvider::get();
+        $oauthProviders = collect(OAuthProvider::get())->filter(fn (OAuthProvider $provider) => $provider->isEnabled())->all();
+
         foreach ($oauthProviders as $oauthProvider) {
-            if (!$oauthProvider->isEnabled()) {
-                continue;
-            }
 
             $id = $oauthProvider->getId();
 
