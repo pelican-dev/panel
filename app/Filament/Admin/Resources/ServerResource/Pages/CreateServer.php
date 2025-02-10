@@ -139,21 +139,21 @@ class CreateServer extends CreateRecord
                                 ->getOptionLabelFromRecordUsing(fn (User $user) => "$user->email | $user->username " . (blank($user->roles) ? '' : '(' . $user->roles->first()->name . ')'))
                                 ->createOptionForm([
                                     TextInput::make('username')
-                                        ->label(trans('admin/user.edit.username'))
+                                        ->label(trans('admin/user.username'))
                                         ->alphaNum()
                                         ->required()
                                         ->minLength(3)
                                         ->maxLength(255),
 
                                     TextInput::make('email')
-                                        ->label(trans('admin/user.edit.email'))
+                                        ->label(trans('admin/user.email'))
                                         ->email()
                                         ->required()
                                         ->unique()
                                         ->maxLength(255),
 
                                     TextInput::make('password')
-                                        ->label(trans('admin/user.edit.password'))
+                                        ->label(trans('admin/user.password'))
                                         ->hintIcon('tabler-question-mark')
                                         ->hintIconTooltip(trans('admin/user.password_help'))
                                         ->password(),
