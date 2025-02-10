@@ -18,6 +18,7 @@ use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Tabs;
 use Filament\Forms\Components\Tabs\Tab;
 use Filament\Forms\Components\TagsInput;
+use Filament\Forms\Components\TextArea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Components\ToggleButtons;
@@ -245,11 +246,13 @@ class Settings extends Page implements HasForms
             TextInput::make('alert_banner_title')
                 ->label(trans('admin/setting.alert_banner.title'))
                 ->required()
+                ->maxLength(32)
                 ->visible(fn (Get $get) => $get('ALERT_BANNER_ENABLED'))
                 ->default(env('ALERT_BANNER_TITLE', config('panel.alert_banner.title'))),
-            TextInput::make('alert_banner_message')
+            TextArea::make('alert_banner_message')
                 ->label(trans('admin/setting.alert_banner.message'))
                 ->required()
+                ->maxLength(114)
                 ->visible(fn (Get $get) => $get('ALERT_BANNER_ENABLED'))
                 ->default(env('ALERT_BANNER_MESSAGE', config('panel.alert_banner.message'))),
             Select::make('alert_banner_status')
