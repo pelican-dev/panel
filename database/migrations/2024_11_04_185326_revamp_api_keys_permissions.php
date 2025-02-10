@@ -22,7 +22,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('api_keys', function (Blueprint $table) {
-            $table->json('permissions');
+            $table->json('permissions')->default('[]');
         });
 
         foreach (ApiKey::all() as $apiKey) {
@@ -72,7 +72,7 @@ return new class extends Migration
             $table->unsignedTinyInteger('r_mounts')->default(0);
         });
 
-        foreach (ApiKey::query() as $apiKey) {
+        foreach (ApiKey::all() as $apiKey) {
             DB::table('api_keys')
                 ->where('id', $apiKey->id)
                 ->update([
