@@ -2,20 +2,9 @@
 # Pelican Production Dockerfile
 
 # ================================
-# Stage 1: Build PHP Base Image
+# Stage 1-1: Composer Install
 # ================================
-FROM --platform=$TARGETOS/$TARGETARCH php:8.3-fpm-alpine AS base
-
-ADD --chmod=0755 https://github.com/mlocati/docker-php-extension-installer/releases/latest/download/install-php-extensions /usr/local/bin/
-
-RUN install-php-extensions bcmath gd intl zip opcache pcntl posix pdo_mysql
-
-RUN rm /usr/local/bin/install-php-extensions
-
-# ================================
-# Stage 2-1: Composer Install
-# ================================
-FROM --platform=$TARGETOS/$TARGETARCH base AS composer
+FROM --platform=$TARGETOS/$TARGETARCH localhost:5000/base-php:$TARGETARCH AS composer
 
 WORKDIR /build
 
@@ -27,7 +16,7 @@ COPY composer.json composer.lock ./
 RUN composer install --no-dev --no-interaction --no-autoloader --no-scripts
 
 # ================================
-# Stage 2-2: Yarn Install
+# Stage 1-2: Yarn Install
 # ================================
 FROM --platform=$TARGETOS/$TARGETARCH node:20-alpine AS yarn
 
@@ -40,7 +29,7 @@ RUN yarn config set network-timeout 300000 \
     && yarn install --frozen-lockfile
 
 # ================================
-# Stage 3-1: Composer Optimize
+# Stage 2-1: Composer Optimize
 # ================================
 FROM --platform=$TARGETOS/$TARGETARCH composer AS composerbuild
 
@@ -50,7 +39,7 @@ COPY --exclude=Caddyfile --exclude=docker/ . ./
 RUN composer dump-autoload --optimize
 
 # ================================
-# Stage 3-2: Build Frontend Assets
+# Stage 2-2: Build Frontend Assets
 # ================================
 FROM --platform=$TARGETOS/$TARGETARCH yarn AS yarnbuild
 
@@ -63,9 +52,9 @@ COPY --from=composer /build .
 RUN yarn run build
 
 # ================================
-# Stage 4: Build Final Application Image
+# Stage 5: Build Final Application Image
 # ================================
-FROM --platform=$TARGETOS/$TARGETARCH base AS final
+FROM --platform=$TARGETOS/$TARGETARCH localhost:5000/base-php:$TARGETARCH AS final
 
 WORKDIR /var/www/html
 
