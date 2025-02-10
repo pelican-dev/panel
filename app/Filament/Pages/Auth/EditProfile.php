@@ -116,7 +116,7 @@ class EditProfile extends BaseEditProfile
                                             ->prefixIcon('tabler-flag')
                                             ->live()
                                             ->default('en')
-                                            ->helperText(fn ($state, LanguageService $languageService) => new HtmlString($languageService->isLanguageTranslated($state) ? '' : trans('profile.language_helper', ['state' => $state])))
+                                            ->helperText(fn ($state, LanguageService $languageService) => new HtmlString($languageService->isLanguageTranslated($state) ? '' : trans('profile.language_help', ['state' => $state])))
                                             ->options(fn (LanguageService $languageService) => $languageService->getAvailableLanguages()),
                                     ]),
 

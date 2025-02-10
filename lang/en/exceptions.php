@@ -55,4 +55,7 @@ return [
     'mount' => [
         'servers_attached' => 'A mount must have no servers attached to it in order to be deleted.',
     ],
+    'server' => [
+        'marked_as_failed' => 'This server has not yet completed its installation process, please try again later.',
+    ],
 ];

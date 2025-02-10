@@ -95,6 +95,7 @@ return [
     'change_egg' => 'Change Egg',
     'new_egg' => 'New Egg',
     'keep_old_variables' => 'Keep old variables if possible?',
+    'create_allocation' => 'Create Allocation',
     'add_allocation' => 'Add Allocation',
     'view' => 'View',
     'tabs' => [

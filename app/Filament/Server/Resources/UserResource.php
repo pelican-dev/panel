@@ -458,7 +458,7 @@ class UserResource extends Resource
                                                             ->descriptions([
                                                                 'rename' => trans('server/users.permissions.setting_rename'),
                                                                 'reinstall' => trans('server/users.permissions.setting_reinstall'),
-                                                                'activity' => trans('server/users.permissions.setting_activity'),
+                                                                'activity' => trans('server/users.permissions.activity_desc'),
                                                             ]),
                                                     ]),
                                             ]),
