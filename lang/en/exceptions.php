@@ -57,5 +57,5 @@ return [
     ],
     'server' => [
         'marked_as_failed' => 'This server has not yet completed its installation process, please try again later.',
-    ]
+    ],
 ];
