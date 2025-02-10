@@ -51,8 +51,8 @@ class ListServers extends ListRecords
     public function getTabs(): array
     {
         $all = auth()->user()->accessibleServers();
-        $my = (clone $all)->where('owner_id', auth()->user()->id);
-        $other = (clone $all)->whereNot('owner_id', auth()->user()->id);
+        $my = (clone $all)->where('owner_id', auth()->id());
+        $other = (clone $all)->whereNot('owner_id', auth()->id());
 
         return [
             'my' => Tab::make('My Servers')

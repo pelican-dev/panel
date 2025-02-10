@@ -39,7 +39,7 @@ class CreateApiKey extends CreateRecord
                 Hidden::make('token')->default(str_random(ApiKey::KEY_LENGTH)),
 
                 Hidden::make('user_id')
-                    ->default(auth()->user()->id)
+                    ->default(auth()->id())
                     ->required(),
 
                 Hidden::make('key_type')

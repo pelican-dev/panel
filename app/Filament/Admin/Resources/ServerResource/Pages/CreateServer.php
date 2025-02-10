@@ -127,7 +127,7 @@ class CreateServer extends CreateRecord
                             Select::make('owner_id')
                                 ->preload()
                                 ->prefixIcon('tabler-user')
-                                ->default(auth()->user()->id)
+                                ->default(auth()->id())
                                 ->label(trans('admin/server.owner'))
                                 ->columnSpan([
                                     'default' => 1,

@@ -41,7 +41,7 @@ class EditUser extends EditRecord
                     Hidden::make('skipValidation')
                         ->default(true),
                     CheckboxList::make('roles')
-                        ->disabled(fn (User $user) => $user->id === auth()->user()->id)
+                        ->disabled(fn (User $user) => $user->id === auth()->id())
                         ->disableOptionWhen(fn (string $value): bool => $value == Role::getRootAdmin()->id)
                         ->relationship('roles', 'name')
                         ->label(trans('admin/user.admin_roles'))
@@ -56,8 +56,8 @@ class EditUser extends EditRecord
     {
         return [
             DeleteAction::make()
-                ->label(fn (User $user) => auth()->user()->id === $user->id ? trans('admin/user.self_delete') : ($user->servers()->count() > 0 ? trans('admin/user.has_servers') : trans('filament-actions::delete.single.modal.actions.delete.label')))
-                ->disabled(fn (User $user) => auth()->user()->id === $user->id || $user->servers()->count() > 0),
+                ->label(fn (User $user) => auth()->id() === $user->id ? trans('admin/user.self_delete') : ($user->servers()->count() > 0 ? trans('admin/user.has_servers') : trans('filament-actions::delete.single.modal.actions.delete.label')))
+                ->disabled(fn (User $user) => auth()->id() === $user->id || $user->servers()->count() > 0),
             $this->getSaveFormAction()->formId('form'),
         ];
     }
