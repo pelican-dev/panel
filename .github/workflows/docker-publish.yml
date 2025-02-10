@@ -43,7 +43,6 @@ jobs:
           file: ./Dockerfile.base
           push: false
           load: true
-          provenance: false
           platforms: ${{ matrix.platform }}
           tags: base-php:${{ matrix.arch }}
           cache-from: type=gha,scope=tagged-base-php${{ matrix.arch }}
