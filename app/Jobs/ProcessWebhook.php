@@ -3,8 +3,6 @@
 namespace App\Jobs;
 
 use App\Models\WebhookConfiguration;
-use GuzzleHttp\Client;
-use GuzzleHttp\Exception\GuzzleException;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -18,16 +16,14 @@ class ProcessWebhook implements ShouldQueue
 
     public function __construct(
         private WebhookConfiguration $webhookConfiguration,
-        private string               $eventName,
-        private array                $data
-    )
-    {
-    }
+        private string $eventName,
+        private array $data
+    ) {}
 
     public function handle(): void
     {
         try {
-            Http::withHeader("X-Webhook-Event", $this->eventName)
+            Http::withHeader('X-Webhook-Event', $this->eventName)
                 ->post($this->webhookConfiguration->endpoint, $this->data)
                 ->throw();
             $successful = now();

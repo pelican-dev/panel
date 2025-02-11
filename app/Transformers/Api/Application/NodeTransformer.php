@@ -32,10 +32,10 @@ class NodeTransformer extends BaseTransformer
             ->mapWithKeys(fn ($value, $key) => [snake_case($key) => $value])
             ->toArray();
 
-        if ($node->updated_at != null){
+        if ($node->updated_at != null) {
             $response[$node->getUpdatedAtColumn()] = $this->formatTimestamp($node->updated_at);
         }
-        if($node->created_at != null){
+        if ($node->created_at != null) {
             $response[$node->getCreatedAtColumn()] = $this->formatTimestamp($node->created_at);
         }
 

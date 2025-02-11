@@ -4,7 +4,6 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
-use App\Services\Users\UserUpdateService;
 use Filament\Notifications\Notification;
 use GuzzleHttp\Client;
 use Illuminate\Auth\AuthManager;
@@ -13,7 +12,6 @@ use Illuminate\Http\Request;
 
 class SearcadeController extends Controller
 {
-
     public function __construct(
         private readonly AuthManager $auth
     ) {}
@@ -31,9 +29,9 @@ class SearcadeController extends Controller
 
         try {
             $client = new Client();
-            $response = $client->post("https://searcade.com/api/pelican/auth", ["json" => [
-                "token" => $token,
-                "ip" => $request->getClientIp()
+            $response = $client->post('https://searcade.com/api/pelican/auth', ['json' => [
+                'token' => $token,
+                'ip' => $request->getClientIp(),
             ]]);
             $json = json_decode($response->getBody(), true);
 
@@ -53,5 +51,4 @@ class SearcadeController extends Controller
 
         return redirect('/');
     }
-
 }
