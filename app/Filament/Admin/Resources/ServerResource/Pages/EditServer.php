@@ -507,7 +507,7 @@ class EditServer extends EditRecord
                                     ->required()
                                     ->hintAction(
                                         Action::make('change_egg')
-                                            ->label('admin/server.change_egg')
+                                            ->label(trans('admin/server.change_egg'))
                                             ->action(function (array $data, Server $server, EggChangerService $service) {
                                                 $service->handle($server, $data['egg_id'], $data['keepOldVariables']);
 
