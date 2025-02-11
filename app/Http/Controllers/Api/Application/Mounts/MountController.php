@@ -5,7 +5,6 @@ namespace App\Http\Controllers\Api\Application\Mounts;
 use Ramsey\Uuid\Uuid;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Contracts\Translation\Translator;
 use Spatie\QueryBuilder\QueryBuilder;
 use App\Models\Mount;
 use App\Http\Controllers\Api\Application\ApplicationApiController;
@@ -18,15 +17,6 @@ use App\Exceptions\Service\HasActiveServersException;
 
 class MountController extends ApplicationApiController
 {
-    /**
-     * MountController constructor.
-     */
-    public function __construct(
-        protected Translator $translator
-    ) {
-        parent::__construct();
-    }
-
     /**
      * Return all the mounts currently available on the Panel.
      */
@@ -99,7 +89,7 @@ class MountController extends ApplicationApiController
     public function delete(DeleteMountRequest $request, Mount $mount): JsonResponse
     {
         if ($mount->servers()->count() > 0) {
-            throw new HasActiveServersException($this->translator->get('exceptions.mount.servers_attached'));
+            throw new HasActiveServersException(trans('exceptions.mount.servers_attached'));
         }
 
         $mount->delete();

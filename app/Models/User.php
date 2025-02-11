@@ -180,9 +180,9 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
         });
 
         static::deleting(function (self $user) {
-            throw_if($user->servers()->count() > 0, new DisplayException(__('admin/user.exceptions.user_has_servers')));
+            throw_if($user->servers()->count() > 0, new DisplayException(trans('exceptions.users.has_servers')));
 
-            throw_if(request()->user()?->id === $user->id, new DisplayException(__('admin/user.exceptions.user_is_self')));
+            throw_if(request()->user()?->id === $user->id, new DisplayException(trans('exceptions.users.is_self')));
         });
     }
 
