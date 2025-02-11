@@ -4,10 +4,10 @@ namespace App\Checks;
 
 use Carbon\Carbon;
 use Composer\InstalledVersions;
-use Spatie\Health\Checks\Checks\ScheduleCheck as Check;
+use Spatie\Health\Checks\Checks\ScheduleCheck as BaseCheck;
 use Spatie\Health\Checks\Result;
 
-class ScheduleCheck extends Check
+class ScheduleCheck extends BaseCheck
 {
     public function run(): Result
     {
