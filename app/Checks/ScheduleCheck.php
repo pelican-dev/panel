@@ -4,48 +4,11 @@ namespace App\Checks;
 
 use Carbon\Carbon;
 use Composer\InstalledVersions;
-use Spatie\Health\Checks\Check;
+use Spatie\Health\Checks\Checks\ScheduleCheck as Check;
 use Spatie\Health\Checks\Result;
 
 class ScheduleCheck extends Check
 {
-    protected string $cacheKey = 'health:checks:schedule:latestHeartbeatAt';
-
-    protected ?string $cacheStoreName = null;
-
-    protected int $heartbeatMaxAgeInMinutes = 1;
-
-    public function useCacheStore(string $cacheStoreName): self
-    {
-        $this->cacheStoreName = $cacheStoreName;
-
-        return $this;
-    }
-
-    public function getCacheStoreName(): string
-    {
-        return $this->cacheStoreName ?? config('cache.default');
-    }
-
-    public function cacheKey(string $cacheKey): self
-    {
-        $this->cacheKey = $cacheKey;
-
-        return $this;
-    }
-
-    public function heartbeatMaxAgeInMinutes(int $heartbeatMaxAgeInMinutes): self
-    {
-        $this->heartbeatMaxAgeInMinutes = $heartbeatMaxAgeInMinutes;
-
-        return $this;
-    }
-
-    public function getCacheKey(): string
-    {
-        return $this->cacheKey;
-    }
-
     public function run(): Result
     {
         $result = Result::make()->ok(trans('admin/health.results.schedule.ok'));
