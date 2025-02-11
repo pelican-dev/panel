@@ -40,7 +40,7 @@ class Login extends BaseLogin
         $this->dispatch('reset-captcha');
 
         throw ValidationException::withMessages([
-            'data.login' => __('filament-panels::pages/auth/login.messages.failed'),
+            'data.login' => trans('filament-panels::pages/auth/login.messages.failed'),
         ]);
     }
 
