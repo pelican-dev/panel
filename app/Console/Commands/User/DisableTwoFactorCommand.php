@@ -19,7 +19,7 @@ class DisableTwoFactorCommand extends Command
     public function handle(): void
     {
         if ($this->input->isInteractive()) {
-            $this->output->warning(trans('command/messages.user.2fa_help_text'));
+            $this->output->warning(trans('command/messages.user.2fa_help_text.0') . trans('command/messages.user.2fa_help_text.1'));
         }
 
         $email = $this->option('email') ?? $this->ask(trans('command/messages.user.ask_email'));

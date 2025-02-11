@@ -60,7 +60,7 @@ class AllocationsRelationManager extends RelationManager
                     ->label(fn (Allocation $allocation) => $allocation->id === $this->getOwnerRecord()->allocation_id ? '' : trans('admin/server.make_primary')),
             ])
             ->headerActions([
-                CreateAction::make()->label(trans('admin/node.create_allocations'))
+                CreateAction::make()->label(trans('admin/server.create_allocation'))
                     ->createAnother(false)
                     ->form(fn () => [
                         Select::make('allocation_ip')
@@ -94,7 +94,7 @@ class AllocationsRelationManager extends RelationManager
                     ->preloadRecordSelect()
                     ->recordSelectOptionsQuery(fn ($query) => $query->whereBelongsTo($this->getOwnerRecord()->node)->whereNull('server_id'))
                     ->recordSelectSearchColumns(['ip', 'port'])
-                    ->label(trans('admin/server.add_allocations')),
+                    ->label(trans('admin/server.add_allocation')),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([

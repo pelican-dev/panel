@@ -73,7 +73,7 @@ class AllocationsRelationManager extends RelationManager
             ])
             ->headerActions([
                 Tables\Actions\Action::make('create new allocation')
-                    ->label(trans('admin/node.create_allocations'))
+                    ->label(trans('admin/node.create_allocation'))
                     ->form(fn () => [
                         Select::make('allocation_ip')
                             ->options(collect($this->getOwnerRecord()->ipAddresses())->mapWithKeys(fn (string $ip) => [$ip => $ip]))
