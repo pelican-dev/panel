@@ -56,8 +56,6 @@ class Settings extends Page implements HasForms
     public function mount(): void
     {
         $this->form->fill();
-        $this->data['alert_banner_message_length'] = strlen($this->data['alert_banner_message'] ?? '');
-        $this->data['alert_banner_title_length'] = strlen($this->data['alert_banner_title'] ?? '');
     }
 
     public static function canAccess(): bool
