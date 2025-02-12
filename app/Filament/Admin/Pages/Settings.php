@@ -253,7 +253,7 @@ class Settings extends Page implements HasForms
                 ->default(env('ALERT_BANNER_TITLE', config('panel.alert_banner.title')))
                 ->reactive()
                 ->afterStateUpdated(fn ($state, Set $set) => $set('alert_banner_title_length', strlen($state))),
-            TextArea::make('alert_banner_message')
+            Textarea::make('alert_banner_message')
                 ->label(fn (Get $get) => trans('admin/setting.alert_banner.message') . " ({$get('alert_banner_message_length')}/114 characters)")
                 ->required()
                 ->maxLength(114)
