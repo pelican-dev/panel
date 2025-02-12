@@ -18,6 +18,7 @@ use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Tabs;
 use Filament\Forms\Components\Tabs\Tab;
 use Filament\Forms\Components\TagsInput;
+use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Components\ToggleButtons;
@@ -35,6 +36,7 @@ use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Notification as MailNotification;
 use Illuminate\Support\HtmlString;
 use Illuminate\Support\Str;
+use TomatoPHP\FilamentIcons\Components\IconPicker;
 
 /**
  * @property Form $form
@@ -83,6 +85,10 @@ class Settings extends Page implements HasForms
                         ->label(trans('admin/setting.navigation.general'))
                         ->icon('tabler-home')
                         ->schema($this->generalSettings()),
+                    Tab::make('alert_banner')
+                        ->label(trans('admin/setting.navigation.alert_banner'))
+                        ->icon('tabler-bell')
+                        ->schema($this->alertBannerSettings()),
                     Tab::make('captcha')
                         ->label(trans('admin/setting.navigation.captcha'))
                         ->icon('tabler-shield')
@@ -207,6 +213,69 @@ class Settings extends Page implements HasForms
                 ->native(false)
                 ->options(MaxWidth::class)
                 ->default(env('FILAMENT_WIDTH', config('panel.filament.display-width'))),
+        ];
+    }
+
+    private function alertBannerSettings(): array
+    {
+        return [
+            Toggle::make('ALERT_BANNER_ENABLED')
+                ->label(trans('admin/setting.alert_banner.enable'))
+                ->inline(false)
+                ->columnSpan(1)
+                ->onIcon('tabler-check')
+                ->offIcon('tabler-x')
+                ->onColor('success')
+                ->offColor('danger')
+                ->live()
+                ->formatStateUsing(fn ($state): bool => (bool) $state)
+                ->afterStateUpdated(fn ($state, Set $set) => $set('ALERT_BANNER_ENABLED', (bool) $state))
+                ->default(env('ALERT_BANNER_ENABLED', config('panel.alert_banner.enabled'))),
+            Toggle::make('ALERT_BANNER_CLOSEABLE')
+                ->label(trans('admin/setting.alert_banner.closeable'))
+                ->inline(false)
+                ->columnSpan(1)
+                ->onIcon('tabler-check')
+                ->offIcon('tabler-x')
+                ->onColor('success')
+                ->offColor('danger')
+                ->formatStateUsing(fn ($state): bool => (bool) $state)
+                ->afterStateUpdated(fn ($state, Set $set) => $set('ALERT_BANNER_CLOSEABLE', (bool) $state))
+                ->visible(fn (Get $get) => $get('ALERT_BANNER_ENABLED'))
+                ->default(env('ALERT_BANNER_CLOSEABLE', config('panel.alert_banner.closeable'))),
+            TextInput::make('alert_banner_title')
+                ->label(fn (Get $get) => trans('admin/setting.alert_banner.title') . " ({$get('alert_banner_title_length')}/32 characters)")
+                ->required()
+                ->maxLength(32)
+                ->visible(fn (Get $get) => $get('ALERT_BANNER_ENABLED'))
+                ->default(env('ALERT_BANNER_TITLE', config('panel.alert_banner.title')))
+                ->reactive()
+                ->afterStateUpdated(fn ($state, Set $set) => $set('alert_banner_title_length', strlen($state))),
+            Textarea::make('alert_banner_message')
+                ->label(fn (Get $get) => trans('admin/setting.alert_banner.message') . " ({$get('alert_banner_message_length')}/114 characters)")
+                ->required()
+                ->maxLength(114)
+                ->visible(fn (Get $get) => $get('ALERT_BANNER_ENABLED'))
+                ->default(env('ALERT_BANNER_MESSAGE', config('panel.alert_banner.message')))
+                ->reactive()
+                ->afterStateUpdated(fn ($state, Set $set) => $set('alert_banner_message_length', strlen($state))),
+            Select::make('alert_banner_status')
+                ->label(trans('admin/setting.alert_banner.status'))
+                ->options([
+                    'info' => '<span class="text-info-600 dark:text-info-500">Info</span>',
+                    'warning' => '<span class="text-warning-600 dark:text-warning-500">Warning</span>',
+                    'danger' => '<span class="text-danger-600 dark:text-danger-500">Danger</span>',
+                    'success' => '<span class="text-success-600 dark:text-success-500">Success</span>',
+                ])
+                ->allowHtml()
+                ->required()
+                ->visible(fn (Get $get) => $get('ALERT_BANNER_ENABLED'))
+                ->default(env('ALERT_BANNER_STATUS', config('panel.alert_banner.status')))
+                ->native(false),
+            IconPicker::make('alert_banner_icon')
+                ->label(trans('admin/setting.alert_banner.icon'))
+                ->visible(fn (Get $get) => $get('ALERT_BANNER_ENABLED'))
+                ->default(env('ALERT_BANNER_ICON', config('panel.alert_banner.icon'))),
         ];
     }
 

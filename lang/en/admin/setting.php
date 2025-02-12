@@ -6,6 +6,7 @@ return [
     'save_failed' => 'Failed to save Settings',
     'navigation' => [
         'general' => 'General',
+        'alert_banner' => 'Alert Banner',
         'captcha' => 'Captcha',
         'mail' => 'Mail',
         'backup' => 'Backup',
@@ -32,6 +33,14 @@ return [
         'clear' => 'Clear',
         'set_to_cf' => 'Set to Cloudflare IPs',
         'display_width' => 'Display Width',
+    ],
+    'alert_banner' => [
+        'enable' => 'Enable Alert Banner?',
+        'closeable' => 'Closeable',
+        'title' => 'Alert Title',
+        'message' => 'Alert Message',
+        'status' => 'Alert Status',
+        'icon' => 'Alert Icon',
     ],
     'captcha' => [
         'enable' => 'Enable Turnstile Captcha?',
