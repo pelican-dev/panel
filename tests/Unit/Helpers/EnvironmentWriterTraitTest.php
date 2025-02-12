@@ -9,7 +9,7 @@ use PHPUnit\Framework\Attributes\DataProvider;
 class EnvironmentWriterTraitTest extends TestCase
 {
     #[DataProvider('variableDataProvider')]
-    public function testVariableIsEscapedProperly($input, $expected): void
+    public function test_variable_is_escaped_properly($input, $expected): void
     {
         $output = (new FooClass())->escapeEnvironmentValue($input);
 

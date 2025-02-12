@@ -29,7 +29,7 @@ class BuildModificationServiceTest extends IntegrationTestCase
      * Test that allocations can be added and removed from a server. Only the allocations on the
      * current node and belonging to this server should be modified.
      */
-    public function testAllocationsCanBeModifiedForTheServer(): void
+    public function test_allocations_can_be_modified_for_the_server(): void
     {
         $server = $this->createServerModel();
         $server2 = $this->createServerModel();
@@ -78,7 +78,7 @@ class BuildModificationServiceTest extends IntegrationTestCase
      * Test that an exception is thrown if removing the default allocation without also assigning
      * new allocations to the server.
      */
-    public function testExceptionIsThrownIfRemovingTheDefaultAllocation(): void
+    public function test_exception_is_thrown_if_removing_the_default_allocation(): void
     {
         $server = $this->createServerModel();
         /** @var \App\Models\Allocation[] $allocations */
@@ -100,7 +100,7 @@ class BuildModificationServiceTest extends IntegrationTestCase
      * the server data is updated in realtime. This test also ensures that only certain fields get updated
      * for the server, and not just any arbitrary field.
      */
-    public function testServerBuildDataIsProperlyUpdatedOndaemon(): void
+    public function test_server_build_data_is_properly_updated_ondaemon(): void
     {
         $server = $this->createServerModel();
 
@@ -140,7 +140,7 @@ class BuildModificationServiceTest extends IntegrationTestCase
      * when making updates. This allows for a server to be modified even when the Daemon
      * node is offline.
      */
-    public function testConnectionExceptionIsIgnoredWhenUpdatingServerSettings(): void
+    public function test_connection_exception_is_ignored_when_updating_server_settings(): void
     {
         $this->markTestSkipped();
 
@@ -160,7 +160,7 @@ class BuildModificationServiceTest extends IntegrationTestCase
     /**
      * Test that no exception is thrown if we are only removing an allocation.
      */
-    public function testNoExceptionIsThrownIfOnlyRemovingAllocation(): void
+    public function test_no_exception_is_thrown_if_only_removing_allocation(): void
     {
         $server = $this->createServerModel();
         /** @var \App\Models\Allocation $allocation */
@@ -183,7 +183,7 @@ class BuildModificationServiceTest extends IntegrationTestCase
      *
      * We'll default to adding the allocation in this case.
      */
-    public function testAllocationInBothAddAndRemoveIsAdded(): void
+    public function test_allocation_in_both_add_and_remove_is_added(): void
     {
         $server = $this->createServerModel();
         /** @var \App\Models\Allocation $allocation */
@@ -202,7 +202,7 @@ class BuildModificationServiceTest extends IntegrationTestCase
     /**
      * Test that using the same allocation ID multiple times in the array does not cause an error.
      */
-    public function testUsingSameAllocationIdMultipleTimesDoesNotError(): void
+    public function test_using_same_allocation_id_multiple_times_does_not_error(): void
     {
         $server = $this->createServerModel();
         /** @var \App\Models\Allocation $allocation */
@@ -227,7 +227,7 @@ class BuildModificationServiceTest extends IntegrationTestCase
      * test which should properly ignore connection issues. We want any other type of exception
      * to properly be thrown back to the caller.
      */
-    public function testThatUpdatesAreRolledBackIfExceptionIsEncountered(): void
+    public function test_that_updates_are_rolled_back_if_exception_is_encountered(): void
     {
         $server = $this->createServerModel();
         /** @var \App\Models\Allocation $allocation */

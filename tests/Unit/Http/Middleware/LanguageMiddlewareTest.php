@@ -25,7 +25,7 @@ class LanguageMiddlewareTest extends MiddlewareTestCase
     /**
      * Test that a language is defined via the middleware for guests.
      */
-    public function testLanguageIsSetForGuest(): void
+    public function test_language_is_set_for_guest(): void
     {
         $this->request->shouldReceive('user')->withNoArgs()->andReturnNull();
         $this->appMock->shouldReceive('setLocale')->with('en')->once()->andReturnNull();
@@ -36,7 +36,7 @@ class LanguageMiddlewareTest extends MiddlewareTestCase
     /**
      * Test that a language is defined via the middleware for a user.
      */
-    public function testLanguageIsSetWithAuthenticatedUser(): void
+    public function test_language_is_set_with_authenticated_user(): void
     {
         $user = User::factory()->make(['language' => 'de']);
 
