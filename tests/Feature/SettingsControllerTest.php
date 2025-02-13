@@ -25,6 +25,21 @@ it('server name cannot be changed', function () {
     $this->assertSame($originalName, $server->name);
 });
 
+it('server name can be changed', function () {
+    [$user, $server] = generateTestAccount([Permission::ACTION_WEBSOCKET_CONNECT, Permission::ACTION_SETTINGS_RENAME]);
+    $originalName = $server->name;
+
+    $this->actingAs($user)
+        ->post("/api/client/servers/$server->uuid/settings/rename", [
+            'name' => 'Test Server Name',
+        ])
+        ->assertStatus(Response::HTTP_NO_CONTENT);
+
+    $server = $server->refresh();
+    expect()->toLogActivities(1);
+    $this->assertNotSame($originalName, $server->name);
+});
+
 //test('subuser cannot change server name without permission', function () {
 //
 //});
@@ -40,6 +55,7 @@ test('unauthorized user cannot change docker image in use by server', function (
         ->assertStatus(Response::HTTP_FORBIDDEN);
 
     $server = $server->refresh();
+    expect()->toLogActivities(0);
     $this->assertSame($originalImage, $server->image);
 });
 
@@ -58,6 +74,7 @@ test('can change docker image in use by server', function () {
 
     $server = $server->refresh();
 
+    expect()->toLogActivities(1);
     expect($server->image)->toBe($newImage);
 });
 
