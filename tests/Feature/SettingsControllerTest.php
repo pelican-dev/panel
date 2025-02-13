@@ -10,7 +10,7 @@ pest()->group('API');
 
 covers(SettingsController::class);
 
-it('server name can be changed', function () {
+it('server name cannot be changed', function () {
     [$user, $server] = generateTestAccount([Permission::ACTION_WEBSOCKET_CONNECT]);
     $originalName = $server->name;
 
@@ -21,6 +21,7 @@ it('server name can be changed', function () {
         ->assertStatus(Response::HTTP_FORBIDDEN);
 
     $server = $server->refresh();
+    expect()->toLogActivities(0);
     $this->assertSame($originalName, $server->name);
 });
 

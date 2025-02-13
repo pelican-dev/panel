@@ -24,6 +24,7 @@
 |
 */
 
+use App\Models\ActivityLog;
 use App\Models\Allocation;
 use App\Models\Egg;
 use App\Models\Node;
@@ -35,6 +36,10 @@ use Ramsey\Uuid\Uuid;
 
 expect()->extend('toBeOne', function () {
     return $this->toBe(1);
+});
+
+expect()->extend('toLogActivities', function (int $times) {
+    expect(ActivityLog::count())->toBe($times);
 });
 
 uses(IntegrationTestCase::class)->in('Feature');
