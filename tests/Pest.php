@@ -30,13 +30,14 @@ use App\Models\Node;
 use App\Models\Server;
 use App\Models\Subuser;
 use App\Models\User;
+use App\Tests\Integration\IntegrationTestCase;
 use Ramsey\Uuid\Uuid;
 
 expect()->extend('toBeOne', function () {
     return $this->toBe(1);
 });
 
-uses(\App\Tests\TestCase::class)->in('Feature', 'Unit');
+uses(IntegrationTestCase::class)->in('Feature');
 
 /*
 |--------------------------------------------------------------------------
