@@ -1,11 +1,14 @@
 <?php
 
 use App\Enums\ServerState;
+use App\Http\Controllers\Api\Client\Servers\SettingsController;
 use App\Models\Permission;
 use App\Repositories\Daemon\DaemonServerRepository;
 use Symfony\Component\HttpFoundation\Response;
 
 pest()->group('API');
+
+covers(SettingsController::class);
 
 it('server name can be changed', function () {
     [$user, $server] = generateTestAccount([Permission::ACTION_WEBSOCKET_CONNECT]);
