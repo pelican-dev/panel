@@ -59,7 +59,6 @@ class ListDatabaseHosts extends ListRecords
             ->emptyStateHeading(trans('admin/databasehost.no_database_hosts'))
             ->emptyStateActions([
                 CreateAction::make('create')
-                    ->label(trans('admin/databasehost.create_action', ['action' => trans('filament-actions::create.single.modal.actions.create.label')]))
                     ->button(),
             ]);
     }
@@ -68,7 +67,6 @@ class ListDatabaseHosts extends ListRecords
     {
         return [
             Actions\CreateAction::make('create')
-                ->label(trans('admin/databasehost.create_action', ['action' => trans('filament-actions::create.single.modal.actions.create.label')]))
                 ->hidden(fn () => DatabaseHost::count() <= 0),
         ];
     }

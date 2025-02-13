@@ -1,7 +1,6 @@
 <?php
 
 return [
-    'create_action' => ':action Database host',
     'nav_title' => 'Database Hosts',
     'model_label' => 'Database Host',
     'model_label_plural' => 'Database Hosts',

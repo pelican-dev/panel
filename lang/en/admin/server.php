@@ -1,7 +1,6 @@
 <?php
 
 return [
-    'create_action' => ':action Server',
     'nav_title' => 'Servers',
     'model_label' => 'Server',
     'model_label_plural' => 'Servers',
