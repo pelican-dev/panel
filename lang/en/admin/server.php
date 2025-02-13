@@ -30,7 +30,7 @@ return [
     'resource_limits' => 'Resource Limits',
     'cpu' => 'CPU',
     'cpu_limit' => 'CPU Limit',
-    'cpu_helper' => '100% equals one CPU core.',
+    'cpu_helper' => '100% equals one CPU thread.',
     'unlimited' => 'Unlimited',
     'limited' => 'Limited',
     'enabled' => 'Enabled',
