@@ -85,9 +85,7 @@ class DatabaseHostResource extends Resource
             ->emptyStateDescription('')
             ->emptyStateHeading(trans('admin/databasehost.no_database_hosts'))
             ->emptyStateActions([
-                CreateAction::make()
-                    ->label(trans('admin/databasehost.create_action', ['action' => trans('filament-actions::create.single.modal.actions.create.label')]))
-                    ->button(),
+                CreateAction::make(),
             ]);
     }
 

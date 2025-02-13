@@ -15,7 +15,6 @@ class ListDatabaseHosts extends ListRecords
     {
         return [
             CreateAction::make()
-                ->label(trans('admin/databasehost.create_action', ['action' => trans('filament-actions::create.single.modal.actions.create.label')]))
                 ->hidden(fn () => DatabaseHost::count() <= 0),
         ];
     }

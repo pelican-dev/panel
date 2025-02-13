@@ -72,9 +72,7 @@ class WebhookResource extends Resource
             ->emptyStateDescription('')
             ->emptyStateHeading(trans('admin/webhook.no_webhooks'))
             ->emptyStateActions([
-                CreateAction::make()
-                    ->label(trans('admin/webhook.create_action', ['action' => trans('filament-actions::create.single.modal.actions.create.label')]))
-                    ->button(),
+                CreateAction::make(),
             ]);
     }
 

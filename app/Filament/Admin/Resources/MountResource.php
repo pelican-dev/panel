@@ -90,9 +90,7 @@ class MountResource extends Resource
             ->emptyStateDescription('')
             ->emptyStateHeading(trans('admin/mount.no_mounts'))
             ->emptyStateActions([
-                CreateAction::make()
-                    ->label(trans('admin/mount.create_action', ['action' => trans('filament-actions::create.single.modal.actions.create.label')]))
-                    ->button(),
+                CreateAction::make(),
             ]);
     }
 

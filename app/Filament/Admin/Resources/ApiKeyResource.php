@@ -88,9 +88,7 @@ class ApiKeyResource extends Resource
             ->emptyStateDescription('')
             ->emptyStateHeading(trans('admin/apikey.empty_table'))
             ->emptyStateActions([
-                CreateAction::make()
-                    ->label(trans('admin/apikey.create_action', ['action' => trans('filament-actions::create.single.modal.actions.create.label')]))
-                    ->button(),
+                CreateAction::make(),
             ]);
     }
 
