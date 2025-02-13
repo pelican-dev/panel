@@ -61,7 +61,7 @@
 
         monacoEditorAddLoaderScriptToHead() {
             script = document.createElement('script');
-            script.src = 'https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.52.2/min/vs/loader.min.js';
+            script.src = 'https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.52.2/min/vs/loader.js';
             document.head.appendChild(script);
         },
 
@@ -97,9 +97,9 @@
         monacoLoaderInterval = setInterval(() => {
             if(typeof _amdLoaderGlobal !== 'undefined'){
 
-                // Based on https://jsfiddle.net/developit/bwgkr6uq/ which works without needing service worker. Provided by loader.min.js.
+                // Based on https://jsfiddle.net/developit/bwgkr6uq/ which works without needing service worker. Provided by loader.js.
                 require.config({ paths: { 'vs': 'https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.52.2/min/vs' }});
-                let proxy = URL.createObjectURL(new Blob([` self.MonacoEnvironment = { baseUrl: 'https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.52.2/min' }; importScripts('https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.52.2/min/vs/base/worker/workerMain.min.js');`], { type: 'text/javascript' }));
+                let proxy = URL.createObjectURL(new Blob([` self.MonacoEnvironment = { baseUrl: 'https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.52.2/min' }; importScripts('https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.52.2/min/vs/base/worker/workerMain.js');`], { type: 'text/javascript' }));
                 window.MonacoEnvironment = { getWorkerUrl: () => proxy };
 
                 require(['vs/editor/editor.main'], () => {
