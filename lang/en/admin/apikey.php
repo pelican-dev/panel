@@ -10,7 +10,6 @@ return [
     'nav_title' => 'API Keys',
     'model_label' => 'Application API Key',
     'model_label_plural' => 'Application API Keys',
-    'create_action' => ':action API Key',
     'table' => [
         'key' => 'Key',
         'description' => 'Description',

@@ -58,7 +58,6 @@ class ListApiKeys extends ListRecords
             ->emptyStateHeading(trans('admin/apikey.empty_table'))
             ->emptyStateActions([
                 CreateAction::make('create')
-                    ->label(trans('admin/apikey.create_action', ['action' => trans('filament-actions::create.single.modal.actions.create.label')]))
                     ->button(),
             ]);
     }
@@ -67,7 +66,6 @@ class ListApiKeys extends ListRecords
     {
         return [
             Actions\CreateAction::make()
-                ->label(trans('admin/apikey.create_action', ['action' => trans('filament-actions::create.single.modal.actions.create.label')]))
                 ->hidden(fn () => ApiKey::where('key_type', ApiKey::TYPE_APPLICATION)->count() <= 0),
         ];
     }

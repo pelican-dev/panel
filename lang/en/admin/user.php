@@ -1,7 +1,6 @@
 <?php
 
 return [
-    'create_action' => ':action User',
     'nav_title' => 'Users',
     'model_label' => 'User',
     'model_label_plural' => 'Users',

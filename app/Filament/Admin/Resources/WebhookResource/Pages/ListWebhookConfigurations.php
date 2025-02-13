@@ -34,7 +34,6 @@ class ListWebhookConfigurations extends ListRecords
             ->emptyStateHeading(trans('admin/webhook.no_webhooks'))
             ->emptyStateActions([
                 CreateAction::make('create')
-                    ->label(trans('admin/webhook.create_action', ['action' => trans('filament-actions::create.single.modal.actions.create.label')]))
                     ->button(),
             ]);
     }
@@ -43,7 +42,6 @@ class ListWebhookConfigurations extends ListRecords
     {
         return [
             Actions\CreateAction::make()
-                ->label(trans('admin/webhook.create_action', ['action' => trans('filament-actions::create.single.modal.actions.create.label')]))
                 ->hidden(fn () => WebhookConfiguration::count() <= 0),
         ];
     }
