@@ -11,7 +11,7 @@ class IsDigitTest extends TestCase
      * Test the is_digit helper.
      */
     #[DataProvider('helperDataProvider')]
-    public function testHelper($value, $response): void
+    public function test_helper($value, $response): void
     {
         $this->assertSame($response, is_digit($value));
     }

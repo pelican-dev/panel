@@ -28,7 +28,8 @@ class Login extends BaseLogin
                             ->hidden(!config('turnstile.turnstile_enabled'))
                             ->validationMessages([
                                 'required' => config('turnstile.error_messages.turnstile_check_message'),
-                            ]),
+                            ])
+                            ->view('filament.plugins.turnstile'),
                     ])
                     ->statePath('data'),
             ),

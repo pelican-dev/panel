@@ -15,7 +15,7 @@ class GetStartupAndVariablesTest extends ClientApiIntegrationTestCase
      * that can be viewed by a user (e.g. user_viewable=true).
      */
     #[DataProvider('permissionsDataProvider')]
-    public function testStartupVariablesAreReturnedForServer(array $permissions): void
+    public function test_startup_variables_are_returned_for_server(array $permissions): void
     {
         /** @var \App\Models\Server $server */
         [$user, $server] = $this->generateTestAccount($permissions);
@@ -49,7 +49,7 @@ class GetStartupAndVariablesTest extends ClientApiIntegrationTestCase
      * Test that a user without the required permission, or who does not have any permission to
      * access the server cannot get the startup information for it.
      */
-    public function testStartupDataIsNotReturnedWithoutPermission(): void
+    public function test_startup_data_is_not_returned_without_permission(): void
     {
         [$user, $server] = $this->generateTestAccount([Permission::ACTION_WEBSOCKET_CONNECT]);
         $this->actingAs($user)->getJson($this->link($server) . '/startup')->assertForbidden();
