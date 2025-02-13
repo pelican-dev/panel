@@ -19,14 +19,14 @@ class NodeConfigurationCommand extends Command
 
         /** @var \App\Models\Node $node */
         $node = Node::query()->where($column, $this->argument('node'))->firstOr(function () {
-            $this->error(__('commands.node_config.error_not_exist'));
+            $this->error(trans('commands.node_config.error_not_exist'));
 
             exit(1);
         });
 
         $format = $this->option('format');
         if (!in_array($format, ['yaml', 'yml', 'json'])) {
-            $this->error(__('commands.node_config.error_invalid_format'));
+            $this->error(trans('commands.node_config.error_invalid_format'));
 
             return 1;
         }

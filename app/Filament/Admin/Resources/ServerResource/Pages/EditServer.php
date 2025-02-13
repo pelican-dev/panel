@@ -165,7 +165,7 @@ class EditServer extends EditRecord
                                         'md' => 2,
                                         'lg' => 3,
                                     ])
-                                    ->unique()
+                                    ->unique(ignoreRecord: true)
                                     ->maxLength(255),
                                 Select::make('node_id')
                                     ->label(trans('admin/server.node'))
@@ -507,7 +507,7 @@ class EditServer extends EditRecord
                                     ->required()
                                     ->hintAction(
                                         Action::make('change_egg')
-                                            ->label('admin/server.change_egg')
+                                            ->label(trans('admin/server.change_egg'))
                                             ->action(function (array $data, Server $server, EggChangerService $service) {
                                                 $service->handle($server, $data['egg_id'], $data['keepOldVariables']);
 

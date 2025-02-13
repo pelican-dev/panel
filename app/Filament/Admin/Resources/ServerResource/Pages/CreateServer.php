@@ -102,7 +102,7 @@ class CreateServer extends CreateRecord
                                     'sm' => 2,
                                     'md' => 2,
                                 ])
-                                ->unique()
+                                ->unique(ignoreRecord: true)
                                 ->maxLength(255),
 
                             Select::make('node_id')

@@ -1,7 +1,6 @@
 <?php
 
 return [
-    'create_action' => ':action Server',
     'nav_title' => 'Servers',
     'model_label' => 'Server',
     'model_label_plural' => 'Servers',
@@ -30,7 +29,7 @@ return [
     'resource_limits' => 'Resource Limits',
     'cpu' => 'CPU',
     'cpu_limit' => 'CPU Limit',
-    'cpu_helper' => '100% equals one CPU core.',
+    'cpu_helper' => '100% equals one CPU thread.',
     'unlimited' => 'Unlimited',
     'limited' => 'Limited',
     'enabled' => 'Enabled',
