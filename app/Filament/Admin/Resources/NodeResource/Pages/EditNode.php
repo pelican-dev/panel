@@ -272,7 +272,7 @@ class EditNode extends EditRecord
                                 ])
                                 ->label(trans('admin/node.upload_limit'))
                                 ->hintIcon('tabler-question-mark')
-                                ->hintIconTooltip('Enter the maximum size of files that can be uploaded through the web-based file manager. Make sure your webserver supports file uploads of this size!')
+                                ->hintIconTooltip(trans('admin/node.upload_limit_help.0') . trans('admin/node.upload_limit_help.1'))
                                 ->numeric()->required()
                                 ->minValue(1)
                                 ->maxValue(1024)

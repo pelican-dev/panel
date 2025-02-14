@@ -224,9 +224,9 @@ class CreateNode extends CreateRecord
                                 ->columnSpan(2),
                             TextInput::make('upload_size')
                                 ->label(trans('admin/node.upload_limit'))
-                                ->helperText('Enter the maximum size of files that can be uploaded through the web-based file manager.')
+                                ->helperText(trans('admin/node.upload_limit_help.0'))
                                 ->hintIcon('tabler-question-mark')
-                                ->hintIconTooltip('Make sure your webserver supports file uploads of this size!')
+                                ->hintIconTooltip(trans('admin/node.upload_limit_help.1'))
                                 ->columnSpan(1)
                                 ->numeric()->required()
                                 ->default(256)
