@@ -113,7 +113,8 @@ class EditProfile extends BaseEditProfile
                                             ->default('UTC')
                                             ->selectablePlaceholder(false)
                                             ->options(fn () => collect(DateTimeZone::listIdentifiers())->mapWithKeys(fn ($tz) => [$tz => $tz]))
-                                            ->searchable(),
+                                            ->searchable()
+                                            ->native(false),
                                         Select::make('language')
                                             ->label(trans('profile.language'))
                                             ->required()
@@ -122,7 +123,8 @@ class EditProfile extends BaseEditProfile
                                             ->default('en')
                                             ->selectablePlaceholder(false)
                                             ->helperText(fn ($state, LanguageService $languageService) => new HtmlString($languageService->isLanguageTranslated($state) ? '' : trans('profile.language_help', ['state' => $state])))
-                                            ->options(fn (LanguageService $languageService) => $languageService->getAvailableLanguages()),
+                                            ->options(fn (LanguageService $languageService) => $languageService->getAvailableLanguages())
+                                            ->native(false),
                                     ]),
 
                                 Tab::make(trans('profile.tabs.oauth'))
