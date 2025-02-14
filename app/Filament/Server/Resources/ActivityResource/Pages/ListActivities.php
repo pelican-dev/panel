@@ -42,11 +42,7 @@ class ListActivities extends ListRecords
                 TextColumn::make('user')
                     ->state(function (ActivityLog $activityLog) use ($server) {
                         if (!$activityLog->actor instanceof User) {
-                            if ($activityLog->actor_id == null) {
-                                return 'System';
-                            } else {
-                                return 'Deleted user';
-                            }
+                            return $activityLog->actor_id === null ? 'System' : 'Deleted user';
                         }
 
                         $user = $activityLog->actor->username;
@@ -76,11 +72,7 @@ class ListActivities extends ListRecords
                         TextInput::make('user')
                             ->formatStateUsing(function (ActivityLog $activityLog) use ($server) {
                                 if (!$activityLog->actor instanceof User) {
-                                    if ($activityLog->actor_id == null) {
-                                        return 'System';
-                                    } else {
-                                        return 'Deleted user';
-                                    }
+                                    return $activityLog->actor_id === null ? 'System' : 'Deleted user';
                                 }
 
                                 $user = $activityLog->actor->username;
