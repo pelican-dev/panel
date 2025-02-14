@@ -282,7 +282,9 @@ class ScheduleResource extends Resource
                                             '5' => 'Friday',
                                             '6' => 'Saturday',
                                             '0' => 'Sunday',
-                                        ]),
+                                        ])
+                                        ->selectablePlaceholder(false)
+                                        ->native(false),
                                 ])
                                 ->action(function (Set $set, $data) {
                                     $set('cron_minute', '0');
