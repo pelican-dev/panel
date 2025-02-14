@@ -110,6 +110,8 @@ class EditProfile extends BaseEditProfile
                                             ->label(trans('profile.timezone'))
                                             ->required()
                                             ->prefixIcon('tabler-clock-pin')
+                                            ->default('UTC')
+                                            ->selectablePlaceholder(false)
                                             ->options(fn () => collect(DateTimeZone::listIdentifiers())->mapWithKeys(fn ($tz) => [$tz => $tz]))
                                             ->searchable(),
                                         Select::make('language')
@@ -118,6 +120,7 @@ class EditProfile extends BaseEditProfile
                                             ->prefixIcon('tabler-flag')
                                             ->live()
                                             ->default('en')
+                                            ->selectablePlaceholder(false)
                                             ->helperText(fn ($state, LanguageService $languageService) => new HtmlString($languageService->isLanguageTranslated($state) ? '' : trans('profile.language_help', ['state' => $state])))
                                             ->options(fn (LanguageService $languageService) => $languageService->getAvailableLanguages()),
                                     ]),

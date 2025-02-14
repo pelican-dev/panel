@@ -206,6 +206,7 @@ class Settings extends Page implements HasForms
                 ->label(trans('admin/setting.general.display_width'))
                 ->native(false)
                 ->options(MaxWidth::class)
+                ->selectablePlaceholder(false)
                 ->default(env('FILAMENT_WIDTH', config('panel.filament.display-width'))),
         ];
     }
