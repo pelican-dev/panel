@@ -9,14 +9,14 @@ use App\Models\Permission;
 use Illuminate\Support\Facades\Bus;
 use App\Jobs\Schedule\RunTaskJob;
 use App\Tests\Integration\Api\Client\ClientApiIntegrationTestCase;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 class ExecuteScheduleTest extends ClientApiIntegrationTestCase
 {
     /**
      * Test that a schedule can be executed and is updated in the database correctly.
-     *
-     * @dataProvider permissionsDataProvider
      */
+    #[DataProvider('permissionsDataProvider')]
     public function testScheduleIsExecutedRightAway(array $permissions): void
     {
         [$user, $server] = $this->generateTestAccount($permissions);

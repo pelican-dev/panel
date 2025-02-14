@@ -6,6 +6,7 @@ use App\Http\Middleware\Api\Daemon\DaemonAuthenticate;
 use App\Models\Node;
 use App\Tests\Unit\Http\Middleware\MiddlewareTestCase;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\HttpException;
@@ -45,9 +46,8 @@ class DaemonAuthenticateTest extends MiddlewareTestCase
     /**
      * Test that passing in an invalid node daemon secret will result in a bad request
      * exception being returned.
-     *
-     * @dataProvider badTokenDataProvider
      */
+    #[DataProvider('badTokenDataProvider')]
     public function testResponseShouldFailIfTokenFormatIsIncorrect(string $token): void
     {
         $this->expectException(BadRequestHttpException::class);

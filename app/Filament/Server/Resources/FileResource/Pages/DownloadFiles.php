@@ -23,14 +23,21 @@ class DownloadFiles extends Page
     #[Locked]
     public string $path;
 
-    public function mount(string $path, NodeJWTService $service): void
+    private NodeJWTService $nodeJWTService;
+
+    public function boot(NodeJWTService $nodeJWTService): void
+    {
+        $this->nodeJWTService = $nodeJWTService;
+    }
+
+    public function mount(string $path): void
     {
         $this->authorizeAccess();
 
         /** @var Server $server */
         $server = Filament::getTenant();
 
-        $token = $service
+        $token = $this->nodeJWTService
             ->setExpiresAt(CarbonImmutable::now()->addMinutes(15))
             ->setUser(auth()->user())
             ->setClaims([

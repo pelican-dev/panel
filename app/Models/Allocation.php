@@ -3,7 +3,10 @@
 namespace App\Models;
 
 use App\Exceptions\Service\Allocation\ServerUsingAllocationException;
+use App\Traits\HasValidation;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Casts\Attribute;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
@@ -40,16 +43,14 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  */
 class Allocation extends Model
 {
+    use HasFactory;
+    use HasValidation;
+
     /**
      * The resource name for this model when it is transformed into an
      * API representation using fractal. Also used as name for api key permissions.
      */
     public const RESOURCE_NAME = 'allocation';
-
-    /**
-     * The table associated with the model.
-     */
-    protected $table = 'allocations';
 
     /**
      * Fields that are not mass assignable.
@@ -79,11 +80,6 @@ class Allocation extends Model
             'port' => 'integer',
             'server_id' => 'integer',
         ];
-    }
-
-    public function getRouteKeyName(): string
-    {
-        return $this->getKeyName();
     }
 
     /**

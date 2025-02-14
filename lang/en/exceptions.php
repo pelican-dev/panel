@@ -43,6 +43,8 @@ return [
         'has_nodes' => 'Cannot delete a location that has active nodes attached to it.',
     ],
     'users' => [
+        'is_self' => 'Cannot delete your own user account.',
+        'has_servers' => 'Cannot delete a user with active servers attached to their account. Please delete their servers before continuing.',
         'node_revocation_failed' => 'Failed to revoke keys on <a href=":link">Node #:node</a>. :error',
     ],
     'deployment' => [
@@ -54,5 +56,8 @@ return [
     ],
     'mount' => [
         'servers_attached' => 'A mount must have no servers attached to it in order to be deleted.',
+    ],
+    'server' => [
+        'marked_as_failed' => 'This server has not yet completed its installation process, please try again later.',
     ],
 ];

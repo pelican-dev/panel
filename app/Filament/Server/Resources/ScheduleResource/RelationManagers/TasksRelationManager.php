@@ -40,7 +40,8 @@ class TasksRelationManager extends RelationManager
                 ->live()
                 ->disableOptionWhen(fn (string $value): bool => $value === Task::ACTION_BACKUP && $schedule->server->backup_limit === 0)
                 ->options($this->getActionOptions())
-                ->selectablePlaceholder(false),
+                ->selectablePlaceholder(false)
+                ->default(Task::ACTION_POWER),
             Textarea::make('payload')
                 ->hidden(fn (Get $get) => $get('action') === Task::ACTION_POWER)
                 ->label(fn (Get $get) => $this->getActionOptions(false)[$get('action')] ?? 'Payload'),
@@ -77,13 +78,9 @@ class TasksRelationManager extends RelationManager
                 TextColumn::make('action')
                     ->state(fn (Task $task) => $this->getActionOptions()[$task->action] ?? $task->action),
                 TextColumn::make('payload')
-                    ->state(function (Task $task) {
-                        $payload = match ($task->payload) {
-                            'start', 'restart', 'stop', 'kill' => mb_ucfirst($task->payload),
-                            default => $task->payload
-                        };
-
-                        return explode(PHP_EOL, $payload);
+                    ->state(fn (Task $task) => match ($task->payload) {
+                        'start', 'restart', 'stop', 'kill' => mb_ucfirst($task->payload),
+                        default => explode(PHP_EOL, $task->payload)
                     })
                     ->badge(),
                 TextColumn::make('time_offset')
@@ -94,7 +91,12 @@ class TasksRelationManager extends RelationManager
             ])
             ->actions([
                 EditAction::make()
-                    ->form($this->getTaskForm($schedule)),
+                    ->form($this->getTaskForm($schedule))
+                    ->mutateFormDataUsing(function ($data) {
+                        $data['payload'] ??= '';
+
+                        return $data;
+                    }),
                 DeleteAction::make(),
             ])
             ->headerActions([

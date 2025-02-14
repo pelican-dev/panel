@@ -15,14 +15,27 @@ class Health extends Page
 {
     protected static ?string $navigationIcon = 'tabler-heart';
 
-    protected static ?string $navigationGroup = 'Advanced';
-
     protected static string $view = 'filament.pages.health';
 
     // @phpstan-ignore-next-line
     protected $listeners = [
         'refresh-component' => '$refresh',
     ];
+
+    public function getTitle(): string
+    {
+        return trans('admin/health.title');
+    }
+
+    public static function getNavigationLabel(): string
+    {
+        return trans('admin/health.title');
+    }
+
+    public static function getNavigationGroup(): ?string
+    {
+        return trans('admin/dashboard.advanced');
+    }
 
     public static function canAccess(): bool
     {
@@ -33,6 +46,7 @@ class Health extends Page
     {
         return [
             Action::make('refresh')
+                ->label(trans('admin/health.refresh'))
                 ->button()
                 ->action('refresh'),
         ];
@@ -62,7 +76,7 @@ class Health extends Page
         $this->dispatch('refresh-component');
 
         Notification::make()
-            ->title('Health check results refreshed')
+            ->title(trans('admin/health.results_refreshed'))
             ->success()
             ->send();
     }
@@ -109,7 +123,7 @@ class Health extends Page
             return $carry;
         }, []);
 
-        return 'Failed: ' . implode(', ', $failedNames);
+        return trans('admin/health.checks.failed') . implode(', ', $failedNames);
     }
 
     public static function getNavigationIcon(): string

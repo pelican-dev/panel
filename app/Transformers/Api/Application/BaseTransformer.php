@@ -59,8 +59,6 @@ abstract class BaseTransformer extends TransformerAbstract
      * Determine if the API key loaded onto the transformer has permission
      * to access a different resource. This is used when including other
      * models on a transformation request.
-     *
-     * @deprecated — prefer $user->can/cannot methods
      */
     protected function authorize(string $resource): bool
     {

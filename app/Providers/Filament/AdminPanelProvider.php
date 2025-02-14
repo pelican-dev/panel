@@ -42,17 +42,17 @@ class AdminPanelProvider extends PanelProvider
             ->login(Login::class)
             ->userMenuItems([
                 MenuItem::make()
-                    ->label('Exit Admin')
+                    ->label(trans('profile.exit_admin'))
                     ->url('/')
                     ->icon('tabler-arrow-back')
                     ->sort(24),
             ])
             ->navigationGroups([
-                NavigationGroup::make('Server')
+                NavigationGroup::make(trans('admin/dashboard.server'))
                     ->collapsible(false),
-                NavigationGroup::make('User')
+                NavigationGroup::make(trans('admin/dashboard.user'))
                     ->collapsible(false),
-                NavigationGroup::make('Advanced'),
+                NavigationGroup::make(trans('admin/dashboard.advanced')),
             ])
             ->sidebarCollapsibleOnDesktop()
             ->discoverResources(in: app_path('Filament/Admin/Resources'), for: 'App\\Filament\\Admin\\Resources')

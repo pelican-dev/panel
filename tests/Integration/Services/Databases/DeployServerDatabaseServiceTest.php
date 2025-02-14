@@ -10,6 +10,7 @@ use App\Tests\Integration\IntegrationTestCase;
 use App\Services\Databases\DatabaseManagementService;
 use App\Services\Databases\DeployServerDatabaseService;
 use App\Exceptions\Service\Database\NoSuitableDatabaseHostException;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 class DeployServerDatabaseServiceTest extends IntegrationTestCase
 {
@@ -41,9 +42,8 @@ class DeployServerDatabaseServiceTest extends IntegrationTestCase
 
     /**
      * Test that an error is thrown if either the database name or the remote host are empty.
-     *
-     * @dataProvider invalidDataProvider
      */
+    #[DataProvider('invalidDataProvider')]
     public function testErrorIsThrownIfDatabaseNameIsEmpty(array $data): void
     {
         $server = $this->createServerModel();

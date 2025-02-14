@@ -36,8 +36,10 @@ class ListUsers extends ListRecords
                     ->hidden()
                     ->searchable(),
                 TextColumn::make('username')
+                    ->label(trans('admin/user.username'))
                     ->searchable(),
                 TextColumn::make('email')
+                    ->label(trans('admin/user.email'))
                     ->searchable()
                     ->icon('tabler-mail'),
                 IconColumn::make('use_totp')
@@ -47,17 +49,17 @@ class ListUsers extends ListRecords
                     ->boolean()
                     ->sortable(),
                 TextColumn::make('roles.name')
-                    ->label('Roles')
+                    ->label(trans('admin/user.roles'))
                     ->badge()
                     ->icon('tabler-users-group')
-                    ->placeholder('No roles'),
+                    ->placeholder(trans('admin/user.no_roles')),
                 TextColumn::make('servers_count')
                     ->counts('servers')
                     ->icon('tabler-server')
-                    ->label('Servers'),
+                    ->label(trans('admin/user.servers')),
                 TextColumn::make('subusers_count')
                     ->visibleFrom('sm')
-                    ->label('Subusers')
+                    ->label(trans('admin/user.subusers'))
                     ->counts('subusers')
                     ->icon('tabler-users'),
             ])
@@ -76,8 +78,7 @@ class ListUsers extends ListRecords
     protected function getHeaderActions(): array
     {
         return [
-            CreateAction::make()
-                ->label('Create User'),
+            CreateAction::make(),
         ];
     }
 }

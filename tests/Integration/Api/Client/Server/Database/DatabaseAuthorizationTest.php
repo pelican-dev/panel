@@ -8,12 +8,11 @@ use App\Models\DatabaseHost;
 use App\Services\Databases\DatabasePasswordService;
 use App\Services\Databases\DatabaseManagementService;
 use App\Tests\Integration\Api\Client\ClientApiIntegrationTestCase;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 class DatabaseAuthorizationTest extends ClientApiIntegrationTestCase
 {
-    /**
-     * @dataProvider methodDataProvider
-     */
+    #[DataProvider('methodDataProvider')]
     public function testAccessToAServersDatabasesIsRestrictedProperly(string $method, string $endpoint): void
     {
         // The API $user is the owner of $server1.

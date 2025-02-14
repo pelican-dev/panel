@@ -23,8 +23,8 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('users', function (Blueprint $table) {
-            $table->addColumn('varchar', 'name_first');
-            $table->addColumn('varchar', 'name_last');
+            $table->string('name_first')->nullable();
+            $table->string('name_last')->nullable();
         });
     }
 };

@@ -10,6 +10,7 @@ use App\Models\Permission;
 use App\Models\Role;
 use App\Models\UserSSHKey;
 use App\Tests\Integration\IntegrationTestCase;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 class SftpAuthenticationControllerTest extends IntegrationTestCase
 {
@@ -95,9 +96,8 @@ class SftpAuthenticationControllerTest extends IntegrationTestCase
     /**
      * Test that providing an invalid key and/or invalid username triggers the throttle on
      * the endpoint.
-     *
-     * @dataProvider authorizationTypeDataProvider
      */
+    #[DataProvider('authorizationTypeDataProvider')]
     public function testUserIsThrottledIfInvalidCredentialsAreProvided(): void
     {
         for ($i = 0; $i <= 10; $i++) {
@@ -113,9 +113,8 @@ class SftpAuthenticationControllerTest extends IntegrationTestCase
     /**
      * Test that a request is rejected if the credentials are valid but the username indicates
      * a server on a different node.
-     *
-     * @dataProvider authorizationTypeDataProvider
      */
+    #[DataProvider('authorizationTypeDataProvider')]
     public function testRequestIsRejectedIfServerBelongsToDifferentNode(string $type): void
     {
         $node2 = $this->createServerModel()->node;
@@ -150,9 +149,7 @@ class SftpAuthenticationControllerTest extends IntegrationTestCase
             ->assertJsonPath('errors.0.detail', 'You do not have permission to access SFTP for this server.');
     }
 
-    /**
-     * @dataProvider serverStateDataProvider
-     */
+    #[DataProvider('serverStateDataProvider')]
     public function testInvalidServerStateReturnsConflictError(string $status): void
     {
         $this->server->update(['status' => $status]);

@@ -18,6 +18,7 @@ use Filament\Forms\Form;
 use Filament\Notifications\Notification;
 use Filament\Support\Enums\Alignment;
 use Illuminate\Support\Number;
+use Webbingbrasil\FilamentCopyActions\Forms\Actions\CopyAction;
 
 class Settings extends ServerFormPage
 {
@@ -161,7 +162,8 @@ class Settings extends ServerFormPage
                                     ->label('Connection')
                                     ->columnSpan(1)
                                     ->disabled()
-                                    ->hintActions([
+                                    ->suffixAction(fn () => request()->isSecure() ? CopyAction::make() : null)
+                                    ->hintAction(
                                         Action::make('connect_sftp')
                                             ->label('Connect to SFTP')
                                             ->color('success')
@@ -171,7 +173,7 @@ class Settings extends ServerFormPage
 
                                                 return 'sftp://' . auth()->user()->username . '.' . $server->uuid_short . '@' . $fqdn . ':' . $server->node->daemon_sftp;
                                             }),
-                                    ])
+                                    )
                                     ->formatStateUsing(function (Server $server) {
                                         $fqdn = $server->node->daemon_sftp_alias ?? $server->node->fqdn;
 
@@ -180,6 +182,7 @@ class Settings extends ServerFormPage
                                 TextInput::make('username')
                                     ->label('Username')
                                     ->columnSpan(1)
+                                    ->suffixAction(fn () => request()->isSecure() ? CopyAction::make() : null)
                                     ->disabled()
                                     ->formatStateUsing(fn (Server $server) => auth()->user()->username . '.' . $server->uuid_short),
                                 Placeholder::make('password')

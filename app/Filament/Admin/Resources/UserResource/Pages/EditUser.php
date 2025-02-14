@@ -5,12 +5,10 @@ namespace App\Filament\Admin\Resources\UserResource\Pages;
 use App\Filament\Admin\Resources\UserResource;
 use App\Models\Role;
 use App\Models\User;
-use App\Services\Helpers\LanguageService;
 use Filament\Actions\DeleteAction;
 use Filament\Forms\Components\CheckboxList;
 use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\Section;
-use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Resources\Pages\EditRecord;
@@ -26,29 +24,27 @@ class EditUser extends EditRecord
             ->schema([
                 Section::make()->schema([
                     TextInput::make('username')
+                        ->label(trans('admin/user.username'))
                         ->required()
                         ->minLength(3)
                         ->maxLength(255),
                     TextInput::make('email')
+                        ->label(trans('admin/user.email'))
                         ->email()
                         ->required()
                         ->maxLength(255),
                     TextInput::make('password')
+                        ->label(trans('admin/user.password'))
                         ->dehydrateStateUsing(fn (string $state): string => Hash::make($state))
                         ->dehydrated(fn (?string $state): bool => filled($state))
                         ->password(),
-                    Select::make('language')
-                        ->required()
-                        ->hidden()
-                        ->default('en')
-                        ->options(fn (LanguageService $languageService) => $languageService->getAvailableLanguages()),
                     Hidden::make('skipValidation')
                         ->default(true),
                     CheckboxList::make('roles')
                         ->disabled(fn (User $user) => $user->id === auth()->user()->id)
                         ->disableOptionWhen(fn (string $value): bool => $value == Role::getRootAdmin()->id)
                         ->relationship('roles', 'name')
-                        ->label('Admin Roles')
+                        ->label(trans('admin/user.admin_roles'))
                         ->columnSpanFull()
                         ->bulkToggleable(false),
                 ])
@@ -60,7 +56,7 @@ class EditUser extends EditRecord
     {
         return [
             DeleteAction::make()
-                ->label(fn (User $user) => auth()->user()->id === $user->id ? 'Can\'t Delete Yourself' : ($user->servers()->count() > 0 ? 'User Has Servers' : 'Delete'))
+                ->label(fn (User $user) => auth()->user()->id === $user->id ? trans('admin/user.self_delete') : ($user->servers()->count() > 0 ? trans('admin/user.has_servers') : trans('filament-actions::delete.single.modal.actions.delete.label')))
                 ->disabled(fn (User $user) => auth()->user()->id === $user->id || $user->servers()->count() > 0),
             $this->getSaveFormAction()->formId('form'),
         ];
