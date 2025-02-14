@@ -47,7 +47,7 @@ class Startup extends ServerFormPage
                         'lg' => 4,
                     ])
                     ->autosize()
-                    ->formatStateUsing(fn (Server $server, StartupCommandService $StartupCommandService) => $StartupCommandService->handle($server))
+                    ->formatStateUsing(fn (Server $server, StartupCommandService $service) => $service->handle($server))
                     ->readOnly(),
                 TextInput::make('custom_image')
                     ->label('Docker Image')
