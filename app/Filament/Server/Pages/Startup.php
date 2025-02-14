@@ -6,6 +6,7 @@ use App\Facades\Activity;
 use App\Models\Permission;
 use App\Models\Server;
 use App\Models\ServerVariable;
+use App\Services\Servers\StartupCommandService;
 use Closure;
 use Filament\Facades\Filament;
 use Filament\Forms\Components\Component;
@@ -46,6 +47,7 @@ class Startup extends ServerFormPage
                         'lg' => 4,
                     ])
                     ->autosize()
+                    ->formatStateUsing(fn (Server $server, StartupCommandService $StartupCommandService) => $StartupCommandService->handle($server))
                     ->readOnly(),
                 TextInput::make('custom_image')
                     ->label('Docker Image')
