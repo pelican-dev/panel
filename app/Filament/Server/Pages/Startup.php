@@ -3,13 +3,14 @@
 namespace App\Filament\Server\Pages;
 
 use App\Facades\Activity;
+use App\Filament\Components\Forms\Actions\PreviewStartupAction;
 use App\Models\Permission;
 use App\Models\Server;
 use App\Models\ServerVariable;
-use App\Services\Servers\StartupCommandService;
 use Closure;
 use Filament\Facades\Filament;
 use Filament\Forms\Components\Component;
+use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
@@ -38,6 +39,8 @@ class Startup extends ServerFormPage
                 'lg' => 6,
             ])
             ->schema([
+                Hidden::make('previewing')
+                    ->default(false),
                 Textarea::make('startup')
                     ->label('Startup Command')
                     ->columnSpan([
@@ -47,7 +50,7 @@ class Startup extends ServerFormPage
                         'lg' => 4,
                     ])
                     ->autosize()
-                    ->formatStateUsing(fn (Server $server, StartupCommandService $service) => $service->handle($server))
+                    ->hintAction(PreviewStartupAction::make('preview'))
                     ->readOnly(),
                 TextInput::make('custom_image')
                     ->label('Docker Image')
