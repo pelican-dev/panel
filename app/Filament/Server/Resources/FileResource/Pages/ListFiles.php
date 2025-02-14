@@ -498,7 +498,6 @@ class ListFiles extends ListRecords
                                 ->live()
                                 ->schema([
                                     FileUpload::make('files')
-                                        ->label('File(s)')
                                         ->storeFiles(false)
                                         ->previewable(false)
                                         ->preserveFilenames()
