@@ -13,7 +13,7 @@ class EggControllerTest extends ApplicationApiIntegrationTestCase
     /**
      * Test that all the eggs can be returned.
      */
-    public function testListAllEggs(): void
+    public function test_list_all_eggs(): void
     {
         $eggs = Egg::query()->get();
 
@@ -57,7 +57,7 @@ class EggControllerTest extends ApplicationApiIntegrationTestCase
     /**
      * Test that a single egg can be returned.
      */
-    public function testReturnSingleEgg(): void
+    public function test_return_single_egg(): void
     {
         $egg = Egg::query()->findOrFail(1);
 
@@ -79,7 +79,7 @@ class EggControllerTest extends ApplicationApiIntegrationTestCase
     /**
      * Test that a single egg and all the defined relationships can be returned.
      */
-    public function testReturnSingleEggWithRelationships(): void
+    public function test_return_single_egg_with_relationships(): void
     {
         $egg = Egg::query()->findOrFail(1);
 
@@ -99,7 +99,7 @@ class EggControllerTest extends ApplicationApiIntegrationTestCase
     /**
      * Test that a missing egg returns a 404 error.
      */
-    public function testGetMissingEgg(): void
+    public function test_get_missing_egg(): void
     {
         $response = $this->getJson('/api/application/eggs/nil');
         $this->assertNotFoundJson($response);
@@ -109,7 +109,7 @@ class EggControllerTest extends ApplicationApiIntegrationTestCase
      * Test that an authentication error occurs if a key does not have permission
      * to access a resource.
      */
-    public function testErrorReturnedIfNoPermission(): void
+    public function test_error_returned_if_no_permission(): void
     {
         $egg = Egg::query()->findOrFail(1);
         $this->createNewDefaultApiKey($this->getApiUser(), [Egg::RESOURCE_NAME => AdminAcl::NONE]);

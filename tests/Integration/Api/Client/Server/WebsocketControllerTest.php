@@ -17,7 +17,7 @@ class WebsocketControllerTest extends ClientApiIntegrationTestCase
      * Test that a subuser attempting to connect to the websocket receives an error if they
      * do not explicitly have the permission.
      */
-    public function testSubuserWithoutWebsocketPermissionReceivesError(): void
+    public function test_subuser_without_websocket_permission_receives_error(): void
     {
         [$user, $server] = $this->generateTestAccount([Permission::ACTION_CONTROL_RESTART]);
 
@@ -30,7 +30,7 @@ class WebsocketControllerTest extends ClientApiIntegrationTestCase
     /**
      * Confirm users cannot access the websocket for another user's server.
      */
-    public function testUserWithoutPermissionForServerReceivesError(): void
+    public function test_user_without_permission_for_server_receives_error(): void
     {
         [, $server] = $this->generateTestAccount([Permission::ACTION_WEBSOCKET_CONNECT]);
         [$user] = $this->generateTestAccount([Permission::ACTION_WEBSOCKET_CONNECT]);
@@ -43,7 +43,7 @@ class WebsocketControllerTest extends ClientApiIntegrationTestCase
      * Test that the expected permissions are returned for the server owner and that the JWT is
      * configured correctly.
      */
-    public function testJwtAndWebsocketUrlAreReturnedForServerOwner(): void
+    public function test_jwt_and_websocket_url_are_returned_for_server_owner(): void
     {
         /** @var \App\Models\User $user */
         /** @var \App\Models\Server $server */
@@ -94,7 +94,7 @@ class WebsocketControllerTest extends ClientApiIntegrationTestCase
     /**
      * Test that the subuser's permissions are passed along correctly in the generated JWT.
      */
-    public function testJwtIsConfiguredCorrectlyForServerSubuser(): void
+    public function test_jwt_is_configured_correctly_for_server_subuser(): void
     {
         $permissions = [Permission::ACTION_WEBSOCKET_CONNECT, Permission::ACTION_CONTROL_CONSOLE];
 

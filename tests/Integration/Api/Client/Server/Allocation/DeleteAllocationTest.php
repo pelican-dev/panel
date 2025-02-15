@@ -15,7 +15,7 @@ class DeleteAllocationTest extends ClientApiIntegrationTestCase
      * to an empty value on assignment.
      */
     #[DataProvider('permissionDataProvider')]
-    public function testAllocationCanBeDeletedFromServer(array $permission): void
+    public function test_allocation_can_be_deleted_from_server(array $permission): void
     {
         /** @var \App\Models\Server $server */
         [$user, $server] = $this->generateTestAccount($permission);
@@ -36,7 +36,7 @@ class DeleteAllocationTest extends ClientApiIntegrationTestCase
     /**
      * Test that an error is returned if the user does not have permissiont to delete an allocation.
      */
-    public function testErrorIsReturnedIfUserDoesNotHavePermission(): void
+    public function test_error_is_returned_if_user_does_not_have_permission(): void
     {
         /** @var \App\Models\Server $server */
         [$user, $server] = $this->generateTestAccount([Permission::ACTION_ALLOCATION_CREATE]);
@@ -57,7 +57,7 @@ class DeleteAllocationTest extends ClientApiIntegrationTestCase
      * Test that an allocation is not deleted if it is currently marked as the primary allocation
      * for the server.
      */
-    public function testErrorIsReturnedIfAllocationIsPrimary(): void
+    public function test_error_is_returned_if_allocation_is_primary(): void
     {
         /** @var \App\Models\Server $server */
         [$user, $server] = $this->generateTestAccount();
@@ -69,7 +69,7 @@ class DeleteAllocationTest extends ClientApiIntegrationTestCase
             ->assertJsonPath('errors.0.detail', 'You cannot delete the primary allocation for this server.');
     }
 
-    public function testAllocationCannotBeDeletedIfServerLimitIsNotDefined(): void
+    public function test_allocation_cannot_be_deleted_if_server_limit_is_not_defined(): void
     {
         [$user, $server] = $this->generateTestAccount();
 
@@ -88,7 +88,7 @@ class DeleteAllocationTest extends ClientApiIntegrationTestCase
     /**
      * Test that an allocation cannot be deleted if it does not belong to the server instance.
      */
-    public function testErrorIsReturnedIfAllocationDoesNotBelongToServer(): void
+    public function test_error_is_returned_if_allocation_does_not_belong_to_server(): void
     {
         /** @var \App\Models\Server $server */
         [$user, $server] = $this->generateTestAccount();

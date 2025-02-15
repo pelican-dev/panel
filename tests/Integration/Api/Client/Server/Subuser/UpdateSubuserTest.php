@@ -14,7 +14,7 @@ class UpdateSubuserTest extends ClientApiIntegrationTestCase
      * Test that the correct permissions are applied to the account when making updates
      * to a subusers permissions.
      */
-    public function testCorrectPermissionsAreRequiredForUpdating(): void
+    public function test_correct_permissions_are_required_for_updating(): void
     {
         [$user, $server] = $this->generateTestAccount(['user.read']);
 
@@ -56,7 +56,7 @@ class UpdateSubuserTest extends ClientApiIntegrationTestCase
      * Tests that permissions for the account are updated and any extraneous values
      * we don't know about are removed.
      */
-    public function testPermissionsAreSavedToAccount(): void
+    public function test_permissions_are_saved_to_account(): void
     {
         [$user, $server] = $this->generateTestAccount();
 
@@ -93,7 +93,7 @@ class UpdateSubuserTest extends ClientApiIntegrationTestCase
      * Ensure a subuser cannot assign permissions to an account that they do not have
      * themselves.
      */
-    public function testUserCannotAssignPermissionsTheyDoNotHave(): void
+    public function test_user_cannot_assign_permissions_they_do_not_have(): void
     {
         [$user, $server] = $this->generateTestAccount([Permission::ACTION_USER_READ, Permission::ACTION_USER_UPDATE]);
 
@@ -114,7 +114,7 @@ class UpdateSubuserTest extends ClientApiIntegrationTestCase
     /**
      * Test that a user cannot update thyself.
      */
-    public function testUserCannotUpdateSelf(): void
+    public function test_user_cannot_update_self(): void
     {
         [$user, $server] = $this->generateTestAccount([Permission::ACTION_USER_READ, Permission::ACTION_USER_UPDATE]);
 
@@ -126,7 +126,7 @@ class UpdateSubuserTest extends ClientApiIntegrationTestCase
     /**
      * Test that an error is returned if you attempt to update a subuser on a different account.
      */
-    public function testCannotUpdateSubuserForDifferentServer(): void
+    public function test_cannot_update_subuser_for_different_server(): void
     {
         [$user, $server] = $this->generateTestAccount();
         [$user2] = $this->generateTestAccount(['foo.bar']);
