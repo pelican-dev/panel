@@ -7,6 +7,7 @@ use App\Enums\ServerState;
 use App\Enums\SuspendAction;
 use App\Filament\Admin\Resources\ServerResource;
 use App\Filament\Admin\Resources\ServerResource\RelationManagers\AllocationsRelationManager;
+use App\Filament\Components\Forms\Actions\PreviewStartupAction;
 use App\Filament\Components\Forms\Actions\RotateDatabasePasswordAction;
 use App\Filament\Server\Pages\Console;
 use App\Models\Database;
@@ -549,12 +550,14 @@ class EditServer extends EditRecord
                                         true => 'tabler-code-off',
                                     ])
                                     ->required(),
-
+                                Hidden::make('previewing')
+                                    ->default(false),
                                 Textarea::make('startup')
                                     ->label(trans('admin/server.startup_cmd'))
                                     ->required()
                                     ->columnSpan(6)
-                                    ->autosize(),
+                                    ->autosize()
+                                    ->hintAction(PreviewStartupAction::make('preview')),
 
                                 Textarea::make('defaultStartup')
                                     ->hintAction(fn () => request()->isSecure() ? CopyAction::make() : null)
