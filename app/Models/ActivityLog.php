@@ -157,7 +157,7 @@ class ActivityLog extends Model implements HasIcon, HasLabel
             return 'tabler-user';
         }
 
-        return $this->actor_id !== null ? 'tabler-user-off' : 'tabler-device-desktop';
+        return $this->actor_id === null ? 'tabler-device-desktop' : 'tabler-user-off';
     }
 
     public function getLabel(): string
