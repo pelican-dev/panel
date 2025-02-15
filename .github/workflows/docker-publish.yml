@@ -57,6 +57,7 @@ jobs:
         with:
           name: base-php-${{ matrix.arch }}.tar
           path: base-php-${{ matrix.arch }}.tar
+          retention-days: 7
 
 
   build-and-push:
