@@ -1,6 +1,7 @@
 # syntax=docker.io/docker/dockerfile:1.13-labs
 # Pelican Production Dockerfile
 
+
 # For those who want to build this Dockerfile themselves, uncomment lines 6-12 and replace "localhost:5000/base-php:$TARGETARCH" on lines 17 and 67 with "base".
 
 # FROM --platform=$TARGETOS/$TARGETARCH php:8.3-fpm-alpine as base
