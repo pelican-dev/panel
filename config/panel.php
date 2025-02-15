@@ -193,4 +193,21 @@ return [
     'webhook' => [
         'prune_days' => env('APP_WEBHOOK_PRUNE_DAYS', 30),
     ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Alert Banner Settings
+    |--------------------------------------------------------------------------
+    |
+    | This section controls Alert Banner configurations
+    */
+
+    'alert_banner' => [
+        'enabled' => env('ALERT_BANNER_ENABLED', false),
+        'closeable' => env('ALERT_BANNER_CLOSEABLE', true),
+        'status' => env('ALERT_BANNER_STATUS', 'info'),
+        'title' => env('ALERT_BANNER_TITLE', ''),
+        'message' => env('ALERT_BANNER_MESSAGE', ''),
+        'icon' => env('ALERT_BANNER_ICON', null),
+    ],
 ];
