@@ -1,6 +1,16 @@
 # syntax=docker.io/docker/dockerfile:1.13-labs
 # Pelican Production Dockerfile
 
+# For those who want to build this Dockerfile themselves, uncomment lines 6-12 and replace "localhost:5000/base-php:$TARGETARCH" on lines 17 and 67 with "base".
+
+# FROM --platform=$TARGETOS/$TARGETARCH php:8.3-fpm-alpine as base
+
+# ADD --chmod=0755 https://github.com/mlocati/docker-php-extension-installer/releases/latest/download/install-php-extensions /usr/local/bin/
+
+# RUN install-php-extensions bcmath gd intl zip opcache pcntl posix pdo_mysql
+
+# RUN rm /usr/local/bin/install-php-extensions
+
 # ================================
 # Stage 1-1: Composer Install
 # ================================
