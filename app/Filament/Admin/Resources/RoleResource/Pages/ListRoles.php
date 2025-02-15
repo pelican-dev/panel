@@ -53,8 +53,7 @@ class ListRoles extends ListRecords
     protected function getHeaderActions(): array
     {
         return [
-            CreateAction::make()
-                ->label(trans('admin/role.create_action', ['action' => trans('filament-actions::create.single.modal.actions.create.label')])),
+            CreateAction::make(),
         ];
     }
 }

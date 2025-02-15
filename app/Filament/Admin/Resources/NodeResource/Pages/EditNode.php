@@ -271,6 +271,8 @@ class EditNode extends EditRecord
                                     'lg' => 1,
                                 ])
                                 ->label(trans('admin/node.upload_limit'))
+                                ->hintIcon('tabler-question-mark')
+                                ->hintIconTooltip(trans('admin/node.upload_limit_help.0') . trans('admin/node.upload_limit_help.1'))
                                 ->numeric()->required()
                                 ->minValue(1)
                                 ->maxValue(1024)

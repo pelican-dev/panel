@@ -113,6 +113,8 @@
                             vertical: 'auto',
                             verticalScrollbarSize: 15
                         },
+                        wordWrap: 'on',
+                        WrappingIndent: 'same',
 
                     });
                     monacoEditor(document.getElementById(monacoId).editor);

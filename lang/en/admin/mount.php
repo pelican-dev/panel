@@ -1,7 +1,6 @@
 <?php
 
 return [
-    'create_action' => ':action Mount',
     'nav_title' => 'Mounts',
     'model_label' => 'Mount',
     'model_label_plural' => 'Mounts',
