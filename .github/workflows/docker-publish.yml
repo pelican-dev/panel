@@ -45,8 +45,8 @@ jobs:
           load: true
           platforms: ${{ matrix.platform }}
           tags: base-php:${{ matrix.arch }}
-          cache-from: type=gha,scope=tagged-base-php${{ matrix.arch }}
-          cache-to: type=gha,scope=tagged-base-php${{ matrix.arch }}
+          cache-from: type=gha,scope=base-php${{ matrix.arch }}
+          cache-to: type=gha,scope=base-php${{ matrix.arch }}
 
       - name: Export image to file
         run: docker save -o base-php-${{ matrix.arch }}.tar base-php:${{ matrix.arch }}
