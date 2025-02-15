@@ -59,7 +59,7 @@ class ServersRelationManager extends RelationManager
                     ->searchable()
                     ->sortable(),
                 TextColumn::make('node.name')
-                    ->label('admin/server.node')
+                    ->label(trans('admin/server.node'))
                     ->icon('tabler-server-2')
                     ->url(fn (Server $server): string => route('filament.admin.resources.nodes.edit', ['record' => $server->node]))
                     ->sortable(),

@@ -90,7 +90,7 @@ class ListActivities extends ListRecords
                             })
                             ->hintAction(
                                 Action::make('edit')
-                                    ->label(__('filament-actions::edit.single.label'))
+                                    ->label(trans('filament-actions::edit.single.label'))
                                     ->icon('tabler-edit')
                                     ->visible(fn (ActivityLog $activityLog) => $activityLog->actor instanceof User && auth()->user()->can('update user'))
                                     ->url(fn (ActivityLog $activityLog) => EditUser::getUrl(['record' => $activityLog->actor], panel: 'admin'))

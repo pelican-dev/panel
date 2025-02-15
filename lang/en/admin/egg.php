@@ -19,7 +19,6 @@ return [
         'import_success' => 'Import Success',
     ],
     'in_use' => 'In Use',
-    'create_action' => ':action Egg',
     'servers' => 'Servers',
     'name' => 'Name',
     'egg_uuid' => 'Egg UUID',

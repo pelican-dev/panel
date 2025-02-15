@@ -102,12 +102,13 @@ class CreateServer extends CreateRecord
                                     'sm' => 2,
                                     'md' => 2,
                                 ])
-                                ->unique()
+                                ->unique(ignoreRecord: true)
                                 ->maxLength(255),
 
                             Select::make('node_id')
                                 ->disabledOn('edit')
                                 ->prefixIcon('tabler-server-2')
+                                ->selectablePlaceholder(false)
                                 ->default(fn () => ($this->node = Node::query()->latest()->first())?->id)
                                 ->columnSpan([
                                     'default' => 1,
@@ -127,6 +128,7 @@ class CreateServer extends CreateRecord
                             Select::make('owner_id')
                                 ->preload()
                                 ->prefixIcon('tabler-user')
+                                ->selectablePlaceholder(false)
                                 ->default(auth()->user()->id)
                                 ->label(trans('admin/server.owner'))
                                 ->columnSpan([

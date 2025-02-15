@@ -206,6 +206,7 @@ class Settings extends Page implements HasForms
                 ->label(trans('admin/setting.general.display_width'))
                 ->native(false)
                 ->options(MaxWidth::class)
+                ->selectablePlaceholder(false)
                 ->default(env('FILAMENT_WIDTH', config('panel.filament.display-width'))),
         ];
     }
@@ -512,8 +513,6 @@ class Settings extends Page implements HasForms
                                 $data = array_merge([
                                     "OAUTH_{$id}_ENABLED" => 'true',
                                 ], $data);
-
-                                $data = array_filter($data, fn ($value) => !Str::startsWith($value, '_noenv'));
 
                                 foreach ($data as $key => $value) {
                                     $set($key, $value);
