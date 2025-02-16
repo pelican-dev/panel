@@ -1,5 +1,9 @@
 @script
 <script>
+    $wire.on('setContent', ({ content }) => {
+        document.getElementById('{{ $getId() }}').editor.getModel().setValue(content);
+    });
+
     $wire.on('setLanguage', ({ lang }) => {
         monaco.editor.setModelLanguage(document.getElementById('{{ $getId() }}').editor.getModel(), lang);
     });

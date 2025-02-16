@@ -112,11 +112,28 @@ class EditEgg extends EditRecord
                         ->columns()
                         ->icon('tabler-server-cog')
                         ->schema([
-                            Select::make('config_from')
+                            Select::make('config_process_from')
                                 ->label(trans('admin/egg.copy_from'))
+                                ->helperText(trans('admin/egg.copy_from_help'))
                                 ->placeholder(trans('admin/egg.none'))
                                 ->relationship('configFrom', 'name', ignoreRecord: true)
-                                ->helperText(trans('admin/egg.copy_from_help')),
+                                ->live()
+                                ->afterStateUpdated(function ($state, Set $set) {
+                                    $set('copy_script_from', $state);
+                                    if ($state === null) {
+                                        $set('config_stop', '');
+                                        $set('config_startup', '{}');
+                                        $set('config_files', '{}');
+                                        $set('config_logs', '{}');
+
+                                        return;
+                                    }
+                                    $egg = Egg::find($state);
+                                    $set('config_stop', $egg->config_stop);
+                                    $set('config_startup', $egg->config_startup);
+                                    $set('config_files', $egg->config_files);
+                                    $set('config_logs', $egg->config_logs);
+                                }),
                             TextInput::make('config_stop')
                                 ->label(trans('admin/egg.stop_command'))
                                 ->maxLength(255)
@@ -231,17 +248,31 @@ class EditEgg extends EditRecord
                             Select::make('copy_script_from')
                                 ->label(trans('admin/egg.script_from'))
                                 ->placeholder(trans('admin/egg.none'))
-                                ->relationship('scriptFrom', 'name', ignoreRecord: true),
+                                ->relationship('scriptFrom', 'name', ignoreRecord: true)
+                                ->live()
+                                ->afterStateUpdated(function ($state, Set $set) {
+                                    if ($state === null) {
+                                        $set('script_container', 'ghcr.io/pelican-eggs/installers:debian');
+                                        $set('script_entry', 'bash');
+                                        $this->dispatch('setContent', content: '');
+
+                                        return;
+                                    }
+                                    $egg = Egg::find($state);
+                                    $set('script_container', $egg->script_container);
+                                    $set('script_entry', $egg->script_entry);
+                                    $this->dispatch('setContent', content: $egg->script_install);
+                                }),
                             TextInput::make('script_container')
                                 ->label(trans('admin/egg.script_container'))
                                 ->required()
                                 ->maxLength(255)
-                                ->default('alpine:3.4'),
-                            TextInput::make('script_entry')
+                                ->placeholder('ghcr.io/pelican-eggs/installers:debian'),
+                            Select::make('script_entry')
                                 ->label(trans('admin/egg.script_entry'))
-                                ->required()
-                                ->maxLength(255)
-                                ->default('ash'),
+                                ->selectablePlaceholder(false)
+                                ->options(['bash', 'ash', '/bin/bash'])
+                                ->required(),
                             MonacoEditor::make('script_install')
                                 ->label(trans('admin/egg.script_install'))
                                 ->placeholderText('')
