@@ -4,7 +4,7 @@ namespace App\Filament\Admin\Resources\EggResource\Pages;
 
 use AbdelhamidErrahmouni\FilamentMonacoEditor\MonacoEditor;
 use App\Filament\Admin\Resources\EggResource;
-use App\Models\Egg;
+use App\Filament\Components\Forms\Fields\CopyFrom;
 use App\Models\EggVariable;
 use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\Fieldset;
@@ -118,28 +118,8 @@ class CreateEgg extends CreateRecord
                     Tab::make(trans('admin/egg.tabs.process_management'))
                         ->columns()
                         ->schema([
-                            Select::make('config_process_from')
-                                ->label(trans('admin/egg.copy_from'))
-                                ->helperText(trans('admin/egg.copy_from_help'))
-                                ->placeholder(trans('admin/egg.none'))
-                                ->relationship('configFrom', 'name', ignoreRecord: true)
-                                ->live()
-                                ->afterStateUpdated(function ($state, Set $set) {
-                                    $set('copy_script_from', $state);
-                                    if ($state === null) {
-                                        $set('config_stop', '');
-                                        $set('config_startup', '{}');
-                                        $set('config_files', '{}');
-                                        $set('config_logs', '{}');
-
-                                        return;
-                                    }
-                                    $egg = Egg::find($state);
-                                    $set('config_stop', $egg->config_stop);
-                                    $set('config_startup', $egg->config_startup);
-                                    $set('config_files', $egg->config_files);
-                                    $set('config_logs', $egg->config_logs);
-                                }),
+                            CopyFrom::make('copy_process_from')
+                                ->process(),
                             TextInput::make('config_stop')
                                 ->label(trans('admin/egg.stop_command'))
                                 ->required()
@@ -254,24 +234,8 @@ class CreateEgg extends CreateRecord
                     Tab::make(trans('admin/egg.tabs.install_script'))
                         ->columns(3)
                         ->schema([
-                            Select::make('copy_script_from')
-                                ->label(trans('admin/egg.script_from'))
-                                ->placeholder(trans('admin/egg.none'))
-                                ->relationship('scriptFrom', 'name', ignoreRecord: true)
-                                ->live()
-                                ->afterStateUpdated(function ($state, Set $set) {
-                                    if ($state === null) {
-                                        $set('script_container', 'ghcr.io/pelican-eggs/installers:debian');
-                                        $set('script_entry', 'bash');
-                                        $this->dispatch('setContent', content: '');
-
-                                        return;
-                                    }
-                                    $egg = Egg::find($state);
-                                    $set('script_container', $egg->script_container);
-                                    $set('script_entry', $egg->script_entry);
-                                    $this->dispatch('setContent', content: $egg->script_install);
-                                }),
+                            CopyFrom::make('copy_script_from')
+                                ->script(),
                             TextInput::make('script_container')
                                 ->label(trans('admin/egg.script_container'))
                                 ->required()
