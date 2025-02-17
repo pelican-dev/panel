@@ -58,7 +58,12 @@ class SubuserCreationService
                 throw new ServerSubuserExistsException(trans('exceptions.subusers.subuser_exists'));
             }
 
-            $cleanedPermissions = array_filter(array_unique($permissions), fn ($permission) => $permission === Permission::ACTION_WEBSOCKET_CONNECT || auth()->user()->can($permission, $server));
+            $cleanedPermissions = collect($permissions)
+                ->unique()
+                ->filter(fn ($permission) => $permission === Permission::ACTION_WEBSOCKET_CONNECT || auth()->user()->can($permission, $server))
+                ->sort()
+                ->values()
+                ->all();
 
             $subuser = Subuser::query()->create([
                 'user_id' => $user->id,

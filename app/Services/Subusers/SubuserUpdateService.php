@@ -17,10 +17,14 @@ class SubuserUpdateService
 
     public function handle(Subuser $subuser, Server $server, array $permissions): void
     {
-        $cleanedPermissions = array_filter($permissions, fn ($permission) => $permission === Permission::ACTION_WEBSOCKET_CONNECT || auth()->user()->can($permission, $server));
-        $current = $subuser->permissions;
+        $cleanedPermissions = collect($permissions)
+            ->unique()
+            ->filter(fn ($permission) => $permission === Permission::ACTION_WEBSOCKET_CONNECT || auth()->user()->can($permission, $server))
+            ->sort()
+            ->values()
+            ->all();
 
-        sort($cleanedPermissions);
+        $current = $subuser->permissions;
         sort($current);
 
         $log = Activity::event('server:subuser.update')
