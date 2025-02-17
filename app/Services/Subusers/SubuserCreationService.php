@@ -57,10 +57,12 @@ class SubuserCreationService
                 throw new ServerSubuserExistsException(trans('exceptions.subusers.subuser_exists'));
             }
 
+            $cleanedPermissions = array_filter(array_unique($permissions), fn ($permission) => auth()->user()->can($permission, $server));
+
             $subuser = Subuser::query()->create([
                 'user_id' => $user->id,
                 'server_id' => $server->id,
-                'permissions' => array_unique($permissions),
+                'permissions' => $cleanedPermissions,
             ]);
 
             event(new SubUserAdded($subuser));

@@ -16,9 +16,10 @@ class SubuserUpdateService
 
     public function handle(Subuser $subuser, Server $server, array $permissions): void
     {
+        $cleanedPermissions = array_filter($permissions, fn ($permission) => auth()->user()->can($permission, $server));
         $current = $subuser->permissions;
 
-        sort($permissions);
+        sort($cleanedPermissions);
         sort($current);
 
         $log = Activity::event('server:subuser.update')
@@ -26,15 +27,15 @@ class SubuserUpdateService
             ->property([
                 'email' => $subuser->user->email,
                 'old' => $current,
-                'new' => $permissions,
+                'new' => $cleanedPermissions,
                 'revoked' => true,
             ]);
 
         // Only update the database and hit up the daemon instance to invalidate JTI's if the permissions
         // have actually changed for the user.
-        if ($permissions !== $current) {
-            $log->transaction(function ($instance) use ($subuser, $permissions, $server) {
-                $subuser->update(['permissions' => $permissions]);
+        if ($cleanedPermissions !== $current) {
+            $log->transaction(function ($instance) use ($subuser, $cleanedPermissions, $server) {
+                $subuser->update(['permissions' => $cleanedPermissions]);
 
                 try {
                     $this->serverRepository->setServer($server)->revokeUserJTI($subuser->user_id);
