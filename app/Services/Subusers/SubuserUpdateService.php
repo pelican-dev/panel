@@ -3,6 +3,7 @@
 namespace App\Services\Subusers;
 
 use App\Facades\Activity;
+use App\Models\Permission;
 use App\Models\Server;
 use App\Models\Subuser;
 use App\Repositories\Daemon\DaemonServerRepository;
@@ -16,7 +17,7 @@ class SubuserUpdateService
 
     public function handle(Subuser $subuser, Server $server, array $permissions): void
     {
-        $cleanedPermissions = array_filter($permissions, fn ($permission) => auth()->user()->can($permission, $server));
+        $cleanedPermissions = array_filter($permissions, fn ($permission) => $permission === Permission::ACTION_WEBSOCKET_CONNECT || auth()->user()->can($permission, $server));
         $current = $subuser->permissions;
 
         sort($cleanedPermissions);
