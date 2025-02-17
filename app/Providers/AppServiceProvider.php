@@ -41,6 +41,8 @@ use Spatie\Health\Facades\Health;
 
 class AppServiceProvider extends ServiceProvider
 {
+    protected static bool $providersRegistered = false;
+
     /**
      * Bootstrap any application services.
      */
@@ -85,20 +87,24 @@ class AppServiceProvider extends ServiceProvider
         Scramble::registerApi('client', ['api_path' => 'api/client', 'info' => ['version' => '1.0']])->afterOpenApiGenerated($bearerTokens);
         Scramble::registerApi('remote', ['api_path' => 'api/remote', 'info' => ['version' => '1.0']])->afterOpenApiGenerated($bearerTokens);
 
-        // Default OAuth providers included with Socialite
-        CommonProvider::register('facebook', null, 'tabler-brand-facebook-f', '#1877f2');
-        CommonProvider::register('x', null, 'tabler-brand-x-f', '#1da1f2');
-        CommonProvider::register('linkedin', null, 'tabler-brand-linkedin-f', '#0a66c2');
-        CommonProvider::register('google', null, 'tabler-brand-google-f', '#4285f4');
-        GithubProvider::register();
-        CommonProvider::register('gitlab', null, 'tabler-brand-gitlab', '#fca326');
-        CommonProvider::register('bitbucket', null, 'tabler-brand-bitbucket-f', '#205081');
-        CommonProvider::register('slack', null, 'tabler-brand-slack', '#6ecadc');
+        if (!self::$providersRegistered) {
+            // Default OAuth providers included with Socialite
+            CommonProvider::register('facebook', null, 'tabler-brand-facebook-f', '#1877f2');
+            CommonProvider::register('x', null, 'tabler-brand-x-f', '#1da1f2');
+            CommonProvider::register('linkedin', null, 'tabler-brand-linkedin-f', '#0a66c2');
+            CommonProvider::register('google', null, 'tabler-brand-google-f', '#4285f4');
+            GithubProvider::register();
+            CommonProvider::register('gitlab', null, 'tabler-brand-gitlab', '#fca326');
+            CommonProvider::register('bitbucket', null, 'tabler-brand-bitbucket-f', '#205081');
+            CommonProvider::register('slack', null, 'tabler-brand-slack', '#6ecadc');
 
-        // Additional OAuth providers from socialiteproviders.com
-        AuthentikProvider::register();
-        DiscordProvider::register();
-        SteamProvider::register();
+            // Additional OAuth providers from socialiteproviders.com
+            AuthentikProvider::register();
+            DiscordProvider::register();
+            SteamProvider::register();
+
+            self::$providersRegistered = true;
+        }
 
         FilamentColor::register([
             'danger' => Color::Red,
