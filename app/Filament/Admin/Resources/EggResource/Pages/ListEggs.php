@@ -50,6 +50,8 @@ class ListEggs extends ListRecords
                 ExportEggAction::make(),
                 UpdateEggAction::make(),
                 ReplicateAction::make()
+                    ->hiddenLabel()
+                    ->tooltip(trans('filament-actions::replicate.single.label'))
                     ->excludeAttributes(['author', 'uuid', 'update_url', 'servers_count', 'created_at', 'updated_at'])
                     ->modal(false)
                     ->beforeReplicaSaved(function (Egg $replica) {
