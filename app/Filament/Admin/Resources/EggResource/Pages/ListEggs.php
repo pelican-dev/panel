@@ -14,8 +14,10 @@ use Filament\Tables\Actions\BulkActionGroup;
 use Filament\Tables\Actions\CreateAction;
 use Filament\Tables\Actions\DeleteBulkAction;
 use Filament\Tables\Actions\EditAction;
+use Filament\Tables\Actions\ReplicateAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
+use Illuminate\Support\Str;
 
 class ListEggs extends ListRecords
 {
@@ -47,6 +49,16 @@ class ListEggs extends ListRecords
                 EditAction::make(),
                 ExportEggAction::make(),
                 UpdateEggAction::make(),
+                ReplicateAction::make()
+                    ->excludeAttributes(['author', 'uuid', 'update_url', 'servers_count', 'created_at', 'updated_at'])
+                    ->modal(false)
+                    ->beforeReplicaSaved(function (Egg $replica) {
+                        $replica->author = auth()->user()->email;
+                        $replica->name .= ' Copy';
+                        $replica->uuid = Str::uuid()->toString();
+                    })
+                    ->successRedirectUrl(fn (Egg $replica) => EditEgg::getUrl(['record' => $replica]))
+                    ->authorize(fn () => auth()->user()->can('create egg')),
             ])
             ->bulkActions([
                 BulkActionGroup::make([
