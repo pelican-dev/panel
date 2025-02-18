@@ -54,7 +54,7 @@ class ListEggs extends ListRecords
                     ->tooltip(trans('filament-actions::export.modal.actions.export.label')),
                 UpdateEggAction::make()
                     ->iconButton()
-                    ->tooltip(trans('filament-actions::update.single.label')),
+                    ->tooltip(trans('admin/egg.update')),
                 ReplicateAction::make()
                     ->iconButton()
                     ->tooltip(trans('filament-actions::replicate.single.label'))
