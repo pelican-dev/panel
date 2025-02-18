@@ -243,6 +243,9 @@ class Node extends Model implements Validatable
         return $this->hasMany(Allocation::class);
     }
 
+    /**
+     * @return BelongsToMany<DatabaseHost, $this>
+     */
     public function databaseHosts(): BelongsToMany
     {
         return $this->belongsToMany(DatabaseHost::class);

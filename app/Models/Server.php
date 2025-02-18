@@ -248,6 +248,8 @@ class Server extends Model implements Validatable
 
     /**
      * Gets the subusers associated with a server.
+     *
+     * @return HasMany<Subuser, $this>
      */
     public function subusers(): HasMany
     {
@@ -285,6 +287,8 @@ class Server extends Model implements Validatable
 
     /**
      * Gets information for the egg variables associated with this server.
+     *
+     * @return HasMany<EggVariable, $this>
      */
     public function variables(): HasMany
     {
@@ -304,6 +308,7 @@ class Server extends Model implements Validatable
         return $this->hasMany(ServerVariable::class);
     }
 
+    /** @deprecated use serverVariables */
     public function viewableServerVariables(): HasMany
     {
         return $this->serverVariables()

@@ -93,6 +93,9 @@ class ActivityLog extends Model implements HasIcon, HasLabel
         return $this->morphTo()->withTrashed();
     }
 
+    /**
+     * @return HasMany<ActivityLogSubject, $this>
+     */
     public function subjects(): HasMany
     {
         return $this->hasMany(ActivityLogSubject::class);

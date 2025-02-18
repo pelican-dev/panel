@@ -179,7 +179,7 @@ class DatabaseSettingsCommand extends Command
         } elseif ($this->variables['DB_CONNECTION'] === 'sqlite') {
             $this->variables['DB_DATABASE'] = $this->option('database') ?? $this->ask(
                 'Database Path',
-                env('DB_DATABASE', 'database.sqlite')
+                (string) env('DB_DATABASE', 'database.sqlite')
             );
         }
 

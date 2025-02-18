@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api\Client;
 
+use App\Models\UserSSHKey;
 use Illuminate\Http\JsonResponse;
 use App\Facades\Activity;
 use App\Http\Requests\Api\Client\ClientApiRequest;
@@ -55,6 +56,7 @@ class SSHKeyController extends ClientApiController
     {
         $this->validate($request, ['fingerprint' => ['required', 'string']]);
 
+        /** @var ?UserSSHKey $key */
         $key = $request->user()->sshKeys()
             ->where('fingerprint', $request->input('fingerprint'))
             ->first();
