@@ -4,6 +4,7 @@ namespace App\Filament\Admin\Resources\EggResource\Pages;
 
 use AbdelhamidErrahmouni\FilamentMonacoEditor\MonacoEditor;
 use App\Filament\Admin\Resources\EggResource;
+use App\Filament\Components\Forms\Fields\CopyFrom;
 use App\Models\EggVariable;
 use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\Fieldset;
@@ -117,12 +118,8 @@ class CreateEgg extends CreateRecord
                     Tab::make(trans('admin/egg.tabs.process_management'))
                         ->columns()
                         ->schema([
-                            Hidden::make('config_from')
-                                ->default(null)
-                                ->label('Copy Settings From')
-                                // ->placeholder('None')
-                                // ->relationship('configFrom', 'name', ignoreRecord: true)
-                                ->helperText('If you would like to default to settings from another Egg select it from the menu above.'),
+                            CopyFrom::make('copy_process_from')
+                                ->process(),
                             TextInput::make('config_stop')
                                 ->label(trans('admin/egg.stop_command'))
                                 ->required()
@@ -237,10 +234,8 @@ class CreateEgg extends CreateRecord
                     Tab::make(trans('admin/egg.tabs.install_script'))
                         ->columns(3)
                         ->schema([
-                            Hidden::make('copy_script_from'),
-                            //->placeholder('None')
-                            //->relationship('scriptFrom', 'name', ignoreRecord: true),
-
+                            CopyFrom::make('copy_script_from')
+                                ->script(),
                             TextInput::make('script_container')
                                 ->label(trans('admin/egg.script_container'))
                                 ->required()
