@@ -58,13 +58,14 @@ class ListEggs extends ListRecords
                 ReplicateAction::make()
                     ->iconButton()
                     ->tooltip(trans('filament-actions::replicate.single.label'))
-                    ->excludeAttributes(['author', 'uuid', 'update_url', 'servers_count', 'created_at', 'updated_at'])
                     ->modal(false)
+                    ->excludeAttributes(['author', 'uuid', 'update_url', 'servers_count', 'created_at', 'updated_at'])
                     ->beforeReplicaSaved(function (Egg $replica) {
                         $replica->author = auth()->user()->email;
                         $replica->name .= ' Copy';
                         $replica->uuid = Str::uuid()->toString();
                     })
+                    ->after(fn (Egg $record, Egg $replica) => $record->variables()->get()->each(fn ($variable) => $variable->replicate()->fill(['egg_id' => $replica->id])->save()))
                     ->successRedirectUrl(fn (Egg $replica) => EditEgg::getUrl(['record' => $replica]))
                     ->authorize(fn () => auth()->user()->can('create egg')),
             ])
