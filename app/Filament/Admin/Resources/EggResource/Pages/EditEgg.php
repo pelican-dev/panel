@@ -192,6 +192,7 @@ class EditEgg extends EditRecord
                                         ->required(),
                                     TextInput::make('default_value')
                                         ->label(trans('admin/egg.default_value'))
+                                        ->required(fn (Get $get) => in_array('required', $get('rules')))
                                         ->rules(fn (Get $get) => $get('rules'))
                                         ->maxLength(255),
                                     Fieldset::make(trans('admin/egg.user_permissions'))
@@ -203,6 +204,7 @@ class EditEgg extends EditRecord
                                         ->label(trans('admin/egg.rules'))
                                         ->columnSpanFull()
                                         ->reorderable()
+                                        ->live()
                                         ->suggestions([
                                             'required',
                                             'nullable',

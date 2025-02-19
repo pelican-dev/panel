@@ -201,6 +201,7 @@ class CreateEgg extends CreateRecord
                                         ->required(),
                                     TextInput::make('default_value')
                                         ->label(trans('admin/egg.default_value'))
+                                        ->required(fn (Get $get) => in_array('required', $get('rules')))
                                         ->rules(fn (Get $get) => $get('rules'))
                                         ->maxLength(255),
                                     Fieldset::make(trans('admin/egg.user_permissions'))
@@ -212,6 +213,7 @@ class CreateEgg extends CreateRecord
                                         ->label(trans('admin/egg.rules'))
                                         ->columnSpanFull()
                                         ->reorderable()
+                                        ->live()
                                         ->suggestions([
                                             'required',
                                             'nullable',
