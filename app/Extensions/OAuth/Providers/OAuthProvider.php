@@ -20,7 +20,10 @@ abstract class OAuthProvider
     protected function __construct()
     {
         if (array_key_exists($this->getId(), static::$providers)) {
-            logger()->warning("Tried to create duplicate OAuth provider with id '{$this->getId()}'");
+            // @phpstan-ignore-next-line
+            if (!app()->runningUnitTests()) {
+                logger()->warning("Tried to create duplicate OAuth provider with id '{$this->getId()}'");
+            }
 
             return;
         }
