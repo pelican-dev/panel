@@ -115,7 +115,9 @@ class ListUsers extends ListRecords
                                             'settings' => [
                                                 'rename',
                                                 'reinstall',
-                                                'activity',
+                                            ],
+                                            'activity' => [
+                                                'read',
                                             ],
                                         ];
 
@@ -353,7 +355,25 @@ class ListUsers extends ListRecords
                                                         ->descriptions([
                                                             'rename' => trans('server/users.permissions.setting_rename'),
                                                             'reinstall' => trans('server/users.permissions.setting_reinstall'),
-                                                            'activity' => trans('server/users.permissions.setting_activity'),
+                                                            'activity' => trans('server/users.permissions.activity_desc'),
+                                                        ]),
+                                                ]),
+                                        ]),
+                                    Tabs\Tab::make('Activity')
+                                        ->schema([
+                                            Section::make()
+                                                ->description(trans('server/users.permissions.activity_desc'))
+                                                ->icon('tabler-stack')
+                                                ->schema([
+                                                    CheckboxList::make('activity')
+                                                        ->bulkToggleable()
+                                                        ->label('')
+                                                        ->columns(2)
+                                                        ->options([
+                                                            'read' => 'Read',
+                                                        ])
+                                                        ->descriptions([
+                                                            'read' => trans('server/users.permissions.activity_read'),
                                                         ]),
                                                 ]),
                                         ]),

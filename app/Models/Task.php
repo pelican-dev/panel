@@ -2,6 +2,10 @@
 
 namespace App\Models;
 
+use App\Contracts\Validatable;
+use App\Traits\HasValidation;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasOneThrough;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
@@ -19,8 +23,11 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property \App\Models\Schedule $schedule
  * @property \App\Models\Server $server
  */
-class Task extends Model
+class Task extends Model implements Validatable
 {
+    use HasFactory;
+    use HasValidation;
+
     /**
      * The resource name for this model when it is transformed into an
      * API representation using fractal.
@@ -37,11 +44,6 @@ class Task extends Model
     public const ACTION_BACKUP = 'backup';
 
     public const ACTION_DELETE_FILES = 'delete_files';
-
-    /**
-     * The table associated with the model.
-     */
-    protected $table = 'tasks';
 
     /**
      * Relationships to be updated when this model is updated.
@@ -90,11 +92,6 @@ class Task extends Model
             'is_queued' => 'boolean',
             'continue_on_failure' => 'boolean',
         ];
-    }
-
-    public function getRouteKeyName(): string
-    {
-        return $this->getKeyName();
     }
 
     /**

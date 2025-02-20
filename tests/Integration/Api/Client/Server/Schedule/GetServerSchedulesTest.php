@@ -6,6 +6,7 @@ use App\Models\Task;
 use App\Models\Schedule;
 use App\Models\Permission;
 use App\Tests\Integration\Api\Client\ClientApiIntegrationTestCase;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 class GetServerSchedulesTest extends ClientApiIntegrationTestCase
 {
@@ -22,9 +23,8 @@ class GetServerSchedulesTest extends ClientApiIntegrationTestCase
 
     /**
      * Test that schedules for a server are returned.
-     *
-     * @dataProvider permissionsDataProvider
      */
+    #[DataProvider('permissionsDataProvider')]
     public function testServerSchedulesAreReturned(array $permissions, bool $individual): void
     {
         [$user, $server] = $this->generateTestAccount($permissions);

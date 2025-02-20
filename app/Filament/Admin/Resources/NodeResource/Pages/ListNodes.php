@@ -27,14 +27,15 @@ class ListNodes extends ListRecords
                     ->label('UUID')
                     ->searchable()
                     ->hidden(),
-                NodeHealthColumn::make('health'),
+                NodeHealthColumn::make('health')->label(trans('admin/node.table.health')),
                 TextColumn::make('name')
+                    ->label(trans('admin/node.table.name'))
                     ->icon('tabler-server-2')
                     ->sortable()
                     ->searchable(),
                 TextColumn::make('fqdn')
                     ->visibleFrom('md')
-                    ->label('Address')
+                    ->label(trans('admin/node.table.address'))
                     ->icon('tabler-network')
                     ->sortable()
                     ->searchable(),
@@ -45,13 +46,14 @@ class ListNodes extends ListRecords
                     ->falseIcon('tabler-lock-open-off')
                     ->state(fn (Node $node) => $node->scheme === 'https'),
                 IconColumn::make('public')
+                    ->label(trans('admin/node.table.public'))
                     ->visibleFrom('lg')
                     ->trueIcon('tabler-eye-check')
                     ->falseIcon('tabler-eye-cancel'),
                 TextColumn::make('servers_count')
                     ->visibleFrom('sm')
                     ->counts('servers')
-                    ->label('Servers')
+                    ->label(trans('admin/node.table.servers'))
                     ->sortable()
                     ->icon('tabler-brand-docker'),
             ])
@@ -60,10 +62,9 @@ class ListNodes extends ListRecords
             ])
             ->emptyStateIcon('tabler-server-2')
             ->emptyStateDescription('')
-            ->emptyStateHeading('No Nodes')
+            ->emptyStateHeading(trans('admin/node.no_nodes'))
             ->emptyStateActions([
                 CreateAction::make('create')
-                    ->label('Create Node')
                     ->button(),
             ]);
     }
@@ -72,7 +73,6 @@ class ListNodes extends ListRecords
     {
         return [
             Actions\CreateAction::make()
-                ->label('Create Node')
                 ->hidden(fn () => Node::count() <= 0),
         ];
     }

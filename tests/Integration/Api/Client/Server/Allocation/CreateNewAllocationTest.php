@@ -6,6 +6,7 @@ use Illuminate\Http\Response;
 use App\Models\Allocation;
 use App\Models\Permission;
 use App\Tests\Integration\Api\Client\ClientApiIntegrationTestCase;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 class CreateNewAllocationTest extends ClientApiIntegrationTestCase
 {
@@ -23,9 +24,8 @@ class CreateNewAllocationTest extends ClientApiIntegrationTestCase
 
     /**
      * Tests that a new allocation can be properly assigned to a server.
-     *
-     * @dataProvider permissionDataProvider
      */
+    #[DataProvider('permissionDataProvider')]
     public function testNewAllocationCanBeAssignedToServer(array $permission): void
     {
         /** @var \App\Models\Server $server */

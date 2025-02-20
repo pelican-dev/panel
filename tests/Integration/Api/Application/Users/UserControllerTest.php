@@ -9,6 +9,7 @@ use App\Services\Acl\Api\AdminAcl;
 use App\Transformers\Api\Application\UserTransformer;
 use App\Transformers\Api\Application\ServerTransformer;
 use App\Tests\Integration\Api\Application\ApplicationApiIntegrationTestCase;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 class UserControllerTest extends ApplicationApiIntegrationTestCase
 {
@@ -272,9 +273,8 @@ class UserControllerTest extends ApplicationApiIntegrationTestCase
     /**
      * Test that an API key without write permissions cannot create, update, or
      * delete a user model.
-     *
-     * @dataProvider userWriteEndpointsDataProvider
      */
+    #[DataProvider('userWriteEndpointsDataProvider')]
     public function testApiKeyWithoutWritePermissions(string $method, string $url): void
     {
         $this->createNewDefaultApiKey($this->getApiUser(), [User::RESOURCE_NAME => AdminAcl::READ]);

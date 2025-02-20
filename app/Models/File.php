@@ -7,6 +7,7 @@ use App\Repositories\Daemon\DaemonFileRepository;
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
 use Sushi\Sushi;
 
 /**

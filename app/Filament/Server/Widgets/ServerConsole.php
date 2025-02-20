@@ -3,6 +3,7 @@
 namespace App\Filament\Server\Widgets;
 
 use App\Exceptions\Http\HttpForbiddenException;
+use App\Livewire\AlertBanner;
 use App\Models\Permission;
 use App\Models\Server;
 use App\Models\User;
@@ -66,9 +67,14 @@ class ServerConsole extends Widget
         return $socket;
     }
 
+    protected function authorizeSendCommand(): bool
+    {
+        return $this->user->can(Permission::ACTION_CONTROL_CONSOLE, $this->server);
+    }
+
     protected function canSendCommand(): bool
     {
-        return !$this->server->isInConflictState() && $this->server->retrieveStatus() === 'running';
+        return $this->authorizeSendCommand() && !$this->server->isInConflictState() && $this->server->retrieveStatus() === 'running';
     }
 
     public function up(): void
@@ -97,6 +103,12 @@ class ServerConsole extends Widget
         }
     }
 
+    #[On('token-request')]
+    public function tokenRequest(): void
+    {
+        $this->dispatch('sendAuthRequest', token: $this->getToken());
+    }
+
     #[On('store-stats')]
     public function storeStats(string $data): void
     {
@@ -112,5 +124,15 @@ class ServerConsole extends Widget
 
             cache()->put($cacheKey, $data, now()->addMinute());
         }
+    }
+
+    #[On('websocket-error')]
+    public function websocketError(): void
+    {
+        AlertBanner::make()
+            ->title('Could not connect to websocket!')
+            ->body('Check your browser console for more details.')
+            ->danger()
+            ->send();
     }
 }

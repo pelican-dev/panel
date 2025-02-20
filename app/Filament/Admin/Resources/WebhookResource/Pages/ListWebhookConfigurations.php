@@ -21,22 +21,19 @@ class ListWebhookConfigurations extends ListRecords
         return $table
             ->columns([
                 TextColumn::make('description')
-                    ->label('Description'),
+                    ->label(trans('admin/webhook.table.description')),
                 TextColumn::make('endpoint')
-                    ->label('Endpoint'),
+                    ->label(trans('admin/webhook.table.endpoint')),
             ])
             ->actions([
-                DeleteAction::make()
-                    ->label('Delete'),
-                EditAction::make()
-                    ->label('Edit'),
+                DeleteAction::make(),
+                EditAction::make(),
             ])
             ->emptyStateIcon('tabler-webhook')
             ->emptyStateDescription('')
-            ->emptyStateHeading('No Webhooks')
+            ->emptyStateHeading(trans('admin/webhook.no_webhooks'))
             ->emptyStateActions([
                 CreateAction::make('create')
-                    ->label('Create Webhook')
                     ->button(),
             ]);
     }
@@ -45,7 +42,6 @@ class ListWebhookConfigurations extends ListRecords
     {
         return [
             Actions\CreateAction::make()
-                ->label('Create Webhook')
                 ->hidden(fn () => WebhookConfiguration::count() <= 0),
         ];
     }

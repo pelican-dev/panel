@@ -6,7 +6,7 @@ use AbdelhamidErrahmouni\FilamentMonacoEditor\MonacoEditor;
 use App\Enums\EditorLanguages;
 use App\Facades\Activity;
 use App\Filament\Server\Resources\FileResource;
-use App\Models\File;
+use App\Livewire\AlertBanner;
 use App\Models\Permission;
 use App\Models\Server;
 use App\Repositories\Daemon\DaemonFileRepository;
@@ -18,7 +18,6 @@ use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Form;
 use Filament\Forms\Get;
 use Filament\Notifications\Notification;
-use Filament\Pages\Concerns\HasUnsavedDataChangesAlert;
 use Filament\Pages\Concerns\InteractsWithFormActions;
 use Filament\Panel;
 use Filament\Resources\Pages\Page;
@@ -34,7 +33,6 @@ use Livewire\Attributes\Locked;
  */
 class EditFiles extends Page
 {
-    use HasUnsavedDataChangesAlert;
     use InteractsWithFormActions;
     use InteractsWithForms;
 
@@ -54,27 +52,34 @@ class EditFiles extends Page
         /** @var Server $server */
         $server = Filament::getTenant();
 
-        File::get($server, dirname($this->path))->orderByDesc('is_directory')->orderBy('name');
-
         return $form
             ->schema([
-                Select::make('lang')
-                    ->live()
-                    ->label('')
-                    ->placeholder('File Language')
-                    ->options(EditorLanguages::class)
-                    ->hidden() //TODO Fix Dis
-                    ->default(function () {
-                        $ext = pathinfo($this->path, PATHINFO_EXTENSION);
-
-                        if ($ext === 'yml') {
-                            return 'yaml';
-                        }
-
-                        return $ext;
-                    }),
                 Section::make('Editing: ' . $this->path)
                     ->footerActions([
+                        Action::make('save_and_close')
+                            ->label('Save & Close')
+                            ->authorize(fn () => auth()->user()->can(Permission::ACTION_FILE_UPDATE, $server))
+                            ->icon('tabler-device-floppy')
+                            ->keyBindings('mod+shift+s')
+                            ->action(function (DaemonFileRepository $fileRepository) use ($server) {
+                                $data = $this->form->getState();
+
+                                $fileRepository
+                                    ->setServer($server)
+                                    ->putContent($this->path, $data['editor'] ?? '');
+
+                                Activity::event('server:file.write')
+                                    ->property('file', $this->path)
+                                    ->log();
+
+                                Notification::make()
+                                    ->success()
+                                    ->title('File saved')
+                                    ->body(fn () => $this->path)
+                                    ->send();
+
+                                $this->redirect(ListFiles::getUrl(['path' => dirname($this->path)]));
+                            }),
                         Action::make('save')
                             ->label('Save')
                             ->authorize(fn () => auth()->user()->can(Permission::ACTION_FILE_UPDATE, $server))
@@ -93,12 +98,9 @@ class EditFiles extends Page
 
                                 Notification::make()
                                     ->success()
-                                    ->duration(5000) // 5 seconds
-                                    ->title('Saved File')
+                                    ->title('File saved')
                                     ->body(fn () => $this->path)
                                     ->send();
-
-                                $this->redirect(ListFiles::getUrl(['path' => dirname($this->path)]));
                             }),
                         Action::make('cancel')
                             ->label('Cancel')
@@ -108,10 +110,17 @@ class EditFiles extends Page
                     ])
                     ->footerActionsAlignment(Alignment::End)
                     ->schema([
+                        Select::make('lang')
+                            ->label('Syntax Highlighting')
+                            ->live()
+                            ->options(EditorLanguages::class)
+                            ->selectablePlaceholder(false)
+                            ->afterStateUpdated(fn ($state) => $this->dispatch('setLanguage', lang: $state))
+                            ->default(fn () => EditorLanguages::fromWithAlias(pathinfo($this->path, PATHINFO_EXTENSION))),
                         MonacoEditor::make('editor')
                             ->label('')
                             ->placeholderText('')
-                            ->formatStateUsing(function (DaemonFileRepository $fileRepository) use ($server) {
+                            ->default(function (DaemonFileRepository $fileRepository) use ($server) {
                                 try {
                                     return $fileRepository
                                         ->setServer($server)
@@ -120,7 +129,7 @@ class EditFiles extends Page
                                     abort(404, $this->path . ' not found.');
                                 }
                             })
-                            ->language(fn (Get $get) => $get('lang') ?? 'plaintext')
+                            ->language(fn (Get $get) => $get('lang'))
                             ->view('filament.plugins.monaco-editor'),
                     ]),
             ]);
@@ -133,6 +142,15 @@ class EditFiles extends Page
         $this->path = $path;
 
         $this->form->fill();
+
+        if (str($path)->endsWith('.pelicanignore')) {
+            AlertBanner::make()
+                ->title('You\'re editing a <code>.pelicanignore</code> file!')
+                ->body('Any files or directories listed in here will be excluded from backups. Wildcards are supported by using an asterisk (<code>*</code>).<br>You can negate a prior rule by prepending an exclamation point (<code>!</code>).')
+                ->info()
+                ->closable()
+                ->send();
+        }
     }
 
     protected function authorizeAccess(): void

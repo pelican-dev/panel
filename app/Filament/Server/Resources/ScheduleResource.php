@@ -264,7 +264,7 @@ class ScheduleResource extends Resource
                                 ->action(function (Set $set, $data) {
                                     $set('cron_minute', '0');
                                     $set('cron_hour', '0');
-                                    $set('cron_day_of_month', '0');
+                                    $set('cron_day_of_month', '1');
                                     $set('cron_month', '*/' . $data['x']);
                                     $set('cron_day_of_week', '*');
                                 }),
@@ -275,14 +275,16 @@ class ScheduleResource extends Resource
                                         ->label('')
                                         ->prefix('Every')
                                         ->options([
-                                            '0' => 'Sunday',
                                             '1' => 'Monday',
                                             '2' => 'Tuesday',
                                             '3' => 'Wednesday',
                                             '4' => 'Thursday',
                                             '5' => 'Friday',
                                             '6' => 'Saturday',
-                                        ]),
+                                            '0' => 'Sunday',
+                                        ])
+                                        ->selectablePlaceholder(false)
+                                        ->native(false),
                                 ])
                                 ->action(function (Set $set, $data) {
                                     $set('cron_minute', '0');

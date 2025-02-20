@@ -2,10 +2,15 @@
 
 namespace App\Models;
 
+use App\Contracts\Validatable;
+use App\Traits\HasValidation;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
 
-class Permission extends Model
+class Permission extends Model implements Validatable
 {
+    use HasValidation;
+
     /**
      * The resource name for this model when it is transformed into an
      * API representation using fractal.
@@ -93,17 +98,9 @@ class Permission extends Model
 
     public const ACTION_SETTINGS_REINSTALL = 'settings.reinstall';
 
-    public const ACTION_ACTIVITY_READ = 'settings.activity';
+    public const ACTION_ACTIVITY_READ = 'activity.read';
 
-    /**
-     * Should timestamps be used on this model.
-     */
     public $timestamps = false;
-
-    /**
-     * The table associated with the model.
-     */
-    protected $table = 'permissions';
 
     /**
      * Fields that are not mass assignable.

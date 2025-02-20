@@ -9,7 +9,6 @@ use App\Services\Allocations\AssignmentService;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TagsInput;
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Form;
 use Filament\Forms\Get;
 use Filament\Forms\Set;
 use Filament\Resources\RelationManagers\RelationManager;
@@ -20,7 +19,6 @@ use Filament\Tables\Columns\SelectColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Columns\TextInputColumn;
 use Filament\Tables\Table;
-use Illuminate\Support\HtmlString;
 
 /**
  * @method Node getOwnerRecord()
@@ -31,14 +29,10 @@ class AllocationsRelationManager extends RelationManager
 
     protected static ?string $icon = 'tabler-plug-connected';
 
-    public function form(Form $form): Form
+    public function setTitle(): string
     {
-        return $form
-            ->schema([
-                TextInput::make('ip')
-                    ->required()
-                    ->maxLength(255),
-            ]);
+        return trans('admin/server.allocations');
+
     }
 
     public function table(Table $table): Table
@@ -51,8 +45,9 @@ class AllocationsRelationManager extends RelationManager
 
             // All assigned allocations
             ->checkIfRecordIsSelectableUsing(fn (Allocation $allocation) => $allocation->server_id === null)
-            ->paginationPageOptions(['10', '20', '50', '100', '200', '500', '1000'])
+            ->paginationPageOptions(['10', '20', '50', '100', '200', '500'])
             ->searchable()
+            ->heading('')
             ->selectCurrentPageOnly() //Prevent people from trying to nuke 30,000 ports at once.... -,-
             ->columns([
                 TextColumn::make('id')
@@ -60,48 +55,44 @@ class AllocationsRelationManager extends RelationManager
                     ->toggledHiddenByDefault(),
                 TextColumn::make('port')
                     ->searchable()
-                    ->label('Port'),
+                    ->label(trans('admin/node.ports')),
                 TextColumn::make('server.name')
-                    ->label('Server')
+                    ->label(trans('admin/node.table.servers'))
                     ->icon('tabler-brand-docker')
                     ->visibleFrom('md')
                     ->searchable()
                     ->url(fn (Allocation $allocation): string => $allocation->server ? route('filament.admin.resources.servers.edit', ['record' => $allocation->server]) : ''),
                 TextInputColumn::make('ip_alias')
                     ->searchable()
-                    ->label('Alias'),
+                    ->label(trans('admin/node.table.alias')),
                 SelectColumn::make('ip')
                     ->options(fn (Allocation $allocation) => collect($this->getOwnerRecord()->ipAddresses())->merge([$allocation->ip])->mapWithKeys(fn (string $ip) => [$ip => $ip]))
                     ->selectablePlaceholder(false)
                     ->searchable()
-                    ->label('IP'),
+                    ->label(trans('admin/node.table.ip')),
             ])
             ->headerActions([
-                Tables\Actions\Action::make('create new allocation')->label('Create Allocations')
+                Tables\Actions\Action::make('create new allocation')
+                    ->label(trans('admin/node.create_allocation'))
                     ->form(fn () => [
                         Select::make('allocation_ip')
                             ->options(collect($this->getOwnerRecord()->ipAddresses())->mapWithKeys(fn (string $ip) => [$ip => $ip]))
-                            ->label('IP Address')
+                            ->label(trans('admin/node.ip_address'))
                             ->inlineLabel()
                             ->ipv4()
-                            ->helperText("Usually your machine's public IP unless you are port forwarding.")
+                            ->helperText(trans('admin/node.ip_help'))
                             ->afterStateUpdated(fn (Set $set) => $set('allocation_ports', []))
                             ->live()
                             ->required(),
                         TextInput::make('allocation_alias')
-                            ->label('Alias')
+                            ->label(trans('admin/node.table.alias'))
                             ->inlineLabel()
                             ->default(null)
-                            ->helperText('Optional display name to help you remember what these are.')
+                            ->helperText(trans('admin/node.alias_help'))
                             ->required(false),
                         TagsInput::make('allocation_ports')
-                            ->placeholder('Examples: 27015, 27017-27019')
-                            ->helperText(new HtmlString('
-                                These are the ports that users can connect to this Server through.
-                                <br />
-                                You would have to port forward these on your home network.
-                            '))
-                            ->label('Ports')
+                            ->placeholder('27015, 27017-27019')
+                            ->label(trans('admin/node.ports'))
                             ->inlineLabel()
                             ->live()
                             ->disabled(fn (Get $get) => empty($get('allocation_ip')))
@@ -116,7 +107,7 @@ class AllocationsRelationManager extends RelationManager
             ->bulkActions([
                 BulkActionGroup::make([
                     DeleteBulkAction::make()
-                        ->authorize(fn () => auth()->user()->can('delete allocation')),
+                        ->authorize(fn () => auth()->user()->can('update node')),
                 ]),
             ]);
     }

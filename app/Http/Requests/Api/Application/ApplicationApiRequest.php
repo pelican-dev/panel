@@ -37,12 +37,13 @@ abstract class ApplicationApiRequest extends FormRequest
             throw new PanelException('An ACL resource must be defined on API requests.');
         }
 
+        /** @var TransientToken|ApiKey $token */
         $token = $this->user()->currentAccessToken();
+
         if ($token instanceof TransientToken) {
             return true;
         }
 
-        /** @var ApiKey $token */
         if ($token->key_type === ApiKey::TYPE_ACCOUNT) {
             return true;
         }

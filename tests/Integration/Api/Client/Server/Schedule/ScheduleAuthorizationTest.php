@@ -5,6 +5,7 @@ namespace App\Tests\Integration\Api\Client\Server\Schedule;
 use App\Models\Subuser;
 use App\Models\Schedule;
 use App\Tests\Integration\Api\Client\ClientApiIntegrationTestCase;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 class ScheduleAuthorizationTest extends ClientApiIntegrationTestCase
 {
@@ -16,9 +17,8 @@ class ScheduleAuthorizationTest extends ClientApiIntegrationTestCase
      *
      * The comments within the test code itself are better at explaining exactly what is
      * being tested and protected against.
-     *
-     * @dataProvider methodDataProvider
      */
+    #[DataProvider('methodDataProvider')]
     public function testAccessToAServersSchedulesIsRestrictedProperly(string $method, string $endpoint): void
     {
         // The API $user is the owner of $server1.

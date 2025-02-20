@@ -32,11 +32,11 @@ use Illuminate\Support\Facades\URL;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Str;
 use Laravel\Sanctum\Sanctum;
-use Spatie\Health\Checks\Checks\CacheCheck;
-use Spatie\Health\Checks\Checks\DatabaseCheck;
-use Spatie\Health\Checks\Checks\DebugModeCheck;
-use Spatie\Health\Checks\Checks\EnvironmentCheck;
-use Spatie\Health\Checks\Checks\ScheduleCheck;
+use App\Checks\CacheCheck;
+use App\Checks\DatabaseCheck;
+use App\Checks\DebugModeCheck;
+use App\Checks\EnvironmentCheck;
+use App\Checks\ScheduleCheck;
 use Spatie\Health\Facades\Health;
 
 class AppServiceProvider extends ServiceProvider
@@ -118,8 +118,8 @@ class AppServiceProvider extends ServiceProvider
         );
 
         FilamentView::registerRenderHook(
-            PanelsRenderHook::CONTENT_START,
-            fn () => view('filament.alerts.alert-banner-container'),
+            PanelsRenderHook::PAGE_START,
+            fn () => Blade::render('@livewire(\App\Livewire\AlertBannerContainer::class)'),
         );
 
         FilamentView::registerRenderHook(

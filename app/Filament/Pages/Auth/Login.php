@@ -40,7 +40,7 @@ class Login extends BaseLogin
         $this->dispatch('reset-captcha');
 
         throw ValidationException::withMessages([
-            'data.login' => __('filament-panels::pages/auth/login.messages.failed'),
+            'data.login' => trans('filament-panels::pages/auth/login.messages.failed'),
         ]);
     }
 
@@ -58,11 +58,9 @@ class Login extends BaseLogin
     {
         $actions = [];
 
-        $oauthProviders = OAuthProvider::get();
+        $oauthProviders = collect(OAuthProvider::get())->filter(fn (OAuthProvider $provider) => $provider->isEnabled())->all();
+
         foreach ($oauthProviders as $oauthProvider) {
-            if (!$oauthProvider->isEnabled()) {
-                continue;
-            }
 
             $id = $oauthProvider->getId();
 
