@@ -6,11 +6,13 @@ use Filament\Tables\Columns\IconColumn;
 
 class NodeHealthColumn extends IconColumn
 {
-    protected string $view = 'livewire.columns.version-column';
+    protected string $view = 'tables.columns.node-health-column';
 
     protected function setUp(): void
     {
         parent::setUp();
+
+        $this->label(trans('admin/node.table.health'));
 
         $this->alignCenter();
     }
