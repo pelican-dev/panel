@@ -4,6 +4,7 @@ namespace App\Extensions\OAuth\Providers;
 
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Wizard\Step;
+use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Str;
 use SocialiteProviders\Manager\SocialiteWasCalled;
@@ -17,11 +18,10 @@ abstract class OAuthProvider
         return $id ? static::$providers[$id] : static::$providers;
     }
 
-    protected function __construct()
+    protected function __construct(protected Application $app)
     {
         if (array_key_exists($this->getId(), static::$providers)) {
-            // @phpstan-ignore-next-line
-            if (!app()->runningUnitTests()) {
+            if (!$this->app->runningUnitTests()) {
                 logger()->warning("Tried to create duplicate OAuth provider with id '{$this->getId()}'");
             }
 

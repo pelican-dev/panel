@@ -4,10 +4,13 @@ namespace App\Extensions\OAuth\Providers;
 
 use Filament\Forms\Components\ColorPicker;
 use Filament\Forms\Components\TextInput;
+use Illuminate\Foundation\Application;
 use SocialiteProviders\Authentik\Provider;
 
 final class AuthentikProvider extends OAuthProvider
 {
+    public function __construct(protected Application $app) {}
+
     public function getId(): string
     {
         return 'authentik';
@@ -61,8 +64,8 @@ final class AuthentikProvider extends OAuthProvider
         return env('OAUTH_AUTHENTIK_DISPLAY_COLOR') ?? '#fd4b2d';
     }
 
-    public static function register(): self
+    public static function register(Application $app): self
     {
-        return new self();
+        return new self($app);
     }
 }
