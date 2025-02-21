@@ -11,6 +11,7 @@ use Illuminate\Database\ConnectionInterface;
 use App\Services\Users\UserCreationService;
 use App\Exceptions\Service\Subuser\UserIsServerOwnerException;
 use App\Exceptions\Service\Subuser\ServerSubuserExistsException;
+use App\Models\Permission;
 
 class SubuserCreationService
 {
@@ -57,10 +58,17 @@ class SubuserCreationService
                 throw new ServerSubuserExistsException(trans('exceptions.subusers.subuser_exists'));
             }
 
+            $cleanedPermissions = collect($permissions)
+                ->unique()
+                ->filter(fn ($permission) => $permission === Permission::ACTION_WEBSOCKET_CONNECT || auth()->user()->can($permission, $server))
+                ->sort()
+                ->values()
+                ->all();
+
             $subuser = Subuser::query()->create([
                 'user_id' => $user->id,
                 'server_id' => $server->id,
-                'permissions' => array_unique($permissions),
+                'permissions' => $cleanedPermissions,
             ]);
 
             event(new SubUserAdded($subuser));
