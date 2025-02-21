@@ -17,7 +17,14 @@ class DaemonConfigurationRepository extends DaemonRepository
     {
         return $this->getHttpClient()
             ->connectTimeout(3)
-            ->get('/api/system')->throw()->json();
+            ->get('/api/system')
+            ->throwIf(function ($result) {
+                if (preg_match('/^Pelican Wings\/v(\d+\.\d+\.\d+|develop) \(id:\w*\)$/', $result->header('User-Agent'))) {
+                    return true;
+                }
+
+                throw new ConnectionException($result->effectiveUri()->__toString() . ' is not Pelican Wings !');
+            })->json();
     }
 
     /**
