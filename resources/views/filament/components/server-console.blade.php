@@ -9,40 +9,31 @@
     <link rel="stylesheet" href="{{ asset('/css/filament/server/console.css') }}">
     @endassets
 
-    <div class="flex flex-auto gap-6 fi-wi-stats-overview-stat rounded-lg shadow-sm" style="padding-bottom: 14px">
+    <div class="flex flex-auto gap-6" style="padding-bottom: 14px">
         <div
             class="grid grid-flow-row w-full p-3 rounded-lg shadow-sm overflow-hidden ring-1 ring-gray-950/5 dark:bg-gray-900 dark:ring-white/10">
         <span>
-{{--                <x-filament::icon--}}
-            {{--                    icon="tabler-cpu"--}}
-            {{--                    class="inline-block" />--}}
-                <span class="text-md font-medium text-gray-500 dark:text-gray-400">
-                                CPU:
-                            </span>
+        <span class="text-md font-medium text-gray-500 dark:text-gray-400">
+            CPU:
+        </span>
         <span class="text-md font-semibold">{{ $this->cpuUsage() }}</span>
         </span>
         </div>
         <div
             class="grid grid-flow-row w-full p-3 rounded-lg shadow-sm overflow-hidden ring-1 ring-gray-950/5 dark:bg-gray-900 dark:ring-white/10">
         <span>
-{{--                <x-filament::icon--}}
-            {{--                    icon="tabler-memory"--}}
-            {{--                    class="inline-block" />--}}
-                <span class="text-md font-medium text-gray-500 dark:text-gray-400">
-                                Memory:
-                            </span>
+            <span class="text-md font-medium text-gray-500 dark:text-gray-400">
+                Memory:
+            </span>
             <span class="text-md font-semibold">{{ $this->memoryUsage() }}</span>
         </span>
         </div>
         <div
             class="grid grid-flow-row w-full p-3 rounded-lg shadow-sm overflow-hidden ring-1 ring-gray-950/5 dark:bg-gray-900 dark:ring-white/10">
         <span>
-{{--             <x-filament::icon--}}
-            {{--                 icon="tabler-database"--}}
-            {{--                 class="inline-block" />--}}
             <span class="text-md font-medium text-gray-500 dark:text-gray-400">
-                            Disk:
-                        </span>
+                Disk:
+            </span>
             <span class="text-md font-semibold">{{ $this->diskUsage() }}</span>
         </span>
         </div>
