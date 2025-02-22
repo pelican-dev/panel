@@ -5,12 +5,15 @@ namespace App\Extensions\OAuth\Providers;
 use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Wizard\Step;
+use Illuminate\Foundation\Application;
 use Illuminate\Support\HtmlString;
 use Illuminate\Support\Str;
 use Webbingbrasil\FilamentCopyActions\Forms\Actions\CopyAction;
 
 final class GithubProvider extends OAuthProvider
 {
+    public function __construct(protected Application $app) {}
+
     public function getId(): string
     {
         return 'github';
@@ -50,8 +53,8 @@ final class GithubProvider extends OAuthProvider
         return '#4078c0';
     }
 
-    public static function register(): self
+    public static function register(Application $app): self
     {
-        return new self();
+        return new self($app);
     }
 }

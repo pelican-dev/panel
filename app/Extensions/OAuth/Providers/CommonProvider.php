@@ -2,11 +2,13 @@
 
 namespace App\Extensions\OAuth\Providers;
 
+use Illuminate\Foundation\Application;
+
 final class CommonProvider extends OAuthProvider
 {
-    protected function __construct(private string $id, private ?string $providerClass, private ?string $icon, private ?string $hexColor)
+    protected function __construct(protected Application $app, private string $id, private ?string $providerClass, private ?string $icon, private ?string $hexColor)
     {
-        parent::__construct();
+        parent::__construct($app);
     }
 
     public function getId(): string
@@ -29,8 +31,8 @@ final class CommonProvider extends OAuthProvider
         return $this->hexColor;
     }
 
-    public static function register(string $id, ?string $providerClass = null, ?string $icon = null, ?string $hexColor = null): static
+    public static function register(Application $app, string $id, ?string $providerClass = null, ?string $icon = null, ?string $hexColor = null): static
     {
-        return new self($id, $providerClass, $icon, $hexColor);
+        return new self($app, $id, $providerClass, $icon, $hexColor);
     }
 }
