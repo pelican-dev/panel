@@ -48,7 +48,7 @@ class ServerCreationServiceTest extends IntegrationTestCase
      * tests to cover that the logic being used does indeed find suitable nodes and ports. For
      * this test we just care that it is recognized and passed off to those functions.
      */
-    public function testServerIsCreatedWithDeploymentObject(): void
+    public function test_server_is_created_with_deployment_object(): void
     {
         /** @var \App\Models\User $user */
         $user = User::factory()->create();
@@ -145,7 +145,7 @@ class ServerCreationServiceTest extends IntegrationTestCase
      * Test that a server is deleted from the Panel if daemon returns an error during the creation
      * process.
      */
-    public function testErrorEncounteredByDaemonCausesServerToBeDeleted(): void
+    public function test_error_encountered_by_daemon_causes_server_to_be_deleted(): void
     {
         /** @var \App\Models\User $user */
         $user = User::factory()->create();

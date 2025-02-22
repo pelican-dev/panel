@@ -17,7 +17,7 @@ class DaemonAuthenticateTest extends MiddlewareTestCase
      * Test that if we are accessing the daemon configuration route this middleware is not
      * applied in order to allow an unauthenticated request to use a token to grab data.
      */
-    public function testResponseShouldContinueIfRouteIsExempted(): void
+    public function test_response_should_continue_if_route_is_exempted(): void
     {
         $this->request->expects('route->getName')->withNoArgs()->andReturn('daemon.configuration');
 
@@ -28,7 +28,7 @@ class DaemonAuthenticateTest extends MiddlewareTestCase
      * Test that not passing in the bearer token will result in a HTTP/401 error with the
      * proper response headers.
      */
-    public function testResponseShouldFailIfNoTokenIsProvided(): void
+    public function test_response_should_fail_if_no_token_is_provided(): void
     {
         $this->request->expects('route->getName')->withNoArgs()->andReturn('random.route');
         $this->request->expects('bearerToken')->withNoArgs()->andReturnNull();
@@ -48,7 +48,7 @@ class DaemonAuthenticateTest extends MiddlewareTestCase
      * exception being returned.
      */
     #[DataProvider('badTokenDataProvider')]
-    public function testResponseShouldFailIfTokenFormatIsIncorrect(string $token): void
+    public function test_response_should_fail_if_token_format_is_incorrect(string $token): void
     {
         $this->expectException(BadRequestHttpException::class);
 
@@ -62,7 +62,7 @@ class DaemonAuthenticateTest extends MiddlewareTestCase
      * Test that an access denied error is returned if the node is valid but the token
      * provided is not valid.
      */
-    public function testResponseShouldFailIfTokenIsNotValid(): void
+    public function test_response_should_fail_if_token_is_not_valid(): void
     {
         $node = Node::factory()->create();
 
@@ -78,7 +78,7 @@ class DaemonAuthenticateTest extends MiddlewareTestCase
      * Test that an access denied exception is returned if the node is not found using
      * the token ID provided.
      */
-    public function testResponseShouldFailIfNodeIsNotFound(): void
+    public function test_response_should_fail_if_node_is_not_found(): void
     {
         $this->expectException(ModelNotFoundException::class);
 
@@ -91,7 +91,7 @@ class DaemonAuthenticateTest extends MiddlewareTestCase
     /**
      * Test a successful middleware process.
      */
-    public function testSuccessfulMiddlewareProcess(): void
+    public function test_successful_middleware_process(): void
     {
         $node = Node::factory()->create();
         $node->daemon_token = 'the_same';

@@ -4,6 +4,7 @@
         "concat_space": false,
         "new_with_parentheses": {"anonymous_class":  false},
         "not_operator_with_successor_space": false,
-        "ordered_imports": false
+        "ordered_imports": false,
+        "single_line_comment_spacing": false
     }
 }
