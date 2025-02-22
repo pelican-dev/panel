@@ -63,6 +63,30 @@ class Console extends Page
         ];
     }
 
+    public function cpuUsage(): string
+    {
+        $cacheKey = "servers.{$this->server->id}.cpu";
+        $data = cache()->get($cacheKey, []);
+
+        return $data[collect($data)->keys()->last()] ?? '0%' . ' of ' . $this->server->cpu . '%';
+    }
+
+    public function memoryUsage(): string
+    {
+        $cacheKey = "servers.{$this->server->id}.cpu";
+        $data = cache()->get($cacheKey, []);
+
+        return json_encode($data);
+    }
+
+    public function diskUsage(): string
+    {
+        $cacheKey = "servers.{$this->server->id}.cpu";
+        $data = cache()->get($cacheKey, []);
+
+        return json_encode($data);
+    }
+
     public function getVisibleWidgets(): array
     {
         return $this->filterVisibleWidgets($this->getWidgets());

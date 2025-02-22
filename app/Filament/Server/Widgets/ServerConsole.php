@@ -11,6 +11,7 @@ use App\Services\Nodes\NodeJWTService;
 use App\Services\Servers\GetUserPermissionsService;
 use Filament\Widgets\Widget;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Number;
 use Livewire\Attributes\On;
 
 class ServerConsole extends Widget
@@ -91,14 +92,6 @@ class ServerConsole extends Widget
         $this->input = $this->history[$this->historyIndex] ?? '';
     }
 
-    public function cpu(): string
-    {
-        $cacheKey = "servers.{$this->server->id}.cpu";
-        $data = cache()->get($cacheKey, []);
-
-        return json_encode($data);
-    }
-
     public function enter(): void
     {
         if (!empty($this->input) && $this->canSendCommand()) {
@@ -109,6 +102,50 @@ class ServerConsole extends Widget
 
             $this->input = '';
         }
+    }
+
+    public function cpuUsage(): string
+    {
+        if ($this->server->condition === 'offline') {
+            return 'Offline';
+        }
+
+        $data = collect(cache()->get("servers.{$this->server->id}.cpu_absolute"))->last() ?? 0;
+        $cpu = Number::format($data, maxPrecision: 2, locale: auth()->user()->language) . ' %';
+
+        return $cpu . ($this->server->cpu > 0 ? ' / ' . Number::format($this->server->cpu, locale: auth()->user()->language) . ' %' : ' / ∞');
+    }
+
+    public function memoryUsage(): string
+    {
+        if ($this->server->condition === 'offline') {
+            return 'Offline';
+        }
+
+        $latestMemoryUsed = collect(cache()->get("servers.{$this->server->id}.memory_bytes"))->last() ?? 0;
+        $totalMemory = collect(cache()->get("servers.{$this->server->id}.memory_limit_bytes"))->last() ?? 0;
+
+        $used = config('panel.use_binary_prefix')
+            ? Number::format($latestMemoryUsed / 1024 / 1024 / 1024, maxPrecision: 2, locale: auth()->user()->language) .' GiB'
+            : Number::format($latestMemoryUsed / 1000 / 1000 / 1000, maxPrecision: 2, locale: auth()->user()->language) . ' GB';
+        $total = config('panel.use_binary_prefix')
+            ? Number::format($totalMemory / 1024 / 1024 / 1024, maxPrecision: 2, locale: auth()->user()->language) .' GiB'
+            : Number::format($totalMemory / 1000 / 1000 / 1000, maxPrecision: 2, locale: auth()->user()->language) . ' GB';
+
+        return $used . ($this->server->memory > 0 ? ' / ' . $total : ' / ∞');
+    }
+
+    public function diskUsage(): string
+    {
+        $disk = collect(cache()->get("servers.{$this->server->id}.disk_bytes"))->last() ?? 0;
+        $used = config('panel.use_binary_prefix')
+            ? Number::format($disk / 1024 / 1024 / 1024, maxPrecision: 2, locale: auth()->user()->language) .' GiB'
+            : Number::format($disk / 1000 / 1000 / 1000, maxPrecision: 2, locale: auth()->user()->language) . ' GB';
+        $total = config('panel.use_binary_prefix')
+            ? Number::format($this->server->disk / 1024, maxPrecision: 2, locale: auth()->user()->language) .' GiB'
+            : Number::format($this->server->disk / 1000, maxPrecision: 2, locale: auth()->user()->language) . ' GB';
+
+        return $used . ($this->server->disk > 0 ? ' / ' . $total : ' / ∞');
     }
 
     #[On('token-request')]
