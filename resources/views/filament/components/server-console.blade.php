@@ -9,11 +9,50 @@
     <link rel="stylesheet" href="{{ asset('/css/filament/server/console.css') }}">
     @endassets
 
+    <div class="flex flex-auto gap-6 fi-wi-stats-overview-stat rounded-lg shadow-sm" style="padding-bottom: 14px">
+        <div
+            class="grid grid-flow-row w-full p-3 rounded-lg shadow-sm overflow-hidden ring-1 ring-gray-950/5 dark:bg-gray-900 dark:ring-white/10">
+        <span>
+                <x-filament::icon
+                    icon="tabler-cpu"
+                    class="inline-block" />
+{{--                <span class="text-md font-medium text-gray-500 dark:text-gray-400">--}}
+            {{--                    CPU:--}}
+            {{--                </span>--}}
+        <span class="text-md font-semibold">{{ $this->server->cpu }}%</span>
+        </span>
+        </div>
+        <div
+            class="grid grid-flow-row w-full p-3 rounded-lg shadow-sm overflow-hidden ring-1 ring-gray-950/5 dark:bg-gray-900 dark:ring-white/10">
+        <span>
+                <x-filament::icon
+                    icon="tabler-memory"
+                    class="inline-block" />
+{{--                <span class="text-md font-medium text-gray-500 dark:text-gray-400">--}}
+            {{--                    Memory:--}}
+            {{--                </span>--}}
+            <span class="text-md font-semibold">0 MB / 4 GB</span>
+        </span>
+        </div>
+        <div
+            class="grid grid-flow-row w-full p-3 rounded-lg shadow-sm overflow-hidden ring-1 ring-gray-950/5 dark:bg-gray-900 dark:ring-white/10">
+        <span>
+             <x-filament::icon
+                 icon="tabler-database"
+                 class="inline-block" />
+{{--            <span class="text-md font-medium text-gray-500 dark:text-gray-400">--}}
+            {{--                Disk:--}}
+            {{--            </span>--}}
+            <span class="text-md font-semibold">10.56 GB / 16.63 GB</span>
+        </span>
+        </div>
+    </div>
     <div id="terminal" wire:ignore></div>
+
 
     @if ($this->authorizeSendCommand())
         <div class="flex items-center w-full border-top overflow-hidden dark:bg-gray-900"
-            style="border-bottom-right-radius: 10px; border-bottom-left-radius: 10px;">
+             style="border-bottom-right-radius: 10px; border-bottom-left-radius: 10px;">
             <x-filament::icon
                 icon="tabler-chevrons-right"
             />
@@ -56,10 +95,10 @@
         };
 
         let options = {
-            fontSize: 16,
+            fontSize: 14,
             disableStdin: true,
             cursorStyle: 'underline',
-            cursorInactiveStyle: 'none',
+            cursorInactiveStyle: 'underline',
             allowTransparency: true,
             rows: 30,
             theme: theme

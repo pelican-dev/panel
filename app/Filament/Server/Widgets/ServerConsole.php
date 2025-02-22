@@ -91,6 +91,14 @@ class ServerConsole extends Widget
         $this->input = $this->history[$this->historyIndex] ?? '';
     }
 
+    public function cpu(): string
+    {
+        $cacheKey = "servers.{$this->server->id}.cpu";
+        $data = cache()->get($cacheKey, []);
+
+        return json_encode($data);
+    }
+
     public function enter(): void
     {
         if (!empty($this->input) && $this->canSendCommand()) {
