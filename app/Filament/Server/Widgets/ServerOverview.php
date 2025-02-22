@@ -2,10 +2,10 @@
 
 namespace App\Filament\Server\Widgets;
 
+use App\Filament\Server\Components\StatBlock;
 use App\Models\Server;
 use Carbon\CarbonInterface;
 use Filament\Widgets\StatsOverviewWidget;
-use Filament\Widgets\StatsOverviewWidget\Stat;
 use Illuminate\Support\Str;
 
 class ServerOverview extends StatsOverviewWidget
@@ -17,13 +17,13 @@ class ServerOverview extends StatsOverviewWidget
     protected function getStats(): array
     {
         return [
-            Stat::make('Name', $this->server->name)
+            StatBlock::make('Name', $this->server->name)
                 ->description($this->server->description)
                 ->extraAttributes([
                     'class' => 'overflow-x-auto',
                 ]),
-            Stat::make('Status', $this->status()),
-            Stat::make('Address', $this->server->allocation->address)
+            StatBlock::make('Status', $this->status()),
+            StatBlock::make('Address', $this->server->allocation->address)
                 ->extraAttributes([
                     'class' => 'overflow-x-auto',
                 ]),
