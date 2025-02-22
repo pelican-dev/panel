@@ -6,7 +6,7 @@ use Filament\Tables\Columns\IconColumn;
 
 class NodeHealthColumn extends IconColumn
 {
-    protected string $view = 'tables.columns.node-health-column';
+    protected string $view = 'livewire.columns.version-column';
 
     protected function setUp(): void
     {
