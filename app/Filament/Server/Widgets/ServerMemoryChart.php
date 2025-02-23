@@ -69,23 +69,6 @@ class ServerMemoryChart extends ChartWidget
 
     public function getHeading(): string
     {
-        $latestMemoryUsed = collect(cache()->get("servers.{$this->server->id}.memory_bytes"))->last() ?? 0;
-        $totalMemory = collect(cache()->get("servers.{$this->server->id}.memory_limit_bytes"))->last() ?? 0;
-
-        $used = config('panel.use_binary_prefix')
-            ? Number::format($latestMemoryUsed / 1024 / 1024 / 1024, maxPrecision: 2, locale: auth()->user()->language) .' GiB'
-            : Number::format($latestMemoryUsed / 1000 / 1000 / 1000, maxPrecision: 2, locale: auth()->user()->language) . ' GB';
-
-        if ($totalMemory === 0) {
-            $total = config('panel.use_binary_prefix')
-                ? Number::format($this->server->memory / 1024, maxPrecision: 2, locale: auth()->user()->language) .' GiB'
-                : Number::format($this->server->memory / 1000, maxPrecision: 2, locale: auth()->user()->language) . ' GB';
-        } else {
-            $total = config('panel.use_binary_prefix')
-                ? Number::format($totalMemory / 1024 / 1024 / 1024, maxPrecision: 2, locale: auth()->user()->language) .' GiB'
-                : Number::format($totalMemory / 1000 / 1000 / 1000, maxPrecision: 2, locale: auth()->user()->language) . ' GB';
-        }
-
-        return 'Memory - ' . $used . ($this->server->memory > 0 ? ' Of ' . $total : '');
+        return 'Memory';
     }
 }
