@@ -19,13 +19,5 @@
     <div class="text-xl font-semibold text-gray-950 dark:text-white">
         {{ $getValue() }}
     </div>
-
-    @if ($description = $getDescription())
-        <div class="flex items-center">
-            <span>
-                {{ $description }}
-            </span>
-        </div>
-    @endif
 </div>
 </{!! $tag !!}>
