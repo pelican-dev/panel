@@ -107,7 +107,9 @@ class ServerConsole extends Widget
 
     public function cpuUsage(): string
     {
-        if (ContainerStatus::tryFrom($this->server->retrieveStatus()) === ContainerStatus::Offline || ContainerStatus::Missing) {
+        $status = ContainerStatus::tryFrom($this->server->retrieveStatus());
+
+        if ($status === ContainerStatus::Offline || $status === ContainerStatus::Missing) {
             return 'Offline';
         }
 
@@ -119,7 +121,9 @@ class ServerConsole extends Widget
 
     public function memoryUsage(): string
     {
-        if (ContainerStatus::tryFrom($this->server->retrieveStatus()) === ContainerStatus::Offline || ContainerStatus::Missing) {
+        $status = ContainerStatus::tryFrom($this->server->retrieveStatus());
+
+        if ($status === ContainerStatus::Offline || $status === ContainerStatus::Missing) {
             return 'Offline';
         }
 
