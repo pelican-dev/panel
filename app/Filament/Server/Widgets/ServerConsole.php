@@ -125,12 +125,9 @@ class ServerConsole extends Widget
 
         $latestMemoryUsed = collect(cache()->get("servers.{$this->server->id}.memory_bytes"))->last(default: 0);
         $totalMemory = collect(cache()->get("servers.{$this->server->id}.memory_limit_bytes"))->last(default: 0);
-        $used = config('panel.use_binary_prefix')
-            ? Number::format($latestMemoryUsed / 1024 / 1024 / 1024, maxPrecision: 2, locale: auth()->user()->language) .' GiB'
-            : Number::format($latestMemoryUsed / 1000 / 1000 / 1000, maxPrecision: 2, locale: auth()->user()->language) . ' GB';
-        $total = config('panel.use_binary_prefix')
-            ? Number::format($totalMemory / 1024 / 1024 / 1024, maxPrecision: 2, locale: auth()->user()->language) .' GiB'
-            : Number::format($totalMemory / 1000 / 1000 / 1000, maxPrecision: 2, locale: auth()->user()->language) . ' GB';
+
+        $used = convert_bytes_to_readable($latestMemoryUsed);
+        $total = convert_bytes_to_readable($totalMemory);
 
         return $used . ($this->server->memory > 0 ? ' / ' . $total : ' / ∞');
     }
@@ -143,12 +140,8 @@ class ServerConsole extends Widget
             return 'Unavailable';
         }
 
-        $used = config('panel.use_binary_prefix')
-            ? Number::format($disk / 1024 / 1024 / 1024, maxPrecision: 2, locale: auth()->user()->language) .' GiB'
-            : Number::format($disk / 1000 / 1000 / 1000, maxPrecision: 2, locale: auth()->user()->language) . ' GB';
-        $total = config('panel.use_binary_prefix')
-            ? Number::format($this->server->disk / 1024, maxPrecision: 2, locale: auth()->user()->language) .' GiB'
-            : Number::format($this->server->disk / 1000, maxPrecision: 2, locale: auth()->user()->language) . ' GB';
+        $used = convert_bytes_to_readable($disk);
+        $total = convert_bytes_to_readable($this->server->disk);
 
         return $used . ($this->server->disk > 0 ? ' / ' . $total : ' / ∞');
     }
