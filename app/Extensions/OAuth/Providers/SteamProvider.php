@@ -5,11 +5,14 @@ namespace App\Extensions\OAuth\Providers;
 use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Wizard\Step;
+use Illuminate\Foundation\Application;
 use Illuminate\Support\HtmlString;
 use SocialiteProviders\Steam\Provider;
 
 final class SteamProvider extends OAuthProvider
 {
+    public function __construct(protected Application $app) {}
+
     public function getId(): string
     {
         return 'steam';
@@ -67,8 +70,8 @@ final class SteamProvider extends OAuthProvider
         return '#00adee';
     }
 
-    public static function register(): self
+    public static function register(Application $app): self
     {
-        return new self();
+        return new self($app);
     }
 }
