@@ -31,7 +31,6 @@ class DatabaseManagementService
 
     public function __construct(
         protected ConnectionInterface $connection,
-        protected DynamicDatabaseConnection $dynamic,
     ) {}
 
     /**
@@ -91,7 +90,7 @@ class DatabaseManagementService
         return $this->connection->transaction(function () use ($data) {
             $database = $this->createModel($data);
 
-            $this->dynamic->set('dynamic', $data['database_host_id']);
+            DynamicDatabaseConnection::set('dynamic', $data['database_host_id']);
 
             $database->createDatabase($database->database);
             $database->createUser(
@@ -114,7 +113,7 @@ class DatabaseManagementService
      */
     public function delete(Database $database): ?bool
     {
-        $this->dynamic->set('dynamic', $database->database_host_id);
+        DynamicDatabaseConnection::set('dynamic', $database->database_host_id);
 
         $database->dropDatabase($database->database);
         $database->dropUser($database->username, $database->remote);
