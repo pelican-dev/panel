@@ -87,6 +87,7 @@
 
         let options = {
             fontSize: 14,
+            lineHeight: 1.2,
             disableStdin: true,
             cursorStyle: 'underline',
             cursorInactiveStyle: 'underline',
