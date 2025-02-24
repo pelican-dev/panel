@@ -16,7 +16,10 @@ class ActivityLogTransformer extends BaseClientTransformer
         return ActivityLog::RESOURCE_NAME;
     }
 
-    public function transform(ActivityLog $model): array
+    /**
+     * @param ActivityLog $model
+     */
+    public function transform($model): array
     {
         return [
             // This is not for security, it is only to provide a unique identifier to
