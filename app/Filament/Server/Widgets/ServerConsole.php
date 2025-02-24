@@ -2,6 +2,7 @@
 
 namespace App\Filament\Server\Widgets;
 
+use App\Enums\ContainerStatus;
 use App\Exceptions\Http\HttpForbiddenException;
 use App\Livewire\AlertBanner;
 use App\Models\Permission;
@@ -106,11 +107,11 @@ class ServerConsole extends Widget
 
     public function cpuUsage(): string
     {
-        if ($this->server->condition === 'offline') {
+        if (ContainerStatus::tryFrom($this->server->retrieveStatus()) === ContainerStatus::Offline) {
             return 'Offline';
         }
 
-        $data = collect(cache()->get("servers.{$this->server->id}.cpu_absolute"))->last() ?? 0;
+        $data = collect(cache()->get("servers.{$this->server->id}.cpu_absolute"))->last(default: 0);
         $cpu = Number::format($data, maxPrecision: 2, locale: auth()->user()->language) . ' %';
 
         return $cpu . ($this->server->cpu > 0 ? ' / ' . Number::format($this->server->cpu, locale: auth()->user()->language) . ' %' : ' / ∞');
@@ -118,13 +119,12 @@ class ServerConsole extends Widget
 
     public function memoryUsage(): string
     {
-        if ($this->server->condition === 'offline') {
+        if (ContainerStatus::tryFrom($this->server->retrieveStatus()) === ContainerStatus::Offline) {
             return 'Offline';
         }
 
-        $latestMemoryUsed = collect(cache()->get("servers.{$this->server->id}.memory_bytes"))->last() ?? 0;
-        $totalMemory = collect(cache()->get("servers.{$this->server->id}.memory_limit_bytes"))->last() ?? 0;
-
+        $latestMemoryUsed = collect(cache()->get("servers.{$this->server->id}.memory_bytes"))->last(default: 0);
+        $totalMemory = collect(cache()->get("servers.{$this->server->id}.memory_limit_bytes"))->last(default: 0);
         $used = config('panel.use_binary_prefix')
             ? Number::format($latestMemoryUsed / 1024 / 1024 / 1024, maxPrecision: 2, locale: auth()->user()->language) .' GiB'
             : Number::format($latestMemoryUsed / 1000 / 1000 / 1000, maxPrecision: 2, locale: auth()->user()->language) . ' GB';
@@ -137,7 +137,12 @@ class ServerConsole extends Widget
 
     public function diskUsage(): string
     {
-        $disk = collect(cache()->get("servers.{$this->server->id}.disk_bytes"))->last() ?? 0;
+        $disk = collect(cache()->get("servers.{$this->server->id}.disk_bytes"))->last(default: 0);
+
+        if ($disk === 0) {
+            return 'Unavailable';
+        }
+
         $used = config('panel.use_binary_prefix')
             ? Number::format($disk / 1024 / 1024 / 1024, maxPrecision: 2, locale: auth()->user()->language) .' GiB'
             : Number::format($disk / 1000 / 1000 / 1000, maxPrecision: 2, locale: auth()->user()->language) . ' GB';

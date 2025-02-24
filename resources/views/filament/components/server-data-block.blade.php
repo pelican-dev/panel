@@ -1,10 +1,4 @@
-@php
-    use Filament\Support\Enums\IconPosition;
-    use Filament\Support\Facades\FilamentView;
-    $tag = 'div';
-@endphp
-
-<{!! $tag !!}
+<{!! $tag ?? 'div' !!}
 {{
     $getExtraAttributeBag()
         ->class([
@@ -20,4 +14,4 @@
         {{ $getValue() }}
     </div>
 </div>
-</{!! $tag !!}>
+</{!! $tag ?? 'div' !!}>
