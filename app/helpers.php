@@ -31,7 +31,7 @@ if (!function_exists('convert_bytes_to_readable')) {
         $fromBase = log($bytes) / log($conversionUnit);
         $base ??= floor($fromBase);
 
-        return round(pow($conversionUnit, $fromBase - $base), $decimals) . ' ' . $suffix[$base];
+        return Number::format(pow($conversionUnit, $fromBase - $base), $decimals, locale: auth()->user()->language) . ' ' . $suffix[$base];
     }
 }
 
