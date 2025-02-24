@@ -23,8 +23,8 @@ return [
     ],
     'table' => [
         'name' => 'Name',
-        'source' => 'Source',
-        'target' => 'Target',
+        'all_eggs' => 'All Eggs',
+        'all_nodes' => 'All Nodes',
         'read_only' => 'Read Only',
     ],
 ];

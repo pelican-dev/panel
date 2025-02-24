@@ -64,8 +64,7 @@ class ListNodes extends ListRecords
             ->emptyStateDescription('')
             ->emptyStateHeading(trans('admin/node.no_nodes'))
             ->emptyStateActions([
-                CreateAction::make('create')
-                    ->button(),
+                CreateAction::make(),
             ]);
     }
 
