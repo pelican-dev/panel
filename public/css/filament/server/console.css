@@ -2,7 +2,10 @@
     border-top-left-radius: 10px;
     border-top-right-radius: 10px;
     overflow: hidden;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+.xterm-selection div {
+    background-color: transparent !important;
 }
 
 .xterm .xterm-rows > div {
