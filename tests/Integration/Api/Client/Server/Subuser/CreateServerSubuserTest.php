@@ -19,7 +19,7 @@ class CreateServerSubuserTest extends ClientApiIntegrationTestCase
      * Test that a subuser can be created for a server.
      */
     #[DataProvider('permissionsDataProvider')]
-    public function testSubuserCanBeCreated(array $permissions): void
+    public function test_subuser_can_be_created(array $permissions): void
     {
         [$user, $server] = $this->generateTestAccount($permissions);
 
@@ -52,7 +52,7 @@ class CreateServerSubuserTest extends ClientApiIntegrationTestCase
      * Tests that an error is returned if a subuser attempts to create a new subuser and assign
      * permissions that their account does not also possess.
      */
-    public function testErrorIsReturnedIfAssigningPermissionsNotAssignedToSelf(): void
+    public function test_error_is_returned_if_assigning_permissions_not_assigned_to_self(): void
     {
         [$user, $server] = $this->generateTestAccount([
             Permission::ACTION_USER_CREATE,
@@ -76,7 +76,7 @@ class CreateServerSubuserTest extends ClientApiIntegrationTestCase
     /**
      * Throws some bad data at the API and ensures that a subuser cannot be created.
      */
-    public function testSubuserWithExcessivelyLongEmailCannotBeCreated(): void
+    public function test_subuser_with_excessively_long_email_cannot_be_created(): void
     {
         [$user, $server] = $this->generateTestAccount();
 
@@ -107,7 +107,7 @@ class CreateServerSubuserTest extends ClientApiIntegrationTestCase
      * Test that creating a subuser when there is already an account with that email runs
      * as expected and does not create a new account.
      */
-    public function testCreatingSubuserWithSameEmailAsExistingUserWorks(): void
+    public function test_creating_subuser_with_same_email_as_existing_user_works(): void
     {
         [$user, $server] = $this->generateTestAccount();
 
@@ -130,7 +130,7 @@ class CreateServerSubuserTest extends ClientApiIntegrationTestCase
      * Test that an error is returned if the account associated with an email address is already
      * associated with the server instance.
      */
-    public function testAddingSubuserThatAlreadyIsAssignedReturnsError(): void
+    public function test_adding_subuser_that_already_is_assigned_returns_error(): void
     {
         [$user, $server] = $this->generateTestAccount();
 

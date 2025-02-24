@@ -20,7 +20,7 @@ class DeleteSubuserTest extends ClientApiIntegrationTestCase
      * it to an integer. Then, in the deep API middlewares you would end up trying to load a user
      * with an ID of 12, which may or may not exist and be wrongly assigned to the model object.
      */
-    public function testCorrectSubuserIsDeletedFromServer(): void
+    public function test_correct_subuser_is_deleted_from_server(): void
     {
         $this->swap(DaemonServerRepository::class, $mock = \Mockery::mock(DaemonServerRepository::class));
 

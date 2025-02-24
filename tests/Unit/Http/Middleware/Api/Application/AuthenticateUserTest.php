@@ -11,7 +11,7 @@ class AuthenticateUserTest extends MiddlewareTestCase
     /**
      * Test that no user defined results in an access denied exception.
      */
-    public function testNoUserDefined(): void
+    public function test_no_user_defined(): void
     {
         $this->expectException(AccessDeniedHttpException::class);
 
@@ -23,7 +23,7 @@ class AuthenticateUserTest extends MiddlewareTestCase
     /**
      * Test that a non-admin user results in an exception.
      */
-    public function testNonAdminUser(): void
+    public function test_non_admin_user(): void
     {
         $this->expectException(AccessDeniedHttpException::class);
 
@@ -35,7 +35,7 @@ class AuthenticateUserTest extends MiddlewareTestCase
     /**
      * Test that an admin user continues though the middleware.
      */
-    public function testAdminUser(): void
+    public function test_admin_user(): void
     {
         $this->generateRequestUserModel(true);
 

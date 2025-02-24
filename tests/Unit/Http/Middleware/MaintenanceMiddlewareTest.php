@@ -27,7 +27,7 @@ class MaintenanceMiddlewareTest extends MiddlewareTestCase
     /**
      * Test that a node not in maintenance mode continues through the request cycle.
      */
-    public function testHandle(): void
+    public function test_handle(): void
     {
         // maintenance mode is off by default
         $server = new Server();
@@ -45,7 +45,7 @@ class MaintenanceMiddlewareTest extends MiddlewareTestCase
     /**
      * Test that a node in maintenance mode returns an error view.
      */
-    public function testHandleInMaintenanceMode(): void
+    public function test_handle_in_maintenance_mode(): void
     {
         $server = new Server();
 
