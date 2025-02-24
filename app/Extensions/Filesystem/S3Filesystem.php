@@ -7,6 +7,9 @@ use League\Flysystem\AwsS3V3\AwsS3V3Adapter;
 
 class S3Filesystem extends AwsS3V3Adapter
 {
+    /**
+     * @param mixed[] $options
+     */
     public function __construct(
         private S3ClientInterface $client,
         private string $bucket,

@@ -212,7 +212,7 @@ class Server extends Model implements Validatable
         static::saved(function (self $server) {
             $subuser = $server->subusers()->where('user_id', $server->owner_id)->first();
             if ($subuser) {
-                // @phpstan-ignore-next-line
+                // @phpstan-ignore myCustomRules.forbiddenGlobalFunctions
                 app(SubuserDeletionService::class)->handle($subuser, $server);
             }
         });
@@ -449,7 +449,7 @@ class Server extends Model implements Validatable
     public function resources(): array
     {
         return cache()->remember("resources:$this->uuid", now()->addSeconds(15), function () {
-            // @phpstan-ignore-next-line
+            // @phpstan-ignore myCustomRules.forbiddenGlobalFunctions
             return Arr::get(app(DaemonServerRepository::class)->setServer($this)->getDetails(), 'utilization', []);
         });
     }

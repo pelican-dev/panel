@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands\Server;
 
+use App\Models\Node;
 use App\Models\Server;
 use Illuminate\Console\Command;
 use Illuminate\Database\Eloquent\Builder;
@@ -81,6 +82,9 @@ class BulkPowerActionCommand extends Command
 
     /**
      * Returns the query builder instance that will return the servers that should be affected.
+     *
+     * @param string[]|int[] $servers
+     * @param string[]|int[] $nodes
      */
     protected function getQueryBuilder(array $servers, array $nodes): Builder
     {

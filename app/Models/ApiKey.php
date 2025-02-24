@@ -151,7 +151,7 @@ class ApiKey extends PersonalAccessToken
 
     public function tokenable()
     {
-        // @phpstan-ignore-next-line
+        // @phpstan-ignore return.type
         return $this->user();
     }
 

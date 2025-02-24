@@ -46,6 +46,8 @@ class Handler extends ExceptionHandler
     /**
      * Maps exceptions to a specific response code. This handles special exception
      * types that don't have a defined response code.
+     *
+     * @var array<class-string, int>
      */
     protected static array $exceptionResponseCodes = [
         AuthenticationException::class => 401,
@@ -180,6 +182,19 @@ class Handler extends ExceptionHandler
         return response()->json(['errors' => $errors], $exception->status);
     }
 
+    /**
+     * @param array<string, mixed> $override
+     * @return array{errors: array{
+     *     code: string,
+     *     status: string,
+     *     detail: string,
+     *     source?: array{line: int, file: string},
+     *     meta?: array{
+     *         trace: string[],
+     *         previous: string[],
+     *     },
+     * }}
+     */
     public static function exceptionToArray(Throwable $e, array $override = []): array
     {
         $match = self::$exceptionResponseCodes[get_class($e)] ?? null;

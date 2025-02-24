@@ -4,6 +4,7 @@ namespace App\Traits;
 
 use App\Observers\ValidationObserver;
 use Illuminate\Container\Container;
+use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
@@ -30,6 +31,8 @@ trait HasValidation
 
     /**
      * Returns the rules associated with this model.
+     *
+     * @return array<string, string[]|ValidationRule[]>
      */
     public static function getRules(): array
     {
@@ -42,8 +45,9 @@ trait HasValidation
     }
 
     /**
-     * Returns the rules for a specific field. If the field is not found an empty
-     * array is returned.
+     * Returns the rules for a specific field. If the field is not found, an empty array is returned.
+     *
+     * @return string[]|ValidationRule[]
      */
     public static function getRulesForField(string $field): array
     {
@@ -51,8 +55,9 @@ trait HasValidation
     }
 
     /**
-     * Returns the rules associated with the model, specifically for updating the given model
-     * rather than just creating it.
+     * Returns the rules associated with the model, specifically for updating the given model rather than just creating it.
+     *
+     * @return array<string, string[]|ValidationRule[]>
      */
     public static function getRulesForUpdate(self $model): array
     {
