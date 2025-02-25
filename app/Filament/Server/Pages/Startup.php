@@ -176,6 +176,9 @@ class Startup extends ServerFormPage
         throw new \Exception('Component type not supported: ' . $component::class);
     }
 
+    /**
+     * @return array<string>
+     */
     private function getSelectOptionsFromRules(ServerVariable $serverVariable): array
     {
         $inRule = array_first($serverVariable->variable->rules, fn ($value) => str($value)->startsWith('in:'));

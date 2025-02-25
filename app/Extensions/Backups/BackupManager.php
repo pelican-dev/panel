@@ -126,7 +126,7 @@ class BackupManager
     /**
      * Returns the configuration associated with a given backup type.
      *
-     * @return mixed[]
+     * @return array<mixed>
      */
     protected function getConfig(string $name): array
     {

@@ -15,6 +15,7 @@ use App\Extensions\Lcobucci\JWT\Encoding\TimestampDates;
 
 class NodeJWTService
 {
+    /** @var array<string, mixed> */
     private array $claims = [];
 
     private ?User $user = null;
@@ -25,6 +26,8 @@ class NodeJWTService
 
     /**
      * Set the claims to include in this JWT.
+     *
+     * @param array<string, mixed> $claims
      */
     public function setClaims(array $claims): self
     {
@@ -44,7 +47,7 @@ class NodeJWTService
         return $this;
     }
 
-    public function setExpiresAt(\DateTimeImmutable $date): self
+    public function setExpiresAt(DateTimeImmutable $date): self
     {
         $this->expiresAt = $date;
 

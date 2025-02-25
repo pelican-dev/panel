@@ -37,11 +37,4 @@ class AdminAcl
         return self::can($key->getPermission($resource), $action);
     }
 
-    /**
-     * Returns a list of all possible permissions.
-     */
-    public static function getResourceList(): array
-    {
-        return ApiKey::getPermissionList();
-    }
 }

@@ -184,16 +184,14 @@ class Handler extends ExceptionHandler
 
     /**
      * @param array<string, mixed> $override
+     *
      * @return array{errors: array{
      *     code: string,
      *     status: string,
      *     detail: string,
      *     source?: array{line: int, file: string},
-     *     meta?: array{
-     *         trace: string[],
-     *         previous: string[],
-     *     },
-     * }}
+     *     meta?: array{trace: string[], previous: string[]}
+     * }}|array{errors: array{non-empty-array<string, mixed>}}
      */
     public static function exceptionToArray(Throwable $e, array $override = []): array
     {
@@ -240,6 +238,10 @@ class Handler extends ExceptionHandler
 
     /**
      * Return the exception as a JSONAPI representation for use on API requests.
+     *
+     * @param array{detail?: mixed, source?: mixed, meta?: mixed} $override
+     *
+     * @return array{errors?: array<mixed>}
      */
     protected function convertExceptionToArray(Throwable $e, array $override = []): array
     {
@@ -288,6 +290,8 @@ class Handler extends ExceptionHandler
     /**
      * Helper method to allow reaching into the handler to convert an exception
      * into the expected array response type.
+     *
+     * @return array<mixed>
      */
     public static function toArray(\Throwable $e): array
     {

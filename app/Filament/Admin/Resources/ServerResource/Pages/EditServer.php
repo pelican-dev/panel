@@ -969,6 +969,9 @@ class EditServer extends EditRecord
         throw new Exception('Component type not supported: ' . $component::class);
     }
 
+    /**
+     * @return array<string, string>
+     */
     private function getSelectOptionsFromRules(ServerVariable $serverVariable): array
     {
         $inRule = array_first($serverVariable->variable->rules, fn ($value) => str($value)->startsWith('in:'));

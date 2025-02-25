@@ -542,6 +542,9 @@ class ListFiles extends ListRecords
         );
     }
 
+    /**
+     * @return string[]
+     */
     private function getPermissionsFromModeBit(int $mode): array
     {
         if ($mode === 1) {

@@ -7,6 +7,7 @@ use Livewire\Component;
 
 class AlertBannerContainer extends Component
 {
+    /** @var array<AlertBanner> */
     public array $alertBanners;
 
     public function mount(): void

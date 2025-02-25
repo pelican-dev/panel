@@ -13,6 +13,7 @@ use Filament\Models\Contracts\HasAvatar;
 use Filament\Models\Contracts\HasName;
 use Filament\Models\Contracts\HasTenants;
 use Filament\Panel;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -202,17 +203,6 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
     }
 
     /**
-     * Return the user model in a format that can be passed over to React templates.
-     */
-    public function toReactObject(): array
-    {
-        return array_merge(collect($this->toArray())->except(['id', 'external_id'])->toArray(), [
-            'root_admin' => $this->isRootAdmin(),
-            'admin' => $this->canAccessPanel(Filament::getPanel('admin')),
-        ]);
-    }
-
-    /**
      * Send the password reset notification.
      *
      * @param  string  $token
@@ -227,20 +217,18 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
         $this->notify(new ResetPasswordNotification($token));
     }
 
-    /**
-     * Store the username as a lowercase string.
-     */
-    public function setUsernameAttribute(string $value): void
+    public function username(): Attribute
     {
-        $this->attributes['username'] = mb_strtolower($value);
+        return Attribute::make(
+            set: fn (string $value) => mb_strtolower($value),
+        );
     }
 
-    /**
-     * Store the email as a lowercase string.
-     */
-    public function setEmailAttribute(string $value): void
+    public function email(): Attribute
     {
-        $this->attributes['email'] = mb_strtolower($value);
+        return Attribute::make(
+            set: fn (string $value) => mb_strtolower($value),
+        );
     }
 
     /**

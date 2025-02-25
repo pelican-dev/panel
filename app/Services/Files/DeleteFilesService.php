@@ -7,17 +7,16 @@ use App\Repositories\Daemon\DaemonFileRepository;
 use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Support\Str;
 
-class DeleteFilesService
+readonly class DeleteFilesService
 {
-    /**
-     * DeleteFilesService constructor.
-     */
     public function __construct(
         private DaemonFileRepository $daemonFileRepository
     ) {}
 
     /**
      * Deletes the given files.
+     *
+     * @param string[] $files
      *
      * @throws ConnectionException
      */

@@ -220,6 +220,8 @@ class Server extends Model implements Validatable
 
     /**
      * Returns the format for server allocations when communicating with the Daemon.
+     *
+     * @return array<int>
      */
     public function getAllocationMappings(): array
     {

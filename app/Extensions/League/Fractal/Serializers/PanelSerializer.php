@@ -9,8 +9,8 @@ class PanelSerializer extends ArraySerializer
     /**
      * Serialize an item.
      *
-     * @param mixed[] $data
-     * @return array{object: ?string, attributes: mixed[]}
+     * @param array<mixed> $data
+     * @return array{object: ?string, attributes: array<mixed>}
      */
     public function item(?string $resourceKey, array $data): array
     {
@@ -23,8 +23,8 @@ class PanelSerializer extends ArraySerializer
     /**
      * Serialize a collection.
      *
-     * @param mixed[] $data
-     * @return array{object: 'list', data: mixed[]}
+     * @param array<mixed> $data
+     * @return array{object: 'list', data: array<mixed>}
      */
     public function collection(?string $resourceKey, array $data): array
     {

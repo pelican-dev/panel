@@ -96,7 +96,7 @@ abstract class OAuthProvider
     }
 
     /**
-     * @return Component[]
+     * @return Step[]
      */
     public function getSetupSteps(): array
     {

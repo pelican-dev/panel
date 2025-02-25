@@ -33,11 +33,13 @@ class Mount extends Model implements Validatable
 
     /**
      * Fields that are not mass assignable.
+     * @var array<string|array<string>>
      */
     protected $guarded = ['id'];
 
     /**
      * Rules verifying that the data being stored matches the expectations of the database.
+     * @var array<string|array<string>>
      */
     public static array $validationRules = [
         'name' => 'required|string|min:2|max:64|unique:mounts,name',
@@ -49,8 +51,9 @@ class Mount extends Model implements Validatable
     ];
 
     /**
-     * Implement language verification by overriding Eloquence's gather
-     * rules function.
+     * Implement language verification by overriding Eloquence's gather rules function.
+     *
+     * @return array<string|array<string>>
      */
     public static function getRules(): array
     {

@@ -17,6 +17,8 @@ class ServerConfigurationStructureService
      *
      * DO NOT MODIFY THIS FUNCTION. This powers legacy code handling for the new daemon
      * daemon, if you modify the structure eggs will break unexpectedly.
+     *
+     * @return
      */
     public function handle(Server $server, array $override = []): array
     {
@@ -35,6 +37,35 @@ class ServerConfigurationStructureService
 
     /**
      * Returns the data format used for the daemon.
+     *
+     * @return array{
+     *     uuid: string,
+     *     meta: array{name: string, description: string},
+     *     suspended: bool,
+     *     environment: array<string, mixed>,
+     *     invocation: string,
+     *     skip_egg_scripts: bool,
+     *     build: array{
+     *         memory_limit: int,
+     *         swap: int,
+     *         io_weight: int,
+     *         cpu_limit: int,
+     *         threads: int,
+     *         disk_space: int,
+     *         oom_killer: bool,
+     *     },
+     *     container: array{image: string, requires_rebuild: false},
+     *     allocations: array{
+     *         force_outgoing_ip: bool,
+     *         default: array{ip: string, port: int},
+     *         mappings: array<int>,
+     *     },
+     *     egg: array{id: string, file_denylist: string},
+     *     labels?: string,
+     *     mounts: array{source: string, target: string, read_only: bool},
+     * }
+     *
+     * @todo convert to API Resource
      */
     protected function returnFormat(Server $server): array
     {

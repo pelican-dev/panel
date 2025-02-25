@@ -2,6 +2,7 @@
 
 namespace App\Services\Activity;
 
+use App\Models\User;
 use Illuminate\Support\Arr;
 use Throwable;
 use Webmozart\Assert\Assert;
@@ -19,6 +20,7 @@ class ActivityLogService
 {
     protected ?ActivityLog $activity = null;
 
+    /** @var array<User> */
     protected array $subjects = [];
 
     public function __construct(
@@ -102,7 +104,7 @@ class ActivityLogService
     /**
      * Sets a custom property on the activity log instance.
      *
-     * @param  string|array  $key
+     * @param  string|array<string, mixed>  $key
      * @param  mixed  $value
      */
     public function property($key, $value = null): self
