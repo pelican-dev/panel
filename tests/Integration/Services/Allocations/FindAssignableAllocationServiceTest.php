@@ -26,7 +26,7 @@ class FindAssignableAllocationServiceTest extends IntegrationTestCase
      * Test that an unassigned allocation is preferred rather than creating an entirely new
      * allocation for the server.
      */
-    public function testExistingAllocationIsPreferred(): void
+    public function test_existing_allocation_is_preferred(): void
     {
         $server = $this->createServerModel();
 
@@ -47,7 +47,7 @@ class FindAssignableAllocationServiceTest extends IntegrationTestCase
     /**
      * Test that a new allocation is created if there is not a free one available.
      */
-    public function testNewAllocationIsCreatedIfOneIsNotFound(): void
+    public function test_new_allocation_is_created_if_one_is_not_found(): void
     {
         $server = $this->createServerModel();
         config()->set('panel.client_features.allocations.range_start', 5000);
@@ -64,7 +64,7 @@ class FindAssignableAllocationServiceTest extends IntegrationTestCase
     /**
      * Test that a currently assigned port is never assigned to a server.
      */
-    public function testOnlyPortNotInUseIsCreated(): void
+    public function test_only_port_not_in_use_is_created(): void
     {
         $server = $this->createServerModel();
         $server2 = $this->createServerModel(['node_id' => $server->node_id]);
@@ -83,7 +83,7 @@ class FindAssignableAllocationServiceTest extends IntegrationTestCase
         $this->assertSame(5001, $response->port);
     }
 
-    public function testExceptionIsThrownIfNoMoreAllocationsCanBeCreatedInRange(): void
+    public function test_exception_is_thrown_if_no_more_allocations_can_be_created_in_range(): void
     {
         $server = $this->createServerModel();
         $server2 = $this->createServerModel(['node_id' => $server->node_id]);
@@ -109,7 +109,7 @@ class FindAssignableAllocationServiceTest extends IntegrationTestCase
      * Test that we only auto-allocate from the current server's IP address space, and not a random
      * IP address available on that node.
      */
-    public function testExceptionIsThrownIfOnlyFreePortIsOnADifferentIp(): void
+    public function test_exception_is_thrown_if_only_free_port_is_on_a_different_ip(): void
     {
         $server = $this->createServerModel();
 
@@ -121,7 +121,7 @@ class FindAssignableAllocationServiceTest extends IntegrationTestCase
         $this->getService()->handle($server);
     }
 
-    public function testExceptionIsThrownIfStartOrEndRangeIsNotDefined(): void
+    public function test_exception_is_thrown_if_start_or_end_range_is_not_defined(): void
     {
         $server = $this->createServerModel();
 
@@ -131,7 +131,7 @@ class FindAssignableAllocationServiceTest extends IntegrationTestCase
         $this->getService()->handle($server);
     }
 
-    public function testExceptionIsThrownIfStartOrEndRangeIsNotNumeric(): void
+    public function test_exception_is_thrown_if_start_or_end_range_is_not_numeric(): void
     {
         $server = $this->createServerModel();
         config()->set('panel.client_features.allocations.range_start', 'hodor');
@@ -157,7 +157,7 @@ class FindAssignableAllocationServiceTest extends IntegrationTestCase
         }
     }
 
-    public function testExceptionIsThrownIfFeatureIsNotEnabled(): void
+    public function test_exception_is_thrown_if_feature_is_not_enabled(): void
     {
         config()->set('panel.client_features.allocations.enabled', false);
         $server = $this->createServerModel();

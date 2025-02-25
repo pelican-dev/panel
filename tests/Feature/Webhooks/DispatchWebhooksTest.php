@@ -13,7 +13,7 @@ class DispatchWebhooksTest extends TestCase
 {
     use LazilyRefreshDatabase;
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
         Queue::fake();
