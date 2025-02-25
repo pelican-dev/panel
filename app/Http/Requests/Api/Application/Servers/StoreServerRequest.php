@@ -55,9 +55,11 @@ class StoreServerRequest extends ApplicationApiRequest
 
             // Automatic deployment rules
             'deploy' => 'sometimes|required|array',
-            'deploy.locations' => 'array',
-            'deploy.locations.*' => 'required_with:deploy.locations,integer|min:1',
-            'deploy.dedicated_ip' => 'required_with:deploy,boolean',
+            'deploy.locations' => 'sometimes|array',
+            'deploy.locations.*' => 'required_with:deploy.locations|integer|min:1',
+            'deploy.tags' => 'array',
+            'deploy.tags.*' => 'required_with:deploy.tags|string|min:1',
+            'deploy.dedicated_ip' => 'required_with:deploy|boolean',
             'deploy.port_range' => 'array',
             'deploy.port_range.*' => 'string',
             'start_on_completion' => 'sometimes|boolean',
