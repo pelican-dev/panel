@@ -92,8 +92,7 @@ class UserResource extends Resource
             ])
             ->checkIfRecordIsSelectableUsing(fn (User $user) => auth()->user()->id !== $user->id && !$user->servers_count)
             ->groupedBulkActions([
-                DeleteBulkAction::make()
-                    ->authorize(fn () => auth()->user()->can('delete user')),
+                DeleteBulkAction::make(),
             ]);
     }
 

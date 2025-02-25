@@ -10,7 +10,6 @@ use App\Filament\Components\Tables\Actions\UpdateEggAction;
 use App\Models\Egg;
 use Filament\Actions\CreateAction as CreateHeaderAction;
 use Filament\Resources\Pages\ListRecords;
-use Filament\Tables\Actions\BulkActionGroup;
 use Filament\Tables\Actions\CreateAction;
 use Filament\Tables\Actions\DeleteBulkAction;
 use Filament\Tables\Actions\EditAction;
@@ -66,14 +65,10 @@ class ListEggs extends ListRecords
                         $replica->uuid = Str::uuid()->toString();
                     })
                     ->after(fn (Egg $record, Egg $replica) => $record->variables->each(fn ($variable) => $variable->replicate()->fill(['egg_id' => $replica->id])->save()))
-                    ->successRedirectUrl(fn (Egg $replica) => EditEgg::getUrl(['record' => $replica]))
-                    ->authorize(fn () => auth()->user()->can('create egg')),
+                    ->successRedirectUrl(fn (Egg $replica) => EditEgg::getUrl(['record' => $replica])),
             ])
-            ->bulkActions([
-                BulkActionGroup::make([
-                    DeleteBulkAction::make()
-                        ->authorize(fn () => auth()->user()->can('delete egg')),
-                ]),
+            ->groupedBulkActions([
+                DeleteBulkAction::make(),
             ])
             ->emptyStateIcon('tabler-eggs')
             ->emptyStateDescription('')
