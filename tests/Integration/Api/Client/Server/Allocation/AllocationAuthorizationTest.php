@@ -10,7 +10,7 @@ use PHPUnit\Framework\Attributes\DataProvider;
 class AllocationAuthorizationTest extends ClientApiIntegrationTestCase
 {
     #[DataProvider('methodDataProvider')]
-    public function testAccessToAServersAllocationsIsRestrictedProperly(string $method, string $endpoint): void
+    public function test_access_to_a_servers_allocations_is_restricted_properly(string $method, string $endpoint): void
     {
         // The API $user is the owner of $server1.
         [$user, $server1] = $this->generateTestAccount();

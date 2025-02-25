@@ -52,7 +52,7 @@ class ServerDeletionServiceTest extends IntegrationTestCase
      * Test that a server is not deleted if the force option is not set and an error
      * is returned by daemon.
      */
-    public function testRegularDeleteFailsIfDaemonReturnsError(): void
+    public function test_regular_delete_fails_if_daemon_returns_error(): void
     {
         $server = $this->createServerModel();
 
@@ -68,7 +68,7 @@ class ServerDeletionServiceTest extends IntegrationTestCase
     /**
      * Test that a 404 from Daemon while deleting a server does not cause the deletion to fail.
      */
-    public function testRegularDeleteIgnores404FromDaemon(): void
+    public function test_regular_delete_ignores404_from_daemon(): void
     {
         $server = $this->createServerModel();
 
@@ -83,7 +83,7 @@ class ServerDeletionServiceTest extends IntegrationTestCase
      * Test that an error from Daemon does not cause the deletion to fail if the server is being
      * force deleted.
      */
-    public function testForceDeleteIgnoresExceptionFromDaemon(): void
+    public function test_force_delete_ignores_exception_from_daemon(): void
     {
         $server = $this->createServerModel();
 
@@ -98,7 +98,7 @@ class ServerDeletionServiceTest extends IntegrationTestCase
      * Test that a non-force-delete call does not delete the server if one of the databases
      * cannot be deleted from the host.
      */
-    public function testExceptionWhileDeletingStopsProcess(): void
+    public function test_exception_while_deleting_stops_process(): void
     {
         $server = $this->createServerModel();
         $host = DatabaseHost::factory()->create();
@@ -123,7 +123,7 @@ class ServerDeletionServiceTest extends IntegrationTestCase
     /**
      * Test that a server is deleted even if the server databases cannot be deleted from the host.
      */
-    public function testExceptionWhileDeletingDatabasesDoesNotAbortIfForceDeleted(): void
+    public function test_exception_while_deleting_databases_does_not_abort_if_force_deleted(): void
     {
         $server = $this->createServerModel();
         $host = DatabaseHost::factory()->create();
