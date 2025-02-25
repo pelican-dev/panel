@@ -83,8 +83,7 @@ class MountResource extends Resource
                 EditAction::make(),
             ])
             ->groupedBulkActions([
-                DeleteBulkAction::make()
-                    ->authorize(fn () => auth()->user()->can('delete mount')),
+                DeleteBulkAction::make(),
             ])
             ->emptyStateIcon('tabler-layers-linked')
             ->emptyStateDescription('')

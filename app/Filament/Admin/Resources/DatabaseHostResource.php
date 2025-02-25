@@ -78,8 +78,7 @@ class DatabaseHostResource extends Resource
                 EditAction::make(),
             ])
             ->groupedBulkActions([
-                DeleteBulkAction::make()
-                    ->authorize(fn () => auth()->user()->can('delete databasehost')),
+                DeleteBulkAction::make(),
             ])
             ->emptyStateIcon('tabler-database')
             ->emptyStateDescription('')

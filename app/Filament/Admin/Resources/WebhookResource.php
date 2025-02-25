@@ -65,8 +65,7 @@ class WebhookResource extends Resource
                 DeleteAction::make(),
             ])
             ->groupedBulkActions([
-                DeleteBulkAction::make()
-                    ->authorize(fn () => auth()->user()->can('delete webhook')),
+                DeleteBulkAction::make(),
             ])
             ->emptyStateIcon('tabler-webhook')
             ->emptyStateDescription('')

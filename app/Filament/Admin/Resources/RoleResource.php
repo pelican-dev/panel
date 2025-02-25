@@ -82,8 +82,7 @@ class RoleResource extends Resource
             ])
             ->checkIfRecordIsSelectableUsing(fn (Role $role) => !$role->isRootAdmin() && $role->users_count <= 0)
             ->groupedBulkActions([
-                DeleteBulkAction::make()
-                    ->authorize(fn () => auth()->user()->can('delete role')),
+                DeleteBulkAction::make(),
             ])
             ->emptyStateIcon('tabler-users-group')
             ->emptyStateDescription('')
