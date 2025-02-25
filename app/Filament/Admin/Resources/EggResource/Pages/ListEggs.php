@@ -65,8 +65,7 @@ class ListEggs extends ListRecords
                         $replica->uuid = Str::uuid()->toString();
                     })
                     ->after(fn (Egg $record, Egg $replica) => $record->variables->each(fn ($variable) => $variable->replicate()->fill(['egg_id' => $replica->id])->save()))
-                    ->successRedirectUrl(fn (Egg $replica) => EditEgg::getUrl(['record' => $replica]))
-                    ->authorize(fn () => auth()->user()->can('create egg')),
+                    ->successRedirectUrl(fn (Egg $replica) => EditEgg::getUrl(['record' => $replica])),
             ])
             ->groupedBulkActions([
                 DeleteBulkAction::make(),

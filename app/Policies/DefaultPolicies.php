@@ -36,4 +36,9 @@ trait DefaultPolicies
     {
         return $user->can('delete ' . $this->modelName);
     }
+
+    public function replicate(User $user, Model $model): bool
+    {
+        return $user->can('create ' . $this->modelName);
+    }
 }
