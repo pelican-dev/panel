@@ -22,8 +22,10 @@ use App\Http\Requests\Api\Client\Servers\Files\CompressFilesRequest;
 use App\Http\Requests\Api\Client\Servers\Files\DecompressFilesRequest;
 use App\Http\Requests\Api\Client\Servers\Files\GetFileContentsRequest;
 use App\Http\Requests\Api\Client\Servers\Files\WriteFileContentRequest;
+use Dedoc\Scramble\Attributes\Group;
 use Illuminate\Http\Client\ConnectionException;
 
+#[Group('Server - File', weight: 0)]
 class FileController extends ClientApiController
 {
     /**
@@ -37,6 +39,8 @@ class FileController extends ClientApiController
     }
 
     /**
+     * List files
+     *
      * Returns a listing of files in a given directory.
      *
      * @throws ConnectionException
@@ -53,6 +57,8 @@ class FileController extends ClientApiController
     }
 
     /**
+     * View file
+     *
      * Return the contents of a specified file for the user.
      *
      * @throws \Throwable
@@ -72,6 +78,8 @@ class FileController extends ClientApiController
     }
 
     /**
+     * Download file
+     *
      * Generates a one-time token with a link that the user can use to
      * download a given file.
      *
@@ -103,6 +111,8 @@ class FileController extends ClientApiController
     }
 
     /**
+     * Write file
+     *
      * Writes the contents of the specified file to the server.
      *
      * @throws ConnectionException
@@ -121,6 +131,8 @@ class FileController extends ClientApiController
     }
 
     /**
+     * Create directory
+     *
      * Creates a new folder on the server.
      *
      * @throws \Throwable
@@ -140,6 +152,8 @@ class FileController extends ClientApiController
     }
 
     /**
+     * Rename file
+     *
      * Renames a file on the remote machine.
      *
      * @throws \Throwable
@@ -163,6 +177,8 @@ class FileController extends ClientApiController
     }
 
     /**
+     * Copy file
+     *
      * Copies a file on the server.
      *
      * @throws ConnectionException
@@ -181,6 +197,8 @@ class FileController extends ClientApiController
     }
 
     /**
+     * Compress files
+     *
      * @throws ConnectionException
      */
     public function compress(CompressFilesRequest $request, Server $server): array
@@ -201,6 +219,8 @@ class FileController extends ClientApiController
     }
 
     /**
+     * Decompress files
+     *
      * @throws ConnectionException
      */
     public function decompress(DecompressFilesRequest $request, Server $server): JsonResponse
@@ -221,6 +241,8 @@ class FileController extends ClientApiController
     }
 
     /**
+     * Delete files/ folders
+     *
      * Deletes files or folders for the server in the given root directory.
      *
      * @throws ConnectionException
@@ -241,6 +263,8 @@ class FileController extends ClientApiController
     }
 
     /**
+     * Update file permissions
+     *
      * Updates file permissions for file(s) in the given root directory.
      *
      * @throws ConnectionException
@@ -256,6 +280,8 @@ class FileController extends ClientApiController
     }
 
     /**
+     * Pull remote file
+     *
      * Requests that a file be downloaded from a remote location by daemon.
      *
      * @throws \Throwable

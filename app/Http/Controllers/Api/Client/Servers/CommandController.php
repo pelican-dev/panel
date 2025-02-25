@@ -9,12 +9,16 @@ use GuzzleHttp\Exception\BadResponseException;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 use App\Http\Controllers\Api\Client\ClientApiController;
 use App\Http\Requests\Api\Client\Servers\SendCommandRequest;
+use Dedoc\Scramble\Attributes\Group;
 use Exception;
 use Illuminate\Http\Client\ConnectionException;
 
+#[Group('Server', weight: 1)]
 class CommandController extends ClientApiController
 {
     /**
+     * Send command
+     *
      * Send a command to a running server.
      *
      * @throws ConnectionException
