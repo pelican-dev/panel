@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en" data-theme="{{ $config->get('ui.theme', 'light') }}">
+<html lang="en">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
@@ -9,6 +9,12 @@
     <link rel="stylesheet" href="https://unpkg.com/@stoplight/elements@8.3.4/styles.min.css">
 
     <script>
+        const theme = localStorage.getItem('theme') === 'system'
+        ? (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light')
+        : localStorage.getItem('theme') ?? 'dark';
+
+        document.documentElement.setAttribute('data-theme', theme);
+
         const originalFetch = window.fetch;
 
         // intercept TryIt requests and add the XSRF-TOKEN header,
