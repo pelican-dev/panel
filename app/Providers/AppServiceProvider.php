@@ -79,11 +79,11 @@ class AppServiceProvider extends ServiceProvider
 
         Sanctum::usePersonalAccessTokenModel(ApiKey::class);
 
-        $bearerTokens = fn (OpenApi $openApi) => $openApi->secure(SecurityScheme::http('bearer'));
         Gate::define('viewApiDocs', fn () => true);
-        Scramble::registerApi('application', ['api_path' => 'api/application', 'info' => ['version' => '1.0']]);
+
+        $bearerTokens = fn (OpenApi $openApi) => $openApi->secure(SecurityScheme::http('bearer'));
+        Scramble::registerApi('application', ['api_path' => 'api/application', 'info' => ['version' => '1.0']])->afterOpenApiGenerated($bearerTokens);
         Scramble::registerApi('client', ['api_path' => 'api/client', 'info' => ['version' => '1.0']])->afterOpenApiGenerated($bearerTokens);
-        Scramble::registerApi('remote', ['api_path' => 'api/remote', 'info' => ['version' => '1.0']])->afterOpenApiGenerated($bearerTokens);
 
         // Default OAuth providers included with Socialite
         CommonProvider::register($app, 'facebook', null, 'tabler-brand-facebook-f', '#1877f2');
@@ -164,7 +164,6 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        Scramble::extendOpenApi(fn (OpenApi $openApi) => $openApi->secure(SecurityScheme::http('bearer')));
         Scramble::ignoreDefaultRoutes();
     }
 }

@@ -11,7 +11,9 @@ use App\Exceptions\Http\HttpForbiddenException;
 use App\Http\Requests\Api\Client\ClientApiRequest;
 use App\Services\Servers\GetUserPermissionsService;
 use App\Http\Controllers\Api\Client\ClientApiController;
+use Dedoc\Scramble\Attributes\Group;
 
+#[Group('Server - Websocket')]
 class WebsocketController extends ClientApiController
 {
     /**
@@ -25,6 +27,8 @@ class WebsocketController extends ClientApiController
     }
 
     /**
+     * Get websocket token
+     *
      * Generates a one-time token that is sent along in every websocket call to the Daemon.
      * This is a signed JWT that the Daemon then uses to verify the user's identity, and
      * allows us to continually renew this token and avoid users maintaining sessions wrongly,

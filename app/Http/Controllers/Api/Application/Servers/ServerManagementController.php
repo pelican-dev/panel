@@ -10,9 +10,11 @@ use App\Repositories\Daemon\DaemonServerRepository;
 use App\Services\Servers\ReinstallServerService;
 use App\Services\Servers\SuspensionService;
 use App\Services\Servers\TransferServerService;
+use Dedoc\Scramble\Attributes\Group;
 use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Http\Response;
 
+#[Group('Server', weight: 4)]
 class ServerManagementController extends ApplicationApiController
 {
     /**
@@ -28,6 +30,8 @@ class ServerManagementController extends ApplicationApiController
     }
 
     /**
+     * Suspsend
+     *
      * Suspend a server on the Panel.
      *
      * @throws \Throwable
@@ -40,6 +44,8 @@ class ServerManagementController extends ApplicationApiController
     }
 
     /**
+     * Unsuspsend
+     *
      * Unsuspend a server on the Panel.
      *
      * @throws \Throwable
@@ -52,6 +58,8 @@ class ServerManagementController extends ApplicationApiController
     }
 
     /**
+     * Reinstall
+     *
      * Mark a server as needing to be reinstalled.
      *
      * @throws \App\Exceptions\DisplayException
@@ -65,6 +73,8 @@ class ServerManagementController extends ApplicationApiController
     }
 
     /**
+     * Start transfer
+     *
      * Starts a transfer of a server to a new node.
      */
     public function startTransfer(ServerWriteRequest $request, Server $server): Response
@@ -85,6 +95,8 @@ class ServerManagementController extends ApplicationApiController
     }
 
     /**
+     * Cancel transfer
+     *
      * Cancels a transfer of a server to a new node.
      *
      * @throws ConnectionException
