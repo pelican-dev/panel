@@ -2,7 +2,6 @@
 
 namespace App\Filament\Server\Widgets;
 
-use App\Enums\ContainerStatus;
 use App\Exceptions\Http\HttpForbiddenException;
 use App\Livewire\AlertBanner;
 use App\Models\Permission;
@@ -12,7 +11,6 @@ use App\Services\Nodes\NodeJWTService;
 use App\Services\Servers\GetUserPermissionsService;
 use Filament\Widgets\Widget;
 use Illuminate\Support\Arr;
-use Illuminate\Support\Number;
 use Livewire\Attributes\On;
 
 class ServerConsole extends Widget
@@ -103,51 +101,6 @@ class ServerConsole extends Widget
 
             $this->input = '';
         }
-    }
-
-    public function cpuUsage(): string
-    {
-        $status = ContainerStatus::tryFrom($this->server->retrieveStatus());
-
-        if ($status === ContainerStatus::Offline || $status === ContainerStatus::Missing) {
-            return 'Offline';
-        }
-
-        $data = collect(cache()->get("servers.{$this->server->id}.cpu_absolute"))->last(default: 0);
-        $cpu = Number::format($data, maxPrecision: 2, locale: auth()->user()->language) . ' %';
-
-        return $cpu . ($this->server->cpu > 0 ? ' / ' . Number::format($this->server->cpu, locale: auth()->user()->language) . ' %' : ' / ∞');
-    }
-
-    public function memoryUsage(): string
-    {
-        $status = ContainerStatus::tryFrom($this->server->retrieveStatus());
-
-        if ($status === ContainerStatus::Offline || $status === ContainerStatus::Missing) {
-            return 'Offline';
-        }
-
-        $latestMemoryUsed = collect(cache()->get("servers.{$this->server->id}.memory_bytes"))->last(default: 0);
-        $totalMemory = collect(cache()->get("servers.{$this->server->id}.memory_limit_bytes"))->last(default: 0);
-
-        $used = convert_bytes_to_readable($latestMemoryUsed);
-        $total = convert_bytes_to_readable($totalMemory);
-
-        return $used . ($this->server->memory > 0 ? ' / ' . $total : ' / ∞');
-    }
-
-    public function diskUsage(): string
-    {
-        $disk = collect(cache()->get("servers.{$this->server->id}.disk_bytes"))->last(default: 0);
-
-        if ($disk === 0) {
-            return 'Unavailable';
-        }
-
-        $used = convert_bytes_to_readable($disk);
-        $total = convert_bytes_to_readable($this->server->disk);
-
-        return $used . ($this->server->disk > 0 ? ' / ' . $total : ' / ∞');
     }
 
     #[On('token-request')]
