@@ -10,7 +10,5 @@ Route::group(['prefix' => 'api'], function () {
     Scramble::registerUiRoute(path: 'client', api: 'client');
     Scramble::registerJsonSpecificationRoute(path: 'client.json', api: 'client');
 
-    Route::get('', function () {
-        return view('docs.api-index');
-    });
+    Route::view('', 'docs.api-index');
 });
