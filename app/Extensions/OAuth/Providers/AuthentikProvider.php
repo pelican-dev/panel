@@ -9,7 +9,10 @@ use SocialiteProviders\Authentik\Provider;
 
 final class AuthentikProvider extends OAuthProvider
 {
-    public function __construct(protected Application $app) {}
+    public function __construct(protected Application $app)
+    {
+        parent::__construct($app);
+    }
 
     public function getId(): string
     {
