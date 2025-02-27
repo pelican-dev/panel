@@ -112,6 +112,9 @@ class File extends Model
         ];
     }
 
+    /**
+     * @return array<string>
+     */
     public function getSchema(): array
     {
         return [
@@ -128,6 +131,21 @@ class File extends Model
         ];
     }
 
+
+    /**
+     * @return array<array{
+     *     name: string,
+     *     created_at: string,
+     *     modified_at: string,
+     *     mode: string,
+     *     mode_bits: int,
+     *     size: int,
+     *     is_directory: bool,
+     *     is_file: bool,
+     *     is_symlink: bool,
+     *     mime_type: string,
+     * }>
+     */
     public function getRows(): array
     {
         try {

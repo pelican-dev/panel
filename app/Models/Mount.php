@@ -33,7 +33,7 @@ class Mount extends Model implements Validatable
 
     /**
      * Fields that are not mass assignable.
-     * @var array<string|array<string>>
+     * @var array<string>
      */
     protected $guarded = ['id'];
 
@@ -72,6 +72,8 @@ class Mount extends Model implements Validatable
 
     /**
      * Blacklisted source paths.
+     *
+     * @var array<string>
      */
     public static array $invalidSourcePaths = [
         '/etc/pelican',
@@ -81,6 +83,8 @@ class Mount extends Model implements Validatable
 
     /**
      * Blacklisted target paths.
+     *
+     * @param array<string>
      */
     public static array $invalidTargetPaths = [
         '/home/container',

@@ -41,7 +41,7 @@ use Symfony\Component\Yaml\Yaml;
  * @property int $daemon_sftp
  * @property string|null $daemon_sftp_alias
  * @property string $daemon_base
- * @property array $tags
+ * @property array<string> $tags
  * @property \Carbon\Carbon $created_at
  * @property \Carbon\Carbon $updated_at
  * @property \App\Models\Mount[]|\Illuminate\Database\Eloquent\Collection $mounts
@@ -85,6 +85,8 @@ class Node extends Model implements Validatable
         'description', 'maintenance_mode', 'tags',
     ];
 
+
+    /** @var array<string, string|array<string>> */
     public static array $validationRules = [
         'name' => 'required|string|min:1|max:100',
         'description' => 'string|nullable',
@@ -172,6 +174,22 @@ class Node extends Model implements Validatable
 
     /**
      * Returns the configuration as an array.
+     *
+     * @return array{
+     *     debug: bool,
+     *     uuid: string,
+     *     token_id: string,
+     *     token: string,
+     *     api: array{
+     *         host: string,
+     *         port: int,
+     *         ssl: array{enabled: bool, cert: string, key: string},
+     *         upload_limit: int
+     *     },
+     *     system: array{data: string, sftp: array{bind_port: int}},
+     *     allowed_mounts: array<string>,
+     *     remote: string,
+     * }
      */
     public function getConfiguration(): array
     {
@@ -302,6 +320,7 @@ class Node extends Model implements Validatable
         })->values();
     }
 
+    /** @return array<mixed> */
     public function systemInformation(): array
     {
         return once(function () {
@@ -325,6 +344,9 @@ class Node extends Model implements Validatable
         });
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     public function serverStatuses(): array
     {
         $statuses = [];
@@ -342,6 +364,14 @@ class Node extends Model implements Validatable
         return $statuses;
     }
 
+    /** @return array{
+     *     memory_total: int, memory_used: int,
+     *     swap_total: int, swap_used: int,
+     *     load_average1: float, load_average5: float, load_average15: float,
+     *     cpu_percent: float,
+     *     disk_total: int, disk_used: int,
+     * }
+     */
     public function statistics(): array
     {
         $default = [
@@ -368,6 +398,7 @@ class Node extends Model implements Validatable
         }
     }
 
+    /** @return array<string> */
     public function ipAddresses(): array
     {
         return cache()->remember("nodes.$this->id.ips", now()->addHour(), function () {

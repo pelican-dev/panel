@@ -47,6 +47,8 @@ class Task extends Model implements Validatable
 
     /**
      * Relationships to be updated when this model is updated.
+     *
+     * @var array<string> $touches
      */
     protected $touches = ['schedule'];
 
@@ -72,6 +74,7 @@ class Task extends Model implements Validatable
         'continue_on_failure' => false,
     ];
 
+    /** @var array<string, string|array<string>> */
     public static array $validationRules = [
         'schedule_id' => 'required|numeric|exists:schedules,id',
         'sequence_id' => 'required|numeric|min:1',

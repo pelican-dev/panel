@@ -48,9 +48,7 @@ class DatabaseHost extends Model implements Validatable
         'name', 'host', 'port', 'username', 'password', 'max_databases',
     ];
 
-    /**
-     * Validation rules to assign to this model.
-     */
+    /** @var array<string, string|array<string>> */
     public static array $validationRules = [
         'name' => 'required|string|max:255',
         'host' => 'required|string',

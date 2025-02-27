@@ -107,6 +107,7 @@ class Permission extends Model implements Validatable
      */
     protected $guarded = ['id', 'created_at', 'updated_at'];
 
+    /** @var array<string, string|array<string>> */
     public static array $validationRules = [
         'subuser_id' => 'required|numeric|min:1',
         'permission' => 'required|string',
@@ -116,7 +117,12 @@ class Permission extends Model implements Validatable
      * All the permissions available on the system. You should use self::permissions()
      * to retrieve them, and not directly access this array as it is subject to change.
      *
-     * @see \App\Models\Permission::permissions()
+     * @see Permission::permissions()
+     *
+     * @var array<string, array{
+     *     description: string,
+     *     keys: array<string, string>,
+     * }>
      */
     protected static array $permissions = [
         'websocket' => [

@@ -51,7 +51,7 @@ use Spatie\Permission\Traits\HasRoles;
  * @property bool $use_totp
  * @property string|null $totp_secret
  * @property \Illuminate\Support\Carbon|null $totp_authenticated_at
- * @property array|null $oauth
+ * @property array<string>|null $oauth
  * @property bool $gravatar
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
@@ -144,9 +144,7 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
         'oauth' => '[]',
     ];
 
-    /**
-     * Rules verifying that the data being stored matches the expectations of the database.
-     */
+    /** @var array<string, string|array<string>> */
     public static array $validationRules = [
         'uuid' => 'nullable|string|size:36|unique:users,uuid',
         'email' => 'required|email|between:1,255|unique:users,email',
@@ -329,6 +327,8 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
      * Laravel's policies strictly check for the existence of a real method,
      * this checks if the ability is one of our permissions and then checks if the user can do it or not
      * Otherwise it calls the Authorizable trait's parent method
+     *
+     * @param array<Model>|mixed $arguments
      */
     public function can($abilities, mixed $arguments = []): bool
     {

@@ -112,7 +112,7 @@ use App\Services\Subusers\SubuserDeletionService;
  * @method static \Illuminate\Database\Eloquent\Builder|Server whereUuid($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Server whereuuid_short($value)
  *
- * @property array|null $docker_labels
+ * @property array<string>|null $docker_labels
  * @property string|null $ports
  * @property-read mixed $condition
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\EggVariable> $eggVariables
@@ -157,6 +157,7 @@ class Server extends Model implements Validatable
      */
     protected $guarded = ['id', self::CREATED_AT, self::UPDATED_AT, 'deleted_at', 'installed_at'];
 
+    /** @var array<string, string|array<string>> */
     public static array $validationRules = [
         'external_id' => 'sometimes|nullable|string|between:1,255|unique:servers',
         'owner_id' => 'required|integer|exists:users,id',
@@ -426,6 +427,8 @@ class Server extends Model implements Validatable
     /**
      * Sends a command or multiple commands to a running server instance.
      *
+     * @param array<string>|string $command
+     *
      * @throws ConnectionException
      */
     public function send(array|string $command): ResponseInterface
@@ -448,6 +451,9 @@ class Server extends Model implements Validatable
         return cache()->get("servers.$this->uuid.container.status") ?? 'missing';
     }
 
+    /**
+     * @return array<mixed>
+     */
     public function resources(): array
     {
         return cache()->remember("resources:$this->uuid", now()->addSeconds(15), function () {

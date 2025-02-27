@@ -50,6 +50,7 @@ class Backup extends Model implements Validatable
 
     protected $guarded = ['id', 'created_at', 'updated_at', 'deleted_at'];
 
+    /** @var array<string, string|array<string>> */
     public static array $validationRules = [
         'server_id' => 'bail|required|numeric|exists:servers,id',
         'uuid' => 'required|uuid',
