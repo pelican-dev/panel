@@ -30,7 +30,7 @@ class DispatchWebhooksTest extends TestCase
         Queue::assertPushed(ProcessWebhook::class);
     }
 
-    public function testSendsMultipleWebhooks()
+    public function testSendsMultipleWebhooks(): void
     {
         WebhookConfiguration::factory(2)
             ->create(['events' => ['eloquent.created: ' . Server::class]]);
@@ -40,7 +40,7 @@ class DispatchWebhooksTest extends TestCase
         Queue::assertPushed(ProcessWebhook::class, 2);
     }
 
-    public function testItSendsNoWebhooks()
+    public function testItSendsNoWebhooks(): void
     {
         WebhookConfiguration::factory()->create();
 
@@ -49,7 +49,7 @@ class DispatchWebhooksTest extends TestCase
         Queue::assertNothingPushed();
     }
 
-    public function testItSendsSomeWebhooks()
+    public function testItSendsSomeWebhooks(): void
     {
         WebhookConfiguration::factory(2)
             ->sequence(
@@ -62,7 +62,7 @@ class DispatchWebhooksTest extends TestCase
         Queue::assertPushed(ProcessWebhook::class, 1);
     }
 
-    public function testItDoesNotCallRemovedEvents()
+    public function testItDoesNotCallRemovedEvents(): void
     {
         $webhookConfig = WebhookConfiguration::factory()->create([
             'events' => ['eloquent.created: ' . Server::class],
@@ -75,7 +75,7 @@ class DispatchWebhooksTest extends TestCase
         Queue::assertNothingPushed();
     }
 
-    public function testItDoesNotCallDeletedWebhooks()
+    public function testItDoesNotCallDeletedWebhooks(): void
     {
         $webhookConfig = WebhookConfiguration::factory()->create([
             'events' => ['eloquent.created: ' . Server::class],

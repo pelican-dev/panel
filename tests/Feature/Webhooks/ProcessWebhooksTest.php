@@ -77,7 +77,7 @@ class ProcessWebhooksTest extends TestCase
         });
     }
 
-    public function testSendsMultipleWebhooks()
+    public function testSendsMultipleWebhooks(): void
     {
         [$webhook1, $webhook2] = WebhookConfiguration::factory(2)
             ->create(['events' => [$eventName = 'eloquent.created: ' . Server::class]]);
@@ -98,7 +98,7 @@ class ProcessWebhooksTest extends TestCase
         Http::assertSent(fn (Request $request) => $webhook2->endpoint === $request->url());
     }
 
-    public function testItSendsNoWebhooks()
+    public function testItSendsNoWebhooks(): void
     {
         Http::fake();
 
@@ -109,7 +109,7 @@ class ProcessWebhooksTest extends TestCase
         Http::assertSentCount(0);
     }
 
-    public function testItSendsSomeWebhooks()
+    public function testItSendsSomeWebhooks(): void
     {
         [$webhook1, $webhook2] = WebhookConfiguration::factory(2)
             ->sequence(
@@ -129,7 +129,7 @@ class ProcessWebhooksTest extends TestCase
         Http::assertNotSent(fn (Request $request) => $webhook2->endpoint === $request->url());
     }
 
-    public function testItRecordsWhenAWebhookIsSent()
+    public function testItRecordsWhenAWebhookIsSent(): void
     {
         $webhookConfig = WebhookConfiguration::factory()
             ->create(['events' => ['eloquent.created: ' . Server::class]]);
@@ -152,7 +152,7 @@ class ProcessWebhooksTest extends TestCase
         ]);
     }
 
-    public function testItRecordsWhenAWebhookFails()
+    public function testItRecordsWhenAWebhookFails(): void
     {
         $webhookConfig = WebhookConfiguration::factory()->create([
             'events' => ['eloquent.created: ' . Server::class],
@@ -173,7 +173,7 @@ class ProcessWebhooksTest extends TestCase
         ]);
     }
 
-    public function testItIsTriggeredOnCustomEvents()
+    public function testItIsTriggeredOnCustomEvents(): void
     {
         $webhookConfig = WebhookConfiguration::factory()->create([
             'events' => [Installed::class],
