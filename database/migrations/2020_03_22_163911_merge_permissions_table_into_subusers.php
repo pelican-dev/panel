@@ -1,15 +1,14 @@
 <?php
 
+use App\Models\Permission;
+use App\Models\Permission as P;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
-use App\Models\Permission;
 use Illuminate\Support\Facades\Schema;
-use App\Models\Permission as P;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-return new class extends Migration
-{
+return new class () extends Migration {
     /**
      * A list of all pre-1.0 permissions available to a user and their associated
      * casting for the new permissions system.

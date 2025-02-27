@@ -3,11 +3,11 @@
 namespace App\Services\Backups;
 
 use Ramsey\Uuid\Uuid;
-use Webmozart\Assert\Assert;
 use App\Models\Backup;
 use App\Models\Server;
-use Illuminate\Database\ConnectionInterface;
+use Webmozart\Assert\Assert;
 use App\Extensions\Backups\BackupManager;
+use Illuminate\Database\ConnectionInterface;
 use App\Repositories\Daemon\DaemonBackupRepository;
 use App\Exceptions\Service\Backup\TooManyBackupsException;
 use Symfony\Component\HttpKernel\Exception\TooManyRequestsHttpException;
@@ -26,7 +26,8 @@ class InitiateBackupService
         private readonly DaemonBackupRepository $daemonBackupRepository,
         private readonly DeleteBackupService $deleteBackupService,
         private readonly BackupManager $backupManager
-    ) {}
+    ) {
+    }
 
     /**
      * Set if the backup should be locked once it is created which will prevent
@@ -42,7 +43,7 @@ class InitiateBackupService
     /**
      * Sets the files to be ignored by this backup.
      *
-     * @param  string[]|null  $ignored
+     * @param string[]|null $ignored
      */
     public function setIgnoredFiles(?array $ignored): self
     {
@@ -66,8 +67,8 @@ class InitiateBackupService
      * Initiates the backup process for a server on daemon.
      *
      * @throws \Throwable
-     * @throws \App\Exceptions\Service\Backup\TooManyBackupsException
-     * @throws \Symfony\Component\HttpKernel\Exception\TooManyRequestsHttpException
+     * @throws TooManyBackupsException
+     * @throws TooManyRequestsHttpException
      */
     public function handle(Server $server, ?string $name = null, bool $override = false): Backup
     {
@@ -109,7 +110,7 @@ class InitiateBackupService
         }
 
         return $this->connection->transaction(function () use ($server, $name) {
-            /** @var \App\Models\Backup $backup */
+            /** @var Backup $backup */
             $backup = Backup::query()->create([
                 'server_id' => $server->id,
                 'uuid' => Uuid::uuid4()->toString(),

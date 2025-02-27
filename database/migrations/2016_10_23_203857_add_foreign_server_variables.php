@@ -4,8 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-return new class extends Migration
-{
+return new class () extends Migration {
     /**
      * Run the migrations.
      */
@@ -36,6 +35,5 @@ return new class extends Migration
             $table->unsignedMediumInteger('server_id')->change();
             $table->unsignedMediumInteger('variable_id')->change();
         });
-
     }
 };

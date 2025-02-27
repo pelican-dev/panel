@@ -2,32 +2,31 @@
 
 namespace App\Filament\Admin\Resources\NodeResource\Pages;
 
-use App\Filament\Admin\Resources\NodeResource;
-use App\Models\Node;
-use App\Services\Helpers\SoftwareVersionService;
-use App\Services\Nodes\NodeAutoDeployService;
-use App\Services\Nodes\NodeUpdateService;
-use Exception;
-use Filament\Actions;
 use Filament\Forms;
-use Filament\Forms\Components\Actions as FormActions;
-use Filament\Forms\Components\Fieldset;
-use Filament\Forms\Components\Grid;
-use Filament\Forms\Components\Placeholder;
-use Filament\Forms\Components\Tabs;
-use Filament\Forms\Components\Tabs\Tab;
-use Filament\Forms\Components\TagsInput;
-use Filament\Forms\Components\Textarea;
-use Filament\Forms\Components\TextInput;
-use Filament\Forms\Components\ToggleButtons;
-use Filament\Forms\Components\View;
+use App\Models\Node;
+use Filament\Actions;
 use Filament\Forms\Get;
 use Filament\Forms\Set;
+use Illuminate\Support\HtmlString;
+use Filament\Forms\Components\Grid;
+use Filament\Forms\Components\Tabs;
+use Filament\Forms\Components\View;
+use Filament\Support\Enums\Alignment;
+use Filament\Forms\Components\Fieldset;
+use Filament\Forms\Components\Tabs\Tab;
+use Filament\Forms\Components\Textarea;
+use Illuminate\Database\Eloquent\Model;
+use Filament\Forms\Components\TagsInput;
+use Filament\Forms\Components\TextInput;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\EditRecord;
-use Filament\Support\Enums\Alignment;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\HtmlString;
+use App\Services\Nodes\NodeUpdateService;
+use Filament\Forms\Components\Placeholder;
+use Filament\Forms\Components\ToggleButtons;
+use App\Services\Nodes\NodeAutoDeployService;
+use App\Filament\Admin\Resources\NodeResource;
+use App\Services\Helpers\SoftwareVersionService;
+use Filament\Forms\Components\Actions as FormActions;
 use Webbingbrasil\FilamentCopyActions\Forms\Actions\CopyAction;
 
 class EditNode extends EditRecord
@@ -595,7 +594,7 @@ class EditNode extends EditRecord
             $this->record = $this->nodeUpdateService->handle($record, $data);
 
             return $this->record;
-        } catch (Exception $exception) {
+        } catch (\Exception $exception) {
             $this->errored = true;
 
             Notification::make()

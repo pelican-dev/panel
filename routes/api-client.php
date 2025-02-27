@@ -1,7 +1,7 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\Client;
+use Illuminate\Support\Facades\Route;
 use App\Http\Middleware\Activity\ServerSubject;
 use App\Http\Middleware\Activity\AccountSubject;
 use App\Http\Middleware\RequireTwoFactorAuthentication;

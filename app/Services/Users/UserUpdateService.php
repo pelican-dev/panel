@@ -3,8 +3,8 @@
 namespace App\Services\Users;
 
 use App\Models\User;
-use Illuminate\Contracts\Hashing\Hasher;
 use App\Traits\Services\HasUserLevels;
+use Illuminate\Contracts\Hashing\Hasher;
 
 class UserUpdateService
 {
@@ -13,7 +13,9 @@ class UserUpdateService
     /**
      * UserUpdateService constructor.
      */
-    public function __construct(private Hasher $hasher) {}
+    public function __construct(private Hasher $hasher)
+    {
+    }
 
     /**
      * Update the user model instance and return the updated model.

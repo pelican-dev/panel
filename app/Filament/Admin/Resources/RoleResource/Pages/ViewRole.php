@@ -2,9 +2,9 @@
 
 namespace App\Filament\Admin\Resources\RoleResource\Pages;
 
-use App\Filament\Admin\Resources\RoleResource;
 use Filament\Actions\EditAction;
 use Filament\Resources\Pages\ViewRecord;
+use App\Filament\Admin\Resources\RoleResource;
 
 class ViewRole extends ViewRecord
 {

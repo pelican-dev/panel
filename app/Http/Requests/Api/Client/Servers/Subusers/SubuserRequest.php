@@ -2,9 +2,9 @@
 
 namespace App\Http\Requests\Api\Client\Servers\Subusers;
 
-use Illuminate\Http\Request;
 use App\Models\User;
 use App\Models\Subuser;
+use Illuminate\Http\Request;
 use App\Exceptions\Http\HttpForbiddenException;
 use App\Http\Requests\Api\Client\ClientApiRequest;
 use App\Services\Servers\GetUserPermissionsService;
@@ -63,7 +63,7 @@ abstract class SubuserRequest extends ClientApiRequest
         // Otherwise, get the current subuser's permission set, and ensure that the
         // permissions they are trying to assign are not _more_ than the ones they
         // already have.
-        /** @var \App\Services\Servers\GetUserPermissionsService $service */
+        /** @var GetUserPermissionsService $service */
         $service = $this->container->make(GetUserPermissionsService::class);
 
         if (count(array_diff($permissions, $service->handle($server, $user))) > 0) {

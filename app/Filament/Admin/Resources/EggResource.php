@@ -2,9 +2,9 @@
 
 namespace App\Filament\Admin\Resources;
 
-use App\Filament\Admin\Resources\EggResource\Pages;
 use App\Models\Egg;
 use Filament\Resources\Resource;
+use App\Filament\Admin\Resources\EggResource\Pages;
 
 class EggResource extends Resource
 {

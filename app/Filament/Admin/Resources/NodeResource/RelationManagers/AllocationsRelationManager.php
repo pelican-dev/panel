@@ -2,23 +2,23 @@
 
 namespace App\Filament\Admin\Resources\NodeResource\RelationManagers;
 
-use App\Filament\Admin\Resources\ServerResource\Pages\CreateServer;
-use App\Models\Allocation;
 use App\Models\Node;
-use App\Services\Allocations\AssignmentService;
-use Filament\Forms\Components\Select;
-use Filament\Forms\Components\TagsInput;
-use Filament\Forms\Components\TextInput;
+use Filament\Tables;
 use Filament\Forms\Get;
 use Filament\Forms\Set;
-use Filament\Resources\RelationManagers\RelationManager;
-use Filament\Tables;
-use Filament\Tables\Actions\BulkActionGroup;
-use Filament\Tables\Actions\DeleteBulkAction;
-use Filament\Tables\Columns\SelectColumn;
-use Filament\Tables\Columns\TextColumn;
-use Filament\Tables\Columns\TextInputColumn;
+use App\Models\Allocation;
 use Filament\Tables\Table;
+use Filament\Forms\Components\Select;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Forms\Components\TagsInput;
+use Filament\Forms\Components\TextInput;
+use Filament\Tables\Columns\SelectColumn;
+use Filament\Tables\Actions\BulkActionGroup;
+use Filament\Tables\Columns\TextInputColumn;
+use Filament\Tables\Actions\DeleteBulkAction;
+use App\Services\Allocations\AssignmentService;
+use Filament\Resources\RelationManagers\RelationManager;
+use App\Filament\Admin\Resources\ServerResource\Pages\CreateServer;
 
 /**
  * @method Node getOwnerRecord()
@@ -32,7 +32,6 @@ class AllocationsRelationManager extends RelationManager
     public function setTitle(): string
     {
         return trans('admin/server.allocations');
-
     }
 
     public function table(Table $table): Table
@@ -48,7 +47,7 @@ class AllocationsRelationManager extends RelationManager
             ->paginationPageOptions(['10', '20', '50', '100', '200', '500'])
             ->searchable()
             ->heading('')
-            ->selectCurrentPageOnly() //Prevent people from trying to nuke 30,000 ports at once.... -,-
+            ->selectCurrentPageOnly() // Prevent people from trying to nuke 30,000 ports at once.... -,-
             ->columns([
                 TextColumn::make('id')
                     ->toggleable()
@@ -96,8 +95,11 @@ class AllocationsRelationManager extends RelationManager
                             ->inlineLabel()
                             ->live()
                             ->disabled(fn (Get $get) => empty($get('allocation_ip')))
-                            ->afterStateUpdated(fn ($state, Set $set, Get $get) => $set('allocation_ports',
-                                CreateServer::retrieveValidPorts($this->getOwnerRecord(), $state, $get('allocation_ip')))
+                            ->afterStateUpdated(
+                                fn ($state, Set $set, Get $get) => $set(
+                                    'allocation_ports',
+                                    CreateServer::retrieveValidPorts($this->getOwnerRecord(), $state, $get('allocation_ip'))
+                                )
                             )
                             ->splitKeys(['Tab', ' ', ','])
                             ->required(),

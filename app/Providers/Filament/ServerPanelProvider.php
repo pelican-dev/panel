@@ -2,27 +2,27 @@
 
 namespace App\Providers\Filament;
 
-use App\Filament\App\Resources\ServerResource\Pages\ListServers;
-use App\Filament\Pages\Auth\Login;
-use App\Filament\Admin\Resources\ServerResource\Pages\EditServer;
-use App\Filament\Pages\Auth\EditProfile;
-use App\Http\Middleware\Activity\ServerSubject;
-use App\Models\Server;
-use Filament\Facades\Filament;
-use Filament\Http\Middleware\Authenticate;
-use Filament\Http\Middleware\DisableBladeIconComponents;
-use Filament\Http\Middleware\DispatchServingFilamentEvent;
-use Filament\Navigation\MenuItem;
-use Filament\Navigation\NavigationItem;
 use Filament\Panel;
+use App\Models\Server;
 use Filament\PanelProvider;
-use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
+use Filament\Facades\Filament;
+use Filament\Navigation\MenuItem;
+use App\Filament\Pages\Auth\Login;
+use Filament\Navigation\NavigationItem;
+use App\Filament\Pages\Auth\EditProfile;
+use Filament\Http\Middleware\Authenticate;
+use App\Http\Middleware\Activity\ServerSubject;
+use Illuminate\Session\Middleware\StartSession;
 use Illuminate\Cookie\Middleware\EncryptCookies;
-use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
 use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\AuthenticateSession;
-use Illuminate\Session\Middleware\StartSession;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
+use Filament\Http\Middleware\DisableBladeIconComponents;
+use Filament\Http\Middleware\DispatchServingFilamentEvent;
+use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
+use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
+use App\Filament\App\Resources\ServerResource\Pages\ListServers;
+use App\Filament\Admin\Resources\ServerResource\Pages\EditServer;
 
 class ServerPanelProvider extends PanelProvider
 {

@@ -2,13 +2,13 @@
 
 namespace App\Models;
 
-use App\Contracts\Validatable;
 use App\Traits\HasValidation;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use App\Contracts\Validatable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 /**
  * @property int $id
@@ -17,8 +17,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property array $permissions
  * @property \Carbon\Carbon $created_at
  * @property \Carbon\Carbon $updated_at
- * @property \App\Models\User $user
- * @property \App\Models\Server $server
+ * @property User $user
+ * @property Server $server
  */
 class Subuser extends Model implements Validatable
 {

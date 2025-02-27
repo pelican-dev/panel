@@ -2,9 +2,9 @@
 
 namespace App\Http\Requests\Api\Application\Users;
 
+use App\Models\User;
 use App\Services\Acl\Api\AdminAcl as Acl;
 use App\Http\Requests\Api\Application\ApplicationApiRequest;
-use App\Models\User;
 
 class GetUsersRequest extends ApplicationApiRequest
 {

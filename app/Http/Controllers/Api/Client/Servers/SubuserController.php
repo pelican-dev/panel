@@ -3,21 +3,21 @@
 namespace App\Http\Controllers\Api\Client\Servers;
 
 use App\Models\User;
-use App\Services\Subusers\SubuserDeletionService;
-use App\Services\Subusers\SubuserUpdateService;
-use Illuminate\Http\Request;
 use App\Models\Server;
-use Illuminate\Http\JsonResponse;
 use App\Facades\Activity;
 use App\Models\Permission;
+use Illuminate\Http\Request;
+use Illuminate\Http\JsonResponse;
+use Dedoc\Scramble\Attributes\Group;
+use App\Services\Subusers\SubuserUpdateService;
 use App\Services\Subusers\SubuserCreationService;
+use App\Services\Subusers\SubuserDeletionService;
 use App\Transformers\Api\Client\SubuserTransformer;
 use App\Http\Controllers\Api\Client\ClientApiController;
 use App\Http\Requests\Api\Client\Servers\Subusers\GetSubuserRequest;
 use App\Http\Requests\Api\Client\Servers\Subusers\StoreSubuserRequest;
 use App\Http\Requests\Api\Client\Servers\Subusers\DeleteSubuserRequest;
 use App\Http\Requests\Api\Client\Servers\Subusers\UpdateSubuserRequest;
-use Dedoc\Scramble\Attributes\Group;
 
 #[Group('Server - Subuser')]
 class SubuserController extends ClientApiController
@@ -34,7 +34,7 @@ class SubuserController extends ClientApiController
     }
 
     /**
-     * List subusers
+     * List subusers.
      *
      * Return the users associated with this server instance.
      */
@@ -46,7 +46,7 @@ class SubuserController extends ClientApiController
     }
 
     /**
-     * View subusers
+     * View subusers.
      *
      * Returns a single subuser associated with this server instance.
      */
@@ -60,7 +60,7 @@ class SubuserController extends ClientApiController
     }
 
     /**
-     * Create subuser
+     * Create subuser.
      *
      * Create a new subuser for the given server.
      *
@@ -88,7 +88,7 @@ class SubuserController extends ClientApiController
     }
 
     /**
-     * Update subuser
+     * Update subuser.
      *
      * Update a given subuser in the system for the server.
      *
@@ -107,7 +107,7 @@ class SubuserController extends ClientApiController
     }
 
     /**
-     * Delete subuser
+     * Delete subuser.
      *
      * Removes a subusers from a server's assignment.
      */

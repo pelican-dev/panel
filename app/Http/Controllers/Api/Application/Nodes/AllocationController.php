@@ -3,8 +3,9 @@
 namespace App\Http\Controllers\Api\Application\Nodes;
 
 use App\Models\Node;
-use Illuminate\Http\JsonResponse;
 use App\Models\Allocation;
+use Illuminate\Http\JsonResponse;
+use Dedoc\Scramble\Attributes\Group;
 use Spatie\QueryBuilder\QueryBuilder;
 use Spatie\QueryBuilder\AllowedFilter;
 use Illuminate\Database\Eloquent\Builder;
@@ -14,7 +15,6 @@ use App\Http\Controllers\Api\Application\ApplicationApiController;
 use App\Http\Requests\Api\Application\Allocations\GetAllocationsRequest;
 use App\Http\Requests\Api\Application\Allocations\StoreAllocationRequest;
 use App\Http\Requests\Api\Application\Allocations\DeleteAllocationRequest;
-use Dedoc\Scramble\Attributes\Group;
 
 #[Group('Node - Allocation')]
 class AllocationController extends ApplicationApiController
@@ -29,7 +29,7 @@ class AllocationController extends ApplicationApiController
     }
 
     /**
-     * List allocations
+     * List allocations.
      *
      * Return all the allocations that exist for a given node.
      */
@@ -56,7 +56,7 @@ class AllocationController extends ApplicationApiController
     }
 
     /**
-     * Create allocation
+     * Create allocation.
      *
      * Store new allocations for a given node.
      *
@@ -74,7 +74,7 @@ class AllocationController extends ApplicationApiController
     }
 
     /**
-     * Delete allocation
+     * Delete allocation.
      *
      * Delete a specific allocation from the Panel.
      */

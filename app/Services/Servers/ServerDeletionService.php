@@ -2,13 +2,12 @@
 
 namespace App\Services\Servers;
 
-use Exception;
-use Illuminate\Http\Response;
 use App\Models\Server;
+use Illuminate\Http\Response;
 use Illuminate\Database\ConnectionInterface;
+use Illuminate\Http\Client\ConnectionException;
 use App\Repositories\Daemon\DaemonServerRepository;
 use App\Services\Databases\DatabaseManagementService;
-use Illuminate\Http\Client\ConnectionException;
 
 class ServerDeletionService
 {
@@ -21,7 +20,8 @@ class ServerDeletionService
         private ConnectionInterface $connection,
         private DaemonServerRepository $daemonServerRepository,
         private DatabaseManagementService $databaseManagementService
-    ) {}
+    ) {
+    }
 
     /**
      * Set if the server should be forcibly deleted from the panel (ignoring daemon errors) or not.
@@ -53,7 +53,7 @@ class ServerDeletionService
             }
 
             logger()->warning($exception);
-        } catch (Exception $exception) {
+        } catch (\Exception $exception) {
             report($exception);
         }
 
@@ -61,7 +61,7 @@ class ServerDeletionService
             foreach ($server->databases as $database) {
                 try {
                     $this->databaseManagementService->delete($database);
-                } catch (Exception $exception) {
+                } catch (\Exception $exception) {
                     if (!$this->force) {
                         throw $exception;
                     }

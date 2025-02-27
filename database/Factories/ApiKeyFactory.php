@@ -3,8 +3,8 @@
 namespace Database\Factories;
 
 use Carbon\Carbon;
-use Illuminate\Support\Str;
 use App\Models\ApiKey;
+use Illuminate\Support\Str;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class ApiKeyFactory extends Factory

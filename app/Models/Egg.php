@@ -2,15 +2,15 @@
 
 namespace App\Models;
 
-use App\Contracts\Validatable;
-use App\Exceptions\Service\Egg\HasChildrenException;
-use App\Exceptions\Service\HasActiveServersException;
+use Illuminate\Support\Str;
 use App\Traits\HasValidation;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use App\Contracts\Validatable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use App\Exceptions\Service\Egg\HasChildrenException;
+use App\Exceptions\Service\HasActiveServersException;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Support\Str;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 /**
  * @property int $id
@@ -50,8 +50,8 @@ use Illuminate\Support\Str;
  * @property int|null $servers_count
  * @property \Illuminate\Database\Eloquent\Collection|\App\Models\EggVariable[] $variables
  * @property int|null $variables_count
- * @property \App\Models\Egg|null $scriptFrom
- * @property \App\Models\Egg|null $configFrom
+ * @property Egg|null $scriptFrom
+ * @property Egg|null $configFrom
  */
 class Egg extends Model implements Validatable
 {

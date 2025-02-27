@@ -2,29 +2,29 @@
 
 namespace App\Filament\Admin\Resources\EggResource\Pages;
 
-use AbdelhamidErrahmouni\FilamentMonacoEditor\MonacoEditor;
-use App\Filament\Admin\Resources\EggResource;
-use App\Filament\Components\Forms\Fields\CopyFrom;
-use App\Models\EggVariable;
-use Filament\Forms\Components\Checkbox;
-use Filament\Forms\Components\Fieldset;
-use Filament\Forms\Components\Hidden;
-use Filament\Forms\Components\KeyValue;
-use Filament\Forms\Components\Repeater;
-use Filament\Forms\Components\Select;
-use Filament\Forms\Components\Tabs;
-use Filament\Forms\Components\Tabs\Tab;
-use Filament\Forms\Components\TagsInput;
-use Filament\Forms\Components\Textarea;
-use Filament\Forms\Components\TextInput;
-use Filament\Forms\Components\Toggle;
-use Filament\Forms\Form;
 use Filament\Forms\Get;
 use Filament\Forms\Set;
-use Filament\Resources\Pages\CreateRecord;
-use Illuminate\Database\Eloquent\Model;
+use Filament\Forms\Form;
+use App\Models\EggVariable;
 use Illuminate\Support\Str;
+use Filament\Forms\Components\Tabs;
+use Filament\Forms\Components\Hidden;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Toggle;
+use Filament\Forms\Components\Checkbox;
+use Filament\Forms\Components\Fieldset;
+use Filament\Forms\Components\KeyValue;
+use Filament\Forms\Components\Repeater;
+use Filament\Forms\Components\Tabs\Tab;
+use Filament\Forms\Components\Textarea;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Validation\Rules\Unique;
+use Filament\Forms\Components\TagsInput;
+use Filament\Forms\Components\TextInput;
+use Filament\Resources\Pages\CreateRecord;
+use App\Filament\Admin\Resources\EggResource;
+use App\Filament\Components\Forms\Fields\CopyFrom;
+use AbdelhamidErrahmouni\FilamentMonacoEditor\MonacoEditor;
 
 class CreateEgg extends CreateRecord
 {
@@ -255,7 +255,6 @@ class CreateEgg extends CreateRecord
                                 ->lazy()
                                 ->view('filament.plugins.monaco-editor'),
                         ]),
-
                 ])->columnSpanFull()->persistTabInQueryString(),
             ]);
     }

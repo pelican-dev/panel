@@ -2,27 +2,27 @@
 
 namespace App\Http\Controllers\Auth;
 
-use App\Extensions\OAuth\Providers\OAuthProvider;
+use App\Models\User;
+use Illuminate\Http\Request;
+use Illuminate\Auth\AuthManager;
+use App\Http\Controllers\Controller;
+use Illuminate\Http\RedirectResponse;
 use App\Filament\Pages\Auth\EditProfile;
 use Filament\Notifications\Notification;
-use Illuminate\Auth\AuthManager;
-use Illuminate\Http\RedirectResponse;
 use Laravel\Socialite\Facades\Socialite;
-use App\Http\Controllers\Controller;
-use App\Models\User;
 use App\Services\Users\UserUpdateService;
-use Exception;
-use Illuminate\Http\Request;
+use App\Extensions\OAuth\Providers\OAuthProvider;
 
 class OAuthController extends Controller
 {
     public function __construct(
         private readonly AuthManager $auth,
         private readonly UserUpdateService $updateService
-    ) {}
+    ) {
+    }
 
     /**
-     * Redirect user to the OAuth provider
+     * Redirect user to the OAuth provider.
      */
     protected function redirect(string $driver): RedirectResponse
     {
@@ -57,10 +57,10 @@ class OAuthController extends Controller
         }
 
         try {
-            $user = User::query()->whereJsonContains('oauth->'. $driver, $oauthUser->getId())->firstOrFail();
+            $user = User::query()->whereJsonContains('oauth->' . $driver, $oauthUser->getId())->firstOrFail();
 
             $this->auth->guard()->login($user, true);
-        } catch (Exception) {
+        } catch (\Exception) {
             // No user found - redirect to normal login
             Notification::make()
                 ->title('No linked User found')

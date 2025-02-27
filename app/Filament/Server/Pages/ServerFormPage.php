@@ -3,11 +3,11 @@
 namespace App\Filament\Server\Pages;
 
 use App\Models\Server;
+use Filament\Forms\Form;
+use Filament\Pages\Page;
 use Filament\Facades\Filament;
 use Filament\Forms\Concerns\InteractsWithForms;
-use Filament\Forms\Form;
 use Filament\Pages\Concerns\InteractsWithFormActions;
-use Filament\Pages\Page;
 
 /**
  * @property Form $form
@@ -28,7 +28,9 @@ abstract class ServerFormPage extends Page
         $this->fillForm();
     }
 
-    protected function authorizeAccess(): void {}
+    protected function authorizeAccess(): void
+    {
+    }
 
     protected function fillForm(): void
     {
@@ -37,12 +39,13 @@ abstract class ServerFormPage extends Page
     }
 
     /**
-     * @return array<int | string, string | Form>
+     * @return array<int|string, string|Form>
      */
     protected function getForms(): array
     {
         return [
-            'form' => $this->form($this->makeForm()
+            'form' => $this->form(
+                $this->makeForm()
                 ->model($this->getRecord())
                 ->statePath($this->getFormStatePath())
                 ->columns($this->hasInlineLabels() ? 1 : 2)

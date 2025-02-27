@@ -3,10 +3,10 @@
 namespace App\Models;
 
 use Carbon\Carbon;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\MassPrunable;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\MassPrunable;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 /**
  * @property string $event
@@ -18,7 +18,8 @@ use Illuminate\Database\Eloquent\Model;
  */
 class Webhook extends Model
 {
-    use HasFactory, MassPrunable;
+    use HasFactory;
+    use MassPrunable;
 
     protected $fillable = ['payload', 'successful_at', 'event', 'endpoint'];
 

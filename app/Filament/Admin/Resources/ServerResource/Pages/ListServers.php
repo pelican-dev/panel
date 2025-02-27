@@ -2,18 +2,18 @@
 
 namespace App\Filament\Admin\Resources\ServerResource\Pages;
 
-use App\Filament\Server\Pages\Console;
-use App\Filament\Admin\Resources\ServerResource;
-use App\Models\Server;
 use Filament\Actions;
-use Filament\Resources\Pages\ListRecords;
-use Filament\Tables\Actions\Action;
-use Filament\Tables\Actions\CreateAction;
-use Filament\Tables\Actions\EditAction;
-use Filament\Tables\Columns\SelectColumn;
-use Filament\Tables\Columns\TextColumn;
-use Filament\Tables\Grouping\Group;
+use App\Models\Server;
 use Filament\Tables\Table;
+use Filament\Tables\Actions\Action;
+use Filament\Tables\Grouping\Group;
+use App\Filament\Server\Pages\Console;
+use Filament\Tables\Actions\EditAction;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Resources\Pages\ListRecords;
+use Filament\Tables\Actions\CreateAction;
+use Filament\Tables\Columns\SelectColumn;
+use App\Filament\Admin\Resources\ServerResource;
 
 class ListServers extends ListRecords
 {

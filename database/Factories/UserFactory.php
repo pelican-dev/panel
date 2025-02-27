@@ -3,9 +3,9 @@
 namespace Database\Factories;
 
 use Carbon\Carbon;
+use App\Models\User;
 use Ramsey\Uuid\Uuid;
 use Illuminate\Support\Str;
-use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class UserFactory extends Factory

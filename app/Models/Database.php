@@ -2,13 +2,13 @@
 
 namespace App\Models;
 
-use App\Contracts\Validatable;
 use App\Traits\HasValidation;
-use Illuminate\Database\Eloquent\Casts\Attribute;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use App\Contracts\Validatable;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Casts\Attribute;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 /**
  * @property int $id
@@ -22,8 +22,8 @@ use Illuminate\Support\Facades\DB;
  * @property string $jdbc
  * @property \Carbon\Carbon $created_at
  * @property \Carbon\Carbon $updated_at
- * @property \App\Models\Server $server
- * @property \App\Models\DatabaseHost $host
+ * @property Server $server
+ * @property DatabaseHost $host
  */
 class Database extends Model implements Validatable
 {

@@ -2,14 +2,14 @@
 
 namespace App\Http\Controllers\Api\Remote\Servers;
 
-use App\Enums\ServerState;
 use App\Models\Backup;
-use Illuminate\Http\Request;
 use App\Models\Server;
-use Illuminate\Http\JsonResponse;
 use App\Facades\Activity;
-use Illuminate\Database\ConnectionInterface;
+use App\Enums\ServerState;
+use Illuminate\Http\Request;
+use Illuminate\Http\JsonResponse;
 use App\Http\Controllers\Controller;
+use Illuminate\Database\ConnectionInterface;
 use App\Services\Eggs\EggConfigurationService;
 use App\Http\Resources\Daemon\ServerConfigurationCollection;
 use App\Services\Servers\ServerConfigurationStructureService;
@@ -23,7 +23,8 @@ class ServerDetailsController extends Controller
         protected ConnectionInterface $connection,
         private ServerConfigurationStructureService $configurationStructureService,
         private EggConfigurationService $eggConfigurationService
-    ) {}
+    ) {
+    }
 
     /**
      * Returns details about the server that allows daemon to self-recover and ensure
@@ -85,7 +86,7 @@ class ServerDetailsController extends Controller
             ->get();
 
         $this->connection->transaction(function () use ($node, $servers) {
-            /** @var \App\Models\Server $server */
+            /** @var Server $server */
             foreach ($servers as $server) {
                 /** @var \App\Models\ActivityLog|null $activity */
                 $activity = $server->activity->first();

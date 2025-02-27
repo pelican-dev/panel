@@ -2,21 +2,21 @@
 
 namespace App\Filament\Server\Pages;
 
+use App\Models\Server;
+use Filament\Pages\Page;
+use App\Models\Permission;
+use Livewire\Attributes\On;
+use Filament\Actions\Action;
+// use App\Filament\Server\Widgets\ServerNetworkChart;
+use App\Livewire\AlertBanner;
 use App\Enums\ContainerStatus;
-use App\Exceptions\Http\Server\ServerStateConflictException;
+use Filament\Facades\Filament;
+use Filament\Support\Enums\ActionSize;
 use App\Filament\Server\Widgets\ServerConsole;
 use App\Filament\Server\Widgets\ServerCpuChart;
-use App\Filament\Server\Widgets\ServerMemoryChart;
-// use App\Filament\Server\Widgets\ServerNetworkChart;
 use App\Filament\Server\Widgets\ServerOverview;
-use App\Livewire\AlertBanner;
-use App\Models\Permission;
-use App\Models\Server;
-use Filament\Actions\Action;
-use Filament\Facades\Filament;
-use Filament\Pages\Page;
-use Filament\Support\Enums\ActionSize;
-use Livewire\Attributes\On;
+use App\Filament\Server\Widgets\ServerMemoryChart;
+use App\Exceptions\Http\Server\ServerStateConflictException;
 
 class Console extends Page
 {
@@ -59,7 +59,7 @@ class Console extends Page
             ServerConsole::class,
             ServerCpuChart::class,
             ServerMemoryChart::class,
-            //ServerNetworkChart::class, TODO: convert units.
+            // ServerNetworkChart::class, TODO: convert units.
         ];
     }
 

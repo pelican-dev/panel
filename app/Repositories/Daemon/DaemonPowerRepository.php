@@ -2,8 +2,8 @@
 
 namespace App\Repositories\Daemon;
 
-use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Http\Client\Response;
+use Illuminate\Http\Client\ConnectionException;
 
 class DaemonPowerRepository extends DaemonRepository
 {
@@ -14,7 +14,8 @@ class DaemonPowerRepository extends DaemonRepository
      */
     public function send(string $action): Response
     {
-        return $this->getHttpClient()->post("/api/servers/{$this->server->uuid}/power",
+        return $this->getHttpClient()->post(
+            "/api/servers/{$this->server->uuid}/power",
             ['action' => $action],
         );
     }

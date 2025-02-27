@@ -3,13 +3,13 @@
 namespace App\Exceptions;
 
 use Exception;
-use Filament\Notifications\Notification;
-use Illuminate\Http\JsonResponse;
-use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Psr\Log\LoggerInterface;
 use Illuminate\Http\Response;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Container\Container;
+use Illuminate\Http\RedirectResponse;
+use Filament\Notifications\Notification;
 use Symfony\Component\HttpKernel\Exception\HttpExceptionInterface;
 
 class DisplayException extends PanelException implements HttpExceptionInterface
@@ -83,7 +83,7 @@ class DisplayException extends PanelException implements HttpExceptionInterface
 
         try {
             $logger = Container::getInstance()->make(LoggerInterface::class);
-        } catch (Exception) {
+        } catch (\Exception) {
             throw $this->getPrevious();
         }
 

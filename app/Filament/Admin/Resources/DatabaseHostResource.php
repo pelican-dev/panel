@@ -2,20 +2,20 @@
 
 namespace App\Filament\Admin\Resources;
 
-use App\Filament\Admin\Resources\DatabaseHostResource\Pages;
-use App\Models\DatabaseHost;
-use Filament\Forms\Components\Section;
-use Filament\Forms\Components\Select;
-use Filament\Forms\Components\TextInput;
-use Filament\Forms\Form;
 use Filament\Forms\Set;
+use Filament\Forms\Form;
+use Filament\Tables\Table;
+use App\Models\DatabaseHost;
 use Filament\Resources\Resource;
-use Filament\Tables\Actions\CreateAction;
-use Filament\Tables\Actions\DeleteBulkAction;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Section;
 use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
-use Filament\Tables\Table;
+use Filament\Forms\Components\TextInput;
+use Filament\Tables\Actions\CreateAction;
+use Filament\Tables\Actions\DeleteBulkAction;
+use App\Filament\Admin\Resources\DatabaseHostResource\Pages;
 
 class DatabaseHostResource extends Resource
 {

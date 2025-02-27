@@ -2,17 +2,17 @@
 
 namespace App\Http\Controllers\Api\Client\Servers;
 
+use App\Models\Server;
 use App\Facades\Activity;
+use Illuminate\Http\Response;
+use Illuminate\Http\JsonResponse;
+use Dedoc\Scramble\Attributes\Group;
+use App\Services\Servers\ReinstallServerService;
 use App\Http\Controllers\Api\Client\ClientApiController;
-use App\Http\Requests\Api\Client\Servers\Settings\ReinstallServerRequest;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use App\Http\Requests\Api\Client\Servers\Settings\RenameServerRequest;
 use App\Http\Requests\Api\Client\Servers\Settings\SetDockerImageRequest;
-use App\Models\Server;
-use App\Services\Servers\ReinstallServerService;
-use Dedoc\Scramble\Attributes\Group;
-use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Response;
-use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
+use App\Http\Requests\Api\Client\Servers\Settings\ReinstallServerRequest;
 
 #[Group('Server - Settings')]
 class SettingsController extends ClientApiController
@@ -27,7 +27,7 @@ class SettingsController extends ClientApiController
     }
 
     /**
-     * Rename
+     * Rename.
      *
      * Renames a server.
      */
@@ -60,7 +60,7 @@ class SettingsController extends ClientApiController
     }
 
     /**
-     * Reinstall
+     * Reinstall.
      *
      * Reinstalls the server on the daemon.
      *
@@ -76,7 +76,7 @@ class SettingsController extends ClientApiController
     }
 
     /**
-     * Change docker image
+     * Change docker image.
      *
      * Changes the Docker image in use by the server.
      *

@@ -2,12 +2,12 @@
 
 namespace App\Filament\Admin\Resources\UserResource\Pages;
 
-use App\Filament\Admin\Resources\UserResource;
 use App\Models\User;
-use App\Services\Users\UserUpdateService;
 use Filament\Actions\DeleteAction;
-use Filament\Resources\Pages\EditRecord;
 use Illuminate\Database\Eloquent\Model;
+use Filament\Resources\Pages\EditRecord;
+use App\Services\Users\UserUpdateService;
+use App\Filament\Admin\Resources\UserResource;
 
 class EditUser extends EditRecord
 {

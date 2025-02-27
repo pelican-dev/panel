@@ -3,10 +3,10 @@
 namespace App\Http\Controllers\Api\Client;
 
 use Carbon\Carbon;
+use App\Facades\Activity;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Http\JsonResponse;
-use App\Facades\Activity;
 use App\Services\Users\TwoFactorSetupService;
 use App\Services\Users\ToggleTwoFactorService;
 use Illuminate\Contracts\Validation\Factory as ValidationFactory;
@@ -26,7 +26,7 @@ class TwoFactorController extends ClientApiController
     }
 
     /**
-     * Setup 2fa
+     * Setup 2fa.
      *
      * Returns two-factor token credentials that allow a user to configure
      * it on their account. If two-factor is already enabled this endpoint
@@ -46,7 +46,7 @@ class TwoFactorController extends ClientApiController
     }
 
     /**
-     * Enable 2fa
+     * Enable 2fa.
      *
      * Updates a user's account to have two-factor enabled.
      *
@@ -78,7 +78,7 @@ class TwoFactorController extends ClientApiController
     }
 
     /**
-     * Disable 2fa
+     * Disable 2fa.
      *
      * Disables two-factor authentication on an account if the password provided
      * is valid.

@@ -3,11 +3,11 @@
 namespace App\Http\Controllers\Api\Remote;
 
 use Carbon\Carbon;
-use Illuminate\Support\Str;
 use App\Models\User;
-use Webmozart\Assert\Assert;
 use App\Models\Server;
 use App\Models\ActivityLog;
+use Illuminate\Support\Str;
+use Webmozart\Assert\Assert;
 use App\Models\ActivityLogSubject;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\Remote\ActivityEventRequest;
@@ -26,7 +26,7 @@ class ActivityProcessingController extends Controller
 
         $logs = [];
         foreach ($request->input('data') as $datum) {
-            /** @var \App\Models\Server|null $server */
+            /** @var Server|null $server */
             $server = $servers->get($datum['server']);
             if (is_null($server) || !Str::startsWith($datum['event'], 'server:')) {
                 continue;

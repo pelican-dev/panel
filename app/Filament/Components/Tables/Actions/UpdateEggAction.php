@@ -3,11 +3,10 @@
 namespace App\Filament\Components\Tables\Actions;
 
 use App\Models\Egg;
-use App\Services\Eggs\Sharing\EggImporterService;
-use Exception;
 use Filament\Actions\StaticAction;
-use Filament\Notifications\Notification;
 use Filament\Tables\Actions\Action;
+use Filament\Notifications\Notification;
+use App\Services\Eggs\Sharing\EggImporterService;
 
 class UpdateEggAction extends Action
 {
@@ -41,7 +40,7 @@ class UpdateEggAction extends Action
                 $eggImporterService->fromUrl($egg->update_url, $egg);
 
                 cache()->forget("eggs.$egg->uuid.update");
-            } catch (Exception $exception) {
+            } catch (\Exception $exception) {
                 Notification::make()
                     ->title(trans('admin/egg.update_failed'))
                     ->body($exception->getMessage())

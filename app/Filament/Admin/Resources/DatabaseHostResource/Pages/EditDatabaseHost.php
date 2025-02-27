@@ -2,16 +2,15 @@
 
 namespace App\Filament\Admin\Resources\DatabaseHostResource\Pages;
 
-use App\Filament\Admin\Resources\DatabaseHostResource;
-use App\Filament\Admin\Resources\DatabaseHostResource\RelationManagers\DatabasesRelationManager;
 use App\Models\DatabaseHost;
-use App\Services\Databases\Hosts\HostUpdateService;
 use Filament\Actions\DeleteAction;
-use Filament\Notifications\Notification;
-use Filament\Resources\Pages\EditRecord;
 use Filament\Support\Exceptions\Halt;
 use Illuminate\Database\Eloquent\Model;
-use PDOException;
+use Filament\Notifications\Notification;
+use Filament\Resources\Pages\EditRecord;
+use App\Services\Databases\Hosts\HostUpdateService;
+use App\Filament\Admin\Resources\DatabaseHostResource;
+use App\Filament\Admin\Resources\DatabaseHostResource\RelationManagers\DatabasesRelationManager;
 
 class EditDatabaseHost extends EditRecord
 {
@@ -58,7 +57,7 @@ class EditDatabaseHost extends EditRecord
 
         try {
             return $this->hostUpdateService->handle($record, $data);
-        } catch (PDOException $exception) {
+        } catch (\PDOException $exception) {
             Notification::make()
                 ->title(trans('admin/databasehost.error'))
                 ->body($exception->getMessage())

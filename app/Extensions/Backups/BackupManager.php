@@ -27,7 +27,9 @@ class BackupManager
     /**
      * BackupManager constructor.
      */
-    public function __construct(protected Application $app) {}
+    public function __construct(protected Application $app)
+    {
+    }
 
     /**
      * Returns a backup adapter instance.
@@ -143,7 +145,7 @@ class BackupManager
     /**
      * Unset the given adapter instances.
      *
-     * @param  string|string[]  $adapter
+     * @param string|string[] $adapter
      */
     public function forget(array|string $adapter): self
     {
@@ -157,7 +159,7 @@ class BackupManager
     /**
      * Register a custom adapter creator closure.
      */
-    public function extend(string $adapter, Closure $callback): self
+    public function extend(string $adapter, \Closure $callback): self
     {
         $this->customCreators[$adapter] = $callback;
 

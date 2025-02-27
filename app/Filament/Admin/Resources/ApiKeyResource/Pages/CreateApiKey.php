@@ -2,10 +2,10 @@
 
 namespace App\Filament\Admin\Resources\ApiKeyResource\Pages;
 
-use App\Filament\Admin\Resources\ApiKeyResource;
 use App\Models\ApiKey;
-use Filament\Resources\Pages\CreateRecord;
 use Illuminate\Database\Eloquent\Model;
+use Filament\Resources\Pages\CreateRecord;
+use App\Filament\Admin\Resources\ApiKeyResource;
 
 class CreateApiKey extends CreateRecord
 {

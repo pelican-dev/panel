@@ -2,16 +2,16 @@
 
 namespace App\Http\Controllers\Api\Application\Eggs;
 
-use App\Http\Controllers\Api\Application\ApplicationApiController;
-use App\Http\Requests\Api\Application\Eggs\GetEggRequest;
-use App\Http\Requests\Api\Application\Eggs\GetEggsRequest;
 use App\Models\Egg;
 use App\Transformers\Api\Application\EggTransformer;
+use App\Http\Requests\Api\Application\Eggs\GetEggRequest;
+use App\Http\Requests\Api\Application\Eggs\GetEggsRequest;
+use App\Http\Controllers\Api\Application\ApplicationApiController;
 
 class EggController extends ApplicationApiController
 {
     /**
-     * List eggs
+     * List eggs.
      *
      * Return all eggs
      */
@@ -23,7 +23,7 @@ class EggController extends ApplicationApiController
     }
 
     /**
-     * View egg
+     * View egg.
      *
      * Return a single egg that exists
      */

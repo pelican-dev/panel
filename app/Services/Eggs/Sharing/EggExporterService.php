@@ -4,8 +4,8 @@ namespace App\Services\Eggs\Sharing;
 
 use Carbon\Carbon;
 use App\Models\Egg;
-use Illuminate\Support\Collection;
 use App\Models\EggVariable;
+use Illuminate\Support\Collection;
 
 class EggExporterService
 {

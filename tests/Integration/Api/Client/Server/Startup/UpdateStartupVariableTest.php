@@ -3,11 +3,11 @@
 namespace App\Tests\Integration\Api\Client\Server\Startup;
 
 use App\Models\User;
-use Illuminate\Http\Response;
 use App\Models\Permission;
 use App\Models\EggVariable;
-use App\Tests\Integration\Api\Client\ClientApiIntegrationTestCase;
+use Illuminate\Http\Response;
 use PHPUnit\Framework\Attributes\DataProvider;
+use App\Tests\Integration\Api\Client\ClientApiIntegrationTestCase;
 
 class UpdateStartupVariableTest extends ClientApiIntegrationTestCase
 {
@@ -15,7 +15,7 @@ class UpdateStartupVariableTest extends ClientApiIntegrationTestCase
      * Test that a startup variable can be edited successfully for a server.
      */
     #[DataProvider('permissionsDataProvider')]
-    public function test_startup_variable_can_be_updated(array $permissions): void
+    public function testStartupVariableCanBeUpdated(array $permissions): void
     {
         /** @var \App\Models\Server $server */
         [$user, $server] = $this->generateTestAccount($permissions);
@@ -49,7 +49,7 @@ class UpdateStartupVariableTest extends ClientApiIntegrationTestCase
      * updated via this endpoint.
      */
     #[DataProvider('permissionsDataProvider')]
-    public function test_startup_variable_cannot_be_updated_if_not_user_viewable_or_editable(array $permissions): void
+    public function testStartupVariableCannotBeUpdatedIfNotUserViewableOrEditable(array $permissions): void
     {
         /** @var \App\Models\Server $server */
         [$user, $server] = $this->generateTestAccount($permissions);
@@ -84,7 +84,7 @@ class UpdateStartupVariableTest extends ClientApiIntegrationTestCase
      * Test that a hidden variable is not included in the startup_command output for the server if
      * a different variable is updated.
      */
-    public function test_hidden_variables_are_not_returned_in_startup_command_when_updating_variable(): void
+    public function testHiddenVariablesAreNotReturnedInStartupCommandWhenUpdatingVariable(): void
     {
         /** @var \App\Models\Server $server */
         [$user, $server] = $this->generateTestAccount();
@@ -113,7 +113,7 @@ class UpdateStartupVariableTest extends ClientApiIntegrationTestCase
      * Test that an egg variable with a validation rule of 'nullable|string' works if no value
      * is passed through in the request.
      */
-    public function test_egg_variable_with_nullable_string_is_not_required(): void
+    public function testEggVariableWithNullableStringIsNotRequired(): void
     {
         /** @var \App\Models\Server $server */
         [$user, $server] = $this->generateTestAccount();
@@ -137,7 +137,7 @@ class UpdateStartupVariableTest extends ClientApiIntegrationTestCase
      * Test that a variable cannot be updated if the user does not have permission to perform
      * that action, or they aren't assigned at all to the server.
      */
-    public function test_startup_variable_cannot_be_updated_if_not_user_viewable(): void
+    public function testStartupVariableCannotBeUpdatedIfNotUserViewable(): void
     {
         [$user, $server] = $this->generateTestAccount([Permission::ACTION_WEBSOCKET_CONNECT]);
         $this->actingAs($user)->putJson($this->link($server) . '/startup/variable')->assertForbidden();

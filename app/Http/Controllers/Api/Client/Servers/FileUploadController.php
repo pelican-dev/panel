@@ -2,14 +2,14 @@
 
 namespace App\Http\Controllers\Api\Client\Servers;
 
-use Carbon\CarbonImmutable;
 use App\Models\User;
 use App\Models\Server;
+use Carbon\CarbonImmutable;
 use Illuminate\Http\JsonResponse;
+use Dedoc\Scramble\Attributes\Group;
 use App\Services\Nodes\NodeJWTService;
 use App\Http\Controllers\Api\Client\ClientApiController;
 use App\Http\Requests\Api\Client\Servers\Files\UploadFileRequest;
-use Dedoc\Scramble\Attributes\Group;
 
 #[Group('Server - File', weight: 1)]
 class FileUploadController extends ClientApiController
@@ -24,7 +24,7 @@ class FileUploadController extends ClientApiController
     }
 
     /**
-     * Get upload url
+     * Get upload url.
      *
      * Returns an url where files can be uploaded to.
      */

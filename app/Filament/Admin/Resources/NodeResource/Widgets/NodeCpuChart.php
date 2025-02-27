@@ -2,11 +2,11 @@
 
 namespace App\Filament\Admin\Resources\NodeResource\Widgets;
 
-use App\Models\Node;
 use Carbon\Carbon;
+use App\Models\Node;
 use Filament\Support\RawJs;
-use Filament\Widgets\ChartWidget;
 use Illuminate\Support\Number;
+use Filament\Widgets\ChartWidget;
 
 class NodeCpuChart extends ChartWidget
 {

@@ -2,17 +2,17 @@
 
 namespace App\Repositories\Daemon;
 
-use Illuminate\Contracts\Filesystem\FileNotFoundException;
 use Illuminate\Http\Client\Response;
-use App\Exceptions\Http\Server\FileSizeTooLargeException;
 use Illuminate\Http\Client\ConnectionException;
+use App\Exceptions\Http\Server\FileSizeTooLargeException;
+use Illuminate\Contracts\Filesystem\FileNotFoundException;
 
 class DaemonFileRepository extends DaemonRepository
 {
     /**
      * Return the contents of a given file.
      *
-     * @param  int|null  $notLargerThan  the maximum content length in bytes
+     * @param int|null $notLargerThan the maximum content length in bytes
      *
      * @throws FileSizeTooLargeException
      * @throws ConnectionException
@@ -20,7 +20,8 @@ class DaemonFileRepository extends DaemonRepository
      */
     public function getContent(string $path, ?int $notLargerThan = null): string
     {
-        $response = $this->getHttpClient()->get("/api/servers/{$this->server->uuid}/files/contents",
+        $response = $this->getHttpClient()->get(
+            "/api/servers/{$this->server->uuid}/files/contents",
             ['file' => $path]
         );
 
@@ -57,7 +58,8 @@ class DaemonFileRepository extends DaemonRepository
      */
     public function getDirectory(string $path): array
     {
-        return $this->getHttpClient()->get("/api/servers/{$this->server->uuid}/files/list-directory",
+        return $this->getHttpClient()->get(
+            "/api/servers/{$this->server->uuid}/files/list-directory",
             ['directory' => $path]
         )->json();
     }
@@ -69,7 +71,8 @@ class DaemonFileRepository extends DaemonRepository
      */
     public function createDirectory(string $name, string $path): Response
     {
-        return $this->getHttpClient()->post("/api/servers/{$this->server->uuid}/files/create-directory",
+        return $this->getHttpClient()->post(
+            "/api/servers/{$this->server->uuid}/files/create-directory",
             [
                 'name' => $name,
                 'path' => $path,
@@ -84,7 +87,8 @@ class DaemonFileRepository extends DaemonRepository
      */
     public function renameFiles(?string $root, array $files): Response
     {
-        return $this->getHttpClient()->put("/api/servers/{$this->server->uuid}/files/rename",
+        return $this->getHttpClient()->put(
+            "/api/servers/{$this->server->uuid}/files/rename",
             [
                 'root' => $root ?? '/',
                 'files' => $files,
@@ -99,7 +103,8 @@ class DaemonFileRepository extends DaemonRepository
      */
     public function copyFile(string $location): Response
     {
-        return $this->getHttpClient()->post("/api/servers/{$this->server->uuid}/files/copy",
+        return $this->getHttpClient()->post(
+            "/api/servers/{$this->server->uuid}/files/copy",
             ['location' => $location]
         );
     }
@@ -111,7 +116,8 @@ class DaemonFileRepository extends DaemonRepository
      */
     public function deleteFiles(?string $root, array $files): Response
     {
-        return $this->getHttpClient()->post("/api/servers/{$this->server->uuid}/files/delete",
+        return $this->getHttpClient()->post(
+            "/api/servers/{$this->server->uuid}/files/delete",
             [
                 'root' => $root ?? '/',
                 'files' => $files,
@@ -130,7 +136,8 @@ class DaemonFileRepository extends DaemonRepository
             // Wait for up to 15 minutes for the archive to be completed when calling this endpoint
             // since it will likely take quite awhile for large directories.
             ->timeout(60 * 15)
-            ->post("/api/servers/{$this->server->uuid}/files/compress",
+            ->post(
+                "/api/servers/{$this->server->uuid}/files/compress",
                 [
                     'root' => $root ?? '/',
                     'files' => $files,
@@ -149,7 +156,8 @@ class DaemonFileRepository extends DaemonRepository
             // Wait for up to 15 minutes for the archive to be completed when calling this endpoint
             // since it will likely take quite awhile for large directories.
             ->timeout(60 * 15)
-            ->post("/api/servers/{$this->server->uuid}/files/decompress",
+            ->post(
+                "/api/servers/{$this->server->uuid}/files/decompress",
                 [
                     'root' => $root ?? '/',
                     'file' => $file,
@@ -164,7 +172,8 @@ class DaemonFileRepository extends DaemonRepository
      */
     public function chmodFiles(?string $root, array $files): Response
     {
-        return $this->getHttpClient()->post("/api/servers/{$this->server->uuid}/files/chmod",
+        return $this->getHttpClient()->post(
+            "/api/servers/{$this->server->uuid}/files/chmod",
             [
                 'root' => $root ?? '/',
                 'files' => $files,
@@ -201,7 +210,8 @@ class DaemonFileRepository extends DaemonRepository
             // Wait for up to 2 minutes for the search to be completed when calling this endpoint
             // since it will likely take quite awhile for large directories.
             ->timeout(60 * 2)
-            ->get("/api/servers/{$this->server->uuid}/files/search",
+            ->get(
+                "/api/servers/{$this->server->uuid}/files/search",
                 [
                     'pattern' => $searchTerm,
                     'directory' => $directory ?? '/',

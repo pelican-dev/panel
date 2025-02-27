@@ -2,9 +2,9 @@
 
 namespace App\Filament\Admin\Resources\UserResource\Pages;
 
-use App\Filament\Admin\Resources\UserResource;
 use Filament\Actions\EditAction;
 use Filament\Resources\Pages\ViewRecord;
+use App\Filament\Admin\Resources\UserResource;
 
 class ViewUser extends ViewRecord
 {

@@ -3,8 +3,8 @@
 namespace App\Transformers\Api\Application;
 
 use App\Models\Database;
-use League\Fractal\Resource\Item;
 use App\Models\DatabaseHost;
+use League\Fractal\Resource\Item;
 use League\Fractal\Resource\NullResource;
 
 class ServerDatabaseTransformer extends BaseTransformer

@@ -2,11 +2,11 @@
 
 namespace App\Extensions\OAuth\Providers;
 
+use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Event;
+use Illuminate\Foundation\Application;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Wizard\Step;
-use Illuminate\Foundation\Application;
-use Illuminate\Support\Facades\Event;
-use Illuminate\Support\Str;
 use SocialiteProviders\Manager\SocialiteWasCalled;
 
 abstract class OAuthProvider

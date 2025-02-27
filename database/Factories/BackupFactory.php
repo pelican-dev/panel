@@ -3,8 +3,8 @@
 namespace Database\Factories;
 
 use Ramsey\Uuid\Uuid;
-use Carbon\CarbonImmutable;
 use App\Models\Backup;
+use Carbon\CarbonImmutable;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class BackupFactory extends Factory

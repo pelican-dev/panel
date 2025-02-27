@@ -2,8 +2,8 @@
 
 namespace App\Policies;
 
-use App\Models\Server;
 use App\Models\User;
+use App\Models\Server;
 
 class ServerPolicy
 {

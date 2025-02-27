@@ -4,8 +4,8 @@ namespace App\Tests;
 
 use Carbon\Carbon;
 use Carbon\CarbonImmutable;
-use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
 use Spatie\Permission\PermissionRegistrar;
+use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
 
 abstract class TestCase extends BaseTestCase
 {

@@ -2,8 +2,8 @@
 
 namespace App\Filament\Admin\Resources\WebhookResource\Pages;
 
-use App\Filament\Admin\Resources\WebhookResource;
 use Filament\Resources\Pages\CreateRecord;
+use App\Filament\Admin\Resources\WebhookResource;
 
 class CreateWebhookConfiguration extends CreateRecord
 {

@@ -2,16 +2,16 @@
 
 namespace App\Traits;
 
-use App\Observers\ValidationObserver;
-use Illuminate\Container\Container;
-use Illuminate\Database\Eloquent\Attributes\ObservedBy;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
-use Illuminate\Validation\Factory as ValidationFactory;
 use Illuminate\Validation\Rule;
-use Illuminate\Validation\ValidationException;
+use Illuminate\Container\Container;
 use Illuminate\Validation\Validator;
+use App\Observers\ValidationObserver;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Validation\ValidationException;
+use Illuminate\Database\Eloquent\Attributes\ObservedBy;
+use Illuminate\Validation\Factory as ValidationFactory;
 
 #[ObservedBy([ValidationObserver::class])]
 trait HasValidation
@@ -82,7 +82,7 @@ trait HasValidation
     /**
      * Determines if the model is in a valid state or not.
      *
-     * @throws \Illuminate\Validation\ValidationException
+     * @throws ValidationException
      */
     public function validate(): void
     {

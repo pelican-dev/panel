@@ -2,10 +2,10 @@
 
 namespace App\Transformers\Api\Application;
 
-use App\Models\Server;
+use App\Models\Egg;
 use App\Models\Node;
 use App\Models\User;
-use App\Models\Egg;
+use App\Models\Server;
 use App\Models\Database;
 use App\Models\Allocation;
 use League\Fractal\Resource\Item;

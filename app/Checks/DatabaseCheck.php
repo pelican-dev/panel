@@ -2,10 +2,9 @@
 
 namespace App\Checks;
 
-use Exception;
-use Illuminate\Support\Facades\DB;
 use Spatie\Health\Checks\Check;
 use Spatie\Health\Checks\Result;
+use Illuminate\Support\Facades\DB;
 
 class DatabaseCheck extends Check
 {
@@ -30,7 +29,7 @@ class DatabaseCheck extends Check
             DB::connection($connectionName)->getPdo();
 
             return $result->ok(trans('admin/health.results.database.ok'));
-        } catch (Exception $exception) {
+        } catch (\Exception $exception) {
             return $result->failed(trans('admin/health.results.database.failed', ['error' => $exception->getMessage()]));
         }
     }

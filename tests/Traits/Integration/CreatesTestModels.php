@@ -2,10 +2,10 @@
 
 namespace App\Tests\Traits\Integration;
 
-use Ramsey\Uuid\Uuid;
 use App\Models\Egg;
 use App\Models\Node;
 use App\Models\User;
+use Ramsey\Uuid\Uuid;
 use App\Models\Server;
 use App\Models\Subuser;
 use App\Models\Allocation;
@@ -26,19 +26,19 @@ trait CreatesTestModels
         }
 
         if (!isset($attributes['owner_id'])) {
-            /** @var \App\Models\User $user */
+            /** @var User $user */
             $user = User::factory()->create();
             $attributes['owner_id'] = $user->id;
         }
 
         if (!isset($attributes['node_id'])) {
-            /** @var \App\Models\Node $node */
+            /** @var Node $node */
             $node = Node::factory()->create();
             $attributes['node_id'] = $node->id;
         }
 
         if (!isset($attributes['allocation_id'])) {
-            /** @var \App\Models\Allocation $allocation */
+            /** @var Allocation $allocation */
             $allocation = Allocation::factory()->create(['node_id' => $attributes['node_id']]);
             $attributes['allocation_id'] = $allocation->id;
         }
@@ -51,7 +51,7 @@ trait CreatesTestModels
 
         unset($attributes['user_id']);
 
-        /** @var \App\Models\Server $server */
+        /** @var Server $server */
         $server = Server::factory()->create($attributes);
 
         Allocation::query()->where('id', $server->allocation_id)->update(['server_id' => $server->id]);
@@ -65,12 +65,13 @@ trait CreatesTestModels
      * Generates a user and a server for that user. If an array of permissions is passed it
      * is assumed that the user is actually a subuser of the server.
      *
-     * @param  string[]  $permissions
+     * @param string[] $permissions
+     *
      * @return array{\App\Models\User, \App\Models\Server}
      */
     public function generateTestAccount(array $permissions = []): array
     {
-        /** @var \App\Models\User $user */
+        /** @var User $user */
         $user = User::factory()->create();
 
         if (empty($permissions)) {
@@ -98,7 +99,7 @@ trait CreatesTestModels
         $model->uuid = Uuid::uuid4()->toString();
         $model->push();
 
-        /** @var \App\Models\Egg $model */
+        /** @var Egg $model */
         $model = $model->fresh();
 
         foreach ($egg->variables as $variable) {
@@ -114,7 +115,7 @@ trait CreatesTestModels
      */
     private function getBungeecordEgg(): Egg
     {
-        /** @var \App\Models\Egg $egg */
+        /** @var Egg $egg */
         $egg = Egg::query()->where('author', 'panel@example.com')->where('name', 'Bungeecord')->firstOrFail();
 
         return $egg;

@@ -2,9 +2,9 @@
 
 namespace App\Filament\Admin\Resources\MountResource\Pages;
 
-use App\Filament\Admin\Resources\MountResource;
 use Filament\Actions\EditAction;
 use Filament\Resources\Pages\ViewRecord;
+use App\Filament\Admin\Resources\MountResource;
 
 class ViewMount extends ViewRecord
 {

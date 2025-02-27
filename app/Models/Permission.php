@@ -2,10 +2,10 @@
 
 namespace App\Models;
 
-use App\Contracts\Validatable;
 use App\Traits\HasValidation;
-use Illuminate\Database\Eloquent\Model;
+use App\Contracts\Validatable;
 use Illuminate\Support\Collection;
+use Illuminate\Database\Eloquent\Model;
 
 class Permission extends Model implements Validatable
 {

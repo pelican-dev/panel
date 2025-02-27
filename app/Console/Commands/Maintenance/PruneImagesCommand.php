@@ -3,7 +3,6 @@
 namespace App\Console\Commands\Maintenance;
 
 use App\Models\Node;
-use Exception;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Http;
 
@@ -53,7 +52,7 @@ class PruneImagesCommand extends Command
             $space = round($useBinaryPrefix ? $response['SpaceReclaimed'] / 1024 / 1024 : $response['SpaceReclaimed'] / 1000 / 1000, 2) . ($useBinaryPrefix ? ' MiB' : ' MB');
 
             $this->info("Node {$node->id}: Cleaned up {$count} dangling docker images. ({$space})");
-        } catch (Exception $exception) {
+        } catch (\Exception $exception) {
             $this->error($exception->getMessage());
         }
     }

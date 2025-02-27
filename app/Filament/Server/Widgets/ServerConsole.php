@@ -2,16 +2,16 @@
 
 namespace App\Filament\Server\Widgets;
 
-use App\Exceptions\Http\HttpForbiddenException;
-use App\Livewire\AlertBanner;
-use App\Models\Permission;
-use App\Models\Server;
 use App\Models\User;
-use App\Services\Nodes\NodeJWTService;
-use App\Services\Servers\GetUserPermissionsService;
-use Filament\Widgets\Widget;
+use App\Models\Server;
+use App\Models\Permission;
 use Illuminate\Support\Arr;
 use Livewire\Attributes\On;
+use Filament\Widgets\Widget;
+use App\Livewire\AlertBanner;
+use App\Services\Nodes\NodeJWTService;
+use App\Exceptions\Http\HttpForbiddenException;
+use App\Services\Servers\GetUserPermissionsService;
 
 class ServerConsole extends Widget
 {

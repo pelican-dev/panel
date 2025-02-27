@@ -2,45 +2,44 @@
 
 namespace App\Filament\Pages\Auth;
 
-use App\Exceptions\Service\User\TwoFactorAuthenticationTokenInvalid;
-use App\Extensions\OAuth\Providers\OAuthProvider;
+use App\Models\User;
+use App\Models\ApiKey;
+use Filament\Forms\Get;
 use App\Facades\Activity;
 use App\Models\ActivityLog;
-use App\Models\ApiKey;
-use App\Models\User;
-use App\Services\Helpers\LanguageService;
-use App\Services\Users\ToggleTwoFactorService;
-use App\Services\Users\TwoFactorSetupService;
-use App\Services\Users\UserUpdateService;
-use chillerlan\QRCode\Common\EccLevel;
-use chillerlan\QRCode\Common\Version;
 use chillerlan\QRCode\QRCode;
 use chillerlan\QRCode\QROptions;
-use DateTimeZone;
-use Filament\Forms\Components\Actions;
-use Filament\Forms\Components\Actions\Action;
-use Filament\Forms\Components\Grid;
-use Filament\Forms\Components\Placeholder;
-use Filament\Forms\Components\Repeater;
-use Filament\Forms\Components\Section;
-use Filament\Forms\Components\Select;
-use Filament\Forms\Components\Tabs;
-use Filament\Forms\Components\Tabs\Tab;
-use Filament\Forms\Components\TagsInput;
-use Filament\Forms\Components\Textarea;
-use Filament\Forms\Components\TextInput;
-use Filament\Forms\Get;
-use Filament\Notifications\Notification;
-use Filament\Pages\Auth\EditProfile as BaseEditProfile;
 use Filament\Support\Colors\Color;
-use Filament\Support\Enums\MaxWidth;
-use Filament\Support\Exceptions\Halt;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\HtmlString;
-use Illuminate\Validation\Rules\Password;
+use Filament\Forms\Components\Grid;
+use Filament\Forms\Components\Tabs;
+use Filament\Support\Enums\MaxWidth;
+use Illuminate\Support\Facades\Hash;
+use chillerlan\QRCode\Common\Version;
+use Filament\Forms\Components\Select;
+use Filament\Support\Exceptions\Halt;
+use chillerlan\QRCode\Common\EccLevel;
+use Filament\Forms\Components\Actions;
+use Filament\Forms\Components\Section;
+use Filament\Forms\Components\Repeater;
+use Filament\Forms\Components\Tabs\Tab;
+use Filament\Forms\Components\Textarea;
+use Illuminate\Database\Eloquent\Model;
+use Filament\Forms\Components\TagsInput;
+use Filament\Forms\Components\TextInput;
+use Filament\Notifications\Notification;
 use Laravel\Socialite\Facades\Socialite;
+use App\Services\Helpers\LanguageService;
+use App\Services\Users\UserUpdateService;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Validation\Rules\Password;
+use Filament\Forms\Components\Placeholder;
+use App\Services\Users\TwoFactorSetupService;
+use Filament\Forms\Components\Actions\Action;
+use App\Services\Users\ToggleTwoFactorService;
+use App\Extensions\OAuth\Providers\OAuthProvider;
+use Filament\Pages\Auth\EditProfile as BaseEditProfile;
+use App\Exceptions\Service\User\TwoFactorAuthenticationTokenInvalid;
 
 /**
  * @method User getUser()
@@ -112,7 +111,7 @@ class EditProfile extends BaseEditProfile
                                             ->prefixIcon('tabler-clock-pin')
                                             ->default('UTC')
                                             ->selectablePlaceholder(false)
-                                            ->options(fn () => collect(DateTimeZone::listIdentifiers())->mapWithKeys(fn ($tz) => [$tz => $tz]))
+                                            ->options(fn () => collect(\DateTimeZone::listIdentifiers())->mapWithKeys(fn ($tz) => [$tz => $tz]))
                                             ->searchable()
                                             ->native(false),
                                         Select::make('language')
@@ -134,7 +133,6 @@ class EditProfile extends BaseEditProfile
                                         $actions = [];
 
                                         foreach ($oauthProviders as $oauthProvider) {
-
                                             $id = $oauthProvider->getId();
                                             $name = $oauthProvider->getName();
 
@@ -189,7 +187,8 @@ class EditProfile extends BaseEditProfile
 
                                         ['image_url_data' => $url, 'secret' => $secret] = cache()->remember(
                                             "users.{$this->getUser()->id}.2fa.state",
-                                            now()->addMinutes(5), fn () => $setupService->handle($this->getUser())
+                                            now()->addMinutes(5),
+                                            fn () => $setupService->handle($this->getUser())
                                         );
 
                                         $options = new QROptions([
@@ -230,7 +229,7 @@ class EditProfile extends BaseEditProfile
                                                 ->content(fn () => new HtmlString("
                                                 <div style='width: 300px; background-color: rgb(24, 24, 27);'>$image</div>
                                             "))
-                                                ->helperText(trans('profile.setup_key') .': '. $secret),
+                                                ->helperText(trans('profile.setup_key') . ': ' . $secret),
                                             TextInput::make('2facode')
                                                 ->label(trans('profile.code'))
                                                 ->requiredWith('2fapassword')
@@ -379,6 +378,5 @@ class EditProfile extends BaseEditProfile
         return [
             $this->getSaveFormAction()->formId('form'),
         ];
-
     }
 }

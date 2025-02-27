@@ -2,14 +2,14 @@
 
 namespace App\Tests\Integration\Services\Servers;
 
-use Mockery\MockInterface;
 use App\Models\Database;
+use Mockery\MockInterface;
 use App\Models\DatabaseHost;
 use App\Tests\Integration\IntegrationTestCase;
 use App\Services\Servers\ServerDeletionService;
+use Illuminate\Http\Client\ConnectionException;
 use App\Repositories\Daemon\DaemonServerRepository;
 use App\Services\Databases\DatabaseManagementService;
-use Illuminate\Http\Client\ConnectionException;
 
 class ServerDeletionServiceTest extends IntegrationTestCase
 {
@@ -52,7 +52,7 @@ class ServerDeletionServiceTest extends IntegrationTestCase
      * Test that a server is not deleted if the force option is not set and an error
      * is returned by daemon.
      */
-    public function test_regular_delete_fails_if_daemon_returns_error(): void
+    public function testRegularDeleteFailsIfDaemonReturnsError(): void
     {
         $server = $this->createServerModel();
 
@@ -68,7 +68,7 @@ class ServerDeletionServiceTest extends IntegrationTestCase
     /**
      * Test that a 404 from Daemon while deleting a server does not cause the deletion to fail.
      */
-    public function test_regular_delete_ignores404_from_daemon(): void
+    public function testRegularDeleteIgnores404FromDaemon(): void
     {
         $server = $this->createServerModel();
 
@@ -83,7 +83,7 @@ class ServerDeletionServiceTest extends IntegrationTestCase
      * Test that an error from Daemon does not cause the deletion to fail if the server is being
      * force deleted.
      */
-    public function test_force_delete_ignores_exception_from_daemon(): void
+    public function testForceDeleteIgnoresExceptionFromDaemon(): void
     {
         $server = $this->createServerModel();
 
@@ -98,12 +98,12 @@ class ServerDeletionServiceTest extends IntegrationTestCase
      * Test that a non-force-delete call does not delete the server if one of the databases
      * cannot be deleted from the host.
      */
-    public function test_exception_while_deleting_stops_process(): void
+    public function testExceptionWhileDeletingStopsProcess(): void
     {
         $server = $this->createServerModel();
         $host = DatabaseHost::factory()->create();
 
-        /** @var \App\Models\Database $db */
+        /** @var Database $db */
         $db = Database::factory()->create(['database_host_id' => $host->id, 'server_id' => $server->id]);
 
         $server->refresh();
@@ -123,12 +123,12 @@ class ServerDeletionServiceTest extends IntegrationTestCase
     /**
      * Test that a server is deleted even if the server databases cannot be deleted from the host.
      */
-    public function test_exception_while_deleting_databases_does_not_abort_if_force_deleted(): void
+    public function testExceptionWhileDeletingDatabasesDoesNotAbortIfForceDeleted(): void
     {
         $server = $this->createServerModel();
         $host = DatabaseHost::factory()->create();
 
-        /** @var \App\Models\Database $db */
+        /** @var Database $db */
         $db = Database::factory()->create(['database_host_id' => $host->id, 'server_id' => $server->id]);
 
         $server->refresh();

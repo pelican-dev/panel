@@ -2,10 +2,10 @@
 
 namespace App\Services\Servers;
 
+use App\Models\Server;
 use App\Enums\ServerState;
 use App\Enums\SuspendAction;
 use Filament\Notifications\Notification;
-use App\Models\Server;
 use App\Repositories\Daemon\DaemonServerRepository;
 use Symfony\Component\HttpKernel\Exception\ConflictHttpException;
 
@@ -16,7 +16,8 @@ class SuspensionService
      */
     public function __construct(
         private DaemonServerRepository $daemonServerRepository
-    ) {}
+    ) {
+    }
 
     /**
      * Suspends a server on the system.

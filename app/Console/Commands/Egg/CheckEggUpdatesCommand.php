@@ -3,9 +3,8 @@
 namespace App\Console\Commands\Egg;
 
 use App\Models\Egg;
-use App\Services\Eggs\Sharing\EggExporterService;
-use Exception;
 use Illuminate\Console\Command;
+use App\Services\Eggs\Sharing\EggExporterService;
 
 class CheckEggUpdatesCommand extends Command
 {
@@ -35,7 +34,7 @@ class CheckEggUpdatesCommand extends Command
                     $this->warn("{$egg->name}: Found update");
                     cache()->put("eggs.{$egg->uuid}.update", true, now()->addHour());
                 }
-            } catch (Exception $exception) {
+            } catch (\Exception $exception) {
                 $this->error("{$egg->name}: Error ({$exception->getMessage()})");
             }
         }

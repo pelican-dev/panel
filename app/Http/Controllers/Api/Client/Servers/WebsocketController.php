@@ -2,16 +2,16 @@
 
 namespace App\Http\Controllers\Api\Client\Servers;
 
-use Carbon\CarbonImmutable;
 use App\Models\Server;
-use Illuminate\Http\JsonResponse;
 use App\Models\Permission;
+use Carbon\CarbonImmutable;
+use Illuminate\Http\JsonResponse;
+use Dedoc\Scramble\Attributes\Group;
 use App\Services\Nodes\NodeJWTService;
 use App\Exceptions\Http\HttpForbiddenException;
 use App\Http\Requests\Api\Client\ClientApiRequest;
 use App\Services\Servers\GetUserPermissionsService;
 use App\Http\Controllers\Api\Client\ClientApiController;
-use Dedoc\Scramble\Attributes\Group;
 
 #[Group('Server - Websocket')]
 class WebsocketController extends ClientApiController
@@ -27,7 +27,7 @@ class WebsocketController extends ClientApiController
     }
 
     /**
-     * Get websocket token
+     * Get websocket token.
      *
      * Generates a one-time token that is sent along in every websocket call to the Daemon.
      * This is a signed JWT that the Daemon then uses to verify the user's identity, and

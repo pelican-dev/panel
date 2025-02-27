@@ -3,15 +3,15 @@
 namespace App\Http\Controllers\Api\Remote\Servers;
 
 use App\Models\Server;
-use App\Repositories\Daemon\DaemonServerRepository;
-use Illuminate\Http\Response;
-use Illuminate\Http\JsonResponse;
 use App\Models\Allocation;
+use Illuminate\Http\Response;
 use App\Models\ServerTransfer;
-use Illuminate\Database\ConnectionInterface;
+use Illuminate\Http\JsonResponse;
 use App\Http\Controllers\Controller;
-use Symfony\Component\HttpKernel\Exception\ConflictHttpException;
+use Illuminate\Database\ConnectionInterface;
 use Illuminate\Http\Client\ConnectionException;
+use App\Repositories\Daemon\DaemonServerRepository;
+use Symfony\Component\HttpKernel\Exception\ConflictHttpException;
 
 class ServerTransferController extends Controller
 {
@@ -21,7 +21,8 @@ class ServerTransferController extends Controller
     public function __construct(
         private ConnectionInterface $connection,
         private DaemonServerRepository $daemonServerRepository,
-    ) {}
+    ) {
+    }
 
     /**
      * The daemon notifies us about a transfer failure.
@@ -50,7 +51,7 @@ class ServerTransferController extends Controller
             throw new ConflictHttpException('Server is not being transferred.');
         }
 
-        /** @var \App\Models\Server $server */
+        /** @var Server $server */
         $server = $this->connection->transaction(function () use ($server, $transfer) {
             $allocations = array_merge([$transfer->old_allocation], $transfer->old_additional_allocations);
 

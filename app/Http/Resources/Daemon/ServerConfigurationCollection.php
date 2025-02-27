@@ -4,8 +4,8 @@ namespace App\Http\Resources\Daemon;
 
 use App\Models\Server;
 use Illuminate\Container\Container;
-use Illuminate\Http\Resources\Json\ResourceCollection;
 use App\Services\Eggs\EggConfigurationService;
+use Illuminate\Http\Resources\Json\ResourceCollection;
 use App\Services\Servers\ServerConfigurationStructureService;
 
 class ServerConfigurationCollection extends ResourceCollection

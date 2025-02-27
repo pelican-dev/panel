@@ -5,13 +5,13 @@ namespace App\Http\Controllers\Api\Client\Servers;
 use App\Models\Server;
 use App\Facades\Activity;
 use App\Models\ServerVariable;
+use Dedoc\Scramble\Attributes\Group;
 use App\Services\Servers\StartupCommandService;
 use App\Transformers\Api\Client\EggVariableTransformer;
 use App\Http\Controllers\Api\Client\ClientApiController;
-use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use App\Http\Requests\Api\Client\Servers\Startup\GetStartupRequest;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use App\Http\Requests\Api\Client\Servers\Startup\UpdateStartupVariableRequest;
-use Dedoc\Scramble\Attributes\Group;
 
 #[Group('Server - Startup')]
 class StartupController extends ClientApiController
@@ -26,7 +26,7 @@ class StartupController extends ClientApiController
     }
 
     /**
-     * List startup variables
+     * List startup variables.
      *
      * Returns the startup information for the server including all the variables.
      */
@@ -47,7 +47,7 @@ class StartupController extends ClientApiController
     }
 
     /**
-     * Update startup variable
+     * Update startup variable.
      *
      * Updates a single variable for a server.
      *

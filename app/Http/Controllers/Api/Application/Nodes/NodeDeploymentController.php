@@ -2,11 +2,11 @@
 
 namespace App\Http\Controllers\Api\Application\Nodes;
 
+use Dedoc\Scramble\Attributes\Group;
 use App\Services\Deployment\FindViableNodesService;
 use App\Transformers\Api\Application\NodeTransformer;
 use App\Http\Controllers\Api\Application\ApplicationApiController;
 use App\Http\Requests\Api\Application\Nodes\GetDeployableNodesRequest;
-use Dedoc\Scramble\Attributes\Group;
 
 #[Group('Node', weight: 2)]
 class NodeDeploymentController extends ApplicationApiController
@@ -17,7 +17,7 @@ class NodeDeploymentController extends ApplicationApiController
     }
 
     /**
-     * Get deployable nodes
+     * Get deployable nodes.
      *
      * Finds any nodes that are available using the given deployment criteria. This works
      * similarly to the server creation process, but allows you to pass the deployment object

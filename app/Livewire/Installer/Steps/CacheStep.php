@@ -2,17 +2,16 @@
 
 namespace App\Livewire\Installer\Steps;
 
-use App\Livewire\Installer\PanelInstaller;
-use Exception;
-use Filament\Forms\Components\TextInput;
-use Filament\Forms\Components\ToggleButtons;
-use Filament\Forms\Components\Wizard\Step;
 use Filament\Forms\Get;
 use Filament\Forms\Set;
-use Filament\Notifications\Notification;
+use Illuminate\Redis\RedisManager;
 use Filament\Support\Exceptions\Halt;
 use Illuminate\Foundation\Application;
-use Illuminate\Redis\RedisManager;
+use Filament\Forms\Components\TextInput;
+use Filament\Notifications\Notification;
+use App\Livewire\Installer\PanelInstaller;
+use Filament\Forms\Components\Wizard\Step;
+use Filament\Forms\Components\ToggleButtons;
 
 class CacheStep
 {
@@ -91,7 +90,7 @@ class CacheStep
             });
     }
 
-    private static function testConnection(Application $app, string $driver, ?string $host, null|string|int $port, ?string $username, ?string $password): bool
+    private static function testConnection(Application $app, string $driver, ?string $host, string|int|null $port, ?string $username, ?string $password): bool
     {
         if ($driver !== 'redis') {
             return true;
@@ -108,7 +107,7 @@ class CacheStep
             ]);
 
             $redis->connection()->command('ping');
-        } catch (Exception $exception) {
+        } catch (\Exception $exception) {
             Notification::make()
                 ->title('Redis connection failed')
                 ->body($exception->getMessage())

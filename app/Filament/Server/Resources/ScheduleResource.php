@@ -2,23 +2,23 @@
 
 namespace App\Filament\Server\Resources;
 
+use App\Models\Server;
+use Filament\Forms\Set;
+use App\Models\Schedule;
+use Filament\Forms\Form;
+use App\Models\Permission;
+use Filament\Facades\Filament;
+use Filament\Resources\Resource;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Toggle;
+use Filament\Forms\Components\Actions;
+use Filament\Forms\Components\Section;
+use Illuminate\Database\Eloquent\Model;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\ToggleButtons;
+use Filament\Forms\Components\Actions\Action;
 use App\Filament\Server\Resources\ScheduleResource\Pages;
 use App\Filament\Server\Resources\ScheduleResource\RelationManagers\TasksRelationManager;
-use App\Models\Permission;
-use App\Models\Schedule;
-use App\Models\Server;
-use Filament\Facades\Filament;
-use Filament\Forms\Components\Actions;
-use Filament\Forms\Components\Actions\Action;
-use Filament\Forms\Components\Section;
-use Filament\Forms\Components\Select;
-use Filament\Forms\Components\TextInput;
-use Filament\Forms\Components\Toggle;
-use Filament\Forms\Components\ToggleButtons;
-use Filament\Forms\Form;
-use Filament\Forms\Set;
-use Filament\Resources\Resource;
-use Illuminate\Database\Eloquent\Model;
 
 class ScheduleResource extends Resource
 {

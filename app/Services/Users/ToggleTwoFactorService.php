@@ -2,10 +2,10 @@
 
 namespace App\Services\Users;
 
-use App\Models\RecoveryToken;
 use Carbon\Carbon;
-use Illuminate\Support\Str;
 use App\Models\User;
+use Illuminate\Support\Str;
+use App\Models\RecoveryToken;
 use PragmaRX\Google2FA\Google2FA;
 use Illuminate\Database\ConnectionInterface;
 use App\Exceptions\Service\User\TwoFactorAuthenticationTokenInvalid;
@@ -18,7 +18,8 @@ class ToggleTwoFactorService
     public function __construct(
         private ConnectionInterface $connection,
         private Google2FA $google2FA,
-    ) {}
+    ) {
+    }
 
     /**
      * Toggle 2FA on an account only if the token provided is valid.
@@ -27,7 +28,7 @@ class ToggleTwoFactorService
      * @throws \PragmaRX\Google2FA\Exceptions\IncompatibleWithGoogleAuthenticatorException
      * @throws \PragmaRX\Google2FA\Exceptions\InvalidCharactersException
      * @throws \PragmaRX\Google2FA\Exceptions\SecretKeyTooShortException
-     * @throws \App\Exceptions\Service\User\TwoFactorAuthenticationTokenInvalid
+     * @throws TwoFactorAuthenticationTokenInvalid
      */
     public function handle(User $user, string $token, ?bool $toggleState = null): array
     {
@@ -48,7 +49,7 @@ class ToggleTwoFactorService
             $tokens = [];
             if ((!$toggleState && !$user->use_totp) || $toggleState) {
                 $inserts = [];
-                for ($i = 0; $i < 10; $i++) {
+                for ($i = 0; $i < 10; ++$i) {
                     $token = Str::random(10);
 
                     $inserts[] = [

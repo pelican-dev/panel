@@ -4,12 +4,12 @@ namespace App\Http\Controllers\Api\Client;
 
 use App\Models\Server;
 use App\Models\Permission;
+use Dedoc\Scramble\Attributes\Group;
 use Spatie\QueryBuilder\QueryBuilder;
 use Spatie\QueryBuilder\AllowedFilter;
 use App\Models\Filters\MultiFieldServerFilter;
 use App\Transformers\Api\Client\ServerTransformer;
 use App\Http\Requests\Api\Client\GetServersRequest;
-use Dedoc\Scramble\Attributes\Group;
 
 #[Group('Base')]
 class ClientController extends ClientApiController
@@ -23,7 +23,7 @@ class ClientController extends ClientApiController
     }
 
     /**
-     * List servers
+     * List servers.
      *
      * Return all the servers available to the client making the API
      * request, including servers the user has access to as a subuser.
@@ -71,7 +71,7 @@ class ClientController extends ClientApiController
     }
 
     /**
-     * List subuser permissions
+     * List subuser permissions.
      *
      * Returns all the subuser permissions available on the system.
      */

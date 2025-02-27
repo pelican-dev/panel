@@ -2,13 +2,13 @@
 
 namespace App\Models;
 
-use App\Contracts\Validatable;
 use App\Helpers\Utilities;
 use App\Traits\HasValidation;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use App\Contracts\Validatable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 /**
  * @property int $id
@@ -26,7 +26,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property \Carbon\Carbon|null $next_run_at
  * @property \Carbon\Carbon $created_at
  * @property \Carbon\Carbon $updated_at
- * @property \App\Models\Server $server
+ * @property Server $server
  * @property \App\Models\Task[]|\Illuminate\Support\Collection $tasks
  */
 class Schedule extends Model implements Validatable

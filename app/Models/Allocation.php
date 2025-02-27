@@ -2,12 +2,12 @@
 
 namespace App\Models;
 
-use App\Exceptions\Service\Allocation\ServerUsingAllocationException;
 use App\Traits\HasValidation;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Casts\Attribute;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use App\Exceptions\Service\Allocation\ServerUsingAllocationException;
 
 /**
  * App\Models\Allocation.
@@ -24,8 +24,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property string $alias
  * @property bool $has_alias
  * @property string $address
- * @property \App\Models\Server|null $server
- * @property \App\Models\Node $node
+ * @property Server|null $server
+ * @property Node $node
  *
  * @method static \Database\Factories\AllocationFactory factory(...$parameters)
  * @method static \Illuminate\Database\Eloquent\Builder|Allocation newModelQuery()

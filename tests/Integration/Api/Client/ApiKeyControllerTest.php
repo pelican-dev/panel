@@ -3,10 +3,10 @@
 namespace App\Tests\Integration\Api\Client;
 
 use App\Models\User;
-use Illuminate\Http\Response;
 use App\Models\ApiKey;
-use Illuminate\Support\Facades\Event;
+use Illuminate\Http\Response;
 use App\Events\ActivityLogged;
+use Illuminate\Support\Facades\Event;
 use PHPUnit\Framework\Attributes\DataProvider;
 
 class ApiKeyControllerTest extends ClientApiIntegrationTestCase
@@ -24,11 +24,11 @@ class ApiKeyControllerTest extends ClientApiIntegrationTestCase
     /**
      * Test that the client's API key can be returned successfully.
      */
-    public function test_api_keys_are_returned(): void
+    public function testApiKeysAreReturned(): void
     {
-        /** @var \App\Models\User $user */
+        /** @var User $user */
         $user = User::factory()->create();
-        /** @var \App\Models\ApiKey $key */
+        /** @var ApiKey $key */
         $key = ApiKey::factory()->for($user)->create([
             'key_type' => ApiKey::TYPE_ACCOUNT,
         ]);
@@ -47,9 +47,9 @@ class ApiKeyControllerTest extends ClientApiIntegrationTestCase
      * after that point.
      */
     #[DataProvider('validIPAddressDataProvider')]
-    public function test_api_key_can_be_created_for_account(array $data): void
+    public function testApiKeyCanBeCreatedForAccount(array $data): void
     {
-        /** @var \App\Models\User $user */
+        /** @var User $user */
         $user = User::factory()->create();
 
         // Small subtest to ensure we're always comparing the  number of keys to the
@@ -67,7 +67,7 @@ class ApiKeyControllerTest extends ClientApiIntegrationTestCase
             ->assertOk()
             ->assertJsonPath('object', ApiKey::RESOURCE_NAME);
 
-        /** @var \App\Models\ApiKey $key */
+        /** @var ApiKey $key */
         $key = ApiKey::query()->where('identifier', $response->json('attributes.identifier'))->firstOrFail();
 
         $this->assertJsonTransformedWith($response->json('attributes'), $key);
@@ -79,10 +79,10 @@ class ApiKeyControllerTest extends ClientApiIntegrationTestCase
     /**
      * Block requests to create an API key specifying more than 50 IP addresses.
      */
-    public function test_api_key_cannot_specify_more_than_fifty_ips(): void
+    public function testApiKeyCannotSpecifyMoreThanFiftyIps(): void
     {
         $ips = [];
-        for ($i = 0; $i < 100; $i++) {
+        for ($i = 0; $i < 100; ++$i) {
             $ips[] = '127.0.0.' . $i;
         }
 
@@ -99,9 +99,9 @@ class ApiKeyControllerTest extends ClientApiIntegrationTestCase
      * Test that no more than the Max number of API keys can exist at one time for an account. This prevents
      * a DoS attack vector against the panel.
      */
-    public function test_api_key_limit_is_applied(): void
+    public function testApiKeyLimitIsApplied(): void
     {
-        /** @var \App\Models\User $user */
+        /** @var User $user */
         $user = User::factory()->create();
         ApiKey::factory()->times(config('panel.api.key_limit', 25))->for($user)->create([
             'key_type' => ApiKey::TYPE_ACCOUNT,
@@ -119,7 +119,7 @@ class ApiKeyControllerTest extends ClientApiIntegrationTestCase
     /**
      * Test that a bad request results in a validation error being returned by the API.
      */
-    public function test_validation_error_is_returned_for_bad_requests(): void
+    public function testValidationErrorIsReturnedForBadRequests(): void
     {
         $this->actingAs(User::factory()->create());
 
@@ -153,11 +153,11 @@ class ApiKeyControllerTest extends ClientApiIntegrationTestCase
     /**
      * Tests that an API key can be deleted from the account.
      */
-    public function test_api_key_can_be_deleted(): void
+    public function testApiKeyCanBeDeleted(): void
     {
-        /** @var \App\Models\User $user */
+        /** @var User $user */
         $user = User::factory()->create();
-        /** @var \App\Models\ApiKey $key */
+        /** @var ApiKey $key */
         $key = ApiKey::factory()->for($user)->create([
             'key_type' => ApiKey::TYPE_ACCOUNT,
         ]);
@@ -172,11 +172,11 @@ class ApiKeyControllerTest extends ClientApiIntegrationTestCase
     /**
      * Test that trying to delete an API key that does not exist results in a 404.
      */
-    public function test_non_existent_api_key_deletion_returns404_error(): void
+    public function testNonExistentApiKeyDeletionReturns404Error(): void
     {
-        /** @var \App\Models\User $user */
+        /** @var User $user */
         $user = User::factory()->create();
-        /** @var \App\Models\ApiKey $key */
+        /** @var ApiKey $key */
         $key = ApiKey::factory()->create([
             'user_id' => $user->id,
             'key_type' => ApiKey::TYPE_ACCOUNT,
@@ -193,13 +193,13 @@ class ApiKeyControllerTest extends ClientApiIntegrationTestCase
      * Test that an API key that exists on the system cannot be deleted if the user
      * who created it is not the authenticated user.
      */
-    public function test_api_key_belonging_to_another_user_cannot_be_deleted(): void
+    public function testApiKeyBelongingToAnotherUserCannotBeDeleted(): void
     {
-        /** @var \App\Models\User $user */
+        /** @var User $user */
         $user = User::factory()->create();
-        /** @var \App\Models\User $user2 */
+        /** @var User $user2 */
         $user2 = User::factory()->create();
-        /** @var \App\Models\ApiKey $key */
+        /** @var ApiKey $key */
         $key = ApiKey::factory()->for($user2)->create([
             'key_type' => ApiKey::TYPE_ACCOUNT,
         ]);
@@ -216,11 +216,11 @@ class ApiKeyControllerTest extends ClientApiIntegrationTestCase
      * Tests that an application API key also belonging to the logged-in user cannot be
      * deleted through this endpoint if it exists.
      */
-    public function test_application_api_key_cannot_be_deleted(): void
+    public function testApplicationApiKeyCannotBeDeleted(): void
     {
-        /** @var \App\Models\User $user */
+        /** @var User $user */
         $user = User::factory()->create();
-        /** @var \App\Models\ApiKey $key */
+        /** @var ApiKey $key */
         $key = ApiKey::factory()->for($user)->create([
             'key_type' => ApiKey::TYPE_APPLICATION,
         ]);

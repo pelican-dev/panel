@@ -2,23 +2,22 @@
 
 namespace App\Filament\Server\Pages;
 
-use App\Facades\Activity;
-use App\Filament\Components\Forms\Actions\PreviewStartupAction;
-use App\Models\Permission;
 use App\Models\Server;
-use App\Models\ServerVariable;
-use Closure;
-use Filament\Facades\Filament;
-use Filament\Forms\Components\Component;
-use Filament\Forms\Components\Hidden;
-use Filament\Forms\Components\Repeater;
-use Filament\Forms\Components\Section;
-use Filament\Forms\Components\Select;
-use Filament\Forms\Components\Textarea;
-use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
+use App\Facades\Activity;
+use App\Models\Permission;
+use App\Models\ServerVariable;
+use Filament\Facades\Filament;
+use Filament\Forms\Components\Hidden;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Section;
+use Filament\Forms\Components\Repeater;
+use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\Component;
+use Filament\Forms\Components\TextInput;
 use Filament\Notifications\Notification;
 use Illuminate\Support\Facades\Validator;
+use App\Filament\Components\Forms\Actions\PreviewStartupAction;
 
 class Startup extends ServerFormPage
 {
@@ -110,7 +109,7 @@ class Startup extends ServerFormPage
                                     ->disabled(fn (ServerVariable $serverVariable) => !$serverVariable->variable->user_editable)
                                     ->required(fn (ServerVariable $serverVariable) => $serverVariable->variable->getRequiredAttribute())
                                     ->rules([
-                                        fn (ServerVariable $serverVariable): Closure => function (string $attribute, $value, Closure $fail) use ($serverVariable) {
+                                        fn (ServerVariable $serverVariable): \Closure => function (string $attribute, $value, \Closure $fail) use ($serverVariable) {
                                             $validator = Validator::make(['validatorkey' => $value], [
                                                 'validatorkey' => $serverVariable->variable->rules,
                                             ]);
@@ -193,7 +192,6 @@ class Startup extends ServerFormPage
         $original = $serverVariable->variable_value;
 
         try {
-
             $validator = Validator::make(
                 ['variable_value' => $state],
                 ['variable_value' => $serverVariable->variable->rules]

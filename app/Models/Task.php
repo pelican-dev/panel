@@ -2,12 +2,12 @@
 
 namespace App\Models;
 
-use App\Contracts\Validatable;
 use App\Traits\HasValidation;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use App\Contracts\Validatable;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\HasOneThrough;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasOneThrough;
 
 /**
  * @property int $id
@@ -20,8 +20,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property bool $continue_on_failure
  * @property \Carbon\Carbon $created_at
  * @property \Carbon\Carbon $updated_at
- * @property \App\Models\Schedule $schedule
- * @property \App\Models\Server $server
+ * @property Schedule $schedule
+ * @property Server $server
  */
 class Task extends Model implements Validatable
 {
@@ -35,7 +35,7 @@ class Task extends Model implements Validatable
     public const RESOURCE_NAME = 'schedule_task';
 
     /**
-     * The default actions that can exist for a task
+     * The default actions that can exist for a task.
      */
     public const ACTION_POWER = 'power';
 

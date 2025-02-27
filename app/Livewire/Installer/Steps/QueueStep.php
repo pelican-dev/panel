@@ -2,13 +2,13 @@
 
 namespace App\Livewire\Installer\Steps;
 
-use App\Livewire\Installer\PanelInstaller;
-use Filament\Forms\Components\TextInput;
-use Filament\Forms\Components\Toggle;
-use Filament\Forms\Components\ToggleButtons;
-use Filament\Forms\Components\Wizard\Step;
 use Filament\Forms\Get;
 use Illuminate\Support\HtmlString;
+use Filament\Forms\Components\Toggle;
+use Filament\Forms\Components\TextInput;
+use App\Livewire\Installer\PanelInstaller;
+use Filament\Forms\Components\Wizard\Step;
+use Filament\Forms\Components\ToggleButtons;
 use Webbingbrasil\FilamentCopyActions\Forms\Actions\CopyAction;
 
 class QueueStep

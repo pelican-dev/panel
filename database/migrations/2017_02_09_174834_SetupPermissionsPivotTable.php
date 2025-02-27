@@ -2,13 +2,12 @@
 
 use App\Models\Subuser;
 use App\Models\Permission;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
-use Illuminate\Support\Facades\DB;
 
-return new class extends Migration
-{
+return new class () extends Migration {
     /**
      * Run the migrations.
      */
@@ -27,7 +26,6 @@ return new class extends Migration
         });
 
         Schema::table('permissions', function (Blueprint $table) {
-
             $table->dropForeign(['server_id']);
             $table->dropForeign(['user_id']);
 

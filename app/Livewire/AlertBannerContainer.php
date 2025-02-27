@@ -2,8 +2,8 @@
 
 namespace App\Livewire;
 
-use Illuminate\Contracts\View\View;
 use Livewire\Component;
+use Illuminate\Contracts\View\View;
 
 class AlertBannerContainer extends Component
 {

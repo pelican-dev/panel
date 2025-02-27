@@ -3,8 +3,8 @@
 namespace App\Http\Controllers\Api\Client;
 
 use App\Models\ApiKey;
-use Illuminate\Http\JsonResponse;
 use App\Facades\Activity;
+use Illuminate\Http\JsonResponse;
 use App\Exceptions\DisplayException;
 use App\Http\Requests\Api\Client\ClientApiRequest;
 use App\Transformers\Api\Client\ApiKeyTransformer;
@@ -13,7 +13,7 @@ use App\Http\Requests\Api\Client\Account\StoreApiKeyRequest;
 class ApiKeyController extends ClientApiController
 {
     /**
-     * List api keys
+     * List api keys.
      *
      * Returns all the API keys that exist for the given client.
      */
@@ -25,11 +25,11 @@ class ApiKeyController extends ClientApiController
     }
 
     /**
-     * Create api key
+     * Create api key.
      *
      * Store a new API key for a user's account.
      *
-     * @throws \App\Exceptions\DisplayException
+     * @throws DisplayException
      */
     public function store(StoreApiKeyRequest $request): array
     {
@@ -54,13 +54,13 @@ class ApiKeyController extends ClientApiController
     }
 
     /**
-     * Delete api key
+     * Delete api key.
      *
      * Deletes a given API key.
      */
     public function delete(ClientApiRequest $request, string $identifier): JsonResponse
     {
-        /** @var \App\Models\ApiKey $key */
+        /** @var ApiKey $key */
         $key = $request->user()->apiKeys()
             ->where('key_type', ApiKey::TYPE_ACCOUNT)
             ->where('identifier', $identifier)

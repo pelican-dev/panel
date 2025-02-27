@@ -3,10 +3,10 @@
 namespace App\Services\Servers;
 
 use App\Models\User;
-use Illuminate\Support\Collection;
 use App\Models\EggVariable;
-use Illuminate\Validation\ValidationException;
+use Illuminate\Support\Collection;
 use App\Traits\Services\HasUserLevels;
+use Illuminate\Validation\ValidationException;
 use Illuminate\Contracts\Validation\Factory as ValidationFactory;
 
 class VariableValidatorService
@@ -16,12 +16,14 @@ class VariableValidatorService
     /**
      * VariableValidatorService constructor.
      */
-    public function __construct(private ValidationFactory $validator) {}
+    public function __construct(private ValidationFactory $validator)
+    {
+    }
 
     /**
      * Validate all of the passed data against the given egg variables.
      *
-     * @throws \Illuminate\Validation\ValidationException
+     * @throws ValidationException
      */
     public function handle(int $egg, array $fields = []): Collection
     {

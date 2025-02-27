@@ -2,8 +2,8 @@
 
 namespace App\Console\Commands\Environment;
 
-use App\Traits\EnvironmentWriterTrait;
 use Illuminate\Console\Command;
+use App\Traits\EnvironmentWriterTrait;
 use Illuminate\Contracts\Console\Kernel;
 use Illuminate\Database\DatabaseManager;
 

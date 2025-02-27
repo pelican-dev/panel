@@ -3,15 +3,15 @@
 namespace App\Http\Controllers\Api\Client\Servers;
 
 use Carbon\Carbon;
-use Exception;
-use Illuminate\Http\Request;
-use Illuminate\Http\Response;
 use App\Models\Server;
 use App\Models\Schedule;
-use Illuminate\Http\JsonResponse;
 use App\Facades\Activity;
 use App\Helpers\Utilities;
+use Illuminate\Http\Request;
+use Illuminate\Http\Response;
+use Illuminate\Http\JsonResponse;
 use App\Exceptions\DisplayException;
+use Dedoc\Scramble\Attributes\Group;
 use App\Services\Schedules\ProcessScheduleService;
 use App\Transformers\Api\Client\ScheduleTransformer;
 use App\Http\Controllers\Api\Client\ClientApiController;
@@ -21,7 +21,6 @@ use App\Http\Requests\Api\Client\Servers\Schedules\StoreScheduleRequest;
 use App\Http\Requests\Api\Client\Servers\Schedules\DeleteScheduleRequest;
 use App\Http\Requests\Api\Client\Servers\Schedules\UpdateScheduleRequest;
 use App\Http\Requests\Api\Client\Servers\Schedules\TriggerScheduleRequest;
-use Dedoc\Scramble\Attributes\Group;
 
 #[Group('Server - Schedule', weight: 0)]
 class ScheduleController extends ClientApiController
@@ -35,7 +34,7 @@ class ScheduleController extends ClientApiController
     }
 
     /**
-     * List schedules
+     * List schedules.
      *
      * Returns all the schedules belonging to a given server.
      */
@@ -49,16 +48,16 @@ class ScheduleController extends ClientApiController
     }
 
     /**
-     * Create schedule
+     * Create schedule.
      *
      * Store a new schedule for a server.
      *
-     * @throws \App\Exceptions\DisplayException
+     * @throws DisplayException
      * @throws \App\Exceptions\Model\DataValidationException
      */
     public function store(StoreScheduleRequest $request, Server $server): array
     {
-        /** @var \App\Models\Schedule $model */
+        /** @var Schedule $model */
         $model = Schedule::query()->create([
             'server_id' => $server->id,
             'name' => $request->input('name'),
@@ -83,7 +82,7 @@ class ScheduleController extends ClientApiController
     }
 
     /**
-     * View schedule
+     * View schedule.
      *
      * Returns a specific schedule for the server.
      */
@@ -101,11 +100,11 @@ class ScheduleController extends ClientApiController
     }
 
     /**
-     * Update schedule
+     * Update schedule.
      *
      * Updates a given schedule with the new data provided.
      *
-     * @throws \App\Exceptions\DisplayException
+     * @throws DisplayException
      * @throws \App\Exceptions\Model\DataValidationException
      */
     public function update(UpdateScheduleRequest $request, Server $server, Schedule $schedule): array
@@ -143,7 +142,7 @@ class ScheduleController extends ClientApiController
     }
 
     /**
-     * Run schedule
+     * Run schedule.
      *
      * Executes a given schedule immediately rather than waiting on it's normally scheduled time
      * to pass. This does not care about the schedule state.
@@ -160,7 +159,7 @@ class ScheduleController extends ClientApiController
     }
 
     /**
-     * Delete schedule
+     * Delete schedule.
      *
      * Deletes a schedule and it's associated tasks.
      */
@@ -176,7 +175,7 @@ class ScheduleController extends ClientApiController
     /**
      * Get the next run timestamp based on the cron data provided.
      *
-     * @throws \App\Exceptions\DisplayException
+     * @throws DisplayException
      */
     protected function getNextRunAt(Request $request): Carbon
     {
@@ -188,7 +187,7 @@ class ScheduleController extends ClientApiController
                 $request->input('month'),
                 $request->input('day_of_week')
             );
-        } catch (Exception) {
+        } catch (\Exception) {
             throw new DisplayException('The cron data provided does not evaluate to a valid expression.');
         }
     }

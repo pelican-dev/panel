@@ -2,16 +2,16 @@
 
 namespace App\Http\Controllers\Api\Remote\Backups;
 
+use App\Models\Backup;
 use Carbon\CarbonImmutable;
 use Illuminate\Http\Request;
-use App\Models\Backup;
 use Illuminate\Http\JsonResponse;
 use App\Http\Controllers\Controller;
 use App\Extensions\Backups\BackupManager;
 use App\Extensions\Filesystem\S3Filesystem;
+use App\Exceptions\Http\HttpForbiddenException;
 use Symfony\Component\HttpKernel\Exception\ConflictHttpException;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
-use App\Exceptions\Http\HttpForbiddenException;
 
 class BackupRemoteUploadController extends Controller
 {
@@ -20,7 +20,9 @@ class BackupRemoteUploadController extends Controller
     /**
      * BackupRemoteUploadController constructor.
      */
-    public function __construct(private BackupManager $backupManager) {}
+    public function __construct(private BackupManager $backupManager)
+    {
+    }
 
     /**
      * Returns the required presigned urls to upload a backup to S3 cloud storage.
@@ -41,7 +43,7 @@ class BackupRemoteUploadController extends Controller
             throw new BadRequestHttpException('A non-empty "size" query parameter must be provided.');
         }
 
-        /** @var \App\Models\Backup $model */
+        /** @var Backup $model */
         $model = Backup::query()
             ->where('uuid', $backup)
             ->firstOrFail();
@@ -97,7 +99,7 @@ class BackupRemoteUploadController extends Controller
 
         // Create as many UploadPart presigned urls as needed
         $parts = [];
-        for ($i = 0; $i < ($size / $maxPartSize); $i++) {
+        for ($i = 0; $i < ($size / $maxPartSize); ++$i) {
             $parts[] = $client->createPresignedRequest(
                 $client->getCommand('UploadPart', array_merge($params, ['PartNumber' => $i + 1])),
                 $expires

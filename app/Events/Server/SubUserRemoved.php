@@ -2,9 +2,9 @@
 
 namespace App\Events\Server;
 
+use App\Models\User;
 use App\Events\Event;
 use App\Models\Server;
-use App\Models\User;
 use Illuminate\Queue\SerializesModels;
 
 class SubUserRemoved extends Event
@@ -14,5 +14,7 @@ class SubUserRemoved extends Event
     /**
      * Create a new event instance.
      */
-    public function __construct(public Server $server, public User $user) {}
+    public function __construct(public Server $server, public User $user)
+    {
+    }
 }

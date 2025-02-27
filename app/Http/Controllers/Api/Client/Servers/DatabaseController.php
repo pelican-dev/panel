@@ -2,10 +2,11 @@
 
 namespace App\Http\Controllers\Api\Client\Servers;
 
-use Illuminate\Http\Response;
 use App\Models\Server;
 use App\Models\Database;
 use App\Facades\Activity;
+use Illuminate\Http\Response;
+use Dedoc\Scramble\Attributes\Group;
 use App\Services\Databases\DatabasePasswordService;
 use App\Transformers\Api\Client\DatabaseTransformer;
 use App\Services\Databases\DatabaseManagementService;
@@ -15,7 +16,6 @@ use App\Http\Requests\Api\Client\Servers\Databases\GetDatabasesRequest;
 use App\Http\Requests\Api\Client\Servers\Databases\StoreDatabaseRequest;
 use App\Http\Requests\Api\Client\Servers\Databases\DeleteDatabaseRequest;
 use App\Http\Requests\Api\Client\Servers\Databases\RotatePasswordRequest;
-use Dedoc\Scramble\Attributes\Group;
 
 #[Group('Server - Database')]
 class DatabaseController extends ClientApiController
@@ -32,7 +32,7 @@ class DatabaseController extends ClientApiController
     }
 
     /**
-     * List databases
+     * List databases.
      *
      * Return all the databases that belong to the given server.
      */
@@ -44,7 +44,7 @@ class DatabaseController extends ClientApiController
     }
 
     /**
-     * Create database
+     * Create database.
      *
      * Create a new database for the given server and return it.
      *
@@ -68,7 +68,7 @@ class DatabaseController extends ClientApiController
     }
 
     /**
-     * Rotate password
+     * Rotate password.
      *
      * Rotates the password for the given server model and returns a fresh instance to
      * the caller.
@@ -92,7 +92,7 @@ class DatabaseController extends ClientApiController
     }
 
     /**
-     * Delete database
+     * Delete database.
      *
      * Removes a database from the server.
      */

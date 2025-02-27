@@ -2,12 +2,12 @@
 
 namespace App\Filament\Admin\Resources\RoleResource\Pages;
 
-use App\Filament\Admin\Resources\RoleResource;
 use App\Models\Role;
-use Filament\Resources\Pages\CreateRecord;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Spatie\Permission\Models\Permission;
+use Filament\Resources\Pages\CreateRecord;
+use App\Filament\Admin\Resources\RoleResource;
 
 /**
  * @property Role $record

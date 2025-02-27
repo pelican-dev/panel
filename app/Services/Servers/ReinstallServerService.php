@@ -2,8 +2,8 @@
 
 namespace App\Services\Servers;
 
-use App\Enums\ServerState;
 use App\Models\Server;
+use App\Enums\ServerState;
 use Illuminate\Database\ConnectionInterface;
 use App\Repositories\Daemon\DaemonServerRepository;
 
@@ -15,7 +15,8 @@ class ReinstallServerService
     public function __construct(
         private ConnectionInterface $connection,
         private DaemonServerRepository $daemonServerRepository
-    ) {}
+    ) {
+    }
 
     /**
      * Reinstall a server on the remote daemon.

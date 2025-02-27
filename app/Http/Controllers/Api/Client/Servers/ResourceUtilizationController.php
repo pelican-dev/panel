@@ -5,12 +5,12 @@ namespace App\Http\Controllers\Api\Client\Servers;
 use Carbon\Carbon;
 use App\Models\Server;
 use Illuminate\Cache\Repository;
+use Dedoc\Scramble\Attributes\Group;
+use Illuminate\Http\Client\ConnectionException;
 use App\Transformers\Api\Client\StatsTransformer;
 use App\Repositories\Daemon\DaemonServerRepository;
 use App\Http\Controllers\Api\Client\ClientApiController;
 use App\Http\Requests\Api\Client\Servers\GetServerRequest;
-use Dedoc\Scramble\Attributes\Group;
-use Illuminate\Http\Client\ConnectionException;
 
 #[Group('Server', weight: 3)]
 class ResourceUtilizationController extends ClientApiController
@@ -24,7 +24,7 @@ class ResourceUtilizationController extends ClientApiController
     }
 
     /**
-     * View resources
+     * View resources.
      *
      * Return the current resource utilization for a server. This value is cached for up to
      * 20 seconds at a time to ensure that repeated requests to this endpoint do not cause

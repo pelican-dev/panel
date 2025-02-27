@@ -2,12 +2,12 @@
 
 namespace App\Tests\Integration\Api\Client\Server\Backup;
 
-use Mockery\MockInterface;
-use Illuminate\Http\Response;
 use App\Models\Backup;
 use App\Models\Permission;
-use Illuminate\Support\Facades\Event;
+use Mockery\MockInterface;
+use Illuminate\Http\Response;
 use App\Events\ActivityLogged;
+use Illuminate\Support\Facades\Event;
 use App\Repositories\Daemon\DaemonBackupRepository;
 use App\Tests\Integration\Api\Client\ClientApiIntegrationTestCase;
 
@@ -22,7 +22,7 @@ class DeleteBackupTest extends ClientApiIntegrationTestCase
         $this->repository = $this->mock(DaemonBackupRepository::class);
     }
 
-    public function test_user_without_permission_cannot_delete_backup(): void
+    public function testUserWithoutPermissionCannotDeleteBackup(): void
     {
         [$user, $server] = $this->generateTestAccount([Permission::ACTION_BACKUP_CREATE]);
 
@@ -37,13 +37,13 @@ class DeleteBackupTest extends ClientApiIntegrationTestCase
      * in the database. Once deleted there should also be a corresponding record in the
      * activity logs table for this API call.
      */
-    public function test_backup_can_be_deleted(): void
+    public function testBackupCanBeDeleted(): void
     {
         Event::fake([ActivityLogged::class]);
 
         [$user, $server] = $this->generateTestAccount([Permission::ACTION_BACKUP_DELETE]);
 
-        /** @var \App\Models\Backup $backup */
+        /** @var Backup $backup */
         $backup = Backup::factory()->create(['server_id' => $server->id]);
 
         $this->repository->expects('setServer->delete')->with(

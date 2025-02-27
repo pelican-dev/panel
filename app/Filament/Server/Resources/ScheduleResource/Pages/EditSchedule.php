@@ -2,9 +2,9 @@
 
 namespace App\Filament\Server\Resources\ScheduleResource\Pages;
 
-use App\Filament\Server\Resources\ScheduleResource;
 use Filament\Actions;
 use Filament\Resources\Pages\EditRecord;
+use App\Filament\Server\Resources\ScheduleResource;
 
 class EditSchedule extends EditRecord
 {

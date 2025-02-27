@@ -2,25 +2,27 @@
 
 namespace App\Http\Controllers\Api\Remote\Backups;
 
+use App\Models\Backup;
+use App\Facades\Activity;
 use Carbon\CarbonImmutable;
 use Illuminate\Http\Request;
-use App\Models\Backup;
 use Illuminate\Http\JsonResponse;
-use App\Facades\Activity;
 use App\Exceptions\DisplayException;
 use App\Http\Controllers\Controller;
 use App\Extensions\Backups\BackupManager;
 use App\Extensions\Filesystem\S3Filesystem;
-use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
-use App\Http\Requests\Api\Remote\ReportBackupCompleteRequest;
 use App\Exceptions\Http\HttpForbiddenException;
+use App\Http\Requests\Api\Remote\ReportBackupCompleteRequest;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
 class BackupStatusController extends Controller
 {
     /**
      * BackupStatusController constructor.
      */
-    public function __construct(private BackupManager $backupManager) {}
+    public function __construct(private BackupManager $backupManager)
+    {
+    }
 
     /**
      * Handles updating the state of a backup.
@@ -33,7 +35,7 @@ class BackupStatusController extends Controller
         /** @var \App\Models\Node $node */
         $node = $request->attributes->get('node');
 
-        /** @var \App\Models\Backup $model */
+        /** @var Backup $model */
         $model = Backup::query()
             ->where('uuid', $backup)
             ->firstOrFail();
@@ -90,7 +92,7 @@ class BackupStatusController extends Controller
      */
     public function restore(Request $request, string $backup): JsonResponse
     {
-        /** @var \App\Models\Backup $model */
+        /** @var Backup $model */
         $model = Backup::query()->where('uuid', $backup)->firstOrFail();
 
         $model->server->update(['status' => null]);
@@ -108,7 +110,7 @@ class BackupStatusController extends Controller
      * the given backup.
      *
      * @throws \Exception
-     * @throws \App\Exceptions\DisplayException
+     * @throws DisplayException
      */
     protected function completeMultipartUpload(Backup $backup, S3Filesystem $adapter, bool $successful, ?array $parts): void
     {

@@ -2,8 +2,8 @@
 
 namespace App\Tests\Integration\Api\Client\Server\Subuser;
 
-use Ramsey\Uuid\Uuid;
 use App\Models\User;
+use Ramsey\Uuid\Uuid;
 use App\Models\Subuser;
 use App\Models\Permission;
 use App\Repositories\Daemon\DaemonServerRepository;
@@ -20,20 +20,20 @@ class DeleteSubuserTest extends ClientApiIntegrationTestCase
      * it to an integer. Then, in the deep API middlewares you would end up trying to load a user
      * with an ID of 12, which may or may not exist and be wrongly assigned to the model object.
      */
-    public function test_correct_subuser_is_deleted_from_server(): void
+    public function testCorrectSubuserIsDeletedFromServer(): void
     {
         $this->swap(DaemonServerRepository::class, $mock = \Mockery::mock(DaemonServerRepository::class));
 
         [$user, $server] = $this->generateTestAccount();
 
-        /** @var \App\Models\User $differentUser */
+        /** @var User $differentUser */
         $differentUser = User::factory()->create();
 
         $real = Uuid::uuid4()->toString();
         // Generate a UUID that lines up with a user in the database if it were to be cast to an int.
         $uuid = $differentUser->id . substr($real, strlen((string) $differentUser->id));
 
-        /** @var \App\Models\User $subuser */
+        /** @var User $subuser */
         $subuser = User::factory()->create(['uuid' => $uuid]);
 
         Subuser::query()->forceCreate([
@@ -49,7 +49,7 @@ class DeleteSubuserTest extends ClientApiIntegrationTestCase
         // Try the same test, but this time with a UUID that if cast to an int (shouldn't) line up with
         // anything in the database.
         $uuid = '18180000' . substr(Uuid::uuid4()->toString(), 8);
-        /** @var \App\Models\User $subuser */
+        /** @var User $subuser */
         $subuser = User::factory()->create(['uuid' => $uuid]);
 
         Subuser::query()->forceCreate([

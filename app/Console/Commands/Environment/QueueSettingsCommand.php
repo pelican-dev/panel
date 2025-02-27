@@ -2,10 +2,10 @@
 
 namespace App\Console\Commands\Environment;
 
-use App\Traits\Commands\RequestRedisSettingsTrait;
-use App\Traits\EnvironmentWriterTrait;
 use Illuminate\Console\Command;
+use App\Traits\EnvironmentWriterTrait;
 use Illuminate\Contracts\Console\Kernel;
+use App\Traits\Commands\RequestRedisSettingsTrait;
 
 class QueueSettingsCommand extends Command
 {

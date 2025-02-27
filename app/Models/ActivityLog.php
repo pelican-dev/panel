@@ -2,19 +2,19 @@
 
 namespace App\Models;
 
-use App\Traits\HasValidation;
 use Carbon\Carbon;
-use Illuminate\Support\Facades\Event;
+use Illuminate\Support\Str;
+use App\Traits\HasValidation;
 use App\Events\ActivityLogged;
+use Illuminate\Support\Facades\Event;
 use Filament\Support\Contracts\HasIcon;
+use Illuminate\Database\Eloquent\Model;
 use Filament\Support\Contracts\HasLabel;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\MassPrunable;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Str;
 
 /**
  * \App\Models\ActivityLog.
@@ -28,11 +28,11 @@ use Illuminate\Support\Str;
  * @property int|null $actor_id
  * @property int|null $api_key_id
  * @property \Illuminate\Support\Collection|null $properties
- * @property \Carbon\Carbon $timestamp
+ * @property Carbon $timestamp
  * @property Model|\Eloquent $actor
  * @property \Illuminate\Database\Eloquent\Collection|\App\Models\ActivityLogSubject[] $subjects
  * @property int|null $subjects_count
- * @property \App\Models\ApiKey|null $apiKey
+ * @property ApiKey|null $apiKey
  *
  * @method static Builder|ActivityLog forActor(Model $actor)
  * @method static Builder|ActivityLog forEvent(string $action)
@@ -164,7 +164,7 @@ class ActivityLog extends Model implements HasIcon, HasLabel
     {
         $properties = $this->wrapProperties();
 
-        return trans_choice('activity.'.str($this->event)->replace(':', '.'), array_key_exists('count', $properties) ? $properties['count'] : 1, $properties);
+        return trans_choice('activity.' . str($this->event)->replace(':', '.'), array_key_exists('count', $properties) ? $properties['count'] : 1, $properties);
     }
 
     public function htmlable(): string
@@ -240,7 +240,7 @@ class ActivityLog extends Model implements HasIcon, HasLabel
         }
 
         $properties = $this->wrapProperties();
-        $event = trans_choice('activity.'.str($this->event)->replace(':', '.'), array_key_exists('count', $properties) ? $properties['count'] : 1);
+        $event = trans_choice('activity.' . str($this->event)->replace(':', '.'), array_key_exists('count', $properties) ? $properties['count'] : 1);
 
         preg_match_all('/:(?<key>[\w.-]+\w)(?:[^\w:]?|$)/', $event, $matches);
 

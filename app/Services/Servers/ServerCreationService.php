@@ -2,22 +2,22 @@
 
 namespace App\Services\Servers;
 
-use App\Enums\ServerState;
-use App\Models\ServerVariable;
-use Illuminate\Http\Client\ConnectionException;
-use Ramsey\Uuid\Uuid;
-use Illuminate\Support\Arr;
+use App\Models\Egg;
 use App\Models\User;
-use Webmozart\Assert\Assert;
+use Ramsey\Uuid\Uuid;
 use App\Models\Server;
-use Illuminate\Support\Collection;
+use App\Enums\ServerState;
 use App\Models\Allocation;
-use Illuminate\Database\ConnectionInterface;
+use Illuminate\Support\Arr;
+use Webmozart\Assert\Assert;
+use App\Models\ServerVariable;
+use Illuminate\Support\Collection;
 use App\Models\Objects\DeploymentObject;
+use Illuminate\Database\ConnectionInterface;
+use Illuminate\Http\Client\ConnectionException;
 use App\Repositories\Daemon\DaemonServerRepository;
 use App\Services\Deployment\FindViableNodesService;
 use App\Services\Deployment\AllocationSelectionService;
-use App\Models\Egg;
 
 class ServerCreationService
 {
@@ -31,7 +31,8 @@ class ServerCreationService
         private FindViableNodesService $findViableNodesService,
         private ServerDeletionService $serverDeletionService,
         private VariableValidatorService $validatorService
-    ) {}
+    ) {
+    }
 
     /**
      * Create a server on the Panel and trigger a request to the Daemon to begin the server
@@ -82,7 +83,7 @@ class ServerCreationService
         //
         // If that connection fails out we will attempt to perform a cleanup by just
         // deleting the server itself from the system.
-        /** @var \App\Models\Server $server */
+        /** @var Server $server */
         $server = $this->connection->transaction(function () use ($data, $eggVariableData) {
             // Create the server and assign any additional allocations to it.
             $server = $this->createModel($data);

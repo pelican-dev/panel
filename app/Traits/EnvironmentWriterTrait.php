@@ -2,8 +2,6 @@
 
 namespace App\Traits;
 
-use Exception;
-
 trait EnvironmentWriterTrait
 {
     /**
@@ -23,13 +21,13 @@ trait EnvironmentWriterTrait
     /**
      * Update the .env file for the application using the passed in values.
      *
-     * @throws Exception
+     * @throws \Exception
      */
     public function writeToEnvironment(array $values = []): void
     {
         $path = base_path('.env');
         if (!file_exists($path)) {
-            throw new Exception('Cannot locate .env file, was this software installed correctly?');
+            throw new \Exception('Cannot locate .env file, was this software installed correctly?');
         }
 
         $saveContents = file_get_contents($path);

@@ -2,14 +2,14 @@
 
 namespace App\Filament\Server\Widgets;
 
-use App\Enums\ContainerStatus;
-use App\Filament\Server\Components\SmallStatBlock;
-use App\Filament\Server\Components\StatBlock;
 use App\Models\Server;
 use Carbon\CarbonInterface;
-use Filament\Widgets\StatsOverviewWidget;
-use Illuminate\Support\Number;
 use Illuminate\Support\Str;
+use App\Enums\ContainerStatus;
+use Illuminate\Support\Number;
+use Filament\Widgets\StatsOverviewWidget;
+use App\Filament\Server\Components\StatBlock;
+use App\Filament\Server\Components\SmallStatBlock;
 
 class ServerOverview extends StatsOverviewWidget
 {

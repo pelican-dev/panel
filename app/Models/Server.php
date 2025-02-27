@@ -2,30 +2,30 @@
 
 namespace App\Models;
 
+use App\Enums\ServerState;
+use Carbon\CarbonInterface;
+use Illuminate\Support\Arr;
+use App\Traits\HasValidation;
 use App\Contracts\Validatable;
 use App\Enums\ContainerStatus;
+use Illuminate\Support\Number;
 use App\Enums\ServerResourceType;
-use App\Enums\ServerState;
-use App\Repositories\Daemon\DaemonServerRepository;
-use App\Traits\HasValidation;
-use Carbon\CarbonInterface;
-use Illuminate\Database\Eloquent\Casts\Attribute;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
-use Illuminate\Http\Client\ConnectionException;
+use Psr\Http\Message\ResponseInterface;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Query\JoinClause;
-use Illuminate\Support\Arr;
-use Illuminate\Support\Facades\Http;
-use Illuminate\Support\Number;
-use Psr\Http\Message\ResponseInterface;
+use Illuminate\Http\Client\ConnectionException;
+use App\Services\Subusers\SubuserDeletionService;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use App\Repositories\Daemon\DaemonServerRepository;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use App\Exceptions\Http\Server\ServerStateConflictException;
-use App\Services\Subusers\SubuserDeletionService;
 
 /**
  * \App\Models\Server.
@@ -59,25 +59,25 @@ use App\Services\Subusers\SubuserDeletionService;
  * @property \Illuminate\Support\Carbon|null $installed_at
  * @property \Illuminate\Database\Eloquent\Collection|\App\Models\ActivityLog[] $activity
  * @property int|null $activity_count
- * @property \App\Models\Allocation|null $allocation
+ * @property Allocation|null $allocation
  * @property \Illuminate\Database\Eloquent\Collection|\App\Models\Allocation[] $allocations
  * @property int|null $allocations_count
  * @property \Illuminate\Database\Eloquent\Collection|\App\Models\Backup[] $backups
  * @property int|null $backups_count
  * @property \Illuminate\Database\Eloquent\Collection|\App\Models\Database[] $databases
  * @property int|null $databases_count
- * @property \App\Models\Egg|null $egg
+ * @property Egg|null $egg
  * @property \Illuminate\Database\Eloquent\Collection|\App\Models\Mount[] $mounts
  * @property int|null $mounts_count
- * @property \App\Models\Node $node
+ * @property Node $node
  * @property \Illuminate\Notifications\DatabaseNotificationCollection|\Illuminate\Notifications\DatabaseNotification[] $notifications
  * @property int|null $notifications_count
  * @property \Illuminate\Database\Eloquent\Collection|\App\Models\Schedule[] $schedules
  * @property int|null $schedules_count
  * @property \Illuminate\Database\Eloquent\Collection|\App\Models\Subuser[] $subusers
  * @property int|null $subusers_count
- * @property \App\Models\ServerTransfer|null $transfer
- * @property \App\Models\User $user
+ * @property ServerTransfer|null $transfer
+ * @property User $user
  * @property \Illuminate\Database\Eloquent\Collection|\App\Models\EggVariable[] $variables
  * @property int|null $variables_count
  *
@@ -114,11 +114,11 @@ use App\Services\Subusers\SubuserDeletionService;
  *
  * @property array|null $docker_labels
  * @property string|null $ports
- * @property-read mixed $condition
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\EggVariable> $eggVariables
- * @property-read int|null $egg_variables_count
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ServerVariable> $serverVariables
- * @property-read int|null $server_variables_count
+ * @property mixed $condition
+ * @property \Illuminate\Database\Eloquent\Collection<int, \App\Models\EggVariable> $eggVariables
+ * @property int|null $egg_variables_count
+ * @property \Illuminate\Database\Eloquent\Collection<int, \App\Models\ServerVariable> $serverVariables
+ * @property int|null $server_variables_count
  *
  * @method static \Illuminate\Database\Eloquent\Builder|Server whereDockerLabels($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Server whereInstalledAt($value)
@@ -408,9 +408,9 @@ class Server extends Model implements Validatable
     public function validateTransferState(): void
     {
         if (
-            !$this->isInstalled() ||
-            $this->status === ServerState::RestoringBackup ||
-            !is_null($this->transfer)
+            !$this->isInstalled()
+            || $this->status === ServerState::RestoringBackup
+            || !is_null($this->transfer)
         ) {
             throw new ServerStateConflictException($this);
         }

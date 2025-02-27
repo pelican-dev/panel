@@ -1,21 +1,20 @@
 <?php
 
-use App\Models\Allocation;
-use App\Models\ApiKey;
-use App\Models\Database;
-use App\Models\DatabaseHost;
 use App\Models\Egg;
-use App\Models\Mount;
 use App\Models\Node;
-use App\Models\Server;
 use App\Models\User;
-use Illuminate\Database\Migrations\Migration;
-use Illuminate\Database\Schema\Blueprint;
+use App\Models\Mount;
+use App\Models\ApiKey;
+use App\Models\Server;
+use App\Models\Database;
+use App\Models\Allocation;
+use App\Models\DatabaseHost;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Database\Migrations\Migration;
 
-return new class extends Migration
-{
+return new class () extends Migration {
     /**
      * Run the migrations.
      */

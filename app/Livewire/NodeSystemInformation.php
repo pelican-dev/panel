@@ -3,8 +3,8 @@
 namespace App\Livewire;
 
 use App\Models\Node;
-use Illuminate\View\View;
 use Livewire\Component;
+use Illuminate\View\View;
 
 class NodeSystemInformation extends Component
 {

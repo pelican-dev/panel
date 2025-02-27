@@ -2,23 +2,23 @@
 
 namespace App\Http\Controllers\Api\Application\Mounts;
 
+use App\Models\Mount;
 use Ramsey\Uuid\Uuid;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use Spatie\QueryBuilder\QueryBuilder;
-use App\Models\Mount;
-use App\Http\Controllers\Api\Application\ApplicationApiController;
+use App\Exceptions\Service\HasActiveServersException;
 use App\Transformers\Api\Application\MountTransformer;
 use App\Http\Requests\Api\Application\Mounts\GetMountRequest;
 use App\Http\Requests\Api\Application\Mounts\StoreMountRequest;
 use App\Http\Requests\Api\Application\Mounts\DeleteMountRequest;
 use App\Http\Requests\Api\Application\Mounts\UpdateMountRequest;
-use App\Exceptions\Service\HasActiveServersException;
+use App\Http\Controllers\Api\Application\ApplicationApiController;
 
 class MountController extends ApplicationApiController
 {
     /**
-     * List mounts
+     * List mounts.
      *
      * Return all the mounts currently available on the Panel.
      */
@@ -35,7 +35,7 @@ class MountController extends ApplicationApiController
     }
 
     /**
-     * View mount
+     * View mount.
      *
      * Return data for a single instance of a mount.
      */
@@ -47,7 +47,7 @@ class MountController extends ApplicationApiController
     }
 
     /**
-     * Create mount
+     * Create mount.
      *
      * Create a new mount on the Panel. Returns the created mount and an HTTP/201
      * status response on success.
@@ -73,7 +73,7 @@ class MountController extends ApplicationApiController
     }
 
     /**
-     * Update mount
+     * Update mount.
      *
      * Update an existing mount on the Panel.
      *
@@ -89,12 +89,12 @@ class MountController extends ApplicationApiController
     }
 
     /**
-     * Delete mount
+     * Delete mount.
      *
      * Deletes a given mount from the Panel as long as there are no servers
      * currently attached to it.
      *
-     * @throws \App\Exceptions\Service\HasActiveServersException
+     * @throws HasActiveServersException
      */
     public function delete(DeleteMountRequest $request, Mount $mount): JsonResponse
     {
@@ -108,7 +108,7 @@ class MountController extends ApplicationApiController
     }
 
     /**
-     * Assign eggs to mount
+     * Assign eggs to mount.
      *
      * Adds eggs to the mount's many-to-many relation.
      */
@@ -129,7 +129,7 @@ class MountController extends ApplicationApiController
     }
 
     /**
-     * Assign mounts to mount
+     * Assign mounts to mount.
      *
      * Adds nodes to the mount's many-to-many relation.
      */
@@ -148,7 +148,7 @@ class MountController extends ApplicationApiController
     }
 
     /**
-     * Unassign egg from mount
+     * Unassign egg from mount.
      *
      * Deletes an egg from the mount's many-to-many relation.
      */
@@ -160,7 +160,7 @@ class MountController extends ApplicationApiController
     }
 
     /**
-     * Unassign node from mount
+     * Unassign node from mount.
      *
      * Deletes a node from the mount's many-to-many relation.
      */

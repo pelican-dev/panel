@@ -2,12 +2,12 @@
 
 namespace App\Services\Allocations;
 
-use App\Models\Allocation;
-use IPTools\Network;
 use App\Models\Node;
+use IPTools\Network;
 use App\Models\Server;
-use Illuminate\Database\ConnectionInterface;
+use App\Models\Allocation;
 use App\Exceptions\DisplayException;
+use Illuminate\Database\ConnectionInterface;
 use App\Exceptions\Service\Allocation\CidrOutOfRangeException;
 use App\Exceptions\Service\Allocation\PortOutOfRangeException;
 use App\Exceptions\Service\Allocation\InvalidPortMappingException;
@@ -30,16 +30,18 @@ class AssignmentService
     /**
      * AssignmentService constructor.
      */
-    public function __construct(protected ConnectionInterface $connection) {}
+    public function __construct(protected ConnectionInterface $connection)
+    {
+    }
 
     /**
      * Insert allocations into the database and link them to a specific node.
      *
-     * @throws \App\Exceptions\DisplayException
-     * @throws \App\Exceptions\Service\Allocation\CidrOutOfRangeException
-     * @throws \App\Exceptions\Service\Allocation\InvalidPortMappingException
-     * @throws \App\Exceptions\Service\Allocation\PortOutOfRangeException
-     * @throws \App\Exceptions\Service\Allocation\TooManyPortsInRangeException
+     * @throws DisplayException
+     * @throws CidrOutOfRangeException
+     * @throws InvalidPortMappingException
+     * @throws PortOutOfRangeException
+     * @throws TooManyPortsInRangeException
      */
     public function handle(Node $node, array $data, ?Server $server = null): array
     {

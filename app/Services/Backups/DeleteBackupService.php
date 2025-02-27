@@ -2,16 +2,16 @@
 
 namespace App\Services\Backups;
 
-use App\Extensions\Filesystem\S3Filesystem;
 use Aws\S3\S3Client;
-use Illuminate\Http\Response;
 use App\Models\Backup;
-use GuzzleHttp\Exception\ClientException;
-use Illuminate\Database\ConnectionInterface;
+use Illuminate\Http\Response;
 use App\Extensions\Backups\BackupManager;
+use GuzzleHttp\Exception\ClientException;
+use App\Extensions\Filesystem\S3Filesystem;
+use Illuminate\Database\ConnectionInterface;
+use Illuminate\Http\Client\ConnectionException;
 use App\Repositories\Daemon\DaemonBackupRepository;
 use App\Exceptions\Service\Backup\BackupLockedException;
-use Illuminate\Http\Client\ConnectionException;
 
 class DeleteBackupService
 {
@@ -19,7 +19,8 @@ class DeleteBackupService
         private ConnectionInterface $connection,
         private BackupManager $manager,
         private DaemonBackupRepository $daemonBackupRepository
-    ) {}
+    ) {
+    }
 
     /**
      * Deletes a backup from the system. If the backup is stored in S3 a request

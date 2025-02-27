@@ -3,10 +3,10 @@
 namespace App\Models;
 
 use App\Traits\HasValidation;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 /**
  * \App\Models\UserSSHKey.
@@ -19,7 +19,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property \Illuminate\Support\Carbon|null $deleted_at
- * @property \App\Models\User $user
+ * @property User $user
  *
  * @method static \Illuminate\Database\Eloquent\Builder|UserSSHKey newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|UserSSHKey newQuery()

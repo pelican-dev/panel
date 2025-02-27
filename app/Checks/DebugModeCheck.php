@@ -5,8 +5,6 @@ namespace App\Checks;
 use Spatie\Health\Checks\Check;
 use Spatie\Health\Checks\Result;
 
-use function config;
-
 class DebugModeCheck extends Check
 {
     protected bool $expected = false;
@@ -20,7 +18,7 @@ class DebugModeCheck extends Check
 
     public function run(): Result
     {
-        $actual = config('app.debug');
+        $actual = \config('app.debug');
 
         $result = Result::make()
             ->meta([

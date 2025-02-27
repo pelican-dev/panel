@@ -2,24 +2,24 @@
 
 namespace App\Http\Controllers\Api\Client\Servers;
 
-use App\Enums\ServerState;
-use Illuminate\Http\Request;
 use App\Models\Backup;
 use App\Models\Server;
-use Illuminate\Http\JsonResponse;
 use App\Facades\Activity;
+use App\Enums\ServerState;
 use App\Models\Permission;
-use Illuminate\Auth\Access\AuthorizationException;
+use Illuminate\Http\Request;
+use Illuminate\Http\JsonResponse;
+use Dedoc\Scramble\Attributes\Group;
 use App\Services\Backups\DeleteBackupService;
 use App\Services\Backups\DownloadLinkService;
 use App\Services\Backups\InitiateBackupService;
-use App\Repositories\Daemon\DaemonBackupRepository;
 use App\Transformers\Api\Client\BackupTransformer;
+use Illuminate\Auth\Access\AuthorizationException;
+use App\Repositories\Daemon\DaemonBackupRepository;
 use App\Http\Controllers\Api\Client\ClientApiController;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use App\Http\Requests\Api\Client\Servers\Backups\StoreBackupRequest;
 use App\Http\Requests\Api\Client\Servers\Backups\RestoreBackupRequest;
-use Dedoc\Scramble\Attributes\Group;
 
 #[Group('Server - Backup')]
 class BackupController extends ClientApiController
@@ -34,7 +34,7 @@ class BackupController extends ClientApiController
     }
 
     /**
-     * List backups
+     * List backups.
      *
      * Returns all the backups for a given server instance in a paginated
      * result set.
@@ -58,7 +58,7 @@ class BackupController extends ClientApiController
     }
 
     /**
-     * Create backup
+     * Create backup.
      *
      * Starts the backup process for a server.
      *
@@ -92,12 +92,12 @@ class BackupController extends ClientApiController
     }
 
     /**
-     * Toggle lock
+     * Toggle lock.
      *
      * Toggles the lock status of a given backup for a server.
      *
      * @throws \Throwable
-     * @throws \Illuminate\Auth\Access\AuthorizationException
+     * @throws AuthorizationException
      */
     public function toggleLock(Request $request, Server $server, Backup $backup): array
     {
@@ -117,11 +117,11 @@ class BackupController extends ClientApiController
     }
 
     /**
-     * View backup
+     * View backup.
      *
      * Returns information about a single backup.
      *
-     * @throws \Illuminate\Auth\Access\AuthorizationException
+     * @throws AuthorizationException
      */
     public function view(Request $request, Server $server, Backup $backup): array
     {
@@ -135,7 +135,7 @@ class BackupController extends ClientApiController
     }
 
     /**
-     * Delete backup
+     * Delete backup.
      *
      * Deletes a backup from the panel as well as the remote source where it is currently
      * being stored.
@@ -159,14 +159,14 @@ class BackupController extends ClientApiController
     }
 
     /**
-     * Download backup
+     * Download backup.
      *
      * Download the backup for a given server instance. For daemon local files, the file
      * will be streamed back through the Panel. For AWS S3 files, a signed URL will be generated
      * which the user is redirected to.
      *
      * @throws \Throwable
-     * @throws \Illuminate\Auth\Access\AuthorizationException
+     * @throws AuthorizationException
      */
     public function download(Request $request, Server $server, Backup $backup): JsonResponse
     {
@@ -189,7 +189,7 @@ class BackupController extends ClientApiController
     }
 
     /**
-     * Restore backup
+     * Restore backup.
      *
      * Handles restoring a backup by making a request to the daemon instance telling it
      * to begin the process of finding (or downloading) the backup and unpacking it

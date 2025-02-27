@@ -2,15 +2,15 @@
 
 namespace App\Services\Servers;
 
-use App\Models\Allocation;
 use App\Models\Node;
 use App\Models\Server;
-use App\Models\ServerTransfer;
-use App\Services\Nodes\NodeJWTService;
+use App\Models\Allocation;
 use Carbon\CarbonImmutable;
-use Illuminate\Database\ConnectionInterface;
-use Illuminate\Support\Facades\Http;
 use Lcobucci\JWT\Token\Plain;
+use App\Models\ServerTransfer;
+use Illuminate\Support\Facades\Http;
+use App\Services\Nodes\NodeJWTService;
+use Illuminate\Database\ConnectionInterface;
 
 class TransferServerService
 {
@@ -20,7 +20,8 @@ class TransferServerService
     public function __construct(
         private ConnectionInterface $connection,
         private NodeJWTService $nodeJWTService,
-    ) {}
+    ) {
+    }
 
     private function notify(Server $server, Plain $token): void
     {

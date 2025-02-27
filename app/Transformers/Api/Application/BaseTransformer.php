@@ -2,15 +2,15 @@
 
 namespace App\Transformers\Api\Application;
 
+use App\Models\ApiKey;
 use Carbon\CarbonImmutable;
 use Carbon\CarbonInterface;
 use Illuminate\Http\Request;
 use Webmozart\Assert\Assert;
-use App\Models\ApiKey;
+use App\Services\Acl\Api\AdminAcl;
 use Illuminate\Container\Container;
 use Illuminate\Database\Eloquent\Model;
 use League\Fractal\TransformerAbstract;
-use App\Services\Acl\Api\AdminAcl;
 
 /**
  * @method array transform(Model $model)
@@ -85,7 +85,8 @@ abstract class BaseTransformer extends TransformerAbstract
      *
      * @template T of \App\Transformers\Api\Application\BaseTransformer
      *
-     * @param  class-string<T>  $abstract
+     * @param class-string<T> $abstract
+     *
      * @return T
      *
      * @noinspection PhpDocSignatureInspection

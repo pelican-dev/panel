@@ -7,8 +7,7 @@ use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Contracts\Encryption\DecryptException;
 
-return new class extends Migration
-{
+return new class () extends Migration {
     /**
      * Run the migrations.
      */
@@ -38,7 +37,6 @@ return new class extends Migration
         } else {
             DB::statement('ALTER TABLE `api_keys` CHANGE `secret` `token` CHAR(32) NOT NULL, ADD UNIQUE INDEX `api_keys_token_unique` (`token`(32))');
         }
-
     }
 
     /**

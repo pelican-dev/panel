@@ -13,7 +13,7 @@ class GetDeployableNodesRequest extends GetNodesRequest
             'cpu' => 'sometimes|integer|min:0',
             'tags' => 'sometimes|array',
 
-            /** @deprecated use tags instead */
+            /* @deprecated use tags instead */
             'location_ids' => 'sometimes|array',
         ];
     }

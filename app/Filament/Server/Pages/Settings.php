@@ -2,22 +2,21 @@
 
 namespace App\Filament\Server\Pages;
 
+use App\Models\Server;
+use Filament\Forms\Form;
 use App\Facades\Activity;
 use App\Models\Permission;
-use App\Models\Server;
-use App\Services\Servers\ReinstallServerService;
-use Exception;
 use Filament\Facades\Filament;
-use Filament\Forms\Components\Actions\Action;
-use Filament\Forms\Components\Fieldset;
-use Filament\Forms\Components\Placeholder;
+use Illuminate\Support\Number;
+use Filament\Support\Enums\Alignment;
 use Filament\Forms\Components\Section;
+use Filament\Forms\Components\Fieldset;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Form;
 use Filament\Notifications\Notification;
-use Filament\Support\Enums\Alignment;
-use Illuminate\Support\Number;
+use Filament\Forms\Components\Placeholder;
+use Filament\Forms\Components\Actions\Action;
+use App\Services\Servers\ReinstallServerService;
 use Webbingbrasil\FilamentCopyActions\Forms\Actions\CopyAction;
 
 class Settings extends ServerFormPage
@@ -207,7 +206,7 @@ class Settings extends ServerFormPage
 
                                 try {
                                     $reinstallService->handle($server);
-                                } catch (Exception $exception) {
+                                } catch (\Exception $exception) {
                                     report($exception);
 
                                     Notification::make()
@@ -261,7 +260,7 @@ class Settings extends ServerFormPage
                 ->title('Updated Server Name')
                 ->body(fn () => $original . ' -> ' . $name)
                 ->send();
-        } catch (Exception $exception) {
+        } catch (\Exception $exception) {
             Notification::make()
                 ->danger()
                 ->title('Failed')
@@ -293,7 +292,7 @@ class Settings extends ServerFormPage
                 ->title('Updated Server Description')
                 ->body(fn () => $original . ' -> ' . $description)
                 ->send();
-        } catch (Exception $exception) {
+        } catch (\Exception $exception) {
             Notification::make()
                 ->danger()
                 ->title('Failed')

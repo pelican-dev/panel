@@ -3,8 +3,8 @@
 namespace App\Repositories\Daemon;
 
 use App\Models\Node;
-use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Http\Client\Response;
+use Illuminate\Http\Client\ConnectionException;
 
 class DaemonConfigurationRepository extends DaemonRepository
 {
@@ -21,9 +21,9 @@ class DaemonConfigurationRepository extends DaemonRepository
             ->throwIf(function ($result) {
                 $header = $result->header('User-Agent');
                 if (
-                    filled($header) &&
-                    preg_match('/^Pelican Wings\/v(?:\d+\.\d+\.\d+|develop) \(id:(\w*)\)$/', $header, $matches) &&
-                    array_get($matches, 1, '') !== $this->node->daemon_token_id
+                    filled($header)
+                    && preg_match('/^Pelican Wings\/v(?:\d+\.\d+\.\d+|develop) \(id:(\w*)\)$/', $header, $matches)
+                    && array_get($matches, 1, '') !== $this->node->daemon_token_id
                 ) {
                     throw new ConnectionException($result->effectiveUri()->__toString() . ' does not match node token_id !');
                 }

@@ -2,39 +2,38 @@
 
 namespace App\Filament\Admin\Pages;
 
-use App\Extensions\OAuth\Providers\OAuthProvider;
 use App\Models\Backup;
-use App\Notifications\MailTested;
-use App\Traits\EnvironmentWriterTrait;
-use Exception;
-use Filament\Actions\Action;
-use Filament\Forms\Components\Actions;
-use Filament\Forms\Components\Actions\Action as FormAction;
-use Filament\Forms\Components\Group;
-use Filament\Forms\Components\Hidden;
-use Filament\Forms\Components\Placeholder;
-use Filament\Forms\Components\Section;
-use Filament\Forms\Components\Select;
-use Filament\Forms\Components\Tabs;
-use Filament\Forms\Components\Tabs\Tab;
-use Filament\Forms\Components\TagsInput;
-use Filament\Forms\Components\TextInput;
-use Filament\Forms\Components\Toggle;
-use Filament\Forms\Components\ToggleButtons;
-use Filament\Forms\Concerns\InteractsWithForms;
-use Filament\Forms\Contracts\HasForms;
-use Filament\Forms\Form;
 use Filament\Forms\Get;
 use Filament\Forms\Set;
-use Filament\Notifications\Notification;
-use Filament\Pages\Concerns\InteractsWithHeaderActions;
+use Filament\Forms\Form;
 use Filament\Pages\Page;
-use Filament\Support\Enums\MaxWidth;
-use Illuminate\Http\Client\Factory;
-use Illuminate\Support\Facades\Artisan;
-use Illuminate\Support\Facades\Notification as MailNotification;
-use Illuminate\Support\HtmlString;
 use Illuminate\Support\Str;
+use Filament\Actions\Action;
+use App\Notifications\MailTested;
+use Illuminate\Support\HtmlString;
+use Filament\Forms\Components\Tabs;
+use Illuminate\Http\Client\Factory;
+use Filament\Forms\Components\Group;
+use Filament\Support\Enums\MaxWidth;
+use Filament\Forms\Components\Hidden;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Toggle;
+use App\Traits\EnvironmentWriterTrait;
+use Filament\Forms\Components\Actions;
+use Filament\Forms\Components\Section;
+use Filament\Forms\Contracts\HasForms;
+use Filament\Forms\Components\Tabs\Tab;
+use Illuminate\Support\Facades\Artisan;
+use Filament\Forms\Components\TagsInput;
+use Filament\Forms\Components\TextInput;
+use Filament\Notifications\Notification;
+use Filament\Forms\Components\Placeholder;
+use Filament\Forms\Components\ToggleButtons;
+use Filament\Forms\Concerns\InteractsWithForms;
+use App\Extensions\OAuth\Providers\OAuthProvider;
+use Filament\Pages\Concerns\InteractsWithHeaderActions;
+use Filament\Forms\Components\Actions\Action as FormAction;
+use Illuminate\Support\Facades\Notification as MailNotification;
 
 /**
  * @property Form $form
@@ -196,7 +195,7 @@ class Settings extends Page implements HasForms
                                     }
                                     $ips->unique();
                                 }
-                            } catch (Exception) {
+                            } catch (\Exception) {
                             }
 
                             $set('TRUSTED_PROXIES', $ips->values()->all());
@@ -318,7 +317,7 @@ class Settings extends Page implements HasForms
                                     ->title(trans('admin/setting.mail.test_mail_sent'))
                                     ->success()
                                     ->send();
-                            } catch (Exception $exception) {
+                            } catch (\Exception $exception) {
                                 Notification::make()
                                     ->title(trans('admin/setting.mail.test_mail_failed'))
                                     ->body($exception->getMessage())
@@ -725,7 +724,7 @@ class Settings extends Page implements HasForms
                 ->title(trans('admin/setting.save_success'))
                 ->success()
                 ->send();
-        } catch (Exception $exception) {
+        } catch (\Exception $exception) {
             Notification::make()
                 ->title(trans('admin/setting.save_failed'))
                 ->body($exception->getMessage())
@@ -742,6 +741,5 @@ class Settings extends Page implements HasForms
                 ->authorize(fn () => auth()->user()->can('update settings'))
                 ->keyBindings(['mod+s']),
         ];
-
     }
 }

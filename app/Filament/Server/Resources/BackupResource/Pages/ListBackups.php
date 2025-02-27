@@ -2,35 +2,35 @@
 
 namespace App\Filament\Server\Resources\BackupResource\Pages;
 
-use App\Enums\ServerState;
-use App\Facades\Activity;
-use App\Filament\Server\Resources\BackupResource;
-use App\Http\Controllers\Api\Client\Servers\BackupController;
-use App\Models\Backup;
-use App\Models\Permission;
-use App\Models\Server;
-use App\Repositories\Daemon\DaemonBackupRepository;
-use App\Services\Backups\DownloadLinkService;
-use App\Services\Backups\InitiateBackupService;
-use App\Filament\Components\Tables\Columns\BytesColumn;
-use App\Filament\Components\Tables\Columns\DateTimeColumn;
 use Filament\Actions;
-use Filament\Facades\Filament;
-use Filament\Forms\Components\Checkbox;
-use Filament\Forms\Components\Placeholder;
-use Filament\Forms\Components\Textarea;
-use Filament\Forms\Components\TextInput;
-use Filament\Forms\Components\Toggle;
+use App\Models\Backup;
+use App\Models\Server;
 use Filament\Forms\Form;
-use Filament\Notifications\Notification;
-use Filament\Resources\Pages\ListRecords;
-use Filament\Tables\Actions\Action;
-use Filament\Tables\Actions\ActionGroup;
-use Filament\Tables\Actions\DeleteAction;
-use Filament\Tables\Columns\IconColumn;
-use Filament\Tables\Columns\TextColumn;
+use App\Facades\Activity;
+use App\Enums\ServerState;
+use App\Models\Permission;
 use Filament\Tables\Table;
 use Illuminate\Http\Request;
+use Filament\Facades\Filament;
+use Filament\Tables\Actions\Action;
+use Filament\Forms\Components\Toggle;
+use Filament\Forms\Components\Checkbox;
+use Filament\Forms\Components\Textarea;
+use Filament\Tables\Columns\IconColumn;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Forms\Components\TextInput;
+use Filament\Notifications\Notification;
+use Filament\Tables\Actions\ActionGroup;
+use Filament\Resources\Pages\ListRecords;
+use Filament\Tables\Actions\DeleteAction;
+use Filament\Forms\Components\Placeholder;
+use App\Services\Backups\DownloadLinkService;
+use App\Services\Backups\InitiateBackupService;
+use App\Filament\Server\Resources\BackupResource;
+use App\Repositories\Daemon\DaemonBackupRepository;
+use App\Filament\Components\Tables\Columns\BytesColumn;
+use App\Filament\Components\Tables\Columns\DateTimeColumn;
+use App\Http\Controllers\Api\Client\Servers\BackupController;
 
 class ListBackups extends ListRecords
 {
@@ -45,7 +45,7 @@ class ListBackups extends ListRecords
                 TextInput::make('name')
                     ->label('Name')
                     ->columnSpanFull(),
-                TextArea::make('ignored')
+                Textarea::make('ignored')
                     ->columnSpanFull()
                     ->label('Ignored Files & Directories'),
                 Toggle::make('is_locked')
@@ -108,7 +108,7 @@ class ListBackups extends ListRecords
                                     ->send();
                             }
 
-                            if (!$backup->is_successful && is_null($backup->completed_at)) { //TODO Change to Notifications
+                            if (!$backup->is_successful && is_null($backup->completed_at)) { // TODO Change to Notifications
                                 return Notification::make()
                                     ->danger()
                                     ->title('Backup Restore Failed')

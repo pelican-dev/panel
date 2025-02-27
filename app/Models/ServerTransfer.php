@@ -2,8 +2,8 @@
 
 namespace App\Models;
 
-use App\Contracts\Validatable;
 use App\Traits\HasValidation;
+use App\Contracts\Validatable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -21,9 +21,9 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property bool $archived
  * @property \Carbon\Carbon $created_at
  * @property \Carbon\Carbon $updated_at
- * @property \App\Models\Server $server
- * @property \App\Models\Node $oldNode
- * @property \App\Models\Node $newNode
+ * @property Server $server
+ * @property Node $oldNode
+ * @property Node $newNode
  */
 class ServerTransfer extends Model implements Validatable
 {

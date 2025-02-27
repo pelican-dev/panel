@@ -2,38 +2,36 @@
 
 namespace App\Models;
 
-use App\Contracts\Validatable;
-use App\Exceptions\DisplayException;
+use Filament\Panel;
 use App\Rules\Username;
 use App\Facades\Activity;
-use App\Traits\HasValidation;
-use DateTimeZone;
-use Filament\Models\Contracts\FilamentUser;
-use Filament\Models\Contracts\HasAvatar;
-use Filament\Models\Contracts\HasName;
-use Filament\Models\Contracts\HasTenants;
-use Filament\Panel;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
-use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
+use App\Traits\HasValidation;
+use App\Contracts\Validatable;
+use Filament\Facades\Filament;
+use Illuminate\Support\Collection;
 use Illuminate\Validation\Rules\In;
+use App\Exceptions\DisplayException;
 use Illuminate\Auth\Authenticatable;
-use Illuminate\Notifications\Notifiable;
-use Illuminate\Database\Eloquent\Builder;
 use App\Models\Traits\HasAccessTokens;
+use Filament\Models\Contracts\HasName;
+use Spatie\Permission\Traits\HasRoles;
+use Illuminate\Database\Eloquent\Model;
+use Filament\Models\Contracts\HasAvatar;
+use Illuminate\Notifications\Notifiable;
+use Filament\Models\Contracts\HasTenants;
+use Illuminate\Database\Eloquent\Builder;
+use Filament\Models\Contracts\FilamentUser;
 use Illuminate\Auth\Passwords\CanResetPassword;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\Access\Authorizable;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use App\Notifications\SendPasswordReset as ResetPasswordNotification;
 use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
 use Illuminate\Contracts\Auth\Access\Authorizable as AuthorizableContract;
 use Illuminate\Contracts\Auth\CanResetPassword as CanResetPasswordContract;
-use App\Notifications\SendPasswordReset as ResetPasswordNotification;
-use Filament\Facades\Filament;
-use ResourceBundle;
-use Spatie\Permission\Traits\HasRoles;
 
 /**
  * App\Models\User.
@@ -194,8 +192,8 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
     {
         $rules = self::getValidationRules();
 
-        $rules['language'][] = new In(array_values(array_filter(ResourceBundle::getLocales(''), fn ($lang) => preg_match('/^[a-z]{2}$/', $lang))));
-        $rules['timezone'][] = new In(DateTimeZone::listIdentifiers());
+        $rules['language'][] = new In(array_values(array_filter(\ResourceBundle::getLocales(''), fn ($lang) => preg_match('/^[a-z]{2}$/', $lang))));
+        $rules['timezone'][] = new In(\DateTimeZone::listIdentifiers());
         $rules['username'][] = new Username();
 
         return $rules;
@@ -215,7 +213,7 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
     /**
      * Send the password reset notification.
      *
-     * @param  string  $token
+     * @param string $token
      */
     public function sendPasswordResetNotification($token): void
     {
@@ -340,7 +338,7 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
     /**
      * Laravel's policies strictly check for the existence of a real method,
      * this checks if the ability is one of our permissions and then checks if the user can do it or not
-     * Otherwise it calls the Authorizable trait's parent method
+     * Otherwise it calls the Authorizable trait's parent method.
      */
     public function can($abilities, mixed $arguments = []): bool
     {

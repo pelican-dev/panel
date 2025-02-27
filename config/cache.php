@@ -1,7 +1,6 @@
 <?php
 
 return [
-
     'default' => env('CACHE_STORE', env('CACHE_DRIVER', 'file')),
 
     'stores' => [
@@ -11,5 +10,4 @@ return [
             'lock_connection' => env('REDIS_CACHE_LOCK_CONNECTION', 'default'),
         ],
     ],
-
 ];

@@ -2,16 +2,16 @@
 
 namespace App\Tests\Feature\Webhooks;
 
-use App\Events\Server\Installed;
-use App\Jobs\ProcessWebhook;
 use App\Models\Server;
 use App\Models\Webhook;
-use App\Models\WebhookConfiguration;
 use App\Tests\TestCase;
-use Illuminate\Foundation\Testing\LazilyRefreshDatabase;
-use Illuminate\Http\Client\Request;
+use App\Jobs\ProcessWebhook;
 use Illuminate\Support\Carbon;
+use App\Events\Server\Installed;
+use Illuminate\Http\Client\Request;
+use App\Models\WebhookConfiguration;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Foundation\Testing\LazilyRefreshDatabase;
 
 class ProcessWebhooksTest extends TestCase
 {
@@ -24,10 +24,10 @@ class ProcessWebhooksTest extends TestCase
         Carbon::setTestNow();
     }
 
-    public function test_it_sends_a_single_webhook(): void
+    public function testItSendsASingleWebhook(): void
     {
         $webhook = WebhookConfiguration::factory()->create([
-            'events' => [$eventName = 'eloquent.created: '.Server::class],
+            'events' => [$eventName = 'eloquent.created: ' . Server::class],
         ]);
 
         Http::fake([$webhook->endpoint => Http::response()]);
@@ -63,7 +63,7 @@ class ProcessWebhooksTest extends TestCase
 
         ProcessWebhook::dispatchSync(
             $webhook,
-            'eloquent.created: '.Server::class,
+            'eloquent.created: ' . Server::class,
             $data,
         );
 
@@ -77,10 +77,10 @@ class ProcessWebhooksTest extends TestCase
         });
     }
 
-    public function test_sends_multiple_webhooks()
+    public function testSendsMultipleWebhooks()
     {
         [$webhook1, $webhook2] = WebhookConfiguration::factory(2)
-            ->create(['events' => [$eventName = 'eloquent.created: '.Server::class]]);
+            ->create(['events' => [$eventName = 'eloquent.created: ' . Server::class]]);
 
         Http::fake([
             $webhook1->endpoint => Http::response(),
@@ -98,7 +98,7 @@ class ProcessWebhooksTest extends TestCase
         Http::assertSent(fn (Request $request) => $webhook2->endpoint === $request->url());
     }
 
-    public function test_it_sends_no_webhooks()
+    public function testItSendsNoWebhooks()
     {
         Http::fake();
 
@@ -109,12 +109,12 @@ class ProcessWebhooksTest extends TestCase
         Http::assertSentCount(0);
     }
 
-    public function test_it_sends_some_webhooks()
+    public function testItSendsSomeWebhooks()
     {
         [$webhook1, $webhook2] = WebhookConfiguration::factory(2)
             ->sequence(
-                ['events' => ['eloquent.created: '.Server::class]],
-                ['events' => ['eloquent.deleted: '.Server::class]]
+                ['events' => ['eloquent.created: ' . Server::class]],
+                ['events' => ['eloquent.deleted: ' . Server::class]]
             )->create();
 
         Http::fake([
@@ -129,10 +129,10 @@ class ProcessWebhooksTest extends TestCase
         Http::assertNotSent(fn (Request $request) => $webhook2->endpoint === $request->url());
     }
 
-    public function test_it_records_when_a_webhook_is_sent()
+    public function testItRecordsWhenAWebhookIsSent()
     {
         $webhookConfig = WebhookConfiguration::factory()
-            ->create(['events' => ['eloquent.created: '.Server::class]]);
+            ->create(['events' => ['eloquent.created: ' . Server::class]]);
 
         Http::fake([$webhookConfig->endpoint => Http::response()]);
 
@@ -148,14 +148,14 @@ class ProcessWebhooksTest extends TestCase
         $this->assertDatabaseHas(Webhook::class, [
             'endpoint' => $webhookConfig->endpoint,
             'successful_at' => now()->startOfSecond(),
-            'event' => 'eloquent.created: '.Server::class,
+            'event' => 'eloquent.created: ' . Server::class,
         ]);
     }
 
-    public function test_it_records_when_a_webhook_fails()
+    public function testItRecordsWhenAWebhookFails()
     {
         $webhookConfig = WebhookConfiguration::factory()->create([
-            'events' => ['eloquent.created: '.Server::class],
+            'events' => ['eloquent.created: ' . Server::class],
         ]);
 
         Http::fake([$webhookConfig->endpoint => Http::response(status: 500)]);
@@ -169,11 +169,11 @@ class ProcessWebhooksTest extends TestCase
             'payload' => json_encode([$server->toArray()]),
             'endpoint' => $webhookConfig->endpoint,
             'successful_at' => null,
-            'event' => 'eloquent.created: '.Server::class,
+            'event' => 'eloquent.created: ' . Server::class,
         ]);
     }
 
-    public function test_it_is_triggered_on_custom_events()
+    public function testItIsTriggeredOnCustomEvents()
     {
         $webhookConfig = WebhookConfiguration::factory()->create([
             'events' => [Installed::class],
@@ -194,7 +194,6 @@ class ProcessWebhooksTest extends TestCase
             'successful_at' => now()->startOfSecond(),
             'event' => Installed::class,
         ]);
-
     }
 
     public function createServer(): Server

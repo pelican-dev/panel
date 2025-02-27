@@ -2,8 +2,8 @@
 
 namespace App\Exceptions\Http\Server;
 
-use App\Enums\ServerState;
 use App\Models\Server;
+use App\Enums\ServerState;
 use Symfony\Component\HttpKernel\Exception\ConflictHttpException;
 
 class ServerStateConflictException extends ConflictHttpException

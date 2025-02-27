@@ -15,7 +15,9 @@ class VariableUpdateService
     /**
      * VariableUpdateService constructor.
      */
-    public function __construct(private ValidationFactory $validator) {}
+    public function __construct(private ValidationFactory $validator)
+    {
+    }
 
     /**
      * Return the validation factory instance to be used by rule validation
@@ -29,9 +31,9 @@ class VariableUpdateService
     /**
      * Update a specific egg variable.
      *
-     * @throws \App\Exceptions\DisplayException
+     * @throws DisplayException
      * @throws \App\Exceptions\Model\DataValidationException
-     * @throws \App\Exceptions\Service\Egg\Variable\ReservedVariableNameException
+     * @throws ReservedVariableNameException
      */
     public function handle(EggVariable $variable, array $data): mixed
     {

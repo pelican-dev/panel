@@ -3,12 +3,12 @@
 namespace App\Tests\Unit\Http\Middleware;
 
 use Mockery as m;
-use Mockery\MockInterface;
 use App\Models\Node;
-use Illuminate\Http\Response;
 use App\Models\Server;
-use Illuminate\Contracts\Routing\ResponseFactory;
+use Mockery\MockInterface;
+use Illuminate\Http\Response;
 use App\Http\Middleware\MaintenanceMiddleware;
+use Illuminate\Contracts\Routing\ResponseFactory;
 
 class MaintenanceMiddlewareTest extends MiddlewareTestCase
 {
@@ -27,7 +27,7 @@ class MaintenanceMiddlewareTest extends MiddlewareTestCase
     /**
      * Test that a node not in maintenance mode continues through the request cycle.
      */
-    public function test_handle(): void
+    public function testHandle(): void
     {
         // maintenance mode is off by default
         $server = new Server();
@@ -45,7 +45,7 @@ class MaintenanceMiddlewareTest extends MiddlewareTestCase
     /**
      * Test that a node in maintenance mode returns an error view.
      */
-    public function test_handle_in_maintenance_mode(): void
+    public function testHandleInMaintenanceMode(): void
     {
         $server = new Server();
 

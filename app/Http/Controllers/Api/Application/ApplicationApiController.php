@@ -51,7 +51,8 @@ abstract class ApplicationApiController extends Controller
      *
      * @template T of \App\Transformers\Api\Application\BaseTransformer
      *
-     * @param  class-string<T>  $abstract
+     * @param class-string<T> $abstract
+     *
      * @return T
      *
      * @noinspection PhpDocSignatureInspection

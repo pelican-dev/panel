@@ -2,15 +2,15 @@
 
 namespace App\Filament\Pages\Auth;
 
-use App\Extensions\OAuth\Providers\OAuthProvider;
-use Coderflex\FilamentTurnstile\Forms\Components\Turnstile;
+use Filament\Support\Colors\Color;
 use Filament\Forms\Components\Actions;
-use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\Component;
 use Filament\Forms\Components\TextInput;
 use Filament\Pages\Auth\Login as BaseLogin;
-use Filament\Support\Colors\Color;
+use Filament\Forms\Components\Actions\Action;
 use Illuminate\Validation\ValidationException;
+use App\Extensions\OAuth\Providers\OAuthProvider;
+use Coderflex\FilamentTurnstile\Forms\Components\Turnstile;
 
 class Login extends BaseLogin
 {
@@ -40,9 +40,7 @@ class Login extends BaseLogin
     {
         $this->dispatch('reset-captcha');
 
-        throw ValidationException::withMessages([
-            'data.login' => trans('filament-panels::pages/auth/login.messages.failed'),
-        ]);
+        throw ValidationException::withMessages(['data.login' => trans('filament-panels::pages/auth/login.messages.failed')]);
     }
 
     protected function getLoginFormComponent(): Component
@@ -62,7 +60,6 @@ class Login extends BaseLogin
         $oauthProviders = collect(OAuthProvider::get())->filter(fn (OAuthProvider $provider) => $provider->isEnabled())->all();
 
         foreach ($oauthProviders as $oauthProvider) {
-
             $id = $oauthProvider->getId();
 
             $actions[] = Action::make("oauth_$id")

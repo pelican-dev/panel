@@ -2,8 +2,8 @@
 
 namespace App\Console\Commands;
 
-use Illuminate\Console\Command;
 use App\Console\Kernel;
+use Illuminate\Console\Command;
 use Symfony\Component\Process\Process;
 use Symfony\Component\Console\Helper\ProgressBar;
 
@@ -131,7 +131,7 @@ class UpgradeCommand extends Command
 
         /** @var \Illuminate\Foundation\Application $app */
         $app = require __DIR__ . '/../../../bootstrap/app.php';
-        /** @var \App\Console\Kernel $kernel */
+        /** @var Kernel $kernel */
         $kernel = $app->make(Kernel::class);
         $kernel->bootstrap();
         $this->setLaravel($app);

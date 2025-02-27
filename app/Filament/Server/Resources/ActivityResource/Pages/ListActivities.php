@@ -2,24 +2,24 @@
 
 namespace App\Filament\Server\Resources\ActivityResource\Pages;
 
-use App\Filament\Admin\Resources\UserResource\Pages\EditUser;
-use App\Filament\Server\Resources\ActivityResource;
-use App\Models\ActivityLog;
-use App\Filament\Components\Tables\Columns\DateTimeColumn;
-use App\Models\Server;
 use App\Models\User;
+use App\Models\Server;
+use Filament\Tables\Table;
+use App\Models\ActivityLog;
 use Filament\Facades\Filament;
-use Filament\Forms\Components\Actions\Action;
-use Filament\Forms\Components\DateTimePicker;
+use Illuminate\Support\HtmlString;
 use Filament\Forms\Components\KeyValue;
-use Filament\Forms\Components\Placeholder;
-use Filament\Forms\Components\TextInput;
-use Filament\Resources\Pages\ListRecords;
 use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Forms\Components\TextInput;
+use Filament\Resources\Pages\ListRecords;
 use Filament\Tables\Filters\SelectFilter;
-use Filament\Tables\Table;
-use Illuminate\Support\HtmlString;
+use Filament\Forms\Components\Placeholder;
+use Filament\Forms\Components\Actions\Action;
+use Filament\Forms\Components\DateTimePicker;
+use App\Filament\Server\Resources\ActivityResource;
+use App\Filament\Components\Tables\Columns\DateTimeColumn;
+use App\Filament\Admin\Resources\UserResource\Pages\EditUser;
 
 class ListActivities extends ListRecords
 {
@@ -65,7 +65,7 @@ class ListActivities extends ListRecords
             ->defaultSort('timestamp', 'desc')
             ->actions([
                 ViewAction::make()
-                    //->visible(fn (ActivityLog $activityLog) => $activityLog->hasAdditionalMetadata())
+                    // ->visible(fn (ActivityLog $activityLog) => $activityLog->hasAdditionalMetadata())
                     ->form([
                         Placeholder::make('event')
                             ->content(fn (ActivityLog $activityLog) => new HtmlString($activityLog->getLabel())),

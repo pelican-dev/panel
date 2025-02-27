@@ -2,16 +2,15 @@
 
 namespace App\Services\Activity;
 
-use Illuminate\Support\Arr;
-use Throwable;
-use Webmozart\Assert\Assert;
-use Illuminate\Support\Collection;
+use App\Models\Server;
 use App\Models\ActivityLog;
+use Illuminate\Support\Arr;
+use Webmozart\Assert\Assert;
+use Filament\Facades\Filament;
+use App\Models\ActivityLogSubject;
+use Illuminate\Support\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Request;
-use App\Models\ActivityLogSubject;
-use App\Models\Server;
-use Filament\Facades\Filament;
 use Illuminate\Database\ConnectionInterface;
 use Illuminate\Contracts\Auth\Factory as AuthFactory;
 
@@ -26,7 +25,8 @@ class ActivityLogService
         protected ActivityLogBatchService $batch,
         protected ActivityLogTargetableService $targetable,
         protected ConnectionInterface $connection
-    ) {}
+    ) {
+    }
 
     /**
      * Sets the activity logger as having been caused by an anonymous
@@ -66,7 +66,7 @@ class ActivityLogService
      *
      * @template T extends \Illuminate\Database\Eloquent\Model|\Illuminate\Contracts\Auth\Authenticatable
      *
-     * @param  T|T[]|null  $subjects
+     * @param T|T[]|null $subjects
      */
     public function subject(...$subjects): self
     {
@@ -102,8 +102,7 @@ class ActivityLogService
     /**
      * Sets a custom property on the activity log instance.
      *
-     * @param  string|array  $key
-     * @param  mixed  $value
+     * @param string|array $key
      */
     public function property($key, $value = null): self
     {
@@ -142,7 +141,7 @@ class ActivityLogService
 
         try {
             return $this->save();
-        } catch (Throwable $exception) {
+        } catch (\Throwable $exception) {
             if (config('app.env') !== 'production') {
                 throw $exception;
             }

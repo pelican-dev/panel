@@ -2,16 +2,16 @@
 
 namespace App\Filament\Server\Resources;
 
-use App\Filament\Server\Resources\ActivityResource\Pages;
-use App\Models\ActivityLog;
-use App\Models\Permission;
 use App\Models\Role;
-use App\Models\Server;
 use App\Models\User;
+use App\Models\Server;
+use App\Models\Permission;
+use App\Models\ActivityLog;
 use Filament\Facades\Filament;
 use Filament\Resources\Resource;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Query\JoinClause;
+use App\Filament\Server\Resources\ActivityResource\Pages;
 
 class ActivityResource extends Resource
 {

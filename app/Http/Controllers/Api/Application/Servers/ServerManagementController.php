@@ -2,17 +2,17 @@
 
 namespace App\Http\Controllers\Api\Application\Servers;
 
-use App\Enums\SuspendAction;
-use App\Http\Controllers\Api\Application\ApplicationApiController;
-use App\Http\Requests\Api\Application\Servers\ServerWriteRequest;
 use App\Models\Server;
-use App\Repositories\Daemon\DaemonServerRepository;
-use App\Services\Servers\ReinstallServerService;
+use App\Enums\SuspendAction;
+use Illuminate\Http\Response;
+use Dedoc\Scramble\Attributes\Group;
 use App\Services\Servers\SuspensionService;
 use App\Services\Servers\TransferServerService;
-use Dedoc\Scramble\Attributes\Group;
 use Illuminate\Http\Client\ConnectionException;
-use Illuminate\Http\Response;
+use App\Services\Servers\ReinstallServerService;
+use App\Repositories\Daemon\DaemonServerRepository;
+use App\Http\Requests\Api\Application\Servers\ServerWriteRequest;
+use App\Http\Controllers\Api\Application\ApplicationApiController;
 
 #[Group('Server', weight: 4)]
 class ServerManagementController extends ApplicationApiController
@@ -30,7 +30,7 @@ class ServerManagementController extends ApplicationApiController
     }
 
     /**
-     * Suspsend
+     * Suspsend.
      *
      * Suspend a server on the Panel.
      *
@@ -44,7 +44,7 @@ class ServerManagementController extends ApplicationApiController
     }
 
     /**
-     * Unsuspsend
+     * Unsuspsend.
      *
      * Unsuspend a server on the Panel.
      *
@@ -58,7 +58,7 @@ class ServerManagementController extends ApplicationApiController
     }
 
     /**
-     * Reinstall
+     * Reinstall.
      *
      * Mark a server as needing to be reinstalled.
      *
@@ -73,7 +73,7 @@ class ServerManagementController extends ApplicationApiController
     }
 
     /**
-     * Start transfer
+     * Start transfer.
      *
      * Starts a transfer of a server to a new node.
      */
@@ -95,7 +95,7 @@ class ServerManagementController extends ApplicationApiController
     }
 
     /**
-     * Cancel transfer
+     * Cancel transfer.
      *
      * Cancels a transfer of a server to a new node.
      *

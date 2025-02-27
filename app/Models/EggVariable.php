@@ -2,12 +2,12 @@
 
 namespace App\Models;
 
-use App\Contracts\Validatable;
 use App\Traits\HasValidation;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use App\Contracts\Validatable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 /**
  * @property int $id
@@ -23,8 +23,8 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property \Carbon\CarbonImmutable $created_at
  * @property \Carbon\CarbonImmutable $updated_at
  * @property bool $required
- * @property \App\Models\Egg $egg
- * @property \App\Models\ServerVariable $serverVariable
+ * @property Egg $egg
+ * @property ServerVariable $serverVariable
  *
  * The "server_value" variable is only present on the object if you've loaded this model
  * using the server relationship.

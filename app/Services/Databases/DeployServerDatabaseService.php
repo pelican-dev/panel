@@ -2,15 +2,17 @@
 
 namespace App\Services\Databases;
 
-use Webmozart\Assert\Assert;
 use App\Models\Server;
 use App\Models\Database;
 use App\Models\DatabaseHost;
+use Webmozart\Assert\Assert;
 use App\Exceptions\Service\Database\NoSuitableDatabaseHostException;
 
 readonly class DeployServerDatabaseService
 {
-    public function __construct(private DatabaseManagementService $managementService) {}
+    public function __construct(private DatabaseManagementService $managementService)
+    {
+    }
 
     public function handle(Server $server, array $data): Database
     {

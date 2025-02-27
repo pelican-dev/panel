@@ -2,21 +2,20 @@
 
 namespace App\Models;
 
-use App\Contracts\Validatable;
-use App\Exceptions\Service\HasActiveServersException;
-use App\Repositories\Daemon\DaemonConfigurationRepository;
+use Illuminate\Support\Str;
 use App\Traits\HasValidation;
-use Exception;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
-use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Relations\HasManyThrough;
-use Illuminate\Notifications\Notifiable;
+use App\Contracts\Validatable;
+use Symfony\Component\Yaml\Yaml;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Http;
-use Illuminate\Support\Str;
-use Symfony\Component\Yaml\Yaml;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Notifications\Notifiable;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use App\Exceptions\Service\HasActiveServersException;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use App\Repositories\Daemon\DaemonConfigurationRepository;
+use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 
 /**
  * @property int $id
@@ -306,7 +305,7 @@ class Node extends Model implements Validatable
                 return (new DaemonConfigurationRepository())
                     ->setNode($this)
                     ->getSystemInformation();
-            } catch (Exception $exception) {
+            } catch (\Exception $exception) {
                 $message = str($exception->getMessage());
 
                 if ($message->startsWith('cURL error 6: Could not resolve host')) {
@@ -327,7 +326,7 @@ class Node extends Model implements Validatable
         $statuses = [];
         try {
             $statuses = Http::daemon($this)->connectTimeout(1)->timeout(1)->get('/api/servers')->json() ?? [];
-        } catch (Exception $exception) {
+        } catch (\Exception $exception) {
             report($exception);
         }
 
@@ -360,7 +359,7 @@ class Node extends Model implements Validatable
                 ->timeout(1)
                 ->get('/api/system/utilization')
                 ->json() ?? $default;
-        } catch (Exception) {
+        } catch (\Exception) {
             return $default;
         }
     }
@@ -373,7 +372,7 @@ class Node extends Model implements Validatable
             try {
                 $addresses = Http::daemon($this)->connectTimeout(1)->timeout(1)->get('/api/system/ips')->json();
                 $ips = $ips->concat(fluent($addresses)->get('ip_addresses'));
-            } catch (Exception) {
+            } catch (\Exception) {
                 if (is_ip($this->fqdn)) {
                     $ips->push($this->fqdn);
                 }

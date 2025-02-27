@@ -3,10 +3,11 @@
 namespace App\Http\Controllers\Api\Client\Servers;
 
 use App\Models\Server;
-use Illuminate\Http\JsonResponse;
 use App\Facades\Activity;
 use App\Models\Allocation;
+use Illuminate\Http\JsonResponse;
 use App\Exceptions\DisplayException;
+use Dedoc\Scramble\Attributes\Group;
 use App\Transformers\Api\Client\AllocationTransformer;
 use App\Http\Controllers\Api\Client\ClientApiController;
 use App\Services\Allocations\FindAssignableAllocationService;
@@ -15,7 +16,6 @@ use App\Http\Requests\Api\Client\Servers\Network\NewAllocationRequest;
 use App\Http\Requests\Api\Client\Servers\Network\DeleteAllocationRequest;
 use App\Http\Requests\Api\Client\Servers\Network\UpdateAllocationRequest;
 use App\Http\Requests\Api\Client\Servers\Network\SetPrimaryAllocationRequest;
-use Dedoc\Scramble\Attributes\Group;
 
 #[Group('Server - Allocation')]
 class NetworkAllocationController extends ClientApiController
@@ -30,7 +30,7 @@ class NetworkAllocationController extends ClientApiController
     }
 
     /**
-     * List allocations
+     * List allocations.
      *
      * Lists all the allocations available to a server and whether
      * they are currently assigned as the primary for this server.
@@ -43,7 +43,7 @@ class NetworkAllocationController extends ClientApiController
     }
 
     /**
-     * Update allocation
+     * Update allocation.
      *
      * Set the primary allocation for a server.
      *
@@ -68,7 +68,7 @@ class NetworkAllocationController extends ClientApiController
     }
 
     /**
-     * Set primar<
+     * Set primar<.
      *
      * Set the primary allocation for a server.
      *
@@ -90,11 +90,11 @@ class NetworkAllocationController extends ClientApiController
     }
 
     /**
-     * Create allocation
+     * Create allocation.
      *
      * Set the notes for the allocation for a server.
      *
-     * @throws \App\Exceptions\DisplayException
+     * @throws DisplayException
      */
     public function store(NewAllocationRequest $request, Server $server): array
     {
@@ -115,11 +115,11 @@ class NetworkAllocationController extends ClientApiController
     }
 
     /**
-     * Delete allocation
+     * Delete allocation.
      *
      * Delete an allocation from a server.
      *
-     * @throws \App\Exceptions\DisplayException
+     * @throws DisplayException
      */
     public function delete(DeleteAllocationRequest $request, Server $server, Allocation $allocation): JsonResponse
     {

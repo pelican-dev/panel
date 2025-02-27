@@ -2,11 +2,10 @@
 
 namespace App\Livewire;
 
-use Closure;
+use Livewire\Wireable;
+use Illuminate\Support\Str;
 use Filament\Notifications\Concerns;
 use Filament\Support\Concerns\EvaluatesClosures;
-use Illuminate\Support\Str;
-use Livewire\Wireable;
 
 final class AlertBanner implements Wireable
 {
@@ -17,7 +16,7 @@ final class AlertBanner implements Wireable
     use Concerns\HasTitle;
     use EvaluatesClosures;
 
-    protected bool|Closure $closable = false;
+    protected bool|\Closure $closable = false;
 
     public static function make(?string $id = null): AlertBanner
     {
@@ -53,7 +52,7 @@ final class AlertBanner implements Wireable
         return $static;
     }
 
-    public function closable(bool|Closure $closable = true): AlertBanner
+    public function closable(bool|\Closure $closable = true): AlertBanner
     {
         $this->closable = $closable;
 

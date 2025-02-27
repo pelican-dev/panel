@@ -4,8 +4,8 @@ namespace App\Tests\Integration\Api\Client\Server\Schedule;
 
 use App\Models\Subuser;
 use App\Models\Schedule;
-use App\Tests\Integration\Api\Client\ClientApiIntegrationTestCase;
 use PHPUnit\Framework\Attributes\DataProvider;
+use App\Tests\Integration\Api\Client\ClientApiIntegrationTestCase;
 
 class ScheduleAuthorizationTest extends ClientApiIntegrationTestCase
 {
@@ -19,7 +19,7 @@ class ScheduleAuthorizationTest extends ClientApiIntegrationTestCase
      * being tested and protected against.
      */
     #[DataProvider('methodDataProvider')]
-    public function test_access_to_a_servers_schedules_is_restricted_properly(string $method, string $endpoint): void
+    public function testAccessToAServersSchedulesIsRestrictedProperly(string $method, string $endpoint): void
     {
         // The API $user is the owner of $server1.
         [$user, $server1] = $this->generateTestAccount();

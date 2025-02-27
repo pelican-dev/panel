@@ -2,13 +2,13 @@
 
 namespace App\Http\Controllers\Api\Client\Servers;
 
-use Illuminate\Http\Response;
 use App\Models\Server;
 use App\Facades\Activity;
+use Illuminate\Http\Response;
+use Dedoc\Scramble\Attributes\Group;
 use App\Repositories\Daemon\DaemonPowerRepository;
 use App\Http\Controllers\Api\Client\ClientApiController;
 use App\Http\Requests\Api\Client\Servers\SendPowerRequest;
-use Dedoc\Scramble\Attributes\Group;
 
 #[Group('Server', weight: 2)]
 class PowerController extends ClientApiController
@@ -22,7 +22,7 @@ class PowerController extends ClientApiController
     }
 
     /**
-     * Send power action
+     * Send power action.
      *
      * Send a power action to a server.
      */

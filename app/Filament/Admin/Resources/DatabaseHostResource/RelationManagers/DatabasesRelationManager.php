@@ -2,16 +2,16 @@
 
 namespace App\Filament\Admin\Resources\DatabaseHostResource\RelationManagers;
 
-use App\Filament\Components\Forms\Actions\RotateDatabasePasswordAction;
-use App\Filament\Components\Tables\Columns\DateTimeColumn;
 use App\Models\Database;
-use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
-use Filament\Resources\RelationManagers\RelationManager;
-use Filament\Tables\Actions\DeleteAction;
+use Filament\Tables\Table;
 use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
-use Filament\Tables\Table;
+use Filament\Forms\Components\TextInput;
+use Filament\Tables\Actions\DeleteAction;
+use Filament\Resources\RelationManagers\RelationManager;
+use App\Filament\Components\Tables\Columns\DateTimeColumn;
+use App\Filament\Components\Forms\Actions\RotateDatabasePasswordAction;
 
 class DatabasesRelationManager extends RelationManager
 {
@@ -33,7 +33,7 @@ class DatabasesRelationManager extends RelationManager
                     ->formatStateUsing(fn (Database $database) => $database->password),
                 TextInput::make('remote')
                     ->label(trans('admin/databasehost.table.remote'))
-                    ->formatStateUsing(fn (Database $record) => $record->remote === '%' ? trans('admin/databasehost.anywhere'). ' ( % )' : $record->remote),
+                    ->formatStateUsing(fn (Database $record) => $record->remote === '%' ? trans('admin/databasehost.anywhere') . ' ( % )' : $record->remote),
                 TextInput::make('max_connections')
                     ->label(trans('admin/databasehost.table.max_connections'))
                     ->formatStateUsing(fn (Database $record) => $record->max_connections === 0 ? trans('admin/databasehost.unlimited') : $record->max_connections),
@@ -59,7 +59,7 @@ class DatabasesRelationManager extends RelationManager
                     ->icon('tabler-user'),
                 TextColumn::make('remote')
                     ->label(trans('admin/databasehost.table.remote'))
-                    ->formatStateUsing(fn (Database $record) => $record->remote === '%' ? trans('admin/databasehost.anywhere'). ' ( % )' : $record->remote),
+                    ->formatStateUsing(fn (Database $record) => $record->remote === '%' ? trans('admin/databasehost.anywhere') . ' ( % )' : $record->remote),
                 TextColumn::make('server.name')
                     ->icon('tabler-brand-docker')
                     ->url(fn (Database $database) => route('filament.admin.resources.servers.edit', ['record' => $database->server_id])),

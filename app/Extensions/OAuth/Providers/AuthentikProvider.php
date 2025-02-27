@@ -2,9 +2,9 @@
 
 namespace App\Extensions\OAuth\Providers;
 
-use Filament\Forms\Components\ColorPicker;
-use Filament\Forms\Components\TextInput;
 use Illuminate\Foundation\Application;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\ColorPicker;
 use SocialiteProviders\Authentik\Provider;
 
 final class AuthentikProvider extends OAuthProvider

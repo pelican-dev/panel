@@ -20,7 +20,6 @@ use Symfony\Component\HttpKernel\Exception\HttpException;
 use Symfony\Component\Mailer\Exception\TransportException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Symfony\Component\HttpKernel\Exception\HttpExceptionInterface;
-use Throwable;
 
 class Handler extends ExceptionHandler
 {
@@ -115,7 +114,7 @@ class Handler extends ExceptionHandler
     /**
      * Render an exception into an HTTP response.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param \Illuminate\Http\Request $request
      *
      * @throws \Throwable
      */
@@ -141,7 +140,7 @@ class Handler extends ExceptionHandler
      * Transform a validation exception into a consistent format to be returned for
      * calls to the API.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param \Illuminate\Http\Request $request
      */
     public function invalidJson($request, ValidationException $exception): JsonResponse
     {
@@ -180,7 +179,7 @@ class Handler extends ExceptionHandler
         return response()->json(['errors' => $errors], $exception->status);
     }
 
-    public static function exceptionToArray(Throwable $e, array $override = []): array
+    public static function exceptionToArray(\Throwable $e, array $override = []): array
     {
         $match = self::$exceptionResponseCodes[get_class($e)] ?? null;
 
@@ -226,7 +225,7 @@ class Handler extends ExceptionHandler
     /**
      * Return the exception as a JSONAPI representation for use on API requests.
      */
-    protected function convertExceptionToArray(Throwable $e, array $override = []): array
+    protected function convertExceptionToArray(\Throwable $e, array $override = []): array
     {
         return self::exceptionToArray($e, $override);
     }
@@ -242,7 +241,7 @@ class Handler extends ExceptionHandler
     /**
      * Convert an authentication exception into an unauthenticated response.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param \Illuminate\Http\Request $request
      */
     protected function unauthenticated($request, AuthenticationException $exception): JsonResponse|RedirectResponse
     {
@@ -257,9 +256,9 @@ class Handler extends ExceptionHandler
      * Extracts all the previous exceptions that lead to the one passed into this
      * function being thrown.
      *
-     * @return Throwable[]
+     * @return \Throwable[]
      */
-    public static function extractPrevious(Throwable $e): array
+    public static function extractPrevious(\Throwable $e): array
     {
         $previous = [];
         while ($value = $e->getPrevious()) {

@@ -2,24 +2,24 @@
 
 namespace App\Filament\Admin\Resources\ServerResource\RelationManagers;
 
-use App\Filament\Admin\Resources\ServerResource\Pages\CreateServer;
-use App\Models\Allocation;
+use Filament\Tables;
 use App\Models\Server;
-use App\Services\Allocations\AssignmentService;
-use Filament\Forms\Components\Select;
-use Filament\Forms\Components\TagsInput;
-use Filament\Forms\Components\TextInput;
 use Filament\Forms\Get;
 use Filament\Forms\Set;
-use Filament\Resources\RelationManagers\RelationManager;
-use Filament\Tables;
+use App\Models\Allocation;
+use Filament\Tables\Table;
 use Filament\Tables\Actions\Action;
-use Filament\Tables\Actions\AssociateAction;
-use Filament\Tables\Actions\CreateAction;
+use Filament\Forms\Components\Select;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Forms\Components\TagsInput;
+use Filament\Forms\Components\TextInput;
+use Filament\Tables\Actions\CreateAction;
+use Filament\Tables\Actions\AssociateAction;
 use Filament\Tables\Columns\TextInputColumn;
-use Filament\Tables\Table;
+use App\Services\Allocations\AssignmentService;
+use Filament\Resources\RelationManagers\RelationManager;
+use App\Filament\Admin\Resources\ServerResource\Pages\CreateServer;
 
 /**
  * @method Server getOwnerRecord()
@@ -81,8 +81,11 @@ class AllocationsRelationManager extends RelationManager
                             ->label(trans('admin/server.ports'))
                             ->inlineLabel()
                             ->live()
-                            ->afterStateUpdated(fn ($state, Set $set, Get $get) => $set('allocation_ports',
-                                CreateServer::retrieveValidPorts($this->getOwnerRecord()->node, $state, $get('allocation_ip')))
+                            ->afterStateUpdated(
+                                fn ($state, Set $set, Get $get) => $set(
+                                    'allocation_ports',
+                                    CreateServer::retrieveValidPorts($this->getOwnerRecord()->node, $state, $get('allocation_ip'))
+                                )
                             )
                             ->splitKeys(['Tab', ' ', ','])
                             ->required(),

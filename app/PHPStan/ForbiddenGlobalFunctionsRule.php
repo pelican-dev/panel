@@ -3,9 +3,9 @@
 namespace App\PHPStan;
 
 use PhpParser\Node;
-use PhpParser\Node\Expr\FuncCall;
-use PHPStan\Analyser\Scope;
 use PHPStan\Rules\Rule;
+use PHPStan\Analyser\Scope;
+use PhpParser\Node\Expr\FuncCall;
 use PHPStan\Rules\RuleErrorBuilder;
 
 class ForbiddenGlobalFunctionsRule implements Rule

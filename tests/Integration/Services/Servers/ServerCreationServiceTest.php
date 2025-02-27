@@ -2,18 +2,18 @@
 
 namespace App\Tests\Integration\Services\Servers;
 
-use Illuminate\Http\Client\ConnectionException;
-use Mockery\MockInterface;
 use App\Models\Egg;
 use App\Models\Node;
 use App\Models\User;
 use App\Models\Server;
 use App\Models\Allocation;
-use Illuminate\Foundation\Testing\WithFaker;
-use Illuminate\Validation\ValidationException;
+use Mockery\MockInterface;
 use App\Models\Objects\DeploymentObject;
+use Illuminate\Foundation\Testing\WithFaker;
 use App\Tests\Integration\IntegrationTestCase;
+use Illuminate\Validation\ValidationException;
 use App\Services\Servers\ServerCreationService;
+use Illuminate\Http\Client\ConnectionException;
 use App\Repositories\Daemon\DaemonServerRepository;
 
 class ServerCreationServiceTest extends IntegrationTestCase
@@ -48,12 +48,12 @@ class ServerCreationServiceTest extends IntegrationTestCase
      * tests to cover that the logic being used does indeed find suitable nodes and ports. For
      * this test we just care that it is recognized and passed off to those functions.
      */
-    public function test_server_is_created_with_deployment_object(): void
+    public function testServerIsCreatedWithDeploymentObject(): void
     {
-        /** @var \App\Models\User $user */
+        /** @var User $user */
         $user = User::factory()->create();
 
-        /** @var \App\Models\Node $node */
+        /** @var Node $node */
         $node = Node::factory()->create();
 
         /** @var \App\Models\Allocation[]|\Illuminate\Database\Eloquent\Collection $allocations */
@@ -145,15 +145,15 @@ class ServerCreationServiceTest extends IntegrationTestCase
      * Test that a server is deleted from the Panel if daemon returns an error during the creation
      * process.
      */
-    public function test_error_encountered_by_daemon_causes_server_to_be_deleted(): void
+    public function testErrorEncounteredByDaemonCausesServerToBeDeleted(): void
     {
-        /** @var \App\Models\User $user */
+        /** @var User $user */
         $user = User::factory()->create();
 
-        /** @var \App\Models\Node $node */
+        /** @var Node $node */
         $node = Node::factory()->create();
 
-        /** @var \App\Models\Allocation $allocation */
+        /** @var Allocation $allocation */
         $allocation = Allocation::factory()->create([
             'node_id' => $node->id,
         ]);

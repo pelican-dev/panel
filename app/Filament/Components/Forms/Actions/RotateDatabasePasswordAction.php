@@ -2,13 +2,12 @@
 
 namespace App\Filament\Components\Forms\Actions;
 
-use App\Models\Database;
-use App\Services\Databases\DatabasePasswordService;
-use Exception;
-use Filament\Actions\StaticAction;
-use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Set;
+use App\Models\Database;
+use Filament\Actions\StaticAction;
 use Filament\Notifications\Notification;
+use Filament\Forms\Components\Actions\Action;
+use App\Services\Databases\DatabasePasswordService;
 
 class RotateDatabasePasswordAction extends Action
 {
@@ -48,7 +47,7 @@ class RotateDatabasePasswordAction extends Action
                     ->title(trans('admin/databasehost.rotated'))
                     ->success()
                     ->send();
-            } catch (Exception $exception) {
+            } catch (\Exception $exception) {
                 Notification::make()
                     ->title(trans('admin/databasehost.rotate_error'))
                     ->body($exception->getMessage())

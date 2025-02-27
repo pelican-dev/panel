@@ -7,12 +7,12 @@ use App\Models\Model;
 use App\Models\Backup;
 use App\Models\Server;
 use App\Models\Schedule;
-use Illuminate\Support\Collection;
 use App\Models\Allocation;
+use Illuminate\Support\Collection;
 use App\Tests\Integration\TestResponse;
 use App\Tests\Integration\IntegrationTestCase;
-use Illuminate\Database\Eloquent\Model as EloquentModel;
 use App\Transformers\Api\Client\BaseClientTransformer;
+use Illuminate\Database\Eloquent\Model as EloquentModel;
 
 abstract class ClientApiIntegrationTestCase extends IntegrationTestCase
 {
@@ -20,12 +20,11 @@ abstract class ClientApiIntegrationTestCase extends IntegrationTestCase
      * Override the default createTestResponse from Illuminate so that we can
      * just dump 500-level errors to the screen in the tests without having
      * to keep re-assigning variables.
-    protected function createTestResponse($response, $request): \Illuminate\Testing\TestResponse
-    {
-        return TestResponse::fromBaseResponse($response);
-    }
-
-    /**
+     * protected function createTestResponse($response, $request): \Illuminate\Testing\TestResponse
+     * {
+     * return TestResponse::fromBaseResponse($response);
+     * }.
+     * /**
      * Returns a link to the specific resource using the client API.
      */
     protected function link(mixed $model, ?string $append = null): string

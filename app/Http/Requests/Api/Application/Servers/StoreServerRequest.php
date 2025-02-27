@@ -4,8 +4,8 @@ namespace App\Http\Requests\Api\Application\Servers;
 
 use App\Models\Server;
 use Illuminate\Validation\Rule;
-use Illuminate\Validation\Validator;
 use App\Services\Acl\Api\AdminAcl;
+use Illuminate\Validation\Validator;
 use App\Models\Objects\DeploymentObject;
 use App\Http\Requests\Api\Application\ApplicationApiRequest;
 
@@ -124,7 +124,7 @@ class StoreServerRequest extends ApplicationApiRequest
             return !$input->deploy;
         });
 
-        /** @deprecated use tags instead */
+        /* @deprecated use tags instead */
         $validator->sometimes('deploy.locations', 'present', function ($input) {
             return $input->deploy;
         });

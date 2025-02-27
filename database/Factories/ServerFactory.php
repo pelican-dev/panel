@@ -2,14 +2,14 @@
 
 namespace Database\Factories;
 
-use App\Models\Allocation;
+use Carbon\Carbon;
 use App\Models\Egg;
 use App\Models\Node;
 use App\Models\User;
-use Carbon\Carbon;
 use Ramsey\Uuid\Uuid;
-use Illuminate\Support\Str;
 use App\Models\Server;
+use App\Models\Allocation;
+use Illuminate\Support\Str;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class ServerFactory extends Factory

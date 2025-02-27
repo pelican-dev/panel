@@ -2,12 +2,12 @@
 
 namespace App\Models\Traits;
 
+use App\Models\ApiKey;
 use Illuminate\Support\Str;
 use Laravel\Sanctum\Sanctum;
-use App\Models\ApiKey;
 use Laravel\Sanctum\HasApiTokens;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 use App\Extensions\Laravel\Sanctum\NewAccessToken;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
  * @mixin \App\Models\Model
@@ -26,7 +26,7 @@ trait HasAccessTokens
 
     public function createToken(?string $memo, ?array $ips): NewAccessToken
     {
-        /** @var \App\Models\ApiKey $token */
+        /** @var ApiKey $token */
         $token = $this->tokens()->forceCreate([
             'user_id' => $this->id,
             'key_type' => ApiKey::TYPE_ACCOUNT,

@@ -29,7 +29,7 @@ class ActivityLogBatchService
             $this->uuid = Uuid::uuid4()->toString();
         }
 
-        $this->transaction++;
+        ++$this->transaction;
     }
 
     /**

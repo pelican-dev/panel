@@ -1,10 +1,9 @@
 <?php
 
-use Illuminate\Database\Migrations\Migration;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Database\Migrations\Migration;
 
-return new class extends Migration
-{
+return new class () extends Migration {
     public function up(): void
     {
         $eggs = DB::table('eggs')->get();

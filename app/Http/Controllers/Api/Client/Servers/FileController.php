@@ -2,12 +2,14 @@
 
 namespace App\Http\Controllers\Api\Client\Servers;
 
+use App\Models\Server;
+use App\Facades\Activity;
 use Carbon\CarbonImmutable;
 use Illuminate\Http\Response;
-use App\Models\Server;
 use Illuminate\Http\JsonResponse;
-use App\Facades\Activity;
+use Dedoc\Scramble\Attributes\Group;
 use App\Services\Nodes\NodeJWTService;
+use Illuminate\Http\Client\ConnectionException;
 use App\Repositories\Daemon\DaemonFileRepository;
 use App\Transformers\Api\Client\FileObjectTransformer;
 use App\Http\Controllers\Api\Client\ClientApiController;
@@ -22,8 +24,6 @@ use App\Http\Requests\Api\Client\Servers\Files\CompressFilesRequest;
 use App\Http\Requests\Api\Client\Servers\Files\DecompressFilesRequest;
 use App\Http\Requests\Api\Client\Servers\Files\GetFileContentsRequest;
 use App\Http\Requests\Api\Client\Servers\Files\WriteFileContentRequest;
-use Dedoc\Scramble\Attributes\Group;
-use Illuminate\Http\Client\ConnectionException;
 
 #[Group('Server - File', weight: 0)]
 class FileController extends ClientApiController
@@ -39,7 +39,7 @@ class FileController extends ClientApiController
     }
 
     /**
-     * List files
+     * List files.
      *
      * Returns a listing of files in a given directory.
      *
@@ -57,7 +57,7 @@ class FileController extends ClientApiController
     }
 
     /**
-     * View file
+     * View file.
      *
      * Return the contents of a specified file for the user.
      *
@@ -78,7 +78,7 @@ class FileController extends ClientApiController
     }
 
     /**
-     * Download file
+     * Download file.
      *
      * Generates a one-time token with a link that the user can use to
      * download a given file.
@@ -111,7 +111,7 @@ class FileController extends ClientApiController
     }
 
     /**
-     * Write file
+     * Write file.
      *
      * Writes the contents of the specified file to the server.
      *
@@ -131,7 +131,7 @@ class FileController extends ClientApiController
     }
 
     /**
-     * Create directory
+     * Create directory.
      *
      * Creates a new folder on the server.
      *
@@ -152,7 +152,7 @@ class FileController extends ClientApiController
     }
 
     /**
-     * Rename file
+     * Rename file.
      *
      * Renames a file on the remote machine.
      *
@@ -177,7 +177,7 @@ class FileController extends ClientApiController
     }
 
     /**
-     * Copy file
+     * Copy file.
      *
      * Copies a file on the server.
      *
@@ -197,7 +197,7 @@ class FileController extends ClientApiController
     }
 
     /**
-     * Compress files
+     * Compress files.
      *
      * @throws ConnectionException
      */
@@ -219,7 +219,7 @@ class FileController extends ClientApiController
     }
 
     /**
-     * Decompress files
+     * Decompress files.
      *
      * @throws ConnectionException
      */
@@ -241,7 +241,7 @@ class FileController extends ClientApiController
     }
 
     /**
-     * Delete files/ folders
+     * Delete files/ folders.
      *
      * Deletes files or folders for the server in the given root directory.
      *
@@ -263,7 +263,7 @@ class FileController extends ClientApiController
     }
 
     /**
-     * Update file permissions
+     * Update file permissions.
      *
      * Updates file permissions for file(s) in the given root directory.
      *
@@ -280,7 +280,7 @@ class FileController extends ClientApiController
     }
 
     /**
-     * Pull remote file
+     * Pull remote file.
      *
      * Requests that a file be downloaded from a remote location by daemon.
      *

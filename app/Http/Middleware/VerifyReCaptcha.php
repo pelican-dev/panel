@@ -2,16 +2,18 @@
 
 namespace App\Http\Middleware;
 
-use Illuminate\Foundation\Application;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use App\Events\Auth\FailedCaptcha;
+use Illuminate\Foundation\Application;
 use Coderflex\LaravelTurnstile\Facades\LaravelTurnstile;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 
 readonly class VerifyReCaptcha
 {
-    public function __construct(private Application $app) {}
+    public function __construct(private Application $app)
+    {
+    }
 
     public function handle(Request $request, \Closure $next): mixed
     {

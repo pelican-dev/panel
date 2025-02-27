@@ -2,8 +2,8 @@
 
 namespace App\Repositories\Daemon;
 
-use Illuminate\Http\Client\Response;
 use App\Models\Backup;
+use Illuminate\Http\Client\Response;
 use Illuminate\Http\Client\ConnectionException;
 
 class DaemonBackupRepository extends DaemonRepository
@@ -27,7 +27,8 @@ class DaemonBackupRepository extends DaemonRepository
      */
     public function backup(Backup $backup): Response
     {
-        return $this->getHttpClient()->post("/api/servers/{$this->server->uuid}/backup",
+        return $this->getHttpClient()->post(
+            "/api/servers/{$this->server->uuid}/backup",
             [
                 'adapter' => $this->adapter ?? config('backups.default'),
                 'uuid' => $backup->uuid,
@@ -43,7 +44,8 @@ class DaemonBackupRepository extends DaemonRepository
      */
     public function restore(Backup $backup, ?string $url = null, bool $truncate = false): Response
     {
-        return $this->getHttpClient()->post("/api/servers/{$this->server->uuid}/backup/$backup->uuid/restore",
+        return $this->getHttpClient()->post(
+            "/api/servers/{$this->server->uuid}/backup/$backup->uuid/restore",
             [
                 'adapter' => $backup->disk,
                 'truncate_directory' => $truncate,

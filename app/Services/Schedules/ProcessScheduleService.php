@@ -2,18 +2,20 @@
 
 namespace App\Services\Schedules;
 
-use App\Models\Task;
 use Exception;
+use App\Models\Task;
 use App\Models\Schedule;
-use Illuminate\Contracts\Bus\Dispatcher;
 use App\Jobs\Schedule\RunTaskJob;
-use Illuminate\Database\ConnectionInterface;
 use App\Exceptions\DisplayException;
+use Illuminate\Contracts\Bus\Dispatcher;
+use Illuminate\Database\ConnectionInterface;
 use App\Repositories\Daemon\DaemonServerRepository;
 
 class ProcessScheduleService
 {
-    public function __construct(private ConnectionInterface $connection, private Dispatcher $dispatcher, private DaemonServerRepository $serverRepository) {}
+    public function __construct(private ConnectionInterface $connection, private Dispatcher $dispatcher, private DaemonServerRepository $serverRepository)
+    {
+    }
 
     /**
      * Process a schedule and push the first task onto the queue worker.
@@ -49,7 +51,7 @@ class ProcessScheduleService
 
                     return;
                 }
-            } catch (Exception) {
+            } catch (\Exception) {
                 $job->failed();
 
                 return;
@@ -63,7 +65,7 @@ class ProcessScheduleService
             // so we need to manually trigger it and then continue with the exception throw.
             try {
                 $this->dispatcher->dispatchNow($job);
-            } catch (Exception $exception) {
+            } catch (\Exception $exception) {
                 $job->failed();
 
                 throw $exception;

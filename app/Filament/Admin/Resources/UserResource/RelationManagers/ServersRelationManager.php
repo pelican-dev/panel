@@ -2,16 +2,16 @@
 
 namespace App\Filament\Admin\Resources\UserResource\RelationManagers;
 
-use App\Enums\ServerState;
-use App\Enums\SuspendAction;
-use App\Models\Server;
 use App\Models\User;
+use App\Models\Server;
+use App\Enums\ServerState;
+use Filament\Tables\Table;
+use App\Enums\SuspendAction;
+use Filament\Tables\Actions;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Columns\SelectColumn;
 use App\Services\Servers\SuspensionService;
 use Filament\Resources\RelationManagers\RelationManager;
-use Filament\Tables\Actions;
-use Filament\Tables\Columns\SelectColumn;
-use Filament\Tables\Columns\TextColumn;
-use Filament\Tables\Table;
 
 class ServersRelationManager extends RelationManager
 {
@@ -27,7 +27,8 @@ class ServersRelationManager extends RelationManager
             ->heading(trans('admin/user.servers'))
             ->headerActions([
                 Actions\Action::make('toggleSuspend')
-                    ->hidden(fn () => $user->servers()
+                    ->hidden(
+                        fn () => $user->servers()
                         ->whereNot('status', ServerState::Suspended)
                         ->orWhereNull('status')
                         ->count() === 0

@@ -3,9 +3,9 @@
 namespace App\Filament\Components\Forms\Fields;
 
 use App\Models\Egg;
-use Filament\Forms\Components\Select;
 use Filament\Forms\Set;
 use Livewire\Component;
+use Filament\Forms\Components\Select;
 
 class CopyFrom extends Select
 {

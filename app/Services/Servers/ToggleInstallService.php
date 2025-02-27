@@ -2,8 +2,8 @@
 
 namespace App\Services\Servers;
 
-use App\Enums\ServerState;
 use App\Models\Server;
+use App\Enums\ServerState;
 
 class ToggleInstallService
 {

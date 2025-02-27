@@ -2,11 +2,11 @@
 
 namespace App\Filament\Server\Widgets;
 
-use App\Models\Server;
 use Carbon\Carbon;
+use App\Models\Server;
 use Filament\Support\RawJs;
-use Filament\Widgets\ChartWidget;
 use Illuminate\Support\Number;
+use Filament\Widgets\ChartWidget;
 
 class ServerCpuChart extends ChartWidget
 {

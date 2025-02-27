@@ -2,30 +2,29 @@
 
 namespace App\Livewire\Installer;
 
-use App\Filament\Admin\Pages\Dashboard;
-use App\Livewire\Installer\Steps\CacheStep;
-use App\Livewire\Installer\Steps\DatabaseStep;
-use App\Livewire\Installer\Steps\EnvironmentStep;
-use App\Livewire\Installer\Steps\QueueStep;
-use App\Livewire\Installer\Steps\RequirementsStep;
-use App\Livewire\Installer\Steps\SessionStep;
 use App\Models\User;
-use App\Services\Users\UserCreationService;
-use App\Traits\CheckMigrationsTrait;
-use App\Traits\EnvironmentWriterTrait;
-use Exception;
-use Filament\Forms\Components\Actions\Action;
-use Filament\Forms\Components\Wizard;
-use Filament\Forms\Concerns\InteractsWithForms;
-use Filament\Forms\Contracts\HasForms;
 use Filament\Forms\Form;
-use Filament\Notifications\Notification;
 use Filament\Pages\SimplePage;
-use Filament\Support\Enums\MaxWidth;
-use Filament\Support\Exceptions\Halt;
-use Illuminate\Support\Facades\Artisan;
-use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\HtmlString;
+use App\Traits\CheckMigrationsTrait;
+use Filament\Support\Enums\MaxWidth;
+use Filament\Forms\Components\Wizard;
+use Filament\Support\Exceptions\Halt;
+use Illuminate\Support\Facades\Blade;
+use App\Traits\EnvironmentWriterTrait;
+use Filament\Forms\Contracts\HasForms;
+use App\Filament\Admin\Pages\Dashboard;
+use Illuminate\Support\Facades\Artisan;
+use Filament\Notifications\Notification;
+use App\Livewire\Installer\Steps\CacheStep;
+use App\Livewire\Installer\Steps\QueueStep;
+use App\Services\Users\UserCreationService;
+use App\Livewire\Installer\Steps\SessionStep;
+use Filament\Forms\Components\Actions\Action;
+use App\Livewire\Installer\Steps\DatabaseStep;
+use Filament\Forms\Concerns\InteractsWithForms;
+use App\Livewire\Installer\Steps\EnvironmentStep;
+use App\Livewire\Installer\Steps\RequirementsStep;
 
 /**
  * @property Form $form
@@ -116,7 +115,7 @@ class PanelInstaller extends SimplePage implements HasForms
             $variables = array_get($this->data, $key);
             $variables = array_filter($variables); // Filter array to remove NULL values
             $this->writeToEnvironment($variables);
-        } catch (Exception $exception) {
+        } catch (\Exception $exception) {
             report($exception);
 
             Notification::make()
@@ -139,7 +138,7 @@ class PanelInstaller extends SimplePage implements HasForms
                 '--force' => true,
                 '--seed' => true,
             ]);
-        } catch (Exception $exception) {
+        } catch (\Exception $exception) {
             report($exception);
 
             Notification::make()
@@ -170,7 +169,7 @@ class PanelInstaller extends SimplePage implements HasForms
             $userData['root_admin'] = true;
 
             return $userCreationService->handle($userData);
-        } catch (Exception $exception) {
+        } catch (\Exception $exception) {
             report($exception);
 
             Notification::make()

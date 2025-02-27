@@ -1,7 +1,6 @@
 <?php
 
 return [
-
     'turnstile_enabled' => env('TURNSTILE_ENABLED', false),
 
     'turnstile_site_key' => env('TURNSTILE_SITE_KEY', null),

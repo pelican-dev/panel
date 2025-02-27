@@ -2,12 +2,12 @@
 
 namespace App\Extensions\OAuth\Providers;
 
-use Filament\Forms\Components\Placeholder;
-use Filament\Forms\Components\TextInput;
-use Filament\Forms\Components\Wizard\Step;
-use Illuminate\Foundation\Application;
 use Illuminate\Support\HtmlString;
+use Illuminate\Foundation\Application;
 use SocialiteProviders\Steam\Provider;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Placeholder;
+use Filament\Forms\Components\Wizard\Step;
 
 final class SteamProvider extends OAuthProvider
 {

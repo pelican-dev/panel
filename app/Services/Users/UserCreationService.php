@@ -3,12 +3,12 @@
 namespace App\Services\Users;
 
 use App\Models\Role;
-use Ramsey\Uuid\Uuid;
 use App\Models\User;
+use Ramsey\Uuid\Uuid;
+use App\Notifications\AccountCreated;
 use Illuminate\Contracts\Hashing\Hasher;
 use Illuminate\Database\ConnectionInterface;
 use Illuminate\Contracts\Auth\PasswordBroker;
-use App\Notifications\AccountCreated;
 
 class UserCreationService
 {
@@ -19,7 +19,8 @@ class UserCreationService
         private ConnectionInterface $connection,
         private Hasher $hasher,
         private PasswordBroker $passwordBroker,
-    ) {}
+    ) {
+    }
 
     /**
      * Create a new user on the system.

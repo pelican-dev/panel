@@ -3,14 +3,16 @@
 namespace App\Checks;
 
 use App\Models\Node;
-use App\Services\Helpers\SoftwareVersionService;
 use Spatie\Health\Checks\Check;
-use Spatie\Health\Checks\Result;
 use Spatie\Health\Enums\Status;
+use Spatie\Health\Checks\Result;
+use App\Services\Helpers\SoftwareVersionService;
 
 class NodeVersionsCheck extends Check
 {
-    public function __construct(private SoftwareVersionService $versionService) {}
+    public function __construct(private SoftwareVersionService $versionService)
+    {
+    }
 
     public function run(): Result
     {

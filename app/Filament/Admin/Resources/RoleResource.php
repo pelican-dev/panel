@@ -2,27 +2,27 @@
 
 namespace App\Filament\Admin\Resources;
 
+use App\Models\Role;
+use Filament\Forms\Get;
+use Filament\Forms\Form;
+use Filament\Tables\Table;
+use Illuminate\Support\Str;
+use Filament\Resources\Resource;
 use App\Enums\RolePermissionModels;
 use App\Enums\RolePermissionPrefixes;
-use App\Filament\Admin\Resources\RoleResource\Pages;
-use App\Models\Role;
-use Filament\Forms\Components\Actions\Action;
-use Filament\Forms\Components\CheckboxList;
-use Filament\Forms\Components\Component;
-use Filament\Forms\Components\Fieldset;
-use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\Section;
-use Filament\Forms\Components\TextInput;
-use Filament\Forms\Form;
-use Filament\Forms\Get;
-use Filament\Resources\Resource;
-use Filament\Tables\Actions\CreateAction;
-use Filament\Tables\Actions\DeleteBulkAction;
+use Filament\Forms\Components\Fieldset;
 use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
-use Filament\Tables\Table;
-use Illuminate\Support\Str;
+use Filament\Forms\Components\Component;
+use Filament\Forms\Components\TextInput;
+use Filament\Tables\Actions\CreateAction;
+use Filament\Forms\Components\Placeholder;
+use Filament\Forms\Components\CheckboxList;
+use Filament\Forms\Components\Actions\Action;
+use Filament\Tables\Actions\DeleteBulkAction;
+use App\Filament\Admin\Resources\RoleResource\Pages;
 
 class RoleResource extends Resource
 {
@@ -178,7 +178,6 @@ class RoleResource extends Resource
                     ->afterStateHydrated(
                         function (Component $component, string $operation, ?Role $record) use ($options) {
                             if (in_array($operation, ['edit', 'view'])) {
-
                                 if (blank($record)) {
                                     return;
                                 }

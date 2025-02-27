@@ -2,8 +2,8 @@
 
 namespace App\Notifications;
 
-use App\Models\Server;
 use App\Models\User;
+use App\Models\Server;
 use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Notification;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -13,7 +13,9 @@ class AddedToServer extends Notification implements ShouldQueue
 {
     use Queueable;
 
-    public function __construct(public Server $server) {}
+    public function __construct(public Server $server)
+    {
+    }
 
     public function via(): array
     {

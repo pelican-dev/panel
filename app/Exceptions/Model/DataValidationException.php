@@ -2,10 +2,10 @@
 
 namespace App\Exceptions\Model;
 
+use App\Exceptions\PanelException;
 use Illuminate\Support\MessageBag;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Contracts\Validation\Validator;
-use App\Exceptions\PanelException;
 use Illuminate\Contracts\Support\MessageProvider;
 use Symfony\Component\HttpKernel\Exception\HttpExceptionInterface;
 

@@ -2,10 +2,10 @@
 
 namespace App\Filament\Admin\Resources\DatabaseHostResource\Pages;
 
-use App\Filament\Admin\Resources\DatabaseHostResource;
-use App\Filament\Admin\Resources\DatabaseHostResource\RelationManagers\DatabasesRelationManager;
 use Filament\Actions\EditAction;
 use Filament\Resources\Pages\ViewRecord;
+use App\Filament\Admin\Resources\DatabaseHostResource;
+use App\Filament\Admin\Resources\DatabaseHostResource\RelationManagers\DatabasesRelationManager;
 
 class ViewDatabaseHost extends ViewRecord
 {

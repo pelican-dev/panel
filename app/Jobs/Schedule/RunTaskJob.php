@@ -2,18 +2,18 @@
 
 namespace App\Jobs\Schedule;
 
+use Exception;
 use App\Jobs\Job;
-use Carbon\CarbonImmutable;
 use App\Models\Task;
+use Carbon\CarbonImmutable;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Queue\InteractsWithQueue;
+use App\Services\Files\DeleteFilesService;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\DispatchesJobs;
 use App\Services\Backups\InitiateBackupService;
-use App\Repositories\Daemon\DaemonPowerRepository;
-use App\Services\Files\DeleteFilesService;
-use Exception;
 use Illuminate\Http\Client\ConnectionException;
+use App\Repositories\Daemon\DaemonPowerRepository;
 
 class RunTaskJob extends Job implements ShouldQueue
 {
@@ -24,7 +24,9 @@ class RunTaskJob extends Job implements ShouldQueue
     /**
      * RunTaskJob constructor.
      */
-    public function __construct(public Task $task, public bool $manualRun = false) {}
+    public function __construct(public Task $task, public bool $manualRun = false)
+    {
+    }
 
     /**
      * Run the job and send actions to the daemon running the server.
@@ -73,7 +75,7 @@ class RunTaskJob extends Job implements ShouldQueue
                 default:
                     throw new \InvalidArgumentException('Invalid task action provided: ' . $this->task->action);
             }
-        } catch (Exception $exception) {
+        } catch (\Exception $exception) {
             // If this isn't a ConnectionException on a task that allows for failures
             // throw the exception back up the chain so that the task is stopped.
             if (!($this->task->continue_on_failure && $exception instanceof ConnectionException)) {
@@ -99,7 +101,7 @@ class RunTaskJob extends Job implements ShouldQueue
      */
     private function queueNextTask(): void
     {
-        /** @var \App\Models\Task|null $nextTask */
+        /** @var Task|null $nextTask */
         $nextTask = Task::query()->where('schedule_id', $this->task->schedule_id)
             ->orderBy('sequence_id', 'asc')
             ->where('sequence_id', '>', $this->task->sequence_id)

@@ -2,21 +2,21 @@
 
 namespace App\Filament\Admin\Resources;
 
-use App\Filament\Admin\Resources\ApiKeyResource\Pages;
-use App\Filament\Admin\Resources\UserResource\Pages\EditUser;
-use App\Filament\Components\Tables\Columns\DateTimeColumn;
 use App\Models\ApiKey;
-use Filament\Forms\Components\Fieldset;
-use Filament\Forms\Components\TagsInput;
-use Filament\Forms\Components\Textarea;
-use Filament\Forms\Components\ToggleButtons;
 use Filament\Forms\Form;
+use Filament\Tables\Table;
 use Filament\Resources\Resource;
+use Filament\Forms\Components\Fieldset;
+use Filament\Forms\Components\Textarea;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Forms\Components\TagsInput;
 use Filament\Tables\Actions\CreateAction;
 use Filament\Tables\Actions\DeleteAction;
-use Filament\Tables\Columns\TextColumn;
-use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
+use Filament\Forms\Components\ToggleButtons;
+use App\Filament\Admin\Resources\ApiKeyResource\Pages;
+use App\Filament\Components\Tables\Columns\DateTimeColumn;
+use App\Filament\Admin\Resources\UserResource\Pages\EditUser;
 
 class ApiKeyResource extends Resource
 {
@@ -103,7 +103,8 @@ class ApiKeyResource extends Resource
                         'md' => 2,
                     ])
                     ->schema(
-                        collect(ApiKey::getPermissionList())->map(fn ($resource) => ToggleButtons::make('permissions_' . $resource)
+                        collect(ApiKey::getPermissionList())->map(
+                            fn ($resource) => ToggleButtons::make('permissions_' . $resource)
                             ->label(str($resource)->replace('_', ' ')->title())->inline()
                             ->options([
                                 0 => trans('admin/apikey.permissions.none'),

@@ -2,18 +2,19 @@
 
 namespace App\Services\Subusers;
 
-use App\Facades\Activity;
-use App\Models\Permission;
 use App\Models\Server;
 use App\Models\Subuser;
-use App\Repositories\Daemon\DaemonServerRepository;
+use App\Facades\Activity;
+use App\Models\Permission;
 use Illuminate\Http\Client\ConnectionException;
+use App\Repositories\Daemon\DaemonServerRepository;
 
 class SubuserUpdateService
 {
     public function __construct(
         private DaemonServerRepository $serverRepository,
-    ) {}
+    ) {
+    }
 
     public function handle(Subuser $subuser, Server $server, array $permissions): void
     {

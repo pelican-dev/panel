@@ -11,7 +11,7 @@ use App\Transformers\Api\Client\ActivityLogTransformer;
 class ActivityLogController extends ClientApiController
 {
     /**
-     * List activity logs
+     * List activity logs.
      *
      * Returns a paginated set of the user's activity logs.
      */

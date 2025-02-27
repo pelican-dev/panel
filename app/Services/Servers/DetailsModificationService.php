@@ -2,12 +2,12 @@
 
 namespace App\Services\Servers;
 
-use Illuminate\Support\Arr;
 use App\Models\Server;
+use Illuminate\Support\Arr;
 use Illuminate\Database\ConnectionInterface;
 use App\Traits\Services\ReturnsUpdatedModels;
-use App\Repositories\Daemon\DaemonServerRepository;
 use Illuminate\Http\Client\ConnectionException;
+use App\Repositories\Daemon\DaemonServerRepository;
 
 class DetailsModificationService
 {
@@ -16,7 +16,9 @@ class DetailsModificationService
     /**
      * DetailsModificationService constructor.
      */
-    public function __construct(private ConnectionInterface $connection, private DaemonServerRepository $serverRepository) {}
+    public function __construct(private ConnectionInterface $connection, private DaemonServerRepository $serverRepository)
+    {
+    }
 
     /**
      * Update the details for a single server instance.

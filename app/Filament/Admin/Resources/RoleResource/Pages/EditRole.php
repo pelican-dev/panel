@@ -2,13 +2,13 @@
 
 namespace App\Filament\Admin\Resources\RoleResource\Pages;
 
-use App\Filament\Admin\Resources\RoleResource;
 use App\Models\Role;
-use Filament\Actions\DeleteAction;
-use Filament\Resources\Pages\EditRecord;
 use Illuminate\Support\Arr;
+use Filament\Actions\DeleteAction;
 use Illuminate\Support\Collection;
+use Filament\Resources\Pages\EditRecord;
 use Spatie\Permission\Models\Permission;
+use App\Filament\Admin\Resources\RoleResource;
 
 /**
  * @property Role $record

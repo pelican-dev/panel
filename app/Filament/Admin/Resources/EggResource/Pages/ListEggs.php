@@ -2,21 +2,21 @@
 
 namespace App\Filament\Admin\Resources\EggResource\Pages;
 
+use App\Models\Egg;
+use Filament\Tables\Table;
+use Illuminate\Support\Str;
+use Filament\Tables\Actions\EditAction;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Resources\Pages\ListRecords;
+use Filament\Tables\Actions\CreateAction;
+use Filament\Tables\Actions\ReplicateAction;
 use App\Filament\Admin\Resources\EggResource;
-use App\Filament\Components\Actions\ImportEggAction as ImportEggHeaderAction;
+use Filament\Tables\Actions\DeleteBulkAction;
+use Filament\Actions\CreateAction as CreateHeaderAction;
 use App\Filament\Components\Tables\Actions\ExportEggAction;
 use App\Filament\Components\Tables\Actions\ImportEggAction;
 use App\Filament\Components\Tables\Actions\UpdateEggAction;
-use App\Models\Egg;
-use Filament\Actions\CreateAction as CreateHeaderAction;
-use Filament\Resources\Pages\ListRecords;
-use Filament\Tables\Actions\CreateAction;
-use Filament\Tables\Actions\DeleteBulkAction;
-use Filament\Tables\Actions\EditAction;
-use Filament\Tables\Actions\ReplicateAction;
-use Filament\Tables\Columns\TextColumn;
-use Filament\Tables\Table;
-use Illuminate\Support\Str;
+use App\Filament\Components\Actions\ImportEggAction as ImportEggHeaderAction;
 
 class ListEggs extends ListRecords
 {
@@ -35,7 +35,7 @@ class ListEggs extends ListRecords
                 TextColumn::make('name')
                     ->label(trans('admin/egg.name'))
                     ->icon('tabler-egg')
-                    ->description(fn ($record): ?string => (strlen($record->description) > 120) ? substr($record->description, 0, 120).'...' : $record->description)
+                    ->description(fn ($record): ?string => (strlen($record->description) > 120) ? substr($record->description, 0, 120) . '...' : $record->description)
                     ->wrap()
                     ->searchable()
                     ->sortable(),

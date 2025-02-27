@@ -3,18 +3,20 @@
 namespace App\Notifications;
 
 use App\Models\User;
-use Illuminate\Bus\Queueable;
 use App\Models\Server;
-use App\Filament\App\Resources\ServerResource\Pages\ListServers;
+use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Notification;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
+use App\Filament\App\Resources\ServerResource\Pages\ListServers;
 
 class ServerInstalled extends Notification implements ShouldQueue
 {
     use Queueable;
 
-    public function __construct(public Server $server) {}
+    public function __construct(public Server $server)
+    {
+    }
 
     public function via(): array
     {

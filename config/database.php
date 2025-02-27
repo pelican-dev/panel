@@ -8,7 +8,6 @@ if (str_starts_with($database, '/') || $database === ':memory:') {
 }
 
 return [
-
     'default' => env('DB_CONNECTION', 'sqlite'),
 
     'connections' => [
@@ -107,5 +106,4 @@ return [
             ] : [],
         ],
     ],
-
 ];

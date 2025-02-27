@@ -2,16 +2,16 @@
 
 namespace App\Filament\App\Resources\ServerResource\Pages;
 
-use App\Filament\App\Resources\ServerResource;
-use App\Filament\Components\Tables\Columns\ServerEntryColumn;
-use App\Filament\Server\Pages\Console;
 use App\Models\Server;
+use Filament\Tables\Table;
+use App\Filament\Server\Pages\Console;
 use Filament\Resources\Components\Tab;
 use Filament\Resources\Pages\ListRecords;
 use Filament\Tables\Columns\Layout\Stack;
 use Filament\Tables\Filters\SelectFilter;
-use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
+use App\Filament\App\Resources\ServerResource;
+use App\Filament\Components\Tables\Columns\ServerEntryColumn;
 
 class ListServers extends ListRecords
 {

@@ -2,8 +2,8 @@
 
 namespace App\Tests\Integration\Api\Client;
 
-use Illuminate\Support\Str;
 use App\Models\User;
+use Illuminate\Support\Str;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Hash;
 
@@ -12,9 +12,9 @@ class AccountControllerTest extends ClientApiIntegrationTestCase
     /**
      * Test that the user's account details are returned from the account endpoint.
      */
-    public function test_account_details_are_returned(): void
+    public function testAccountDetailsAreReturned(): void
     {
-        /** @var \App\Models\User $user */
+        /** @var User $user */
         $user = User::factory()->create();
 
         $response = $this->actingAs($user)->get('/api/client/account');
@@ -39,9 +39,9 @@ class AccountControllerTest extends ClientApiIntegrationTestCase
     /**
      * Test that the user's email address can be updated via the API.
      */
-    public function test_email_is_updated(): void
+    public function testEmailIsUpdated(): void
     {
-        /** @var \App\Models\User $user */
+        /** @var User $user */
         $user = User::factory()->create();
 
         $response = $this->actingAs($user)->putJson('/api/client/account/email', [
@@ -58,9 +58,9 @@ class AccountControllerTest extends ClientApiIntegrationTestCase
      * Tests that an email is not updated if the password provided in the request is not
      * valid for the account.
      */
-    public function test_email_is_not_updated_when_password_is_invalid(): void
+    public function testEmailIsNotUpdatedWhenPasswordIsInvalid(): void
     {
-        /** @var \App\Models\User $user */
+        /** @var User $user */
         $user = User::factory()->create();
 
         $response = $this->actingAs($user)->putJson('/api/client/account/email', [
@@ -77,9 +77,9 @@ class AccountControllerTest extends ClientApiIntegrationTestCase
      * Tests that an email is not updated if an invalid email address is passed through
      * in the request.
      */
-    public function test_email_is_not_updated_when_not_valid(): void
+    public function testEmailIsNotUpdatedWhenNotValid(): void
     {
-        /** @var \App\Models\User $user */
+        /** @var User $user */
         $user = User::factory()->create();
 
         $response = $this->actingAs($user)->putJson('/api/client/account/email', [
@@ -104,9 +104,9 @@ class AccountControllerTest extends ClientApiIntegrationTestCase
     /**
      * Test that the password for an account can be successfully updated.
      */
-    public function test_password_is_updated(): void
+    public function testPasswordIsUpdated(): void
     {
-        /** @var \App\Models\User $user */
+        /** @var User $user */
         $user = User::factory()->create();
 
         $initialHash = $user->password;
@@ -130,9 +130,9 @@ class AccountControllerTest extends ClientApiIntegrationTestCase
      * Test that the password for an account is not updated if the current password is not
      * provided correctly.
      */
-    public function test_password_is_not_updated_if_current_password_is_invalid(): void
+    public function testPasswordIsNotUpdatedIfCurrentPasswordIsInvalid(): void
     {
-        /** @var \App\Models\User $user */
+        /** @var User $user */
         $user = User::factory()->create();
 
         $response = $this->actingAs($user)->putJson('/api/client/account/password', [
@@ -150,7 +150,7 @@ class AccountControllerTest extends ClientApiIntegrationTestCase
      * Test that a validation error is returned to the user if no password is provided or if
      * the password is below the minimum password length.
      */
-    public function test_error_is_returned_for_invalid_request_data(): void
+    public function testErrorIsReturnedForInvalidRequestData(): void
     {
         $user = User::factory()->create();
 
@@ -173,9 +173,9 @@ class AccountControllerTest extends ClientApiIntegrationTestCase
      * Test that a validation error is returned if the password passed in the request
      * does not have a confirmation, or the confirmation is not the same as the password.
      */
-    public function test_error_is_returned_if_password_is_not_confirmed(): void
+    public function testErrorIsReturnedIfPasswordIsNotConfirmed(): void
     {
-        /** @var \App\Models\User $user */
+        /** @var User $user */
         $user = User::factory()->create();
 
         $response = $this->actingAs($user)->putJson('/api/client/account/password', [

@@ -2,36 +2,36 @@
 
 namespace App\Tests\Integration\Jobs\Schedule;
 
-use App\Enums\ServerState;
 use Carbon\Carbon;
-use Carbon\CarbonImmutable;
 use App\Models\Task;
 use App\Models\Server;
 use App\Models\Schedule;
-use Illuminate\Support\Facades\Bus;
+use App\Enums\ServerState;
+use Carbon\CarbonImmutable;
 use App\Jobs\Schedule\RunTaskJob;
+use Illuminate\Support\Facades\Bus;
 use App\Tests\Integration\IntegrationTestCase;
-use App\Repositories\Daemon\DaemonPowerRepository;
-use Illuminate\Http\Client\ConnectionException;
 use PHPUnit\Framework\Attributes\DataProvider;
+use Illuminate\Http\Client\ConnectionException;
+use App\Repositories\Daemon\DaemonPowerRepository;
 
 class RunTaskJobTest extends IntegrationTestCase
 {
     /**
      * An inactive job should not be run by the system.
      */
-    public function test_inactive_job_is_not_run(): void
+    public function testInactiveJobIsNotRun(): void
     {
         $server = $this->createServerModel();
 
-        /** @var \App\Models\Schedule $schedule */
+        /** @var Schedule $schedule */
         $schedule = Schedule::factory()->create([
             'server_id' => $server->id,
             'is_processing' => true,
             'last_run_at' => null,
             'is_active' => false,
         ]);
-        /** @var \App\Models\Task $task */
+        /** @var Task $task */
         $task = Task::factory()->create(['schedule_id' => $schedule->id, 'is_queued' => true]);
 
         $job = new RunTaskJob($task);
@@ -47,13 +47,13 @@ class RunTaskJobTest extends IntegrationTestCase
         $this->assertTrue(CarbonImmutable::now()->isSameAs(\DateTimeInterface::ATOM, $schedule->last_run_at));
     }
 
-    public function test_job_with_invalid_action_throws_exception(): void
+    public function testJobWithInvalidActionThrowsException(): void
     {
         $server = $this->createServerModel();
 
-        /** @var \App\Models\Schedule $schedule */
+        /** @var Schedule $schedule */
         $schedule = Schedule::factory()->create(['server_id' => $server->id]);
-        /** @var \App\Models\Task $task */
+        /** @var Task $task */
         $task = Task::factory()->create(['schedule_id' => $schedule->id, 'action' => 'foobar']);
 
         $job = new RunTaskJob($task);
@@ -64,18 +64,18 @@ class RunTaskJobTest extends IntegrationTestCase
     }
 
     #[DataProvider('isManualRunDataProvider')]
-    public function test_job_is_executed(bool $isManualRun): void
+    public function testJobIsExecuted(bool $isManualRun): void
     {
         $server = $this->createServerModel();
 
-        /** @var \App\Models\Schedule $schedule */
+        /** @var Schedule $schedule */
         $schedule = Schedule::factory()->create([
             'server_id' => $server->id,
             'is_active' => !$isManualRun,
             'is_processing' => true,
             'last_run_at' => null,
         ]);
-        /** @var \App\Models\Task $task */
+        /** @var Task $task */
         $task = Task::factory()->create([
             'schedule_id' => $schedule->id,
             'action' => Task::ACTION_POWER,
@@ -103,13 +103,13 @@ class RunTaskJobTest extends IntegrationTestCase
     }
 
     #[DataProvider('isManualRunDataProvider')]
-    public function test_exception_during_run_is_handled_correctly(bool $continueOnFailure): void
+    public function testExceptionDuringRunIsHandledCorrectly(bool $continueOnFailure): void
     {
         $server = $this->createServerModel();
 
-        /** @var \App\Models\Schedule $schedule */
+        /** @var Schedule $schedule */
         $schedule = Schedule::factory()->create(['server_id' => $server->id]);
-        /** @var \App\Models\Task $task */
+        /** @var Task $task */
         $task = Task::factory()->create([
             'schedule_id' => $schedule->id,
             'action' => Task::ACTION_POWER,
@@ -141,7 +141,7 @@ class RunTaskJobTest extends IntegrationTestCase
     /**
      * Test that a schedule is not executed if the server is suspended.
      */
-    public function test_task_is_not_run_if_server_is_suspended(): void
+    public function testTaskIsNotRunIfServerIsSuspended(): void
     {
         $server = $this->createServerModel([
             'status' => ServerState::Suspended,

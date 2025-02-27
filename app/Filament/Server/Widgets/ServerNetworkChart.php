@@ -2,8 +2,8 @@
 
 namespace App\Filament\Server\Widgets;
 
-use App\Models\Server;
 use Carbon\Carbon;
+use App\Models\Server;
 use Filament\Support\RawJs;
 use Filament\Widgets\ChartWidget;
 
@@ -25,7 +25,7 @@ class ServerNetworkChart extends ChartWidget
             ->slice(-10)
             ->map(fn ($value, $key) => [
                 'rx' => $value->rx_bytes,
-                'timestamp' => Carbon::createFromTimestamp($key, (auth()->user()->timezone ?? 'UTC'))->format('H:i:s'),
+                'timestamp' => Carbon::createFromTimestamp($key, auth()->user()->timezone ?? 'UTC')->format('H:i:s'),
             ])
             ->all();
 
@@ -33,7 +33,7 @@ class ServerNetworkChart extends ChartWidget
             ->slice(-10)
             ->map(fn ($value, $key) => [
                 'tx' => $value->rx_bytes,
-                'timestamp' => Carbon::createFromTimestamp($key, (auth()->user()->timezone ?? 'UTC'))->format('H:i:s'),
+                'timestamp' => Carbon::createFromTimestamp($key, auth()->user()->timezone ?? 'UTC')->format('H:i:s'),
             ])
             ->all();
 

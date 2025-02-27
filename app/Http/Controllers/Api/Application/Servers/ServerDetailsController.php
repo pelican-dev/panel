@@ -3,13 +3,13 @@
 namespace App\Http\Controllers\Api\Application\Servers;
 
 use App\Models\Server;
+use Dedoc\Scramble\Attributes\Group;
 use App\Services\Servers\BuildModificationService;
 use App\Services\Servers\DetailsModificationService;
 use App\Transformers\Api\Application\ServerTransformer;
 use App\Http\Controllers\Api\Application\ApplicationApiController;
 use App\Http\Requests\Api\Application\Servers\UpdateServerDetailsRequest;
 use App\Http\Requests\Api\Application\Servers\UpdateServerBuildConfigurationRequest;
-use Dedoc\Scramble\Attributes\Group;
 
 #[Group('Server', weight: 2)]
 class ServerDetailsController extends ApplicationApiController
@@ -25,7 +25,7 @@ class ServerDetailsController extends ApplicationApiController
     }
 
     /**
-     * Update details
+     * Update details.
      *
      * Update the details for a specific server.
      *
@@ -45,7 +45,7 @@ class ServerDetailsController extends ApplicationApiController
     }
 
     /**
-     * Update build
+     * Update build.
      *
      * Update the build details for a specific server.
      *

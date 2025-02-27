@@ -2,11 +2,11 @@
 
 namespace App\Tests\Integration\Api\Client\Server\Schedule;
 
-use Illuminate\Http\Response;
 use App\Models\Schedule;
 use App\Models\Permission;
-use App\Tests\Integration\Api\Client\ClientApiIntegrationTestCase;
+use Illuminate\Http\Response;
 use PHPUnit\Framework\Attributes\DataProvider;
+use App\Tests\Integration\Api\Client\ClientApiIntegrationTestCase;
 
 class CreateServerScheduleTest extends ClientApiIntegrationTestCase
 {
@@ -14,7 +14,7 @@ class CreateServerScheduleTest extends ClientApiIntegrationTestCase
      * Test that a schedule can be created for the server.
      */
     #[DataProvider('permissionsDataProvider')]
-    public function test_schedule_can_be_created_for_server(array $permissions): void
+    public function testScheduleCanBeCreatedForServer(array $permissions): void
     {
         [$user, $server] = $this->generateTestAccount($permissions);
 
@@ -32,7 +32,7 @@ class CreateServerScheduleTest extends ClientApiIntegrationTestCase
 
         $this->assertNotNull($id = $response->json('attributes.id'));
 
-        /** @var \App\Models\Schedule $schedule */
+        /** @var Schedule $schedule */
         $schedule = Schedule::query()->findOrFail($id);
         $this->assertFalse($schedule->is_active);
         $this->assertFalse($schedule->is_processing);
@@ -50,7 +50,7 @@ class CreateServerScheduleTest extends ClientApiIntegrationTestCase
     /**
      * Test that the validation rules for scheduling work as expected.
      */
-    public function test_schedule_validation_rules(): void
+    public function testScheduleValidationRules(): void
     {
         [$user, $server] = $this->generateTestAccount();
 
@@ -81,7 +81,7 @@ class CreateServerScheduleTest extends ClientApiIntegrationTestCase
     /**
      * Test that a subuser without required permissions cannot create a schedule.
      */
-    public function test_subuser_cannot_create_schedule_without_permissions(): void
+    public function testSubuserCannotCreateScheduleWithoutPermissions(): void
     {
         [$user, $server] = $this->generateTestAccount([Permission::ACTION_SCHEDULE_UPDATE]);
 

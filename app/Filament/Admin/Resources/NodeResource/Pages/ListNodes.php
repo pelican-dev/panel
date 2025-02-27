@@ -2,16 +2,16 @@
 
 namespace App\Filament\Admin\Resources\NodeResource\Pages;
 
-use App\Filament\Admin\Resources\NodeResource;
-use App\Filament\Components\Tables\Columns\NodeHealthColumn;
 use App\Models\Node;
 use Filament\Actions;
-use Filament\Resources\Pages\ListRecords;
-use Filament\Tables\Actions\CreateAction;
+use Filament\Tables\Table;
 use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
-use Filament\Tables\Table;
+use Filament\Resources\Pages\ListRecords;
+use Filament\Tables\Actions\CreateAction;
+use App\Filament\Admin\Resources\NodeResource;
+use App\Filament\Components\Tables\Columns\NodeHealthColumn;
 
 class ListNodes extends ListRecords
 {

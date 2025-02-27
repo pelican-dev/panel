@@ -2,12 +2,12 @@
 
 namespace App\Services\Nodes;
 
-use Illuminate\Support\Str;
 use App\Models\Node;
+use Illuminate\Support\Str;
 use Illuminate\Database\ConnectionInterface;
+use Illuminate\Http\Client\ConnectionException;
 use App\Repositories\Daemon\DaemonConfigurationRepository;
 use App\Exceptions\Service\Node\ConfigurationNotPersistedException;
-use Illuminate\Http\Client\ConnectionException;
 
 class NodeUpdateService
 {
@@ -17,7 +17,8 @@ class NodeUpdateService
     public function __construct(
         private ConnectionInterface $connection,
         private DaemonConfigurationRepository $configurationRepository,
-    ) {}
+    ) {
+    }
 
     /**
      * Update the configuration values for a given node on the machine.
@@ -34,7 +35,7 @@ class NodeUpdateService
         }
 
         [$updated, $exception] = $this->connection->transaction(function () use ($data, $node) {
-            /** @var \App\Models\Node $updated */
+            /** @var Node $updated */
             $updated = $node->replicate();
             $updated->exists = true;
             $updated->forceFill($data)->save();

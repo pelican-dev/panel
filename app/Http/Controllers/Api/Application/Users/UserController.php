@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers\Api\Application\Users;
 
+use App\Models\Role;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
+use Dedoc\Scramble\Attributes\Group;
 use Spatie\QueryBuilder\QueryBuilder;
 use App\Services\Users\UserUpdateService;
 use App\Services\Users\UserCreationService;
@@ -14,8 +16,6 @@ use App\Http\Requests\Api\Application\Users\DeleteUserRequest;
 use App\Http\Requests\Api\Application\Users\UpdateUserRequest;
 use App\Http\Controllers\Api\Application\ApplicationApiController;
 use App\Http\Requests\Api\Application\Users\AssignUserRolesRequest;
-use App\Models\Role;
-use Dedoc\Scramble\Attributes\Group;
 
 #[Group('User', weight: 0)]
 class UserController extends ApplicationApiController
@@ -31,7 +31,7 @@ class UserController extends ApplicationApiController
     }
 
     /**
-     * List users
+     * List users.
      *
      * Handle request to list all users on the panel. Returns a JSON-API representation
      * of a collection of users including any defined relations passed in
@@ -50,7 +50,7 @@ class UserController extends ApplicationApiController
     }
 
     /**
-     * View user
+     * View user.
      *
      * Handle a request to view a single user. Includes any relations that
      * were defined in the request.
@@ -63,7 +63,7 @@ class UserController extends ApplicationApiController
     }
 
     /**
-     * Update user
+     * Update user.
      *
      * Update an existing user on the system and return the response. Returns the
      * updated user model response on success. Supports handling of token revocation
@@ -86,7 +86,7 @@ class UserController extends ApplicationApiController
     }
 
     /**
-     * Assign role to user
+     * Assign role to user.
      *
      * Assign roles to a user.
      */
@@ -107,7 +107,7 @@ class UserController extends ApplicationApiController
     }
 
     /**
-     * Unassign role from user
+     * Unassign role from user.
      *
      * Removes roles from a user.
      */
@@ -128,7 +128,7 @@ class UserController extends ApplicationApiController
     }
 
     /**
-     * Create user
+     * Create user.
      *
      * Store a new user on the system. Returns the created user and an HTTP/201
      * header on successful creation.
@@ -151,7 +151,7 @@ class UserController extends ApplicationApiController
     }
 
     /**
-     * Delete user
+     * Delete user.
      *
      * Handle a request to delete a user from the Panel. Returns a HTTP/204 response on successful deletion.
      */

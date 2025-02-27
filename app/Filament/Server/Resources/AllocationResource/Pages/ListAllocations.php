@@ -2,20 +2,20 @@
 
 namespace App\Filament\Server\Resources\AllocationResource\Pages;
 
+use Filament\Actions;
+use App\Models\Server;
 use App\Facades\Activity;
-use App\Filament\Server\Resources\AllocationResource;
 use App\Models\Allocation;
 use App\Models\Permission;
-use App\Models\Server;
-use App\Services\Allocations\FindAssignableAllocationService;
-use Filament\Actions;
+use Filament\Tables\Table;
 use Filament\Facades\Filament;
-use Filament\Resources\Pages\ListRecords;
-use Filament\Tables\Actions\DetachAction;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Resources\Pages\ListRecords;
+use Filament\Tables\Actions\DetachAction;
 use Filament\Tables\Columns\TextInputColumn;
-use Filament\Tables\Table;
+use App\Filament\Server\Resources\AllocationResource;
+use App\Services\Allocations\FindAssignableAllocationService;
 
 class ListAllocations extends ListRecords
 {
@@ -49,7 +49,7 @@ class ListAllocations extends ListRecords
                         default => 'gray',
                     })
                     ->action(function (Allocation $allocation) use ($server) {
-                        if (auth()->user()->can(PERMISSION::ACTION_ALLOCATION_UPDATE, $server)) {
+                        if (auth()->user()->can(Permission::ACTION_ALLOCATION_UPDATE, $server)) {
                             return $server->update(['allocation_id' => $allocation->id]);
                         }
                     })

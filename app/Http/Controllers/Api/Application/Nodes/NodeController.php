@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api\Application\Nodes;
 
 use App\Models\Node;
 use Illuminate\Http\JsonResponse;
+use Dedoc\Scramble\Attributes\Group;
 use Spatie\QueryBuilder\QueryBuilder;
 use App\Services\Nodes\NodeUpdateService;
 use App\Services\Nodes\NodeCreationService;
@@ -15,7 +16,6 @@ use App\Http\Requests\Api\Application\Nodes\StoreNodeRequest;
 use App\Http\Requests\Api\Application\Nodes\DeleteNodeRequest;
 use App\Http\Requests\Api\Application\Nodes\UpdateNodeRequest;
 use App\Http\Controllers\Api\Application\ApplicationApiController;
-use Dedoc\Scramble\Attributes\Group;
 
 #[Group('Node', weight: 0)]
 class NodeController extends ApplicationApiController
@@ -32,7 +32,7 @@ class NodeController extends ApplicationApiController
     }
 
     /**
-     * List nodes
+     * List nodes.
      *
      * Return all the nodes currently available on the Panel.
      */
@@ -49,7 +49,7 @@ class NodeController extends ApplicationApiController
     }
 
     /**
-     * View node
+     * View node.
      *
      * Return data for a single instance of a node.
      */
@@ -61,7 +61,7 @@ class NodeController extends ApplicationApiController
     }
 
     /**
-     * Create node
+     * Create node.
      *
      * Create a new node on the Panel. Returns the created node and an HTTP/201
      * status response on success.
@@ -83,7 +83,7 @@ class NodeController extends ApplicationApiController
     }
 
     /**
-     * Update node
+     * Update node.
      *
      * Update an existing node on the Panel.
      *
@@ -103,7 +103,7 @@ class NodeController extends ApplicationApiController
     }
 
     /**
-     * Delete node
+     * Delete node.
      *
      * Deletes a given node from the Panel as long as there are no servers
      * currently attached to it.

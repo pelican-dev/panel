@@ -2,13 +2,13 @@
 
 namespace App\Services\Servers;
 
-use Illuminate\Support\Arr;
 use App\Models\Server;
 use App\Models\Allocation;
-use Illuminate\Database\ConnectionInterface;
+use Illuminate\Support\Arr;
 use App\Exceptions\DisplayException;
-use App\Repositories\Daemon\DaemonServerRepository;
+use Illuminate\Database\ConnectionInterface;
 use Illuminate\Http\Client\ConnectionException;
+use App\Repositories\Daemon\DaemonServerRepository;
 
 class BuildModificationService
 {
@@ -19,17 +19,18 @@ class BuildModificationService
         private ConnectionInterface $connection,
         private DaemonServerRepository $daemonServerRepository,
         private ServerConfigurationStructureService $structureService
-    ) {}
+    ) {
+    }
 
     /**
      * Change the build details for a specified server.
      *
      * @throws \Throwable
-     * @throws \App\Exceptions\DisplayException
+     * @throws DisplayException
      */
     public function handle(Server $server, array $data): Server
     {
-        /** @var \App\Models\Server $server */
+        /** @var Server $server */
         $server = $this->connection->transaction(function () use ($server, $data) {
             $this->processAllocations($server, $data);
 
@@ -75,7 +76,7 @@ class BuildModificationService
     /**
      * Process the allocations being assigned in the data and ensure they are available for a server.
      *
-     * @throws \App\Exceptions\DisplayException
+     * @throws DisplayException
      */
     private function processAllocations(Server $server, array &$data): void
     {

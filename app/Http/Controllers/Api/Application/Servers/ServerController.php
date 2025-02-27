@@ -2,9 +2,10 @@
 
 namespace App\Http\Controllers\Api\Application\Servers;
 
-use Illuminate\Http\Response;
 use App\Models\Server;
+use Illuminate\Http\Response;
 use Illuminate\Http\JsonResponse;
+use Dedoc\Scramble\Attributes\Group;
 use Spatie\QueryBuilder\QueryBuilder;
 use App\Services\Servers\ServerCreationService;
 use App\Services\Servers\ServerDeletionService;
@@ -14,7 +15,6 @@ use App\Http\Requests\Api\Application\Servers\GetServersRequest;
 use App\Http\Requests\Api\Application\Servers\ServerWriteRequest;
 use App\Http\Requests\Api\Application\Servers\StoreServerRequest;
 use App\Http\Controllers\Api\Application\ApplicationApiController;
-use Dedoc\Scramble\Attributes\Group;
 
 #[Group('Server', weight: 0)]
 class ServerController extends ApplicationApiController
@@ -30,7 +30,7 @@ class ServerController extends ApplicationApiController
     }
 
     /**
-     * List servers
+     * List servers.
      *
      * Return all the servers that currently exist on the Panel.
      */
@@ -47,7 +47,7 @@ class ServerController extends ApplicationApiController
     }
 
     /**
-     * Create server
+     * Create server.
      *
      * Create a new server on the system.
      *
@@ -67,7 +67,7 @@ class ServerController extends ApplicationApiController
     }
 
     /**
-     * View server
+     * View server.
      *
      * Show a single server transformed for the application API.
      */
@@ -79,7 +79,7 @@ class ServerController extends ApplicationApiController
     }
 
     /**
-     * Delete server
+     * Delete server.
      *
      * Deletes a server.
      *

@@ -3,7 +3,6 @@
 namespace Database\Seeders;
 
 use App\Models\Egg;
-use Exception;
 use Illuminate\Database\Seeder;
 use Illuminate\Http\UploadedFile;
 use App\Services\Eggs\Sharing\EggImporterService;
@@ -57,7 +56,7 @@ class EggSeeder extends Seeder
 
             try {
                 $decoded = json_decode(file_get_contents($file->getRealPath()), true, 512, JSON_THROW_ON_ERROR);
-            } catch (Exception) {
+            } catch (\Exception) {
                 continue;
             }
 

@@ -2,13 +2,12 @@
 
 namespace App\Filament\Admin\Resources\DatabaseHostResource\Pages;
 
-use App\Filament\Admin\Resources\DatabaseHostResource;
-use App\Services\Databases\Hosts\HostCreationService;
-use Filament\Notifications\Notification;
-use Filament\Resources\Pages\CreateRecord;
 use Filament\Support\Exceptions\Halt;
 use Illuminate\Database\Eloquent\Model;
-use PDOException;
+use Filament\Notifications\Notification;
+use Filament\Resources\Pages\CreateRecord;
+use App\Services\Databases\Hosts\HostCreationService;
+use App\Filament\Admin\Resources\DatabaseHostResource;
 
 class CreateDatabaseHost extends CreateRecord
 {
@@ -39,7 +38,7 @@ class CreateDatabaseHost extends CreateRecord
     {
         try {
             return $this->service->handle($data);
-        } catch (PDOException $exception) {
+        } catch (\PDOException $exception) {
             Notification::make()
                 ->title(trans('admin/databasehost.error'))
                 ->body($exception->getMessage())

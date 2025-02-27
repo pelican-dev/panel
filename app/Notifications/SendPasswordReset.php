@@ -12,7 +12,9 @@ class SendPasswordReset extends Notification implements ShouldQueue
 {
     use Queueable;
 
-    public function __construct(public string $token) {}
+    public function __construct(public string $token)
+    {
+    }
 
     public function via(): array
     {

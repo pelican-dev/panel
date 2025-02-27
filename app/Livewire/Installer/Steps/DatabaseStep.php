@@ -2,16 +2,15 @@
 
 namespace App\Livewire\Installer\Steps;
 
-use App\Livewire\Installer\PanelInstaller;
-use Exception;
-use Filament\Forms\Components\TextInput;
-use Filament\Forms\Components\ToggleButtons;
-use Filament\Forms\Components\Wizard\Step;
 use Filament\Forms\Get;
 use Filament\Forms\Set;
-use Filament\Notifications\Notification;
-use Filament\Support\Exceptions\Halt;
 use Illuminate\Support\Facades\DB;
+use Filament\Support\Exceptions\Halt;
+use Filament\Forms\Components\TextInput;
+use Filament\Notifications\Notification;
+use App\Livewire\Installer\PanelInstaller;
+use Filament\Forms\Components\Wizard\Step;
+use Filament\Forms\Components\ToggleButtons;
 
 class DatabaseStep
 {
@@ -100,7 +99,7 @@ class DatabaseStep
             });
     }
 
-    private static function testConnection(string $driver, ?string $host, null|string|int $port, ?string $database, ?string $username, ?string $password): bool
+    private static function testConnection(string $driver, ?string $host, string|int|null $port, ?string $database, ?string $username, ?string $password): bool
     {
         if ($driver === 'sqlite') {
             return true;
@@ -120,7 +119,7 @@ class DatabaseStep
             ]);
 
             DB::connection('_panel_install_test')->getPdo();
-        } catch (Exception $exception) {
+        } catch (\Exception $exception) {
             DB::disconnect('_panel_install_test');
 
             Notification::make()

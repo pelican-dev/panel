@@ -2,31 +2,31 @@
 
 namespace App\Filament\Server\Resources;
 
-use App\Filament\Server\Resources\UserResource\Pages;
-use App\Models\Permission;
+use App\Models\User;
 use App\Models\Server;
 use App\Models\Subuser;
-use App\Models\User;
-use App\Services\Subusers\SubuserDeletionService;
-use App\Services\Subusers\SubuserUpdateService;
-use Filament\Facades\Filament;
-use Filament\Forms\Components\Actions;
-use Filament\Forms\Components\Actions\Action;
-use Filament\Forms\Components\CheckboxList;
-use Filament\Forms\Components\Grid;
-use Filament\Forms\Components\Section;
-use Filament\Forms\Components\Tabs;
-use Filament\Forms\Components\Tabs\Tab;
-use Filament\Forms\Components\TextInput;
 use Filament\Forms\Set;
-use Filament\Notifications\Notification;
-use Filament\Tables\Actions\DeleteAction;
-use Filament\Resources\Resource;
-use Filament\Tables\Actions\EditAction;
-use Filament\Tables\Columns\ImageColumn;
-use Filament\Tables\Columns\TextColumn;
+use App\Models\Permission;
 use Filament\Tables\Table;
+use Filament\Facades\Filament;
+use Filament\Resources\Resource;
+use Filament\Forms\Components\Grid;
+use Filament\Forms\Components\Tabs;
+use Filament\Forms\Components\Actions;
+use Filament\Forms\Components\Section;
+use Filament\Forms\Components\Tabs\Tab;
+use Filament\Tables\Actions\EditAction;
+use Filament\Tables\Columns\TextColumn;
 use Illuminate\Database\Eloquent\Model;
+use Filament\Forms\Components\TextInput;
+use Filament\Notifications\Notification;
+use Filament\Tables\Columns\ImageColumn;
+use Filament\Tables\Actions\DeleteAction;
+use Filament\Forms\Components\CheckboxList;
+use Filament\Forms\Components\Actions\Action;
+use App\Services\Subusers\SubuserUpdateService;
+use App\Services\Subusers\SubuserDeletionService;
+use App\Filament\Server\Resources\UserResource\Pages;
 
 class UserResource extends Resource
 {
@@ -107,7 +107,6 @@ class UserResource extends Resource
                     ->action(function (User $user, SubuserDeletionService $subuserDeletionService) use ($server) {
                         $subuser = Subuser::query()->where('user_id', $user->id)->where('server_id', $server->id)->first();
                         $subuserDeletionService->handle($subuser, $server);
-
                     }),
                 EditAction::make()
                     ->label('Edit User')

@@ -3,7 +3,6 @@
 namespace App\Services\Helpers;
 
 use Illuminate\Support\Facades\File;
-use Locale;
 
 class LanguageService
 {
@@ -21,7 +20,7 @@ class LanguageService
         return collect(File::directories(base_path($path)))->mapWithKeys(function ($path) {
             $code = basename($path);
 
-            return [$code => title_case(Locale::getDisplayName($code, $code))];
+            return [$code => title_case(\Locale::getDisplayName($code, $code))];
         })->toArray();
     }
 }

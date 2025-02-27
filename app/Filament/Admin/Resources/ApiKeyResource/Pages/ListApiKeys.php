@@ -2,10 +2,10 @@
 
 namespace App\Filament\Admin\Resources\ApiKeyResource\Pages;
 
-use App\Filament\Admin\Resources\ApiKeyResource;
 use App\Models\ApiKey;
 use Filament\Actions\CreateAction;
 use Filament\Resources\Pages\ListRecords;
+use App\Filament\Admin\Resources\ApiKeyResource;
 
 class ListApiKeys extends ListRecords
 {

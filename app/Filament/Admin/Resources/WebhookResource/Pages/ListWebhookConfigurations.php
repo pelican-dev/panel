@@ -2,10 +2,10 @@
 
 namespace App\Filament\Admin\Resources\WebhookResource\Pages;
 
-use App\Filament\Admin\Resources\WebhookResource;
-use App\Models\WebhookConfiguration;
 use Filament\Actions\CreateAction;
+use App\Models\WebhookConfiguration;
 use Filament\Resources\Pages\ListRecords;
+use App\Filament\Admin\Resources\WebhookResource;
 
 class ListWebhookConfigurations extends ListRecords
 {

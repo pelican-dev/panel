@@ -1,7 +1,6 @@
 <?php
 
 return [
-
     'lockout' => [
         'time' => 2,
         'attempts' => 3,
@@ -22,5 +21,4 @@ return [
             'throttle' => 60,
         ],
     ],
-
 ];

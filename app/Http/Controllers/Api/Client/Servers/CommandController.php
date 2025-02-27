@@ -2,22 +2,21 @@
 
 namespace App\Http\Controllers\Api\Client\Servers;
 
-use Illuminate\Http\Response;
 use App\Models\Server;
 use App\Facades\Activity;
-use GuzzleHttp\Exception\BadResponseException;
-use Symfony\Component\HttpKernel\Exception\HttpException;
-use App\Http\Controllers\Api\Client\ClientApiController;
-use App\Http\Requests\Api\Client\Servers\SendCommandRequest;
+use Illuminate\Http\Response;
 use Dedoc\Scramble\Attributes\Group;
-use Exception;
+use GuzzleHttp\Exception\BadResponseException;
 use Illuminate\Http\Client\ConnectionException;
+use App\Http\Controllers\Api\Client\ClientApiController;
+use Symfony\Component\HttpKernel\Exception\HttpException;
+use App\Http\Requests\Api\Client\Servers\SendCommandRequest;
 
 #[Group('Server', weight: 1)]
 class CommandController extends ClientApiController
 {
     /**
-     * Send command
+     * Send command.
      *
      * Send a command to a running server.
      *
@@ -27,7 +26,7 @@ class CommandController extends ClientApiController
     {
         try {
             $server->send($request->input('command'));
-        } catch (Exception $exception) {
+        } catch (\Exception $exception) {
             $previous = $exception->getPrevious();
 
             if ($previous instanceof BadResponseException) {

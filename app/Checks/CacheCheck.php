@@ -2,11 +2,10 @@
 
 namespace App\Checks;
 
-use Exception;
-use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Str;
 use Spatie\Health\Checks\Check;
 use Spatie\Health\Checks\Result;
+use Illuminate\Support\Facades\Cache;
 
 class CacheCheck extends Check
 {
@@ -31,7 +30,7 @@ class CacheCheck extends Check
             return $this->canWriteValuesToCache($driver)
                 ? $result->ok(trans('admin/health.results.cache.ok'))
                 : $result->failed(trans('admin/health.results.cache.failed_retrieve'));
-        } catch (Exception $exception) {
+        } catch (\Exception $exception) {
             return $result->failed(trans('admin/health.results.cache.failed', ['error' => $exception->getMessage()]));
         }
     }

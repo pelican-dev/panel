@@ -2,47 +2,43 @@
 
 namespace App\Filament\Admin\Resources\ServerResource\Pages;
 
-use App\Filament\Admin\Resources\ServerResource;
-use App\Models\Allocation;
 use App\Models\Egg;
 use App\Models\Node;
 use App\Models\User;
-use App\Services\Allocations\AssignmentService;
-use App\Services\Servers\RandomWordService;
-use App\Services\Servers\ServerCreationService;
-use App\Services\Users\UserCreationService;
-use Closure;
-use Exception;
-use Filament\Forms;
-use Filament\Forms\Components\Actions\Action;
-use Filament\Forms\Components\CheckboxList;
-use Filament\Forms\Components\Component;
-use Filament\Forms\Components\Fieldset;
-use Filament\Forms\Components\Grid;
-use Filament\Forms\Components\Hidden;
-use Filament\Forms\Components\KeyValue;
-use Filament\Forms\Components\Placeholder;
-use Filament\Forms\Components\Repeater;
-use Filament\Forms\Components\Section;
-use Filament\Forms\Components\Select;
-use Filament\Forms\Components\TagsInput;
-use Filament\Forms\Components\Textarea;
-use Filament\Forms\Components\TextInput;
-use Filament\Forms\Components\ToggleButtons;
-use Filament\Forms\Components\Wizard;
-use Filament\Forms\Components\Wizard\Step;
-use Filament\Forms\Form;
 use Filament\Forms\Get;
 use Filament\Forms\Set;
-use Filament\Notifications\Notification;
-use Filament\Resources\Pages\CreateRecord;
-use Filament\Support\Exceptions\Halt;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Facades\Blade;
-use Illuminate\Support\Facades\Validator;
+use Filament\Forms\Form;
+use App\Models\Allocation;
 use Illuminate\Support\HtmlString;
-use LogicException;
+use Filament\Forms\Components\Grid;
+use Filament\Forms\Components\Hidden;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Wizard;
+use Filament\Support\Exceptions\Halt;
+use Illuminate\Support\Facades\Blade;
+use Filament\Forms\Components\Section;
+use Filament\Forms\Components\Fieldset;
+use Filament\Forms\Components\KeyValue;
+use Filament\Forms\Components\Repeater;
+use Filament\Forms\Components\Textarea;
+use Illuminate\Database\Eloquent\Model;
+use Filament\Forms\Components\Component;
+use Filament\Forms\Components\TagsInput;
+use Filament\Forms\Components\TextInput;
+use Filament\Notifications\Notification;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\Validator;
+use Filament\Forms\Components\Placeholder;
+use Filament\Forms\Components\Wizard\Step;
+use Filament\Resources\Pages\CreateRecord;
+use App\Services\Servers\RandomWordService;
+use App\Services\Users\UserCreationService;
+use Filament\Forms\Components\CheckboxList;
+use Filament\Forms\Components\ToggleButtons;
+use Filament\Forms\Components\Actions\Action;
+use App\Services\Allocations\AssignmentService;
+use App\Services\Servers\ServerCreationService;
+use App\Filament\Admin\Resources\ServerResource;
 
 class CreateServer extends CreateRecord
 {
@@ -77,7 +73,7 @@ class CreateServer extends CreateRecord
                             TextInput::make('name')
                                 ->prefixIcon('tabler-server')
                                 ->label(trans('admin/server.name'))
-                                ->suffixAction(Forms\Components\Actions\Action::make('random')
+                                ->suffixAction(Action::make('random')
                                     ->icon('tabler-dice-' . random_int(1, 6))
                                     ->action(function (Set $set, Get $get) {
                                         $egg = Egg::find($get('egg_id'));
@@ -228,8 +224,11 @@ class CreateServer extends CreateRecord
                                             ->placeholder('27015, 27017-27019')
                                             ->live()
                                             ->disabled(fn (Get $get) => empty($get('allocation_ip')))
-                                            ->afterStateUpdated(fn ($state, Set $set, Get $get) => $set('allocation_ports',
-                                                CreateServer::retrieveValidPorts(Node::find($getPage('node_id')), $state, $get('allocation_ip')))
+                                            ->afterStateUpdated(
+                                                fn ($state, Set $set, Get $get) => $set(
+                                                    'allocation_ports',
+                                                    CreateServer::retrieveValidPorts(Node::find($getPage('node_id')), $state, $get('allocation_ip'))
+                                                )
                                             )
                                             ->splitKeys(['Tab', ' ', ','])
                                             ->required(),
@@ -325,7 +324,7 @@ class CreateServer extends CreateRecord
 
                                     $variables = [];
                                     $set($path = 'server_variables', $serverVariables->sortBy(['sort'])->all());
-                                    for ($i = 0; $i < $serverVariables->count(); $i++) {
+                                    for ($i = 0; $i < $serverVariables->count(); ++$i) {
                                         $set("$path.$i.variable_value", $serverVariables[$i]['default_value']);
                                         $set("$path.$i.variable_id", $serverVariables[$i]['id']);
                                         $variables[$serverVariables[$i]['env_variable']] = $serverVariables[$i]['default_value'];
@@ -420,8 +419,9 @@ class CreateServer extends CreateRecord
                                         ->hidden(fn (Get $get) => $get('egg_id')),
 
                                     Placeholder::make(trans('admin/server.no_variables'))
-                                        ->hidden(fn (Get $get) => !$get('egg_id') ||
-                                            Egg::query()->find($get('egg_id'))?->variables()?->count()
+                                        ->hidden(
+                                            fn (Get $get) => !$get('egg_id')
+                                            || Egg::query()->find($get('egg_id'))?->variables()?->count()
                                         ),
 
                                     Repeater::make('server_variables')
@@ -436,12 +436,11 @@ class CreateServer extends CreateRecord
                                         ->default([])
                                         ->hidden(fn ($state) => empty($state))
                                         ->schema(function () {
-
                                             $text = TextInput::make('variable_value')
                                                 ->hidden($this->shouldHideComponent(...))
                                                 ->required(fn (Get $get) => in_array('required', $get('rules')))
                                                 ->rules(
-                                                    fn (Get $get): Closure => function (string $attribute, $value, Closure $fail) use ($get) {
+                                                    fn (Get $get): \Closure => function (string $attribute, $value, \Closure $fail) use ($get) {
                                                         $validator = Validator::make(['validatorkey' => $value], [
                                                             'validatorkey' => $get('rules'),
                                                         ]);
@@ -588,7 +587,6 @@ class CreateServer extends CreateRecord
                                                 ->numeric()
                                                 ->minValue(0),
                                         ]),
-
                                 ]),
 
                             Fieldset::make(trans('admin/server.advanced_limits'))
@@ -650,7 +648,7 @@ class CreateServer extends CreateRecord
                                                         'unlimited' => -1,
                                                         'disabled' => 0,
                                                         'limited' => 128,
-                                                        default => throw new LogicException('Invalid state'),
+                                                        default => throw new \LogicException('Invalid state'),
                                                     };
 
                                                     $set('swap', $value);
@@ -835,7 +833,7 @@ class CreateServer extends CreateRecord
 
         try {
             return $this->serverCreationService->handle($data);
-        } catch (Exception $exception) {
+        } catch (\Exception $exception) {
             Notification::make()
                 ->title(trans('admin/server.notifications.create_failed'))
                 ->body($exception->getMessage())
@@ -850,7 +848,8 @@ class CreateServer extends CreateRecord
     private function shouldHideComponent(Get $get, Component $component): bool
     {
         $containsRuleIn = collect($get('rules'))->reduce(
-            fn ($result, $value) => $result === true && !str($value)->startsWith('in:'), true
+            fn ($result, $value) => $result === true && !str($value)->startsWith('in:'),
+            true
         );
 
         if ($component instanceof Select) {
@@ -861,13 +860,14 @@ class CreateServer extends CreateRecord
             return !$containsRuleIn;
         }
 
-        throw new Exception('Component type not supported: ' . $component::class);
+        throw new \Exception('Component type not supported: ' . $component::class);
     }
 
     private function getSelectOptionsFromRules(Get $get): array
     {
         $inRule = collect($get('rules'))->reduce(
-            fn ($result, $value) => str($value)->startsWith('in:') ? $value : $result, ''
+            fn ($result, $value) => str($value)->startsWith('in:') ? $value : $result,
+            ''
         );
 
         return str($inRule)

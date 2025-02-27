@@ -3,13 +3,13 @@
 namespace App\Filament\Admin\Pages;
 
 use Carbon\Carbon;
-use Filament\Actions\Action;
-use Filament\Notifications\Notification;
 use Filament\Pages\Page;
-use Illuminate\Support\Facades\Artisan;
-use Spatie\Health\Commands\RunHealthChecksCommand;
+use Filament\Actions\Action;
 use Spatie\Health\Enums\Status;
+use Illuminate\Support\Facades\Artisan;
+use Filament\Notifications\Notification;
 use Spatie\Health\ResultStores\ResultStore;
+use Spatie\Health\Commands\RunHealthChecksCommand;
 
 class Health extends Page
 {

@@ -3,12 +3,13 @@
 namespace App\Http\Controllers\Api\Client\Servers;
 
 use App\Models\Task;
-use Illuminate\Http\Response;
 use App\Models\Server;
 use App\Models\Schedule;
-use Illuminate\Http\JsonResponse;
 use App\Facades\Activity;
 use App\Models\Permission;
+use Illuminate\Http\Response;
+use Illuminate\Http\JsonResponse;
+use Dedoc\Scramble\Attributes\Group;
 use Illuminate\Database\ConnectionInterface;
 use App\Exceptions\Http\HttpForbiddenException;
 use App\Transformers\Api\Client\TaskTransformer;
@@ -17,7 +18,6 @@ use App\Http\Controllers\Api\Client\ClientApiController;
 use App\Exceptions\Service\ServiceLimitExceededException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use App\Http\Requests\Api\Client\Servers\Schedules\StoreTaskRequest;
-use Dedoc\Scramble\Attributes\Group;
 
 #[Group('Server - Schedule', weight: 1)]
 class ScheduleTaskController extends ClientApiController
@@ -32,12 +32,12 @@ class ScheduleTaskController extends ClientApiController
     }
 
     /**
-     * Create task
+     * Create task.
      *
      * Create a new task for a given schedule and store it in the database.
      *
      * @throws \App\Exceptions\Model\DataValidationException
-     * @throws \App\Exceptions\Service\ServiceLimitExceededException
+     * @throws ServiceLimitExceededException
      */
     public function store(StoreTaskRequest $request, Server $server, Schedule $schedule): array
     {
@@ -50,10 +50,10 @@ class ScheduleTaskController extends ClientApiController
             throw new HttpForbiddenException("A backup task cannot be created when the server's backup limit is set to 0.");
         }
 
-        /** @var \App\Models\Task|null $lastTask */
+        /** @var Task|null $lastTask */
         $lastTask = $schedule->tasks()->orderByDesc('sequence_id')->first();
 
-        /** @var \App\Models\Task $task */
+        /** @var Task $task */
         $task = $this->connection->transaction(function () use ($request, $schedule, $lastTask) {
             $sequenceId = ($lastTask->sequence_id ?? 0) + 1;
             $requestSequenceId = $request->integer('sequence_id', $sequenceId);
@@ -95,7 +95,7 @@ class ScheduleTaskController extends ClientApiController
     }
 
     /**
-     * Update task
+     * Update task.
      *
      * Updates a given task for a server.
      *
@@ -151,7 +151,7 @@ class ScheduleTaskController extends ClientApiController
     }
 
     /**
-     * Delete task
+     * Delete task.
      *
      * Delete a given task for a schedule. If there are subsequent tasks stored in the database
      * for this schedule their sequence IDs are decremented properly.

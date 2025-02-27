@@ -2,14 +2,14 @@
 
 namespace App\Http\Requests\Api\Application;
 
-use Webmozart\Assert\Assert;
 use App\Models\ApiKey;
+use Webmozart\Assert\Assert;
+use App\Exceptions\PanelException;
+use App\Services\Acl\Api\AdminAcl;
 use Laravel\Sanctum\TransientToken;
 use Illuminate\Validation\Validator;
 use Illuminate\Database\Eloquent\Model;
-use App\Services\Acl\Api\AdminAcl;
 use Illuminate\Foundation\Http\FormRequest;
-use App\Exceptions\PanelException;
 
 abstract class ApplicationApiRequest extends FormRequest
 {
@@ -29,7 +29,7 @@ abstract class ApplicationApiRequest extends FormRequest
      * Determine if the current user is authorized to perform
      * the requested action against the API.
      *
-     * @throws \App\Exceptions\PanelException
+     * @throws PanelException
      */
     public function authorize(): bool
     {
@@ -75,7 +75,8 @@ abstract class ApplicationApiRequest extends FormRequest
      *
      * @template T of \Illuminate\Database\Eloquent\Model
      *
-     * @param  class-string<T>  $expect
+     * @param class-string<T> $expect
+     *
      * @return T
      *
      * @noinspection PhpDocSignatureInspection

@@ -2,10 +2,10 @@
 
 namespace App\Filament\Admin\Resources\DatabaseHostResource\Pages;
 
-use App\Filament\Admin\Resources\DatabaseHostResource;
 use App\Models\DatabaseHost;
 use Filament\Actions\CreateAction;
 use Filament\Resources\Pages\ListRecords;
+use App\Filament\Admin\Resources\DatabaseHostResource;
 
 class ListDatabaseHosts extends ListRecords
 {

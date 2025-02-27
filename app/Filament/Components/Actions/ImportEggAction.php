@@ -3,14 +3,13 @@
 namespace App\Filament\Components\Actions;
 
 use App\Models\Egg;
-use App\Services\Eggs\Sharing\EggImporterService;
-use Exception;
 use Filament\Actions\Action;
-use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Tabs;
 use Filament\Forms\Components\Tabs\Tab;
 use Filament\Forms\Components\TextInput;
 use Filament\Notifications\Notification;
+use Filament\Forms\Components\FileUpload;
+use App\Services\Eggs\Sharing\EggImporterService;
 
 class ImportEggAction extends Action
 {
@@ -66,7 +65,7 @@ class ImportEggAction extends Action
                 if (!empty($data['url'])) {
                     $eggImportService->fromUrl($data['url']);
                 }
-            } catch (Exception $exception) {
+            } catch (\Exception $exception) {
                 Notification::make()
                     ->title(trans('admin/egg.import.import_failed'))
                     ->body($exception->getMessage())

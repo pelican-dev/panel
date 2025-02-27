@@ -2,9 +2,9 @@
 
 namespace App\Services\Eggs;
 
+use App\Models\Server;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
-use App\Models\Server;
 use App\Services\Servers\ServerConfigurationStructureService;
 
 class EggConfigurationService
@@ -12,7 +12,9 @@ class EggConfigurationService
     /**
      * EggConfigurationService constructor.
      */
-    public function __construct(private ServerConfigurationStructureService $configurationStructureService) {}
+    public function __construct(private ServerConfigurationStructureService $configurationStructureService)
+    {
+    }
 
     /**
      * Return an Egg file to be used by the Daemon.

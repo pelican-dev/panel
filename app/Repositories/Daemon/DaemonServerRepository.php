@@ -2,12 +2,11 @@
 
 namespace App\Repositories\Daemon;
 
-use App\Enums\ContainerStatus;
 use App\Enums\HttpStatusCode;
-use Exception;
+use App\Enums\ContainerStatus;
 use Filament\Notifications\Notification;
-use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Http\Client\RequestException;
+use Illuminate\Http\Client\ConnectionException;
 
 class DaemonServerRepository extends DaemonRepository
 {
@@ -34,7 +33,7 @@ class DaemonServerRepository extends DaemonRepository
                     ->danger()
                     ->send();
             }
-        } catch (Exception $exception) {
+        } catch (\Exception $exception) {
             report($exception);
         }
 

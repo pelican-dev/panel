@@ -2,9 +2,9 @@
 
 namespace App\Services\Allocations;
 
-use Webmozart\Assert\Assert;
 use App\Models\Server;
 use App\Models\Allocation;
+use Webmozart\Assert\Assert;
 use App\Exceptions\Service\Allocation\AutoAllocationNotEnabledException;
 use App\Exceptions\Service\Allocation\NoAutoAllocationSpaceAvailableException;
 
@@ -13,7 +13,9 @@ class FindAssignableAllocationService
     /**
      * FindAssignableAllocationService constructor.
      */
-    public function __construct(private AssignmentService $service) {}
+    public function __construct(private AssignmentService $service)
+    {
+    }
 
     /**
      * Finds an existing unassigned allocation and attempts to assign it to the given server. If
@@ -35,7 +37,7 @@ class FindAssignableAllocationService
         // Attempt to find a given available allocation for a server. If one cannot be found
         // we will fall back to attempting to create a new allocation that can be used for the
         // server.
-        /** @var \App\Models\Allocation|null $allocation */
+        /** @var Allocation|null $allocation */
         $allocation = $server->node->allocations()
             ->where('ip', $server->allocation->ip)
             ->whereNull('server_id')
@@ -98,7 +100,7 @@ class FindAssignableAllocationService
             'allocation_ports' => [$port],
         ]);
 
-        /** @var \App\Models\Allocation $allocation */
+        /** @var Allocation $allocation */
         $allocation = $server->node->allocations()
             ->where('ip', $server->allocation->ip)
             ->where('port', $port)

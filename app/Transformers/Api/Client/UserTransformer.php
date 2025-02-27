@@ -2,8 +2,8 @@
 
 namespace App\Transformers\Api\Client;
 
-use Illuminate\Support\Str;
 use App\Models\User;
+use Illuminate\Support\Str;
 
 class UserTransformer extends BaseClientTransformer
 {

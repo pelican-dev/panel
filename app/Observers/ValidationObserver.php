@@ -2,10 +2,10 @@
 
 namespace App\Observers;
 
-use App\Contracts\Validatable as HasValidationContract;
-use App\Exceptions\Model\DataValidationException;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Validation\ValidationException;
+use App\Exceptions\Model\DataValidationException;
+use App\Contracts\Validatable as HasValidationContract;
 
 class ValidationObserver
 {

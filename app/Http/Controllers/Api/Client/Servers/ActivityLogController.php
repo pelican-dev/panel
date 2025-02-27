@@ -2,10 +2,12 @@
 
 namespace App\Http\Controllers\Api\Client\Servers;
 
+use App\Models\Role;
 use App\Models\User;
 use App\Models\Server;
 use App\Models\Permission;
 use App\Models\ActivityLog;
+use Dedoc\Scramble\Attributes\Group;
 use Spatie\QueryBuilder\QueryBuilder;
 use Spatie\QueryBuilder\AllowedFilter;
 use Illuminate\Database\Eloquent\Builder;
@@ -13,14 +15,12 @@ use Illuminate\Database\Query\JoinClause;
 use App\Http\Requests\Api\Client\ClientApiRequest;
 use App\Transformers\Api\Client\ActivityLogTransformer;
 use App\Http\Controllers\Api\Client\ClientApiController;
-use App\Models\Role;
-use Dedoc\Scramble\Attributes\Group;
 
 #[Group('Server - Activity log')]
 class ActivityLogController extends ClientApiController
 {
     /**
-     * List activity logs
+     * List activity logs.
      *
      * Returns the activity logs for a server.
      */

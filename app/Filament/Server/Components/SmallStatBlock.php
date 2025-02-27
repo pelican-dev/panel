@@ -2,9 +2,9 @@
 
 namespace App\Filament\Server\Components;
 
-use Filament\Widgets\StatsOverviewWidget\Stat;
-use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Contracts\View\View;
+use Illuminate\Contracts\Support\Htmlable;
+use Filament\Widgets\StatsOverviewWidget\Stat;
 
 class SmallStatBlock extends Stat
 {

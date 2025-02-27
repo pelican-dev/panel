@@ -2,4 +2,6 @@
 
 namespace App\Http\Requests\Api\Application\Roles;
 
-class UpdateRoleRequest extends StoreRoleRequest {}
+class UpdateRoleRequest extends StoreRoleRequest
+{
+}

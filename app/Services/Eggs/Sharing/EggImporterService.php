@@ -2,15 +2,15 @@
 
 namespace App\Services\Eggs\Sharing;
 
-use App\Exceptions\Service\InvalidFileUploadException;
-use Ramsey\Uuid\Uuid;
-use Illuminate\Support\Arr;
 use App\Models\Egg;
-use Illuminate\Http\UploadedFile;
+use Ramsey\Uuid\Uuid;
 use App\Models\EggVariable;
-use Illuminate\Database\ConnectionInterface;
+use Illuminate\Support\Arr;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Collection;
+use Illuminate\Database\ConnectionInterface;
 use Spatie\TemporaryDirectory\TemporaryDirectory;
+use App\Exceptions\Service\InvalidFileUploadException;
 
 class EggImporterService
 {
@@ -25,12 +25,14 @@ class EggImporterService
         'server.build.environment.' => 'server.environment.',
     ];
 
-    public function __construct(protected ConnectionInterface $connection) {}
+    public function __construct(protected ConnectionInterface $connection)
+    {
+    }
 
     /**
      * Take an uploaded JSON file and parse it into a new egg.
      *
-     * @throws \App\Exceptions\Service\InvalidFileUploadException|\Throwable
+     * @throws InvalidFileUploadException|\Throwable
      */
     public function fromFile(UploadedFile $file, ?Egg $egg = null): Egg
     {
@@ -47,7 +49,7 @@ class EggImporterService
             ]);
 
             // Don't check for this anymore
-            for ($i = 0; $i < count($parsed['variables']); $i++) {
+            for ($i = 0; $i < count($parsed['variables']); ++$i) {
                 unset($parsed['variables'][$i]['field_type']);
             }
 
@@ -76,7 +78,7 @@ class EggImporterService
     /**
      * Take an url and parse it into a new egg or update an existing one.
      *
-     * @throws \App\Exceptions\Service\InvalidFileUploadException|\Throwable
+     * @throws InvalidFileUploadException|\Throwable
      */
     public function fromUrl(string $url, ?Egg $egg = null): Egg
     {
@@ -94,7 +96,7 @@ class EggImporterService
     /**
      * Takes an uploaded file and parses out the egg configuration from within.
      *
-     * @throws \App\Exceptions\Service\InvalidFileUploadException
+     * @throws InvalidFileUploadException
      */
     protected function parseFile(UploadedFile $file): array
     {

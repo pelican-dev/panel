@@ -2,9 +2,9 @@
 
 namespace App\Filament\App\Resources;
 
-use App\Filament\App\Resources\ServerResource\Pages;
 use App\Models\Server;
 use Filament\Resources\Resource;
+use App\Filament\App\Resources\ServerResource\Pages;
 
 class ServerResource extends Resource
 {

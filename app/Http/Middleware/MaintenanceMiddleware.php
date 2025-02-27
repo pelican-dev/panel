@@ -10,7 +10,9 @@ class MaintenanceMiddleware
     /**
      * MaintenanceMiddleware constructor.
      */
-    public function __construct(private ResponseFactory $response) {}
+    public function __construct(private ResponseFactory $response)
+    {
+    }
 
     /**
      * Handle an incoming request.

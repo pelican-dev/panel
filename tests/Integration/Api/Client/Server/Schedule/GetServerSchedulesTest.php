@@ -5,8 +5,8 @@ namespace App\Tests\Integration\Api\Client\Server\Schedule;
 use App\Models\Task;
 use App\Models\Schedule;
 use App\Models\Permission;
-use App\Tests\Integration\Api\Client\ClientApiIntegrationTestCase;
 use PHPUnit\Framework\Attributes\DataProvider;
+use App\Tests\Integration\Api\Client\ClientApiIntegrationTestCase;
 
 class GetServerSchedulesTest extends ClientApiIntegrationTestCase
 {
@@ -25,13 +25,13 @@ class GetServerSchedulesTest extends ClientApiIntegrationTestCase
      * Test that schedules for a server are returned.
      */
     #[DataProvider('permissionsDataProvider')]
-    public function test_server_schedules_are_returned(array $permissions, bool $individual): void
+    public function testServerSchedulesAreReturned(array $permissions, bool $individual): void
     {
         [$user, $server] = $this->generateTestAccount($permissions);
 
-        /** @var \App\Models\Schedule $schedule */
+        /** @var Schedule $schedule */
         $schedule = Schedule::factory()->create(['server_id' => $server->id]);
-        /** @var \App\Models\Task $task */
+        /** @var Task $task */
         $task = Task::factory()->create(['schedule_id' => $schedule->id, 'sequence_id' => 1, 'time_offset' => 0]);
 
         $response = $this->actingAs($user)
@@ -59,7 +59,7 @@ class GetServerSchedulesTest extends ClientApiIntegrationTestCase
     /**
      * Test that a schedule belonging to another server cannot be viewed.
      */
-    public function test_schedule_belonging_to_another_server_cannot_be_viewed(): void
+    public function testScheduleBelongingToAnotherServerCannotBeViewed(): void
     {
         [$user, $server] = $this->generateTestAccount();
         $server2 = $this->createServerModel(['owner_id' => $user->id]);
@@ -74,7 +74,7 @@ class GetServerSchedulesTest extends ClientApiIntegrationTestCase
     /**
      * Test that a subuser without the required permissions is unable to access the schedules endpoint.
      */
-    public function test_user_without_permission_cannot_view_schedules(): void
+    public function testUserWithoutPermissionCannotViewSchedules(): void
     {
         [$user, $server] = $this->generateTestAccount([Permission::ACTION_WEBSOCKET_CONNECT]);
 

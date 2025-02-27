@@ -3,11 +3,11 @@
 namespace App\Tests\Integration\Api\Client\Server\ScheduleTask;
 
 use App\Models\Task;
-use Illuminate\Http\Response;
 use App\Models\Schedule;
 use App\Models\Permission;
-use App\Tests\Integration\Api\Client\ClientApiIntegrationTestCase;
+use Illuminate\Http\Response;
 use PHPUnit\Framework\Attributes\DataProvider;
+use App\Tests\Integration\Api\Client\ClientApiIntegrationTestCase;
 
 class CreateServerScheduleTaskTest extends ClientApiIntegrationTestCase
 {
@@ -15,11 +15,11 @@ class CreateServerScheduleTaskTest extends ClientApiIntegrationTestCase
      * Test that a task can be created.
      */
     #[DataProvider('permissionsDataProvider')]
-    public function test_task_can_be_created(array $permissions): void
+    public function testTaskCanBeCreated(array $permissions): void
     {
         [$user, $server] = $this->generateTestAccount($permissions);
 
-        /** @var \App\Models\Schedule $schedule */
+        /** @var Schedule $schedule */
         $schedule = Schedule::factory()->create(['server_id' => $server->id]);
         $this->assertEmpty($schedule->tasks);
 
@@ -31,7 +31,7 @@ class CreateServerScheduleTaskTest extends ClientApiIntegrationTestCase
         ]);
 
         $response->assertOk();
-        /** @var \App\Models\Task $task */
+        /** @var Task $task */
         $task = Task::query()->findOrFail($response->json('attributes.id'));
 
         $this->assertSame($schedule->id, $task->schedule_id);
@@ -45,11 +45,11 @@ class CreateServerScheduleTaskTest extends ClientApiIntegrationTestCase
     /**
      * Test that validation errors are returned correctly if bad data is passed into the API.
      */
-    public function test_validation_errors_are_returned(): void
+    public function testValidationErrorsAreReturned(): void
     {
         [$user, $server] = $this->generateTestAccount();
 
-        /** @var \App\Models\Schedule $schedule */
+        /** @var Schedule $schedule */
         $schedule = Schedule::factory()->create(['server_id' => $server->id]);
 
         $response = $this->actingAs($user)->postJson($this->link($schedule, '/tasks'))->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY);
@@ -90,11 +90,11 @@ class CreateServerScheduleTaskTest extends ClientApiIntegrationTestCase
     /**
      * Test that backups can not be tasked when the backup limit is 0.
      */
-    public function test_backups_can_not_be_tasked_if_limit0(): void
+    public function testBackupsCanNotBeTaskedIfLimit0(): void
     {
         [$user, $server] = $this->generateTestAccount();
 
-        /** @var \App\Models\Schedule $schedule */
+        /** @var Schedule $schedule */
         $schedule = Schedule::factory()->create(['server_id' => $server->id]);
 
         $this->actingAs($user)->postJson($this->link($schedule, '/tasks'), [
@@ -117,13 +117,13 @@ class CreateServerScheduleTaskTest extends ClientApiIntegrationTestCase
      * Test that an error is returned if the user attempts to create an additional task that
      * would put the schedule over the task limit.
      */
-    public function test_error_is_returned_if_too_many_tasks_exist_for_schedule(): void
+    public function testErrorIsReturnedIfTooManyTasksExistForSchedule(): void
     {
         config()->set('panel.client_features.schedules.per_schedule_task_limit', 2);
 
         [$user, $server] = $this->generateTestAccount();
 
-        /** @var \App\Models\Schedule $schedule */
+        /** @var Schedule $schedule */
         $schedule = Schedule::factory()->create(['server_id' => $server->id]);
         Task::factory()->times(2)->create(['schedule_id' => $schedule->id]);
 
@@ -141,12 +141,12 @@ class CreateServerScheduleTaskTest extends ClientApiIntegrationTestCase
      * Test that an error is returned if the targeted schedule does not belong to the server
      * in the request.
      */
-    public function test_error_is_returned_if_schedule_does_not_belong_to_server(): void
+    public function testErrorIsReturnedIfScheduleDoesNotBelongToServer(): void
     {
         [$user, $server] = $this->generateTestAccount();
         $server2 = $this->createServerModel(['owner_id' => $user->id]);
 
-        /** @var \App\Models\Schedule $schedule */
+        /** @var Schedule $schedule */
         $schedule = Schedule::factory()->create(['server_id' => $server2->id]);
 
         $this->actingAs($user)
@@ -158,11 +158,11 @@ class CreateServerScheduleTaskTest extends ClientApiIntegrationTestCase
      * Test that an error is returned if the subuser making the request does not have permission
      * to update a schedule.
      */
-    public function test_error_is_returned_if_subuser_does_not_have_schedule_update_permissions(): void
+    public function testErrorIsReturnedIfSubuserDoesNotHaveScheduleUpdatePermissions(): void
     {
         [$user, $server] = $this->generateTestAccount([Permission::ACTION_SCHEDULE_CREATE]);
 
-        /** @var \App\Models\Schedule $schedule */
+        /** @var Schedule $schedule */
         $schedule = Schedule::factory()->create(['server_id' => $server->id]);
 
         $this->actingAs($user)

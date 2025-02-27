@@ -2,24 +2,23 @@
 
 namespace App\Filament\Server\Resources\UserResource\Pages;
 
-use App\Filament\Server\Resources\UserResource;
-use App\Models\Permission;
-use App\Models\Server;
-use App\Services\Subusers\SubuserCreationService;
-use Exception;
 use Filament\Actions;
-use Filament\Facades\Filament;
-use Filament\Forms\Components\Actions as assignAll;
-use Filament\Forms\Components\Actions\Action;
-use Filament\Forms\Components\CheckboxList;
-use Filament\Forms\Components\Grid;
-use Filament\Forms\Components\Section;
-use Filament\Forms\Components\Tabs;
-use Filament\Forms\Components\TextInput;
+use App\Models\Server;
 use Filament\Forms\Get;
 use Filament\Forms\Set;
+use App\Models\Permission;
+use Filament\Facades\Filament;
+use Filament\Forms\Components\Grid;
+use Filament\Forms\Components\Tabs;
+use Filament\Forms\Components\Section;
+use Filament\Forms\Components\TextInput;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\ListRecords;
+use Filament\Forms\Components\CheckboxList;
+use Filament\Forms\Components\Actions\Action;
+use App\Filament\Server\Resources\UserResource;
+use App\Services\Subusers\SubuserCreationService;
+use Filament\Forms\Components\Actions as assignAll;
 
 class ListUsers extends ListRecords
 {
@@ -378,7 +377,6 @@ class ListUsers extends ListRecords
                                                 ]),
                                         ]),
                                 ]),
-
                         ]),
                 ])
                 ->modalHeading('Invite User')
@@ -399,7 +397,7 @@ class ListUsers extends ListRecords
                             ->title('User Invited!')
                             ->success()
                             ->send();
-                    } catch (Exception $exception) {
+                    } catch (\Exception $exception) {
                         Notification::make()
                             ->title('Failed')
                             ->body($exception->getMessage())

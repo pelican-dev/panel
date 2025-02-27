@@ -2,16 +2,16 @@
 
 namespace App\Http\Controllers\Api\Client;
 
-use Illuminate\Auth\SessionGuard;
+use App\Facades\Activity;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Auth\AuthManager;
+use Illuminate\Auth\SessionGuard;
 use Illuminate\Http\JsonResponse;
-use App\Facades\Activity;
 use App\Services\Users\UserUpdateService;
+use App\Transformers\Api\Client\UserTransformer;
 use App\Http\Requests\Api\Client\Account\UpdateEmailRequest;
 use App\Http\Requests\Api\Client\Account\UpdatePasswordRequest;
-use App\Transformers\Api\Client\UserTransformer;
 
 class AccountController extends ClientApiController
 {
@@ -24,7 +24,7 @@ class AccountController extends ClientApiController
     }
 
     /**
-     * View account
+     * View account.
      */
     public function index(Request $request): array
     {
@@ -34,7 +34,7 @@ class AccountController extends ClientApiController
     }
 
     /**
-     * Update email
+     * Update email.
      *
      * Update the authenticated user's email address.
      */
@@ -53,7 +53,7 @@ class AccountController extends ClientApiController
     }
 
     /**
-     * Update password
+     * Update password.
      *
      * Update the authenticated user's password. All existing sessions will be logged
      * out immediately.

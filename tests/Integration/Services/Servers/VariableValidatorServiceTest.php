@@ -5,8 +5,8 @@ namespace App\Tests\Integration\Services\Servers;
 use App\Models\Egg;
 use App\Models\User;
 use Illuminate\Support\Collection;
-use Illuminate\Validation\ValidationException;
 use App\Tests\Integration\IntegrationTestCase;
+use Illuminate\Validation\ValidationException;
 use App\Services\Servers\VariableValidatorService;
 
 class VariableValidatorServiceTest extends IntegrationTestCase
@@ -27,7 +27,7 @@ class VariableValidatorServiceTest extends IntegrationTestCase
     /**
      * Test that environment variables for a server are validated as expected.
      */
-    public function test_environment_variables_can_be_validated(): void
+    public function testEnvironmentVariablesCanBeValidated(): void
     {
         $egg = $this->cloneEggAndVariables($this->egg);
 
@@ -64,7 +64,7 @@ class VariableValidatorServiceTest extends IntegrationTestCase
      * Test that variables that are user_editable=false do not get validated (or returned) by
      * the handler.
      */
-    public function test_normal_user_cannot_validate_non_user_editable_variables(): void
+    public function testNormalUserCannotValidateNonUserEditableVariables(): void
     {
         $egg = $this->cloneEggAndVariables($this->egg);
         $egg->variables()->first()->update([
@@ -83,7 +83,7 @@ class VariableValidatorServiceTest extends IntegrationTestCase
         $this->assertSame('server.jar', $response->get(0)->value);
     }
 
-    public function test_environment_variables_can_be_updated_as_admin(): void
+    public function testEnvironmentVariablesCanBeUpdatedAsAdmin(): void
     {
         $egg = $this->cloneEggAndVariables($this->egg);
         $egg->variables()->first()->update([
@@ -115,7 +115,7 @@ class VariableValidatorServiceTest extends IntegrationTestCase
         $this->assertSame('server.jar', $response->get(1)->value);
     }
 
-    public function test_nullable_environment_variables_can_be_used_correctly(): void
+    public function testNullableEnvironmentVariablesCanBeUsedCorrectly(): void
     {
         $egg = $this->cloneEggAndVariables($this->egg);
         $egg->variables()->where('env_variable', '!=', 'BUNGEE_VERSION')->delete();

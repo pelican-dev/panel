@@ -3,8 +3,8 @@
 namespace App\Filament\Admin\Resources\NodeResource\Widgets;
 
 use App\Models\Node;
-use Filament\Widgets\ChartWidget;
 use Illuminate\Support\Number;
+use Filament\Widgets\ChartWidget;
 
 class NodeStorageChart extends ChartWidget
 {

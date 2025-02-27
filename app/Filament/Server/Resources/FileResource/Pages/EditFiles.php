@@ -2,31 +2,31 @@
 
 namespace App\Filament\Server\Resources\FileResource\Pages;
 
-use AbdelhamidErrahmouni\FilamentMonacoEditor\MonacoEditor;
-use App\Enums\EditorLanguages;
-use App\Facades\Activity;
-use App\Filament\Server\Resources\FileResource;
-use App\Livewire\AlertBanner;
-use App\Models\Permission;
-use App\Models\Server;
-use App\Repositories\Daemon\DaemonFileRepository;
-use Filament\Facades\Filament;
-use Filament\Forms\Components\Actions\Action;
-use Filament\Forms\Components\Section;
-use Filament\Forms\Components\Select;
-use Filament\Forms\Concerns\InteractsWithForms;
-use Filament\Forms\Form;
-use Filament\Forms\Get;
-use Filament\Notifications\Notification;
-use Filament\Pages\Concerns\InteractsWithFormActions;
 use Filament\Panel;
-use Filament\Resources\Pages\Page;
-use Filament\Resources\Pages\PageRegistration;
-use Filament\Support\Enums\Alignment;
-use Illuminate\Contracts\Filesystem\FileNotFoundException;
+use App\Models\Server;
+use Filament\Forms\Get;
+use Filament\Forms\Form;
+use App\Facades\Activity;
+use App\Models\Permission;
+use App\Livewire\AlertBanner;
 use Illuminate\Routing\Route;
-use Illuminate\Support\Facades\Route as RouteFacade;
+use App\Enums\EditorLanguages;
+use Filament\Facades\Filament;
 use Livewire\Attributes\Locked;
+use Filament\Resources\Pages\Page;
+use Filament\Forms\Components\Select;
+use Filament\Support\Enums\Alignment;
+use Filament\Forms\Components\Section;
+use Filament\Notifications\Notification;
+use Filament\Forms\Components\Actions\Action;
+use Filament\Resources\Pages\PageRegistration;
+use App\Filament\Server\Resources\FileResource;
+use Filament\Forms\Concerns\InteractsWithForms;
+use App\Repositories\Daemon\DaemonFileRepository;
+use Illuminate\Support\Facades\Route as RouteFacade;
+use Filament\Pages\Concerns\InteractsWithFormActions;
+use Illuminate\Contracts\Filesystem\FileNotFoundException;
+use AbdelhamidErrahmouni\FilamentMonacoEditor\MonacoEditor;
 
 /**
  * @property Form $form
@@ -159,7 +159,7 @@ class EditFiles extends Page
     }
 
     /**
-     * @return array<int | string, string | Form>
+     * @return array<int|string, string|Form>
      */
     protected function getForms(): array
     {

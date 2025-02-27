@@ -2,22 +2,22 @@
 
 namespace App\Http\Controllers\Api\Application\Roles;
 
-use App\Exceptions\PanelException;
+use App\Models\Role;
 use Illuminate\Http\Response;
 use Illuminate\Http\JsonResponse;
-use App\Models\Role;
+use App\Exceptions\PanelException;
 use Spatie\QueryBuilder\QueryBuilder;
 use App\Transformers\Api\Application\RoleTransformer;
-use App\Http\Controllers\Api\Application\ApplicationApiController;
 use App\Http\Requests\Api\Application\Roles\GetRoleRequest;
 use App\Http\Requests\Api\Application\Roles\StoreRoleRequest;
 use App\Http\Requests\Api\Application\Roles\DeleteRoleRequest;
 use App\Http\Requests\Api\Application\Roles\UpdateRoleRequest;
+use App\Http\Controllers\Api\Application\ApplicationApiController;
 
 class RoleController extends ApplicationApiController
 {
     /**
-     * List roles
+     * List roles.
      *
      * Return all the roles currently registered on the Panel.
      */
@@ -34,7 +34,7 @@ class RoleController extends ApplicationApiController
     }
 
     /**
-     * View role
+     * View role.
      *
      * Return a single role.
      */
@@ -46,7 +46,7 @@ class RoleController extends ApplicationApiController
     }
 
     /**
-     * Create role
+     * Create role.
      *
      * Store a new role on the Panel and return an HTTP/201 response code with the
      * new role attached.
@@ -68,7 +68,7 @@ class RoleController extends ApplicationApiController
     }
 
     /**
-     * Update role
+     * Update role.
      *
      * Update a role on the Panel and return the updated record to the user.
      *
@@ -88,7 +88,7 @@ class RoleController extends ApplicationApiController
     }
 
     /**
-     * Delete role
+     * Delete role.
      *
      * Delete a role from the Panel.
      *

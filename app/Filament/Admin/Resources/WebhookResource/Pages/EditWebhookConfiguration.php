@@ -2,9 +2,9 @@
 
 namespace App\Filament\Admin\Resources\WebhookResource\Pages;
 
-use App\Filament\Admin\Resources\WebhookResource;
 use Filament\Actions\DeleteAction;
 use Filament\Resources\Pages\EditRecord;
+use App\Filament\Admin\Resources\WebhookResource;
 
 class EditWebhookConfiguration extends EditRecord
 {

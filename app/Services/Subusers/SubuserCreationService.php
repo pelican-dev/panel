@@ -2,16 +2,16 @@
 
 namespace App\Services\Subusers;
 
-use App\Events\Server\SubUserAdded;
 use App\Models\User;
-use Illuminate\Support\Str;
 use App\Models\Server;
 use App\Models\Subuser;
-use Illuminate\Database\ConnectionInterface;
+use App\Models\Permission;
+use Illuminate\Support\Str;
+use App\Events\Server\SubUserAdded;
 use App\Services\Users\UserCreationService;
+use Illuminate\Database\ConnectionInterface;
 use App\Exceptions\Service\Subuser\UserIsServerOwnerException;
 use App\Exceptions\Service\Subuser\ServerSubuserExistsException;
-use App\Models\Permission;
 
 class SubuserCreationService
 {
@@ -21,7 +21,8 @@ class SubuserCreationService
     public function __construct(
         private ConnectionInterface $connection,
         private UserCreationService $userCreationService,
-    ) {}
+    ) {
+    }
 
     /**
      * Creates a new user on the system and assigns them access to the provided server.
@@ -29,8 +30,8 @@ class SubuserCreationService
      * be created.
      *
      * @throws \App\Exceptions\Model\DataValidationException
-     * @throws \App\Exceptions\Service\Subuser\ServerSubuserExistsException
-     * @throws \App\Exceptions\Service\Subuser\UserIsServerOwnerException
+     * @throws ServerSubuserExistsException
+     * @throws UserIsServerOwnerException
      * @throws \Throwable
      */
     public function handle(Server $server, string $email, array $permissions): Subuser

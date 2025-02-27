@@ -12,7 +12,9 @@ class AccountCreated extends Notification implements ShouldQueue
 {
     use Queueable;
 
-    public function __construct(public ?string $token = null) {}
+    public function __construct(public ?string $token = null)
+    {
+    }
 
     public function via(): array
     {

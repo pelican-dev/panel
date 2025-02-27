@@ -4,8 +4,8 @@ namespace App\Checks;
 
 use Carbon\Carbon;
 use Composer\InstalledVersions;
-use Spatie\Health\Checks\Checks\ScheduleCheck as BaseCheck;
 use Spatie\Health\Checks\Result;
+use Spatie\Health\Checks\Checks\ScheduleCheck as BaseCheck;
 
 class ScheduleCheck extends BaseCheck
 {
@@ -25,9 +25,12 @@ class ScheduleCheck extends BaseCheck
 
         $minutesAgo = $latestHeartbeatAt->diffInMinutes();
 
-        if (version_compare($carbonVersion,
-            '3.0.0', '<')) {
-            $minutesAgo += 1;
+        if (version_compare(
+            $carbonVersion,
+            '3.0.0',
+            '<'
+        )) {
+            ++$minutesAgo;
         }
 
         if ($minutesAgo > $this->heartbeatMaxAgeInMinutes) {

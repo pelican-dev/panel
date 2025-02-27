@@ -2,8 +2,8 @@
 
 namespace App\Traits\Commands;
 
-use App\Traits\CheckMigrationsTrait;
 use Illuminate\Console\Command;
+use App\Traits\CheckMigrationsTrait;
 
 /**
  * @mixin Command

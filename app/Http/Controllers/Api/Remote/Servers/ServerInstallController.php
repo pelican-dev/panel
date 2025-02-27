@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers\Api\Remote\Servers;
 
+use App\Models\Server;
 use App\Enums\ServerState;
 use Illuminate\Http\Response;
-use App\Models\Server;
 use Illuminate\Http\JsonResponse;
 use App\Http\Controllers\Controller;
 use App\Events\Server\Installed as ServerInstalled;

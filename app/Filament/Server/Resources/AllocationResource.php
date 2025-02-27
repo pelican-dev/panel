@@ -2,13 +2,13 @@
 
 namespace App\Filament\Server\Resources;
 
-use App\Filament\Server\Resources\AllocationResource\Pages;
+use App\Models\Server;
 use App\Models\Allocation;
 use App\Models\Permission;
-use App\Models\Server;
 use Filament\Facades\Filament;
 use Filament\Resources\Resource;
 use Illuminate\Database\Eloquent\Model;
+use App\Filament\Server\Resources\AllocationResource\Pages;
 
 class AllocationResource extends Resource
 {

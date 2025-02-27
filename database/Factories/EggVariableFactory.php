@@ -2,8 +2,8 @@
 
 namespace Database\Factories;
 
-use Illuminate\Support\Str;
 use App\Models\EggVariable;
+use Illuminate\Support\Str;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class EggVariableFactory extends Factory

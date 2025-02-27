@@ -2,13 +2,12 @@
 
 namespace App\Models;
 
-use App\Livewire\AlertBanner;
-use App\Repositories\Daemon\DaemonFileRepository;
-use Carbon\Carbon;
-use Exception;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Model;
 use Sushi\Sushi;
+use Carbon\Carbon;
+use App\Livewire\AlertBanner;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Builder;
+use App\Repositories\Daemon\DaemonFileRepository;
 
 /**
  * @property string $name
@@ -140,7 +139,7 @@ class File extends Model
             }
 
             if (isset($contents['error'])) {
-                throw new Exception($contents['error']);
+                throw new \Exception($contents['error']);
             }
 
             return array_map(function ($file) {
@@ -157,7 +156,7 @@ class File extends Model
                     'mime_type' => $file['mime'],
                 ];
             }, $contents);
-        } catch (Exception $exception) {
+        } catch (\Exception $exception) {
             report($exception);
 
             $message = str($exception->getMessage());

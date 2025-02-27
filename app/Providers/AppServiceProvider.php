@@ -2,42 +2,42 @@
 
 namespace App\Providers;
 
-use App\Checks\NodeVersionsCheck;
-use App\Checks\PanelVersionCheck;
-use App\Checks\UsedDiskSpaceCheck;
-use App\Extensions\OAuth\Providers\AuthentikProvider;
-use App\Extensions\OAuth\Providers\CommonProvider;
-use App\Extensions\OAuth\Providers\DiscordProvider;
-use App\Extensions\OAuth\Providers\GithubProvider;
-use App\Extensions\OAuth\Providers\SteamProvider;
 use App\Models;
-use App\Models\ApiKey;
 use App\Models\Node;
 use App\Models\User;
-use App\Services\Helpers\SoftwareVersionService;
-use Dedoc\Scramble\Scramble;
-use Dedoc\Scramble\Support\Generator\OpenApi;
-use Dedoc\Scramble\Support\Generator\SecurityScheme;
-use Filament\Support\Colors\Color;
-use Filament\Support\Facades\FilamentColor;
-use Filament\Support\Facades\FilamentView;
-use Filament\View\PanelsRenderHook;
-use Illuminate\Database\Eloquent\Relations\Relation;
-use Illuminate\Foundation\Application;
-use Illuminate\Foundation\Console\AboutCommand;
-use Illuminate\Support\Facades\Blade;
-use Illuminate\Support\Facades\Gate;
-use Illuminate\Support\Facades\Http;
-use Illuminate\Support\Facades\URL;
-use Illuminate\Support\ServiceProvider;
-use Illuminate\Support\Str;
-use Laravel\Sanctum\Sanctum;
+use App\Models\ApiKey;
 use App\Checks\CacheCheck;
+use Illuminate\Support\Str;
+use Dedoc\Scramble\Scramble;
+use Laravel\Sanctum\Sanctum;
 use App\Checks\DatabaseCheck;
+use App\Checks\ScheduleCheck;
 use App\Checks\DebugModeCheck;
 use App\Checks\EnvironmentCheck;
-use App\Checks\ScheduleCheck;
+use App\Checks\NodeVersionsCheck;
+use App\Checks\PanelVersionCheck;
 use Spatie\Health\Facades\Health;
+use App\Checks\UsedDiskSpaceCheck;
+use Filament\Support\Colors\Color;
+use Filament\View\PanelsRenderHook;
+use Illuminate\Support\Facades\URL;
+use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Blade;
+use Illuminate\Foundation\Application;
+use Illuminate\Support\ServiceProvider;
+use Filament\Support\Facades\FilamentView;
+use Filament\Support\Facades\FilamentColor;
+use Dedoc\Scramble\Support\Generator\OpenApi;
+use Illuminate\Foundation\Console\AboutCommand;
+use App\Services\Helpers\SoftwareVersionService;
+use App\Extensions\OAuth\Providers\SteamProvider;
+use App\Extensions\OAuth\Providers\CommonProvider;
+use App\Extensions\OAuth\Providers\GithubProvider;
+use App\Extensions\OAuth\Providers\DiscordProvider;
+use Dedoc\Scramble\Support\Generator\SecurityScheme;
+use Illuminate\Database\Eloquent\Relations\Relation;
+use App\Extensions\OAuth\Providers\AuthentikProvider;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -53,7 +53,7 @@ class AppServiceProvider extends ServiceProvider
 
         Relation::enforceMorphMap([
             'allocation' => Models\Allocation::class,
-            'api_key' => Models\ApiKey::class,
+            'api_key' => ApiKey::class,
             'backup' => Models\Backup::class,
             'database' => Models\Database::class,
             'egg' => Models\Egg::class,
@@ -62,7 +62,7 @@ class AppServiceProvider extends ServiceProvider
             'server' => Models\Server::class,
             'ssh_key' => Models\UserSSHKey::class,
             'task' => Models\Task::class,
-            'user' => Models\User::class,
+            'user' => User::class,
         ]);
 
         Http::macro(

@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers\Api\Application\DatabaseHosts;
 
+use App\Models\DatabaseHost;
 use Illuminate\Http\Response;
 use Illuminate\Http\JsonResponse;
-use App\Models\DatabaseHost;
 use Spatie\QueryBuilder\QueryBuilder;
 use App\Services\Databases\Hosts\HostUpdateService;
 use App\Services\Databases\Hosts\HostCreationService;
@@ -28,7 +28,7 @@ class DatabaseHostController extends ApplicationApiController
     }
 
     /**
-     * List database hosts
+     * List database hosts.
      *
      * Return all the database hosts currently registered on the Panel.
      */
@@ -45,7 +45,7 @@ class DatabaseHostController extends ApplicationApiController
     }
 
     /**
-     * View database host
+     * View database host.
      *
      * Return a single database host.
      */
@@ -57,7 +57,7 @@ class DatabaseHostController extends ApplicationApiController
     }
 
     /**
-     * Create database host
+     * Create database host.
      *
      * Store a new database host on the Panel and return an HTTP/201 response code with the
      * new database host attached.
@@ -79,7 +79,7 @@ class DatabaseHostController extends ApplicationApiController
     }
 
     /**
-     * Update database host
+     * Update database host.
      *
      * Update a database host on the Panel and return the updated record to the user.
      *
@@ -95,7 +95,7 @@ class DatabaseHostController extends ApplicationApiController
     }
 
     /**
-     * Delete database host
+     * Delete database host.
      *
      * Delete a database host from the Panel.
      *

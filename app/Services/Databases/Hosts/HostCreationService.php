@@ -16,7 +16,8 @@ class HostCreationService
         private ConnectionInterface $connection,
         private DatabaseManager $databaseManager,
         private DynamicDatabaseConnection $dynamic,
-    ) {}
+    ) {
+    }
 
     /**
      * Create a new database host on the Panel.

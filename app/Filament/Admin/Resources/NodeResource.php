@@ -2,10 +2,10 @@
 
 namespace App\Filament\Admin\Resources;
 
-use App\Filament\Admin\Resources\NodeResource\Pages;
-use App\Filament\Admin\Resources\NodeResource\RelationManagers;
 use App\Models\Node;
 use Filament\Resources\Resource;
+use App\Filament\Admin\Resources\NodeResource\Pages;
+use App\Filament\Admin\Resources\NodeResource\RelationManagers;
 
 class NodeResource extends Resource
 {

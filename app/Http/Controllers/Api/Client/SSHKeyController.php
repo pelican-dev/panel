@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers\Api\Client;
 
-use Illuminate\Http\JsonResponse;
 use App\Facades\Activity;
+use Illuminate\Http\JsonResponse;
 use App\Http\Requests\Api\Client\ClientApiRequest;
 use App\Transformers\Api\Client\UserSSHKeyTransformer;
 use App\Http\Requests\Api\Client\Account\StoreSSHKeyRequest;
@@ -11,7 +11,7 @@ use App\Http\Requests\Api\Client\Account\StoreSSHKeyRequest;
 class SSHKeyController extends ClientApiController
 {
     /**
-     * List ssh keys
+     * List ssh keys.
      *
      * Returns all the SSH keys that have been configured for the logged-in
      * user account.
@@ -24,7 +24,7 @@ class SSHKeyController extends ClientApiController
     }
 
     /**
-     * Create ssh keys
+     * Create ssh keys.
      *
      * Stores a new SSH key for the authenticated user's account.
      */
@@ -47,7 +47,7 @@ class SSHKeyController extends ClientApiController
     }
 
     /**
-     * Delete ssh keys
+     * Delete ssh keys.
      *
      * Deletes an SSH key from the user's account.
      */

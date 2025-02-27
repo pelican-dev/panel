@@ -3,9 +3,9 @@
 namespace App\Services\Files;
 
 use App\Models\Server;
-use App\Repositories\Daemon\DaemonFileRepository;
-use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Support\Str;
+use Illuminate\Http\Client\ConnectionException;
+use App\Repositories\Daemon\DaemonFileRepository;
 
 class DeleteFilesService
 {
@@ -14,7 +14,8 @@ class DeleteFilesService
      */
     public function __construct(
         private DaemonFileRepository $daemonFileRepository
-    ) {}
+    ) {
+    }
 
     /**
      * Deletes the given files.

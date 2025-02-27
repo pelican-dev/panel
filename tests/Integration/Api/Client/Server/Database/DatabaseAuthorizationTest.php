@@ -5,15 +5,15 @@ namespace App\Tests\Integration\Api\Client\Server\Database;
 use App\Models\Subuser;
 use App\Models\Database;
 use App\Models\DatabaseHost;
+use PHPUnit\Framework\Attributes\DataProvider;
 use App\Services\Databases\DatabasePasswordService;
 use App\Services\Databases\DatabaseManagementService;
 use App\Tests\Integration\Api\Client\ClientApiIntegrationTestCase;
-use PHPUnit\Framework\Attributes\DataProvider;
 
 class DatabaseAuthorizationTest extends ClientApiIntegrationTestCase
 {
     #[DataProvider('methodDataProvider')]
-    public function test_access_to_a_servers_databases_is_restricted_properly(string $method, string $endpoint): void
+    public function testAccessToAServersDatabasesIsRestrictedProperly(string $method, string $endpoint): void
     {
         // The API $user is the owner of $server1.
         [$user, $server1] = $this->generateTestAccount();

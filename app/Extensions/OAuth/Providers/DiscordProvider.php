@@ -2,13 +2,13 @@
 
 namespace App\Extensions\OAuth\Providers;
 
-use Filament\Forms\Components\Placeholder;
-use Filament\Forms\Components\TextInput;
-use Filament\Forms\Components\Wizard\Step;
-use Illuminate\Foundation\Application;
-use Illuminate\Support\HtmlString;
 use Illuminate\Support\Str;
+use Illuminate\Support\HtmlString;
+use Illuminate\Foundation\Application;
+use Filament\Forms\Components\TextInput;
 use SocialiteProviders\Discord\Provider;
+use Filament\Forms\Components\Placeholder;
+use Filament\Forms\Components\Wizard\Step;
 use Webbingbrasil\FilamentCopyActions\Forms\Actions\CopyAction;
 
 final class DiscordProvider extends OAuthProvider

@@ -2,57 +2,54 @@
 
 namespace App\Filament\Admin\Resources\ServerResource\Pages;
 
-use App\Enums\ContainerStatus;
-use App\Enums\ServerState;
-use App\Enums\SuspendAction;
-use App\Filament\Admin\Resources\ServerResource;
-use App\Filament\Admin\Resources\ServerResource\RelationManagers\AllocationsRelationManager;
-use App\Filament\Components\Forms\Actions\PreviewStartupAction;
-use App\Filament\Components\Forms\Actions\RotateDatabasePasswordAction;
-use App\Filament\Server\Pages\Console;
-use App\Models\Database;
-use App\Models\DatabaseHost;
 use App\Models\Egg;
-use App\Models\Mount;
-use App\Models\Server;
-use App\Models\ServerVariable;
-use App\Models\User;
-use App\Services\Databases\DatabaseManagementService;
-use App\Services\Eggs\EggChangerService;
-use App\Services\Servers\RandomWordService;
-use App\Services\Servers\ReinstallServerService;
-use App\Services\Servers\ServerDeletionService;
-use App\Services\Servers\SuspensionService;
-use App\Services\Servers\ToggleInstallService;
-use App\Services\Servers\TransferServerService;
-use Closure;
-use Exception;
-use Filament\Actions;
 use Filament\Forms;
-use Filament\Forms\Components\Actions\Action;
-use Filament\Forms\Components\CheckboxList;
-use Filament\Forms\Components\Fieldset;
-use Filament\Forms\Components\Grid;
-use Filament\Forms\Components\Hidden;
-use Filament\Forms\Components\KeyValue;
-use Filament\Forms\Components\Repeater;
-use Filament\Forms\Components\Select;
-use Filament\Forms\Components\Tabs;
-use Filament\Forms\Components\Tabs\Tab;
-use Filament\Forms\Components\TagsInput;
-use Filament\Forms\Components\Textarea;
-use Filament\Forms\Components\TextInput;
-use Filament\Forms\Components\Toggle;
-use Filament\Forms\Components\ToggleButtons;
-use Filament\Forms\Form;
+use App\Models\User;
+use App\Models\Mount;
+use Filament\Actions;
+use App\Models\Server;
 use Filament\Forms\Get;
 use Filament\Forms\Set;
+use App\Models\Database;
+use Filament\Forms\Form;
+use App\Enums\ServerState;
+use App\Enums\SuspendAction;
+use App\Models\DatabaseHost;
+use App\Enums\ContainerStatus;
+use App\Models\ServerVariable;
+use Filament\Forms\Components\Grid;
+use Filament\Forms\Components\Tabs;
+use Filament\Forms\Components\Hidden;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Toggle;
+use App\Filament\Server\Pages\Console;
+use Filament\Forms\Components\Fieldset;
+use Filament\Forms\Components\KeyValue;
+use Filament\Forms\Components\Repeater;
+use Filament\Forms\Components\Tabs\Tab;
+use Filament\Forms\Components\Textarea;
+use App\Services\Eggs\EggChangerService;
+use Filament\Forms\Components\TagsInput;
+use Filament\Forms\Components\TextInput;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\EditRecord;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Validator;
-use LogicException;
+use App\Services\Servers\RandomWordService;
+use App\Services\Servers\SuspensionService;
+use Filament\Forms\Components\CheckboxList;
+use Filament\Forms\Components\ToggleButtons;
+use Filament\Forms\Components\Actions\Action;
+use App\Services\Servers\ToggleInstallService;
+use App\Services\Servers\ServerDeletionService;
+use App\Services\Servers\TransferServerService;
+use App\Filament\Admin\Resources\ServerResource;
+use App\Services\Servers\ReinstallServerService;
+use App\Services\Databases\DatabaseManagementService;
+use App\Filament\Components\Forms\Actions\PreviewStartupAction;
 use Webbingbrasil\FilamentCopyActions\Forms\Actions\CopyAction;
+use App\Filament\Components\Forms\Actions\RotateDatabasePasswordAction;
+use App\Filament\Admin\Resources\ServerResource\RelationManagers\AllocationsRelationManager;
 
 class EditServer extends EditRecord
 {
@@ -115,7 +112,8 @@ class EditServer extends EditRecord
                                 ToggleButtons::make('condition')
                                     ->label(trans('admin/server.server_status'))
                                     ->formatStateUsing(fn (Server $server) => $server->condition)
-                                    ->options(fn ($state) => collect(array_merge(ContainerStatus::cases(), ServerState::cases()))
+                                    ->options(
+                                        fn ($state) => collect(array_merge(ContainerStatus::cases(), ServerState::cases()))
                                         ->filter(fn ($condition) => $condition->value === $state)
                                         ->mapWithKeys(fn ($state) => [$state->value => str($state->value)->replace('_', ' ')->ucwords()])
                                     )
@@ -334,7 +332,7 @@ class EditServer extends EditRecord
                                                             'unlimited' => -1,
                                                             'disabled' => 0,
                                                             'limited' => 128,
-                                                            default => throw new LogicException('Invalid state')
+                                                            default => throw new \LogicException('Invalid state')
                                                         };
 
                                                         $set('swap', $value);
@@ -344,7 +342,7 @@ class EditServer extends EditRecord
                                                             $get('swap') > 0 => 'limited',
                                                             $get('swap') == 0 => 'disabled',
                                                             $get('swap') < 0 => 'unlimited',
-                                                            default => throw new LogicException('Invalid state')
+                                                            default => throw new \LogicException('Invalid state')
                                                         };
                                                     })
                                                     ->options([
@@ -600,12 +598,11 @@ class EditServer extends EditRecord
                                     })
                                     ->reorderable(false)->addable(false)->deletable(false)
                                     ->schema(function () {
-
                                         $text = TextInput::make('variable_value')
                                             ->hidden($this->shouldHideComponent(...))
                                             ->required(fn (ServerVariable $serverVariable) => $serverVariable->variable->getRequiredAttribute())
                                             ->rules([
-                                                fn (ServerVariable $serverVariable): Closure => function (string $attribute, $value, Closure $fail) use ($serverVariable) {
+                                                fn (ServerVariable $serverVariable): \Closure => function (string $attribute, $value, \Closure $fail) use ($serverVariable) {
                                                     $validator = Validator::make(['validatorkey' => $value], [
                                                         'validatorkey' => $serverVariable->variable->rules,
                                                     ]);
@@ -736,7 +733,7 @@ class EditServer extends EditRecord
 
                                             try {
                                                 $service->setValidateDatabaseLimit(false)->create($server, $data);
-                                            } catch (Exception $e) {
+                                            } catch (\Exception $e) {
                                                 Notification::make()
                                                     ->title(trans('admin/server.failed_to_create'))
                                                     ->body($e->getMessage())
@@ -750,11 +747,12 @@ class EditServer extends EditRecord
                                                 ->label(trans('admin/databasehost.table.name'))
                                                 ->required()
                                                 ->placeholder('Select Database Host')
-                                                ->options(fn (Server $server) => DatabaseHost::query()
+                                                ->options(
+                                                    fn (Server $server) => DatabaseHost::query()
                                                     ->whereHas('nodes', fn ($query) => $query->where('nodes.id', $server->node_id))
                                                     ->pluck('name', 'id')
                                                 )
-                                                ->default(fn () => (DatabaseHost::query()->first())?->id)
+                                                ->default(fn () => DatabaseHost::query()->first()?->id)
                                                 ->selectablePlaceholder(false),
                                             TextInput::make('database')
                                                 ->label(trans('admin/server.name'))
@@ -845,8 +843,8 @@ class EditServer extends EditRecord
                                                     Action::make('transfer')
                                                         ->label(trans('admin/server.transfer'))
                                                         ->action(fn (TransferServerService $transfer, Server $server) => $transfer->handle($server, []))
-                                                        ->disabled() //TODO!
-                                                        ->form([ //TODO!
+                                                        ->disabled() // TODO!
+                                                        ->form([ // TODO!
                                                             Select::make('newNode')
                                                                 ->label('New Node')
                                                                 ->required()
@@ -905,7 +903,6 @@ class EditServer extends EditRecord
                 TextInput::make('newAllocation')
                     ->label('Allocation'),
             ]);
-
     }
 
     protected function getHeaderActions(): array
@@ -928,7 +925,6 @@ class EditServer extends EditRecord
                 ->url(fn (Server $server) => Console::getUrl(panel: 'server', tenant: $server)),
             $this->getSaveFormAction()->formId('form'),
         ];
-
     }
 
     protected function getFormActions(): array
@@ -966,7 +962,7 @@ class EditServer extends EditRecord
             return $containsRuleIn;
         }
 
-        throw new Exception('Component type not supported: ' . $component::class);
+        throw new \Exception('Component type not supported: ' . $component::class);
     }
 
     private function getSelectOptionsFromRules(ServerVariable $serverVariable): array

@@ -2,25 +2,25 @@
 
 namespace App\Filament\Server\Resources\DatabaseResource\Pages;
 
-use App\Filament\Components\Forms\Actions\RotateDatabasePasswordAction;
-use App\Filament\Components\Tables\Columns\DateTimeColumn;
-use App\Filament\Server\Resources\DatabaseResource;
-use App\Models\Database;
-use App\Models\Permission;
 use App\Models\Server;
-use App\Services\Databases\DatabaseManagementService;
-use Filament\Actions\CreateAction;
+use App\Models\Database;
+use Filament\Forms\Form;
+use App\Models\Permission;
+use Filament\Tables\Table;
 use Filament\Facades\Filament;
+use Filament\Actions\CreateAction;
 use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\Select;
-use Filament\Forms\Components\TextInput;
-use Filament\Forms\Form;
-use Filament\Resources\Pages\ListRecords;
-use Filament\Tables\Actions\DeleteAction;
 use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
-use Filament\Tables\Table;
+use Filament\Forms\Components\TextInput;
+use Filament\Resources\Pages\ListRecords;
+use Filament\Tables\Actions\DeleteAction;
+use App\Filament\Server\Resources\DatabaseResource;
+use App\Services\Databases\DatabaseManagementService;
+use App\Filament\Components\Tables\Columns\DateTimeColumn;
 use Webbingbrasil\FilamentCopyActions\Forms\Actions\CopyAction;
+use App\Filament\Components\Forms\Actions\RotateDatabasePasswordAction;
 
 class ListDatabases extends ListRecords
 {
@@ -102,7 +102,7 @@ class ListDatabases extends ListRecords
                             TextInput::make('database')
                                 ->columnSpan(1)
                                 ->label('Database Name')
-                                ->prefix('s'. $server->id . '_')
+                                ->prefix('s' . $server->id . '_')
                                 ->hintIcon('tabler-question-mark')
                                 ->hintIconTooltip('Leaving this blank will auto generate a random name'),
                             TextInput::make('remote')
@@ -115,7 +115,7 @@ class ListDatabases extends ListRecords
                     if (empty($data['database'])) {
                         $data['database'] = str_random(12);
                     }
-                    $data['database'] = 's'. $server->id . '_' . $data['database'];
+                    $data['database'] = 's' . $server->id . '_' . $data['database'];
 
                     $service->create($server, $data);
                 }),

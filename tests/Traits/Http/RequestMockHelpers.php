@@ -4,8 +4,8 @@ namespace App\Tests\Traits\Http;
 
 use Mockery as m;
 use Mockery\Mock;
-use Illuminate\Http\Request;
 use App\Models\User;
+use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\ParameterBag;
 
 trait RequestMockHelpers
@@ -41,7 +41,7 @@ trait RequestMockHelpers
         $user = m::mock($user)->makePartial();
         $user->shouldReceive('isRootAdmin')->andReturn($isRootAdmin);
 
-        /** @var User|Mock $user */
+        /* @var User|Mock $user */
         $this->setRequestUserModel($user);
     }
 

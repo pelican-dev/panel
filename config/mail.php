@@ -1,7 +1,6 @@
 <?php
 
 return [
-
     'default' => env('MAIL_MAILER', 'log'),
 
     'from' => [
@@ -14,5 +13,4 @@ return [
             'transport' => 'mailgun',
         ],
     ],
-
 ];

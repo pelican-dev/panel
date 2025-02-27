@@ -68,6 +68,5 @@ return [
         'are_your_sure' => 'Are you sure you want to run the upgrade process for your Panel?',
         'terminated' => 'Upgrade process terminated by user.',
         'success' => 'Panel has been successfully upgraded. Please ensure you also update any Daemon instances',
-
     ],
 ];

@@ -2,10 +2,11 @@
 
 namespace App\Http\Controllers\Api\Application\Servers;
 
-use Illuminate\Http\Response;
 use App\Models\Server;
 use App\Models\Database;
+use Illuminate\Http\Response;
 use Illuminate\Http\JsonResponse;
+use Dedoc\Scramble\Attributes\Group;
 use App\Services\Databases\DatabasePasswordService;
 use App\Services\Databases\DatabaseManagementService;
 use App\Transformers\Api\Application\ServerDatabaseTransformer;
@@ -14,7 +15,6 @@ use App\Http\Requests\Api\Application\Servers\Databases\GetServerDatabaseRequest
 use App\Http\Requests\Api\Application\Servers\Databases\GetServerDatabasesRequest;
 use App\Http\Requests\Api\Application\Servers\Databases\ServerDatabaseWriteRequest;
 use App\Http\Requests\Api\Application\Servers\Databases\StoreServerDatabaseRequest;
-use Dedoc\Scramble\Attributes\Group;
 
 #[Group('Server - Database')]
 class DatabaseController extends ApplicationApiController
@@ -30,7 +30,7 @@ class DatabaseController extends ApplicationApiController
     }
 
     /**
-     * List databases
+     * List databases.
      *
      * Return a listing of all databases currently available to a single
      * server.
@@ -43,7 +43,7 @@ class DatabaseController extends ApplicationApiController
     }
 
     /**
-     * View database
+     * View database.
      *
      * Return a single server database.
      */
@@ -55,7 +55,7 @@ class DatabaseController extends ApplicationApiController
     }
 
     /**
-     * Reset password
+     * Reset password.
      *
      * Reset the password for a specific server database.
      *
@@ -69,7 +69,7 @@ class DatabaseController extends ApplicationApiController
     }
 
     /**
-     * Create database
+     * Create database.
      *
      * Create a new database on the Panel for a given server.
      *
@@ -93,7 +93,7 @@ class DatabaseController extends ApplicationApiController
     }
 
     /**
-     * Delete database
+     * Delete database.
      *
      * Handle a request to delete a specific server database from the Panel.
      */

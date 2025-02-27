@@ -2,10 +2,10 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\Relations\Pivot;
+use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
  * \App\Models\ActivityLogSubject.
@@ -14,7 +14,7 @@ use Illuminate\Database\Eloquent\SoftDeletingScope;
  * @property int $activity_log_id
  * @property int $subject_id
  * @property string $subject_type
- * @property \App\Models\ActivityLog|null $activityLog
+ * @property ActivityLog|null $activityLog
  * @property \Illuminate\Database\Eloquent\Model|\Eloquent $subject
  *
  * @method static \Illuminate\Database\Eloquent\Builder|ActivityLogSubject newModelQuery()

@@ -4,9 +4,9 @@ namespace App\Tests\Integration\Api\Client\Server\Subuser;
 
 use App\Models\User;
 use App\Models\Subuser;
+use PHPUnit\Framework\Attributes\DataProvider;
 use App\Repositories\Daemon\DaemonServerRepository;
 use App\Tests\Integration\Api\Client\ClientApiIntegrationTestCase;
-use PHPUnit\Framework\Attributes\DataProvider;
 
 class SubuserAuthorizationTest extends ClientApiIntegrationTestCase
 {
@@ -14,10 +14,10 @@ class SubuserAuthorizationTest extends ClientApiIntegrationTestCase
      * Test that mismatched subusers are not accessible to a server.
      */
     #[DataProvider('methodDataProvider')]
-    public function test_user_cannot_access_resource_belonging_to_other_servers(string $method): void
+    public function testUserCannotAccessResourceBelongingToOtherServers(string $method): void
     {
         // Generic subuser, the specific resource we're trying to access.
-        /** @var \App\Models\User $internal */
+        /** @var User $internal */
         $internal = User::factory()->create();
 
         // The API $user is the owner of $server1.

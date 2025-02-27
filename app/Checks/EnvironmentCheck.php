@@ -2,9 +2,9 @@
 
 namespace App\Checks;
 
-use Illuminate\Support\Facades\App;
 use Spatie\Health\Checks\Check;
 use Spatie\Health\Checks\Result;
+use Illuminate\Support\Facades\App;
 
 class EnvironmentCheck extends Check
 {

@@ -2,10 +2,10 @@
 
 namespace App\Models;
 
-use App\Contracts\Validatable;
 use App\Traits\HasValidation;
-use Illuminate\Database\Eloquent\Model;
+use App\Contracts\Validatable;
 use Illuminate\Validation\Rules\NotIn;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 /**

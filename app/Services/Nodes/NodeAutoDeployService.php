@@ -2,11 +2,11 @@
 
 namespace App\Services\Nodes;
 
-use App\Models\ApiKey;
 use App\Models\Node;
+use App\Models\ApiKey;
+use Illuminate\Http\Request;
 use App\Services\Acl\Api\AdminAcl;
 use App\Services\Api\KeyCreationService;
-use Illuminate\Http\Request;
 
 class NodeAutoDeployService
 {
@@ -15,7 +15,8 @@ class NodeAutoDeployService
      */
     public function __construct(
         private readonly KeyCreationService $keyCreationService
-    ) {}
+    ) {
+    }
 
     /**
      * Generates a new API key for the logged-in user with only permission to read

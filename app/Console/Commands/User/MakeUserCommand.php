@@ -2,10 +2,9 @@
 
 namespace App\Console\Commands\User;
 
-use Exception;
 use Illuminate\Console\Command;
-use App\Services\Users\UserCreationService;
 use Illuminate\Support\Facades\DB;
+use App\Services\Users\UserCreationService;
 
 class MakeUserCommand extends Command
 {
@@ -24,14 +23,14 @@ class MakeUserCommand extends Command
     /**
      * Handle command request to create a new user.
      *
-     * @throws Exception
+     * @throws \Exception
      * @throws \App\Exceptions\Model\DataValidationException
      */
     public function handle(): int
     {
         try {
             DB::connection()->getPdo();
-        } catch (Exception $exception) {
+        } catch (\Exception $exception) {
             $this->error($exception->getMessage());
 
             return 1;

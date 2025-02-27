@@ -22,7 +22,6 @@ enum ContainerStatus: string
     public function icon(): string
     {
         return match ($this) {
-
             self::Created => 'tabler-heart-plus',
             self::Starting => 'tabler-heart-up',
             self::Running => 'tabler-heartbeat',

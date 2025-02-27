@@ -2,13 +2,13 @@
 
 namespace App\Models;
 
-use App\Services\Acl\Api\AdminAcl;
-use App\Traits\HasValidation;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Support\Str;
-use Laravel\Sanctum\PersonalAccessToken;
 use Webmozart\Assert\Assert;
+use App\Traits\HasValidation;
+use App\Services\Acl\Api\AdminAcl;
+use Laravel\Sanctum\PersonalAccessToken;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 /**
  * App\Models\ApiKey.
@@ -25,8 +25,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property \Illuminate\Support\Carbon|null $expires_at
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
- * @property \App\Models\User $tokenable
- * @property \App\Models\User $user
+ * @property User $tokenable
+ * @property User $user
  *
  * @method static \Database\Factories\ApiKeyFactory factory(...$parameters)
  * @method static \Illuminate\Database\Eloquent\Builder|ApiKey newModelQuery()
@@ -193,7 +193,7 @@ class ApiKey extends PersonalAccessToken
     /**
      * Finds the model matching the provided token.
      *
-     * @param  string  $token
+     * @param string $token
      */
     public static function findToken($token): ?self
     {

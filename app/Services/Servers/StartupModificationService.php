@@ -2,13 +2,13 @@
 
 namespace App\Services\Servers;
 
-use Illuminate\Support\Arr;
 use App\Models\Egg;
 use App\Models\User;
 use App\Models\Server;
+use Illuminate\Support\Arr;
 use App\Models\ServerVariable;
-use Illuminate\Database\ConnectionInterface;
 use App\Traits\Services\HasUserLevels;
+use Illuminate\Database\ConnectionInterface;
 
 class StartupModificationService
 {
@@ -17,7 +17,9 @@ class StartupModificationService
     /**
      * StartupModificationService constructor.
      */
-    public function __construct(private ConnectionInterface $connection, private VariableValidatorService $validatorService) {}
+    public function __construct(private ConnectionInterface $connection, private VariableValidatorService $validatorService)
+    {
+    }
 
     /**
      * Process startup modification for a server.
@@ -68,7 +70,7 @@ class StartupModificationService
         $eggId = Arr::get($data, 'egg_id');
 
         if (is_digit($eggId) && $server->egg_id !== (int) $eggId) {
-            /** @var \App\Models\Egg $egg */
+            /** @var Egg $egg */
             $egg = Egg::query()->findOrFail($data['egg_id']);
 
             $server = $server->forceFill([
