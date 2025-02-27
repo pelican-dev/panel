@@ -1,7 +1,6 @@
 <?php
 
 return [
-
     /*
     |--------------------------------------------------------------------------
     | Default Mailer
@@ -39,7 +38,6 @@ return [
         'mailgun' => [
             'transport' => 'mailgun',
         ],
-
 
         'smtp' => [
             'transport' => 'smtp',
@@ -98,7 +96,6 @@ return [
                 'postmark',
             ],
         ],
-
     ],
 
     /*
@@ -116,5 +113,4 @@ return [
         'address' => env('MAIL_FROM_ADDRESS', 'hello@example.com'),
         'name' => env('MAIL_FROM_NAME', 'Example'),
     ],
-
 ];
