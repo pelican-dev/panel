@@ -28,7 +28,7 @@ class EditDatabaseHost extends EditRecord
     {
         return [
             DeleteAction::make()
-                ->label(fn (DatabaseHost $databaseHost) => $databaseHost->databases()->count() > 0 ? 'Database Host Has Databases' : trans('filament-actions::delete.single.label'))
+                ->label(fn (DatabaseHost $databaseHost) => $databaseHost->databases()->count() > 0 ? trans('admin/databasehost.delete_help') : trans('filament-actions::delete.single.modal.actions.delete.label'))
                 ->disabled(fn (DatabaseHost $databaseHost) => $databaseHost->databases()->count() > 0),
             $this->getSaveFormAction()->formId('form'),
         ];
@@ -60,7 +60,7 @@ class EditDatabaseHost extends EditRecord
             return $this->hostUpdateService->handle($record, $data);
         } catch (PDOException $exception) {
             Notification::make()
-                ->title('Error connecting to database host')
+                ->title(trans('admin/databasehost.error'))
                 ->body($exception->getMessage())
                 ->color('danger')
                 ->icon('tabler-database')

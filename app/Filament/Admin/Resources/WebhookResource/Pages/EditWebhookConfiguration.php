@@ -13,11 +13,7 @@ class EditWebhookConfiguration extends EditRecord
     protected function getHeaderActions(): array
     {
         return [
-            DeleteAction::make()
-                ->label('Delete')
-                ->modalHeading('Are you sure you want to delete this?')
-                ->modalDescription('')
-                ->modalSubmitActionLabel('Delete'),
+            DeleteAction::make(),
             $this->getSaveFormAction()->formId('form'),
         ];
     }
