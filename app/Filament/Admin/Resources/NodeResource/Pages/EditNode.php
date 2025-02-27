@@ -599,7 +599,7 @@ class EditNode extends EditRecord
             $this->errored = true;
 
             Notification::make()
-                ->title(trans('admin/node.error_connecting'))
+                ->title(trans('admin/node.error_connecting', ['node' => $record->name]))
                 ->body(trans('admin/node.error_connecting_description'))
                 ->color('warning')
                 ->icon('tabler-database')

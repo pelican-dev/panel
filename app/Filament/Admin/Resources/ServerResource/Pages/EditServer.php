@@ -972,7 +972,7 @@ class EditServer extends EditRecord
             $this->errored = true;
 
             Notification::make()
-                ->title(trans('admin/server.notifications.error_connecting'))
+                ->title(trans('admin/server.notifications.error_connecting', ['node' => $record->node->name]))
                 ->body(trans('admin/server.notifications.error_connecting_description'))
                 ->color('warning')
                 ->icon('tabler-database')

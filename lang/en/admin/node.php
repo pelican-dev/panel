@@ -103,6 +103,6 @@ return [
     'databases' => 'Databases',
     'backups' => 'Backups',
 
-    'error_connecting' => 'Error connecting to the node',
+    'error_connecting' => 'Error connecting to :node',
     'error_connecting_description' => 'The configuration could not be automatically updated on Wings, you will need to manually update the configuration file.',
 ];
