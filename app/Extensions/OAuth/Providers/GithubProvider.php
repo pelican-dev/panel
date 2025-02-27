@@ -12,7 +12,10 @@ use Webbingbrasil\FilamentCopyActions\Forms\Actions\CopyAction;
 
 final class GithubProvider extends OAuthProvider
 {
-    public function __construct(protected Application $app) {}
+    public function __construct(protected Application $app)
+    {
+        parent::__construct($app);
+    }
 
     public function getId(): string
     {

@@ -11,7 +11,10 @@ use SocialiteProviders\Steam\Provider;
 
 final class SteamProvider extends OAuthProvider
 {
-    public function __construct(protected Application $app) {}
+    public function __construct(protected Application $app)
+    {
+        parent::__construct($app);
+    }
 
     public function getId(): string
     {
