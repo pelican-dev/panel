@@ -106,9 +106,9 @@ class ApiKeyResource extends Resource
                         collect(ApiKey::getPermissionList())->map(fn ($resource) => ToggleButtons::make('permissions_' . $resource)
                             ->label(str($resource)->replace('_', ' ')->title())->inline()
                             ->options([
-                                0 => 'None',
-                                1 => 'Read',
-                                3 => 'Read & Write',
+                                0 => trans('admin/apikey.permissions.none'),
+                                1 => trans('admin/apikey.permissions.read'),
+                                3 => trans('admin/apikey.permissions.read_write'),
                             ])
                             ->icons([
                                 0 => 'tabler-book-off',

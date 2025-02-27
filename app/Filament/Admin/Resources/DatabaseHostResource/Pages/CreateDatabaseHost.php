@@ -41,7 +41,7 @@ class CreateDatabaseHost extends CreateRecord
             return $this->service->handle($data);
         } catch (PDOException $exception) {
             Notification::make()
-                ->title('Error connecting to database host')
+                ->title(trans('admin/databasehost.error'))
                 ->body($exception->getMessage())
                 ->color('danger')
                 ->icon('tabler-database')

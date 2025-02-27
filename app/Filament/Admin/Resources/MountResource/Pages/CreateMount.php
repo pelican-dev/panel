@@ -28,6 +28,7 @@ class CreateMount extends CreateRecord
     protected function handleRecordCreation(array $data): Model
     {
         $data['uuid'] ??= Str::uuid()->toString();
+        $data['user_mountable'] = 1;
 
         return parent::handleRecordCreation($data);
     }
