@@ -10,14 +10,12 @@ use Illuminate\Queue\SerializesModels;
 use Illuminate\Queue\InteractsWithQueue;
 use App\Services\Files\DeleteFilesService;
 use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Foundation\Bus\DispatchesJobs;
 use App\Services\Backups\InitiateBackupService;
 use Illuminate\Http\Client\ConnectionException;
 use App\Repositories\Daemon\DaemonPowerRepository;
 
 class RunTaskJob extends Job implements ShouldQueue
 {
-    use DispatchesJobs;
     use InteractsWithQueue;
     use SerializesModels;
 
