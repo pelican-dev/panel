@@ -66,7 +66,7 @@ jobs:
           coverage: none
 
       - name: Install dependencies
-        run: composer install --no-interaction --no-suggest
+        run: composer install --no-interaction --no-suggest --no-progress --no-scripts
 
       - name: Unit tests
         run: vendor/bin/pest tests/Unit
@@ -139,7 +139,7 @@ jobs:
           coverage: none
 
       - name: Install dependencies
-        run: composer install --no-interaction --no-suggest
+        run: composer install --no-interaction --no-suggest --no-progress --no-scripts
 
       - name: Unit tests
         run: vendor/bin/pest tests/Unit
@@ -200,7 +200,7 @@ jobs:
           coverage: none
 
       - name: Install dependencies
-        run: composer install --no-interaction --no-suggest
+        run: composer install --no-interaction --no-suggest --no-progress --no-scripts
 
       - name: Create SQLite file
         run: touch database/testing.sqlite
