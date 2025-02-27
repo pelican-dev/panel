@@ -53,7 +53,7 @@ class SSHKeyController extends ClientApiController
      */
     public function delete(ClientApiRequest $request): JsonResponse
     {
-        $this->validate($request, ['fingerprint' => ['required', 'string']]);
+        $request->validate(['fingerprint' => ['required', 'string']]);
 
         $key = $request->user()->sshKeys()
             ->where('fingerprint', $request->input('fingerprint'))
