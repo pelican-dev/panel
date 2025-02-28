@@ -6,6 +6,7 @@ use Illuminate\Foundation\Http\FormRequest;
 
 class ReportBackupCompleteRequest extends FormRequest
 {
+    /** @return array<string, string|array<string>> */
     public function rules(): array
     {
         return [

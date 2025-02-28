@@ -30,6 +30,8 @@ class ResourceUtilizationController extends ClientApiController
      * 20 seconds at a time to ensure that repeated requests to this endpoint do not cause
      * a flood of unnecessary API calls.
      *
+     * @return array<string, mixed>
+     *
      * @throws ConnectionException
      */
     public function __invoke(GetServerRequest $request, Server $server): array

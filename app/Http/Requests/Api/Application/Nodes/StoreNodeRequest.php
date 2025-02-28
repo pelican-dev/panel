@@ -13,7 +13,9 @@ class StoreNodeRequest extends ApplicationApiRequest
     protected int $permission = AdminAcl::WRITE;
 
     /**
-     * Validation rules to apply to this request.
+     * @param array<string, string|array<string>>|null $rules
+     *
+     * @return array<string, string|array<string>>
      */
     public function rules(?array $rules = null): array
     {
@@ -43,6 +45,8 @@ class StoreNodeRequest extends ApplicationApiRequest
 
     /**
      * Fields to rename for clarity in the API response.
+     *
+     * @return array<string, string>
      */
     public function attributes(): array
     {
@@ -56,6 +60,8 @@ class StoreNodeRequest extends ApplicationApiRequest
     /**
      * Change the formatting of some data keys in the validated response data
      * to match what the application expects in the services.
+     *
+     * @return array<string, mixed>
      */
     public function validated($key = null, $default = null): array
     {

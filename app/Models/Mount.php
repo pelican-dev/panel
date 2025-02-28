@@ -84,7 +84,7 @@ class Mount extends Model implements Validatable
     /**
      * Blacklisted target paths.
      *
-     * @param array<string>
+     * @var array<string>
      */
     public static array $invalidTargetPaths = [
         '/home/container',

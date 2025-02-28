@@ -13,7 +13,9 @@ class StoreUserRequest extends ApplicationApiRequest
     protected int $permission = AdminAcl::WRITE;
 
     /**
-     * Return the validation rules for this request.
+     * @param array<string, string|array<string>> |null $rules
+     *
+     * @return array<string, string|array<string>>
      */
     public function rules(?array $rules = null): array
     {
@@ -30,7 +32,9 @@ class StoreUserRequest extends ApplicationApiRequest
     }
 
     /**
-     * Rename some fields to be more user friendly.
+     * Rename some fields to be more user-friendly.
+     *
+     * @return array<string, string>
      */
     public function attributes(): array
     {

@@ -4,9 +4,7 @@ namespace App\Http\Requests\Api\Application\Users;
 
 class AssignUserRolesRequest extends StoreUserRequest
 {
-    /**
-     * Return the validation rules for this request.
-     */
+    /** @return array<string, string|array<string>> */
     public function rules(?array $rules = null): array
     {
         return [

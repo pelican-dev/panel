@@ -43,6 +43,9 @@ class StoreDatabaseRequest extends ClientApiRequest implements ClientPermissions
         ];
     }
 
+    /**
+     * @return array<string, string>
+     */
     public function messages(): array
     {
         return [

@@ -38,6 +38,8 @@ class ScheduleController extends ClientApiController
      * List schedules
      *
      * Returns all the schedules belonging to a given server.
+     *
+     * @return array<string, mixed>
      */
     public function index(ViewScheduleRequest $request, Server $server): array
     {
@@ -52,6 +54,8 @@ class ScheduleController extends ClientApiController
      * Create schedule
      *
      * Store a new schedule for a server.
+     *
+     * @return array<string, mixed>
      *
      * @throws \App\Exceptions\DisplayException
      * @throws \App\Exceptions\Model\DataValidationException

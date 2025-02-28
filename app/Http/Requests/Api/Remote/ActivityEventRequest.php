@@ -12,6 +12,9 @@ class ActivityEventRequest extends FormRequest
         return true;
     }
 
+    /**
+     * @return array<string, string|array<string>>
+     */
     public function rules(): array
     {
         return [
@@ -28,6 +31,8 @@ class ActivityEventRequest extends FormRequest
 
     /**
      * Returns all the unique server UUIDs that were received in this request.
+     *
+     * @return array<string>
      */
     public function servers(): array
     {
@@ -36,6 +41,8 @@ class ActivityEventRequest extends FormRequest
 
     /**
      * Returns all the unique user UUIDs that were submitted in this request.
+     *
+     * @return array<string>
      */
     public function users(): array
     {

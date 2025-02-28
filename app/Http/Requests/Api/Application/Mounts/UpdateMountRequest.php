@@ -7,8 +7,10 @@ use App\Models\Mount;
 class UpdateMountRequest extends StoreMountRequest
 {
     /**
-     * Apply validation rules to this request.
+     * @param array<string, string|array<string>>|null $rules
+     * @return array<string, string|array<string>>
      */
+
     public function rules(?array $rules = null): array
     {
         /** @var Mount $mount */
