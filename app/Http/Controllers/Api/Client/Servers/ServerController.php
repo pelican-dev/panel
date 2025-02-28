@@ -12,9 +12,6 @@ use Dedoc\Scramble\Attributes\Group;
 #[Group('Server', weight: 0)]
 class ServerController extends ClientApiController
 {
-    /**
-     * ServerController constructor.
-     */
     public function __construct(private GetUserPermissionsService $permissionsService)
     {
         parent::__construct();
@@ -23,8 +20,9 @@ class ServerController extends ClientApiController
     /**
      * View server
      *
-     * Transform an individual server into a response that can be consumed by a
-     * client using the API.
+     * Transform an individual server into a response that can be consumed by a client using the API.
+     *
+     * @return array<array-key, mixed>
      */
     public function index(GetServerRequest $request, Server $server): array
     {

@@ -67,6 +67,8 @@ use Spatie\Permission\Traits\HasRoles;
  * @property int|null $ssh_keys_count
  * @property \Illuminate\Database\Eloquent\Collection|\App\Models\ApiKey[] $tokens
  * @property int|null $tokens_count
+ * @property \Illuminate\Database\Eloquent\Collection|\App\Models\Role[] $roles
+ * @property int|null $roles_count
  *
  * @method static \Database\Factories\UserFactory factory(...$parameters)
  * @method static Builder|User newModelQuery()

@@ -36,8 +36,9 @@ class BackupController extends ClientApiController
     /**
      * List backups
      *
-     * Returns all the backups for a given server instance in a paginated
-     * result set.
+     * Returns all the backups for a given server instance in a paginated result set.
+     *
+     * @return array<array-key, mixed>
      *
      * @throws AuthorizationException
      */
@@ -61,6 +62,8 @@ class BackupController extends ClientApiController
      * Create backup
      *
      * Starts the backup process for a server.
+     *
+     * @return array<array-key, mixed>
      *
      * @throws \Spatie\Fractalistic\Exceptions\InvalidTransformation
      * @throws \Spatie\Fractalistic\Exceptions\NoTransformerSpecified
@@ -96,6 +99,8 @@ class BackupController extends ClientApiController
      *
      * Toggles the lock status of a given backup for a server.
      *
+     * @return array<array-key, mixed>
+     *
      * @throws \Throwable
      * @throws \Illuminate\Auth\Access\AuthorizationException
      */
@@ -120,6 +125,8 @@ class BackupController extends ClientApiController
      * View backup
      *
      * Returns information about a single backup.
+     *
+     * @return array<array-key, mixed>
      *
      * @throws \Illuminate\Auth\Access\AuthorizationException
      */

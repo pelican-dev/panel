@@ -34,6 +34,8 @@ class NetworkAllocationController extends ClientApiController
      *
      * Lists all the allocations available to a server and whether
      * they are currently assigned as the primary for this server.
+     *
+     * @return array<array-key, mixed>
      */
     public function index(GetNetworkRequest $request, Server $server): array
     {
@@ -46,6 +48,8 @@ class NetworkAllocationController extends ClientApiController
      * Update allocation
      *
      * Set the primary allocation for a server.
+     *
+     * @return array<array-key, mixed>
      *
      * @throws \App\Exceptions\Model\DataValidationException
      */
@@ -68,9 +72,11 @@ class NetworkAllocationController extends ClientApiController
     }
 
     /**
-     * Set primar<
+     * Set primary allocation
      *
      * Set the primary allocation for a server.
+     *
+     * @return array<array-key, mixed>
      *
      * @throws \App\Exceptions\Model\DataValidationException
      */
@@ -93,6 +99,8 @@ class NetworkAllocationController extends ClientApiController
      * Create allocation
      *
      * Set the notes for the allocation for a server.
+     *
+     * @return array<array-key, mixed>
      *
      * @throws \App\Exceptions\DisplayException
      */

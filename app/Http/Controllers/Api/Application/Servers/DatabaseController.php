@@ -32,8 +32,9 @@ class DatabaseController extends ApplicationApiController
     /**
      * List databases
      *
-     * Return a listing of all databases currently available to a single
-     * server.
+     * Return a listing of all databases currently available to a single server.
+     *
+     * @return array<array-key, mixed>
      */
     public function index(GetServerDatabasesRequest $request, Server $server): array
     {
@@ -46,6 +47,8 @@ class DatabaseController extends ApplicationApiController
      * View database
      *
      * Return a single server database.
+     *
+     * @return array<array-key, mixed>
      */
     public function view(GetServerDatabaseRequest $request, Server $server, Database $database): array
     {
