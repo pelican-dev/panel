@@ -16,7 +16,7 @@ class SubuserUpdateService
     ) {}
 
     /**
-     * @param string[] $permissions
+     * @param  string[]  $permissions
      */
     public function handle(Subuser $subuser, Server $server, array $permissions): void
     {
