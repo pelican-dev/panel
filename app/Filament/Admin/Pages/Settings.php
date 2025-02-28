@@ -303,7 +303,7 @@ class Settings extends Page implements HasForms
                                     'mail.mailers.smtp.port' => $get('MAIL_PORT'),
                                     'mail.mailers.smtp.username' => $get('MAIL_USERNAME'),
                                     'mail.mailers.smtp.password' => $get('MAIL_PASSWORD'),
-                                    'mail.mailers.smtp.encryption' => $get('MAIL_ENCRYPTION'),
+                                    'mail.mailers.smtp.encryption' => $get('MAIL_SCHEME'),
                                     'mail.from.address' => $get('MAIL_FROM_ADDRESS'),
                                     'mail.from.name' => $get('MAIL_FROM_NAME'),
                                     'services.mailgun.domain' => $get('MAILGUN_DOMAIN'),
@@ -366,7 +366,7 @@ class Settings extends Page implements HasForms
                         ->password()
                         ->revealable()
                         ->default(env('MAIL_PASSWORD')),
-                    ToggleButtons::make('MAIL_ENCRYPTION')
+                    ToggleButtons::make('MAIL_SCHEME')
                         ->label(trans('admin/setting.mail.smtp.encryption'))
                         ->inline()
                         ->options([
@@ -374,7 +374,7 @@ class Settings extends Page implements HasForms
                             'ssl' => trans('admin/setting.mail.smtp.ssl'),
                             '' => trans('admin/setting.mail.smtp.none'),
                         ])
-                        ->default(env('MAIL_ENCRYPTION', config('mail.mailers.smtp.encryption', 'tls')))
+                        ->default(env('MAIL_SCHEME', config('mail.mailers.smtp.encryption', 'tls')))
                         ->live()
                         ->afterStateUpdated(function ($state, Set $set) {
                             $port = match ($state) {
