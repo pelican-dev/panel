@@ -19,7 +19,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property string $default_value
  * @property bool $user_viewable
  * @property bool $user_editable
- * @property array<string> $rules
+ * @property string[] $rules
  * @property \Carbon\CarbonImmutable $created_at
  * @property \Carbon\CarbonImmutable $updated_at
  * @property bool $required
@@ -51,7 +51,7 @@ class EggVariable extends Model implements Validatable
      */
     protected $guarded = ['id', 'created_at', 'updated_at'];
 
-    /** @var array<string, string|array<string>> */
+    /** @var array<string, string|string[]> */
     public static array $validationRules = [
         'egg_id' => 'exists:eggs,id',
         'sort' => 'nullable',

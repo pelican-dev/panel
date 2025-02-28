@@ -21,7 +21,7 @@ class UserCreationService
     /**
      * Create a new user on the system.
      *
-     * @param array<string, mixed> $data
+     * @param array<array-key, mixed> $data
      *
      * @throws \Exception
      * @throws \App\Exceptions\Model\DataValidationException

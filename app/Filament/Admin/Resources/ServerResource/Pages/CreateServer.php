@@ -865,7 +865,7 @@ class CreateServer extends CreateRecord
     }
 
     /**
-     * @return array<string, string>
+     * @return array<array-key, string>
      */
     private function getSelectOptionsFromRules(Get $get): array
     {
@@ -882,7 +882,7 @@ class CreateServer extends CreateRecord
     }
 
     /**
-     * @param array<string> $portEntries
+     * @param string[] $portEntries
      * @return array<int>
      */
     public static function retrieveValidPorts(Node $node, array $portEntries, string $ip): array

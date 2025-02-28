@@ -36,6 +36,8 @@ class UserController extends ApplicationApiController
      * Handle request to list all users on the panel. Returns a JSON-API representation
      * of a collection of users including any defined relations passed in
      * the request.
+     *
+     * @return array<array-key, mixed>
      */
     public function index(GetUsersRequest $request): array
     {
@@ -54,6 +56,8 @@ class UserController extends ApplicationApiController
      *
      * Handle a request to view a single user. Includes any relations that
      * were defined in the request.
+     *
+     * @return array<array-key, mixed>
      */
     public function view(GetUsersRequest $request, User $user): array
     {
@@ -72,6 +76,8 @@ class UserController extends ApplicationApiController
      * Revocation errors are returned under the 'revocation_errors' key in the response
      * meta. If there are no errors this is an empty array.
      *
+     * @return array<array-key, mixed>
+     *
      * @throws \App\Exceptions\Model\DataValidationException
      */
     public function update(UpdateUserRequest $request, User $user): array
@@ -89,6 +95,8 @@ class UserController extends ApplicationApiController
      * Assign role to user
      *
      * Assign roles to a user.
+     *
+     * @return array<array-key, mixed>
      */
     public function assignRoles(AssignUserRolesRequest $request, User $user): array
     {
@@ -110,6 +118,8 @@ class UserController extends ApplicationApiController
      * Unassign role from user
      *
      * Removes roles from a user.
+     *
+     * @return array<array-key, mixed>
      */
     public function removeRoles(AssignUserRolesRequest $request, User $user): array
     {

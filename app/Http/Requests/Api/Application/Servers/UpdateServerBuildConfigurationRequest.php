@@ -50,7 +50,7 @@ class UpdateServerBuildConfigurationRequest extends ServerWriteRequest
     /**
      * Convert the allocation field into the expected format for the service handler.
      *
-     * @return array<string, string>
+     * @return array<array-key, string>
      */
     public function validated($key = null, $default = null): array
     {
@@ -77,7 +77,7 @@ class UpdateServerBuildConfigurationRequest extends ServerWriteRequest
     /**
      * Custom attributes to use in error message responses.
      *
-     * @return array<string, string>
+     * @return array<array-key, string>
      */
     public function attributes(): array
     {
@@ -97,9 +97,9 @@ class UpdateServerBuildConfigurationRequest extends ServerWriteRequest
      * compatability with the old API endpoint while also supporting a more correct API
      * call.
      *
-     * @param array<string, mixed> $rules
+     * @param array<array-key, mixed> $rules
      *
-     * @return array<string, string>
+     * @return array<array-key, string>
      */
     protected function requiredToOptional(string $field, array $rules, bool $limits = false): array
     {

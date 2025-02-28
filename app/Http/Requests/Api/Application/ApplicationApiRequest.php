@@ -51,7 +51,7 @@ abstract class ApplicationApiRequest extends FormRequest
         return AdminAcl::check($token, $this->resource, $this->permission);
     }
 
-    /** @return array<string, string|array<string>> */
+    /** @return array<string, string|string[]> */
     public function rules(): array
     {
         return [];

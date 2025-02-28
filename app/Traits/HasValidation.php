@@ -32,7 +32,7 @@ trait HasValidation
     /**
      * Returns the rules associated with this model.
      *
-     * @return array<string, string[]|ValidationRule[]>
+     * @return array<array-key, string|ValidationRule|array<array-key, string|ValidationRule>>
      */
     public static function getRules(): array
     {
@@ -57,7 +57,7 @@ trait HasValidation
     /**
      * Returns the rules associated with the model, specifically for updating the given model rather than just creating it.
      *
-     * @return array<string, string[]|ValidationRule[]>
+     * @return array<array-key, string[]|ValidationRule[]>
      */
     public static function getRulesForUpdate(self $model): array
     {
@@ -70,7 +70,7 @@ trait HasValidation
             // working model, so we don't run into errors due to the way that field validation
             // works.
             foreach ($data as &$datum) {
-                if (!is_string($datum) || !Str::startsWith($datum, 'unique')) {
+                if (!Str::startsWith($datum, 'unique')) {
                     continue;
                 }
 

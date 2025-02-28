@@ -15,7 +15,7 @@ use App\Extensions\Lcobucci\JWT\Encoding\TimestampDates;
 
 class NodeJWTService
 {
-    /** @var array<string, mixed> */
+    /** @var array<array-key, mixed> */
     private array $claims = [];
 
     private ?User $user = null;
@@ -27,7 +27,7 @@ class NodeJWTService
     /**
      * Set the claims to include in this JWT.
      *
-     * @param array<string, mixed> $claims
+     * @param array<array-key, mixed> $claims
      */
     public function setClaims(array $claims): self
     {

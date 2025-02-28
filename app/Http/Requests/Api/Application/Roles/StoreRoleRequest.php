@@ -13,8 +13,8 @@ class StoreRoleRequest extends ApplicationApiRequest
     protected int $permission = AdminAcl::WRITE;
 
     /**
-     * @param array<string, string|array<string>>|null $rules
-     * @return array<string, string|array<string>>
+     * @param array<array-key, string|string[]>|null $rules
+     * @return array<array-key, string|string[]>
      */
     public function rules(?array $rules = null): array
     {

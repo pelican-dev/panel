@@ -36,7 +36,7 @@ class ScheduleTaskController extends ClientApiController
      *
      * Create a new task for a given schedule and store it in the database.
      *
-     * @return array<string, mixed>
+     * @return array<array-key, mixed>
      *
      * @throws \App\Exceptions\Model\DataValidationException
      * @throws \App\Exceptions\Service\ServiceLimitExceededException
@@ -101,7 +101,7 @@ class ScheduleTaskController extends ClientApiController
      *
      * Updates a given task for a server.
      *
-     * @return array<string, mixed>
+     * @return array<array-key, mixed>
      *
      * @throws \App\Exceptions\Model\DataValidationException
      */

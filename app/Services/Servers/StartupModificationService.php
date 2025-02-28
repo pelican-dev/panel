@@ -22,6 +22,8 @@ class StartupModificationService
     /**
      * Process startup modification for a server.
      *
+     * @param array<array-key, mixed> $data
+     *
      * @throws \Throwable
      */
     public function handle(Server $server, array $data): Server
@@ -62,6 +64,13 @@ class StartupModificationService
 
     /**
      * Update certain administrative settings for a server in the DB.
+     *
+     * @param array{
+     *     egg_id: ?int,
+     *     docker_image?: ?string,
+     *     startup?: ?string,
+     *     skip_scripts?: ?bool,
+     * } $data
      */
     protected function updateAdministrativeSettings(array $data, Server &$server): void
     {

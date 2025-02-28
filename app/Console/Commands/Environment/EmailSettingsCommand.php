@@ -22,7 +22,7 @@ class EmailSettingsCommand extends Command
                             {--username=}
                             {--password=}';
 
-    /** @var array<string, mixed> */
+    /** @var array<array-key, mixed> */
     protected array $variables = [];
 
     /**

@@ -12,7 +12,7 @@ class InstallationDataRequest extends FormRequest
     }
 
     /**
-     * @return array<string, string|array<string>>
+     * @return array<string, string|string[]>
      */
     public function rules(): array
     {

@@ -69,7 +69,30 @@ class StoreServerRequest extends ApplicationApiRequest
     /**
      * Normalize the data into a format that can be consumed by the service.
      *
-     * @return array<string, string>
+     * @return array{
+     *     external_id: int,
+     *     name: string,
+     *     description: string,
+     *     owner_id: int,
+     *     egg_id: int,
+     *     image: string,
+     *     startup: string,
+     *     environment: string,
+     *     memory: int,
+     *     swap: int,
+     *     disk: int,
+     *     io: int,
+     *     cpu: int,
+     *     threads: int,
+     *     skip_scripts: bool,
+     *     allocation_id: int,
+     *     allocation_additional: int[],
+     *     start_on_completion: bool,
+     *     database_limit: int,
+     *     allocation_limit: int,
+     *     backup_limit: int,
+     *     oom_killer: bool,
+     * }
      */
     public function validated($key = null, $default = null): array
     {

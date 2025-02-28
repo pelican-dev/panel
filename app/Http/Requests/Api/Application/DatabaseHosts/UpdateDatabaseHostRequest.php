@@ -6,7 +6,7 @@ use App\Models\DatabaseHost;
 
 class UpdateDatabaseHostRequest extends StoreDatabaseHostRequest
 {
-    /** @return array<string, string|array<string>> */
+    /** @return array<array-key, string|string[]> */
     public function rules(?array $rules = null): array
     {
         /** @var DatabaseHost $databaseHost */

@@ -47,7 +47,7 @@ abstract class SubuserRequest extends ClientApiRequest
      * Validates that the permissions we are trying to assign can actually be assigned
      * by the user making the request.
      *
-     * @param array<string> $permissions
+     * @param string[] $permissions
      *
      * @throws \Illuminate\Contracts\Container\BindingResolutionException
      */

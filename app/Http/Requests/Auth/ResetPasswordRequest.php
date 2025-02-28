@@ -12,7 +12,7 @@ class ResetPasswordRequest extends FormRequest
     }
 
     /**
-     * @return array<string, string>
+     * @return array<array-key, string>
      */
     public function rules(): array
     {

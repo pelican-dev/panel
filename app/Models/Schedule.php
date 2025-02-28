@@ -75,7 +75,7 @@ class Schedule extends Model implements Validatable
         'only_when_online' => false,
     ];
 
-    /** @var array<string, string|array<string>> */
+    /** @var array<array-key, string|string[]> */
     public static array $validationRules = [
         'server_id' => 'required|exists:servers,id',
         'name' => 'required|string|max:255',

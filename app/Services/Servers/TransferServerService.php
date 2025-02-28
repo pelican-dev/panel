@@ -40,6 +40,12 @@ class TransferServerService
     /**
      * Starts a transfer of a server to a new node.
      *
+     * @param array{
+     *     allocation_id: int,
+     *     node_id: int,
+     *     allocation_additional?: ?int[],
+     * } $data
+     *
      * @throws \Throwable
      */
     public function handle(Server $server, array $data): bool
@@ -98,6 +104,8 @@ class TransferServerService
 
     /**
      * Assigns the specified allocations to the specified server.
+     *
+     * @param int[] $additional_allocations
      */
     private function assignAllocationsToServer(Server $server, int $node_id, int $allocation_id, array $additional_allocations): void
     {

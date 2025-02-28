@@ -17,7 +17,7 @@ class LanguageService
     }
 
     /**
-     * @return array<string, string>
+     * @return array<array-key, string>
      */
     public function getAvailableLanguages(string $path = 'lang'): array
     {

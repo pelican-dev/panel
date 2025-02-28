@@ -14,7 +14,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property int $id
  * @property int $user_id
  * @property int $server_id
- * @property array<string> $permissions
+ * @property string[] $permissions
  * @property \Carbon\Carbon $created_at
  * @property \Carbon\Carbon $updated_at
  * @property \App\Models\User $user
@@ -37,7 +37,7 @@ class Subuser extends Model implements Validatable
      */
     protected $guarded = ['id', 'created_at', 'updated_at'];
 
-    /** @var array<string, string|array<string>> */
+    /** @var array<string, string|string[]> */
     public static array $validationRules = [
         'user_id' => 'required|numeric|exists:users,id',
         'server_id' => 'required|numeric|exists:servers,id',

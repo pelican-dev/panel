@@ -33,13 +33,13 @@ class Mount extends Model implements Validatable
 
     /**
      * Fields that are not mass assignable.
-     * @var array<string>
+     * @var string[]
      */
     protected $guarded = ['id'];
 
     /**
      * Rules verifying that the data being stored matches the expectations of the database.
-     * @var array<string|array<string>>
+     * @var array<array-key, string|array<array-key, string>>
      */
     public static array $validationRules = [
         'name' => 'required|string|min:2|max:64|unique:mounts,name',
@@ -53,7 +53,7 @@ class Mount extends Model implements Validatable
     /**
      * Implement language verification by overriding Eloquence's gather rules function.
      *
-     * @return array<string|array<string>>
+     * @return array<string|string[]>
      */
     public static function getRules(): array
     {
@@ -73,7 +73,7 @@ class Mount extends Model implements Validatable
     /**
      * Blacklisted source paths.
      *
-     * @var array<string>
+     * @var string[]
      */
     public static array $invalidSourcePaths = [
         '/etc/pelican',
@@ -84,7 +84,7 @@ class Mount extends Model implements Validatable
     /**
      * Blacklisted target paths.
      *
-     * @var array<string>
+     * @var string[]
      */
     public static array $invalidTargetPaths = [
         '/home/container',

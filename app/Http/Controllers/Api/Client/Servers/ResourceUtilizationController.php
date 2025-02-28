@@ -30,7 +30,7 @@ class ResourceUtilizationController extends ClientApiController
      * 20 seconds at a time to ensure that repeated requests to this endpoint do not cause
      * a flood of unnecessary API calls.
      *
-     * @return array<string, mixed>
+     * @return array<array-key, mixed>
      *
      * @throws ConnectionException
      */

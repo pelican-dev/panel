@@ -16,6 +16,8 @@ class ApiKeyController extends ClientApiController
      * List api keys
      *
      * Returns all the API keys that exist for the given client.
+     *
+     * @return array<array-key, mixed>
      */
     public function index(ClientApiRequest $request): array
     {
@@ -28,6 +30,8 @@ class ApiKeyController extends ClientApiController
      * Create api key
      *
      * Store a new API key for a user's account.
+     *
+     * @return array<array-key, mixed>
      *
      * @throws \App\Exceptions\DisplayException
      */

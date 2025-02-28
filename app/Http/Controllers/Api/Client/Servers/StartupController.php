@@ -29,6 +29,8 @@ class StartupController extends ClientApiController
      * List startup variables
      *
      * Returns the startup information for the server including all the variables.
+     *
+     * @return array<array-key, mixed>
      */
     public function index(GetStartupRequest $request, Server $server): array
     {
@@ -50,6 +52,8 @@ class StartupController extends ClientApiController
      * Update startup variable
      *
      * Updates a single variable for a server.
+     *
+     * @return array<array-key, mixed>
      *
      * @throws \Illuminate\Validation\ValidationException
      * @throws \App\Exceptions\Model\DataValidationException

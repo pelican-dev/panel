@@ -95,7 +95,7 @@ class EggImporterService
      * Takes an uploaded file and parses out the egg configuration from within.
      * @todo replace with DTO
      *
-     * @return array<string, mixed>
+     * @return array<array-key, mixed>
      *
      * @throws \App\Exceptions\Service\InvalidFileUploadException
      */
@@ -173,9 +173,9 @@ class EggImporterService
      * the "docker_images" field potentially not being present, and not being in the
      * expected "key => value" format.
      *
-     * @param array{images?: string[], image?: string, field_type?: string, docker_images?: array<string, string>} $parsed
+     * @param array{images?: string[], image?: string, field_type?: string, docker_images?: array<array-key, string>} $parsed
      *
-     * @return array<string, mixed>
+     * @return array<array-key, mixed>
      */
     protected function convertToV2(array $parsed): array
     {

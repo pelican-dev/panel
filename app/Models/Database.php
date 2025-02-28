@@ -50,7 +50,7 @@ class Database extends Model implements Validatable
         'server_id', 'database_host_id', 'database', 'username', 'password', 'remote', 'max_connections',
     ];
 
-    /** @var array<string, string|array<string>> */
+    /** @var array<string, string|string[]> */
     public static array $validationRules = [
         'server_id' => 'required|numeric|exists:servers,id',
         'database_host_id' => 'required|exists:database_hosts,id',

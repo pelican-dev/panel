@@ -24,7 +24,7 @@ class TasksRelationManager extends RelationManager
     protected static string $relationship = 'tasks';
 
     /**
-     * @return array<string, string>
+     * @return array<array-key, string>
      */
     private function getActionOptions(bool $full = true): array
     {

@@ -225,7 +225,7 @@ class ActivityLogService
     }
 
     /**
-     * Saves the activity log instance and attaches all of the subject models.
+     * Saves the activity log instance and attaches all the subject models.
      *
      * @throws \Throwable
      */

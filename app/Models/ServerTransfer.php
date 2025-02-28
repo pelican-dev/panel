@@ -40,7 +40,7 @@ class ServerTransfer extends Model implements Validatable
      */
     protected $guarded = ['id', 'created_at', 'updated_at'];
 
-    /** @var array<string, string|array<string>> */
+    /** @var array<array-key, string|string[]> */
     public static array $validationRules = [
         'server_id' => 'required|numeric|exists:servers,id',
         'old_node' => 'required|numeric',

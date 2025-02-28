@@ -27,7 +27,7 @@ class DatabaseSettingsCommand extends Command
                             {--username= : Username to use when connecting to the MySQL/ MariaDB server.}
                             {--password= : Password to use for the MySQL/ MariaDB database.}';
 
-    /** @var array<string, mixed> */
+    /** @var array<array-key, mixed> */
     protected array $variables = [];
 
     /**

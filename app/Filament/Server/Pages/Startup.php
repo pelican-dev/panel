@@ -177,7 +177,7 @@ class Startup extends ServerFormPage
     }
 
     /**
-     * @return array<string>
+     * @return string[]
      */
     private function getSelectOptionsFromRules(ServerVariable $serverVariable): array
     {

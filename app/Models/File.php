@@ -113,7 +113,7 @@ class File extends Model
     }
 
     /**
-     * @return array<string>
+     * @return string[]
      */
     public function getSchema(): array
     {

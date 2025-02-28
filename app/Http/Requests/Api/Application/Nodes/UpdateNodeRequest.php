@@ -7,9 +7,9 @@ use App\Models\Node;
 class UpdateNodeRequest extends StoreNodeRequest
 {
     /**
-     * @param array<string, string|array<string>>|null $rules
+     * @param array<string, string|string[]>|null $rules
      *
-     * @return array<string, string|array<string>>
+     * @return array<string, string|string[]>
      */
     public function rules(?array $rules = null): array
     {

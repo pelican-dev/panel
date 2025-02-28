@@ -41,7 +41,7 @@ use Symfony\Component\Yaml\Yaml;
  * @property int $daemon_sftp
  * @property string|null $daemon_sftp_alias
  * @property string $daemon_base
- * @property array<string> $tags
+ * @property string[] $tags
  * @property \Carbon\Carbon $created_at
  * @property \Carbon\Carbon $updated_at
  * @property \App\Models\Mount[]|\Illuminate\Database\Eloquent\Collection $mounts
@@ -86,7 +86,7 @@ class Node extends Model implements Validatable
     ];
 
 
-    /** @var array<string, string|array<string>> */
+    /** @var array<array-key, string|string[]> */
     public static array $validationRules = [
         'name' => 'required|string|min:1|max:100',
         'description' => 'string|nullable',
@@ -187,7 +187,7 @@ class Node extends Model implements Validatable
      *         upload_limit: int
      *     },
      *     system: array{data: string, sftp: array{bind_port: int}},
-     *     allowed_mounts: array<string>,
+     *     allowed_mounts: string[],
      *     remote: string,
      * }
      */
@@ -345,7 +345,7 @@ class Node extends Model implements Validatable
     }
 
     /**
-     * @return array<string, mixed>
+     * @return array<array-key, mixed>
      */
     public function serverStatuses(): array
     {
@@ -398,7 +398,7 @@ class Node extends Model implements Validatable
         }
     }
 
-    /** @return array<string> */
+    /** @return string[] */
     public function ipAddresses(): array
     {
         return cache()->remember("nodes.$this->id.ips", now()->addHour(), function () {

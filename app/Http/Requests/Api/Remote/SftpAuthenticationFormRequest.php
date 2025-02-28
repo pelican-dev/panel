@@ -17,7 +17,7 @@ class SftpAuthenticationFormRequest extends FormRequest
     /**
      * Rules to apply to the request.
      *
-     * @return array<string, array<string>>
+     * @return array<string, string[]>
      */
     public function rules(): array
     {

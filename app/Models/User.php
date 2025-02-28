@@ -51,7 +51,7 @@ use Spatie\Permission\Traits\HasRoles;
  * @property bool $use_totp
  * @property string|null $totp_secret
  * @property \Illuminate\Support\Carbon|null $totp_authenticated_at
- * @property array<string>|null $oauth
+ * @property string[]|null $oauth
  * @property bool $gravatar
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
@@ -144,7 +144,7 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
         'oauth' => '[]',
     ];
 
-    /** @var array<string, string|array<string>> */
+    /** @var array<array-key, string|string[]> */
     public static array $validationRules = [
         'uuid' => 'nullable|string|size:36|unique:users,uuid',
         'email' => 'required|email|between:1,255|unique:users,email',

@@ -15,7 +15,7 @@ class UserUpdateService
     /**
      * Update the user model instance and return the updated model.
      *
-     * @param array<string, mixed> $data
+     * @param array<array-key, mixed> $data
      *
      * @throws \Throwable
      */

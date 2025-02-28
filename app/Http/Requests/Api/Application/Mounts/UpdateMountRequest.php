@@ -7,8 +7,8 @@ use App\Models\Mount;
 class UpdateMountRequest extends StoreMountRequest
 {
     /**
-     * @param array<string, string|array<string>>|null $rules
-     * @return array<string, string|array<string>>
+     * @param array<string, string|string[]>|null $rules
+     * @return array<string, string|string[]>
      */
 
     public function rules(?array $rules = null): array

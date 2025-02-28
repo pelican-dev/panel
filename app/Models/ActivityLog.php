@@ -72,7 +72,7 @@ class ActivityLog extends Model implements HasIcon, HasLabel
 
     protected $with = ['subjects'];
 
-    /** @var array<string, array<string>> */
+    /** @var array<array-key, string|string[]> */
     public static array $validationRules = [
         'event' => ['required', 'string'],
         'batch' => ['nullable', 'uuid'],

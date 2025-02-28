@@ -112,7 +112,7 @@ use App\Services\Subusers\SubuserDeletionService;
  * @method static \Illuminate\Database\Eloquent\Builder|Server whereUuid($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Server whereuuid_short($value)
  *
- * @property array<string>|null $docker_labels
+ * @property string[]|null $docker_labels
  * @property string|null $ports
  * @property-read mixed $condition
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\EggVariable> $eggVariables
@@ -157,7 +157,7 @@ class Server extends Model implements Validatable
      */
     protected $guarded = ['id', self::CREATED_AT, self::UPDATED_AT, 'deleted_at', 'installed_at'];
 
-    /** @var array<string, string|array<string>> */
+    /** @var array<array-key, string|string[]> */
     public static array $validationRules = [
         'external_id' => 'sometimes|nullable|string|between:1,255|unique:servers',
         'owner_id' => 'required|integer|exists:users,id',
@@ -427,7 +427,7 @@ class Server extends Model implements Validatable
     /**
      * Sends a command or multiple commands to a running server instance.
      *
-     * @param array<string>|string $command
+     * @param string[]|string $command
      *
      * @throws ConnectionException
      */
