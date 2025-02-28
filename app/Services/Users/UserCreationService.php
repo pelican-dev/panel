@@ -14,14 +14,14 @@ class UserCreationService
 {
     public function __construct(
         private readonly ConnectionInterface $connection,
-        private readonly Hasher              $hasher,
-        private readonly PasswordBroker      $passwordBroker,
+        private readonly Hasher $hasher,
+        private readonly PasswordBroker $passwordBroker,
     ) {}
 
     /**
      * Create a new user on the system.
      *
-     * @param array<array-key, mixed> $data
+     * @param  array<array-key, mixed>  $data
      *
      * @throws \Exception
      * @throws \App\Exceptions\Model\DataValidationException

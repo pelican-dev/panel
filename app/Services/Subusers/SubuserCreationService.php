@@ -28,7 +28,7 @@ class SubuserCreationService
      * If the email address already belongs to a user on the system a new user will not
      * be created.
      *
-     * @param string[] $permissions
+     * @param  string[]  $permissions
      *
      * @throws \App\Exceptions\Model\DataValidationException
      * @throws \App\Exceptions\Service\Subuser\ServerSubuserExistsException

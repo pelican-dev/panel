@@ -105,7 +105,7 @@ class TransferServerService
     /**
      * Assigns the specified allocations to the specified server.
      *
-     * @param int[] $additional_allocations
+     * @param  int[]  $additional_allocations
      */
     private function assignAllocationsToServer(Server $server, int $node_id, int $allocation_id, array $additional_allocations): void
     {

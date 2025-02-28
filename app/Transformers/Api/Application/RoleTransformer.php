@@ -21,7 +21,7 @@ class RoleTransformer extends BaseTransformer
     }
 
     /**
-     * @param Role $model
+     * @param  Role  $model
      */
     public function transform($model): array
     {

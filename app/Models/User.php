@@ -32,7 +32,6 @@ use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
 use Illuminate\Contracts\Auth\Access\Authorizable as AuthorizableContract;
 use Illuminate\Contracts\Auth\CanResetPassword as CanResetPasswordContract;
 use App\Notifications\SendPasswordReset as ResetPasswordNotification;
-use Filament\Facades\Filament;
 use ResourceBundle;
 use Spatie\Permission\Traits\HasRoles;
 
@@ -328,8 +327,8 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
      * this checks if the ability is one of our permissions and then checks if the user can do it or not
      * Otherwise it calls the Authorizable trait's parent method
      *
-     * @param iterable<string|\BackedEnum>|\BackedEnum|string $abilities
-     * @param array<mixed>|mixed $arguments
+     * @param  iterable<string|\BackedEnum>|\BackedEnum|string  $abilities
+     * @param  array<mixed>|mixed  $arguments
      */
     public function can($abilities, mixed $arguments = []): bool
     {

@@ -85,7 +85,6 @@ class Node extends Model implements Validatable
         'description', 'maintenance_mode', 'tags',
     ];
 
-
     /** @var array<array-key, string|string[]> */
     public static array $validationRules = [
         'name' => 'required|string|min:1|max:100',

@@ -21,7 +21,7 @@ class ScheduleTransformer extends BaseClientTransformer
     }
 
     /**
-     * @param Schedule $model
+     * @param  Schedule  $model
      */
     public function transform($model): array
     {

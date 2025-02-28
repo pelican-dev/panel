@@ -33,12 +33,14 @@ class Mount extends Model implements Validatable
 
     /**
      * Fields that are not mass assignable.
+     *
      * @var string[]
      */
     protected $guarded = ['id'];
 
     /**
      * Rules verifying that the data being stored matches the expectations of the database.
+     *
      * @var array<array-key, string|array<array-key, string>>
      */
     public static array $validationRules = [

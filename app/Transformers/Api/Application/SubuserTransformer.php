@@ -24,7 +24,7 @@ class SubuserTransformer extends BaseTransformer
     }
 
     /**
-     * @param Subuser $subuser
+     * @param  Subuser  $subuser
      */
     public function transform($subuser): array
     {

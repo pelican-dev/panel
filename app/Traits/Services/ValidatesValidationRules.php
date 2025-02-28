@@ -13,7 +13,7 @@ trait ValidatesValidationRules
     /**
      * Validate that the rules being provided are valid and can be resolved.
      *
-     * @param string[]|string|\Illuminate\Contracts\Validation\ValidationRule[] $rules
+     * @param  string[]|string|\Illuminate\Contracts\Validation\ValidationRule[]  $rules
      *
      * @throws \App\Exceptions\Service\Egg\Variable\BadValidationRuleException
      */

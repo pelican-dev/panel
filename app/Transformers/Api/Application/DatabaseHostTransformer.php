@@ -24,7 +24,7 @@ class DatabaseHostTransformer extends BaseTransformer
     }
 
     /**
-     * @param DatabaseHost $model
+     * @param  DatabaseHost  $model
      */
     public function transform($model): array
     {

@@ -59,7 +59,7 @@ class DatabaseManagementService
     /**
      * Create a new database that is linked to a specific host.
      *
-     * @param array{database?: string, database_host_id: int} $data
+     * @param  array{database?: string, database_host_id: int}  $data
      *
      * @throws \Throwable
      * @throws \App\Exceptions\Service\Database\TooManyDatabasesException
@@ -130,7 +130,7 @@ class DatabaseManagementService
      * have the same name across multiple hosts, for the sake of keeping this logic easy to understand
      * and avoiding user confusion we will ignore the specific host and just look across all hosts.
      *
-     * @param array{server_id: int, database: string} $data
+     * @param  array{server_id: int, database: string}  $data
      *
      * @throws \App\Exceptions\Repository\DuplicateDatabaseNameException
      * @throws \Throwable

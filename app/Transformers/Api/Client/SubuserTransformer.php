@@ -15,7 +15,7 @@ class SubuserTransformer extends BaseClientTransformer
     }
 
     /**
-     * @param Subuser $model
+     * @param  Subuser  $model
      */
     public function transform($model): array
     {

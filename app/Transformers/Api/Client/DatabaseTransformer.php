@@ -17,7 +17,7 @@ class DatabaseTransformer extends BaseClientTransformer
     }
 
     /**
-     * @param Database $model
+     * @param  Database  $model
      */
     public function transform($model): array
     {

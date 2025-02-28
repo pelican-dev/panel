@@ -23,7 +23,7 @@ class ServerVariableTransformer extends BaseTransformer
     }
 
     /**
-     * @param EggVariable $variable
+     * @param  EggVariable  $variable
      */
     public function transform($variable): array
     {

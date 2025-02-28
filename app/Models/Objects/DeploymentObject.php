@@ -47,7 +47,7 @@ class DeploymentObject
     }
 
     /**
-     * @param string[] $tags
+     * @param  string[]  $tags
      * @return $this
      */
     public function setTags(array $tags): self

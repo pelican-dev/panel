@@ -20,7 +20,7 @@ class ServerDatabaseTransformer extends BaseTransformer
     }
 
     /**
-     * @param Database $model
+     * @param  Database  $model
      */
     public function transform($model): array
     {

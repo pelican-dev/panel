@@ -25,7 +25,7 @@ class MountTransformer extends BaseTransformer
     }
 
     /**
-     * @param Mount $model
+     * @param  Mount  $model
      */
     public function transform($model): array
     {

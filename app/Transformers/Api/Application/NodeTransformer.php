@@ -24,7 +24,7 @@ class NodeTransformer extends BaseTransformer
     }
 
     /**
-     * @param Node $node
+     * @param  Node  $node
      */
     public function transform($node): array
     {

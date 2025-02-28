@@ -131,7 +131,6 @@ class File extends Model
         ];
     }
 
-
     /**
      * @return array<array{
      *     name: string,

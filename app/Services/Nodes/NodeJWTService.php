@@ -27,7 +27,7 @@ class NodeJWTService
     /**
      * Set the claims to include in this JWT.
      *
-     * @param array<array-key, mixed> $claims
+     * @param  array<array-key, mixed>  $claims
      */
     public function setClaims(array $claims): self
     {

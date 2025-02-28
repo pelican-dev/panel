@@ -183,8 +183,7 @@ class Handler extends ExceptionHandler
     }
 
     /**
-     * @param array<string, mixed> $override
-     *
+     * @param  array<string, mixed>  $override
      * @return array{errors: array{
      *     code: string,
      *     status: string,
@@ -239,8 +238,7 @@ class Handler extends ExceptionHandler
     /**
      * Return the exception as a JSONAPI representation for use on API requests.
      *
-     * @param array{detail?: mixed, source?: mixed, meta?: mixed} $override
-     *
+     * @param  array{detail?: mixed, source?: mixed, meta?: mixed}  $override
      * @return array{errors?: array<mixed>}
      */
     protected function convertExceptionToArray(Throwable $e, array $override = []): array

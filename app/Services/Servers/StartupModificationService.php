@@ -22,7 +22,7 @@ class StartupModificationService
     /**
      * Process startup modification for a server.
      *
-     * @param array<array-key, mixed> $data
+     * @param  array<array-key, mixed>  $data
      *
      * @throws \Throwable
      */

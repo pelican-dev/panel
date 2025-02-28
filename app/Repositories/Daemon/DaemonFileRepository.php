@@ -82,7 +82,7 @@ class DaemonFileRepository extends DaemonRepository
     /**
      * Renames or moves a file on the remote machine.
      *
-     * @param array<array{from: string, to: string}> $files
+     * @param  array<array{from: string, to: string}>  $files
      *
      * @throws ConnectionException
      */
@@ -111,7 +111,7 @@ class DaemonFileRepository extends DaemonRepository
     /**
      * Delete a file or folder for the server.
      *
-     * @param string[] $files
+     * @param  string[]  $files
      *
      * @throws ConnectionException
      */
@@ -128,8 +128,7 @@ class DaemonFileRepository extends DaemonRepository
     /**
      * Compress the given files or folders in the given root.
      *
-     * @param string[] $files
-     *
+     * @param  string[]  $files
      * @return array<string, mixed>
      *
      * @throws ConnectionException
@@ -170,7 +169,7 @@ class DaemonFileRepository extends DaemonRepository
     /**
      * Chmods the given files.
      *
-     * @param array<array{file: string, mode: string}> $files
+     * @param  array<array{file: string, mode: string}>  $files
      *
      * @throws ConnectionException
      */
@@ -187,7 +186,7 @@ class DaemonFileRepository extends DaemonRepository
     /**
      * Pulls a file from the given URL and saves it to the disk.
      *
-     * @param array<mixed> $params
+     * @param  array<mixed>  $params
      *
      * @throws ConnectionException
      */

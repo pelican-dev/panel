@@ -26,7 +26,7 @@ class ServerTransformer extends BaseClientTransformer
     }
 
     /**
-     * @param Server $server
+     * @param  Server  $server
      */
     public function transform($server): array
     {

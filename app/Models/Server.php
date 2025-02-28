@@ -427,7 +427,7 @@ class Server extends Model implements Validatable
     /**
      * Sends a command or multiple commands to a running server instance.
      *
-     * @param string[]|string $command
+     * @param  string[]|string  $command
      *
      * @throws ConnectionException
      */

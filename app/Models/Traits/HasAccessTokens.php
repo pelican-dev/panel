@@ -25,7 +25,7 @@ trait HasAccessTokens
     }
 
     /**
-     * @param ?string[] $ips
+     * @param  ?string[]  $ips
      */
     public function createToken(?string $memo, ?array $ips): NewAccessToken
     {

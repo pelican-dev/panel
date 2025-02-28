@@ -24,7 +24,7 @@ class AllocationTransformer extends BaseTransformer
     }
 
     /**
-     * @param Allocation $allocation
+     * @param  Allocation  $allocation
      */
     public function transform($allocation): array
     {

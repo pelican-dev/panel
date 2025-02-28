@@ -16,7 +16,7 @@ readonly class DeleteFilesService
     /**
      * Deletes the given files.
      *
-     * @param string[] $files
+     * @param  string[]  $files
      *
      * @throws ConnectionException
      */

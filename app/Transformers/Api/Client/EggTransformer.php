@@ -15,7 +15,7 @@ class EggTransformer extends BaseClientTransformer
     }
 
     /**
-     * @param Egg $egg
+     * @param  Egg  $egg
      */
     public function transform($egg): array
     {

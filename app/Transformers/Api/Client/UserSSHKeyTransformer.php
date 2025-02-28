@@ -12,7 +12,7 @@ class UserSSHKeyTransformer extends BaseClientTransformer
     }
 
     /**
-     * @param UserSSHKey $model
+     * @param  UserSSHKey  $model
      */
     public function transform($model): array
     {

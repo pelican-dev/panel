@@ -16,9 +16,9 @@ class UserTransformer extends BaseClientTransformer
     }
 
     /**
-     * @param User $user
+     * @param  User  $user
      *
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function transform($user): array
     {

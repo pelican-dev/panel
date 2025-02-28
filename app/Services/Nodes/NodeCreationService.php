@@ -13,7 +13,7 @@ class NodeCreationService
      *
      * @todo remove this class
      *
-     * @param array<string, mixed> $data
+     * @param  array<string, mixed>  $data
      *
      * @throws \App\Exceptions\Model\DataValidationException
      */

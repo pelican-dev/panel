@@ -22,7 +22,7 @@ class NodeUpdateService
     /**
      * Update the configuration values for a given node on the machine.
      *
-     * @param array<string, mixed> $data
+     * @param  array<string, mixed>  $data
      *
      * @throws \Throwable
      */

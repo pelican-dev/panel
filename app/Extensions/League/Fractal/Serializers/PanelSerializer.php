@@ -9,7 +9,7 @@ class PanelSerializer extends ArraySerializer
     /**
      * Serialize an item.
      *
-     * @param array<mixed> $data
+     * @param  array<mixed>  $data
      * @return array{object: ?string, attributes: array<mixed>}
      */
     public function item(?string $resourceKey, array $data): array
@@ -23,7 +23,7 @@ class PanelSerializer extends ArraySerializer
     /**
      * Serialize a collection.
      *
-     * @param array<mixed> $data
+     * @param  array<mixed>  $data
      * @return array{object: 'list', data: array<mixed>}
      */
     public function collection(?string $resourceKey, array $data): array
@@ -55,8 +55,8 @@ class PanelSerializer extends ArraySerializer
     /**
      * Merge the included resources with the parent resource being serialized.
      *
-     * @param array{relationships: array{string, mixed}} $transformedData
-     * @param array{string, mixed} $includedData
+     * @param  array{relationships: array{string, mixed}}  $transformedData
+     * @param  array{string, mixed}  $includedData
      * @return array{relationships: array{string, mixed}}
      */
     public function mergeIncludes(array $transformedData, array $includedData): array

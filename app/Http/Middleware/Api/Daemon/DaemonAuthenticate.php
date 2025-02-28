@@ -12,6 +12,7 @@ class DaemonAuthenticate
 {
     /**
      * Daemon routes that this middleware should be skipped on.
+     *
      * @var string[]
      */
     protected array $except = [

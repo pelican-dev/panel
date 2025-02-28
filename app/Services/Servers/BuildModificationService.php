@@ -24,7 +24,7 @@ class BuildModificationService
     /**
      * Change the build details for a specified server.
      *
-     * @param array<string, mixed> $data
+     * @param  array<string, mixed>  $data
      *
      * @throws \Throwable
      * @throws \App\Exceptions\DisplayException

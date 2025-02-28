@@ -36,5 +36,4 @@ class AdminAcl
     {
         return self::can($key->getPermission($resource), $action);
     }
-
 }

@@ -24,7 +24,7 @@ class UserTransformer extends BaseTransformer
     }
 
     /**
-     * @param User $user
+     * @param  User  $user
      */
     public function transform($user): array
     {

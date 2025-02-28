@@ -12,7 +12,7 @@ class EggVariableTransformer extends BaseClientTransformer
     }
 
     /**
-     * @param EggVariable $variable
+     * @param  EggVariable  $variable
      */
     public function transform($variable): array
     {

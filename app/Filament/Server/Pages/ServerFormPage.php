@@ -19,7 +19,7 @@ abstract class ServerFormPage extends Page
 
     protected static string $view = 'filament.server.pages.server-form-page';
 
-    /** @var ?array<mixed>  */
+    /** @var ?array<mixed> */
     public ?array $data = [];
 
     public function mount(): void

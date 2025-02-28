@@ -16,7 +16,7 @@ class EggVariableTransformer extends BaseTransformer
     }
 
     /**
-     * @param EggVariable $model
+     * @param  EggVariable  $model
      */
     public function transform($model): array
     {

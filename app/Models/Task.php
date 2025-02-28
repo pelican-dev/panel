@@ -48,7 +48,7 @@ class Task extends Model implements Validatable
     /**
      * Relationships to be updated when this model is updated.
      *
-     * @var string[] $touches
+     * @var string[]
      */
     protected $touches = ['schedule'];
 

@@ -11,8 +11,7 @@ abstract class ClientApiController extends ApplicationApiController
     /**
      * Returns only the includes which are valid for the given transformer.
      *
-     * @param array<mixed> $merge
-     *
+     * @param  array<mixed>  $merge
      * @return array<array-key, mixed>
      */
     protected function getIncludesForTransformer(BaseClientTransformer $transformer, array $merge = []): array

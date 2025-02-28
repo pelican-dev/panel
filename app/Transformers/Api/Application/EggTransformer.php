@@ -30,7 +30,7 @@ class EggTransformer extends BaseTransformer
     }
 
     /**
-     * @param Egg $model
+     * @param  Egg  $model
      */
     public function transform($model): array
     {

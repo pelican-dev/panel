@@ -118,7 +118,7 @@ class ServerCreationService
     /**
      * Gets an allocation to use for automatic deployment.
      *
-     * @param array{memory?: ?int, disk?: ?int, cpu?: ?int, tags?: ?string[]} $data
+     * @param  array{memory?: ?int, disk?: ?int, cpu?: ?int, tags?: ?string[]}  $data
      *
      * @throws \App\Exceptions\DisplayException
      * @throws \App\Exceptions\Service\Deployment\NoViableAllocationException
@@ -141,7 +141,7 @@ class ServerCreationService
     /**
      * Store the server in the database and return the model.
      *
-     * @param array<array-key, mixed> $data
+     * @param  array<array-key, mixed>  $data
      *
      * @throws \App\Exceptions\Model\DataValidationException
      */
@@ -180,7 +180,7 @@ class ServerCreationService
     /**
      * Configure the allocations assigned to this server.
      *
-     * @param array{allocation_id: int, allocation_additional?: ?int[]} $data
+     * @param  array{allocation_id: int, allocation_additional?: ?int[]}  $data
      */
     private function storeAssignedAllocations(Server $server, array $data): void
     {

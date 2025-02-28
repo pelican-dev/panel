@@ -40,8 +40,7 @@ class EggConfigurationService
     /**
      * Convert the "done" variable into an array if it is not currently one.
      *
-     * @param array{done: string|string[], strip_ansi: bool} $startup
-     *
+     * @param  array{done: string|string[], strip_ansi: bool}  $startup
      * @return array{done: string[], user_interaction: string[], strip_ansi: bool}
      */
     protected function convertStartupToNewFormat(array $startup): array
@@ -132,7 +131,7 @@ class EggConfigurationService
     }
 
     /**
-     * @param array{string, mixed} $structure
+     * @param  array{string, mixed}  $structure
      */
     protected function matchAndReplaceKeys(mixed $value, array $structure): mixed
     {
@@ -189,7 +188,7 @@ class EggConfigurationService
      * the value of the line match is something iterable, continue iterating, otherwise perform
      * a match & replace.
      *
-     * @param array<mixed> $structure
+     * @param  array<mixed>  $structure
      */
     private function iterate(mixed $data, array $structure): mixed
     {

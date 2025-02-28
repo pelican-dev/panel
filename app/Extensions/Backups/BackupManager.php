@@ -24,7 +24,7 @@ class BackupManager
     /**
      * The registered custom driver creators.
      *
-     * @var array<string, Callable>
+     * @var array<string, callable>
      */
     protected array $customCreators;
 
@@ -88,7 +88,7 @@ class BackupManager
     /**
      * Calls a custom creator for a given adapter type.
      *
-     * @param array{adapter: string} $config
+     * @param  array{adapter: string}  $config
      */
     protected function callCustomCreator(array $config): mixed
     {
@@ -98,7 +98,7 @@ class BackupManager
     /**
      * Creates a new daemon adapter.
      *
-     * @param array<string, string> $config
+     * @param  array<string, string>  $config
      */
     public function createWingsAdapter(array $config): FilesystemAdapter
     {
@@ -108,7 +108,7 @@ class BackupManager
     /**
      * Creates a new S3 adapter.
      *
-     * @param array<string, string> $config
+     * @param  array<string, string>  $config
      */
     public function createS3Adapter(array $config): FilesystemAdapter
     {

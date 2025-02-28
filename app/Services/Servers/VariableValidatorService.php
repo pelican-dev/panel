@@ -18,7 +18,7 @@ class VariableValidatorService
     /**
      * Validate  passed data against the given egg variables.
      *
-     * @param array<array-key, ?string> $fields
+     * @param  array<array-key, ?string>  $fields
      *
      * @throws \Illuminate\Validation\ValidationException
      */

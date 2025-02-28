@@ -7,7 +7,7 @@ use App\Models\User;
 class UpdateUserRequest extends StoreUserRequest
 {
     /**
-     * @param array<array-key, string|string[]> |null $rules
+     * @param  array<array-key, string|string[]> |null  $rules
      * @return array<array-key, string|string[]>
      */
     public function rules(?array $rules = null): array

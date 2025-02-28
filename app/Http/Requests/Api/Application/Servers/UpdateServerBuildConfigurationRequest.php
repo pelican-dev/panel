@@ -97,8 +97,7 @@ class UpdateServerBuildConfigurationRequest extends ServerWriteRequest
      * compatability with the old API endpoint while also supporting a more correct API
      * call.
      *
-     * @param array<array-key, mixed> $rules
-     *
+     * @param  array<array-key, mixed>  $rules
      * @return array<array-key, string>
      */
     protected function requiredToOptional(string $field, array $rules, bool $limits = false): array

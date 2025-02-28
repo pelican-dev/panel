@@ -34,7 +34,7 @@ class AllocationSelectionService
      * A list of node IDs that should be used when selecting an allocation. If empty, all
      * nodes will be used to filter with.
      *
-     * @param array<int> $nodes
+     * @param  array<int>  $nodes
      */
     public function setNodes(array $nodes): self
     {
@@ -48,7 +48,7 @@ class AllocationSelectionService
      * empty, all ports will be considered when finding an allocation. If set, only ports appearing
      * in the array or range will be used.
      *
-     * @param array<string|int> $ports
+     * @param  array<string|int>  $ports
      *
      * @throws \App\Exceptions\DisplayException
      */
@@ -95,8 +95,8 @@ class AllocationSelectionService
     /**
      * Return a single allocation from those meeting the requirements.
      *
-     * @param array<int> $nodes
-     * @param array<int|string|array<int|string>> $ports
+     * @param  array<int>  $nodes
+     * @param  array<int|string|array<int|string>>  $ports
      */
     private function getRandomAllocation(array $nodes = [], array $ports = [], bool $dedicated = false): ?Allocation
     {
@@ -144,8 +144,7 @@ class AllocationSelectionService
      * If an array of nodes is passed the results will be limited to allocations
      * in those nodes.
      *
-     * @param array<int> $nodes
-     *
+     * @param  array<int>  $nodes
      * @return array<Node>
      */
     private function getDiscardableDedicatedAllocations(array $nodes = []): array

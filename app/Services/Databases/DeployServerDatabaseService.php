@@ -13,7 +13,7 @@ readonly class DeployServerDatabaseService
     public function __construct(private DatabaseManagementService $managementService) {}
 
     /**
-     * @param array{database?: string, remote?: string} $data
+     * @param  array{database?: string, remote?: string}  $data
      */
     public function handle(Server $server, array $data): Database
     {

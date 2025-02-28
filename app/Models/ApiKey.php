@@ -183,6 +183,7 @@ class ApiKey extends PersonalAccessToken
 
     /**
      * Returns a list of all possible permission keys.
+     *
      * @return string[]
      */
     public static function getPermissionList(): array

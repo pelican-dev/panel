@@ -15,7 +15,7 @@ class TaskTransformer extends BaseClientTransformer
     }
 
     /**
-     * @param Task $model
+     * @param  Task  $model
      */
     public function transform($model): array
     {

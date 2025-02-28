@@ -15,8 +15,7 @@ class ServerConfigurationStructureService
      * DO NOT MODIFY THIS FUNCTION. This powers legacy code handling for the new daemon
      * daemon, if you modify the structure eggs will break unexpectedly.
      *
-     * @param array<array-key, mixed> $override
-     *
+     * @param  array<array-key, mixed>  $override
      * @return array<array-key, mixed>
      */
     public function handle(Server $server, array $override = []): array

@@ -12,7 +12,7 @@ class BackupTransformer extends BaseClientTransformer
     }
 
     /**
-     * @param Backup $backup
+     * @param  Backup  $backup
      */
     public function transform($backup): array
     {

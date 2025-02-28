@@ -15,7 +15,7 @@ class AllocationTransformer extends BaseClientTransformer
     }
 
     /**
-     * @param Allocation $model
+     * @param  Allocation  $model
      */
     public function transform($model): array
     {

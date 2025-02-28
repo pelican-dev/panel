@@ -12,7 +12,7 @@ class RolePermissionTransformer extends BaseTransformer
     }
 
     /**
-     * @param Permission $model
+     * @param  Permission  $model
      */
     public function transform($model): array
     {

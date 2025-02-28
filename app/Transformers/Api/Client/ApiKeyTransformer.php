@@ -15,7 +15,7 @@ class ApiKeyTransformer extends BaseClientTransformer
     }
 
     /**
-     * @param ApiKey $model
+     * @param  ApiKey  $model
      */
     public function transform($model): array
     {

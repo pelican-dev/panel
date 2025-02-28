@@ -17,7 +17,7 @@ class ActivityLogTransformer extends BaseClientTransformer
     }
 
     /**
-     * @param ActivityLog $model
+     * @param  ActivityLog  $model
      */
     public function transform($model): array
     {
