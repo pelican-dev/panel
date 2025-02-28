@@ -111,7 +111,7 @@ Route::prefix('/eggs')->group(function () {
 | Endpoint: /api/application/database-hosts
 |
 */
-Route::group(['prefix' => '/database-hosts'], function () {
+Route::prefix('/database-hosts')->group(function () {
     Route::get('/', [Application\DatabaseHosts\DatabaseHostController::class, 'index'])->name('api.application.databasehosts');
     Route::get('/{database_host:id}', [Application\DatabaseHosts\DatabaseHostController::class, 'view'])->name('api.application.databasehosts.view');
 
@@ -153,7 +153,7 @@ Route::prefix('mounts')->group(function () {
 | Endpoint: /api/application/roles
 |
 */
-Route::group(['prefix' => '/roles'], function () {
+Route::prefix('/roles')->group(function () {
     Route::get('/', [Application\Roles\RoleController::class, 'index'])->name('api.application.roles');
     Route::get('/{role:id}', [Application\Roles\RoleController::class, 'view'])->name('api.application.roles.view');
 
