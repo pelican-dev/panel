@@ -41,6 +41,8 @@ class EditUser extends EditRecord
             return $record;
         }
 
+        unset($data['roles']);
+
         return $this->service->handle($record, $data);
     }
 }
