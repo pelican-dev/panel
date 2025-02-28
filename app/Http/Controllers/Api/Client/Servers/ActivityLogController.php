@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api\Client\Servers;
 
+use Illuminate\Support\Facades\Gate;
 use App\Models\User;
 use App\Models\Server;
 use App\Models\Permission;
@@ -26,7 +27,7 @@ class ActivityLogController extends ClientApiController
      */
     public function __invoke(ClientApiRequest $request, Server $server): array
     {
-        $this->authorize(Permission::ACTION_ACTIVITY_READ, $server);
+        Gate::authorize(Permission::ACTION_ACTIVITY_READ, $server);
 
         $activity = QueryBuilder::for($server->activity())
             ->allowedSorts(['timestamp'])
