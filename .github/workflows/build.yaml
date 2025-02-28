@@ -29,7 +29,7 @@ jobs:
           coverage: none
 
       - name: Install PHP dependencies
-        run: composer install --no-interaction --no-suggest --prefer-dist
+        run: composer install --no-interaction --no-suggest --no-progress --no-autoloader --no-scripts --no-dev
 
       - name: Setup Node
         uses: actions/setup-node@v4
