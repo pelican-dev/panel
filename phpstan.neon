@@ -14,7 +14,6 @@ parameters:
     ignoreErrors:
         - identifier: argument.templateType
         - identifier: missingType.generics
-        - identifier: missingType.iterableValue
 
         # We are getting and setting environment variables directly
         -
