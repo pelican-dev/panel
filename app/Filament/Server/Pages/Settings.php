@@ -187,7 +187,7 @@ class Settings extends ServerFormPage
                                     ->formatStateUsing(fn (Server $server) => auth()->user()->username . '.' . $server->uuid_short),
                                 Placeholder::make('password')
                                     ->columnSpan(1)
-                                    ->content('Your SFTP password is the same as the password you use to access this panel.'),
+                                    ->content('Your SFTP password is visible in your server\'s settings on the searcade website.'),
                             ]),
                     ]),
                 Section::make('Reinstall Server')
