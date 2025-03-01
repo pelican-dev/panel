@@ -9,10 +9,12 @@ use App\Http\Requests\Api\Client\Servers\Settings\RenameServerRequest;
 use App\Http\Requests\Api\Client\Servers\Settings\SetDockerImageRequest;
 use App\Models\Server;
 use App\Services\Servers\ReinstallServerService;
+use Dedoc\Scramble\Attributes\Group;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
+#[Group('Server - Settings')]
 class SettingsController extends ClientApiController
 {
     /**
@@ -25,6 +27,8 @@ class SettingsController extends ClientApiController
     }
 
     /**
+     * Rename
+     *
      * Renames a server.
      */
     public function rename(RenameServerRequest $request, Server $server): JsonResponse
@@ -56,6 +60,8 @@ class SettingsController extends ClientApiController
     }
 
     /**
+     * Reinstall
+     *
      * Reinstalls the server on the daemon.
      *
      * @throws \Throwable
@@ -70,6 +76,8 @@ class SettingsController extends ClientApiController
     }
 
     /**
+     * Change docker image
+     *
      * Changes the Docker image in use by the server.
      *
      * @throws \Throwable

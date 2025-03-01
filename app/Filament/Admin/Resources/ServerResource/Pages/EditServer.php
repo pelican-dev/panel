@@ -7,6 +7,7 @@ use App\Enums\ServerState;
 use App\Enums\SuspendAction;
 use App\Filament\Admin\Resources\ServerResource;
 use App\Filament\Admin\Resources\ServerResource\RelationManagers\AllocationsRelationManager;
+use App\Filament\Components\Forms\Actions\PreviewStartupAction;
 use App\Filament\Components\Forms\Actions\RotateDatabasePasswordAction;
 use App\Filament\Server\Pages\Console;
 use App\Models\Database;
@@ -165,7 +166,7 @@ class EditServer extends EditRecord
                                         'md' => 2,
                                         'lg' => 3,
                                     ])
-                                    ->unique()
+                                    ->unique(ignoreRecord: true)
                                     ->maxLength(255),
                                 Select::make('node_id')
                                     ->label(trans('admin/server.node'))
@@ -194,6 +195,7 @@ class EditServer extends EditRecord
                                             ->columnSpanFull()
                                             ->schema([
                                                 ToggleButtons::make('unlimited_cpu')
+                                                    ->dehydrated()
                                                     ->label(trans('admin/server.cpu'))->inlineLabel()->inline()
                                                     ->afterStateUpdated(fn (Set $set) => $set('cpu', 0))
                                                     ->formatStateUsing(fn (Get $get) => $get('cpu') == 0)
@@ -223,6 +225,7 @@ class EditServer extends EditRecord
                                             ->columnSpanFull()
                                             ->schema([
                                                 ToggleButtons::make('unlimited_mem')
+                                                    ->dehydrated()
                                                     ->label(trans('admin/server.memory'))->inlineLabel()->inline()
                                                     ->afterStateUpdated(fn (Set $set) => $set('memory', 0))
                                                     ->formatStateUsing(fn (Get $get) => $get('memory') == 0)
@@ -253,6 +256,7 @@ class EditServer extends EditRecord
                                             ->columnSpanFull()
                                             ->schema([
                                                 ToggleButtons::make('unlimited_disk')
+                                                    ->dehydrated()
                                                     ->label(trans('admin/server.disk'))->inlineLabel()->inline()
                                                     ->live()
                                                     ->afterStateUpdated(fn (Set $set) => $set('disk', 0))
@@ -387,9 +391,6 @@ class EditServer extends EditRecord
                                                         false => 'success',
                                                         true => 'danger',
                                                     ]),
-
-                                                TextInput::make('oom_disabled_hidden')
-                                                    ->hidden(),
                                             ]),
                                     ]),
 
@@ -507,7 +508,7 @@ class EditServer extends EditRecord
                                     ->required()
                                     ->hintAction(
                                         Action::make('change_egg')
-                                            ->label('admin/server.change_egg')
+                                            ->label(trans('admin/server.change_egg'))
                                             ->action(function (array $data, Server $server, EggChangerService $service) {
                                                 $service->handle($server, $data['egg_id'], $data['keepOldVariables']);
 
@@ -549,12 +550,14 @@ class EditServer extends EditRecord
                                         true => 'tabler-code-off',
                                     ])
                                     ->required(),
-
+                                Hidden::make('previewing')
+                                    ->default(false),
                                 Textarea::make('startup')
                                     ->label(trans('admin/server.startup_cmd'))
                                     ->required()
                                     ->columnSpan(6)
-                                    ->autosize(),
+                                    ->autosize()
+                                    ->hintAction(PreviewStartupAction::make('preview')),
 
                                 Textarea::make('defaultStartup')
                                     ->hintAction(fn () => request()->isSecure() ? CopyAction::make() : null)

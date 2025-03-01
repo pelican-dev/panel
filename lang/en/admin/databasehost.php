@@ -1,7 +1,6 @@
 <?php
 
 return [
-    'create_action' => ':action Database host',
     'nav_title' => 'Database Hosts',
     'model_label' => 'Database Host',
     'model_label_plural' => 'Database Hosts',
@@ -26,7 +25,7 @@ return [
     'max_database' => 'Max Databases',
     'max_databases_help' => 'The maximum number of databases that can be created on this host. If the limit is reached, no new databases can be created on this host. Blank is unlimited.',
     'display_name' => 'Display Name',
-    'display_name_help' => 'A short identifier used to distinguish this location from others. Must be between 1 and 60 characters, for example, us.nyc.lvl3.',
+    'display_name_help' => 'A short identifier used to distinguish this host from others. Must be between 1 and 60 characters, for example, us.nyc.lvl3.',
     'username' => 'Username',
     'username_help' => 'The username of an account that has enough permissions to create new users and databases on the system.',
     'password' => 'Password',

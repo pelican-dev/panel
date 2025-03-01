@@ -19,7 +19,9 @@ use App\Http\Controllers\Api\Client\ClientApiController;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use App\Http\Requests\Api\Client\Servers\Backups\StoreBackupRequest;
 use App\Http\Requests\Api\Client\Servers\Backups\RestoreBackupRequest;
+use Dedoc\Scramble\Attributes\Group;
 
+#[Group('Server - Backup')]
 class BackupController extends ClientApiController
 {
     public function __construct(
@@ -32,6 +34,8 @@ class BackupController extends ClientApiController
     }
 
     /**
+     * List backups
+     *
      * Returns all the backups for a given server instance in a paginated
      * result set.
      *
@@ -54,6 +58,8 @@ class BackupController extends ClientApiController
     }
 
     /**
+     * Create backup
+     *
      * Starts the backup process for a server.
      *
      * @throws \Spatie\Fractalistic\Exceptions\InvalidTransformation
@@ -86,6 +92,8 @@ class BackupController extends ClientApiController
     }
 
     /**
+     * Toggle lock
+     *
      * Toggles the lock status of a given backup for a server.
      *
      * @throws \Throwable
@@ -109,6 +117,8 @@ class BackupController extends ClientApiController
     }
 
     /**
+     * View backup
+     *
      * Returns information about a single backup.
      *
      * @throws \Illuminate\Auth\Access\AuthorizationException
@@ -125,6 +135,8 @@ class BackupController extends ClientApiController
     }
 
     /**
+     * Delete backup
+     *
      * Deletes a backup from the panel as well as the remote source where it is currently
      * being stored.
      *
@@ -147,6 +159,8 @@ class BackupController extends ClientApiController
     }
 
     /**
+     * Download backup
+     *
      * Download the backup for a given server instance. For daemon local files, the file
      * will be streamed back through the Panel. For AWS S3 files, a signed URL will be generated
      * which the user is redirected to.
@@ -175,6 +189,8 @@ class BackupController extends ClientApiController
     }
 
     /**
+     * Restore backup
+     *
      * Handles restoring a backup by making a request to the daemon instance telling it
      * to begin the process of finding (or downloading) the backup and unpacking it
      * over the server files.

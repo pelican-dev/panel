@@ -3,6 +3,7 @@
 namespace App\Services\Subusers;
 
 use App\Facades\Activity;
+use App\Models\Permission;
 use App\Models\Server;
 use App\Models\Subuser;
 use App\Repositories\Daemon\DaemonServerRepository;
@@ -16,9 +17,14 @@ class SubuserUpdateService
 
     public function handle(Subuser $subuser, Server $server, array $permissions): void
     {
-        $current = $subuser->permissions;
+        $cleanedPermissions = collect($permissions)
+            ->unique()
+            ->filter(fn ($permission) => $permission === Permission::ACTION_WEBSOCKET_CONNECT || auth()->user()->can($permission, $server))
+            ->sort()
+            ->values()
+            ->all();
 
-        sort($permissions);
+        $current = $subuser->permissions;
         sort($current);
 
         $log = Activity::event('server:subuser.update')
@@ -26,15 +32,15 @@ class SubuserUpdateService
             ->property([
                 'email' => $subuser->user->email,
                 'old' => $current,
-                'new' => $permissions,
+                'new' => $cleanedPermissions,
                 'revoked' => true,
             ]);
 
         // Only update the database and hit up the daemon instance to invalidate JTI's if the permissions
         // have actually changed for the user.
-        if ($permissions !== $current) {
-            $log->transaction(function ($instance) use ($subuser, $permissions, $server) {
-                $subuser->update(['permissions' => $permissions]);
+        if ($cleanedPermissions !== $current) {
+            $log->transaction(function ($instance) use ($subuser, $cleanedPermissions, $server) {
+                $subuser->update(['permissions' => $cleanedPermissions]);
 
                 try {
                     $this->serverRepository->setServer($server)->revokeUserJTI($subuser->user_id);

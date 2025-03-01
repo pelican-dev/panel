@@ -7,6 +7,7 @@ use App\Filament\Admin\Resources\EggResource;
 use App\Filament\Admin\Resources\EggResource\RelationManagers\ServersRelationManager;
 use App\Filament\Components\Actions\ExportEggAction;
 use App\Filament\Components\Actions\ImportEggAction;
+use App\Filament\Components\Forms\Fields\CopyFrom;
 use App\Models\Egg;
 use App\Models\EggVariable;
 use Filament\Actions\DeleteAction;
@@ -112,11 +113,8 @@ class EditEgg extends EditRecord
                         ->columns()
                         ->icon('tabler-server-cog')
                         ->schema([
-                            Select::make('config_from')
-                                ->label(trans('admin/egg.copy_from'))
-                                ->placeholder(trans('admin/egg.none'))
-                                ->relationship('configFrom', 'name', ignoreRecord: true)
-                                ->helperText(trans('admin/egg.copy_from_help')),
+                            CopyFrom::make('copy_process_from')
+                                ->process(),
                             TextInput::make('config_stop')
                                 ->label(trans('admin/egg.stop_command'))
                                 ->maxLength(255)
@@ -228,20 +226,18 @@ class EditEgg extends EditRecord
                         ->columns(3)
                         ->icon('tabler-file-download')
                         ->schema([
-                            Select::make('copy_script_from')
-                                ->label(trans('admin/egg.script_from'))
-                                ->placeholder(trans('admin/egg.none'))
-                                ->relationship('scriptFrom', 'name', ignoreRecord: true),
+                            CopyFrom::make('copy_script_from')
+                                ->script(),
                             TextInput::make('script_container')
                                 ->label(trans('admin/egg.script_container'))
                                 ->required()
                                 ->maxLength(255)
-                                ->default('alpine:3.4'),
-                            TextInput::make('script_entry')
+                                ->placeholder('ghcr.io/pelican-eggs/installers:debian'),
+                            Select::make('script_entry')
                                 ->label(trans('admin/egg.script_entry'))
-                                ->required()
-                                ->maxLength(255)
-                                ->default('ash'),
+                                ->selectablePlaceholder(false)
+                                ->options(['bash', 'ash', '/bin/bash'])
+                                ->required(),
                             MonacoEditor::make('script_install')
                                 ->label(trans('admin/egg.script_install'))
                                 ->placeholderText('')

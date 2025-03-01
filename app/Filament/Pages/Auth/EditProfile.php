@@ -61,6 +61,8 @@ class EditProfile extends BaseEditProfile
 
     protected function getForms(): array
     {
+        $oauthProviders = collect(OAuthProvider::get())->filter(fn (OAuthProvider $provider) => $provider->isEnabled())->all();
+
         return [
             'form' => $this->form(
                 $this->makeForm()
@@ -108,38 +110,30 @@ class EditProfile extends BaseEditProfile
                                             ->label(trans('profile.timezone'))
                                             ->required()
                                             ->prefixIcon('tabler-clock-pin')
+                                            ->default('UTC')
+                                            ->selectablePlaceholder(false)
                                             ->options(fn () => collect(DateTimeZone::listIdentifiers())->mapWithKeys(fn ($tz) => [$tz => $tz]))
-                                            ->searchable(),
+                                            ->searchable()
+                                            ->native(false),
                                         Select::make('language')
                                             ->label(trans('profile.language'))
                                             ->required()
                                             ->prefixIcon('tabler-flag')
                                             ->live()
                                             ->default('en')
+                                            ->selectablePlaceholder(false)
                                             ->helperText(fn ($state, LanguageService $languageService) => new HtmlString($languageService->isLanguageTranslated($state) ? '' : trans('profile.language_help', ['state' => $state])))
-                                            ->options(fn (LanguageService $languageService) => $languageService->getAvailableLanguages()),
+                                            ->options(fn (LanguageService $languageService) => $languageService->getAvailableLanguages())
+                                            ->native(false),
                                     ]),
 
                                 Tab::make(trans('profile.tabs.oauth'))
                                     ->icon('tabler-brand-oauth')
-                                    ->visible(function () {
-                                        $oauthProviders = OAuthProvider::get();
-                                        foreach ($oauthProviders as $oauthProvider) {
-                                            if ($oauthProvider->isEnabled()) {
-                                                return true;
-                                            }
-                                        }
-
-                                        return false;
-                                    })
-                                    ->schema(function () {
+                                    ->visible(count($oauthProviders) > 0)
+                                    ->schema(function () use ($oauthProviders) {
                                         $actions = [];
 
-                                        $oauthProviders = OAuthProvider::get();
                                         foreach ($oauthProviders as $oauthProvider) {
-                                            if (!$oauthProvider->isEnabled()) {
-                                                continue;
-                                            }
 
                                             $id = $oauthProvider->getId();
                                             $name = $oauthProvider->getName();

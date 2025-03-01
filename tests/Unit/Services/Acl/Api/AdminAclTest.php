@@ -14,7 +14,7 @@ class AdminAclTest extends TestCase
      * Test that permissions return the expects values.
      */
     #[DataProvider('permissionsDataProvider')]
-    public function testPermissions(int $permission, int $check, bool $outcome): void
+    public function test_permissions(int $permission, int $check, bool $outcome): void
     {
         $this->assertSame($outcome, AdminAcl::can($permission, $check));
     }
@@ -22,7 +22,7 @@ class AdminAclTest extends TestCase
     /**
      * Test that checking against a model works as expected.
      */
-    public function testCheck(): void
+    public function test_check(): void
     {
         $model = ApiKey::factory()->make(['permissions' => [
             Server::RESOURCE_NAME => AdminAcl::READ | AdminAcl::WRITE,

@@ -14,10 +14,14 @@ use App\Http\Requests\Api\Client\ClientApiRequest;
 use App\Transformers\Api\Client\ActivityLogTransformer;
 use App\Http\Controllers\Api\Client\ClientApiController;
 use App\Models\Role;
+use Dedoc\Scramble\Attributes\Group;
 
+#[Group('Server - Activity log')]
 class ActivityLogController extends ClientApiController
 {
     /**
+     * List activity logs
+     *
      * Returns the activity logs for a server.
      */
     public function __invoke(ClientApiRequest $request, Server $server): array

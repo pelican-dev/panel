@@ -34,8 +34,8 @@ class UpgradeCommand extends Command
     {
         $skipDownload = $this->option('skip-download');
         if (!$skipDownload) {
-            $this->output->warning(__('commands.upgrade.integrity'));
-            $this->output->comment(__('commands.upgrade.source_url'));
+            $this->output->warning(trans('commands.upgrade.integrity'));
+            $this->output->comment(trans('commands.upgrade.source_url'));
             $this->line($this->getUrl());
         }
 
@@ -43,17 +43,17 @@ class UpgradeCommand extends Command
         $group = 'www-data';
         if ($this->input->isInteractive()) {
             if (!$skipDownload) {
-                $skipDownload = !$this->confirm(__('commands.upgrade.skipDownload'), true);
+                $skipDownload = !$this->confirm(trans('commands.upgrade.skipDownload'), true);
             }
 
             if (is_null($this->option('user'))) {
                 $userDetails = function_exists('posix_getpwuid') ? posix_getpwuid(fileowner('public')) : [];
                 $user = $userDetails['name'] ?? 'www-data';
 
-                $message = __('commands.upgrade.webserver_user', ['user' => $user]);
+                $message = trans('commands.upgrade.webserver_user', ['user' => $user]);
                 if (!$this->confirm($message, true)) {
                     $user = $this->anticipate(
-                        __('commands.upgrade.name_webserver'),
+                        trans('commands.upgrade.name_webserver'),
                         [
                             'www-data',
                             'nginx',
@@ -67,10 +67,10 @@ class UpgradeCommand extends Command
                 $groupDetails = function_exists('posix_getgrgid') ? posix_getgrgid(filegroup('public')) : [];
                 $group = $groupDetails['name'] ?? 'www-data';
 
-                $message = __('commands.upgrade.group_webserver', ['group' => $user]);
+                $message = trans('commands.upgrade.group_webserver', ['group' => $user]);
                 if (!$this->confirm($message, true)) {
                     $group = $this->anticipate(
-                        __('commands.upgrade.group_webserver_question'),
+                        trans('commands.upgrade.group_webserver_question'),
                         [
                             'www-data',
                             'nginx',
@@ -80,8 +80,8 @@ class UpgradeCommand extends Command
                 }
             }
 
-            if (!$this->confirm(__('commands.upgrade.are_your_sure'))) {
-                $this->warn(__('commands.upgrade.terminated'));
+            if (!$this->confirm(trans('commands.upgrade.are_your_sure'))) {
+                $this->warn(trans('commands.upgrade.terminated'));
 
                 return;
             }
@@ -171,7 +171,7 @@ class UpgradeCommand extends Command
         });
 
         $this->newLine(2);
-        $this->info(__('commands.upgrade.success'));
+        $this->info(trans('commands.upgrade.success'));
     }
 
     protected function withProgress(ProgressBar $bar, \Closure $callback): void

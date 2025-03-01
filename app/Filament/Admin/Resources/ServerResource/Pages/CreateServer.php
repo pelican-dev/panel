@@ -102,12 +102,13 @@ class CreateServer extends CreateRecord
                                     'sm' => 2,
                                     'md' => 2,
                                 ])
-                                ->unique()
+                                ->unique(ignoreRecord: true)
                                 ->maxLength(255),
 
                             Select::make('node_id')
                                 ->disabledOn('edit')
                                 ->prefixIcon('tabler-server-2')
+                                ->selectablePlaceholder(false)
                                 ->default(fn () => ($this->node = Node::query()->latest()->first())?->id)
                                 ->columnSpan([
                                     'default' => 1,
@@ -127,6 +128,7 @@ class CreateServer extends CreateRecord
                             Select::make('owner_id')
                                 ->preload()
                                 ->prefixIcon('tabler-user')
+                                ->selectablePlaceholder(false)
                                 ->default(auth()->user()->id)
                                 ->label(trans('admin/server.owner'))
                                 ->columnSpan([
@@ -497,6 +499,7 @@ class CreateServer extends CreateRecord
                                         ->columnSpanFull()
                                         ->schema([
                                             ToggleButtons::make('unlimited_cpu')
+                                                ->dehydrated()
                                                 ->label(trans('admin/server.cpu'))->inlineLabel()->inline()
                                                 ->default(true)
                                                 ->afterStateUpdated(fn (Set $set) => $set('cpu', 0))
@@ -528,6 +531,7 @@ class CreateServer extends CreateRecord
                                         ->columnSpanFull()
                                         ->schema([
                                             ToggleButtons::make('unlimited_mem')
+                                                ->dehydrated()
                                                 ->label(trans('admin/server.memory'))->inlineLabel()->inline()
                                                 ->default(true)
                                                 ->afterStateUpdated(fn (Set $set) => $set('memory', 0))
@@ -558,6 +562,7 @@ class CreateServer extends CreateRecord
                                         ->columnSpanFull()
                                         ->schema([
                                             ToggleButtons::make('unlimited_disk')
+                                                ->dehydrated()
                                                 ->label(trans('admin/server.disk'))->inlineLabel()->inline()
                                                 ->default(true)
                                                 ->live()
@@ -694,9 +699,6 @@ class CreateServer extends CreateRecord
                                                     false => 'success',
                                                     true => 'danger',
                                                 ]),
-
-                                            TextInput::make('oom_disabled_hidden')
-                                                ->hidden(),
                                         ]),
                                 ]),
 

@@ -13,12 +13,12 @@ class KeyGenerateCommand extends BaseKeyGenerateCommand
     public function handle(): void
     {
         if (!empty(config('app.key')) && $this->input->isInteractive()) {
-            $this->output->warning(__('commands.key_generate.error_already_exist'));
-            if (!$this->confirm(__('commands.key_generate.understand'))) {
+            $this->output->warning(trans('commands.key_generate.error_already_exist'));
+            if (!$this->confirm(trans('commands.key_generate.understand'))) {
                 return;
             }
 
-            if (!$this->confirm(__('commands.key_generate.continue'))) {
+            if (!$this->confirm(trans('commands.key_generate.continue'))) {
                 return;
             }
         }

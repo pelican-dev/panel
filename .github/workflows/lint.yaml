@@ -25,7 +25,7 @@ jobs:
         run: cp .env.example .env
 
       - name: Install dependencies
-        run: composer install --no-interaction --no-progress --prefer-dist
+        run: composer install --no-interaction --no-suggest --no-progress --no-autoloader --no-scripts
 
       - name: Pint
         run: vendor/bin/pint --test
@@ -48,7 +48,7 @@ jobs:
         run: cp .env.example .env
 
       - name: Install dependencies
-        run: composer install --no-interaction --no-progress --prefer-dist
+        run: composer install --no-interaction --no-suggest --no-progress --no-scripts
 
       - name: PHPStan
         run: vendor/bin/phpstan --memory-limit=-1

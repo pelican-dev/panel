@@ -17,7 +17,9 @@ use App\Http\Requests\Api\Client\Servers\Subusers\GetSubuserRequest;
 use App\Http\Requests\Api\Client\Servers\Subusers\StoreSubuserRequest;
 use App\Http\Requests\Api\Client\Servers\Subusers\DeleteSubuserRequest;
 use App\Http\Requests\Api\Client\Servers\Subusers\UpdateSubuserRequest;
+use Dedoc\Scramble\Attributes\Group;
 
+#[Group('Server - Subuser')]
 class SubuserController extends ClientApiController
 {
     /**
@@ -32,6 +34,8 @@ class SubuserController extends ClientApiController
     }
 
     /**
+     * List subusers
+     *
      * Return the users associated with this server instance.
      */
     public function index(GetSubuserRequest $request, Server $server): array
@@ -42,6 +46,8 @@ class SubuserController extends ClientApiController
     }
 
     /**
+     * View subusers
+     *
      * Returns a single subuser associated with this server instance.
      */
     public function view(GetSubuserRequest $request, Server $server, User $user): array
@@ -54,6 +60,8 @@ class SubuserController extends ClientApiController
     }
 
     /**
+     * Create subuser
+     *
      * Create a new subuser for the given server.
      *
      * @throws \App\Exceptions\Model\DataValidationException
@@ -80,6 +88,8 @@ class SubuserController extends ClientApiController
     }
 
     /**
+     * Update subuser
+     *
      * Update a given subuser in the system for the server.
      *
      * @throws \App\Exceptions\Model\DataValidationException
@@ -97,6 +107,8 @@ class SubuserController extends ClientApiController
     }
 
     /**
+     * Delete subuser
+     *
      * Removes a subusers from a server's assignment.
      */
     public function delete(DeleteSubuserRequest $request, Server $server, User $user): JsonResponse

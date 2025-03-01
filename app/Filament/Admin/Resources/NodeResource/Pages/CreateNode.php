@@ -224,6 +224,9 @@ class CreateNode extends CreateRecord
                                 ->columnSpan(2),
                             TextInput::make('upload_size')
                                 ->label(trans('admin/node.upload_limit'))
+                                ->helperText(trans('admin/node.upload_limit_help.0'))
+                                ->hintIcon('tabler-question-mark')
+                                ->hintIconTooltip(trans('admin/node.upload_limit_help.1'))
                                 ->columnSpan(1)
                                 ->numeric()->required()
                                 ->default(256)
@@ -247,6 +250,7 @@ class CreateNode extends CreateRecord
                                 ->columnSpanFull()
                                 ->schema([
                                     ToggleButtons::make('unlimited_mem')
+                                        ->dehydrated()
                                         ->label(trans('admin/node.memory'))->inlineLabel()->inline()
                                         ->afterStateUpdated(fn (Set $set) => $set('memory', 0))
                                         ->afterStateUpdated(fn (Set $set) => $set('memory_overallocate', 0))
@@ -288,6 +292,7 @@ class CreateNode extends CreateRecord
                                 ->columnSpanFull()
                                 ->schema([
                                     ToggleButtons::make('unlimited_disk')
+                                        ->dehydrated()
                                         ->label(trans('admin/node.disk'))->inlineLabel()->inline()
                                         ->live()
                                         ->afterStateUpdated(fn (Set $set) => $set('disk', 0))
@@ -329,6 +334,7 @@ class CreateNode extends CreateRecord
                                 ->columnSpanFull()
                                 ->schema([
                                     ToggleButtons::make('unlimited_cpu')
+                                        ->dehydrated()
                                         ->label(trans('admin/node.cpu'))->inlineLabel()->inline()
                                         ->live()
                                         ->afterStateUpdated(fn (Set $set) => $set('cpu', 0))
