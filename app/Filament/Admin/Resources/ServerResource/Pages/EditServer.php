@@ -665,11 +665,13 @@ class EditServer extends EditRecord
                                             ->label(trans('admin/databasehost.table.host'))
                                             ->disabled()
                                             ->formatStateUsing(fn ($record) => $record->address())
+                                            ->suffixAction(fn (string $state) => request()->isSecure() ? CopyAction::make()->copyable($state) : null)
                                             ->columnSpan(1),
                                         TextInput::make('database')
                                             ->label(trans('admin/databasehost.table.database'))
                                             ->disabled()
                                             ->formatStateUsing(fn ($record) => $record->database)
+                                            ->suffixAction(fn (string $state) => request()->isSecure() ? CopyAction::make()->copyable($state) : null)
                                             ->hintAction(
                                                 Action::make('Delete')
                                                     ->label(trans('filament-actions::delete.single.modal.actions.delete.label'))
@@ -690,6 +692,7 @@ class EditServer extends EditRecord
                                             ->label(trans('admin/databasehost.table.username'))
                                             ->disabled()
                                             ->formatStateUsing(fn ($record) => $record->username)
+                                            ->suffixAction(fn (string $state) => request()->isSecure() ? CopyAction::make()->copyable($state) : null)
                                             ->columnSpan(1),
                                         TextInput::make('password')
                                             ->label(trans('admin/databasehost.table.password'))
@@ -698,6 +701,7 @@ class EditServer extends EditRecord
                                             ->revealable()
                                             ->columnSpan(1)
                                             ->hintAction(RotateDatabasePasswordAction::make())
+                                            ->suffixAction(fn (string $state) => request()->isSecure() ? CopyAction::make()->copyable($state) : null)
                                             ->formatStateUsing(fn (Database $database) => $database->password),
                                         TextInput::make('remote')
                                             ->disabled()
@@ -715,7 +719,8 @@ class EditServer extends EditRecord
                                             ->revealable()
                                             ->label(trans('admin/databasehost.table.connection_string'))
                                             ->columnSpan(2)
-                                            ->formatStateUsing(fn (Database $record) => $record->jdbc),
+                                            ->formatStateUsing(fn (Database $record) => $record->jdbc)
+                                            ->suffixAction(fn (string $state) => request()->isSecure() ? CopyAction::make()->copyable($state) : null),
                                     ])
                                     ->relationship('databases')
                                     ->deletable(false)
