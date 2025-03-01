@@ -661,9 +661,13 @@ class EditServer extends EditRecord
                                     ->helperText(fn (Server $server) => $server->databases->isNotEmpty() ? '' : trans('admin/server.no_databases'))
                                     ->columns(2)
                                     ->schema([
+                                        TextInput::make('host')
+                                            ->label(trans('admin/databasehost.table.host'))
+                                            ->disabled()
+                                            ->formatStateUsing(fn ($record) => $record->address())
+                                            ->columnSpan(1),
                                         TextInput::make('database')
-                                            ->columnSpan(2)
-                                            ->label(trans('admin/server.name'))
+                                            ->label(trans('admin/databasehost.table.database'))
                                             ->disabled()
                                             ->formatStateUsing(fn ($record) => $record->database)
                                             ->hintAction(
