@@ -89,8 +89,10 @@ class ServerOverview extends StatsOverviewWidget
             return 'Unavailable';
         }
 
+        $totalBytes = $this->server->disk * (config('panel.use_binary_prefix') ? 1024 * 1024 : 1000 * 1000);
+
         $used = convert_bytes_to_readable($disk);
-        $total = convert_bytes_to_readable($this->server->disk);
+        $total = convert_bytes_to_readable($totalBytes);
 
         return $used . ($this->server->disk > 0 ? ' / ' . $total : ' / ∞');
     }
