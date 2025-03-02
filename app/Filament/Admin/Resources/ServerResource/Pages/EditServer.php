@@ -844,7 +844,7 @@ class EditServer extends EditRecord
                                                 Forms\Components\Actions::make([
                                                     Action::make('transfer')
                                                         ->label(trans('admin/server.transfer'))
-                                                        ->action(fn (TransferServerService $transfer, Server $server) => $transfer->handle($server, []))
+                                                        // ->action(fn (TransferServerService $transfer, Server $server) => $transfer->handle($server, []))
                                                         ->disabled() //TODO!
                                                         ->form([ //TODO!
                                                             Select::make('newNode')

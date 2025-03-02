@@ -77,6 +77,8 @@ class DatabaseController extends ClientApiController
      * Rotates the password for the given server model and returns a fresh instance to
      * the caller.
      *
+     * @return array<array-key, mixed>
+     *
      * @throws \Throwable
      */
     public function rotatePassword(RotatePasswordRequest $request, Server $server, Database $database): array
