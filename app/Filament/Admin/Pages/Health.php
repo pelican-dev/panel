@@ -17,7 +17,7 @@ class Health extends Page
 
     protected static string $view = 'filament.pages.health';
 
-    // @phpstan-ignore missingType.property
+    /** @var array<string, string> */
     protected $listeners = [
         'refresh-component' => '$refresh',
     ];
