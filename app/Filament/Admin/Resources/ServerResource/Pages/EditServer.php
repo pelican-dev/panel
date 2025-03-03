@@ -17,9 +17,9 @@ use App\Models\Mount;
 use App\Models\Server;
 use App\Models\ServerVariable;
 use App\Models\User;
+use App\Repositories\Daemon\DaemonServerRepository;
 use App\Services\Databases\DatabaseManagementService;
 use App\Services\Eggs\EggChangerService;
-use App\Services\Servers\BuildModificationService;
 use App\Services\Servers\RandomWordService;
 use App\Services\Servers\ReinstallServerService;
 use App\Services\Servers\ServerDeletionService;
@@ -52,6 +52,7 @@ use Filament\Notifications\Notification;
 use Filament\Resources\Pages\EditRecord;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Support\Facades\Validator;
 use LogicException;
 use Webbingbrasil\FilamentCopyActions\Forms\Actions\CopyAction;
@@ -62,11 +63,11 @@ class EditServer extends EditRecord
 
     private bool $errored = false;
 
-    private BuildModificationService $buildModificationService;
+    private DaemonServerRepository $daemonServerRepository;
 
-    public function boot(BuildModificationService $buildModificationService): void
+    public function boot(DaemonServerRepository $daemonServerRepository): void
     {
-        $this->buildModificationService = $buildModificationService;
+        $this->daemonServerRepository = $daemonServerRepository;
     }
 
     public function form(Form $form): Form
@@ -964,11 +965,12 @@ class EditServer extends EditRecord
             return $record;
         }
 
-        try {
-            $this->record = $this->buildModificationService->handle($record, $data, true);
+        /** @var Server $record */
+        $record = parent::handleRecordUpdate($record, $data);
 
-            return $this->record;
-        } catch (Exception $exception) {
+        try {
+            $this->daemonServerRepository->setServer($record)->sync();
+        } catch (ConnectionException) {
             $this->errored = true;
 
             Notification::make()
@@ -978,9 +980,9 @@ class EditServer extends EditRecord
                 ->icon('tabler-database')
                 ->warning()
                 ->send();
-
-            return parent::handleRecordUpdate($record, $data);
         }
+
+        return $record;
     }
 
     protected function getSavedNotification(): ?Notification
