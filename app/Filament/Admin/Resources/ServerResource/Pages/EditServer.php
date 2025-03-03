@@ -19,6 +19,7 @@ use App\Models\ServerVariable;
 use App\Models\User;
 use App\Services\Databases\DatabaseManagementService;
 use App\Services\Eggs\EggChangerService;
+use App\Services\Servers\BuildModificationService;
 use App\Services\Servers\RandomWordService;
 use App\Services\Servers\ReinstallServerService;
 use App\Services\Servers\ServerDeletionService;
@@ -50,6 +51,7 @@ use Filament\Forms\Set;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\EditRecord;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Validator;
 use LogicException;
 use Webbingbrasil\FilamentCopyActions\Forms\Actions\CopyAction;
@@ -57,6 +59,15 @@ use Webbingbrasil\FilamentCopyActions\Forms\Actions\CopyAction;
 class EditServer extends EditRecord
 {
     protected static string $resource = ServerResource::class;
+
+    private bool $errored = false;
+
+    private BuildModificationService $buildModificationService;
+
+    public function boot(BuildModificationService $buildModificationService): void
+    {
+        $this->buildModificationService = $buildModificationService;
+    }
 
     public function form(Form $form): Form
     {
@@ -945,6 +956,40 @@ class EditServer extends EditRecord
         unset($data['docker'], $data['status']);
 
         return $data;
+    }
+
+    protected function handleRecordUpdate(Model $record, array $data): Model
+    {
+        if (!$record instanceof Server) {
+            return $record;
+        }
+
+        try {
+            $this->record = $this->buildModificationService->handle($record, $data, true);
+
+            return $this->record;
+        } catch (Exception $exception) {
+            $this->errored = true;
+
+            Notification::make()
+                ->title(trans('admin/server.notifications.error_connecting', ['node' => $record->node->name]))
+                ->body(trans('admin/server.notifications.error_connecting_description'))
+                ->color('warning')
+                ->icon('tabler-database')
+                ->warning()
+                ->send();
+
+            return parent::handleRecordUpdate($record, $data);
+        }
+    }
+
+    protected function getSavedNotification(): ?Notification
+    {
+        if ($this->errored) {
+            return null;
+        }
+
+        return parent::getSavedNotification();
     }
 
     public function getRelationManagers(): array
