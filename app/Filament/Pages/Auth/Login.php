@@ -107,8 +107,8 @@ class Login extends BaseLogin
     private function getTwoFactorAuthenticationComponent(): Component
     {
         return TextInput::make('2fa')
+            ->label(trans('auth.two-factor-code'))
             ->hidden(fn () => !$this->verifyTwoFactor)
-            ->label('Two Factor Code')
             ->required()
             ->live();
     }
