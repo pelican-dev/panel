@@ -16,6 +16,7 @@ use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Cache;
 use Symfony\Component\Yaml\Yaml;
 
 /**
@@ -164,10 +165,19 @@ class Node extends Model implements Validatable
 
     /**
      * Get the connection address to use when making calls to this node.
+     * Added a cache to avoid unnecessary queries.
      */
     public function getConnectionAddress(): string
     {
-        return "$this->scheme://$this->fqdn:$this->daemon_listen";
+        $nodeaddress = "$this->scheme://$this->fqdn:$this->daemon_listen";
+        
+        if (Cache::has('nodeaddress')) {
+            return Cache::get('nodeaddress');
+        } else {
+            Cache::put('nodeaddress', $nodeaddress, now()->addMinutes(5));
+        }
+    
+        return $nodeaddress;
     }
 
     /**
