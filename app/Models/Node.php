@@ -169,11 +169,11 @@ class Node extends Model implements Validatable
      */
     public function getConnectionAddress(): string
     {
-        $nodeaddress = "$this->scheme://$this->fqdn:$this->daemon_listen";
         
         if (Cache::has('nodeaddress')) {
             return Cache::get('nodeaddress');
         } else {
+            $nodeaddress = "$this->scheme://$this->fqdn:$this->daemon_listen";
             Cache::put('nodeaddress', $nodeaddress, now()->addMinutes(5));
         }
     
