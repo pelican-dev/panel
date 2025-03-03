@@ -8,7 +8,6 @@ use App\Models\Allocation;
 use Illuminate\Database\ConnectionInterface;
 use App\Exceptions\DisplayException;
 use App\Repositories\Daemon\DaemonServerRepository;
-use Exception;
 use Illuminate\Http\Client\ConnectionException;
 
 class BuildModificationService
@@ -30,7 +29,7 @@ class BuildModificationService
      * @throws \Throwable
      * @throws \App\Exceptions\DisplayException
      */
-    public function handle(Server $server, array $data, ?bool $shouldThrow = false): Server
+    public function handle(Server $server, array $data): Server
     {
         /** @var \App\Models\Server $server */
         $server = $this->connection->transaction(function () use ($server, $data) {
@@ -69,10 +68,6 @@ class BuildModificationService
                 $this->daemonServerRepository->setServer($server)->sync();
             } catch (ConnectionException $exception) {
                 logger()->warning($exception, ['server_id' => $server->id]);
-
-                if ($shouldThrow) {
-                    throw $exception;
-                }
             }
         }
 
