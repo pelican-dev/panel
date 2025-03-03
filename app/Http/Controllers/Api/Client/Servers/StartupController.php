@@ -67,7 +67,7 @@ class StartupController extends ClientApiController
         $original = $variable->server_value;
 
         // Revalidate the variable value using the egg variable specific validation rules for it.
-        $this->validate($request, ['value' => $variable->rules]);
+        $request->validate(['value' => $variable->rules]);
 
         ServerVariable::query()->updateOrCreate([
             'server_id' => $server->id,

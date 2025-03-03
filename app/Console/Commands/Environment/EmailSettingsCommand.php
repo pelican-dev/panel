@@ -91,7 +91,7 @@ class EmailSettingsCommand extends Command
             trans('command/messages.environment.mail.ask_smtp_password')
         );
 
-        $this->variables['MAIL_ENCRYPTION'] = $this->option('encryption') ?? $this->choice(
+        $this->variables['MAIL_SCHEME'] = $this->option('encryption') ?? $this->choice(
             trans('command/messages.environment.mail.ask_encryption'),
             ['tls' => 'TLS', 'ssl' => 'SSL', '' => 'None'],
             config('mail.mailers.smtp.encryption', 'tls')
