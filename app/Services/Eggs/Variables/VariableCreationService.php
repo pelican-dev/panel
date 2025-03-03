@@ -28,6 +28,14 @@ class VariableCreationService
     /**
      * Create a new variable for a given Egg.
      *
+     * @param array{
+     *     name?: string,
+     *     description?: string,
+     *     env_variable?: string,
+     *     default_value?: string,
+     *     rules?: string|string[],
+     * } $data
+     *
      * @throws \App\Exceptions\Model\DataValidationException
      * @throws \App\Exceptions\Service\Egg\Variable\BadValidationRuleException
      * @throws \App\Exceptions\Service\Egg\Variable\ReservedVariableNameException

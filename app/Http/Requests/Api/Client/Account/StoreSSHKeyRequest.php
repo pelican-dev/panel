@@ -15,9 +15,7 @@ class StoreSSHKeyRequest extends ClientApiRequest
 {
     protected ?PublicKey $key;
 
-    /**
-     * Returns the rules for this request.
-     */
+    /** @return array<string, string|string[]> */
     public function rules(): array
     {
         return [

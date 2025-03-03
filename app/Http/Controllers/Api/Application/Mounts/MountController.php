@@ -21,6 +21,8 @@ class MountController extends ApplicationApiController
      * List mounts
      *
      * Return all the mounts currently available on the Panel.
+     *
+     * @return array<array-key, mixed>
      */
     public function index(GetMountRequest $request): array
     {
@@ -38,6 +40,8 @@ class MountController extends ApplicationApiController
      * View mount
      *
      * Return data for a single instance of a mount.
+     *
+     * @return array<array-key, mixed>
      */
     public function view(GetMountRequest $request, Mount $mount): array
     {
@@ -77,6 +81,8 @@ class MountController extends ApplicationApiController
      *
      * Update an existing mount on the Panel.
      *
+     * @return array<array-key, mixed>
+     *
      * @throws \Throwable
      */
     public function update(UpdateMountRequest $request, Mount $mount): array
@@ -111,6 +117,8 @@ class MountController extends ApplicationApiController
      * Assign eggs to mount
      *
      * Adds eggs to the mount's many-to-many relation.
+     *
+     * @return array<array-key, mixed>
      */
     public function addEggs(Request $request, Mount $mount): array
     {
@@ -132,6 +140,8 @@ class MountController extends ApplicationApiController
      * Assign mounts to mount
      *
      * Adds nodes to the mount's many-to-many relation.
+     *
+     * @return array<array-key, mixed>
      */
     public function addNodes(Request $request, Mount $mount): array
     {

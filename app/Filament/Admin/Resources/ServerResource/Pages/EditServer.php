@@ -119,7 +119,7 @@ class EditServer extends EditRecord
                                     ])
                                     ->relationship('user', 'username')
                                     ->searchable(['username', 'email'])
-                                    ->getOptionLabelFromRecordUsing(fn (User $user) => "$user->email | $user->username " . (blank($user->roles) ? '' : '(' . $user->roles->first()->name . ')'))
+                                    ->getOptionLabelFromRecordUsing(fn (User $user) => "$user->username ($user->email)")
                                     ->preload()
                                     ->required(),
 
@@ -855,7 +855,7 @@ class EditServer extends EditRecord
                                                 Forms\Components\Actions::make([
                                                     Action::make('transfer')
                                                         ->label(trans('admin/server.transfer'))
-                                                        ->action(fn (TransferServerService $transfer, Server $server) => $transfer->handle($server, []))
+                                                        // ->action(fn (TransferServerService $transfer, Server $server) => $transfer->handle($server, []))
                                                         ->disabled() //TODO!
                                                         ->form([ //TODO!
                                                             Select::make('newNode')
@@ -1014,6 +1014,9 @@ class EditServer extends EditRecord
         throw new Exception('Component type not supported: ' . $component::class);
     }
 
+    /**
+     * @return array<string, string>
+     */
     private function getSelectOptionsFromRules(ServerVariable $serverVariable): array
     {
         $inRule = array_first($serverVariable->variable->rules, fn ($value) => str($value)->startsWith('in:'));

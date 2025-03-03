@@ -51,9 +51,7 @@ abstract class ApplicationApiRequest extends FormRequest
         return AdminAcl::check($token, $this->resource, $this->permission);
     }
 
-    /**
-     * Default set of rules to apply to API requests.
-     */
+    /** @return array<string, string|string[]> */
     public function rules(): array
     {
         return [];

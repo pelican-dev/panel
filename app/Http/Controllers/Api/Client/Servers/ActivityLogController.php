@@ -24,6 +24,8 @@ class ActivityLogController extends ClientApiController
      * List activity logs
      *
      * Returns the activity logs for a server.
+     *
+     * @return array<array-key, mixed>
      */
     public function __invoke(ClientApiRequest $request, Server $server): array
     {

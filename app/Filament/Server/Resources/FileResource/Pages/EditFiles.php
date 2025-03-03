@@ -45,6 +45,7 @@ class EditFiles extends Page
     #[Locked]
     public string $path;
 
+    /** @var array<mixed> */
     public ?array $data = [];
 
     public function form(Form $form): Form

@@ -72,6 +72,7 @@ class ActivityLog extends Model implements HasIcon, HasLabel
 
     protected $with = ['subjects'];
 
+    /** @var array<array-key, string|string[]> */
     public static array $validationRules = [
         'event' => ['required', 'string'],
         'batch' => ['nullable', 'uuid'],
@@ -93,6 +94,9 @@ class ActivityLog extends Model implements HasIcon, HasLabel
         return $this->morphTo()->withTrashed();
     }
 
+    /**
+     * @return HasMany<ActivityLogSubject, $this>
+     */
     public function subjects(): HasMany
     {
         return $this->hasMany(ActivityLogSubject::class);
@@ -190,6 +194,9 @@ class ActivityLog extends Model implements HasIcon, HasLabel
         ";
     }
 
+    /**
+     * @return array<string, string>
+     */
     public function wrapProperties(): array
     {
         if (!$this->properties || $this->properties->isEmpty()) {

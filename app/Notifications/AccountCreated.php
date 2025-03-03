@@ -14,6 +14,7 @@ class AccountCreated extends Notification implements ShouldQueue
 
     public function __construct(public ?string $token = null) {}
 
+    /** @return string[] */
     public function via(): array
     {
         return ['mail'];

@@ -14,6 +14,7 @@ use Symfony\Component\HttpKernel\Exception\TooManyRequestsHttpException;
 
 class InitiateBackupService
 {
+    /** @var string[] */
     private array $ignoredFiles;
 
     private bool $isLocked = false;

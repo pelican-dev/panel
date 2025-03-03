@@ -10,6 +10,7 @@ use Exception;
 use Filament\Actions\Action;
 use Filament\Forms\Components\Actions;
 use Filament\Forms\Components\Actions\Action as FormAction;
+use Filament\Forms\Components\Component;
 use Filament\Forms\Components\Group;
 use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\Placeholder;
@@ -49,6 +50,7 @@ class Settings extends Page implements HasForms
 
     protected static string $view = 'filament.pages.settings';
 
+    /** @var array<mixed>|null */
     public ?array $data = [];
 
     public function mount(): void
@@ -108,6 +110,7 @@ class Settings extends Page implements HasForms
         ];
     }
 
+    /** @return Component[] */
     private function generalSettings(): array
     {
         return [
@@ -211,6 +214,9 @@ class Settings extends Page implements HasForms
         ];
     }
 
+    /**
+     * @return Component[]
+     */
     private function captchaSettings(): array
     {
         return [
@@ -256,6 +262,9 @@ class Settings extends Page implements HasForms
         ];
     }
 
+    /**
+     * @return Component[]
+     */
     private function mailSettings(): array
     {
         return [
@@ -405,6 +414,9 @@ class Settings extends Page implements HasForms
         ];
     }
 
+    /**
+     * @return Component[]
+     */
     private function backupSettings(): array
     {
         return [
@@ -475,6 +487,9 @@ class Settings extends Page implements HasForms
         ];
     }
 
+    /**
+     * @return Component[]
+     */
     private function oauthSettings(): array
     {
         $formFields = [];
@@ -529,6 +544,9 @@ class Settings extends Page implements HasForms
         return $formFields;
     }
 
+    /**
+     * @return Component[]
+     */
     private function miscSettings(): array
     {
         return [

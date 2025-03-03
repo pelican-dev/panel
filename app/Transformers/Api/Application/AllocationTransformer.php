@@ -24,9 +24,9 @@ class AllocationTransformer extends BaseTransformer
     }
 
     /**
-     * Return a generic transformed allocation array.
+     * @param  Allocation  $allocation
      */
-    public function transform(Allocation $allocation): array
+    public function transform($allocation): array
     {
         return [
             'id' => $allocation->id,

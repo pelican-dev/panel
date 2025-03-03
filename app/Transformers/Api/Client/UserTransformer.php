@@ -16,10 +16,11 @@ class UserTransformer extends BaseClientTransformer
     }
 
     /**
-     * Transforms a User model into a representation that can be shown to regular
-     * users of the API.
+     * @param  User  $user
+     *
+     * {@inheritdoc}
      */
-    public function transform(User $user): array
+    public function transform($user): array
     {
         return [
             'uuid' => $user->uuid,

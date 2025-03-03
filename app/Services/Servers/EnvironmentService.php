@@ -7,11 +7,11 @@ use App\Models\EggVariable;
 
 class EnvironmentService
 {
+    /** @var array<array-key, callable> */
     private array $additional = [];
 
     /**
-     * Dynamically configure additional environment variables to be assigned
-     * with a specific server.
+     * Dynamically configure additional environment variables to be assigned with a specific server.
      */
     public function setEnvironmentKey(string $key, callable $closure): void
     {
@@ -20,6 +20,8 @@ class EnvironmentService
 
     /**
      * Return the dynamically added additional keys.
+     *
+     * @return array<array-key, callable>
      */
     public function getEnvironmentKeys(): array
     {
@@ -27,8 +29,10 @@ class EnvironmentService
     }
 
     /**
-     * Take all of the environment variables configured for this server and return
+     * Take all the environment variables configured for this server and return
      * them in an easy to process format.
+     *
+     * @return array<array-key, mixed>
      */
     public function handle(Server $server): array
     {
@@ -61,6 +65,8 @@ class EnvironmentService
 
     /**
      * Return a mapping of Panel default environment variables.
+     *
+     * @return array<array-key, string>
      */
     private function getEnvironmentMappings(): array
     {

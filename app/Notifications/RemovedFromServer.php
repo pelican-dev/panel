@@ -15,6 +15,7 @@ class RemovedFromServer extends Notification implements ShouldQueue
 
     public function __construct(public Server $server) {}
 
+    /** @return string[] */
     public function via(): array
     {
         return ['mail'];

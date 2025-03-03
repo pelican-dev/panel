@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api\Client;
 
 use App\Models\Server;
 use App\Models\Permission;
+use Illuminate\Support\Collection;
 use Spatie\QueryBuilder\QueryBuilder;
 use Spatie\QueryBuilder\AllowedFilter;
 use App\Models\Filters\MultiFieldServerFilter;
@@ -27,6 +28,8 @@ class ClientController extends ClientApiController
      *
      * Return all the servers available to the client making the API
      * request, including servers the user has access to as a subuser.
+     *
+     * @return array<array-key, mixed>
      */
     public function index(GetServersRequest $request): array
     {
@@ -74,6 +77,8 @@ class ClientController extends ClientApiController
      * List subuser permissions
      *
      * Returns all the subuser permissions available on the system.
+     *
+     * @return array{object: string, attributes: array{permissions: Collection}}
      */
     public function permissions(): array
     {

@@ -15,6 +15,8 @@ class ExternalServerController extends ApplicationApiController
      * View server (external id)
      *
      * Retrieve a specific server from the database using its external ID.
+     *
+     * @return array<array-key, mixed>
      */
     public function index(GetExternalServerRequest $request, string $external_id): array
     {

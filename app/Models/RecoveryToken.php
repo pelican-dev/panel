@@ -25,6 +25,7 @@ class RecoveryToken extends Model implements Validatable
 
     public $timestamps = true;
 
+    /** @var array<array-key, string|string[]> */
     public static array $validationRules = [
         'token' => 'required|string',
     ];

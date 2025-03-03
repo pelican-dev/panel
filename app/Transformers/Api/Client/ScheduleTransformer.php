@@ -21,9 +21,9 @@ class ScheduleTransformer extends BaseClientTransformer
     }
 
     /**
-     * Returns a transformed schedule model such that a client can view the information.
+     * @param  Schedule  $model
      */
-    public function transform(Schedule $model): array
+    public function transform($model): array
     {
         return [
             'id' => $model->id,
