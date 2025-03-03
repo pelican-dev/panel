@@ -104,8 +104,9 @@ class BackupStatusController extends Controller
     }
 
     /**
-     * Marks a multipart upload in a given S3-compatible instance as failed or successful for
-     * the given backup.
+     * Marks a multipart upload in a given S3-compatible instance as failed or successful for the given backup.
+     *
+     * @param  ?array<array{int, etag: string, part_number: string}>  $parts
      *
      * @throws \Exception
      * @throws \App\Exceptions\DisplayException

@@ -36,6 +36,7 @@ class PanelInstaller extends SimplePage implements HasForms
     use EnvironmentWriterTrait;
     use InteractsWithForms;
 
+    /** @var array<mixed> */
     public array $data = [];
 
     protected static string $view = 'filament.pages.installer';

@@ -22,6 +22,8 @@ class NodeUpdateService
     /**
      * Update the configuration values for a given node on the machine.
      *
+     * @param  array<string, mixed>  $data
+     *
      * @throws \Throwable
      */
     public function handle(Node $node, array $data, bool $resetToken = false): Node

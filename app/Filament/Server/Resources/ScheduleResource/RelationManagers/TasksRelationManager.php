@@ -5,6 +5,7 @@ namespace App\Filament\Server\Resources\ScheduleResource\RelationManagers;
 use App\Facades\Activity;
 use App\Models\Schedule;
 use App\Models\Task;
+use Filament\Forms\Components\Field;
 use Filament\Tables\Actions\DeleteAction;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
@@ -22,6 +23,9 @@ class TasksRelationManager extends RelationManager
 {
     protected static string $relationship = 'tasks';
 
+    /**
+     * @return array<array-key, string>
+     */
     private function getActionOptions(bool $full = true): array
     {
         return [
@@ -32,6 +36,9 @@ class TasksRelationManager extends RelationManager
         ];
     }
 
+    /**
+     * @return array<Field>
+     */
     private function getTaskForm(Schedule $schedule): array
     {
         return [

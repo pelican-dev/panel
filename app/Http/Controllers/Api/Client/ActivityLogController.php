@@ -14,6 +14,8 @@ class ActivityLogController extends ClientApiController
      * List activity logs
      *
      * Returns a paginated set of the user's activity logs.
+     *
+     * @return array<array-key, mixed>
      */
     public function __invoke(ClientApiRequest $request): array
     {

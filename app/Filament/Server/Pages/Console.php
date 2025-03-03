@@ -16,6 +16,8 @@ use Filament\Actions\Action;
 use Filament\Facades\Filament;
 use Filament\Pages\Page;
 use Filament\Support\Enums\ActionSize;
+use Filament\Widgets\Widget;
+use Filament\Widgets\WidgetConfiguration;
 use Livewire\Attributes\On;
 
 class Console extends Page
@@ -52,6 +54,9 @@ class Console extends Page
         ];
     }
 
+    /**
+     * @return class-string<Widget>[]
+     */
     public function getWidgets(): array
     {
         return [
@@ -63,12 +68,15 @@ class Console extends Page
         ];
     }
 
+    /**
+     * @return array<class-string<Widget> | WidgetConfiguration>
+     */
     public function getVisibleWidgets(): array
     {
         return $this->filterVisibleWidgets($this->getWidgets());
     }
 
-    public function getColumns(): int|string|array
+    public function getColumns(): int
     {
         return 3;
     }

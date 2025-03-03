@@ -13,6 +13,8 @@ class TwoFactorSetupService
      * QR code URL. This URL will need to be attached to a QR generating service in
      * order to function.
      *
+     * @return array{image_url_data: string, secret: string}
+     *
      * @throws \App\Exceptions\Model\DataValidationException
      */
     public function handle(User $user): array

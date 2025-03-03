@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api\Client;
 
+use App\Models\UserSSHKey;
 use Illuminate\Http\JsonResponse;
 use App\Facades\Activity;
 use App\Http\Requests\Api\Client\ClientApiRequest;
@@ -13,8 +14,9 @@ class SSHKeyController extends ClientApiController
     /**
      * List ssh keys
      *
-     * Returns all the SSH keys that have been configured for the logged-in
-     * user account.
+     * Returns all the SSH keys that have been configured for the logged-in user account.
+     *
+     * @return array<array-key, mixed>
      */
     public function index(ClientApiRequest $request): array
     {
@@ -27,6 +29,8 @@ class SSHKeyController extends ClientApiController
      * Create ssh keys
      *
      * Stores a new SSH key for the authenticated user's account.
+     *
+     * @return array<array-key, mixed>
      */
     public function store(StoreSSHKeyRequest $request): array
     {
@@ -53,8 +57,9 @@ class SSHKeyController extends ClientApiController
      */
     public function delete(ClientApiRequest $request): JsonResponse
     {
-        $this->validate($request, ['fingerprint' => ['required', 'string']]);
+        $request->validate(['fingerprint' => ['required', 'string']]);
 
+        /** @var ?UserSSHKey $key */
         $key = $request->user()->sshKeys()
             ->where('fingerprint', $request->input('fingerprint'))
             ->first();

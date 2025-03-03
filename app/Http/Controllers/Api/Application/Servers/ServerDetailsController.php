@@ -29,14 +29,19 @@ class ServerDetailsController extends ApplicationApiController
      *
      * Update the details for a specific server.
      *
+     * @return array<array-key, mixed>
+     *
      * @throws \App\Exceptions\DisplayException
      * @throws \App\Exceptions\Model\DataValidationException
      */
     public function details(UpdateServerDetailsRequest $request, Server $server): array
     {
+        /** @var array<array-key, mixed> $validated */
+        $validated = $request->validated();
+
         $updated = $this->detailsModificationService->returnUpdatedModel()->handle(
             $server,
-            $request->validated()
+            $validated,
         );
 
         return $this->fractal->item($updated)
@@ -48,6 +53,8 @@ class ServerDetailsController extends ApplicationApiController
      * Update build
      *
      * Update the build details for a specific server.
+     *
+     * @return array<array-key, mixed>
      *
      * @throws \App\Exceptions\DisplayException
      * @throws \App\Exceptions\Model\DataValidationException

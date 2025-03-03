@@ -43,6 +43,8 @@ class FileController extends ClientApiController
      *
      * Returns a listing of files in a given directory.
      *
+     * @return array<array-key, mixed>
+     *
      * @throws ConnectionException
      */
     public function directory(ListFilesRequest $request, Server $server): array
@@ -80,8 +82,9 @@ class FileController extends ClientApiController
     /**
      * Download file
      *
-     * Generates a one-time token with a link that the user can use to
-     * download a given file.
+     * Generates a one-time token with a link that the user can use to download a given file.
+     *
+     * @return array<array-key, mixed>
      *
      * @throws \Throwable
      */
@@ -198,6 +201,8 @@ class FileController extends ClientApiController
 
     /**
      * Compress files
+     *
+     * @return array<array-key, mixed>
      *
      * @throws ConnectionException
      */

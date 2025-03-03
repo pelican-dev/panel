@@ -94,6 +94,10 @@ class EggImporterService
     /**
      * Takes an uploaded file and parses out the egg configuration from within.
      *
+     * @todo replace with DTO
+     *
+     * @return array<array-key, mixed>
+     *
      * @throws \App\Exceptions\Service\InvalidFileUploadException
      */
     protected function parseFile(UploadedFile $file): array
@@ -129,6 +133,20 @@ class EggImporterService
 
     /**
      * Fills the provided model with the parsed JSON data.
+     *
+     * @param array{
+     *     name: string,
+     *     description: string,
+     *     features: string[],
+     *     docker_images: string[],
+     *     file_denylist: string[],
+     *     meta: array{update_url: string},
+     *     config: array{files: string, startup: string, logs: string, stop: string},
+     *     startup: string,
+     *     scripts: array{
+     *         installation: array{script: string, entrypoint: string, container: string},
+     *     },
+     * } $parsed
      */
     protected function fillFromParsed(Egg $model, array $parsed): Egg
     {
@@ -155,6 +173,9 @@ class EggImporterService
      * Converts a PTDL_V1 egg into the expected PTDL_V2 egg format. This just handles
      * the "docker_images" field potentially not being present, and not being in the
      * expected "key => value" format.
+     *
+     * @param  array{images?: string[], image?: string, field_type?: string, docker_images?: array<array-key, string>}  $parsed
+     * @return array<array-key, mixed>
      */
     protected function convertToV2(array $parsed): array
     {

@@ -16,6 +16,12 @@ class EggConfigurationService
 
     /**
      * Return an Egg file to be used by the Daemon.
+     *
+     * @return array{
+     *     startup: array{done: string[], user_interaction: string[], strip_ansi: bool},
+     *     stop: array{type: string, value: string},
+     *     configs: array<mixed>
+     * }
      */
     public function handle(Server $server): array
     {
@@ -33,6 +39,9 @@ class EggConfigurationService
 
     /**
      * Convert the "done" variable into an array if it is not currently one.
+     *
+     * @param  array{done: string|string[], strip_ansi: bool}  $startup
+     * @return array{done: string[], user_interaction: string[], strip_ansi: bool}
      */
     protected function convertStartupToNewFormat(array $startup): array
     {
@@ -51,6 +60,8 @@ class EggConfigurationService
      * For most eggs, this ends up just being a command sent to the server console, but
      * if the stop command is something starting with a caret (^), it will be converted
      * into the associated kill signal for the instance.
+     *
+     * @return array{type: string, value: string}
      */
     protected function convertStopToNewFormat(string $stop): array
     {
@@ -69,6 +80,9 @@ class EggConfigurationService
         ];
     }
 
+    /**
+     * @return array<mixed>
+     */
     protected function replacePlaceholders(Server $server, object $configs): array
     {
         // Get the legacy configuration structure for the server so that we
@@ -116,6 +130,9 @@ class EggConfigurationService
         return $response;
     }
 
+    /**
+     * @param  array{string, mixed}  $structure
+     */
     protected function matchAndReplaceKeys(mixed $value, array $structure): mixed
     {
         preg_match_all('/{{(?<key>[\w.-]*)}}/', $value, $matches);
@@ -170,6 +187,8 @@ class EggConfigurationService
      * Iterates over a set of "find" values for a given file in the parser configuration. If
      * the value of the line match is something iterable, continue iterating, otherwise perform
      * a match & replace.
+     *
+     * @param  array<mixed>  $structure
      */
     private function iterate(mixed $data, array $structure): mixed
     {

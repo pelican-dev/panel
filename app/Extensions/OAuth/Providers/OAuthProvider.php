@@ -2,6 +2,7 @@
 
 namespace App\Extensions\OAuth\Providers;
 
+use Filament\Forms\Components\Component;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Wizard\Step;
 use Illuminate\Foundation\Application;
@@ -11,8 +12,14 @@ use SocialiteProviders\Manager\SocialiteWasCalled;
 
 abstract class OAuthProvider
 {
+    /**
+     * @var array<string, static>
+     */
     protected static array $providers = [];
 
+    /**
+     * @return self|static[]
+     */
     public static function get(?string $id = null): array|self
     {
         return $id ? static::$providers[$id] : static::$providers;
@@ -46,6 +53,9 @@ abstract class OAuthProvider
         return null;
     }
 
+    /**
+     * @return array<string, string|string[]|bool|null>
+     */
     public function getServiceConfig(): array
     {
         $id = Str::upper($this->getId());
@@ -56,6 +66,9 @@ abstract class OAuthProvider
         ];
     }
 
+    /**
+     * @return Component[]
+     */
     public function getSettingsForm(): array
     {
         $id = Str::upper($this->getId());
@@ -82,6 +95,9 @@ abstract class OAuthProvider
         ];
     }
 
+    /**
+     * @return Step[]
+     */
     public function getSetupSteps(): array
     {
         return [

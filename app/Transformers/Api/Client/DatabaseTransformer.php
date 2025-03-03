@@ -16,7 +16,10 @@ class DatabaseTransformer extends BaseClientTransformer
         return Database::RESOURCE_NAME;
     }
 
-    public function transform(Database $model): array
+    /**
+     * @param  Database  $model
+     */
+    public function transform($model): array
     {
         $model->loadMissing('host');
 

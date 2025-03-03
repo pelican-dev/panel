@@ -23,6 +23,7 @@ use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Support\Str;
+use Spatie\Permission\Contracts\Permission;
 
 class RoleResource extends Resource
 {
@@ -145,6 +146,9 @@ class RoleResource extends Resource
             ]);
     }
 
+    /**
+     * @param  string[]|int[]|Permission[]|\BackedEnum[]  $options
+     */
     private static function makeSection(string $model, array $options): Section
     {
         $icon = null;

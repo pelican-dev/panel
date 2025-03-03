@@ -37,6 +37,8 @@ class SubuserController extends ClientApiController
      * List subusers
      *
      * Return the users associated with this server instance.
+     *
+     * @return array<array-key, mixed>
      */
     public function index(GetSubuserRequest $request, Server $server): array
     {
@@ -49,6 +51,8 @@ class SubuserController extends ClientApiController
      * View subusers
      *
      * Returns a single subuser associated with this server instance.
+     *
+     * @return array<array-key, mixed>
      */
     public function view(GetSubuserRequest $request, Server $server, User $user): array
     {
@@ -63,6 +67,8 @@ class SubuserController extends ClientApiController
      * Create subuser
      *
      * Create a new subuser for the given server.
+     *
+     * @return array<array-key, mixed>
      *
      * @throws \App\Exceptions\Model\DataValidationException
      * @throws \App\Exceptions\Service\Subuser\ServerSubuserExistsException
@@ -91,6 +97,8 @@ class SubuserController extends ClientApiController
      * Update subuser
      *
      * Update a given subuser in the system for the server.
+     *
+     * @return array<array-key, mixed>
      *
      * @throws \App\Exceptions\Model\DataValidationException
      */
@@ -125,6 +133,8 @@ class SubuserController extends ClientApiController
      * Returns the default permissions for subusers and parses out any permissions
      * that were passed that do not also exist in the internally tracked list of
      * permissions.
+     *
+     * @return array<array-key, mixed>
      */
     protected function getDefaultPermissions(Request $request): array
     {

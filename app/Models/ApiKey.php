@@ -18,8 +18,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property int $key_type
  * @property string $identifier
  * @property string $token
- * @property array $permissions
- * @property array $allowed_ips
+ * @property string[] $permissions
+ * @property string[] $allowed_ips
  * @property string|null $memo
  * @property \Illuminate\Support\Carbon|null $last_used_at
  * @property \Illuminate\Support\Carbon|null $expires_at
@@ -110,9 +110,7 @@ class ApiKey extends PersonalAccessToken
      */
     protected $hidden = ['token'];
 
-    /**
-     * Rules to protect against invalid data entry to DB.
-     */
+    /** @var array<array-key, string|string[]> */
     public static array $validationRules = [
         'user_id' => 'required|exists:users,id',
         'key_type' => 'present|integer|min:0|max:2',
@@ -151,7 +149,7 @@ class ApiKey extends PersonalAccessToken
 
     public function tokenable()
     {
-        // @phpstan-ignore-next-line
+        // @phpstan-ignore return.type
         return $this->user();
     }
 
@@ -175,6 +173,7 @@ class ApiKey extends PersonalAccessToken
         Role::RESOURCE_NAME,
     ];
 
+    /** @var string[] */
     protected static array $customResourceNames = [];
 
     public static function registerCustomResourceName(string $resourceName): void
@@ -184,6 +183,8 @@ class ApiKey extends PersonalAccessToken
 
     /**
      * Returns a list of all possible permission keys.
+     *
+     * @return string[]
      */
     public static function getPermissionList(): array
     {

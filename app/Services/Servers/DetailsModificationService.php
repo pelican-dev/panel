@@ -21,6 +21,13 @@ class DetailsModificationService
     /**
      * Update the details for a single server instance.
      *
+     * @param array{
+     *     external_id: int,
+     *     owner_id: int,
+     *     name: string,
+     *     description?: ?string
+     * } $data
+     *
      * @throws \Throwable
      */
     public function handle(Server $server, array $data): Server

@@ -12,7 +12,7 @@ use Illuminate\Support\Facades\File;
 /**
  * @property string $endpoint
  * @property string $description
- * @property array $events
+ * @property string[] $events
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property \Illuminate\Support\Carbon|null $deleted_at
@@ -21,9 +21,7 @@ class WebhookConfiguration extends Model
 {
     use HasFactory, SoftDeletes;
 
-    /**
-     * Blacklisted events.
-     */
+    /** @var string[] */
     protected static array $eventBlacklist = [
         'eloquent.created: App\Models\Webhook',
     ];
@@ -71,6 +69,7 @@ class WebhookConfiguration extends Model
         return $this->hasMany(Webhook::class);
     }
 
+    /** @return string[] */
     public static function allPossibleEvents(): array
     {
         return collect(static::discoverCustomEvents())
@@ -80,6 +79,7 @@ class WebhookConfiguration extends Model
             ->all();
     }
 
+    /** @return array<string, string> */
     public static function filamentCheckboxList(): array
     {
         $list = [];
@@ -100,6 +100,7 @@ class WebhookConfiguration extends Model
             ->toString();
     }
 
+    /** @return string[] */
     public static function allModelEvents(): array
     {
         $eventTypes = ['created', 'updated', 'deleted'];
@@ -115,6 +116,7 @@ class WebhookConfiguration extends Model
         return $events;
     }
 
+    /** @return string[] */
     public static function discoverModels(): array
     {
         $namespace = 'App\\Models\\';
@@ -129,6 +131,7 @@ class WebhookConfiguration extends Model
         return $models;
     }
 
+    /** @return string[] */
     public static function discoverCustomEvents(): array
     {
         $directory = app_path('Events');

@@ -8,6 +8,7 @@ use App\Models\Allocation;
 use Illuminate\Database\ConnectionInterface;
 use App\Exceptions\DisplayException;
 use App\Repositories\Daemon\DaemonServerRepository;
+use Exception;
 use Illuminate\Http\Client\ConnectionException;
 
 class BuildModificationService
@@ -24,10 +25,12 @@ class BuildModificationService
     /**
      * Change the build details for a specified server.
      *
+     * @param  array<string, mixed>  $data
+     *
      * @throws \Throwable
      * @throws \App\Exceptions\DisplayException
      */
-    public function handle(Server $server, array $data): Server
+    public function handle(Server $server, array $data, ?bool $shouldThrow = false): Server
     {
         /** @var \App\Models\Server $server */
         $server = $this->connection->transaction(function () use ($server, $data) {
@@ -66,6 +69,10 @@ class BuildModificationService
                 $this->daemonServerRepository->setServer($server)->sync();
             } catch (ConnectionException $exception) {
                 logger()->warning($exception, ['server_id' => $server->id]);
+
+                if ($shouldThrow) {
+                    throw $exception;
+                }
             }
         }
 
@@ -74,6 +81,14 @@ class BuildModificationService
 
     /**
      * Process the allocations being assigned in the data and ensure they are available for a server.
+     *
+     * @param array{
+     *     add_allocations?: array<int>,
+     *     remove_allocations?: array<int>,
+     *     allocation_id?: int,
+     *     oom_killer?: bool,
+     *     oom_disabled?: bool,
+     * } $data
      *
      * @throws \App\Exceptions\DisplayException
      */

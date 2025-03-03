@@ -40,6 +40,8 @@ abstract class DaemonRepository
 
     /**
      * Return an instance of the Guzzle HTTP Client to be used for requests.
+     *
+     * @param  array<string, string>  $headers
      */
     public function getHttpClient(array $headers = []): PendingRequest
     {

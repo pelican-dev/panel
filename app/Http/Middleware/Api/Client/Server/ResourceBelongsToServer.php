@@ -37,7 +37,7 @@ class ResourceBelongsToServer
         $server = $request->route()->parameter('server');
         $exception = new NotFoundHttpException('The requested resource was not found for this server.');
         foreach ($params as $key => $model) {
-            // Specifically skip the server, we're just trying to see if all of the
+            // Specifically skip the server, we're just trying to see if all the
             // other resources are assigned to this server. Also skip anything that
             // is not currently a Model instance since those will just end up being
             // a 404 down the road.
@@ -46,7 +46,7 @@ class ResourceBelongsToServer
             }
 
             switch (get_class($model)) {
-                // All of these models use "server_id" as the field key for the server
+                // all these models use "server_id" as the field key for the server
                 // they are assigned to, so the logic is identical for them all.
                 case Allocation::class:
                 case Backup::class:

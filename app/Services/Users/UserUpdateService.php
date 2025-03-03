@@ -10,13 +10,12 @@ class UserUpdateService
 {
     use HasUserLevels;
 
-    /**
-     * UserUpdateService constructor.
-     */
-    public function __construct(private Hasher $hasher) {}
+    public function __construct(private readonly Hasher $hasher) {}
 
     /**
      * Update the user model instance and return the updated model.
+     *
+     * @param  array<array-key, mixed>  $data
      *
      * @throws \Throwable
      */

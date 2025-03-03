@@ -3,7 +3,7 @@
 use Dedoc\Scramble\Scramble;
 use Illuminate\Support\Facades\Route;
 
-Route::group(['prefix' => 'api'], function () {
+Route::prefix('api')->group(function () {
     Scramble::registerUiRoute(path: 'application', api: 'application');
     Scramble::registerJsonSpecificationRoute(path: 'application.json', api: 'application');
 

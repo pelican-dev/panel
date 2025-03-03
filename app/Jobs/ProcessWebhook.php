@@ -14,6 +14,9 @@ class ProcessWebhook implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
+    /**
+     * @param  array<mixed>  $data
+     */
     public function __construct(
         private WebhookConfiguration $webhookConfiguration,
         private string $eventName,
