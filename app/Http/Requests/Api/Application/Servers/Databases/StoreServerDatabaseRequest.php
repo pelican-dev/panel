@@ -42,6 +42,12 @@ class StoreServerDatabaseRequest extends ApplicationApiRequest
 
     /**
      * Return data formatted in the correct format for the service to consume.
+     *
+     * @return array{
+     *     database: string,
+     *     remote: string,
+     *     database_host_id: int,
+     * }
      */
     public function validated($key = null, $default = null): array
     {
@@ -54,6 +60,8 @@ class StoreServerDatabaseRequest extends ApplicationApiRequest
 
     /**
      * Format error messages in a more understandable format for API output.
+     *
+     * @return array<array-key, string>
      */
     public function attributes(): array
     {

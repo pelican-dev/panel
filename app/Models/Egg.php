@@ -18,12 +18,12 @@ use Illuminate\Support\Str;
  * @property string $author
  * @property string $name
  * @property string|null $description
- * @property array|null $features
+ * @property string[]|null $features
  * @property string $docker_image -- deprecated, use $docker_images
- * @property array<string, string> $docker_images
+ * @property array<array-key, string> $docker_images
  * @property string|null $update_url
  * @property bool $force_outgoing_ip
- * @property array|null $file_denylist
+ * @property string[]|null $file_denylist
  * @property string|null $config_files
  * @property string|null $config_startup
  * @property string|null $config_logs
@@ -45,7 +45,7 @@ use Illuminate\Support\Str;
  * @property string|null $inherit_config_logs
  * @property string|null $inherit_config_stop
  * @property string $inherit_file_denylist
- * @property array|null $inherit_features
+ * @property string[]|null $inherit_features
  * @property \Illuminate\Database\Eloquent\Collection|\App\Models\Server[] $servers
  * @property int|null $servers_count
  * @property \Illuminate\Database\Eloquent\Collection|\App\Models\EggVariable[] $variables
@@ -109,6 +109,7 @@ class Egg extends Model implements Validatable
         'tags',
     ];
 
+    /** @var array<array-key, string|string[]> */
     public static array $validationRules = [
         'uuid' => 'required|string|size:36',
         'name' => 'required|string|max:255',
@@ -259,6 +260,8 @@ class Egg extends Model implements Validatable
     /**
      * Returns the features available to this egg from the parent configuration if there are
      * no features defined for this egg specifically and there is a parent egg configured.
+     *
+     * @return ?string[]
      */
     public function getInheritFeaturesAttribute(): ?array
     {
@@ -272,6 +275,8 @@ class Egg extends Model implements Validatable
     /**
      * Returns the features available to this egg from the parent configuration if there are
      * no features defined for this egg specifically and there is a parent egg configured.
+     *
+     * @return ?string[]
      */
     public function getInheritFileDenylistAttribute(): ?array
     {

@@ -343,6 +343,7 @@ class EditNode extends EditRecord
                                 ->columnSpanFull()
                                 ->schema([
                                     ToggleButtons::make('unlimited_mem')
+                                        ->dehydrated()
                                         ->label(trans('admin/node.memory'))->inlineLabel()->inline()
                                         ->afterStateUpdated(fn (Set $set) => $set('memory', 0))
                                         ->afterStateUpdated(fn (Set $set) => $set('memory_overallocate', 0))
@@ -401,6 +402,7 @@ class EditNode extends EditRecord
                                 ])
                                 ->schema([
                                     ToggleButtons::make('unlimited_disk')
+                                        ->dehydrated()
                                         ->label(trans('admin/node.disk'))->inlineLabel()->inline()
                                         ->live()
                                         ->afterStateUpdated(fn (Set $set) => $set('disk', 0))
@@ -455,6 +457,7 @@ class EditNode extends EditRecord
                                 ->columnSpanFull()
                                 ->schema([
                                     ToggleButtons::make('unlimited_cpu')
+                                        ->dehydrated()
                                         ->label(trans('admin/node.cpu'))->inlineLabel()->inline()
                                         ->live()
                                         ->afterStateUpdated(fn (Set $set) => $set('cpu', 0))
@@ -589,8 +592,6 @@ class EditNode extends EditRecord
         }
 
         try {
-            unset($data['unlimited_mem'], $data['unlimited_disk'], $data['unlimited_cpu']);
-
             $this->record = $this->nodeUpdateService->handle($record, $data);
 
             return $this->record;
@@ -598,7 +599,7 @@ class EditNode extends EditRecord
             $this->errored = true;
 
             Notification::make()
-                ->title(trans('admin/node.error_connecting'))
+                ->title(trans('admin/node.error_connecting', ['node' => $record->name]))
                 ->body(trans('admin/node.error_connecting_description'))
                 ->color('warning')
                 ->icon('tabler-database')

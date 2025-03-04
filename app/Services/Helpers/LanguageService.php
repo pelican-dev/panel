@@ -16,6 +16,9 @@ class LanguageService
         return in_array($countryCode, self::TRANSLATED_COMPLETELY, true);
     }
 
+    /**
+     * @return array<array-key, string>
+     */
     public function getAvailableLanguages(string $path = 'lang'): array
     {
         return collect(File::directories(base_path($path)))->mapWithKeys(function ($path) {

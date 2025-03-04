@@ -12,17 +12,16 @@ use App\Notifications\AccountCreated;
 
 class UserCreationService
 {
-    /**
-     * UserCreationService constructor.
-     */
     public function __construct(
-        private ConnectionInterface $connection,
-        private Hasher $hasher,
-        private PasswordBroker $passwordBroker,
+        private readonly ConnectionInterface $connection,
+        private readonly Hasher $hasher,
+        private readonly PasswordBroker $passwordBroker,
     ) {}
 
     /**
      * Create a new user on the system.
+     *
+     * @param  array<array-key, mixed>  $data
      *
      * @throws \Exception
      * @throws \App\Exceptions\Model\DataValidationException

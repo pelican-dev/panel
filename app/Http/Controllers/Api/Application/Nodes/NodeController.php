@@ -15,7 +15,9 @@ use App\Http\Requests\Api\Application\Nodes\StoreNodeRequest;
 use App\Http\Requests\Api\Application\Nodes\DeleteNodeRequest;
 use App\Http\Requests\Api\Application\Nodes\UpdateNodeRequest;
 use App\Http\Controllers\Api\Application\ApplicationApiController;
+use Dedoc\Scramble\Attributes\Group;
 
+#[Group('Node', weight: 0)]
 class NodeController extends ApplicationApiController
 {
     /**
@@ -30,7 +32,11 @@ class NodeController extends ApplicationApiController
     }
 
     /**
+     * List nodes
+     *
      * Return all the nodes currently available on the Panel.
+     *
+     * @return array<mixed>
      */
     public function index(GetNodesRequest $request): array
     {
@@ -45,7 +51,11 @@ class NodeController extends ApplicationApiController
     }
 
     /**
+     * View node
+     *
      * Return data for a single instance of a node.
+     *
+     * @return array<mixed>
      */
     public function view(GetNodeRequest $request, Node $node): array
     {
@@ -55,6 +65,8 @@ class NodeController extends ApplicationApiController
     }
 
     /**
+     * Create node
+     *
      * Create a new node on the Panel. Returns the created node and an HTTP/201
      * status response on success.
      *
@@ -75,7 +87,11 @@ class NodeController extends ApplicationApiController
     }
 
     /**
+     * Update node
+     *
      * Update an existing node on the Panel.
+     *
+     * @return array<mixed>
      *
      * @throws \Throwable
      */
@@ -93,6 +109,8 @@ class NodeController extends ApplicationApiController
     }
 
     /**
+     * Delete node
+     *
      * Deletes a given node from the Panel as long as there are no servers
      * currently attached to it.
      *

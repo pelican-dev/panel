@@ -15,7 +15,9 @@ use App\Http\Requests\Api\Client\Servers\Databases\GetDatabasesRequest;
 use App\Http\Requests\Api\Client\Servers\Databases\StoreDatabaseRequest;
 use App\Http\Requests\Api\Client\Servers\Databases\DeleteDatabaseRequest;
 use App\Http\Requests\Api\Client\Servers\Databases\RotatePasswordRequest;
+use Dedoc\Scramble\Attributes\Group;
 
+#[Group('Server - Database')]
 class DatabaseController extends ClientApiController
 {
     /**
@@ -30,7 +32,11 @@ class DatabaseController extends ClientApiController
     }
 
     /**
+     * List databases
+     *
      * Return all the databases that belong to the given server.
+     *
+     * @return array<string, mixed>
      */
     public function index(GetDatabasesRequest $request, Server $server): array
     {
@@ -40,7 +46,11 @@ class DatabaseController extends ClientApiController
     }
 
     /**
+     * Create database
+     *
      * Create a new database for the given server and return it.
+     *
+     * @return array<string, mixed>
      *
      * @throws \Throwable
      * @throws \App\Exceptions\Service\Database\TooManyDatabasesException
@@ -62,8 +72,12 @@ class DatabaseController extends ClientApiController
     }
 
     /**
+     * Rotate password
+     *
      * Rotates the password for the given server model and returns a fresh instance to
      * the caller.
+     *
+     * @return array<array-key, mixed>
      *
      * @throws \Throwable
      */
@@ -84,6 +98,8 @@ class DatabaseController extends ClientApiController
     }
 
     /**
+     * Delete database
+     *
      * Removes a database from the server.
      */
     public function delete(DeleteDatabaseRequest $request, Server $server, Database $database): Response

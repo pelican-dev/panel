@@ -12,6 +12,7 @@ class StoreAllocationRequest extends ApplicationApiRequest
 
     protected int $permission = AdminAcl::WRITE;
 
+    /** @return array<string, string|string[]> */
     public function rules(): array
     {
         return [
@@ -22,6 +23,9 @@ class StoreAllocationRequest extends ApplicationApiRequest
         ];
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     public function validated($key = null, $default = null): array
     {
         $data = parent::validated();

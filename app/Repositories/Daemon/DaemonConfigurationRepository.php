@@ -11,13 +11,30 @@ class DaemonConfigurationRepository extends DaemonRepository
     /**
      * Returns system information from the daemon instance.
      *
+     * @return array<mixed>
+     *
      * @throws ConnectionException
      */
     public function getSystemInformation(): array
     {
         return $this->getHttpClient()
             ->connectTimeout(3)
-            ->get('/api/system')->throw()->json();
+            ->get('/api/system')
+            ->throwIf(function ($result) {
+                $header = $result->header('User-Agent');
+                if (
+                    filled($header) &&
+                    preg_match('/^Pelican Wings\/v(?:\d+\.\d+\.\d+|develop) \(id:(\w*)\)$/', $header, $matches) &&
+                    array_get($matches, 1, '') !== $this->node->daemon_token_id
+                ) {
+                    throw new ConnectionException($result->effectiveUri()->__toString() . ' does not match node token_id !');
+                }
+                if (!$result->collect()->has(['architecture', 'cpu_count', 'kernel_version', 'os', 'version'])) {
+                    throw new ConnectionException($result->effectiveUri()->__toString() . ' is not Pelican Wings !');
+                }
+
+                return true;
+            })->json();
     }
 
     /**

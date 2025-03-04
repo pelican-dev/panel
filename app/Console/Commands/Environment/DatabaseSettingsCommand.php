@@ -27,6 +27,7 @@ class DatabaseSettingsCommand extends Command
                             {--username= : Username to use when connecting to the MySQL/ MariaDB server.}
                             {--password= : Password to use for the MySQL/ MariaDB database.}';
 
+    /** @var array<array-key, mixed> */
     protected array $variables = [];
 
     /**
@@ -179,7 +180,7 @@ class DatabaseSettingsCommand extends Command
         } elseif ($this->variables['DB_CONNECTION'] === 'sqlite') {
             $this->variables['DB_DATABASE'] = $this->option('database') ?? $this->ask(
                 'Database Path',
-                env('DB_DATABASE', 'database.sqlite')
+                (string) env('DB_DATABASE', 'database.sqlite')
             );
         }
 

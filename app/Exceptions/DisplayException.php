@@ -12,6 +12,9 @@ use Illuminate\Http\Response;
 use Illuminate\Container\Container;
 use Symfony\Component\HttpKernel\Exception\HttpExceptionInterface;
 
+/**
+ * @deprecated
+ */
 class DisplayException extends PanelException implements HttpExceptionInterface
 {
     public const LEVEL_DEBUG = 'debug';
@@ -40,6 +43,9 @@ class DisplayException extends PanelException implements HttpExceptionInterface
         return Response::HTTP_BAD_REQUEST;
     }
 
+    /**
+     * @return array<string, string>
+     */
     public function getHeaders(): array
     {
         return [];

@@ -20,9 +20,9 @@ class ServerDatabaseTransformer extends BaseTransformer
     }
 
     /**
-     * Transform a database model in a representation for the application API.
+     * @param  Database  $model
      */
-    public function transform(Database $model): array
+    public function transform($model): array
     {
         return [
             'id' => $model->id,

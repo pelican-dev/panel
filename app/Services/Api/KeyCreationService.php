@@ -24,6 +24,8 @@ class KeyCreationService
      * This will automatically generate an identifier and an encrypted token that are
      * stored in the database.
      *
+     * @param  array<mixed>  $data
+     *
      * @throws \App\Exceptions\Model\DataValidationException
      */
     public function handle(array $data): ApiKey

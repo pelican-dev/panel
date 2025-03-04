@@ -5,6 +5,7 @@ namespace App\Extensions\OAuth\Providers;
 use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Wizard\Step;
+use Illuminate\Foundation\Application;
 use Illuminate\Support\HtmlString;
 use Illuminate\Support\Str;
 use SocialiteProviders\Discord\Provider;
@@ -12,6 +13,11 @@ use Webbingbrasil\FilamentCopyActions\Forms\Actions\CopyAction;
 
 final class DiscordProvider extends OAuthProvider
 {
+    public function __construct(protected Application $app)
+    {
+        parent::__construct($app);
+    }
+
     public function getId(): string
     {
         return 'discord';
@@ -51,8 +57,8 @@ final class DiscordProvider extends OAuthProvider
         return '#5865F2';
     }
 
-    public static function register(): self
+    public static function register(Application $app): self
     {
-        return new self();
+        return new self($app);
     }
 }

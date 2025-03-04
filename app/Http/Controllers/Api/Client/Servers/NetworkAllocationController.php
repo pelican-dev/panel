@@ -15,7 +15,9 @@ use App\Http\Requests\Api\Client\Servers\Network\NewAllocationRequest;
 use App\Http\Requests\Api\Client\Servers\Network\DeleteAllocationRequest;
 use App\Http\Requests\Api\Client\Servers\Network\UpdateAllocationRequest;
 use App\Http\Requests\Api\Client\Servers\Network\SetPrimaryAllocationRequest;
+use Dedoc\Scramble\Attributes\Group;
 
+#[Group('Server - Allocation')]
 class NetworkAllocationController extends ClientApiController
 {
     /**
@@ -28,8 +30,12 @@ class NetworkAllocationController extends ClientApiController
     }
 
     /**
+     * List allocations
+     *
      * Lists all the allocations available to a server and whether
      * they are currently assigned as the primary for this server.
+     *
+     * @return array<array-key, mixed>
      */
     public function index(GetNetworkRequest $request, Server $server): array
     {
@@ -39,7 +45,11 @@ class NetworkAllocationController extends ClientApiController
     }
 
     /**
+     * Update allocation
+     *
      * Set the primary allocation for a server.
+     *
+     * @return array<array-key, mixed>
      *
      * @throws \App\Exceptions\Model\DataValidationException
      */
@@ -62,7 +72,11 @@ class NetworkAllocationController extends ClientApiController
     }
 
     /**
+     * Set primary allocation
+     *
      * Set the primary allocation for a server.
+     *
+     * @return array<array-key, mixed>
      *
      * @throws \App\Exceptions\Model\DataValidationException
      */
@@ -82,8 +96,11 @@ class NetworkAllocationController extends ClientApiController
     }
 
     /**
+     * Create allocation
+     *
      * Set the notes for the allocation for a server.
-     *s.
+     *
+     * @return array<array-key, mixed>
      *
      * @throws \App\Exceptions\DisplayException
      */
@@ -106,6 +123,8 @@ class NetworkAllocationController extends ClientApiController
     }
 
     /**
+     * Delete allocation
+     *
      * Delete an allocation from a server.
      *
      * @throws \App\Exceptions\DisplayException

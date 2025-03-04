@@ -15,9 +15,9 @@ class TaskTransformer extends BaseClientTransformer
     }
 
     /**
-     * Transforms a schedule's task into a client viewable format.
+     * @param  Task  $model
      */
-    public function transform(Task $model): array
+    public function transform($model): array
     {
         return [
             'id' => $model->id,

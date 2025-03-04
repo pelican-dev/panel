@@ -48,9 +48,9 @@ class ServerTransformer extends BaseTransformer
     }
 
     /**
-     * Return a generic transformed server array.
+     * @param  Server  $server
      */
-    public function transform(Server $server): array
+    public function transform($server): array
     {
         return [
             'id' => $server->getKey(),

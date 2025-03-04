@@ -11,6 +11,9 @@ class ResetPasswordRequest extends FormRequest
         return true;
     }
 
+    /**
+     * @return array<array-key, string>
+     */
     public function rules(): array
     {
         return [

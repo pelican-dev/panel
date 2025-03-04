@@ -55,9 +55,11 @@ class StoreServerRequest extends ApplicationApiRequest
 
             // Automatic deployment rules
             'deploy' => 'sometimes|required|array',
-            'deploy.locations' => 'array',
-            'deploy.locations.*' => 'required_with:deploy.locations,integer|min:1',
-            'deploy.dedicated_ip' => 'required_with:deploy,boolean',
+            'deploy.locations' => 'sometimes|array',
+            'deploy.locations.*' => 'required_with:deploy.locations|integer|min:1',
+            'deploy.tags' => 'array',
+            'deploy.tags.*' => 'required_with:deploy.tags|string|min:1',
+            'deploy.dedicated_ip' => 'required_with:deploy|boolean',
             'deploy.port_range' => 'array',
             'deploy.port_range.*' => 'string',
             'start_on_completion' => 'sometimes|boolean',
@@ -66,6 +68,31 @@ class StoreServerRequest extends ApplicationApiRequest
 
     /**
      * Normalize the data into a format that can be consumed by the service.
+     *
+     * @return array{
+     *     external_id: int,
+     *     name: string,
+     *     description: string,
+     *     owner_id: int,
+     *     egg_id: int,
+     *     image: string,
+     *     startup: string,
+     *     environment: string,
+     *     memory: int,
+     *     swap: int,
+     *     disk: int,
+     *     io: int,
+     *     cpu: int,
+     *     threads: int,
+     *     skip_scripts: bool,
+     *     allocation_id: int,
+     *     allocation_additional: int[],
+     *     start_on_completion: bool,
+     *     database_limit: int,
+     *     allocation_limit: int,
+     *     backup_limit: int,
+     *     oom_killer: bool,
+     * }
      */
     public function validated($key = null, $default = null): array
     {

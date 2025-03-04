@@ -97,8 +97,7 @@ class ListServers extends ListRecords
             ->emptyStateDescription('')
             ->emptyStateHeading(trans('admin/server.no_servers'))
             ->emptyStateActions([
-                CreateAction::make('create')
-                    ->button(),
+                CreateAction::make(),
             ]);
     }
 

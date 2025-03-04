@@ -12,6 +12,8 @@ class NodeHealthColumn extends IconColumn
     {
         parent::setUp();
 
+        $this->label(trans('admin/node.table.health'));
+
         $this->alignCenter();
     }
 }

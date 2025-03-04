@@ -17,7 +17,9 @@ use App\Http\Controllers\Api\Client\ClientApiController;
 use App\Exceptions\Service\ServiceLimitExceededException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use App\Http\Requests\Api\Client\Servers\Schedules\StoreTaskRequest;
+use Dedoc\Scramble\Attributes\Group;
 
+#[Group('Server - Schedule', weight: 1)]
 class ScheduleTaskController extends ClientApiController
 {
     /**
@@ -30,7 +32,11 @@ class ScheduleTaskController extends ClientApiController
     }
 
     /**
+     * Create task
+     *
      * Create a new task for a given schedule and store it in the database.
+     *
+     * @return array<array-key, mixed>
      *
      * @throws \App\Exceptions\Model\DataValidationException
      * @throws \App\Exceptions\Service\ServiceLimitExceededException
@@ -91,7 +97,11 @@ class ScheduleTaskController extends ClientApiController
     }
 
     /**
+     * Update task
+     *
      * Updates a given task for a server.
+     *
+     * @return array<array-key, mixed>
      *
      * @throws \App\Exceptions\Model\DataValidationException
      */
@@ -145,6 +155,8 @@ class ScheduleTaskController extends ClientApiController
     }
 
     /**
+     * Delete task
+     *
      * Delete a given task for a schedule. If there are subsequent tasks stored in the database
      * for this schedule their sequence IDs are decremented properly.
      *

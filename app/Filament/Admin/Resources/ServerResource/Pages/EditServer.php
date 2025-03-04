@@ -17,6 +17,7 @@ use App\Models\Mount;
 use App\Models\Server;
 use App\Models\ServerVariable;
 use App\Models\User;
+use App\Repositories\Daemon\DaemonServerRepository;
 use App\Services\Databases\DatabaseManagementService;
 use App\Services\Eggs\EggChangerService;
 use App\Services\Servers\RandomWordService;
@@ -50,6 +51,8 @@ use Filament\Forms\Set;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\EditRecord;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Support\Facades\Validator;
 use LogicException;
 use Webbingbrasil\FilamentCopyActions\Forms\Actions\CopyAction;
@@ -57,6 +60,15 @@ use Webbingbrasil\FilamentCopyActions\Forms\Actions\CopyAction;
 class EditServer extends EditRecord
 {
     protected static string $resource = ServerResource::class;
+
+    private bool $errored = false;
+
+    private DaemonServerRepository $daemonServerRepository;
+
+    public function boot(DaemonServerRepository $daemonServerRepository): void
+    {
+        $this->daemonServerRepository = $daemonServerRepository;
+    }
 
     public function form(Form $form): Form
     {
@@ -108,7 +120,7 @@ class EditServer extends EditRecord
                                     ])
                                     ->relationship('user', 'username')
                                     ->searchable(['username', 'email'])
-                                    ->getOptionLabelFromRecordUsing(fn (User $user) => "$user->email | $user->username " . (blank($user->roles) ? '' : '(' . $user->roles->first()->name . ')'))
+                                    ->getOptionLabelFromRecordUsing(fn (User $user) => "$user->username ($user->email)")
                                     ->preload()
                                     ->required(),
 
@@ -195,6 +207,7 @@ class EditServer extends EditRecord
                                             ->columnSpanFull()
                                             ->schema([
                                                 ToggleButtons::make('unlimited_cpu')
+                                                    ->dehydrated()
                                                     ->label(trans('admin/server.cpu'))->inlineLabel()->inline()
                                                     ->afterStateUpdated(fn (Set $set) => $set('cpu', 0))
                                                     ->formatStateUsing(fn (Get $get) => $get('cpu') == 0)
@@ -224,6 +237,7 @@ class EditServer extends EditRecord
                                             ->columnSpanFull()
                                             ->schema([
                                                 ToggleButtons::make('unlimited_mem')
+                                                    ->dehydrated()
                                                     ->label(trans('admin/server.memory'))->inlineLabel()->inline()
                                                     ->afterStateUpdated(fn (Set $set) => $set('memory', 0))
                                                     ->formatStateUsing(fn (Get $get) => $get('memory') == 0)
@@ -254,6 +268,7 @@ class EditServer extends EditRecord
                                             ->columnSpanFull()
                                             ->schema([
                                                 ToggleButtons::make('unlimited_disk')
+                                                    ->dehydrated()
                                                     ->label(trans('admin/server.disk'))->inlineLabel()->inline()
                                                     ->live()
                                                     ->afterStateUpdated(fn (Set $set) => $set('disk', 0))
@@ -388,9 +403,6 @@ class EditServer extends EditRecord
                                                         false => 'success',
                                                         true => 'danger',
                                                     ]),
-
-                                                TextInput::make('oom_disabled_hidden')
-                                                    ->hidden(),
                                             ]),
                                     ]),
 
@@ -844,7 +856,7 @@ class EditServer extends EditRecord
                                                 Forms\Components\Actions::make([
                                                     Action::make('transfer')
                                                         ->label(trans('admin/server.transfer'))
-                                                        ->action(fn (TransferServerService $transfer, Server $server) => $transfer->handle($server, []))
+                                                        // ->action(fn (TransferServerService $transfer, Server $server) => $transfer->handle($server, []))
                                                         ->disabled() //TODO!
                                                         ->form([ //TODO!
                                                             Select::make('newNode')
@@ -947,6 +959,41 @@ class EditServer extends EditRecord
         return $data;
     }
 
+    protected function handleRecordUpdate(Model $record, array $data): Model
+    {
+        if (!$record instanceof Server) {
+            return $record;
+        }
+
+        /** @var Server $record */
+        $record = parent::handleRecordUpdate($record, $data);
+
+        try {
+            $this->daemonServerRepository->setServer($record)->sync();
+        } catch (ConnectionException) {
+            $this->errored = true;
+
+            Notification::make()
+                ->title(trans('admin/server.notifications.error_connecting', ['node' => $record->node->name]))
+                ->body(trans('admin/server.notifications.error_connecting_description'))
+                ->color('warning')
+                ->icon('tabler-database')
+                ->warning()
+                ->send();
+        }
+
+        return $record;
+    }
+
+    protected function getSavedNotification(): ?Notification
+    {
+        if ($this->errored) {
+            return null;
+        }
+
+        return parent::getSavedNotification();
+    }
+
     public function getRelationManagers(): array
     {
         return [
@@ -969,6 +1016,9 @@ class EditServer extends EditRecord
         throw new Exception('Component type not supported: ' . $component::class);
     }
 
+    /**
+     * @return array<string, string>
+     */
     private function getSelectOptionsFromRules(ServerVariable $serverVariable): array
     {
         $inRule = array_first($serverVariable->variable->rules, fn ($value) => str($value)->startsWith('in:'));

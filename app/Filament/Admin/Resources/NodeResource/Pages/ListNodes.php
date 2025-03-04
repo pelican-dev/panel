@@ -27,7 +27,7 @@ class ListNodes extends ListRecords
                     ->label('UUID')
                     ->searchable()
                     ->hidden(),
-                NodeHealthColumn::make('health')->label(trans('admin/node.table.health')),
+                NodeHealthColumn::make('health'),
                 TextColumn::make('name')
                     ->label(trans('admin/node.table.name'))
                     ->icon('tabler-server-2')
@@ -64,8 +64,7 @@ class ListNodes extends ListRecords
             ->emptyStateDescription('')
             ->emptyStateHeading(trans('admin/node.no_nodes'))
             ->emptyStateActions([
-                CreateAction::make('create')
-                    ->button(),
+                CreateAction::make(),
             ]);
     }
 

@@ -15,7 +15,7 @@ x-common:
     # MAIL_FROM: ""
     # MAIL_USERNAME: ""
     # MAIL_PASSWORD: ""
-    # MAIL_ENCRYPTION: ""
+    # MAIL_SCHEME: ""
 
 #
 # ------------------------------------------------------------------------------------------

@@ -26,6 +26,8 @@ class TwoFactorController extends ClientApiController
     }
 
     /**
+     * Setup 2fa
+     *
      * Returns two-factor token credentials that allow a user to configure
      * it on their account. If two-factor is already enabled this endpoint
      * will return a 400 error.
@@ -44,6 +46,8 @@ class TwoFactorController extends ClientApiController
     }
 
     /**
+     * Enable 2fa
+     *
      * Updates a user's account to have two-factor enabled.
      *
      * @throws \Throwable
@@ -74,6 +78,8 @@ class TwoFactorController extends ClientApiController
     }
 
     /**
+     * Disable 2fa
+     *
      * Disables two-factor authentication on an account if the password provided
      * is valid.
      *

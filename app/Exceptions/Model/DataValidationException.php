@@ -42,6 +42,9 @@ class DataValidationException extends PanelException implements HttpExceptionInt
         return 500;
     }
 
+    /**
+     * @return array<string, string>
+     */
     public function getHeaders(): array
     {
         return [];

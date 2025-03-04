@@ -21,6 +21,16 @@ class HostCreationService
     /**
      * Create a new database host on the Panel.
      *
+     * @param array{
+     *     password: string,
+     *     name: string,
+     *     host: string,
+     *     port: int,
+     *     username: string,
+     *     max_databases: int,
+     *     node_ids?: array<int>
+     * } $data
+     *
      * @throws \Throwable
      */
     public function handle(array $data): DatabaseHost

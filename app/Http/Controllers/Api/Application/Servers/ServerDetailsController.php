@@ -9,7 +9,9 @@ use App\Transformers\Api\Application\ServerTransformer;
 use App\Http\Controllers\Api\Application\ApplicationApiController;
 use App\Http\Requests\Api\Application\Servers\UpdateServerDetailsRequest;
 use App\Http\Requests\Api\Application\Servers\UpdateServerBuildConfigurationRequest;
+use Dedoc\Scramble\Attributes\Group;
 
+#[Group('Server', weight: 2)]
 class ServerDetailsController extends ApplicationApiController
 {
     /**
@@ -23,16 +25,23 @@ class ServerDetailsController extends ApplicationApiController
     }
 
     /**
+     * Update details
+     *
      * Update the details for a specific server.
+     *
+     * @return array<array-key, mixed>
      *
      * @throws \App\Exceptions\DisplayException
      * @throws \App\Exceptions\Model\DataValidationException
      */
     public function details(UpdateServerDetailsRequest $request, Server $server): array
     {
+        /** @var array<array-key, mixed> $validated */
+        $validated = $request->validated();
+
         $updated = $this->detailsModificationService->returnUpdatedModel()->handle(
             $server,
-            $request->validated()
+            $validated,
         );
 
         return $this->fractal->item($updated)
@@ -41,7 +50,11 @@ class ServerDetailsController extends ApplicationApiController
     }
 
     /**
+     * Update build
+     *
      * Update the build details for a specific server.
+     *
+     * @return array<array-key, mixed>
      *
      * @throws \App\Exceptions\DisplayException
      * @throws \App\Exceptions\Model\DataValidationException

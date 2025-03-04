@@ -25,6 +25,7 @@ class ServerConsole extends Widget
 
     public ?User $user = null;
 
+    /** @var string[] */
     public array $history = [];
 
     public int $historyIndex = 0;

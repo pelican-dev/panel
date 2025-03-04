@@ -14,6 +14,7 @@ class SendPasswordReset extends Notification implements ShouldQueue
 
     public function __construct(public string $token) {}
 
+    /** @return string[] */
     public function via(): array
     {
         return ['mail'];

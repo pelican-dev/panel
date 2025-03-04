@@ -22,8 +22,9 @@ class UpdateServerDetailsRequest extends ServerWriteRequest
     }
 
     /**
-     * Convert the posted data into the correct format that is expected
-     * by the application.
+     * Convert the posted data into the correct format that is expected by the application.
+     *
+     * @return array<array-key, string>
      */
     public function validated($key = null, $default = null): array
     {
@@ -38,6 +39,8 @@ class UpdateServerDetailsRequest extends ServerWriteRequest
     /**
      * Rename some attributes in error messages to clarify the field
      * being discussed.
+     *
+     * @return array<array-key, string>
      */
     public function attributes(): array
     {
