@@ -2,6 +2,7 @@
 
 namespace App\Filament\Server\Resources\UserResource\Pages;
 
+use App\Facades\Activity;
 use App\Filament\Server\Resources\UserResource;
 use App\Models\Permission;
 use App\Models\Server;
@@ -394,6 +395,12 @@ class ListUsers extends ListRecords
 
                     try {
                         $service->handle($server, $email, $permissions);
+
+                        Activity::event('server:subuser.create')
+                            ->subject($data['email'])
+                            ->property([
+                                'email' => $data['email'],
+                            ]);
 
                         Notification::make()
                             ->title('User Invited!')
