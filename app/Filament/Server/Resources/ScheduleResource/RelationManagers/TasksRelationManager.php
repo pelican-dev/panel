@@ -62,7 +62,8 @@ class TasksRelationManager extends RelationManager
                     'stop' => 'Stop',
                     'kill' => 'Kill',
                 ])
-                ->selectablePlaceholder(false),
+                ->selectablePlaceholder(false)
+                ->default('restart'),
             TextInput::make('time_offset')
                 ->hidden(fn (Get $get) => config('queue.default') === 'sync' || $get('sequence_id') === 1)
                 ->default(0)
