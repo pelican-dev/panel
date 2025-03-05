@@ -3,6 +3,7 @@
 namespace App\Filament\Server\Resources\ScheduleResource\Pages;
 
 use App\Exceptions\DisplayException;
+use App\Facades\Activity;
 use App\Filament\Server\Resources\ScheduleResource;
 use App\Helpers\Utilities;
 use App\Models\Server;
@@ -29,6 +30,10 @@ class CreateSchedule extends CreateRecord
         if (!isset($data['next_run_at'])) {
             $data['next_run_at'] = $this->getNextRunAt($data['cron_minute'], $data['cron_hour'], $data['cron_day_of_month'], $data['cron_month'], $data['cron_day_of_week']);
         }
+
+        Activity::event('server:schedule.create')
+            ->property('name', $data['name'])
+            ->log();
 
         return $data;
     }
