@@ -39,7 +39,6 @@ return [
         ],
     ],
     'server' => [
-        'reinstall' => 'Reinstalled server',
         'console' => [
             'command' => 'Executed "<b>:command</b>" on the server',
         ],
@@ -108,6 +107,7 @@ return [
         'settings' => [
             'rename' => 'Renamed the server from "<b>:old</b>" to "<b>:new</b>"',
             'description' => 'Changed the server description from "<b>:old</b>" to "<b>:new</b>"',
+            'reinstall' => 'Reinstalled server',
         ],
         'startup' => [
             'edit' => 'Changed the <b>:variable</b> variable from "<b>:old</b>" to "<b>:new</b>"',
