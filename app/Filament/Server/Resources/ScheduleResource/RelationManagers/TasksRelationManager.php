@@ -100,11 +100,30 @@ class TasksRelationManager extends RelationManager
                 EditAction::make()
                     ->form($this->getTaskForm($schedule))
                     ->mutateFormDataUsing(function ($data) {
+                        /** @var Schedule $schedule */
+                        $schedule = $this->getOwnerRecord();
+
                         $data['payload'] ??= '';
+
+                        Activity::event('server:task.update')
+                            ->subject($schedule)
+                            ->property(['name' => $schedule->name, 'action' => $data['action'], 'payload' => $data['payload']])
+                            ->log();
 
                         return $data;
                     }),
-                DeleteAction::make(),
+                DeleteAction::make()
+                    ->action(function (Task $task) {
+                        /** @var Schedule $schedule */
+                        $schedule = $this->getOwnerRecord();
+
+                        Activity::event('server:task.delete')
+                            ->subject($schedule)
+                            ->property(['name' => $schedule->name, 'action' => $task->action, 'payload' => $task->payload])
+                            ->log();
+
+                        return $task->delete();
+                    }),
             ])
             ->headerActions([
                 CreateAction::make()
