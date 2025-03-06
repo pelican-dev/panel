@@ -56,6 +56,7 @@
         "nunomaduro/collision": "^8.1.1",
         "pestphp/pest": "^3.7",
         "pestphp/pest-plugin-faker": "^3.0",
+        "pestphp/pest-plugin-livewire": "^3.0",
         "spatie/laravel-ignition": "^2.7"
     },
     "autoload": {
