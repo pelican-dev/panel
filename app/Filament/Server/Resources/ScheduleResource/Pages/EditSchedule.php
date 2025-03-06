@@ -11,22 +11,25 @@ class EditSchedule extends EditRecord
 {
     protected static string $resource = ScheduleResource::class;
 
+    protected function afterSave(): void
+    {
+        Activity::event('server:schedule.update')
+            ->property('name', $this->record->name)
+            ->log();
+    }
+
     protected function getHeaderActions(): array
     {
         return [
-            Actions\DeleteAction::make(),
+            Actions\DeleteAction::make()
+                ->after(function ($record) {
+                    Activity::event('server:schedule.delete')
+                        ->property('name', $record->name)
+                        ->log();
+                }),
             $this->getSaveFormAction()->formId('form')->label('Save'),
             $this->getCancelFormAction()->formId('form'),
         ];
-    }
-
-    protected function mutateFormDataBeforeSave(array $data): array
-    {
-        Activity::event('server:schedule.update')
-            ->property('name', $data['name'])
-            ->log();
-
-        return $data;
     }
 
     public function getBreadcrumbs(): array

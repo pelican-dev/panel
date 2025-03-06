@@ -46,12 +46,11 @@ class ListSchedules extends ListRecords
                 ViewAction::make(),
                 EditAction::make(),
                 DeleteAction::make()
-                    ->action(function (Schedule $schedule) {
+                    ->after(function (Schedule $schedule) {
                         Activity::event('server:schedule.delete')
+                            ->subject($schedule)
                             ->property('name', $schedule->name)
                             ->log();
-
-                        return $schedule->delete();
                     }),
             ]);
     }

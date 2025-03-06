@@ -6,6 +6,7 @@ use App\Exceptions\DisplayException;
 use App\Facades\Activity;
 use App\Filament\Server\Resources\ScheduleResource;
 use App\Helpers\Utilities;
+use App\Models\Schedule;
 use App\Models\Server;
 use Carbon\Carbon;
 use Exception;
@@ -17,6 +18,13 @@ class CreateSchedule extends CreateRecord
     protected static string $resource = ScheduleResource::class;
 
     protected static bool $canCreateAnother = false;
+
+    protected function afterCreate(Schedule $schedule): void
+    {
+        Activity::event('server:schedule.create')
+            ->property('name', $schedule->name)
+            ->log();
+    }
 
     protected function mutateFormDataBeforeCreate(array $data): array
     {
@@ -30,10 +38,6 @@ class CreateSchedule extends CreateRecord
         if (!isset($data['next_run_at'])) {
             $data['next_run_at'] = $this->getNextRunAt($data['cron_minute'], $data['cron_hour'], $data['cron_day_of_month'], $data['cron_month'], $data['cron_day_of_week']);
         }
-
-        Activity::event('server:schedule.create')
-            ->property('name', $data['name'])
-            ->log();
 
         return $data;
     }

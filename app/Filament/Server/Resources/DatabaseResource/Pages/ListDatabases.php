@@ -77,14 +77,11 @@ class ListDatabases extends ListRecords
                 ViewAction::make()
                     ->modalHeading(fn (Database $database) => 'Viewing ' . $database->database),
                 DeleteAction::make()
-                    ->action(function (Database $database) {
-
+                    ->after(function (Database $database) {
                         Activity::event('server:database.delete')
                             ->subject($database)
                             ->property('name', $database->database)
                             ->log();
-
-                        return $database->delete();
                     }),
             ]);
     }
