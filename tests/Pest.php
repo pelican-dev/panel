@@ -42,7 +42,7 @@ expect()->extend('toLogActivities', function (int $times) {
     expect(ActivityLog::count())->toBe($times);
 });
 
-uses(IntegrationTestCase::class)->in('Feature');
+uses(IntegrationTestCase::class)->in('Feature', 'Filament');
 
 /*
 |--------------------------------------------------------------------------
