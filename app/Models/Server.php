@@ -19,7 +19,6 @@ use Illuminate\Database\Query\JoinClause;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Number;
-use Illuminate\Support\Str;
 use Psr\Http\Message\ResponseInterface;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -475,7 +474,7 @@ class Server extends Model implements Validatable
                 return 'Suspended';
             }
             if ($resourceAmount === 0) {
-                return Str::title(ContainerStatus::Offline->value);
+                return ContainerStatus::Offline->title();
             }
 
             return now()->subMillis($resourceAmount)->diffForHumans(syntax: CarbonInterface::DIFF_ABSOLUTE, short: true, parts: 4);
@@ -500,7 +499,7 @@ class Server extends Model implements Validatable
     public function condition(): Attribute
     {
         return Attribute::make(
-            get: fn () => ($this->isSuspended() ? ServerState::Suspended : $this->status ?? $this->retrieveStatus())->value,
+            get: fn () => $this->isSuspended() ? ServerState::Suspended : $this->status ?? $this->retrieveStatus(),
         );
     }
 

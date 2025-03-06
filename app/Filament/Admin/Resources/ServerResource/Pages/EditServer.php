@@ -126,7 +126,7 @@ class EditServer extends EditRecord
 
                                 ToggleButtons::make('condition')
                                     ->label(trans('admin/server.server_status'))
-                                    ->formatStateUsing(fn (Server $server) => $server->condition)
+                                    ->formatStateUsing(fn (Server $server) => $server->condition->value)
                                     ->options(fn ($state) => collect(array_merge(ContainerStatus::cases(), ServerState::cases()))
                                         ->filter(fn ($condition) => $condition->value === $state)
                                         ->mapWithKeys(fn ($state) => [$state->value => str($state->value)->replace('_', ' ')->ucwords()])

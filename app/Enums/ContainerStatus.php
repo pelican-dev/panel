@@ -63,6 +63,11 @@ enum ContainerStatus: string
         };
     }
 
+    public function title(): string
+    {
+        return str($this->value)->title();
+    }
+
     public function isOffline(): bool
     {
         return in_array($this, [ContainerStatus::Offline, ContainerStatus::Missing]);

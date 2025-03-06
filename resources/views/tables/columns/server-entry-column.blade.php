@@ -28,7 +28,7 @@
                 <x-filament::icon-button
                     :icon="$server->conditionIcon()"
                     :color="$server->conditionColor()"
-                    :tooltip="\Illuminate\Support\Str::title($server->condition)"
+                    :tooltip="$server->condition->title()"
                     size="xl"
                 />
                 <h2 class="text-xl font-bold">

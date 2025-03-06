@@ -9,7 +9,6 @@ use App\Models\Server;
 use Carbon\CarbonInterface;
 use Filament\Widgets\StatsOverviewWidget;
 use Illuminate\Support\Number;
-use Illuminate\Support\Str;
 
 class ServerOverview extends StatsOverviewWidget
 {
@@ -38,7 +37,7 @@ class ServerOverview extends StatsOverviewWidget
 
     private function status(): string
     {
-        $status = Str::title($this->server->condition);
+        $status = $this->server->condition->title();
         $uptime = collect(cache()->get("servers.{$this->server->id}.uptime"))->last() ?? 0;
 
         if ($uptime === 0) {
@@ -55,7 +54,7 @@ class ServerOverview extends StatsOverviewWidget
         $status = $this->server->retrieveStatus();
 
         if ($status->isOffline()) {
-            return Str::title(ContainerStatus::Offline->value);
+            return ContainerStatus::Offline->title();
         }
 
         $data = collect(cache()->get("servers.{$this->server->id}.cpu_absolute"))->last(default: 0);
@@ -69,7 +68,7 @@ class ServerOverview extends StatsOverviewWidget
         $status = $this->server->retrieveStatus();
 
         if ($status->isOffline()) {
-            return Str::title(ContainerStatus::Offline->value);
+            return ContainerStatus::Offline->title();
         }
 
         $latestMemoryUsed = collect(cache()->get("servers.{$this->server->id}.memory_bytes"))->last(default: 0);
