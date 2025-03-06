@@ -2,8 +2,6 @@
 
 namespace App\Filament\Admin\Resources\ServerResource\Pages;
 
-use App\Enums\ContainerStatus;
-use App\Enums\ServerState;
 use App\Enums\SuspendAction;
 use App\Filament\Admin\Resources\ServerResource;
 use App\Filament\Admin\Resources\ServerResource\RelationManagers\AllocationsRelationManager;
@@ -127,16 +125,9 @@ class EditServer extends EditRecord
                                 ToggleButtons::make('condition')
                                     ->label(trans('admin/server.server_status'))
                                     ->formatStateUsing(fn (Server $server) => $server->condition)
-                                    ->options(fn ($state) => collect(array_merge(ContainerStatus::cases(), ServerState::cases()))
-                                        ->filter(fn ($condition) => $condition->value === $state)
-                                        ->mapWithKeys(fn ($state) => [$state->value => str($state->value)->replace('_', ' ')->ucwords()])
-                                    )
-                                    ->colors(collect(array_merge(ContainerStatus::cases(), ServerState::cases()))->mapWithKeys(
-                                        fn ($status) => [$status->value => $status->color()]
-                                    ))
-                                    ->icons(collect(array_merge(ContainerStatus::cases(), ServerState::cases()))->mapWithKeys(
-                                        fn ($status) => [$status->value => $status->icon()]
-                                    ))
+                                    ->options(fn ($state) => [$state->value => $state->getLabel()])
+                                    ->colors(fn ($state) => [$state->value => $state->getColor()])
+                                    ->icons(fn ($state) => [$state->value => $state->getIcon()])
                                     ->columnSpan([
                                         'default' => 2,
                                         'sm' => 1,

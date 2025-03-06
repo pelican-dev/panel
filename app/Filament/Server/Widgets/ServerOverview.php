@@ -9,7 +9,6 @@ use App\Models\Server;
 use Carbon\CarbonInterface;
 use Filament\Widgets\StatsOverviewWidget;
 use Illuminate\Support\Number;
-use Illuminate\Support\Str;
 
 class ServerOverview extends StatsOverviewWidget
 {
@@ -38,7 +37,7 @@ class ServerOverview extends StatsOverviewWidget
 
     private function status(): string
     {
-        $status = Str::title($this->server->condition);
+        $status = $this->server->condition->getLabel();
         $uptime = collect(cache()->get("servers.{$this->server->id}.uptime"))->last() ?? 0;
 
         if ($uptime === 0) {
@@ -52,10 +51,10 @@ class ServerOverview extends StatsOverviewWidget
 
     public function cpuUsage(): string
     {
-        $status = ContainerStatus::tryFrom($this->server->retrieveStatus());
+        $status = $this->server->retrieveStatus();
 
-        if ($status === ContainerStatus::Offline || $status === ContainerStatus::Missing) {
-            return 'Offline';
+        if ($status->isOffline()) {
+            return ContainerStatus::Offline->getLabel();
         }
 
         $data = collect(cache()->get("servers.{$this->server->id}.cpu_absolute"))->last(default: 0);
@@ -66,10 +65,10 @@ class ServerOverview extends StatsOverviewWidget
 
     public function memoryUsage(): string
     {
-        $status = ContainerStatus::tryFrom($this->server->retrieveStatus());
+        $status = $this->server->retrieveStatus();
 
-        if ($status === ContainerStatus::Offline || $status === ContainerStatus::Missing) {
-            return 'Offline';
+        if ($status->isOffline()) {
+            return ContainerStatus::Offline->getLabel();
         }
 
         $latestMemoryUsed = collect(cache()->get("servers.{$this->server->id}.memory_bytes"))->last(default: 0);

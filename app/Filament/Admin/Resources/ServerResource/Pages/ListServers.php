@@ -34,8 +34,8 @@ class ListServers extends ListRecords
                     ->label(trans('admin/server.condition'))
                     ->default('unknown')
                     ->badge()
-                    ->icon(fn (Server $server) => $server->conditionIcon())
-                    ->color(fn (Server $server) => $server->conditionColor()),
+                    ->icon(fn (Server $server) => $server->condition->getIcon())
+                    ->color(fn (Server $server) => $server->condition->getColor()),
                 TextColumn::make('uuid')
                     ->hidden()
                     ->label('UUID')
