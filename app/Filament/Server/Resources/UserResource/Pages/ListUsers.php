@@ -394,10 +394,10 @@ class ListUsers extends ListRecords
                     $permissions = collect($data)->forget('email')->map(fn ($permissions, $key) => collect($permissions)->map(fn ($permission) => "$key.$permission"))->flatten()->all();
 
                     try {
-                        $service->handle($server, $email, $permissions);
+                        $subuser = $service->handle($server, $email, $permissions);
 
                         Activity::event('server:subuser.create')
-                            ->subject($data['email'])
+                            ->subject($subuser->user)
                             ->property([
                                 'email' => $data['email'],
                             ]);
