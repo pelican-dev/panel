@@ -108,6 +108,10 @@ class UserResource extends Resource
                         $subuser = Subuser::query()->where('user_id', $user->id)->where('server_id', $server->id)->first();
                         $subuserDeletionService->handle($subuser, $server);
 
+                        Notification::make()
+                            ->title('User Deleted!')
+                            ->success()
+                            ->send();
                     }),
                 EditAction::make()
                     ->label('Edit User')

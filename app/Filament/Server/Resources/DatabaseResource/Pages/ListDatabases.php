@@ -2,6 +2,7 @@
 
 namespace App\Filament\Server\Resources\DatabaseResource\Pages;
 
+use App\Facades\Activity;
 use App\Filament\Components\Forms\Actions\RotateDatabasePasswordAction;
 use App\Filament\Components\Tables\Columns\DateTimeColumn;
 use App\Filament\Server\Resources\DatabaseResource;
@@ -75,7 +76,13 @@ class ListDatabases extends ListRecords
             ->actions([
                 ViewAction::make()
                     ->modalHeading(fn (Database $database) => 'Viewing ' . $database->database),
-                DeleteAction::make(),
+                DeleteAction::make()
+                    ->after(function (Database $database) {
+                        Activity::event('server:database.delete')
+                            ->subject($database)
+                            ->property('name', $database->database)
+                            ->log();
+                    }),
             ]);
     }
 

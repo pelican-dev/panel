@@ -39,7 +39,6 @@ return [
         ],
     ],
     'server' => [
-        'reinstall' => 'Reinstalled server',
         'console' => [
             'command' => 'Executed "<b>:command</b>" on the server',
         ],
@@ -103,11 +102,12 @@ return [
         'task' => [
             'create' => 'Created a new "<b>:action</b>" task for the <b>:name</b> schedule',
             'update' => 'Updated the "<b>:action</b>" task for the <b>:name</b> schedule',
-            'delete' => 'Deleted a task for the <b>:name</b> schedule',
+            'delete' => 'Deleted the "<b>:action</b>" task for the <b>:name</b> schedule',
         ],
         'settings' => [
             'rename' => 'Renamed the server from "<b>:old</b>" to "<b>:new</b>"',
             'description' => 'Changed the server description from "<b>:old</b>" to "<b>:new</b>"',
+            'reinstall' => 'Reinstalled server',
         ],
         'startup' => [
             'edit' => 'Changed the <b>:variable</b> variable from "<b>:old</b>" to "<b>:new</b>"',

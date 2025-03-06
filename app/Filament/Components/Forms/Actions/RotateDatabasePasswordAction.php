@@ -2,6 +2,7 @@
 
 namespace App\Filament\Components\Forms\Actions;
 
+use App\Facades\Activity;
 use App\Models\Database;
 use App\Services\Databases\DatabasePasswordService;
 use Exception;
@@ -43,6 +44,11 @@ class RotateDatabasePasswordAction extends Action
 
                 $set('password', $database->password);
                 $set('jdbc', $database->jdbc);
+
+                Activity::event('server:database.rotate-password')
+                    ->subject($database)
+                    ->property('name', $database->database)
+                    ->log();
 
                 Notification::make()
                     ->title(trans('admin/databasehost.rotated'))

@@ -2,6 +2,7 @@
 
 namespace App\Services\Databases;
 
+use App\Facades\Activity;
 use App\Models\Server;
 use App\Models\Database;
 use App\Helpers\Utilities;
@@ -104,6 +105,11 @@ class DatabaseManagementService
             );
             $database->assignUserToDatabase($database->database, $database->username, $database->remote);
             $database->flush();
+
+            Activity::event('server:database.create')
+                ->subject($database)
+                ->property('name', $database->database)
+                ->log();
 
             return $database;
         });
