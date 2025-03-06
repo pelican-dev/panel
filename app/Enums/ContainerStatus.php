@@ -73,6 +73,11 @@ enum ContainerStatus: string
         return in_array($this, [ContainerStatus::Offline, ContainerStatus::Missing]);
     }
 
+    public function isStartingOrRunning(): bool
+    {
+        return in_array($this, [ContainerStatus::Starting, ContainerStatus::Running]);
+    }
+
     public function isStartingOrStopping(): bool
     {
         return in_array($this, [ContainerStatus::Starting, ContainerStatus::Stopping, ContainerStatus::Restarting]);

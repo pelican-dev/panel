@@ -2,7 +2,6 @@
 
 namespace App\Filament\Server\Widgets;
 
-use App\Enums\ContainerStatus;
 use App\Exceptions\Http\HttpForbiddenException;
 use App\Livewire\AlertBanner;
 use App\Models\Permission;
@@ -76,7 +75,7 @@ class ServerConsole extends Widget
 
     protected function canSendCommand(): bool
     {
-        return $this->authorizeSendCommand() && !$this->server->isInConflictState() && $this->server->retrieveStatus() === ContainerStatus::Running;
+        return $this->authorizeSendCommand() && !$this->server->isInConflictState() && $this->server->retrieveStatus()->isStartingOrRunning();
     }
 
     public function up(): void
