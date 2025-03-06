@@ -102,7 +102,7 @@ return [
         'task' => [
             'create' => 'Created a new "<b>:action</b>" task for the <b>:name</b> schedule',
             'update' => 'Updated the "<b>:action</b>" task for the <b>:name</b> schedule',
-            'delete' => 'Deleted a task for the <b>:name</b> schedule',
+            'delete' => 'Deleted the "<b>:action</b>" task for the <b>:name</b> schedule',
         ],
         'settings' => [
             'rename' => 'Renamed the server from "<b>:old</b>" to "<b>:new</b>"',
