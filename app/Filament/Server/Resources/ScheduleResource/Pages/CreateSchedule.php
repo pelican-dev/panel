@@ -19,8 +19,10 @@ class CreateSchedule extends CreateRecord
 
     protected static bool $canCreateAnother = false;
 
-    protected function afterCreate(Schedule $schedule): void
+    protected function afterCreate(): void
     {
+        $schedule = $this->record;
+
         Activity::event('server:schedule.create')
             ->property('name', $schedule->name)
             ->log();
