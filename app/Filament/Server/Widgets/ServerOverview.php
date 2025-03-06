@@ -37,7 +37,7 @@ class ServerOverview extends StatsOverviewWidget
 
     private function status(): string
     {
-        $status = $this->server->condition->title();
+        $status = $this->server->condition->getLabel();
         $uptime = collect(cache()->get("servers.{$this->server->id}.uptime"))->last() ?? 0;
 
         if ($uptime === 0) {
@@ -54,7 +54,7 @@ class ServerOverview extends StatsOverviewWidget
         $status = $this->server->retrieveStatus();
 
         if ($status->isOffline()) {
-            return ContainerStatus::Offline->title();
+            return ContainerStatus::Offline->getLabel();
         }
 
         $data = collect(cache()->get("servers.{$this->server->id}.cpu_absolute"))->last(default: 0);
@@ -68,7 +68,7 @@ class ServerOverview extends StatsOverviewWidget
         $status = $this->server->retrieveStatus();
 
         if ($status->isOffline()) {
-            return ContainerStatus::Offline->title();
+            return ContainerStatus::Offline->getLabel();
         }
 
         $latestMemoryUsed = collect(cache()->get("servers.{$this->server->id}.memory_bytes"))->last(default: 0);

@@ -114,7 +114,7 @@ use App\Services\Subusers\SubuserDeletionService;
  *
  * @property string[]|null $docker_labels
  * @property string|null $ports
- * @property-read mixed $condition
+ * @property-read ContainerStatus|ServerState $condition
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\EggVariable> $eggVariables
  * @property-read int|null $egg_variables_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ServerVariable> $serverVariables
@@ -474,7 +474,7 @@ class Server extends Model implements Validatable
                 return 'Suspended';
             }
             if ($resourceAmount === 0) {
-                return ContainerStatus::Offline->title();
+                return ContainerStatus::Offline->getLabel();
             }
 
             return now()->subMillis($resourceAmount)->diffForHumans(syntax: CarbonInterface::DIFF_ABSOLUTE, short: true, parts: 4);
@@ -501,28 +501,5 @@ class Server extends Model implements Validatable
         return Attribute::make(
             get: fn () => $this->isSuspended() ? ServerState::Suspended : $this->status ?? $this->retrieveStatus(),
         );
-    }
-
-    public function conditionIcon(): string
-    {
-        if ($this->status === null) {
-            return $this->retrieveStatus()->icon();
-        }
-
-        return $this->status->icon();
-    }
-
-    public function conditionColor(): string
-    {
-        if ($this->status === null) {
-            return $this->retrieveStatus()->color();
-        }
-
-        return $this->status->color();
-    }
-
-    public function conditionColorHex(): string
-    {
-        return $this->retrieveStatus()->colorHex();
     }
 }
