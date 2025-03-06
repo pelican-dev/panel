@@ -52,10 +52,10 @@ class ServerOverview extends StatsOverviewWidget
 
     public function cpuUsage(): string
     {
-        $status = ContainerStatus::tryFrom($this->server->retrieveStatus());
+        $status = $this->server->retrieveStatus();
 
-        if ($status === ContainerStatus::Offline || $status === ContainerStatus::Missing) {
-            return 'Offline';
+        if ($status->isOffline()) {
+            return Str::title(ContainerStatus::Offline->value);
         }
 
         $data = collect(cache()->get("servers.{$this->server->id}.cpu_absolute"))->last(default: 0);
@@ -66,10 +66,10 @@ class ServerOverview extends StatsOverviewWidget
 
     public function memoryUsage(): string
     {
-        $status = ContainerStatus::tryFrom($this->server->retrieveStatus());
+        $status = $this->server->retrieveStatus();
 
-        if ($status === ContainerStatus::Offline || $status === ContainerStatus::Missing) {
-            return 'Offline';
+        if ($status->isOffline()) {
+            return Str::title(ContainerStatus::Offline->value);
         }
 
         $latestMemoryUsed = collect(cache()->get("servers.{$this->server->id}.memory_bytes"))->last(default: 0);

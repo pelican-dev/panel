@@ -19,6 +19,7 @@ use Illuminate\Database\Query\JoinClause;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Number;
+use Illuminate\Support\Str;
 use Psr\Http\Message\ResponseInterface;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -438,17 +439,17 @@ class Server extends Model implements Validatable
         ])->toPsrResponse();
     }
 
-    public function retrieveStatus(): string
+    public function retrieveStatus(): ContainerStatus
     {
         $status = cache()->get("servers.$this->uuid.container.status");
 
-        if ($status) {
-            return $status;
+        if ($status === null) {
+            $this->node->serverStatuses();
+
+            $status = cache()->get("servers.$this->uuid.container.status");
         }
 
-        $this->node->serverStatuses();
-
-        return cache()->get("servers.$this->uuid.container.status") ?? 'missing';
+        return ContainerStatus::tryFrom($status) ?? ContainerStatus::Missing;
     }
 
     /**
@@ -474,7 +475,7 @@ class Server extends Model implements Validatable
                 return 'Suspended';
             }
             if ($resourceAmount === 0) {
-                return 'Offline';
+                return Str::title(ContainerStatus::Offline->value);
             }
 
             return now()->subMillis($resourceAmount)->diffForHumans(syntax: CarbonInterface::DIFF_ABSOLUTE, short: true, parts: 4);
@@ -499,16 +500,14 @@ class Server extends Model implements Validatable
     public function condition(): Attribute
     {
         return Attribute::make(
-            get: fn () => $this->isSuspended() ? ServerState::Suspended->value : $this->status->value ?? $this->retrieveStatus(),
+            get: fn () => ($this->isSuspended() ? ServerState::Suspended : $this->status ?? $this->retrieveStatus())->value,
         );
     }
 
     public function conditionIcon(): string
     {
         if ($this->status === null) {
-            $containerStatus = ContainerStatus::from($this->retrieveStatus());
-
-            return $containerStatus->icon();
+            return $this->retrieveStatus()->icon();
         }
 
         return $this->status->icon();
@@ -517,9 +516,7 @@ class Server extends Model implements Validatable
     public function conditionColor(): string
     {
         if ($this->status === null) {
-            $containerStatus = ContainerStatus::from($this->retrieveStatus());
-
-            return $containerStatus->color();
+            return $this->retrieveStatus()->color();
         }
 
         return $this->status->color();
@@ -527,6 +524,6 @@ class Server extends Model implements Validatable
 
     public function conditionColorHex(): string
     {
-        return ContainerStatus::from($this->retrieveStatus())->colorHex();
+        return $this->retrieveStatus()->colorHex();
     }
 }
