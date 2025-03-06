@@ -400,6 +400,7 @@ class ListUsers extends ListRecords
                             ->subject($subuser->user)
                             ->property([
                                 'email' => $data['email'],
+                                'permissions' => $permissions,
                             ]);
 
                         Notification::make()
