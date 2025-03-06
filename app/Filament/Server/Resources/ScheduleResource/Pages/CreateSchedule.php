@@ -21,6 +21,7 @@ class CreateSchedule extends CreateRecord
 
     protected function afterCreate(): void
     {
+        /** @var Schedule $schedule */
         $schedule = $this->record;
 
         Activity::event('server:schedule.create')
