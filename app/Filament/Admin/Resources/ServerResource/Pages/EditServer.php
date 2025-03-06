@@ -125,7 +125,7 @@ class EditServer extends EditRecord
                                 ToggleButtons::make('condition')
                                     ->label(trans('admin/server.server_status'))
                                     ->formatStateUsing(fn (Server $server) => $server->condition)
-                                    ->options(fn ($state) => [$state->value => str($state->value)->headline()])
+                                    ->options(fn ($state) => [$state->value => $state->getLabel()])
                                     ->colors(fn ($state) => [$state->value => $state->getColor()])
                                     ->icons(fn ($state) => [$state->value => $state->getIcon()])
                                     ->columnSpan([
