@@ -5,6 +5,7 @@ return [
     'model_label' => 'Database Host',
     'model_label_plural' => 'Database Hosts',
     'table' => [
+        'database' => 'Database',
         'name' => 'Name',
         'host' => 'Host',
         'port' => 'Port',
@@ -25,7 +26,7 @@ return [
     'max_database' => 'Max Databases',
     'max_databases_help' => 'The maximum number of databases that can be created on this host. If the limit is reached, no new databases can be created on this host. Blank is unlimited.',
     'display_name' => 'Display Name',
-    'display_name_help' => 'A short identifier used to distinguish this host from others. Must be between 1 and 60 characters, for example, us.nyc.lvl3.',
+    'display_name_help' => 'The IP address or Domain name that should be shown to the enduser.',
     'username' => 'Username',
     'username_help' => 'The username of an account that has enough permissions to create new users and databases on the system.',
     'password' => 'Password',

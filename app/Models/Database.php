@@ -87,10 +87,15 @@ class Database extends Model implements Validatable
         return $this->belongsTo(Server::class);
     }
 
+    public function address(): string
+    {
+        return $this->host->name . ':' . $this->host->port;
+    }
+
     protected function jdbc(): Attribute
     {
         return Attribute::make(
-            get: fn () => 'jdbc:mysql://' . $this->username . ':' . urlencode($this->password) . '@' . $this->host->host . ':' . $this->host->port . '/' . $this->database,
+            get: fn () => 'jdbc:mysql://' . $this->username . ':' . urlencode($this->password) . '@' . $this->address() . '/' . $this->database,
         );
     }
 

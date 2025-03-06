@@ -35,8 +35,10 @@ class ListDatabases extends ListRecords
 
         return $form
             ->schema([
+                TextInput::make('host')
+                    ->formatStateUsing(fn (Database $database) => $database->address())
+                    ->suffixAction(fn (string $state) => request()->isSecure() ? CopyAction::make()->copyable($state) : null),
                 TextInput::make('database')
-                    ->columnSpanFull()
                     ->suffixAction(fn (string $state) => request()->isSecure() ? CopyAction::make()->copyable($state) : null),
                 TextInput::make('username')
                     ->suffixAction(fn (string $state) => request()->isSecure() ? CopyAction::make()->copyable($state) : null),
@@ -67,6 +69,9 @@ class ListDatabases extends ListRecords
     {
         return $table
             ->columns([
+                TextColumn::make('host')
+                    ->state(fn (Database $database) => $database->address())
+                    ->badge(),
                 TextColumn::make('database'),
                 TextColumn::make('username'),
                 TextColumn::make('remote'),
