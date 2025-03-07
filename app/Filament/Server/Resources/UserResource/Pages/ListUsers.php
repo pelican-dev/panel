@@ -387,8 +387,12 @@ class ListUsers extends ListRecords
                 ->action(function (array $data, SubuserCreationService $service) use ($server) {
                     $email = strtolower($data['email']);
 
-                    $permissions = collect($data)->forget('email')->map(fn ($permissions, $key) => collect($permissions)->map(fn ($permission) => "$key.$permission"))->flatten()->all();
-                    $permissions = array_unique(array_merge($permissions, [Permission::ACTION_WEBSOCKET_CONNECT]));
+                    $permissions = collect($data)
+                        ->forget('email')
+                        ->flatMap(fn ($permissions, $key) => collect($permissions)->map(fn ($permission) => "$key.$permission"))
+                        ->push(Permission::ACTION_WEBSOCKET_CONNECT)
+                        ->unique()
+                        ->all();
 
                     try {
                         $subuser = $service->handle($server, $email, $permissions);
