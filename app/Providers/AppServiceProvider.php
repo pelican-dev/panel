@@ -37,6 +37,7 @@ use App\Checks\DatabaseCheck;
 use App\Checks\DebugModeCheck;
 use App\Checks\EnvironmentCheck;
 use App\Checks\ScheduleCheck;
+use App\Extensions\Captcha\Providers\TurnstileProvider;
 use Spatie\Health\Facades\Health;
 
 class AppServiceProvider extends ServiceProvider
@@ -99,6 +100,9 @@ class AppServiceProvider extends ServiceProvider
         AuthentikProvider::register($app);
         DiscordProvider::register($app);
         SteamProvider::register($app);
+
+        // Default Captcha provider
+        TurnstileProvider::register($app);
 
         FilamentColor::register([
             'danger' => Color::Red,
