@@ -54,7 +54,7 @@ class Mount extends Model implements Validatable
     /**
      * Implement language verification by overriding Eloquence's gather rules function.
      *
-     * @return array<array-key, string[]|>
+     * @return array<array-key, string[]>
      */
     public static function getRules(): array
     {
