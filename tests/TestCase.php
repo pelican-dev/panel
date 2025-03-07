@@ -30,6 +30,7 @@ abstract class TestCase extends BaseTestCase
         // "an error occurred" message), we can probably assume that the exception isn't one that
         // is recognized as being user viewable.
         config()->set('app.debug', false);
+        config()->set('panel.auth.2fa_required', 0);
 
         $this->setKnownUuidFactory();
 
