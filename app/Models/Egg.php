@@ -109,25 +109,25 @@ class Egg extends Model implements Validatable
         'tags',
     ];
 
-    /** @var array<array-key, string|string[]> */
+    /** @var array<array-key, string[]> */
     public static array $validationRules = [
-        'uuid' => 'required|string|size:36',
-        'name' => 'required|string|max:255',
-        'description' => 'string|nullable',
-        'features' => 'array|nullable',
-        'author' => 'required|string|email',
-        'file_denylist' => 'array|nullable',
-        'file_denylist.*' => 'string',
-        'docker_images' => 'required|array|min:1',
-        'docker_images.*' => 'required|string',
-        'startup' => 'required|nullable|string',
-        'config_from' => 'sometimes|bail|nullable|numeric|exists:eggs,id',
-        'config_stop' => 'required_without:config_from|nullable|string|max:255',
-        'config_startup' => 'required_without:config_from|nullable|json',
-        'config_logs' => 'required_without:config_from|nullable|json',
-        'config_files' => 'required_without:config_from|nullable|json',
-        'update_url' => 'sometimes|nullable|string',
-        'force_outgoing_ip' => 'sometimes|boolean',
+        'uuid' => ['required', 'string', 'size:36'],
+        'name' => ['required', 'string', 'max:255'],
+        'description' => ['string', 'nullable'],
+        'features' => ['array', 'nullable'],
+        'author' => ['required', 'string', 'email'],
+        'file_denylist' => ['array', 'nullable'],
+        'file_denylist.*' => [['string']],
+        'docker_images' => ['required', 'array', 'min:1'],
+        'docker_images.*' => ['required', 'string'],
+        'startup' => ['required', 'nullable', 'string'],
+        'config_from' => ['sometimes', 'bail', 'nullable', 'numeric', 'exists:eggs,id'],
+        'config_stop' => ['required_without:config_from', 'nullable', 'string', 'max:255'],
+        'config_startup' => ['required_without:config_from', 'nullable', 'json'],
+        'config_logs' => ['required_without:config_from', 'nullable', 'json'],
+        'config_files' => ['required_without:config_from', 'nullable', 'json'],
+        'update_url' => ['sometimes', 'nullable', 'string'],
+        'force_outgoing_ip' => ['sometimes', 'boolean'],
     ];
 
     protected $attributes = [

@@ -50,18 +50,18 @@ class Backup extends Model implements Validatable
 
     protected $guarded = ['id', 'created_at', 'updated_at', 'deleted_at'];
 
-    /** @var array<string, string|string[]> */
+    /** @var array<array-key, string[]> */
     public static array $validationRules = [
-        'server_id' => 'bail|required|numeric|exists:servers,id',
-        'uuid' => 'required|uuid',
-        'is_successful' => 'boolean',
-        'is_locked' => 'boolean',
-        'name' => 'required|string',
-        'ignored_files' => 'array',
-        'disk' => 'required|string',
-        'checksum' => 'nullable|string',
-        'bytes' => 'numeric',
-        'upload_id' => 'nullable|string',
+        'server_id' => ['bail', 'required', 'numeric', 'exists:servers,id'],
+        'uuid' => ['required', 'uuid'],
+        'is_successful' => ['boolean'],
+        'is_locked' => ['boolean'],
+        'name' => ['required', 'string'],
+        'ignored_files' => ['array'],
+        'disk' => ['required', 'string'],
+        'checksum' => ['nullable', 'string'],
+        'bytes' => ['numeric'],
+        'upload_id' => ['nullable', 'string'],
     ];
 
     protected function casts(): array

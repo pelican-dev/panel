@@ -37,12 +37,12 @@ class Subuser extends Model implements Validatable
      */
     protected $guarded = ['id', 'created_at', 'updated_at'];
 
-    /** @var array<string, string|string[]> */
+    /** @var array<array-key, string[]> */
     public static array $validationRules = [
-        'user_id' => 'required|numeric|exists:users,id',
-        'server_id' => 'required|numeric|exists:servers,id',
-        'permissions' => 'nullable|array',
-        'permissions.*' => 'string',
+        'user_id' => ['required', 'numeric', 'exists:users,id'],
+        'server_id' => ['required', 'numeric', 'exists:servers,id'],
+        'permissions' => ['nullable', 'array'],
+        'permissions.*' => ['string'],
     ];
 
     protected function casts(): array
