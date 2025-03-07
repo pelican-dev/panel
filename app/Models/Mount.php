@@ -5,9 +5,7 @@ namespace App\Models;
 use App\Contracts\Validatable;
 use App\Traits\HasValidation;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Validation\Rules\NotIn;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
-use Spatie\LaravelData\Support\Validation\ValidationRule;
 
 /**
  * @property int $id
