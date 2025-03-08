@@ -7,6 +7,7 @@ use App\Services\Eggs\Sharing\EggImporterService;
 use Exception;
 use Filament\Actions\Action;
 use Filament\Forms\Components\FileUpload;
+use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Tabs;
 use Filament\Forms\Components\Tabs\Tab;
 use Filament\Forms\Components\TextInput;
@@ -44,11 +45,18 @@ class ImportEggAction extends Action
                     Tab::make(trans('admin/egg.import.url'))
                         ->icon('tabler-world-upload')
                         ->schema([
-                            TextInput::make('url')
-                                ->default(fn (Egg $egg) => $egg->update_url)
-                                ->label(trans('admin/egg.import.url'))
+                            Repeater::make('url')
+                                ->label('Egg')
                                 ->hint(trans('admin/egg.import.url_help'))
-                                ->url(),
+                                ->unique()
+                                ->reorderable(false)
+                                ->schema([
+                                    TextInput::make('url')
+                                        ->default(fn (Egg $egg) => $egg->update_url)
+                                        ->label(trans('admin/egg.import.url'))
+                                        ->placeholder('https://raw.githubusercontent.com/pelican-eggs/generic/main/nodejs/egg-node-js-generic.json')
+                                        ->url(),
+                                ]),
                         ]),
                 ]),
         ]);
@@ -56,15 +64,19 @@ class ImportEggAction extends Action
         $this->action(function (array $data, EggImporterService $eggImportService): void {
             try {
                 if (!empty($data['egg'])) {
-                    $eggFile = $data['egg'];
+                    $eggFiles = $data['egg'];
 
-                    foreach ($eggFile as $file) {
+                    foreach ($eggFiles as $file) {
                         $eggImportService->fromFile($file);
                     }
                 }
 
                 if (!empty($data['url'])) {
-                    $eggImportService->fromUrl($data['url']);
+                    $eggUrls = collect($data['url'])->flatten()->all();
+
+                    foreach ($eggUrls as $url) {
+                        $eggImportService->fromUrl($url);
+                    }
                 }
             } catch (Exception $exception) {
                 Notification::make()
