@@ -36,6 +36,7 @@ return [
     'disabled' => 'Disabled',
     'memory' => 'Memory',
     'memory_limit' => 'Memory Limit',
+    'memory_helper' => 'Wings will add overhead to this value when creating the container. <=2048MB = +10%, <=4069MB = +15%, anything else = +5%',
     'disk' => 'Disk Space',
     'disk_limit' => 'Disk Space Limit',
     'advanced_limits' => 'Advanced Limits',
