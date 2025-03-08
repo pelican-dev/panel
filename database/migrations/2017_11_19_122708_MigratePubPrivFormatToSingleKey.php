@@ -31,7 +31,7 @@ return new class extends Migration
         if (Schema::getConnection()->getDriverName() === 'sqlite') {
             Schema::table('api_keys', function (Blueprint $table) {
                 $table->dropColumn('public');
-                $table->char('secret', 32)->change();
+                $table->string('secret', 32)->change();
                 $table->renameColumn('secret', 'token');
                 $table->string('token', 32)->unique()->change();
             });
@@ -49,7 +49,7 @@ return new class extends Migration
         DB::statement('ALTER TABLE `api_keys` CHANGE `token` `secret` TEXT, DROP INDEX `api_keys_token_unique`');
 
         Schema::table('api_keys', function (Blueprint $table) {
-            $table->char('public', 16)->after('user_id');
+            $table->string('public', 16)->after('user_id');
         });
 
         DB::transaction(function () {
