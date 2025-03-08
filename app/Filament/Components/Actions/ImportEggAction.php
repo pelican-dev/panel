@@ -48,6 +48,7 @@ class ImportEggAction extends Action
                             Repeater::make('url')
                                 ->label('Egg')
                                 ->hint(trans('admin/egg.import.url_help'))
+                                ->addActionLabel(trans('admin/egg.import.add_url'))
                                 ->unique()
                                 ->reorderable(false)
                                 ->schema([
