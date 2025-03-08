@@ -248,7 +248,7 @@ jobs:
       SESSION_DRIVER: array
       QUEUE_CONNECTION: sync
       DB_CONNECTION: pgsql
-      DB_HOST: database
+      DB_HOST: 127.0.0.1
       DB_DATABASE: testing
       DB_USERNAME: postgres
       DB_PASSWORD: postgres
