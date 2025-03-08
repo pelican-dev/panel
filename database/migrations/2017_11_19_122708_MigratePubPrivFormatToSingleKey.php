@@ -35,8 +35,7 @@ return new class extends Migration
                 $table->renameColumn('secret', 'token');
                 $table->string('token', 32)->unique()->change();
             });
-        }
-        elseif (Schema::getConnection()->getDriverName() === 'pgsql') {
+        } elseif (Schema::getConnection()->getDriverName() === 'pgsql') {
             // Rename column 'secret' to 'token'
             DB::statement('ALTER TABLE api_keys RENAME COLUMN secret TO token');
 
@@ -47,8 +46,7 @@ return new class extends Migration
             // Add unique constraint on 'token'
             DB::statement('ALTER TABLE api_keys ADD CONSTRAINT api_keys_token_unique UNIQUE (token)');
 
-        }
-        else {
+        } else {
             DB::statement('ALTER TABLE `api_keys` CHANGE `secret` `token` CHAR(32) NOT NULL, ADD UNIQUE INDEX `api_keys_token_unique` (`token`(32))');
         }
 

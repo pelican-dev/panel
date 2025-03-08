@@ -15,8 +15,7 @@ return new class extends Migration
         Schema::table('schedules', function (Blueprint $table) {
             DB::table('schedules')
                 ->where('cron_month', '')
-                ->update(['cron_month' => '*'])
-            ;
+                ->update(['cron_month' => '*']);
         });
     }
 

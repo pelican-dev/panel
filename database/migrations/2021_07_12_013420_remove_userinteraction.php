@@ -13,13 +13,13 @@ return new class extends Migration
     {
         if (Schema::getConnection()->getDriverName() === 'pgsql') {
             DB::table('eggs')->update([
-                'config_startup' => DB::raw("config_startup::jsonb - 'userInteraction'")
+                'config_startup' => DB::raw("config_startup::jsonb - 'userInteraction'"),
             ]);
 
             return;
         }
 
-            // Remove User Interaction from startup config
+        // Remove User Interaction from startup config
         DB::table('eggs')->update([
             'config_startup' => DB::raw('JSON_REMOVE(config_startup, \'$.userInteraction\')'),
         ]);
