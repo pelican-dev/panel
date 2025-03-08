@@ -231,8 +231,12 @@ jobs:
           POSTGRES_PASSWORD: postgres
           POSTGRES_HOST_AUTH_METHOD: trust
         ports:
-          - 5432
-        options: --health-cmd="pg_isready" --health-interval=10s --health-timeout=5s --health-retries=3
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
     env:
       APP_ENV: testing
       APP_DEBUG: "false"
@@ -244,7 +248,7 @@ jobs:
       SESSION_DRIVER: array
       QUEUE_CONNECTION: sync
       DB_CONNECTION: pgsql
-      DB_HOST: 127.0.0.1
+      DB_HOST: database
       DB_DATABASE: testing
       DB_USERNAME: postgres
       DB_PASSWORD: postgres
@@ -276,9 +280,6 @@ jobs:
 
       - name: Install dependencies
         run: composer install --no-interaction --no-suggest --no-progress --no-scripts
-
-      - name: Create SQLite file
-        run: touch database/testing.sqlite
 
       - name: Unit tests
         run: vendor/bin/pest tests/Unit
