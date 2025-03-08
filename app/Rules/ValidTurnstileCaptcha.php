@@ -13,7 +13,7 @@ class ValidTurnstileCaptcha implements ValidationRule
         $response = CaptchaProvider::get('turnstile')->validateResponse($value);
 
         if (!$response['success']) {
-            $fail($response['message']);
+            $fail($response['message'] ?? 'Unknown error occurred, please try again');
         }
     }
 }
