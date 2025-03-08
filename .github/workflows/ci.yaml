@@ -265,3 +265,26 @@ jobs:
           path: ${{ steps.composer-cache.outputs.dir }}
           key: ${{ runner.os }}-composer-${{ matrix.php }}-${{ hashFiles('**/composer.lock') }}
           restore-keys: |
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+          extensions: bcmath, curl, gd, mbstring, mysql, openssl, pdo, tokenizer, xml, zip
+          tools: composer:v2
+          coverage: none
+
+      - name: Install dependencies
+        run: composer install --no-interaction --no-suggest --no-progress --no-scripts
+
+      - name: Create SQLite file
+        run: touch database/testing.sqlite
+
+      - name: Unit tests
+        run: vendor/bin/pest tests/Unit
+        env:
+          DB_HOST: UNIT_NO_DB
+          SKIP_MIGRATIONS: true
+
+      - name: Integration tests
+        run: vendor/bin/pest tests/Integration
