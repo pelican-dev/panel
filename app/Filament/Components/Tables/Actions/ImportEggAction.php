@@ -103,9 +103,10 @@ class ImportEggAction extends Action
                                 ->itemLabel(fn (array $state) => $state['url'] ? str($state['url'])->afterLast('/')->before('.json') : null)
                                 ->hint(trans('admin/egg.import.url_help'))
                                 ->addActionLabel(trans('admin/egg.import.add_url'))
-                                ->grid()
+                                ->grid($isMultiple ? 2 : null)
                                 ->reorderable(false)
                                 ->addable($isMultiple)
+                                ->deletable(fn (array $state) => count($state) > 1)
                                 ->schema([
                                     TextInput::make('url')
                                         ->default(fn (Egg $egg) => $egg->update_url)
