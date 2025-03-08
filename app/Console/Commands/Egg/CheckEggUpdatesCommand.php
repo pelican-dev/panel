@@ -39,7 +39,7 @@ class CheckEggUpdatesCommand extends Command
         $updatedJson = json_decode($updatedEgg);
         unset($updatedJson->exported_at);
 
-        if (md5((string) json_encode($currentJson)) === md5((string) json_encode($updatedJson))) {
+        if (md5(json_encode($currentJson, JSON_THROW_ON_ERROR)) === md5(json_encode($updatedJson, JSON_THROW_ON_ERROR))) {
             $this->info("$egg->name: Up-to-date");
             cache()->put("eggs.$egg->uuid.update", false, now()->addHour());
 
