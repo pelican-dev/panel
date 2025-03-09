@@ -107,10 +107,10 @@ class Permission extends Model implements Validatable
      */
     protected $guarded = ['id', 'created_at', 'updated_at'];
 
-    /** @var array<array-key, string|string[]> */
+    /** @var array<array-key, string[]> */
     public static array $validationRules = [
-        'subuser_id' => 'required|numeric|min:1',
-        'permission' => 'required|string',
+        'subuser_id' => ['required', 'numeric', 'min:1'],
+        'permission' => ['required', 'string'],
     ];
 
     /**

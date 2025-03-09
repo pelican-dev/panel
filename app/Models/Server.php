@@ -157,29 +157,29 @@ class Server extends Model implements Validatable
      */
     protected $guarded = ['id', self::CREATED_AT, self::UPDATED_AT, 'deleted_at', 'installed_at'];
 
-    /** @var array<array-key, string|string[]> */
+    /** @var array<array-key, string[]> */
     public static array $validationRules = [
-        'external_id' => 'sometimes|nullable|string|between:1,255|unique:servers',
-        'owner_id' => 'required|integer|exists:users,id',
-        'name' => 'required|string|min:1|max:255',
-        'node_id' => 'required|exists:nodes,id',
-        'description' => 'string',
-        'status' => 'nullable|string',
-        'memory' => 'required|numeric|min:0',
-        'swap' => 'required|numeric|min:-1',
-        'io' => 'required|numeric|between:0,1000',
-        'cpu' => 'required|numeric|min:0',
-        'threads' => 'nullable|regex:/^[0-9-,]+$/',
-        'oom_killer' => 'sometimes|boolean',
-        'disk' => 'required|numeric|min:0',
-        'allocation_id' => 'required|bail|unique:servers|exists:allocations,id',
-        'egg_id' => 'required|exists:eggs,id',
-        'startup' => 'required|string',
-        'skip_scripts' => 'sometimes|boolean',
-        'image' => 'required|string|max:255',
-        'database_limit' => 'present|nullable|integer|min:0',
-        'allocation_limit' => 'sometimes|nullable|integer|min:0',
-        'backup_limit' => 'present|nullable|integer|min:0',
+        'external_id' => ['sometimes', 'nullable', 'string', 'between:1,255', 'unique:servers'],
+        'owner_id' => ['required', 'integer', 'exists:users,id'],
+        'name' => ['required', 'string', 'min:1', 'max:255'],
+        'node_id' => ['required', 'exists:nodes,id'],
+        'description' => ['string'],
+        'status' => ['nullable', 'string'],
+        'memory' => ['required', 'numeric', 'min:0'],
+        'swap' => ['required', 'numeric', 'min:-1'],
+        'io' => ['required', 'numeric', 'between:0,1000'],
+        'cpu' => ['required', 'numeric', 'min:0'],
+        'threads' => ['nullable', 'regex:/^[0-9-,]+$/'],
+        'oom_killer' => ['sometimes', 'boolean'],
+        'disk' => ['required', 'numeric', 'min:0'],
+        'allocation_id' => ['required', 'bail', 'unique:servers', 'exists:allocations,id'],
+        'egg_id' => ['required', 'exists:eggs,id'],
+        'startup' => ['required', 'string'],
+        'skip_scripts' => ['sometimes', 'boolean'],
+        'image' => ['required', 'string', 'max:255'],
+        'database_limit' => ['present', 'nullable', 'integer', 'min:0'],
+        'allocation_limit' => ['sometimes', 'nullable', 'integer', 'min:0'],
+        'backup_limit' => ['present', 'nullable', 'integer', 'min:0'],
     ];
 
     protected function casts(): array
