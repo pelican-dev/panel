@@ -26,7 +26,8 @@ class AlertBannerContainer extends Component
 
     public function remove(string $id): void
     {
-        unset($this->alertBanners[$id]);
+        $alertBanners = &$this->alertBanners;
+        unset($alertBanners[$id]);
     }
 
     public function render(): View
