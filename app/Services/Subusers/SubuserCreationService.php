@@ -42,7 +42,8 @@ class SubuserCreationService
             if (!$user) {
                 // Just cap the username generated at 64 characters at most and then append a random string
                 // to the end to make it "unique"...
-                $username = substr(preg_replace('/([^\w\.-]+)/', '', strtok($email, '@')), 0, 64) . Str::random(3);
+                [$beforeDomain] = explode('@', $email, 1);
+                $username = substr(preg_replace('/([^\w.-]+)/', '', $beforeDomain), 0, 64) . Str::random(3);
 
                 $user = $this->userCreationService->handle([
                     'email' => $email,

@@ -35,6 +35,10 @@ trait EnvironmentWriterTrait
         }
 
         $saveContents = file_get_contents($path);
+        if ($saveContents === false) {
+            $saveContents = '';
+        }
+
         collect($values)->each(function ($value, $key) use (&$saveContents) {
             $key = strtoupper($key);
             $saveValue = sprintf('%s=%s', $key, $this->escapeEnvironmentValue($value ?? ''));

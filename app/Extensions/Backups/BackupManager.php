@@ -156,8 +156,9 @@ class BackupManager
      */
     public function forget(array|string $adapter): self
     {
+        $adapters = &$this->adapters;
         foreach ((array) $adapter as $adapterName) {
-            unset($this->adapters[$adapterName]);
+            unset($adapters[$adapterName]);
         }
 
         return $this;
