@@ -2,9 +2,9 @@
 
 namespace App\Filament\Pages\Auth;
 
+use App\Extensions\Captcha\Providers\CaptchaProvider;
 use App\Extensions\OAuth\Providers\OAuthProvider;
 use App\Models\User;
-use Coderflex\FilamentTurnstile\Forms\Components\Turnstile;
 use Filament\Facades\Filament;
 use Filament\Forms\Components\Actions;
 use Filament\Forms\Components\Actions\Action;
@@ -83,22 +83,22 @@ class Login extends BaseLogin
 
     protected function getForms(): array
     {
+        $schema = [
+            $this->getLoginFormComponent(),
+            $this->getPasswordFormComponent(),
+            $this->getRememberFormComponent(),
+            $this->getOAuthFormComponent(),
+            $this->getTwoFactorAuthenticationComponent(),
+        ];
+
+        if ($captchaProvider = $this->getCaptchaComponent()) {
+            $schema = array_merge($schema, [$captchaProvider]);
+        }
+
         return [
             'form' => $this->form(
                 $this->makeForm()
-                    ->schema([
-                        $this->getLoginFormComponent(),
-                        $this->getPasswordFormComponent(),
-                        $this->getRememberFormComponent(),
-                        $this->getOAuthFormComponent(),
-                        $this->getTwoFactorAuthenticationComponent(),
-                        Turnstile::make('captcha')
-                            ->hidden(!config('turnstile.turnstile_enabled'))
-                            ->validationMessages([
-                                'required' => config('turnstile.error_messages.turnstile_check_message'),
-                            ])
-                            ->view('filament.plugins.turnstile'),
-                    ])
+                    ->schema($schema)
                     ->statePath('data'),
             ),
         ];
@@ -111,6 +111,17 @@ class Login extends BaseLogin
             ->hidden(fn () => !$this->verifyTwoFactor)
             ->required()
             ->live();
+    }
+
+    private function getCaptchaComponent(): ?Component
+    {
+        $captchaProvider = collect(CaptchaProvider::get())->filter(fn (CaptchaProvider $provider) => $provider->isEnabled())->first();
+
+        if (!$captchaProvider) {
+            return null;
+        }
+
+        return $captchaProvider->getComponent();
     }
 
     protected function throwFailureValidationException(): never
