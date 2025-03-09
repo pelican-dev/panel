@@ -15,8 +15,8 @@ return new class extends Migration
             $table->increments('id');
             $table->boolean('authorized');
             $table->text('error')->nullable();
-            $table->char('key', 16)->nullable();
-            $table->char('method', 6);
+            $table->string('key', 16)->nullable();
+            $table->string('method', 6);
             $table->text('route');
             $table->text('content')->nullable();
             $table->text('user_agent');

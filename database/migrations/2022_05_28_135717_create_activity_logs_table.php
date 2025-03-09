@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('activity_logs', function (Blueprint $table) {
             $table->id();
-            $table->char('batch', 36)->nullable();
+            $table->string('batch', 36)->nullable();
             $table->string('event')->index();
             $table->string('ip');
             $table->text('description')->nullable();

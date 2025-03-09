@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('api_keys', function (Blueprint $table) {
-            if (Schema::getConnection()->getDriverName() !== 'sqlite') {
+            if (!in_array(Schema::getConnection()->getDriverName(), ['sqlite', 'pgsql'])) {
                 $table->dropForeign('api_keys_user_foreign');
                 $table->dropIndex('api_keys_user_foreign');
             }
@@ -28,7 +28,7 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('api_keys', function (Blueprint $table) {
-            if (Schema::getConnection()->getDriverName() !== 'sqlite') {
+            if (!in_array(Schema::getConnection()->getDriverName(), ['sqlite', 'pgsql'])) {
                 $table->dropForeign('api_keys_user_id_foreign');
                 $table->dropIndex('api_keys_user_id_foreign');
             }
