@@ -108,10 +108,7 @@ class EggImporterService
 
         try {
             $parsed = $file->getContent();
-            $reservedEnvNames = explode(',', EggVariable::RESERVED_ENV_NAMES);
-            $pattern = '/\b(' . implode('|', array_map('preg_quote', $reservedEnvNames)) . ')\b/';
-            preg_replace($pattern, 'SERVER_$1', $parsed);
-
+            $parsed = self::parseReservedEnvNames($parsed);
             $parsed = json_decode($parsed, true, 512, JSON_THROW_ON_ERROR);
         } catch (\JsonException $exception) {
             throw new InvalidFileUploadException('Could not read JSON file: ' . $exception->getMessage());
@@ -200,5 +197,13 @@ class EggImporterService
         }
 
         return $parsed;
+    }
+
+    public static function parseReservedEnvNames(string $parsed): string
+    {
+        $reservedEnvNames = explode(',', EggVariable::RESERVED_ENV_NAMES);
+        $pattern = '/\b(' . implode('|', array_map('preg_quote', $reservedEnvNames)) . ')\b/';
+
+        return preg_replace($pattern, 'SERVER_$1', $parsed);
     }
 }
