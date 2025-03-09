@@ -32,12 +32,27 @@ abstract class CaptchaProvider
             return;
         }
 
+        config()->set('captcha.' . Str::lower($this->getId()), $this->getConfig());
+
         static::$providers[$this->getId()] = $this;
     }
 
     abstract public function getId(): string;
 
     abstract public function getComponent(): Component;
+
+    /**
+     * @return array<string, string|string[]|bool|null>
+     */
+    public function getConfig(): array
+    {
+        $id = Str::upper($this->getId());
+
+        return [
+            'site_key' => env("CAPTCHA_{$id}_SITE_KEY"),
+            'secret_key' => env("CAPTCHA_{$id}_SECRET_KEY"),
+        ];
+    }
 
     /**
      * @return Component[]

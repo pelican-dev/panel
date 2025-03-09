@@ -24,6 +24,16 @@ class TurnstileProvider extends CaptchaProvider
     }
 
     /**
+     * @return array<string, string|string[]|bool|null>
+     */
+    public function getConfig(): array
+    {
+        return array_merge(parent::getConfig(), [
+            'verify_domain' => env('CAPTCHA_TURNSTILE_VERIFY_DOMAIN'),
+        ]);
+    }
+
+    /**
      * @return Component[]
      */
     public function getSettingsForm(): array
