@@ -387,19 +387,21 @@ class ListUsers extends ListRecords
                 ->action(function (array $data, SubuserCreationService $service) use ($server) {
                     $email = strtolower($data['email']);
 
-                    if (in_array('console', $data['control'])) {
-                        $data['websocket'][0] = 'connect';
-                    }
-
-                    $permissions = collect($data)->forget('email')->map(fn ($permissions, $key) => collect($permissions)->map(fn ($permission) => "$key.$permission"))->flatten()->all();
+                    $permissions = collect($data)
+                        ->forget('email')
+                        ->flatMap(fn ($permissions, $key) => collect($permissions)->map(fn ($permission) => "$key.$permission"))
+                        ->push(Permission::ACTION_WEBSOCKET_CONNECT)
+                        ->unique()
+                        ->all();
 
                     try {
-                        $service->handle($server, $email, $permissions);
+                        $subuser = $service->handle($server, $email, $permissions);
 
                         Activity::event('server:subuser.create')
-                            ->subject($data['email'])
+                            ->subject($subuser->user)
                             ->property([
                                 'email' => $data['email'],
+                                'permissions' => $permissions,
                             ]);
 
                         Notification::make()

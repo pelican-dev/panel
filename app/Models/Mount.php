@@ -5,7 +5,6 @@ namespace App\Models;
 use App\Contracts\Validatable;
 use App\Traits\HasValidation;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Validation\Rules\NotIn;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 /**
@@ -41,28 +40,27 @@ class Mount extends Model implements Validatable
     /**
      * Rules verifying that the data being stored matches the expectations of the database.
      *
-     * @var array<array-key, string|array<array-key, string>>
+     * @var array<array-key, string[]>
      */
     public static array $validationRules = [
-        'name' => 'required|string|min:2|max:64|unique:mounts,name',
-        'description' => 'nullable|string|max:255',
-        'source' => 'required|string',
-        'target' => 'required|string',
-        'read_only' => 'sometimes|boolean',
-        'user_mountable' => 'sometimes|boolean',
+        'name' => ['required', 'string', 'min:2', 'max:64', 'unique:mounts,name'],
+        'description' => ['nullable', 'string', 'max:255'],
+        'source' => ['required', 'string'],
+        'target' => ['required', 'string'],
+        'read_only' => ['sometimes', 'boolean'],
+        'user_mountable' => ['sometimes', 'boolean'],
     ];
 
     /**
      * Implement language verification by overriding Eloquence's gather rules function.
      *
-     * @return array<string|string[]>
+     * @return array<array-key, string[]>
      */
     public static function getRules(): array
     {
         $rules = self::getValidationRules();
-
-        $rules['source'][] = new NotIn(Mount::$invalidSourcePaths);
-        $rules['target'][] = new NotIn(Mount::$invalidTargetPaths);
+        $rules['source'][] = 'not_in:' . implode(',', Mount::$invalidSourcePaths);
+        $rules['target'][] = 'not_in:' . implode(',', Mount::$invalidTargetPaths);
 
         return $rules;
     }
