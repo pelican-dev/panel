@@ -364,6 +364,10 @@ class Node extends Model implements Validatable
         ];
 
         try {
+            (new DaemonConfigurationRepository())
+                ->setNode($this)
+                ->getSystemInformation();
+
             return Http::daemon($this)
                 ->connectTimeout(1)
                 ->timeout(1)
