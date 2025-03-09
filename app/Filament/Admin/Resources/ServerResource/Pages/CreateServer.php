@@ -551,6 +551,8 @@ class CreateServer extends CreateRecord
                                                 ->hidden(fn (Get $get) => $get('unlimited_mem'))
                                                 ->label(trans('admin/server.memory_limit'))->inlineLabel()
                                                 ->suffix(config('panel.use_binary_prefix') ? 'MiB' : 'MB')
+                                                ->hintIcon('tabler-question-mark')
+                                                ->hintIconToolTip(trans('admin/server.memory_helper'))
                                                 ->default(0)
                                                 ->required()
                                                 ->columnSpan(2)
