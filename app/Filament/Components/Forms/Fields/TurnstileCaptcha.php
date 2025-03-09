@@ -17,10 +17,10 @@ class TurnstileCaptcha extends Field
 
         $this->hiddenLabel();
 
-        $this->dehydrated(false);
-
         $this->required();
 
-        $this->after(fn (TurnstileCaptcha $component) => $component->rule(new ValidTurnstileCaptcha()));
+        $this->after(function (TurnstileCaptcha $component) {
+            $component->rule(new ValidTurnstileCaptcha());
+        });
     }
 }
