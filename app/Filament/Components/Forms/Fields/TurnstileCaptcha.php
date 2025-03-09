@@ -21,6 +21,6 @@ class TurnstileCaptcha extends Field
 
         $this->required();
 
-        $this->rule(new ValidTurnstileCaptcha());
+        $this->after(fn (TurnstileCaptcha $component) => $component->rule(new ValidTurnstileCaptcha()));
     }
 }
