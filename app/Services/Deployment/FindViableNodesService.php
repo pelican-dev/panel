@@ -29,7 +29,7 @@ class FindViableNodesService
             ->get();
 
         return $nodes
-            ->filter(fn (Node $node) => !tags || collect($node->tags)->intersect($tags)->isNotEmpty())
+            ->filter(fn (Node $node) => !$tags || collect($node->tags)->intersect($tags)->isNotEmpty())
             ->filter(fn (Node $node) => $node->isViable($memory, $disk, $cpu));
     }
 }
