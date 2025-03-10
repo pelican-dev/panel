@@ -27,6 +27,8 @@ class NodeDeploymentController extends ApplicationApiController
     {
         $data = $request->validated();
 
+        dump($data["tags"]); // Make sure tags are present
+
         $nodes = $this->viableNodesService->handle(
             $data['memory'] ?? 0,
             $data['disk'] ?? 0,

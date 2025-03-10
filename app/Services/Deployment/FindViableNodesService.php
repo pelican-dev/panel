@@ -19,6 +19,8 @@ class FindViableNodesService
      */
     public function handle(int $memory = 0, int $disk = 0, int $cpu = 0, array $tags = []): Collection
     {
+        dump($tags); // Verify that the tags are present
+
         $nodes = Node::query()
             ->withSum('servers', 'memory')
             ->withSum('servers', 'disk')
