@@ -155,7 +155,7 @@ class Server extends Model implements Validatable
     /**
      * Fields that are not mass assignable.
      */
-    protected $guarded = ['id', self::CREATED_AT, self::UPDATED_AT, 'deleted_at', 'installed_at'];
+    protected $guarded = ['id', self::CREATED_AT, self::UPDATED_AT, 'installed_at'];
 
     /** @var array<array-key, string[]> */
     public static array $validationRules = [
@@ -202,7 +202,6 @@ class Server extends Model implements Validatable
             'backup_limit' => 'integer',
             self::CREATED_AT => 'datetime',
             self::UPDATED_AT => 'datetime',
-            'deleted_at' => 'datetime',
             'installed_at' => 'datetime',
             'docker_labels' => 'array',
         ];
