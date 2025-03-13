@@ -11,7 +11,10 @@ class RolePermissionTransformer extends BaseTransformer
         return 'permissions';
     }
 
-    public function transform(Permission $model): array
+    /**
+     * @param  Permission  $model
+     */
+    public function transform($model): array
     {
         return [
             'name' => $model->name,

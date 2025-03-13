@@ -108,6 +108,10 @@ class UserResource extends Resource
                         $subuser = Subuser::query()->where('user_id', $user->id)->where('server_id', $server->id)->first();
                         $subuserDeletionService->handle($subuser, $server);
 
+                        Notification::make()
+                            ->title('User Deleted!')
+                            ->success()
+                            ->send();
                     }),
                 EditAction::make()
                     ->label('Edit User')
@@ -117,11 +121,13 @@ class UserResource extends Resource
                     ->action(function (array $data, SubuserUpdateService $subuserUpdateService, User $user) use ($server) {
                         $subuser = Subuser::query()->where('user_id', $user->id)->where('server_id', $server->id)->first();
 
-                        if (in_array('console', $data['control'])) {
-                            $data['websocket'][0] = 'connect';
-                        }
+                        $permissions = collect($data)
+                            ->forget('email')
+                            ->flatMap(fn ($permissions, $key) => collect($permissions)->map(fn ($permission) => "$key.$permission"))
+                            ->push(Permission::ACTION_WEBSOCKET_CONNECT)
+                            ->unique()
+                            ->all();
 
-                        $permissions = collect($data)->forget('email')->map(fn ($permissions, $key) => collect($permissions)->map(fn ($permission) => "$key.$permission"))->flatten()->all();
                         $subuserUpdateService->handle($subuser, $server, $permissions);
 
                         Notification::make()
@@ -458,7 +464,7 @@ class UserResource extends Resource
                                                             ->descriptions([
                                                                 'rename' => trans('server/users.permissions.setting_rename'),
                                                                 'reinstall' => trans('server/users.permissions.setting_reinstall'),
-                                                                'activity' => trans('server/users.permissions.setting_activity'),
+                                                                'activity' => trans('server/users.permissions.activity_desc'),
                                                             ]),
                                                     ]),
                                             ]),

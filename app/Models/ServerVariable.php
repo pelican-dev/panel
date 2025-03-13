@@ -29,10 +29,11 @@ class ServerVariable extends Model implements Validatable
 
     protected $guarded = ['id', 'created_at', 'updated_at'];
 
+    /** @var array<array-key, string[]> */
     public static array $validationRules = [
-        'server_id' => 'required|int',
-        'variable_id' => 'required|int',
-        'variable_value' => 'string',
+        'server_id' => ['required', 'int'],
+        'variable_id' => ['required', 'int'],
+        'variable_value' => ['string'],
     ];
 
     protected function casts(): array

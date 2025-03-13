@@ -2,25 +2,35 @@
 
 namespace App\Extensions\OAuth\Providers;
 
+use Filament\Forms\Components\Component;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Wizard\Step;
+use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Str;
 use SocialiteProviders\Manager\SocialiteWasCalled;
 
 abstract class OAuthProvider
 {
+    /**
+     * @var array<string, static>
+     */
     protected static array $providers = [];
 
+    /**
+     * @return self|static[]
+     */
     public static function get(?string $id = null): array|self
     {
         return $id ? static::$providers[$id] : static::$providers;
     }
 
-    protected function __construct()
+    protected function __construct(protected Application $app)
     {
         if (array_key_exists($this->getId(), static::$providers)) {
-            logger()->warning("Tried to create duplicate OAuth provider with id '{$this->getId()}'");
+            if (!$this->app->runningUnitTests()) {
+                logger()->warning("Tried to create duplicate OAuth provider with id '{$this->getId()}'");
+            }
 
             return;
         }
@@ -43,6 +53,9 @@ abstract class OAuthProvider
         return null;
     }
 
+    /**
+     * @return array<string, string|string[]|bool|null>
+     */
     public function getServiceConfig(): array
     {
         $id = Str::upper($this->getId());
@@ -53,6 +66,9 @@ abstract class OAuthProvider
         ];
     }
 
+    /**
+     * @return Component[]
+     */
     public function getSettingsForm(): array
     {
         $id = Str::upper($this->getId());
@@ -79,6 +95,9 @@ abstract class OAuthProvider
         ];
     }
 
+    /**
+     * @return Step[]
+     */
     public function getSetupSteps(): array
     {
         return [

@@ -17,7 +17,7 @@ class ProcessWebhooksTest extends TestCase
 {
     use LazilyRefreshDatabase;
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
         Http::preventStrayRequests();
@@ -77,7 +77,7 @@ class ProcessWebhooksTest extends TestCase
         });
     }
 
-    public function test_sends_multiple_webhooks()
+    public function test_sends_multiple_webhooks(): void
     {
         [$webhook1, $webhook2] = WebhookConfiguration::factory(2)
             ->create(['events' => [$eventName = 'eloquent.created: '.Server::class]]);
@@ -98,7 +98,7 @@ class ProcessWebhooksTest extends TestCase
         Http::assertSent(fn (Request $request) => $webhook2->endpoint === $request->url());
     }
 
-    public function test_it_sends_no_webhooks()
+    public function test_it_sends_no_webhooks(): void
     {
         Http::fake();
 
@@ -109,7 +109,7 @@ class ProcessWebhooksTest extends TestCase
         Http::assertSentCount(0);
     }
 
-    public function test_it_sends_some_webhooks()
+    public function test_it_sends_some_webhooks(): void
     {
         [$webhook1, $webhook2] = WebhookConfiguration::factory(2)
             ->sequence(
@@ -129,7 +129,7 @@ class ProcessWebhooksTest extends TestCase
         Http::assertNotSent(fn (Request $request) => $webhook2->endpoint === $request->url());
     }
 
-    public function test_it_records_when_a_webhook_is_sent()
+    public function test_it_records_when_a_webhook_is_sent(): void
     {
         $webhookConfig = WebhookConfiguration::factory()
             ->create(['events' => ['eloquent.created: '.Server::class]]);
@@ -152,7 +152,7 @@ class ProcessWebhooksTest extends TestCase
         ]);
     }
 
-    public function test_it_records_when_a_webhook_fails()
+    public function test_it_records_when_a_webhook_fails(): void
     {
         $webhookConfig = WebhookConfiguration::factory()->create([
             'events' => ['eloquent.created: '.Server::class],
@@ -173,7 +173,7 @@ class ProcessWebhooksTest extends TestCase
         ]);
     }
 
-    public function test_it_is_triggered_on_custom_events()
+    public function test_it_is_triggered_on_custom_events(): void
     {
         $webhookConfig = WebhookConfiguration::factory()->create([
             'events' => [Installed::class],

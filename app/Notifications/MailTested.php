@@ -10,6 +10,9 @@ class MailTested extends Notification
 {
     public function __construct(private User $user) {}
 
+    /**
+     * @return string[]
+     */
     public function via(): array
     {
         return ['mail'];

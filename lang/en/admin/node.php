@@ -4,7 +4,6 @@ return [
     'nav_title' => 'Nodes',
     'model_label' => 'Node',
     'model_label_plural' => 'Nodes',
-    'create_action' => ':action Node',
     'tabs' => [
         'overview' => 'Overview',
         'basic_settings' => 'Basic Settings',
@@ -53,6 +52,10 @@ return [
 
     'tags' => 'Tags',
     'upload_limit' => 'Upload Limit',
+    'upload_limit_help' => [
+        'Enter the maximum size of files that can be uploaded through the web-based file manager.',
+        'Make sure your webserver supports file uploads of this size!',
+    ],
     'sftp_port' => 'SFTP Port',
     'sftp_alias' => 'SFTP Alias',
     'sftp_alias_help' => 'Display alias for the SFTP address. Leave empty to use the Node FQDN.',
@@ -95,11 +98,11 @@ return [
 
     'next_step' => 'Next Step',
     'node_has_servers' => 'Node Has Servers',
-    'create_allocations' => 'Create Allocations',
+    'create_allocation' => 'Create Allocation',
     'primary_allocation' => 'Primary Allocation',
     'databases' => 'Databases',
     'backups' => 'Backups',
 
-    'error_connecting' => 'Error connecting to the node',
+    'error_connecting' => 'Error connecting to :node',
     'error_connecting_description' => 'The configuration could not be automatically updated on Wings, you will need to manually update the configuration file.',
 ];

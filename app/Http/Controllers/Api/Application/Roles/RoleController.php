@@ -17,7 +17,11 @@ use App\Http\Requests\Api\Application\Roles\UpdateRoleRequest;
 class RoleController extends ApplicationApiController
 {
     /**
+     * List roles
+     *
      * Return all the roles currently registered on the Panel.
+     *
+     * @return array<array-key, mixed>
      */
     public function index(GetRoleRequest $request): array
     {
@@ -32,7 +36,11 @@ class RoleController extends ApplicationApiController
     }
 
     /**
+     * View role
+     *
      * Return a single role.
+     *
+     * @return array<array-key, mixed>
      */
     public function view(GetRoleRequest $request, Role $role): array
     {
@@ -42,6 +50,8 @@ class RoleController extends ApplicationApiController
     }
 
     /**
+     * Create role
+     *
      * Store a new role on the Panel and return an HTTP/201 response code with the
      * new role attached.
      *
@@ -62,7 +72,11 @@ class RoleController extends ApplicationApiController
     }
 
     /**
+     * Update role
+     *
      * Update a role on the Panel and return the updated record to the user.
+     *
+     * @return array<array-key, mixed>
      *
      * @throws \Throwable
      */
@@ -80,6 +94,8 @@ class RoleController extends ApplicationApiController
     }
 
     /**
+     * Delete role
+     *
      * Delete a role from the Panel.
      *
      * @throws \Exception

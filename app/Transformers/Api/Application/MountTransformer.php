@@ -24,7 +24,10 @@ class MountTransformer extends BaseTransformer
         return Mount::RESOURCE_NAME;
     }
 
-    public function transform(Mount $model): array
+    /**
+     * @param  Mount  $model
+     */
+    public function transform($model): array
     {
         return $model->toArray();
     }

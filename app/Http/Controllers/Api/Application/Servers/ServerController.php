@@ -14,7 +14,9 @@ use App\Http\Requests\Api\Application\Servers\GetServersRequest;
 use App\Http\Requests\Api\Application\Servers\ServerWriteRequest;
 use App\Http\Requests\Api\Application\Servers\StoreServerRequest;
 use App\Http\Controllers\Api\Application\ApplicationApiController;
+use Dedoc\Scramble\Attributes\Group;
 
+#[Group('Server', weight: 0)]
 class ServerController extends ApplicationApiController
 {
     /**
@@ -28,7 +30,11 @@ class ServerController extends ApplicationApiController
     }
 
     /**
+     * List servers
+     *
      * Return all the servers that currently exist on the Panel.
+     *
+     * @return array<array-key, mixed>
      */
     public function index(GetServersRequest $request): array
     {
@@ -43,6 +49,8 @@ class ServerController extends ApplicationApiController
     }
 
     /**
+     * Create server
+     *
      * Create a new server on the system.
      *
      * @throws \Throwable
@@ -61,7 +69,11 @@ class ServerController extends ApplicationApiController
     }
 
     /**
+     * View server
+     *
      * Show a single server transformed for the application API.
+     *
+     * @return array<array-key, mixed>
      */
     public function view(GetServerRequest $request, Server $server): array
     {
@@ -71,6 +83,8 @@ class ServerController extends ApplicationApiController
     }
 
     /**
+     * Delete server
+     *
      * Deletes a server.
      *
      * @throws \App\Exceptions\DisplayException

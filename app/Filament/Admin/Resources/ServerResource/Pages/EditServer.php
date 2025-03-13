@@ -2,11 +2,10 @@
 
 namespace App\Filament\Admin\Resources\ServerResource\Pages;
 
-use App\Enums\ContainerStatus;
-use App\Enums\ServerState;
 use App\Enums\SuspendAction;
 use App\Filament\Admin\Resources\ServerResource;
 use App\Filament\Admin\Resources\ServerResource\RelationManagers\AllocationsRelationManager;
+use App\Filament\Components\Forms\Actions\PreviewStartupAction;
 use App\Filament\Components\Forms\Actions\RotateDatabasePasswordAction;
 use App\Filament\Server\Pages\Console;
 use App\Models\Database;
@@ -16,6 +15,7 @@ use App\Models\Mount;
 use App\Models\Server;
 use App\Models\ServerVariable;
 use App\Models\User;
+use App\Repositories\Daemon\DaemonServerRepository;
 use App\Services\Databases\DatabaseManagementService;
 use App\Services\Eggs\EggChangerService;
 use App\Services\Servers\RandomWordService;
@@ -49,6 +49,8 @@ use Filament\Forms\Set;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\EditRecord;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Support\Facades\Validator;
 use LogicException;
 use Webbingbrasil\FilamentCopyActions\Forms\Actions\CopyAction;
@@ -56,6 +58,15 @@ use Webbingbrasil\FilamentCopyActions\Forms\Actions\CopyAction;
 class EditServer extends EditRecord
 {
     protected static string $resource = ServerResource::class;
+
+    private bool $errored = false;
+
+    private DaemonServerRepository $daemonServerRepository;
+
+    public function boot(DaemonServerRepository $daemonServerRepository): void
+    {
+        $this->daemonServerRepository = $daemonServerRepository;
+    }
 
     public function form(Form $form): Form
     {
@@ -107,23 +118,16 @@ class EditServer extends EditRecord
                                     ])
                                     ->relationship('user', 'username')
                                     ->searchable(['username', 'email'])
-                                    ->getOptionLabelFromRecordUsing(fn (User $user) => "$user->email | $user->username " . (blank($user->roles) ? '' : '(' . $user->roles->first()->name . ')'))
+                                    ->getOptionLabelFromRecordUsing(fn (User $user) => "$user->username ($user->email)")
                                     ->preload()
                                     ->required(),
 
                                 ToggleButtons::make('condition')
                                     ->label(trans('admin/server.server_status'))
                                     ->formatStateUsing(fn (Server $server) => $server->condition)
-                                    ->options(fn ($state) => collect(array_merge(ContainerStatus::cases(), ServerState::cases()))
-                                        ->filter(fn ($condition) => $condition->value === $state)
-                                        ->mapWithKeys(fn ($state) => [$state->value => str($state->value)->replace('_', ' ')->ucwords()])
-                                    )
-                                    ->colors(collect(array_merge(ContainerStatus::cases(), ServerState::cases()))->mapWithKeys(
-                                        fn ($status) => [$status->value => $status->color()]
-                                    ))
-                                    ->icons(collect(array_merge(ContainerStatus::cases(), ServerState::cases()))->mapWithKeys(
-                                        fn ($status) => [$status->value => $status->icon()]
-                                    ))
+                                    ->options(fn ($state) => [$state->value => $state->getLabel()])
+                                    ->colors(fn ($state) => [$state->value => $state->getColor()])
+                                    ->icons(fn ($state) => [$state->value => $state->getIcon()])
                                     ->columnSpan([
                                         'default' => 2,
                                         'sm' => 1,
@@ -165,7 +169,7 @@ class EditServer extends EditRecord
                                         'md' => 2,
                                         'lg' => 3,
                                     ])
-                                    ->unique()
+                                    ->unique(ignoreRecord: true)
                                     ->maxLength(255),
                                 Select::make('node_id')
                                     ->label(trans('admin/server.node'))
@@ -194,6 +198,7 @@ class EditServer extends EditRecord
                                             ->columnSpanFull()
                                             ->schema([
                                                 ToggleButtons::make('unlimited_cpu')
+                                                    ->dehydrated()
                                                     ->label(trans('admin/server.cpu'))->inlineLabel()->inline()
                                                     ->afterStateUpdated(fn (Set $set) => $set('cpu', 0))
                                                     ->formatStateUsing(fn (Get $get) => $get('cpu') == 0)
@@ -223,6 +228,7 @@ class EditServer extends EditRecord
                                             ->columnSpanFull()
                                             ->schema([
                                                 ToggleButtons::make('unlimited_mem')
+                                                    ->dehydrated()
                                                     ->label(trans('admin/server.memory'))->inlineLabel()->inline()
                                                     ->afterStateUpdated(fn (Set $set) => $set('memory', 0))
                                                     ->formatStateUsing(fn (Get $get) => $get('memory') == 0)
@@ -253,6 +259,7 @@ class EditServer extends EditRecord
                                             ->columnSpanFull()
                                             ->schema([
                                                 ToggleButtons::make('unlimited_disk')
+                                                    ->dehydrated()
                                                     ->label(trans('admin/server.disk'))->inlineLabel()->inline()
                                                     ->live()
                                                     ->afterStateUpdated(fn (Set $set) => $set('disk', 0))
@@ -387,9 +394,6 @@ class EditServer extends EditRecord
                                                         false => 'success',
                                                         true => 'danger',
                                                     ]),
-
-                                                TextInput::make('oom_disabled_hidden')
-                                                    ->hidden(),
                                             ]),
                                     ]),
 
@@ -507,7 +511,7 @@ class EditServer extends EditRecord
                                     ->required()
                                     ->hintAction(
                                         Action::make('change_egg')
-                                            ->label('admin/server.change_egg')
+                                            ->label(trans('admin/server.change_egg'))
                                             ->action(function (array $data, Server $server, EggChangerService $service) {
                                                 $service->handle($server, $data['egg_id'], $data['keepOldVariables']);
 
@@ -549,12 +553,14 @@ class EditServer extends EditRecord
                                         true => 'tabler-code-off',
                                     ])
                                     ->required(),
-
+                                Hidden::make('previewing')
+                                    ->default(false),
                                 Textarea::make('startup')
                                     ->label(trans('admin/server.startup_cmd'))
                                     ->required()
                                     ->columnSpan(6)
-                                    ->autosize(),
+                                    ->autosize()
+                                    ->hintAction(PreviewStartupAction::make('preview')),
 
                                 Textarea::make('defaultStartup')
                                     ->hintAction(fn () => request()->isSecure() ? CopyAction::make() : null)
@@ -658,11 +664,17 @@ class EditServer extends EditRecord
                                     ->helperText(fn (Server $server) => $server->databases->isNotEmpty() ? '' : trans('admin/server.no_databases'))
                                     ->columns(2)
                                     ->schema([
+                                        TextInput::make('host')
+                                            ->label(trans('admin/databasehost.table.host'))
+                                            ->disabled()
+                                            ->formatStateUsing(fn ($record) => $record->address())
+                                            ->suffixAction(fn (string $state) => request()->isSecure() ? CopyAction::make()->copyable($state) : null)
+                                            ->columnSpan(1),
                                         TextInput::make('database')
-                                            ->columnSpan(2)
-                                            ->label(trans('admin/server.name'))
+                                            ->label(trans('admin/databasehost.table.database'))
                                             ->disabled()
                                             ->formatStateUsing(fn ($record) => $record->database)
+                                            ->suffixAction(fn (string $state) => request()->isSecure() ? CopyAction::make()->copyable($state) : null)
                                             ->hintAction(
                                                 Action::make('Delete')
                                                     ->label(trans('filament-actions::delete.single.modal.actions.delete.label'))
@@ -683,6 +695,7 @@ class EditServer extends EditRecord
                                             ->label(trans('admin/databasehost.table.username'))
                                             ->disabled()
                                             ->formatStateUsing(fn ($record) => $record->username)
+                                            ->suffixAction(fn (string $state) => request()->isSecure() ? CopyAction::make()->copyable($state) : null)
                                             ->columnSpan(1),
                                         TextInput::make('password')
                                             ->label(trans('admin/databasehost.table.password'))
@@ -691,6 +704,7 @@ class EditServer extends EditRecord
                                             ->revealable()
                                             ->columnSpan(1)
                                             ->hintAction(RotateDatabasePasswordAction::make())
+                                            ->suffixAction(fn (string $state) => request()->isSecure() ? CopyAction::make()->copyable($state) : null)
                                             ->formatStateUsing(fn (Database $database) => $database->password),
                                         TextInput::make('remote')
                                             ->disabled()
@@ -708,7 +722,8 @@ class EditServer extends EditRecord
                                             ->revealable()
                                             ->label(trans('admin/databasehost.table.connection_string'))
                                             ->columnSpan(2)
-                                            ->formatStateUsing(fn (Database $record) => $record->jdbc),
+                                            ->formatStateUsing(fn (Database $record) => $record->jdbc)
+                                            ->suffixAction(fn (string $state) => request()->isSecure() ? CopyAction::make()->copyable($state) : null),
                                     ])
                                     ->relationship('databases')
                                     ->deletable(false)
@@ -841,7 +856,7 @@ class EditServer extends EditRecord
                                                 Forms\Components\Actions::make([
                                                     Action::make('transfer')
                                                         ->label(trans('admin/server.transfer'))
-                                                        ->action(fn (TransferServerService $transfer, Server $server) => $transfer->handle($server, []))
+                                                        // ->action(fn (TransferServerService $transfer, Server $server) => $transfer->handle($server, []))
                                                         ->disabled() //TODO!
                                                         ->form([ //TODO!
                                                             Select::make('newNode')
@@ -944,6 +959,41 @@ class EditServer extends EditRecord
         return $data;
     }
 
+    protected function handleRecordUpdate(Model $record, array $data): Model
+    {
+        if (!$record instanceof Server) {
+            return $record;
+        }
+
+        /** @var Server $record */
+        $record = parent::handleRecordUpdate($record, $data);
+
+        try {
+            $this->daemonServerRepository->setServer($record)->sync();
+        } catch (ConnectionException) {
+            $this->errored = true;
+
+            Notification::make()
+                ->title(trans('admin/server.notifications.error_connecting', ['node' => $record->node->name]))
+                ->body(trans('admin/server.notifications.error_connecting_description'))
+                ->color('warning')
+                ->icon('tabler-database')
+                ->warning()
+                ->send();
+        }
+
+        return $record;
+    }
+
+    protected function getSavedNotification(): ?Notification
+    {
+        if ($this->errored) {
+            return null;
+        }
+
+        return parent::getSavedNotification();
+    }
+
     public function getRelationManagers(): array
     {
         return [
@@ -966,6 +1016,9 @@ class EditServer extends EditRecord
         throw new Exception('Component type not supported: ' . $component::class);
     }
 
+    /**
+     * @return array<string, string>
+     */
     private function getSelectOptionsFromRules(ServerVariable $serverVariable): array
     {
         $inRule = array_first($serverVariable->variable->rules, fn ($value) => str($value)->startsWith('in:'));

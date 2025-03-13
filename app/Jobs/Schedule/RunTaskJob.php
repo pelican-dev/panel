@@ -8,7 +8,6 @@ use App\Models\Task;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Foundation\Bus\DispatchesJobs;
 use App\Services\Backups\InitiateBackupService;
 use App\Repositories\Daemon\DaemonPowerRepository;
 use App\Services\Files\DeleteFilesService;
@@ -17,7 +16,6 @@ use Illuminate\Http\Client\ConnectionException;
 
 class RunTaskJob extends Job implements ShouldQueue
 {
-    use DispatchesJobs;
     use InteractsWithQueue;
     use SerializesModels;
 
@@ -113,7 +111,7 @@ class RunTaskJob extends Job implements ShouldQueue
 
         $nextTask->update(['is_queued' => true]);
 
-        $this->dispatch((new self($nextTask, $this->manualRun))->delay($nextTask->time_offset));
+        dispatch((new self($nextTask, $this->manualRun))->delay($nextTask->time_offset));
     }
 
     /**

@@ -25,7 +25,7 @@ class ProcessRunnableCommand extends Command
             ->get();
 
         if ($schedules->count() < 1) {
-            $this->line(__('commands.schedule.process.no_tasks'));
+            $this->line(trans('commands.schedule.process.no_tasks'));
 
             return 0;
         }
@@ -64,7 +64,7 @@ class ProcessRunnableCommand extends Command
         } catch (Throwable $exception) {
             logger()->error($exception, ['schedule_id' => $schedule->id]);
 
-            $this->error(__('commands.schedule.process.no_tasks') . " #$schedule->id: " . $exception->getMessage());
+            $this->error(trans('commands.schedule.process.no_tasks') . " #$schedule->id: " . $exception->getMessage());
         }
     }
 }

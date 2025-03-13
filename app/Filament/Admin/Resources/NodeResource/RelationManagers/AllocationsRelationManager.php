@@ -55,7 +55,7 @@ class AllocationsRelationManager extends RelationManager
                     ->toggledHiddenByDefault(),
                 TextColumn::make('port')
                     ->searchable()
-                    ->label(trans('admin/node.table.servers')),
+                    ->label(trans('admin/node.ports')),
                 TextColumn::make('server.name')
                     ->label(trans('admin/node.table.servers'))
                     ->icon('tabler-brand-docker')
@@ -73,7 +73,7 @@ class AllocationsRelationManager extends RelationManager
             ])
             ->headerActions([
                 Tables\Actions\Action::make('create new allocation')
-                    ->label(trans('admin/node.create_allocations'))
+                    ->label(trans('admin/node.create_allocation'))
                     ->form(fn () => [
                         Select::make('allocation_ip')
                             ->options(collect($this->getOwnerRecord()->ipAddresses())->mapWithKeys(fn (string $ip) => [$ip => $ip]))
@@ -107,7 +107,7 @@ class AllocationsRelationManager extends RelationManager
             ->bulkActions([
                 BulkActionGroup::make([
                     DeleteBulkAction::make()
-                        ->authorize(fn () => auth()->user()->can('delete allocation')),
+                        ->authorize(fn () => auth()->user()->can('update node')),
                 ]),
             ]);
     }

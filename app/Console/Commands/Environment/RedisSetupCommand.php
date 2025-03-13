@@ -20,8 +20,6 @@ class RedisSetupCommand extends Command
                             {--redis-pass= : Password used to connect to redis.}
                             {--redis-port= : Port to connect to redis over.}';
 
-    protected array $variables = [];
-
     /**
      * RedisSetupCommand constructor.
      */

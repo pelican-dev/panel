@@ -1,7 +1,6 @@
 <?php
 
 return [
-    'create_action' => ':action Server',
     'nav_title' => 'Servers',
     'model_label' => 'Server',
     'model_label_plural' => 'Servers',
@@ -30,7 +29,7 @@ return [
     'resource_limits' => 'Resource Limits',
     'cpu' => 'CPU',
     'cpu_limit' => 'CPU Limit',
-    'cpu_helper' => '100% equals one CPU core.',
+    'cpu_helper' => '100% equals one CPU thread.',
     'unlimited' => 'Unlimited',
     'limited' => 'Limited',
     'enabled' => 'Enabled',
@@ -95,6 +94,7 @@ return [
     'change_egg' => 'Change Egg',
     'new_egg' => 'New Egg',
     'keep_old_variables' => 'Keep old variables if possible?',
+    'create_allocation' => 'Create Allocation',
     'add_allocation' => 'Add Allocation',
     'view' => 'View',
     'tabs' => [
@@ -117,5 +117,7 @@ return [
         'invalid_port_body' => ':i is not in the valid port range between :portFloor-:portCeil',
         'already_exists' => 'Port already in use',
         'already_exists_body' => ':i is already with an allocation',
+        'error_connecting' => 'Error connecting to :node',
+        'error_connecting_description' => 'The configuration could not be automatically synced on Wings, you will need to manually restart the server.',
     ],
 ];

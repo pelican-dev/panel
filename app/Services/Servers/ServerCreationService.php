@@ -39,6 +39,15 @@ class ServerCreationService
      * as possible given the input data. For example, if an allocation_id is passed with
      * no node_id the node_is will be picked from the allocation.
      *
+     * @param array{
+     *     oom_killer?: bool,
+     *     oom_disabled?: bool,
+     *     egg_id?: int,
+     *     image?: ?string,
+     *     startup?: ?string,
+     *     start_on_completion?: ?bool,
+     * } $data
+     *
      * @throws \Throwable
      * @throws \App\Exceptions\DisplayException
      * @throws \Illuminate\Validation\ValidationException
@@ -109,6 +118,8 @@ class ServerCreationService
     /**
      * Gets an allocation to use for automatic deployment.
      *
+     * @param  array{memory?: ?int, disk?: ?int, cpu?: ?int, tags?: ?string[]}  $data
+     *
      * @throws \App\Exceptions\DisplayException
      * @throws \App\Exceptions\Service\Deployment\NoViableAllocationException
      */
@@ -129,6 +140,8 @@ class ServerCreationService
 
     /**
      * Store the server in the database and return the model.
+     *
+     * @param  array<array-key, mixed>  $data
      *
      * @throws \App\Exceptions\Model\DataValidationException
      */
@@ -166,11 +179,13 @@ class ServerCreationService
 
     /**
      * Configure the allocations assigned to this server.
+     *
+     * @param  array{allocation_id: int, allocation_additional?: ?int[]}  $data
      */
     private function storeAssignedAllocations(Server $server, array $data): void
     {
         $records = [$data['allocation_id']];
-        if (isset($data['allocation_additional']) && is_array($data['allocation_additional'])) {
+        if (isset($data['allocation_additional'])) {
             $records = array_merge($records, $data['allocation_additional']);
         }
 

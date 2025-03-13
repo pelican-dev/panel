@@ -16,28 +16,37 @@ class CheckEggUpdatesCommand extends Command
         $eggs = Egg::all();
         foreach ($eggs as $egg) {
             try {
-                if (is_null($egg->update_url)) {
-                    $this->comment("{$egg->name}: Skipping (no update url set)");
-
-                    continue;
-                }
-
-                $currentJson = json_decode($exporterService->handle($egg->id));
-                unset($currentJson->exported_at);
-
-                $updatedJson = json_decode(file_get_contents($egg->update_url));
-                unset($updatedJson->exported_at);
-
-                if (md5(json_encode($currentJson)) === md5(json_encode($updatedJson))) {
-                    $this->info("{$egg->name}: Up-to-date");
-                    cache()->put("eggs.{$egg->uuid}.update", false, now()->addHour());
-                } else {
-                    $this->warn("{$egg->name}: Found update");
-                    cache()->put("eggs.{$egg->uuid}.update", true, now()->addHour());
-                }
+                $this->check($egg, $exporterService);
             } catch (Exception $exception) {
                 $this->error("{$egg->name}: Error ({$exception->getMessage()})");
             }
         }
+    }
+
+    private function check(Egg $egg, EggExporterService $exporterService): void
+    {
+        if (is_null($egg->update_url)) {
+            $this->comment("$egg->name: Skipping (no update url set)");
+
+            return;
+        }
+
+        $currentJson = json_decode($exporterService->handle($egg->id));
+        unset($currentJson->exported_at);
+
+        $updatedEgg = file_get_contents($egg->update_url);
+        assert($updatedEgg !== false);
+        $updatedJson = json_decode($updatedEgg);
+        unset($updatedJson->exported_at);
+
+        if (md5(json_encode($currentJson, JSON_THROW_ON_ERROR)) === md5(json_encode($updatedJson, JSON_THROW_ON_ERROR))) {
+            $this->info("$egg->name: Up-to-date");
+            cache()->put("eggs.$egg->uuid.update", false, now()->addHour());
+
+            return;
+        }
+
+        $this->warn("$egg->name: Found update");
+        cache()->put("eggs.$egg->uuid.update", true, now()->addHour());
     }
 }

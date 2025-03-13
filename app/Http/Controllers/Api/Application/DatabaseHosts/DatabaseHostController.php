@@ -28,7 +28,11 @@ class DatabaseHostController extends ApplicationApiController
     }
 
     /**
+     * List database hosts
+     *
      * Return all the database hosts currently registered on the Panel.
+     *
+     * @return array<mixed>
      */
     public function index(GetDatabaseHostRequest $request): array
     {
@@ -43,7 +47,11 @@ class DatabaseHostController extends ApplicationApiController
     }
 
     /**
+     * View database host
+     *
      * Return a single database host.
+     *
+     * @return array<mixed>
      */
     public function view(GetDatabaseHostRequest $request, DatabaseHost $databaseHost): array
     {
@@ -53,6 +61,8 @@ class DatabaseHostController extends ApplicationApiController
     }
 
     /**
+     * Create database host
+     *
      * Store a new database host on the Panel and return an HTTP/201 response code with the
      * new database host attached.
      *
@@ -73,7 +83,11 @@ class DatabaseHostController extends ApplicationApiController
     }
 
     /**
+     * Update database host
+     *
      * Update a database host on the Panel and return the updated record to the user.
+     *
+     * @return array<mixed>
      *
      * @throws \Throwable
      */
@@ -87,6 +101,8 @@ class DatabaseHostController extends ApplicationApiController
     }
 
     /**
+     * Delete database host
+     *
      * Delete a database host from the Panel.
      *
      * @throws \Exception

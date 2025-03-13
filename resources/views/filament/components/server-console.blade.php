@@ -13,7 +13,7 @@
 
     @if ($this->authorizeSendCommand())
         <div class="flex items-center w-full border-top overflow-hidden dark:bg-gray-900"
-            style="border-bottom-right-radius: 10px; border-bottom-left-radius: 10px;">
+             style="border-bottom-right-radius: 10px; border-bottom-left-radius: 10px;">
             <x-filament::icon
                 icon="tabler-chevrons-right"
             />
@@ -56,10 +56,11 @@
         };
 
         let options = {
-            fontSize: 16,
+            fontSize: 14,
+            lineHeight: 1.2,
             disableStdin: true,
             cursorStyle: 'underline',
-            cursorInactiveStyle: 'none',
+            cursorInactiveStyle: 'underline',
             allowTransparency: true,
             rows: 30,
             theme: theme

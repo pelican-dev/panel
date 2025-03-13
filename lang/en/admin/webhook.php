@@ -1,7 +1,6 @@
 <?php
 
 return [
-    'create_action' => ':action Webhook',
     'nav_title' => 'Webhooks',
     'model_label' => 'Webhook',
     'model_label_plural' => 'Webhooks',

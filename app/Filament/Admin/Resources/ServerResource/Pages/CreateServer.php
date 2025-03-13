@@ -102,12 +102,13 @@ class CreateServer extends CreateRecord
                                     'sm' => 2,
                                     'md' => 2,
                                 ])
-                                ->unique()
+                                ->unique(ignoreRecord: true)
                                 ->maxLength(255),
 
                             Select::make('node_id')
                                 ->disabledOn('edit')
                                 ->prefixIcon('tabler-server-2')
+                                ->selectablePlaceholder(false)
                                 ->default(fn () => ($this->node = Node::query()->latest()->first())?->id)
                                 ->columnSpan([
                                     'default' => 1,
@@ -127,6 +128,7 @@ class CreateServer extends CreateRecord
                             Select::make('owner_id')
                                 ->preload()
                                 ->prefixIcon('tabler-user')
+                                ->selectablePlaceholder(false)
                                 ->default(auth()->user()->id)
                                 ->label(trans('admin/server.owner'))
                                 ->columnSpan([
@@ -136,24 +138,24 @@ class CreateServer extends CreateRecord
                                 ])
                                 ->relationship('user', 'username')
                                 ->searchable(['username', 'email'])
-                                ->getOptionLabelFromRecordUsing(fn (User $user) => "$user->email | $user->username " . (blank($user->roles) ? '' : '(' . $user->roles->first()->name . ')'))
+                                ->getOptionLabelFromRecordUsing(fn (User $user) => "$user->username ($user->email)")
                                 ->createOptionForm([
                                     TextInput::make('username')
-                                        ->label(trans('admin/user.edit.username'))
+                                        ->label(trans('admin/user.username'))
                                         ->alphaNum()
                                         ->required()
                                         ->minLength(3)
                                         ->maxLength(255),
 
                                     TextInput::make('email')
-                                        ->label(trans('admin/user.edit.email'))
+                                        ->label(trans('admin/user.email'))
                                         ->email()
                                         ->required()
                                         ->unique()
                                         ->maxLength(255),
 
                                     TextInput::make('password')
-                                        ->label(trans('admin/user.edit.password'))
+                                        ->label(trans('admin/user.password'))
                                         ->hintIcon('tabler-question-mark')
                                         ->hintIconTooltip(trans('admin/user.password_help'))
                                         ->password(),
@@ -497,6 +499,7 @@ class CreateServer extends CreateRecord
                                         ->columnSpanFull()
                                         ->schema([
                                             ToggleButtons::make('unlimited_cpu')
+                                                ->dehydrated()
                                                 ->label(trans('admin/server.cpu'))->inlineLabel()->inline()
                                                 ->default(true)
                                                 ->afterStateUpdated(fn (Set $set) => $set('cpu', 0))
@@ -528,6 +531,7 @@ class CreateServer extends CreateRecord
                                         ->columnSpanFull()
                                         ->schema([
                                             ToggleButtons::make('unlimited_mem')
+                                                ->dehydrated()
                                                 ->label(trans('admin/server.memory'))->inlineLabel()->inline()
                                                 ->default(true)
                                                 ->afterStateUpdated(fn (Set $set) => $set('memory', 0))
@@ -558,6 +562,7 @@ class CreateServer extends CreateRecord
                                         ->columnSpanFull()
                                         ->schema([
                                             ToggleButtons::make('unlimited_disk')
+                                                ->dehydrated()
                                                 ->label(trans('admin/server.disk'))->inlineLabel()->inline()
                                                 ->default(true)
                                                 ->live()
@@ -694,9 +699,6 @@ class CreateServer extends CreateRecord
                                                     false => 'success',
                                                     true => 'danger',
                                                 ]),
-
-                                            TextInput::make('oom_disabled_hidden')
-                                                ->hidden(),
                                         ]),
                                 ]),
 
@@ -862,6 +864,9 @@ class CreateServer extends CreateRecord
         throw new Exception('Component type not supported: ' . $component::class);
     }
 
+    /**
+     * @return array<array-key, string>
+     */
     private function getSelectOptionsFromRules(Get $get): array
     {
         $inRule = collect($get('rules'))->reduce(
@@ -876,6 +881,10 @@ class CreateServer extends CreateRecord
             ->all();
     }
 
+    /**
+     * @param  string[]  $portEntries
+     * @return array<int>
+     */
     public static function retrieveValidPorts(Node $node, array $portEntries, string $ip): array
     {
         $portRangeLimit = AssignmentService::PORT_RANGE_LIMIT;

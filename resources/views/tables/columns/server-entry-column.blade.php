@@ -18,7 +18,7 @@
         <!-- Status Strip Outside the Box -->
         <div
             class="absolute left-0 top-1 bottom-0 w-1 rounded-lg"
-            style="background-color: {{ $server->conditionColorHex() }};">
+            style="background-color: {{ $server->condition->getColor(true) }};">
         </div>
 
         <!-- Card Component -->
@@ -26,9 +26,9 @@
             <!-- Header -->
             <div class="flex items-center mb-5 gap-2">
                 <x-filament::icon-button
-                    :icon="$server->conditionIcon()"
-                    :color="$server->conditionColor()"
-                    :tooltip="\Illuminate\Support\Str::title($server->condition)"
+                    :icon="$server->condition->getIcon()"
+                    :color="$server->condition->getColor()"
+                    :tooltip="$server->condition->getLabel()"
                     size="xl"
                 />
                 <h2 class="text-xl font-bold">

@@ -14,7 +14,6 @@ class DaemonFileRepository extends DaemonRepository
      *
      * @param  int|null  $notLargerThan  the maximum content length in bytes
      *
-     * @throws ConnectionException
      * @throws FileSizeTooLargeException
      * @throws ConnectionException
      * @throws FileNotFoundException
@@ -54,6 +53,8 @@ class DaemonFileRepository extends DaemonRepository
     /**
      * Return a directory listing for a given path.
      *
+     * @return array<string, mixed>
+     *
      * @throws ConnectionException
      */
     public function getDirectory(string $path): array
@@ -80,6 +81,8 @@ class DaemonFileRepository extends DaemonRepository
 
     /**
      * Renames or moves a file on the remote machine.
+     *
+     * @param  array<array{from: string, to: string}>  $files
      *
      * @throws ConnectionException
      */
@@ -108,6 +111,8 @@ class DaemonFileRepository extends DaemonRepository
     /**
      * Delete a file or folder for the server.
      *
+     * @param  string[]  $files
+     *
      * @throws ConnectionException
      */
     public function deleteFiles(?string $root, array $files): Response
@@ -122,6 +127,9 @@ class DaemonFileRepository extends DaemonRepository
 
     /**
      * Compress the given files or folders in the given root.
+     *
+     * @param  string[]  $files
+     * @return array<string, mixed>
      *
      * @throws ConnectionException
      */
@@ -161,6 +169,8 @@ class DaemonFileRepository extends DaemonRepository
     /**
      * Chmods the given files.
      *
+     * @param  array<array{file: string, mode: string}>  $files
+     *
      * @throws ConnectionException
      */
     public function chmodFiles(?string $root, array $files): Response
@@ -175,6 +185,8 @@ class DaemonFileRepository extends DaemonRepository
 
     /**
      * Pulls a file from the given URL and saves it to the disk.
+     *
+     * @param  array<mixed>  $params
      *
      * @throws ConnectionException
      */
@@ -193,6 +205,8 @@ class DaemonFileRepository extends DaemonRepository
 
     /**
      * Searches all files in the directory (and its subdirectories) for the given search term.
+     *
+     * @return array<string, mixed>
      *
      * @throws ConnectionException
      */

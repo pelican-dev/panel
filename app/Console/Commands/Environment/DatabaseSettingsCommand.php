@@ -27,6 +27,7 @@ class DatabaseSettingsCommand extends Command
                             {--username= : Username to use when connecting to the MySQL/ MariaDB server.}
                             {--password= : Password to use for the MySQL/ MariaDB database.}';
 
+    /** @var array<array-key, mixed> */
     protected array $variables = [];
 
     /**
@@ -57,7 +58,7 @@ class DatabaseSettingsCommand extends Command
         );
 
         if ($this->variables['DB_CONNECTION'] === 'mysql') {
-            $this->output->note(__('commands.database_settings.DB_HOST_note'));
+            $this->output->note(trans('commands.database_settings.DB_HOST_note'));
             $this->variables['DB_HOST'] = $this->option('host') ?? $this->ask(
                 'Database Host',
                 config('database.connections.mysql.host', '127.0.0.1')
@@ -73,7 +74,7 @@ class DatabaseSettingsCommand extends Command
                 config('database.connections.mysql.database', 'panel')
             );
 
-            $this->output->note(__('commands.database_settings.DB_USERNAME_note'));
+            $this->output->note(trans('commands.database_settings.DB_USERNAME_note'));
             $this->variables['DB_USERNAME'] = $this->option('username') ?? $this->ask(
                 'Database Username',
                 config('database.connections.mysql.username', 'pelican')
@@ -82,7 +83,7 @@ class DatabaseSettingsCommand extends Command
             $askForMySQLPassword = true;
             if (!empty(config('database.connections.mysql.password')) && $this->input->isInteractive()) {
                 $this->variables['DB_PASSWORD'] = config('database.connections.mysql.password');
-                $askForMySQLPassword = $this->confirm(__('commands.database_settings.DB_PASSWORD_note'));
+                $askForMySQLPassword = $this->confirm(trans('commands.database_settings.DB_PASSWORD_note'));
             }
 
             if ($askForMySQLPassword) {
@@ -106,9 +107,9 @@ class DatabaseSettingsCommand extends Command
                 $this->database->connection('_panel_command_test')->getPdo();
             } catch (\PDOException $exception) {
                 $this->output->error(sprintf('Unable to connect to the MySQL server using the provided credentials. The error returned was "%s".', $exception->getMessage()));
-                $this->output->error(__('commands.database_settings.DB_error_2'));
+                $this->output->error(trans('commands.database_settings.DB_error_2'));
 
-                if ($this->confirm(__('commands.database_settings.go_back'))) {
+                if ($this->confirm(trans('commands.database_settings.go_back'))) {
                     $this->database->disconnect('_panel_command_test');
 
                     return $this->handle();
@@ -117,7 +118,7 @@ class DatabaseSettingsCommand extends Command
                 return 1;
             }
         } elseif ($this->variables['DB_CONNECTION'] === 'mariadb') {
-            $this->output->note(__('commands.database_settings.DB_HOST_note'));
+            $this->output->note(trans('commands.database_settings.DB_HOST_note'));
             $this->variables['DB_HOST'] = $this->option('host') ?? $this->ask(
                 'Database Host',
                 config('database.connections.mariadb.host', '127.0.0.1')
@@ -133,7 +134,7 @@ class DatabaseSettingsCommand extends Command
                 config('database.connections.mariadb.database', 'panel')
             );
 
-            $this->output->note(__('commands.database_settings.DB_USERNAME_note'));
+            $this->output->note(trans('commands.database_settings.DB_USERNAME_note'));
             $this->variables['DB_USERNAME'] = $this->option('username') ?? $this->ask(
                 'Database Username',
                 config('database.connections.mariadb.username', 'pelican')
@@ -142,7 +143,7 @@ class DatabaseSettingsCommand extends Command
             $askForMariaDBPassword = true;
             if (!empty(config('database.connections.mariadb.password')) && $this->input->isInteractive()) {
                 $this->variables['DB_PASSWORD'] = config('database.connections.mariadb.password');
-                $askForMariaDBPassword = $this->confirm(__('commands.database_settings.DB_PASSWORD_note'));
+                $askForMariaDBPassword = $this->confirm(trans('commands.database_settings.DB_PASSWORD_note'));
             }
 
             if ($askForMariaDBPassword) {
@@ -166,9 +167,9 @@ class DatabaseSettingsCommand extends Command
                 $this->database->connection('_panel_command_test')->getPdo();
             } catch (\PDOException $exception) {
                 $this->output->error(sprintf('Unable to connect to the MariaDB server using the provided credentials. The error returned was "%s".', $exception->getMessage()));
-                $this->output->error(__('commands.database_settings.DB_error_2'));
+                $this->output->error(trans('commands.database_settings.DB_error_2'));
 
-                if ($this->confirm(__('commands.database_settings.go_back'))) {
+                if ($this->confirm(trans('commands.database_settings.go_back'))) {
                     $this->database->disconnect('_panel_command_test');
 
                     return $this->handle();
@@ -179,7 +180,7 @@ class DatabaseSettingsCommand extends Command
         } elseif ($this->variables['DB_CONNECTION'] === 'sqlite') {
             $this->variables['DB_DATABASE'] = $this->option('database') ?? $this->ask(
                 'Database Path',
-                env('DB_DATABASE', 'database.sqlite')
+                (string) env('DB_DATABASE', 'database.sqlite')
             );
         }
 

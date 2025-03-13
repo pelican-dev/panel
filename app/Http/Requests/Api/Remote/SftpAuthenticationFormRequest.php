@@ -16,6 +16,8 @@ class SftpAuthenticationFormRequest extends FormRequest
 
     /**
      * Rules to apply to the request.
+     *
+     * @return array<string, string[]>
      */
     public function rules(): array
     {
@@ -29,6 +31,8 @@ class SftpAuthenticationFormRequest extends FormRequest
     /**
      * Return only the fields that we are interested in from the request.
      * This will include empty fields as a null value.
+     *
+     * @return array<string, mixed>
      */
     public function normalize(): array
     {

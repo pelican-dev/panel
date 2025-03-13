@@ -13,6 +13,9 @@ class DeleteFileRequest extends ClientApiRequest implements ClientPermissionsReq
         return Permission::ACTION_FILE_DELETE;
     }
 
+    /**
+     * @return string[]
+     */
     public function rules(): array
     {
         return [

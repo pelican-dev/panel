@@ -13,6 +13,8 @@ class DaemonServerRepository extends DaemonRepository
 {
     /**
      * Returns details about a server from the Daemon instance.
+     *
+     * @return array<string, mixed>
      */
     public function getDetails(): array
     {

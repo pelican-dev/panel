@@ -4,6 +4,7 @@ namespace App\Traits;
 
 use App\Observers\ValidationObserver;
 use Illuminate\Container\Container;
+use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
@@ -30,20 +31,18 @@ trait HasValidation
 
     /**
      * Returns the rules associated with this model.
+     *
+     * @return array<array-key, string[]>
      */
     public static function getRules(): array
     {
-        $rules = static::$validationRules;
-        foreach ($rules as &$rule) {
-            $rule = is_array($rule) ? $rule : explode('|', $rule);
-        }
-
-        return $rules;
+        return static::$validationRules;
     }
 
     /**
-     * Returns the rules for a specific field. If the field is not found an empty
-     * array is returned.
+     * Returns the rules for a specific field. If the field is not found, an empty array is returned.
+     *
+     * @return string[]|ValidationRule[]
      */
     public static function getRulesForField(string $field): array
     {
@@ -51,8 +50,9 @@ trait HasValidation
     }
 
     /**
-     * Returns the rules associated with the model, specifically for updating the given model
-     * rather than just creating it.
+     * Returns the rules associated with the model, specifically for updating the given model rather than just creating it.
+     *
+     * @return array<array-key, string[]|ValidationRule[]>
      */
     public static function getRulesForUpdate(self $model): array
     {
@@ -65,7 +65,7 @@ trait HasValidation
             // working model, so we don't run into errors due to the way that field validation
             // works.
             foreach ($data as &$datum) {
-                if (!is_string($datum) || !Str::startsWith($datum, 'unique')) {
+                if (!Str::startsWith($datum, 'unique')) {
                     continue;
                 }
 

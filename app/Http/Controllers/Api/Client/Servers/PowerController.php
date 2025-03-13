@@ -8,7 +8,9 @@ use App\Facades\Activity;
 use App\Repositories\Daemon\DaemonPowerRepository;
 use App\Http\Controllers\Api\Client\ClientApiController;
 use App\Http\Requests\Api\Client\Servers\SendPowerRequest;
+use Dedoc\Scramble\Attributes\Group;
 
+#[Group('Server', weight: 2)]
 class PowerController extends ClientApiController
 {
     /**
@@ -20,6 +22,8 @@ class PowerController extends ClientApiController
     }
 
     /**
+     * Send power action
+     *
      * Send a power action to a server.
      */
     public function index(SendPowerRequest $request, Server $server): Response

@@ -14,7 +14,9 @@ use App\Http\Requests\Api\Application\Servers\Databases\GetServerDatabaseRequest
 use App\Http\Requests\Api\Application\Servers\Databases\GetServerDatabasesRequest;
 use App\Http\Requests\Api\Application\Servers\Databases\ServerDatabaseWriteRequest;
 use App\Http\Requests\Api\Application\Servers\Databases\StoreServerDatabaseRequest;
+use Dedoc\Scramble\Attributes\Group;
 
+#[Group('Server - Database')]
 class DatabaseController extends ApplicationApiController
 {
     /**
@@ -28,8 +30,11 @@ class DatabaseController extends ApplicationApiController
     }
 
     /**
-     * Return a listing of all databases currently available to a single
-     * server.
+     * List databases
+     *
+     * Return a listing of all databases currently available to a single server.
+     *
+     * @return array<array-key, mixed>
      */
     public function index(GetServerDatabasesRequest $request, Server $server): array
     {
@@ -39,7 +44,11 @@ class DatabaseController extends ApplicationApiController
     }
 
     /**
+     * View database
+     *
      * Return a single server database.
+     *
+     * @return array<array-key, mixed>
      */
     public function view(GetServerDatabaseRequest $request, Server $server, Database $database): array
     {
@@ -49,6 +58,8 @@ class DatabaseController extends ApplicationApiController
     }
 
     /**
+     * Reset password
+     *
      * Reset the password for a specific server database.
      *
      * @throws \Throwable
@@ -61,6 +72,8 @@ class DatabaseController extends ApplicationApiController
     }
 
     /**
+     * Create database
+     *
      * Create a new database on the Panel for a given server.
      *
      * @throws \Throwable
@@ -83,6 +96,8 @@ class DatabaseController extends ApplicationApiController
     }
 
     /**
+     * Delete database
+     *
      * Handle a request to delete a specific server database from the Panel.
      */
     public function delete(ServerDatabaseWriteRequest $request, Server $server, Database $database): Response

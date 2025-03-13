@@ -3,18 +3,10 @@
 namespace App\Services\Nodes;
 
 use App\Models\Node;
-use Illuminate\Contracts\Translation\Translator;
 use App\Exceptions\Service\HasActiveServersException;
 
 class NodeDeletionService
 {
-    /**
-     * NodeDeletionService constructor.
-     */
-    public function __construct(
-        protected Translator $translator
-    ) {}
-
     /**
      * Delete a node from the panel if no servers are attached to it.
      *
@@ -27,7 +19,7 @@ class NodeDeletionService
         }
 
         if ($node->servers()->count() > 0) {
-            throw new HasActiveServersException($this->translator->get('exceptions.node.servers_attached'));
+            throw new HasActiveServersException(trans('exceptions.node.servers_attached'));
         }
 
         return (int) $node->delete();

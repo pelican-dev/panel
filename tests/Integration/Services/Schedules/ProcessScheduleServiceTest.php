@@ -19,7 +19,7 @@ class ProcessScheduleServiceTest extends IntegrationTestCase
     /**
      * Test that a schedule with no tasks registered returns an error.
      */
-    public function testScheduleWithNoTasksReturnsException(): void
+    public function test_schedule_with_no_tasks_returns_exception(): void
     {
         $server = $this->createServerModel();
         $schedule = Schedule::factory()->create(['server_id' => $server->id]);
@@ -33,7 +33,7 @@ class ProcessScheduleServiceTest extends IntegrationTestCase
     /**
      * Test that an error during the schedule update is not persisted to the database.
      */
-    public function testErrorDuringScheduleDataUpdateDoesNotPersistChanges(): void
+    public function test_error_during_schedule_data_update_does_not_persist_changes(): void
     {
         $server = $this->createServerModel();
 
@@ -58,7 +58,7 @@ class ProcessScheduleServiceTest extends IntegrationTestCase
      * Test that a job is dispatched as expected using the initial delay.
      */
     #[DataProvider('dispatchNowDataProvider')]
-    public function testJobCanBeDispatchedWithExpectedInitialDelay(bool $now): void
+    public function test_job_can_be_dispatched_with_expected_initial_delay(bool $now): void
     {
         Bus::fake();
 
@@ -89,7 +89,7 @@ class ProcessScheduleServiceTest extends IntegrationTestCase
      * Test that even if a schedule's task sequence gets messed up the first task based on
      * the ascending order of tasks is used.
      */
-    public function testFirstSequenceTaskIsFound(): void
+    public function test_first_sequence_task_is_found(): void
     {
         Bus::fake();
 
@@ -118,7 +118,7 @@ class ProcessScheduleServiceTest extends IntegrationTestCase
      * Tests that a task's processing state is reset correctly if using "dispatchNow" and there is
      * an exception encountered while running it.
      */
-    public function testTaskDispatchedNowIsResetProperlyIfErrorIsEncountered(): void
+    public function test_task_dispatched_now_is_reset_properly_if_error_is_encountered(): void
     {
         $this->swap(Dispatcher::class, $dispatcher = \Mockery::mock(Dispatcher::class));
 

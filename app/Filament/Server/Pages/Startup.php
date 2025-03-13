@@ -3,12 +3,14 @@
 namespace App\Filament\Server\Pages;
 
 use App\Facades\Activity;
+use App\Filament\Components\Forms\Actions\PreviewStartupAction;
 use App\Models\Permission;
 use App\Models\Server;
 use App\Models\ServerVariable;
 use Closure;
 use Filament\Facades\Filament;
 use Filament\Forms\Components\Component;
+use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
@@ -37,6 +39,8 @@ class Startup extends ServerFormPage
                 'lg' => 6,
             ])
             ->schema([
+                Hidden::make('previewing')
+                    ->default(false),
                 Textarea::make('startup')
                     ->label('Startup Command')
                     ->columnSpan([
@@ -46,6 +50,7 @@ class Startup extends ServerFormPage
                         'lg' => 4,
                     ])
                     ->autosize()
+                    ->hintAction(PreviewStartupAction::make('preview'))
                     ->readOnly(),
                 TextInput::make('custom_image')
                     ->label('Docker Image')
@@ -171,6 +176,9 @@ class Startup extends ServerFormPage
         throw new \Exception('Component type not supported: ' . $component::class);
     }
 
+    /**
+     * @return string[]
+     */
     private function getSelectOptionsFromRules(ServerVariable $serverVariable): array
     {
         $inRule = array_first($serverVariable->variable->rules, fn ($value) => str($value)->startsWith('in:'));

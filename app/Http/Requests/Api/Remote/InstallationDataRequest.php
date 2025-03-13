@@ -11,6 +11,9 @@ class InstallationDataRequest extends FormRequest
         return true;
     }
 
+    /**
+     * @return array<string, string|string[]>
+     */
     public function rules(): array
     {
         return [

@@ -21,9 +21,9 @@ class RoleTransformer extends BaseTransformer
     }
 
     /**
-     * Transform role into a representation for the application API.
+     * @param  Role  $model
      */
-    public function transform(Role $model): array
+    public function transform($model): array
     {
         return [
             'id' => $model->id,

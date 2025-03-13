@@ -12,7 +12,7 @@ trait CheckMigrationsTrait
     protected function hasCompletedMigrations(): bool
     {
         /** @var Migrator $migrator */
-        $migrator = app()->make('migrator'); // @phpstan-ignore-line
+        $migrator = app()->make('migrator'); // @phpstan-ignore myCustomRules.forbiddenGlobalFunctions
 
         $files = $migrator->getMigrationFiles(database_path('migrations'));
 

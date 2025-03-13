@@ -21,7 +21,9 @@ use App\Http\Requests\Api\Client\Servers\Schedules\StoreScheduleRequest;
 use App\Http\Requests\Api\Client\Servers\Schedules\DeleteScheduleRequest;
 use App\Http\Requests\Api\Client\Servers\Schedules\UpdateScheduleRequest;
 use App\Http\Requests\Api\Client\Servers\Schedules\TriggerScheduleRequest;
+use Dedoc\Scramble\Attributes\Group;
 
+#[Group('Server - Schedule', weight: 0)]
 class ScheduleController extends ClientApiController
 {
     /**
@@ -33,7 +35,11 @@ class ScheduleController extends ClientApiController
     }
 
     /**
+     * List schedules
+     *
      * Returns all the schedules belonging to a given server.
+     *
+     * @return array<array-key, mixed>
      */
     public function index(ViewScheduleRequest $request, Server $server): array
     {
@@ -45,7 +51,11 @@ class ScheduleController extends ClientApiController
     }
 
     /**
+     * Create schedule
+     *
      * Store a new schedule for a server.
+     *
+     * @return array<array-key, mixed>
      *
      * @throws \App\Exceptions\DisplayException
      * @throws \App\Exceptions\Model\DataValidationException
@@ -77,7 +87,11 @@ class ScheduleController extends ClientApiController
     }
 
     /**
+     * View schedule
+     *
      * Returns a specific schedule for the server.
+     *
+     * @return array<array-key, mixed>
      */
     public function view(ViewScheduleRequest $request, Server $server, Schedule $schedule): array
     {
@@ -93,7 +107,11 @@ class ScheduleController extends ClientApiController
     }
 
     /**
+     * Update schedule
+     *
      * Updates a given schedule with the new data provided.
+     *
+     * @return array<array-key, mixed>
      *
      * @throws \App\Exceptions\DisplayException
      * @throws \App\Exceptions\Model\DataValidationException
@@ -133,6 +151,8 @@ class ScheduleController extends ClientApiController
     }
 
     /**
+     * Run schedule
+     *
      * Executes a given schedule immediately rather than waiting on it's normally scheduled time
      * to pass. This does not care about the schedule state.
      *
@@ -148,6 +168,8 @@ class ScheduleController extends ClientApiController
     }
 
     /**
+     * Delete schedule
+     *
      * Deletes a schedule and it's associated tasks.
      */
     public function delete(DeleteScheduleRequest $request, Server $server, Schedule $schedule): JsonResponse

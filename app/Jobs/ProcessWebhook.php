@@ -14,6 +14,9 @@ class ProcessWebhook implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
+    /**
+     * @param  array<mixed>  $data
+     */
     public function __construct(
         private WebhookConfiguration $webhookConfiguration,
         private string $eventName,
@@ -23,7 +26,9 @@ class ProcessWebhook implements ShouldQueue
     public function handle(): void
     {
         try {
-            Http::post($this->webhookConfiguration->endpoint, $this->data)->throw();
+            Http::withHeader('X-Webhook-Event', $this->eventName)
+                ->post($this->webhookConfiguration->endpoint, $this->data)
+                ->throw();
             $successful = now();
         } catch (\Exception) {
             $successful = null;

@@ -15,7 +15,10 @@ class EggVariableTransformer extends BaseTransformer
         return Egg::RESOURCE_NAME;
     }
 
-    public function transform(EggVariable $model): array
+    /**
+     * @param  EggVariable  $model
+     */
+    public function transform($model): array
     {
         return $model->toArray();
     }

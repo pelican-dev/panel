@@ -22,6 +22,7 @@ use Filament\Support\Colors\Color;
 use Filament\Support\Facades\FilamentColor;
 use Filament\Support\Facades\FilamentView;
 use Filament\View\PanelsRenderHook;
+use Illuminate\Config\Repository;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Console\AboutCommand;
@@ -44,12 +45,19 @@ class AppServiceProvider extends ServiceProvider
     /**
      * Bootstrap any application services.
      */
-    public function boot(Application $app, SoftwareVersionService $versionService): void
-    {
+    public function boot(
+        Application $app,
+        SoftwareVersionService $versionService,
+        Repository $config,
+    ): void {
         // If the APP_URL value is set with https:// make sure we force it here. Theoretically
         // this should just work with the proxy logic, but there are a lot of cases where it
         // doesn't, and it triggers a lot of support requests, so lets just head it off here.
         URL::forceHttps(Str::startsWith(config('app.url') ?? '', 'https://'));
+
+        if ($app->runningInConsole() && empty(config('app.key'))) {
+            $config->set('app.key', '');
+        }
 
         Relation::enforceMorphMap([
             'allocation' => Models\Allocation::class,
@@ -79,26 +87,26 @@ class AppServiceProvider extends ServiceProvider
 
         Sanctum::usePersonalAccessTokenModel(ApiKey::class);
 
-        $bearerTokens = fn (OpenApi $openApi) => $openApi->secure(SecurityScheme::http('bearer'));
         Gate::define('viewApiDocs', fn () => true);
-        Scramble::registerApi('application', ['api_path' => 'api/application', 'info' => ['version' => '1.0']]);
+
+        $bearerTokens = fn (OpenApi $openApi) => $openApi->secure(SecurityScheme::http('bearer'));
+        Scramble::registerApi('application', ['api_path' => 'api/application', 'info' => ['version' => '1.0']])->afterOpenApiGenerated($bearerTokens);
         Scramble::registerApi('client', ['api_path' => 'api/client', 'info' => ['version' => '1.0']])->afterOpenApiGenerated($bearerTokens);
-        Scramble::registerApi('remote', ['api_path' => 'api/remote', 'info' => ['version' => '1.0']])->afterOpenApiGenerated($bearerTokens);
 
         // Default OAuth providers included with Socialite
-        CommonProvider::register('facebook', null, 'tabler-brand-facebook-f', '#1877f2');
-        CommonProvider::register('x', null, 'tabler-brand-x-f', '#1da1f2');
-        CommonProvider::register('linkedin', null, 'tabler-brand-linkedin-f', '#0a66c2');
-        CommonProvider::register('google', null, 'tabler-brand-google-f', '#4285f4');
-        GithubProvider::register();
-        CommonProvider::register('gitlab', null, 'tabler-brand-gitlab', '#fca326');
-        CommonProvider::register('bitbucket', null, 'tabler-brand-bitbucket-f', '#205081');
-        CommonProvider::register('slack', null, 'tabler-brand-slack', '#6ecadc');
+        CommonProvider::register($app, 'facebook', null, 'tabler-brand-facebook-f', '#1877f2');
+        CommonProvider::register($app, 'x', null, 'tabler-brand-x-f', '#1da1f2');
+        CommonProvider::register($app, 'linkedin', null, 'tabler-brand-linkedin-f', '#0a66c2');
+        CommonProvider::register($app, 'google', null, 'tabler-brand-google-f', '#4285f4');
+        GithubProvider::register($app);
+        CommonProvider::register($app, 'gitlab', null, 'tabler-brand-gitlab', '#fca326');
+        CommonProvider::register($app, 'bitbucket', null, 'tabler-brand-bitbucket-f', '#205081');
+        CommonProvider::register($app, 'slack', null, 'tabler-brand-slack', '#6ecadc');
 
         // Additional OAuth providers from socialiteproviders.com
-        AuthentikProvider::register();
-        DiscordProvider::register();
-        SteamProvider::register();
+        AuthentikProvider::register($app);
+        DiscordProvider::register($app);
+        SteamProvider::register($app);
 
         FilamentColor::register([
             'danger' => Color::Red,
@@ -164,7 +172,6 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        Scramble::extendOpenApi(fn (OpenApi $openApi) => $openApi->secure(SecurityScheme::http('bearer')));
         Scramble::ignoreDefaultRoutes();
     }
 }

@@ -14,7 +14,9 @@ use App\Http\Controllers\Api\Application\ApplicationApiController;
 use App\Http\Requests\Api\Application\Allocations\GetAllocationsRequest;
 use App\Http\Requests\Api\Application\Allocations\StoreAllocationRequest;
 use App\Http\Requests\Api\Application\Allocations\DeleteAllocationRequest;
+use Dedoc\Scramble\Attributes\Group;
 
+#[Group('Node - Allocation')]
 class AllocationController extends ApplicationApiController
 {
     /**
@@ -27,7 +29,11 @@ class AllocationController extends ApplicationApiController
     }
 
     /**
+     * List allocations
+     *
      * Return all the allocations that exist for a given node.
+     *
+     * @return array<mixed>
      */
     public function index(GetAllocationsRequest $request, Node $node): array
     {
@@ -52,6 +58,8 @@ class AllocationController extends ApplicationApiController
     }
 
     /**
+     * Create allocation
+     *
      * Store new allocations for a given node.
      *
      * @throws \App\Exceptions\DisplayException
@@ -68,6 +76,8 @@ class AllocationController extends ApplicationApiController
     }
 
     /**
+     * Delete allocation
+     *
      * Delete a specific allocation from the Panel.
      */
     public function delete(DeleteAllocationRequest $request, Node $node, Allocation $allocation): JsonResponse

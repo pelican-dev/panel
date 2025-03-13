@@ -30,12 +30,9 @@ class EggTransformer extends BaseTransformer
     }
 
     /**
-     * Transform an Egg model into a representation that can be consumed by
-     * the application api.
-     *
-     * @throws \JsonException
+     * @param  Egg  $model
      */
-    public function transform(Egg $model): array
+    public function transform($model): array
     {
         $model->loadMissing('configFrom');
 

@@ -23,6 +23,8 @@ class ToggleTwoFactorService
     /**
      * Toggle 2FA on an account only if the token provided is valid.
      *
+     * @return string[]
+     *
      * @throws \Throwable
      * @throws \PragmaRX\Google2FA\Exceptions\IncompatibleWithGoogleAuthenticatorException
      * @throws \PragmaRX\Google2FA\Exceptions\InvalidCharactersException

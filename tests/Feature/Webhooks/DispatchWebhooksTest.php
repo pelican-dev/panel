@@ -13,7 +13,7 @@ class DispatchWebhooksTest extends TestCase
 {
     use LazilyRefreshDatabase;
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
         Queue::fake();
@@ -30,7 +30,7 @@ class DispatchWebhooksTest extends TestCase
         Queue::assertPushed(ProcessWebhook::class);
     }
 
-    public function test_sends_multiple_webhooks()
+    public function test_sends_multiple_webhooks(): void
     {
         WebhookConfiguration::factory(2)
             ->create(['events' => ['eloquent.created: '.Server::class]]);
@@ -40,7 +40,7 @@ class DispatchWebhooksTest extends TestCase
         Queue::assertPushed(ProcessWebhook::class, 2);
     }
 
-    public function test_it_sends_no_webhooks()
+    public function test_it_sends_no_webhooks(): void
     {
         WebhookConfiguration::factory()->create();
 
@@ -49,7 +49,7 @@ class DispatchWebhooksTest extends TestCase
         Queue::assertNothingPushed();
     }
 
-    public function test_it_sends_some_webhooks()
+    public function test_it_sends_some_webhooks(): void
     {
         WebhookConfiguration::factory(2)
             ->sequence(
@@ -62,7 +62,7 @@ class DispatchWebhooksTest extends TestCase
         Queue::assertPushed(ProcessWebhook::class, 1);
     }
 
-    public function test_it_does_not_call_removed_events()
+    public function test_it_does_not_call_removed_events(): void
     {
         $webhookConfig = WebhookConfiguration::factory()->create([
             'events' => ['eloquent.created: '.Server::class],
@@ -75,7 +75,7 @@ class DispatchWebhooksTest extends TestCase
         Queue::assertNothingPushed();
     }
 
-    public function test_it_does_not_call_deleted_webhooks()
+    public function test_it_does_not_call_deleted_webhooks(): void
     {
         $webhookConfig = WebhookConfiguration::factory()->create([
             'events' => ['eloquent.created: '.Server::class],

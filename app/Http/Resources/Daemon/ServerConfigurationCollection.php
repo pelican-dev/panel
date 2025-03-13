@@ -15,10 +15,15 @@ class ServerConfigurationCollection extends ResourceCollection
      * that can be understood by daemon. Make sure you've properly loaded the required
      * relationships on the Server models before calling this function, otherwise you'll
      * have some serious performance issues from all the N+1 queries.
+     *
+     * @return array<array{uuid: string, }>
      */
     public function toArray($request): array
     {
+        /** @var EggConfigurationService $egg */
         $egg = Container::getInstance()->make(EggConfigurationService::class);
+
+        /** @var ServerConfigurationStructureService $configuration */
         $configuration = Container::getInstance()->make(ServerConfigurationStructureService::class);
 
         return $this->collection->map(function (Server $server) use ($configuration, $egg) {

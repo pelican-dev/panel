@@ -8,22 +8,21 @@ use Illuminate\Http\Request;
 use Webmozart\Assert\Assert;
 use App\Models\ApiKey;
 use Illuminate\Container\Container;
-use Illuminate\Database\Eloquent\Model;
 use League\Fractal\TransformerAbstract;
 use App\Services\Acl\Api\AdminAcl;
 
-/**
- * @method array transform(Model $model)
- */
 abstract class BaseTransformer extends TransformerAbstract
 {
     public const RESPONSE_TIMEZONE = 'UTC';
 
     protected Request $request;
 
-    /**
-     * BaseTransformer constructor.
-     */
+    /** @var string[] */
+    protected array $availableIncludes = [];
+
+    /** @var string[] */
+    protected array $defaultIncludes = [];
+
     final public function __construct()
     {
         // Transformers allow for dependency injection on the handle method.
@@ -36,6 +35,13 @@ abstract class BaseTransformer extends TransformerAbstract
      * Return the resource name for the JSONAPI output.
      */
     abstract public function getResourceName(): string;
+
+    /**
+     * @return array<string, mixed>
+     *
+     * Transforms a Model into a representation that can be shown to regular users of the API.
+     */
+    abstract public function transform($model): array; // @phpstan-ignore missingType.parameter
 
     /**
      * Sets the request on the instance.
@@ -59,8 +65,6 @@ abstract class BaseTransformer extends TransformerAbstract
      * Determine if the API key loaded onto the transformer has permission
      * to access a different resource. This is used when including other
      * models on a transformation request.
-     *
-     * @deprecated — prefer $user->can/cannot methods
      */
     protected function authorize(string $resource): bool
     {

@@ -18,7 +18,7 @@ class PowerControllerTest extends ClientApiIntegrationTestCase
      * @param  string[]  $permissions
      */
     #[DataProvider('invalidPermissionDataProvider')]
-    public function testSubuserWithoutPermissionsReceivesError(string $action, array $permissions): void
+    public function test_subuser_without_permissions_receives_error(string $action, array $permissions): void
     {
         [$user, $server] = $this->generateTestAccount($permissions);
 
@@ -30,7 +30,7 @@ class PowerControllerTest extends ClientApiIntegrationTestCase
     /**
      * Test that sending an invalid power signal returns an error.
      */
-    public function testInvalidPowerSignalResultsInError(): void
+    public function test_invalid_power_signal_results_in_error(): void
     {
         [$user, $server] = $this->generateTestAccount();
 
@@ -47,7 +47,7 @@ class PowerControllerTest extends ClientApiIntegrationTestCase
      * Test that sending a valid power actions works.
      */
     #[DataProvider('validPowerActionDataProvider')]
-    public function testActionCanBeSentToServer(string $action, string $permission): void
+    public function test_action_can_be_sent_to_server(string $action, string $permission): void
     {
         $service = \Mockery::mock(DaemonPowerRepository::class);
         $this->app->instance(DaemonPowerRepository::class, $service);

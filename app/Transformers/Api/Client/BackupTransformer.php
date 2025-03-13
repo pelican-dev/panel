@@ -11,7 +11,10 @@ class BackupTransformer extends BaseClientTransformer
         return Backup::RESOURCE_NAME;
     }
 
-    public function transform(Backup $backup): array
+    /**
+     * @param  Backup  $backup
+     */
+    public function transform($backup): array
     {
         return [
             'uuid' => $backup->uuid,

@@ -72,6 +72,7 @@ class ActivityLog extends Model implements HasIcon, HasLabel
 
     protected $with = ['subjects'];
 
+    /** @var array<array-key, string[]> */
     public static array $validationRules = [
         'event' => ['required', 'string'],
         'batch' => ['nullable', 'uuid'],
@@ -93,6 +94,9 @@ class ActivityLog extends Model implements HasIcon, HasLabel
         return $this->morphTo()->withTrashed();
     }
 
+    /**
+     * @return HasMany<ActivityLogSubject, $this>
+     */
     public function subjects(): HasMany
     {
         return $this->hasMany(ActivityLogSubject::class);
@@ -153,7 +157,11 @@ class ActivityLog extends Model implements HasIcon, HasLabel
             return 'tabler-api';
         }
 
-        return $this->actor instanceof User ? 'tabler-user' : 'tabler-device-desktop';
+        if ($this->actor instanceof User) {
+            return 'tabler-user';
+        }
+
+        return $this->actor_id === null ? 'tabler-device-desktop' : 'tabler-user-off';
     }
 
     public function getLabel(): string
@@ -186,6 +194,9 @@ class ActivityLog extends Model implements HasIcon, HasLabel
         ";
     }
 
+    /**
+     * @return array<string, string>
+     */
     public function wrapProperties(): array
     {
         if (!$this->properties || $this->properties->isEmpty()) {

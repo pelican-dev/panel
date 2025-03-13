@@ -72,7 +72,7 @@ class FindAssignableAllocationService
         Assert::integerish($start);
         Assert::integerish($end);
 
-        // Get all of the currently allocated ports for the node so that we can figure out
+        // Get all the currently allocated ports for the node so that we can figure out
         // which port might be available.
         $ports = $server->node->allocations()
             ->where('ip', $server->allocation->ip)
@@ -84,7 +84,7 @@ class FindAssignableAllocationService
         // array of ports to create a new allocation to assign to the server.
         $available = array_diff(range($start, $end), $ports->toArray());
 
-        // If we've already allocated all of the ports, just abort.
+        // If we've already allocated all the ports, just abort.
         if (empty($available)) {
             throw new NoAutoAllocationSpaceAvailableException();
         }

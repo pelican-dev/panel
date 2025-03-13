@@ -11,7 +11,11 @@ use App\Transformers\Api\Application\EggTransformer;
 class EggController extends ApplicationApiController
 {
     /**
+     * List eggs
+     *
      * Return all eggs
+     *
+     * @return array<mixed>
      */
     public function index(GetEggsRequest $request): array
     {
@@ -21,7 +25,11 @@ class EggController extends ApplicationApiController
     }
 
     /**
+     * View egg
+     *
      * Return a single egg that exists
+     *
+     * @return array<mixed>
      */
     public function view(GetEggRequest $request, Egg $egg): array
     {

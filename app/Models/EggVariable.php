@@ -19,7 +19,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property string $default_value
  * @property bool $user_viewable
  * @property bool $user_editable
- * @property array $rules
+ * @property string[] $rules
  * @property \Carbon\CarbonImmutable $created_at
  * @property \Carbon\CarbonImmutable $updated_at
  * @property bool $required
@@ -44,24 +44,25 @@ class EggVariable extends Model implements Validatable
     /**
      * Reserved environment variable names.
      */
-    public const RESERVED_ENV_NAMES = 'P_SERVER_UUID,P_SERVER_ALLOCATION_LIMIT,SERVER_MEMORY,SERVER_IP,SERVER_PORT,ENV,HOME,USER,STARTUP,MODIFIED_STARTUP,SERVER_UUID,UUID,INTERNAL_IP';
+    public const RESERVED_ENV_NAMES = 'P_SERVER_UUID,P_SERVER_ALLOCATION_LIMIT,SERVER_MEMORY,SERVER_IP,SERVER_PORT,ENV,HOME,USER,STARTUP,MODIFIED_STARTUP,SERVER_UUID,UUID,INTERNAL_IP,HOSTNAME,TERM,LANG,PWD,TZ,TIMEZONE';
 
     /**
      * Fields that are not mass assignable.
      */
     protected $guarded = ['id', 'created_at', 'updated_at'];
 
+    /** @var array<string, string[]> */
     public static array $validationRules = [
-        'egg_id' => 'exists:eggs,id',
-        'sort' => 'nullable',
-        'name' => 'required|string|between:1,255',
-        'description' => 'string',
-        'env_variable' => 'required|alphaDash|between:1,255|notIn:' . self::RESERVED_ENV_NAMES,
-        'default_value' => 'string',
-        'user_viewable' => 'boolean',
-        'user_editable' => 'boolean',
-        'rules' => 'array',
-        'rules.*' => 'string',
+        'egg_id' => ['exists:eggs,id'],
+        'sort' => ['nullable'],
+        'name' => ['required', 'string', 'between:1,255'],
+        'description' => ['string'],
+        'env_variable' => ['required', 'alphaDash', 'between:1,255', 'notIn:' . self::RESERVED_ENV_NAMES],
+        'default_value' => ['string'],
+        'user_viewable' => ['boolean'],
+        'user_editable' => ['boolean'],
+        'rules' => ['array'],
+        'rules.*' => ['string'],
     ];
 
     protected $attributes = [

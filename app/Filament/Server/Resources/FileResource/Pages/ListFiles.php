@@ -452,8 +452,8 @@ class ListFiles extends ListRecords
                         ->setServer($server)
                         ->createDirectory($data['name'], $this->path);
 
-                    Activity::event('server:file.write')
-                        ->property('file', join_paths($this->path, $data['name']))
+                    Activity::event('server:file.create-directory')
+                        ->property(['directory' => $this->path, 'name' => $data['name']])
                         ->log();
                 })
                 ->form([
@@ -474,7 +474,7 @@ class ListFiles extends ListRecords
 
                             Activity::event('server:file.uploaded')
                                 ->property('directory', $this->path)
-                                ->property('file', $file->getFilename())
+                                ->property('file', $file->getClientOriginalName())
                                 ->log();
                         }
                     } elseif ($data['url'] !== null) {
@@ -498,10 +498,10 @@ class ListFiles extends ListRecords
                                 ->live()
                                 ->schema([
                                     FileUpload::make('files')
-                                        ->label('File(s)')
                                         ->storeFiles(false)
                                         ->previewable(false)
                                         ->preserveFilenames()
+                                        ->maxSize((int) round($server->node->upload_size * (config('panel.use_binary_prefix') ? 1.048576 * 1024 : 1000)))
                                         ->multiple(),
                                 ]),
                             Tab::make('Upload From URL')
@@ -542,6 +542,9 @@ class ListFiles extends ListRecords
         );
     }
 
+    /**
+     * @return string[]
+     */
     private function getPermissionsFromModeBit(int $mode): array
     {
         if ($mode === 1) {

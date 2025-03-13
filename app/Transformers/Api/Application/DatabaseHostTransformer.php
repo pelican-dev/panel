@@ -24,9 +24,9 @@ class DatabaseHostTransformer extends BaseTransformer
     }
 
     /**
-     * Transform database host into a representation for the application API.
+     * @param  DatabaseHost  $model
      */
-    public function transform(DatabaseHost $model): array
+    public function transform($model): array
     {
         return [
             'id' => $model->id,

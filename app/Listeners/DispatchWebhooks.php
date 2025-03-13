@@ -7,6 +7,9 @@ use App\Models\WebhookConfiguration;
 
 class DispatchWebhooks
 {
+    /**
+     * @param  array<mixed>  $data
+     */
     public function handle(string $eventName, array $data): void
     {
         if (!$this->eventIsWatched($eventName)) {

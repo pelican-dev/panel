@@ -3,17 +3,84 @@
 namespace App\Filament\Pages\Auth;
 
 use App\Extensions\OAuth\Providers\OAuthProvider;
+use App\Models\User;
 use Coderflex\FilamentTurnstile\Forms\Components\Turnstile;
+use Filament\Facades\Filament;
 use Filament\Forms\Components\Actions;
 use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\Component;
 use Filament\Forms\Components\TextInput;
+use Filament\Http\Responses\Auth\Contracts\LoginResponse;
+use Filament\Notifications\Notification;
 use Filament\Pages\Auth\Login as BaseLogin;
 use Filament\Support\Colors\Color;
+use Illuminate\Support\Facades\Config;
+use Illuminate\Support\Sleep;
 use Illuminate\Validation\ValidationException;
+use PragmaRX\Google2FA\Google2FA;
 
 class Login extends BaseLogin
 {
+    private Google2FA $google2FA;
+
+    public bool $verifyTwoFactor = false;
+
+    public function boot(Google2FA $google2FA): void
+    {
+        $this->google2FA = $google2FA;
+    }
+
+    public function authenticate(): ?LoginResponse
+    {
+        $data = $this->form->getState();
+        Filament::auth()->once($this->getCredentialsFromFormData($data));
+
+        /** @var ?User $user */
+        $user = Filament::auth()->user();
+
+        // Make sure that rate limits apply
+        if (!$user) {
+            return parent::authenticate();
+        }
+
+        // 2FA disabled
+        if (!$user->use_totp) {
+            return parent::authenticate();
+        }
+
+        $token = $data['2fa'] ?? null;
+
+        // 2FA not shown yet
+        if ($token === null) {
+            $this->verifyTwoFactor = true;
+
+            return null;
+        }
+
+        $isValidToken = $this->google2FA->verifyKey(
+            $user->totp_secret,
+            $token,
+            Config::integer('panel.auth.2fa.window'),
+        );
+
+        if (!$isValidToken) {
+            // Buffer to prevent bruteforce
+            Sleep::sleep(1);
+
+            Notification::make()
+                ->title(trans('auth.failed-two-factor'))
+                ->body(trans('auth.failed'))
+                ->color('danger')
+                ->icon('tabler-auth-2fa')
+                ->danger()
+                ->send();
+
+            return null;
+        }
+
+        return parent::authenticate();
+    }
+
     protected function getForms(): array
     {
         return [
@@ -24,15 +91,26 @@ class Login extends BaseLogin
                         $this->getPasswordFormComponent(),
                         $this->getRememberFormComponent(),
                         $this->getOAuthFormComponent(),
+                        $this->getTwoFactorAuthenticationComponent(),
                         Turnstile::make('captcha')
                             ->hidden(!config('turnstile.turnstile_enabled'))
                             ->validationMessages([
                                 'required' => config('turnstile.error_messages.turnstile_check_message'),
-                            ]),
+                            ])
+                            ->view('filament.plugins.turnstile'),
                     ])
                     ->statePath('data'),
             ),
         ];
+    }
+
+    private function getTwoFactorAuthenticationComponent(): Component
+    {
+        return TextInput::make('2fa')
+            ->label(trans('auth.two-factor-code'))
+            ->hidden(fn () => !$this->verifyTwoFactor)
+            ->required()
+            ->live();
     }
 
     protected function throwFailureValidationException(): never
@@ -40,7 +118,7 @@ class Login extends BaseLogin
         $this->dispatch('reset-captcha');
 
         throw ValidationException::withMessages([
-            'data.login' => __('filament-panels::pages/auth/login.messages.failed'),
+            'data.login' => trans('filament-panels::pages/auth/login.messages.failed'),
         ]);
     }
 
@@ -58,11 +136,9 @@ class Login extends BaseLogin
     {
         $actions = [];
 
-        $oauthProviders = OAuthProvider::get();
+        $oauthProviders = collect(OAuthProvider::get())->filter(fn (OAuthProvider $provider) => $provider->isEnabled())->all();
+
         foreach ($oauthProviders as $oauthProvider) {
-            if (!$oauthProvider->isEnabled()) {
-                continue;
-            }
 
             $id = $oauthProvider->getId();
 

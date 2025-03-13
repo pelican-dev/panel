@@ -1,7 +1,6 @@
 <?php
 
 return [
-    'create_action' => ':action Mount',
     'nav_title' => 'Mounts',
     'model_label' => 'Mount',
     'model_label_plural' => 'Mounts',
@@ -24,8 +23,8 @@ return [
     ],
     'table' => [
         'name' => 'Name',
-        'source' => 'Source',
-        'target' => 'Target',
+        'all_eggs' => 'All Eggs',
+        'all_nodes' => 'All Nodes',
         'read_only' => 'Read Only',
     ],
 ];

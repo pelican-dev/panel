@@ -13,13 +13,12 @@ class VariableValidatorService
 {
     use HasUserLevels;
 
-    /**
-     * VariableValidatorService constructor.
-     */
-    public function __construct(private ValidationFactory $validator) {}
+    public function __construct(private readonly ValidationFactory $validator) {}
 
     /**
-     * Validate all of the passed data against the given egg variables.
+     * Validate  passed data against the given egg variables.
+     *
+     * @param  array<array-key, ?string>  $fields
      *
      * @throws \Illuminate\Validation\ValidationException
      */

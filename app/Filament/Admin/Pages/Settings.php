@@ -10,6 +10,7 @@ use Exception;
 use Filament\Actions\Action;
 use Filament\Forms\Components\Actions;
 use Filament\Forms\Components\Actions\Action as FormAction;
+use Filament\Forms\Components\Component;
 use Filament\Forms\Components\Group;
 use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\Placeholder;
@@ -49,6 +50,7 @@ class Settings extends Page implements HasForms
 
     protected static string $view = 'filament.pages.settings';
 
+    /** @var array<mixed>|null */
     public ?array $data = [];
 
     public function mount(): void
@@ -108,6 +110,7 @@ class Settings extends Page implements HasForms
         ];
     }
 
+    /** @return Component[] */
     private function generalSettings(): array
     {
         return [
@@ -206,10 +209,14 @@ class Settings extends Page implements HasForms
                 ->label(trans('admin/setting.general.display_width'))
                 ->native(false)
                 ->options(MaxWidth::class)
+                ->selectablePlaceholder(false)
                 ->default(env('FILAMENT_WIDTH', config('panel.filament.display-width'))),
         ];
     }
 
+    /**
+     * @return Component[]
+     */
     private function captchaSettings(): array
     {
         return [
@@ -255,6 +262,9 @@ class Settings extends Page implements HasForms
         ];
     }
 
+    /**
+     * @return Component[]
+     */
     private function mailSettings(): array
     {
         return [
@@ -302,7 +312,7 @@ class Settings extends Page implements HasForms
                                     'mail.mailers.smtp.port' => $get('MAIL_PORT'),
                                     'mail.mailers.smtp.username' => $get('MAIL_USERNAME'),
                                     'mail.mailers.smtp.password' => $get('MAIL_PASSWORD'),
-                                    'mail.mailers.smtp.encryption' => $get('MAIL_ENCRYPTION'),
+                                    'mail.mailers.smtp.encryption' => $get('MAIL_SCHEME'),
                                     'mail.from.address' => $get('MAIL_FROM_ADDRESS'),
                                     'mail.from.name' => $get('MAIL_FROM_NAME'),
                                     'services.mailgun.domain' => $get('MAILGUN_DOMAIN'),
@@ -365,7 +375,7 @@ class Settings extends Page implements HasForms
                         ->password()
                         ->revealable()
                         ->default(env('MAIL_PASSWORD')),
-                    ToggleButtons::make('MAIL_ENCRYPTION')
+                    ToggleButtons::make('MAIL_SCHEME')
                         ->label(trans('admin/setting.mail.smtp.encryption'))
                         ->inline()
                         ->options([
@@ -373,7 +383,7 @@ class Settings extends Page implements HasForms
                             'ssl' => trans('admin/setting.mail.smtp.ssl'),
                             '' => trans('admin/setting.mail.smtp.none'),
                         ])
-                        ->default(env('MAIL_ENCRYPTION', config('mail.mailers.smtp.encryption', 'tls')))
+                        ->default(env('MAIL_SCHEME', config('mail.mailers.smtp.encryption', 'tls')))
                         ->live()
                         ->afterStateUpdated(function ($state, Set $set) {
                             $port = match ($state) {
@@ -404,6 +414,9 @@ class Settings extends Page implements HasForms
         ];
     }
 
+    /**
+     * @return Component[]
+     */
     private function backupSettings(): array
     {
         return [
@@ -474,6 +487,9 @@ class Settings extends Page implements HasForms
         ];
     }
 
+    /**
+     * @return Component[]
+     */
     private function oauthSettings(): array
     {
         $formFields = [];
@@ -505,15 +521,13 @@ class Settings extends Page implements HasForms
                             ->label(trans('admin/setting.oauth.enable'))
                             ->color('success')
                             ->steps($oauthProvider->getSetupSteps())
-                            ->modalHeading(trans('admin/setting.oauth.enable') . $name)
+                            ->modalHeading(trans('admin/setting.oauth.enable') . ' ' . $name)
                             ->modalSubmitActionLabel(trans('admin/setting.oauth.enable'))
                             ->modalCancelAction(false)
                             ->action(function ($data, Set $set) use ($id) {
                                 $data = array_merge([
                                     "OAUTH_{$id}_ENABLED" => 'true',
                                 ], $data);
-
-                                $data = array_filter($data, fn ($value) => !Str::startsWith($value, '_noenv'));
 
                                 foreach ($data as $key => $value) {
                                     $set($key, $value);
@@ -530,6 +544,9 @@ class Settings extends Page implements HasForms
         return $formFields;
     }
 
+    /**
+     * @return Component[]
+     */
     private function miscSettings(): array
     {
         return [

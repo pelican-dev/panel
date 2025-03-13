@@ -27,7 +27,6 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property \Carbon\CarbonImmutable $updated_at
  * @property \Carbon\CarbonImmutable|null $deleted_at
  * @property \App\Models\Server $server
- * @property \App\Models\AuditLog[] $audits
  */
 class Backup extends Model implements Validatable
 {
@@ -51,17 +50,18 @@ class Backup extends Model implements Validatable
 
     protected $guarded = ['id', 'created_at', 'updated_at', 'deleted_at'];
 
+    /** @var array<array-key, string[]> */
     public static array $validationRules = [
-        'server_id' => 'bail|required|numeric|exists:servers,id',
-        'uuid' => 'required|uuid',
-        'is_successful' => 'boolean',
-        'is_locked' => 'boolean',
-        'name' => 'required|string',
-        'ignored_files' => 'array',
-        'disk' => 'required|string',
-        'checksum' => 'nullable|string',
-        'bytes' => 'numeric',
-        'upload_id' => 'nullable|string',
+        'server_id' => ['bail', 'required', 'numeric', 'exists:servers,id'],
+        'uuid' => ['required', 'uuid'],
+        'is_successful' => ['boolean'],
+        'is_locked' => ['boolean'],
+        'name' => ['required', 'string'],
+        'ignored_files' => ['array'],
+        'disk' => ['required', 'string'],
+        'checksum' => ['nullable', 'string'],
+        'bytes' => ['numeric'],
+        'upload_id' => ['nullable', 'string'],
     ];
 
     protected function casts(): array

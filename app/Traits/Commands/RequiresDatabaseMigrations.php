@@ -14,7 +14,7 @@ trait RequiresDatabaseMigrations
 
     /**
      * Throw a massive error into the console to hopefully catch the users attention and get
-     * them to properly run the migrations rather than ignoring all of the other previous
+     * them to properly run the migrations rather than ignoring  other previous
      * errors...
      */
     protected function showMigrationWarning(): void
