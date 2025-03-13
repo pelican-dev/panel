@@ -1,0 +1,621 @@
+diff --git a/tests/Feature/SettingsControllerTest.php b/tests/Feature/SettingsControllerTest.php
+deleted file mode 100644
+index f45552fe0..000000000
+--- a/tests/Feature/SettingsControllerTest.php
++++ /dev/null
+@@ -1,189 +0,0 @@
+-<?php
+-
+-use App\Enums\ServerState;
+-use App\Http\Controllers\Api\Client\Servers\SettingsController;
+-use App\Models\ActivityLog;
+-use App\Models\Permission;
+-use App\Repositories\Daemon\DaemonServerRepository;
+-use Illuminate\Support\Facades\Config;
+-use Symfony\Component\HttpFoundation\Response;
+-
+-pest()->group('API');
+-
+-covers(SettingsController::class);
+-
+-it('server name can be changed', function () {
+-    [$user, $server] = generateTestAccount([Permission::ACTION_WEBSOCKET_CONNECT, Permission::ACTION_SETTINGS_RENAME]);
+-    $originalName = $server->name;
+-
+-    $this->actingAs($user)
+-        ->post("/api/client/servers/$server->uuid/settings/rename", [
+-            'name' => $newName = 'Test Server Name',
+-        ])
+-        ->assertStatus(Response::HTTP_NO_CONTENT);
+-
+-    $server = $server->refresh();
+-
+-    $logged = ActivityLog::first();
+-    expect()->toLogActivities(1)
+-        ->and($server->name)->not()->toBe($originalName)
+-        ->and($logged->properties['old'])->toBe($originalName)
+-        ->and($logged->properties['new'])->toBe($newName);
+-});
+-
+-it('server name cannot be changed', function () {
+-    [$user, $server] = generateTestAccount([Permission::ACTION_WEBSOCKET_CONNECT]);
+-    $originalName = $server->name;
+-
+-    $this->actingAs($user)
+-        ->post("/api/client/servers/$server->uuid/settings/rename", [
+-            'name' => 'Test Server Name',
+-        ])
+-        ->assertStatus(Response::HTTP_FORBIDDEN);
+-
+-    $server = $server->refresh();
+-    expect()->toLogActivities(0)
+-        ->and($server->name)->toBe($originalName);
+-});
+-
+-it('server description can be changed', function () {
+-    [$user, $server] = generateTestAccount([Permission::ACTION_SETTINGS_DESCRIPTION]);
+-    $originalDescription = $server->description;
+-
+-    $newDescription = 'Test Server Description';
+-    $this->actingAs($user)
+-        ->post("/api/client/servers/$server->uuid/settings/description", [
+-            'description' => $newDescription,
+-        ])
+-        ->assertStatus(Response::HTTP_NO_CONTENT);
+-
+-    $server = $server->refresh();
+-    $logged = ActivityLog::first();
+-    expect()->toLogActivities(1)
+-        ->and($logged->properties['old'])->toBe($originalDescription)
+-        ->and($logged->properties['new'])->toBe($newDescription)
+-        ->and($server->description)->not()->toBe($originalDescription);
+-});
+-
+-it('server description cannot be changed', function () {
+-    [$user, $server] = generateTestAccount([Permission::ACTION_SETTINGS_DESCRIPTION]);
+-    Config::set('panel.editable_server_descriptions', false);
+-    $originalDescription = $server->description;
+-
+-    $this->actingAs($user)
+-        ->post("/api/client/servers/$server->uuid/settings/description", [
+-            'description' => 'Test Description',
+-        ])
+-        ->assertStatus(Response::HTTP_NO_CONTENT);
+-
+-    $server = $server->refresh();
+-    expect()->toLogActivities(0)
+-        ->and($server->description)->toBe($originalDescription);
+-});
+-
+-//test('subuser cannot change server name without permission', function () {
+-//
+-//});
+-
+-test('unauthorized user cannot change docker image in use by server', function () {
+-    [$user, $server] = generateTestAccount([Permission::ACTION_WEBSOCKET_CONNECT]);
+-    $originalImage = $server->image;
+-
+-    $this->actingAs($user)
+-        ->put("/api/client/servers/$server->uuid/settings/docker-image", [
+-            'docker_image' => 'ghcr.io/pelican-dev/yolks:java_21',
+-        ])
+-        ->assertStatus(Response::HTTP_FORBIDDEN);
+-
+-    $server = $server->refresh();
+-    expect()->toLogActivities(0)
+-        ->and($server->image)->toBe($originalImage);
+-});
+-
+-test('cannot change docker image to image not allowed by egg', function () {
+-
+-    [$user, $server] = generateTestAccount([Permission::ACTION_STARTUP_DOCKER_IMAGE]);
+-    $server->image = 'ghcr.io/parkervcp/yolks:java_17';
+-    $server->save();
+-
+-    $newImage = 'ghcr.io/parkervcp/fake:image';
+-
+-    $server = $server->refresh();
+-
+-    $this->actingAs($user)
+-        ->putJson("/api/client/servers/$server->uuid/settings/docker-image", [
+-            'docker_image' => $newImage,
+-        ])
+-        ->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY);
+-
+-    $server->refresh();
+-    expect()->toLogActivities(0)
+-        ->and($server->image)->not()->toBe($newImage);
+-});
+-
+-test('can change docker image in use by server', function () {
+-    [$user, $server] = generateTestAccount([Permission::ACTION_STARTUP_DOCKER_IMAGE]);
+-    $oldImage = 'ghcr.io/parkervcp/yolks:java_17';
+-    $server->image = $oldImage;
+-    $server->save();
+-
+-    $newImage = 'ghcr.io/parkervcp/yolks:java_21';
+-
+-    $this->actingAs($user)
+-        ->putJson("/api/client/servers/$server->uuid/settings/docker-image", [
+-            'docker_image' => $newImage,
+-        ])
+-        ->assertStatus(Response::HTTP_NO_CONTENT);
+-
+-    $server = $server->refresh();
+-
+-    $logItem = \App\Models\ActivityLog::first();
+-    expect()->toLogActivities(1)
+-        ->and($logItem->properties['old'])->toBe($oldImage)
+-        ->and($logItem->properties['new'])->toBe($newImage)
+-        ->and($server->image)->toBe($newImage);
+-});
+-
+-test('unable to change the docker image set by administrator', function () {
+-    [$user, $server] = generateTestAccount([Permission::ACTION_STARTUP_DOCKER_IMAGE]);
+-    $oldImage = 'ghcr.io/parkervcp/yolks:java_custom';
+-    $server->image = $oldImage;
+-    $server->save();
+-
+-    $newImage = 'ghcr.io/parkervcp/yolks:java_8';
+-
+-    $this->actingAs($user)
+-        ->putJson("/api/client/servers/$server->uuid/settings/docker-image", [
+-            'docker_image' => $newImage,
+-        ])
+-        ->assertStatus(Response::HTTP_BAD_REQUEST);
+-
+-    $server = $server->refresh();
+-
+-    expect()->toLogActivities(0)
+-        ->and($server->image)->toBe($oldImage);
+-});
+-
+-test('can be reinstalled', function () {
+-    [$user, $server] = generateTestAccount([Permission::ACTION_SETTINGS_REINSTALL]);
+-    expect($server->isInstalled())->toBeTrue();
+-
+-    $service = \Mockery::mock(DaemonServerRepository::class);
+-    $this->app->instance(DaemonServerRepository::class, $service);
+-
+-    $service->expects('setServer')
+-        ->with(\Mockery::on(function ($value) use ($server) {
+-            return $value->uuid === $server->uuid;
+-        }))
+-        ->andReturnSelf()
+-        ->getMock()
+-        ->expects('reinstall')
+-        ->andReturnUndefined();
+-
+-    $this->actingAs($user)->postJson("/api/client/servers/$server->uuid/settings/reinstall")
+-        ->assertStatus(Response::HTTP_ACCEPTED);
+-
+-    $server = $server->refresh();
+-    expect()->toLogActivities(1)
+-        ->and($server->status)->toBe(ServerState::Installing);
+-});
+diff --git a/tests/Feature/Webhooks/DispatchWebhooksTest.php b/tests/Feature/Webhooks/DispatchWebhooksTest.php
+index dba1a543f..477927353 100644
+--- a/tests/Feature/Webhooks/DispatchWebhooksTest.php
++++ b/tests/Feature/Webhooks/DispatchWebhooksTest.php
+@@ -30,7 +30,7 @@ class DispatchWebhooksTest extends TestCase
+         Queue::assertPushed(ProcessWebhook::class);
+     }
+ 
+-    public function test_sends_multiple_webhooks()
++    public function test_sends_multiple_webhooks(): void
+     {
+         WebhookConfiguration::factory(2)
+             ->create(['events' => ['eloquent.created: '.Server::class]]);
+@@ -40,7 +40,7 @@ class DispatchWebhooksTest extends TestCase
+         Queue::assertPushed(ProcessWebhook::class, 2);
+     }
+ 
+-    public function test_it_sends_no_webhooks()
++    public function test_it_sends_no_webhooks(): void
+     {
+         WebhookConfiguration::factory()->create();
+ 
+@@ -49,7 +49,7 @@ class DispatchWebhooksTest extends TestCase
+         Queue::assertNothingPushed();
+     }
+ 
+-    public function test_it_sends_some_webhooks()
++    public function test_it_sends_some_webhooks(): void
+     {
+         WebhookConfiguration::factory(2)
+             ->sequence(
+@@ -62,7 +62,7 @@ class DispatchWebhooksTest extends TestCase
+         Queue::assertPushed(ProcessWebhook::class, 1);
+     }
+ 
+-    public function test_it_does_not_call_removed_events()
++    public function test_it_does_not_call_removed_events(): void
+     {
+         $webhookConfig = WebhookConfiguration::factory()->create([
+             'events' => ['eloquent.created: '.Server::class],
+@@ -75,7 +75,7 @@ class DispatchWebhooksTest extends TestCase
+         Queue::assertNothingPushed();
+     }
+ 
+-    public function test_it_does_not_call_deleted_webhooks()
++    public function test_it_does_not_call_deleted_webhooks(): void
+     {
+         $webhookConfig = WebhookConfiguration::factory()->create([
+             'events' => ['eloquent.created: '.Server::class],
+diff --git a/tests/Feature/Webhooks/ProcessWebhooksTest.php b/tests/Feature/Webhooks/ProcessWebhooksTest.php
+index 3b71d50a8..40c6a3382 100644
+--- a/tests/Feature/Webhooks/ProcessWebhooksTest.php
++++ b/tests/Feature/Webhooks/ProcessWebhooksTest.php
+@@ -77,7 +77,7 @@ class ProcessWebhooksTest extends TestCase
+         });
+     }
+ 
+-    public function test_sends_multiple_webhooks()
++    public function test_sends_multiple_webhooks(): void
+     {
+         [$webhook1, $webhook2] = WebhookConfiguration::factory(2)
+             ->create(['events' => [$eventName = 'eloquent.created: '.Server::class]]);
+@@ -98,7 +98,7 @@ class ProcessWebhooksTest extends TestCase
+         Http::assertSent(fn (Request $request) => $webhook2->endpoint === $request->url());
+     }
+ 
+-    public function test_it_sends_no_webhooks()
++    public function test_it_sends_no_webhooks(): void
+     {
+         Http::fake();
+ 
+@@ -109,7 +109,7 @@ class ProcessWebhooksTest extends TestCase
+         Http::assertSentCount(0);
+     }
+ 
+-    public function test_it_sends_some_webhooks()
++    public function test_it_sends_some_webhooks(): void
+     {
+         [$webhook1, $webhook2] = WebhookConfiguration::factory(2)
+             ->sequence(
+@@ -129,7 +129,7 @@ class ProcessWebhooksTest extends TestCase
+         Http::assertNotSent(fn (Request $request) => $webhook2->endpoint === $request->url());
+     }
+ 
+-    public function test_it_records_when_a_webhook_is_sent()
++    public function test_it_records_when_a_webhook_is_sent(): void
+     {
+         $webhookConfig = WebhookConfiguration::factory()
+             ->create(['events' => ['eloquent.created: '.Server::class]]);
+@@ -152,7 +152,7 @@ class ProcessWebhooksTest extends TestCase
+         ]);
+     }
+ 
+-    public function test_it_records_when_a_webhook_fails()
++    public function test_it_records_when_a_webhook_fails(): void
+     {
+         $webhookConfig = WebhookConfiguration::factory()->create([
+             'events' => ['eloquent.created: '.Server::class],
+@@ -173,7 +173,7 @@ class ProcessWebhooksTest extends TestCase
+         ]);
+     }
+ 
+-    public function test_it_is_triggered_on_custom_events()
++    public function test_it_is_triggered_on_custom_events(): void
+     {
+         $webhookConfig = WebhookConfiguration::factory()->create([
+             'events' => [Installed::class],
+diff --git a/tests/Filament/Admin/ListEggsTest.php b/tests/Filament/Admin/ListEggsTest.php
+deleted file mode 100644
+index 0e34b22fa..000000000
+--- a/tests/Filament/Admin/ListEggsTest.php
++++ /dev/null
+@@ -1,49 +0,0 @@
+-<?php
+-
+-use App\Enums\RolePermissionModels;
+-use App\Filament\Admin\Resources\EggResource\Pages\ListEggs;
+-use App\Models\Egg;
+-use App\Models\Permission;
+-use App\Models\Role;
+-
+-use function Pest\Livewire\livewire;
+-
+-it('root admin can see all eggs', function () {
+-    $eggs = Egg::all();
+-    [$admin] = generateTestAccount([]);
+-    $admin = $admin->syncRoles(Role::getRootAdmin());
+-
+-    $this->actingAs($admin);
+-    livewire(ListEggs::class)
+-        ->assertSuccessful()
+-        ->assertCountTableRecords($eggs->count())
+-        ->assertCanSeeTableRecords($eggs);
+-});
+-
+-it('non root admin cannot see any eggs', function () {
+-    $role = Role::factory()->create(['name' => 'Node Viewer', 'guard_name' => 'web']);
+-    // Node Permission is on purpose, we check the wrong permissions.
+-    $permission = Permission::factory()->create(['name' => RolePermissionModels::Node->viewAny(), 'guard_name' => 'web']);
+-    $role->permissions()->attach($permission);
+-    [$user] = generateTestAccount([]);
+-
+-    $this->actingAs($user);
+-    livewire(ListEggs::class)
+-        ->assertForbidden();
+-});
+-
+-it('non root admin with permissions can see eggs', function () {
+-    $role = Role::factory()->create(['name' => 'Egg Viewer', 'guard_name' => 'web']);
+-    $permission = Permission::factory()->create(['name' => RolePermissionModels::Egg->viewAny(), 'guard_name' => 'web']);
+-    $role->permissions()->attach($permission);
+-
+-    $eggs = Egg::all();
+-    [$user] = generateTestAccount([]);
+-    $user = $user->syncRoles($role);
+-
+-    $this->actingAs($user);
+-    livewire(ListEggs::class)
+-        ->assertSuccessful()
+-        ->assertCountTableRecords($eggs->count())
+-        ->assertCanSeeTableRecords($eggs);
+-});
+diff --git a/tests/Filament/Admin/ListNodesTest.php b/tests/Filament/Admin/ListNodesTest.php
+deleted file mode 100644
+index 9f7115556..000000000
+--- a/tests/Filament/Admin/ListNodesTest.php
++++ /dev/null
+@@ -1,67 +0,0 @@
+-<?php
+-
+-use App\Enums\RolePermissionModels;
+-use App\Filament\Admin\Resources\NodeResource\Pages\ListNodes;
+-use App\Models\Node;
+-use App\Models\Permission;
+-use App\Models\Role;
+-use App\Models\Server;
+-use Filament\Actions\CreateAction;
+-use Filament\Tables\Actions\CreateAction as TableCreateAction;
+-
+-use function Pest\Livewire\livewire;
+-
+-it('root admin can see all nodes', function () {
+-    [$admin] = generateTestAccount([]);
+-    $admin = $admin->syncRoles(Role::getRootAdmin());
+-    $nodes = Node::all();
+-
+-    $this->actingAs($admin);
+-    livewire(ListNodes::class)
+-        ->assertSuccessful()
+-        ->assertCountTableRecords($nodes->count())
+-        ->assertCanSeeTableRecords($nodes);
+-});
+-
+-it('non root admin cannot see any nodes', function () {
+-    $role = Role::factory()->create(['name' => 'Egg Viewer', 'guard_name' => 'web']);
+-    // Egg Permission is on purpose, we check the wrong permissions.
+-    $permission = Permission::factory()->create(['name' => RolePermissionModels::Egg->viewAny(), 'guard_name' => 'web']);
+-    $role->permissions()->attach($permission);
+-    [$user] = generateTestAccount();
+-
+-    $this->actingAs($user);
+-    livewire(ListNodes::class)
+-        ->assertForbidden();
+-});
+-
+-it('non root admin with permissions can see nodes', function () {
+-    $role = Role::factory()->create(['name' => 'Node Viewer', 'guard_name' => 'web']);
+-    $permission = Permission::factory()->create(['name' => RolePermissionModels::Node->viewAny(), 'guard_name' => 'web']);
+-    $role->permissions()->attach($permission);
+-
+-    [$user] = generateTestAccount();
+-    $nodes = Node::all();
+-    $user = $user->syncRoles($role);
+-
+-    $this->actingAs($user);
+-    livewire(ListNodes::class)
+-        ->assertSuccessful()
+-        ->assertCountTableRecords($nodes->count())
+-        ->assertCanSeeTableRecords($nodes);
+-});
+-
+-it('displays the create button in the table instead of the header when 0 nodes', function () {
+-    [$admin] = generateTestAccount([]);
+-    $admin = $admin->syncRoles(Role::getRootAdmin());
+-
+-    // Nuke servers & nodes
+-    Server::truncate();
+-    Node::truncate();
+-
+-    $this->actingAs($admin);
+-    livewire(ListNodes::class)
+-        ->assertSuccessful()
+-        ->assertHeaderMissing(CreateAction::class)
+-        ->assertActionExists(TableCreateAction::class);
+-});
+diff --git a/tests/Pest.php b/tests/Pest.php
+index c396b3bb7..fd279ada6 100644
+--- a/tests/Pest.php
++++ b/tests/Pest.php
+@@ -24,26 +24,10 @@
+ |
+ */
+ 
+-use App\Models\ActivityLog;
+-use App\Models\Allocation;
+-use App\Models\Egg;
+-use App\Models\Node;
+-use App\Models\Server;
+-use App\Models\Subuser;
+-use App\Models\User;
+-use App\Tests\Integration\IntegrationTestCase;
+-use Ramsey\Uuid\Uuid;
+-
+ expect()->extend('toBeOne', function () {
+     return $this->toBe(1);
+ });
+ 
+-expect()->extend('toLogActivities', function (int $times) {
+-    expect(ActivityLog::count())->toBe($times);
+-});
+-
+-uses(IntegrationTestCase::class)->in('Feature', 'Filament');
+-
+ /*
+ |--------------------------------------------------------------------------
+ | Functions
+@@ -59,119 +43,3 @@ function something()
+ {
+     // ..
+ }
+-
+-/**
+- * Generates a user and a server for that user. If an array of permissions is passed it
+- * is assumed that the user is actually a subuser of the server.
+- *
+- * @param  string[]  $permissions
+- * @return array{\App\Models\User, \App\Models\Server}
+- */
+-
+-/**
+- * Creates a server model in the databases for the purpose of testing. If an attribute
+- * is passed in that normally requires this function to create a model no model will be
+- * created and that attribute's value will be used.
+- *
+- * The returned server model will have all the relationships loaded onto it.
+- */
+-function createServerModel(array $attributes = []): Server
+-{
+-    if (isset($attributes['user_id'])) {
+-        $attributes['owner_id'] = $attributes['user_id'];
+-    }
+-
+-    if (!isset($attributes['owner_id'])) {
+-        /** @var \App\Models\User $user */
+-        $user = User::factory()->create();
+-        $attributes['owner_id'] = $user->id;
+-    }
+-
+-    if (!isset($attributes['node_id'])) {
+-        /** @var \App\Models\Node $node */
+-        $node = Node::factory()->create();
+-        $attributes['node_id'] = $node->id;
+-    }
+-
+-    if (!isset($attributes['allocation_id'])) {
+-        /** @var \App\Models\Allocation $allocation */
+-        $allocation = Allocation::factory()->create(['node_id' => $attributes['node_id']]);
+-        $attributes['allocation_id'] = $allocation->id;
+-    }
+-
+-    if (empty($attributes['egg_id'])) {
+-        $egg = getBungeecordEgg();
+-
+-        $attributes['egg_id'] = $egg->id;
+-    }
+-
+-    unset($attributes['user_id']);
+-
+-    /** @var \App\Models\Server $server */
+-    $server = Server::factory()->create($attributes);
+-
+-    Allocation::query()->where('id', $server->allocation_id)->update(['server_id' => $server->id]);
+-
+-    return $server->fresh([
+-        'user', 'node', 'allocation', 'egg',
+-    ]);
+-}
+-
+-/**
+- * Generates a user and a server for that user. If an array of permissions is passed it
+- * is assumed that the user is actually a subuser of the server.
+- *
+- * @param  string[]  $permissions
+- * @return array{\App\Models\User, \App\Models\Server}
+- */
+-function generateTestAccount(array $permissions = []): array
+-{
+-    /** @var \App\Models\User $user */
+-    $user = User::factory()->create();
+-
+-    if (empty($permissions)) {
+-        return [$user, createServerModel(['user_id' => $user->id])];
+-    }
+-
+-    $server = createServerModel();
+-
+-    Subuser::query()->create([
+-        'user_id' => $user->id,
+-        'server_id' => $server->id,
+-        'permissions' => $permissions,
+-    ]);
+-
+-    return [$user, $server];
+-}
+-
+-/**
+- * Clones a given egg allowing us to make modifications that don't affect other
+- * tests that rely on the egg existing in the correct state.
+- */
+-function cloneEggAndVariables(Egg $egg): Egg
+-{
+-    $model = $egg->replicate(['id', 'uuid']);
+-    $model->uuid = Uuid::uuid4()->toString();
+-    $model->push();
+-
+-    /** @var \App\Models\Egg $model */
+-    $model = $model->fresh();
+-
+-    foreach ($egg->variables as $variable) {
+-        $variable->replicate(['id', 'egg_id'])->forceFill(['egg_id' => $model->id])->push();
+-    }
+-
+-    return $model->fresh();
+-}
+-
+-/**
+- * Almost every test just assumes it is using BungeeCord — this is the critical
+- * egg model for all tests unless specified otherwise.
+- */
+-function getBungeecordEgg(): Egg
+-{
+-    /** @var \App\Models\Egg $egg */
+-    $egg = Egg::query()->where('author', 'panel@example.com')->where('name', 'Bungeecord')->firstOrFail();
+-
+-    return $egg;
+-}
+diff --git a/tests/TestCase.php b/tests/TestCase.php
+index 2eda1ecec..d789400e3 100644
+--- a/tests/TestCase.php
++++ b/tests/TestCase.php
+@@ -2,8 +2,6 @@
+ 
+ namespace App\Tests;
+ 
+-use App\Models\Role;
+-use App\Models\User;
+ use Carbon\Carbon;
+ use Carbon\CarbonImmutable;
+ use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
+@@ -11,8 +9,6 @@ use Spatie\Permission\PermissionRegistrar;
+ 
+ abstract class TestCase extends BaseTestCase
+ {
+-    protected User $admin;
+-
+     /**
+      * Setup tests.
+      */
+@@ -23,9 +19,6 @@ abstract class TestCase extends BaseTestCase
+         Carbon::setTestNow(Carbon::now());
+         CarbonImmutable::setTestNow(Carbon::now());
+ 
+-        [$admin] = generateTestAccount([]);
+-        $this->admin = $admin->syncRoles(Role::getRootAdmin());
+-
+         // TODO: if unit tests suite, then force set DB_HOST=UNIT_NO_DB
+         // env('DB_DATABASE', 'UNIT_NO_DB');
+ 
+@@ -37,6 +30,7 @@ abstract class TestCase extends BaseTestCase
+         // "an error occurred" message), we can probably assume that the exception isn't one that
+         // is recognized as being user viewable.
+         config()->set('app.debug', false);
++        config()->set('panel.auth.2fa_required', 0);
+ 
+         $this->setKnownUuidFactory();
+ 

@@ -16,6 +16,12 @@ use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Forms\Get;
 use Filament\Resources\Resource;
+use Filament\Tables\Actions\CreateAction;
+use Filament\Tables\Actions\DeleteBulkAction;
+use Filament\Tables\Actions\EditAction;
+use Filament\Tables\Actions\ViewAction;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Table;
 use Illuminate\Support\Str;
 
 class RoleResource extends Resource
@@ -24,13 +30,66 @@ class RoleResource extends Resource
 
     protected static ?string $navigationIcon = 'tabler-users-group';
 
-    protected static ?string $navigationGroup = 'User';
-
     protected static ?string $recordTitleAttribute = 'name';
+
+    public static function getNavigationLabel(): string
+    {
+        return trans('admin/role.nav_title');
+    }
+
+    public static function getModelLabel(): string
+    {
+        return trans('admin/role.model_label');
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return trans('admin/role.model_label_plural');
+    }
+
+    public static function getNavigationGroup(): ?string
+    {
+        return trans('admin/dashboard.user');
+    }
 
     public static function getNavigationBadge(): ?string
     {
         return static::getModel()::count() ?: null;
+    }
+
+    public static function table(Table $table): Table
+    {
+        return $table
+            ->columns([
+                TextColumn::make('name')
+                    ->label(trans('admin/role.name'))
+                    ->sortable()
+                    ->searchable(),
+                TextColumn::make('permissions_count')
+                    ->label(trans('admin/role.permissions'))
+                    ->badge()
+                    ->counts('permissions')
+                    ->formatStateUsing(fn (Role $role, $state) => $role->isRootAdmin() ? trans('admin/role.all') : $state),
+                TextColumn::make('users_count')
+                    ->label(trans('admin/role.users'))
+                    ->counts('users')
+                    ->icon('tabler-users'),
+            ])
+            ->actions([
+                ViewAction::make()
+                    ->hidden(fn ($record) => static::canEdit($record)),
+                EditAction::make(),
+            ])
+            ->checkIfRecordIsSelectableUsing(fn (Role $role) => !$role->isRootAdmin() && $role->users_count <= 0)
+            ->groupedBulkActions([
+                DeleteBulkAction::make(),
+            ])
+            ->emptyStateIcon('tabler-users-group')
+            ->emptyStateDescription('')
+            ->emptyStateHeading(trans('admin/role.no_roles'))
+            ->emptyStateActions([
+                CreateAction::make(),
+            ]);
     }
 
     public static function form(Form $form): Form
@@ -67,7 +126,7 @@ class RoleResource extends Resource
             ->columns(1)
             ->schema([
                 TextInput::make('name')
-                    ->label('Role Name')
+                    ->label(trans('admin/role.name'))
                     ->required()
                     ->disabled(fn (Get $get) => $get('name') === Role::ROOT_ADMIN),
                 TextInput::make('guard_name')
@@ -75,12 +134,13 @@ class RoleResource extends Resource
                     ->default(Role::DEFAULT_GUARD_NAME)
                     ->nullable()
                     ->hidden(),
-                Fieldset::make('Permissions')
+                Fieldset::make(trans('admin/role.permissions'))
                     ->columns(3)
                     ->schema($permissions)
                     ->hidden(fn (Get $get) => $get('name') === Role::ROOT_ADMIN),
                 Placeholder::make('permissions')
-                    ->content('The Root Admin has all permissions.')
+                    ->label(trans('admin/role.permissions'))
+                    ->content(trans('admin/role.root_admin', ['role' => Role::ROOT_ADMIN]))
                     ->visible(fn (Get $get) => $get('name') === Role::ROOT_ADMIN),
             ]);
     }
@@ -143,6 +203,7 @@ class RoleResource extends Resource
         return [
             'index' => Pages\ListRoles::route('/'),
             'create' => Pages\CreateRole::route('/create'),
+            'view' => Pages\ViewRole::route('/{record}'),
             'edit' => Pages\EditRole::route('/{record}/edit'),
         ];
     }

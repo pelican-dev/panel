@@ -13,7 +13,7 @@ class ExternalUserControllerTest extends ApplicationApiIntegrationTestCase
     /**
      * Test that a user can be retrieved by their external ID.
      */
-    public function testGetRemoteUser(): void
+    public function test_get_remote_user(): void
     {
         $user = User::factory()->create(['external_id' => Str::random()]);
 
@@ -48,7 +48,7 @@ class ExternalUserControllerTest extends ApplicationApiIntegrationTestCase
     /**
      * Test that an invalid external ID returns a 404 error.
      */
-    public function testGetMissingUser(): void
+    public function test_get_missing_user(): void
     {
         $response = $this->getJson('/api/application/users/external/nil');
         $this->assertNotFoundJson($response);
@@ -58,7 +58,7 @@ class ExternalUserControllerTest extends ApplicationApiIntegrationTestCase
      * Test that an authentication error occurs if a key does not have permission
      * to access a resource.
      */
-    public function testErrorReturnedIfNoPermission(): void
+    public function test_error_returned_if_no_permission(): void
     {
         $user = User::factory()->create(['external_id' => Str::random()]);
         $this->createNewDefaultApiKey($this->getApiUser(), [User::RESOURCE_NAME => AdminAcl::NONE]);

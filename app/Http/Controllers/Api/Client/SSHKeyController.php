@@ -11,6 +11,8 @@ use App\Http\Requests\Api\Client\Account\StoreSSHKeyRequest;
 class SSHKeyController extends ClientApiController
 {
     /**
+     * List ssh keys
+     *
      * Returns all the SSH keys that have been configured for the logged-in
      * user account.
      */
@@ -22,6 +24,8 @@ class SSHKeyController extends ClientApiController
     }
 
     /**
+     * Create ssh keys
+     *
      * Stores a new SSH key for the authenticated user's account.
      */
     public function store(StoreSSHKeyRequest $request): array
@@ -43,6 +47,8 @@ class SSHKeyController extends ClientApiController
     }
 
     /**
+     * Delete ssh keys
+     *
      * Deletes an SSH key from the user's account.
      */
     public function delete(ClientApiRequest $request): JsonResponse

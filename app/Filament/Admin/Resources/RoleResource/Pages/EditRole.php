@@ -50,7 +50,12 @@ class EditRole extends EditRecord
         return [
             DeleteAction::make()
                 ->disabled(fn (Role $role) => $role->isRootAdmin() || $role->users_count >= 1)
-                ->label(fn (Role $role) => $role->isRootAdmin() ? 'Can\'t delete Root Admin' : ($role->users_count >= 1 ? 'In Use' : 'Delete')),
+                ->label(fn (Role $role) => $role->isRootAdmin() ? trans('admin/role.root_admin_delete') : ($role->users_count >= 1 ? trans('admin/role.in_use') : trans('filament-actions::delete.single.label'))),            $this->getSaveFormAction()->formId('form'),
         ];
+    }
+
+    protected function getFormActions(): array
+    {
+        return [];
     }
 }

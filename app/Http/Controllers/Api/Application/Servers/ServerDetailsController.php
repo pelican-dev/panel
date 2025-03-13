@@ -9,7 +9,9 @@ use App\Transformers\Api\Application\ServerTransformer;
 use App\Http\Controllers\Api\Application\ApplicationApiController;
 use App\Http\Requests\Api\Application\Servers\UpdateServerDetailsRequest;
 use App\Http\Requests\Api\Application\Servers\UpdateServerBuildConfigurationRequest;
+use Dedoc\Scramble\Attributes\Group;
 
+#[Group('Server', weight: 2)]
 class ServerDetailsController extends ApplicationApiController
 {
     /**
@@ -23,6 +25,8 @@ class ServerDetailsController extends ApplicationApiController
     }
 
     /**
+     * Update details
+     *
      * Update the details for a specific server.
      *
      * @throws \App\Exceptions\DisplayException
@@ -41,6 +45,8 @@ class ServerDetailsController extends ApplicationApiController
     }
 
     /**
+     * Update build
+     *
      * Update the build details for a specific server.
      *
      * @throws \App\Exceptions\DisplayException

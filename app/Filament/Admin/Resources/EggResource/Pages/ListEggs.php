@@ -10,12 +10,13 @@ use App\Filament\Components\Tables\Actions\UpdateEggAction;
 use App\Models\Egg;
 use Filament\Actions\CreateAction as CreateHeaderAction;
 use Filament\Resources\Pages\ListRecords;
-use Filament\Tables\Actions\BulkActionGroup;
 use Filament\Tables\Actions\CreateAction;
 use Filament\Tables\Actions\DeleteBulkAction;
 use Filament\Tables\Actions\EditAction;
+use Filament\Tables\Actions\ReplicateAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
+use Illuminate\Support\Str;
 
 class ListEggs extends ListRecords
 {
@@ -32,6 +33,7 @@ class ListEggs extends ListRecords
                     ->label('Id')
                     ->hidden(),
                 TextColumn::make('name')
+                    ->label(trans('admin/egg.name'))
                     ->icon('tabler-egg')
                     ->description(fn ($record): ?string => (strlen($record->description) > 120) ? substr($record->description, 0, 120).'...' : $record->description)
                     ->wrap()
@@ -40,25 +42,39 @@ class ListEggs extends ListRecords
                 TextColumn::make('servers_count')
                     ->counts('servers')
                     ->icon('tabler-server')
-                    ->label('Servers'),
+                    ->label(trans('admin/egg.servers')),
             ])
             ->actions([
-                EditAction::make(),
-                ExportEggAction::make(),
-                UpdateEggAction::make(),
+                EditAction::make()
+                    ->iconButton()
+                    ->tooltip(trans('filament-actions::edit.single.label')),
+                ExportEggAction::make()
+                    ->iconButton()
+                    ->tooltip(trans('filament-actions::export.modal.actions.export.label')),
+                UpdateEggAction::make()
+                    ->iconButton()
+                    ->tooltip(trans('admin/egg.update')),
+                ReplicateAction::make()
+                    ->iconButton()
+                    ->tooltip(trans('filament-actions::replicate.single.label'))
+                    ->modal(false)
+                    ->excludeAttributes(['author', 'uuid', 'update_url', 'servers_count', 'created_at', 'updated_at'])
+                    ->beforeReplicaSaved(function (Egg $replica) {
+                        $replica->author = auth()->user()->email;
+                        $replica->name .= ' Copy';
+                        $replica->uuid = Str::uuid()->toString();
+                    })
+                    ->after(fn (Egg $record, Egg $replica) => $record->variables->each(fn ($variable) => $variable->replicate()->fill(['egg_id' => $replica->id])->save()))
+                    ->successRedirectUrl(fn (Egg $replica) => EditEgg::getUrl(['record' => $replica])),
             ])
-            ->bulkActions([
-                BulkActionGroup::make([
-                    DeleteBulkAction::make()
-                        ->authorize(fn () => auth()->user()->can('delete egg')),
-                ]),
+            ->groupedBulkActions([
+                DeleteBulkAction::make(),
             ])
             ->emptyStateIcon('tabler-eggs')
             ->emptyStateDescription('')
-            ->emptyStateHeading('No Eggs')
+            ->emptyStateHeading(trans('admin/egg.no_eggs'))
             ->emptyStateActions([
-                CreateAction::make()
-                    ->label('Create Egg'),
+                CreateAction::make(),
                 ImportEggAction::make(),
             ]);
     }
@@ -67,8 +83,7 @@ class ListEggs extends ListRecords
     {
         return [
             ImportEggHeaderAction::make(),
-            CreateHeaderAction::make()
-                ->label('Create Egg'),
+            CreateHeaderAction::make(),
         ];
     }
 }

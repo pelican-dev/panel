@@ -29,7 +29,7 @@ class CreateNode extends CreateRecord
             ->schema([
                 Wizard::make([
                     Step::make('basic')
-                        ->label('Basic Settings')
+                        ->label(trans('admin/node.tabs.basic_settings'))
                         ->icon('tabler-server')
                         ->columnSpanFull()
                         ->columns([
@@ -45,29 +45,23 @@ class CreateNode extends CreateRecord
                                 ->autofocus()
                                 ->live(debounce: 1500)
                                 ->rule('prohibited', fn ($state) => is_ip($state) && request()->isSecure())
-                                ->label(fn ($state) => is_ip($state) ? 'IP Address' : 'Domain Name')
+                                ->label(fn ($state) => is_ip($state) ? trans('admin/node.ip_address') : trans('admin/node.domain'))
                                 ->placeholder(fn ($state) => is_ip($state) ? '192.168.1.1' : 'node.example.com')
                                 ->helperText(function ($state) {
                                     if (is_ip($state)) {
                                         if (request()->isSecure()) {
-                                            return '
-                                    Your panel is currently secured via an SSL certificate and that means your nodes require one too.
-                                    You must use a domain name, because you cannot get SSL certificates for IP Addresses
-                                ';
+                                            return trans('admin/node.fqdn_help');
                                         }
 
                                         return '';
                                     }
 
-                                    return "
-                            This is the domain name that points to your node's IP Address.
-                            If you've already set up this, you can verify it by checking the next field!
-                            ";
+                                    return trans('admin/node.error');
                                 })
                                 ->hintColor('danger')
                                 ->hint(function ($state) {
                                     if (is_ip($state) && request()->isSecure()) {
-                                        return 'You cannot connect to an IP Address over SSL';
+                                        return trans('admin/node.ssl_ip');
                                     }
 
                                     return '';
@@ -105,16 +99,16 @@ class CreateNode extends CreateRecord
                                 ->hidden(),
 
                             ToggleButtons::make('dns')
-                                ->label('DNS Record Check')
-                                ->helperText('This lets you know if your DNS record correctly points to an IP Address.')
+                                ->label(trans('admin/node.dns'))
+                                ->helperText(trans('admin/node.dns_help'))
                                 ->disabled()
                                 ->inline()
                                 ->default(null)
                                 ->hint(fn (Get $get) => $get('ip'))
                                 ->hintColor('success')
                                 ->options([
-                                    true => 'Valid',
-                                    false => 'Invalid',
+                                    true => trans('admin/node.valid'),
+                                    false => trans('admin/node.invalid'),
                                 ])
                                 ->colors([
                                     true => 'success',
@@ -134,8 +128,8 @@ class CreateNode extends CreateRecord
                                     'md' => 1,
                                     'lg' => 1,
                                 ])
-                                ->label(trans('strings.port'))
-                                ->helperText('If you are running the daemon behind Cloudflare you should set the daemon port to 8443 to allow websocket proxying over SSL.')
+                                ->label(trans('admin/node.port'))
+                                ->helperText(trans('admin/node.port_help'))
                                 ->minValue(1)
                                 ->maxValue(65535)
                                 ->default(8080)
@@ -143,7 +137,7 @@ class CreateNode extends CreateRecord
                                 ->integer(),
 
                             TextInput::make('name')
-                                ->label('Display Name')
+                                ->label(trans('admin/node.display_name'))
                                 ->columnSpan([
                                     'default' => 1,
                                     'sm' => 1,
@@ -151,11 +145,10 @@ class CreateNode extends CreateRecord
                                     'lg' => 2,
                                 ])
                                 ->required()
-                                ->helperText('This name is for display only and can be changed later.')
                                 ->maxLength(100),
 
                             ToggleButtons::make('scheme')
-                                ->label('Communicate over SSL')
+                                ->label(trans('admin/node.ssl'))
                                 ->columnSpan([
                                     'default' => 1,
                                     'sm' => 1,
@@ -165,11 +158,11 @@ class CreateNode extends CreateRecord
                                 ->inline()
                                 ->helperText(function (Get $get) {
                                     if (request()->isSecure()) {
-                                        return new HtmlString('Your Panel is using a secure SSL connection,<br>so your Daemon must too.');
+                                        return new HtmlString(trans('admin/node.panel_on_ssl'));
                                     }
 
                                     if (is_ip($get('fqdn'))) {
-                                        return 'An IP address cannot use SSL.';
+                                        return trans('admin/node.ssl_help');
                                     }
 
                                     return '';
@@ -190,7 +183,7 @@ class CreateNode extends CreateRecord
                                 ->default(fn () => request()->isSecure() ? 'https' : 'http'),
                         ]),
                     Step::make('advanced')
-                        ->label('Advanced Settings')
+                        ->label(trans('admin/node.tabs.advanced_settings'))
                         ->icon('tabler-server-cog')
                         ->columnSpanFull()
                         ->columns([
@@ -201,14 +194,14 @@ class CreateNode extends CreateRecord
                         ])
                         ->schema([
                             ToggleButtons::make('maintenance_mode')
-                                ->label('Maintenance Mode')->inline()
+                                ->label(trans('admin/node.maintenance_mode'))->inline()
                                 ->columnSpan(1)
                                 ->default(false)
                                 ->hinticon('tabler-question-mark')
-                                ->hintIconTooltip("If the node is marked 'Under Maintenance' users won't be able to access servers that are on this node.")
+                                ->hintIconTooltip(trans('admin/node.maintenance_mode_help'))
                                 ->options([
-                                    true => 'Enable',
-                                    false => 'Disable',
+                                    true => trans('admin/node.enabled'),
+                                    false => trans('admin/node.disabled'),
                                 ])
                                 ->colors([
                                     true => 'danger',
@@ -217,21 +210,23 @@ class CreateNode extends CreateRecord
                             ToggleButtons::make('public')
                                 ->default(true)
                                 ->columnSpan(1)
-                                ->label('Use Node for deployment?')->inline()
+                                ->label(trans('admin/node.use_for_deploy'))->inline()
                                 ->options([
-                                    true => 'Yes',
-                                    false => 'No',
+                                    true => trans('admin/node.yes'),
+                                    false => trans('admin/node.no'),
                                 ])
                                 ->colors([
                                     true => 'success',
                                     false => 'danger',
                                 ]),
                             TagsInput::make('tags')
-                                ->placeholder('Add Tags')
+                                ->label(trans('admin/node.tags'))
                                 ->columnSpan(2),
                             TextInput::make('upload_size')
-                                ->label('Upload Limit')
-                                ->helperText('Enter the maximum size of files that can be uploaded through the web-based file manager.')
+                                ->label(trans('admin/node.upload_limit'))
+                                ->helperText(trans('admin/node.upload_limit_help.0'))
+                                ->hintIcon('tabler-question-mark')
+                                ->hintIconTooltip(trans('admin/node.upload_limit_help.1'))
                                 ->columnSpan(1)
                                 ->numeric()->required()
                                 ->default(256)
@@ -240,7 +235,7 @@ class CreateNode extends CreateRecord
                                 ->suffix(config('panel.use_binary_prefix') ? 'MiB' : 'MB'),
                             TextInput::make('daemon_sftp')
                                 ->columnSpan(1)
-                                ->label('SFTP Port')
+                                ->label(trans('admin/node.sftp_port'))
                                 ->minValue(1)
                                 ->maxValue(65535)
                                 ->default(2022)
@@ -248,21 +243,22 @@ class CreateNode extends CreateRecord
                                 ->integer(),
                             TextInput::make('daemon_sftp_alias')
                                 ->columnSpan(2)
-                                ->label('SFTP Alias')
-                                ->helperText('Display alias for the SFTP address. Leave empty to use the Node FQDN.'),
+                                ->label(trans('admin/node.sftp_alias'))
+                                ->helperText(trans('admin/node.sftp_alias_help')),
                             Grid::make()
                                 ->columns(6)
                                 ->columnSpanFull()
                                 ->schema([
                                     ToggleButtons::make('unlimited_mem')
-                                        ->label('Memory')->inlineLabel()->inline()
+                                        ->dehydrated()
+                                        ->label(trans('admin/node.memory'))->inlineLabel()->inline()
                                         ->afterStateUpdated(fn (Set $set) => $set('memory', 0))
                                         ->afterStateUpdated(fn (Set $set) => $set('memory_overallocate', 0))
                                         ->formatStateUsing(fn (Get $get) => $get('memory') == 0)
                                         ->live()
                                         ->options([
-                                            true => 'Unlimited',
-                                            false => 'Limited',
+                                            true => trans('admin/node.unlimited'),
+                                            false => trans('admin/node.limited'),
                                         ])
                                         ->colors([
                                             true => 'primary',
@@ -272,7 +268,7 @@ class CreateNode extends CreateRecord
                                     TextInput::make('memory')
                                         ->dehydratedWhenHidden()
                                         ->hidden(fn (Get $get) => $get('unlimited_mem'))
-                                        ->label('Memory Limit')->inlineLabel()
+                                        ->label(trans('admin/node.memory_limit'))->inlineLabel()
                                         ->suffix(config('panel.use_binary_prefix') ? 'MiB' : 'MB')
                                         ->columnSpan(2)
                                         ->numeric()
@@ -281,10 +277,8 @@ class CreateNode extends CreateRecord
                                         ->required(),
                                     TextInput::make('memory_overallocate')
                                         ->dehydratedWhenHidden()
-                                        ->label('Overallocate')->inlineLabel()
+                                        ->label(trans('admin/node.overallocate'))->inlineLabel()
                                         ->hidden(fn (Get $get) => $get('unlimited_mem'))
-                                        ->hintIcon('tabler-question-mark')
-                                        ->hintIconTooltip('The % allowable to go over the set limit.')
                                         ->columnSpan(2)
                                         ->numeric()
                                         ->minValue(-1)
@@ -298,14 +292,15 @@ class CreateNode extends CreateRecord
                                 ->columnSpanFull()
                                 ->schema([
                                     ToggleButtons::make('unlimited_disk')
-                                        ->label('Disk')->inlineLabel()->inline()
+                                        ->dehydrated()
+                                        ->label(trans('admin/node.disk'))->inlineLabel()->inline()
                                         ->live()
                                         ->afterStateUpdated(fn (Set $set) => $set('disk', 0))
                                         ->afterStateUpdated(fn (Set $set) => $set('disk_overallocate', 0))
                                         ->formatStateUsing(fn (Get $get) => $get('disk') == 0)
                                         ->options([
-                                            true => 'Unlimited',
-                                            false => 'Limited',
+                                            true => trans('admin/node.unlimited'),
+                                            false => trans('admin/node.limited'),
                                         ])
                                         ->colors([
                                             true => 'primary',
@@ -315,7 +310,7 @@ class CreateNode extends CreateRecord
                                     TextInput::make('disk')
                                         ->dehydratedWhenHidden()
                                         ->hidden(fn (Get $get) => $get('unlimited_disk'))
-                                        ->label('Disk Limit')->inlineLabel()
+                                        ->label(trans('admin/node.disk_limit'))->inlineLabel()
                                         ->suffix(config('panel.use_binary_prefix') ? 'MiB' : 'MB')
                                         ->columnSpan(2)
                                         ->numeric()
@@ -325,9 +320,7 @@ class CreateNode extends CreateRecord
                                     TextInput::make('disk_overallocate')
                                         ->dehydratedWhenHidden()
                                         ->hidden(fn (Get $get) => $get('unlimited_disk'))
-                                        ->label('Overallocate')->inlineLabel()
-                                        ->hintIcon('tabler-question-mark')
-                                        ->hintIconTooltip('The % allowable to go over the set limit.')
+                                        ->label(trans('admin/node.overallocate'))->inlineLabel()
                                         ->columnSpan(2)
                                         ->numeric()
                                         ->minValue(-1)
@@ -341,14 +334,15 @@ class CreateNode extends CreateRecord
                                 ->columnSpanFull()
                                 ->schema([
                                     ToggleButtons::make('unlimited_cpu')
-                                        ->label('CPU')->inlineLabel()->inline()
+                                        ->dehydrated()
+                                        ->label(trans('admin/node.cpu'))->inlineLabel()->inline()
                                         ->live()
                                         ->afterStateUpdated(fn (Set $set) => $set('cpu', 0))
                                         ->afterStateUpdated(fn (Set $set) => $set('cpu_overallocate', 0))
                                         ->formatStateUsing(fn (Get $get) => $get('cpu') == 0)
                                         ->options([
-                                            true => 'Unlimited',
-                                            false => 'Limited',
+                                            true => trans('admin/node.unlimited'),
+                                            false => trans('admin/node.limited'),
                                         ])
                                         ->colors([
                                             true => 'primary',
@@ -358,7 +352,7 @@ class CreateNode extends CreateRecord
                                     TextInput::make('cpu')
                                         ->dehydratedWhenHidden()
                                         ->hidden(fn (Get $get) => $get('unlimited_cpu'))
-                                        ->label('CPU Limit')->inlineLabel()
+                                        ->label(trans('admin/node.cpu_limit'))->inlineLabel()
                                         ->suffix('%')
                                         ->columnSpan(2)
                                         ->numeric()
@@ -368,9 +362,7 @@ class CreateNode extends CreateRecord
                                     TextInput::make('cpu_overallocate')
                                         ->dehydratedWhenHidden()
                                         ->hidden(fn (Get $get) => $get('unlimited_cpu'))
-                                        ->label('Overallocate')->inlineLabel()
-                                        ->hintIcon('tabler-question-mark')
-                                        ->hintIconTooltip('The % allowable to go over the set limit.')
+                                        ->label(trans('admin/node.overallocate'))->inlineLabel()
                                         ->columnSpan(2)
                                         ->numeric()
                                         ->default(0)
@@ -381,7 +373,7 @@ class CreateNode extends CreateRecord
                                 ]),
                         ]),
                 ])->columnSpanFull()
-                    ->nextAction(fn (Action $action) => $action->label('Next Step'))
+                    ->nextAction(fn (Action $action) => $action->label(trans('admin/node.next_step')))
                     ->submitAction(new HtmlString(Blade::render(<<<'BLADE'
                                         <x-filament::button
                                                 type="submit"

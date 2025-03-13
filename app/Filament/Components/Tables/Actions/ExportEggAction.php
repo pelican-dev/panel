@@ -17,7 +17,7 @@ class ExportEggAction extends Action
     {
         parent::setUp();
 
-        $this->label('Export');
+        $this->label(trans('filament-actions::export.modal.actions.export.label'));
 
         $this->icon('tabler-download');
 

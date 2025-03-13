@@ -13,7 +13,7 @@
         "calebporzio/sushi": "^2.5",
         "chillerlan/php-qrcode": "^5.0.2",
         "coderflex/filament-turnstile": "^2.2",
-        "dedoc/scramble": "^0.10.0",
+        "dedoc/scramble": "^0.12.10",
         "doctrine/dbal": "~3.6.0",
         "filament/filament": "^3.2",
         "guzzlehttp/guzzle": "^7.8.1",
@@ -56,6 +56,7 @@
         "nunomaduro/collision": "^8.1.1",
         "pestphp/pest": "^3.7",
         "pestphp/pest-plugin-faker": "^3.0",
+        "pestphp/pest-plugin-livewire": "^3.0",
         "spatie/laravel-ignition": "^2.7"
     },
     "autoload": {

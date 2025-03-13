@@ -17,7 +17,9 @@ class NodeVersionsCheck extends Check
         $all = Node::query()->count();
 
         if ($all === 0) {
-            $result = Result::make()->notificationMessage('No Nodes created')->shortSummary('No Nodes');
+            $result = Result::make()
+                ->notificationMessage(trans('admin/health.results.nodeversions.no_nodes_created'))
+                ->shortSummary(trans('admin/health.results.nodeversions.no_nodes'));
             $result->status = Status::skipped();
 
             return $result;
@@ -34,10 +36,10 @@ class NodeVersionsCheck extends Check
                 'all' => $all,
                 'outdated' => $outdated,
             ])
-            ->shortSummary($outdated === 0 ? 'All up-to-date' : "{$outdated}/{$all} outdated");
+            ->shortSummary($outdated === 0 ? trans('admin/health.results.nodeversions.all_up_to_date') : trans('admin/health.results.nodeversions.outdated', ['outdated' => $outdated, 'all' => $all]));
 
         return $outdated === 0
-            ? $result->ok('All Nodes are up-to-date.')
-            : $result->failed(':outdated/:all Nodes are outdated.');
+            ? $result->ok(trans('admin/health.results.nodeversions.ok'))
+            : $result->failed(trans('admin/health.results.nodeversions.failed', ['outdated' => $outdated, 'all' => $all]));
     }
 }

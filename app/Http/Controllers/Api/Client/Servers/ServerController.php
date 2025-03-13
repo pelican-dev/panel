@@ -7,7 +7,9 @@ use App\Transformers\Api\Client\ServerTransformer;
 use App\Services\Servers\GetUserPermissionsService;
 use App\Http\Controllers\Api\Client\ClientApiController;
 use App\Http\Requests\Api\Client\Servers\GetServerRequest;
+use Dedoc\Scramble\Attributes\Group;
 
+#[Group('Server', weight: 0)]
 class ServerController extends ClientApiController
 {
     /**
@@ -19,6 +21,8 @@ class ServerController extends ClientApiController
     }
 
     /**
+     * View server
+     *
      * Transform an individual server into a response that can be consumed by a
      * client using the API.
      */

@@ -2,56 +2,24 @@
 
 namespace App\Filament\Admin\Resources\WebhookResource\Pages;
 
-use App\Models\WebhookConfiguration;
 use App\Filament\Admin\Resources\WebhookResource;
-use Filament\Actions;
-use Filament\Forms\Components\CheckboxList;
-use Filament\Forms\Components\TextInput;
-use Filament\Forms\Form;
+use Filament\Actions\DeleteAction;
 use Filament\Resources\Pages\EditRecord;
 
 class EditWebhookConfiguration extends EditRecord
 {
     protected static string $resource = WebhookResource::class;
 
-    public function form(Form $form): Form
+    protected function getHeaderActions(): array
     {
-        return $form
-            ->schema([
-                TextInput::make('endpoint')
-                    ->label('Endpoint')
-                    ->activeUrl()
-                    ->required(),
-                TextInput::make('description')
-                    ->label('Description')
-                    ->required(),
-                CheckboxList::make('events')
-                    ->label('Events')
-                    ->lazy()
-                    ->options(fn () => WebhookConfiguration::filamentCheckboxList())
-                    ->searchable()
-                    ->bulkToggleable()
-                    ->columns(3)
-                    ->columnSpanFull()
-                    ->gridDirection('row')
-                    ->required(),
-            ]);
+        return [
+            DeleteAction::make(),
+            $this->getSaveFormAction()->formId('form'),
+        ];
     }
 
     protected function getFormActions(): array
     {
         return [];
-    }
-
-    protected function getHeaderActions(): array
-    {
-        return [
-            Actions\DeleteAction::make()
-                ->label('Delete')
-                ->modalHeading('Are you sure you want to delete this?')
-                ->modalDescription('')
-                ->modalSubmitActionLabel('Delete'),
-            $this->getSaveFormAction()->formId('form'),
-        ];
     }
 }

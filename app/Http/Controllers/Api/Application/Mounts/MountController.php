@@ -5,7 +5,6 @@ namespace App\Http\Controllers\Api\Application\Mounts;
 use Ramsey\Uuid\Uuid;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Contracts\Translation\Translator;
 use Spatie\QueryBuilder\QueryBuilder;
 use App\Models\Mount;
 use App\Http\Controllers\Api\Application\ApplicationApiController;
@@ -19,15 +18,8 @@ use App\Exceptions\Service\HasActiveServersException;
 class MountController extends ApplicationApiController
 {
     /**
-     * MountController constructor.
-     */
-    public function __construct(
-        protected Translator $translator
-    ) {
-        parent::__construct();
-    }
-
-    /**
+     * List mounts
+     *
      * Return all the mounts currently available on the Panel.
      */
     public function index(GetMountRequest $request): array
@@ -43,6 +35,8 @@ class MountController extends ApplicationApiController
     }
 
     /**
+     * View mount
+     *
      * Return data for a single instance of a mount.
      */
     public function view(GetMountRequest $request, Mount $mount): array
@@ -53,6 +47,8 @@ class MountController extends ApplicationApiController
     }
 
     /**
+     * Create mount
+     *
      * Create a new mount on the Panel. Returns the created mount and an HTTP/201
      * status response on success.
      *
@@ -77,6 +73,8 @@ class MountController extends ApplicationApiController
     }
 
     /**
+     * Update mount
+     *
      * Update an existing mount on the Panel.
      *
      * @throws \Throwable
@@ -91,6 +89,8 @@ class MountController extends ApplicationApiController
     }
 
     /**
+     * Delete mount
+     *
      * Deletes a given mount from the Panel as long as there are no servers
      * currently attached to it.
      *
@@ -99,7 +99,7 @@ class MountController extends ApplicationApiController
     public function delete(DeleteMountRequest $request, Mount $mount): JsonResponse
     {
         if ($mount->servers()->count() > 0) {
-            throw new HasActiveServersException($this->translator->get('exceptions.mount.servers_attached'));
+            throw new HasActiveServersException(trans('exceptions.mount.servers_attached'));
         }
 
         $mount->delete();
@@ -108,6 +108,8 @@ class MountController extends ApplicationApiController
     }
 
     /**
+     * Assign eggs to mount
+     *
      * Adds eggs to the mount's many-to-many relation.
      */
     public function addEggs(Request $request, Mount $mount): array
@@ -127,6 +129,8 @@ class MountController extends ApplicationApiController
     }
 
     /**
+     * Assign mounts to mount
+     *
      * Adds nodes to the mount's many-to-many relation.
      */
     public function addNodes(Request $request, Mount $mount): array
@@ -144,6 +148,8 @@ class MountController extends ApplicationApiController
     }
 
     /**
+     * Unassign egg from mount
+     *
      * Deletes an egg from the mount's many-to-many relation.
      */
     public function deleteEgg(Mount $mount, int $egg_id): JsonResponse
@@ -154,6 +160,8 @@ class MountController extends ApplicationApiController
     }
 
     /**
+     * Unassign node from mount
+     *
      * Deletes a node from the mount's many-to-many relation.
      */
     public function deleteNode(Mount $mount, int $node_id): JsonResponse

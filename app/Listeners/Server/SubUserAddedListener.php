@@ -4,6 +4,7 @@ namespace App\Listeners\Server;
 
 use App\Events\Server\SubUserAdded;
 use App\Filament\Server\Pages\Console;
+use App\Notifications\AddedToServer;
 use Filament\Notifications\Actions\Action;
 use Filament\Notifications\Notification;
 
@@ -25,5 +26,7 @@ class SubUserAddedListener
                     ->url(fn () => Console::getUrl(panel: 'server', tenant: $event->subuser->server)),
             ])
             ->sendToDatabase($event->subuser->user);
+
+        $event->subuser->user->notify(new AddedToServer($event->subuser->server));
     }
 }

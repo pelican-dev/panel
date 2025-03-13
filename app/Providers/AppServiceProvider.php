@@ -32,11 +32,11 @@ use Illuminate\Support\Facades\URL;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Str;
 use Laravel\Sanctum\Sanctum;
-use Spatie\Health\Checks\Checks\CacheCheck;
-use Spatie\Health\Checks\Checks\DatabaseCheck;
-use Spatie\Health\Checks\Checks\DebugModeCheck;
-use Spatie\Health\Checks\Checks\EnvironmentCheck;
-use Spatie\Health\Checks\Checks\ScheduleCheck;
+use App\Checks\CacheCheck;
+use App\Checks\DatabaseCheck;
+use App\Checks\DebugModeCheck;
+use App\Checks\EnvironmentCheck;
+use App\Checks\ScheduleCheck;
 use Spatie\Health\Facades\Health;
 
 class AppServiceProvider extends ServiceProvider
@@ -79,26 +79,26 @@ class AppServiceProvider extends ServiceProvider
 
         Sanctum::usePersonalAccessTokenModel(ApiKey::class);
 
-        $bearerTokens = fn (OpenApi $openApi) => $openApi->secure(SecurityScheme::http('bearer'));
         Gate::define('viewApiDocs', fn () => true);
-        Scramble::registerApi('application', ['api_path' => 'api/application', 'info' => ['version' => '1.0']]);
+
+        $bearerTokens = fn (OpenApi $openApi) => $openApi->secure(SecurityScheme::http('bearer'));
+        Scramble::registerApi('application', ['api_path' => 'api/application', 'info' => ['version' => '1.0']])->afterOpenApiGenerated($bearerTokens);
         Scramble::registerApi('client', ['api_path' => 'api/client', 'info' => ['version' => '1.0']])->afterOpenApiGenerated($bearerTokens);
-        Scramble::registerApi('remote', ['api_path' => 'api/remote', 'info' => ['version' => '1.0']])->afterOpenApiGenerated($bearerTokens);
 
         // Default OAuth providers included with Socialite
-        CommonProvider::register('facebook', null, 'tabler-brand-facebook-f', '#1877f2');
-        CommonProvider::register('x', null, 'tabler-brand-x-f', '#1da1f2');
-        CommonProvider::register('linkedin', null, 'tabler-brand-linkedin-f', '#0a66c2');
-        CommonProvider::register('google', null, 'tabler-brand-google-f', '#4285f4');
-        GithubProvider::register();
-        CommonProvider::register('gitlab', null, 'tabler-brand-gitlab', '#fca326');
-        CommonProvider::register('bitbucket', null, 'tabler-brand-bitbucket-f', '#205081');
-        CommonProvider::register('slack', null, 'tabler-brand-slack', '#6ecadc');
+        CommonProvider::register($app, 'facebook', null, 'tabler-brand-facebook-f', '#1877f2');
+        CommonProvider::register($app, 'x', null, 'tabler-brand-x-f', '#1da1f2');
+        CommonProvider::register($app, 'linkedin', null, 'tabler-brand-linkedin-f', '#0a66c2');
+        CommonProvider::register($app, 'google', null, 'tabler-brand-google-f', '#4285f4');
+        GithubProvider::register($app);
+        CommonProvider::register($app, 'gitlab', null, 'tabler-brand-gitlab', '#fca326');
+        CommonProvider::register($app, 'bitbucket', null, 'tabler-brand-bitbucket-f', '#205081');
+        CommonProvider::register($app, 'slack', null, 'tabler-brand-slack', '#6ecadc');
 
         // Additional OAuth providers from socialiteproviders.com
-        AuthentikProvider::register();
-        DiscordProvider::register();
-        SteamProvider::register();
+        AuthentikProvider::register($app);
+        DiscordProvider::register($app);
+        SteamProvider::register($app);
 
         FilamentColor::register([
             'danger' => Color::Red,
@@ -164,7 +164,6 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        Scramble::extendOpenApi(fn (OpenApi $openApi) => $openApi->secure(SecurityScheme::http('bearer')));
         Scramble::ignoreDefaultRoutes();
     }
 }

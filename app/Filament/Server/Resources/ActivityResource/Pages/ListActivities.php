@@ -42,7 +42,7 @@ class ListActivities extends ListRecords
                 TextColumn::make('user')
                     ->state(function (ActivityLog $activityLog) use ($server) {
                         if (!$activityLog->actor instanceof User) {
-                            return 'System';
+                            return $activityLog->actor_id === null ? 'System' : 'Deleted user';
                         }
 
                         $user = $activityLog->actor->username;
@@ -72,7 +72,7 @@ class ListActivities extends ListRecords
                         TextInput::make('user')
                             ->formatStateUsing(function (ActivityLog $activityLog) use ($server) {
                                 if (!$activityLog->actor instanceof User) {
-                                    return 'System';
+                                    return $activityLog->actor_id === null ? 'System' : 'Deleted user';
                                 }
 
                                 $user = $activityLog->actor->username;
@@ -90,7 +90,7 @@ class ListActivities extends ListRecords
                             })
                             ->hintAction(
                                 Action::make('edit')
-                                    ->label(__('filament-actions::edit.single.label'))
+                                    ->label(trans('filament-actions::edit.single.label'))
                                     ->icon('tabler-edit')
                                     ->visible(fn (ActivityLog $activityLog) => $activityLog->actor instanceof User && auth()->user()->can('update user'))
                                     ->url(fn (ActivityLog $activityLog) => EditUser::getUrl(['record' => $activityLog->actor], panel: 'admin'))

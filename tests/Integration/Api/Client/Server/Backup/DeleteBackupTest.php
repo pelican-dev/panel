@@ -22,7 +22,7 @@ class DeleteBackupTest extends ClientApiIntegrationTestCase
         $this->repository = $this->mock(DaemonBackupRepository::class);
     }
 
-    public function testUserWithoutPermissionCannotDeleteBackup(): void
+    public function test_user_without_permission_cannot_delete_backup(): void
     {
         [$user, $server] = $this->generateTestAccount([Permission::ACTION_BACKUP_CREATE]);
 
@@ -37,7 +37,7 @@ class DeleteBackupTest extends ClientApiIntegrationTestCase
      * in the database. Once deleted there should also be a corresponding record in the
      * activity logs table for this API call.
      */
-    public function testBackupCanBeDeleted(): void
+    public function test_backup_can_be_deleted(): void
     {
         Event::fake([ActivityLogged::class]);
 

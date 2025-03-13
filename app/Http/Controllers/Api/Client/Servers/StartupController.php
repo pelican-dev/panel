@@ -11,7 +11,9 @@ use App\Http\Controllers\Api\Client\ClientApiController;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use App\Http\Requests\Api\Client\Servers\Startup\GetStartupRequest;
 use App\Http\Requests\Api\Client\Servers\Startup\UpdateStartupVariableRequest;
+use Dedoc\Scramble\Attributes\Group;
 
+#[Group('Server - Startup')]
 class StartupController extends ClientApiController
 {
     /**
@@ -24,6 +26,8 @@ class StartupController extends ClientApiController
     }
 
     /**
+     * List startup variables
+     *
      * Returns the startup information for the server including all the variables.
      */
     public function index(GetStartupRequest $request, Server $server): array
@@ -43,6 +47,8 @@ class StartupController extends ClientApiController
     }
 
     /**
+     * Update startup variable
+     *
      * Updates a single variable for a server.
      *
      * @throws \Illuminate\Validation\ValidationException

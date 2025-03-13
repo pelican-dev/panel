@@ -13,6 +13,8 @@ use App\Http\Requests\Api\Client\Account\StoreApiKeyRequest;
 class ApiKeyController extends ClientApiController
 {
     /**
+     * List api keys
+     *
      * Returns all the API keys that exist for the given client.
      */
     public function index(ClientApiRequest $request): array
@@ -23,6 +25,8 @@ class ApiKeyController extends ClientApiController
     }
 
     /**
+     * Create api key
+     *
      * Store a new API key for a user's account.
      *
      * @throws \App\Exceptions\DisplayException
@@ -50,6 +54,8 @@ class ApiKeyController extends ClientApiController
     }
 
     /**
+     * Delete api key
+     *
      * Deletes a given API key.
      */
     public function delete(ClientApiRequest $request, string $identifier): JsonResponse

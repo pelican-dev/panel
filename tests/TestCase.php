@@ -2,6 +2,8 @@
 
 namespace App\Tests;
 
+use App\Models\Role;
+use App\Models\User;
 use Carbon\Carbon;
 use Carbon\CarbonImmutable;
 use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
@@ -9,6 +11,8 @@ use Spatie\Permission\PermissionRegistrar;
 
 abstract class TestCase extends BaseTestCase
 {
+    protected User $admin;
+
     /**
      * Setup tests.
      */
@@ -18,6 +22,9 @@ abstract class TestCase extends BaseTestCase
 
         Carbon::setTestNow(Carbon::now());
         CarbonImmutable::setTestNow(Carbon::now());
+
+        [$admin] = generateTestAccount([]);
+        $this->admin = $admin->syncRoles(Role::getRootAdmin());
 
         // TODO: if unit tests suite, then force set DB_HOST=UNIT_NO_DB
         // env('DB_DATABASE', 'UNIT_NO_DB');

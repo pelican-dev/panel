@@ -2,13 +2,34 @@
 
 use App\Enums\ServerState;
 use App\Http\Controllers\Api\Client\Servers\SettingsController;
+use App\Models\ActivityLog;
 use App\Models\Permission;
 use App\Repositories\Daemon\DaemonServerRepository;
+use Illuminate\Support\Facades\Config;
 use Symfony\Component\HttpFoundation\Response;
 
 pest()->group('API');
 
 covers(SettingsController::class);
+
+it('server name can be changed', function () {
+    [$user, $server] = generateTestAccount([Permission::ACTION_WEBSOCKET_CONNECT, Permission::ACTION_SETTINGS_RENAME]);
+    $originalName = $server->name;
+
+    $this->actingAs($user)
+        ->post("/api/client/servers/$server->uuid/settings/rename", [
+            'name' => $newName = 'Test Server Name',
+        ])
+        ->assertStatus(Response::HTTP_NO_CONTENT);
+
+    $server = $server->refresh();
+
+    $logged = ActivityLog::first();
+    expect()->toLogActivities(1)
+        ->and($server->name)->not()->toBe($originalName)
+        ->and($logged->properties['old'])->toBe($originalName)
+        ->and($logged->properties['new'])->toBe($newName);
+});
 
 it('server name cannot be changed', function () {
     [$user, $server] = generateTestAccount([Permission::ACTION_WEBSOCKET_CONNECT]);
@@ -37,7 +58,7 @@ it('server description can be changed', function () {
         ->assertStatus(Response::HTTP_NO_CONTENT);
 
     $server = $server->refresh();
-    $logged = \App\Models\ActivityLog::first();
+    $logged = ActivityLog::first();
     expect()->toLogActivities(1)
         ->and($logged->properties['old'])->toBe($originalDescription)
         ->and($logged->properties['new'])->toBe($newDescription)
@@ -58,21 +79,6 @@ it('server description cannot be changed', function () {
     $server = $server->refresh();
     expect()->toLogActivities(0)
         ->and($server->description)->toBe($originalDescription);
-});
-
-it('server name can be changed', function () {
-    [$user, $server] = generateTestAccount([Permission::ACTION_WEBSOCKET_CONNECT, Permission::ACTION_SETTINGS_RENAME]);
-    $originalName = $server->name;
-
-    $this->actingAs($user)
-        ->post("/api/client/servers/$server->uuid/settings/rename", [
-            'name' => 'Test Server Name',
-        ])
-        ->assertStatus(Response::HTTP_NO_CONTENT);
-
-    $server = $server->refresh();
-    expect()->toLogActivities(1)
-        ->and($server->name)->not()->toBe($originalName);
 });
 
 //test('subuser cannot change server name without permission', function () {
