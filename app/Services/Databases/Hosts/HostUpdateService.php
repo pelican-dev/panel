@@ -15,7 +15,6 @@ class HostUpdateService
     public function __construct(
         private ConnectionInterface $connection,
         private DatabaseManager $databaseManager,
-        private DynamicDatabaseConnection $dynamic,
     ) {}
 
     /**
@@ -38,7 +37,7 @@ class HostUpdateService
         return $this->connection->transaction(function () use ($data, $host) {
             $host->update($data);
 
-            $this->dynamic->set('dynamic', $host);
+            DynamicDatabaseConnection::set('dynamic', $host);
             $this->databaseManager->connection('dynamic')->getPdo();
 
             return $host;
