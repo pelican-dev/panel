@@ -42,7 +42,7 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('subusers', function (Blueprint $table) {
-            $table->char('daemonSecret', 36)->after('server_id');
+            $table->string('daemonSecret', 36)->after('server_id');
         });
 
         $subusers = DB::table('subusers')->get();

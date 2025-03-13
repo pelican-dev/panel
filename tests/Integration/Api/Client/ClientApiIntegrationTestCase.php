@@ -3,15 +3,13 @@
 namespace App\Tests\Integration\Api\Client;
 
 use App\Models\Task;
-use App\Models\Model;
 use App\Models\Backup;
 use App\Models\Server;
 use App\Models\Schedule;
 use Illuminate\Support\Collection;
 use App\Models\Allocation;
-use App\Tests\Integration\TestResponse;
 use App\Tests\Integration\IntegrationTestCase;
-use Illuminate\Database\Eloquent\Model as EloquentModel;
+use Illuminate\Database\Eloquent\Model;
 use App\Transformers\Api\Client\BaseClientTransformer;
 
 abstract class ClientApiIntegrationTestCase extends IntegrationTestCase
@@ -57,7 +55,7 @@ abstract class ClientApiIntegrationTestCase extends IntegrationTestCase
      * Asserts that the data passed through matches the output of the data from the transformer. This
      * will remove the "relationships" key when performing the comparison.
      */
-    protected function assertJsonTransformedWith(array $data, Model|EloquentModel $model): void
+    protected function assertJsonTransformedWith(array $data, Model $model): void
     {
         $reflect = new \ReflectionClass($model);
         $transformer = sprintf('\\App\\Transformers\\Api\\Client\\%sTransformer', $reflect->getShortName());

@@ -179,6 +179,10 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
             return true;
         });
 
+        static::saving(function (self $user) {
+            $user->email = strtolower($user->email);
+        });
+
         static::deleting(function (self $user) {
             throw_if($user->servers()->count() > 0, new DisplayException(trans('exceptions.users.has_servers')));
 

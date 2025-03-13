@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('mounts', function (Blueprint $table) {
             $table->increments('id')->unique();
-            $table->char('uuid', 36)->unique();
+            $table->string('uuid', 36)->unique();
             $table->string('name')->unique();
             $table->text('description')->nullable();
             $table->string('source');
