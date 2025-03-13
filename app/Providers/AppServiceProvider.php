@@ -38,6 +38,7 @@ use App\Checks\DatabaseCheck;
 use App\Checks\DebugModeCheck;
 use App\Checks\EnvironmentCheck;
 use App\Checks\ScheduleCheck;
+use App\Extensions\OAuth\Providers\AutheliaProvider;
 use Spatie\Health\Facades\Health;
 
 class AppServiceProvider extends ServiceProvider
@@ -104,6 +105,7 @@ class AppServiceProvider extends ServiceProvider
         CommonProvider::register($app, 'slack', null, 'tabler-brand-slack', '#6ecadc');
 
         // Additional OAuth providers from socialiteproviders.com
+        AutheliaProvider::register($app);
         AuthentikProvider::register($app);
         DiscordProvider::register($app);
         SteamProvider::register($app);

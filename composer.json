@@ -31,6 +31,7 @@
         "predis/predis": "^2.3",
         "s1lentium/iptools": "~1.2.0",
         "secondnetwork/blade-tabler-icons": "^3.26",
+        "socialiteproviders/authelia": "^4.0",
         "socialiteproviders/authentik": "^5.2",
         "socialiteproviders/discord": "^4.2",
         "socialiteproviders/steam": "^4.3",
