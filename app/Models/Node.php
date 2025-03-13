@@ -364,6 +364,8 @@ class Node extends Model implements Validatable
         ];
 
         try {
+            $this->systemInformation();
+
             return Http::daemon($this)
                 ->connectTimeout(1)
                 ->timeout(1)
