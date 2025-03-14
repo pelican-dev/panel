@@ -13,6 +13,7 @@ use Filament\Forms\Components\Tabs\Tab;
 use Filament\Forms\Components\TextInput;
 use Filament\Notifications\Notification;
 use Filament\Tables\Actions\Action;
+use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 
 class ImportEggAction extends Action
 {
@@ -30,46 +31,40 @@ class ImportEggAction extends Action
         $this->authorize(fn () => auth()->user()->can('import egg'));
 
         $this->action(function (array $data, EggImporterService $eggImportService): void {
+            $eggs = array_merge($data['files'], collect($data['urls'])->flatten()->whereNotNull()->unique()->all());
+            if (empty($eggs)) {
+                return;
+            }
+
             [$success, $failed] = [collect(), collect()];
 
-            if (!empty($data['egg'])) {
-                $eggFiles = $data['egg'];
-
-                foreach ($eggFiles as $file) {
-                    $name = str($file)->afterLast('/')->before('.json');
-                    try {
-                        $eggImportService->fromFile($file);
-                        $success->push($name);
-                    } catch (Exception $exception) {
-                        $failed->push($name);
-                        report($exception);
-                    }
+            foreach ($eggs as $egg) {
+                if ($egg instanceof TemporaryUploadedFile) {
+                    $name = str($egg->getClientOriginalName())->afterLast('egg-')->before('.json')->headline();
+                    $method = 'fromFile';
+                } else {
+                    $egg = str($egg);
+                    $egg = $egg->contains('github.com') ? $egg->replaceFirst('blob', 'raw') : $egg;
+                    $name = $egg->afterLast('/egg-')->before('.json')->headline();
+                    $method = 'fromUrl';
+                }
+                try {
+                    $eggImportService->$method($egg);
+                    $success->push($name);
+                } catch (Exception $exception) {
+                    $failed->push($name);
+                    report($exception);
                 }
             }
 
-            if (!empty($data['urls'])) {
-                $eggUrls = collect($data['urls'])->flatten()->unique()->all();
-
-                foreach ($eggUrls as $url) {
-                    $name = str($url)->afterLast('/')->before('.json');
-                    try {
-                        $eggImportService->fromUrl($url);
-                        $success->push($name);
-                    } catch (Exception $exception) {
-                        $failed->push($name);
-                        report($exception);
-                    }
-                }
-            }
-
-            if (count($failed) > 0) {
+            if ($failed->count() > 0) {
                 Notification::make()
                     ->title(trans('admin/egg.import.import_failed'))
                     ->body($failed->join(', '))
                     ->danger()
                     ->send();
             }
-            if (count($success) > 0) {
+            if ($success->count() > 0) {
                 Notification::make()
                     ->title(trans('admin/egg.import.import_success'))
                     ->body($success->join(', '))
@@ -89,10 +84,12 @@ class ImportEggAction extends Action
                     Tab::make(trans('admin/egg.import.file'))
                         ->icon('tabler-file-upload')
                         ->schema([
-                            FileUpload::make('egg')
-                                ->label('Egg')
+                            FileUpload::make('files')
+                                ->label(trans('admin/egg.model_label'))
                                 ->hint(trans('admin/egg.import.egg_help'))
                                 ->acceptedFileTypes(['application/json'])
+                                ->preserveFilenames()
+                                ->previewable(false)
                                 ->storeFiles(false)
                                 ->multiple($isMultiple),
                         ]),
@@ -100,7 +97,7 @@ class ImportEggAction extends Action
                         ->icon('tabler-world-upload')
                         ->schema([
                             Repeater::make('urls')
-                                ->itemLabel(fn (array $state) => $state['url'] ? str($state['url'])->afterLast('/')->before('.json') : null)
+                                ->itemLabel(fn (array $state) => str($state['url'])->afterLast('/egg-')->before('.json')->headline())
                                 ->hint(trans('admin/egg.import.url_help'))
                                 ->addActionLabel(trans('admin/egg.import.add_url'))
                                 ->grid($isMultiple ? 2 : null)
@@ -112,9 +109,10 @@ class ImportEggAction extends Action
                                         ->default(fn (Egg $egg) => $egg->update_url)
                                         ->live()
                                         ->label(trans('admin/egg.import.url'))
-                                        ->placeholder('https://raw.githubusercontent.com/pelican-eggs/generic/main/nodejs/egg-node-js-generic.json')
+                                        ->placeholder('https://github.com/pelican-eggs/generic/blob/main/nodejs/egg-node-js-generic.json')
                                         ->url()
-                                        ->required(),
+                                        ->endsWith('.json')
+                                        ->validationAttribute(trans('admin/egg.import.url')),
                                 ]),
                         ]),
                 ]),
