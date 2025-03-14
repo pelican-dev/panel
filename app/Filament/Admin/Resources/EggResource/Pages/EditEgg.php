@@ -257,7 +257,8 @@ class EditEgg extends EditRecord
                 ->disabled(fn (Egg $egg): bool => $egg->servers()->count() > 0)
                 ->label(fn (Egg $egg): string => $egg->servers()->count() <= 0 ? trans('filament-actions::delete.single.label') : trans('admin/egg.in_use')),
             ExportEggAction::make(),
-            ImportEggAction::make(),
+            ImportEggAction::make()
+                ->multiple(false),
             $this->getSaveFormAction()->formId('form'),
         ];
     }

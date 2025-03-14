@@ -75,14 +75,16 @@ class ListEggs extends ListRecords
             ->emptyStateHeading(trans('admin/egg.no_eggs'))
             ->emptyStateActions([
                 CreateAction::make(),
-                ImportEggAction::make(),
+                ImportEggAction::make()
+                    ->multiple(),
             ]);
     }
 
     protected function getHeaderActions(): array
     {
         return [
-            ImportEggHeaderAction::make(),
+            ImportEggHeaderAction::make()
+                ->multiple(),
             CreateHeaderAction::make(),
         ];
     }
