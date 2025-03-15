@@ -12,7 +12,6 @@
         "aws/aws-sdk-php": "^3.341",
         "calebporzio/sushi": "^2.5",
         "chillerlan/php-qrcode": "^5.0.2",
-        "coderflex/filament-turnstile": "^2.2",
         "dedoc/scramble": "^0.12.10",
         "doctrine/dbal": "~3.6.0",
         "filament/filament": "3.3.3",

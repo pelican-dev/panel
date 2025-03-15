@@ -34,9 +34,10 @@ return [
         'display_width' => 'Display Width',
     ],
     'captcha' => [
-        'enable' => 'Enable Turnstile Captcha?',
+        'enable' => 'Enable',
+        'disable' => 'Disable',
         'info_label' => 'Info',
-        'info' => 'You can generate the keys on your Cloudflare Dashboard. A Cloudflare account is required.',
+        'info' => 'You can generate the keys on your <u><a href="https://developers.cloudflare.com/turnstile/get-started/#get-a-sitekey-and-secret-key" target="_blank">Cloudflare Dashboard</a></u>. A Cloudflare account is required.',
         'site_key' => 'Site Key',
         'secret_key' => 'Secret Key',
         'verify' => 'Verify Domain?',
