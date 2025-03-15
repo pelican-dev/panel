@@ -192,7 +192,7 @@ class CreateEgg extends CreateRecord
                                         ->hintIcon('tabler-code')
                                         ->hintIconTooltip(fn ($state) => "{{{$state}}}")
                                         ->unique(modifyRuleUsing: fn (Unique $rule, Get $get) => $rule->where('egg_id', $get('../../id')), ignoreRecord: true)
-                                        ->rules(EggVariable::$validationRules['env_variable'])
+                                        ->rules(EggVariable::getRulesForField('env_variable'))
                                         ->validationMessages([
                                             'unique' => trans('admin/egg.error_unique'),
                                             'required' => trans('admin/egg.error_required'),
