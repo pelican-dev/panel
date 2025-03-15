@@ -33,7 +33,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 class EggVariable extends Model implements Validatable
 {
     use HasFactory;
-    use HasValidation;
+    use HasValidation { getRules as getValidationRules; }
 
     /**
      * The resource name for this model when it is transformed into an
@@ -44,7 +44,7 @@ class EggVariable extends Model implements Validatable
     /**
      * Reserved environment variable names.
      */
-    public const RESERVED_ENV_NAMES = 'P_SERVER_UUID,P_SERVER_ALLOCATION_LIMIT,SERVER_MEMORY,SERVER_IP,SERVER_PORT,ENV,HOME,USER,STARTUP,MODIFIED_STARTUP,SERVER_UUID,UUID,INTERNAL_IP,HOSTNAME,TERM,LANG,PWD,TZ,TIMEZONE';
+    public const RESERVED_ENV_NAMES = ['P_SERVER_UUID', 'P_SERVER_ALLOCATION_LIMIT', 'SERVER_MEMORY', 'SERVER_IP', 'SERVER_PORT', 'ENV', 'HOME', 'USER', 'STARTUP', 'MODIFIED_STARTUP', 'SERVER_UUID', 'UUID', 'INTERNAL_IP', 'HOSTNAME', 'TERM', 'LANG', 'PWD', 'TZ', 'TIMEZONE'];
 
     /**
      * Fields that are not mass assignable.
@@ -57,13 +57,26 @@ class EggVariable extends Model implements Validatable
         'sort' => 'nullable',
         'name' => 'required|string|between:1,255',
         'description' => 'string',
-        'env_variable' => 'required|alphaDash|between:1,255|notIn:' . self::RESERVED_ENV_NAMES,
         'default_value' => 'string',
         'user_viewable' => 'boolean',
         'user_editable' => 'boolean',
         'rules' => 'array',
         'rules.*' => 'string',
     ];
+
+    /**
+     * Implement language verification by overriding Eloquence's gather rules function.
+     *
+     * @return array<string|string[]>
+     */
+    public static function getRules(): array
+    {
+        $rules = self::getValidationRules();
+
+        $rules['env_variable'] = ['required', 'alphaDash', 'between:1,255', 'notIn:' . implode(',', EggVariable::RESERVED_ENV_NAMES)];
+
+        return $rules;
+    }
 
     protected $attributes = [
         'user_editable' => 0,
