@@ -57,7 +57,7 @@ class Allocation extends Model
      */
     protected $guarded = ['id', 'created_at', 'updated_at'];
 
-    /** @var array<array-key, string|string[]> */
+    /** @var array<array-key, string[]> */
     public static array $validationRules = [
         'node_id' => ['required', 'exists:nodes,id'],
         'ip' => ['required', 'ip'],

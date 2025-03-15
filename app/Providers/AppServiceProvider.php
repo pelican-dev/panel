@@ -22,6 +22,7 @@ use Filament\Support\Colors\Color;
 use Filament\Support\Facades\FilamentColor;
 use Filament\Support\Facades\FilamentView;
 use Filament\View\PanelsRenderHook;
+use Illuminate\Config\Repository;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Console\AboutCommand;
@@ -44,12 +45,19 @@ class AppServiceProvider extends ServiceProvider
     /**
      * Bootstrap any application services.
      */
-    public function boot(Application $app, SoftwareVersionService $versionService): void
-    {
+    public function boot(
+        Application $app,
+        SoftwareVersionService $versionService,
+        Repository $config,
+    ): void {
         // If the APP_URL value is set with https:// make sure we force it here. Theoretically
         // this should just work with the proxy logic, but there are a lot of cases where it
         // doesn't, and it triggers a lot of support requests, so lets just head it off here.
         URL::forceHttps(Str::startsWith(config('app.url') ?? '', 'https://'));
+
+        if ($app->runningInConsole() && empty(config('app.key'))) {
+            $config->set('app.key', '');
+        }
 
         Relation::enforceMorphMap([
             'allocation' => Models\Allocation::class,

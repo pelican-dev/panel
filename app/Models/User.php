@@ -145,18 +145,18 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
         'oauth' => '[]',
     ];
 
-    /** @var array<array-key, string|string[]> */
+    /** @var array<array-key, string[]> */
     public static array $validationRules = [
-        'uuid' => 'nullable|string|size:36|unique:users,uuid',
-        'email' => 'required|email|between:1,255|unique:users,email',
-        'external_id' => 'sometimes|nullable|string|max:255|unique:users,external_id',
-        'username' => 'required|between:1,255|unique:users,username',
-        'password' => 'sometimes|nullable|string',
-        'language' => 'string',
-        'timezone' => 'string',
-        'use_totp' => 'boolean',
-        'totp_secret' => 'nullable|string',
-        'oauth' => 'array|nullable',
+        'uuid' => ['nullable', 'string', 'size:36', 'unique:users,uuid'],
+        'email' => ['required', 'email', 'between:1,255', 'unique:users,email'],
+        'external_id' => ['sometimes', 'nullable', 'string', 'max:255', 'unique:users,external_id'],
+        'username' => ['required', 'between:1,255', 'unique:users,username'],
+        'password' => ['sometimes', 'nullable', 'string'],
+        'language' => ['string'],
+        'timezone' => ['string'],
+        'use_totp' => ['boolean'],
+        'totp_secret' => ['nullable', 'string'],
+        'oauth' => ['array', 'nullable'],
     ];
 
     protected function casts(): array
