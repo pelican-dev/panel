@@ -13,7 +13,6 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Notifications\Notifiable;
-use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Str;
 use Symfony\Component\Yaml\Yaml;
@@ -85,26 +84,26 @@ class Node extends Model implements Validatable
         'description', 'maintenance_mode', 'tags',
     ];
 
-    /** @var array<array-key, string|string[]> */
+    /** @var array<array-key, string[]> */
     public static array $validationRules = [
-        'name' => 'required|string|min:1|max:100',
-        'description' => 'string|nullable',
-        'public' => 'boolean',
-        'fqdn' => 'required|string',
-        'scheme' => 'required|string|in:http,https',
-        'behind_proxy' => 'boolean',
-        'memory' => 'required|numeric|min:0',
-        'memory_overallocate' => 'required|numeric|min:-1',
-        'disk' => 'required|numeric|min:0',
-        'disk_overallocate' => 'required|numeric|min:-1',
-        'cpu' => 'required|numeric|min:0',
-        'cpu_overallocate' => 'required|numeric|min:-1',
-        'daemon_base' => 'sometimes|required|regex:/^([\/][\d\w.\-\/]+)$/',
-        'daemon_sftp' => 'required|numeric|between:1,65535',
-        'daemon_sftp_alias' => 'nullable|string',
-        'daemon_listen' => 'required|numeric|between:1,65535',
-        'maintenance_mode' => 'boolean',
-        'upload_size' => 'int|between:1,1024',
+        'name' => ['required', 'string', 'min:1', 'max:100'],
+        'description' => ['string', 'nullable'],
+        'public' => ['boolean'],
+        'fqdn' => ['required', 'string'],
+        'scheme' => ['required', 'string', 'in:http,https'],
+        'behind_proxy' => ['boolean'],
+        'memory' => ['required', 'numeric', 'min:0'],
+        'memory_overallocate' => ['required', 'numeric', 'min:-1'],
+        'disk' => ['required', 'numeric', 'min:0'],
+        'disk_overallocate' => ['required', 'numeric', 'min:-1'],
+        'cpu' => ['required', 'numeric', 'min:0'],
+        'cpu_overallocate' => ['required', 'numeric', 'min:-1'],
+        'daemon_base' => ['sometimes', 'required', 'regex:/^([\/][\d\w.\-\/]+)$/'],
+        'daemon_sftp' => ['required', 'numeric', 'between:1,65535'],
+        'daemon_sftp_alias' => ['nullable', 'string'],
+        'daemon_listen' => ['required', 'numeric', 'between:1,65535'],
+        'maintenance_mode' => ['boolean'],
+        'upload_size' => ['int', 'between:1,1024'],
     ];
 
     /**
@@ -297,28 +296,6 @@ class Node extends Model implements Validatable
         return true;
     }
 
-    public static function getForServerCreation(): Collection
-    {
-        return self::with('allocations')->get()->map(function (Node $item) {
-            $filtered = $item->getRelation('allocations')->where('server_id', null)->map(function ($map) {
-                return collect($map)->only(['id', 'ip', 'port']);
-            });
-
-            $ports = $filtered->map(function ($map) {
-                return [
-                    'id' => $map['id'],
-                    'text' => sprintf('%s:%s', $map['ip'], $map['port']),
-                ];
-            })->values();
-
-            return [
-                'id' => $item->id,
-                'text' => $item->name,
-                'allocations' => $ports,
-            ];
-        })->values();
-    }
-
     /** @return array<mixed> */
     public function systemInformation(): array
     {
@@ -387,6 +364,8 @@ class Node extends Model implements Validatable
         ];
 
         try {
+            $this->systemInformation();
+
             return Http::daemon($this)
                 ->connectTimeout(1)
                 ->timeout(1)

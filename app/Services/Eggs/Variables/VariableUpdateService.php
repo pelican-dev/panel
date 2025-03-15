@@ -45,7 +45,7 @@ class VariableUpdateService
     public function handle(EggVariable $variable, array $data): EggVariable
     {
         if (!is_null(array_get($data, 'env_variable'))) {
-            if (in_array(strtoupper(array_get($data, 'env_variable')), explode(',', EggVariable::RESERVED_ENV_NAMES))) {
+            if (in_array(strtoupper(array_get($data, 'env_variable')), EggVariable::RESERVED_ENV_NAMES)) {
                 throw new ReservedVariableNameException(trans('exceptions.service.variables.reserved_name', ['name' => array_get($data, 'env_variable')]));
             }
 

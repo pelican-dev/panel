@@ -32,16 +32,11 @@ trait HasValidation
     /**
      * Returns the rules associated with this model.
      *
-     * @return array<array-key, string|ValidationRule|array<array-key, string|ValidationRule>>
+     * @return array<array-key, string[]>
      */
     public static function getRules(): array
     {
-        $rules = static::$validationRules;
-        foreach ($rules as &$rule) {
-            $rule = is_array($rule) ? $rule : explode('|', $rule);
-        }
-
-        return $rules;
+        return static::$validationRules;
     }
 
     /**

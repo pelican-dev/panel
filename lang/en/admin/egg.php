@@ -15,6 +15,7 @@ return [
         'url' => 'URL',
         'egg_help' => 'This should be the raw .json file ( egg-minecraft.json )',
         'url_help' => 'URLs must point directly to the raw .json file',
+        'add_url' => 'New URL',
         'import_failed' => 'Import Failed',
         'import_success' => 'Import Success',
     ],
