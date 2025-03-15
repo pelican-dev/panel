@@ -29,6 +29,8 @@ class StartupController extends ApplicationApiController
      *
      * Update the startup and environment settings for a specific server.
      *
+     * @return array<array-key, mixed>
+     *
      * @throws ValidationException
      * @throws ConnectionException
      * @throws DataValidationException

@@ -13,6 +13,7 @@ use Filament\Models\Contracts\HasAvatar;
 use Filament\Models\Contracts\HasName;
 use Filament\Models\Contracts\HasTenants;
 use Filament\Panel;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -31,7 +32,6 @@ use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
 use Illuminate\Contracts\Auth\Access\Authorizable as AuthorizableContract;
 use Illuminate\Contracts\Auth\CanResetPassword as CanResetPasswordContract;
 use App\Notifications\SendPasswordReset as ResetPasswordNotification;
-use Filament\Facades\Filament;
 use ResourceBundle;
 use Spatie\Permission\Traits\HasRoles;
 
@@ -50,7 +50,7 @@ use Spatie\Permission\Traits\HasRoles;
  * @property bool $use_totp
  * @property string|null $totp_secret
  * @property \Illuminate\Support\Carbon|null $totp_authenticated_at
- * @property array|null $oauth
+ * @property string[]|null $oauth
  * @property bool $gravatar
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
@@ -67,6 +67,8 @@ use Spatie\Permission\Traits\HasRoles;
  * @property int|null $ssh_keys_count
  * @property \Illuminate\Database\Eloquent\Collection|\App\Models\ApiKey[] $tokens
  * @property int|null $tokens_count
+ * @property \Illuminate\Database\Eloquent\Collection|\App\Models\Role[] $roles
+ * @property int|null $roles_count
  *
  * @method static \Database\Factories\UserFactory factory(...$parameters)
  * @method static Builder|User newModelQuery()
@@ -143,20 +145,18 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
         'oauth' => '[]',
     ];
 
-    /**
-     * Rules verifying that the data being stored matches the expectations of the database.
-     */
+    /** @var array<array-key, string[]> */
     public static array $validationRules = [
-        'uuid' => 'nullable|string|size:36|unique:users,uuid',
-        'email' => 'required|email|between:1,255|unique:users,email',
-        'external_id' => 'sometimes|nullable|string|max:255|unique:users,external_id',
-        'username' => 'required|between:1,255|unique:users,username',
-        'password' => 'sometimes|nullable|string',
-        'language' => 'string',
-        'timezone' => 'string',
-        'use_totp' => 'boolean',
-        'totp_secret' => 'nullable|string',
-        'oauth' => 'array|nullable',
+        'uuid' => ['nullable', 'string', 'size:36', 'unique:users,uuid'],
+        'email' => ['required', 'email', 'between:1,255', 'unique:users,email'],
+        'external_id' => ['sometimes', 'nullable', 'string', 'max:255', 'unique:users,external_id'],
+        'username' => ['required', 'between:1,255', 'unique:users,username'],
+        'password' => ['sometimes', 'nullable', 'string'],
+        'language' => ['string'],
+        'timezone' => ['string'],
+        'use_totp' => ['boolean'],
+        'totp_secret' => ['nullable', 'string'],
+        'oauth' => ['array', 'nullable'],
     ];
 
     protected function casts(): array
@@ -202,17 +202,6 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
     }
 
     /**
-     * Return the user model in a format that can be passed over to React templates.
-     */
-    public function toReactObject(): array
-    {
-        return array_merge(collect($this->toArray())->except(['id', 'external_id'])->toArray(), [
-            'root_admin' => $this->isRootAdmin(),
-            'admin' => $this->canAccessPanel(Filament::getPanel('admin')),
-        ]);
-    }
-
-    /**
      * Send the password reset notification.
      *
      * @param  string  $token
@@ -227,20 +216,18 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
         $this->notify(new ResetPasswordNotification($token));
     }
 
-    /**
-     * Store the username as a lowercase string.
-     */
-    public function setUsernameAttribute(string $value): void
+    public function username(): Attribute
     {
-        $this->attributes['username'] = mb_strtolower($value);
+        return Attribute::make(
+            set: fn (string $value) => mb_strtolower($value),
+        );
     }
 
-    /**
-     * Store the email as a lowercase string.
-     */
-    public function setEmailAttribute(string $value): void
+    public function email(): Attribute
     {
-        $this->attributes['email'] = mb_strtolower($value);
+        return Attribute::make(
+            set: fn (string $value) => mb_strtolower($value),
+        );
     }
 
     /**
@@ -341,6 +328,9 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
      * Laravel's policies strictly check for the existence of a real method,
      * this checks if the ability is one of our permissions and then checks if the user can do it or not
      * Otherwise it calls the Authorizable trait's parent method
+     *
+     * @param  iterable<string|\BackedEnum>|\BackedEnum|string  $abilities
+     * @param  array<mixed>|mixed  $arguments
      */
     public function can($abilities, mixed $arguments = []): bool
     {

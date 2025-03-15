@@ -32,6 +32,8 @@ class AllocationController extends ApplicationApiController
      * List allocations
      *
      * Return all the allocations that exist for a given node.
+     *
+     * @return array<mixed>
      */
     public function index(GetAllocationsRequest $request, Node $node): array
     {

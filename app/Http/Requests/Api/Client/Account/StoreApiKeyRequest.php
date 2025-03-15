@@ -9,6 +9,7 @@ use App\Http\Requests\Api\Client\ClientApiRequest;
 
 class StoreApiKeyRequest extends ClientApiRequest
 {
+    /** @return array<array-key, string|string[]> */
     public function rules(): array
     {
         $rules = ApiKey::getRules();

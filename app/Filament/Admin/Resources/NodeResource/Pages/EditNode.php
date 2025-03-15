@@ -592,22 +592,21 @@ class EditNode extends EditRecord
         }
 
         try {
-            $this->record = $this->nodeUpdateService->handle($record, $data);
-
-            return $this->record;
+            $record = $this->nodeUpdateService->handle($record, $data);
         } catch (Exception $exception) {
             $this->errored = true;
 
             Notification::make()
-                ->title(trans('admin/node.error_connecting'))
+                ->title(trans('admin/node.error_connecting', ['node' => $record->name]))
                 ->body(trans('admin/node.error_connecting_description'))
                 ->color('warning')
                 ->icon('tabler-database')
                 ->warning()
                 ->send();
 
-            return parent::handleRecordUpdate($record, $data);
         }
+
+        return parent::handleRecordUpdate($record, $data);
     }
 
     protected function getSavedNotification(): ?Notification

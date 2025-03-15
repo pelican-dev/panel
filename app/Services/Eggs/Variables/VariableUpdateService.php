@@ -29,14 +29,23 @@ class VariableUpdateService
     /**
      * Update a specific egg variable.
      *
+     * @param array{
+     *     env_variable?: string,
+     *     rules?: string|string[],
+     *     options?: string[],
+     *     name?: string,
+     *     description?: string,
+     *     default_value?: string,
+     * } $data
+     *
      * @throws \App\Exceptions\DisplayException
      * @throws \App\Exceptions\Model\DataValidationException
      * @throws \App\Exceptions\Service\Egg\Variable\ReservedVariableNameException
      */
-    public function handle(EggVariable $variable, array $data): mixed
+    public function handle(EggVariable $variable, array $data): EggVariable
     {
         if (!is_null(array_get($data, 'env_variable'))) {
-            if (in_array(strtoupper(array_get($data, 'env_variable')), explode(',', EggVariable::RESERVED_ENV_NAMES))) {
+            if (in_array(strtoupper(array_get($data, 'env_variable')), EggVariable::RESERVED_ENV_NAMES)) {
                 throw new ReservedVariableNameException(trans('exceptions.service.variables.reserved_name', ['name' => array_get($data, 'env_variable')]));
             }
 
@@ -57,7 +66,7 @@ class VariableUpdateService
 
         $options = array_get($data, 'options') ?? [];
 
-        return $variable->update([
+        $variable->update([
             'name' => $data['name'] ?? '',
             'description' => $data['description'] ?? '',
             'env_variable' => $data['env_variable'] ?? '',
@@ -66,5 +75,7 @@ class VariableUpdateService
             'user_editable' => in_array('user_editable', $options),
             'rules' => $data['rules'] ?? [],
         ]);
+
+        return $variable;
     }
 }

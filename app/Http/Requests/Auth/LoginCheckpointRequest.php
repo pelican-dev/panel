@@ -17,6 +17,8 @@ class LoginCheckpointRequest extends FormRequest
 
     /**
      * Rules to apply to the request.
+     *
+     * @return array<string, string|string[]>
      */
     public function rules(): array
     {

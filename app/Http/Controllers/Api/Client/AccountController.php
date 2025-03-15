@@ -25,6 +25,8 @@ class AccountController extends ClientApiController
 
     /**
      * View account
+     *
+     * @return array<array-key, mixed>
      */
     public function index(Request $request): array
     {

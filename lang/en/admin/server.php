@@ -36,6 +36,7 @@ return [
     'disabled' => 'Disabled',
     'memory' => 'Memory',
     'memory_limit' => 'Memory Limit',
+    'memory_helper' => 'Wings will add overhead to this value when creating the container to make sure it doesn\'t starve out when using max memory.',
     'disk' => 'Disk Space',
     'disk_limit' => 'Disk Space Limit',
     'advanced_limits' => 'Advanced Limits',
@@ -117,5 +118,7 @@ return [
         'invalid_port_body' => ':i is not in the valid port range between :portFloor-:portCeil',
         'already_exists' => 'Port already in use',
         'already_exists_body' => ':i is already with an allocation',
+        'error_connecting' => 'Error connecting to :node',
+        'error_connecting_description' => 'The configuration could not be automatically synced on Wings, you will need to manually restart the server.',
     ],
 ];

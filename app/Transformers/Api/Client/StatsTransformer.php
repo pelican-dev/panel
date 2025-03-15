@@ -12,10 +12,20 @@ class StatsTransformer extends BaseClientTransformer
     }
 
     /**
-     * Transform stats from the daemon into a result set that can be used in
-     * the client API.
+     * @param array{
+     *     state: string,
+     *     is_suspended: bool,
+     *     utilization: array{
+     *         memory_bytes: int,
+     *         cpu_absolute: int,
+     *         disk_bytes: int,
+     *         rx_bytes: int,
+     *         tx_bytes: int,
+     *         uptime: int,
+     *     },
+     * } $data
      */
-    public function transform(array $data): array
+    public function transform($data): array
     {
         return [
             'current_state' => Arr::get($data, 'state', 'stopped'),

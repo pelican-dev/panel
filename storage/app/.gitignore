@@ -1,4 +1,5 @@
 *
+!private/
 !.gitignore
 !services/*
 packs/**/*

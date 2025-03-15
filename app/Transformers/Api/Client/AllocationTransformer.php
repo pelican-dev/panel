@@ -14,7 +14,10 @@ class AllocationTransformer extends BaseClientTransformer
         return 'allocation';
     }
 
-    public function transform(Allocation $model): array
+    /**
+     * @param  Allocation  $model
+     */
+    public function transform($model): array
     {
         return [
             'id' => $model->id,

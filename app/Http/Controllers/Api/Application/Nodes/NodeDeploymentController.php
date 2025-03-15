@@ -22,6 +22,8 @@ class NodeDeploymentController extends ApplicationApiController
      * Finds any nodes that are available using the given deployment criteria. This works
      * similarly to the server creation process, but allows you to pass the deployment object
      * to this endpoint and get back a list of all Nodes satisfying the requirements.
+     *
+     * @return array<mixed>
      */
     public function __invoke(GetDeployableNodesRequest $request): array
     {

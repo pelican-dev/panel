@@ -35,6 +35,8 @@ class DatabaseController extends ClientApiController
      * List databases
      *
      * Return all the databases that belong to the given server.
+     *
+     * @return array<string, mixed>
      */
     public function index(GetDatabasesRequest $request, Server $server): array
     {
@@ -47,6 +49,8 @@ class DatabaseController extends ClientApiController
      * Create database
      *
      * Create a new database for the given server and return it.
+     *
+     * @return array<string, mixed>
      *
      * @throws \Throwable
      * @throws \App\Exceptions\Service\Database\TooManyDatabasesException
@@ -72,6 +76,8 @@ class DatabaseController extends ClientApiController
      *
      * Rotates the password for the given server model and returns a fresh instance to
      * the caller.
+     *
+     * @return array<array-key, mixed>
      *
      * @throws \Throwable
      */

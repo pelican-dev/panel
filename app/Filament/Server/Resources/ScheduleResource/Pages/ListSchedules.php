@@ -2,6 +2,7 @@
 
 namespace App\Filament\Server\Resources\ScheduleResource\Pages;
 
+use App\Facades\Activity;
 use App\Filament\Server\Resources\ScheduleResource;
 use App\Models\Schedule;
 use App\Filament\Components\Tables\Columns\DateTimeColumn;
@@ -44,14 +45,20 @@ class ListSchedules extends ListRecords
             ->actions([
                 ViewAction::make(),
                 EditAction::make(),
-                DeleteAction::make(),
+                DeleteAction::make()
+                    ->after(function (Schedule $schedule) {
+                        Activity::event('server:schedule.delete')
+                            ->subject($schedule)
+                            ->property('name', $schedule->name)
+                            ->log();
+                    }),
             ]);
     }
 
     protected function getHeaderActions(): array
     {
         return [
-            Actions\CreateAction::make(),
+            Actions\CreateAction::make()->label('New Schedule'),
         ];
     }
 

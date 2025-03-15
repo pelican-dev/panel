@@ -4,6 +4,9 @@ namespace App\Traits\Commands;
 
 trait RequestRedisSettingsTrait
 {
+    /** @var array<string, mixed> */
+    protected array $variables;
+
     protected function requestRedisSettings(): void
     {
         $this->output->note(trans('commands.appsettings.redis.note'));

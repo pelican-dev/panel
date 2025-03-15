@@ -27,13 +27,13 @@ class AssignmentService
 
     public const PORT_RANGE_REGEX = '/^(\d{4,5})-(\d{4,5})$/';
 
-    /**
-     * AssignmentService constructor.
-     */
     public function __construct(protected ConnectionInterface $connection) {}
 
     /**
      * Insert allocations into the database and link them to a specific node.
+     *
+     * @param  array{allocation_ip: string, allocation_ports: array<int|string>}  $data
+     * @return array<int>
      *
      * @throws \App\Exceptions\DisplayException
      * @throws \App\Exceptions\Service\Allocation\CidrOutOfRangeException

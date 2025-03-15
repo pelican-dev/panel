@@ -75,19 +75,20 @@ class Schedule extends Model implements Validatable
         'only_when_online' => false,
     ];
 
+    /** @var array<array-key, string[]> */
     public static array $validationRules = [
-        'server_id' => 'required|exists:servers,id',
-        'name' => 'required|string|max:255',
-        'cron_day_of_week' => 'required|string',
-        'cron_month' => 'required|string',
-        'cron_day_of_month' => 'required|string',
-        'cron_hour' => 'required|string',
-        'cron_minute' => 'required|string',
-        'is_active' => 'boolean',
-        'is_processing' => 'boolean',
-        'only_when_online' => 'boolean',
-        'last_run_at' => 'nullable|date',
-        'next_run_at' => 'nullable|date',
+        'server_id' => ['required', 'exists:servers,id'],
+        'name' => ['required', 'string', 'max:255'],
+        'cron_day_of_week' => ['required', 'string'],
+        'cron_month' => ['required', 'string'],
+        'cron_day_of_month' => ['required', 'string'],
+        'cron_hour' => ['required', 'string'],
+        'cron_minute' => ['required', 'string'],
+        'is_active' => ['boolean'],
+        'is_processing' => ['boolean'],
+        'only_when_online' => ['boolean'],
+        'last_run_at' => ['nullable', 'date'],
+        'next_run_at' => ['nullable', 'date'],
     ];
 
     protected function casts(): array

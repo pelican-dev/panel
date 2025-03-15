@@ -33,6 +33,8 @@ class ServerController extends ApplicationApiController
      * List servers
      *
      * Return all the servers that currently exist on the Panel.
+     *
+     * @return array<array-key, mixed>
      */
     public function index(GetServersRequest $request): array
     {
@@ -70,6 +72,8 @@ class ServerController extends ApplicationApiController
      * View server
      *
      * Show a single server transformed for the application API.
+     *
+     * @return array<array-key, mixed>
      */
     public function view(GetServerRequest $request, Server $server): array
     {

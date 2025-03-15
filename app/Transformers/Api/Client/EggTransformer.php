@@ -14,7 +14,10 @@ class EggTransformer extends BaseClientTransformer
         return Egg::RESOURCE_NAME;
     }
 
-    public function transform(Egg $egg): array
+    /**
+     * @param  Egg  $egg
+     */
+    public function transform($egg): array
     {
         return [
             'uuid' => $egg->uuid,

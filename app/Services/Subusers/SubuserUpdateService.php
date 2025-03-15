@@ -15,6 +15,9 @@ class SubuserUpdateService
         private DaemonServerRepository $serverRepository,
     ) {}
 
+    /**
+     * @param  string[]  $permissions
+     */
     public function handle(Subuser $subuser, Server $server, array $permissions): void
     {
         $cleanedPermissions = collect($permissions)

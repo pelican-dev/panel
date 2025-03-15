@@ -138,7 +138,7 @@ class CreateServer extends CreateRecord
                                 ])
                                 ->relationship('user', 'username')
                                 ->searchable(['username', 'email'])
-                                ->getOptionLabelFromRecordUsing(fn (User $user) => "$user->email | $user->username " . (blank($user->roles) ? '' : '(' . $user->roles->first()->name . ')'))
+                                ->getOptionLabelFromRecordUsing(fn (User $user) => "$user->username ($user->email)")
                                 ->createOptionForm([
                                     TextInput::make('username')
                                         ->label(trans('admin/user.username'))
@@ -551,6 +551,8 @@ class CreateServer extends CreateRecord
                                                 ->hidden(fn (Get $get) => $get('unlimited_mem'))
                                                 ->label(trans('admin/server.memory_limit'))->inlineLabel()
                                                 ->suffix(config('panel.use_binary_prefix') ? 'MiB' : 'MB')
+                                                ->hintIcon('tabler-question-mark')
+                                                ->hintIconToolTip(trans('admin/server.memory_helper'))
                                                 ->default(0)
                                                 ->required()
                                                 ->columnSpan(2)
@@ -864,6 +866,9 @@ class CreateServer extends CreateRecord
         throw new Exception('Component type not supported: ' . $component::class);
     }
 
+    /**
+     * @return array<array-key, string>
+     */
     private function getSelectOptionsFromRules(Get $get): array
     {
         $inRule = collect($get('rules'))->reduce(
@@ -878,6 +883,10 @@ class CreateServer extends CreateRecord
             ->all();
     }
 
+    /**
+     * @param  string[]  $portEntries
+     * @return array<int>
+     */
     public static function retrieveValidPorts(Node $node, array $portEntries, string $ip): array
     {
         $portRangeLimit = AssignmentService::PORT_RANGE_LIMIT;

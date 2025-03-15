@@ -16,17 +16,18 @@ class BackupManager
 {
     /**
      * The array of resolved backup drivers.
+     *
+     * @var array<string, FilesystemAdapter>
      */
     protected array $adapters = [];
 
     /**
      * The registered custom driver creators.
+     *
+     * @var array<string, callable>
      */
     protected array $customCreators;
 
-    /**
-     * BackupManager constructor.
-     */
     public function __construct(protected Application $app) {}
 
     /**
@@ -86,6 +87,8 @@ class BackupManager
 
     /**
      * Calls a custom creator for a given adapter type.
+     *
+     * @param  array{adapter: string}  $config
      */
     protected function callCustomCreator(array $config): mixed
     {
@@ -94,6 +97,8 @@ class BackupManager
 
     /**
      * Creates a new daemon adapter.
+     *
+     * @param  array<string, string>  $config
      */
     public function createWingsAdapter(array $config): FilesystemAdapter
     {
@@ -102,6 +107,8 @@ class BackupManager
 
     /**
      * Creates a new S3 adapter.
+     *
+     * @param  array<string, string>  $config
      */
     public function createS3Adapter(array $config): FilesystemAdapter
     {
@@ -118,6 +125,8 @@ class BackupManager
 
     /**
      * Returns the configuration associated with a given backup type.
+     *
+     * @return array<mixed>
      */
     protected function getConfig(string $name): array
     {
@@ -147,8 +156,9 @@ class BackupManager
      */
     public function forget(array|string $adapter): self
     {
+        $adapters = &$this->adapters;
         foreach ((array) $adapter as $adapterName) {
-            unset($this->adapters[$adapterName]);
+            unset($adapters[$adapterName]);
         }
 
         return $this;

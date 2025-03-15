@@ -2,6 +2,7 @@
 
 namespace App\Filament\Server\Resources\UserResource\Pages;
 
+use App\Facades\Activity;
 use App\Filament\Server\Resources\UserResource;
 use App\Models\Permission;
 use App\Models\Server;
@@ -386,14 +387,22 @@ class ListUsers extends ListRecords
                 ->action(function (array $data, SubuserCreationService $service) use ($server) {
                     $email = strtolower($data['email']);
 
-                    if (in_array('console', $data['control'])) {
-                        $data['websocket'][0] = 'connect';
-                    }
-
-                    $permissions = collect($data)->forget('email')->map(fn ($permissions, $key) => collect($permissions)->map(fn ($permission) => "$key.$permission"))->flatten()->all();
+                    $permissions = collect($data)
+                        ->forget('email')
+                        ->flatMap(fn ($permissions, $key) => collect($permissions)->map(fn ($permission) => "$key.$permission"))
+                        ->push(Permission::ACTION_WEBSOCKET_CONNECT)
+                        ->unique()
+                        ->all();
 
                     try {
-                        $service->handle($server, $email, $permissions);
+                        $subuser = $service->handle($server, $email, $permissions);
+
+                        Activity::event('server:subuser.create')
+                            ->subject($subuser->user)
+                            ->property([
+                                'email' => $data['email'],
+                                'permissions' => $permissions,
+                            ]);
 
                         Notification::make()
                             ->title('User Invited!')

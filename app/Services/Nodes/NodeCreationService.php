@@ -11,6 +11,10 @@ class NodeCreationService
     /**
      * Create a new node on the panel.
      *
+     * @todo remove this class
+     *
+     * @param  array<string, mixed>  $data
+     *
      * @throws \App\Exceptions\Model\DataValidationException
      */
     public function handle(array $data): Node

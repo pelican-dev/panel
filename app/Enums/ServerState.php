@@ -2,7 +2,11 @@
 
 namespace App\Enums;
 
-enum ServerState: string
+use Filament\Support\Contracts\HasColor;
+use Filament\Support\Contracts\HasIcon;
+use Filament\Support\Contracts\HasLabel;
+
+enum ServerState: string implements HasColor, HasIcon, HasLabel
 {
     case Normal = 'normal';
     case Installing = 'installing';
@@ -11,7 +15,7 @@ enum ServerState: string
     case Suspended = 'suspended';
     case RestoringBackup = 'restoring_backup';
 
-    public function icon(): string
+    public function getIcon(): string
     {
         return match ($this) {
             self::Normal => 'tabler-heart',
@@ -23,7 +27,7 @@ enum ServerState: string
         };
     }
 
-    public function color(): string
+    public function getColor(): string
     {
         return match ($this) {
             self::Normal => 'primary',
@@ -33,5 +37,10 @@ enum ServerState: string
             self::Suspended => 'warning',
             self::RestoringBackup => 'primary',
         };
+    }
+
+    public function getLabel(): string
+    {
+        return str($this->value)->headline();
     }
 }

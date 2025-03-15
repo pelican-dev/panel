@@ -24,6 +24,9 @@ trait HasAccessTokens
         return $this->hasMany(Sanctum::$personalAccessTokenModel);
     }
 
+    /**
+     * @param  ?string[]  $ips
+     */
     public function createToken(?string $memo, ?array $ips): NewAccessToken
     {
         /** @var \App\Models\ApiKey $token */

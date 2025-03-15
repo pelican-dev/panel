@@ -107,16 +107,22 @@ class Permission extends Model implements Validatable
      */
     protected $guarded = ['id', 'created_at', 'updated_at'];
 
+    /** @var array<array-key, string[]> */
     public static array $validationRules = [
-        'subuser_id' => 'required|numeric|min:1',
-        'permission' => 'required|string',
+        'subuser_id' => ['required', 'numeric', 'min:1'],
+        'permission' => ['required', 'string'],
     ];
 
     /**
      * All the permissions available on the system. You should use self::permissions()
      * to retrieve them, and not directly access this array as it is subject to change.
      *
-     * @see \App\Models\Permission::permissions()
+     * @see Permission::permissions()
+     *
+     * @var array<array-key, array{
+     *     description: string,
+     *     keys: array<array-key, string>,
+     * }>
      */
     protected static array $permissions = [
         'websocket' => [
@@ -166,7 +172,7 @@ class Permission extends Model implements Validatable
                 'read' => 'Allows a user to view all backups that exist for this server.',
                 'delete' => 'Allows a user to remove backups from the system.',
                 'download' => 'Allows a user to download a backup for the server. Danger: this allows a user to access all files for the server in the backup.',
-                'restore' => 'Allows a user to restore a backup for the server. Danger: this allows the user to delete all of the server files in the process.',
+                'restore' => 'Allows a user to restore a backup for the server. Danger: this allows the user to delete all the server files in the process.',
             ],
         ],
 
@@ -236,8 +242,7 @@ class Permission extends Model implements Validatable
     }
 
     /**
-     * Returns all the permissions available on the system for a user to
-     * have when controlling a server.
+     * Returns all the permissions available on the system for a user to have when controlling a server.
      */
     public static function permissions(): Collection
     {

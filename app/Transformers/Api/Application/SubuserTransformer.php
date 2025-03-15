@@ -24,9 +24,9 @@ class SubuserTransformer extends BaseTransformer
     }
 
     /**
-     * Return a transformed Subuser model that can be consumed by external services.
+     * @param  Subuser  $subuser
      */
-    public function transform(Subuser $subuser): array
+    public function transform($subuser): array
     {
         return [
             'id' => $subuser->id,

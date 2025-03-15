@@ -11,6 +11,8 @@ class GetUserPermissionsService
      * Returns the server specific permissions that a user has. This checks
      * if they are an admin, the owner or a subuser for the server. If no
      * permissions are found, an empty array is returned.
+     *
+     * @return string[]
      */
     public function handle(Server $server, User $user): array
     {

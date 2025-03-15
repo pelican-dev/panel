@@ -38,11 +38,11 @@ class NodeStorageChart extends ChartWidget
     protected function getData(): array
     {
         $total = config('panel.use_binary_prefix')
-            ? ($this->node->statistics()['disk_total'] ?? 0) / 1024 / 1024 / 1024
-            : ($this->node->statistics()['disk_total'] ?? 0) / 1000 / 1000 / 1000;
+            ? ($this->node->statistics()['disk_total']) / 1024 / 1024 / 1024
+            : ($this->node->statistics()['disk_total']) / 1000 / 1000 / 1000;
         $used = config('panel.use_binary_prefix')
-            ? ($this->node->statistics()['disk_used'] ?? 0) / 1024 / 1024 / 1024
-            : ($this->node->statistics()['disk_used'] ?? 0) / 1000 / 1000 / 1000;
+            ? ($this->node->statistics()['disk_used']) / 1024 / 1024 / 1024
+            : ($this->node->statistics()['disk_used']) / 1000 / 1000 / 1000;
 
         $unused = $total - $used;
 
@@ -72,8 +72,8 @@ class NodeStorageChart extends ChartWidget
 
     public function getHeading(): string
     {
-        $used = convert_bytes_to_readable($this->node->statistics()['disk_used'] ?? 0);
-        $total = convert_bytes_to_readable($this->node->statistics()['disk_total'] ?? 0);
+        $used = convert_bytes_to_readable($this->node->statistics()['disk_used']);
+        $total = convert_bytes_to_readable($this->node->statistics()['disk_total']);
 
         return trans('admin/node.disk_chart', ['used' => $used, 'total' => $total]);
     }

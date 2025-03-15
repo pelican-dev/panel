@@ -15,8 +15,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property int $new_node
  * @property int $old_allocation
  * @property int $new_allocation
- * @property array|null $old_additional_allocations
- * @property array|null $new_additional_allocations
+ * @property array<int>|null $old_additional_allocations array of allocation.id's
+ * @property array<int>|null $new_additional_allocations array of allocation.id's
  * @property bool|null $successful
  * @property bool $archived
  * @property \Carbon\Carbon $created_at
@@ -40,17 +40,18 @@ class ServerTransfer extends Model implements Validatable
      */
     protected $guarded = ['id', 'created_at', 'updated_at'];
 
+    /** @var array<array-key, string[]> */
     public static array $validationRules = [
-        'server_id' => 'required|numeric|exists:servers,id',
-        'old_node' => 'required|numeric',
-        'new_node' => 'required|numeric',
-        'old_allocation' => 'required|numeric',
-        'new_allocation' => 'required|numeric',
-        'old_additional_allocations' => 'nullable|array',
-        'old_additional_allocations.*' => 'numeric',
-        'new_additional_allocations' => 'nullable|array',
-        'new_additional_allocations.*' => 'numeric',
-        'successful' => 'sometimes|nullable|boolean',
+        'server_id' => ['required', 'numeric', 'exists:servers,id'],
+        'old_node' => ['required', 'numeric'],
+        'new_node' => ['required', 'numeric'],
+        'old_allocation' => ['required', 'numeric'],
+        'new_allocation' => ['required', 'numeric'],
+        'old_additional_allocations' => ['nullable', 'array'],
+        'old_additional_allocations.*' => ['numeric'],
+        'new_additional_allocations' => ['nullable', 'array'],
+        'new_additional_allocations.*' => ['numeric'],
+        'successful' => ['sometimes', 'nullable', 'boolean'],
     ];
 
     protected function casts(): array

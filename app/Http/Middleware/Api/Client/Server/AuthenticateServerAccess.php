@@ -11,6 +11,8 @@ class AuthenticateServerAccess
 {
     /**
      * Routes that this middleware should not apply to if the user is an admin.
+     *
+     * @var string[]
      */
     protected array $except = [
         'api:client:server.ws',

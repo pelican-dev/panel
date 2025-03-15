@@ -24,9 +24,9 @@ class NodeTransformer extends BaseTransformer
     }
 
     /**
-     * Return a node transformed into a format that can be consumed by the external administrative API.
+     * @param  Node  $node
      */
-    public function transform(Node $node): array
+    public function transform($node): array
     {
         $response = collect($node->toArray())
             ->mapWithKeys(fn ($value, $key) => [snake_case($key) => $value])

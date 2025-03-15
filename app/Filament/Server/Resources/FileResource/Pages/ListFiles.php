@@ -452,8 +452,8 @@ class ListFiles extends ListRecords
                         ->setServer($server)
                         ->createDirectory($data['name'], $this->path);
 
-                    Activity::event('server:file.write')
-                        ->property('file', join_paths($this->path, $data['name']))
+                    Activity::event('server:file.create-directory')
+                        ->property(['directory' => $this->path, 'name' => $data['name']])
                         ->log();
                 })
                 ->form([
@@ -542,6 +542,9 @@ class ListFiles extends ListRecords
         );
     }
 
+    /**
+     * @return string[]
+     */
     private function getPermissionsFromModeBit(int $mode): array
     {
         if ($mode === 1) {

@@ -7,6 +7,7 @@ use Livewire\Component;
 
 class AlertBannerContainer extends Component
 {
+    /** @var array<AlertBanner> */
     public array $alertBanners;
 
     public function mount(): void
@@ -25,7 +26,8 @@ class AlertBannerContainer extends Component
 
     public function remove(string $id): void
     {
-        unset($this->alertBanners[$id]);
+        $alertBanners = &$this->alertBanners;
+        unset($alertBanners[$id]);
     }
 
     public function render(): View

@@ -12,7 +12,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property string $event
  * @property string $endpoint
  * @property \Illuminate\Support\Carbon|null $successful_at
- * @property array $payload
+ * @property array<array-key, mixed> $payload
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  */

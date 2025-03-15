@@ -27,6 +27,9 @@ final class AlertBanner implements Wireable
         return $static;
     }
 
+    /**
+     * @return array{id: string, title: ?string, body: ?string, status: ?string, icon: ?string, closeable: bool}
+     */
     public function toLivewire(): array
     {
         return [

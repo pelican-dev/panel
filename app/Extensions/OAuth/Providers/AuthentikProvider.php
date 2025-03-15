@@ -59,12 +59,12 @@ final class AuthentikProvider extends OAuthProvider
 
     public function getName(): string
     {
-        return env('OAUTH_AUTHENTIK_DISPLAY_NAME') ?? 'Authentik';
+        return env('OAUTH_AUTHENTIK_DISPLAY_NAME', 'Authentik');
     }
 
     public function getHexColor(): string
     {
-        return env('OAUTH_AUTHENTIK_DISPLAY_COLOR') ?? '#fd4b2d';
+        return env('OAUTH_AUTHENTIK_DISPLAY_COLOR', '#fd4b2d');
     }
 
     public static function register(Application $app): self

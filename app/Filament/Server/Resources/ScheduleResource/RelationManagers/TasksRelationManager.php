@@ -5,6 +5,7 @@ namespace App\Filament\Server\Resources\ScheduleResource\RelationManagers;
 use App\Facades\Activity;
 use App\Models\Schedule;
 use App\Models\Task;
+use Filament\Forms\Components\Field;
 use Filament\Tables\Actions\DeleteAction;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
@@ -22,6 +23,9 @@ class TasksRelationManager extends RelationManager
 {
     protected static string $relationship = 'tasks';
 
+    /**
+     * @return array<array-key, string>
+     */
     private function getActionOptions(bool $full = true): array
     {
         return [
@@ -32,6 +36,9 @@ class TasksRelationManager extends RelationManager
         ];
     }
 
+    /**
+     * @return array<Field>
+     */
     private function getTaskForm(Schedule $schedule): array
     {
         return [
@@ -55,7 +62,8 @@ class TasksRelationManager extends RelationManager
                     'stop' => 'Stop',
                     'kill' => 'Kill',
                 ])
-                ->selectablePlaceholder(false),
+                ->selectablePlaceholder(false)
+                ->default('restart'),
             TextInput::make('time_offset')
                 ->hidden(fn (Get $get) => config('queue.default') === 'sync' || $get('sequence_id') === 1)
                 ->default(0)
@@ -96,8 +104,28 @@ class TasksRelationManager extends RelationManager
                         $data['payload'] ??= '';
 
                         return $data;
+                    })
+                    ->after(function ($data) {
+                        /** @var Schedule $schedule */
+                        $schedule = $this->getOwnerRecord();
+
+                        Activity::event('server:task.update')
+                            ->subject($schedule)
+                            ->property(['name' => $schedule->name, 'action' => $data['action'], 'payload' => $data['payload']])
+                            ->log();
+
                     }),
-                DeleteAction::make(),
+                DeleteAction::make()
+                    ->action(function (Task $task) {
+                        /** @var Schedule $schedule */
+                        $schedule = $this->getOwnerRecord();
+                        $task->delete();
+
+                        Activity::event('server:task.delete')
+                            ->subject($schedule)
+                            ->property(['name' => $schedule->name, 'action' => $task->action, 'payload' => $task->payload])
+                            ->log();
+                    }),
             ])
             ->headerActions([
                 CreateAction::make()

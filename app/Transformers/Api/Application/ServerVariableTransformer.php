@@ -23,9 +23,9 @@ class ServerVariableTransformer extends BaseTransformer
     }
 
     /**
-     * Return a generic transformed server variable array.
+     * @param  EggVariable  $variable
      */
-    public function transform(EggVariable $variable): array
+    public function transform($variable): array
     {
         return $variable->toArray();
     }

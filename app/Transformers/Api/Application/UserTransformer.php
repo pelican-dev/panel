@@ -10,9 +10,6 @@ use League\Fractal\Resource\NullResource;
 
 class UserTransformer extends BaseTransformer
 {
-    /**
-     * List of resources that can be included.
-     */
     protected array $availableIncludes = [
         'servers',
         'roles',
@@ -27,9 +24,9 @@ class UserTransformer extends BaseTransformer
     }
 
     /**
-     * Return a transformed User model that can be consumed by external services.
+     * @param  User  $user
      */
-    public function transform(User $user): array
+    public function transform($user): array
     {
         return [
             'id' => $user->id,

@@ -25,13 +25,17 @@ class RecoveryToken extends Model implements Validatable
 
     public $timestamps = true;
 
+    /** @var array<array-key, string[]> */
     public static array $validationRules = [
-        'token' => 'required|string',
+        'token' => ['required', 'string'],
     ];
 
-    protected $casts = [
-        'created_at' => 'immutable_datetime',
-    ];
+    protected function casts(): array
+    {
+        return [
+            'created_at' => 'immutable_datetime',
+        ];
+    }
 
     public function user(): BelongsTo
     {
