@@ -592,9 +592,7 @@ class EditNode extends EditRecord
         }
 
         try {
-            $this->record = $this->nodeUpdateService->handle($record, $data);
-
-            return $this->record;
+            $record = $this->nodeUpdateService->handle($record, $data);
         } catch (Exception $exception) {
             $this->errored = true;
 
@@ -606,8 +604,9 @@ class EditNode extends EditRecord
                 ->warning()
                 ->send();
 
-            return parent::handleRecordUpdate($record, $data);
         }
+
+        return parent::handleRecordUpdate($record, $data);
     }
 
     protected function getSavedNotification(): ?Notification
