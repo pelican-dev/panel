@@ -76,10 +76,12 @@ class ListFiles extends ListRecords
         /** @var Server $server */
         $server = Filament::getTenant();
 
+        $files = File::get($server, $this->path);
+
         return $table
             ->paginated([25, 50, 100, 250])
             ->defaultPaginationPageOption(50)
-            ->query(fn () => File::get($server, $this->path)->orderByDesc('is_directory'))
+            ->query(fn () => $files->orderByDesc('is_directory'))
             ->defaultSort('name')
             ->columns([
                 TextColumn::make('name')
@@ -88,6 +90,7 @@ class ListFiles extends ListRecords
                     ->icon(fn (File $file) => $file->getIcon()),
                 BytesColumn::make('size')
                     ->visibleFrom('md')
+                    ->state(fn (File $file) => $file->is_directory ? null : $file->size)
                     ->sortable(),
                 DateTimeColumn::make('modified_at')
                     ->visibleFrom('md')
