@@ -42,7 +42,7 @@ class ProcessScheduleService
             // Check that the server is currently in a starting or running state before executing
             // this schedule if this option has been set.
             try {
-                $state = fluent($this->serverRepository->setServer($schedule->server)->getDetails())->get('state') ?? ContainerStatus::Offline;
+                $state = ContainerStatus::tryFrom(fluent($this->serverRepository->setServer($schedule->server)->getDetails())->get('state')) ?? ContainerStatus::Offline;
 
                 // If the server is stopping or offline just do nothing with this task.
                 if ($state->isOffline()) {
