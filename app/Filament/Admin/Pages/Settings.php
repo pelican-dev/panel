@@ -124,8 +124,7 @@ class Settings extends Page implements HasForms
                         ->label(trans('admin/setting.general.app_logo'))
                         ->hintIcon('tabler-question-mark')
                         ->hintIconTooltip(trans('admin/setting.general.app_logo_help'))
-                        ->required()
-                        ->default(env('APP_LOGO', '/pelican.svg'))
+                        ->default(env('APP_LOGO'))
                         ->placeholder('/pelican.svg'),
                     TextInput::make('APP_FAVICON')
                         ->label(trans('admin/setting.general.app_favicon'))
