@@ -117,12 +117,24 @@ class Settings extends Page implements HasForms
                 ->label(trans('admin/setting.general.app_name'))
                 ->required()
                 ->default(env('APP_NAME', 'Pelican')),
-            TextInput::make('APP_FAVICON')
-                ->label(trans('admin/setting.general.app_favicon'))
-                ->hintIcon('tabler-question-mark')
-                ->hintIconTooltip(trans('admin/setting.general.app_favicon_help'))
-                ->required()
-                ->default(env('APP_FAVICON', '/pelican.ico')),
+            Group::make()
+                ->columns(2)
+                ->schema([
+                    TextInput::make('APP_LOGO')
+                        ->label(trans('admin/setting.general.app_logo'))
+                        ->hintIcon('tabler-question-mark')
+                        ->hintIconTooltip(trans('admin/setting.general.app_logo_help'))
+                        ->required()
+                        ->default(env('APP_LOGO', '/pelican.svg'))
+                        ->placeholder('/pelican.svg'),
+                    TextInput::make('APP_FAVICON')
+                        ->label(trans('admin/setting.general.app_favicon'))
+                        ->hintIcon('tabler-question-mark')
+                        ->hintIconTooltip(trans('admin/setting.general.app_favicon_help'))
+                        ->required()
+                        ->default(env('APP_FAVICON', '/pelican.ico'))
+                        ->placeholder('/pelican.ico'),
+                ]),
             Toggle::make('APP_DEBUG')
                 ->label(trans('admin/setting.general.debug_mode'))
                 ->inline(false)

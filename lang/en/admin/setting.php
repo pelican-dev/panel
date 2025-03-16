@@ -14,6 +14,8 @@ return [
     ],
     'general' => [
         'app_name' => 'App Name',
+        'app_logo' => 'App Logo',
+        'app_logo_help' => 'Logo should be placed in the public folder, located in the root panel directory.',
         'app_favicon' => 'App Favicon',
         'app_favicon_help' => 'Favicons should be placed in the public folder, located in the root panel directory.',
         'debug_mode' => 'Debug Mode',
