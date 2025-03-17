@@ -32,7 +32,7 @@ class ImportEggAction extends Action
         $this->authorize(fn () => auth()->user()->can('import egg'));
 
         $this->action(function (array $data, EggImporterService $eggImportService): void {
-            $eggs = array_merge(Arr::wrap($data['urls']), collect($data['urls'])->flatten()->whereNotNull()->unique()->all());
+            $eggs = array_merge(collect($data['urls'])->flatten()->whereNotNull()->unique()->all(), Arr::wrap($data['files']));
             if (empty($eggs)) {
                 return;
             }
