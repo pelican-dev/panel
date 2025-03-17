@@ -53,6 +53,10 @@ class EditFiles extends Page
         /** @var Server $server */
         $server = Filament::getTenant();
 
+        Activity::event('server:file.read')
+            ->property('file', $this->path)
+            ->log();
+
         return $form
             ->schema([
                 Section::make('Editing: ' . $this->path)

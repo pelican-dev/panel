@@ -2,7 +2,11 @@
 
 namespace App\Enums;
 
-enum ContainerStatus: string
+use Filament\Support\Contracts\HasColor;
+use Filament\Support\Contracts\HasIcon;
+use Filament\Support\Contracts\HasLabel;
+
+enum ContainerStatus: string implements HasColor, HasIcon, HasLabel
 {
     // Docker Based
     case Created = 'created';
@@ -19,7 +23,7 @@ enum ContainerStatus: string
     // HTTP Based
     case Missing = 'missing';
 
-    public function icon(): string
+    public function getIcon(): string
     {
         return match ($this) {
 
@@ -36,8 +40,17 @@ enum ContainerStatus: string
         };
     }
 
-    public function color(): string
+    public function getColor(bool $hex = false): string
     {
+        if ($hex) {
+            return match ($this) {
+                self::Created, self::Restarting => '#2563EB',
+                self::Starting, self::Paused, self::Removing, self::Stopping => '#D97706',
+                self::Running => '#22C55E',
+                self::Exited, self::Missing, self::Dead, self::Offline => '#EF4444',
+            };
+        }
+
         return match ($this) {
             self::Created => 'primary',
             self::Starting => 'warning',
@@ -53,14 +66,19 @@ enum ContainerStatus: string
         };
     }
 
-    public function colorHex(): string
+    public function getLabel(): string
     {
-        return match ($this) {
-            self::Created, self::Restarting => '#2563EB',
-            self::Starting, self::Paused, self::Removing, self::Stopping => '#D97706',
-            self::Running => '#22C55E',
-            self::Exited, self::Missing, self::Dead, self::Offline => '#EF4444',
-        };
+        return str($this->value)->title();
+    }
+
+    public function isOffline(): bool
+    {
+        return in_array($this, [ContainerStatus::Offline, ContainerStatus::Missing]);
+    }
+
+    public function isStartingOrRunning(): bool
+    {
+        return in_array($this, [ContainerStatus::Starting, ContainerStatus::Running]);
     }
 
     public function isStartingOrStopping(): bool

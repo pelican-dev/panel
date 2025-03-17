@@ -18,8 +18,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property int $key_type
  * @property string $identifier
  * @property string $token
- * @property string[] $permissions
- * @property string[] $allowed_ips
+ * @property string[]|null $permissions
+ * @property string[]|null $allowed_ips
  * @property string|null $memo
  * @property \Illuminate\Support\Carbon|null $last_used_at
  * @property \Illuminate\Support\Carbon|null $expires_at
@@ -110,19 +110,19 @@ class ApiKey extends PersonalAccessToken
      */
     protected $hidden = ['token'];
 
-    /** @var array<array-key, string|string[]> */
+    /** @var array<array-key, string[]> */
     public static array $validationRules = [
-        'user_id' => 'required|exists:users,id',
-        'key_type' => 'present|integer|min:0|max:2',
-        'identifier' => 'required|string|size:16|unique:api_keys,identifier',
-        'token' => 'required|string',
-        'permissions' => 'array',
-        'permissions.*' => 'integer|min:0|max:3',
-        'memo' => 'required|nullable|string|max:500',
-        'allowed_ips' => 'array',
-        'allowed_ips.*' => 'string',
-        'last_used_at' => 'nullable|date',
-        'expires_at' => 'nullable|date',
+        'user_id' => ['required', 'exists:users,id'],
+        'key_type' => ['present', 'integer', 'min:0', 'max:2'],
+        'identifier' => ['required', 'string', 'size:16', 'unique:api_keys,identifier'],
+        'token' => ['required', 'string'],
+        'permissions' => ['array'],
+        'permissions.*' => ['integer', 'min:0', 'max:3'],
+        'memo' => ['required', 'nullable', 'string', 'max:500'],
+        'allowed_ips' => ['array'],
+        'allowed_ips.*' => ['string'],
+        'last_used_at' => ['nullable', 'date'],
+        'expires_at' => ['nullable', 'date'],
     ];
 
     protected function casts(): array

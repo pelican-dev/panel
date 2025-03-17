@@ -114,7 +114,7 @@ use App\Services\Subusers\SubuserDeletionService;
  *
  * @property string[]|null $docker_labels
  * @property string|null $ports
- * @property-read mixed $condition
+ * @property-read ContainerStatus|ServerState $condition
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\EggVariable> $eggVariables
  * @property-read int|null $egg_variables_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ServerVariable> $serverVariables
@@ -155,31 +155,31 @@ class Server extends Model implements Validatable
     /**
      * Fields that are not mass assignable.
      */
-    protected $guarded = ['id', self::CREATED_AT, self::UPDATED_AT, 'deleted_at', 'installed_at'];
+    protected $guarded = ['id', self::CREATED_AT, self::UPDATED_AT, 'installed_at'];
 
-    /** @var array<array-key, string|string[]> */
+    /** @var array<array-key, string[]> */
     public static array $validationRules = [
-        'external_id' => 'sometimes|nullable|string|between:1,255|unique:servers',
-        'owner_id' => 'required|integer|exists:users,id',
-        'name' => 'required|string|min:1|max:255',
-        'node_id' => 'required|exists:nodes,id',
-        'description' => 'string',
-        'status' => 'nullable|string',
-        'memory' => 'required|numeric|min:0',
-        'swap' => 'required|numeric|min:-1',
-        'io' => 'required|numeric|between:0,1000',
-        'cpu' => 'required|numeric|min:0',
-        'threads' => 'nullable|regex:/^[0-9-,]+$/',
-        'oom_killer' => 'sometimes|boolean',
-        'disk' => 'required|numeric|min:0',
-        'allocation_id' => 'required|bail|unique:servers|exists:allocations,id',
-        'egg_id' => 'required|exists:eggs,id',
-        'startup' => 'required|string',
-        'skip_scripts' => 'sometimes|boolean',
-        'image' => 'required|string|max:255',
-        'database_limit' => 'present|nullable|integer|min:0',
-        'allocation_limit' => 'sometimes|nullable|integer|min:0',
-        'backup_limit' => 'present|nullable|integer|min:0',
+        'external_id' => ['sometimes', 'nullable', 'string', 'between:1,255', 'unique:servers'],
+        'owner_id' => ['required', 'integer', 'exists:users,id'],
+        'name' => ['required', 'string', 'min:1', 'max:255'],
+        'node_id' => ['required', 'exists:nodes,id'],
+        'description' => ['string'],
+        'status' => ['nullable', 'string'],
+        'memory' => ['required', 'numeric', 'min:0'],
+        'swap' => ['required', 'numeric', 'min:-1'],
+        'io' => ['required', 'numeric', 'between:0,1000'],
+        'cpu' => ['required', 'numeric', 'min:0'],
+        'threads' => ['nullable', 'regex:/^[0-9-,]+$/'],
+        'oom_killer' => ['sometimes', 'boolean'],
+        'disk' => ['required', 'numeric', 'min:0'],
+        'allocation_id' => ['required', 'bail', 'unique:servers', 'exists:allocations,id'],
+        'egg_id' => ['required', 'exists:eggs,id'],
+        'startup' => ['required', 'string'],
+        'skip_scripts' => ['sometimes', 'boolean'],
+        'image' => ['required', 'string', 'max:255'],
+        'database_limit' => ['present', 'nullable', 'integer', 'min:0'],
+        'allocation_limit' => ['sometimes', 'nullable', 'integer', 'min:0'],
+        'backup_limit' => ['present', 'nullable', 'integer', 'min:0'],
     ];
 
     protected function casts(): array
@@ -202,7 +202,6 @@ class Server extends Model implements Validatable
             'backup_limit' => 'integer',
             self::CREATED_AT => 'datetime',
             self::UPDATED_AT => 'datetime',
-            'deleted_at' => 'datetime',
             'installed_at' => 'datetime',
             'docker_labels' => 'array',
         ];
@@ -438,17 +437,17 @@ class Server extends Model implements Validatable
         ])->toPsrResponse();
     }
 
-    public function retrieveStatus(): string
+    public function retrieveStatus(): ContainerStatus
     {
         $status = cache()->get("servers.$this->uuid.container.status");
 
-        if ($status) {
-            return $status;
+        if ($status === null) {
+            $this->node->serverStatuses();
+
+            $status = cache()->get("servers.$this->uuid.container.status");
         }
 
-        $this->node->serverStatuses();
-
-        return cache()->get("servers.$this->uuid.container.status") ?? 'missing';
+        return ContainerStatus::tryFrom($status) ?? ContainerStatus::Missing;
     }
 
     /**
@@ -474,7 +473,7 @@ class Server extends Model implements Validatable
                 return 'Suspended';
             }
             if ($resourceAmount === 0) {
-                return 'Offline';
+                return ContainerStatus::Offline->getLabel();
             }
 
             return now()->subMillis($resourceAmount)->diffForHumans(syntax: CarbonInterface::DIFF_ABSOLUTE, short: true, parts: 4);
@@ -499,34 +498,7 @@ class Server extends Model implements Validatable
     public function condition(): Attribute
     {
         return Attribute::make(
-            get: fn () => $this->isSuspended() ? ServerState::Suspended->value : $this->status->value ?? $this->retrieveStatus(),
+            get: fn () => $this->isSuspended() ? ServerState::Suspended : $this->status ?? $this->retrieveStatus(),
         );
-    }
-
-    public function conditionIcon(): string
-    {
-        if ($this->status === null) {
-            $containerStatus = ContainerStatus::from($this->retrieveStatus());
-
-            return $containerStatus->icon();
-        }
-
-        return $this->status->icon();
-    }
-
-    public function conditionColor(): string
-    {
-        if ($this->status === null) {
-            $containerStatus = ContainerStatus::from($this->retrieveStatus());
-
-            return $containerStatus->color();
-        }
-
-        return $this->status->color();
-    }
-
-    public function conditionColorHex(): string
-    {
-        return ContainerStatus::from($this->retrieveStatus())->colorHex();
     }
 }

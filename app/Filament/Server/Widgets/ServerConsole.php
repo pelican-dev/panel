@@ -75,7 +75,7 @@ class ServerConsole extends Widget
 
     protected function canSendCommand(): bool
     {
-        return $this->authorizeSendCommand() && !$this->server->isInConflictState() && $this->server->retrieveStatus() === 'running';
+        return $this->authorizeSendCommand() && !$this->server->isInConflictState() && $this->server->retrieveStatus()->isStartingOrRunning();
     }
 
     public function up(): void

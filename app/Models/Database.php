@@ -50,15 +50,15 @@ class Database extends Model implements Validatable
         'server_id', 'database_host_id', 'database', 'username', 'password', 'remote', 'max_connections',
     ];
 
-    /** @var array<string, string|string[]> */
+    /** @var array<array-key, string[]> */
     public static array $validationRules = [
-        'server_id' => 'required|numeric|exists:servers,id',
-        'database_host_id' => 'required|exists:database_hosts,id',
-        'database' => 'required|string|alpha_dash|between:3,48',
-        'username' => 'string|alpha_dash|between:3,100',
-        'max_connections' => 'nullable|integer',
-        'remote' => 'required|string|regex:/^[\w\-\/.%:]+$/',
-        'password' => 'string',
+        'server_id' => ['required', 'numeric', 'exists:servers,id'],
+        'database_host_id' => ['required', 'exists:database_hosts,id'],
+        'database' => ['required', 'string', 'alpha_dash', 'between:3,48'],
+        'username' => ['string', 'alpha_dash', 'between:3,100'],
+        'max_connections' => ['nullable', 'integer'],
+        'remote' => ['required', 'string', 'regex:/^[\w\-\/.%:]+$/'],
+        'password' => ['string'],
     ];
 
     protected function casts(): array
@@ -87,10 +87,15 @@ class Database extends Model implements Validatable
         return $this->belongsTo(Server::class);
     }
 
+    public function address(): string
+    {
+        return $this->host->name . ':' . $this->host->port;
+    }
+
     protected function jdbc(): Attribute
     {
         return Attribute::make(
-            get: fn () => 'jdbc:mysql://' . $this->username . ':' . urlencode($this->password) . '@' . $this->host->host . ':' . $this->host->port . '/' . $this->database,
+            get: fn () => 'jdbc:mysql://' . $this->username . ':' . urlencode($this->password) . '@' . $this->address() . '/' . $this->database,
         );
     }
 

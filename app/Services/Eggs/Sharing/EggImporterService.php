@@ -122,11 +122,34 @@ class EggImporterService
         };
 
         // Make sure we only use recent variable format from now on
-        $parsed['config']['files'] = str_replace(
-            array_keys(self::UPGRADE_VARIABLES),
-            array_values(self::UPGRADE_VARIABLES),
-            $parsed['config']['files'] ?? '',
-        );
+        if (array_get($parsed['config'], 'files')) {
+            $parsed['config']['files'] = str_replace(
+                array_keys(self::UPGRADE_VARIABLES),
+                array_values(self::UPGRADE_VARIABLES),
+                $parsed['config']['files'],
+            );
+        }
+
+        [$forbidden, $allowed] = collect($parsed['variables'])
+            ->map(fn ($variable) => array_merge(
+                $variable,
+                ['env_variable' => strtoupper($variable['env_variable'])]
+            ))
+            ->partition(fn ($variable) => in_array($variable['env_variable'], EggVariable::RESERVED_ENV_NAMES));
+
+        $updatedVariables = $forbidden->map(fn ($variable) => array_merge(
+            $variable,
+            ['env_variable' => 'SERVER_' . $variable['env_variable']]
+        ));
+
+        if ($forbidden->count()) {
+            $parsed['variables'] = $allowed->merge($updatedVariables)->all();
+
+            if (!empty($parsed['startup'])) {
+                $pattern = '/\b(' . collect($forbidden)->map(fn ($variable) => preg_quote($variable['env_variable']))->join('|') . ')\b/';
+                $parsed['startup'] = preg_replace($pattern, 'SERVER_$1', $parsed['startup']) ?? $parsed['startup'];
+            }
+        }
 
         return $parsed;
     }

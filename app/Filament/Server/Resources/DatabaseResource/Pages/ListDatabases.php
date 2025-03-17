@@ -2,6 +2,7 @@
 
 namespace App\Filament\Server\Resources\DatabaseResource\Pages;
 
+use App\Facades\Activity;
 use App\Filament\Components\Forms\Actions\RotateDatabasePasswordAction;
 use App\Filament\Components\Tables\Columns\DateTimeColumn;
 use App\Filament\Server\Resources\DatabaseResource;
@@ -34,8 +35,10 @@ class ListDatabases extends ListRecords
 
         return $form
             ->schema([
+                TextInput::make('host')
+                    ->formatStateUsing(fn (Database $database) => $database->address())
+                    ->suffixAction(fn (string $state) => request()->isSecure() ? CopyAction::make()->copyable($state) : null),
                 TextInput::make('database')
-                    ->columnSpanFull()
                     ->suffixAction(fn (string $state) => request()->isSecure() ? CopyAction::make()->copyable($state) : null),
                 TextInput::make('username')
                     ->suffixAction(fn (string $state) => request()->isSecure() ? CopyAction::make()->copyable($state) : null),
@@ -66,6 +69,9 @@ class ListDatabases extends ListRecords
     {
         return $table
             ->columns([
+                TextColumn::make('host')
+                    ->state(fn (Database $database) => $database->address())
+                    ->badge(),
                 TextColumn::make('database'),
                 TextColumn::make('username'),
                 TextColumn::make('remote'),
@@ -75,7 +81,13 @@ class ListDatabases extends ListRecords
             ->actions([
                 ViewAction::make()
                     ->modalHeading(fn (Database $database) => 'Viewing ' . $database->database),
-                DeleteAction::make(),
+                DeleteAction::make()
+                    ->after(function (Database $database) {
+                        Activity::event('server:database.delete')
+                            ->subject($database)
+                            ->property('name', $database->database)
+                            ->log();
+                    }),
             ]);
     }
 

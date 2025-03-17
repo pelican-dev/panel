@@ -2,8 +2,6 @@
 
 namespace App\Filament\Admin\Resources\ServerResource\Pages;
 
-use App\Enums\ContainerStatus;
-use App\Enums\ServerState;
 use App\Enums\SuspendAction;
 use App\Filament\Admin\Resources\ServerResource;
 use App\Filament\Admin\Resources\ServerResource\RelationManagers\AllocationsRelationManager;
@@ -127,16 +125,9 @@ class EditServer extends EditRecord
                                 ToggleButtons::make('condition')
                                     ->label(trans('admin/server.server_status'))
                                     ->formatStateUsing(fn (Server $server) => $server->condition)
-                                    ->options(fn ($state) => collect(array_merge(ContainerStatus::cases(), ServerState::cases()))
-                                        ->filter(fn ($condition) => $condition->value === $state)
-                                        ->mapWithKeys(fn ($state) => [$state->value => str($state->value)->replace('_', ' ')->ucwords()])
-                                    )
-                                    ->colors(collect(array_merge(ContainerStatus::cases(), ServerState::cases()))->mapWithKeys(
-                                        fn ($status) => [$status->value => $status->color()]
-                                    ))
-                                    ->icons(collect(array_merge(ContainerStatus::cases(), ServerState::cases()))->mapWithKeys(
-                                        fn ($status) => [$status->value => $status->icon()]
-                                    ))
+                                    ->options(fn ($state) => [$state->value => $state->getLabel()])
+                                    ->colors(fn ($state) => [$state->value => $state->getColor()])
+                                    ->icons(fn ($state) => [$state->value => $state->getIcon()])
                                     ->columnSpan([
                                         'default' => 2,
                                         'sm' => 1,
@@ -257,6 +248,8 @@ class EditServer extends EditRecord
                                                     ->hidden(fn (Get $get) => $get('unlimited_mem'))
                                                     ->label(trans('admin/server.memory_limit'))->inlineLabel()
                                                     ->suffix(config('panel.use_binary_prefix') ? 'MiB' : 'MB')
+                                                    ->hintIcon('tabler-question-mark')
+                                                    ->hintIconToolTip(trans('admin/server.memory_helper'))
                                                     ->required()
                                                     ->columnSpan(2)
                                                     ->numeric()
@@ -673,11 +666,17 @@ class EditServer extends EditRecord
                                     ->helperText(fn (Server $server) => $server->databases->isNotEmpty() ? '' : trans('admin/server.no_databases'))
                                     ->columns(2)
                                     ->schema([
+                                        TextInput::make('host')
+                                            ->label(trans('admin/databasehost.table.host'))
+                                            ->disabled()
+                                            ->formatStateUsing(fn ($record) => $record->address())
+                                            ->suffixAction(fn (string $state) => request()->isSecure() ? CopyAction::make()->copyable($state) : null)
+                                            ->columnSpan(1),
                                         TextInput::make('database')
-                                            ->columnSpan(2)
-                                            ->label(trans('admin/server.name'))
+                                            ->label(trans('admin/databasehost.table.database'))
                                             ->disabled()
                                             ->formatStateUsing(fn ($record) => $record->database)
+                                            ->suffixAction(fn (string $state) => request()->isSecure() ? CopyAction::make()->copyable($state) : null)
                                             ->hintAction(
                                                 Action::make('Delete')
                                                     ->label(trans('filament-actions::delete.single.modal.actions.delete.label'))
@@ -698,6 +697,7 @@ class EditServer extends EditRecord
                                             ->label(trans('admin/databasehost.table.username'))
                                             ->disabled()
                                             ->formatStateUsing(fn ($record) => $record->username)
+                                            ->suffixAction(fn (string $state) => request()->isSecure() ? CopyAction::make()->copyable($state) : null)
                                             ->columnSpan(1),
                                         TextInput::make('password')
                                             ->label(trans('admin/databasehost.table.password'))
@@ -706,6 +706,7 @@ class EditServer extends EditRecord
                                             ->revealable()
                                             ->columnSpan(1)
                                             ->hintAction(RotateDatabasePasswordAction::make())
+                                            ->suffixAction(fn (string $state) => request()->isSecure() ? CopyAction::make()->copyable($state) : null)
                                             ->formatStateUsing(fn (Database $database) => $database->password),
                                         TextInput::make('remote')
                                             ->disabled()
@@ -723,7 +724,8 @@ class EditServer extends EditRecord
                                             ->revealable()
                                             ->label(trans('admin/databasehost.table.connection_string'))
                                             ->columnSpan(2)
-                                            ->formatStateUsing(fn (Database $record) => $record->jdbc),
+                                            ->formatStateUsing(fn (Database $record) => $record->jdbc)
+                                            ->suffixAction(fn (string $state) => request()->isSecure() ? CopyAction::make()->copyable($state) : null),
                                     ])
                                     ->relationship('databases')
                                     ->deletable(false)

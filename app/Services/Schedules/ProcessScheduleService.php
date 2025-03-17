@@ -2,6 +2,7 @@
 
 namespace App\Services\Schedules;
 
+use App\Enums\ContainerStatus;
 use App\Models\Task;
 use Exception;
 use App\Models\Schedule;
@@ -41,10 +42,10 @@ class ProcessScheduleService
             // Check that the server is currently in a starting or running state before executing
             // this schedule if this option has been set.
             try {
-                $details = $this->serverRepository->setServer($schedule->server)->getDetails();
-                $state = $details['state'] ?? 'offline';
+                $state = ContainerStatus::tryFrom(fluent($this->serverRepository->setServer($schedule->server)->getDetails())->get('state')) ?? ContainerStatus::Offline;
+
                 // If the server is stopping or offline just do nothing with this task.
-                if (in_array($state, ['offline', 'stopping'])) {
+                if ($state->isOffline()) {
                     $job->failed();
 
                     return;

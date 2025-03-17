@@ -21,7 +21,7 @@ class QueueWorkerServiceCommand extends Command
         $serviceName = $this->option('service-name') ?? $this->ask('Queue worker service name', 'pelican-queue');
         $path = '/etc/systemd/system/' . $serviceName  . '.service';
 
-        $fileExists = file_exists($path);
+        $fileExists = @file_exists($path);
         if ($fileExists && !$this->option('overwrite') && !$this->confirm('The service file already exists. Do you want to overwrite it?')) {
             $this->line('Creation of queue worker service file aborted because service file already exists.');
 

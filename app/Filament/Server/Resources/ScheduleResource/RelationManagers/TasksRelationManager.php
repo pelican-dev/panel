@@ -62,7 +62,8 @@ class TasksRelationManager extends RelationManager
                     'stop' => 'Stop',
                     'kill' => 'Kill',
                 ])
-                ->selectablePlaceholder(false),
+                ->selectablePlaceholder(false)
+                ->default('restart'),
             TextInput::make('time_offset')
                 ->hidden(fn (Get $get) => config('queue.default') === 'sync' || $get('sequence_id') === 1)
                 ->default(0)
@@ -103,8 +104,28 @@ class TasksRelationManager extends RelationManager
                         $data['payload'] ??= '';
 
                         return $data;
+                    })
+                    ->after(function ($data) {
+                        /** @var Schedule $schedule */
+                        $schedule = $this->getOwnerRecord();
+
+                        Activity::event('server:task.update')
+                            ->subject($schedule)
+                            ->property(['name' => $schedule->name, 'action' => $data['action'], 'payload' => $data['payload']])
+                            ->log();
+
                     }),
-                DeleteAction::make(),
+                DeleteAction::make()
+                    ->action(function (Task $task) {
+                        /** @var Schedule $schedule */
+                        $schedule = $this->getOwnerRecord();
+                        $task->delete();
+
+                        Activity::event('server:task.delete')
+                            ->subject($schedule)
+                            ->property(['name' => $schedule->name, 'action' => $task->action, 'payload' => $task->payload])
+                            ->log();
+                    }),
             ])
             ->headerActions([
                 CreateAction::make()
