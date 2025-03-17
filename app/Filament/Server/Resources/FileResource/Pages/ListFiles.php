@@ -538,23 +538,16 @@ class ListFiles extends ListRecords
      */
     private function getPermissionsFromModeBit(int $mode): array
     {
-        if ($mode === 1) {
-            return ['execute'];
-        } elseif ($mode === 2) {
-            return ['write'];
-        } elseif ($mode === 3) {
-            return ['write', 'execute'];
-        } elseif ($mode === 4) {
-            return ['read'];
-        } elseif ($mode === 5) {
-            return ['read', 'execute'];
-        } elseif ($mode === 6) {
-            return ['read', 'write'];
-        } elseif ($mode === 7) {
-            return ['read', 'write', 'execute'];
-        }
-
-        return [];
+        return match ($mode) {
+            1 => ['execute'],
+            2 => ['write'],
+            3 => ['write', 'execute'],
+            4 => ['read'],
+            5 => ['read', 'execute'],
+            6 => ['read', 'write'],
+            7 => ['read', 'write', 'execute'],
+            default => [],
+        };
     }
 
     private function getDaemonFileRepository(): DaemonFileRepository
