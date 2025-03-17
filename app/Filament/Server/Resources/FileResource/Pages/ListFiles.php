@@ -50,14 +50,10 @@ class ListFiles extends ListRecords
 
     private DaemonFileRepository $fileRepository;
 
-    public function mount(?DaemonFileRepository $fileRepository = null, ?string $path = null): void
+    public function mount(?string $path = null): void
     {
         parent::mount();
         $this->path = $path ?? '/';
-
-        /** @var Server $server */
-        $server = Filament::getTenant();
-        $this->fileRepository = $fileRepository->setServer($server);
     }
 
     public function getBreadcrumbs(): array
@@ -140,7 +136,7 @@ class ListFiles extends ListRecords
                         ->action(function ($data, File $file) {
                             $files = [['to' => $data['name'], 'from' => $file->name]];
 
-                            $this->fileRepository
+                            $this->getDaemonFileRepository()
                                 ->renameFiles($this->path, $files);
 
                             Activity::event('server:file.rename')
@@ -162,7 +158,7 @@ class ListFiles extends ListRecords
                         ->icon('tabler-copy')
                         ->visible(fn (File $file) => $file->is_file)
                         ->action(function (File $file) {
-                            $this->fileRepository
+                            $this->getDaemonFileRepository()
                                 ->copyFile(join_paths($this->path, $file->name));
 
                             Activity::event('server:file.copy')
@@ -201,7 +197,7 @@ class ListFiles extends ListRecords
 
                             $files = [['to' => $location, 'from' => $file->name]];
 
-                            $this->fileRepository
+                            $this->getDaemonFileRepository()
                                 ->renameFiles($this->path, $files);
 
                             Activity::event('server:file.rename')
@@ -265,7 +261,7 @@ class ListFiles extends ListRecords
 
                             $mode = $owner . $group . $public;
 
-                            $this->fileRepository
+                            $this->getDaemonFileRepository()
                                 ->chmodFiles($this->path, [['file' => $file->name, 'mode' => $mode]]);
 
                             Notification::make()
@@ -278,7 +274,7 @@ class ListFiles extends ListRecords
                         ->label('Archive')
                         ->icon('tabler-archive')
                         ->action(function (File $file) {
-                            $this->fileRepository
+                            $this->getDaemonFileRepository()
                                 ->compressFiles($this->path, [$file->name]);
 
                             Activity::event('server:file.compress')
@@ -299,7 +295,7 @@ class ListFiles extends ListRecords
                         ->icon('tabler-archive')
                         ->visible(fn (File $file) => $file->isArchive())
                         ->action(function (File $file) {
-                            $this->fileRepository
+                            $this->getDaemonFileRepository()
                                 ->decompressFile($this->path, $file->name);
 
                             Activity::event('server:file.decompress')
@@ -323,7 +319,7 @@ class ListFiles extends ListRecords
                     ->modalDescription(fn (File $file) => $file->name)
                     ->modalHeading('Delete file?')
                     ->action(function (File $file) {
-                        $this->fileRepository
+                        $this->getDaemonFileRepository()
                             ->deleteFiles($this->path, [$file->name]);
 
                         Activity::event('server:file.delete')
@@ -351,7 +347,7 @@ class ListFiles extends ListRecords
                             $location = resolve_path(join_paths($this->path, $data['location']));
 
                             $files = $files->map(fn ($file) => ['to' => $location, 'from' => $file['name']])->toArray();
-                            $this->fileRepository
+                            $this->getDaemonFileRepository()
                                 ->renameFiles($this->path, $files);
 
                             Activity::event('server:file.rename')
@@ -369,7 +365,7 @@ class ListFiles extends ListRecords
                         ->action(function (Collection $files) {
                             $files = $files->map(fn ($file) => $file['name'])->toArray();
 
-                            $this->fileRepository
+                            $this->getDaemonFileRepository()
                                 ->compressFiles($this->path, $files);
 
                             Activity::event('server:file.compress')
@@ -388,7 +384,7 @@ class ListFiles extends ListRecords
                         ->authorize(fn () => auth()->user()->can(Permission::ACTION_FILE_DELETE, $server))
                         ->action(function (Collection $files) {
                             $files = $files->map(fn ($file) => $file['name'])->toArray();
-                            $this->fileRepository
+                            $this->getDaemonFileRepository()
                                 ->deleteFiles($this->path, $files);
 
                             Activity::event('server:file.delete')
@@ -418,7 +414,7 @@ class ListFiles extends ListRecords
                 ->keyBindings('')
                 ->modalSubmitActionLabel('Create')
                 ->action(function ($data) {
-                    $this->fileRepository
+                    $this->getDaemonFileRepository()
                         ->putContent(join_paths($this->path, $data['name']), $data['editor'] ?? '');
 
                     Activity::event('server:file.write')
@@ -446,7 +442,7 @@ class ListFiles extends ListRecords
                 ->label('New Folder')
                 ->color('gray')
                 ->action(function ($data) {
-                    $this->fileRepository
+                    $this->getDaemonFileRepository()
                         ->createDirectory($data['name'], $this->path);
 
                     Activity::event('server:file.create-directory')
@@ -465,7 +461,7 @@ class ListFiles extends ListRecords
                     if (count($data['files']) > 0 && !isset($data['url'])) {
                         /** @var UploadedFile $file */
                         foreach ($data['files'] as $file) {
-                            $this->fileRepository
+                            $this->getDaemonFileRepository()
                                 ->putContent(join_paths($this->path, $file->getClientOriginalName()), $file->getContent());
 
                             Activity::event('server:file.uploaded')
@@ -474,7 +470,7 @@ class ListFiles extends ListRecords
                                 ->log();
                         }
                     } elseif ($data['url'] !== null) {
-                        $this->fileRepository
+                        $this->getDaemonFileRepository()
                             ->pull($data['url'], $this->path);
 
                         Activity::event('server:file.pull')
@@ -542,22 +538,24 @@ class ListFiles extends ListRecords
      */
     private function getPermissionsFromModeBit(int $mode): array
     {
-        if ($mode === 1) {
-            return ['execute'];
-        } elseif ($mode === 2) {
-            return ['write'];
-        } elseif ($mode === 3) {
-            return ['write', 'execute'];
-        } elseif ($mode === 4) {
-            return ['read'];
-        } elseif ($mode === 5) {
-            return ['read', 'execute'];
-        } elseif ($mode === 6) {
-            return ['read', 'write'];
-        } elseif ($mode === 7) {
-            return ['read', 'write', 'execute'];
-        }
+        return match ($mode) {
+            1 => ['execute'],
+            2 => ['write'],
+            3 => ['write', 'execute'],
+            4 => ['read'],
+            5 => ['read', 'execute'],
+            6 => ['read', 'write'],
+            7 => ['read', 'write', 'execute'],
+            default => [],
+        };
+    }
 
-        return [];
+    private function getDaemonFileRepository(): DaemonFileRepository
+    {
+        /** @var Server $server */
+        $server = Filament::getTenant();
+        $this->fileRepository ??= (new DaemonFileRepository())->setServer($server);
+
+        return $this->fileRepository;
     }
 }
