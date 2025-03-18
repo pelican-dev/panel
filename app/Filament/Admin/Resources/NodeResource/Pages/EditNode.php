@@ -555,7 +555,18 @@ class EditNode extends EditRecord
                                             ->modalHeading(trans('admin/node.reset_token'))
                                             ->modalDescription(trans('admin/node.reset_help'))
                                             ->action(function (Node $node) {
-                                                $this->nodeUpdateService->handle($node, [], true);
+                                                try {
+                                                    $this->nodeUpdateService->handle($node, [], true);
+                                                } catch (Exception) {
+                                                    Notification::make()
+                                                        ->title(trans('admin/node.error_connecting', ['node' => $node->name]))
+                                                        ->body(trans('admin/node.error_connecting_description'))
+                                                        ->color('warning')
+                                                        ->icon('tabler-database')
+                                                        ->warning()
+                                                        ->send();
+
+                                                }
                                                 Notification::make()->success()->title(trans('admin/node.token_reset'))->send();
                                                 $this->fillForm();
                                             }),

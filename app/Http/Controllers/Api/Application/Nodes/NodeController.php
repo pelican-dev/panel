@@ -15,6 +15,7 @@ use App\Http\Requests\Api\Application\Nodes\DeleteNodeRequest;
 use App\Http\Requests\Api\Application\Nodes\UpdateNodeRequest;
 use App\Http\Controllers\Api\Application\ApplicationApiController;
 use Dedoc\Scramble\Attributes\Group;
+use Exception;
 
 #[Group('Node', weight: 0)]
 class NodeController extends ApplicationApiController
@@ -95,11 +96,15 @@ class NodeController extends ApplicationApiController
      */
     public function update(UpdateNodeRequest $request, Node $node): array
     {
-        $node = $this->updateService->handle(
-            $node,
-            $request->validated(),
-            $request->input('reset_secret') === true
-        );
+        try {
+            $node = $this->updateService->handle(
+                $node,
+                $request->validated(),
+                $request->input('reset_secret') === true
+            );
+        } catch (Exception $exception) {
+            report($exception);
+        }
 
         return $this->fractal->item($node)
             ->transformWith($this->getTransformer(NodeTransformer::class))
