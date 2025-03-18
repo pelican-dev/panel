@@ -4,11 +4,14 @@
         "version": "PLCN_v1",
         "update_url": "https:\/\/github.com\/pelican-dev\/panel\/raw\/main\/database\/Seeders\/eggs\/minecraft\/egg-sponge--sponge-vanilla.json"
     },
-    "exported_at": "2024-11-23T22:22:37+00:00",
+    "exported_at": "2025-03-18T12:35:50+00:00",
     "name": "Sponge (SpongeVanilla)",
     "author": "panel@example.com",
     "uuid": "f0d2f88f-1ff3-42a0-b03f-ac44c5571e6d",
     "description": "SpongeVanilla is the SpongeAPI implementation for Vanilla Minecraft.",
+    "tags": [
+        "minecraft"
+    ],
     "features": [
         "eula",
         "java_version",

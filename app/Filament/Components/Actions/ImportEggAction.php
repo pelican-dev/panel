@@ -13,6 +13,7 @@ use Filament\Forms\Components\Tabs;
 use Filament\Forms\Components\Tabs\Tab;
 use Filament\Forms\Components\TextInput;
 use Filament\Notifications\Notification;
+use Illuminate\Support\Arr;
 use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 
 class ImportEggAction extends Action
@@ -31,7 +32,7 @@ class ImportEggAction extends Action
         $this->authorize(fn () => auth()->user()->can('import egg'));
 
         $this->action(function (array $data, EggImporterService $eggImportService): void {
-            $eggs = array_merge($data['files'], collect($data['urls'])->flatten()->whereNotNull()->unique()->all());
+            $eggs = array_merge(collect($data['urls'])->flatten()->whereNotNull()->unique()->all(), Arr::wrap($data['files']));
             if (empty($eggs)) {
                 return;
             }

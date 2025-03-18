@@ -20,7 +20,7 @@ class UpdateEggAction extends Action
     {
         parent::setUp();
 
-        $this->label(trans('admin/egg.update'));
+        $this->label(trans_choice('admin/egg.update', 1));
 
         $this->icon('tabler-cloud-download');
 
@@ -28,9 +28,9 @@ class UpdateEggAction extends Action
 
         $this->requiresConfirmation();
 
-        $this->modalHeading(trans('admin/egg.update_question'));
+        $this->modalHeading(trans_choice('admin/egg.update_question', 1));
 
-        $this->modalDescription(trans('admin/egg.update_description'));
+        $this->modalDescription(trans_choice('admin/egg.update_description', 1));
 
         $this->modalIconColor('danger');
 
@@ -54,7 +54,7 @@ class UpdateEggAction extends Action
             }
 
             Notification::make()
-                ->title(trans('admin/egg.updated'))
+                ->title(trans_choice('admin/egg.updated', 1))
                 ->body($egg->name)
                 ->success()
                 ->send();

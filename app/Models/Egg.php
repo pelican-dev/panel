@@ -46,6 +46,7 @@ use Illuminate\Support\Str;
  * @property string|null $inherit_config_stop
  * @property string $inherit_file_denylist
  * @property string[]|null $inherit_features
+ * @property string[] $tags
  * @property \Illuminate\Database\Eloquent\Collection|\App\Models\Server[] $servers
  * @property int|null $servers_count
  * @property \Illuminate\Database\Eloquent\Collection|\App\Models\EggVariable[] $variables
@@ -128,6 +129,7 @@ class Egg extends Model implements Validatable
         'config_files' => ['required_without:config_from', 'nullable', 'json'],
         'update_url' => ['sometimes', 'nullable', 'string'],
         'force_outgoing_ip' => ['sometimes', 'boolean'],
+        'tags' => ['array'],
     ];
 
     protected $attributes = [
