@@ -7,6 +7,7 @@ use App\Filament\Components\Actions\ImportEggAction as ImportEggHeaderAction;
 use App\Filament\Components\Tables\Actions\ExportEggAction;
 use App\Filament\Components\Tables\Actions\ImportEggAction;
 use App\Filament\Components\Tables\Actions\UpdateEggAction;
+use App\Filament\Components\Tables\Actions\UpdateEggBulkAction;
 use App\Models\Egg;
 use Filament\Actions\CreateAction as CreateHeaderAction;
 use Filament\Resources\Pages\ListRecords;
@@ -16,6 +17,7 @@ use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Actions\ReplicateAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Str;
 
 class ListEggs extends ListRecords
@@ -27,7 +29,7 @@ class ListEggs extends ListRecords
         return $table
             ->searchable(true)
             ->defaultPaginationPageOption(25)
-            ->checkIfRecordIsSelectableUsing(fn (Egg $egg) => $egg->servers_count <= 0)
+            ->checkIfRecordIsSelectableUsing(fn (Egg $egg) => $egg->servers_count <= 0 || cache()->get("eggs.$egg->uuid.update", false))
             ->columns([
                 TextColumn::make('id')
                     ->label('Id')
@@ -68,7 +70,15 @@ class ListEggs extends ListRecords
                     ->successRedirectUrl(fn (Egg $replica) => EditEgg::getUrl(['record' => $replica])),
             ])
             ->groupedBulkActions([
-                DeleteBulkAction::make(),
+                DeleteBulkAction::make()
+                    ->using(function (Collection $records) {
+                        foreach ($records as $egg) {
+                            if ($egg->servers_count <= 0) {
+                                $egg->delete();
+                            }
+                        }
+                    }),
+                UpdateEggBulkAction::make(),
             ])
             ->emptyStateIcon('tabler-eggs')
             ->emptyStateDescription('')
