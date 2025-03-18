@@ -4,11 +4,14 @@
         "version": "PLCN_v1",
         "update_url": "https:\/\/github.com\/pelican-dev\/panel\/raw\/main\/database\/Seeders\/eggs\/voice-servers\/egg-mumble-server.json"
     },
-    "exported_at": "2024-11-23T22:22:44+00:00",
+    "exported_at": "2025-03-18T12:36:35+00:00",
     "name": "Mumble Server",
     "author": "panel@example.com",
     "uuid": "727ee758-7fb2-4979-972b-d3eba4e1e9f0",
     "description": "Mumble is an open source, low-latency, high quality voice chat software primarily intended for use while gaming.",
+    "tags": [
+        "voice"
+    ],
     "features": [],
     "docker_images": {
         "Mumble": "ghcr.io\/parkervcp\/yolks:voice_mumble"
