@@ -7,6 +7,7 @@ use App\Filament\Components\Actions\ImportEggAction as ImportEggHeaderAction;
 use App\Filament\Components\Tables\Actions\ExportEggAction;
 use App\Filament\Components\Tables\Actions\ImportEggAction;
 use App\Filament\Components\Tables\Actions\UpdateEggAction;
+use App\Filament\Components\Tables\Filters\TagsFilter;
 use App\Models\Egg;
 use Filament\Actions\CreateAction as CreateHeaderAction;
 use Filament\Resources\Pages\ListRecords;
@@ -77,6 +78,10 @@ class ListEggs extends ListRecords
                 CreateAction::make(),
                 ImportEggAction::make()
                     ->multiple(),
+            ])
+            ->filters([
+                TagsFilter::make()
+                    ->model(Egg::class),
             ]);
     }
 
