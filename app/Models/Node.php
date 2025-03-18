@@ -104,6 +104,7 @@ class Node extends Model implements Validatable
         'daemon_listen' => ['required', 'numeric', 'between:1,65535'],
         'maintenance_mode' => ['boolean'],
         'upload_size' => ['int', 'between:1,1024'],
+        'tags' => ['array'],
     ];
 
     /**

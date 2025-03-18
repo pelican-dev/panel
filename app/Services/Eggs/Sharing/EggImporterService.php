@@ -160,6 +160,7 @@ class EggImporterService
      * @param array{
      *     name: string,
      *     description: string,
+     *     tags: string[],
      *     features: string[],
      *     docker_images: string[],
      *     file_denylist: string[],
@@ -176,10 +177,10 @@ class EggImporterService
         return $model->forceFill([
             'name' => Arr::get($parsed, 'name'),
             'description' => Arr::get($parsed, 'description'),
+            'tags' => Arr::get($parsed, 'tags', []),
             'features' => Arr::get($parsed, 'features'),
             'docker_images' => Arr::get($parsed, 'docker_images'),
-            'file_denylist' => Collection::make(Arr::get($parsed, 'file_denylist'))
-                ->filter(fn ($value) => !empty($value)),
+            'file_denylist' => Collection::make(Arr::get($parsed, 'file_denylist'))->filter(fn ($value) => !empty($value)),
             'update_url' => Arr::get($parsed, 'meta.update_url'),
             'config_files' => Arr::get($parsed, 'config.files'),
             'config_startup' => Arr::get($parsed, 'config.startup'),
