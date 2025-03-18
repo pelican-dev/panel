@@ -4,11 +4,14 @@
         "version": "PLCN_v1",
         "update_url": "https:\/\/github.com\/pelican-dev\/panel\/raw\/main\/database\/Seeders\/eggs\/minecraft\/egg-forge-minecraft.json"
     },
-    "exported_at": "2024-11-23T22:22:35+00:00",
+    "exported_at": "2025-03-18T12:35:39+00:00",
     "name": "Forge Minecraft",
     "author": "panel@example.com",
     "uuid": "ed072427-f209-4603-875c-f540c6dd5a65",
     "description": "Minecraft Forge Server. Minecraft Forge is a modding API (Application Programming Interface), which makes it easier to create mods, and also make sure mods are compatible with each other.",
+    "tags": [
+        "minecraft"
+    ],
     "features": [
         "eula",
         "java_version",
