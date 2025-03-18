@@ -193,9 +193,7 @@ class ListFiles extends ListRecords
                                 ->content(fn (Get $get) => resolve_path('./' . join_paths($this->path, $get('location')))),
                         ])
                         ->action(function ($data, File $file) {
-                            $location = resolve_path(join_paths($this->path, $data['location']));
-
-                            $files = [['to' => $location, 'from' => $file->name]];
+                            $files = [['to' => $data['location'], 'from' => $file->name]];
 
                             $this->getDaemonFileRepository()
                                 ->renameFiles($this->path, $files);
@@ -203,12 +201,13 @@ class ListFiles extends ListRecords
                             Activity::event('server:file.rename')
                                 ->property('directory', $this->path)
                                 ->property('files', $files)
-                                ->property('to', $location)
+                                ->property('to', $data['location'])
                                 ->property('from', $file->name)
                                 ->log();
 
                             Notification::make()
-                                ->title(join_paths($this->path, $file->name) . ' was moved to ' . $location)
+                                ->title('File Moved')
+                                ->body(join_paths($this->path, $file->name) . ' -> ' . resolve_path(join_paths($this->path, $data['location'])))
                                 ->success()
                                 ->send();
                         }),
