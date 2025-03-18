@@ -861,7 +861,7 @@ class EditServer extends EditRecord
                                                 Forms\Components\Actions::make([
                                                     Action::make('transfer')
                                                         ->label(trans('admin/server.transfer'))
-                                                        ->disabled(fn () => Node::count() <= 1)
+                                                        ->disabled(fn (Server $server) => Node::count() <= 1 || $server->isInConflictState())
                                                         ->modalheading(trans('admin/server.transfer'))
                                                         ->action(function (TransferServerService $transfer, Server $server, $data) {
                                                             try {
