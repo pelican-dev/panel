@@ -29,7 +29,6 @@ class ListEggs extends ListRecords
         return $table
             ->searchable(true)
             ->defaultPaginationPageOption(25)
-            ->checkIfRecordIsSelectableUsing(fn (Egg $egg) => $egg->servers_count <= 0 || cache()->get("eggs.$egg->uuid.update", false))
             ->columns([
                 TextColumn::make('id')
                     ->label('Id')
@@ -71,14 +70,15 @@ class ListEggs extends ListRecords
             ])
             ->groupedBulkActions([
                 DeleteBulkAction::make()
-                    ->using(function (Collection $records) {
-                        foreach ($records as $egg) {
-                            if ($egg->servers_count <= 0) {
-                                $egg->delete();
-                            }
-                        }
-                    }),
-                UpdateEggBulkAction::make(),
+                    ->before(fn (DeleteBulkAction $action, Collection $records) => $action->records($records->filter(function ($egg) {
+                        /** @var Egg $egg */
+                        return $egg->servers_count <= 0;
+                    }))),
+                UpdateEggBulkAction::make()
+                    ->before(fn (UpdateEggBulkAction $action, Collection $records) => $action->records($records->filter(function ($egg) {
+                        /** @var Egg $egg */
+                        return cache()->get("eggs.$egg->uuid.update", false);
+                    }))),
             ])
             ->emptyStateIcon('tabler-eggs')
             ->emptyStateDescription('')

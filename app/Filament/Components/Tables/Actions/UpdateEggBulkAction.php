@@ -38,18 +38,20 @@ class UpdateEggBulkAction extends BulkAction
         $this->modalSubmitAction(fn (StaticAction $action) => $action->color('danger'));
 
         $this->action(function (Collection $records, EggImporterService $eggImporterService) {
+            if ($records->count() === 0) {
+                Notification::make()
+                    ->title(trans('admin/egg.no_updates'))
+                    ->warning()
+                    ->send();
+
+                return;
+            }
+
             $success = 0;
             $failed = 0;
-            $skipped = 0;
 
             /** @var Egg $egg */
             foreach ($records as $egg) {
-                if (!cache()->get("eggs.$egg->uuid.update", false)) {
-                    $skipped++;
-
-                    continue;
-                }
-
                 try {
                     $eggImporterService->fromUrl($egg->update_url, $egg);
 
@@ -65,7 +67,7 @@ class UpdateEggBulkAction extends BulkAction
 
             Notification::make()
                 ->title(trans_choice('admin/egg.updated', 2, ['count' => $success, 'total' => $records->count()]))
-                ->body(trans('admin/egg.updated_failed', ['count' => $failed]) . ', ' . trans('admin/egg.updated_skipped', ['count' => $skipped]))
+                ->body($failed > 0 ? trans('admin/egg.updated_failed', ['count' => $failed]) : null)
                 ->status($failed > 0 ? 'warning' : 'success')
                 ->persistent()
                 ->send();
