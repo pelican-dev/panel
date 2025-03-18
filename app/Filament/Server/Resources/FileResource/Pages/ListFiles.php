@@ -198,16 +198,19 @@ class ListFiles extends ListRecords
                             $this->getDaemonFileRepository()
                                 ->renameFiles($this->path, $files);
 
+                            $oldLocation = join_paths($this->path, $file->name);
+                            $newLocation = resolve_path(join_paths($this->path, $data['location']));
+
                             Activity::event('server:file.rename')
                                 ->property('directory', $this->path)
                                 ->property('files', $files)
-                                ->property('to', $data['location'])
-                                ->property('from', $file->name)
+                                ->property('to', $newLocation)
+                                ->property('from', $oldLocation)
                                 ->log();
 
                             Notification::make()
                                 ->title('File Moved')
-                                ->body(join_paths($this->path, $file->name) . ' -> ' . resolve_path(join_paths($this->path, $data['location'])))
+                                ->body($oldLocation . ' -> ' . $newLocation)
                                 ->success()
                                 ->send();
                         }),
