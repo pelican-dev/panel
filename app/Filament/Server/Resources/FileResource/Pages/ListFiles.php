@@ -332,21 +332,19 @@ class ListFiles extends ListRecords
                 BulkActionGroup::make([
                     BulkAction::make('move')
                         ->authorize(fn () => auth()->user()->can(Permission::ACTION_FILE_UPDATE, $server))
-                        ->hidden() // TODO
                         ->form([
                             TextInput::make('location')
-                                ->label('File name')
-                                ->hint('Enter the new name and directory of this file or folder, relative to the current directory.')
-                                ->default(fn (File $file) => $file->name)
+                                ->label('Directory')
+                                ->hint('Enter the new directory, relative to the current directory.')
                                 ->required()
                                 ->live(),
                             Placeholder::make('new_location')
                                 ->content(fn (Get $get) => resolve_path('./' . join_paths($this->path, $get('location') ?? ''))),
                         ])
                         ->action(function (Collection $files, $data) {
-                            $location = resolve_path(join_paths($this->path, $data['location']));
+                            $location = rtrim($data['location'], '/');
 
-                            $files = $files->map(fn ($file) => ['to' => $location, 'from' => $file['name']])->toArray();
+                            $files = $files->map(fn ($file) => ['to' => join_paths($location, $file['name']), 'from' => $file['name']])->toArray();
                             $this->getDaemonFileRepository()
                                 ->renameFiles($this->path, $files);
 
@@ -356,7 +354,7 @@ class ListFiles extends ListRecords
                                 ->log();
 
                             Notification::make()
-                                ->title(count($files) . ' Files were moved from ' . $location)
+                                ->title(count($files) . ' Files were moved to ' . resolve_path(join_paths($this->path, $location)))
                                 ->success()
                                 ->send();
                         }),
