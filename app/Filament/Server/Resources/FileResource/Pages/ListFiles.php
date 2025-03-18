@@ -361,7 +361,6 @@ class ListFiles extends ListRecords
                         ->action(function (Collection $files, $data) {
                             $location = rtrim($data['location'], '/');
 
-
                             $files = $files->map(fn ($file) => ['to' => join_paths($location, $file['name']), 'from' => $file['name']])->toArray();
                             $this->getDaemonFileRepository()
                                 ->renameFiles($this->path, $files);
