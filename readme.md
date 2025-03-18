@@ -33,7 +33,7 @@ Some of our popular eggs include:
 |                                                                      | Project Zomboid | Satisfactory  | Sons of the Forest | Starbound      |
 | [Standalone Games](https://github.com/pelican-eggs/games-standalone) | Among Us        | Factorio      | FTL                | GTA            |
 |                                                                      | Kerbal Space    | Mindustry     | Rimworld           | Terraria       |
-| [Discord Bots](https://github.com/pelican-eggs/chatbots)             | Redbot          | JMusicBot     | Dynamica           |                |
+| [Discord Bots](https://github.com/pelican-eggs/chatbots)             | Redbot          | JMusicBot     | Dynamica           | Parkertron     |
 | [Voice Servers](https://github.com/pelican-eggs/voice)               | Mumble          | Teamspeak     | Lavalink           |                |
 | [Software](https://github.com/pelican-eggs/software)                 | Elasticsearch   | Gitea         | Grafana            | RabbitMQ       |
 | [Programming](https://github.com/pelican-eggs/generic)               | Node.js         | Python        | Java               | C#             |
