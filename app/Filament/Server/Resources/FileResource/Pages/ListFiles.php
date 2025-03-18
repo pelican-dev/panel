@@ -184,31 +184,33 @@ class ListFiles extends ListRecords
                         ->icon('tabler-replace')
                         ->form([
                             TextInput::make('location')
-                                ->label('File name')
-                                ->hint('Enter the new name and directory of this file or folder, relative to the current directory.')
-                                ->default(fn (File $file) => $file->name)
+                                ->label('New location')
+                                ->hint('Enter the location of this file or folder, relative to the current directory.')
                                 ->required()
                                 ->live(),
                             Placeholder::make('new_location')
-                                ->content(fn (Get $get) => resolve_path('./' . join_paths($this->path, $get('location')))),
+                                ->content(fn (Get $get, File $file) => resolve_path('./' . join_paths($this->path, $get('location') ?? '/', $file->name))),
                         ])
                         ->action(function ($data, File $file) {
-                            $location = resolve_path(join_paths($this->path, $data['location']));
-
-                            $files = [['to' => $location, 'from' => $file->name]];
+                            $location = rtrim($data['location'], '/');
+                            $files = [['to' => join_paths($location, $file->name), 'from' => $file->name]];
 
                             $this->getDaemonFileRepository()
                                 ->renameFiles($this->path, $files);
 
+                            $oldLocation = join_paths($this->path, $file->name);
+                            $newLocation = resolve_path(join_paths($this->path, $location, $file->name));
+
                             Activity::event('server:file.rename')
                                 ->property('directory', $this->path)
                                 ->property('files', $files)
-                                ->property('to', $location)
-                                ->property('from', $file->name)
+                                ->property('to', $newLocation)
+                                ->property('from', $oldLocation)
                                 ->log();
 
                             Notification::make()
-                                ->title(join_paths($this->path, $file->name) . ' was moved to ' . $location)
+                                ->title('File Moved')
+                                ->body($oldLocation . ' -> ' . $newLocation)
                                 ->success()
                                 ->send();
                         }),

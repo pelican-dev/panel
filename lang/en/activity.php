@@ -74,7 +74,7 @@ return [
             'delete' => 'Deleted <b>:directory:files</b>|Deleted <b>:count</b> files in <b>:directory</b>',
             'download' => 'Downloaded <b>:file</b>',
             'pull' => 'Downloaded a remote file from <b>:url</b> to <b>:directory</b>',
-            'rename' => 'Renamed <b>:directory:from</b> to <b>:directory:to</b>|Renamed <b>:count</b> files in <b>:directory</b>',
+            'rename' => 'Moved/ Renamed <b>:from</b> to <b>:to</b>|Moved/ Renamed <b>:count</b> files in <b>:directory</b>',
             'write' => 'Wrote new content to <b>:file</b>',
             'upload' => 'Began a file upload',
             'uploaded' => 'Uploaded <b>:directory:file</b>',
