@@ -2,6 +2,7 @@
 
 namespace App\Filament\Components\Tables\Actions;
 
+use App\Models\Egg;
 use App\Services\Eggs\Sharing\EggImporterService;
 use Exception;
 use Filament\Actions\StaticAction;
@@ -41,6 +42,7 @@ class UpdateEggBulkAction extends BulkAction
             $failed = 0;
             $skipped = 0;
 
+            /** @var Egg $egg */
             foreach ($records as $egg) {
                 if (!cache()->get("eggs.$egg->uuid.update", false)) {
                     $skipped++;
