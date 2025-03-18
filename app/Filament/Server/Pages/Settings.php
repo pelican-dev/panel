@@ -192,7 +192,7 @@ class Settings extends ServerFormPage
                     ]),
                 Section::make('Reinstall Server')
                     ->hidden(fn () => !auth()->user()->can(Permission::ACTION_SETTINGS_REINSTALL, $server))
-                    ->collapsible()->collapsed()
+                    ->collapsible()
                     ->footerActions([
                         Action::make('reinstall')
                             ->color('danger')
@@ -226,6 +226,8 @@ class Settings extends ServerFormPage
                                     ->success()
                                     ->title('Server Reinstall started')
                                     ->send();
+
+                                redirect(Console::getUrl());
                             }),
                     ])
                     ->footerActionsAlignment(Alignment::Right)
@@ -257,7 +259,6 @@ class Settings extends ServerFormPage
 
             Notification::make()
                 ->success()
-                ->duration(5000) // 5 seconds
                 ->title('Updated Server Name')
                 ->body(fn () => $original . ' -> ' . $name)
                 ->send();
@@ -289,7 +290,6 @@ class Settings extends ServerFormPage
 
             Notification::make()
                 ->success()
-                ->duration(5000) // 5 seconds
                 ->title('Updated Server Description')
                 ->body(fn () => $original . ' -> ' . $description)
                 ->send();

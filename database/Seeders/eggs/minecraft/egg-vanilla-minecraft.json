@@ -4,11 +4,14 @@
         "version": "PLCN_v1",
         "update_url": "https:\/\/github.com\/pelican-dev\/panel\/raw\/main\/database\/Seeders\/eggs\/minecraft\/egg-vanilla-minecraft.json"
     },
-    "exported_at": "2024-11-23T22:22:38+00:00",
+    "exported_at": "2025-03-18T12:35:55+00:00",
     "name": "Vanilla Minecraft",
     "author": "panel@example.com",
     "uuid": "9ac39f3d-0c34-4d93-8174-c52ab9e6c57b",
     "description": "Minecraft is a game about placing blocks and going on adventures. Explore randomly generated worlds and build amazing things from the simplest of homes to the grandest of castles. Play in Creative Mode with unlimited resources or mine deep in Survival Mode, crafting weapons and armor to fend off dangerous mobs. Do all this alone or with friends.",
+    "tags": [
+        "minecraft"
+    ],
     "features": [
         "eula",
         "java_version",
