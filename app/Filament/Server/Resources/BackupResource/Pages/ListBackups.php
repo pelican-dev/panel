@@ -182,15 +182,11 @@ class ListBackups extends ListRecords
                             ->send();
 
                     } catch (HttpException $e) {
-                        $retry = $e->getHeaders()['Retry-After'] ?? 'error';
-                        $message = $e->getMessage() . ' Try again in ' . $retry . ' seconds.';
-
                         return Notification::make()
                             ->danger()
                             ->title('Backup Failed')
-                            ->body($message)
+                            ->body($e->getMessage() . ' Try again' . ($e->getHeaders()['Retry-After'] ? ' in ' . $e->getHeaders()['Retry-After'] . ' seconds.' : ''))
                             ->send();
-
                     }
                 }),
         ];
