@@ -31,7 +31,7 @@ use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Http\Request;
-use Throwable;
+use Symfony\Component\HttpKernel\Exception\HttpException;
 
 class ListBackups extends ListRecords
 {
@@ -181,12 +181,14 @@ class ListBackups extends ListRecords
                             ->success()
                             ->send();
 
-                    } catch (Throwable $e) {
+                    } catch (HttpException $e) {
+                        $retry = $e->getHeaders()['Retry-After'] ?? 'error';
+                        $message = $e->getMessage() . ' Try again in ' . $retry . ' seconds.';
 
                         return Notification::make()
                             ->danger()
                             ->title('Backup Failed')
-                            ->body($e->getMessage() . ' Try again in ' . $e->getheaders()['Retry-After'] . ' seconds.')
+                            ->body($message)
                             ->send();
 
                     }
