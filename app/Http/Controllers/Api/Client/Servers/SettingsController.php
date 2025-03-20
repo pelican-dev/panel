@@ -52,14 +52,16 @@ class SettingsController extends ClientApiController
      */
     public function description(DescriptionServerRequest $request, Server $server): JsonResponse
     {
-        $description = $request->has('description') ? $request->input('description') : $server->description;
-
-        if ($server->description !== $description && config('panel.editable_server_descriptions')) {
-            $server->update(['description' => $description]);
-            Activity::event('server:settings.description')
-                ->property(['old' => $server->description, 'new' => $description])
-                ->log();
+        if (config('panel.editable_server_descriptions')) {
+            return new JsonResponse([], Response::HTTP_FORBIDDEN);
         }
+
+        $description = $request->input('description');
+        $server->update(['description' => $description ?? '']);
+
+        Activity::event('server:settings.description')
+            ->property(['old' => $server->getOriginal('description'), 'new' => $description])
+            ->log();
 
         return new JsonResponse([], Response::HTTP_NO_CONTENT);
     }
