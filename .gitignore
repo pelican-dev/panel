@@ -24,8 +24,7 @@ yarn-error.log
 /.vscode
 
 public/assets/manifest.json
-/database/*.sqlite
-/database/*.sqlite-journal
+/database/*.sqlite*
 filament-monaco-editor/
 _ide_helper*
 /.phpstorm.meta.php
