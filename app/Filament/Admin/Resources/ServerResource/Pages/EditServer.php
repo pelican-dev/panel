@@ -924,17 +924,51 @@ class EditServer extends EditRecord
 
     protected function getHeaderActions(): array
     {
+        /** @var Server $server */
+        $server = $this->getRecord();
+
+        $canForceDelete = cache()->get("servers.$server->uuid.canForceDelete", false);
+
         return [
             Actions\Action::make('Delete')
-                ->successRedirectUrl(route('filament.admin.resources.servers.index'))
                 ->color('danger')
-                ->label(trans('filament-actions::delete.single.modal.actions.delete.label'))
+                ->label(trans('filament-actions::delete.single.label'))
+                ->modalHeading(trans('filament-actions::delete.single.modal.heading', ['label' => $this->getRecordTitle()]))
+                ->modalSubmitActionLabel(trans('filament-actions::delete.single.label'))
                 ->requiresConfirmation()
                 ->action(function (Server $server, ServerDeletionService $service) {
-                    $service->handle($server);
+                    try {
+                        $service->handle($server);
+                    } catch (ConnectionException) {
+                        cache()->put("servers.$server->uuid.canForceDelete", true, now()->addMinutes(5));
 
-                    return redirect(ListServers::getUrl(panel: 'admin'));
+                        Notification::make()
+                            ->title(trans('admin/server.notifications.error_server_delete'))
+                            ->body(trans('admin/server.notifications.error_server_delete_body'))
+                            ->color('warning')
+                            ->icon('tabler-database')
+                            ->warning()
+                            ->send();
+                    }
                 })
+                ->hidden(fn () => $canForceDelete)
+                ->authorize(fn (Server $server) => auth()->user()->can('delete server', $server)),
+            Actions\Action::make('ForceDelete')
+                ->color('danger')
+                ->label(trans('filament-actions::force-delete.single.label'))
+                ->modalHeading(trans('filament-actions::force-delete.single.modal.heading', ['label' => $this->getRecordTitle()]))
+                ->modalSubmitActionLabel(trans('filament-actions::force-delete.single.label'))
+                ->requiresConfirmation()
+                ->action(function (Server $server, ServerDeletionService $service) {
+                    try {
+                        $service->withForce()->handle($server);
+
+                        return redirect(ListServers::getUrl(panel: 'admin'));
+                    } catch (ConnectionException) {
+                        cache()->forget("servers.$server->uuid.canForceDelete");
+                    }
+                })
+                ->visible(fn () => $canForceDelete)
                 ->authorize(fn (Server $server) => auth()->user()->can('delete server', $server)),
             Actions\Action::make('console')
                 ->label(trans('admin/server.console'))
