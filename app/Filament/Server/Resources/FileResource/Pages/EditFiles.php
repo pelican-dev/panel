@@ -4,6 +4,7 @@ namespace App\Filament\Server\Resources\FileResource\Pages;
 
 use AbdelhamidErrahmouni\FilamentMonacoEditor\MonacoEditor;
 use App\Enums\EditorLanguages;
+use App\Exceptions\Repository\FileNotEditableException;
 use App\Facades\Activity;
 use App\Filament\Server\Resources\FileResource;
 use App\Livewire\AlertBanner;
@@ -132,6 +133,8 @@ class EditFiles extends Page
                                         ->getContent($this->path, config('panel.files.max_edit_size'));
                                 } catch (FileNotFoundException) {
                                     abort(404, $this->path . ' not found.');
+                                } catch (FileNotEditableException) {
+                                    abort(400, $this->path . ' is not editable.');
                                 }
                             })
                             ->language(fn (Get $get) => $get('lang'))
