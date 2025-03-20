@@ -10,6 +10,7 @@ use App\Checks\NodeVersionsCheck;
 use App\Checks\PanelVersionCheck;
 use App\Checks\ScheduleCheck;
 use App\Checks\UsedDiskSpaceCheck;
+use App\Extensions\OAuth\Providers\GitlabProvider;
 use App\Models;
 use App\Extensions\Captcha\Providers\TurnstileProvider;
 use App\Extensions\OAuth\Providers\AuthentikProvider;
@@ -97,7 +98,7 @@ class AppServiceProvider extends ServiceProvider
         CommonProvider::register($app, 'linkedin', null, 'tabler-brand-linkedin-f', '#0a66c2');
         CommonProvider::register($app, 'google', null, 'tabler-brand-google-f', '#4285f4');
         GithubProvider::register($app);
-        CommonProvider::register($app, 'gitlab', null, 'tabler-brand-gitlab', '#fca326');
+        GitlabProvider::register($app);
         CommonProvider::register($app, 'bitbucket', null, 'tabler-brand-bitbucket-f', '#205081');
         CommonProvider::register($app, 'slack', null, 'tabler-brand-slack', '#6ecadc');
 
