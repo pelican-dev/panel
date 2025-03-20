@@ -96,8 +96,6 @@ class Permission extends Model implements Validatable
 
     public const ACTION_SETTINGS_RENAME = 'settings.rename';
 
-    public const ACTION_SETTINGS_DESCRIPTION = 'settings.description';
-
     public const ACTION_SETTINGS_REINSTALL = 'settings.reinstall';
 
     public const ACTION_ACTIVITY_READ = 'activity.read';

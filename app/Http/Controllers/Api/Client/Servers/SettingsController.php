@@ -4,7 +4,6 @@ namespace App\Http\Controllers\Api\Client\Servers;
 
 use App\Facades\Activity;
 use App\Http\Controllers\Api\Client\ClientApiController;
-use App\Http\Requests\Api\Client\Servers\Settings\DescriptionServerRequest;
 use App\Http\Requests\Api\Client\Servers\Settings\ReinstallServerRequest;
 use App\Http\Requests\Api\Client\Servers\Settings\RenameServerRequest;
 use App\Http\Requests\Api\Client\Servers\Settings\SetDockerImageRequest;
@@ -35,6 +34,7 @@ class SettingsController extends ClientApiController
     public function rename(RenameServerRequest $request, Server $server): JsonResponse
     {
         $name = $request->input('name');
+        $description = $request->has('description') ? (string) $request->input('description') : $server->description;
 
         if ($server->name !== $name) {
             Activity::event('server:settings.rename')
@@ -42,18 +42,6 @@ class SettingsController extends ClientApiController
                 ->log();
             $server->name = $name;
         }
-
-        $server->save();
-
-        return new JsonResponse([], Response::HTTP_NO_CONTENT);
-    }
-
-    /**
-     * Update server description
-     */
-    public function description(DescriptionServerRequest $request, Server $server): JsonResponse
-    {
-        $description = $request->has('description') ? $request->input('description') : $server->description;
 
         if ($server->description !== $description && config('panel.editable_server_descriptions')) {
             Activity::event('server:settings.description')
@@ -92,7 +80,7 @@ class SettingsController extends ClientApiController
      */
     public function dockerImage(SetDockerImageRequest $request, Server $server): JsonResponse
     {
-        if (!in_array($server->image, $server->egg->docker_images)) {
+        if (!in_array($server->image, array_values($server->egg->docker_images))) {
             throw new BadRequestHttpException('This server\'s Docker image has been manually set by an administrator and cannot be updated.');
         }
 
