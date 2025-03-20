@@ -31,6 +31,7 @@ use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Http\Request;
+use Symfony\Component\HttpKernel\Exception\HttpException;
 
 class ListBackups extends ListRecords
 {
@@ -166,18 +167,27 @@ class ListBackups extends ListRecords
                         $action->setIsLocked((bool) $data['is_locked']);
                     }
 
-                    $backup = $action->handle($server, $data['name']);
+                    try {
+                        $backup = $action->handle($server, $data['name']);
 
-                    Activity::event('server:backup.start')
-                        ->subject($backup)
-                        ->property(['name' => $backup->name, 'locked' => (bool) $data['is_locked']])
-                        ->log();
+                        Activity::event('server:backup.start')
+                            ->subject($backup)
+                            ->property(['name' => $backup->name, 'locked' => (bool) $data['is_locked']])
+                            ->log();
 
-                    return Notification::make()
-                        ->title('Backup Created')
-                        ->body($backup->name . ' created.')
-                        ->success()
-                        ->send();
+                        return Notification::make()
+                            ->title('Backup Created')
+                            ->body($backup->name . ' created.')
+                            ->success()
+                            ->send();
+
+                    } catch (HttpException $e) {
+                        return Notification::make()
+                            ->danger()
+                            ->title('Backup Failed')
+                            ->body($e->getMessage() . ' Try again' . ($e->getHeaders()['Retry-After'] ? ' in ' . $e->getHeaders()['Retry-After'] . ' seconds.' : ''))
+                            ->send();
+                    }
                 }),
         ];
     }
