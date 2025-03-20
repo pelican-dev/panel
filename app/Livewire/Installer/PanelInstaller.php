@@ -95,6 +95,9 @@ class PanelInstaller extends SimplePage implements HasForms
             // Disable installer
             $this->writeToEnvironment(['APP_INSTALLED' => 'true']);
 
+            // Generate app key if not present
+            Artisan::call('p:environment:setup');
+
             // Run migrations
             $this->runMigrations();
 
