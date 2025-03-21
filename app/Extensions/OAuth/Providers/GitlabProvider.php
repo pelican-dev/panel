@@ -2,8 +2,14 @@
 
 namespace App\Extensions\OAuth\Providers;
 
+use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Wizard\Step;
 use Illuminate\Foundation\Application;
+use Illuminate\Support\Facades\Blade;
+use Illuminate\Support\HtmlString;
+use Illuminate\Support\Str;
+use Webbingbrasil\FilamentCopyActions\Forms\Actions\CopyAction;
 
 final class GitlabProvider extends OAuthProvider
 {
@@ -39,8 +45,19 @@ final class GitlabProvider extends OAuthProvider
 
     public function getSetupSteps(): array
     {
-        // TODO
-        return parent::getSetupSteps();
+        return array_merge([
+            Step::make('Register new Gitlab OAuth App')
+                ->schema([
+                    Placeholder::make('')
+                        ->content(new HtmlString(Blade::render('Check out the <x-filament::link href="https://docs.gitlab.com/integration/oauth_provider/" target="_blank">Gitlab docs</x-filament::link> on how to create the oauth app.'))),
+                    TextInput::make('_noenv_callback')
+                        ->label('Redirect URI')
+                        ->dehydrated()
+                        ->disabled()
+                        ->hintAction(fn () => request()->isSecure() ? CopyAction::make() : null)
+                        ->default(fn () => config('app.url') . (Str::endsWith(config('app.url'), '/') ? '' : '/') . 'auth/oauth/callback/gitlab'),
+                ]),
+        ], parent::getSetupSteps());
     }
 
     public function getIcon(): string
