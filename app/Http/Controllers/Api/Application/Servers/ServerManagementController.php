@@ -86,7 +86,7 @@ class ServerManagementController extends ApplicationApiController
             'allocation_additional' => 'nullable',
         ]);
 
-        if ($this->transferServerService->handle($server, Arr::get($validatedData, 'node_id'), Arr::get($validatedData, 'allocation_id'), Arr::get($validatedData, 'allocation_additional'))) {
+        if ($this->transferServerService->handle($server, Arr::get($validatedData, 'node_id'), Arr::get($validatedData, 'allocation_id'), Arr::get($validatedData, 'allocation_additional', []))) {
             // Transfer started
             return $this->returnNoContent();
         }
