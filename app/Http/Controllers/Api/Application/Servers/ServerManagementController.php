@@ -13,6 +13,7 @@ use App\Services\Servers\TransferServerService;
 use Dedoc\Scramble\Attributes\Group;
 use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Http\Response;
+use Illuminate\Support\Arr;
 
 #[Group('Server', weight: 4)]
 class ServerManagementController extends ApplicationApiController
@@ -85,7 +86,7 @@ class ServerManagementController extends ApplicationApiController
             'allocation_additional' => 'nullable',
         ]);
 
-        if ($this->transferServerService->handle($server, $validatedData)) {
+        if ($this->transferServerService->handle($server, Arr::get($validatedData, 'node_id'), Arr::get($validatedData, 'allocation_id'), Arr::get($validatedData, 'allocation_additional'))) {
             // Transfer started
             return $this->returnNoContent();
         }

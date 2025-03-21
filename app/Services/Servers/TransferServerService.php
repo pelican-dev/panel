@@ -40,18 +40,12 @@ class TransferServerService
     /**
      * Starts a transfer of a server to a new node.
      *
-     * @param array{
-     *     allocation_id: int,
-     *     node_id: int,
-     *     allocation_additional?: ?int[],
-     * } $data
+     * @param  int[]  $additional_allocations
      *
      * @throws \Throwable
      */
-    public function handle(Server $server, array $data): bool
+    public function handle(Server $server, int $node_id, int $allocation_id, array $additional_allocations): bool
     {
-        $node_id = $data['node_id'];
-        $allocation_id = intval($data['allocation_id']);
         $additional_allocations = array_map(intval(...), $data['allocation_additional'] ?? []);
 
         // Check if the node is viable for the transfer.
