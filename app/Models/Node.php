@@ -373,11 +373,11 @@ class Node extends Model implements Validatable
                 ->get('/api/system/utilization')
                 ->json();
 
-            if ($data['error']) {
+            if ($data['memory_total']) {
+                return $data;
+            } else {
                 return $default;
             }
-
-            return $data ?? $default;
         } catch (Exception) {
             return $default;
         }
