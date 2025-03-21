@@ -22,19 +22,19 @@ class TransferServerService
         private NodeJWTService $nodeJWTService,
     ) {}
 
-    private function notify(Server $server, Plain $token): void
+    private function notify(ServerTransfer $transfer, Plain $token): void
     {
-        Http::daemon($server->node)->post('/api/transfer', [
+        Http::daemon($transfer->oldNode)->post("/api/servers/{$transfer->server->uuid}/transfer", [
             'json' => [
-                'server_id' => $server->uuid,
-                'url' => $server->node->getConnectionAddress() . "/api/servers/$server->uuid/archive",
+                'server_id' => $transfer->server->uuid,
+                'url' => $transfer->newNode->getConnectionAddress() . '/api/transfers',
                 'token' => 'Bearer ' . $token->toString(),
                 'server' => [
-                    'uuid' => $server->uuid,
+                    'uuid' => $transfer->server->uuid,
                     'start_on_completion' => false,
                 ],
             ],
-        ])->toPsrResponse();
+        ]);
     }
 
     /**
@@ -94,7 +94,7 @@ class TransferServerService
                 ->handle($transfer->newNode, $server->uuid, 'sha256');
 
             // Notify the source node of the pending outgoing transfer.
-            $this->notify($server, $token);
+            $this->notify($transfer, $token);
 
             return $transfer;
         });
