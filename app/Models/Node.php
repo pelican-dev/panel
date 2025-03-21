@@ -367,11 +367,17 @@ class Node extends Model implements Validatable
         try {
             $this->systemInformation();
 
-            return Http::daemon($this)
+            $data = Http::daemon($this)
                 ->connectTimeout(1)
                 ->timeout(1)
                 ->get('/api/system/utilization')
-                ->json() ?? $default;
+                ->json();
+
+            if ($data['error']) {
+                return $default;
+            }
+
+            return $data ?? $default;
         } catch (Exception) {
             return $default;
         }
