@@ -59,10 +59,7 @@ return [
             'port' => 'Port',
             'username' => 'Username',
             'password' => 'Password',
-            'encryption' => 'Encryption',
-            'ssl' => 'SSL',
-            'tls' => 'TLS',
-            'none' => 'None',
+            'scheme' => 'Scheme',
         ],
         'mailgun' => [
             'mailgun_title' => 'Mailgun Configuration',
