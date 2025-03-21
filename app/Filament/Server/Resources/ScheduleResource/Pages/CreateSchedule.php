@@ -2,16 +2,16 @@
 
 namespace App\Filament\Server\Resources\ScheduleResource\Pages;
 
-use App\Exceptions\DisplayException;
 use App\Facades\Activity;
 use App\Filament\Server\Resources\ScheduleResource;
 use App\Helpers\Utilities;
 use App\Models\Schedule;
 use App\Models\Server;
-use Carbon\Carbon;
 use Exception;
 use Filament\Facades\Filament;
+use Filament\Notifications\Notification;
 use Filament\Resources\Pages\CreateRecord;
+use Filament\Support\Exceptions\Halt;
 
 class CreateSchedule extends CreateRecord
 {
@@ -39,25 +39,25 @@ class CreateSchedule extends CreateRecord
         }
 
         if (!isset($data['next_run_at'])) {
-            $data['next_run_at'] = $this->getNextRunAt($data['cron_minute'], $data['cron_hour'], $data['cron_day_of_month'], $data['cron_month'], $data['cron_day_of_week']);
+            try {
+                $data['next_run_at'] = Utilities::getScheduleNextRunDate(
+                    $data['cron_minute'],
+                    $data['cron_hour'],
+                    $data['cron_day_of_month'],
+                    $data['cron_month'],
+                    $data['cron_day_of_week']
+                );
+            } catch (Exception) {
+                Notification::make()
+                    ->title('The cron data provided does not evaluate to a valid expression')
+                    ->danger()
+                    ->send();
+
+                throw new Halt();
+            }
         }
 
         return $data;
-    }
-
-    protected function getNextRunAt(string $minute, string $hour, string $dayOfMonth, string $month, string $dayOfWeek): Carbon
-    {
-        try {
-            return Utilities::getScheduleNextRunDate(
-                $minute,
-                $hour,
-                $dayOfMonth,
-                $month,
-                $dayOfWeek
-            );
-        } catch (Exception) {
-            throw new DisplayException('The cron data provided does not evaluate to a valid expression.');
-        }
     }
 
     public function getBreadcrumbs(): array
