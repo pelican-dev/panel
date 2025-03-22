@@ -4,6 +4,7 @@ namespace App\Filament\Server\Resources\FileResource\Pages;
 
 use AbdelhamidErrahmouni\FilamentMonacoEditor\MonacoEditor;
 use App\Enums\EditorLanguages;
+use App\Exceptions\Repository\FileNotEditableException;
 use App\Facades\Activity;
 use App\Filament\Server\Resources\FileResource;
 use App\Livewire\AlertBanner;
@@ -66,8 +67,7 @@ class EditFiles extends Page
                             ->authorize(fn () => auth()->user()->can(Permission::ACTION_FILE_UPDATE, $server))
                             ->icon('tabler-device-floppy')
                             ->keyBindings('mod+shift+s')
-                            ->action(function (DaemonFileRepository $fileRepository) use ($server) {
-                                $data = $this->form->getState();
+                            ->action(function (DaemonFileRepository $fileRepository, array $data) use ($server) {
 
                                 $fileRepository
                                     ->setServer($server)
@@ -90,8 +90,7 @@ class EditFiles extends Page
                             ->authorize(fn () => auth()->user()->can(Permission::ACTION_FILE_UPDATE, $server))
                             ->icon('tabler-device-floppy')
                             ->keyBindings('mod+s')
-                            ->action(function (DaemonFileRepository $fileRepository) use ($server) {
-                                $data = $this->form->getState();
+                            ->action(function (DaemonFileRepository $fileRepository, array $data) use ($server) {
 
                                 $fileRepository
                                     ->setServer($server)
@@ -132,6 +131,13 @@ class EditFiles extends Page
                                         ->getContent($this->path, config('panel.files.max_edit_size'));
                                 } catch (FileNotFoundException) {
                                     abort(404, $this->path . ' not found.');
+                                } catch (FileNotEditableException) {
+                                    $this->redirect(ListFiles::getUrl());
+                                    Notification::make()
+                                        ->title('Could not edit!')
+                                        ->body($this->path . ' is a directory.')
+                                        ->danger()
+                                        ->send();
                                 }
                             })
                             ->language(fn (Get $get) => $get('lang'))
