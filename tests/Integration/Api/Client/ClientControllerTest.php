@@ -53,13 +53,13 @@ class ClientControllerTest extends ClientApiIntegrationTestCase
 
         /** @var \App\Models\Server[] $servers */
         $servers = [
-            $this->createServerModel(['user_id' => $users[0]->id, 'name' => 'Julia']),
-            $this->createServerModel(['user_id' => $users[1]->id, 'uuid_short' => '12121212', 'name' => 'Janice']),
-            $this->createServerModel(['user_id' => $users[1]->id, 'uuid' => '88788878-12356789', 'external_id' => 'ext123', 'name' => 'Julia']),
-            $this->createServerModel(['user_id' => $users[1]->id, 'uuid' => '88788878-abcdefgh', 'name' => 'Jennifer']),
+            $this->createServerModel(['user_id' => $users[0]->id, 'name' => 'julia']),
+            $this->createServerModel(['user_id' => $users[1]->id, 'uuid_short' => '12121212', 'name' => 'janice']),
+            $this->createServerModel(['user_id' => $users[1]->id, 'uuid' => '88788878-12356789', 'external_id' => 'ext123', 'name' => 'julia']),
+            $this->createServerModel(['user_id' => $users[1]->id, 'uuid' => '88788878-abcdefgh', 'name' => 'jennifer']),
         ];
 
-        $this->actingAs($users[1])->getJson('/api/client?filter[*]=Julia')
+        $this->actingAs($users[1])->getJson('/api/client?filter[*]=julia')
             ->assertOk()
             ->assertJsonCount(1, 'data')
             ->assertJsonPath('data.0.attributes.identifier', $servers[2]->uuid_short);
@@ -90,7 +90,7 @@ class ClientControllerTest extends ClientApiIntegrationTestCase
             ->assertJsonCount(1, 'data')
             ->assertJsonPath('data.0.attributes.identifier', $servers[3]->uuid_short);
 
-        $this->actingAs($users[0])->getJson('/api/client?filter[*]=Julia&type=admin-all')
+        $this->actingAs($users[0])->getJson('/api/client?filter[*]=julia&type=admin-all')
             ->assertOk()
             ->assertJsonCount(2, 'data')
             ->assertJsonPath('data.0.attributes.identifier', $servers[0]->uuid_short)

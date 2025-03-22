@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('backups', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->unsignedInteger('server_id');
-            $table->char('uuid', 36);
+            $table->string('uuid', 36);
             $table->string('name');
             $table->text('ignored_files');
             $table->string('disk');

@@ -21,7 +21,7 @@ return new class extends Migration
     {
         Schema::create('node_configuration_tokens', function (Blueprint $table) {
             $table->increments('id');
-            $table->char('token', 32);
+            $table->string('token', 32);
             $table->unsignedInteger('node_id');
             $table->timestamps();
         });
