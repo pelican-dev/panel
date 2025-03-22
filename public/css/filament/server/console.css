@@ -14,6 +14,10 @@
     padding-right: 10px;
 }
 
+#sendCommand:read-only {
+    cursor: not-allowed;
+}
+
 ::-webkit-scrollbar {
     background: none;
     width: 14px;
