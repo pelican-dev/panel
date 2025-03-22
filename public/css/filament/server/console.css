@@ -14,10 +14,6 @@
     padding-right: 10px;
 }
 
-input:read-only {
-    cursor: not-allowed;
-}
-
 ::-webkit-scrollbar {
     background: none;
     width: 14px;
