@@ -35,7 +35,7 @@ class CreateUser extends CreateRecord
 
     protected function prepareForValidation($attributes): array
     {
-        $attributes['data']['email'] = strtolower($attributes['data']['email']);
+        $attributes['data']['email'] = mb_strtolower($attributes['data']['email']);
 
         return $attributes;
     }
