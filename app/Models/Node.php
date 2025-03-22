@@ -374,12 +374,10 @@ class Node extends Model implements Validatable
 
             if ($data['memory_total']) {
                 return $data;
-            } else {
-                return $default;
             }
         } catch (Exception) {
-            return $default;
         }
+        return $default;
     }
 
     /** @return string[] */
