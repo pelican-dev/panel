@@ -70,7 +70,7 @@ return [
     'toggle_install' => 'Toggle Install Status',
     'toggle_install_help' => 'If you need to change the install status from uninstalled to installed, or vice versa, you may do so with this button.',
     'transfer' => 'Transfer',
-    'transfer_help' => 'Transfer this server to another node connected to this panel. Warning! This feature has not been fully tested and may have bugs.',
+    'transfer_help' => 'Transfer this server to another node connected to this panel.<br/><b>Warning!</b> This feature is still experimental. Consider manually making a backup first to avoid data loss!',
     'condition' => 'Condition',
     'suspend_all' => 'Suspend All Servers',
     'unsuspend_all' => 'Unsuspend All Servers',

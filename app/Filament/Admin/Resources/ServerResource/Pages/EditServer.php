@@ -8,10 +8,12 @@ use App\Filament\Admin\Resources\ServerResource\RelationManagers\AllocationsRela
 use App\Filament\Components\Forms\Actions\PreviewStartupAction;
 use App\Filament\Components\Forms\Actions\RotateDatabasePasswordAction;
 use App\Filament\Server\Pages\Console;
+use App\Models\Allocation;
 use App\Models\Database;
 use App\Models\DatabaseHost;
 use App\Models\Egg;
 use App\Models\Mount;
+use App\Models\Node;
 use App\Models\Server;
 use App\Models\ServerVariable;
 use App\Models\User;
@@ -52,6 +54,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\HtmlString;
 use LogicException;
 use Webbingbrasil\FilamentCopyActions\Forms\Actions\CopyAction;
 
@@ -858,34 +861,53 @@ class EditServer extends EditRecord
                                                 Forms\Components\Actions::make([
                                                     Action::make('transfer')
                                                         ->label(trans('admin/server.transfer'))
-                                                        // ->action(fn (TransferServerService $transfer, Server $server) => $transfer->handle($server, []))
-                                                        ->disabled() //TODO!
-                                                        ->form([ //TODO!
-                                                            Select::make('newNode')
-                                                                ->label('New Node')
+                                                        ->disabled(fn (Server $server) => Node::count() <= 1 || $server->isInConflictState())
+                                                        ->modalheading(trans('admin/server.transfer'))
+                                                        ->action(function (TransferServerService $transfer, Server $server, $data) {
+                                                            try {
+                                                                $transfer->handle($server, $data);
+
+                                                                Notification::make()
+                                                                    ->title('Transfer started')
+                                                                    ->success()
+                                                                    ->send();
+                                                            } catch (Exception $exception) {
+                                                                Notification::make()
+                                                                    ->title('Transfer failed')
+                                                                    ->body($exception->getMessage())
+                                                                    ->danger()
+                                                                    ->send();
+                                                            }
+                                                        })
+                                                        ->form([
+                                                            Select::make('node_id')
+                                                                ->label(trans('admin/server.node'))
+                                                                ->prefixIcon('tabler-server-2')
+                                                                ->selectablePlaceholder(false)
+                                                                ->default(fn (Server $server) => Node::whereNot('id', $server->node->id)->first()?->id)
                                                                 ->required()
-                                                                ->options([
-                                                                    true => 'on',
-                                                                    false => 'off',
-                                                                ]),
-                                                            Select::make('newMainAllocation')
-                                                                ->label('New Main Allocation')
+                                                                ->live()
+                                                                ->options(fn (Server $server) => Node::whereNot('id', $server->node->id)->pluck('name', 'id')->all()),
+                                                            Select::make('allocation_id')
+                                                                ->label(trans('admin/server.primary_allocation'))
                                                                 ->required()
-                                                                ->options([
-                                                                    true => 'on',
-                                                                    false => 'off',
-                                                                ]),
-                                                            Select::make('newAdditionalAllocation')
-                                                                ->label('New Additional Allocations')
-                                                                ->options([
-                                                                    true => 'on',
-                                                                    false => 'off',
-                                                                ]),
-                                                        ])
-                                                        ->modalheading(trans('admin/server.transfer')),
+                                                                ->prefixIcon('tabler-network')
+                                                                ->disabled(fn (Get $get) => !$get('node_id'))
+                                                                ->options(fn (Get $get) => Allocation::where('node_id', $get('node_id'))->whereNull('server_id')->get()->mapWithKeys(fn (Allocation $allocation) => [$allocation->id => $allocation->address]))
+                                                                ->searchable(['ip', 'port', 'ip_alias'])
+                                                                ->placeholder(trans('admin/server.select_allocation')),
+                                                            Select::make('allocation_additional')
+                                                                ->label(trans('admin/server.additional_allocations'))
+                                                                ->multiple()
+                                                                ->prefixIcon('tabler-network')
+                                                                ->disabled(fn (Get $get) => !$get('node_id'))
+                                                                ->options(fn (Get $get) => Allocation::where('node_id', $get('node_id'))->whereNull('server_id')->when($get('allocation_id'), fn ($query) => $query->whereNot('id', $get('allocation_id')))->get()->mapWithKeys(fn (Allocation $allocation) => [$allocation->id => $allocation->address]))
+                                                                ->searchable(['ip', 'port', 'ip_alias'])
+                                                                ->placeholder(trans('admin/server.select_additional')),
+                                                        ]),
                                                 ])->fullWidth(),
                                                 ToggleButtons::make('')
-                                                    ->hint(trans('admin/server.transfer_help')),
+                                                    ->hint(new HtmlString(trans('admin/server.transfer_help'))),
                                             ]),
                                         Grid::make()
                                             ->columnSpan(3)
