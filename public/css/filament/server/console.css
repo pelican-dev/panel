@@ -14,7 +14,7 @@
     padding-right: 10px;
 }
 
-#sendCommand:read-only {
+#send-command:read-only {
     cursor: not-allowed;
 }
 

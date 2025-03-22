@@ -18,7 +18,7 @@
                 icon="tabler-chevrons-right"
             />
             <input
-                id="sendCommand"
+                id="send-command"
                 class="w-full focus:outline-none focus:ring-0 border-none dark:bg-gray-900"
                 type="text"
                 :readonly="{{ $this->canSendCommand() ? 'false' : 'true' }}"
