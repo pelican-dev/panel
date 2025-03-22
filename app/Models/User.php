@@ -180,7 +180,7 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
         });
 
         static::saving(function (self $user) {
-            $user->email = strtolower($user->email);
+            $user->email = mb_strtolower($user->email);
         });
 
         static::deleting(function (self $user) {
