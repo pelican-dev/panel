@@ -54,7 +54,7 @@ final class GitlabProvider extends OAuthProvider
                         ->label('Redirect URI')
                         ->dehydrated()
                         ->disabled()
-                        ->hintAction(fn () => request()->isSecure() ? CopyAction::make() : null)
+                        ->hintAction(fn ($state) => request()->isSecure() ? CopyAction::make()->copyable($state) : null)
                         ->default(fn () => config('app.url') . (Str::endsWith(config('app.url'), '/') ? '' : '/') . 'auth/oauth/callback/gitlab'),
                 ]),
         ], parent::getSetupSteps());
