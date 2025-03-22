@@ -67,8 +67,7 @@ class EditFiles extends Page
                             ->authorize(fn () => auth()->user()->can(Permission::ACTION_FILE_UPDATE, $server))
                             ->icon('tabler-device-floppy')
                             ->keyBindings('mod+shift+s')
-                            ->action(function (DaemonFileRepository $fileRepository) use ($server) {
-                                $data = $this->form->getState();
+                            ->action(function (DaemonFileRepository $fileRepository, array $data) use ($server) {
 
                                 $fileRepository
                                     ->setServer($server)
@@ -91,8 +90,7 @@ class EditFiles extends Page
                             ->authorize(fn () => auth()->user()->can(Permission::ACTION_FILE_UPDATE, $server))
                             ->icon('tabler-device-floppy')
                             ->keyBindings('mod+s')
-                            ->action(function (DaemonFileRepository $fileRepository) use ($server) {
-                                $data = $this->form->getState();
+                            ->action(function (DaemonFileRepository $fileRepository, array $data) use ($server) {
 
                                 $fileRepository
                                     ->setServer($server)
@@ -134,8 +132,12 @@ class EditFiles extends Page
                                 } catch (FileNotFoundException) {
                                     abort(404, $this->path . ' not found.');
                                 } catch (FileNotEditableException) {
-                                    redirect(ListFiles::getUrl());
-                                    $this->getFailureNotification($this->path);
+                                    $this->redirect(ListFiles::getUrl());
+                                    Notification::make()
+                                        ->title('Could not edit!')
+                                        ->body($this->path . ' is a directory.')
+                                        ->danger()
+                                        ->send();
                                 }
                             })
                             ->language(fn (Get $get) => $get('lang'))
@@ -202,15 +204,6 @@ class EditFiles extends Page
         }
 
         return $breadcrumbs;
-    }
-
-    public function getFailureNotification(string $subject): Notification
-    {
-        return Notification::make()
-            ->title('Could not edit!')
-            ->body($subject . ' is a directory.')
-            ->danger()
-            ->send();
     }
 
     public static function route(string $path): PageRegistration
