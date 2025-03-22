@@ -8,7 +8,6 @@ use Filament\Forms\Components\Wizard\Step;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\HtmlString;
-use Illuminate\Support\Str;
 use SocialiteProviders\Discord\Provider;
 use Webbingbrasil\FilamentCopyActions\Forms\Actions\CopyAction;
 
@@ -42,8 +41,8 @@ final class DiscordProvider extends OAuthProvider
                         ->label('Redirect URL')
                         ->dehydrated()
                         ->disabled()
-                        ->hintAction(fn ($state) => request()->isSecure() ? CopyAction::make()->copyable($state) : null)
-                        ->formatStateUsing(fn () => config('app.url') . (Str::endsWith(config('app.url'), '/') ? '' : '/') . 'auth/oauth/callback/discord'),
+                        ->hintAction(fn (string $state) => request()->isSecure() ? CopyAction::make()->copyable($state) : null)
+                        ->formatStateUsing(fn () => url('/auth/oauth/callback/discord')),
                 ]),
         ], parent::getSetupSteps());
     }

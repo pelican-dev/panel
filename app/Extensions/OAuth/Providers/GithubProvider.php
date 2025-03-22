@@ -8,7 +8,6 @@ use Filament\Forms\Components\Wizard\Step;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\HtmlString;
-use Illuminate\Support\Str;
 use Webbingbrasil\FilamentCopyActions\Forms\Actions\CopyAction;
 
 final class GithubProvider extends OAuthProvider
@@ -34,8 +33,8 @@ final class GithubProvider extends OAuthProvider
                         ->label('Authorization callback URL')
                         ->dehydrated()
                         ->disabled()
-                        ->hintAction(fn ($state) => request()->isSecure() ? CopyAction::make()->copyable($state) : null)
-                        ->default(fn () => config('app.url') . (Str::endsWith(config('app.url'), '/') ? '' : '/') . 'auth/oauth/callback/github'),
+                        ->hintAction(fn (string $state) => request()->isSecure() ? CopyAction::make()->copyable($state) : null)
+                        ->default(fn () => url('/auth/oauth/callback/github')),
                     Placeholder::make('')
                         ->content(new HtmlString('<p>When you filled all fields click on <b>Register application</b>.</p>')),
                 ]),
