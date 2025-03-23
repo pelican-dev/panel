@@ -31,10 +31,6 @@ class ListServers extends ListRecords
                         ->searchable(['name']),
                 ]),
             ])
-            ->contentGrid([
-                'default' => 1,
-                'md' => 2,
-            ])
             ->recordUrl(fn (Server $server) => Console::getUrl(panel: 'server', tenant: $server))
             ->emptyStateIcon('tabler-brand-docker')
             ->emptyStateDescription('')
