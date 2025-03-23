@@ -377,6 +377,7 @@ class Node extends Model implements Validatable
             }
         } catch (Exception) {
         }
+
         return $default;
     }
 
