@@ -53,6 +53,7 @@ use Filament\Resources\Pages\EditRecord;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Client\ConnectionException;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\HtmlString;
 use LogicException;
@@ -865,7 +866,7 @@ class EditServer extends EditRecord
                                                         ->modalheading(trans('admin/server.transfer'))
                                                         ->action(function (TransferServerService $transfer, Server $server, $data) {
                                                             try {
-                                                                $transfer->handle($server, $data);
+                                                                $transfer->handle($server, Arr::get($data, 'node_id'), Arr::get($data, 'allocation_id'), Arr::get($data, 'allocation_additional', []));
 
                                                                 Notification::make()
                                                                     ->title('Transfer started')
