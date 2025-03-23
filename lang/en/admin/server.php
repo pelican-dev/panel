@@ -109,6 +109,8 @@ return [
         'server_suspend_help' => 'This will suspend the Server, stop any running processes, and immediately block the user from being able to access their files or otherwise manage the Server through the panel or API.',
         'server_unsuspend_help' => 'This will unsuspend the Server and restore normal user access.',
         'server_unsuspended' => 'Server has been unsuspended',
+        'error_server_delete' => 'Server couldn\'t be safely deleted.',
+        'error_server_delete_body' => 'You may Force Delete it.',
         'create_failed' => 'Could not create Server',
         'invalid_port_range' => 'Invalid Port Range',
         'invalid_port_range_body' => 'Your port range are not valid integers: :port',
