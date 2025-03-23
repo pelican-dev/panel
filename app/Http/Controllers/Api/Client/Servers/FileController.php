@@ -172,8 +172,8 @@ class FileController extends ClientApiController
         Activity::event('server:file.rename')
             ->property('directory', $request->input('root'))
             ->property('files', $files)
-            ->property('to', $files['to'])
-            ->property('from', $files['from'])
+            ->property('to', $files[0]['to'])
+            ->property('from', $files[0]['from'])
             ->log();
 
         return new JsonResponse([], Response::HTTP_NO_CONTENT);
