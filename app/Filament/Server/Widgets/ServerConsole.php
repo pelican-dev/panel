@@ -130,7 +130,7 @@ class ServerConsole extends Widget
     #[On('websocket-error')]
     public function websocketError(): void
     {
-        AlertBanner::make()
+        AlertBanner::make('websocket_error')
             ->title('Could not connect to websocket!')
             ->body('Check your browser console for more details.')
             ->danger()
