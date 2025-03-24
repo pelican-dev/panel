@@ -961,6 +961,8 @@ class EditServer extends EditRecord
                 ->action(function (Server $server, ServerDeletionService $service) {
                     try {
                         $service->handle($server);
+
+                        return redirect(ListServers::getUrl(panel: 'admin'));
                     } catch (ConnectionException) {
                         cache()->put("servers.$server->uuid.canForceDelete", true, now()->addMinutes(5));
 
