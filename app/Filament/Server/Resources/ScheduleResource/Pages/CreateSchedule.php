@@ -4,14 +4,10 @@ namespace App\Filament\Server\Resources\ScheduleResource\Pages;
 
 use App\Facades\Activity;
 use App\Filament\Server\Resources\ScheduleResource;
-use App\Helpers\Utilities;
 use App\Models\Schedule;
 use App\Models\Server;
-use Exception;
 use Filament\Facades\Filament;
-use Filament\Notifications\Notification;
 use Filament\Resources\Pages\CreateRecord;
-use Filament\Support\Exceptions\Halt;
 
 class CreateSchedule extends CreateRecord
 {
@@ -39,22 +35,13 @@ class CreateSchedule extends CreateRecord
         }
 
         if (!isset($data['next_run_at'])) {
-            try {
-                $data['next_run_at'] = Utilities::getScheduleNextRunDate(
-                    $data['cron_minute'],
-                    $data['cron_hour'],
-                    $data['cron_day_of_month'],
-                    $data['cron_month'],
-                    $data['cron_day_of_week']
-                );
-            } catch (Exception) {
-                Notification::make()
-                    ->title('The cron data provided does not evaluate to a valid expression')
-                    ->danger()
-                    ->send();
-
-                throw new Halt();
-            }
+            $data['next_run_at'] = ScheduleResource::getNextRun(
+                $data['cron_minute'],
+                $data['cron_hour'],
+                $data['cron_day_of_month'],
+                $data['cron_month'],
+                $data['cron_day_of_week']
+            );
         }
 
         return $data;
