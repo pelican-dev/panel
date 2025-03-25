@@ -108,7 +108,8 @@ class EditNode extends EditRecord
                                 ->required()
                                 ->autofocus()
                                 ->live(debounce: 1500)
-                                ->rule('prohibited', fn ($state) => is_ip($state) && request()->isSecure())
+                                ->notIn(['0.0.0.0', '127.0.0.1', 'localhost'])
+                                ->prohibited(fn ($state) => is_ip($state) && request()->isSecure())
                                 ->label(fn ($state) => is_ip($state) ? trans('admin/node.ip_address') : trans('admin/node.domain'))
                                 ->placeholder(fn ($state) => is_ip($state) ? '192.168.1.1' : 'node.example.com')
                                 ->helperText(function ($state) {
