@@ -6,8 +6,8 @@ use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Wizard\Step;
 use Illuminate\Foundation\Application;
+use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\HtmlString;
-use Illuminate\Support\Str;
 use Webbingbrasil\FilamentCopyActions\Forms\Actions\CopyAction;
 
 final class GithubProvider extends OAuthProvider
@@ -28,13 +28,13 @@ final class GithubProvider extends OAuthProvider
             Step::make('Register new Github OAuth App')
                 ->schema([
                     Placeholder::make('')
-                        ->content(new HtmlString('<p>Visit the <u><a href="https://github.com/settings/developers" target="_blank">Github Developer Dashboard</a></u>, go to <b>OAuth Apps</b> and click on <b>New OAuth App</b>.</p><p>Enter an <b>Application name</b> (e.g. your panel name), set <b>Homepage URL</b> to your panel url and enter the below url as <b>Authorization callback URL</b>.</p>')),
+                        ->content(new HtmlString(Blade::render('<p>Visit the <x-filament::link href="https://github.com/settings/developers" target="_blank">Github Developer Dashboard</x-filament::link>, go to <b>OAuth Apps</b> and click on <b>New OAuth App</b>.</p><p>Enter an <b>Application name</b> (e.g. your panel name), set <b>Homepage URL</b> to your panel url and enter the below url as <b>Authorization callback URL</b>.</p>'))),
                     TextInput::make('_noenv_callback')
                         ->label('Authorization callback URL')
                         ->dehydrated()
                         ->disabled()
-                        ->hintAction(fn () => request()->isSecure() ? CopyAction::make() : null)
-                        ->default(fn () => config('app.url') . (Str::endsWith(config('app.url'), '/') ? '' : '/') . 'auth/oauth/callback/github'),
+                        ->hintAction(fn (string $state) => request()->isSecure() ? CopyAction::make()->copyable($state) : null)
+                        ->default(fn () => url('/auth/oauth/callback/github')),
                     Placeholder::make('')
                         ->content(new HtmlString('<p>When you filled all fields click on <b>Register application</b>.</p>')),
                 ]),

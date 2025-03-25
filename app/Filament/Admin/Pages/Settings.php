@@ -117,12 +117,23 @@ class Settings extends Page implements HasForms
                 ->label(trans('admin/setting.general.app_name'))
                 ->required()
                 ->default(env('APP_NAME', 'Pelican')),
-            TextInput::make('APP_FAVICON')
-                ->label(trans('admin/setting.general.app_favicon'))
-                ->hintIcon('tabler-question-mark')
-                ->hintIconTooltip(trans('admin/setting.general.app_favicon_help'))
-                ->required()
-                ->default(env('APP_FAVICON', '/pelican.ico')),
+            Group::make()
+                ->columns(2)
+                ->schema([
+                    TextInput::make('APP_LOGO')
+                        ->label(trans('admin/setting.general.app_logo'))
+                        ->hintIcon('tabler-question-mark')
+                        ->hintIconTooltip(trans('admin/setting.general.app_logo_help'))
+                        ->default(env('APP_LOGO'))
+                        ->placeholder('/pelican.svg'),
+                    TextInput::make('APP_FAVICON')
+                        ->label(trans('admin/setting.general.app_favicon'))
+                        ->hintIcon('tabler-question-mark')
+                        ->hintIconTooltip(trans('admin/setting.general.app_favicon_help'))
+                        ->required()
+                        ->default(env('APP_FAVICON', '/pelican.ico'))
+                        ->placeholder('/pelican.ico'),
+                ]),
             Toggle::make('APP_DEBUG')
                 ->label(trans('admin/setting.general.debug_mode'))
                 ->inline(false)
@@ -297,7 +308,7 @@ class Settings extends Page implements HasForms
                                 'mail.mailers.smtp.port' => config('mail.mailers.smtp.port'),
                                 'mail.mailers.smtp.username' => config('mail.mailers.smtp.username'),
                                 'mail.mailers.smtp.password' => config('mail.mailers.smtp.password'),
-                                'mail.mailers.smtp.encryption' => config('mail.mailers.smtp.encryption'),
+                                'mail.mailers.smtp.scheme' => config('mail.mailers.smtp.scheme'),
                                 'mail.from.address' => config('mail.from.address'),
                                 'mail.from.name' => config('mail.from.name'),
                                 'services.mailgun.domain' => config('services.mailgun.domain'),
@@ -313,7 +324,7 @@ class Settings extends Page implements HasForms
                                     'mail.mailers.smtp.port' => $get('MAIL_PORT'),
                                     'mail.mailers.smtp.username' => $get('MAIL_USERNAME'),
                                     'mail.mailers.smtp.password' => $get('MAIL_PASSWORD'),
-                                    'mail.mailers.smtp.encryption' => $get('MAIL_SCHEME'),
+                                    'mail.mailers.smtp.scheme' => $get('MAIL_SCHEME'),
                                     'mail.from.address' => $get('MAIL_FROM_ADDRESS'),
                                     'mail.from.name' => $get('MAIL_FROM_NAME'),
                                     'services.mailgun.domain' => $get('MAILGUN_DOMAIN'),
@@ -377,22 +388,16 @@ class Settings extends Page implements HasForms
                         ->revealable()
                         ->default(env('MAIL_PASSWORD')),
                     ToggleButtons::make('MAIL_SCHEME')
-                        ->label(trans('admin/setting.mail.smtp.encryption'))
+                        ->label(trans('admin/setting.mail.smtp.scheme'))
                         ->inline()
                         ->options([
-                            'tls' => trans('admin/setting.mail.smtp.tls'),
-                            'ssl' => trans('admin/setting.mail.smtp.ssl'),
-                            '' => trans('admin/setting.mail.smtp.none'),
+                            'smtp' => 'SMTP',
+                            'smtps' => 'SMTPS',
                         ])
-                        ->default(env('MAIL_SCHEME', config('mail.mailers.smtp.encryption', 'tls')))
+                        ->default(env('MAIL_SCHEME', config('mail.mailers.smtp.scheme')))
                         ->live()
                         ->afterStateUpdated(function ($state, Set $set) {
-                            $port = match ($state) {
-                                'tls' => 587,
-                                'ssl' => 465,
-                                default => 25,
-                            };
-                            $set('MAIL_PORT', $port);
+                            $set('MAIL_PORT', $state === 'smtps' ? 587 : 2525);
                         }),
                 ]),
             Section::make(trans('admin/setting.mail.mailgun.mailgun_title'))

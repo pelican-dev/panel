@@ -104,6 +104,7 @@ class Node extends Model implements Validatable
         'daemon_listen' => ['required', 'numeric', 'between:1,65535'],
         'maintenance_mode' => ['boolean'],
         'upload_size' => ['int', 'between:1,1024'],
+        'tags' => ['array'],
     ];
 
     /**
@@ -364,16 +365,20 @@ class Node extends Model implements Validatable
         ];
 
         try {
-            $this->systemInformation();
 
-            return Http::daemon($this)
+            $data = Http::daemon($this)
                 ->connectTimeout(1)
                 ->timeout(1)
                 ->get('/api/system/utilization')
-                ->json() ?? $default;
+                ->json();
+
+            if ($data['memory_total']) {
+                return $data;
+            }
         } catch (Exception) {
-            return $default;
         }
+
+        return $default;
     }
 
     /** @return string[] */

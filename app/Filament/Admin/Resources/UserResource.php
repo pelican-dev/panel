@@ -122,6 +122,11 @@ class UserResource extends Resource
                 CheckboxList::make('roles')
                     ->disableOptionWhen(fn (string $value): bool => $value == Role::getRootAdmin()->id)
                     ->relationship('roles', 'name')
+                    ->saveRelationshipsUsing(function (User $user, array $state) {
+                        $roles = collect($state)->map(fn ($role) => Role::findById($role))->filter(fn ($role) => $role->id !== Role::getRootAdmin()->id);
+
+                        $user->syncRoles($roles);
+                    })
                     ->dehydrated()
                     ->label(trans('admin/user.admin_roles'))
                     ->columnSpanFull()

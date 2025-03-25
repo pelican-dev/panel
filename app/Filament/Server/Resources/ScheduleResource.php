@@ -4,9 +4,12 @@ namespace App\Filament\Server\Resources;
 
 use App\Filament\Server\Resources\ScheduleResource\Pages;
 use App\Filament\Server\Resources\ScheduleResource\RelationManagers\TasksRelationManager;
+use App\Helpers\Utilities;
 use App\Models\Permission;
 use App\Models\Schedule;
 use App\Models\Server;
+use Carbon\Carbon;
+use Exception;
 use Filament\Facades\Filament;
 use Filament\Forms\Components\Actions;
 use Filament\Forms\Components\Actions\Action;
@@ -17,7 +20,9 @@ use Filament\Forms\Components\Toggle;
 use Filament\Forms\Components\ToggleButtons;
 use Filament\Forms\Form;
 use Filament\Forms\Set;
+use Filament\Notifications\Notification;
 use Filament\Resources\Resource;
+use Filament\Support\Exceptions\Halt;
 use Illuminate\Database\Eloquent\Model;
 
 class ScheduleResource extends Resource
@@ -313,5 +318,19 @@ class ScheduleResource extends Resource
             'view' => Pages\ViewSchedule::route('/{record}'),
             'edit' => Pages\EditSchedule::route('/{record}/edit'),
         ];
+    }
+
+    public static function getNextRun(string $minute, string $hour, string $dayOfMonth, string $month, string $dayOfWeek): Carbon
+    {
+        try {
+            return Utilities::getScheduleNextRunDate($minute, $hour, $dayOfMonth, $month, $dayOfWeek);
+        } catch (Exception) {
+            Notification::make()
+                ->title('The cron data provided does not evaluate to a valid expression')
+                ->danger()
+                ->send();
+
+            throw new Halt();
+        }
     }
 }

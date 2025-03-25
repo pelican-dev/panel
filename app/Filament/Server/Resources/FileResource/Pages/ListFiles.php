@@ -12,6 +12,7 @@ use App\Models\Server;
 use App\Repositories\Daemon\DaemonFileRepository;
 use App\Filament\Components\Tables\Columns\BytesColumn;
 use App\Filament\Components\Tables\Columns\DateTimeColumn;
+use App\Livewire\AlertBanner;
 use Filament\Actions\Action as HeaderAction;
 use Filament\Facades\Filament;
 use Filament\Forms\Components\CheckboxList;
@@ -36,6 +37,7 @@ use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Routing\Route;
 use Illuminate\Support\Facades\Route as RouteFacade;
@@ -50,14 +52,19 @@ class ListFiles extends ListRecords
 
     private DaemonFileRepository $fileRepository;
 
-    public function mount(?DaemonFileRepository $fileRepository = null, ?string $path = null): void
+    private bool $isDisabled = false;
+
+    public function mount(?string $path = null): void
     {
         parent::mount();
         $this->path = $path ?? '/';
 
-        /** @var Server $server */
-        $server = Filament::getTenant();
-        $this->fileRepository = $fileRepository->setServer($server);
+        try {
+            $this->getDaemonFileRepository()->getDirectory('/');
+        } catch (ConnectionException) {
+            $this->isDisabled = true;
+            $this->getFailureNotification();
+        }
     }
 
     public function getBreadcrumbs(): array
@@ -117,18 +124,21 @@ class ListFiles extends ListRecords
             ->actions([
                 Action::make('view')
                     ->authorize(fn () => auth()->user()->can(Permission::ACTION_FILE_READ, $server))
+                    ->disabled($this->isDisabled)
                     ->label('Open')
                     ->icon('tabler-eye')
                     ->visible(fn (File $file) => $file->is_directory)
                     ->url(fn (File $file) => self::getUrl(['path' => join_paths($this->path, $file->name)])),
                 EditAction::make('edit')
                     ->authorize(fn () => auth()->user()->can(Permission::ACTION_FILE_READ_CONTENT, $server))
+                    ->disabled($this->isDisabled)
                     ->icon('tabler-edit')
                     ->visible(fn (File $file) => $file->canEdit())
                     ->url(fn (File $file) => EditFiles::getUrl(['path' => join_paths($this->path, $file->name)])),
                 ActionGroup::make([
                     Action::make('rename')
                         ->authorize(fn () => auth()->user()->can(Permission::ACTION_FILE_UPDATE, $server))
+                        ->disabled($this->isDisabled)
                         ->label('Rename')
                         ->icon('tabler-forms')
                         ->form([
@@ -140,8 +150,7 @@ class ListFiles extends ListRecords
                         ->action(function ($data, File $file) {
                             $files = [['to' => $data['name'], 'from' => $file->name]];
 
-                            $this->fileRepository
-                                ->renameFiles($this->path, $files);
+                            $this->getDaemonFileRepository()->renameFiles($this->path, $files);
 
                             Activity::event('server:file.rename')
                                 ->property('directory', $this->path)
@@ -158,12 +167,12 @@ class ListFiles extends ListRecords
                         }),
                     Action::make('copy')
                         ->authorize(fn () => auth()->user()->can(Permission::ACTION_FILE_CREATE, $server))
+                        ->disabled($this->isDisabled)
                         ->label('Copy')
                         ->icon('tabler-copy')
                         ->visible(fn (File $file) => $file->is_file)
                         ->action(function (File $file) {
-                            $this->fileRepository
-                                ->copyFile(join_paths($this->path, $file->name));
+                            $this->getDaemonFileRepository()->copyFile(join_paths($this->path, $file->name));
 
                             Activity::event('server:file.copy')
                                 ->property('file', join_paths($this->path, $file->name))
@@ -178,46 +187,50 @@ class ListFiles extends ListRecords
                         }),
                     Action::make('download')
                         ->authorize(fn () => auth()->user()->can(Permission::ACTION_FILE_READ_CONTENT, $server))
+                        ->disabled($this->isDisabled)
                         ->label('Download')
                         ->icon('tabler-download')
                         ->visible(fn (File $file) => $file->is_file)
                         ->url(fn (File $file) => DownloadFiles::getUrl(['path' => join_paths($this->path, $file->name)]), true),
                     Action::make('move')
                         ->authorize(fn () => auth()->user()->can(Permission::ACTION_FILE_UPDATE, $server))
+                        ->disabled($this->isDisabled)
                         ->label('Move')
                         ->icon('tabler-replace')
                         ->form([
                             TextInput::make('location')
-                                ->label('File name')
-                                ->hint('Enter the new name and directory of this file or folder, relative to the current directory.')
-                                ->default(fn (File $file) => $file->name)
+                                ->label('New location')
+                                ->hint('Enter the location of this file or folder, relative to the current directory.')
                                 ->required()
                                 ->live(),
                             Placeholder::make('new_location')
-                                ->content(fn (Get $get) => resolve_path('./' . join_paths($this->path, $get('location')))),
+                                ->content(fn (Get $get, File $file) => resolve_path('./' . join_paths($this->path, $get('location') ?? '/', $file->name))),
                         ])
                         ->action(function ($data, File $file) {
-                            $location = resolve_path(join_paths($this->path, $data['location']));
+                            $location = rtrim($data['location'], '/');
+                            $files = [['to' => join_paths($location, $file->name), 'from' => $file->name]];
 
-                            $files = [['to' => $location, 'from' => $file->name]];
+                            $this->getDaemonFileRepository()->renameFiles($this->path, $files);
 
-                            $this->fileRepository
-                                ->renameFiles($this->path, $files);
+                            $oldLocation = join_paths($this->path, $file->name);
+                            $newLocation = resolve_path(join_paths($this->path, $location, $file->name));
 
                             Activity::event('server:file.rename')
                                 ->property('directory', $this->path)
                                 ->property('files', $files)
-                                ->property('to', $location)
-                                ->property('from', $file->name)
+                                ->property('to', $newLocation)
+                                ->property('from', $oldLocation)
                                 ->log();
 
                             Notification::make()
-                                ->title(join_paths($this->path, $file->name) . ' was moved to ' . $location)
+                                ->title('File Moved')
+                                ->body($oldLocation . ' -> ' . $newLocation)
                                 ->success()
                                 ->send();
                         }),
                     Action::make('permissions')
                         ->authorize(fn () => auth()->user()->can(Permission::ACTION_FILE_UPDATE, $server))
+                        ->disabled($this->isDisabled)
                         ->label('Permissions')
                         ->icon('tabler-license')
                         ->form([
@@ -265,8 +278,7 @@ class ListFiles extends ListRecords
 
                             $mode = $owner . $group . $public;
 
-                            $this->fileRepository
-                                ->chmodFiles($this->path, [['file' => $file->name, 'mode' => $mode]]);
+                            $this->getDaemonFileRepository()->chmodFiles($this->path, [['file' => $file->name, 'mode' => $mode]]);
 
                             Notification::make()
                                 ->title('Permissions changed to ' . $mode)
@@ -275,11 +287,11 @@ class ListFiles extends ListRecords
                         }),
                     Action::make('archive')
                         ->authorize(fn () => auth()->user()->can(Permission::ACTION_FILE_ARCHIVE, $server))
+                        ->disabled($this->isDisabled)
                         ->label('Archive')
                         ->icon('tabler-archive')
                         ->action(function (File $file) {
-                            $this->fileRepository
-                                ->compressFiles($this->path, [$file->name]);
+                            $this->getDaemonFileRepository()->compressFiles($this->path, [$file->name]);
 
                             Activity::event('server:file.compress')
                                 ->property('directory', $this->path)
@@ -295,12 +307,12 @@ class ListFiles extends ListRecords
                         }),
                     Action::make('unarchive')
                         ->authorize(fn () => auth()->user()->can(Permission::ACTION_FILE_ARCHIVE, $server))
+                        ->disabled($this->isDisabled)
                         ->label('Unarchive')
                         ->icon('tabler-archive')
                         ->visible(fn (File $file) => $file->isArchive())
                         ->action(function (File $file) {
-                            $this->fileRepository
-                                ->decompressFile($this->path, $file->name);
+                            $this->getDaemonFileRepository()->decompressFile($this->path, $file->name);
 
                             Activity::event('server:file.decompress')
                                 ->property('directory', $this->path)
@@ -317,14 +329,14 @@ class ListFiles extends ListRecords
                 ]),
                 DeleteAction::make()
                     ->authorize(fn () => auth()->user()->can(Permission::ACTION_FILE_DELETE, $server))
+                    ->disabled($this->isDisabled)
                     ->label('')
                     ->icon('tabler-trash')
                     ->requiresConfirmation()
                     ->modalDescription(fn (File $file) => $file->name)
                     ->modalHeading('Delete file?')
                     ->action(function (File $file) {
-                        $this->fileRepository
-                            ->deleteFiles($this->path, [$file->name]);
+                        $this->getDaemonFileRepository()->deleteFiles($this->path, [$file->name]);
 
                         Activity::event('server:file.delete')
                             ->property('directory', $this->path)
@@ -336,22 +348,21 @@ class ListFiles extends ListRecords
                 BulkActionGroup::make([
                     BulkAction::make('move')
                         ->authorize(fn () => auth()->user()->can(Permission::ACTION_FILE_UPDATE, $server))
-                        ->hidden() // TODO
+                        ->disabled($this->isDisabled)
                         ->form([
                             TextInput::make('location')
-                                ->label('File name')
-                                ->hint('Enter the new name and directory of this file or folder, relative to the current directory.')
-                                ->default(fn (File $file) => $file->name)
+                                ->label('Directory')
+                                ->hint('Enter the new directory, relative to the current directory.')
                                 ->required()
                                 ->live(),
                             Placeholder::make('new_location')
                                 ->content(fn (Get $get) => resolve_path('./' . join_paths($this->path, $get('location') ?? ''))),
                         ])
                         ->action(function (Collection $files, $data) {
-                            $location = resolve_path(join_paths($this->path, $data['location']));
+                            $location = rtrim($data['location'], '/');
 
-                            $files = $files->map(fn ($file) => ['to' => $location, 'from' => $file['name']])->toArray();
-                            $this->fileRepository
+                            $files = $files->map(fn ($file) => ['to' => join_paths($location, $file['name']), 'from' => $file['name']])->toArray();
+                            $this->getDaemonFileRepository()
                                 ->renameFiles($this->path, $files);
 
                             Activity::event('server:file.rename')
@@ -360,17 +371,17 @@ class ListFiles extends ListRecords
                                 ->log();
 
                             Notification::make()
-                                ->title(count($files) . ' Files were moved from ' . $location)
+                                ->title(count($files) . ' Files were moved to ' . resolve_path(join_paths($this->path, $location)))
                                 ->success()
                                 ->send();
                         }),
                     BulkAction::make('archive')
                         ->authorize(fn () => auth()->user()->can(Permission::ACTION_FILE_ARCHIVE, $server))
+                        ->disabled($this->isDisabled)
                         ->action(function (Collection $files) {
                             $files = $files->map(fn ($file) => $file['name'])->toArray();
 
-                            $this->fileRepository
-                                ->compressFiles($this->path, $files);
+                            $this->getDaemonFileRepository()->compressFiles($this->path, $files);
 
                             Activity::event('server:file.compress')
                                 ->property('directory', $this->path)
@@ -386,10 +397,10 @@ class ListFiles extends ListRecords
                         }),
                     DeleteBulkAction::make()
                         ->authorize(fn () => auth()->user()->can(Permission::ACTION_FILE_DELETE, $server))
+                        ->disabled($this->isDisabled)
                         ->action(function (Collection $files) {
                             $files = $files->map(fn ($file) => $file['name'])->toArray();
-                            $this->fileRepository
-                                ->deleteFiles($this->path, $files);
+                            $this->getDaemonFileRepository()->deleteFiles($this->path, $files);
 
                             Activity::event('server:file.delete')
                                 ->property('directory', $this->path)
@@ -413,13 +424,13 @@ class ListFiles extends ListRecords
         return [
             HeaderAction::make('new_file')
                 ->authorize(fn () => auth()->user()->can(Permission::ACTION_FILE_CREATE, $server))
+                ->disabled($this->isDisabled)
                 ->label('New File')
                 ->color('gray')
                 ->keyBindings('')
                 ->modalSubmitActionLabel('Create')
                 ->action(function ($data) {
-                    $this->fileRepository
-                        ->putContent(join_paths($this->path, $data['name']), $data['editor'] ?? '');
+                    $this->getDaemonFileRepository()->putContent(join_paths($this->path, $data['name']), $data['editor'] ?? '');
 
                     Activity::event('server:file.write')
                         ->property('file', join_paths($this->path, $data['name']))
@@ -443,11 +454,11 @@ class ListFiles extends ListRecords
                 ]),
             HeaderAction::make('new_folder')
                 ->authorize(fn () => auth()->user()->can(Permission::ACTION_FILE_CREATE, $server))
+                ->disabled($this->isDisabled)
                 ->label('New Folder')
                 ->color('gray')
                 ->action(function ($data) {
-                    $this->fileRepository
-                        ->createDirectory($data['name'], $this->path);
+                    $this->getDaemonFileRepository()->createDirectory($data['name'], $this->path);
 
                     Activity::event('server:file.create-directory')
                         ->property(['directory' => $this->path, 'name' => $data['name']])
@@ -460,13 +471,13 @@ class ListFiles extends ListRecords
                 ]),
             HeaderAction::make('upload')
                 ->authorize(fn () => auth()->user()->can(Permission::ACTION_FILE_CREATE, $server))
+                ->disabled($this->isDisabled)
                 ->label('Upload')
                 ->action(function ($data) {
                     if (count($data['files']) > 0 && !isset($data['url'])) {
                         /** @var UploadedFile $file */
                         foreach ($data['files'] as $file) {
-                            $this->fileRepository
-                                ->putContent(join_paths($this->path, $file->getClientOriginalName()), $file->getContent());
+                            $this->getDaemonFileRepository()->putContent(join_paths($this->path, $file->getClientOriginalName()), $file->getContent());
 
                             Activity::event('server:file.uploaded')
                                 ->property('directory', $this->path)
@@ -474,8 +485,7 @@ class ListFiles extends ListRecords
                                 ->log();
                         }
                     } elseif ($data['url'] !== null) {
-                        $this->fileRepository
-                            ->pull($data['url'], $this->path);
+                        $this->getDaemonFileRepository()->pull($data['url'], $this->path);
 
                         Activity::event('server:file.pull')
                             ->property('url', $data['url'])
@@ -511,6 +521,7 @@ class ListFiles extends ListRecords
                 ]),
             HeaderAction::make('search')
                 ->authorize(fn () => auth()->user()->can(Permission::ACTION_FILE_READ, $server))
+                ->disabled($this->isDisabled)
                 ->label('Global Search')
                 ->modalSubmitActionLabel('Search')
                 ->form([
@@ -526,6 +537,40 @@ class ListFiles extends ListRecords
         ];
     }
 
+    /**
+     * @return string[]
+     */
+    private function getPermissionsFromModeBit(int $mode): array
+    {
+        return match ($mode) {
+            1 => ['execute'],
+            2 => ['write'],
+            3 => ['write', 'execute'],
+            4 => ['read'],
+            5 => ['read', 'execute'],
+            6 => ['read', 'write'],
+            7 => ['read', 'write', 'execute'],
+            default => [],
+        };
+    }
+
+    private function getDaemonFileRepository(): DaemonFileRepository
+    {
+        /** @var Server $server */
+        $server = Filament::getTenant();
+        $this->fileRepository ??= (new DaemonFileRepository())->setServer($server);
+
+        return $this->fileRepository;
+    }
+
+    public function getFailureNotification(): AlertBanner
+    {
+        return AlertBanner::make()
+            ->title('Could not connect to the node!')
+            ->danger()
+            ->send();
+    }
+
     public static function route(string $path): PageRegistration
     {
         return new PageRegistration(
@@ -535,29 +580,5 @@ class ListFiles extends ListRecords
                 ->withoutMiddleware(static::getWithoutRouteMiddleware($panel))
                 ->where('path', '.*'),
         );
-    }
-
-    /**
-     * @return string[]
-     */
-    private function getPermissionsFromModeBit(int $mode): array
-    {
-        if ($mode === 1) {
-            return ['execute'];
-        } elseif ($mode === 2) {
-            return ['write'];
-        } elseif ($mode === 3) {
-            return ['write', 'execute'];
-        } elseif ($mode === 4) {
-            return ['read'];
-        } elseif ($mode === 5) {
-            return ['read', 'execute'];
-        } elseif ($mode === 6) {
-            return ['read', 'write'];
-        } elseif ($mode === 7) {
-            return ['read', 'write', 'execute'];
-        }
-
-        return [];
     }
 }

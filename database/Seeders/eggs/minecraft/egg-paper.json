@@ -4,11 +4,14 @@
         "version": "PLCN_v1",
         "update_url": "https:\/\/github.com\/pelican-dev\/panel\/raw\/main\/database\/Seeders\/eggs\/minecraft\/egg-paper.json"
     },
-    "exported_at": "2024-11-23T22:22:36+00:00",
+    "exported_at": "2025-03-18T12:35:44+00:00",
     "name": "Paper",
     "author": "parker@example.com",
     "uuid": "5da37ef6-58da-4169-90a6-e683e1721247",
     "description": "High performance Spigot fork that aims to fix gameplay and mechanics inconsistencies.",
+    "tags": [
+        "minecraft"
+    ],
     "features": [
         "eula",
         "java_version",

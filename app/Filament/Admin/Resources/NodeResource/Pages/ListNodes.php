@@ -4,6 +4,7 @@ namespace App\Filament\Admin\Resources\NodeResource\Pages;
 
 use App\Filament\Admin\Resources\NodeResource;
 use App\Filament\Components\Tables\Columns\NodeHealthColumn;
+use App\Filament\Components\Tables\Filters\TagsFilter;
 use App\Models\Node;
 use Filament\Actions;
 use Filament\Resources\Pages\ListRecords;
@@ -65,6 +66,10 @@ class ListNodes extends ListRecords
             ->emptyStateHeading(trans('admin/node.no_nodes'))
             ->emptyStateActions([
                 CreateAction::make(),
+            ])
+            ->filters([
+                TagsFilter::make()
+                    ->model(Node::class),
             ]);
     }
 

@@ -8,6 +8,7 @@ use Carbon\Carbon;
 use Exception;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Http\Client\ConnectionException;
 use Sushi\Sushi;
 
 /**
@@ -150,10 +151,16 @@ class File extends Model
         try {
             $fileRepository = (new DaemonFileRepository())->setServer(self::$server);
 
-            if (!is_null(self::$searchTerm)) {
-                $contents = cache()->remember('file_search_' . self::$path . '_' . self::$searchTerm, now()->addMinute(), fn () => $fileRepository->search(self::$searchTerm, self::$path));
-            } else {
-                $contents = $fileRepository->getDirectory(self::$path ?? '/');
+            $contents = [];
+
+            try {
+                if (!is_null(self::$searchTerm)) {
+                    $contents = cache()->remember('file_search_' . self::$path . '_' . self::$searchTerm, now()->addMinute(), fn () => $fileRepository->search(self::$searchTerm, self::$path));
+                } else {
+                    $contents = $fileRepository->getDirectory(self::$path ?? '/');
+                }
+            } catch (ConnectionException $exception) {
+                report($exception);
             }
 
             if (isset($contents['error'])) {

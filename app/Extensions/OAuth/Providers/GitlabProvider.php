@@ -8,10 +8,9 @@ use Filament\Forms\Components\Wizard\Step;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\HtmlString;
-use SocialiteProviders\Discord\Provider;
 use Webbingbrasil\FilamentCopyActions\Forms\Actions\CopyAction;
 
-final class DiscordProvider extends OAuthProvider
+final class GitlabProvider extends OAuthProvider
 {
     public function __construct(protected Application $app)
     {
@@ -20,41 +19,54 @@ final class DiscordProvider extends OAuthProvider
 
     public function getId(): string
     {
-        return 'discord';
+        return 'gitlab';
     }
 
-    public function getProviderClass(): string
+    public function getServiceConfig(): array
     {
-        return Provider::class;
+        return array_merge(parent::getServiceConfig(), [
+            'host' => env('OAUTH_GITLAB_HOST'),
+        ]);
+    }
+
+    public function getSettingsForm(): array
+    {
+        return array_merge(parent::getSettingsForm(), [
+            TextInput::make('OAUTH_GITLAB_HOST')
+                ->label('Custom Host')
+                ->placeholder('Only set a custom host if you are self hosting gitlab')
+                ->columnSpan(2)
+                ->url()
+                ->autocomplete(false)
+                ->default(env('OAUTH_GITLAB_HOST')),
+        ]);
     }
 
     public function getSetupSteps(): array
     {
         return array_merge([
-            Step::make('Register new Discord OAuth App')
+            Step::make('Register new Gitlab OAuth App')
                 ->schema([
                     Placeholder::make('')
-                        ->content(new HtmlString(Blade::render('<p>Visit the <x-filament::link href="https://discord.com/developers/applications" target="_blank">Discord Developer Portal</x-filament::link> and click on <b>New Application</b>. Enter a <b>Name</b> (e.g. your panel name) and click on <b>Create</b>.</p><p>Copy the <b>Client ID</b> and the <b>Client Secret</b> from the OAuth2 tab, you will need them in the final step.</p>'))),
-                    Placeholder::make('')
-                        ->content(new HtmlString('<p>Under <b>Redirects</b> add the below URL.</p>')),
+                        ->content(new HtmlString(Blade::render('Check out the <x-filament::link href="https://docs.gitlab.com/integration/oauth_provider/" target="_blank">Gitlab docs</x-filament::link> on how to create the oauth app.'))),
                     TextInput::make('_noenv_callback')
-                        ->label('Redirect URL')
+                        ->label('Redirect URI')
                         ->dehydrated()
                         ->disabled()
                         ->hintAction(fn (string $state) => request()->isSecure() ? CopyAction::make()->copyable($state) : null)
-                        ->formatStateUsing(fn () => url('/auth/oauth/callback/discord')),
+                        ->default(fn () => url('/auth/oauth/callback/gitlab')),
                 ]),
         ], parent::getSetupSteps());
     }
 
     public function getIcon(): string
     {
-        return 'tabler-brand-discord-f';
+        return 'tabler-brand-gitlab';
     }
 
     public function getHexColor(): string
     {
-        return '#5865F2';
+        return '#fca326';
     }
 
     public static function register(Application $app): self
