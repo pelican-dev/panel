@@ -89,7 +89,7 @@ class Node extends Model implements Validatable
         'name' => ['required', 'string', 'min:1', 'max:100'],
         'description' => ['string', 'nullable'],
         'public' => ['boolean'],
-        'fqdn' => ['required', 'string'],
+        'fqdn' => ['required', 'string', 'notIn:0.0.0.0,127.0.0.1,localhost'],
         'scheme' => ['required', 'string', 'in:http,https'],
         'behind_proxy' => ['boolean'],
         'memory' => ['required', 'numeric', 'min:0'],
