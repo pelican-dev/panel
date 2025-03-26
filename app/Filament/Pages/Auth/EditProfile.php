@@ -261,7 +261,7 @@ class EditProfile extends BaseEditProfile
                                                 Action::make('Create')
                                                     ->label(trans('filament-actions::create.single.modal.actions.create.label'))
                                                     ->disabled(fn (Get $get) => $get('description') === null)
-                                                    ->successRedirectUrl(self::getUrl(['tab' => '-api-keys-tab']))
+                                                    ->successRedirectUrl(self::getUrl(['tab' => '-api-keys-tab'], panel: 'app'))
                                                     ->action(function (Get $get, Action $action, User $user) {
                                                         $token = $user->createToken(
                                                             $get('description'),
@@ -345,7 +345,7 @@ class EditProfile extends BaseEditProfile
             $tokens = $this->toggleTwoFactorService->handle($record, $token, true);
             cache()->put("users.$record->id.2fa.tokens", implode("\n", $tokens), now()->addSeconds(15));
 
-            $this->redirectRoute('filament.admin.auth.profile', ['tab' => '-2fa-tab']);
+            $this->redirect(self::getUrl(['tab' => '-2fa-tab'], panel: 'app'));
         }
 
         if ($token = $data['2fa-disable-code'] ?? null) {

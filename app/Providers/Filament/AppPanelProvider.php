@@ -35,9 +35,9 @@ class AppPanelProvider extends PanelProvider
             ->topNavigation(config('panel.filament.top-navigation', true))
             ->maxContentWidth(config('panel.filament.display-width', 'screen-2xl'))
             ->navigation(false)
-            ->profile(EditProfile::class, false)
             ->login(Login::class)
             ->userMenuItems([
+                'profile' => MenuItem::make()->label('Profile')->url(fn () => EditProfile::getUrl(panel: 'app')),
                 MenuItem::make()
                     ->label('Admin')
                     ->url('/admin')
