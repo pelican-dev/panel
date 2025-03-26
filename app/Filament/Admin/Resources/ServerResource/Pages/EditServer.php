@@ -606,7 +606,10 @@ class EditServer extends EditRecord
 
                                         return $data;
                                     })
-                                    ->reorderable(false)->addable(false)->deletable(false)
+                                    ->reorderable(false)
+                                    ->orderColumn()
+                                    ->addable(false)
+                                    ->deletable(false)
                                     ->schema(function () {
 
                                         $text = TextInput::make('variable_value')

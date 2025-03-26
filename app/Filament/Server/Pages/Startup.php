@@ -103,7 +103,10 @@ class Startup extends ServerFormPage
                             ->relationship('viewableServerVariables')
                             ->grid()
                             ->disabled(fn () => !auth()->user()->can(Permission::ACTION_STARTUP_UPDATE, $server))
-                            ->reorderable(false)->addable(false)->deletable(false)
+                            ->reorderable(false)
+                            ->orderColumn()
+                            ->addable(false)
+                            ->deletable(false)
                             ->schema(function () {
                                 $text = TextInput::make('variable_value')
                                     ->hidden($this->shouldHideComponent(...))

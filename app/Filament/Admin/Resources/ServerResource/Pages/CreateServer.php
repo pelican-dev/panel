@@ -431,6 +431,7 @@ class CreateServer extends CreateRecord
                                         ->saveRelationshipsUsing(null)
                                         ->grid(2)
                                         ->reorderable(false)
+                                        ->orderColumn()
                                         ->addable(false)
                                         ->deletable(false)
                                         ->default([])
