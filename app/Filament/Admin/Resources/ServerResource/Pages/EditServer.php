@@ -594,7 +594,9 @@ class EditServer extends EditRecord
                                             ]);
                                         }
 
-                                        return $query;
+                                        return $query
+                                            ->join('egg_variables', 'server_variables.variable_id', '=', 'egg_variables.id')
+                                            ->orderBy('egg_variables.sort');
                                     })
                                     ->grid()
                                     ->mutateRelationshipDataBeforeSaveUsing(function (array &$data): array {

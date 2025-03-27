@@ -315,6 +315,7 @@ class Server extends Model implements Validatable
     {
         return $this->serverVariables()
             ->join('egg_variables', 'egg_variables.id', '=', 'server_variables.variable_id')
+            ->orderBy('egg_variables.sort')
             ->where('egg_variables.user_viewable', true);
     }
 
