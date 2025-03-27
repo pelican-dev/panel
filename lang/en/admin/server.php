@@ -122,5 +122,9 @@ return [
         'already_exists_body' => ':i is already with an allocation',
         'error_connecting' => 'Error connecting to :node',
         'error_connecting_description' => 'The configuration could not be automatically synced on Wings, you will need to manually restart the server.',
+        'install_toggled' => 'Install status toggled',
+        'install_toggle_failed' => 'Could not toggle install status',
+        'reinstall_started' => 'Reinstall started',
+        'reinstall_failed' => 'Could not start reinstall',
     ],
 ];
