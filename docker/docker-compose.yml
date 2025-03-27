@@ -1,0 +1,43 @@
+---
+services:
+  panel:
+    image: ghcr.io/pelican-dev/panel:latest
+    restart: always
+    user: "${UID:?}:${GID:?}"
+    env_file:
+      - .env
+    ports:
+      - "${HTTP_PORT:?}:80"
+      - "${HTTPS_PORT:?}:443"
+      # enable when not using caddy to be able to reach php-fpm
+      # - "9000:9000"
+    volumes:
+      - ./pelican-data:/pelican-data
+      - ./pelican-logs:/var/www/html/storage/logs
+    environment:
+      XDG_DATA_HOME: /pelican-data
+    depends_on:
+      - mariadb
+      - redis
+
+
+  mariadb:
+    image: mariadb:latest
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD:?}
+      MYSQL_DATABASE: ${DB_DATABASE:?}
+      MYSQL_USER: ${DB_USERNAME:?}
+      MYSQL_PASSWORD: ${DB_PASSWORD:?}
+    volumes:
+      - ./mariadb:/var/lib/mysql
+
+
+  redis:
+    image: redis:latest
+    restart: always
+    command: ["redis-server", "--appendonly", "yes", "--requirepass", "${REDIS_PASSWORD:?}"]
+    environment:
+      REDIS_PASSWORD: ${REDIS_PASSWORD:?}
+    volumes:
+      - ./redis:/data
