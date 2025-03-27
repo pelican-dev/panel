@@ -595,7 +595,9 @@ class EditServer extends EditRecord
                                             ]);
                                         }
 
-                                        return $query;
+                                        return $query
+                                            ->join('egg_variables', 'server_variables.variable_id', '=', 'egg_variables.id')
+                                            ->orderBy('egg_variables.sort');
                                     })
                                     ->grid()
                                     ->mutateRelationshipDataBeforeSaveUsing(function (array &$data): array {
@@ -962,6 +964,8 @@ class EditServer extends EditRecord
                 ->action(function (Server $server, ServerDeletionService $service) {
                     try {
                         $service->handle($server);
+
+                        return redirect(ListServers::getUrl(panel: 'admin'));
                     } catch (ConnectionException) {
                         cache()->put("servers.$server->uuid.canForceDelete", true, now()->addMinutes(5));
 

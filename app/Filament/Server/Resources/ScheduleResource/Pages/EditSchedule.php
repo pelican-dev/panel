@@ -22,6 +22,19 @@ class EditSchedule extends EditRecord
             ->log();
     }
 
+    protected function mutateFormDataBeforeSave(array $data): array
+    {
+        $data['next_run_at'] = ScheduleResource::getNextRun(
+            $data['cron_minute'],
+            $data['cron_hour'],
+            $data['cron_day_of_month'],
+            $data['cron_month'],
+            $data['cron_day_of_week']
+        );
+
+        return $data;
+    }
+
     protected function getHeaderActions(): array
     {
         return [
