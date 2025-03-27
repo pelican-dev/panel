@@ -25,14 +25,11 @@ class TransferServerService
     private function notify(ServerTransfer $transfer, Plain $token): void
     {
         Http::daemon($transfer->oldNode)->post("/api/servers/{$transfer->server->uuid}/transfer", [
-            'json' => [
-                'server_id' => $transfer->server->uuid,
-                'url' => $transfer->newNode->getConnectionAddress() . '/api/transfers',
-                'token' => 'Bearer ' . $token->toString(),
-                'server' => [
-                    'uuid' => $transfer->server->uuid,
-                    'start_on_completion' => false,
-                ],
+            'url' => $transfer->newNode->getConnectionAddress() . '/api/transfers',
+            'token' => 'Bearer ' . $token->toString(),
+            'server' => [
+                'uuid' => $transfer->server->uuid,
+                'start_on_completion' => false,
             ],
         ]);
     }
