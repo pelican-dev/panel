@@ -39,8 +39,10 @@ class ListSchedules extends ListRecords
                     ->sortable(),
                 DateTimeColumn::make('next_run_at')
                     ->label('Next run')
+                    ->placeholder('Never')
                     ->since()
-                    ->sortable(),
+                    ->sortable()
+                    ->state(fn (Schedule $schedule) => $schedule->is_active ? $schedule->next_run_at : null),
             ])
             ->actions([
                 ViewAction::make(),
