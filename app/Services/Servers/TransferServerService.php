@@ -27,7 +27,7 @@ class TransferServerService
         Http::daemon($server->node)->post('/api/transfer', [
             'json' => [
                 'server_id' => $server->uuid,
-                'url' => $server->node->getConnectionAddress() . "/api/servers/$server->uuid/archive",
+                'url' => $server->node->getConnectionAddress() . "/api/servers/$server->uuid/transfer",
                 'token' => 'Bearer ' . $token->toString(),
                 'server' => [
                     'uuid' => $server->uuid,
