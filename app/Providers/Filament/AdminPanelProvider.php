@@ -40,7 +40,7 @@ class AdminPanelProvider extends PanelProvider
             ->maxContentWidth(config('panel.filament.display-width', 'screen-2xl'))
             ->login(Login::class)
             ->userMenuItems([
-                'profile' => MenuItem::make()->label('Profile')->url(fn () => EditProfile::getUrl(panel: 'app')),
+                'profile' => MenuItem::make()->label(trans('filament-panels::pages/auth/edit-profile.label'))->url(fn () => EditProfile::getUrl(panel: 'app')),
                 MenuItem::make()
                     ->label(trans('profile.exit_admin'))
                     ->url('/')
