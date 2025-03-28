@@ -2,6 +2,7 @@
 
 namespace App\Filament\Admin\Pages;
 
+use App\Extensions\Avatar\AvatarProvider;
 use App\Extensions\Captcha\Providers\CaptchaProvider;
 use App\Extensions\OAuth\Providers\OAuthProvider;
 use App\Models\Backup;
@@ -134,26 +135,38 @@ class Settings extends Page implements HasForms
                         ->default(env('APP_FAVICON', '/pelican.ico'))
                         ->placeholder('/pelican.ico'),
                 ]),
-            Toggle::make('APP_DEBUG')
-                ->label(trans('admin/setting.general.debug_mode'))
-                ->inline(false)
-                ->onIcon('tabler-check')
-                ->offIcon('tabler-x')
-                ->onColor('success')
-                ->offColor('danger')
-                ->formatStateUsing(fn ($state): bool => (bool) $state)
-                ->afterStateUpdated(fn ($state, Set $set) => $set('APP_DEBUG', (bool) $state))
-                ->default(env('APP_DEBUG', config('app.debug'))),
-            ToggleButtons::make('FILAMENT_TOP_NAVIGATION')
-                ->label(trans('admin/setting.general.navigation'))
-                ->inline()
-                ->options([
-                    false => trans('admin/setting.general.sidebar'),
-                    true => trans('admin/setting.general.topbar'),
-                ])
-                ->formatStateUsing(fn ($state): bool => (bool) $state)
-                ->afterStateUpdated(fn ($state, Set $set) => $set('FILAMENT_TOP_NAVIGATION', (bool) $state))
-                ->default(env('FILAMENT_TOP_NAVIGATION', config('panel.filament.top-navigation'))),
+            Group::make()
+                ->columnSpan(2)
+                ->columns(4)
+                ->schema([
+                    Toggle::make('APP_DEBUG')
+                        ->label(trans('admin/setting.general.debug_mode'))
+                        ->inline(false)
+                        ->onIcon('tabler-check')
+                        ->offIcon('tabler-x')
+                        ->onColor('success')
+                        ->offColor('danger')
+                        ->formatStateUsing(fn ($state): bool => (bool) $state)
+                        ->afterStateUpdated(fn ($state, Set $set) => $set('APP_DEBUG', (bool) $state))
+                        ->default(env('APP_DEBUG', config('app.debug'))),
+                    ToggleButtons::make('FILAMENT_TOP_NAVIGATION')
+                        ->label(trans('admin/setting.general.navigation'))
+                        ->inline()
+                        ->options([
+                            false => trans('admin/setting.general.sidebar'),
+                            true => trans('admin/setting.general.topbar'),
+                        ])
+                        ->formatStateUsing(fn ($state): bool => (bool) $state)
+                        ->afterStateUpdated(fn ($state, Set $set) => $set('FILAMENT_TOP_NAVIGATION', (bool) $state))
+                        ->default(env('FILAMENT_TOP_NAVIGATION', config('panel.filament.top-navigation'))),
+                    Select::make('FILAMENT_AVATAR_PROVIDER')
+                        ->label(trans('admin/setting.general.avatar_provider'))
+                        ->columnSpan(2)
+                        ->native(false)
+                        ->options(collect(AvatarProvider::getAll())->mapWithKeys(fn ($provider) => [$provider->getId() => $provider->getName()]))
+                        ->selectablePlaceholder(false)
+                        ->default(env('FILAMENT_AVATAR_PROVIDER', config('panel.filament.avatar-provider'))),
+                ]),
             ToggleButtons::make('PANEL_USE_BINARY_PREFIX')
                 ->label(trans('admin/setting.general.unit_prefix'))
                 ->inline()
