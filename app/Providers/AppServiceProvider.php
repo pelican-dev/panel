@@ -37,7 +37,12 @@ use Illuminate\Support\Facades\URL;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Str;
 use Laravel\Sanctum\Sanctum;
+use Livewire\Component;
+use Livewire\Livewire;
 use Spatie\Health\Facades\Health;
+
+use function Livewire\on;
+use function Livewire\store;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -138,6 +143,22 @@ class AppServiceProvider extends ServiceProvider
             PanelsRenderHook::FOOTER,
             fn () => Blade::render('filament.layouts.footer'),
         );
+
+        on('dehydrate', function (Component $component) {
+            if (!Livewire::isLivewireRequest()) {
+                return;
+            }
+
+            if (store($component)->has('redirect')) {
+                return;
+            }
+
+            if (count(session()->get('alert-banners') ?? []) <= 0) {
+                return;
+            }
+
+            $component->dispatch('alertBannerSent');
+        });
 
         // Don't run any health checks during tests
         if (!$app->runningUnitTests()) {

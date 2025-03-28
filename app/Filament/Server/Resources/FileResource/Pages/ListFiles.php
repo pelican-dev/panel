@@ -57,13 +57,18 @@ class ListFiles extends ListRecords
     public function mount(?string $path = null): void
     {
         parent::mount();
+
         $this->path = $path ?? '/';
 
         try {
             $this->getDaemonFileRepository()->getDirectory('/');
         } catch (ConnectionException) {
             $this->isDisabled = true;
-            $this->getFailureNotification();
+
+            AlertBanner::make('node_connection_error')
+                ->title('Could not connect to the node!')
+                ->danger()
+                ->send();
         }
     }
 
@@ -561,14 +566,6 @@ class ListFiles extends ListRecords
         $this->fileRepository ??= (new DaemonFileRepository())->setServer($server);
 
         return $this->fileRepository;
-    }
-
-    public function getFailureNotification(): AlertBanner
-    {
-        return AlertBanner::make()
-            ->title('Could not connect to the node!')
-            ->danger()
-            ->send();
     }
 
     public static function route(string $path): PageRegistration
