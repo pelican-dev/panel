@@ -38,9 +38,9 @@ class AdminPanelProvider extends PanelProvider
             ->favicon(config('app.favicon', '/pelican.ico'))
             ->topNavigation(config('panel.filament.top-navigation', true))
             ->maxContentWidth(config('panel.filament.display-width', 'screen-2xl'))
-            ->profile(EditProfile::class, false)
             ->login(Login::class)
             ->userMenuItems([
+                'profile' => MenuItem::make()->label(trans('filament-panels::pages.auth.edit-profile.label'))->url(fn () => EditProfile::getUrl(panel: 'app')),
                 MenuItem::make()
                     ->label(trans('profile.exit_admin'))
                     ->url('/')
