@@ -44,7 +44,7 @@ class ServerPanelProvider extends PanelProvider
             ->login(Login::class)
             ->userMenuItems([
                 'profile' => MenuItem::make()
-                    ->label('Profile')
+                    ->label(fn () => trans('filament-panels::pages/auth/edit-profile.label'))
                     ->url(fn () => EditProfile::getUrl(panel: 'app')),
                 MenuItem::make()
                     ->label('Server List')
