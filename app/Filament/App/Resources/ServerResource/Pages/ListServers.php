@@ -45,7 +45,17 @@ class ListServers extends ListRecords
                     ->relationship('egg', 'name', fn (Builder $query) => $query->whereIn('id', $baseQuery->pluck('egg_id')))
                     ->searchable()
                     ->preload(),
+                SelectFilter::make('owner')
+                    ->relationship('user', 'username', fn (Builder $query) => $query->whereIn('id', $baseQuery->pluck('owner_id')))
+                    ->searchable()
+                    ->hidden(fn () => $this->activeTab === 'my')
+                    ->preload(),
             ]);
+    }
+
+    public function updatedActiveTab(): void
+    {
+        $this->resetTable();
     }
 
     public function getTabs(): array
