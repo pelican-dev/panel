@@ -2,6 +2,7 @@
 
 namespace App\Filament\Admin\Resources\ServerResource\Pages;
 
+use App\Enums\ServerState;
 use App\Enums\SuspendAction;
 use App\Filament\Admin\Resources\ServerResource;
 use App\Filament\Admin\Resources\ServerResource\RelationManagers\AllocationsRelationManager;
@@ -809,22 +810,45 @@ class EditServer extends EditRecord
                                                     Action::make('toggleInstall')
                                                         ->label(trans('admin/server.toggle_install'))
                                                         ->disabled(fn (Server $server) => $server->isSuspended())
-                                                        ->action(function (ToggleInstallService $service, Server $server) {
-                                                            try {
-                                                                $service->handle($server);
+                                                        ->requiresConfirmation(fn (Server $server) => $server->status === ServerState::InstallFailed)
+                                                        ->modalHeading(trans('admin/server.toggle_install_failed_header'))
+                                                        ->modalDescription(trans('admin/server.toggle_install_failed_desc'))
+                                                        ->modalSubmitActionLabel(trans('admin/server.reinstall'))
+                                                        ->action(function (ToggleInstallService $toggleService, ReinstallServerService $reinstallService, Server $server) {
+                                                            if ($server->status === ServerState::InstallFailed) {
+                                                                try {
+                                                                    $reinstallService->handle($server);
 
-                                                                Notification::make()
-                                                                    ->title(trans('admin/server.notifications.install_toggled'))
-                                                                    ->success()
-                                                                    ->send();
+                                                                    Notification::make()
+                                                                        ->title(trans('admin/server.notifications.reinstall_started'))
+                                                                        ->success()
+                                                                        ->send();
 
-                                                                $this->refreshFormData(['status', 'docker']);
-                                                            } catch (Exception $exception) {
-                                                                Notification::make()
-                                                                    ->title(trans('admin/server.notifications.install_toggle_failed'))
-                                                                    ->body($exception->getMessage())
-                                                                    ->danger()
-                                                                    ->send();
+                                                                    $this->refreshFormData(['status', 'docker']);
+                                                                } catch (Exception $exception) {
+                                                                    Notification::make()
+                                                                        ->title(trans('admin/server.notifications.reinstall_failed'))
+                                                                        ->body($exception->getMessage())
+                                                                        ->danger()
+                                                                        ->send();
+                                                                }
+                                                            } else {
+                                                                try {
+                                                                    $toggleService->handle($server);
+
+                                                                    Notification::make()
+                                                                        ->title(trans('admin/server.notifications.install_toggled'))
+                                                                        ->success()
+                                                                        ->send();
+
+                                                                    $this->refreshFormData(['status', 'docker']);
+                                                                } catch (Exception $exception) {
+                                                                    Notification::make()
+                                                                        ->title(trans('admin/server.notifications.install_toggle_failed'))
+                                                                        ->body($exception->getMessage())
+                                                                        ->danger()
+                                                                        ->send();
+                                                                }
                                                             }
                                                         }),
                                                 ])->fullWidth(),

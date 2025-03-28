@@ -69,6 +69,8 @@ return [
     'short_uuid' => 'Short UUID',
     'toggle_install' => 'Toggle Install Status',
     'toggle_install_help' => 'If you need to change the install status from uninstalled to installed, or vice versa, you may do so with this button.',
+    'toggle_install_failed_header' => 'Server is in failed state',
+    'toggle_install_failed_desc' => 'Do you want to reinstall the server to fix this?',
     'transfer' => 'Transfer',
     'transfer_help' => 'Transfer this server to another node connected to this panel.<br/><b>Warning!</b> This feature is still experimental. Consider manually making a backup first to avoid data loss!',
     'condition' => 'Condition',
