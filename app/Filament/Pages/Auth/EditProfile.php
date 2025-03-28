@@ -19,6 +19,7 @@ use chillerlan\QRCode\QROptions;
 use DateTimeZone;
 use Filament\Forms\Components\Actions;
 use Filament\Forms\Components\Actions\Action;
+use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\Repeater;
@@ -125,6 +126,11 @@ class EditProfile extends BaseEditProfile
                                             ->helperText(fn ($state, LanguageService $languageService) => new HtmlString($languageService->isLanguageTranslated($state) ? '' : trans('profile.language_help', ['state' => $state])))
                                             ->options(fn (LanguageService $languageService) => $languageService->getAvailableLanguages())
                                             ->native(false),
+                                        FileUpload::make('avatar')
+                                            ->visible(fn () => config('panel.filament.avatar-provider') === 'local')
+                                            ->avatar()
+                                            ->directory('avatars')
+                                            ->getUploadedFileNameForStorageUsing(fn () => $this->getUser()->id . '.png'),
                                     ]),
 
                                 Tab::make(trans('profile.tabs.oauth'))
