@@ -810,7 +810,7 @@ class EditServer extends EditRecord
                                                     Action::make('toggleInstall')
                                                         ->label(trans('admin/server.toggle_install'))
                                                         ->disabled(fn (Server $server) => $server->isSuspended())
-                                                        ->requiresConfirmation(fn (Server $server) => $server->status === ServerState::InstallFailed)
+                                                        ->modal(fn (Server $server) => $server->status === ServerState::InstallFailed)
                                                         ->modalHeading(trans('admin/server.toggle_install_failed_header'))
                                                         ->modalDescription(trans('admin/server.toggle_install_failed_desc'))
                                                         ->modalSubmitActionLabel(trans('admin/server.reinstall'))
