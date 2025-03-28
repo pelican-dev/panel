@@ -3,6 +3,7 @@
 namespace App\Notifications;
 
 use App\Models\User;
+use Filament\Facades\Filament;
 use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Notification;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -29,7 +30,7 @@ class AccountCreated extends Notification implements ShouldQueue
             ->line('Email: ' . $notifiable->email);
 
         if (!is_null($this->token)) {
-            return $message->action('Setup Your Account', url('/auth/password/reset/' . $this->token . '?email=' . urlencode($notifiable->email)));
+            return $message->action('Setup Your Account', Filament::getResetPasswordUrl($this->token, $notifiable));
         }
 
         return $message;
