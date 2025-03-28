@@ -6,7 +6,6 @@
     <script src="https://cdn.jsdelivr.net/npm/@xterm/addon-web-links/lib/addon-web-links.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@xterm/addon-search/lib/addon-search.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/xterm-addon-search-bar/lib/xterm-addon-search-bar.min.js"></script>
-    <link rel="stylesheet" href="{{ asset('/css/filament/server/font.css') }}">
     <link rel="stylesheet" href="{{ asset('/css/filament/server/console.css') }}">
     @endassets
 
