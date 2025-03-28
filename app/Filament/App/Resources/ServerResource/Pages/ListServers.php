@@ -48,7 +48,7 @@ class ListServers extends ListRecords
                 SelectFilter::make('owner')
                     ->relationship('user', 'username', fn (Builder $query) => $query->whereIn('id', $baseQuery->pluck('owner_id')))
                     ->searchable()
-                    ->visible(fn () => $this->activeTab === 'other')
+                    ->hidden(fn () => $this->activeTab === 'my')
                     ->preload(),
             ]);
     }
