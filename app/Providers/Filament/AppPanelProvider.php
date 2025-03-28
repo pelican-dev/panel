@@ -37,6 +37,7 @@ class AppPanelProvider extends PanelProvider
             ->navigation(false)
             ->profile(EditProfile::class, false)
             ->login(Login::class)
+            ->passwordReset()
             ->userMenuItems([
                 MenuItem::make()
                     ->label('Admin')

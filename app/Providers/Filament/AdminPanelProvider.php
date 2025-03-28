@@ -39,6 +39,7 @@ class AdminPanelProvider extends PanelProvider
             ->topNavigation(config('panel.filament.top-navigation', true))
             ->maxContentWidth(config('panel.filament.display-width', 'screen-2xl'))
             ->login(Login::class)
+            ->passwordReset()
             ->userMenuItems([
                 'profile' => MenuItem::make()->label(trans('filament-panels::pages.auth.edit-profile.label'))->url(fn () => EditProfile::getUrl(panel: 'app')),
                 MenuItem::make()
