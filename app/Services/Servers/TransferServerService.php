@@ -22,37 +22,28 @@ class TransferServerService
         private NodeJWTService $nodeJWTService,
     ) {}
 
-    private function notify(Server $server, Plain $token): void
+    private function notify(ServerTransfer $transfer, Plain $token): void
     {
-        Http::daemon($server->node)->post('/api/transfer', [
-            'json' => [
-                'server_id' => $server->uuid,
-                'url' => $server->node->getConnectionAddress() . "/api/servers/$server->uuid/archive",
-                'token' => 'Bearer ' . $token->toString(),
-                'server' => [
-                    'uuid' => $server->uuid,
-                    'start_on_completion' => false,
-                ],
+        Http::daemon($transfer->oldNode)->post("/api/servers/{$transfer->server->uuid}/transfer", [
+            'url' => $transfer->newNode->getConnectionAddress() . '/api/transfers',
+            'token' => 'Bearer ' . $token->toString(),
+            'server' => [
+                'uuid' => $transfer->server->uuid,
+                'start_on_completion' => false,
             ],
-        ])->toPsrResponse();
+        ]);
     }
 
     /**
      * Starts a transfer of a server to a new node.
      *
-     * @param array{
-     *     allocation_id: int,
-     *     node_id: int,
-     *     allocation_additional?: ?int[],
-     * } $data
+     * @param  int[]  $additional_allocations
      *
      * @throws \Throwable
      */
-    public function handle(Server $server, array $data): bool
+    public function handle(Server $server, int $node_id, int $allocation_id, array $additional_allocations): bool
     {
-        $node_id = $data['node_id'];
-        $allocation_id = intval($data['allocation_id']);
-        $additional_allocations = array_map(intval(...), $data['allocation_additional'] ?? []);
+        $additional_allocations = array_map(intval(...), $additional_allocations);
 
         // Check if the node is viable for the transfer.
         $node = Node::query()
@@ -94,7 +85,7 @@ class TransferServerService
                 ->handle($transfer->newNode, $server->uuid, 'sha256');
 
             // Notify the source node of the pending outgoing transfer.
-            $this->notify($server, $token);
+            $this->notify($transfer, $token);
 
             return $transfer;
         });

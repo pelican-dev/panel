@@ -13,6 +13,7 @@ use App\Services\Servers\TransferServerService;
 use Dedoc\Scramble\Attributes\Group;
 use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Http\Response;
+use Illuminate\Support\Arr;
 
 #[Group('Server', weight: 4)]
 class ServerManagementController extends ApplicationApiController
@@ -82,15 +83,24 @@ class ServerManagementController extends ApplicationApiController
         $validatedData = $request->validate([
             'node_id' => 'required|exists:nodes,id',
             'allocation_id' => 'required|bail|unique:servers|exists:allocations,id',
-            'allocation_additional' => 'nullable',
+            'allocation_additional' => 'nullable|array',
+            'allocation_additional.*' => 'integer|exists:allocations,id',
         ]);
 
-        if ($this->transferServerService->handle($server, $validatedData)) {
-            // Transfer started
+        if ($this->transferServerService->handle($server, Arr::get($validatedData, 'node_id'), Arr::get($validatedData, 'allocation_id'), Arr::get($validatedData, 'allocation_additional', []))) {
+            /**
+             * Transfer started
+             *
+             * @status 204
+             */
             return $this->returnNoContent();
         }
 
-        // Node was not viable
+        /**
+         * Node was not viable
+         *
+         * @status 406
+         */
         return $this->returnNotAcceptable();
     }
 
@@ -104,7 +114,11 @@ class ServerManagementController extends ApplicationApiController
     public function cancelTransfer(ServerWriteRequest $request, Server $server): Response
     {
         if (!$transfer = $server->transfer) {
-            // Server is not transferring
+            /**
+             * Server is not transferring
+             *
+             * @status 406
+             */
             return $this->returnNotAcceptable();
         }
 
@@ -113,6 +127,11 @@ class ServerManagementController extends ApplicationApiController
 
         $this->daemonServerRepository->setServer($server)->cancelTransfer();
 
+        /**
+         * Transfer cancelled
+         *
+         * @status 204
+         */
         return $this->returnNoContent();
     }
 }
