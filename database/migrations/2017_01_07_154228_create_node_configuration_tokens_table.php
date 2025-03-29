@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('node_configuration_tokens', function (Blueprint $table) {
             $table->increments('id');
-            $table->char('token', 32);
+            $table->string('token', 32);
             $table->timestamp('expires_at');
             $table->integer('node')->unsigned();
             $table->foreign('node')->references('id')->on('nodes');

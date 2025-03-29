@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('audit_logs', function (Blueprint $table) {
             $table->id();
-            $table->char('uuid', 36);
+            $table->string('uuid', 36);
             $table->boolean('is_system')->default(false);
             $table->unsignedInteger('user_id')->nullable();
             $table->unsignedInteger('server_id')->nullable();

@@ -17,9 +17,9 @@ return new class extends Migration
         });
 
         DB::transaction(function () {
-            DB::update('UPDATE servers SET `status` = \'suspended\' WHERE `suspended` = 1');
-            DB::update('UPDATE servers SET `status` = \'installing\' WHERE `installed` = 0');
-            DB::update('UPDATE servers SET `status` = \'install_failed\' WHERE `installed` = 2');
+            DB::table('servers')->where('suspended', 1)->update(['status' => 'suspended']);
+            DB::table('servers')->where('suspended', 0)->update(['status' => 'installing']);
+            DB::table('servers')->where('suspended', 2)->update(['status' => 'install_failed']);
         });
 
         Schema::table('servers', function (Blueprint $table) {

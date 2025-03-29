@@ -33,6 +33,13 @@ class CreateUser extends CreateRecord
         return [];
     }
 
+    protected function prepareForValidation($attributes): array
+    {
+        $attributes['data']['email'] = mb_strtolower($attributes['data']['email']);
+
+        return $attributes;
+    }
+
     protected function handleRecordCreation(array $data): Model
     {
         $data['root_admin'] = false;

@@ -50,7 +50,7 @@ class ExternalUserControllerTest extends ApplicationApiIntegrationTestCase
      */
     public function test_get_missing_user(): void
     {
-        $response = $this->getJson('/api/application/users/external/nil');
+        $response = $this->getJson('/api/application/users/external/12345');
         $this->assertNotFoundJson($response);
     }
 
