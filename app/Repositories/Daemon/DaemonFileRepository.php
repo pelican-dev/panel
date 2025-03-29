@@ -5,6 +5,7 @@ namespace App\Repositories\Daemon;
 use Illuminate\Contracts\Filesystem\FileNotFoundException;
 use Illuminate\Http\Client\Response;
 use App\Exceptions\Http\Server\FileSizeTooLargeException;
+use App\Exceptions\Repository\FileNotEditableException;
 use Illuminate\Http\Client\ConnectionException;
 
 class DaemonFileRepository extends DaemonRepository
@@ -27,6 +28,10 @@ class DaemonFileRepository extends DaemonRepository
         $length = $response->header('Content-Length');
         if ($notLargerThan && $length > $notLargerThan) {
             throw new FileSizeTooLargeException();
+        }
+
+        if ($response->getStatusCode() === 400) {
+            throw new FileNotEditableException();
         }
 
         if ($response->getStatusCode() === 404) {
