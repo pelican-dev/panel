@@ -149,7 +149,7 @@ class EditFiles extends Page
         $this->form->fill();
 
         if (str($path)->endsWith('.pelicanignore')) {
-            AlertBanner::make()
+            AlertBanner::make('.pelicanignore_info')
                 ->title('You\'re editing a <code>.pelicanignore</code> file!')
                 ->body('Any files or directories listed in here will be excluded from backups. Wildcards are supported by using an asterisk (<code>*</code>).<br>You can negate a prior rule by prepending an exclamation point (<code>!</code>).')
                 ->info()

@@ -44,9 +44,8 @@ final class AlertBanner implements Wireable
 
     public static function fromLivewire(mixed $value): AlertBanner
     {
-        $static = AlertBanner::make();
+        $static = AlertBanner::make($value['id']);
 
-        $static->id($value['id']);
         $static->title($value['title']);
         $static->body($value['body']);
         $static->status($value['status']);

@@ -2,6 +2,7 @@
 
 namespace App\Filament\Admin\Pages;
 
+use App\Extensions\Captcha\Providers\CaptchaProvider;
 use App\Extensions\OAuth\Providers\OAuthProvider;
 use App\Models\Backup;
 use App\Notifications\MailTested;
@@ -13,7 +14,6 @@ use Filament\Forms\Components\Actions\Action as FormAction;
 use Filament\Forms\Components\Component;
 use Filament\Forms\Components\Group;
 use Filament\Forms\Components\Hidden;
-use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Tabs;
@@ -34,7 +34,6 @@ use Filament\Support\Enums\MaxWidth;
 use Illuminate\Http\Client\Factory;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Notification as MailNotification;
-use Illuminate\Support\HtmlString;
 use Illuminate\Support\Str;
 
 /**
@@ -118,12 +117,23 @@ class Settings extends Page implements HasForms
                 ->label(trans('admin/setting.general.app_name'))
                 ->required()
                 ->default(env('APP_NAME', 'Pelican')),
-            TextInput::make('APP_FAVICON')
-                ->label(trans('admin/setting.general.app_favicon'))
-                ->hintIcon('tabler-question-mark')
-                ->hintIconTooltip(trans('admin/setting.general.app_favicon_help'))
-                ->required()
-                ->default(env('APP_FAVICON', '/pelican.ico')),
+            Group::make()
+                ->columns(2)
+                ->schema([
+                    TextInput::make('APP_LOGO')
+                        ->label(trans('admin/setting.general.app_logo'))
+                        ->hintIcon('tabler-question-mark')
+                        ->hintIconTooltip(trans('admin/setting.general.app_logo_help'))
+                        ->default(env('APP_LOGO'))
+                        ->placeholder('/pelican.svg'),
+                    TextInput::make('APP_FAVICON')
+                        ->label(trans('admin/setting.general.app_favicon'))
+                        ->hintIcon('tabler-question-mark')
+                        ->hintIconTooltip(trans('admin/setting.general.app_favicon_help'))
+                        ->required()
+                        ->default(env('APP_FAVICON', '/pelican.ico'))
+                        ->placeholder('/pelican.ico'),
+                ]),
             Toggle::make('APP_DEBUG')
                 ->label(trans('admin/setting.general.debug_mode'))
                 ->inline(false)
@@ -219,47 +229,49 @@ class Settings extends Page implements HasForms
      */
     private function captchaSettings(): array
     {
-        return [
-            Toggle::make('TURNSTILE_ENABLED')
-                ->label(trans('admin/setting.captcha.enable'))
-                ->inline(false)
-                ->columnSpan(1)
-                ->onIcon('tabler-check')
-                ->offIcon('tabler-x')
-                ->onColor('success')
-                ->offColor('danger')
-                ->live()
-                ->formatStateUsing(fn ($state): bool => (bool) $state)
-                ->afterStateUpdated(fn ($state, Set $set) => $set('TURNSTILE_ENABLED', (bool) $state))
-                ->default(env('TURNSTILE_ENABLED', config('turnstile.turnstile_enabled'))),
-            Placeholder::make('info')
-                ->label(trans('admin/setting.captcha.info_label'))
-                ->columnSpan(2)
-                ->content(new HtmlString('<u><a href="https://developers.cloudflare.com/turnstile/get-started/#get-a-sitekey-and-secret-key" target="_blank">Link to Cloudflare Dashboard</a></u><br> ' . trans('admin/setting.captcha.info'))),
-            TextInput::make('TURNSTILE_SITE_KEY')
-                ->label(trans('admin/setting.captcha.site_key'))
-                ->required()
-                ->visible(fn (Get $get) => $get('TURNSTILE_ENABLED'))
-                ->default(env('TURNSTILE_SITE_KEY', config('turnstile.turnstile_site_key')))
-                ->placeholder('1x00000000000000000000AA'),
-            TextInput::make('TURNSTILE_SECRET_KEY')
-                ->label(trans('admin/setting.captcha.secret_key'))
-                ->required()
-                ->visible(fn (Get $get) => $get('TURNSTILE_ENABLED'))
-                ->default(env('TURNSTILE_SECRET_KEY', config('turnstile.secret_key')))
-                ->placeholder('1x0000000000000000000000000000000AA'),
-            Toggle::make('TURNSTILE_VERIFY_DOMAIN')
-                ->label(trans('admin/setting.captcha.verify'))
-                ->inline(false)
-                ->onIcon('tabler-check')
-                ->offIcon('tabler-x')
-                ->onColor('success')
-                ->offColor('danger')
-                ->visible(fn (Get $get) => $get('TURNSTILE_ENABLED'))
-                ->formatStateUsing(fn ($state): bool => (bool) $state)
-                ->afterStateUpdated(fn ($state, Set $set) => $set('TURNSTILE_VERIFY_DOMAIN', (bool) $state))
-                ->default(env('TURNSTILE_VERIFY_DOMAIN', config('turnstile.turnstile_verify_domain'))),
-        ];
+        $formFields = [];
+
+        $captchaProviders = CaptchaProvider::get();
+        foreach ($captchaProviders as $captchaProvider) {
+            $id = Str::upper($captchaProvider->getId());
+            $name = Str::title($captchaProvider->getId());
+
+            $formFields[] = Section::make($name)
+                ->columns(5)
+                ->icon($captchaProvider->getIcon() ?? 'tabler-shield')
+                ->collapsed(fn () => !env("CAPTCHA_{$id}_ENABLED", false))
+                ->collapsible()
+                ->schema([
+                    Hidden::make("CAPTCHA_{$id}_ENABLED")
+                        ->live()
+                        ->default(env("CAPTCHA_{$id}_ENABLED")),
+                    Actions::make([
+                        FormAction::make("disable_captcha_$id")
+                            ->visible(fn (Get $get) => $get("CAPTCHA_{$id}_ENABLED"))
+                            ->label(trans('admin/setting.captcha.disable'))
+                            ->color('danger')
+                            ->action(function (Set $set) use ($id) {
+                                $set("CAPTCHA_{$id}_ENABLED", false);
+                            }),
+                        FormAction::make("enable_captcha_$id")
+                            ->visible(fn (Get $get) => !$get("CAPTCHA_{$id}_ENABLED"))
+                            ->label(trans('admin/setting.captcha.enable'))
+                            ->color('success')
+                            ->action(function (Set $set) use ($id, $captchaProviders) {
+                                foreach ($captchaProviders as $captchaProvider) {
+                                    $loopId = Str::upper($captchaProvider->getId());
+                                    $set("CAPTCHA_{$loopId}_ENABLED", $loopId === $id);
+                                }
+                            }),
+                    ])->columnSpan(1),
+                    Group::make($captchaProvider->getSettingsForm())
+                        ->visible(fn (Get $get) => $get("CAPTCHA_{$id}_ENABLED"))
+                        ->columns(4)
+                        ->columnSpan(4),
+                ]);
+        }
+
+        return $formFields;
     }
 
     /**
@@ -296,7 +308,7 @@ class Settings extends Page implements HasForms
                                 'mail.mailers.smtp.port' => config('mail.mailers.smtp.port'),
                                 'mail.mailers.smtp.username' => config('mail.mailers.smtp.username'),
                                 'mail.mailers.smtp.password' => config('mail.mailers.smtp.password'),
-                                'mail.mailers.smtp.encryption' => config('mail.mailers.smtp.encryption'),
+                                'mail.mailers.smtp.scheme' => config('mail.mailers.smtp.scheme'),
                                 'mail.from.address' => config('mail.from.address'),
                                 'mail.from.name' => config('mail.from.name'),
                                 'services.mailgun.domain' => config('services.mailgun.domain'),
@@ -312,7 +324,7 @@ class Settings extends Page implements HasForms
                                     'mail.mailers.smtp.port' => $get('MAIL_PORT'),
                                     'mail.mailers.smtp.username' => $get('MAIL_USERNAME'),
                                     'mail.mailers.smtp.password' => $get('MAIL_PASSWORD'),
-                                    'mail.mailers.smtp.encryption' => $get('MAIL_SCHEME'),
+                                    'mail.mailers.smtp.scheme' => $get('MAIL_SCHEME'),
                                     'mail.from.address' => $get('MAIL_FROM_ADDRESS'),
                                     'mail.from.name' => $get('MAIL_FROM_NAME'),
                                     'services.mailgun.domain' => $get('MAILGUN_DOMAIN'),
@@ -376,22 +388,16 @@ class Settings extends Page implements HasForms
                         ->revealable()
                         ->default(env('MAIL_PASSWORD')),
                     ToggleButtons::make('MAIL_SCHEME')
-                        ->label(trans('admin/setting.mail.smtp.encryption'))
+                        ->label(trans('admin/setting.mail.smtp.scheme'))
                         ->inline()
                         ->options([
-                            'tls' => trans('admin/setting.mail.smtp.tls'),
-                            'ssl' => trans('admin/setting.mail.smtp.ssl'),
-                            '' => trans('admin/setting.mail.smtp.none'),
+                            'smtp' => 'SMTP',
+                            'smtps' => 'SMTPS',
                         ])
-                        ->default(env('MAIL_SCHEME', config('mail.mailers.smtp.encryption', 'tls')))
+                        ->default(env('MAIL_SCHEME', config('mail.mailers.smtp.scheme')))
                         ->live()
                         ->afterStateUpdated(function ($state, Set $set) {
-                            $port = match ($state) {
-                                'tls' => 587,
-                                'ssl' => 465,
-                                default => 25,
-                            };
-                            $set('MAIL_PORT', $port);
+                            $set('MAIL_PORT', $state === 'smtps' ? 587 : 2525);
                         }),
                 ]),
             Section::make(trans('admin/setting.mail.mailgun.mailgun_title'))
@@ -521,7 +527,7 @@ class Settings extends Page implements HasForms
                             ->label(trans('admin/setting.oauth.enable'))
                             ->color('success')
                             ->steps($oauthProvider->getSetupSteps())
-                            ->modalHeading(trans('admin/setting.oauth.enable') . $name)
+                            ->modalHeading(trans('admin/setting.oauth.enable') . ' ' . $name)
                             ->modalSubmitActionLabel(trans('admin/setting.oauth.enable'))
                             ->modalCancelAction(false)
                             ->action(function ($data, Set $set) use ($id) {

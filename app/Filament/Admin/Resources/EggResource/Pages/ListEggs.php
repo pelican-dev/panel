@@ -7,6 +7,8 @@ use App\Filament\Components\Actions\ImportEggAction as ImportEggHeaderAction;
 use App\Filament\Components\Tables\Actions\ExportEggAction;
 use App\Filament\Components\Tables\Actions\ImportEggAction;
 use App\Filament\Components\Tables\Actions\UpdateEggAction;
+use App\Filament\Components\Tables\Actions\UpdateEggBulkAction;
+use App\Filament\Components\Tables\Filters\TagsFilter;
 use App\Models\Egg;
 use Filament\Actions\CreateAction as CreateHeaderAction;
 use Filament\Resources\Pages\ListRecords;
@@ -16,6 +18,7 @@ use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Actions\ReplicateAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Str;
 
 class ListEggs extends ListRecords
@@ -27,7 +30,6 @@ class ListEggs extends ListRecords
         return $table
             ->searchable(true)
             ->defaultPaginationPageOption(25)
-            ->checkIfRecordIsSelectableUsing(fn (Egg $egg) => $egg->servers_count <= 0)
             ->columns([
                 TextColumn::make('id')
                     ->label('Id')
@@ -68,21 +70,36 @@ class ListEggs extends ListRecords
                     ->successRedirectUrl(fn (Egg $replica) => EditEgg::getUrl(['record' => $replica])),
             ])
             ->groupedBulkActions([
-                DeleteBulkAction::make(),
+                DeleteBulkAction::make()
+                    ->before(fn (DeleteBulkAction $action, Collection $records) => $action->records($records->filter(function ($egg) {
+                        /** @var Egg $egg */
+                        return $egg->servers_count <= 0;
+                    }))),
+                UpdateEggBulkAction::make()
+                    ->before(fn (UpdateEggBulkAction $action, Collection $records) => $action->records($records->filter(function ($egg) {
+                        /** @var Egg $egg */
+                        return cache()->get("eggs.$egg->uuid.update", false);
+                    }))),
             ])
             ->emptyStateIcon('tabler-eggs')
             ->emptyStateDescription('')
             ->emptyStateHeading(trans('admin/egg.no_eggs'))
             ->emptyStateActions([
                 CreateAction::make(),
-                ImportEggAction::make(),
+                ImportEggAction::make()
+                    ->multiple(),
+            ])
+            ->filters([
+                TagsFilter::make()
+                    ->model(Egg::class),
             ]);
     }
 
     protected function getHeaderActions(): array
     {
         return [
-            ImportEggHeaderAction::make(),
+            ImportEggHeaderAction::make()
+                ->multiple(),
             CreateHeaderAction::make(),
         ];
     }

@@ -31,7 +31,6 @@ use Illuminate\Database\Eloquent\Relations\MorphToMany;
 use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
 use Illuminate\Contracts\Auth\Access\Authorizable as AuthorizableContract;
 use Illuminate\Contracts\Auth\CanResetPassword as CanResetPasswordContract;
-use App\Notifications\SendPasswordReset as ResetPasswordNotification;
 use ResourceBundle;
 use Spatie\Permission\Traits\HasRoles;
 
@@ -205,21 +204,6 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
         return $rules;
     }
 
-    /**
-     * Send the password reset notification.
-     *
-     * @param  string  $token
-     */
-    public function sendPasswordResetNotification($token): void
-    {
-        Activity::event('auth:reset-password')
-            ->withRequestMetadata()
-            ->subject($this)
-            ->log('sending password reset email');
-
-        $this->notify(new ResetPasswordNotification($token));
-    }
-
     public function username(): Attribute
     {
         return Attribute::make(
@@ -293,8 +277,7 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
             ->leftJoin('subusers', 'subusers.server_id', '=', 'servers.id')
             ->where(function (Builder $builder) {
                 $builder->where('servers.owner_id', $this->id)->orWhere('subusers.user_id', $this->id);
-            })
-            ->groupBy('servers.id');
+            });
     }
 
     public function subusers(): HasMany

@@ -12,12 +12,11 @@
         "aws/aws-sdk-php": "^3.341",
         "calebporzio/sushi": "^2.5",
         "chillerlan/php-qrcode": "^5.0.2",
-        "coderflex/filament-turnstile": "^2.2",
         "dedoc/scramble": "^0.12.10",
         "doctrine/dbal": "~3.6.0",
-        "filament/filament": "^3.3",
+        "filament/filament": "3.3.3",
         "guzzlehttp/guzzle": "^7.9",
-        "laravel/framework": "^12.1",
+        "laravel/framework": "^12.2",
         "laravel/helpers": "^1.7",
         "laravel/sanctum": "^4.0.2",
         "laravel/socialite": "^5.18",
@@ -81,11 +80,8 @@
         "post-autoload-dump": [
             "Illuminate\\Foundation\\ComposerScripts::postAutoloadDump"
         ],
-        "post-root-package-install": [
-            "@php -r \"file_exists('.env') || copy('.env.example', '.env');\""
-        ],
-        "post-create-project-cmd": [
-            "@php artisan key:generate --ansi"
+        "post-install-cmd": [
+            "php -r \"file_exists('.env') || copy('.env.example', '.env');\""
         ],
         "dev": [
             "Composer\\Config::disableProcessTimeout",

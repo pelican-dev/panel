@@ -4,11 +4,15 @@
         "version": "PLCN_v1",
         "update_url": "https:\/\/github.com\/pelican-dev\/panel\/raw\/main\/database\/Seeders\/eggs\/source-engine\/egg-counter--strike--global-offensive.json"
     },
-    "exported_at": "2024-11-23T22:22:39+00:00",
+    "exported_at": "2025-03-18T12:36:01+00:00",
     "name": "Counter-Strike: Global Offensive",
     "author": "panel@example.com",
     "uuid": "437c367d-06be-498f-a604-fdad135504d7",
     "description": "Counter-Strike: Global Offensive is a multiplayer first-person shooter video game developed by Hidden Path Entertainment and Valve Corporation.",
+    "tags": [
+        "source",
+        "steamcmd"
+    ],
     "features": [
         "gsl_token",
         "steam_disk_space"

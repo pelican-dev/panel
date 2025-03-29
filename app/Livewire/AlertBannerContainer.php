@@ -3,6 +3,7 @@
 namespace App\Livewire;
 
 use Illuminate\Contracts\View\View;
+use Livewire\Attributes\On;
 use Livewire\Component;
 
 class AlertBannerContainer extends Component
@@ -16,6 +17,7 @@ class AlertBannerContainer extends Component
         $this->pullFromSession();
     }
 
+    #[On('alertBannerSent')]
     public function pullFromSession(): void
     {
         foreach (session()->pull('alert-banners', []) as $alertBanner) {

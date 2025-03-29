@@ -108,7 +108,8 @@ class EditNode extends EditRecord
                                 ->required()
                                 ->autofocus()
                                 ->live(debounce: 1500)
-                                ->rule('prohibited', fn ($state) => is_ip($state) && request()->isSecure())
+                                ->rules(Node::getRulesForField('fqdn'))
+                                ->prohibited(fn ($state) => is_ip($state) && request()->isSecure())
                                 ->label(fn ($state) => is_ip($state) ? trans('admin/node.ip_address') : trans('admin/node.domain'))
                                 ->placeholder(fn ($state) => is_ip($state) ? '192.168.1.1' : 'node.example.com')
                                 ->helperText(function ($state) {
@@ -555,7 +556,18 @@ class EditNode extends EditRecord
                                             ->modalHeading(trans('admin/node.reset_token'))
                                             ->modalDescription(trans('admin/node.reset_help'))
                                             ->action(function (Node $node) {
-                                                $this->nodeUpdateService->handle($node, [], true);
+                                                try {
+                                                    $this->nodeUpdateService->handle($node, [], true);
+                                                } catch (Exception) {
+                                                    Notification::make()
+                                                        ->title(trans('admin/node.error_connecting', ['node' => $node->name]))
+                                                        ->body(trans('admin/node.error_connecting_description'))
+                                                        ->color('warning')
+                                                        ->icon('tabler-database')
+                                                        ->warning()
+                                                        ->send();
+
+                                                }
                                                 Notification::make()->success()->title(trans('admin/node.token_reset'))->send();
                                                 $this->fillForm();
                                             }),
@@ -592,9 +604,7 @@ class EditNode extends EditRecord
         }
 
         try {
-            $this->record = $this->nodeUpdateService->handle($record, $data);
-
-            return $this->record;
+            $record = $this->nodeUpdateService->handle($record, $data);
         } catch (Exception $exception) {
             $this->errored = true;
 
@@ -606,8 +616,9 @@ class EditNode extends EditRecord
                 ->warning()
                 ->send();
 
-            return parent::handleRecordUpdate($record, $data);
         }
+
+        return parent::handleRecordUpdate($record, $data);
     }
 
     protected function getSavedNotification(): ?Notification

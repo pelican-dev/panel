@@ -6,7 +6,6 @@ use App\Models\Node;
 use Illuminate\Http\JsonResponse;
 use Spatie\QueryBuilder\QueryBuilder;
 use App\Services\Nodes\NodeUpdateService;
-use App\Services\Nodes\NodeCreationService;
 use App\Services\Nodes\NodeDeletionService;
 use App\Transformers\Api\Application\NodeTransformer;
 use App\Http\Requests\Api\Application\Nodes\GetNodeRequest;
@@ -16,6 +15,7 @@ use App\Http\Requests\Api\Application\Nodes\DeleteNodeRequest;
 use App\Http\Requests\Api\Application\Nodes\UpdateNodeRequest;
 use App\Http\Controllers\Api\Application\ApplicationApiController;
 use Dedoc\Scramble\Attributes\Group;
+use Exception;
 
 #[Group('Node', weight: 0)]
 class NodeController extends ApplicationApiController
@@ -24,7 +24,6 @@ class NodeController extends ApplicationApiController
      * NodeController constructor.
      */
     public function __construct(
-        private NodeCreationService $creationService,
         private NodeDeletionService $deletionService,
         private NodeUpdateService $updateService
     ) {
@@ -74,7 +73,7 @@ class NodeController extends ApplicationApiController
      */
     public function store(StoreNodeRequest $request): JsonResponse
     {
-        $node = $this->creationService->handle($request->validated());
+        $node = Node::create($request->validated());
 
         return $this->fractal->item($node)
             ->transformWith($this->getTransformer(NodeTransformer::class))
@@ -97,11 +96,15 @@ class NodeController extends ApplicationApiController
      */
     public function update(UpdateNodeRequest $request, Node $node): array
     {
-        $node = $this->updateService->handle(
-            $node,
-            $request->validated(),
-            $request->input('reset_secret') === true
-        );
+        try {
+            $node = $this->updateService->handle(
+                $node,
+                $request->validated(),
+                $request->input('reset_secret') === true
+            );
+        } catch (Exception $exception) {
+            report($exception);
+        }
 
         return $this->fractal->item($node)
             ->transformWith($this->getTransformer(NodeTransformer::class))

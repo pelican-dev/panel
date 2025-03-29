@@ -24,7 +24,7 @@ class OAuthController extends Controller
     /**
      * Redirect user to the OAuth provider
      */
-    protected function redirect(string $driver): RedirectResponse
+    public function redirect(string $driver): RedirectResponse
     {
         // Driver is disabled - redirect to normal login
         if (!OAuthProvider::get($driver)->isEnabled()) {
@@ -37,7 +37,7 @@ class OAuthController extends Controller
     /**
      * Callback from OAuth provider.
      */
-    protected function callback(Request $request, string $driver): RedirectResponse
+    public function callback(Request $request, string $driver): RedirectResponse
     {
         // Driver is disabled - redirect to normal login
         if (!OAuthProvider::get($driver)->isEnabled()) {
@@ -53,7 +53,7 @@ class OAuthController extends Controller
 
             $this->updateService->handle($request->user(), ['oauth' => $oauth]);
 
-            return redirect(EditProfile::getUrl(['tab' => '-oauth-tab']));
+            return redirect(EditProfile::getUrl(['tab' => '-oauth-tab'], panel: 'app'));
         }
 
         try {

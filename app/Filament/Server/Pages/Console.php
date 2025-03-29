@@ -38,10 +38,10 @@ class Console extends Page
         try {
             $server->validateCurrentState();
         } catch (ServerStateConflictException $exception) {
-            AlertBanner::make()
-                ->warning()
+            AlertBanner::make('server_conflict')
                 ->title('Warning')
                 ->body($exception->getMessage())
+                ->warning()
                 ->send();
         }
     }
