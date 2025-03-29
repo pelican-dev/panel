@@ -4,6 +4,7 @@ namespace App\Filament\Server\Resources\FileResource\Pages;
 
 use AbdelhamidErrahmouni\FilamentMonacoEditor\MonacoEditor;
 use App\Enums\EditorLanguages;
+use App\Exceptions\Http\Server\FileSizeTooLargeException;
 use App\Exceptions\Repository\FileNotEditableException;
 use App\Facades\Activity;
 use App\Filament\Server\Resources\FileResource;
@@ -46,6 +47,8 @@ class EditFiles extends Page
     #[Locked]
     public string $path;
 
+    private DaemonFileRepository $fileRepository;
+
     /** @var array<mixed> */
     public ?array $data = [];
 
@@ -67,10 +70,9 @@ class EditFiles extends Page
                             ->authorize(fn () => auth()->user()->can(Permission::ACTION_FILE_UPDATE, $server))
                             ->icon('tabler-device-floppy')
                             ->keyBindings('mod+shift+s')
-                            ->action(function (DaemonFileRepository $fileRepository, array $data) use ($server) {
+                            ->action(function (array $data) {
 
-                                $fileRepository
-                                    ->setServer($server)
+                                $this->getDaemonFileRepository()
                                     ->putContent($this->path, $data['editor'] ?? '');
 
                                 Activity::event('server:file.write')
@@ -90,10 +92,9 @@ class EditFiles extends Page
                             ->authorize(fn () => auth()->user()->can(Permission::ACTION_FILE_UPDATE, $server))
                             ->icon('tabler-device-floppy')
                             ->keyBindings('mod+s')
-                            ->action(function (DaemonFileRepository $fileRepository, array $data) use ($server) {
+                            ->action(function (array $data) {
 
-                                $fileRepository
-                                    ->setServer($server)
+                                $this->getDaemonFileRepository()
                                     ->putContent($this->path, $data['editor'] ?? '');
 
                                 Activity::event('server:file.write')
@@ -122,22 +123,36 @@ class EditFiles extends Page
                             ->afterStateUpdated(fn ($state) => $this->dispatch('setLanguage', lang: $state))
                             ->default(fn () => EditorLanguages::fromWithAlias(pathinfo($this->path, PATHINFO_EXTENSION))),
                         MonacoEditor::make('editor')
-                            ->label('')
-                            ->placeholderText('')
-                            ->default(function (DaemonFileRepository $fileRepository) use ($server) {
+                            ->hiddenLabel()
+                            ->showPlaceholder(false)
+                            ->default(function () {
                                 try {
-                                    return $fileRepository
-                                        ->setServer($server)
+                                    return $this->getDaemonFileRepository()
                                         ->getContent($this->path, config('panel.files.max_edit_size'));
-                                } catch (FileNotFoundException) {
-                                    abort(404, $this->path . ' not found.');
-                                } catch (FileNotEditableException) {
-                                    $this->redirect(ListFiles::getUrl());
-                                    Notification::make()
-                                        ->title('Could not edit!')
-                                        ->body($this->path . ' is a directory.')
+                                } catch (FileSizeTooLargeException) {
+                                    AlertBanner::make()
+                                        ->title('File too large!')
+                                        ->body('<code>' . $this->path . '</code> Max is ' . convert_bytes_to_readable(config('panel.files.max_edit_size')))
                                         ->danger()
+                                        ->closable()
                                         ->send();
+                                    $this->redirect(ListFiles::getUrl());
+                                } catch (FileNotFoundException) {
+                                    AlertBanner::make()
+                                        ->title('File Not found!')
+                                        ->body('<code>' . $this->path . '</code>')
+                                        ->danger()
+                                        ->closable()
+                                        ->send();
+                                    $this->redirect(ListFiles::getUrl());
+                                } catch (FileNotEditableException) {
+                                    AlertBanner::make()
+                                        ->title('Could not edit directory!')
+                                        ->body('<code>' . $this->path . '</code>')
+                                        ->danger()
+                                        ->closable()
+                                        ->send();
+                                    $this->redirect(ListFiles::getUrl());
                                 }
                             })
                             ->language(fn (Get $get) => $get('lang'))
@@ -204,6 +219,15 @@ class EditFiles extends Page
         }
 
         return $breadcrumbs;
+    }
+
+    private function getDaemonFileRepository(): DaemonFileRepository
+    {
+        /** @var Server $server */
+        $server = Filament::getTenant();
+        $this->fileRepository ??= (new DaemonFileRepository())->setServer($server);
+
+        return $this->fileRepository;
     }
 
     public static function route(string $path): PageRegistration
