@@ -21,7 +21,7 @@ return new class extends Migration
             $table->mediumInteger('memory_overallocate')->unsigned()->nullable();
             $table->integer('disk')->unsigned();
             $table->mediumInteger('disk_overallocate')->unsigned()->nullable();
-            $table->char('daemonSecret', 36)->unique();
+            $table->string('daemonSecret', 36)->unique();
             $table->smallInteger('daemonListen')->unsigned()->default(8080);
             $table->smallInteger('daemonSFTP')->unsgined()->default(2022);
             $table->string('daemonBase')->default('/home/daemon-files');

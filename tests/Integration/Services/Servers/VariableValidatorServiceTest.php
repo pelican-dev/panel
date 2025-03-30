@@ -107,12 +107,15 @@ class VariableValidatorServiceTest extends IntegrationTestCase
             'SERVER_JARFILE' => 'server.jar',
         ]);
 
+        $bungeeVersion = $response->firstWhere('key', 'BUNGEE_VERSION');
+        $serverJarfile = $response->firstWhere('key', 'SERVER_JARFILE');
+
         $this->assertInstanceOf(Collection::class, $response);
         $this->assertCount(2, $response);
-        $this->assertSame('BUNGEE_VERSION', $response->get(0)->key);
-        $this->assertSame('123', $response->get(0)->value);
-        $this->assertSame('SERVER_JARFILE', $response->get(1)->key);
-        $this->assertSame('server.jar', $response->get(1)->value);
+        $this->assertSame('BUNGEE_VERSION', $bungeeVersion->key);
+        $this->assertSame('123', $bungeeVersion->value);
+        $this->assertSame('SERVER_JARFILE', $serverJarfile->key);
+        $this->assertSame('server.jar', $serverJarfile->value);
     }
 
     public function test_nullable_environment_variables_can_be_used_correctly(): void

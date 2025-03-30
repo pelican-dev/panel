@@ -12,8 +12,8 @@ return new class extends Migration
     {
         Schema::create('servers', function (Blueprint $table) {
             $table->increments('id');
-            $table->char('uuid', 36)->unique();
-            $table->char('uuidShort', 8)->unique();
+            $table->string('uuid', 36)->unique();
+            $table->string('uuidShort', 8)->unique();
             $table->mediumInteger('node')->unsigned();
             $table->string('name');
             $table->tinyInteger('active')->unsigned();
@@ -29,7 +29,7 @@ return new class extends Migration
             $table->mediumInteger('service')->unsigned();
             $table->mediumInteger('option')->unsigned();
             $table->text('startup');
-            $table->char('daemonSecret', 36)->unique();
+            $table->string('daemonSecret', 36)->unique();
             $table->string('username')->unique();
             $table->tinyInteger('installed')->unsigned()->default(0);
             $table->timestamps();
