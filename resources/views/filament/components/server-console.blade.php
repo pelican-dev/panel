@@ -58,6 +58,7 @@
 
         let options = {
             fontSize: 14,
+            fontFamily: 'Comic Mono, monospace',
             lineHeight: 1.2,
             disableStdin: true,
             cursorStyle: 'underline',
