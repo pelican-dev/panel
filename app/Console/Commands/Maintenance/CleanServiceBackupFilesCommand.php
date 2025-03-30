@@ -6,6 +6,7 @@ use Carbon\Carbon;
 use Illuminate\Console\Command;
 use Illuminate\Contracts\Filesystem\Filesystem;
 use Illuminate\Contracts\Filesystem\Factory as FilesystemFactory;
+use SplFileInfo;
 
 class CleanServiceBackupFilesCommand extends Command
 {
@@ -32,9 +33,10 @@ class CleanServiceBackupFilesCommand extends Command
      */
     public function handle(): void
     {
+        /** @var SplFileInfo[] */
         $files = $this->disk->files('services/.bak');
 
-        collect($files)->each(function (\SplFileInfo $file) {
+        collect($files)->each(function ($file) {
             $lastModified = Carbon::createFromTimestamp($this->disk->lastModified($file->getPath()));
             if ($lastModified->diffInMinutes(Carbon::now()) > self::BACKUP_THRESHOLD_MINUTES) {
                 $this->disk->delete($file->getPath());
