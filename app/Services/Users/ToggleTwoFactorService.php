@@ -49,27 +49,12 @@ class ToggleTwoFactorService
             // on their account.
             $tokens = [];
             if ((!$toggleState && !$user->use_totp) || $toggleState) {
-                $inserts = [];
-                for ($i = 0; $i < 10; $i++) {
-                    $token = Str::random(10);
-
-                    $inserts[] = [
-                        'user_id' => $user->id,
-                        'token' => password_hash($token, PASSWORD_DEFAULT),
-                        // insert() won't actually set the time on the models, so make sure we do this
-                        // manually here.
-                        'created_at' => Carbon::now(),
-                    ];
-
-                    $tokens[] = $token;
-                }
-
-                // Before inserting any new records make sure all the old ones are deleted to avoid
-                // any issues or storing an unnecessary number of tokens in the database.
                 $user->recoveryTokens()->delete();
-
-                // Bulk insert the hashed tokens.
-                RecoveryToken::query()->insert($inserts);
+                for ($i = 0; $i < 10; $i++) {
+                    $user->recoveryTokens()->forceCreate([
+                        'token' => password_hash(str_random(10), PASSWORD_DEFAULT),
+                    ]);
+                }
             }
 
             $user->totp_authenticated_at = now();

@@ -5,10 +5,8 @@ namespace App\Http\Controllers\Api\Remote;
 use Carbon\Carbon;
 use Illuminate\Support\Str;
 use App\Models\User;
-use Webmozart\Assert\Assert;
 use App\Models\Server;
 use App\Models\ActivityLog;
-use App\Models\ActivityLogSubject;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\Remote\ActivityEventRequest;
 
@@ -71,19 +69,17 @@ class ActivityProcessingController extends Controller
         }
 
         foreach ($logs as $key => $data) {
-            Assert::isInstanceOf($server = $servers->get($key), Server::class);
+            $server = $servers->get($key);
+            assert($server instanceof Server);
 
-            $batch = [];
             foreach ($data as $datum) {
-                $id = ActivityLog::insertGetId($datum);
-                $batch[] = [
-                    'activity_log_id' => $id,
+                /** @var ActivityLog $activityLog */
+                $activityLog = ActivityLog::forceCreate($datum);
+                $activityLog->subjects()->create([
                     'subject_id' => $server->id,
                     'subject_type' => $server->getMorphClass(),
-                ];
+                ]);
             }
-
-            ActivityLogSubject::insert($batch);
         }
     }
 }

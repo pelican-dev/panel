@@ -236,16 +236,12 @@ class ActivityLogService
         $response = $this->connection->transaction(function () {
             $this->activity->save();
 
-            $subjects = Collection::make($this->subjects)
-                ->map(fn (Model $subject) => [
-                    'activity_log_id' => $this->activity->id,
+            foreach ($this->subjects as $subject) {
+                $this->activity->subjects()->forceCreate([
                     'subject_id' => $subject->getKey(),
                     'subject_type' => $subject->getMorphClass(),
-                ])
-                ->values()
-                ->toArray();
-
-            ActivityLogSubject::insert($subjects);
+                ]);
+            }
 
             return $this->activity;
         });
