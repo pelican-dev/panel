@@ -2,9 +2,6 @@
 
 namespace App\Services\Users;
 
-use App\Models\RecoveryToken;
-use Carbon\Carbon;
-use Illuminate\Support\Str;
 use App\Models\User;
 use PragmaRX\Google2FA\Google2FA;
 use Illuminate\Database\ConnectionInterface;
@@ -51,9 +48,11 @@ class ToggleTwoFactorService
             if ((!$toggleState && !$user->use_totp) || $toggleState) {
                 $user->recoveryTokens()->delete();
                 for ($i = 0; $i < 10; $i++) {
+                    $token = str_random(10);
                     $user->recoveryTokens()->forceCreate([
-                        'token' => password_hash(str_random(10), PASSWORD_DEFAULT),
+                        'token' => password_hash($token, PASSWORD_DEFAULT),
                     ]);
+                    $tokens[] = $token;
                 }
             }
 

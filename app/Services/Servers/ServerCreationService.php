@@ -3,7 +3,6 @@
 namespace App\Services\Servers;
 
 use App\Enums\ServerState;
-use App\Models\ServerVariable;
 use Illuminate\Http\Client\ConnectionException;
 use Ramsey\Uuid\Uuid;
 use Illuminate\Support\Arr;
