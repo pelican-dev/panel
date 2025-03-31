@@ -825,10 +825,10 @@ class EditServer extends EditRecord
                                                                         ->send();
 
                                                                     $this->refreshFormData(['status', 'docker']);
-                                                                } catch (Exception $exception) {
+                                                                } catch (Exception) {
                                                                     Notification::make()
                                                                         ->title(trans('admin/server.notifications.reinstall_failed'))
-                                                                        ->body($exception->getMessage())
+                                                                        ->body(trans('admin/server.error_connecting', ['node' => $server->node->name]))
                                                                         ->danger()
                                                                         ->send();
                                                                 }
@@ -873,11 +873,11 @@ class EditServer extends EditRecord
                                                                     ->send();
 
                                                                 $this->refreshFormData(['status', 'docker']);
-                                                            } catch (Exception $exception) {
+                                                            } catch (Exception) {
                                                                 Notification::make()
                                                                     ->warning()
                                                                     ->title(trans('admin/server.notifications.server_suspension'))
-                                                                    ->body($exception->getMessage())
+                                                                    ->body(trans('admin/server.error_connecting', ['node' => $server->node->name]))
                                                                     ->send();
                                                             }
                                                         }),
@@ -895,11 +895,11 @@ class EditServer extends EditRecord
                                                                     ->send();
 
                                                                 $this->refreshFormData(['status', 'docker']);
-                                                            } catch (Exception $exception) {
+                                                            } catch (Exception) {
                                                                 Notification::make()
                                                                     ->warning()
                                                                     ->title(trans('admin/server.notifications.server_suspension'))
-                                                                    ->body($exception->getMessage())
+                                                                    ->body(trans('admin/server.error_connecting', ['node' => $server->node->name]))
                                                                     ->send();
                                                             }
                                                         }),
@@ -986,10 +986,10 @@ class EditServer extends EditRecord
                                                                     ->send();
 
                                                                 $this->refreshFormData(['status', 'docker']);
-                                                            } catch (Exception $exception) {
+                                                            } catch (Exception) {
                                                                 Notification::make()
                                                                     ->title(trans('admin/server.notifications.reinstall_failed'))
-                                                                    ->body($exception->getMessage())
+                                                                    ->body(trans('admin/server.error_connecting', ['node' => $server->node->name]))
                                                                     ->danger()
                                                                     ->send();
                                                             }
