@@ -120,11 +120,6 @@ class ActivityLog extends Model implements HasIcon, HasLabel
         return $builder->whereMorphedTo('actor', $actor);
     }
 
-    /**
-     * Returns models to be pruned.
-     *
-     * @see https://laravel.com/docs/9.x/eloquent#pruning-models
-     */
     public function prunable(): Builder
     {
         if (is_null(config('activity.prune_days'))) {
@@ -134,10 +129,6 @@ class ActivityLog extends Model implements HasIcon, HasLabel
         return static::where('timestamp', '<=', Carbon::now()->subDays(config('activity.prune_days')));
     }
 
-    /**
-     * Boots the model event listeners. This will trigger an activity log event every
-     * time a new model is inserted which can then be captured and worked with as needed.
-     */
     protected static function boot(): void
     {
         parent::boot();
