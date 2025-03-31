@@ -62,7 +62,7 @@ enum ContainerStatus: string implements HasColor, HasIcon, HasLabel
             self::Removing => 'warning',
             self::Missing => 'danger',
             self::Stopping => 'warning',
-            self::Offline => 'gray',
+            self::Offline => 'danger',
         };
     }
 

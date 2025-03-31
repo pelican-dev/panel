@@ -2,13 +2,13 @@
 
 namespace App\Filament\App\Resources\ServerResource\Pages;
 
+use App\Enums\ServerResourceType;
 use App\Filament\App\Resources\ServerResource;
-use App\Filament\Components\Tables\Columns\ServerEntryColumn;
 use App\Filament\Server\Pages\Console;
 use App\Models\Server;
 use Filament\Resources\Components\Tab;
 use Filament\Resources\Pages\ListRecords;
-use Filament\Tables\Columns\Layout\Stack;
+use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
@@ -26,10 +26,39 @@ class ListServers extends ListRecords
             ->query(fn () => $baseQuery)
             ->poll('15s')
             ->columns([
-                Stack::make([
-                    ServerEntryColumn::make('server_entry')
-                        ->searchable(['name']),
-                ]),
+                TextColumn::make('condition')
+                    ->label('Status')
+                    ->default('unknown')
+                    ->wrap()
+                    ->badge()
+                    ->alignCenter()
+                    ->icon(fn (Server $server) => $server->condition->getIcon())
+                    ->color(fn (Server $server) => $server->condition->getColor()),
+                TextColumn::make('uptime')
+                    ->label('')
+                    ->icon('tabler-clock')
+                    ->state(fn (Server $server) => $server->formatResource('uptime', type: ServerResourceType::Time)),
+                TextColumn::make('name')
+                    ->searchable(),
+                TextColumn::make('')
+                    ->label('Network')
+                    ->icon('tabler-network')
+                    ->state(fn (Server $server) => $server->allocation->address),
+                TextColumn::make('cpuUsage')
+                    ->label('CPU')
+                    ->icon('tabler-cpu')
+                    ->tooltip(fn (Server $server) => 'Usage Limit: ' . $server->formatResource('cpu', limit: true, type: ServerResourceType::Percentage, precision: 0))
+                    ->state(fn (Server $server) => $server->formatResource('cpu_absolute', type: ServerResourceType::Percentage)),
+                TextColumn::make('memoryUsage')
+                    ->label('Memory')
+                    ->icon('tabler-memory')
+                    ->tooltip(fn (Server $server) => 'Usage Limit: ' . $server->formatResource('memory', limit: true))
+                    ->state(fn (Server $server) => $server->formatResource('memory_bytes')),
+                TextColumn::make('diskUsage')
+                    ->label('Disk')
+                    ->icon('tabler-device-floppy')
+                    ->tooltip(fn (Server $server) => 'Usage Limit: ' . $server->formatResource('disk', limit: true))
+                    ->state(fn (Server $server) => $server->formatResource('disk_bytes')),
             ])
             ->recordUrl(fn (Server $server) => Console::getUrl(panel: 'server', tenant: $server))
             ->emptyStateIcon('tabler-brand-docker')
