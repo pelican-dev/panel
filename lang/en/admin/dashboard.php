@@ -37,6 +37,7 @@ return [
             'extra_note' => 'We appreciate any and all support from anybody.',
             'button_translate' => 'Help Translate',
             'button_donate' => 'Donate Directly',
+            'button_merch' => 'Buy our Pelican Merch MEOW'
         ],
         'intro-help' => [
             'heading' => 'Need Help?',

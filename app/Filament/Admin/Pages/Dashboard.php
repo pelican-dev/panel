@@ -77,6 +77,11 @@ class Dashboard extends Page
                     ->icon('tabler-cash')
                     ->url('https://pelican.dev/donate', true)
                     ->color('success'),
+                CreateAction::make()
+                    ->label(trans('admin/dashboard.sections.intro-support.button_merch'))
+                    ->icon('tabler-shirt')
+                    ->url('https://pelican.dev/merch', true)
+                    ->color('success'),
             ],
             'helpActions' => [
                 CreateAction::make()
