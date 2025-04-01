@@ -118,6 +118,7 @@ return [
         'too_many_ports_body' => 'The current limit is :limit number of ports at one time.',
         'invalid_port' => 'Port not in valid range',
         'invalid_port_body' => ':i is not in the valid port range between :portFloor-:portCeil',
+        'dissociate_primary' => 'Cannot dissociate primary allocation',
         'already_exists' => 'Port already in use',
         'already_exists_body' => ':i is already with an allocation',
         'error_connecting' => 'Error connecting to :node',
