@@ -1035,9 +1035,9 @@ class EditServer extends EditRecord
         }
     }
 
-    public function save(bool $shouldRedirect = true, bool $shouldSendSavedNotification = true): void
+    protected function getSavedNotification(): ?Notification
     {
-        parent::save(shouldSendSavedNotification: false);
+        return null;
     }
 
     public function getRelationManagers(): array

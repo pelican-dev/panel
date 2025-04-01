@@ -639,9 +639,9 @@ class EditNode extends EditRecord
         }
     }
 
-    public function save(bool $shouldRedirect = true, bool $shouldSendSavedNotification = true): void
+    protected function getSavedNotification(): ?Notification
     {
-        parent::save(shouldSendSavedNotification: false);
+        return null;
     }
 
     protected function getColumnSpan(): ?int
