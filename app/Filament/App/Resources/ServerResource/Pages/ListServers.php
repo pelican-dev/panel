@@ -4,11 +4,13 @@ namespace App\Filament\App\Resources\ServerResource\Pages;
 
 use App\Enums\ServerResourceType;
 use App\Filament\App\Resources\ServerResource;
+use App\Filament\Components\Tables\Columns\ServerEntryColumn;
 use App\Filament\Server\Pages\Console;
 use App\Models\Server;
 use Filament\Resources\Components\Tab;
 use Filament\Resources\Pages\ListRecords;
 use Filament\Tables\Columns\ColumnGroup;
+use Filament\Tables\Columns\Layout\Stack;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
@@ -78,13 +80,10 @@ class ListServers extends ListRecords
             ->columns(
                 auth()->user()->dashboard_layout === 'grid'
                     ? [
-                        TextColumn::make('name')
-                            ->label('Name')
-                            ->searchable()
-                            ->url(fn (Server $server) => Console::getUrl(panel: 'server', tenant: $server)),
-                        TextColumn::make('egg.name')
-                            ->label('Egg')
-                            ->searchable(),
+                        Stack::make([
+                            ServerEntryColumn::make('server_entry')
+                                ->searchable(['name']),
+                        ]),
                     ]
                     : [
                         ColumnGroup::make('Status')
@@ -99,6 +98,10 @@ class ListServers extends ListRecords
                     ]
             )
             ->recordUrl(fn (Server $server) => Console::getUrl(panel: 'server', tenant: $server))
+            ->contentGrid([
+                'default' => 1,
+                'md' => 2,
+            ])
             ->emptyStateIcon('tabler-brand-docker')
             ->emptyStateDescription('')
             ->emptyStateHeading(fn () => $this->activeTab === 'my' ? 'You don\'t own any servers!' : 'You don\'t have access to any servers!')
