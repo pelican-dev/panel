@@ -19,7 +19,7 @@ class RecoveryToken extends Model implements Validatable
     use HasValidation;
 
     /**
-     * There are no updates to this model, only inserts and deletes.
+     * There are no updates to this model, only creates and deletes.
      */
     public const UPDATED_AT = null;
 

@@ -19,7 +19,7 @@ return new class extends Migration
             $table->dropForeign(['option']);
             $table->dropForeign(['pack']);
 
-            if (Schema::getConnection()->getDriverName() !== 'sqlite') {
+            if (!in_array(Schema::getConnection()->getDriverName(), ['sqlite', 'pgsql'])) {
                 $table->dropIndex('servers_node_foreign');
                 $table->dropIndex('servers_owner_foreign');
                 $table->dropIndex('servers_allocation_foreign');

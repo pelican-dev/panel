@@ -16,7 +16,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('api_keys', function (Blueprint $table) {
-            $table->char('identifier', 16)->nullable()->unique()->after('user_id');
+            $table->string('identifier', 16)->nullable()->unique()->after('user_id');
             $table->dropUnique(['token']);
         });
 

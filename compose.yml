@@ -35,9 +35,9 @@ services:
     ports:
       - "80:80"
       - "443:443"
-      # - "9000:9000" # enable when not using caddy to be abel to reach php-fpm
+      # - "9000:9000" # enable when not using caddy to be able to reach php-fpm
     extra_hosts:
-      - "host.docker.internal:host-gateway" # shows the panel on te internal docker network as well. usually '172.17.0.1'
+      - "host.docker.internal:host-gateway" # shows the panel on the internal docker network as well. usually '172.17.0.1'
     volumes:
       - pelican-data:/pelican-data
       - pelican-logs:/var/www/html/storage/logs

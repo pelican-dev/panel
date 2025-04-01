@@ -155,8 +155,8 @@ class AllocationSelectionService
             $query->whereIn('node_id', $nodes);
         }
 
-        return $query->groupBy('ip')
-            ->get()
+        return $query
+            ->groupBy('ip')
             ->pluck('ip')
             ->toArray();
     }

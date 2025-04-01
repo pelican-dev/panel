@@ -1,3 +1,4 @@
+
 #terminal {
     border-top-left-radius: 10px;
     border-top-right-radius: 10px;
@@ -46,4 +47,16 @@
 
 ::-webkit-scrollbar-corner {
     background: transparent;
+}
+
+@font-face {
+    font-family: Comic Mono;
+    font-weight: normal;
+    src: url('/fonts/ComicMono.ttf');
+}
+  
+@font-face {
+    font-family: Comic Mono;
+    font-weight: bold;
+    src: url('/fonts/ComicMono-bold.ttf');
 }

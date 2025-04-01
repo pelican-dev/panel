@@ -31,7 +31,6 @@ use Illuminate\Database\Eloquent\Relations\MorphToMany;
 use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
 use Illuminate\Contracts\Auth\Access\Authorizable as AuthorizableContract;
 use Illuminate\Contracts\Auth\CanResetPassword as CanResetPasswordContract;
-use App\Notifications\SendPasswordReset as ResetPasswordNotification;
 use ResourceBundle;
 use Spatie\Permission\Traits\HasRoles;
 
@@ -179,6 +178,10 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
             return true;
         });
 
+        static::saving(function (self $user) {
+            $user->email = mb_strtolower($user->email);
+        });
+
         static::deleting(function (self $user) {
             throw_if($user->servers()->count() > 0, new DisplayException(trans('exceptions.users.has_servers')));
 
@@ -199,21 +202,6 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
         $rules['username'][] = new Username();
 
         return $rules;
-    }
-
-    /**
-     * Send the password reset notification.
-     *
-     * @param  string  $token
-     */
-    public function sendPasswordResetNotification($token): void
-    {
-        Activity::event('auth:reset-password')
-            ->withRequestMetadata()
-            ->subject($this)
-            ->log('sending password reset email');
-
-        $this->notify(new ResetPasswordNotification($token));
     }
 
     public function username(): Attribute

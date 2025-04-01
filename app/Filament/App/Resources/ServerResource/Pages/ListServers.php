@@ -33,21 +33,27 @@ class ListServers extends ListRecords
                         ->searchable(['name']),
                 ]),
             ])
-            ->contentGrid([
-                'default' => 1,
-                'md' => 2,
-            ])
             ->recordUrl(fn (Server $server) => Console::getUrl(panel: 'server', tenant: $server))
             ->emptyStateIcon('tabler-brand-docker')
             ->emptyStateDescription('')
-            ->emptyStateHeading('You don\'t have access to any servers!')
+            ->emptyStateHeading(fn () => $this->activeTab === 'my' ? 'You don\'t own any servers!' : 'You don\'t have access to any servers!')
             ->persistFiltersInSession()
             ->filters([
                 SelectFilter::make('egg')
                     ->relationship('egg', 'name', fn (Builder $query) => $query->whereIn('id', $baseQuery->pluck('egg_id')))
                     ->searchable()
                     ->preload(),
+                SelectFilter::make('owner')
+                    ->relationship('user', 'username', fn (Builder $query) => $query->whereIn('id', $baseQuery->pluck('owner_id')))
+                    ->searchable()
+                    ->hidden(fn () => $this->activeTab === 'my')
+                    ->preload(),
             ]);
+    }
+
+    public function updatedActiveTab(): void
+    {
+        $this->resetTable();
     }
 
     public function getTabs(): array

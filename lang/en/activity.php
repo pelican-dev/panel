@@ -11,7 +11,6 @@ return [
         'fail' => 'Failed log in',
         'success' => 'Logged in',
         'password-reset' => 'Password reset',
-        'reset-password' => 'Requested password reset',
         'checkpoint' => 'Two-factor authentication requested',
         'recovery-token' => 'Used two-factor recovery token',
         'token' => 'Solved two-factor challenge',
