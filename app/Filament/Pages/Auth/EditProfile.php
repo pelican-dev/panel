@@ -29,6 +29,7 @@ use Filament\Forms\Components\Tabs\Tab;
 use Filament\Forms\Components\TagsInput;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\ToggleButtons;
 use Filament\Forms\Get;
 use Filament\Notifications\Notification;
 use Filament\Pages\Auth\EditProfile as BaseEditProfile;
@@ -242,6 +243,7 @@ class EditProfile extends BaseEditProfile
                                                 ->password(),
                                         ];
                                     }),
+
                                 Tab::make(trans('profile.tabs.api_keys'))
                                     ->icon('tabler-key')
                                     ->schema([
@@ -308,9 +310,11 @@ class EditProfile extends BaseEditProfile
                                             ]),
                                         ]),
                                     ]),
+
                                 Tab::make(trans('profile.tabs.ssh_keys'))
                                     ->icon('tabler-lock-code')
                                     ->hidden(),
+
                                 Tab::make(trans('profile.tabs.activity'))
                                     ->icon('tabler-history')
                                     ->schema([
@@ -324,6 +328,19 @@ class EditProfile extends BaseEditProfile
                                             ->schema([
                                                 Placeholder::make('activity!')->label('')->content(fn (ActivityLog $log) => new HtmlString($log->htmlable())),
                                             ]),
+                                    ]),
+
+                                Tab::make(trans('profile.tabs.dashboard'))
+                                    ->icon('tabler-dashboard')
+                                    ->schema([
+                                        ToggleButtons::make('dashboard_layout')
+                                            ->label(trans('profile.dashboard'))
+                                            ->inline()
+                                            ->options([
+                                                'grid' => trans('profile.grid'),
+                                                'table' => trans('profile.table'),
+                                            ]),
+
                                     ]),
                             ]),
                     ])

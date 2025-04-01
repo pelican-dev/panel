@@ -9,6 +9,7 @@ return [
         'api_keys' => 'API Keys',
         'ssh_keys' => 'SSH Keys',
         '2fa' => '2FA',
+        'dashboard' => 'Dashboard',
     ],
     'username' => 'Username',
     'exit_admin' => 'Exit Admin',
@@ -38,4 +39,7 @@ return [
     'description' => 'Description',
     'allowed_ips' => 'Allowed IPs',
     'allowed_ips_help' => 'Press enter to add a new IP address or leave blank to allow any IP address',
+    'dashboard' => 'Dashboard',
+    'grid' => 'Grid',
+    'table' => 'Table',
 ];

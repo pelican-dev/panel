@@ -68,6 +68,7 @@ use Spatie\Permission\Traits\HasRoles;
  * @property int|null $tokens_count
  * @property \Illuminate\Database\Eloquent\Collection|\App\Models\Role[] $roles
  * @property int|null $roles_count
+ * @property string $dashboard_layout
  *
  * @method static \Database\Factories\UserFactory factory(...$parameters)
  * @method static Builder|User newModelQuery()
@@ -125,6 +126,7 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
         'totp_authenticated_at',
         'gravatar',
         'oauth',
+        'dashboard_layout',
     ];
 
     /**
@@ -142,6 +144,7 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
         'use_totp' => false,
         'totp_secret' => null,
         'oauth' => '[]',
+        'dashboard_layout' => 'grid',
     ];
 
     /** @var array<array-key, string[]> */

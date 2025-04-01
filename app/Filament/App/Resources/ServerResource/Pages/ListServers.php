@@ -8,6 +8,7 @@ use App\Filament\Server\Pages\Console;
 use App\Models\Server;
 use Filament\Resources\Components\Tab;
 use Filament\Resources\Pages\ListRecords;
+use Filament\Tables\Columns\ColumnGroup;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
@@ -17,49 +18,86 @@ class ListServers extends ListRecords
 {
     protected static string $resource = ServerResource::class;
 
+    public const DANGER_THRESHOLD = 0.9;
+
+    public const WARNING_THRESHOLD = 0.7;
+
     public function table(Table $table): Table
     {
         $baseQuery = auth()->user()->accessibleServers();
+
+        $viewOne = [
+            TextColumn::make('condition')
+                ->label('')
+                ->default('unknown')
+                ->wrap()
+                ->badge()
+                ->alignCenter()
+                ->tooltip(fn (Server $server) => $server->formatResource('uptime', type: ServerResourceType::Time))
+                ->icon(fn (Server $server) => $server->condition->getIcon())
+                ->color(fn (Server $server) => $server->condition->getColor()),
+        ];
+
+        $viewTwo = [
+            TextColumn::make('name')
+                ->label('')
+                ->searchable(),
+            TextColumn::make('')
+                ->label('')
+                ->badge()
+                ->copyable(request()->isSecure())
+                ->copyMessage(fn (Server $server, string $state) => 'Copied ' . $server->allocation->address)
+                ->state(fn (Server $server) => $server->allocation->address),
+        ];
+
+        $viewThree = [
+            TextColumn::make('cpuUsage')
+                ->label('')
+                ->icon('tabler-cpu')
+                ->tooltip(fn (Server $server) => 'Usage Limit: ' . $server->formatResource('cpu', limit: true, type: ServerResourceType::Percentage, precision: 0))
+                ->state(fn (Server $server) => $server->formatResource('cpu_absolute', type: ServerResourceType::Percentage))
+                ->color(fn (Server $server) => $this->getResourceColor($server, 'cpu')),
+            TextColumn::make('memoryUsage')
+                ->label('')
+                ->icon('tabler-memory')
+                ->tooltip(fn (Server $server) => 'Usage Limit: ' . $server->formatResource('memory', limit: true))
+                ->state(fn (Server $server) => $server->formatResource('memory_bytes'))
+                ->color(fn (Server $server) => $this->getResourceColor($server, 'memory')),
+            TextColumn::make('diskUsage')
+                ->label('')
+                ->icon('tabler-device-floppy')
+                ->tooltip(fn (Server $server) => 'Usage Limit: ' . $server->formatResource('disk', limit: true))
+                ->state(fn (Server $server) => $server->formatResource('disk_bytes'))
+                ->color(fn (Server $server) => $this->getResourceColor($server, 'disk')),
+        ];
 
         return $table
             ->paginated(false)
             ->query(fn () => $baseQuery)
             ->poll('15s')
-            ->columns([
-                TextColumn::make('condition')
-                    ->label('Status')
-                    ->default('unknown')
-                    ->wrap()
-                    ->badge()
-                    ->alignCenter()
-                    ->icon(fn (Server $server) => $server->condition->getIcon())
-                    ->color(fn (Server $server) => $server->condition->getColor()),
-                TextColumn::make('uptime')
-                    ->label('')
-                    ->icon('tabler-clock')
-                    ->state(fn (Server $server) => $server->formatResource('uptime', type: ServerResourceType::Time)),
-                TextColumn::make('name')
-                    ->searchable(),
-                TextColumn::make('')
-                    ->label('Network')
-                    ->icon('tabler-network')
-                    ->state(fn (Server $server) => $server->allocation->address),
-                TextColumn::make('cpuUsage')
-                    ->label('CPU')
-                    ->icon('tabler-cpu')
-                    ->tooltip(fn (Server $server) => 'Usage Limit: ' . $server->formatResource('cpu', limit: true, type: ServerResourceType::Percentage, precision: 0))
-                    ->state(fn (Server $server) => $server->formatResource('cpu_absolute', type: ServerResourceType::Percentage)),
-                TextColumn::make('memoryUsage')
-                    ->label('Memory')
-                    ->icon('tabler-memory')
-                    ->tooltip(fn (Server $server) => 'Usage Limit: ' . $server->formatResource('memory', limit: true))
-                    ->state(fn (Server $server) => $server->formatResource('memory_bytes')),
-                TextColumn::make('diskUsage')
-                    ->label('Disk')
-                    ->icon('tabler-device-floppy')
-                    ->tooltip(fn (Server $server) => 'Usage Limit: ' . $server->formatResource('disk', limit: true))
-                    ->state(fn (Server $server) => $server->formatResource('disk_bytes')),
-            ])
+            ->columns(
+                auth()->user()->dashboard_layout === 'grid'
+                    ? [
+                        TextColumn::make('name')
+                            ->label('Name')
+                            ->searchable()
+                            ->url(fn (Server $server) => Console::getUrl(panel: 'server', tenant: $server)),
+                        TextColumn::make('egg.name')
+                            ->label('Egg')
+                            ->searchable(),
+                    ]
+                    : [
+                        ColumnGroup::make('Status')
+                            ->label('Status')
+                            ->columns($viewOne),
+                        ColumnGroup::make('Server')
+                            ->label('Servers')
+                            ->columns($viewTwo),
+                        ColumnGroup::make('Resources')
+                            ->label('Resources')
+                            ->columns($viewThree),
+                    ]
+            )
             ->recordUrl(fn (Server $server) => Console::getUrl(panel: 'server', tenant: $server))
             ->emptyStateIcon('tabler-brand-docker')
             ->emptyStateDescription('')
@@ -101,5 +139,41 @@ class ListServers extends ListRecords
             'all' => Tab::make('All Servers')
                 ->badge($all->count()),
         ];
+    }
+
+    public function getResourceColor(Server $server, string $resource): ?string
+    {
+        $current = null;
+        $limit = null;
+
+        if ($resource === 'cpu') {
+            $current = $server->resources()['cpu_absolute'];
+            $limit = $server->cpu;
+
+            if ($server->cpu === 0) {
+                return null;
+            }
+        } elseif ($resource === 'memory') {
+            $current = $server->resources()['memory_bytes'];
+            $limit = $server->memory * 2 ** 20;
+            if ($server->memory === 0) {
+                return null;
+            }
+
+        } elseif ($resource === 'disk') {
+            $current = $server->resources()['disk_bytes'];
+            $limit = $server->disk * 2 ** 20;
+            if ($server->disk === 0) {
+                return null;
+            }
+        }
+
+        if ($current >= $limit * self::DANGER_THRESHOLD) {
+            return 'danger';
+        } elseif ($current >= $limit * self::WARNING_THRESHOLD) {
+            return 'warning';
+        } else {
+            return null;
+        }
     }
 }
