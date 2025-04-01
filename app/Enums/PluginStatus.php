@@ -2,15 +2,17 @@
 
 namespace App\Enums;
 
+use Filament\Support\Contracts\HasColor;
+use Filament\Support\Contracts\HasIcon;
 use Filament\Support\Contracts\HasLabel;
 
-enum PluginStatus: string implements HasLabel
+enum PluginStatus: string implements HasColor, HasIcon, HasLabel
 {
     case Disabled = 'disabled';
     case Enabled = 'enabled';
     case Errored = 'errored';
 
-    public function icon(): string
+    public function getIcon(): string
     {
         return match ($this) {
             self::Disabled => 'tabler-heart-off',
@@ -19,7 +21,7 @@ enum PluginStatus: string implements HasLabel
         };
     }
 
-    public function color(): string
+    public function getColor(): string
     {
         return match ($this) {
             self::Disabled => 'gray',
@@ -28,7 +30,7 @@ enum PluginStatus: string implements HasLabel
         };
     }
 
-    public function getLabel(): ?string
+    public function getLabel(): string
     {
         return $this->name;
     }

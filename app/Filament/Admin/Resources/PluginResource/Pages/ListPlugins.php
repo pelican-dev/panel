@@ -2,7 +2,6 @@
 
 namespace App\Filament\Admin\Resources\PluginResource\Pages;
 
-use App\Enums\PluginStatus;
 use App\Models\Plugin;
 use App\Filament\Admin\Resources\PluginResource;
 use App\Services\Helpers\PluginService;
@@ -36,8 +35,6 @@ class ListPlugins extends ListRecords
                     ->badge()
                     ->sortable(),
                 TextColumn::make('status')
-                    ->icon(fn (PluginStatus $state) => $state->icon())
-                    ->iconColor(fn (PluginStatus $state) => $state->color())
                     ->tooltip(fn (Plugin $plugin): ?string => $plugin->status_message)
                     ->sortable(),
             ])

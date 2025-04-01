@@ -2,7 +2,9 @@
 
 namespace App\Models;
 
+use App\Contracts\Plugins\HasPluginSettings;
 use App\Enums\PluginStatus;
+use Filament\Forms\Components\Component;
 use Illuminate\Database\Eloquent\Model as IlluminateModel;
 use Illuminate\Filesystem\Filesystem;
 use Sushi\Sushi;
@@ -22,7 +24,7 @@ use Sushi\Sushi;
  * @property string|null $panel_version
  * @property string $category
  */
-class Plugin extends IlluminateModel
+class Plugin extends IlluminateModel implements HasPluginSettings
 {
     use Sushi;
 
@@ -32,6 +34,9 @@ class Plugin extends IlluminateModel
 
     public $incrementing = false;
 
+    /**
+     * @return string[]
+     */
     public function getSchema(): array
     {
         return [
@@ -51,6 +56,23 @@ class Plugin extends IlluminateModel
         ];
     }
 
+    /**
+     * @return array<array{
+     *     id: string,
+     *     name: string,
+     *     author: string,
+     *     version: string,
+     *     description: string,
+     *     url: string,
+     *     namespace: string,
+     *     class: string,
+     *     status: string,
+     *     status_message: string,
+     *     panels: string,
+     *     panel_version: string,
+     *     category: string
+     * }>
+     */
     public function getRows(): array
     {
         $fileSystem = app(Filesystem::class); // @phpstan-ignore-line
@@ -129,6 +151,9 @@ class Plugin extends IlluminateModel
         return false;
     }
 
+    /**
+     * @return Component[]
+     */
     public function getSettingsForm(): array
     {
         $class = $this->fullClass();
@@ -143,6 +168,9 @@ class Plugin extends IlluminateModel
         return [];
     }
 
+    /**
+     * @param  array<mixed, mixed>  $data
+     */
     public function saveSettings(array $data): void
     {
         $class = $this->fullClass();
@@ -155,6 +183,9 @@ class Plugin extends IlluminateModel
         }
     }
 
+    /**
+     * @return string[]
+     */
     public function getProviders(): array
     {
         $class = $this->fullClass();
@@ -165,6 +196,9 @@ class Plugin extends IlluminateModel
         return [];
     }
 
+    /**
+     * @return string[]
+     */
     public function getCommands(): array
     {
         $class = $this->fullClass();
