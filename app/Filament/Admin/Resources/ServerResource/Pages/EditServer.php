@@ -32,6 +32,7 @@ use Filament\Actions;
 use Filament\Forms;
 use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\CheckboxList;
+use Filament\Forms\Components\Component;
 use Filament\Forms\Components\Fieldset;
 use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\Hidden;
@@ -51,7 +52,6 @@ use Filament\Forms\Set;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\EditRecord;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\HtmlString;
@@ -61,8 +61,6 @@ use Webbingbrasil\FilamentCopyActions\Forms\Actions\CopyAction;
 class EditServer extends EditRecord
 {
     protected static string $resource = ServerResource::class;
-
-    private bool $errored = false;
 
     private DaemonServerRepository $daemonServerRepository;
 
@@ -865,6 +863,7 @@ class EditServer extends EditRecord
                                                         ->label(trans('admin/server.transfer'))
                                                         ->disabled(fn (Server $server) => Node::count() <= 1 || $server->isInConflictState())
                                                         ->modalheading(trans('admin/server.transfer'))
+                                                        ->form($this->transferServer())
                                                         ->action(function (TransferServerService $transfer, Server $server, $data) {
                                                             try {
                                                                 $transfer->handle($server, $data);
@@ -880,33 +879,7 @@ class EditServer extends EditRecord
                                                                     ->danger()
                                                                     ->send();
                                                             }
-                                                        })
-                                                        ->form([
-                                                            Select::make('node_id')
-                                                                ->label(trans('admin/server.node'))
-                                                                ->prefixIcon('tabler-server-2')
-                                                                ->selectablePlaceholder(false)
-                                                                ->default(fn (Server $server) => Node::whereNot('id', $server->node->id)->first()?->id)
-                                                                ->required()
-                                                                ->live()
-                                                                ->options(fn (Server $server) => Node::whereNot('id', $server->node->id)->pluck('name', 'id')->all()),
-                                                            Select::make('allocation_id')
-                                                                ->label(trans('admin/server.primary_allocation'))
-                                                                ->required()
-                                                                ->prefixIcon('tabler-network')
-                                                                ->disabled(fn (Get $get) => !$get('node_id'))
-                                                                ->options(fn (Get $get) => Allocation::where('node_id', $get('node_id'))->whereNull('server_id')->get()->mapWithKeys(fn (Allocation $allocation) => [$allocation->id => $allocation->address]))
-                                                                ->searchable(['ip', 'port', 'ip_alias'])
-                                                                ->placeholder(trans('admin/server.select_allocation')),
-                                                            Select::make('allocation_additional')
-                                                                ->label(trans('admin/server.additional_allocations'))
-                                                                ->multiple()
-                                                                ->prefixIcon('tabler-network')
-                                                                ->disabled(fn (Get $get) => !$get('node_id'))
-                                                                ->options(fn (Get $get) => Allocation::where('node_id', $get('node_id'))->whereNull('server_id')->when($get('allocation_id'), fn ($query) => $query->whereNot('id', $get('allocation_id')))->get()->mapWithKeys(fn (Allocation $allocation) => [$allocation->id => $allocation->address]))
-                                                                ->searchable(['ip', 'port', 'ip_alias'])
-                                                                ->placeholder(trans('admin/server.select_additional')),
-                                                        ]),
+                                                        }),
                                                 ])->fullWidth(),
                                                 ToggleButtons::make('')
                                                     ->hint(new HtmlString(trans('admin/server.transfer_help'))),
@@ -933,17 +906,35 @@ class EditServer extends EditRecord
             ]);
     }
 
-    protected function transferServer(Form $form): Form
+    /** @return Component[] */
+    protected function transferServer(): array
     {
-        return $form
-            ->columns()
-            ->schema([
-                Select::make('toNode')
-                    ->label('New Node'),
-                TextInput::make('newAllocation')
-                    ->label('Allocation'),
-            ]);
-
+        return [
+            Select::make('node_id')
+                ->label(trans('admin/server.node'))
+                ->prefixIcon('tabler-server-2')
+                ->selectablePlaceholder(false)
+                ->default(fn (Server $server) => Node::whereNot('id', $server->node->id)->first()?->id)
+                ->required()
+                ->live()
+                ->options(fn (Server $server) => Node::whereNot('id', $server->node->id)->pluck('name', 'id')->all()),
+            Select::make('allocation_id')
+                ->label(trans('admin/server.primary_allocation'))
+                ->required()
+                ->prefixIcon('tabler-network')
+                ->disabled(fn (Get $get) => !$get('node_id'))
+                ->options(fn (Get $get) => Allocation::where('node_id', $get('node_id'))->whereNull('server_id')->get()->mapWithKeys(fn (Allocation $allocation) => [$allocation->id => $allocation->address]))
+                ->searchable(['ip', 'port', 'ip_alias'])
+                ->placeholder(trans('admin/server.select_allocation')),
+            Select::make('allocation_additional')
+                ->label(trans('admin/server.additional_allocations'))
+                ->multiple()
+                ->prefixIcon('tabler-network')
+                ->disabled(fn (Get $get) => !$get('node_id'))
+                ->options(fn (Get $get) => Allocation::where('node_id', $get('node_id'))->whereNull('server_id')->when($get('allocation_id'), fn ($query) => $query->whereNot('id', $get('allocation_id')))->get()->mapWithKeys(fn (Allocation $allocation) => [$allocation->id => $allocation->address]))
+                ->searchable(['ip', 'port', 'ip_alias'])
+                ->placeholder(trans('admin/server.select_additional')),
+        ];
     }
 
     protected function getHeaderActions(): array
@@ -1021,39 +1012,32 @@ class EditServer extends EditRecord
         return $data;
     }
 
-    protected function handleRecordUpdate(Model $record, array $data): Model
+    protected function afterSave(): void
     {
-        if (!$record instanceof Server) {
-            return $record;
-        }
+        /** @var Server $server */
+        $server = $this->record;
 
-        /** @var Server $record */
-        $record = parent::handleRecordUpdate($record, $data);
+        $changed = collect($server->getChanges())->except(['updated_at', 'name', 'owner_id', 'condition', 'description', 'external_id', 'tags', 'cpu_pinning', 'allocation_limit', 'database_limit', 'backup_limit', 'skip_scripts'])->all();
 
         try {
-            $this->daemonServerRepository->setServer($record)->sync();
+            if ($changed) {
+                $this->daemonServerRepository->setServer($server)->sync();
+            }
+            parent::getSavedNotification()?->send();
         } catch (ConnectionException) {
-            $this->errored = true;
-
             Notification::make()
-                ->title(trans('admin/server.notifications.error_connecting', ['node' => $record->node->name]))
+                ->title(trans('admin/server.notifications.error_connecting', ['node' => $server->node->name]))
                 ->body(trans('admin/server.notifications.error_connecting_description'))
                 ->color('warning')
                 ->icon('tabler-database')
                 ->warning()
                 ->send();
         }
-
-        return $record;
     }
 
-    protected function getSavedNotification(): ?Notification
+    public function save(bool $shouldRedirect = true, bool $shouldSendSavedNotification = true): void
     {
-        if ($this->errored) {
-            return null;
-        }
-
-        return parent::getSavedNotification();
+        parent::save(shouldSendSavedNotification: false);
     }
 
     public function getRelationManagers(): array
