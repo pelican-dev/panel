@@ -3,6 +3,7 @@
 namespace App\Providers\Filament;
 
 use AchyutN\FilamentLogViewer\FilamentLogViewer;
+use App\Services\Helpers\PluginService;
 use Filament\Actions\Action;
 use Filament\Facades\Filament;
 use Filament\Panel;
@@ -11,7 +12,7 @@ class AppPanelProvider extends PanelProvider
 {
     public function panel(Panel $panel): Panel
     {
-        return parent::panel($panel)
+        $panel = parent::panel($panel)
             ->id('app')
             ->default()
             ->breadcrumbs(false)
@@ -29,5 +30,9 @@ class AppPanelProvider extends PanelProvider
                 FilamentLogViewer::make()
                     ->authorize(false),
             ]);
+
+        app(PluginService::class)->loadPanelPlugins(app(), $panel); // @phpstan-ignore-line
+
+        return $panel;
     }
 }
