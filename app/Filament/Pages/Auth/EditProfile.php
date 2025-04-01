@@ -127,7 +127,6 @@ class EditProfile extends BaseEditProfile
                                             ->options(fn (LanguageService $languageService) => $languageService->getAvailableLanguages())
                                             ->native(false),
                                     ]),
-
                                 Tab::make(trans('profile.tabs.oauth'))
                                     ->icon('tabler-brand-oauth')
                                     ->visible(count($oauthProviders) > 0)
@@ -166,7 +165,6 @@ class EditProfile extends BaseEditProfile
 
                                         return [Actions::make($actions)];
                                     }),
-
                                 Tab::make(trans('profile.tabs.2fa'))
                                     ->icon('tabler-shield-lock')
                                     ->schema(function (TwoFactorSetupService $setupService) {
@@ -341,6 +339,34 @@ class EditProfile extends BaseEditProfile
                                                 'table' => trans('profile.table'),
                                             ]),
 
+                                    ]),
+                                Tab::make(trans('profile.tabs.console'))
+                                    ->icon('tabler-terminal')
+                                    ->columns(3)
+                                    ->schema([
+                                        TextInput::make('console_rows')
+                                            ->label(trans('profile.rows'))
+                                            ->minValue(1)
+                                            ->numeric()
+                                            ->required()
+                                            ->columnSpan(1)
+                                            ->default(30),
+                                        Select::make('console_font')
+                                            ->label(trans('profile.font'))
+                                            ->columnSpan(1)
+                                            ->options([
+                                                'monospace' => 'Monospace',
+                                                'sans-serif' => 'Sans-serif',
+                                                'serif' => 'Serif',
+                                            ])
+                                            ->default('monospace'),
+                                        TextInput::make('console_font_size')
+                                            ->label(trans('profile.font_size'))
+                                            ->columnSpan(1)
+                                            ->minValue(1)
+                                            ->numeric()
+                                            ->required()
+                                            ->default(16),
                                     ]),
                             ]),
                     ])

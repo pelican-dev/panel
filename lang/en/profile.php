@@ -10,6 +10,7 @@ return [
         'ssh_keys' => 'SSH Keys',
         '2fa' => '2FA',
         'dashboard' => 'Dashboard',
+        'console' => 'Console',
     ],
     'username' => 'Username',
     'exit_admin' => 'Exit Admin',
@@ -42,4 +43,7 @@ return [
     'dashboard' => 'Dashboard',
     'grid' => 'Grid',
     'table' => 'Table',
+    'rows' => 'Rows',
+    'font_size' => 'Font Size',
+    'font' => 'Font',
 ];
