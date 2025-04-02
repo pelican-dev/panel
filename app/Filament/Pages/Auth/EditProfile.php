@@ -330,7 +330,7 @@ class EditProfile extends BaseEditProfile
                                             ]),
                                     ]),
 
-                                Tab::make(trans('profile.tabs.Customization'))
+                                Tab::make(trans('profile.tabs.customization'))
                                     ->icon('tabler-adjustments')
                                     ->schema([
                                         Section::make(trans('profile.dashboard'))
@@ -366,7 +366,7 @@ class EditProfile extends BaseEditProfile
                                                     ->minValue(1)
                                                     ->numeric()
                                                     ->required()
-                                                    ->default(16),
+                                                    ->default(14),
                                             ]),
                                     ]),
                             ]),

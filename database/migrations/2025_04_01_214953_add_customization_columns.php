@@ -14,10 +14,9 @@ return new class extends Migration
         Schema::table('users', function (Blueprint $table) {
             $table->string('dashboard_layout')->default('grid');
             $table->integer('console_font_size')->default(14);
-            $table->text('console_font')->default('monospace');
+            $table->string('console_font')->default('monospace');
             $table->integer('console_rows')->default(30);
         });
-
     }
 
     /**

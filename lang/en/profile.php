@@ -9,7 +9,7 @@ return [
         'api_keys' => 'API Keys',
         'ssh_keys' => 'SSH Keys',
         '2fa' => '2FA',
-        'Customization' => 'Customization',
+        'customization' => 'Customization',
     ],
     'username' => 'Username',
     'exit_admin' => 'Exit Admin',
