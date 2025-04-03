@@ -57,14 +57,14 @@
         };
 
         let options = {
-            fontSize: {{ auth()->user()->console_font_size ?? 14 }},
+            fontSize: {{ auth()->user()->getCustomization()['console_font_size'] ?? 14 }},
             fontFamily: 'Comic Mono, monospace',
             lineHeight: 1.2,
             disableStdin: true,
             cursorStyle: 'underline',
             cursorInactiveStyle: 'underline',
             allowTransparency: true,
-            rows: {{ auth()->user()->console_rows ?? 30}},
+            rows: {{ auth()->user()->getCustomization()['console_rows'] ?? 30 }},
             theme: theme
         };
 

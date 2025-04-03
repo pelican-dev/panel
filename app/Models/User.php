@@ -68,10 +68,7 @@ use Spatie\Permission\Traits\HasRoles;
  * @property int|null $tokens_count
  * @property \Illuminate\Database\Eloquent\Collection|\App\Models\Role[] $roles
  * @property int|null $roles_count
- * @property int|null $console_rows
- * @property string|null $console_font
- * @property int|null $console_font_size
- * @property string $dashboard_layout
+ * @property string|null $customization
  *
  * @method static \Database\Factories\UserFactory factory(...$parameters)
  * @method static Builder|User newModelQuery()
@@ -129,10 +126,7 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
         'totp_authenticated_at',
         'gravatar',
         'oauth',
-        'console_font_size',
-        'console_font',
-        'console_rows',
-        'dashboard_layout',
+        'customization',
     ];
 
     /**
@@ -150,10 +144,7 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
         'use_totp' => false,
         'totp_secret' => null,
         'oauth' => '[]',
-        'console_font_size' => 14,
-        'console_font' => 'monospace',
-        'console_rows' => 30,
-        'dashboard_layout' => 'grid',
+        'customization' => null,
     ];
 
     /** @var array<array-key, string[]> */
@@ -168,9 +159,10 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
         'use_totp' => ['boolean'],
         'totp_secret' => ['nullable', 'string'],
         'oauth' => ['array', 'nullable'],
-        'console_rows' => ['integer', 'min:1'],
-        'console_font' => ['string'],
-        'console_font_size' => ['integer', 'min:1'],
+        'customization' => ['array', 'nullable'],
+        'customization.console_rows' => ['integer', 'min:1'],
+        'customization.console_font' => ['string'],
+        'customization.console_font_size' => ['integer', 'min:1'],
     ];
 
     protected function casts(): array
@@ -181,6 +173,7 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
             'totp_authenticated_at' => 'datetime',
             'totp_secret' => 'encrypted',
             'oauth' => 'array',
+            'customization' => 'array',
         ];
     }
 
@@ -416,5 +409,11 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
         }
 
         return false;
+    }
+
+    /** @return array<mixed> */
+    public function getCustomization(): array
+    {
+        return json_decode($this->customization, true) ?? [];
     }
 }

@@ -334,19 +334,20 @@ class EditProfile extends BaseEditProfile
                                     ->icon('tabler-adjustments')
                                     ->schema([
                                         Section::make(trans('profile.dashboard'))
-                                            ->collapsed()
+                                            ->collapsible()
                                             ->icon('tabler-dashboard')
                                             ->schema([
                                                 ToggleButtons::make('dashboard_layout')
                                                     ->label(trans('profile.dashboard_layout'))
                                                     ->inline()
+                                                    ->required()
                                                     ->options([
                                                         'grid' => trans('profile.grid'),
                                                         'table' => trans('profile.table'),
                                                     ]),
                                             ]),
                                         Section::make(trans('profile.console'))
-                                            ->collapsed()
+                                            ->collapsible()
                                             ->icon('tabler-brand-tabler')
                                             ->schema([
                                                 TextInput::make('console_rows')
@@ -356,10 +357,10 @@ class EditProfile extends BaseEditProfile
                                                     ->required()
                                                     ->columnSpan(1)
                                                     ->default(30),
-                                                Select::make('console_font')
-                                                    ->label(trans('profile.font'))
-                                                    ->hidden() //TODO
-                                                    ->columnSpan(1),
+                                                //                                                Select::make('console_font')
+                                                //                                                    ->label(trans('profile.font'))
+                                                //                                                    ->hidden() //TODO
+                                                //                                                    ->columnSpan(1),
                                                 TextInput::make('console_font_size')
                                                     ->label(trans('profile.font_size'))
                                                     ->columnSpan(1)
@@ -424,5 +425,30 @@ class EditProfile extends BaseEditProfile
             $this->getSaveFormAction()->formId('form'),
         ];
 
+    }
+
+    protected function mutateFormDataBeforeSave(array $data): array
+    {
+        $moarbetterdata = [
+            'console_font_size' => $data['console_font_size'],
+            'console_rows' => $data['console_rows'],
+            'dashboard_layout' => $data['dashboard_layout'],
+        ];
+
+        unset($data['dashboard_layout'], $data['console_font_size'], $data['console_rows']);
+        $data['customization'] = json_encode($moarbetterdata);
+
+        return $data;
+    }
+
+    protected function mutateFormDataBeforeFill(array $data): array
+    {
+        $moarbetterdata = json_decode($data['customization'], true);
+
+        $data['console_font_size'] = $moarbetterdata['console_font_size'] ?? 14;
+        $data['console_rows'] = $moarbetterdata['console_rows'] ?? 30;
+        $data['dashboard_layout'] = $moarbetterdata['dashboard_layout'] ?? 'grid';
+
+        return $data;
     }
 }

@@ -43,6 +43,7 @@ class ListServers extends ListRecords
         $viewTwo = [
             TextColumn::make('name')
                 ->label('')
+                ->size('md')
                 ->searchable(),
             TextColumn::make('')
                 ->label('')
@@ -78,7 +79,7 @@ class ListServers extends ListRecords
             ->query(fn () => $baseQuery)
             ->poll('15s')
             ->columns(
-                auth()->user()->dashboard_layout === 'grid'
+                (auth()->user()->getCustomization()['dashboard_layout'] ?? 'grid') === 'grid'
                     ? [
                         Stack::make([
                             ServerEntryColumn::make('server_entry')
