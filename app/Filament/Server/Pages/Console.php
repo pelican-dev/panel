@@ -2,6 +2,7 @@
 
 namespace App\Filament\Server\Pages;
 
+use App\Enums\ConsoleWidgetPosition;
 use App\Enums\ContainerStatus;
 use App\Exceptions\Http\Server\ServerStateConflictException;
 use App\Filament\Server\Widgets\ServerConsole;
@@ -54,18 +55,41 @@ class Console extends Page
         ];
     }
 
+    /** @var array<string, array<class-string<Widget>>> */
+    protected static array $customWidgets = [];
+
+    /** @param class-string<Widget>[] $customWidgets */
+    public static function registerCustomWidgets(ConsoleWidgetPosition $position, array $customWidgets): void
+    {
+        static::$customWidgets[$position->value] = array_unique(array_merge(static::$customWidgets[$position->value] ?? [], $customWidgets));
+    }
+
     /**
      * @return class-string<Widget>[]
      */
     public function getWidgets(): array
     {
-        return [
-            ServerOverview::class,
-            ServerConsole::class,
+        $allWidgets = [];
+
+        $allWidgets = array_merge($allWidgets, static::$customWidgets[ConsoleWidgetPosition::Top->value] ?? []);
+
+        $allWidgets[] = ServerOverview::class;
+
+        $allWidgets = array_merge($allWidgets, static::$customWidgets[ConsoleWidgetPosition::AboveConsole->value] ?? []);
+
+        $allWidgets[] = ServerConsole::class;
+
+        $allWidgets = array_merge($allWidgets, static::$customWidgets[ConsoleWidgetPosition::BelowConsole->value] ?? []);
+
+        $allWidgets = array_merge($allWidgets, [
             ServerCpuChart::class,
             ServerMemoryChart::class,
             //ServerNetworkChart::class, TODO: convert units.
-        ];
+        ]);
+
+        $allWidgets = array_merge($allWidgets, static::$customWidgets[ConsoleWidgetPosition::Bottom->value] ?? []);
+
+        return array_unique($allWidgets);
     }
 
     /**
