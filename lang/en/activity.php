@@ -65,7 +65,7 @@ return [
             'delete' => 'Deleted database <b>:name</b>',
         ],
         'file' => [
-            'compress' => 'Compressed <b>:directory:files</b>|Compressed <b>:count</b> files in <b>:name</b>',
+            'compress' => 'Compressed <b>:directory:files</b>|Compressed <b>:count</b> files in <b>:directory</b>',
             'read' => 'Viewed the contents of <b>:file</b>',
             'copy' => 'Created a copy of <b>:file</b>',
             'create-directory' => 'Created directory <b>:directory:name</b>',
