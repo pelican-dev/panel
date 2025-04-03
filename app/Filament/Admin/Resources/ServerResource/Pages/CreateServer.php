@@ -13,6 +13,7 @@ use App\Services\Servers\ServerCreationService;
 use App\Services\Users\UserCreationService;
 use Closure;
 use Exception;
+use Filament\AvatarProviders\UiAvatarsProvider;
 use Filament\Forms;
 use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\CheckboxList;
@@ -287,6 +288,13 @@ class CreateServer extends CreateRecord
                                     'sm' => 4,
                                     'md' => 4,
                                 ]),
+                            TextInput::make('avatar_url')
+                                ->label('Server Avatar')
+                                ->columnSpanFull()
+                                ->live(debounce: 500)
+                                ->url()
+                                ->formatStateUsing(fn ($state) => $state ?? (new UiAvatarsProvider)->get($this->getRecord()))
+                                ->prefix(fn ($state) => new HtmlString("<img src='$state' width='24vh' height='24vh' class='fi-avatar object-cover object-center rounded-md h-8 w-8 fi-tenant-avatar shrink-0'/>")),
                         ]),
 
                     Step::make(trans('admin/server.tabs.egg_configuration'))

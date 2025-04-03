@@ -105,6 +105,7 @@ return [
         ],
         'settings' => [
             'rename' => 'Renamed the server from "<b>:old</b>" to "<b>:new</b>"',
+            'avatar' => 'Changed the server avatar from "<b>:old</b>" to "<b>:new</b>"',
             'description' => 'Changed the server description from "<b>:old</b>" to "<b>:new</b>"',
             'reinstall' => 'Reinstalled server',
         ],

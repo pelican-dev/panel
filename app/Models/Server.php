@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Contracts\Validatable;
+use Filament\Models\Contracts\HasAvatar;
 use App\Enums\ContainerStatus;
 use App\Enums\ServerResourceType;
 use App\Enums\ServerState;
@@ -54,6 +55,7 @@ use App\Services\Subusers\SubuserDeletionService;
  * @property int|null $allocation_limit
  * @property int|null $database_limit
  * @property int|null $backup_limit
+ * @property string|null $avatar_url
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property \Illuminate\Support\Carbon|null $installed_at
@@ -125,7 +127,7 @@ use App\Services\Subusers\SubuserDeletionService;
  * @method static \Illuminate\Database\Eloquent\Builder|Server wherePorts($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Server whereUuidShort($value)
  */
-class Server extends Model implements Validatable
+class Server extends Model implements HasAvatar, Validatable
 {
     use HasFactory;
     use HasValidation;
@@ -180,6 +182,7 @@ class Server extends Model implements Validatable
         'database_limit' => ['present', 'nullable', 'integer', 'min:0'],
         'allocation_limit' => ['sometimes', 'nullable', 'integer', 'min:0'],
         'backup_limit' => ['present', 'nullable', 'integer', 'min:0'],
+        'avatar_url' => ['nullable', 'string', 'max:255'],
     ];
 
     protected function casts(): array
@@ -216,6 +219,11 @@ class Server extends Model implements Validatable
                 app(SubuserDeletionService::class)->handle($subuser, $server);
             }
         });
+    }
+
+    public function getFilamentAvatarUrl(): ?string
+    {
+        return $this->avatar_url;
     }
 
     /**

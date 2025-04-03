@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api\Client\Servers;
 
 use App\Facades\Activity;
 use App\Http\Controllers\Api\Client\ClientApiController;
+use App\Http\Requests\Api\Client\Servers\Settings\AvatarServerRequest;
 use App\Http\Requests\Api\Client\Servers\Settings\ReinstallServerRequest;
 use App\Http\Requests\Api\Client\Servers\Settings\RenameServerRequest;
 use App\Http\Requests\Api\Client\Servers\Settings\SetDockerImageRequest;
@@ -53,6 +54,28 @@ class SettingsController extends ClientApiController
         if ($server->description !== $description) {
             Activity::event('server:settings.description')
                 ->property(['old' => $server->description, 'new' => $description])
+                ->log();
+        }
+
+        return new JsonResponse([], Response::HTTP_NO_CONTENT);
+    }
+
+    /**
+     * Avatar
+     *
+     * Sets server's avatar.
+     */
+    public function avatar(AvatarServerRequest $request, Server $server): JsonResponse
+    {
+        $avatar = $request->input('avatar_url');
+
+        $server->avatar_url = $avatar;
+
+        $server->save();
+
+        if ($server->avatar_url !== $avatar) {
+            Activity::event('server:settings.avatar')
+                ->property(['old' => $server->avatar_url, 'new' => $avatar])
                 ->log();
         }
 

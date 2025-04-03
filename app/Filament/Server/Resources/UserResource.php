@@ -464,10 +464,12 @@ class UserResource extends Resource
                                                             ->columns(2)
                                                             ->options([
                                                                 'rename' => 'Rename',
+                                                                'avatar' => 'Avatar',
                                                                 'reinstall' => 'Reinstall',
                                                             ])
                                                             ->descriptions([
                                                                 'rename' => trans('server/users.permissions.setting_rename'),
+                                                                'avatar' => trans('server/users.permissions.setting_avatar'),
                                                                 'reinstall' => trans('server/users.permissions.setting_reinstall'),
                                                             ]),
                                                     ]),

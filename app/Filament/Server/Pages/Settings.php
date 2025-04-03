@@ -7,6 +7,7 @@ use App\Models\Permission;
 use App\Models\Server;
 use App\Services\Servers\ReinstallServerService;
 use Exception;
+use Filament\AvatarProviders\UiAvatarsProvider;
 use Filament\Facades\Filament;
 use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\Fieldset;
@@ -15,9 +16,14 @@ use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
+use Filament\Forms\Get;
 use Filament\Notifications\Notification;
 use Filament\Support\Enums\Alignment;
+use Filament\Support\Facades\FilamentColor;
+use Filament\Tables\Columns\IconColumn;
+use Illuminate\Support\HtmlString;
 use Illuminate\Support\Number;
+use Spatie\Color\Rgb;
 use Webbingbrasil\FilamentCopyActions\Forms\Actions\CopyAction;
 
 class Settings extends ServerFormPage
@@ -75,6 +81,20 @@ class Settings extends ServerFormPage
                                     ->autosize()
                                     ->live(onBlur: true)
                                     ->afterStateUpdated(fn ($state, Server $server) => $this->updateDescription($state ?? '', $server)),
+                                TextInput::make('avatar_url')
+                                    ->label('Server Avatar')
+                                    ->disabled(fn () => !auth()->user()->can(Permission::ACTION_SETTINGS_AVATAR, $server))
+                                    ->columnSpan([
+                                        'default' => 1,
+                                        'sm' => 2,
+                                        'md' => 4,
+                                        'lg' => 6,
+                                    ])
+                                    ->formatStateUsing(fn ($state) => $state ?? (new UiAvatarsProvider)->get($this->getRecord()))
+                                    ->url()
+                                    ->live(onBlur: true)
+                                    ->afterStateUpdated(fn ($state, Server $server) => $this->updateAvatar($state ?? '', $server))
+                                    ->prefix(fn ($state) => new HtmlString("<img src='$state' width='24vh' height='24vh' class='fi-avatar object-cover object-center rounded-md h-8 w-8 fi-tenant-avatar shrink-0'/>")),
                                 TextInput::make('uuid')
                                     ->label('Server UUID')
                                     ->columnSpan([
@@ -292,6 +312,37 @@ class Settings extends ServerFormPage
                 ->success()
                 ->title('Updated Server Description')
                 ->body(fn () => $original . ' -> ' . $description)
+                ->send();
+        } catch (Exception $exception) {
+            Notification::make()
+                ->danger()
+                ->title('Failed')
+                ->body($exception->getMessage())
+                ->send();
+        }
+    }
+
+    public function updateAvatar(string $avatar_url, Server $server): void
+    {
+        abort_unless(auth()->user()->can(Permission::ACTION_SETTINGS_AVATAR, $server), 403);
+
+        $original = $server->avatar_url;
+
+        try {
+            $server->forceFill([
+                'avatar_url' => $avatar_url,
+            ])->saveOrFail();
+
+            if ($original !== $avatar_url) {
+                Activity::event('server:settings.avatar')
+                    ->property(['old' => $original, 'new' => $avatar_url])
+                    ->log();
+            }
+
+            Notification::make()
+                ->success()
+                ->title('Updated Server Avatar')
+                ->body(fn () => $original . ' -> ' . $avatar_url)
                 ->send();
         } catch (Exception $exception) {
             Notification::make()
