@@ -150,34 +150,44 @@ class ListServers extends ListRecords
         $current = null;
         $limit = null;
 
-        if ($resource === 'cpu') {
-            $current = $server->resources()['cpu_absolute'] ?? 0;
-            $limit = $server->cpu;
+        switch ($resource) {
+            case 'cpu':
+                $current = $server->resources()['cpu_absolute'] ?? 0;
+                $limit = $server->cpu;
+                if ($server->cpu === 0) {
+                    return null;
+                }
+                break;
 
-            if ($server->cpu === 0) {
-                return null;
-            }
-        } elseif ($resource === 'memory') {
-            $current = $server->resources()['memory_bytes'] ?? 0;
-            $limit = $server->memory * 2 ** 20;
-            if ($server->memory === 0) {
-                return null;
-            }
+            case 'memory':
+                $current = $server->resources()['memory_bytes'] ?? 0;
+                $limit = $server->memory * 2 ** 20;
+                if ($server->memory === 0) {
+                    return null;
+                }
+                break;
 
-        } elseif ($resource === 'disk') {
-            $current = $server->resources()['disk_bytes'] ?? 0;
-            $limit = $server->disk * 2 ** 20;
-            if ($server->disk === 0) {
+            case 'disk':
+                $current = $server->resources()['disk_bytes'] ?? 0;
+                $limit = $server->disk * 2 ** 20;
+                if ($server->disk === 0) {
+                    return null;
+                }
+                break;
+
+            default:
                 return null;
-            }
         }
 
         if ($current >= $limit * self::DANGER_THRESHOLD) {
             return 'danger';
-        } elseif ($current >= $limit * self::WARNING_THRESHOLD) {
-            return 'warning';
-        } else {
-            return null;
         }
+
+        if ($current >= $limit * self::WARNING_THRESHOLD) {
+            return 'warning';
+        }
+
+        return null;
+
     }
 }
