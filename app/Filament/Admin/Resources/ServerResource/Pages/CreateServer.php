@@ -293,7 +293,7 @@ class CreateServer extends CreateRecord
                                 ->columnSpanFull()
                                 ->live(debounce: 500)
                                 ->url()
-                                ->formatStateUsing(fn ($state) => $state ?? (new UiAvatarsProvider)->get($this->getRecord()))
+                                ->formatStateUsing(fn ($state) => $state ?? (new UiAvatarsProvider())->get($this->getRecord()))
                                 ->prefix(fn ($state) => new HtmlString("<img src='$state' width='24vh' height='24vh' class='fi-avatar object-cover object-center rounded-md h-8 w-8 fi-tenant-avatar shrink-0'/>")),
                         ]),
 

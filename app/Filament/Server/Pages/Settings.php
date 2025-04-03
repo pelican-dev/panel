@@ -16,14 +16,10 @@ use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
-use Filament\Forms\Get;
 use Filament\Notifications\Notification;
 use Filament\Support\Enums\Alignment;
-use Filament\Support\Facades\FilamentColor;
-use Filament\Tables\Columns\IconColumn;
 use Illuminate\Support\HtmlString;
 use Illuminate\Support\Number;
-use Spatie\Color\Rgb;
 use Webbingbrasil\FilamentCopyActions\Forms\Actions\CopyAction;
 
 class Settings extends ServerFormPage
@@ -90,7 +86,7 @@ class Settings extends ServerFormPage
                                         'md' => 4,
                                         'lg' => 6,
                                     ])
-                                    ->formatStateUsing(fn ($state) => $state ?? (new UiAvatarsProvider)->get($this->getRecord()))
+                                    ->formatStateUsing(fn ($state) => $state ?? (new UiAvatarsProvider())->get($this->getRecord()))
                                     ->url()
                                     ->live(onBlur: true)
                                     ->afterStateUpdated(fn ($state, Server $server) => $this->updateAvatar($state ?? '', $server))
