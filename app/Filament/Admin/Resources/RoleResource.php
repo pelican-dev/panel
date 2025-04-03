@@ -2,8 +2,6 @@
 
 namespace App\Filament\Admin\Resources;
 
-use App\Enums\RolePermissionModels;
-use App\Enums\RolePermissionPrefixes;
 use App\Filament\Admin\Resources\RoleResource\Pages;
 use App\Models\Role;
 use Filament\Forms\Components\Actions\Action;
@@ -95,32 +93,16 @@ class RoleResource extends Resource
 
     public static function form(Form $form): Form
     {
-        $permissions = [];
+        $permissionSections = [];
 
-        foreach (RolePermissionModels::cases() as $model) {
+        foreach (Role::getPermissionList() as $model => $permissions) {
             $options = [];
 
-            foreach (RolePermissionPrefixes::cases() as $prefix) {
-                $options[$prefix->value . ' ' . strtolower($model->value)] = Str::headline($prefix->value);
+            foreach ($permissions as $permission) {
+                $options[$permission . ' ' . strtolower($model)] = Str::headline($permission);
             }
 
-            if (array_key_exists($model->value, Role::MODEL_SPECIFIC_PERMISSIONS)) {
-                foreach (Role::MODEL_SPECIFIC_PERMISSIONS[$model->value] as $permission) {
-                    $options[$permission . ' ' . strtolower($model->value)] = Str::headline($permission);
-                }
-            }
-
-            $permissions[] = self::makeSection($model->value, $options);
-        }
-
-        foreach (Role::SPECIAL_PERMISSIONS as $model => $prefixes) {
-            $options = [];
-
-            foreach ($prefixes as $prefix) {
-                $options[$prefix . ' ' . strtolower($model)] = Str::headline($prefix);
-            }
-
-            $permissions[] = self::makeSection($model, $options);
+            $permissionSections[] = self::makeSection($model, $options);
         }
 
         return $form
@@ -137,7 +119,7 @@ class RoleResource extends Resource
                     ->hidden(),
                 Fieldset::make(trans('admin/role.permissions'))
                     ->columns(3)
-                    ->schema($permissions)
+                    ->schema($permissionSections)
                     ->hidden(fn (Get $get) => $get('name') === Role::ROOT_ADMIN),
                 Placeholder::make('permissions')
                     ->label(trans('admin/role.permissions'))
