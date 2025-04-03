@@ -40,6 +40,7 @@ use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Routing\Route;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Route as RouteFacade;
 use Livewire\Attributes\Locked;
 
@@ -295,16 +296,24 @@ class ListFiles extends ListRecords
                         ->disabled($this->isDisabled)
                         ->label('Archive')
                         ->icon('tabler-archive')
-                        ->action(function (File $file) {
-                            $this->getDaemonFileRepository()->compressFiles($this->path, [$file->name]);
+                        ->form([
+                            TextInput::make('name')
+                                ->label('Archive name')
+                                ->placeholder(fn () => 'archive-' . str(Carbon::now()->toRfc3339String())->replace(':', '')->before('+0000') . 'Z')
+                                ->suffix('.tar.gz'),
+                        ])
+                        ->action(function ($data, File $file) {
+                            $archive = $this->getDaemonFileRepository()->compressFiles($this->path, [$file->name], $data['name']);
 
                             Activity::event('server:file.compress')
+                                ->property('name', $archive['name'])
                                 ->property('directory', $this->path)
                                 ->property('files', [$file->name])
                                 ->log();
 
                             Notification::make()
                                 ->title('Archive created')
+                                ->body($archive['name'])
                                 ->success()
                                 ->send();
 
@@ -383,18 +392,26 @@ class ListFiles extends ListRecords
                     BulkAction::make('archive')
                         ->authorize(fn () => auth()->user()->can(Permission::ACTION_FILE_ARCHIVE, $server))
                         ->disabled($this->isDisabled)
-                        ->action(function (Collection $files) {
+                        ->form([
+                            TextInput::make('name')
+                                ->label('Archive name')
+                                ->placeholder(fn () => 'archive-' . str(Carbon::now()->toRfc3339String())->replace(':', '')->before('+0000') . 'Z')
+                                ->suffix('.tar.gz'),
+                        ])
+                        ->action(function ($data, Collection $files) {
                             $files = $files->map(fn ($file) => $file['name'])->toArray();
 
-                            $this->getDaemonFileRepository()->compressFiles($this->path, $files);
+                            $archive = $this->getDaemonFileRepository()->compressFiles($this->path, $files, $data['name']);
 
                             Activity::event('server:file.compress')
+                                ->property('name', $archive['name'])
                                 ->property('directory', $this->path)
                                 ->property('files', $files)
                                 ->log();
 
                             Notification::make()
                                 ->title('Archive created')
+                                ->body($archive['name'])
                                 ->success()
                                 ->send();
 
