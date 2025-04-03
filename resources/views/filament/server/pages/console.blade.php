@@ -4,4 +4,6 @@
         :data="$this->getWidgetData()"
         :widgets="$this->getVisibleWidgets()"
     />
+
+    @livewire('modals')
 </x-filament-panels::page>

@@ -11,6 +11,7 @@ use App\Models\User;
 use App\Services\Nodes\NodeJWTService;
 use App\Services\Servers\GetUserPermissionsService;
 use Filament\Forms\Components\Actions;
+use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
@@ -23,9 +24,8 @@ use App\Features;
 use App\Features\CustomModal;
 use Filament\Forms\Components\TextInput;
 
-class ServerConsole extends Widget implements HasForms
+class ServerConsole extends Widget
 {
-    use InteractsWithForms;
 
     protected static string $view = 'filament.components.server-console';
 
@@ -44,38 +44,7 @@ class ServerConsole extends Widget implements HasForms
 
     public string $input = '';
 
-    public function modal(): CustomModal
-    {
-        return CustomModal::make('modal-eula')
-            ->heading('Info!')
-            ->description('Description')
-            ->registerActions([/* if neccessary */]);
-    }
-
-    protected function getUserModal(): Form
-    {
-        return $this->makeForm()
-            ->schema([
-                Placeholder::make('see me'),
-                TextInput::make('name'),
-                Actions::make([
-                    Actions\Action::make('closeUserModal')
-                        ->label('Close')
-                        ->color('secondary')
-                        ->extraAttributes([
-                            'x-on:click' => 'isOpen = false',  // close modal [FASTER]
-                        ]),
-                    Actions\Action::make('saveUserModal')
-                        ->label('Save')
-                        ->color('primary')
-                        ->action(function (Get $get) {
-                            logger($get('name'));
-                        }),
-                ])->fullWidth(),
-            ]);
-    }
-
-    public function getModals(): array
+    /* public function getModals(): array
     {
         $modals = [];
         foreach ($this->getActiveFeatures() as $feature) {
@@ -83,7 +52,7 @@ class ServerConsole extends Widget implements HasForms
         }
 
         return $modals;
-    }
+    } */
 
     private GetUserPermissionsService $getUserPermissionsService;
 
