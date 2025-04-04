@@ -70,10 +70,8 @@ class EditFiles extends Page
                             ->authorize(fn () => auth()->user()->can(Permission::ACTION_FILE_UPDATE, $server))
                             ->icon('tabler-device-floppy')
                             ->keyBindings('mod+shift+s')
-                            ->action(function (array $data) {
-
-                                $this->getDaemonFileRepository()
-                                    ->putContent($this->path, $data['editor'] ?? '');
+                            ->action(function () {
+                                $this->getDaemonFileRepository()->putContent($this->path, $this->data['editor'] ?? '');
 
                                 Activity::event('server:file.write')
                                     ->property('file', $this->path)
@@ -92,10 +90,8 @@ class EditFiles extends Page
                             ->authorize(fn () => auth()->user()->can(Permission::ACTION_FILE_UPDATE, $server))
                             ->icon('tabler-device-floppy')
                             ->keyBindings('mod+s')
-                            ->action(function (array $data) {
-
-                                $this->getDaemonFileRepository()
-                                    ->putContent($this->path, $data['editor'] ?? '');
+                            ->action(function () {
+                                $this->getDaemonFileRepository()->putContent($this->path, $this->data['editor'] ?? '');
 
                                 Activity::event('server:file.write')
                                     ->property('file', $this->path)
@@ -127,8 +123,7 @@ class EditFiles extends Page
                             ->showPlaceholder(false)
                             ->default(function () {
                                 try {
-                                    return $this->getDaemonFileRepository()
-                                        ->getContent($this->path, config('panel.files.max_edit_size'));
+                                    return $this->getDaemonFileRepository()->getContent($this->path, config('panel.files.max_edit_size'));
                                 } catch (FileSizeTooLargeException) {
                                     AlertBanner::make()
                                         ->title('File too large!')
@@ -136,6 +131,7 @@ class EditFiles extends Page
                                         ->danger()
                                         ->closable()
                                         ->send();
+
                                     $this->redirect(ListFiles::getUrl());
                                 } catch (FileNotFoundException) {
                                     AlertBanner::make()
@@ -144,6 +140,7 @@ class EditFiles extends Page
                                         ->danger()
                                         ->closable()
                                         ->send();
+
                                     $this->redirect(ListFiles::getUrl());
                                 } catch (FileNotEditableException) {
                                     AlertBanner::make()
@@ -152,6 +149,7 @@ class EditFiles extends Page
                                         ->danger()
                                         ->closable()
                                         ->send();
+
                                     $this->redirect(ListFiles::getUrl());
                                 }
                             })
