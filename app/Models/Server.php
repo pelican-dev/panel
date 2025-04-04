@@ -481,7 +481,7 @@ class Server extends Model implements Validatable
         }
 
         if ($resourceAmount === 0 & $limit) {
-            return 'Unlimited';
+            return "\u{221E}";
         }
 
         if ($type === ServerResourceType::Percentage) {
