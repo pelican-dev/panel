@@ -122,7 +122,6 @@ class UserResource extends Resource
                     ->password(),
                 CheckboxList::make('roles')
                     ->hidden(fn (User $user) => $user->isRootAdmin())
-                    ->disableOptionWhen(fn (string $value) => $value == Role::getRootAdmin()->id)
                     ->relationship('roles', 'name', fn (Builder $query) => $query->whereNot('id', Role::getRootAdmin()->id))
                     ->saveRelationshipsUsing(fn (User $user, array $state) => $user->syncRoles(collect($state)->map(fn ($role) => Role::findById($role))))
                     ->dehydrated()
