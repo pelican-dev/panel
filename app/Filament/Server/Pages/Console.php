@@ -104,20 +104,23 @@ class Console extends Page
                 ->size(ActionSize::ExtraLarge)
                 ->action(fn () => $this->dispatch('setServerState', state: 'start', uuid: $server->uuid))
                 ->authorize(fn () => auth()->user()->can(Permission::ACTION_CONTROL_START, $server))
-                ->disabled(fn () => $server->isInConflictState() || !$this->status->isStartable()),
+                ->disabled(fn () => $server->isInConflictState() || !$this->status->isStartable())
+                ->icon('tabler-player-play-filled'),
             Action::make('restart')
                 ->color('gray')
                 ->size(ActionSize::ExtraLarge)
                 ->action(fn () => $this->dispatch('setServerState', state: 'restart', uuid: $server->uuid))
                 ->authorize(fn () => auth()->user()->can(Permission::ACTION_CONTROL_RESTART, $server))
-                ->disabled(fn () => $server->isInConflictState() || !$this->status->isRestartable()),
+                ->disabled(fn () => $server->isInConflictState() || !$this->status->isRestartable())
+                ->icon('tabler-reload'),
             Action::make('stop')
                 ->color('danger')
                 ->size(ActionSize::ExtraLarge)
                 ->action(fn () => $this->dispatch('setServerState', state: 'stop', uuid: $server->uuid))
                 ->authorize(fn () => auth()->user()->can(Permission::ACTION_CONTROL_STOP, $server))
                 ->hidden(fn () => $this->status->isStartingOrStopping() || $this->status->isKillable())
-                ->disabled(fn () => $server->isInConflictState() || !$this->status->isStoppable()),
+                ->disabled(fn () => $server->isInConflictState() || !$this->status->isStoppable())
+                ->icon('tabler-player-stop-filled'),
             Action::make('kill')
                 ->color('danger')
                 ->requiresConfirmation()
@@ -127,7 +130,8 @@ class Console extends Page
                 ->size(ActionSize::ExtraLarge)
                 ->action(fn () => $this->dispatch('setServerState', state: 'kill', uuid: $server->uuid))
                 ->authorize(fn () => auth()->user()->can(Permission::ACTION_CONTROL_STOP, $server))
-                ->hidden(fn () => $server->isInConflictState() || !$this->status->isKillable()),
+                ->hidden(fn () => $server->isInConflictState() || !$this->status->isKillable())
+                ->icon('tabler-alert-square'),
         ];
     }
 }
