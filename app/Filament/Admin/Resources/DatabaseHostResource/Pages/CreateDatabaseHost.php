@@ -38,6 +38,7 @@ class CreateDatabaseHost extends CreateRecord
         $this->service = $service;
     }
 
+    /** @return Step[] */
     public function getSteps(): array
     {
         return [
