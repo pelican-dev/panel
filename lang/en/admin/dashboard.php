@@ -1,10 +1,7 @@
 <?php
 
 return [
-    'title' => 'Dashboard',
-    'overview' => 'Overview',
     'heading' => 'Welcome to Pelican!',
-    'expand_sections' => 'You can expand the following sections:',
     'version' => 'Version: :version',
     'advanced' => 'Advanced',
     'server' => 'Server',
