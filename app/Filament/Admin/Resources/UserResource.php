@@ -124,11 +124,7 @@ class UserResource extends Resource
                     ->hidden(fn (User $user) => $user->isRootAdmin())
                     ->disableOptionWhen(fn (string $value) => $value == Role::getRootAdmin()->id)
                     ->relationship('roles', 'name', fn (Builder $query) => $query->whereNot('id', Role::getRootAdmin()->id))
-                    ->saveRelationshipsUsing(function (User $user, array $state) {
-                        $roles = collect($state)->map(fn ($role) => Role::findById($role))->filter(fn ($role) => $role->id !== Role::getRootAdmin()->id);
-
-                        $user->syncRoles($roles);
-                    })
+                    ->saveRelationshipsUsing(fn (User $user, array $state) => $user->syncRoles(collect($state)->map(fn ($role) => Role::findById($role))))
                     ->dehydrated()
                     ->label(trans('admin/user.admin_roles'))
                     ->columnSpanFull()
