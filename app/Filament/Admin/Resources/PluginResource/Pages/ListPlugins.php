@@ -45,6 +45,7 @@ class ListPlugins extends ListRecords
                     ->visible(fn (Plugin $plugin) => $plugin->url !== null)
                     ->url(fn (Plugin $plugin): string => $plugin->url, true),
                 Action::make('settings')
+                    ->authorize(fn (Plugin $plugin) => auth()->user()->can('update plugin', $plugin))
                     ->icon('tabler-settings')
                     ->color('primary')
                     ->visible(fn (Plugin $plugin) => !$plugin->isDisabled() && $plugin->hasSettings())
@@ -52,6 +53,7 @@ class ListPlugins extends ListRecords
                     ->action(fn (array $data, Plugin $plugin) => $plugin->saveSettings($data))
                     ->slideOver(),
                 Action::make('enable')
+                    ->authorize(fn (Plugin $plugin) => auth()->user()->can('update plugin', $plugin))
                     ->icon('tabler-check')
                     ->color('success')
                     ->hidden(fn (Plugin $plugin) => !$plugin->isDisabled())
@@ -66,6 +68,7 @@ class ListPlugins extends ListRecords
                             ->send();
                     }),
                 Action::make('disable')
+                    ->authorize(fn (Plugin $plugin) => auth()->user()->can('update plugin', $plugin))
                     ->icon('tabler-x')
                     ->color('danger')
                     ->hidden(fn (Plugin $plugin) => $plugin->isDisabled())
