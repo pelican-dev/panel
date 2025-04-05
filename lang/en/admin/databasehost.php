@@ -45,4 +45,30 @@ return [
     'rotated' => 'Password Rotated',
     'rotate_error' => 'Password Rotation Failed',
     'databases' => 'Databases',
+
+    'setup' => [
+        'preparations' => 'Preparations',
+        'database_setup' => 'Database Setup',
+        'panel_setup' => 'Panel Setup',
+
+        'note' => 'Currently, only MySQL/ MariaDB databases are supported for database hosts!',
+        'different_server' => 'Are the panel and the database <i>not</i> on the same server?',
+
+        'database_user' => 'Database User',
+        'cli_login' => 'Use <code>mysql -u root -p</code> to access mysql cli.',
+        'command_create_user' => 'Command to create the user',
+        'command_assign_permissions' => 'Command to assign permissions',
+        'cli_exit' => 'To exit mysql cli run <code>exit</code>.',
+        'external_access' => 'External Access',
+        'allow_external_access' => '
+                                    <p>Chances are you\'ll need to allow external access to this MySQL instance in order to allow servers to connect to it.</p>
+                                    <br>
+                                    <p>To do this, open <code>my.cnf</code>, which varies in location depending on your OS and how MySQL was installed. You can type find <code>/etc -iname my.cnf</code> to locate it.</p>
+                                    <br>
+                                    <p>Open <code>my.cnf</code>, add text below to the bottom of the file and save it:<br>
+                                    <code>[mysqld]<br>bind-address=0.0.0.0</code></p>
+                                    <br>
+                                    <p>Restart MySQL/ MariaDB to apply these changes. This will override the default MySQL configuration, which by default will only accept requests from localhost. Updating this will allow connections on all interfaces, and thus, external connections. Make sure to allow the MySQL port (default 3306) in your firewall.</p>
+                                ',
+    ],
 ];
