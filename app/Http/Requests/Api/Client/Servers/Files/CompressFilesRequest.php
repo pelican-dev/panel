@@ -21,6 +21,7 @@ class CompressFilesRequest extends ClientApiRequest
             'root' => 'sometimes|nullable|string',
             'files' => 'required|array',
             'files.*' => 'string',
+            'name' => 'sometimes|nullable|string',
         ];
     }
 }
