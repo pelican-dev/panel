@@ -10,6 +10,9 @@ use App\Checks\NodeVersionsCheck;
 use App\Checks\PanelVersionCheck;
 use App\Checks\ScheduleCheck;
 use App\Checks\UsedDiskSpaceCheck;
+use App\Extensions\Avatar\Providers\GravatarProvider;
+use App\Extensions\Avatar\Providers\LocalAvatarProvider;
+use App\Extensions\Avatar\Providers\UiAvatarsProvider;
 use App\Extensions\OAuth\Providers\GitlabProvider;
 use App\Models;
 use App\Extensions\Captcha\Providers\TurnstileProvider;
@@ -114,6 +117,11 @@ class AppServiceProvider extends ServiceProvider
 
         // Default Captcha provider
         TurnstileProvider::register($app);
+
+        // Default Avatar providers
+        GravatarProvider::register();
+        UiAvatarsProvider::register();
+        LocalAvatarProvider::register();
 
         FilamentColor::register([
             'danger' => Color::Red,

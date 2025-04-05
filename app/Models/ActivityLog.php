@@ -6,6 +6,7 @@ use App\Traits\HasValidation;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Event;
 use App\Events\ActivityLogged;
+use Filament\Facades\Filament;
 use Filament\Support\Contracts\HasIcon;
 use Filament\Support\Contracts\HasLabel;
 use Illuminate\Database\Eloquent\Builder;
@@ -172,9 +173,11 @@ class ActivityLog extends Model implements HasIcon, HasLabel
             ]);
         }
 
+        $avatarUrl = Filament::getUserAvatarUrl($user);
+
         return "
             <div style='display: flex; align-items: center;'>
-                <img width='50px' height='50px' src='{$user->getFilamentAvatarUrl()}' style='margin-right: 15px' />
+                <img width='50px' height='50px' src='{$avatarUrl}' style='margin-right: 15px' />
 
                 <div>
                     <p>$user->username — $this->event</p>
