@@ -130,6 +130,7 @@ Route::prefix('/servers/{server:uuid}')->middleware([ServerSubject::class, Authe
     Route::prefix('/settings')->group(function () {
         Route::post('/rename', [Client\Servers\SettingsController::class, 'rename']);
         Route::post('/reinstall', [Client\Servers\SettingsController::class, 'reinstall']);
+        Route::post('/avatar', [Client\Servers\SettingsController::class, 'avatar']);
         Route::put('/docker-image', [Client\Servers\SettingsController::class, 'dockerImage']);
     });
 });
