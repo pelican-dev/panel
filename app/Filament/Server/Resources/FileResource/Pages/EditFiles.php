@@ -113,6 +113,8 @@ class EditFiles extends Page
                     ->schema([
                         Select::make('lang')
                             ->label('Syntax Highlighting')
+                            ->searchable()
+                            ->native(false)
                             ->live()
                             ->options(EditorLanguages::class)
                             ->selectablePlaceholder(false)

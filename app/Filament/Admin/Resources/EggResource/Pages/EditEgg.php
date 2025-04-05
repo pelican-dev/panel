@@ -235,6 +235,7 @@ class EditEgg extends EditRecord
                                 ->placeholder('ghcr.io/pelican-eggs/installers:debian'),
                             Select::make('script_entry')
                                 ->label(trans('admin/egg.script_entry'))
+                                ->native(false)
                                 ->selectablePlaceholder(false)
                                 ->options(['bash', 'ash', '/bin/bash'])
                                 ->required(),

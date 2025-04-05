@@ -17,6 +17,12 @@ class CopyFrom extends Select
 
         $this->placeholder(trans('admin/egg.none'));
 
+        $this->preload();
+
+        $this->searchable();
+
+        $this->native(false);
+
         $this->live();
     }
 

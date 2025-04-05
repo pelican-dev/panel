@@ -447,6 +447,8 @@ class ListFiles extends ListRecords
                         ->required(),
                     Select::make('lang')
                         ->label('Syntax Highlighting')
+                        ->searchable()
+                        ->native(false)
                         ->live()
                         ->options(EditorLanguages::class)
                         ->selectablePlaceholder(false)
