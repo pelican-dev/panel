@@ -14,8 +14,8 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('service_options', function (Blueprint $table) {
-            $table->string('uuid', 36)->after('id');
-            $table->string('author')->after('service_id');
+            $table->string('uuid', 36)->nullable()->after('id');
+            $table->string('author')->nullable()->after('service_id');
             $table->dropColumn('tag');
         });
 

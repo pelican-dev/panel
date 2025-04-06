@@ -18,7 +18,7 @@ return new class extends Migration
             $table->dropUnique(['file']);
 
             $table->string('author')->change();
-            $table->string('uuid', 36)->after('id');
+            $table->string('uuid', 36)->nullable()->after('id');
             $table->dropColumn('folder');
             $table->dropColumn('startup');
             $table->dropColumn('index_file');

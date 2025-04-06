@@ -44,7 +44,7 @@ EOF;
     public function up(): void
     {
         Schema::table('services', function (Blueprint $table) {
-            $table->text('index_file')->after('startup');
+            $table->text('index_file')->nullable()->after('startup');
         });
 
         DB::transaction(function () {

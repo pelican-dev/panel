@@ -11,7 +11,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('eggs', function (Blueprint $table) {
-            $table->text('tags');
+            $table->text('tags')->nullable();
         });
 
         DB::table('eggs')->update(['tags' => '[]']);

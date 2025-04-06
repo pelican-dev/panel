@@ -21,8 +21,8 @@ return new class extends Migration
         });
 
         Schema::table('nodes', function (Blueprint $table) {
-            $table->string('uuid', 36)->after('id');
-            $table->string('daemon_token_id', 16)->after('upload_size');
+            $table->string('uuid', 36)->nullable()->after('id');
+            $table->string('daemon_token_id', 16)->nullable()->after('upload_size');
             $table->renameColumn('daemonSecret', 'daemon_token');
         });
 
