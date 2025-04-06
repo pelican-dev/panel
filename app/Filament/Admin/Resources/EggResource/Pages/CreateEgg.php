@@ -243,6 +243,7 @@ class CreateEgg extends CreateRecord
                                 ->default('ghcr.io/pelican-eggs/installers:debian'),
                             Select::make('script_entry')
                                 ->label(trans('admin/egg.script_entry'))
+                                ->native(false)
                                 ->selectablePlaceholder(false)
                                 ->default('bash')
                                 ->options(['bash', 'ash', '/bin/bash'])
