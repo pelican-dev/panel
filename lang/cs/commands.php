@@ -5,7 +5,7 @@ return [
         'comment' => [
             'author' => 'Zadejte e-mailovou adresu, ze které by měly být vajíčka exportovaná tímto panelem. Toto by mělo být platná e-mailová adresa.',
             'url' => 'URL aplikace MUSÍ začít s https:// nebo http:// v závislosti na tom, zda používáte SSL nebo ne. Pokud nezahrnete do schématu vaše e-maily a jiný obsah bude odkazovat na nesprávné umístění.',
-            'timezone' => "Časové pásmo by mělo odpovídat jednomu z podporovaných časových pásem PHP. Pokud si nejste jisti, prosím na https://php.net/manual/en/timezones.php.",
+            'timezone' => 'Časové pásmo by mělo odpovídat jednomu z podporovaných časových pásem PHP. Pokud si nejste jisti, prosím na https://php.net/manual/en/timezones.php.',
         ],
         'redis' => [
             'note' => 'Vybrali jste ovladač Redis pro jednu nebo více možností, poskytněte prosím platné informace o připojení níže. Ve většině případů můžete použít výchozí hodnoty, pokud jste nezměnili nastavení.',
@@ -15,7 +15,7 @@ return [
     ],
     'database_settings' => [
         'DB_HOST_note' => 'Je důrazně doporučeno nepoužívat "localhost" jako hostitele databáze, protože jsme viděli časté problémy s připojením socketu. Pokud chcete použít místní připojení, měli byste použít "127.0.0.1".',
-        'DB_USERNAME_note' => "Použití kořenového účtu pro MySQL spojení není pouze velmi rozblednuté, ale tato aplikace také nepovoluje. Pro tento software budete muset vytvořit MySQL uživatele.",
+        'DB_USERNAME_note' => 'Použití kořenového účtu pro MySQL spojení není pouze velmi rozblednuté, ale tato aplikace také nepovoluje. Pro tento software budete muset vytvořit MySQL uživatele.',
         'DB_PASSWORD_note' => 'Zdá se, že heslo pro připojení k MySQL je již definováno, chcete jej změnit?',
         'DB_error_2' => 'Vaše přihlašovací údaje k připojení NEJSOU uloženy. Před pokračováním budete muset poskytnout platné informace o připojení.',
         'go_back' => 'Vraťte se zpět a zkuste to znovu',
@@ -34,7 +34,7 @@ return [
         'disk_overallocate' => 'Zadejte množství disku na překrytí přiděleného množství, -1 zakáže kontrolu a 0 zabrání vytváření nového serveru',
         'cpu' => 'Zadejte maximální množství pro Cpu',
         'cpu_overallocate' => 'Zadejte množství Cpu k překročení přiděleného množství, -1 vypne kontrolu a 0 zabrání vytvoření nového serveru',
-        'upload_size' => "Zadejte maximální velikost nahrávání",
+        'upload_size' => 'Zadejte maximální velikost nahrávání',
         'daemonListen' => 'Vložte port poslechu daemon',
         'daemonSFTP' => 'Zadejte port pro poslech SFTP',
         'daemonSFTPAlias' => 'Zadejte alias Démon SFTP (může být prázdný)',

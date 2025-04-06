@@ -24,7 +24,7 @@ return [
         ],
         'intro-first-node' => [
             'heading' => 'Tidak ada Node terdeteksi',
-            'content' => "Anda belum mengkonfigurasi Node apapun, jangan khawatir karena anda bisa menekan tombol untuk membuat Node pertama anda!",
+            'content' => 'Anda belum mengkonfigurasi Node apapun, jangan khawatir karena anda bisa menekan tombol untuk membuat Node pertama anda!',
             'extra_note' => 'Jika terjadi error atau bermasalah, laporkan hal itu ke GitHub',
             'button_label' => 'Membuat Node pertama di Pelican Panel.',
         ],

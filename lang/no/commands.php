@@ -15,7 +15,7 @@ return [
     ],
     'database_settings' => [
         'DB_HOST_note' => 'Det anbefales sterkt å ikke bruke "localhost" som databasevert, da vi ofte ser tilkoblingsproblemer med sockets. Hvis du vil bruke en lokal tilkobling, bør du bruke "127.0.0.1".',
-        'DB_USERNAME_note' => "Å bruke root-kontoen for MySQL-tilkoblinger er ikke bare sterkt frarådet, det er heller ikke tillatt av denne applikasjonen. Du må opprette en MySQL-bruker for denne programvaren.",
+        'DB_USERNAME_note' => 'Å bruke root-kontoen for MySQL-tilkoblinger er ikke bare sterkt frarådet, det er heller ikke tillatt av denne applikasjonen. Du må opprette en MySQL-bruker for denne programvaren.',
         'DB_PASSWORD_note' => 'Det ser ut til at du allerede har definert et MySQL-tilkoblingspassord. Vil du endre det?',
         'DB_error_2' => 'Tilkoblingsinformasjonen din er IKKE lagret. Du må oppgi gyldig tilkoblingsinformasjon før du fortsetter.',
         'go_back' => 'Gå tilbake og prøv igjen',
@@ -34,7 +34,7 @@ return [
         'disk_overallocate' => 'Skriv inn mengden diskplass for overallokering. "-1" deaktiverer sjekking, og "0" forhindrer oppretting av nye servere.',
         'cpu' => 'Skriv inn maksimal mengde CPU',
         'cpu_overallocate' => 'Skriv inn mengden CPU for overallokering. "-1" deaktiverer sjekking, og "0" forhindrer oppretting av nye servere.',
-        'upload_size' => "Skriv inn maksimal filopplastingsstørrelse",
+        'upload_size' => 'Skriv inn maksimal filopplastingsstørrelse',
         'daemonListen' => 'Skriv inn daemonens lytteport',
         'daemonSFTP' => 'Skriv inn daemonens SFTP-lytteport',
         'daemonSFTPAlias' => 'Skriv inn daemonens SFTP-alias (kan være tomt)',

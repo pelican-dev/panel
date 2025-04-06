@@ -34,7 +34,7 @@ return [
         'disk_overallocate' => 'Entrer la quantité de stockage à sur-allouer, -1 désactivera la vérification et 0 empêchera la création de nouveau serveur',
         'cpu' => 'Entrer la quantité maximale de CPU',
         'cpu_overallocate' => 'Entrer la quantité de CPU à sur-allouer, -1 désactivera la vérification et 0 empêchera la création de nouveau serveur',
-        'upload_size' => "Saisir la taille maximale des fichiers à télécharger",
+        'upload_size' => 'Saisir la taille maximale des fichiers à télécharger',
         'daemonListen' => 'Entrer le port du daemon',
         'daemonSFTP' => 'Entrer le port SFTP du daemon',
         'daemonSFTPAlias' => 'Saisir l\'alias SFTP du daemon (peut être vide)',

@@ -17,6 +17,6 @@ return [
     'sent' => 'Elektroniniu paštu išsiuntėme slaptažodžio atstatymo nuorodą.',
     'throttled' => 'Prieš bandydami dar kartą, palaukite.',
     'token' => 'Šis slaptažodžio atnaujinimo ženklas yra negaliojantis.',
-    'user' => "Negalime rasti naudotojo su šiuo el. pašto adresu.",
+    'user' => 'Negalime rasti naudotojo su šiuo el. pašto adresu.',
 
 ];

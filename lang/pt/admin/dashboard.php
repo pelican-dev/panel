@@ -24,7 +24,7 @@ return [
         ],
         'intro-first-node' => [
             'heading' => 'Nenhum Nó detetado',
-            'content' => "Parece que ainda não tem nenhum Nó configurado, mas não se preocupe porque pode clicar no botão para criar o seu primeiro Nó!",
+            'content' => 'Parece que ainda não tem nenhum Nó configurado, mas não se preocupe porque pode clicar no botão para criar o seu primeiro Nó!',
             'extra_note' => 'Se tiver algum problema, por favor reporte-o no GitHub.',
             'button_label' => 'Crie o primeiro Nó no Pelican',
         ],
