@@ -25,7 +25,7 @@ class AvatarServerRequest extends ClientApiRequest implements ClientPermissionsR
     public function rules(): array
     {
         return [
-            'avatar_url' => Server::getRules()['avatar_url'],
+            'avatar_url' => Server::getRulesForField('avatar_url'),
         ];
     }
 }
