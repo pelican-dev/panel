@@ -7,10 +7,11 @@ use App\Models\Plugin;
 use Composer\Autoload\ClassLoader;
 use Exception;
 use Filament\Panel;
-use Illuminate\Console\Application as Artisan;
+use Illuminate\Console\Application as ConsoleApplication;
 use Illuminate\Console\Command;
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Foundation\Application;
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\ServiceProvider;
 
 class PluginService
@@ -60,7 +61,7 @@ class PluginService
                         throw new Exception('Command class "' . $command . '" not found');
                     }
 
-                    Artisan::starting(function ($artisan) use ($command) {
+                    ConsoleApplication::starting(function ($artisan) use ($command) {
                         $artisan->resolve($command);
                     });
                 }
@@ -125,6 +126,15 @@ class PluginService
                 $this->setStatus($plugin, PluginStatus::Errored, $exception->getMessage());
             }
         }
+    }
+
+    public function installPlugin(Plugin $plugin)
+    {
+        Artisan::call('migrate', ['--force' => true]);
+
+        $plugin->runInstall();
+
+        $this->setStatus($plugin, PluginStatus::Enabled);
     }
 
     public function enablePlugin(string|Plugin $plugin): void

@@ -121,6 +121,11 @@ class Plugin extends IlluminateModel implements HasPluginSettings
         return $this->status === PluginStatus::Disabled;
     }
 
+    public function isInstalled(): bool
+    {
+        return $this->status !== PluginStatus::NotInstalled;
+    }
+
     public function hasErrored(): bool
     {
         return $this->status === PluginStatus::Errored;
@@ -179,6 +184,18 @@ class Plugin extends IlluminateModel implements HasPluginSettings
 
             if (method_exists($pluginObject, 'saveSettings')) {
                 $pluginObject->saveSettings($data);
+            }
+        }
+    }
+
+    public function runInstall(): void
+    {
+        $class = $this->fullClass();
+        if (class_exists($class) && method_exists($class, 'get')) {
+            $pluginObject = ($class)::get();
+
+            if (method_exists($pluginObject, 'install')) {
+                $pluginObject->install();
             }
         }
     }
