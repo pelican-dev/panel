@@ -19,7 +19,7 @@ class LocalAvatarProvider extends AvatarProvider
     {
         $path = 'avatars/' . $record->getKey() . '.png';
 
-        return Storage::exists($path) ? Storage::url($path) : (new FilamentUiAvatarsProvider())->get($record);
+        return Storage::disk('public')->exists($path) ? Storage::url($path) : (new FilamentUiAvatarsProvider())->get($record);
     }
 
     public static function register(): self
