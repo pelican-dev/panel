@@ -113,7 +113,7 @@ class Plugin extends IlluminateModel implements HasPluginSettings
 
     public function shouldLoad(string $panelId): bool
     {
-        return !$this->isDisabled() && ($this->panels === null || in_array($panelId, explode(',', $this->panels)));
+        return !$this->isDisabled() && $this->isInstalled() && ($this->panels === null || in_array($panelId, explode(',', $this->panels)));
     }
 
     public function isDisabled(): bool
@@ -184,18 +184,6 @@ class Plugin extends IlluminateModel implements HasPluginSettings
 
             if (method_exists($pluginObject, 'saveSettings')) {
                 $pluginObject->saveSettings($data);
-            }
-        }
-    }
-
-    public function runInstall(): void
-    {
-        $class = $this->fullClass();
-        if (class_exists($class) && method_exists($class, 'get')) {
-            $pluginObject = ($class)::get();
-
-            if (method_exists($pluginObject, 'install')) {
-                $pluginObject->install();
             }
         }
     }

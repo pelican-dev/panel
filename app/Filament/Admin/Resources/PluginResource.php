@@ -2,6 +2,7 @@
 
 namespace App\Filament\Admin\Resources;
 
+use App\Enums\PluginStatus;
 use App\Filament\Admin\Resources\PluginResource\Pages\ListPlugins;
 use App\Models\Plugin;
 use App\Services\Helpers\PluginService;
@@ -57,15 +58,30 @@ class PluginResource extends Resource
                     ->authorize(fn (Plugin $plugin) => auth()->user()->can('update plugin', $plugin))
                     ->icon('tabler-settings')
                     ->color('primary')
-                    ->visible(fn (Plugin $plugin) => !$plugin->isDisabled() && $plugin->hasSettings())
+                    ->visible(fn (Plugin $plugin) => $plugin->status === PluginStatus::Enabled && $plugin->hasSettings())
                     ->form(fn (Plugin $plugin) => $plugin->getSettingsForm())
                     ->action(fn (array $data, Plugin $plugin) => $plugin->saveSettings($data))
                     ->slideOver(),
+                Action::make('install')
+                    ->authorize(fn (Plugin $plugin) => auth()->user()->can('update plugin', $plugin))
+                    ->icon('tabler-terminal')
+                    ->color('success')
+                    ->hidden(fn (Plugin $plugin) => $plugin->isInstalled())
+                    ->action(function (Plugin $plugin, PluginService $service) {
+                        $service->installPlugin($plugin);
+
+                        redirect(ListPlugins::getUrl());
+
+                        Notification::make()
+                            ->success()
+                            ->title('Plugin installed')
+                            ->send();
+                    }),
                 Action::make('enable')
                     ->authorize(fn (Plugin $plugin) => auth()->user()->can('update plugin', $plugin))
                     ->icon('tabler-check')
                     ->color('success')
-                    ->hidden(fn (Plugin $plugin) => !$plugin->isDisabled())
+                    ->hidden(fn (Plugin $plugin) => !$plugin->isInstalled() || !$plugin->isDisabled())
                     ->action(function (Plugin $plugin, PluginService $service) {
                         $service->enablePlugin($plugin);
 
@@ -80,7 +96,7 @@ class PluginResource extends Resource
                     ->authorize(fn (Plugin $plugin) => auth()->user()->can('update plugin', $plugin))
                     ->icon('tabler-x')
                     ->color('danger')
-                    ->hidden(fn (Plugin $plugin) => $plugin->isDisabled())
+                    ->hidden(fn (Plugin $plugin) => !$plugin->isInstalled() || $plugin->isDisabled())
                     ->action(function (Plugin $plugin, PluginService $service) {
                         $service->disablePlugin($plugin);
 

@@ -5,6 +5,7 @@ namespace App\Enums;
 use Filament\Support\Contracts\HasColor;
 use Filament\Support\Contracts\HasIcon;
 use Filament\Support\Contracts\HasLabel;
+use Illuminate\Support\Str;
 
 enum PluginStatus: string implements HasColor, HasIcon, HasLabel
 {
@@ -35,6 +36,6 @@ enum PluginStatus: string implements HasColor, HasIcon, HasLabel
 
     public function getLabel(): string
     {
-        return $this->name;
+        return Str::headline($this->name);
     }
 }

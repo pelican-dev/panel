@@ -130,9 +130,10 @@ class PluginService
 
     public function installPlugin(Plugin $plugin)
     {
-        Artisan::call('migrate', ['--force' => true]);
-
-        $plugin->runInstall();
+        $migrations = plugin_path($plugin->id, 'database', 'migrations');
+        if (file_exists($migrations)) {
+            Artisan::call('migrate', ['--path' => $migrations, '--force' => true]);
+        }
 
         $this->setStatus($plugin, PluginStatus::Enabled);
     }
