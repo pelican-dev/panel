@@ -30,7 +30,7 @@ class PluginService
 
         $plugins = Plugin::all();
         foreach ($plugins as $plugin) {
-            if ($plugin->isDisabled()) {
+            if ($plugin->isDisabled() || !$plugin->isInstalled()) {
                 continue;
             }
 
