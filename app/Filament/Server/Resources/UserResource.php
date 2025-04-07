@@ -90,8 +90,8 @@ class UserResource extends Resource
                 ImageColumn::make('picture')
                     ->visibleFrom('lg')
                     ->label('')
-                    ->extraImgAttributes(['class' => 'rounded-full'])
-                    ->defaultImageUrl(fn (User $user) => 'https://gravatar.com/avatar/' . md5(strtolower($user->email))),
+                    ->alignCenter()->circular()
+                    ->defaultImageUrl(fn (User $user) => Filament::getUserAvatarUrl($user)),
                 TextColumn::make('username')
                     ->searchable(),
                 TextColumn::make('email')

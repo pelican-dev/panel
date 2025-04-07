@@ -9,7 +9,6 @@ use App\Facades\Activity;
 use App\Traits\HasValidation;
 use DateTimeZone;
 use Filament\Models\Contracts\FilamentUser;
-use Filament\Models\Contracts\HasAvatar;
 use Filament\Models\Contracts\HasName;
 use Filament\Models\Contracts\HasTenants;
 use Filament\Panel;
@@ -50,7 +49,6 @@ use Spatie\Permission\Traits\HasRoles;
  * @property string|null $totp_secret
  * @property \Illuminate\Support\Carbon|null $totp_authenticated_at
  * @property string[]|null $oauth
- * @property bool $gravatar
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property \Illuminate\Database\Eloquent\Collection|\App\Models\ApiKey[] $apiKeys
@@ -77,7 +75,6 @@ use Spatie\Permission\Traits\HasRoles;
  * @method static Builder|User whereCreatedAt($value)
  * @method static Builder|User whereEmail($value)
  * @method static Builder|User whereExternalId($value)
- * @method static Builder|User whereGravatar($value)
  * @method static Builder|User whereId($value)
  * @method static Builder|User whereLanguage($value)
  * @method static Builder|User whereTimezone($value)
@@ -90,7 +87,7 @@ use Spatie\Permission\Traits\HasRoles;
  * @method static Builder|User whereUsername($value)
  * @method static Builder|User whereUuid($value)
  */
-class User extends Model implements AuthenticatableContract, AuthorizableContract, CanResetPasswordContract, FilamentUser, HasAvatar, HasName, HasTenants, Validatable
+class User extends Model implements AuthenticatableContract, AuthorizableContract, CanResetPasswordContract, FilamentUser, HasName, HasTenants, Validatable
 {
     use Authenticatable;
     use Authorizable { can as protected canned; }
@@ -124,7 +121,6 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
         'use_totp',
         'totp_secret',
         'totp_authenticated_at',
-        'gravatar',
         'oauth',
         'customization',
     ];
@@ -169,7 +165,6 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
     {
         return [
             'use_totp' => 'boolean',
-            'gravatar' => 'boolean',
             'totp_authenticated_at' => 'datetime',
             'totp_secret' => 'encrypted',
             'oauth' => 'array',
@@ -375,11 +370,6 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
     public function getFilamentName(): string
     {
         return $this->username;
-    }
-
-    public function getFilamentAvatarUrl(): ?string
-    {
-        return 'https://gravatar.com/avatar/' . md5(strtolower($this->email));
     }
 
     public function canTarget(Model $user): bool
