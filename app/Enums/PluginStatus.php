@@ -27,7 +27,7 @@ enum PluginStatus: string implements HasColor, HasIcon, HasLabel
     {
         return match ($this) {
             self::NotInstalled => 'gray',
-            self::Disabled => 'gray',
+            self::Disabled => 'warning',
             self::Enabled => 'success',
             self::Errored => 'danger',
         };

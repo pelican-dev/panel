@@ -27,11 +27,10 @@ class PluginResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
-            ->searchable(false)
             ->openRecordUrlInNewTab()
             ->columns([
                 TextColumn::make('name')
-                    ->description(fn (Plugin $plugin) => (strlen($plugin->description) > 60) ? substr($plugin->description, 0, 60).'...' : $plugin->description)
+                    ->description(fn (Plugin $plugin) => (strlen($plugin->description) > 80) ? substr($plugin->description, 0, 80).'...' : $plugin->description)
                     ->icon(fn (Plugin $plugin) => $plugin->isCompatible() ? 'tabler-versions' : 'tabler-versions-off')
                     ->iconColor(fn (Plugin $plugin) => $plugin->isCompatible() ? 'success' : 'danger')
                     ->tooltip(fn (Plugin $plugin) => !$plugin->isCompatible() ? 'This Plugin is only compatible with Panel version ' . $plugin->panel_version . ' but you are using version ' . config('app.version') . '!' : null)
@@ -44,14 +43,15 @@ class PluginResource extends Resource
                     ->badge()
                     ->sortable(),
                 TextColumn::make('status')
+                    ->badge()
                     ->tooltip(fn (Plugin $plugin) => $plugin->status_message)
                     ->sortable(),
             ])
             ->actions([
                 Action::make('view')
                     ->icon('tabler-eye-share')
-                    ->color('primary')
-                    ->visible(fn (Plugin $plugin) => $plugin->url !== null)
+                    ->color('gray')
+                    ->visible(fn (Plugin $plugin) => $plugin->url)
                     ->url(fn (Plugin $plugin) => $plugin->url, true),
                 Action::make('settings')
                     ->authorize(fn (Plugin $plugin) => auth()->user()->can('update plugin', $plugin))
