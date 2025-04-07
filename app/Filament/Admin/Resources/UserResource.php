@@ -6,6 +6,7 @@ use App\Filament\Admin\Resources\UserResource\Pages;
 use App\Filament\Admin\Resources\UserResource\RelationManagers;
 use App\Models\Role;
 use App\Models\User;
+use Filament\Facades\Filament;
 use Filament\Forms\Components\CheckboxList;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
@@ -58,8 +59,9 @@ class UserResource extends Resource
                 ImageColumn::make('picture')
                     ->visibleFrom('lg')
                     ->label('')
-                    ->extraImgAttributes(['class' => 'rounded-full'])
-                    ->defaultImageUrl(fn (User $user) => 'https://gravatar.com/avatar/' . md5(strtolower($user->email))),
+                    ->circular()
+                    ->alignCenter()
+                    ->defaultImageUrl(fn (User $user) => Filament::getUserAvatarUrl($user)),
                 TextColumn::make('username')
                     ->label(trans('admin/user.username')),
                 TextColumn::make('email')
