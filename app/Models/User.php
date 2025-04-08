@@ -283,6 +283,28 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
             });
     }
 
+    /** @return int[] */
+    public function accessibleNodes(): array
+    {
+        $allNodes = Node::pluck('id')->all();
+
+        if ($this->isRootAdmin()) {
+            return $allNodes;
+        }
+
+        $nodes = [];
+
+        foreach ($this->roles as $role) {
+            if ($role->nodes->isEmpty()) {
+                continue;
+            }
+
+            $nodes = array_merge($nodes, $role->nodes->map(fn ($node) => $node->id)->toArray());
+        }
+
+        return count($nodes) === 0 ? $allNodes : array_unique($nodes);
+    }
+
     public function subusers(): HasMany
     {
         return $this->hasMany(Subuser::class);
@@ -372,13 +394,24 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
         return $this->username;
     }
 
-    public function canTarget(Model $user): bool
+    public function canTarget(Model $model): bool
     {
+        // Root adminds can target everyone and everything
         if ($this->isRootAdmin()) {
             return true;
         }
 
-        return $user instanceof User && !$user->isRootAdmin();
+        // Make sure normal admins can't target root admins
+        if ($model instanceof User) {
+            return !$model->isRootAdmin();
+        }
+
+        // Make sure the user can only target accessible nodes
+        if ($model instanceof Node) {
+            return collect($this->accessibleNodes())->contains($model->id);
+        }
+
+        return false;
     }
 
     public function getTenants(Panel $panel): array|Collection

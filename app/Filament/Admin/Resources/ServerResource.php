@@ -5,6 +5,7 @@ namespace App\Filament\Admin\Resources;
 use App\Filament\Admin\Resources\ServerResource\Pages;
 use App\Models\Server;
 use Filament\Resources\Resource;
+use Illuminate\Database\Eloquent\Builder;
 
 class ServerResource extends Resource
 {
@@ -36,7 +37,7 @@ class ServerResource extends Resource
 
     public static function getNavigationBadge(): ?string
     {
-        return static::getModel()::count() ?: null;
+        return static::getEloquentQuery()->count() ?: null;
     }
 
     public static function getPages(): array
@@ -46,5 +47,14 @@ class ServerResource extends Resource
             'create' => Pages\CreateServer::route('/create'),
             'edit' => Pages\EditServer::route('/{record}/edit'),
         ];
+    }
+
+    public static function getEloquentQuery(): Builder
+    {
+        $query = parent::getEloquentQuery();
+
+        return $query->whereHas('node', function (Builder $query) {
+            $query->whereIn('id', auth()->user()->accessibleNodes());
+        });
     }
 }

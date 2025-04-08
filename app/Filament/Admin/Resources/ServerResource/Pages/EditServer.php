@@ -177,7 +177,7 @@ class EditServer extends EditRecord
                                     ->maxLength(255),
                                 Select::make('node_id')
                                     ->label(trans('admin/server.node'))
-                                    ->relationship('node', 'name')
+                                    ->relationship('node', 'name', fn (Builder $query) => $query->whereIn('id', auth()->user()->accessibleNodes()))
                                     ->columnSpan([
                                         'default' => 2,
                                         'sm' => 1,

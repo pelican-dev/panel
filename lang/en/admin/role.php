@@ -12,4 +12,5 @@ return [
     'root_admin' => 'The :role has all permissions.',
     'root_admin_delete' => 'Can\'t delete Root Admin',
     'users' => 'Users',
+    'nodes' => 'Nodes',
 ];

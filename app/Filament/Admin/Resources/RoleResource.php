@@ -10,6 +10,7 @@ use Filament\Forms\Components\Component;
 use Filament\Forms\Components\Fieldset;
 use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\Section;
+use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Forms\Get;
@@ -73,6 +74,11 @@ class RoleResource extends Resource
                     ->label(trans('admin/role.users'))
                     ->counts('users')
                     ->icon('tabler-users'),
+                TextColumn::make('nodes.name')
+                    ->icon('tabler-server-2')
+                    ->label(trans('admin/role.nodes'))
+                    ->badge()
+                    ->placeholder(trans('admin/role.all')),
             ])
             ->actions([
                 ViewAction::make()
@@ -125,6 +131,13 @@ class RoleResource extends Resource
                     ->label(trans('admin/role.permissions'))
                     ->content(trans('admin/role.root_admin', ['role' => Role::ROOT_ADMIN]))
                     ->visible(fn (Get $get) => $get('name') === Role::ROOT_ADMIN),
+                Select::make('nodes')
+                    ->label(trans('admin/role.nodes'))
+                    ->multiple()
+                    ->relationship('nodes', 'name')
+                    ->searchable(['name', 'fqdn'])
+                    ->preload()
+                    ->hidden(fn (Get $get) => $get('name') === Role::ROOT_ADMIN),
             ]);
     }
 
