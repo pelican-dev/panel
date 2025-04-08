@@ -396,7 +396,7 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
 
     public function canTarget(Model $model): bool
     {
-        // Root adminds can target everyone and everything
+        // Root admins can target everyone and everything
         if ($this->isRootAdmin()) {
             return true;
         }

@@ -13,7 +13,7 @@ class NodePolicy
 
     public function before(User $user, string $ability, string|Node $node): ?bool
     {
-        // For "viewAny" the $server param is the class name
+        // For "viewAny" the $node param is the class name
         if (is_string($node)) {
             return null;
         }
