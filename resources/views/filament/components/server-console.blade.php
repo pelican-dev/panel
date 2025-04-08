@@ -7,6 +7,16 @@
     <script src="https://cdn.jsdelivr.net/npm/@xterm/addon-search/lib/addon-search.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/xterm-addon-search-bar/lib/xterm-addon-search-bar.min.js"></script>
     <link rel="stylesheet" href="{{ asset('/css/filament/server/console.css') }}">
+
+    @php
+        $userFont = auth()->user()->getCustomization()['console_font'] ?? 'ComicMono';
+    @endphp
+    <style>
+        @font-face {
+            font-family: '{{ $userFont }}';
+            src: url('{{ asset("fonts/{$userFont}.ttf") }}');
+        }
+    </style>
     @endassets
 
     <div id="terminal" wire:ignore></div>
@@ -58,7 +68,7 @@
 
         let options = {
             fontSize: {{ auth()->user()->getCustomization()['console_font_size'] ?? 14 }},
-            fontFamily: 'Comic Mono, monospace',
+            fontFamily: '{{ $userFont }}',
             lineHeight: 1.2,
             disableStdin: true,
             cursorStyle: 'underline',
@@ -116,6 +126,8 @@
             terminal.writeln(TERMINAL_PRELUDE + 'Server marked as ' + state + '...\u001b[0m');
 
         const socket = new WebSocket("{{ $this->getSocket() }}");
+
+        terminal.writeln(TERMINAL_PRELUDE + 'Server marked as ...\u001b[0m');
 
         socket.onerror = (event) => {
             $wire.dispatchSelf('websocket-error');
