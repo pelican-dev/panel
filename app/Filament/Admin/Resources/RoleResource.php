@@ -70,15 +70,15 @@ class RoleResource extends Resource
                     ->badge()
                     ->counts('permissions')
                     ->formatStateUsing(fn (Role $role, $state) => $role->isRootAdmin() ? trans('admin/role.all') : $state),
-                TextColumn::make('users_count')
-                    ->label(trans('admin/role.users'))
-                    ->counts('users')
-                    ->icon('tabler-users'),
                 TextColumn::make('nodes.name')
                     ->icon('tabler-server-2')
                     ->label(trans('admin/role.nodes'))
                     ->badge()
                     ->placeholder(trans('admin/role.all')),
+                TextColumn::make('users_count')
+                    ->label(trans('admin/role.users'))
+                    ->counts('users')
+                    ->icon('tabler-users'),
             ])
             ->actions([
                 ViewAction::make()
@@ -137,6 +137,7 @@ class RoleResource extends Resource
                     ->relationship('nodes', 'name')
                     ->searchable(['name', 'fqdn'])
                     ->preload()
+                    ->hint(trans('admin/role.nodes_hint'))
                     ->hidden(fn (Get $get) => $get('name') === Role::ROOT_ADMIN),
             ]);
     }
