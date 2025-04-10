@@ -30,7 +30,11 @@ class MinecraftEula extends Feature
     public function action(): Action
     {
         return Action::make($this->featureName())
-            ->action(function (DaemonFileRepository $fileRepository) {
+            ->requiresConfirmation()
+            ->modalHeading('Minecraft EULA')
+            ->modalDescription('By pressing "I Accept" below you are indicating your agreement to the Minecraft EULA')
+            ->modalSubmitActionLabel('I Accept')
+            ->action(function (Action $action, DaemonFileRepository $fileRepository) {
                 try {
                     /** @var Server $server */
                     $server = Filament::getTenant();
@@ -43,10 +47,6 @@ class MinecraftEula extends Feature
                         ->send();
                 }
             }
-            )
-            ->requiresConfirmation()
-            ->modalHeading('Minecraft EULA')
-            ->modalDescription('By pressing "I Accept" below you are indicating your agreement to the Minecraft EULA')
-            ->modalSubmitActionLabel('I Accept');
+            );
     }
 }

@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "dea93e475a4cba485390342c3a1ea18f",
+    "content-hash": "ce24217b40cafaca4f2fe97c0cc2a31b",
     "packages": [
         {
             "name": "abdelhamiderrahmouni/filament-monaco-editor",
@@ -15757,6 +15757,59 @@
                 }
             ],
             "time": "2024-03-03T12:36:25+00:00"
+        },
+        {
+            "name": "wire-elements/wire-spy",
+            "version": "v0.0.12",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/wire-elements/wire-spy.git",
+                "reference": "f65436e622001698fce79f34f984c25067d957c2"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/wire-elements/wire-spy/zipball/f65436e622001698fce79f34f984c25067d957c2",
+                "reference": "f65436e622001698fce79f34f984c25067d957c2",
+                "shasum": ""
+            },
+            "require": {
+                "livewire/livewire": "^v3.0.0"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "WireElements\\WireSpy\\WireSpyServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "WireElements\\WireSpy\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Philo Hermans",
+                    "email": "me@philo.dev"
+                }
+            ],
+            "description": "Devtools for Livewire",
+            "support": {
+                "issues": "https://github.com/wire-elements/wire-spy/issues",
+                "source": "https://github.com/wire-elements/wire-spy/tree/v0.0.12"
+            },
+            "funding": [
+                {
+                    "url": "https://github.com/PhiloNL",
+                    "type": "github"
+                }
+            ],
+            "time": "2025-01-03T12:44:33+00:00"
         }
     ],
     "aliases": [],

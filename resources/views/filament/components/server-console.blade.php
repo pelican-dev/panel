@@ -110,7 +110,7 @@
         }
 
         const checkListeners = (line) => {
-            $wire.dispatch('line-to-check', { line });
+            Livewire.dispatch('line-to-check', { line });
         }
 
         const handleTransferStatus = (status) =>
