@@ -6,6 +6,7 @@ use App\Traits\HasValidation;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Event;
 use App\Events\ActivityLogged;
+use Filament\Facades\Filament;
 use Filament\Support\Contracts\HasIcon;
 use Filament\Support\Contracts\HasLabel;
 use Illuminate\Database\Eloquent\Builder;
@@ -120,11 +121,6 @@ class ActivityLog extends Model implements HasIcon, HasLabel
         return $builder->whereMorphedTo('actor', $actor);
     }
 
-    /**
-     * Returns models to be pruned.
-     *
-     * @see https://laravel.com/docs/9.x/eloquent#pruning-models
-     */
     public function prunable(): Builder
     {
         if (is_null(config('activity.prune_days'))) {
@@ -134,10 +130,6 @@ class ActivityLog extends Model implements HasIcon, HasLabel
         return static::where('timestamp', '<=', Carbon::now()->subDays(config('activity.prune_days')));
     }
 
-    /**
-     * Boots the model event listeners. This will trigger an activity log event every
-     * time a new model is inserted which can then be captured and worked with as needed.
-     */
     protected static function boot(): void
     {
         parent::boot();
@@ -181,9 +173,11 @@ class ActivityLog extends Model implements HasIcon, HasLabel
             ]);
         }
 
+        $avatarUrl = Filament::getUserAvatarUrl($user);
+
         return "
             <div style='display: flex; align-items: center;'>
-                <img width='50px' height='50px' src='{$user->getFilamentAvatarUrl()}' style='margin-right: 15px' />
+                <img width='50px' height='50px' src='{$avatarUrl}' style='margin-right: 15px' />
 
                 <div>
                     <p>$user->username — $this->event</p>

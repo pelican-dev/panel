@@ -14,7 +14,7 @@ return new class extends Migration
             $table->increments('id');
             $table->integer('user_id')->unsigned();
             $table->integer('server_id')->unsigned();
-            $table->char('daemonSecret', 36)->unique();
+            $table->string('daemonSecret', 36)->unique();
             $table->timestamps();
         });
     }

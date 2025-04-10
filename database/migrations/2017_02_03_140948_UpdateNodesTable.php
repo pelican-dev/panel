@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::table('nodes', function (Blueprint $table) {
             $table->dropForeign(['location']);
 
-            if (Schema::getConnection()->getDriverName() !== 'sqlite') {
+            if (!in_array(Schema::getConnection()->getDriverName(), ['sqlite', 'pgsql'])) {
                 $table->dropIndex('nodes_location_foreign');
             }
 
@@ -31,7 +31,7 @@ return new class extends Migration
         Schema::table('nodes', function (Blueprint $table) {
             $table->dropForeign(['location_id']);
 
-            if (Schema::getConnection()->getDriverName() !== 'sqlite') {
+            if (!in_array(Schema::getConnection()->getDriverName(), ['sqlite', 'pgsql'])) {
                 $table->dropIndex('nodes_location_id_foreign');
             }
 

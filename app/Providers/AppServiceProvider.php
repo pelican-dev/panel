@@ -10,6 +10,9 @@ use App\Checks\NodeVersionsCheck;
 use App\Checks\PanelVersionCheck;
 use App\Checks\ScheduleCheck;
 use App\Checks\UsedDiskSpaceCheck;
+use App\Extensions\Avatar\Providers\GravatarProvider;
+use App\Extensions\Avatar\Providers\LocalAvatarProvider;
+use App\Extensions\Avatar\Providers\UiAvatarsProvider;
 use App\Extensions\OAuth\Providers\GitlabProvider;
 use App\Models;
 use App\Extensions\Captcha\Providers\TurnstileProvider;
@@ -37,7 +40,12 @@ use Illuminate\Support\Facades\URL;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Str;
 use Laravel\Sanctum\Sanctum;
+use Livewire\Component;
+use Livewire\Livewire;
 use Spatie\Health\Facades\Health;
+
+use function Livewire\on;
+use function Livewire\store;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -110,6 +118,11 @@ class AppServiceProvider extends ServiceProvider
         // Default Captcha provider
         TurnstileProvider::register($app);
 
+        // Default Avatar providers
+        GravatarProvider::register();
+        UiAvatarsProvider::register();
+        LocalAvatarProvider::register();
+
         FilamentColor::register([
             'danger' => Color::Red,
             'gray' => Color::Zinc,
@@ -138,6 +151,22 @@ class AppServiceProvider extends ServiceProvider
             PanelsRenderHook::FOOTER,
             fn () => Blade::render('filament.layouts.footer'),
         );
+
+        on('dehydrate', function (Component $component) {
+            if (!Livewire::isLivewireRequest()) {
+                return;
+            }
+
+            if (store($component)->has('redirect')) {
+                return;
+            }
+
+            if (count(session()->get('alert-banners') ?? []) <= 0) {
+                return;
+            }
+
+            $component->dispatch('alertBannerSent');
+        });
 
         // Don't run any health checks during tests
         if (!$app->runningUnitTests()) {

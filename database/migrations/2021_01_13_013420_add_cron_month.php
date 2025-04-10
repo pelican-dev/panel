@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('schedules', function (Blueprint $table) {
-            $table->string('cron_month')->after('cron_day_of_week');
+            $table->string('cron_month')->nullable()->after('cron_day_of_week');
         });
     }
 

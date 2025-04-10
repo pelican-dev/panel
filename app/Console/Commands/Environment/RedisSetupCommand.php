@@ -35,7 +35,7 @@ class RedisSetupCommand extends Command
     {
         $this->variables['CACHE_STORE'] = 'redis';
         $this->variables['QUEUE_CONNECTION'] = 'redis';
-        $this->variables['SESSION_DRIVERS'] = 'redis';
+        $this->variables['SESSION_DRIVER'] = 'redis';
 
         $this->requestRedisSettings();
 

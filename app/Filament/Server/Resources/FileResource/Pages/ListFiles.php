@@ -40,6 +40,7 @@ use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Routing\Route;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Route as RouteFacade;
 use Livewire\Attributes\Locked;
 
@@ -57,13 +58,18 @@ class ListFiles extends ListRecords
     public function mount(?string $path = null): void
     {
         parent::mount();
+
         $this->path = $path ?? '/';
 
         try {
             $this->getDaemonFileRepository()->getDirectory('/');
         } catch (ConnectionException) {
             $this->isDisabled = true;
-            $this->getFailureNotification();
+
+            AlertBanner::make('node_connection_error')
+                ->title('Could not connect to the node!')
+                ->danger()
+                ->send();
         }
     }
 
@@ -92,8 +98,8 @@ class ListFiles extends ListRecords
         $files = File::get($server, $this->path);
 
         return $table
-            ->paginated([25, 50, 100, 250])
-            ->defaultPaginationPageOption(50)
+            ->paginated([25, 50])
+            ->defaultPaginationPageOption(25)
             ->query(fn () => $files->orderByDesc('is_directory'))
             ->defaultSort('name')
             ->columns([
@@ -290,16 +296,24 @@ class ListFiles extends ListRecords
                         ->disabled($this->isDisabled)
                         ->label('Archive')
                         ->icon('tabler-archive')
-                        ->action(function (File $file) {
-                            $this->getDaemonFileRepository()->compressFiles($this->path, [$file->name]);
+                        ->form([
+                            TextInput::make('name')
+                                ->label('Archive name')
+                                ->placeholder(fn () => 'archive-' . str(Carbon::now()->toRfc3339String())->replace(':', '')->before('+0000') . 'Z')
+                                ->suffix('.tar.gz'),
+                        ])
+                        ->action(function ($data, File $file) {
+                            $archive = $this->getDaemonFileRepository()->compressFiles($this->path, [$file->name], $data['name']);
 
                             Activity::event('server:file.compress')
+                                ->property('name', $archive['name'])
                                 ->property('directory', $this->path)
                                 ->property('files', [$file->name])
                                 ->log();
 
                             Notification::make()
                                 ->title('Archive created')
+                                ->body($archive['name'])
                                 ->success()
                                 ->send();
 
@@ -378,18 +392,26 @@ class ListFiles extends ListRecords
                     BulkAction::make('archive')
                         ->authorize(fn () => auth()->user()->can(Permission::ACTION_FILE_ARCHIVE, $server))
                         ->disabled($this->isDisabled)
-                        ->action(function (Collection $files) {
+                        ->form([
+                            TextInput::make('name')
+                                ->label('Archive name')
+                                ->placeholder(fn () => 'archive-' . str(Carbon::now()->toRfc3339String())->replace(':', '')->before('+0000') . 'Z')
+                                ->suffix('.tar.gz'),
+                        ])
+                        ->action(function ($data, Collection $files) {
                             $files = $files->map(fn ($file) => $file['name'])->toArray();
 
-                            $this->getDaemonFileRepository()->compressFiles($this->path, $files);
+                            $archive = $this->getDaemonFileRepository()->compressFiles($this->path, $files, $data['name']);
 
                             Activity::event('server:file.compress')
+                                ->property('name', $archive['name'])
                                 ->property('directory', $this->path)
                                 ->property('files', $files)
                                 ->log();
 
                             Notification::make()
                                 ->title('Archive created')
+                                ->body($archive['name'])
                                 ->success()
                                 ->send();
 
@@ -442,6 +464,8 @@ class ListFiles extends ListRecords
                         ->required(),
                     Select::make('lang')
                         ->label('Syntax Highlighting')
+                        ->searchable()
+                        ->native(false)
                         ->live()
                         ->options(EditorLanguages::class)
                         ->selectablePlaceholder(false)
@@ -561,14 +585,6 @@ class ListFiles extends ListRecords
         $this->fileRepository ??= (new DaemonFileRepository())->setServer($server);
 
         return $this->fileRepository;
-    }
-
-    public function getFailureNotification(): AlertBanner
-    {
-        return AlertBanner::make()
-            ->title('Could not connect to the node!')
-            ->danger()
-            ->send();
     }
 
     public static function route(string $path): PageRegistration

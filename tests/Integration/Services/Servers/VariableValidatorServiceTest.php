@@ -52,12 +52,15 @@ class VariableValidatorServiceTest extends IntegrationTestCase
             'SERVER_JARFILE' => 'server.jar',
         ]);
 
+        $bungeeVersion = $response->firstWhere('key', 'BUNGEE_VERSION');
+        $serverJarfile = $response->firstWhere('key', 'SERVER_JARFILE');
+
         $this->assertInstanceOf(Collection::class, $response);
         $this->assertCount(2, $response);
-        $this->assertSame('BUNGEE_VERSION', $response->get(0)->key);
-        $this->assertSame('1234', $response->get(0)->value);
-        $this->assertSame('SERVER_JARFILE', $response->get(1)->key);
-        $this->assertSame('server.jar', $response->get(1)->value);
+        $this->assertSame('BUNGEE_VERSION', $bungeeVersion->key);
+        $this->assertSame('1234', $bungeeVersion->value);
+        $this->assertSame('SERVER_JARFILE', $serverJarfile->key);
+        $this->assertSame('server.jar', $serverJarfile->value);
     }
 
     /**
@@ -67,7 +70,7 @@ class VariableValidatorServiceTest extends IntegrationTestCase
     public function test_normal_user_cannot_validate_non_user_editable_variables(): void
     {
         $egg = $this->cloneEggAndVariables($this->egg);
-        $egg->variables()->first()->update([
+        $egg->variables()->firstWhere('env_variable', 'BUNGEE_VERSION')->update([
             'user_editable' => false,
         ]);
 
@@ -79,8 +82,8 @@ class VariableValidatorServiceTest extends IntegrationTestCase
 
         $this->assertInstanceOf(Collection::class, $response);
         $this->assertCount(1, $response);
-        $this->assertSame('SERVER_JARFILE', $response->get(0)->key);
-        $this->assertSame('server.jar', $response->get(0)->value);
+        $this->assertSame('SERVER_JARFILE', $response->firstWhere('key', 'SERVER_JARFILE')->key);
+        $this->assertSame('server.jar', $response->firstWhere('key', 'SERVER_JARFILE')->value);
     }
 
     public function test_environment_variables_can_be_updated_as_admin(): void
@@ -107,12 +110,15 @@ class VariableValidatorServiceTest extends IntegrationTestCase
             'SERVER_JARFILE' => 'server.jar',
         ]);
 
+        $bungeeVersion = $response->firstWhere('key', 'BUNGEE_VERSION');
+        $serverJarfile = $response->firstWhere('key', 'SERVER_JARFILE');
+
         $this->assertInstanceOf(Collection::class, $response);
         $this->assertCount(2, $response);
-        $this->assertSame('BUNGEE_VERSION', $response->get(0)->key);
-        $this->assertSame('123', $response->get(0)->value);
-        $this->assertSame('SERVER_JARFILE', $response->get(1)->key);
-        $this->assertSame('server.jar', $response->get(1)->value);
+        $this->assertSame('BUNGEE_VERSION', $bungeeVersion->key);
+        $this->assertSame('123', $bungeeVersion->value);
+        $this->assertSame('SERVER_JARFILE', $serverJarfile->key);
+        $this->assertSame('server.jar', $serverJarfile->value);
     }
 
     public function test_nullable_environment_variables_can_be_used_correctly(): void
