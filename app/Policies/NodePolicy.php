@@ -18,6 +18,10 @@ class NodePolicy
             return null;
         }
 
-        return $user->canTarget($node);
+        if (!$user->canTarget($node)) {
+            return false;
+        }
+
+        return null;
     }
 }
