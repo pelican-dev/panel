@@ -37,7 +37,7 @@ class ServerResource extends Resource
 
     public static function getNavigationBadge(): ?string
     {
-        return static::getEloquentQuery()->count() ?: null;
+        return (string) static::getEloquentQuery()->count() ?: null;
     }
 
     public static function getPages(): array
