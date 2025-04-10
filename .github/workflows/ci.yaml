@@ -19,10 +19,10 @@ jobs:
       database:
         image: ${{ matrix.database }}
         env:
-          MYSQL_ALLOW_EMPTY_PASSWORD: yes
+          MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
           MYSQL_DATABASE: testing
         ports:
-          - 3306
+          - 3306:3306
         options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
     env:
       APP_ENV: testing
@@ -44,15 +44,10 @@ jobs:
       - name: Code Checkout
         uses: actions/checkout@v4
 
-      - name: Get cache directory
-        id: composer-cache
-        run: |
-          echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
-
-      - name: Cache
+      - name: Cache dependencies
         uses: actions/cache@v4
         with:
-          path: ${{ steps.composer-cache.outputs.dir }}
+          path: ~/.composer/cache
           key: ${{ runner.os }}-composer-${{ matrix.php }}-${{ hashFiles('**/composer.lock') }}
           restore-keys: |
             ${{ runner.os }}-composer-${{ matrix.php }}-
@@ -61,23 +56,32 @@ jobs:
         uses: shivammathur/setup-php@v2
         with:
           php-version: ${{ matrix.php }}
-          extensions: bcmath, curl, gd, mbstring, mysql, openssl, pdo, tokenizer, xml, zip
+          extensions: |
+            bcmath
+            curl
+            gd
+            mbstring
+            mysql
+            openssl
+            pdo
+            tokenizer
+            xml
+            zip
           tools: composer:v2
-          coverage: none
 
       - name: Install dependencies
-        run: composer install --no-interaction --no-suggest --no-progress --no-scripts
+        run: composer install --no-interaction --no-progress --no-scripts
 
-      - name: Unit tests
+      - name: Run Unit Tests
         run: vendor/bin/pest tests/Unit
         env:
           DB_HOST: UNIT_NO_DB
-          SKIP_MIGRATIONS: true
+          SKIP_MIGRATIONS: "true"
 
-      - name: Integration tests
+      - name: Run Integration Tests
         run: vendor/bin/pest tests/Integration
         env:
-          DB_PORT: ${{ job.services.database.ports[3306] }}
+          DB_PORT: 3306
           DB_USERNAME: root
 
   mariadb:
@@ -92,10 +96,10 @@ jobs:
       database:
         image: ${{ matrix.database }}
         env:
-          MYSQL_ALLOW_EMPTY_PASSWORD: yes
+          MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
           MYSQL_DATABASE: testing
         ports:
-          - 3306
+          - 3306:3306
         options: --health-cmd="mariadb-admin ping || mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
     env:
       APP_ENV: testing
@@ -117,15 +121,10 @@ jobs:
       - name: Code Checkout
         uses: actions/checkout@v4
 
-      - name: Get cache directory
-        id: composer-cache
-        run: |
-          echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
-
-      - name: Cache
+      - name: Cache dependencies
         uses: actions/cache@v4
         with:
-          path: ${{ steps.composer-cache.outputs.dir }}
+          path: ~/.composer/cache
           key: ${{ runner.os }}-composer-${{ matrix.php }}-${{ hashFiles('**/composer.lock') }}
           restore-keys: |
             ${{ runner.os }}-composer-${{ matrix.php }}-
@@ -134,23 +133,32 @@ jobs:
         uses: shivammathur/setup-php@v2
         with:
           php-version: ${{ matrix.php }}
-          extensions: bcmath, curl, gd, mbstring, mysql, openssl, pdo, tokenizer, xml, zip
+          extensions: |
+            bcmath
+            curl
+            gd
+            mbstring
+            mysql
+            openssl
+            pdo
+            tokenizer
+            xml
+            zip
           tools: composer:v2
-          coverage: none
 
       - name: Install dependencies
-        run: composer install --no-interaction --no-suggest --no-progress --no-scripts
+        run: composer install --no-interaction --no-progress --no-scripts
 
-      - name: Unit tests
+      - name: Run Unit Tests
         run: vendor/bin/pest tests/Unit
         env:
           DB_HOST: UNIT_NO_DB
-          SKIP_MIGRATIONS: true
+          SKIP_MIGRATIONS: "true"
 
-      - name: Integration tests
+      - name: Run Integration Tests
         run: vendor/bin/pest tests/Integration
         env:
-          DB_PORT: ${{ job.services.database.ports[3306] }}
+          DB_PORT: 3306
           DB_USERNAME: root
 
   sqlite:
@@ -178,15 +186,10 @@ jobs:
       - name: Code Checkout
         uses: actions/checkout@v4
 
-      - name: Get cache directory
-        id: composer-cache
-        run: |
-          echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
-
-      - name: Cache
+      - name: Cache dependencies
         uses: actions/cache@v4
         with:
-          path: ${{ steps.composer-cache.outputs.dir }}
+          path: ~/.composer/cache
           key: ${{ runner.os }}-composer-${{ matrix.php }}-${{ hashFiles('**/composer.lock') }}
           restore-keys: |
             ${{ runner.os }}-composer-${{ matrix.php }}-
@@ -195,23 +198,31 @@ jobs:
         uses: shivammathur/setup-php@v2
         with:
           php-version: ${{ matrix.php }}
-          extensions: bcmath, curl, gd, mbstring, mysql, openssl, pdo, tokenizer, xml, zip
+          extensions: |
+            bcmath
+            curl
+            gd
+            mbstring
+            openssl
+            pdo
+            tokenizer
+            xml
+            zip
           tools: composer:v2
-          coverage: none
 
       - name: Install dependencies
-        run: composer install --no-interaction --no-suggest --no-progress --no-scripts
+        run: composer install --no-interaction --no-progress --no-scripts
 
-      - name: Create SQLite file
+      - name: Create SQLite Database
         run: touch database/testing.sqlite
 
-      - name: Unit tests
+      - name: Run Unit Tests
         run: vendor/bin/pest tests/Unit
         env:
           DB_HOST: UNIT_NO_DB
-          SKIP_MIGRATIONS: true
+          SKIP_MIGRATIONS: "true"
 
-      - name: Integration tests
+      - name: Run Integration Tests
         run: vendor/bin/pest tests/Integration
 
   postgresql:
@@ -232,11 +243,7 @@ jobs:
           POSTGRES_HOST_AUTH_METHOD: trust
         ports:
           - 5432:5432
-        options: >-
-          --health-cmd pg_isready
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
+        options: --health-cmd="pg_isready" --health-interval=10s --health-timeout=5s --health-retries=5
     env:
       APP_ENV: testing
       APP_DEBUG: "false"
@@ -258,34 +265,38 @@ jobs:
       - name: Code Checkout
         uses: actions/checkout@v4
 
-      - name: Get cache directory
-        id: composer-cache
-        run: |
-          echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
-
-      - name: Cache
+      - name: Cache dependencies
         uses: actions/cache@v4
         with:
-          path: ${{ steps.composer-cache.outputs.dir }}
+          path: ~/.composer/cache
           key: ${{ runner.os }}-composer-${{ matrix.php }}-${{ hashFiles('**/composer.lock') }}
           restore-keys: |
+            ${{ runner.os }}-composer-${{ matrix.php }}-
 
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
           php-version: ${{ matrix.php }}
-          extensions: bcmath, curl, gd, mbstring, mysql, openssl, pdo, tokenizer, xml, zip
+          extensions: |
+            bcmath
+            curl
+            gd
+            mbstring
+            openssl
+            pdo
+            tokenizer
+            xml
+            zip
           tools: composer:v2
-          coverage: none
 
       - name: Install dependencies
-        run: composer install --no-interaction --no-suggest --no-progress --no-scripts
+        run: composer install --no-interaction --no-progress --no-scripts
 
-      - name: Unit tests
+      - name: Run Unit Tests
         run: vendor/bin/pest tests/Unit
         env:
           DB_HOST: UNIT_NO_DB
-          SKIP_MIGRATIONS: true
+          SKIP_MIGRATIONS: "true"
 
-      - name: Integration tests
+      - name: Run Integration Tests
         run: vendor/bin/pest tests/Integration

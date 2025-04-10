@@ -8,38 +8,47 @@ on:
 jobs:
   release:
     name: Release
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-latest
     permissions:
       contents: write
 
     steps:
-      - name: Code checkout
+      - name: Code Checkout
         uses: actions/checkout@v4
 
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
-          php-version: ${{ matrix.php }}
-          extensions: bcmath, curl, gd, mbstring, mysql, openssl, pdo, tokenizer, xml, zip
+          php-version: 8.4
+          extensions: |
+            bcmath
+            curl
+            gd
+            mbstring
+            mysql
+            openssl
+            pdo
+            tokenizer
+            xml
+            zip
           tools: composer:v2
-          coverage: none
 
-      - name: Install PHP dependencies
-        run: composer install --no-interaction --no-suggest --no-progress --no-autoloader --no-scripts --no-dev
+      - name: Install PHP Dependencies
+        run: composer install --no-interaction --no-progress --no-autoloader --no-scripts --no-dev
 
-      - name: Setup Node
+      - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 20
-          cache: "yarn"
+          node-version: 22
+          cache: yarn
 
-      - name: Install JS dependencies
+      - name: Install JS Dependencies
         run: yarn install --frozen-lockfile
 
-      - name: Build
+      - name: Build Assets
         run: yarn build
 
-      - name: Create release branch and bump version
+      - name: Create Release Branch and Bump Version
         env:
           REF: ${{ github.ref }}
         run: |
@@ -47,23 +56,20 @@ jobs:
           git config --local user.email "github-actions[bot]@users.noreply.github.com"
           git config --local user.name "github-actions[bot]"
           git checkout -b $BRANCH
-          git push -u origin $BRANCH
           sed -i "s/    'version' => 'canary',/    'version' => '${REF:11}',/" config/app.php
           git add config/app.php
           git commit -m "ci(release): bump version"
-          git push
+          git push -u origin $BRANCH
 
-      - name: Create release archive
+      - name: Create Release Archive
         run: |
           rm -rf node_modules vendor tests CODE_OF_CONDUCT.md CONTRIBUTING.md phpunit.xml shell.nix
           tar -czf panel.tar.gz * .env.example
 
-      - name: Create checksum
-        run: |
-          SUM=`sha256sum panel.tar.gz`
-          echo $SUM > checksum.txt
+      - name: Create Checksum
+        run: sha256sum panel.tar.gz > checksum.txt
 
-      - name: Create release
+      - name: Create GitHub Release
         id: create_release
         uses: softprops/action-gh-release@v2
         env:

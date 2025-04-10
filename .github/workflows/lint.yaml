@@ -16,19 +16,29 @@ jobs:
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
-          php-version: "8.3"
-          extensions: bcmath, curl, gd, mbstring, mysql, openssl, pdo, tokenizer, xml, zip
+          php-version: 8.4
+          extensions: |
+            bcmath
+            curl
+            gd
+            mbstring
+            mysql
+            openssl
+            pdo
+            tokenizer
+            xml
+            zip
           tools: composer:v2
-          coverage: none
 
       - name: Setup .env
         run: cp .env.example .env
 
       - name: Install dependencies
-        run: composer install --no-interaction --no-suggest --no-progress --no-autoloader --no-scripts
+        run: composer install --no-interaction --no-progress --no-scripts
 
-      - name: Pint
+      - name: Run Pint
         run: vendor/bin/pint --test
+
   phpstan:
     name: PHPStan
     runs-on: ubuntu-latest
@@ -40,15 +50,10 @@ jobs:
       - name: Code Checkout
         uses: actions/checkout@v4
 
-      - name: Get cache directory
-        id: composer-cache
-        run: |
-          echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
-
-      - name: Cache
+      - name: Cache Composer Dependencies
         uses: actions/cache@v4
         with:
-          path: ${{ steps.composer-cache.outputs.dir }}
+          path: ~/.composer/cache
           key: ${{ runner.os }}-composer-${{ matrix.php }}-${{ hashFiles('**/composer.lock') }}
           restore-keys: |
             ${{ runner.os }}-composer-${{ matrix.php }}-
@@ -57,15 +62,24 @@ jobs:
         uses: shivammathur/setup-php@v2
         with:
           php-version: ${{ matrix.php }}
-          extensions: bcmath, curl, gd, mbstring, mysql, openssl, pdo, tokenizer, xml, zip
+          extensions: |
+            bcmath
+            curl
+            gd
+            mbstring
+            mysql
+            openssl
+            pdo
+            tokenizer
+            xml
+            zip
           tools: composer:v2
-          coverage: none
 
       - name: Setup .env
         run: cp .env.example .env
 
       - name: Install dependencies
-        run: composer install --no-interaction --no-suggest --no-progress --no-scripts
+        run: composer install --no-interaction --no-progress --no-scripts
 
-      - name: PHPStan
+      - name: Run PHPStan
         run: vendor/bin/phpstan --memory-limit=-1
