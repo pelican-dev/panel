@@ -109,7 +109,7 @@
         }
 
         const checkListeners = (line) => {
-            $dispatch('line-to-check', { line });
+            $wire.dispatch('line-to-check', { line });
         }
 
         const handleTransferStatus = (status) =>
@@ -193,13 +193,4 @@
         });
     </script>
     @endscript
-
-
-    @foreach ($this->getActiveFeatures() as $feature)
-    <x-filament::modal id="modal-{{ $feature->featureName() }}" :close-by-clicking-away="false">
-        {{ $feature->modal() }}
-    </x-filament::modal>
-    @endforeach
-
-
 </x-filament::widget>

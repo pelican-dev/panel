@@ -21,7 +21,6 @@ use Filament\Widgets\Widget;
 use Illuminate\Support\Arr;
 use Livewire\Attributes\On;
 use App\Features;
-use App\Features\CustomModal;
 use Filament\Forms\Components\TextInput;
 
 class ServerConsole extends Widget
@@ -43,16 +42,6 @@ class ServerConsole extends Widget
     public int $historyIndex = 0;
 
     public string $input = '';
-
-    /* public function getModals(): array
-    {
-        $modals = [];
-        foreach ($this->getActiveFeatures() as $feature) {
-            $modals[] = $feature->modal();
-        }
-
-        return $modals;
-    } */
 
     private GetUserPermissionsService $getUserPermissionsService;
 
@@ -146,27 +135,6 @@ class ServerConsole extends Widget
             $data[$timestamp] = $value;
 
             cache()->put($cacheKey, $data, now()->addMinute());
-        }
-    }
-
-    /**
-     * @return Feature[]
-     */
-    public function getActiveFeatures(): array
-    {
-        return [new Features\MinecraftEula(), new Features\JavaVersion()];
-    }
-
-    #[On('line-to-check')]
-    public function lineToCheck(string $line): void
-    {
-        foreach ($this->getActiveFeatures() as $feature) {
-            if ($feature->matchesListeners($line)) {
-                logger()->info('Feature listens for this', compact(['feature', 'line']));
-
-                 $this->dispatch('open-modal', id: "modal-{$feature->featureName()}");
-//                $this->dispatch('open-modal', id: 'edit-user');
-            }
         }
     }
 

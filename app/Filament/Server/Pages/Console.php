@@ -4,6 +4,8 @@ namespace App\Filament\Server\Pages;
 
 use App\Enums\ContainerStatus;
 use App\Exceptions\Http\Server\ServerStateConflictException;
+use App\Features;
+use App\Features\Feature;
 use App\Filament\Server\Widgets\ServerConsole;
 use App\Filament\Server\Widgets\ServerCpuChart;
 use App\Filament\Server\Widgets\ServerMemoryChart;
@@ -12,16 +14,25 @@ use App\Filament\Server\Widgets\ServerOverview;
 use App\Livewire\AlertBanner;
 use App\Models\Permission;
 use App\Models\Server;
-use Filament\Actions\Action;
 use Filament\Facades\Filament;
+use Filament\Actions\Action;
+use Filament\Forms\Components\Actions;
+use Filament\Forms\Components\Actions\Action as FormAction;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Concerns\InteractsWithForms;
+use Filament\Forms\Contracts\HasForms;
+use Filament\Forms\Form;
 use Filament\Pages\Page;
 use Filament\Support\Enums\ActionSize;
 use Filament\Widgets\Widget;
 use Filament\Widgets\WidgetConfiguration;
+use Illuminate\Support\Collection;
 use Livewire\Attributes\On;
 
-class Console extends Page
+class Console extends Page implements HasForms
 {
+    use InteractsWithForms;
+
     protected static ?string $navigationIcon = 'tabler-brand-tabler';
 
     protected static ?int $navigationSort = 1;
@@ -46,6 +57,33 @@ class Console extends Page
         }
     }
 
+    public function form(Form $form): Form
+    {
+        $actions = $this->getActiveFeatures()->map(fn (Feature $feature) => $feature->action())->all();
+
+        return $form
+            ->schema([
+                Actions::make($actions)
+            ]);
+    }
+
+    public function getActiveFeatures(): Collection
+    {
+        return collect([new Features\MinecraftEula(), new Features\JavaVersion()]);
+    }
+
+    #[On('line-to-check')]
+    public function lineToCheck(string $line): void
+    {
+        foreach ($this->getActiveFeatures() as $feature) {
+            if ($feature->matchesListeners($line)) {
+                logger()->info('Feature listens for this', compact(['feature', 'line']));
+
+                $this->dispatch('mountAction', $feature->featureName());
+//                $this->dispatch('open-modal', id: 'edit-user');
+            }
+        }
+    }
     public function getWidgetData(): array
     {
         return [

@@ -3,8 +3,7 @@
 namespace App\Features;
 
 use App\Repositories\Daemon\DaemonFileRepository;
-use Filament\Actions\Action;
-use Filament\Forms\Components\Actions;
+use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
@@ -31,8 +30,8 @@ class JavaVersion extends Feature
 
     public function modal(): Form
     {
-        return $this->makeForm()
-            ->schema([
+        return $this->makeForm();
+            /*->schema([
                 Placeholder::make('see me bitches'),
                 TextInput::make('name'),
                 Actions::make([
@@ -49,15 +48,15 @@ class JavaVersion extends Feature
                             logger($get('name'));
                         }),
                 ])->fullWidth(),
-            ]);
+            ]);*/
     }
 
     public function action(): Action
     {
-        return Action::make('eula')
+        return Action::make('Java Version')
             ->form([
                 Placeholder::make('eula')
-                    ->label('By pressing I Accept below you are indicating your agreement to the Minecraft® EULA.'),
+                    ->label('By pressing I Accept below you are indicating your agreement to the Javascript EULA.'),
             ])
             ->action(function (DaemonFileRepository $fileRepository) {
                 try {

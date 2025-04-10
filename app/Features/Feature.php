@@ -6,7 +6,7 @@ use Filament\Actions\Concerns\InteractsWithActions;
 use Filament\Actions\Contracts\HasActions;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
-use Filament\Forms\Form;
+use Filament\Forms\Components\Actions\Action;
 
 abstract class Feature implements HasActions, HasForms
 {
@@ -18,8 +18,7 @@ abstract class Feature implements HasActions, HasForms
     /** eula */
     abstract public function featureName(): string;
 
-    //    abstract public function action(): Action;
-    abstract public function modal(): Form;
+    abstract public function action(): Action;
 
     public function matchesListeners(string $line): bool
     {
