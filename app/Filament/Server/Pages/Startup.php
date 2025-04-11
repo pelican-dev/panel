@@ -101,7 +101,7 @@ class Startup extends ServerFormPage
                     ->schema([
                         Repeater::make('server_variables')
                             ->label('')
-                            ->relationship('viewableServerVariables', fn (Builder $query) => $query->orderByPowerJoins('variable.sort'))
+                            ->relationship('serverVariables', fn (Builder $query) => $query->where('egg_variables.user_viewable', true)->orderByPowerJoins('variable.sort'))
                             ->grid()
                             ->disabled(fn () => !auth()->user()->can(Permission::ACTION_STARTUP_UPDATE, $server))
                             ->reorderable(false)->addable(false)->deletable(false)
