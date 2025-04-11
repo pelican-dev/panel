@@ -2,10 +2,11 @@
 
 namespace $namespace$;
 
+use App\Contracts\Plugins\HasPluginProviders;
 use Filament\Contracts\Plugin;
 use Filament\Panel;
 
-class $class$ implements Plugin
+class $class$ implements Plugin, HasPluginProviders
 {
     public function getId(): string
     {

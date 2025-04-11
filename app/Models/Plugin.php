@@ -5,7 +5,7 @@ namespace App\Models;
 use App\Contracts\Plugins\HasPluginSettings;
 use App\Enums\PluginStatus;
 use Filament\Forms\Components\Component;
-use Illuminate\Database\Eloquent\Model as IlluminateModel;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Filesystem\Filesystem;
 use Sushi\Sushi;
 
@@ -24,7 +24,7 @@ use Sushi\Sushi;
  * @property string|null $panel_version
  * @property string $category
  */
-class Plugin extends IlluminateModel implements HasPluginSettings
+class Plugin extends Model implements HasPluginSettings
 {
     use Sushi;
 

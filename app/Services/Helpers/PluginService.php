@@ -128,7 +128,7 @@ class PluginService
         }
     }
 
-    public function installPlugin(Plugin $plugin)
+    public function installPlugin(Plugin $plugin): void
     {
         $migrations = plugin_path($plugin->id, 'database', 'migrations');
         if (file_exists($migrations)) {
