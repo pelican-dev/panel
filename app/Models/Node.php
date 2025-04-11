@@ -272,7 +272,7 @@ class Node extends Model implements Validatable
 
     public function roles(): HasManyThrough
     {
-        return $this->hasManyThrough(Role::class, RoleNode::class, 'node_id', 'id', 'id', 'role_id');
+        return $this->hasManyThrough(Role::class, NodeRole::class);
     }
 
     /**

@@ -131,6 +131,6 @@ class Role extends BaseRole
 
     public function nodes(): BelongsToMany
     {
-        return $this->belongsToMany(Node::class, RoleNode::class, 'role_id', 'node_id', 'id', 'id');
+        return $this->belongsToMany(Node::class, NodeRole::class);
     }
 }
