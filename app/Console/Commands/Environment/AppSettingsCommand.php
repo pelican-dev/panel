@@ -3,7 +3,6 @@
 namespace App\Console\Commands\Environment;
 
 use Illuminate\Console\Command;
-use Illuminate\Support\Facades\Artisan;
 
 class AppSettingsCommand extends Command
 {
@@ -21,9 +20,13 @@ class AppSettingsCommand extends Command
 
         if (!config('app.key')) {
             $this->comment('Generating app key');
-            Artisan::call('key:generate');
+            $this->call('key:generate');
         }
 
-        Artisan::call('filament:optimize');
+        $this->comment('Creating storage link');
+        $this->call('storage:link');
+
+        $this->comment('Caching components & icons');
+        $this->call('filament:optimize');
     }
 }
