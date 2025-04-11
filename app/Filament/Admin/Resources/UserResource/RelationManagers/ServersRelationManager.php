@@ -22,30 +22,27 @@ class ServersRelationManager extends RelationManager
         /** @var User $user */
         $user = $this->getOwnerRecord();
 
+        $servers = $user->accessibleServers();
+        [$suspended, $unsuspended] = collect($servers->get())->partition(function ($server) {
+            /** @var Server $server */
+            return $server->status === ServerState::Suspended;
+        });
+
         return $table
+            ->query($servers)
             ->searchable(false)
             ->heading(trans('admin/user.servers'))
             ->headerActions([
                 Actions\Action::make('toggleSuspend')
-                    ->hidden(fn () => $user->servers()
-                        ->whereNot('status', ServerState::Suspended)
-                        ->orWhereNull('status')
-                        ->count() === 0
-                    )
+                    ->hidden(fn () => !$servers->count() || !$unsuspended->count())
                     ->label(trans('admin/server.suspend_all'))
                     ->color('warning')
-                    ->action(function (SuspensionService $suspensionService) use ($user) {
-                        collect($user->servers)->filter(fn ($server) => !$server->isSuspended())
-                            ->each(fn ($server) => $suspensionService->handle($server, SuspendAction::Suspend));
-                    }),
+                    ->action(fn (SuspensionService $suspensionService) => $unsuspended->each(fn ($server) => $suspensionService->handle($server, SuspendAction::Suspend))),
                 Actions\Action::make('toggleUnsuspend')
-                    ->hidden(fn () => $user->servers()->where('status', ServerState::Suspended)->count() === 0)
+                    ->hidden(fn () => !$servers->count() || !$suspended->count())
                     ->label(trans('admin/server.unsuspend_all'))
                     ->color('primary')
-                    ->action(function (SuspensionService $suspensionService) use ($user) {
-                        collect($user->servers()->get())->filter(fn ($server) => $server->isSuspended())
-                            ->each(fn ($server) => $suspensionService->handle($server, SuspendAction::Unsuspend));
-                    }),
+                    ->action(fn (SuspensionService $suspensionService) => $suspended->each(fn ($server) => $suspensionService->handle($server, SuspendAction::Unsuspend))),
             ])
             ->columns([
                 TextColumn::make('uuid')
