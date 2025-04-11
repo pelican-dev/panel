@@ -109,14 +109,14 @@ class CreateServer extends CreateRecord
                                 ->disabledOn('edit')
                                 ->prefixIcon('tabler-server-2')
                                 ->selectablePlaceholder(false)
-                                ->default(fn () => ($this->node = Node::query()->latest()->first())?->id)
+                                ->default(fn () => ($this->node = Node::where('id', collect(auth()->user()->accessibleNodes())->last())->first())?->id)
                                 ->columnSpan([
                                     'default' => 1,
                                     'sm' => 2,
                                     'md' => 2,
                                 ])
                                 ->live()
-                                ->relationship('node', 'name')
+                                ->relationship('node', 'name', fn (Builder $query) => $query->whereIn('id', auth()->user()->accessibleNodes()))
                                 ->searchable()
                                 ->preload()
                                 ->afterStateUpdated(function (Set $set, $state) {

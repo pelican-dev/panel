@@ -21,6 +21,11 @@ class ServerPolicy
             return null;
         }
 
+        // Make sure user can target node of the server
+        if (!$user->canTarget($server->node)) {
+            return false;
+        }
+
         // Owner has full server permissions
         if ($server->owner_id === $user->id) {
             return true;
