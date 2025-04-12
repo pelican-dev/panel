@@ -13,7 +13,6 @@ use App\Models\Allocation;
 use App\Models\Database;
 use App\Models\DatabaseHost;
 use App\Models\Egg;
-use App\Models\Mount;
 use App\Models\Node;
 use App\Models\Server;
 use App\Models\ServerVariable;
@@ -33,7 +32,6 @@ use Filament\Actions;
 use Filament\Forms;
 use Filament\Forms\Components\Actions as FormActions;
 use Filament\Forms\Components\Actions\Action;
-use Filament\Forms\Components\CheckboxList;
 use Filament\Forms\Components\Component;
 use Filament\Forms\Components\Fieldset;
 use Filament\Forms\Components\Grid;
@@ -652,14 +650,8 @@ class EditServer extends EditRecord
                             ]),
                         Tab::make(trans('admin/server.mounts'))
                             ->icon('tabler-layers-linked')
-                            ->schema([
-                                CheckboxList::make('mounts')
-                                    ->label('')
-                                    ->relationship('mounts')
-                                    ->options(fn (Server $server) => $server->node->mounts->filter(fn (Mount $mount) => $mount->eggs->contains($server->egg))->mapWithKeys(fn (Mount $mount) => [$mount->id => $mount->name]))
-                                    ->descriptions(fn (Server $server) => $server->node->mounts->mapWithKeys(fn (Mount $mount) => [$mount->id => "$mount->source -> $mount->target"]))
-                                    ->helperText(fn (Server $server) => $server->node->mounts->isNotEmpty() ? '' : trans('admin/server.no_mounts'))
-                                    ->columnSpanFull(),
+                            ->schema(fn (Get $get) => [
+                                ServerResource::getMountCheckboxList($get),
                             ]),
                         Tab::make(trans('admin/server.databases'))
                             ->hidden(fn () => !auth()->user()->can('viewList database'))

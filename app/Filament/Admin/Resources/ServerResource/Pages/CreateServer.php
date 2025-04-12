@@ -15,7 +15,6 @@ use Closure;
 use Exception;
 use Filament\Forms;
 use Filament\Forms\Components\Actions\Action;
-use Filament\Forms\Components\CheckboxList;
 use Filament\Forms\Components\Component;
 use Filament\Forms\Components\Fieldset;
 use Filament\Forms\Components\Grid;
@@ -744,7 +743,7 @@ class CreateServer extends CreateRecord
                                     'lg' => 4,
                                 ])
                                 ->columnSpan(6)
-                                ->schema([
+                                ->schema(fn (Get $get) => [
                                     Select::make('select_image')
                                         ->label(trans('admin/server.image_name'))
                                         ->live()
@@ -797,14 +796,7 @@ class CreateServer extends CreateRecord
                                         ->valueLabel(trans('admin/server.description'))
                                         ->columnSpanFull(),
 
-                                    CheckboxList::make('mounts')
-                                        ->label('Mounts')
-                                        ->live()
-                                        ->relationship('mounts')
-                                        ->options(fn () => $this->node?->mounts->mapWithKeys(fn ($mount) => [$mount->id => $mount->name]) ?? [])
-                                        ->descriptions(fn () => $this->node?->mounts->mapWithKeys(fn ($mount) => [$mount->id => "$mount->source -> $mount->target"]) ?? [])
-                                        ->helperText(fn () => $this->node?->mounts->isNotEmpty() ? '' : 'No Mounts exist for this Node')
-                                        ->columnSpanFull(),
+                                    ServerResource::getMountCheckboxList($get),
                                 ]),
                         ]),
                 ])
