@@ -1,7 +1,7 @@
 # ================================
 # Stage 0: Build PHP Base Image
 # ================================
-FROM --platform=$TARGETOS/$TARGETARCH php:8.3-fpm-alpine
+FROM --platform=$TARGETOS/$TARGETARCH php:8.4-fpm-alpine
 
 ADD --chmod=0755 https://github.com/mlocati/docker-php-extension-installer/releases/latest/download/install-php-extensions /usr/local/bin/
 
