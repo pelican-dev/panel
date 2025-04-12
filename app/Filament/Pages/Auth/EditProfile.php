@@ -130,6 +130,7 @@ class EditProfile extends BaseEditProfile
                                         FileUpload::make('avatar')
                                             ->visible(fn () => config('panel.filament.avatar-provider') === 'local')
                                             ->avatar()
+                                            ->acceptedFileTypes(['image/png'])
                                             ->directory('avatars')
                                             ->getUploadedFileNameForStorageUsing(fn () => $this->getUser()->id . '.png'),
                                     ]),
