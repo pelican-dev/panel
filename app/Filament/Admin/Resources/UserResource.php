@@ -43,11 +43,6 @@ class UserResource extends Resource
         return trans('admin/user.model_label_plural');
     }
 
-    public static function getNavigationGroup(): ?string
-    {
-        return trans('admin/dashboard.user');
-    }
-
     public static function getNavigationBadge(): ?string
     {
         return static::getModel()::count() ?: null;
