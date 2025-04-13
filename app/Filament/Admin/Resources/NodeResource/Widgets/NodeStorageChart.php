@@ -46,8 +46,8 @@ class NodeStorageChart extends ChartWidget
 
         $unused = $total - $used;
 
-        $used = Number::format($used, maxPrecision: 2);
-        $unused = Number::format($unused, maxPrecision: 2);
+        $used = round($used, 2);
+        $unused = round($unused, 2);
 
         return [
             'datasets' => [
