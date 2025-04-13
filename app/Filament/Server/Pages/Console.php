@@ -15,6 +15,7 @@ use App\Filament\Server\Widgets\ServerOverview;
 use App\Livewire\AlertBanner;
 use App\Models\Permission;
 use App\Models\Server;
+use Filament\Actions\Concerns\InteractsWithActions;
 use Filament\Facades\Filament;
 use Filament\Actions\Action;
 use Filament\Forms\Components\Actions;
@@ -33,6 +34,7 @@ use Livewire\Attributes\On;
 class Console extends Page implements HasForms
 {
     use InteractsWithForms;
+    use InteractsWithActions;
 
     protected static ?string $navigationIcon = 'tabler-brand-tabler';
 
@@ -58,14 +60,11 @@ class Console extends Page implements HasForms
         }
     }
 
-    public function form(Form $form): Form
+    public function boot(): void
     {
-        $actions = $this->getActiveFeatures()->map(fn (Feature $feature) => $feature->action())->all();
-
-        return $form
-            ->schema([
-                Actions::make($actions)
-            ]);
+        foreach ($this->getActiveFeatures() as $feature) {
+            $this->cacheAction($feature->action());
+        }
     }
 
     public function getActiveFeatures(): Collection
@@ -76,15 +75,28 @@ class Console extends Page implements HasForms
     #[On('line-to-check')]
     public function lineToCheck(string $line): void
     {
+        /** @var Feature $feature */
         foreach ($this->getActiveFeatures() as $feature) {
             if ($feature->matchesListeners($line)) {
-                logger()->info('Feature listens for this', compact(['feature', 'line']));
+                usleep(2_000_000);
+                $this->replaceMountedAction($feature->featureName());
 
-                $this->dispatch('mountAction', $feature->featureName());
-//                $this->dispatch('open-modal', id: 'edit-user');
+                // $this->callMountedAction();
+//                $a = $feature->action();
+//                $this->cacheMountedFormComponentActionForm($a);
+//                $this->formcomponentaction
+//                $this->mountFormComponentAction($this->getId(), $feature->featureName());
+                // logger()->info('Feature listens for this', compact(['feature', 'line']));
+
+//                $this->mountAction($feature->featureName());
+//                $this->dispatch('mountAction', action: $feature->featureName());
+
+                // dd($this->getId());
+                 //$this->mountFormComponentAction('cool', $feature->featureName());
             }
         }
     }
+
     public function getWidgetData(): array
     {
         return [

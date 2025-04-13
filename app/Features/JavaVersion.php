@@ -3,7 +3,7 @@
 namespace App\Features;
 
 use App\Repositories\Daemon\DaemonFileRepository;
-use Filament\Forms\Components\Actions\Action;
+use Filament\Actions\Action;
 use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
@@ -60,7 +60,7 @@ class JavaVersion extends Feature
             ])
             ->action(function (DaemonFileRepository $fileRepository) {
                 try {
-                    $fileRepository->putContent('eula.txt', 'eula=true');
+                    // $fileRepository->putContent('eula.txt', 'eula=true');
                 } catch (\Exception $e) {
                     Notification::make()
                         ->title('Error')

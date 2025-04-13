@@ -9,10 +9,6 @@
         :widgets="$this->getVisibleWidgets()"
     />
 
-    <form>
-        {{ $this->form }}
-    </form>
-
     <x-filament-actions::modals />
 
 </x-filament-panels::page>

@@ -4,8 +4,8 @@ namespace App\Features;
 
 use App\Models\Server;
 use App\Repositories\Daemon\DaemonFileRepository;
+use Filament\Actions\Action;
 use Filament\Facades\Filament;
-use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\Field;
 use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\TextInput;
