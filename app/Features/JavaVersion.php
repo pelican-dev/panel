@@ -2,16 +2,19 @@
 
 namespace App\Features;
 
-use App\Repositories\Daemon\DaemonFileRepository;
+use App\Facades\Activity;
+use App\Models\Permission;
+use App\Models\Server;
+use App\Repositories\Daemon\DaemonPowerRepository;
 use Filament\Actions\Action;
+use Filament\Facades\Filament;
 use Filament\Forms\Components\Placeholder;
-use Filament\Forms\Components\TextInput;
-use Filament\Forms\Form;
-use Filament\Forms\Get;
+use Filament\Forms\Components\Select;
 use Filament\Notifications\Notification;
 
 class JavaVersion extends Feature
 {
+    /** @return array<string> */
     public function listeners(): array
     {
         return [
@@ -28,39 +31,45 @@ class JavaVersion extends Feature
         return 'java_version';
     }
 
-    public function modal(): Form
-    {
-        return $this->makeForm();
-            /*->schema([
-                Placeholder::make('see me bitches'),
-                TextInput::make('name'),
-                Actions::make([
-                    Actions\Action::make('closeUserModal')
-                        ->label('Close')
-                        ->color('secondary')
-                        ->extraAttributes([
-                            'x-on:click' => 'isOpen = false',  // close modal [FASTER]
-                        ]),
-                    Actions\Action::make('saveUserModal')
-                        ->label('Save')
-                        ->color('primary')
-                        ->action(function (Get $get) {
-                            logger($get('name'));
-                        }),
-                ])->fullWidth(),
-            ]);*/
-    }
-
     public function action(): Action
     {
-        return Action::make('Java Version')
+        /** @var Server $server */
+        $server = Filament::getTenant();
+
+        return Action::make($this->featureName())
+            ->requiresConfirmation()
+            ->modalHeading('Unsupported Java Version')
+            ->modalDescription('This server is currently running an unsupported version of Java and cannot be started.')
+            ->modalSubmitActionLabel('Update Docker Image')
+            ->disabledForm(fn () => !auth()->user()->can(Permission::ACTION_STARTUP_DOCKER_IMAGE, $server))
             ->form([
-                Placeholder::make('eula')
-                    ->label('By pressing I Accept below you are indicating your agreement to the Javascript EULA.'),
+                Placeholder::make('java')
+                    ->label('Please select a supported version from the list below to continue starting the server.'),
+                Select::make('image')
+                    ->label('Docker Image')
+                    ->visible(fn () => in_array($server->image, $server->egg->docker_images))
+                    ->options(fn () => array_flip($server->egg->docker_images)),
             ])
-            ->action(function (DaemonFileRepository $fileRepository) {
+            ->action(function (array $data, DaemonPowerRepository $powerRepository) use ($server) {
+                /** @var Server $server */
+                $server = Filament::getTenant();
                 try {
-                    // $fileRepository->putContent('eula.txt', 'eula=true');
+                    $new = $data['image'];
+                    $original = $server->image;
+                    $server->forceFill(['image' => $new])->saveOrFail();
+
+                    if ($original !== $server->image) {
+                        Activity::event('server:startup.image')
+                            ->property(['old' => $original, 'new' => $new])
+                            ->log();
+                    }
+                    $powerRepository->setServer($server)->send('restart');
+
+                    Notification::make()
+                        ->title('Docker image updated')
+                        ->body('Restart the server to use the new image.')
+                        ->success()
+                        ->send();
                 } catch (\Exception $e) {
                     Notification::make()
                         ->title('Error')
@@ -68,7 +77,6 @@ class JavaVersion extends Feature
                         ->danger()
                         ->send();
                 }
-            }
-            );
+            });
     }
 }
