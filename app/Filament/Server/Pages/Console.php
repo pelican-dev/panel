@@ -18,12 +18,7 @@ use App\Models\Server;
 use Filament\Actions\Concerns\InteractsWithActions;
 use Filament\Facades\Filament;
 use Filament\Actions\Action;
-use Filament\Forms\Components\Actions;
-use Filament\Forms\Components\Actions\Action as FormAction;
-use Filament\Forms\Components\TextInput;
-use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
-use Filament\Forms\Form;
 use Filament\Pages\Page;
 use Filament\Support\Enums\ActionSize;
 use Filament\Widgets\Widget;
@@ -33,7 +28,6 @@ use Livewire\Attributes\On;
 
 class Console extends Page implements HasForms
 {
-    use InteractsWithForms;
     use InteractsWithActions;
 
     protected static ?string $navigationIcon = 'tabler-brand-tabler';
@@ -69,7 +63,11 @@ class Console extends Page implements HasForms
 
     public function getActiveFeatures(): Collection
     {
-        return collect([new Features\MinecraftEula(), new Features\JavaVersion()]);
+        /** @var Server $server */
+        $server = Filament::getTenant();
+
+        return collect([new Features\MinecraftEula(), new Features\JavaVersion(), new Features\GSLToken(), new Features\PIDLimit(), new Features\SteamDiskSpace()])
+            ->filter(fn (Feature $feature) => in_array($feature->featureName(), $server->egg->features));
     }
 
     #[On('line-to-check')]
@@ -82,17 +80,17 @@ class Console extends Page implements HasForms
                 $this->replaceMountedAction($feature->featureName());
 
                 // $this->callMountedAction();
-//                $a = $feature->action();
-//                $this->cacheMountedFormComponentActionForm($a);
-//                $this->formcomponentaction
-//                $this->mountFormComponentAction($this->getId(), $feature->featureName());
+                // $a = $feature->action();
+                // $this->cacheMountedFormComponentActionForm($a);
+                // $this->formcomponentaction
+                // $this->mountFormComponentAction($this->getId(), $feature->featureName());
                 // logger()->info('Feature listens for this', compact(['feature', 'line']));
 
-//                $this->mountAction($feature->featureName());
-//                $this->dispatch('mountAction', action: $feature->featureName());
+                // $this->mountAction($feature->featureName());
+                // $this->dispatch('mountAction', action: $feature->featureName());
 
                 // dd($this->getId());
-                 //$this->mountFormComponentAction('cool', $feature->featureName());
+                //$this->mountFormComponentAction('cool', $feature->featureName());
             }
         }
     }

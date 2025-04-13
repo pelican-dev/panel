@@ -3,29 +3,18 @@
 namespace App\Filament\Server\Widgets;
 
 use App\Exceptions\Http\HttpForbiddenException;
-use App\Features\Feature;
 use App\Livewire\AlertBanner;
 use App\Models\Permission;
 use App\Models\Server;
 use App\Models\User;
 use App\Services\Nodes\NodeJWTService;
 use App\Services\Servers\GetUserPermissionsService;
-use Filament\Forms\Components\Actions;
-use Filament\Forms\Components\Actions\Action;
-use Filament\Forms\Components\Placeholder;
-use Filament\Forms\Concerns\InteractsWithForms;
-use Filament\Forms\Contracts\HasForms;
-use Filament\Forms\Form;
-use Filament\Forms\Get;
 use Filament\Widgets\Widget;
 use Illuminate\Support\Arr;
 use Livewire\Attributes\On;
-use App\Features;
-use Filament\Forms\Components\TextInput;
 
 class ServerConsole extends Widget
 {
-
     protected static string $view = 'filament.components.server-console';
 
     protected int|string|array $columnSpan = 'full';

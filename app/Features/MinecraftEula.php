@@ -4,17 +4,17 @@ namespace App\Features;
 
 use App\Models\Server;
 use App\Repositories\Daemon\DaemonFileRepository;
+use App\Repositories\Daemon\DaemonPowerRepository;
+use Exception;
 use Filament\Actions\Action;
 use Filament\Facades\Filament;
-use Filament\Forms\Components\Field;
-use Filament\Forms\Components\Placeholder;
-use Filament\Forms\Components\TextInput;
-use Filament\Forms\Form;
-use Filament\Forms\Get;
 use Filament\Notifications\Notification;
+use Illuminate\Support\Facades\Blade;
+use Illuminate\Support\HtmlString;
 
 class MinecraftEula extends Feature
 {
+    /** @return array<string> */
     public function listeners(): array
     {
         return [
@@ -32,14 +32,23 @@ class MinecraftEula extends Feature
         return Action::make($this->featureName())
             ->requiresConfirmation()
             ->modalHeading('Minecraft EULA')
-            ->modalDescription('By pressing "I Accept" below you are indicating your agreement to the Minecraft EULA')
+            ->modalDescription(new HtmlString(Blade::render('By pressing "I Accept" below you are indicating your agreement to the <x-filament::link href="https://minecraft.net/eula" target="_blank">Minecraft EULA </x-filament::link>')))
             ->modalSubmitActionLabel('I Accept')
-            ->action(function (Action $action, DaemonFileRepository $fileRepository) {
+            ->action(function (DaemonFileRepository $fileRepository, DaemonPowerRepository $powerRepository) {
                 try {
                     /** @var Server $server */
                     $server = Filament::getTenant();
-                    $fileRepository->setServer($server)->putContent('eula.txt', 'eula=true');
-                } catch (\Exception $e) {
+                    $content = $fileRepository->setServer($server)->getContent('eula.txt');
+                    $content = preg_replace('/(eula=)false/', '\1true', $content);
+                    $fileRepository->setServer($server)->putContent('eula.txt', $content);
+                    $powerRepository->setServer($server)->send('restart');
+
+                    Notification::make()
+                        ->title('Docker image updated')
+                        ->body('Restart the server.')
+                        ->success()
+                        ->send();
+                } catch (Exception $e) {
                     Notification::make()
                         ->title('Error')
                         ->body($e->getMessage())

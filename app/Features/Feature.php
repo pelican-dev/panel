@@ -3,16 +3,14 @@
 namespace App\Features;
 
 use Filament\Actions\Action;
-use Filament\Actions\Concerns\InteractsWithActions;
-use Filament\Actions\Contracts\HasActions;
-use Filament\Forms\Concerns\InteractsWithForms;
-use Filament\Forms\Contracts\HasForms;
 
-abstract class Feature implements HasActions, HasForms
+abstract class Feature
 {
-    use InteractsWithActions, InteractsWithForms;
-
-    /** you need to agree to the eula in order to run the server */
+    /**
+     * you need to agree to the eula in order to run the server
+     *
+     * @return array<string>
+     */
     abstract public function listeners(): array;
 
     /** eula */
@@ -22,6 +20,6 @@ abstract class Feature implements HasActions, HasForms
 
     public function matchesListeners(string $line): bool
     {
-        return collect(static::listeners())->contains(fn ($value) => str($line)->lower->contains($value));
+        return collect(static::listeners())->contains(fn ($value) => str($line)->contains($value, true));
     }
 }
