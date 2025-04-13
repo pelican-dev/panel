@@ -459,7 +459,7 @@ class EditProfile extends BaseEditProfile
 
     protected function mutateFormDataBeforeFill(array $data): array
     {
-        $moarbetterdata = json_decode($data['customization'], true);
+        $moarbetterdata = json_decode($data['customization'] ?? '{}', true);
 
         $data['console_font_size'] = $moarbetterdata['console_font_size'] ?? 14;
         $data['console_rows'] = $moarbetterdata['console_rows'] ?? 30;
