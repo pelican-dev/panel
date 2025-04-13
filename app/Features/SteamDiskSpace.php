@@ -12,13 +12,14 @@ class SteamDiskSpace extends Feature
     public function listeners(): array
     {
         return [
-            'you need to agree to the eula in order to run the server',
+            'steamcmd needs 250mb of free disk space to update',
+            '0x202 after update job',
         ];
     }
 
     public function featureName(): string
     {
-        return 'eula';
+        return 'steam-disk-space';
     }
 
     public function action(): Action
