@@ -1,50 +1,49 @@
-x-common:
-  panel:
-    &panel-environment
-    APP_URL: "https://localhost" # can be set to 'http://localhost' on port 80 only
-    ADMIN_EMAIL: "USEYOUROWNEMAILHERE@example.com"
-
-    APP_DEBUG: "false"
-    APP_ENV: "production"
-
-  mail:
-    &mail-environment
-    MAIL_DRIVER: "log"
-    # MAIL_HOST: ""
-    # MAIL_PORT: ""
-    # MAIL_FROM: ""
-    # MAIL_USERNAME: ""
-    # MAIL_PASSWORD: ""
-    # MAIL_SCHEME: ""
-
-#
-# ------------------------------------------------------------------------------------------
-# DANGER ZONE BELOW
-#
-# The remainder of this file likely does not need to be changed. Please only make modifications
-# below if you understand what you are doing.
-#
+version: '3.8'
 
 services:
   panel:
     image: ghcr.io/pelican-dev/panel:latest
-    build: .
     restart: always
     networks:
       - default
-    ports:
-      - "80:80"
-      - "443:443"
-      # - "9000:9000" # enable when not using caddy to be able to reach php-fpm
+      - dokploy-network  # Dokploy ağına bağlantı için eklendi
+    # Traefik yönlendirme yapacağı için doğrudan port açmaya gerek yok
+    # ports:
+    #   - "80:80"
+    #   - "443:443"
     extra_hosts:
-      - "host.docker.internal:host-gateway" # shows the panel on the internal docker network as well. usually '172.17.0.1'
+      - "host.docker.internal:host-gateway"
     volumes:
       - pelican-data:/pelican-data
       - pelican-logs:/var/www/html/storage/logs
     environment:
-      <<: [*panel-environment, *mail-environment]
+      # Panel ortam değişkenleri
+      APP_URL: "${APP_URL:-https://panel.example.com}"  # Domain adınızla değiştirin
+      ADMIN_EMAIL: "${ADMIN_EMAIL:-admin@example.com}"  # E-posta adresinizle değiştirin
+      APP_DEBUG: "false"
+      APP_ENV: "production"
       XDG_DATA_HOME: /pelican-data
-      # SKIP_CADDY: true # enable when not using caddy.
+
+      # Mail ortam değişkenleri
+      MAIL_DRIVER: "log"
+      # MAIL_HOST: ""
+      # MAIL_PORT: ""
+      # MAIL_FROM: ""
+      # MAIL_USERNAME: ""
+      # MAIL_PASSWORD: ""
+      # MAIL_SCHEME: ""
+
+      # Caddy'yi devre dışı bırak, Traefik yönlendirme yapacak
+      SKIP_CADDY: "true"
+
+    # Dokploy Traefik etiketleri
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.panel.rule=Host(`${APP_URL:-panel.example.com}`)"
+      - "traefik.http.routers.panel.entrypoints=websecure"
+      - "traefik.http.routers.panel.tls=true"
+      - "traefik.http.routers.panel.tls.certresolver=letsencrypt"
+      - "traefik.http.services.panel.loadbalancer.server.port=9000"  # Caddy'yi atladığımız için PHP-FPM portu
 
 volumes:
   pelican-data:
@@ -55,3 +54,5 @@ networks:
     ipam:
       config:
         - subnet: 172.20.0.0/16
+  dokploy-network:
+    external: true  # Dokploy'un harici ağını kullan
