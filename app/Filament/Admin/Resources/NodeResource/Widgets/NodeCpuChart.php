@@ -23,7 +23,7 @@ class NodeCpuChart extends ChartWidget
         $cpu = collect(cache()->get("nodes.{$this->node->id}.cpu_percent"))
             ->slice(-10)
             ->map(fn ($value, $key) => [
-                'cpu' => Number::format($value * $threads, maxPrecision: 2),
+                'cpu' => round($value * $threads, 2),
                 'timestamp' => Carbon::createFromTimestamp($key, auth()->user()->timezone ?? 'UTC')->format('H:i:s'),
             ])
             ->all();
