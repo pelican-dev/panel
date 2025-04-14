@@ -18,7 +18,7 @@ class MinecraftEula extends Feature
     public function listeners(): array
     {
         return [
-            'you need to agree to the eula in order to run the server',
+            'You need to agree to the EULA in order to run the server',
         ];
     }
 
