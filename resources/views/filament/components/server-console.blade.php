@@ -110,11 +110,15 @@
         }
 
         const checkListeners = (line) => {
-            if (line.contains(['Server marked as offline'])) {
-                handlePowerChangeEvent('offline');
-            }
+            const listeners = @js($this->getActiveFeatureListeners());
 
-            Livewire.dispatch('line-to-check', { line });
+            for (const listener of listeners) {
+                if (line.includes(listener)) {
+                    Livewire.dispatch('line-to-check', { line });
+
+                    return;
+                }
+            }
         }
 
         const handleTransferStatus = (status) =>
