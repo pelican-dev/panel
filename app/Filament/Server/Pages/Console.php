@@ -78,13 +78,11 @@ class Console extends Page implements HasForms
     {
         /** @var Feature $feature */
         foreach ($this->getActiveFeatures() as $feature) {
-            if (!$feature->matchesListeners($line)) {
-                continue;
-            }
-
-            // Only mount one at a time
-            if (!$this->getMountedAction()) {
-                $this->mountAction($feature->featureName());
+            if ($feature->matchesListeners($line)) {
+                if (!$this->getMountedAction()) {
+                    sleep(2);
+                    $this->mountAction($feature->featureName());
+                }
             }
         }
     }
