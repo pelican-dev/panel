@@ -7,7 +7,7 @@ use Filament\Actions\Action;
 abstract class Feature
 {
     /**
-     * you need to agree to the eula in order to run the server
+     * A matching subset string (case-sensitive) from the console output
      *
      * @return array<string>
      */
