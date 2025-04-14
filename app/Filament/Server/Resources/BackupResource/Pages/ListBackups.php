@@ -70,9 +70,9 @@ class ListBackups extends ListRecords
                     ->label('Created')
                     ->since()
                     ->sortable(),
-                IconColumn::make('is_successful')
-                    ->label('Successful')
-                    ->boolean(),
+                TextColumn::make('status')
+                    ->label('Status')
+                    ->badge(),
                 IconColumn::make('is_locked')
                     ->visibleFrom('md')
                     ->label('Lock Status')
