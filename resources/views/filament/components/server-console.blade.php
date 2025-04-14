@@ -110,6 +110,10 @@
         }
 
         const checkListeners = (line) => {
+            if (line.contains(['Server marked as offline'])) {
+                handlePowerChangeEvent('offline');
+            }
+
             Livewire.dispatch('line-to-check', { line });
         }
 
