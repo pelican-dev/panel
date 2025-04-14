@@ -77,7 +77,8 @@ class ListBackups extends ListRecords
                 IconColumn::make('is_locked')
                     ->visibleFrom('md')
                     ->label('Lock Status')
-                    ->icon(fn (Backup $backup) => !$backup->is_locked ? 'tabler-lock-open' : 'tabler-lock'),
+                    ->trueIcon('tabler-lock')
+                    ->falseIcon('tabler-lock-open'),
             ])
             ->actions([
                 ActionGroup::make([
@@ -185,7 +186,6 @@ class ListBackups extends ListRecords
                             ->body($backup->name . ' created.')
                             ->success()
                             ->send();
-
                     } catch (HttpException $e) {
                         return Notification::make()
                             ->danger()
