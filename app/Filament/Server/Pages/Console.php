@@ -61,6 +61,9 @@ class Console extends Page implements HasForms
         }
     }
 
+    /**
+     * @return Collection<Feature>
+     */
     public function getActiveFeatures(): Collection
     {
         /** @var Server $server */
@@ -75,24 +78,13 @@ class Console extends Page implements HasForms
     {
         /** @var Feature $feature */
         foreach ($this->getActiveFeatures() as $feature) {
-            if ($feature->matchesListeners($line)) {
-                if (!$this->getMountedAction()) {
-                    sleep(2);
-                    $this->mountAction($feature->featureName());
-                }
+            if (!$feature->matchesListeners($line)) {
+                continue;
+            }
 
-                // $this->callMountedAction();
-                // $a = $feature->action();
-                // $this->cacheMountedFormComponentActionForm($a);
-                // $this->formcomponentaction
-                // $this->mountFormComponentAction($this->getId(), $feature->featureName());
-                // logger()->info('Feature listens for this', compact(['feature', 'line']));
-
-                // $this->mountAction($feature->featureName());
-                // $this->dispatch('mountAction', action: $feature->featureName());
-
-                // dd($this->getId());
-                //$this->mountFormComponentAction('cool', $feature->featureName());
+            // Only mount one at a time
+            if (!$this->getMountedAction()) {
+                $this->mountAction($feature->featureName());
             }
         }
     }
