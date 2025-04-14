@@ -2,6 +2,7 @@
 
 namespace App\Filament\Server\Resources\BackupResource\Pages;
 
+use App\Enums\BackupStatus;
 use App\Enums\ServerState;
 use App\Facades\Activity;
 use App\Filament\Server\Resources\BackupResource;
@@ -84,12 +85,14 @@ class ListBackups extends ListRecords
                         ->icon(fn (Backup $backup) => !$backup->is_locked ? 'tabler-lock' : 'tabler-lock-open')
                         ->authorize(fn () => auth()->user()->can(Permission::ACTION_BACKUP_DELETE, $server))
                         ->label(fn (Backup $backup) => !$backup->is_locked ? 'Lock' : 'Unlock')
-                        ->action(fn (BackupController $backupController, Backup $backup, Request $request) => $backupController->toggleLock($request, $server, $backup)),
+                        ->action(fn (BackupController $backupController, Backup $backup, Request $request) => $backupController->toggleLock($request, $server, $backup))
+                        ->visible(fn (Backup $backup) => $backup->status === BackupStatus::Successful),
                     Action::make('download')
                         ->color('primary')
                         ->icon('tabler-download')
                         ->authorize(fn () => auth()->user()->can(Permission::ACTION_BACKUP_DOWNLOAD, $server))
-                        ->url(fn (DownloadLinkService $downloadLinkService, Backup $backup, Request $request) => $downloadLinkService->handle($backup, $request->user()), true),
+                        ->url(fn (DownloadLinkService $downloadLinkService, Backup $backup, Request $request) => $downloadLinkService->handle($backup, $request->user()), true)
+                        ->visible(fn (Backup $backup) => $backup->status === BackupStatus::Successful),
                     Action::make('restore')
                         ->color('success')
                         ->icon('tabler-folder-up')
@@ -138,12 +141,14 @@ class ListBackups extends ListRecords
                             return Notification::make()
                                 ->title('Restoring Backup')
                                 ->send();
-                        }),
+                        })
+                        ->visible(fn (Backup $backup) => $backup->status === BackupStatus::Successful),
                     DeleteAction::make('delete')
-                        ->disabled(fn (Backup $backup): bool => $backup->is_locked)
+                        ->disabled(fn (Backup $backup) => $backup->is_locked)
                         ->modalDescription(fn (Backup $backup) => 'Do you wish to delete, ' . $backup->name . '?')
                         ->modalSubmitActionLabel('Delete Backup')
-                        ->action(fn (BackupController $backupController, Backup $backup, Request $request) => $backupController->delete($request, $server, $backup)),
+                        ->action(fn (BackupController $backupController, Backup $backup, Request $request) => $backupController->delete($request, $server, $backup))
+                        ->visible(fn (Backup $backup) => $backup->status !== BackupStatus::InProgress),
                 ]),
             ]);
     }
