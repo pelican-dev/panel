@@ -44,6 +44,18 @@ class OAuthController extends Controller
             return redirect()->route('auth.login');
         }
 
+        // handle failed oauth state
+        if ($request->get('error')) {
+            // handle errors: https://www.oauth.com/oauth2-servers/server-side-apps/possible-errors/
+            Notification::make()
+                ->title('Oauth error')
+                ->body($request->get('error_description') ?? $request->get('error'))
+                ->danger()
+                ->persistent()
+                ->send();
+            return redirect()->route('auth.login');
+        }
+
         $oauthUser = Socialite::driver($driver)->user();
 
         // User is already logged in and wants to link a new OAuth Provider
