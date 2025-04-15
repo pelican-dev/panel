@@ -12,7 +12,7 @@ class UpdateServerBuildConfigurationRequest extends ServerWriteRequest
      */
     public function rules(): array
     {
-        $rules = Server::getRulesForUpdate($this->parameter('server', Server::class));
+        $rules = $this->route() ? Server::getRulesForUpdate($this->parameter('server', Server::class)) : Server::getRules();
 
         return [
             'allocation' => $rules['allocation_id'],
