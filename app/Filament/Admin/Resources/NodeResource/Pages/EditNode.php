@@ -14,6 +14,7 @@ use Filament\Forms;
 use Filament\Forms\Components\Actions as FormActions;
 use Filament\Forms\Components\Fieldset;
 use Filament\Forms\Components\Grid;
+use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\Tabs;
 use Filament\Forms\Components\Tabs\Tab;
@@ -199,9 +200,16 @@ class EditNode extends EditRecord
                                 ])
                                 ->required()
                                 ->maxLength(100),
-                            ToggleButtons::make('scheme')
+                            Hidden::make('scheme'),
+                            Hidden::make('behind_proxy'),
+                            ToggleButtons::make('connection')
                                 ->label(trans('admin/node.ssl'))
-                                ->columnSpan(1)
+                                ->columnSpan([
+                                    'default' => 1,
+                                    'sm' => 1,
+                                    'md' => 1,
+                                    'lg' => 2,
+                                ])
                                 ->inline()
                                 ->helperText(function (Get $get) {
                                     if (request()->isSecure()) {
@@ -214,44 +222,29 @@ class EditNode extends EditRecord
 
                                     return '';
                                 })
-                                ->disableOptionWhen(fn (string $value): bool => $value === 'http' && request()->isSecure())
+                                ->disableOptionWhen(fn (string $value) => $value === 'http' && request()->isSecure())
                                 ->options([
                                     'http' => 'HTTP',
                                     'https' => 'HTTPS (SSL)',
+                                    'https_proxy' => 'HTTPS with proxy',
                                 ])
                                 ->colors([
                                     'http' => 'warning',
                                     'https' => 'success',
+                                    'https_proxy' => 'success',
                                 ])
                                 ->icons([
                                     'http' => 'tabler-lock-open-off',
                                     'https' => 'tabler-lock',
+                                    'https_proxy' => 'tabler-shield-lock',
                                 ])
-                                ->default(fn () => request()->isSecure() ? 'https' : 'http')
+                                ->formatStateUsing(fn (Get $get) => $get('scheme') === 'http' ? 'http' : ($get('behind_proxy') ? 'https_proxy' : 'https'))
                                 ->live()
+                                ->dehydrated(false)
                                 ->afterStateUpdated(function ($state, Set $set) {
-                                    if ($state === 'http') {
-                                        $set('behind_proxy', false);
-                                    }
+                                    $set('scheme', $state === 'http' ? 'http' : 'https');
+                                    $set('behind_proxy', $state === 'https_proxy');
                                 }),
-                            ToggleButtons::make('behind_proxy')
-                                ->label(trans('admin/node.behind_proxy'))
-                                ->columnSpan(1)
-                                ->inline()
-                                ->helperText(trans('admin/node.behind_proxy_help'))
-                                ->disableOptionWhen(fn (Get $get) => $get('scheme') === 'http')
-                                ->options([
-                                    true => 'Yes',
-                                    false => 'No',
-                                ])
-                                ->colors([
-                                    true => 'warning',
-                                    false => 'success',
-                                ])
-                                ->icons([
-                                    true => 'tabler-shield',
-                                    false => 'tabler-shield-off',
-                                ]),
                         ]),
                     Tab::make('adv')
                         ->label(trans('admin/node.tabs.advanced_settings'))

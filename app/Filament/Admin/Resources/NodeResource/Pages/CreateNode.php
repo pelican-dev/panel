@@ -7,6 +7,7 @@ use App\Models\Node;
 use Filament\Forms;
 use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\Grid;
+use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\TagsInput;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\ToggleButtons;
@@ -15,6 +16,7 @@ use Filament\Forms\Components\Wizard\Step;
 use Filament\Forms\Get;
 use Filament\Forms\Set;
 use Filament\Resources\Pages\CreateRecord;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\HtmlString;
 
@@ -149,13 +151,19 @@ class CreateNode extends CreateRecord
                                 ->required()
                                 ->maxLength(100),
 
-                            ToggleButtons::make('scheme')
+                            Hidden::make('scheme')
+                                ->default(fn () => request()->isSecure() ? 'https' : 'http'),
+
+                            Hidden::make('behind_proxy')
+                                ->default(false),
+
+                            ToggleButtons::make('connection')
                                 ->label(trans('admin/node.ssl'))
                                 ->columnSpan([
                                     'default' => 1,
                                     'sm' => 1,
                                     'md' => 1,
-                                    'lg' => 1,
+                                    'lg' => 2,
                                 ])
                                 ->inline()
                                 ->helperText(function (Get $get) {
@@ -169,46 +177,29 @@ class CreateNode extends CreateRecord
 
                                     return '';
                                 })
-                                ->disableOptionWhen(fn (string $value): bool => $value === 'http' && request()->isSecure())
+                                ->disableOptionWhen(fn (string $value) => $value === 'http' && request()->isSecure())
                                 ->options([
                                     'http' => 'HTTP',
                                     'https' => 'HTTPS (SSL)',
+                                    'https_proxy' => 'HTTPS with proxy',
                                 ])
                                 ->colors([
                                     'http' => 'warning',
                                     'https' => 'success',
+                                    'https_proxy' => 'success',
                                 ])
                                 ->icons([
                                     'http' => 'tabler-lock-open-off',
                                     'https' => 'tabler-lock',
+                                    'https_proxy' => 'tabler-shield-lock',
                                 ])
                                 ->default(fn () => request()->isSecure() ? 'https' : 'http')
                                 ->live()
+                                ->dehydrated(false)
                                 ->afterStateUpdated(function ($state, Set $set) {
-                                    if ($state === 'http') {
-                                        $set('behind_proxy', false);
-                                    }
+                                    $set('scheme', $state === 'http' ? 'http' : 'https');
+                                    $set('behind_proxy', $state === 'https_proxy');
                                 }),
-
-                            ToggleButtons::make('behind_proxy')
-                                ->label(trans('admin/node.behind_proxy'))
-                                ->columnSpan(1)
-                                ->inline()
-                                ->helperText(trans('admin/node.behind_proxy_help'))
-                                ->disableOptionWhen(fn (Get $get) => $get('scheme') === 'http')
-                                ->options([
-                                    true => 'Yes',
-                                    false => 'No',
-                                ])
-                                ->colors([
-                                    true => 'warning',
-                                    false => 'success',
-                                ])
-                                ->icons([
-                                    true => 'tabler-shield',
-                                    false => 'tabler-shield-off',
-                                ])
-                                ->default(false),
                         ]),
                     Step::make('advanced')
                         ->label(trans('admin/node.tabs.advanced_settings'))
@@ -411,6 +402,13 @@ class CreateNode extends CreateRecord
                                             </x-filament::button>
                                         BLADE))),
             ]);
+    }
+
+    protected function handleRecordCreation(array $data): Model
+    {
+        dd($data);
+
+        return parent::handleRecordCreation($data);
     }
 
     protected function getRedirectUrlParameters(): array
