@@ -792,6 +792,7 @@ class CreateServer extends CreateRecord
                                         ]),
 
                                     KeyValue::make('docker_labels')
+                                        ->live()
                                         ->label('Container Labels')
                                         ->keyLabel(trans('admin/server.title'))
                                         ->valueLabel(trans('admin/server.description'))
