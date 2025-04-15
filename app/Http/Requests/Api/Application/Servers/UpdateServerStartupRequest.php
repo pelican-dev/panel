@@ -17,12 +17,12 @@ class UpdateServerStartupRequest extends ApplicationApiRequest
      */
     public function rules(): array
     {
-        $data = Server::getRulesForUpdate($this->parameter('server', Server::class));
+        $rules = $this->route() ? Server::getRulesForUpdate($this->parameter('server', Server::class)) : Server::getRules();
 
         return [
             'startup' => 'sometimes|string',
             'environment' => 'present|array',
-            'egg' => $data['egg_id'],
+            'egg' => $rules['egg_id'],
             'image' => 'sometimes|string',
             'skip_scripts' => 'present|boolean',
         ];
