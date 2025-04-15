@@ -16,7 +16,6 @@ use Filament\Forms\Components\Wizard\Step;
 use Filament\Forms\Get;
 use Filament\Forms\Set;
 use Filament\Resources\Pages\CreateRecord;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\HtmlString;
 
@@ -402,13 +401,6 @@ class CreateNode extends CreateRecord
                                             </x-filament::button>
                                         BLADE))),
             ]);
-    }
-
-    protected function handleRecordCreation(array $data): Model
-    {
-        dd($data);
-
-        return parent::handleRecordCreation($data);
     }
 
     protected function getRedirectUrlParameters(): array
