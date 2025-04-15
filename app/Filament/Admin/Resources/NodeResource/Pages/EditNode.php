@@ -226,7 +226,7 @@ class EditNode extends EditRecord
                                 ->options([
                                     'http' => 'HTTP',
                                     'https' => 'HTTPS (SSL)',
-                                    'https_proxy' => 'HTTPS with proxy',
+                                    'https_proxy' => 'HTTPS with (reverse) proxy',
                                 ])
                                 ->colors([
                                     'http' => 'warning',
