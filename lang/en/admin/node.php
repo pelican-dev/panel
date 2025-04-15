@@ -49,6 +49,8 @@ return [
     'ssl' => 'Communicate over SSL',
     'panel_on_ssl' => 'Your Panel is using a secure SSL connection,<br>so your Daemon must too.',
     'ssl_help' => 'An IP address cannot use SSL.',
+    'behind_proxy' => 'Behind proxy',
+    'behind_proxy_help' => 'Select this if your node is behind a (reverse) proxy that manages SSL.',
 
     'tags' => 'Tags',
     'upload_limit' => 'Upload Limit',

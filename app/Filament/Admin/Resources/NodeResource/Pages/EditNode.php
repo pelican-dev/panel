@@ -227,7 +227,32 @@ class EditNode extends EditRecord
                                     'http' => 'tabler-lock-open-off',
                                     'https' => 'tabler-lock',
                                 ])
-                                ->default(fn () => request()->isSecure() ? 'https' : 'http'), ]),
+                                ->default(fn () => request()->isSecure() ? 'https' : 'http')
+                                ->live()
+                                ->afterStateUpdated(function ($state, Set $set) {
+                                    if ($state === 'http') {
+                                        $set('behind_proxy', false);
+                                    }
+                                }),
+                            ToggleButtons::make('behind_proxy')
+                                ->label(trans('admin/node.behind_proxy'))
+                                ->columnSpan(1)
+                                ->inline()
+                                ->helperText(trans('admin/node.behind_proxy_help'))
+                                ->disableOptionWhen(fn (Get $get) => $get('scheme') === 'http')
+                                ->options([
+                                    true => 'Yes',
+                                    false => 'No',
+                                ])
+                                ->colors([
+                                    true => 'warning',
+                                    false => 'success',
+                                ])
+                                ->icons([
+                                    true => 'tabler-shield',
+                                    false => 'tabler-shield-off',
+                                ]),
+                        ]),
                     Tab::make('adv')
                         ->label(trans('admin/node.tabs.advanced_settings'))
                         ->columns([
