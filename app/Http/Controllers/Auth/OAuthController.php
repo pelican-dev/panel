@@ -53,6 +53,7 @@ class OAuthController extends Controller
                 ->danger()
                 ->persistent()
                 ->send();
+
             return redirect()->route('auth.login');
         }
 
