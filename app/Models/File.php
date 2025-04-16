@@ -33,6 +33,8 @@ class File extends Model
 
     protected $keyType = 'string';
 
+    protected int $sushiInsertChunkSize = 100;
+
     public const ARCHIVE_MIMES = [
         'application/vnd.rar', // .rar
         'application/x-rar-compressed', // .rar (2)
@@ -167,7 +169,7 @@ class File extends Model
                 throw new Exception($contents['error']);
             }
 
-            return array_map(function ($file) {
+            $rows = array_map(function ($file) {
                 return [
                     'name' => $file['name'],
                     'created_at' => Carbon::parse($file['created'])->timezone('UTC'),
@@ -181,6 +183,10 @@ class File extends Model
                     'mime_type' => $file['mime'],
                 ];
             }, $contents);
+
+            $this->sushiInsertChunkSize = min((int) floor(999 / count($this->getSchema())), count($rows));
+
+            return $rows;
         } catch (Exception $exception) {
             report($exception);
 
