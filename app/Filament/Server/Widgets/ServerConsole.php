@@ -104,14 +104,6 @@ class ServerConsole extends Widget
         }
     }
 
-    /** @return array<array<string>> */
-    public function getActiveFeatureListeners(): array
-    {
-        return collect($this->server->egg->features())->mapWithKeys(fn ($feature) => [
-            $feature->getId() => $feature->getListeners(),
-        ])->all();
-    }
-
     #[On('token-request')]
     public function tokenRequest(): void
     {

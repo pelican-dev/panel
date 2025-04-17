@@ -106,19 +106,6 @@
 
         const handleConsoleOutput = (line, prelude = false) => {
             terminal.writeln((prelude ? TERMINAL_PRELUDE : '') + line.replace(/(?:\r\n|\r|\n)$/im, '') + '\u001b[0m');
-            checkListeners(line);
-        }
-
-        const checkListeners = (line) => {
-            for (const [feature, listeners] of Object.entries(@js($this->getActiveFeatureListeners()))) {
-                for (const listener of listeners) {
-                    if (line.includes(listener)) {
-                        Livewire.dispatch('mount-feature', { feature });
-
-                        return;
-                    }
-                }
-            }
         }
 
         const handleTransferStatus = (status) =>
@@ -143,6 +130,9 @@
                 case 'console output':
                 case 'install output':
                     handleConsoleOutput(args[0]);
+                    break;
+                case 'feature match':
+                    Livewire.dispatch('mount-feature', { data: args[0] });
                     break;
                 case 'status':
                     handlePowerChangeEvent(args[0]);

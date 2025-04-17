@@ -101,6 +101,9 @@ class ServerConfigurationStructureService
             'egg' => [
                 'id' => $server->egg->uuid,
                 'file_denylist' => $server->egg->inherit_file_denylist,
+                'features' => collect($server->egg->features())->mapWithKeys(fn ($feature) => [
+                    $feature->getId() => $feature->getListeners(),
+                ])->all(),
             ],
         ];
 

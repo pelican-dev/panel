@@ -64,6 +64,7 @@ return [
             'rotate-password' => 'Password rotated for database <b>:name</b>',
             'delete' => 'Deleted database <b>:name</b>',
         ],
+        'feature' => 'Server triggered <b>:feature</b> Egg Feature',
         'file' => [
             'compress' => 'Compressed <b>:directory:files</b>|Compressed <b>:count</b> files in <b>:directory</b>',
             'read' => 'Viewed the contents of <b>:file</b>',

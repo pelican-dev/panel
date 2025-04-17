@@ -6,6 +6,7 @@ use App\Enums\ConsoleWidgetPosition;
 use App\Enums\ContainerStatus;
 use App\Exceptions\Http\Server\ServerStateConflictException;
 use App\Extensions\Features\FeatureProvider;
+use App\Facades\Activity;
 use App\Filament\Server\Widgets\ServerConsole;
 use App\Filament\Server\Widgets\ServerCpuChart;
 use App\Filament\Server\Widgets\ServerMemoryChart;
@@ -63,8 +64,19 @@ class Console extends Page implements HasForms
     }
 
     #[On('mount-feature')]
-    public function mountFeature(string $feature): void
+    public function mountFeature(string $data): void
     {
+        $data = json_decode($data);
+        $feature = data_get($data, 'key');
+        $line = data_get($data, 'line');
+
+        Activity::event('server:feature')
+            ->property([
+                'feature' => $feature,
+                'line' => $line,
+            ])
+            ->log();
+
         $feature = FeatureProvider::getProviders($feature);
         if (!$this->getMountedAction()) {
             sleep(2);

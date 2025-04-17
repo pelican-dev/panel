@@ -53,16 +53,16 @@ class JavaVersion extends FeatureProvider
                     ->label('Please select a supported version from the list below to continue starting the server.'),
                 Select::make('image')
                     ->label('Docker Image')
-                    ->visible(fn () => in_array($server->image, $server->egg->docker_images))
-                    ->options(fn () => array_flip($server->egg->docker_images))
+                    ->disabled(fn () => !in_array($server->image, $server->egg->docker_images))
+                    ->options(fn () => collect($server->egg->docker_images)->mapWithKeys(fn ($key, $value) => [$key => $value]))
                     ->selectablePlaceholder(false)
-                    ->default(fn () => collect($server->egg->docker_images)->flip()->first())
+                    ->default(fn () => $server->image)
+                    ->notIn(fn () => $server->image)
                     ->required()
+                    ->preload()
                     ->native(false),
             ])
             ->action(function (array $data, DaemonPowerRepository $powerRepository) use ($server) {
-                /** @var Server $server */
-                $server = Filament::getTenant();
                 try {
                     $new = $data['image'];
                     $original = $server->image;
