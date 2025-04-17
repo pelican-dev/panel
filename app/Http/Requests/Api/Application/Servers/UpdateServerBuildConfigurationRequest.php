@@ -12,7 +12,7 @@ class UpdateServerBuildConfigurationRequest extends ServerWriteRequest
      */
     public function rules(): array
     {
-        $rules = Server::getRulesForUpdate($this->parameter('server', Server::class));
+        $rules = $this->route() ? Server::getRulesForUpdate($this->parameter('server', Server::class)) : Server::getRules();
 
         return [
             'allocation' => $rules['allocation_id'],
@@ -26,13 +26,17 @@ class UpdateServerBuildConfigurationRequest extends ServerWriteRequest
             'limits.threads' => $this->requiredToOptional('threads', $rules['threads'], true),
             'limits.disk' => $this->requiredToOptional('disk', $rules['disk'], true),
 
-            // Legacy rules to maintain backwards compatable API support without requiring
-            // a major version bump.
+            // Deprecated - use limits.memory
             'memory' => $this->requiredToOptional('memory', $rules['memory']),
+            // Deprecated - use limits.swap
             'swap' => $this->requiredToOptional('swap', $rules['swap']),
+            // Deprecated - use limits.io
             'io' => $this->requiredToOptional('io', $rules['io']),
+            // Deprecated - use limits.cpu
             'cpu' => $this->requiredToOptional('cpu', $rules['cpu']),
+            // Deprecated - use limits.threads
             'threads' => $this->requiredToOptional('threads', $rules['threads']),
+            // Deprecated - use limits.disk
             'disk' => $this->requiredToOptional('disk', $rules['disk']),
 
             'add_allocations' => 'bail|array',

@@ -2,10 +2,10 @@
 
 namespace App\Notifications;
 
+use App\Filament\Server\Pages\Console;
 use App\Models\User;
 use Illuminate\Bus\Queueable;
 use App\Models\Server;
-use App\Filament\App\Resources\ServerResource\Pages\ListServers;
 use Illuminate\Notifications\Notification;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
@@ -28,6 +28,6 @@ class ServerInstalled extends Notification implements ShouldQueue
             ->greeting('Hello ' . $notifiable->username . '.')
             ->line('Your server has finished installing and is now ready for you to use.')
             ->line('Server Name: ' . $this->server->name)
-            ->action('Login and Begin Using', ListServers::getUrl());
+            ->action('Login and Begin Using', Console::getUrl(panel: 'server', tenant: $this->server));
     }
 }

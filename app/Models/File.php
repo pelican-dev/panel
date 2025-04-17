@@ -6,7 +6,6 @@ use App\Livewire\AlertBanner;
 use App\Repositories\Daemon\DaemonFileRepository;
 use Carbon\Carbon;
 use Exception;
-use Filament\Notifications\Notification;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Client\ConnectionException;
@@ -33,6 +32,8 @@ class File extends Model
     public $incrementing = false;
 
     protected $keyType = 'string';
+
+    protected int $sushiInsertChunkSize = 100;
 
     public const ARCHIVE_MIMES = [
         'application/vnd.rar', // .rar
@@ -168,17 +169,7 @@ class File extends Model
                 throw new Exception($contents['error']);
             }
 
-            // No files found, for example
-            if (isset($contents['message'])) {
-                Notification::make()
-                    ->title($contents['message'])
-                    ->warning()
-                    ->send();
-
-                return [];
-            }
-
-            return array_map(function ($file) {
+            $rows = array_map(function ($file) {
                 return [
                     'name' => $file['name'],
                     'created_at' => Carbon::parse($file['created'])->timezone('UTC'),
@@ -192,6 +183,14 @@ class File extends Model
                     'mime_type' => $file['mime'],
                 ];
             }, $contents);
+
+            $rowCount = count($rows);
+            $limit = 999;
+            if ($rowCount > $limit) {
+                $this->sushiInsertChunkSize = min(floor($limit / count($this->getSchema())), $rowCount);
+            }
+
+            return $rows;
         } catch (Exception $exception) {
             report($exception);
 
