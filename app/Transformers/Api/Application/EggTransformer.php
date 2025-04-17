@@ -46,6 +46,7 @@ class EggTransformer extends BaseTransformer
             'name' => $model->name,
             'author' => $model->author,
             'description' => $model->description,
+            'features' => $model->features,
             // "docker_image" is deprecated, but left here to avoid breaking too many things at once
             // in external software. We'll remove it down the road once things have gotten the chance
             // to upgrade to using "docker_images".

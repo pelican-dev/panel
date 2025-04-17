@@ -110,13 +110,13 @@
         }
 
         const checkListeners = (line) => {
-            const listeners = @js($this->getActiveFeatureListeners());
+            for (const [feature, listeners] of Object.entries(@js($this->getActiveFeatureListeners()))) {
+                for (const listener of listeners) {
+                    if (line.includes(listener)) {
+                        Livewire.dispatch('mount-feature', { feature });
 
-            for (const listener of listeners) {
-                if (line.includes(listener)) {
-                    Livewire.dispatch('line-to-check', { line });
-
-                    return;
+                        return;
+                    }
                 }
             }
         }

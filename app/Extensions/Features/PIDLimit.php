@@ -1,15 +1,21 @@
 <?php
 
-namespace App\Features;
+namespace App\Extensions\Features;
 
 use Filament\Actions\Action;
+use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\HtmlString;
 
-class PIDLimit extends Feature
+class PIDLimit extends FeatureProvider
 {
+    public function __construct(protected Application $app)
+    {
+        parent::__construct($app);
+    }
+
     /** @return array<string> */
-    public function listeners(): array
+    public function getListeners(): array
     {
         return [
             'pthread_create failed',
@@ -21,14 +27,14 @@ class PIDLimit extends Feature
         ];
     }
 
-    public function featureName(): string
+    public function getId(): string
     {
-        return 'pidlimit';
+        return 'pid_limit';
     }
 
-    public function action(): Action
+    public function getAction(): Action
     {
-        return Action::make($this->featureName())
+        return Action::make($this->getId())
             ->requiresConfirmation()
             ->icon('tabler-alert-triangle')
             ->modalHeading(fn () => auth()->user()->isAdmin() ? 'Memory or process limit reached...' : 'Possible resource limit reached...')
@@ -61,5 +67,10 @@ class PIDLimit extends Feature
             )))
             ->modalCancelActionLabel('Close')
             ->action(fn () => null);
+    }
+
+    public static function register(Application $app): self
+    {
+        return new self($app);
     }
 }

@@ -5,8 +5,7 @@ namespace App\Filament\Server\Pages;
 use App\Enums\ConsoleWidgetPosition;
 use App\Enums\ContainerStatus;
 use App\Exceptions\Http\Server\ServerStateConflictException;
-use App\Features;
-use App\Features\Feature;
+use App\Extensions\Features\FeatureProvider;
 use App\Filament\Server\Widgets\ServerConsole;
 use App\Filament\Server\Widgets\ServerCpuChart;
 use App\Filament\Server\Widgets\ServerMemoryChart;
@@ -23,7 +22,6 @@ use Filament\Pages\Page;
 use Filament\Support\Enums\ActionSize;
 use Filament\Widgets\Widget;
 use Filament\Widgets\WidgetConfiguration;
-use Illuminate\Support\Collection;
 use Livewire\Attributes\On;
 
 class Console extends Page implements HasForms
@@ -56,34 +54,21 @@ class Console extends Page implements HasForms
 
     public function boot(): void
     {
-        foreach ($this->getActiveFeatures() as $feature) {
-            $this->cacheAction($feature->action());
+        /** @var Server $server */
+        $server = Filament::getTenant();
+        /** @var FeatureProvider $feature */
+        foreach ($server->egg->features() as $feature) {
+            $this->cacheAction($feature->getAction());
         }
     }
 
-    /**
-     * @return Collection<Feature>
-     */
-    public function getActiveFeatures(): Collection
+    #[On('mount-feature')]
+    public function mountFeature(string $feature): void
     {
-        /** @var Server $server */
-        $server = Filament::getTenant();
-
-        return collect([new Features\MinecraftEula(), new Features\JavaVersion(), new Features\GSLToken(), new Features\PIDLimit(), new Features\SteamDiskSpace()])
-            ->filter(fn (Feature $feature) => in_array($feature->featureName(), $server->egg->features));
-    }
-
-    #[On('line-to-check')]
-    public function lineToCheck(string $line): void
-    {
-        /** @var Feature $feature */
-        foreach ($this->getActiveFeatures() as $feature) {
-            if ($feature->matchesListeners($line)) {
-                if (!$this->getMountedAction()) {
-                    sleep(2);
-                    $this->mountAction($feature->featureName());
-                }
-            }
+        $feature = FeatureProvider::getProviders($feature);
+        if (!$this->getMountedAction()) {
+            sleep(2);
+            $this->mountAction($feature->getId());
         }
     }
 

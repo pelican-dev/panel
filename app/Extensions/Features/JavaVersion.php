@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Features;
+namespace App\Extensions\Features;
 
 use App\Facades\Activity;
 use App\Models\Permission;
@@ -11,32 +11,38 @@ use Filament\Facades\Filament;
 use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\Select;
 use Filament\Notifications\Notification;
+use Illuminate\Foundation\Application;
 
-class JavaVersion extends Feature
+class JavaVersion extends FeatureProvider
 {
+    public function __construct(protected Application $app)
+    {
+        parent::__construct($app);
+    }
+
     /** @return array<string> */
-    public function listeners(): array
+    public function getListeners(): array
     {
         return [
+            'java.lang.UnsupportedClassVersionError',
             'minecraft 1.17 requires running the server with java 16 or above',
             'minecraft 1.18 requires running the server with java 17 or above',
-            'java.lang.unsupportedclassversionerror',
             'unsupported major.minor version',
             'has been compiled by a more recent version of the java runtime',
         ];
     }
 
-    public function featureName(): string
+    public function getId(): string
     {
         return 'java_version';
     }
 
-    public function action(): Action
+    public function getAction(): Action
     {
         /** @var Server $server */
         $server = Filament::getTenant();
 
-        return Action::make($this->featureName())
+        return Action::make($this->getId())
             ->requiresConfirmation()
             ->modalHeading('Unsupported Java Version')
             ->modalDescription('This server is currently running an unsupported version of Java and cannot be started.')
@@ -48,7 +54,11 @@ class JavaVersion extends Feature
                 Select::make('image')
                     ->label('Docker Image')
                     ->visible(fn () => in_array($server->image, $server->egg->docker_images))
-                    ->options(fn () => array_flip($server->egg->docker_images)),
+                    ->options(fn () => array_flip($server->egg->docker_images))
+                    ->selectablePlaceholder(false)
+                    ->default(fn () => collect($server->egg->docker_images)->flip()->first())
+                    ->required()
+                    ->native(false),
             ])
             ->action(function (array $data, DaemonPowerRepository $powerRepository) use ($server) {
                 /** @var Server $server */
@@ -78,5 +88,10 @@ class JavaVersion extends Feature
                         ->send();
                 }
             });
+    }
+
+    public static function register(Application $app): self
+    {
+        return new self($app);
     }
 }

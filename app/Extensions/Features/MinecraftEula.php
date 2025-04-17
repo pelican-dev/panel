@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Features;
+namespace App\Extensions\Features;
 
 use App\Models\Server;
 use App\Repositories\Daemon\DaemonFileRepository;
@@ -9,27 +9,33 @@ use Exception;
 use Filament\Actions\Action;
 use Filament\Facades\Filament;
 use Filament\Notifications\Notification;
+use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\HtmlString;
 
-class MinecraftEula extends Feature
+class MinecraftEula extends FeatureProvider
 {
+    public function __construct(protected Application $app)
+    {
+        parent::__construct($app);
+    }
+
     /** @return array<string> */
-    public function listeners(): array
+    public function getListeners(): array
     {
         return [
             'You need to agree to the EULA in order to run the server',
         ];
     }
 
-    public function featureName(): string
+    public function getId(): string
     {
         return 'eula';
     }
 
-    public function action(): Action
+    public function getAction(): Action
     {
-        return Action::make($this->featureName())
+        return Action::make($this->getId())
             ->requiresConfirmation()
             ->modalHeading('Minecraft EULA')
             ->modalDescription(new HtmlString(Blade::render('By pressing "I Accept" below you are indicating your agreement to the <x-filament::link href="https://minecraft.net/eula" target="_blank">Minecraft EULA </x-filament::link>')))
@@ -57,5 +63,10 @@ class MinecraftEula extends Feature
                 }
             }
             );
+    }
+
+    public static function register(Application $app): self
+    {
+        return new self($app);
     }
 }

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Features;
+namespace App\Extensions\Features;
 
 use App\Facades\Activity;
 use App\Models\Permission;
@@ -13,12 +13,18 @@ use Filament\Facades\Filament;
 use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\TextInput;
 use Filament\Notifications\Notification;
+use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Validator;
 
-class GSLToken extends Feature
+class GSLToken extends FeatureProvider
 {
+    public function __construct(protected Application $app)
+    {
+        parent::__construct($app);
+    }
+
     /** @return array<string> */
-    public function listeners(): array
+    public function getListeners(): array
     {
         return [
             'gsl token expired',
@@ -26,12 +32,12 @@ class GSLToken extends Feature
         ];
     }
 
-    public function featureName(): string
+    public function getId(): string
     {
         return 'gsltoken';
     }
 
-    public function action(): Action
+    public function getAction(): Action
     {
         /** @var Server $server */
         $server = Filament::getTenant();
@@ -39,7 +45,7 @@ class GSLToken extends Feature
         /** @var ServerVariable */
         $serverVariable = $server->serverVariables()->where('env_variable', 'STEAM_ACC');
 
-        return Action::make($this->featureName())
+        return Action::make($this->getId())
             ->requiresConfirmation()
             ->modalHeading('Invalid GSL token')
             ->modalDescription('It seems like your Gameserver Login Token (GSL token) is invalid or has expired.')
@@ -107,5 +113,10 @@ class GSLToken extends Feature
                         ->send();
                 }
             });
+    }
+
+    public static function register(Application $app): self
+    {
+        return new self($app);
     }
 }

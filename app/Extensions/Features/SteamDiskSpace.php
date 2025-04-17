@@ -1,15 +1,21 @@
 <?php
 
-namespace App\Features;
+namespace App\Extensions\Features;
 
 use Filament\Actions\Action;
+use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\HtmlString;
 
-class SteamDiskSpace extends Feature
+class SteamDiskSpace extends FeatureProvider
 {
+    public function __construct(protected Application $app)
+    {
+        parent::__construct($app);
+    }
+
     /** @return array<string> */
-    public function listeners(): array
+    public function getListeners(): array
     {
         return [
             'steamcmd needs 250mb of free disk space to update',
@@ -17,14 +23,14 @@ class SteamDiskSpace extends Feature
         ];
     }
 
-    public function featureName(): string
+    public function getId(): string
     {
-        return 'steam-disk-space';
+        return 'steam_disk_space';
     }
 
-    public function action(): Action
+    public function getAction(): Action
     {
-        return Action::make($this->featureName())
+        return Action::make($this->getId())
             ->requiresConfirmation()
             ->modalHeading('Out of available disk space...')
             ->modalDescription(new HtmlString(Blade::render(
@@ -49,5 +55,10 @@ class SteamDiskSpace extends Feature
             )))
             ->modalCancelActionLabel('Close')
             ->action(fn () => null);
+    }
+
+    public static function register(Application $app): self
+    {
+        return new self($app);
     }
 }

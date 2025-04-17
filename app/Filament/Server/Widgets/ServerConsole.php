@@ -3,18 +3,14 @@
 namespace App\Filament\Server\Widgets;
 
 use App\Exceptions\Http\HttpForbiddenException;
-use App\Features;
-use App\Features\Feature;
 use App\Livewire\AlertBanner;
 use App\Models\Permission;
 use App\Models\Server;
 use App\Models\User;
 use App\Services\Nodes\NodeJWTService;
 use App\Services\Servers\GetUserPermissionsService;
-use Filament\Facades\Filament;
 use Filament\Widgets\Widget;
 use Illuminate\Support\Arr;
-use Illuminate\Support\Collection;
 use Livewire\Attributes\On;
 
 class ServerConsole extends Widget
@@ -108,29 +104,12 @@ class ServerConsole extends Widget
         }
     }
 
-    /**
-     * @return Collection<Feature>
-     */
-    public function getActiveFeatures(): Collection
-    {
-
-        /** @var Server $server */
-        $server = Filament::getTenant();
-
-        return collect([new Features\MinecraftEula(), new Features\JavaVersion(), new Features\GSLToken(), new Features\PIDLimit(), new Features\SteamDiskSpace()])
-            ->filter(fn (Feature $feature) => in_array($feature->featureName(), $server->egg->features));
-    }
-
+    /** @return array<array<string>> */
     public function getActiveFeatureListeners(): array
     {
-        $listeners = [];
-        foreach ($this->getActiveFeatures() as $feature) {
-            foreach ($feature->listeners() as $listener) {
-                $listeners[] = $listener;
-            }
-        }
-
-        return $listeners;
+        return collect($this->server->egg->features())->mapWithKeys(fn ($feature) => [
+            $feature->getId() => $feature->getListeners(),
+        ])->all();
     }
 
     #[On('token-request')]
