@@ -167,6 +167,7 @@
 
         Livewire.on('setServerState', ({ state, uuid }) => {
             const serverUuid = "{{ $this->server->uuid }}";
+            console.log(serverUuid);
             if (uuid !== serverUuid) {
                 return;
             }

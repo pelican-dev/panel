@@ -78,10 +78,11 @@ class Console extends Page implements HasForms
             ->log();
 
         $feature = FeatureProvider::getProviders($feature);
-        if (!$this->getMountedAction()) {
-            sleep(2);
-            $this->mountAction($feature->getId());
+        if ($this->getMountedAction()) {
+            return;
         }
+        $this->mountAction($feature->getId());
+        sleep(2); // TODO find a better way
     }
 
     public function getWidgetData(): array
@@ -163,33 +164,30 @@ class Console extends Page implements HasForms
             Action::make('start')
                 ->color('primary')
                 ->size(ActionSize::ExtraLarge)
-                ->action(fn () => $this->dispatch('setServerState', state: 'start', uuid: $server->uuid))
+                ->dispatch('setServerState', ['state' => 'start', 'uuid' => $server->uuid])
                 ->authorize(fn () => auth()->user()->can(Permission::ACTION_CONTROL_START, $server))
                 ->disabled(fn () => $server->isInConflictState() || !$this->status->isStartable())
                 ->icon('tabler-player-play-filled'),
             Action::make('restart')
                 ->color('gray')
                 ->size(ActionSize::ExtraLarge)
-                ->action(fn () => $this->dispatch('setServerState', state: 'restart', uuid: $server->uuid))
+                ->dispatch('setServerState', ['state' => 'restart', 'uuid' => $server->uuid])
                 ->authorize(fn () => auth()->user()->can(Permission::ACTION_CONTROL_RESTART, $server))
                 ->disabled(fn () => $server->isInConflictState() || !$this->status->isRestartable())
                 ->icon('tabler-reload'),
             Action::make('stop')
                 ->color('danger')
                 ->size(ActionSize::ExtraLarge)
-                ->action(fn () => $this->dispatch('setServerState', state: 'stop', uuid: $server->uuid))
+                ->dispatch('setServerState', ['state' => 'stop', 'uuid' => $server->uuid])
                 ->authorize(fn () => auth()->user()->can(Permission::ACTION_CONTROL_STOP, $server))
                 ->hidden(fn () => $this->status->isStartingOrStopping() || $this->status->isKillable())
                 ->disabled(fn () => $server->isInConflictState() || !$this->status->isStoppable())
                 ->icon('tabler-player-stop-filled'),
             Action::make('kill')
                 ->color('danger')
-                ->requiresConfirmation()
-                ->modalHeading('Do you wish to kill this server?')
-                ->modalDescription('This can result in data corruption and/or data loss!')
-                ->modalSubmitActionLabel('Kill Server')
+                ->tooltip('This can result in data corruption and/or data loss!')
                 ->size(ActionSize::ExtraLarge)
-                ->action(fn () => $this->dispatch('setServerState', state: 'kill', uuid: $server->uuid))
+                ->dispatch('setServerState', ['state' => 'kill', 'uuid' => $server->uuid])
                 ->authorize(fn () => auth()->user()->can(Permission::ACTION_CONTROL_STOP, $server))
                 ->hidden(fn () => $server->isInConflictState() || !$this->status->isKillable())
                 ->icon('tabler-alert-square'),
