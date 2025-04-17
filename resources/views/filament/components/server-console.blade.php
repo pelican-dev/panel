@@ -104,9 +104,8 @@
 
         const TERMINAL_PRELUDE = '\u001b[1m\u001b[33mpelican@' + '{{ \Filament\Facades\Filament::getTenant()->name }}' + ' ~ \u001b[0m';
 
-        const handleConsoleOutput = (line, prelude = false) => {
+        const handleConsoleOutput = (line, prelude = false) =>
             terminal.writeln((prelude ? TERMINAL_PRELUDE : '') + line.replace(/(?:\r\n|\r|\n)$/im, '') + '\u001b[0m');
-        }
 
         const handleTransferStatus = (status) =>
             status === 'failure' && terminal.writeln(TERMINAL_PRELUDE + 'Transfer has failed.\u001b[0m');
@@ -167,7 +166,6 @@
 
         Livewire.on('setServerState', ({ state, uuid }) => {
             const serverUuid = "{{ $this->server->uuid }}";
-            console.log(serverUuid);
             if (uuid !== serverUuid) {
                 return;
             }

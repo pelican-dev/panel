@@ -1,7 +1,3 @@
-@php
-    use Filament\Actions\Action;
-@endphp
-
 <x-filament-panels::page class="fi-console-page">
     <x-filament-widgets::widgets
         :columns="$this->getColumns()"
