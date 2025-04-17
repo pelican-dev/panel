@@ -1,3 +1,4 @@
+
 #terminal {
     border-top-left-radius: 10px;
     border-top-right-radius: 10px;
@@ -14,7 +15,7 @@
     padding-right: 10px;
 }
 
-input:read-only {
+#send-command:read-only {
     cursor: not-allowed;
 }
 
@@ -46,4 +47,16 @@ input:read-only {
 
 ::-webkit-scrollbar-corner {
     background: transparent;
+}
+
+@font-face {
+    font-family: Comic Mono;
+    font-weight: normal;
+    src: url('/fonts/ComicMono.ttf');
+}
+  
+@font-face {
+    font-family: Comic Mono;
+    font-weight: bold;
+    src: url('/fonts/ComicMono-bold.ttf');
 }

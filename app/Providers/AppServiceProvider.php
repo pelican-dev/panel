@@ -2,18 +2,25 @@
 
 namespace App\Providers;
 
+use App\Checks\CacheCheck;
+use App\Checks\DatabaseCheck;
+use App\Checks\DebugModeCheck;
+use App\Checks\EnvironmentCheck;
 use App\Checks\NodeVersionsCheck;
 use App\Checks\PanelVersionCheck;
+use App\Checks\ScheduleCheck;
 use App\Checks\UsedDiskSpaceCheck;
+use App\Extensions\Avatar\Providers\GravatarProvider;
+use App\Extensions\Avatar\Providers\LocalAvatarProvider;
+use App\Extensions\Avatar\Providers\UiAvatarsProvider;
+use App\Extensions\OAuth\Providers\GitlabProvider;
+use App\Models;
+use App\Extensions\Captcha\Providers\TurnstileProvider;
 use App\Extensions\OAuth\Providers\AuthentikProvider;
 use App\Extensions\OAuth\Providers\CommonProvider;
 use App\Extensions\OAuth\Providers\DiscordProvider;
 use App\Extensions\OAuth\Providers\GithubProvider;
 use App\Extensions\OAuth\Providers\SteamProvider;
-use App\Models;
-use App\Models\ApiKey;
-use App\Models\Node;
-use App\Models\User;
 use App\Services\Helpers\SoftwareVersionService;
 use Dedoc\Scramble\Scramble;
 use Dedoc\Scramble\Support\Generator\OpenApi;
@@ -32,13 +39,12 @@ use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\ServiceProvider;
 use Laravel\Sanctum\Sanctum;
-use App\Checks\CacheCheck;
-use App\Checks\DatabaseCheck;
-use App\Checks\DebugModeCheck;
-use App\Checks\EnvironmentCheck;
-use App\Checks\ScheduleCheck;
-use App\Extensions\Captcha\Providers\TurnstileProvider;
+use Livewire\Component;
+use Livewire\Livewire;
 use Spatie\Health\Facades\Health;
+
+use function Livewire\on;
+use function Livewire\store;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -75,7 +81,7 @@ class AppServiceProvider extends ServiceProvider
 
         Http::macro(
             'daemon',
-            fn (Node $node, array $headers = []) => Http::acceptJson()
+            fn (Models\Node $node, array $headers = []) => Http::acceptJson()
                 ->asJson()
                 ->withToken($node->daemon_token)
                 ->withHeaders($headers)
@@ -85,7 +91,7 @@ class AppServiceProvider extends ServiceProvider
                 ->baseUrl($node->getConnectionAddress())
         );
 
-        Sanctum::usePersonalAccessTokenModel(ApiKey::class);
+        Sanctum::usePersonalAccessTokenModel(Models\ApiKey::class);
 
         Gate::define('viewApiDocs', fn () => true);
 
@@ -99,7 +105,7 @@ class AppServiceProvider extends ServiceProvider
         CommonProvider::register($app, 'linkedin', null, 'tabler-brand-linkedin-f', '#0a66c2');
         CommonProvider::register($app, 'google', null, 'tabler-brand-google-f', '#4285f4');
         GithubProvider::register($app);
-        CommonProvider::register($app, 'gitlab', null, 'tabler-brand-gitlab', '#fca326');
+        GitlabProvider::register($app);
         CommonProvider::register($app, 'bitbucket', null, 'tabler-brand-bitbucket-f', '#205081');
         CommonProvider::register($app, 'slack', null, 'tabler-brand-slack', '#6ecadc');
 
@@ -110,6 +116,11 @@ class AppServiceProvider extends ServiceProvider
 
         // Default Captcha provider
         TurnstileProvider::register($app);
+
+        // Default Avatar providers
+        GravatarProvider::register();
+        UiAvatarsProvider::register();
+        LocalAvatarProvider::register();
 
         FilamentColor::register([
             'danger' => Color::Red,
@@ -122,10 +133,7 @@ class AppServiceProvider extends ServiceProvider
 
         FilamentView::registerRenderHook(
             PanelsRenderHook::HEAD_START,
-            fn (): string => Blade::render(<<<'HTML'
-                @vite(['resources/css/app.css', 'resources/js/app.js'])
-                @livewireStyles
-            HTML),
+            fn () => Blade::render('filament.layouts.header')
         );
 
         FilamentView::registerRenderHook(
@@ -135,11 +143,29 @@ class AppServiceProvider extends ServiceProvider
 
         FilamentView::registerRenderHook(
             PanelsRenderHook::BODY_END,
-            fn (): string => Blade::render(<<<'HTML'
-                @livewireScripts
-                @vite(['resources/js/app.js'])
-            HTML),
+            fn () => Blade::render('filament.layouts.body-end'),
         );
+
+        FilamentView::registerRenderHook(
+            PanelsRenderHook::FOOTER,
+            fn () => Blade::render('filament.layouts.footer'),
+        );
+
+        on('dehydrate', function (Component $component) {
+            if (!Livewire::isLivewireRequest()) {
+                return;
+            }
+
+            if (store($component)->has('redirect')) {
+                return;
+            }
+
+            if (count(session()->get('alert-banners') ?? []) <= 0) {
+                return;
+            }
+
+            $component->dispatch('alertBannerSent');
+        });
 
         // Don't run any health checks during tests
         if (!$app->runningUnitTests()) {
@@ -155,7 +181,7 @@ class AppServiceProvider extends ServiceProvider
             ]);
         }
 
-        Gate::before(function (User $user, $ability) {
+        Gate::before(function (Models\User $user, $ability) {
             return $user->isRootAdmin() ? true : null;
         });
 

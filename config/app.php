@@ -3,7 +3,7 @@
 return [
 
     'name' => env('APP_NAME', 'Pelican'),
-    'logo' => env('APP_LOGO', '/pelican.svg'),
+    'logo' => env('APP_LOGO'),
     'favicon' => env('APP_FAVICON', '/pelican.ico'),
 
     'version' => 'canary',

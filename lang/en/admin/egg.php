@@ -77,11 +77,12 @@ return [
     'script_install' => 'Install Script',
     'no_eggs' => 'No Eggs',
     'no_servers' => 'No Servers',
-    'no_servers_help' => 'No Servers are assigned to this Egg.',
+    'no_servers_help' => 'No Servers are assigned to this Egg',
 
-    'update' => 'Update',
-    'updated' => 'Egg updated',
-    'update_failed' => 'Egg Update Failed',
-    'update_question' => 'Are you sure you want to update this egg?',
-    'update_description' => 'If you made any changes to the egg they will be overwritten!',
+    'update' => 'Update|Update selected',
+    'updated' => 'Egg updated|:count/:total Eggs updated',
+    'updated_failed' => ':count failed',
+    'update_question' => 'Are you sure you want to update this egg?|Are you sure you want to update the selected eggs?',
+    'update_description' => 'If you made any changes to the egg they will be overwritten!|If you made any changes to the eggs they will be overwritten!',
+    'no_updates' => 'No updates for the selected eggs available',
 ];

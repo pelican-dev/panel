@@ -6,6 +6,7 @@ use App\Filament\Admin\Resources\UserResource\Pages;
 use App\Filament\Admin\Resources\UserResource\RelationManagers;
 use App\Models\Role;
 use App\Models\User;
+use Filament\Facades\Filament;
 use Filament\Forms\Components\CheckboxList;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
@@ -17,6 +18,7 @@ use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
 
 class UserResource extends Resource
 {
@@ -58,8 +60,9 @@ class UserResource extends Resource
                 ImageColumn::make('picture')
                     ->visibleFrom('lg')
                     ->label('')
-                    ->extraImgAttributes(['class' => 'rounded-full'])
-                    ->defaultImageUrl(fn (User $user) => 'https://gravatar.com/avatar/' . md5(strtolower($user->email))),
+                    ->circular()
+                    ->alignCenter()
+                    ->defaultImageUrl(fn (User $user) => Filament::getUserAvatarUrl($user)),
                 TextColumn::make('username')
                     ->label(trans('admin/user.username')),
                 TextColumn::make('email')
@@ -120,12 +123,26 @@ class UserResource extends Resource
                     ->hintIconTooltip(fn ($operation) => $operation === 'create' ? trans('admin/user.password_help') : null)
                     ->password(),
                 CheckboxList::make('roles')
-                    ->disableOptionWhen(fn (string $value): bool => $value == Role::getRootAdmin()->id)
-                    ->relationship('roles', 'name')
+                    ->hidden(fn (User $user) => $user->isRootAdmin())
+                    ->relationship('roles', 'name', fn (Builder $query) => $query->whereNot('id', Role::getRootAdmin()->id))
+                    ->saveRelationshipsUsing(fn (User $user, array $state) => $user->syncRoles(collect($state)->map(fn ($role) => Role::findById($role))))
                     ->dehydrated()
                     ->label(trans('admin/user.admin_roles'))
                     ->columnSpanFull()
                     ->bulkToggleable(false),
+                CheckboxList::make('root_admin_role')
+                    ->visible(fn (User $user) => $user->isRootAdmin())
+                    ->disabled()
+                    ->options([
+                        'root_admin' => Role::ROOT_ADMIN,
+                    ])
+                    ->descriptions([
+                        'root_admin' => trans('admin/role.root_admin', ['role' => Role::ROOT_ADMIN]),
+                    ])
+                    ->formatStateUsing(fn () => ['root_admin'])
+                    ->dehydrated(false)
+                    ->label(trans('admin/user.admin_roles'))
+                    ->columnSpanFull(),
             ]);
     }
 

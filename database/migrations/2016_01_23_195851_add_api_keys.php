@@ -12,7 +12,7 @@ return new class extends Migration
     {
         Schema::create('api_keys', function (Blueprint $table) {
             $table->increments('id');
-            $table->char('public', 16);
+            $table->string('public', 16)->nullable();
             $table->text('secret');
             $table->text('allowed_ips')->nullable();
             $table->timestamps();

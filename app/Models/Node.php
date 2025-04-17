@@ -89,7 +89,7 @@ class Node extends Model implements Validatable
         'name' => ['required', 'string', 'min:1', 'max:100'],
         'description' => ['string', 'nullable'],
         'public' => ['boolean'],
-        'fqdn' => ['required', 'string'],
+        'fqdn' => ['required', 'string', 'notIn:0.0.0.0,127.0.0.1,localhost'],
         'scheme' => ['required', 'string', 'in:http,https'],
         'behind_proxy' => ['boolean'],
         'memory' => ['required', 'numeric', 'min:0'],
@@ -104,6 +104,7 @@ class Node extends Model implements Validatable
         'daemon_listen' => ['required', 'numeric', 'between:1,65535'],
         'maintenance_mode' => ['boolean'],
         'upload_size' => ['int', 'between:1,1024'],
+        'tags' => ['array'],
     ];
 
     /**
@@ -364,16 +365,20 @@ class Node extends Model implements Validatable
         ];
 
         try {
-            $this->systemInformation();
 
-            return Http::daemon($this)
+            $data = Http::daemon($this)
                 ->connectTimeout(1)
                 ->timeout(1)
                 ->get('/api/system/utilization')
-                ->json() ?? $default;
+                ->json();
+
+            if ($data['memory_total']) {
+                return $data;
+            }
         } catch (Exception) {
-            return $default;
         }
+
+        return $default;
     }
 
     /** @return string[] */

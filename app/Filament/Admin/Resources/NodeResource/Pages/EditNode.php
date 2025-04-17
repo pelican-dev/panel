@@ -4,6 +4,7 @@ namespace App\Filament\Admin\Resources\NodeResource\Pages;
 
 use App\Filament\Admin\Resources\NodeResource;
 use App\Models\Node;
+use App\Repositories\Daemon\DaemonConfigurationRepository;
 use App\Services\Helpers\SoftwareVersionService;
 use App\Services\Nodes\NodeAutoDeployService;
 use App\Services\Nodes\NodeUpdateService;
@@ -26,7 +27,7 @@ use Filament\Forms\Set;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\EditRecord;
 use Filament\Support\Enums\Alignment;
-use Illuminate\Database\Eloquent\Model;
+use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Support\HtmlString;
 use Webbingbrasil\FilamentCopyActions\Forms\Actions\CopyAction;
 
@@ -34,12 +35,13 @@ class EditNode extends EditRecord
 {
     protected static string $resource = NodeResource::class;
 
-    private bool $errored = false;
+    private DaemonConfigurationRepository $daemonConfigurationRepository;
 
     private NodeUpdateService $nodeUpdateService;
 
-    public function boot(NodeUpdateService $nodeUpdateService): void
+    public function boot(DaemonConfigurationRepository $daemonConfigurationRepository, NodeUpdateService $nodeUpdateService): void
     {
+        $this->daemonConfigurationRepository = $daemonConfigurationRepository;
         $this->nodeUpdateService = $nodeUpdateService;
     }
 
@@ -108,7 +110,8 @@ class EditNode extends EditRecord
                                 ->required()
                                 ->autofocus()
                                 ->live(debounce: 1500)
-                                ->rule('prohibited', fn ($state) => is_ip($state) && request()->isSecure())
+                                ->rules(Node::getRulesForField('fqdn'))
+                                ->prohibited(fn ($state) => is_ip($state) && request()->isSecure())
                                 ->label(fn ($state) => is_ip($state) ? trans('admin/node.ip_address') : trans('admin/node.domain'))
                                 ->placeholder(fn ($state) => is_ip($state) ? '192.168.1.1' : 'node.example.com')
                                 ->helperText(function ($state) {
@@ -555,7 +558,18 @@ class EditNode extends EditRecord
                                             ->modalHeading(trans('admin/node.reset_token'))
                                             ->modalDescription(trans('admin/node.reset_help'))
                                             ->action(function (Node $node) {
-                                                $this->nodeUpdateService->handle($node, [], true);
+                                                try {
+                                                    $this->nodeUpdateService->handle($node, [], true);
+                                                } catch (Exception) {
+                                                    Notification::make()
+                                                        ->title(trans('admin/node.error_connecting', ['node' => $node->name]))
+                                                        ->body(trans('admin/node.error_connecting_description'))
+                                                        ->color('warning')
+                                                        ->icon('tabler-database')
+                                                        ->warning()
+                                                        ->send();
+
+                                                }
                                                 Notification::make()->success()->title(trans('admin/node.token_reset'))->send();
                                                 $this->fillForm();
                                             }),
@@ -585,39 +599,6 @@ class EditNode extends EditRecord
         return $data;
     }
 
-    protected function handleRecordUpdate(Model $record, array $data): Model
-    {
-        if (!$record instanceof Node) {
-            return $record;
-        }
-
-        try {
-            $record = $this->nodeUpdateService->handle($record, $data);
-        } catch (Exception $exception) {
-            $this->errored = true;
-
-            Notification::make()
-                ->title(trans('admin/node.error_connecting', ['node' => $record->name]))
-                ->body(trans('admin/node.error_connecting_description'))
-                ->color('warning')
-                ->icon('tabler-database')
-                ->warning()
-                ->send();
-
-        }
-
-        return parent::handleRecordUpdate($record, $data);
-    }
-
-    protected function getSavedNotification(): ?Notification
-    {
-        if ($this->errored) {
-            return null;
-        }
-
-        return parent::getSavedNotification();
-    }
-
     protected function getFormActions(): array
     {
         return [];
@@ -636,6 +617,31 @@ class EditNode extends EditRecord
     protected function afterSave(): void
     {
         $this->fillForm();
+
+        /** @var Node $node */
+        $node = $this->record;
+
+        $changed = collect($node->getChanges())->except(['updated_at', 'name', 'tags', 'public', 'maintenance_mode', 'memory', 'memory_overallocate', 'disk', 'disk_overallocate', 'cpu', 'cpu_overallocate'])->all();
+
+        try {
+            if ($changed) {
+                $this->daemonConfigurationRepository->setNode($node)->update($node);
+            }
+            parent::getSavedNotification()?->send();
+        } catch (ConnectionException) {
+            Notification::make()
+                ->title(trans('admin/node.error_connecting', ['node' => $node->name]))
+                ->body(trans('admin/node.error_connecting_description'))
+                ->color('warning')
+                ->icon('tabler-database')
+                ->warning()
+                ->send();
+        }
+    }
+
+    protected function getSavedNotification(): ?Notification
+    {
+        return null;
     }
 
     protected function getColumnSpan(): ?int

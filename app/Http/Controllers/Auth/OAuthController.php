@@ -53,7 +53,7 @@ class OAuthController extends Controller
 
             $this->updateService->handle($request->user(), ['oauth' => $oauth]);
 
-            return redirect(EditProfile::getUrl(['tab' => '-oauth-tab']));
+            return redirect(EditProfile::getUrl(['tab' => '-oauth-tab'], panel: 'app'));
         }
 
         try {

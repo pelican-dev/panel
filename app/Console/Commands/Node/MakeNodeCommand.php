@@ -2,8 +2,8 @@
 
 namespace App\Console\Commands\Node;
 
+use App\Models\Node;
 use Illuminate\Console\Command;
-use App\Services\Nodes\NodeCreationService;
 
 class MakeNodeCommand extends Command
 {
@@ -29,14 +29,6 @@ class MakeNodeCommand extends Command
                             {--daemonBase= : Enter the base folder.}';
 
     protected $description = 'Creates a new node on the system via the CLI.';
-
-    /**
-     * MakeNodeCommand constructor.
-     */
-    public function __construct(private NodeCreationService $creationService)
-    {
-        parent::__construct();
-    }
 
     /**
      * Handle the command execution process.
@@ -69,7 +61,7 @@ class MakeNodeCommand extends Command
         $data['daemon_sftp_alias'] = $this->option('daemonSFTPAlias') ?? $this->ask(trans('commands.make_node.daemonSFTPAlias'), '');
         $data['daemon_base'] = $this->option('daemonBase') ?? $this->ask(trans('commands.make_node.daemonBase'), '/var/lib/pelican/volumes');
 
-        $node = $this->creationService->handle($data);
+        $node = Node::create($data);
         $this->line(trans('commands.make_node.success', ['name' => $data['name'], 'id' => $node->id]));
     }
 }

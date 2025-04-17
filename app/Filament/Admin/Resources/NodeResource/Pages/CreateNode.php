@@ -3,6 +3,7 @@
 namespace App\Filament\Admin\Resources\NodeResource\Pages;
 
 use App\Filament\Admin\Resources\NodeResource;
+use App\Models\Node;
 use Filament\Forms;
 use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\Grid;
@@ -44,7 +45,8 @@ class CreateNode extends CreateRecord
                                 ->required()
                                 ->autofocus()
                                 ->live(debounce: 1500)
-                                ->rule('prohibited', fn ($state) => is_ip($state) && request()->isSecure())
+                                ->rules(Node::getRulesForField('fqdn'))
+                                ->prohibited(fn ($state) => is_ip($state) && request()->isSecure())
                                 ->label(fn ($state) => is_ip($state) ? trans('admin/node.ip_address') : trans('admin/node.domain'))
                                 ->placeholder(fn ($state) => is_ip($state) ? '192.168.1.1' : 'node.example.com')
                                 ->helperText(function ($state) {

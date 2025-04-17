@@ -2,6 +2,7 @@
 
 namespace App\Filament\Admin\Pages;
 
+use App\Extensions\Avatar\AvatarProvider;
 use App\Extensions\Captcha\Providers\CaptchaProvider;
 use App\Extensions\OAuth\Providers\OAuthProvider;
 use App\Models\Backup;
@@ -117,32 +118,55 @@ class Settings extends Page implements HasForms
                 ->label(trans('admin/setting.general.app_name'))
                 ->required()
                 ->default(env('APP_NAME', 'Pelican')),
-            TextInput::make('APP_FAVICON')
-                ->label(trans('admin/setting.general.app_favicon'))
-                ->hintIcon('tabler-question-mark')
-                ->hintIconTooltip(trans('admin/setting.general.app_favicon_help'))
-                ->required()
-                ->default(env('APP_FAVICON', '/pelican.ico')),
-            Toggle::make('APP_DEBUG')
-                ->label(trans('admin/setting.general.debug_mode'))
-                ->inline(false)
-                ->onIcon('tabler-check')
-                ->offIcon('tabler-x')
-                ->onColor('success')
-                ->offColor('danger')
-                ->formatStateUsing(fn ($state): bool => (bool) $state)
-                ->afterStateUpdated(fn ($state, Set $set) => $set('APP_DEBUG', (bool) $state))
-                ->default(env('APP_DEBUG', config('app.debug'))),
-            ToggleButtons::make('FILAMENT_TOP_NAVIGATION')
-                ->label(trans('admin/setting.general.navigation'))
-                ->inline()
-                ->options([
-                    false => trans('admin/setting.general.sidebar'),
-                    true => trans('admin/setting.general.topbar'),
-                ])
-                ->formatStateUsing(fn ($state): bool => (bool) $state)
-                ->afterStateUpdated(fn ($state, Set $set) => $set('FILAMENT_TOP_NAVIGATION', (bool) $state))
-                ->default(env('FILAMENT_TOP_NAVIGATION', config('panel.filament.top-navigation'))),
+            Group::make()
+                ->columns(2)
+                ->schema([
+                    TextInput::make('APP_LOGO')
+                        ->label(trans('admin/setting.general.app_logo'))
+                        ->hintIcon('tabler-question-mark')
+                        ->hintIconTooltip(trans('admin/setting.general.app_logo_help'))
+                        ->default(env('APP_LOGO'))
+                        ->placeholder('/pelican.svg'),
+                    TextInput::make('APP_FAVICON')
+                        ->label(trans('admin/setting.general.app_favicon'))
+                        ->hintIcon('tabler-question-mark')
+                        ->hintIconTooltip(trans('admin/setting.general.app_favicon_help'))
+                        ->required()
+                        ->default(env('APP_FAVICON', '/pelican.ico'))
+                        ->placeholder('/pelican.ico'),
+                ]),
+            Group::make()
+                ->columnSpan(2)
+                ->columns(4)
+                ->schema([
+                    Toggle::make('APP_DEBUG')
+                        ->label(trans('admin/setting.general.debug_mode'))
+                        ->inline(false)
+                        ->onIcon('tabler-check')
+                        ->offIcon('tabler-x')
+                        ->onColor('success')
+                        ->offColor('danger')
+                        ->formatStateUsing(fn ($state): bool => (bool) $state)
+                        ->afterStateUpdated(fn ($state, Set $set) => $set('APP_DEBUG', (bool) $state))
+                        ->default(env('APP_DEBUG', config('app.debug'))),
+                    ToggleButtons::make('FILAMENT_TOP_NAVIGATION')
+                        ->label(trans('admin/setting.general.navigation'))
+                        ->inline()
+                        ->options([
+                            false => trans('admin/setting.general.sidebar'),
+                            true => trans('admin/setting.general.topbar'),
+                        ])
+                        ->formatStateUsing(fn ($state): bool => (bool) $state)
+                        ->afterStateUpdated(fn ($state, Set $set) => $set('FILAMENT_TOP_NAVIGATION', (bool) $state))
+                        ->default(env('FILAMENT_TOP_NAVIGATION', config('panel.filament.top-navigation'))),
+                    Select::make('FILAMENT_AVATAR_PROVIDER')
+                        ->label(trans('admin/setting.general.avatar_provider'))
+                        ->columnSpan(2)
+                        ->native(false)
+                        ->options(collect(AvatarProvider::getAll())->mapWithKeys(fn ($provider) => [$provider->getId() => $provider->getName()]))
+                        ->selectablePlaceholder(false)
+                        ->default(env('FILAMENT_AVATAR_PROVIDER', config('panel.filament.avatar-provider'))),
+                ]),
             ToggleButtons::make('PANEL_USE_BINARY_PREFIX')
                 ->label(trans('admin/setting.general.unit_prefix'))
                 ->inline()
@@ -297,7 +321,7 @@ class Settings extends Page implements HasForms
                                 'mail.mailers.smtp.port' => config('mail.mailers.smtp.port'),
                                 'mail.mailers.smtp.username' => config('mail.mailers.smtp.username'),
                                 'mail.mailers.smtp.password' => config('mail.mailers.smtp.password'),
-                                'mail.mailers.smtp.encryption' => config('mail.mailers.smtp.encryption'),
+                                'mail.mailers.smtp.scheme' => config('mail.mailers.smtp.scheme'),
                                 'mail.from.address' => config('mail.from.address'),
                                 'mail.from.name' => config('mail.from.name'),
                                 'services.mailgun.domain' => config('services.mailgun.domain'),
@@ -313,7 +337,7 @@ class Settings extends Page implements HasForms
                                     'mail.mailers.smtp.port' => $get('MAIL_PORT'),
                                     'mail.mailers.smtp.username' => $get('MAIL_USERNAME'),
                                     'mail.mailers.smtp.password' => $get('MAIL_PASSWORD'),
-                                    'mail.mailers.smtp.encryption' => $get('MAIL_SCHEME'),
+                                    'mail.mailers.smtp.scheme' => $get('MAIL_SCHEME'),
                                     'mail.from.address' => $get('MAIL_FROM_ADDRESS'),
                                     'mail.from.name' => $get('MAIL_FROM_NAME'),
                                     'services.mailgun.domain' => $get('MAILGUN_DOMAIN'),
@@ -377,22 +401,16 @@ class Settings extends Page implements HasForms
                         ->revealable()
                         ->default(env('MAIL_PASSWORD')),
                     ToggleButtons::make('MAIL_SCHEME')
-                        ->label(trans('admin/setting.mail.smtp.encryption'))
+                        ->label(trans('admin/setting.mail.smtp.scheme'))
                         ->inline()
                         ->options([
-                            'tls' => trans('admin/setting.mail.smtp.tls'),
-                            'ssl' => trans('admin/setting.mail.smtp.ssl'),
-                            '' => trans('admin/setting.mail.smtp.none'),
+                            'smtp' => 'SMTP',
+                            'smtps' => 'SMTPS',
                         ])
-                        ->default(env('MAIL_SCHEME', config('mail.mailers.smtp.encryption', 'tls')))
+                        ->default(env('MAIL_SCHEME', config('mail.mailers.smtp.scheme')))
                         ->live()
                         ->afterStateUpdated(function ($state, Set $set) {
-                            $port = match ($state) {
-                                'tls' => 587,
-                                'ssl' => 465,
-                                default => 25,
-                            };
-                            $set('MAIL_PORT', $port);
+                            $set('MAIL_PORT', $state === 'smtps' ? 587 : 2525);
                         }),
                 ]),
             Section::make(trans('admin/setting.mail.mailgun.mailgun_title'))

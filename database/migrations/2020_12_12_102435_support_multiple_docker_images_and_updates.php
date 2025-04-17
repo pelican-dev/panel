@@ -18,7 +18,11 @@ return new class extends Migration
         });
 
         Schema::table('eggs', function (Blueprint $table) {
-            DB::statement('UPDATE `eggs` SET `docker_images` = JSON_ARRAY(docker_image)');
+            if (Schema::getConnection()->getDriverName() === 'pgsql') {
+                DB::statement('UPDATE eggs SET docker_images = json_build_array(docker_image)');
+            } else {
+                DB::statement('UPDATE eggs SET docker_images = JSON_ARRAY(docker_image)');
+            }
         });
 
         Schema::table('eggs', function (Blueprint $table) {
@@ -36,7 +40,7 @@ return new class extends Migration
         });
 
         Schema::table('eggs', function (Blueprint $table) {
-            DB::statement('UPDATE `eggs` SET `docker_image` = JSON_UNQUOTE(JSON_EXTRACT(docker_images, "$[0]"))');
+            DB::statement('UPDATE eggs SET docker_image = JSON_UNQUOTE(JSON_EXTRACT(docker_images, "$[0]"))');
         });
 
         Schema::table('eggs', function (Blueprint $table) {

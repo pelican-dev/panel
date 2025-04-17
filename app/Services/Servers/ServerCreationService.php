@@ -3,7 +3,6 @@
 namespace App\Services\Servers;
 
 use App\Enums\ServerState;
-use App\Models\ServerVariable;
 use Illuminate\Http\Client\ConnectionException;
 use Ramsey\Uuid\Uuid;
 use Illuminate\Support\Arr;
@@ -199,20 +198,11 @@ class ServerCreationService
      */
     private function storeEggVariables(Server $server, Collection $variables): void
     {
-        $now = now();
-
-        $records = $variables->map(function ($result) use ($server, $now) {
-            return [
-                'server_id' => $server->id,
-                'variable_id' => $result->id,
-                'variable_value' => $result->value ?? '',
-                'created_at' => $now,
-                'updated_at' => $now,
-            ];
-        })->toArray();
-
-        if (!empty($records)) {
-            ServerVariable::query()->insert($records);
+        foreach ($variables as $variable) {
+            $server->serverVariables()->forceCreate([
+                'variable_id' => $variable->id,
+                'variable_value' => $variable->value ?? '',
+            ]);
         }
     }
 

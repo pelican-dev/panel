@@ -4,11 +4,15 @@
         "version": "PLCN_v1",
         "update_url": "https:\/\/github.com\/pelican-dev\/panel\/raw\/main\/database\/Seeders\/eggs\/source-engine\/egg-team-fortress2.json"
     },
-    "exported_at": "2024-11-23T22:22:43+00:00",
+    "exported_at": "2025-03-18T12:36:28+00:00",
     "name": "Team Fortress 2",
     "author": "panel@example.com",
     "uuid": "7f8eb681-b2c8-4bf8-b9f4-d79ff70b6e5d",
     "description": "Team Fortress 2 is a team-based first-person shooter multiplayer video game developed and published by Valve Corporation. It is the sequel to the 1996 mod Team Fortress for Quake and its 1999 remake.",
+    "tags": [
+        "source",
+        "steamcmd"
+    ],
     "features": [
         "gsl_token",
         "steam_disk_space"
