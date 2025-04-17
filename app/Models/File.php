@@ -184,7 +184,11 @@ class File extends Model
                 ];
             }, $contents);
 
-            $this->sushiInsertChunkSize = min((int) floor(999 / count($this->getSchema())), count($rows));
+            $rowCount = count($rows);
+            $limit = 999;
+            if ($rowCount > $limit) {
+                $this->sushiInsertChunkSize = min(floor($limit / count($this->getSchema())), $rowCount);
+            }
 
             return $rows;
         } catch (Exception $exception) {
