@@ -10,11 +10,15 @@
 
     @php
         $userFont = auth()->user()->getCustomization()['console_font'] ?? 'ComicMono';
+        $userFontSize = auth()->user()->getCustomization()['console_font_size'] ?? 14;
+        $userRows =  auth()->user()->getCustomization()['console_rows'] ?? 30;
     @endphp
     <style>
         @font-face {
             font-family: '{{ $userFont }}';
             src: url('{{ asset("storage/fonts/{$userFont}.ttf") }}');
+            font-weight: auto;
+            font-style: normal;
         }
     </style>
     @endassets
@@ -67,15 +71,14 @@
         };
 
         let options = {
-            fontSize: {{ auth()->user()->getCustomization()['console_font_size'] ?? 14 }},
+            fontSize: {{ $userFontSize }},
             fontFamily: '{{ $userFont }}',
-            letterSpacing: 1.7,
-            lineHeight: 1.7,
+            lineHeight: 1.2,
             disableStdin: true,
             cursorStyle: 'underline',
             cursorInactiveStyle: 'underline',
             allowTransparency: true,
-            rows: {{ auth()->user()->getCustomization()['console_rows'] ?? 30 }},
+            rows: {{ $userRows }},
             theme: theme
         };
 
