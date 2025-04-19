@@ -136,6 +136,7 @@ return [
             'title' => 'Servers',
             'helper' => 'Settings for Servers',
             'edit_server_desc' => 'Allow Users to edit Descriptions?',
+            'console_font_upload' => 'Console Font Upload',
         ],
         'webhook' => [
             'title' => 'Webhooks',

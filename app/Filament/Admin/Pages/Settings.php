@@ -13,6 +13,7 @@ use Filament\Actions\Action;
 use Filament\Forms\Components\Actions;
 use Filament\Forms\Components\Actions\Action as FormAction;
 use Filament\Forms\Components\Component;
+use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Group;
 use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\Section;
@@ -715,10 +716,17 @@ class Settings extends Page implements HasForms
                         ->onColor('success')
                         ->offColor('danger')
                         ->live()
-                        ->columnSpanFull()
+                        ->columnSpan(1)
                         ->formatStateUsing(fn ($state): bool => (bool) $state)
                         ->afterStateUpdated(fn ($state, Set $set) => $set('PANEL_EDITABLE_SERVER_DESCRIPTIONS', (bool) $state))
                         ->default(env('PANEL_EDITABLE_SERVER_DESCRIPTIONS', config('panel.editable_server_descriptions'))),
+                    FileUpload::make('ConsoleFonts')
+                        ->hint('Only ttf fonts are currently supported.')
+                        ->label(trans('admin/setting.misc.server.console_font_upload'))
+                        ->directory('fonts')
+                        ->columnSpan(1)
+                        ->maxFiles(1)
+                        ->preserveFilenames(),
                 ]),
             Section::make(trans('admin/setting.misc.webhook.title'))
                 ->description(trans('admin/setting.misc.webhook.helper'))

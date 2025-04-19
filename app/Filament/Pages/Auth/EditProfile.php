@@ -375,7 +375,7 @@ class EditProfile extends BaseEditProfile
                                                     ->default(30),
                                                 Select::make('console_font')
                                                     ->label(trans('profile.font'))
-                                                    ->options(fn () => get_fonts(public_path('fonts')))
+                                                    ->options(fn () => get_fonts(storage_path('app\public\fonts')))
                                                     ->reactive()
                                                     ->afterStateUpdated(fn ($state, callable $set) => $set('font_preview', $state)),
                                                 Placeholder::make('font_preview')

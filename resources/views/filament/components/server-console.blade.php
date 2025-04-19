@@ -14,7 +14,7 @@
     <style>
         @font-face {
             font-family: '{{ $userFont }}';
-            src: url('{{ asset("fonts/{$userFont}.ttf") }}');
+            src: url('{{ asset("storage/fonts/{$userFont}.ttf") }}');
         }
     </style>
     @endassets
@@ -69,7 +69,8 @@
         let options = {
             fontSize: {{ auth()->user()->getCustomization()['console_font_size'] ?? 14 }},
             fontFamily: '{{ $userFont }}',
-            lineHeight: 1.2,
+            letterSpacing: 1.7,
+            lineHeight: 1.7,
             disableStdin: true,
             cursorStyle: 'underline',
             cursorInactiveStyle: 'underline',
@@ -126,8 +127,6 @@
             terminal.writeln(TERMINAL_PRELUDE + 'Server marked as ' + state + '...\u001b[0m');
 
         const socket = new WebSocket("{{ $this->getSocket() }}");
-
-        terminal.writeln(TERMINAL_PRELUDE + 'Server marked as ...\u001b[0m');
 
         socket.onerror = (event) => {
             $wire.dispatchSelf('websocket-error');
