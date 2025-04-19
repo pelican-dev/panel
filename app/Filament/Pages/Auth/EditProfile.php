@@ -381,10 +381,7 @@ class EditProfile extends BaseEditProfile
                                                 Placeholder::make('font_preview')
                                                     ->label('Preview')
                                                     ->content(function ($get) {
-                                                        $fontName = $get('console_font');
-                                                        if (!$fontName) {
-                                                            return 'No font selected.';
-                                                        }
+                                                        $fontName = $get('console_font') ?? 'No font selected.';
 
                                                         $fontUrl = asset("fonts/{$fontName}.ttf");
                                                         $fontSize = $get('console_font_size') . 'px' ?? 14 . 'px';
