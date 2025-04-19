@@ -380,7 +380,7 @@ class EditProfile extends BaseEditProfile
                                                     ->afterStateUpdated(fn ($state, callable $set) => $set('font_preview', $state)),
                                                 Placeholder::make('font_preview')
                                                     ->label('Preview')
-                                                    ->content(function ($get) {
+                                                    ->content(function (Get $get) {
                                                         $fontName = $get('console_font') ?? 'No font selected.';
 
                                                         $fontUrl = asset("fonts/{$fontName}.ttf");
