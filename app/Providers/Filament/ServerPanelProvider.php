@@ -63,7 +63,7 @@ class ServerPanelProvider extends PanelProvider
             ])
             ->navigationItems([
                 NavigationItem::make('Open in Admin')
-                    ->url(fn () => EditServer::getUrl(['record' => Filament::getTenant()], panel: 'admin', tenant: null), true)
+                    ->url(fn () => EditServer::getUrl(['record' => Filament::getTenant()], panel: 'admin'))
                     ->visible(fn () => auth()->user()->can('view server', Filament::getTenant()))
                     ->icon('tabler-arrow-back')
                     ->sort(99),
