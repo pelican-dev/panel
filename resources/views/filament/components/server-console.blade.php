@@ -1,4 +1,3 @@
-@php use App\Features\CustomModal; @endphp
 <x-filament::widget>
     @assets
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xterm/xterm/css/xterm.min.css">
