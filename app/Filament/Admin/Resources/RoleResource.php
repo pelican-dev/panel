@@ -48,7 +48,7 @@ class RoleResource extends Resource
 
     public static function getNavigationGroup(): ?string
     {
-        return trans('admin/dashboard.advanced');
+        return trans('admin/dashboard.user');
     }
 
     public static function getNavigationBadge(): ?string

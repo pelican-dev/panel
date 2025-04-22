@@ -29,6 +29,11 @@ class ServerResource extends Resource
         return trans('admin/server.model_label_plural');
     }
 
+    public static function getNavigationGroup(): ?string
+    {
+        return trans('admin/dashboard.server');
+    }
+
     public static function getNavigationBadge(): ?string
     {
         return static::getModel()::count() ?: null;
