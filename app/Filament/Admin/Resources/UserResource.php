@@ -45,7 +45,7 @@ class UserResource extends Resource
 
     public static function getNavigationGroup(): ?string
     {
-        return trans('admin/dashboard.user');
+        return config('panel.filament.top-navigation', false) ? null : trans('admin/dashboard.user');
     }
 
     public static function getNavigationBadge(): ?string
