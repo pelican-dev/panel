@@ -62,6 +62,6 @@ class NodeResource extends Resource
     {
         $query = parent::getEloquentQuery();
 
-        return $query->whereIn('id', auth()->user()->accessibleNodes());
+        return $query->whereIn('id', auth()->user()->accessibleNodes()->pluck('id'));
     }
 }

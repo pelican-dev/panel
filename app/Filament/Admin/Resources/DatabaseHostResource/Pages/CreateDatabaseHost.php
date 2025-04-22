@@ -146,7 +146,7 @@ class CreateDatabaseHost extends CreateRecord
                         ->preload()
                         ->helperText(trans('admin/databasehost.linked_nodes_help'))
                         ->label(trans('admin/databasehost.linked_nodes'))
-                        ->relationship('nodes', 'name', fn (Builder $query) => $query->whereIn('id', auth()->user()->accessibleNodes())),
+                        ->relationship('nodes', 'name', fn (Builder $query) => $query->whereIn('nodes.id', auth()->user()->accessibleNodes()->pluck('id'))),
                 ]),
         ];
     }

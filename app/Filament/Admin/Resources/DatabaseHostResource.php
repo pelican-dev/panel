@@ -145,7 +145,7 @@ class DatabaseHostResource extends Resource
                             ->preload()
                             ->helperText(trans('admin/databasehost.linked_nodes_help'))
                             ->label(trans('admin/databasehost.linked_nodes'))
-                            ->relationship('nodes', 'name', fn (Builder $query) => $query->whereIn('nodes.id', auth()->user()->accessibleNodes())),
+                            ->relationship('nodes', 'name', fn (Builder $query) => $query->whereIn('nodes.id', auth()->user()->accessibleNodes()->pluck('id'))),
                     ]),
             ]);
     }
@@ -165,7 +165,7 @@ class DatabaseHostResource extends Resource
         $query = parent::getEloquentQuery();
 
         return $query->whereHas('nodes', function (Builder $query) {
-            $query->whereIn('nodes.id', auth()->user()->accessibleNodes());
+            $query->whereIn('nodes.id', auth()->user()->accessibleNodes()->pluck('id'));
         })->orDoesntHave('nodes');
     }
 }
