@@ -19,6 +19,7 @@ use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
+use Illuminate\Support\Arr;
 use Illuminate\Support\HtmlString;
 
 class ListActivities extends ListRecords
@@ -98,7 +99,7 @@ class ListActivities extends ListRecords
                         DateTimePicker::make('timestamp'),
                         KeyValue::make('properties')
                             ->label('Metadata')
-                            ->formatStateUsing(fn ($state) => collect($state)->filter(fn ($item) => !is_array($item))->all()),
+                            ->formatStateUsing(fn ($state) => Arr::dot($state)),
                     ]),
             ])
             ->filters([
