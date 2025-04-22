@@ -30,7 +30,7 @@ class ServerNetworkChart extends ChartWidget
         $tx = collect($data)
             ->slice(-10)
             ->map(fn ($value, $key) => [
-                'tx' => $value->rx_bytes,
+                'tx' => $value->tx_bytes,
                 'timestamp' => Carbon::createFromTimestamp($key, (auth()->user()->timezone ?? 'UTC'))->format('H:i:s'),
             ])
             ->all();
