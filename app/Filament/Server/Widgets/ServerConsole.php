@@ -27,7 +27,7 @@ class ServerConsole extends Widget
     public ?User $user = null;
 
     /** @var string[] */
-    #[Session]
+    #[Session(key: 'server.{server.id}.history')]
     public array $history = [];
 
     public int $historyIndex = 0;
