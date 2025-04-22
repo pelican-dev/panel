@@ -5,6 +5,8 @@ namespace App\Providers\Filament;
 use App\Extensions\Avatar\AvatarProvider;
 use App\Filament\Pages\Auth\Login;
 use App\Filament\Pages\Auth\EditProfile;
+use App\Http\Middleware\LanguageMiddleware;
+use App\Http\Middleware\RequireTwoFactorAuthentication;
 use Filament\Facades\Filament;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\DisableBladeIconComponents;
@@ -59,6 +61,8 @@ class AppPanelProvider extends PanelProvider
                 SubstituteBindings::class,
                 DisableBladeIconComponents::class,
                 DispatchServingFilamentEvent::class,
+                LanguageMiddleware::class,
+                RequireTwoFactorAuthentication::class,
             ])
             ->authMiddleware([
                 Authenticate::class,

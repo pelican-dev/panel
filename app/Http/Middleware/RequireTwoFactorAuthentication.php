@@ -5,6 +5,9 @@ namespace App\Http\Middleware;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use App\Exceptions\Http\TwoFactorAuthRequiredException;
+use App\Filament\Pages\Auth\EditProfile;
+use App\Livewire\AlertBanner;
+use App\Models\User;
 
 class RequireTwoFactorAuthentication
 {
@@ -13,11 +16,6 @@ class RequireTwoFactorAuthentication
     public const LEVEL_ADMIN = 1;
 
     public const LEVEL_ALL = 2;
-
-    /**
-     * The route to redirect a user to enable 2FA.
-     */
-    protected string $redirectRoute = '/account';
 
     /**
      * Check the user state on the incoming request to determine if they should be allowed to
@@ -29,31 +27,37 @@ class RequireTwoFactorAuthentication
      */
     public function handle(Request $request, \Closure $next): mixed
     {
+        /** @var ?User $user */
         $user = $request->user();
+
         $uri = rtrim($request->getRequestUri(), '/') . '/';
         $current = $request->route()->getName();
 
-        if (!$user || Str::startsWith($uri, ['/auth/']) || Str::startsWith($current, ['auth.', 'account.'])) {
+        if (!$user || Str::startsWith($uri, ['/auth/', '/profile']) || Str::startsWith($current, ['auth.', 'account.', 'filament.app.auth.'])) {
             return $next($request);
         }
 
-        /** @var \App\Models\User $user */
         $level = (int) config('panel.auth.2fa_required');
-        // If this setting is not configured, or the user is already using 2FA then we can just
-        // send them right through, nothing else needs to be checked.
-        //
-        // If the level is set as admin and the user is not an admin, pass them through as well.
+
         if ($level === self::LEVEL_NONE || $user->use_totp) {
+            // If this setting is not configured, or the user is already using 2FA then we can just send them right through, nothing else needs to be checked.
             return $next($request);
-        } elseif ($level === self::LEVEL_ADMIN && !$user->isRootAdmin()) {
+        } elseif ($level === self::LEVEL_ADMIN && !$user->isAdmin()) {
+            // If the level is set as admin and the user is not an admin, pass them through as well.
             return $next($request);
         }
 
-        // For API calls return an exception which gets rendered nicely in the API response.
+        // For API calls return an exception which gets rendered nicely in the API response...
         if ($request->isJson() || Str::startsWith($uri, '/api/')) {
             throw new TwoFactorAuthRequiredException();
         }
 
-        return redirect()->to($this->redirectRoute);
+        // ... otherwise display banner and redirect to profile
+        AlertBanner::make('2fa_must_be_enabled')
+            ->body(trans('auth.2fa_must_be_enabled'))
+            ->warning()
+            ->send();
+
+        return redirect(EditProfile::getUrl(['tab' => '-2fa-tab'], panel: 'app'));
     }
 }
