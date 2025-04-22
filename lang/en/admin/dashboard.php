@@ -4,8 +4,6 @@ return [
     'heading' => 'Welcome to Pelican!',
     'version' => 'Version: :version',
     'advanced' => 'Advanced',
-    'server' => 'Server',
-    'user' => 'User',
     'sections' => [
         'intro-developers' => [
             'heading' => 'Information for Developers',

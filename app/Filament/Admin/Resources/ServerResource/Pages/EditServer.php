@@ -486,6 +486,7 @@ class EditServer extends EditRecord
                                             ]),
 
                                         KeyValue::make('docker_labels')
+                                            ->live()
                                             ->label(trans('admin/server.container_labels'))
                                             ->keyLabel(trans('admin/server.title'))
                                             ->valueLabel(trans('admin/server.description'))
