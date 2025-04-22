@@ -69,8 +69,9 @@ if (!function_exists('resolve_path')) {
 }
 
 if (!function_exists('get_fonts')) {
-    function get_fonts(string $directory): array
+    function get_fonts(?string $directory = null): array
     {
+        $directory ??= public_path('fonts');
         $fonts = [];
         $fontFiles = glob($directory . '/*.ttf', GLOB_BRACE);
 
