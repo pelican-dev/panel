@@ -9,11 +9,9 @@ use Filament\Widgets\ChartWidget;
 
 class ServerNetworkChart extends ChartWidget
 {
-    protected static ?string $heading = 'Network';
-
     protected static ?string $pollingInterval = '1s';
 
-    protected static ?string $maxHeight = '300px';
+    protected static ?string $maxHeight = '200px';
 
     public ?Server $server = null;
 
@@ -69,6 +67,7 @@ class ServerNetworkChart extends ChartWidget
 
     protected function getOptions(): RawJs
     {
+        // TODO: use "panel.use_binary_prefix" config value
         return RawJs::make(<<<'JS'
         {
             scales: {
@@ -79,15 +78,29 @@ class ServerNetworkChart extends ChartWidget
                     ticks: {
                         display: true,
                     },
-                    display: false, //debug
                 },
                 y: {
                     ticks: {
                         display: true,
+                        callback(value) {
+                            const bytes = typeof value === 'string' ? parseInt(value, 10) : value;
+
+                            if (bytes < 1) return '0 Bytes';
+
+                            const i = Math.floor(Math.log(bytes) / Math.log(1024));
+                            const number = Number((bytes / Math.pow(1024, i)).toFixed(2));
+
+                            return `${number} ${['Bytes', 'KiB', 'MiB', 'GiB', 'TiB'][i]}`;
+                        },
                     },
                 },
             }
         }
     JS);
+    }
+
+    public function getHeading(): string
+    {
+        return 'Network';
     }
 }
