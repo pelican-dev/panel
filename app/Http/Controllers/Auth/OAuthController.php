@@ -44,12 +44,13 @@ class OAuthController extends Controller
             return redirect()->route('auth.login');
         }
 
-        // handle failed oauth state
+        // Check for errors (https://www.oauth.com/oauth2-servers/server-side-apps/possible-errors/)
         if ($request->get('error')) {
-            // handle errors: https://www.oauth.com/oauth2-servers/server-side-apps/possible-errors/
+            report($request->get('error_description') ?? $request->get('error'));
+
             Notification::make()
-                ->title('Oauth error')
-                ->body($request->get('error_description') ?? $request->get('error'))
+                ->title('Something went wrong')
+                ->body($request->get('error'))
                 ->danger()
                 ->persistent()
                 ->send();
