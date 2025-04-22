@@ -72,12 +72,7 @@ class ServerNetworkChart extends ChartWidget
         {
             scales: {
                 x: {
-                    grid: {
-                        display: false,
-                    },
-                    ticks: {
-                        display: true,
-                    },
+                    display: false,
                 },
                 y: {
                     ticks: {
