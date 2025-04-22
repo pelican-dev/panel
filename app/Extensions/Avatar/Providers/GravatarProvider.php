@@ -4,8 +4,6 @@ namespace App\Extensions\Avatar\Providers;
 
 use App\Extensions\Avatar\AvatarProvider;
 use App\Models\User;
-use Illuminate\Contracts\Auth\Authenticatable;
-use Illuminate\Database\Eloquent\Model;
 
 class GravatarProvider extends AvatarProvider
 {
@@ -14,10 +12,9 @@ class GravatarProvider extends AvatarProvider
         return 'gravatar';
     }
 
-    public function get(Model|Authenticatable $record): string
+    public function get(User $user): string
     {
-        /** @var User $record */
-        return 'https://gravatar.com/avatar/' . md5($record->email);
+        return 'https://gravatar.com/avatar/' . md5($user->email);
     }
 
     public static function register(): self

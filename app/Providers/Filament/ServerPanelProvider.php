@@ -2,7 +2,6 @@
 
 namespace App\Providers\Filament;
 
-use App\Extensions\Avatar\AvatarProvider;
 use App\Filament\App\Resources\ServerResource\Pages\ListServers;
 use App\Filament\Pages\Auth\Login;
 use App\Filament\Admin\Resources\ServerResource\Pages\EditServer;
@@ -42,7 +41,6 @@ class ServerPanelProvider extends PanelProvider
             ->favicon(config('app.favicon', '/pelican.ico'))
             ->topNavigation(config('panel.filament.top-navigation', true))
             ->maxContentWidth(config('panel.filament.display-width', 'screen-2xl'))
-            ->defaultAvatarProvider(fn () => get_class(AvatarProvider::getProvider(config('panel.filament.avatar-provider'))))
             ->login(Login::class)
             ->passwordReset()
             ->userMenuItems([
