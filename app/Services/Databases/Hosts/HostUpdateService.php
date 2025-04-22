@@ -3,9 +3,7 @@
 namespace App\Services\Databases\Hosts;
 
 use App\Models\DatabaseHost;
-use Illuminate\Database\DatabaseManager;
 use Illuminate\Database\ConnectionInterface;
-use App\Extensions\DynamicDatabaseConnection;
 
 class HostUpdateService
 {
@@ -14,8 +12,6 @@ class HostUpdateService
      */
     public function __construct(
         private ConnectionInterface $connection,
-        private DatabaseManager $databaseManager,
-        private DynamicDatabaseConnection $dynamic,
     ) {}
 
     /**
@@ -38,8 +34,8 @@ class HostUpdateService
         return $this->connection->transaction(function () use ($data, $host) {
             $host->update($data);
 
-            $this->dynamic->set('dynamic', $host);
-            $this->databaseManager->connection('dynamic')->getPdo();
+            // Confirm access using the provided credentials before saving data.
+            $host->buildConnection()->getPdo();
 
             return $host;
         });
