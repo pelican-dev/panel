@@ -6,7 +6,6 @@ use App\Enums\ConsoleWidgetPosition;
 use App\Enums\ContainerStatus;
 use App\Exceptions\Http\Server\ServerStateConflictException;
 use App\Extensions\Features\FeatureProvider;
-use App\Facades\Activity;
 use App\Filament\Server\Widgets\ServerConsole;
 use App\Filament\Server\Widgets\ServerCpuChart;
 use App\Filament\Server\Widgets\ServerMemoryChart;
@@ -18,14 +17,13 @@ use App\Models\Server;
 use Filament\Actions\Concerns\InteractsWithActions;
 use Filament\Facades\Filament;
 use Filament\Actions\Action;
-use Filament\Forms\Contracts\HasForms;
 use Filament\Pages\Page;
 use Filament\Support\Enums\ActionSize;
 use Filament\Widgets\Widget;
 use Filament\Widgets\WidgetConfiguration;
 use Livewire\Attributes\On;
 
-class Console extends Page implements HasForms
+class Console extends Page
 {
     use InteractsWithActions;
 
@@ -68,14 +66,6 @@ class Console extends Page implements HasForms
     {
         $data = json_decode($data);
         $feature = data_get($data, 'key');
-        $line = data_get($data, 'line');
-
-        Activity::event('server:feature')
-            ->property([
-                'feature' => $feature,
-                'line' => $line,
-            ])
-            ->log();
 
         $feature = FeatureProvider::getProviders($feature);
         if ($this->getMountedAction()) {
