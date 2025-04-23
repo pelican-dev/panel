@@ -53,6 +53,7 @@ return [
         'top-navigation' => env('FILAMENT_TOP_NAVIGATION', false),
         'display-width' => env('FILAMENT_WIDTH', 'screen-2xl'),
         'avatar-provider' => env('FILAMENT_AVATAR_PROVIDER', 'gravatar'),
+        'uploadable-avatars' => env('FILAMENT_UPLOADABLE_AVATARS', false),
     ],
 
     'use_binary_prefix' => env('PANEL_USE_BINARY_PREFIX', true),
