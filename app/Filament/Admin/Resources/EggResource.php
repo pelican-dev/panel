@@ -19,6 +19,11 @@ class EggResource extends Resource
         return static::getModel()::count() ?: null;
     }
 
+    public static function getNavigationGroup(): ?string
+    {
+        return config('panel.filament.top-navigation', false) ? null : trans('admin/dashboard.server');
+    }
+
     public static function getNavigationLabel(): string
     {
         return trans('admin/egg.nav_title');
