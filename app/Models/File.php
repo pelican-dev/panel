@@ -50,7 +50,6 @@ class File extends Model
         'application/zstd', // .tar.zst, .zst
         'application/zip', // .zip
     ];
-
     protected static Server $server;
 
     protected static string $path;

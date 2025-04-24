@@ -225,7 +225,6 @@ class ListFiles extends ListRecords
                             $decodedName = base64_decode($file->name);
                             $location = rtrim($data['location'], '/');
                             $files = [['to' => join_paths($location, $decodedName), 'from' => $decodedName]];
-
                             $this->getDaemonFileRepository()->renameFiles($this->path, $files);
 
                             $oldLocation = join_paths($this->path, $decodedName);
