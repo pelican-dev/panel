@@ -395,7 +395,8 @@ class ListFiles extends ListRecords
                             $decodedNames = $files->map(fn ($file) => base64_decode($file['name']))->toArray();
                             $location = rtrim($data['location'], '/');
 
-                            $files = $files->map(fn ($file) => ['to' => join_paths($location, base64_decode($file['name'])), 'from' => base64_decode($file['name'])]);
+                            $files = $files->map(fn ($file) => ['from' => base64_decode($file['name']), 'to' => join_paths($location, base64_decode($file['name']))])
+                                ->toArray();
                             $this->getDaemonFileRepository()
                                 ->renameFiles($this->path, $files);
 
