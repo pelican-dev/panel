@@ -14,7 +14,6 @@
         "dedoc/scramble": "^0.12.10",
         "doctrine/dbal": "~3.6.0",
         "filament/filament": "v4.0.0-alpha1",
-        "filament/upgrade": "^4.0@alpha",
         "guzzlehttp/guzzle": "^7.9",
         "laravel/framework": "^12.10",
         "laravel/helpers": "^1.7",
