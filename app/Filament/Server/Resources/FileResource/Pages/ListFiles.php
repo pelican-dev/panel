@@ -163,10 +163,10 @@ class ListFiles extends ListRecords
 
                             Activity::event('server:file.rename')
                                 ->property('directory', $this->path)
-                                ->property('files', array_map(function($item) {
+                                ->property('files', array_map(function ($item) {
                                     return [
                                         'to' => htmlspecialchars($item['to'], ENT_QUOTES, 'UTF-8'),
-                                        'from' => htmlspecialchars($item['from'], ENT_QUOTES, 'UTF-8')
+                                        'from' => htmlspecialchars($item['from'], ENT_QUOTES, 'UTF-8'),
                                     ];
                                 }, $files))
                                 ->property('to', htmlspecialchars($data['name'], ENT_QUOTES, 'UTF-8'))
@@ -232,10 +232,10 @@ class ListFiles extends ListRecords
 
                             Activity::event('server:file.rename')
                                 ->property('directory', $this->path)
-                                ->property('files', array_map(function($item) {
+                                ->property('files', array_map(function ($item) {
                                     return [
                                         'to' => htmlspecialchars($item['to'], ENT_QUOTES, 'UTF-8'),
-                                        'from' => htmlspecialchars($item['from'], ENT_QUOTES, 'UTF-8')
+                                        'from' => htmlspecialchars($item['from'], ENT_QUOTES, 'UTF-8'),
                                     ];
                                 }, $files))
                                 ->property('to', htmlspecialchars($newLocation, ENT_QUOTES, 'UTF-8'))

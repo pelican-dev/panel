@@ -50,6 +50,7 @@ class File extends Model
         'application/zstd', // .tar.zst, .zst
         'application/zip', // .zip
     ];
+
     protected static Server $server;
 
     protected static string $path;
@@ -173,7 +174,7 @@ class File extends Model
             $rows = array_map(function ($file) {
                 // Base64 encode the name to avoid any special character issues
                 $encodedName = base64_encode($file['name']);
-                
+
                 return [
                     'name' => $encodedName,
                     'display_name' => $file['name'], // Keep original for display
