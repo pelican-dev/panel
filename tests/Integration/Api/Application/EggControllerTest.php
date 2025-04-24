@@ -101,7 +101,7 @@ class EggControllerTest extends ApplicationApiIntegrationTestCase
      */
     public function test_get_missing_egg(): void
     {
-        $response = $this->getJson('/api/application/eggs/nil');
+        $response = $this->getJson('/api/application/eggs/12345');
         $this->assertNotFoundJson($response);
     }
 

@@ -4,12 +4,12 @@ namespace App\Models;
 
 use App\Contracts\Validatable;
 use App\Exceptions\DisplayException;
+use App\Extensions\Avatar\AvatarProvider;
 use App\Rules\Username;
 use App\Facades\Activity;
 use App\Traits\HasValidation;
 use DateTimeZone;
 use Filament\Models\Contracts\FilamentUser;
-use Filament\Models\Contracts\HasAvatar;
 use Filament\Models\Contracts\HasName;
 use Filament\Models\Contracts\HasTenants;
 use Filament\Panel;
@@ -24,6 +24,7 @@ use Illuminate\Auth\Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\Builder;
 use App\Models\Traits\HasAccessTokens;
+use Filament\Models\Contracts\HasAvatar;
 use Illuminate\Auth\Passwords\CanResetPassword;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\Access\Authorizable;
@@ -31,7 +32,7 @@ use Illuminate\Database\Eloquent\Relations\MorphToMany;
 use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
 use Illuminate\Contracts\Auth\Access\Authorizable as AuthorizableContract;
 use Illuminate\Contracts\Auth\CanResetPassword as CanResetPasswordContract;
-use App\Notifications\SendPasswordReset as ResetPasswordNotification;
+use Illuminate\Support\Facades\Storage;
 use ResourceBundle;
 use Spatie\Permission\Traits\HasRoles;
 
@@ -51,7 +52,6 @@ use Spatie\Permission\Traits\HasRoles;
  * @property string|null $totp_secret
  * @property \Illuminate\Support\Carbon|null $totp_authenticated_at
  * @property string[]|null $oauth
- * @property bool $gravatar
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property \Illuminate\Database\Eloquent\Collection|\App\Models\ApiKey[] $apiKeys
@@ -69,6 +69,7 @@ use Spatie\Permission\Traits\HasRoles;
  * @property int|null $tokens_count
  * @property \Illuminate\Database\Eloquent\Collection|\App\Models\Role[] $roles
  * @property int|null $roles_count
+ * @property string|null $customization
  *
  * @method static \Database\Factories\UserFactory factory(...$parameters)
  * @method static Builder|User newModelQuery()
@@ -77,7 +78,6 @@ use Spatie\Permission\Traits\HasRoles;
  * @method static Builder|User whereCreatedAt($value)
  * @method static Builder|User whereEmail($value)
  * @method static Builder|User whereExternalId($value)
- * @method static Builder|User whereGravatar($value)
  * @method static Builder|User whereId($value)
  * @method static Builder|User whereLanguage($value)
  * @method static Builder|User whereTimezone($value)
@@ -124,8 +124,8 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
         'use_totp',
         'totp_secret',
         'totp_authenticated_at',
-        'gravatar',
         'oauth',
+        'customization',
     ];
 
     /**
@@ -143,6 +143,7 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
         'use_totp' => false,
         'totp_secret' => null,
         'oauth' => '[]',
+        'customization' => null,
     ];
 
     /** @var array<array-key, string[]> */
@@ -157,16 +158,20 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
         'use_totp' => ['boolean'],
         'totp_secret' => ['nullable', 'string'],
         'oauth' => ['array', 'nullable'],
+        'customization' => ['array', 'nullable'],
+        'customization.console_rows' => ['integer', 'min:1'],
+        'customization.console_font' => ['string'],
+        'customization.console_font_size' => ['integer', 'min:1'],
     ];
 
     protected function casts(): array
     {
         return [
             'use_totp' => 'boolean',
-            'gravatar' => 'boolean',
             'totp_authenticated_at' => 'datetime',
             'totp_secret' => 'encrypted',
             'oauth' => 'array',
+            'customization' => 'array',
         ];
     }
 
@@ -177,6 +182,10 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
             $user->timezone ??= config('app.timezone');
 
             return true;
+        });
+
+        static::saving(function (self $user) {
+            $user->email = mb_strtolower($user->email);
         });
 
         static::deleting(function (self $user) {
@@ -199,21 +208,6 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
         $rules['username'][] = new Username();
 
         return $rules;
-    }
-
-    /**
-     * Send the password reset notification.
-     *
-     * @param  string  $token
-     */
-    public function sendPasswordResetNotification($token): void
-    {
-        Activity::event('auth:reset-password')
-            ->withRequestMetadata()
-            ->subject($this)
-            ->log('sending password reset email');
-
-        $this->notify(new ResetPasswordNotification($token));
     }
 
     public function username(): Attribute
@@ -383,7 +377,17 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
 
     public function getFilamentAvatarUrl(): ?string
     {
-        return 'https://gravatar.com/avatar/' . md5(strtolower($this->email));
+        if (config('panel.filament.uploadable-avatars')) {
+            $path = "avatars/$this->id.png";
+
+            if (Storage::disk('public')->exists($path)) {
+                return Storage::url($path);
+            }
+        }
+
+        $provider = AvatarProvider::getProvider(config('panel.filament.avatar-provider'));
+
+        return $provider?->get($this);
     }
 
     public function canTarget(Model $user): bool
@@ -413,5 +417,11 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
         }
 
         return false;
+    }
+
+    /** @return array<mixed> */
+    public function getCustomization(): array
+    {
+        return json_decode($this->customization, true) ?? [];
     }
 }

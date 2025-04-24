@@ -12,14 +12,16 @@ use Filament\Forms\Components\TextInput;
 use Filament\Forms\Get;
 use Filament\Forms\Set;
 use Filament\Resources\RelationManagers\RelationManager;
-use Filament\Tables;
+use Filament\Support\Exceptions\Halt;
 use Filament\Tables\Actions\Action;
 use Filament\Tables\Actions\AssociateAction;
 use Filament\Tables\Actions\CreateAction;
+use Filament\Tables\Actions\DissociateBulkAction;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Columns\TextInputColumn;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Collection;
 
 /**
  * @method Server getOwnerRecord()
@@ -96,10 +98,21 @@ class AllocationsRelationManager extends RelationManager
                     ->recordSelectSearchColumns(['ip', 'port'])
                     ->label(trans('admin/server.add_allocation')),
             ])
-            ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DissociateBulkAction::make(),
-                ]),
+            ->groupedBulkActions([
+                DissociateBulkAction::make()
+                    ->before(function (DissociateBulkAction $action, Collection $records) {
+                        $records = $records->filter(function ($allocation) {
+                            /** @var Allocation $allocation */
+                            return $allocation->id !== $this->getOwnerRecord()->allocation_id;
+                        });
+
+                        if ($records->isEmpty()) {
+                            $action->failureNotificationTitle(trans('admin/server.notifications.dissociate_primary'))->failure();
+                            throw new Halt();
+                        }
+
+                        return $records;
+                    }),
             ]);
     }
 }

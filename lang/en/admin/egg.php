@@ -77,7 +77,7 @@ return [
     'script_install' => 'Install Script',
     'no_eggs' => 'No Eggs',
     'no_servers' => 'No Servers',
-    'no_servers_help' => 'No Servers are assigned to this Egg.',
+    'no_servers_help' => 'No Servers are assigned to this Egg',
 
     'update' => 'Update|Update selected',
     'updated' => 'Egg updated|:count/:total Eggs updated',

@@ -70,7 +70,7 @@ class AssignmentService
                     throw new InvalidPortMappingException($port);
                 }
 
-                $insertData = [];
+                $newAllocations = [];
                 if (preg_match(self::PORT_RANGE_REGEX, $port, $matches)) {
                     $block = range($matches[1], $matches[2]);
 
@@ -83,7 +83,7 @@ class AssignmentService
                     }
 
                     foreach ($block as $unit) {
-                        $insertData[] = [
+                        $newAllocations[] = [
                             'node_id' => $node->id,
                             'ip' => $ip->__toString(),
                             'port' => (int) $unit,
@@ -96,7 +96,7 @@ class AssignmentService
                         throw new PortOutOfRangeException();
                     }
 
-                    $insertData[] = [
+                    $newAllocations[] = [
                         'node_id' => $node->id,
                         'ip' => $ip->__toString(),
                         'port' => (int) $port,
@@ -105,8 +105,8 @@ class AssignmentService
                     ];
                 }
 
-                foreach ($insertData as $insert) {
-                    $allocation = Allocation::query()->create($insert);
+                foreach ($newAllocations as $newAllocation) {
+                    $allocation = Allocation::query()->create($newAllocation);
                     $ids[] = $allocation->id;
                 }
             }

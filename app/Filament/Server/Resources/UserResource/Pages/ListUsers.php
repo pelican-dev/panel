@@ -16,6 +16,7 @@ use Filament\Forms\Components\CheckboxList;
 use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Tabs;
+use Filament\Forms\Components\Tabs\Tab;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Get;
 use Filament\Forms\Set;
@@ -139,7 +140,7 @@ class ListUsers extends ListRecords
                             Tabs::make()
                                 ->columnSpanFull()
                                 ->schema([
-                                    Tabs\Tab::make('Console')
+                                    Tab::make('Console')
                                         ->schema([
                                             Section::make()
                                                 ->description(trans('server/users.permissions.control_desc'))
@@ -163,7 +164,7 @@ class ListUsers extends ListRecords
                                                         ]),
                                                 ]),
                                         ]),
-                                    Tabs\Tab::make('User')
+                                    Tab::make('User')
                                         ->schema([
                                             Section::make()
                                                 ->description(trans('server/users.permissions.user_desc'))
@@ -187,7 +188,7 @@ class ListUsers extends ListRecords
                                                         ]),
                                                 ]),
                                         ]),
-                                    Tabs\Tab::make('File')
+                                    Tab::make('File')
                                         ->schema([
                                             Section::make()
                                                 ->description(trans('server/users.permissions.file_desc'))
@@ -217,7 +218,7 @@ class ListUsers extends ListRecords
                                                         ]),
                                                 ]),
                                         ]),
-                                    Tabs\Tab::make('Backup')
+                                    Tab::make('Backup')
                                         ->schema([
                                             Section::make()
                                                 ->description(trans('server/users.permissions.backup_desc'))
@@ -243,7 +244,7 @@ class ListUsers extends ListRecords
                                                         ]),
                                                 ]),
                                         ]),
-                                    Tabs\Tab::make('Allocation')
+                                    Tab::make('Allocation')
                                         ->schema([
                                             Section::make()
                                                 ->description(trans('server/users.permissions.allocation_desc'))
@@ -267,7 +268,7 @@ class ListUsers extends ListRecords
                                                         ]),
                                                 ]),
                                         ]),
-                                    Tabs\Tab::make('Startup')
+                                    Tab::make('Startup')
                                         ->schema([
                                             Section::make()
                                                 ->description(trans('server/users.permissions.startup_desc'))
@@ -289,7 +290,7 @@ class ListUsers extends ListRecords
                                                         ]),
                                                 ]),
                                         ]),
-                                    Tabs\Tab::make('Database')
+                                    Tab::make('Database')
                                         ->schema([
                                             Section::make()
                                                 ->description(trans('server/users.permissions.database_desc'))
@@ -315,7 +316,7 @@ class ListUsers extends ListRecords
                                                         ]),
                                                 ]),
                                         ]),
-                                    Tabs\Tab::make('Schedule')
+                                    Tab::make('Schedule')
                                         ->schema([
                                             Section::make()
                                                 ->description(trans('server/users.permissions.schedule_desc'))
@@ -339,7 +340,7 @@ class ListUsers extends ListRecords
                                                         ]),
                                                 ]),
                                         ]),
-                                    Tabs\Tab::make('Settings')
+                                    Tab::make('Settings')
                                         ->schema([
                                             Section::make()
                                                 ->description(trans('server/users.permissions.settings_desc'))
@@ -353,17 +354,15 @@ class ListUsers extends ListRecords
                                                             'rename' => 'Rename',
                                                             'description' => 'Description',
                                                             'reinstall' => 'Reinstall',
-                                                            'activity' => 'Activity',
                                                         ])
                                                         ->descriptions([
                                                             'rename' => trans('server/users.permissions.setting_rename'),
                                                             'description' => trans('server/users.permissions.setting_description'),
                                                             'reinstall' => trans('server/users.permissions.setting_reinstall'),
-                                                            'activity' => trans('server/users.permissions.activity_desc'),
                                                         ]),
                                                 ]),
                                         ]),
-                                    Tabs\Tab::make('Activity')
+                                    Tab::make('Activity')
                                         ->schema([
                                             Section::make()
                                                 ->description(trans('server/users.permissions.activity_desc'))

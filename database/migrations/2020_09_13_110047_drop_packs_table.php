@@ -22,7 +22,7 @@ return new class extends Migration
         Schema::create('packs', function (Blueprint $table) {
             $table->increments('id');
             $table->unsignedInteger('egg_id');
-            $table->char('uuid', 36)->unique();
+            $table->string('uuid', 36)->unique();
             $table->string('name');
             $table->string('version');
             $table->text('description')->nullable();

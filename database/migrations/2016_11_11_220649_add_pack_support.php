@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('service_packs', function (Blueprint $table) {
             $table->increments('id');
             $table->unsignedInteger('option');
-            $table->char('uuid', 36)->unique();
+            $table->string('uuid', 36)->unique();
             $table->string('name');
             $table->string('version');
             $table->text('description')->nullable();

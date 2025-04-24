@@ -4,7 +4,6 @@ namespace App\Filament\Server\Widgets;
 
 use App\Enums\ContainerStatus;
 use App\Filament\Server\Components\SmallStatBlock;
-use App\Filament\Server\Components\StatBlock;
 use App\Models\Server;
 use Carbon\CarbonInterface;
 use Filament\Widgets\StatsOverviewWidget;
@@ -19,13 +18,12 @@ class ServerOverview extends StatsOverviewWidget
     protected function getStats(): array
     {
         return [
-            StatBlock::make('Name', $this->server->name)
-                ->description($this->server->description)
+            SmallStatBlock::make('Name', $this->server->name)
                 ->extraAttributes([
                     'class' => 'overflow-x-auto',
                 ]),
-            StatBlock::make('Status', $this->status()),
-            StatBlock::make('Address', $this->server->allocation->address)
+            SmallStatBlock::make('Status', $this->status()),
+            SmallStatBlock::make('Address', $this->server->allocation->address)
                 ->extraAttributes([
                     'class' => 'overflow-x-auto',
                 ]),

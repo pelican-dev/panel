@@ -5,7 +5,6 @@ namespace App\Filament\Server\Resources;
 use App\Filament\Server\Resources\UserResource\Pages;
 use App\Models\Permission;
 use App\Models\Server;
-use App\Models\Subuser;
 use App\Models\User;
 use App\Services\Subusers\SubuserDeletionService;
 use App\Services\Subusers\SubuserUpdateService;
@@ -91,21 +90,21 @@ class UserResource extends Resource
                 ImageColumn::make('picture')
                     ->visibleFrom('lg')
                     ->label('')
-                    ->extraImgAttributes(['class' => 'rounded-full'])
-                    ->defaultImageUrl(fn (User $user) => 'https://gravatar.com/avatar/' . md5(strtolower($user->email))),
+                    ->alignCenter()->circular()
+                    ->defaultImageUrl(fn (User $user) => Filament::getUserAvatarUrl($user)),
                 TextColumn::make('username')
                     ->searchable(),
                 TextColumn::make('email')
                     ->searchable(),
                 TextColumn::make('permissions')
-                    ->state(fn (User $user) => count(Subuser::query()->where('user_id', $user->id)->where('server_id', $server->id)->first()->permissions)),
+                    ->state(fn (User $user) => count($server->subusers->where('user_id', $user->id)->first()->permissions)),
             ])
             ->actions([
                 DeleteAction::make()
                     ->label('Remove User')
                     ->hidden(fn (User $user) => auth()->user()->id === $user->id)
                     ->action(function (User $user, SubuserDeletionService $subuserDeletionService) use ($server) {
-                        $subuser = Subuser::query()->where('user_id', $user->id)->where('server_id', $server->id)->first();
+                        $subuser = $server->subusers->where('user_id', $user->id)->first();
                         $subuserDeletionService->handle($subuser, $server);
 
                         Notification::make()
@@ -119,7 +118,7 @@ class UserResource extends Resource
                     ->authorize(fn () => auth()->user()->can(Permission::ACTION_USER_UPDATE, $server))
                     ->modalHeading(fn (User $user) => 'Editing ' . $user->email)
                     ->action(function (array $data, SubuserUpdateService $subuserUpdateService, User $user) use ($server) {
-                        $subuser = Subuser::query()->where('user_id', $user->id)->where('server_id', $server->id)->first();
+                        $subuser = $server->subusers->where('user_id', $user->id)->first();
 
                         $permissions = collect($data)
                             ->forget('email')
@@ -217,7 +216,9 @@ class UserResource extends Resource
                                                     'rename',
                                                     'description',
                                                     'reinstall',
-                                                    'activity',
+                                                ],
+                                                'activity' => [
+                                                    'read',
                                                 ],
                                             ];
 
@@ -244,11 +245,7 @@ class UserResource extends Resource
                                                     ->schema([
                                                         CheckboxList::make('control')
                                                             ->formatStateUsing(function (User $user, Set $set) use ($server) {
-                                                                $permissionsArray = Subuser::query()
-                                                                    ->where('user_id', $user->id)
-                                                                    ->where('server_id', $server->id)
-                                                                    ->first()
-                                                                    ->permissions;
+                                                                $permissionsArray = $server->subusers->where('user_id', $user->id)->first()->permissions;
 
                                                                 $transformedPermissions = [];
 
@@ -265,6 +262,7 @@ class UserResource extends Resource
                                                             })
                                                             ->bulkToggleable()
                                                             ->label('')
+                                                            ->columns(2)
                                                             ->options([
                                                                 'console' => 'Console',
                                                                 'start' => 'Start',
@@ -288,6 +286,7 @@ class UserResource extends Resource
                                                         CheckboxList::make('user')
                                                             ->bulkToggleable()
                                                             ->label('')
+                                                            ->columns(2)
                                                             ->options([
                                                                 'read' => 'Read',
                                                                 'create' => 'Create',
@@ -311,6 +310,7 @@ class UserResource extends Resource
                                                         CheckboxList::make('file')
                                                             ->bulkToggleable()
                                                             ->label('')
+                                                            ->columns(2)
                                                             ->options([
                                                                 'read' => 'Read',
                                                                 'read-content' => 'Read Content',
@@ -340,6 +340,7 @@ class UserResource extends Resource
                                                         CheckboxList::make('backup')
                                                             ->bulkToggleable()
                                                             ->label('')
+                                                            ->columns(2)
                                                             ->options([
                                                                 'read' => 'Read',
                                                                 'create' => 'Create',
@@ -365,6 +366,7 @@ class UserResource extends Resource
                                                         CheckboxList::make('allocation')
                                                             ->bulkToggleable()
                                                             ->label('')
+                                                            ->columns(2)
                                                             ->options([
                                                                 'read' => 'Read',
                                                                 'create' => 'Create',
@@ -388,6 +390,7 @@ class UserResource extends Resource
                                                         CheckboxList::make('startup')
                                                             ->bulkToggleable()
                                                             ->label('')
+                                                            ->columns(2)
                                                             ->options([
                                                                 'read' => 'Read',
                                                                 'update' => 'Update',
@@ -409,6 +412,7 @@ class UserResource extends Resource
                                                         CheckboxList::make('database')
                                                             ->bulkToggleable()
                                                             ->label('')
+                                                            ->columns(2)
                                                             ->options([
                                                                 'read' => 'Read',
                                                                 'create' => 'Create',
@@ -434,6 +438,7 @@ class UserResource extends Resource
                                                         CheckboxList::make('schedule')
                                                             ->bulkToggleable()
                                                             ->label('')
+                                                            ->columns(2)
                                                             ->options([
                                                                 'read' => 'Read',
                                                                 'create' => 'Create',
@@ -457,17 +462,34 @@ class UserResource extends Resource
                                                         CheckboxList::make('settings')
                                                             ->bulkToggleable()
                                                             ->label('')
+                                                            ->columns(2)
                                                             ->options([
                                                                 'rename' => 'Rename',
                                                                 'description' => 'Description',
                                                                 'reinstall' => 'Reinstall',
-                                                                'activity' => 'Activity',
                                                             ])
                                                             ->descriptions([
                                                                 'rename' => trans('server/users.permissions.setting_rename'),
                                                                 'description' => trans('server/users.permissions.setting_description'),
                                                                 'reinstall' => trans('server/users.permissions.setting_reinstall'),
-                                                                'activity' => trans('server/users.permissions.activity_desc'),
+                                                            ]),
+                                                    ]),
+                                            ]),
+                                        Tab::make('Activity')
+                                            ->schema([
+                                                Section::make()
+                                                    ->description(trans('server/users.permissions.activity_desc'))
+                                                    ->icon('tabler-stack')
+                                                    ->schema([
+                                                        CheckboxList::make('activity')
+                                                            ->bulkToggleable()
+                                                            ->label('')
+                                                            ->columns(2)
+                                                            ->options([
+                                                                'read' => 'Read',
+                                                            ])
+                                                            ->descriptions([
+                                                                'read' => trans('server/users.permissions.activity_read'),
                                                             ]),
                                                     ]),
                                             ]),
