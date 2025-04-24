@@ -3,9 +3,7 @@
 namespace App\Extensions\Avatar\Providers;
 
 use App\Extensions\Avatar\AvatarProvider;
-use Filament\AvatarProviders\UiAvatarsProvider as FilamentUiAvatarsProvider;
-use Illuminate\Contracts\Auth\Authenticatable;
-use Illuminate\Database\Eloquent\Model;
+use App\Models\User;
 
 class UiAvatarsProvider extends AvatarProvider
 {
@@ -19,9 +17,10 @@ class UiAvatarsProvider extends AvatarProvider
         return 'UI Avatars';
     }
 
-    public function get(Model|Authenticatable $record): string
+    public function get(User $user): ?string
     {
-        return (new FilamentUiAvatarsProvider())->get($record);
+        // UI Avatars is the default of filament so just return null here
+        return null;
     }
 
     public static function register(): self

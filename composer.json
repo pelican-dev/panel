@@ -16,7 +16,7 @@
         "doctrine/dbal": "~3.6.0",
         "filament/filament": "^3.3",
         "guzzlehttp/guzzle": "^7.9",
-        "laravel/framework": "^12.8",
+        "laravel/framework": "^12.10",
         "laravel/helpers": "^1.7",
         "laravel/sanctum": "^4.0.2",
         "laravel/socialite": "^5.19",

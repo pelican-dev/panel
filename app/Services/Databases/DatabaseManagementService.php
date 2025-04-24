@@ -7,7 +7,6 @@ use App\Models\Server;
 use App\Models\Database;
 use App\Helpers\Utilities;
 use Illuminate\Database\ConnectionInterface;
-use App\Extensions\DynamicDatabaseConnection;
 use App\Exceptions\Repository\DuplicateDatabaseNameException;
 use App\Exceptions\Service\Database\TooManyDatabasesException;
 use App\Exceptions\Service\Database\DatabaseClientFeatureNotEnabledException;
@@ -32,7 +31,6 @@ class DatabaseManagementService
 
     public function __construct(
         protected ConnectionInterface $connection,
-        protected DynamicDatabaseConnection $dynamic,
     ) {}
 
     /**
@@ -94,8 +92,6 @@ class DatabaseManagementService
         return $this->connection->transaction(function () use ($data) {
             $database = $this->createModel($data);
 
-            $this->dynamic->set('dynamic', $data['database_host_id']);
-
             $database->createDatabase($database->database);
             $database->createUser(
                 $database->username,
@@ -122,8 +118,6 @@ class DatabaseManagementService
      */
     public function delete(Database $database): ?bool
     {
-        $this->dynamic->set('dynamic', $database->database_host_id);
-
         $database->dropDatabase($database->database);
         $database->dropUser($database->username, $database->remote);
         $database->flush();

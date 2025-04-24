@@ -21,7 +21,7 @@ class EggResource extends Resource
 
     public static function getNavigationGroup(): ?string
     {
-        return trans('admin/dashboard.server');
+        return config('panel.filament.top-navigation', false) ? null : trans('admin/dashboard.server');
     }
 
     public static function getNavigationLabel(): string

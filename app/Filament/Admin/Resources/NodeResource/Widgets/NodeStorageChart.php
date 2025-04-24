@@ -4,7 +4,6 @@ namespace App\Filament\Admin\Resources\NodeResource\Widgets;
 
 use App\Models\Node;
 use Filament\Widgets\ChartWidget;
-use Illuminate\Support\Number;
 
 class NodeStorageChart extends ChartWidget
 {
@@ -46,8 +45,8 @@ class NodeStorageChart extends ChartWidget
 
         $unused = $total - $used;
 
-        $used = Number::format($used, maxPrecision: 2);
-        $unused = Number::format($unused, maxPrecision: 2);
+        $used = round($used, 2);
+        $unused = round($unused, 2);
 
         return [
             'datasets' => [
