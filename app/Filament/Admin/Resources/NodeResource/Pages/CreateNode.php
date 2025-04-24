@@ -4,19 +4,20 @@ namespace App\Filament\Admin\Resources\NodeResource\Pages;
 
 use App\Filament\Admin\Resources\NodeResource;
 use App\Models\Node;
-use Filament\Forms;
-use Filament\Forms\Components\Actions\Action;
-use Filament\Forms\Components\Grid;
+use Filament\Actions\Action;
+use Filament\Schemas\Components\Form;
+use Filament\Schemas\Components\Grid;
 use Filament\Forms\Components\TagsInput;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\ToggleButtons;
-use Filament\Forms\Components\Wizard;
-use Filament\Forms\Components\Wizard\Step;
-use Filament\Forms\Get;
-use Filament\Forms\Set;
+use Filament\Schemas\Components\Wizard;
+use Filament\Schemas\Components\Wizard\Step;
+use Filament\Schemas\Components\Utilities\Get;
+use Filament\Schemas\Components\Utilities\Set;
 use Filament\Resources\Pages\CreateRecord;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\HtmlString;
+use Filament\Schemas\Schema;
 
 class CreateNode extends CreateRecord
 {
@@ -24,9 +25,9 @@ class CreateNode extends CreateRecord
 
     protected static bool $canCreateAnother = false;
 
-    public function form(Forms\Form $form): Forms\Form
+    public function form(Form|Schema $schema): Schema
     {
-        return $form
+        return $schema
             ->schema([
                 Wizard::make([
                     Step::make('basic')

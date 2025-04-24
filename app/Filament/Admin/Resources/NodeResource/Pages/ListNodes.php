@@ -6,10 +6,9 @@ use App\Filament\Admin\Resources\NodeResource;
 use App\Filament\Components\Tables\Columns\NodeHealthColumn;
 use App\Filament\Components\Tables\Filters\TagsFilter;
 use App\Models\Node;
-use Filament\Actions;
 use Filament\Resources\Pages\ListRecords;
-use Filament\Tables\Actions\CreateAction;
-use Filament\Tables\Actions\EditAction;
+use Filament\Actions\CreateAction;
+use Filament\Actions\EditAction;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
@@ -76,7 +75,7 @@ class ListNodes extends ListRecords
     protected function getHeaderActions(): array
     {
         return [
-            Actions\CreateAction::make()
+            CreateAction::make()
                 ->hidden(fn () => Node::count() <= 0),
         ];
     }

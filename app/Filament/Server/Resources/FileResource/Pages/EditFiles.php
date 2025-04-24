@@ -2,10 +2,7 @@
 
 namespace App\Filament\Server\Resources\FileResource\Pages;
 
-use AbdelhamidErrahmouni\FilamentMonacoEditor\MonacoEditor;
 use App\Enums\EditorLanguages;
-use App\Exceptions\Http\Server\FileSizeTooLargeException;
-use App\Exceptions\Repository\FileNotEditableException;
 use App\Facades\Activity;
 use App\Filament\Server\Resources\FileResource;
 use App\Livewire\AlertBanner;
@@ -13,19 +10,18 @@ use App\Models\Permission;
 use App\Models\Server;
 use App\Repositories\Daemon\DaemonFileRepository;
 use Filament\Facades\Filament;
-use Filament\Forms\Components\Actions\Action;
-use Filament\Forms\Components\Section;
+use Filament\Actions\Action;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Concerns\InteractsWithForms;
-use Filament\Forms\Form;
-use Filament\Forms\Get;
+use Filament\Schemas\Components\Form;
+use Filament\Schemas\Components\Section;
 use Filament\Notifications\Notification;
 use Filament\Pages\Concerns\InteractsWithFormActions;
 use Filament\Panel;
 use Filament\Resources\Pages\Page;
 use Filament\Resources\Pages\PageRegistration;
+use Filament\Schemas\Schema;
 use Filament\Support\Enums\Alignment;
-use Illuminate\Contracts\Filesystem\FileNotFoundException;
 use Illuminate\Routing\Route;
 use Illuminate\Support\Facades\Route as RouteFacade;
 use Livewire\Attributes\Locked;
@@ -40,7 +36,7 @@ class EditFiles extends Page
 
     protected static string $resource = FileResource::class;
 
-    protected static string $view = 'filament.server.pages.edit-file';
+    protected string $view = 'filament.server.pages.edit-file';
 
     protected static ?string $title = '';
 
@@ -49,10 +45,9 @@ class EditFiles extends Page
 
     private DaemonFileRepository $fileRepository;
 
-    /** @var array<mixed> */
     public ?array $data = [];
 
-    public function form(Form $form): Form
+    public function form(Form|Schema $schema): Schema
     {
         /** @var Server $server */
         $server = Filament::getTenant();
@@ -61,7 +56,7 @@ class EditFiles extends Page
             ->property('file', $this->path)
             ->log();
 
-        return $form
+        return $schema
             ->schema([
                 Section::make('Editing: ' . $this->path)
                     ->footerActions([
@@ -120,43 +115,43 @@ class EditFiles extends Page
                             ->selectablePlaceholder(false)
                             ->afterStateUpdated(fn ($state) => $this->dispatch('setLanguage', lang: $state))
                             ->default(fn () => EditorLanguages::fromWithAlias(pathinfo($this->path, PATHINFO_EXTENSION))),
-                        MonacoEditor::make('editor')
-                            ->hiddenLabel()
-                            ->showPlaceholder(false)
-                            ->default(function () {
-                                try {
-                                    return $this->getDaemonFileRepository()->getContent($this->path, config('panel.files.max_edit_size'));
-                                } catch (FileSizeTooLargeException) {
-                                    AlertBanner::make()
-                                        ->title('File too large!')
-                                        ->body('<code>' . $this->path . '</code> Max is ' . convert_bytes_to_readable(config('panel.files.max_edit_size')))
-                                        ->danger()
-                                        ->closable()
-                                        ->send();
-
-                                    $this->redirect(ListFiles::getUrl());
-                                } catch (FileNotFoundException) {
-                                    AlertBanner::make()
-                                        ->title('File Not found!')
-                                        ->body('<code>' . $this->path . '</code>')
-                                        ->danger()
-                                        ->closable()
-                                        ->send();
-
-                                    $this->redirect(ListFiles::getUrl());
-                                } catch (FileNotEditableException) {
-                                    AlertBanner::make()
-                                        ->title('Could not edit directory!')
-                                        ->body('<code>' . $this->path . '</code>')
-                                        ->danger()
-                                        ->closable()
-                                        ->send();
-
-                                    $this->redirect(ListFiles::getUrl());
-                                }
-                            })
-                            ->language(fn (Get $get) => $get('lang'))
-                            ->view('filament.plugins.monaco-editor'),
+                        //                         TODO MonacoEditor::make('editor')
+                        //                            ->hiddenLabel()
+                        //                            ->showPlaceholder(false)
+                        //                            ->default(function () {
+                        //                                try {
+                        //                                    return $this->getDaemonFileRepository()->getContent($this->path, config('panel.files.max_edit_size'));
+                        //                                } catch (FileSizeTooLargeException) {
+                        //                                    AlertBanner::make()
+                        //                                        ->title('File too large!')
+                        //                                        ->body('<code>' . $this->path . '</code> Max is ' . convert_bytes_to_readable(config('panel.files.max_edit_size')))
+                        //                                        ->danger()
+                        //                                        ->closable()
+                        //                                        ->send();
+                        //
+                        //                                    $this->redirect(ListFiles::getUrl());
+                        //                                } catch (FileNotFoundException) {
+                        //                                    AlertBanner::make()
+                        //                                        ->title('File Not found!')
+                        //                                        ->body('<code>' . $this->path . '</code>')
+                        //                                        ->danger()
+                        //                                        ->closable()
+                        //                                        ->send();
+                        //
+                        //                                    $this->redirect(ListFiles::getUrl());
+                        //                                } catch (FileNotEditableException) {
+                        //                                    AlertBanner::make()
+                        //                                        ->title('Could not edit directory!')
+                        //                                        ->body('<code>' . $this->path . '</code>')
+                        //                                        ->danger()
+                        //                                        ->closable()
+                        //                                        ->send();
+                        //
+                        //                                    $this->redirect(ListFiles::getUrl());
+                        //                                }
+                        //                            })
+                        //                            ->language(fn (Get $get) => $get('lang'))
+                        //                            ->view('filament.plugins.monaco-editor'),
                     ]),
             ]);
     }

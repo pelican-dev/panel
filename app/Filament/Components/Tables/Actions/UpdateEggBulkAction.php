@@ -5,9 +5,9 @@ namespace App\Filament\Components\Tables\Actions;
 use App\Models\Egg;
 use App\Services\Eggs\Sharing\EggImporterService;
 use Exception;
-use Filament\Actions\StaticAction;
+use Filament\Actions\Action;
 use Filament\Notifications\Notification;
-use Filament\Tables\Actions\BulkAction;
+use Filament\Actions\BulkAction;
 use Illuminate\Database\Eloquent\Collection;
 
 class UpdateEggBulkAction extends BulkAction
@@ -35,7 +35,7 @@ class UpdateEggBulkAction extends BulkAction
 
         $this->modalIconColor('danger');
 
-        $this->modalSubmitAction(fn (StaticAction $action) => $action->color('danger'));
+        $this->modalSubmitAction(fn (Action $action) => $action->color('danger'));
 
         $this->action(function (Collection $records, EggImporterService $eggImporterService) {
             if ($records->count() === 0) {

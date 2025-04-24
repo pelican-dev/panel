@@ -7,8 +7,8 @@ use Exception;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\ToggleButtons;
 use Filament\Forms\Components\Wizard\Step;
-use Filament\Forms\Get;
-use Filament\Forms\Set;
+use Filament\Schemas\Components\Utilities\Get;
+use Filament\Schemas\Components\Utilities\Set;
 use Filament\Notifications\Notification;
 use Filament\Support\Exceptions\Halt;
 use Illuminate\Foundation\Application;
@@ -21,9 +21,9 @@ class CacheStep
         'redis' => 'Redis',
     ];
 
-    public static function make(PanelInstaller $installer): Step
+    public static function make(PanelInstaller $installer): \Filament\Schemas\Components\Wizard\Step
     {
-        return Step::make('cache')
+        return \Filament\Schemas\Components\Wizard\Step::make('cache')
             ->label('Cache')
             ->columns()
             ->schema([

@@ -22,17 +22,18 @@ use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
-use Filament\Forms\Form;
+use Filament\Schemas\Components\Form;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\ListRecords;
-use Filament\Tables\Actions\Action;
-use Filament\Tables\Actions\ActionGroup;
-use Filament\Tables\Actions\DeleteAction;
+use Filament\Actions\Action;
+use Filament\Actions\ActionGroup;
+use Filament\Actions\DeleteAction;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpKernel\Exception\HttpException;
+use Filament\Schemas\Schema;
 
 class ListBackups extends ListRecords
 {
@@ -40,9 +41,9 @@ class ListBackups extends ListRecords
 
     protected static bool $canCreateAnother = false;
 
-    public function form(Form $form): Form
+    public function form(Form|Schema $schema): Schema
     {
-        return $form
+        return $schema
             ->schema([
                 TextInput::make('name')
                     ->label('Name')
@@ -98,7 +99,7 @@ class ListBackups extends ListRecords
                         ->color('success')
                         ->icon('tabler-folder-up')
                         ->authorize(fn () => auth()->user()->can(Permission::ACTION_BACKUP_RESTORE, $server))
-                        ->form([
+                        ->schema([
                             Placeholder::make('')
                                 ->helperText('Your server will be stopped. You will not be able to control the power state, access the file manager, or create additional backups until this process is completed.'),
                             Checkbox::make('truncate')

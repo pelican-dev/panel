@@ -4,16 +4,16 @@ namespace App\Filament\Admin\Resources;
 
 use App\Filament\Admin\Resources\DatabaseHostResource\Pages;
 use App\Models\DatabaseHost;
-use Filament\Forms\Components\Section;
+use Filament\Actions\CreateAction;
+use Filament\Actions\DeleteBulkAction;
+use Filament\Actions\EditAction;
+use Filament\Actions\ViewAction;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Form;
-use Filament\Forms\Set;
 use Filament\Resources\Resource;
-use Filament\Tables\Actions\CreateAction;
-use Filament\Tables\Actions\DeleteBulkAction;
-use Filament\Tables\Actions\EditAction;
-use Filament\Tables\Actions\ViewAction;
+use Filament\Schemas\Components\Form;
+use Filament\Schemas\Components\Section;
+use Filament\Schemas\Components\Utilities\Set;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 
@@ -21,7 +21,7 @@ class DatabaseHostResource extends Resource
 {
     protected static ?string $model = DatabaseHost::class;
 
-    protected static ?string $navigationIcon = 'tabler-database';
+    protected static string | \BackedEnum | null $navigationIcon = 'tabler-database';
 
     protected static ?string $recordTitleAttribute = 'name';
 
@@ -88,9 +88,9 @@ class DatabaseHostResource extends Resource
             ]);
     }
 
-    public static function form(Form $form): Form
+    public static function form(Form|\Filament\Schemas\Schema $schema): \Filament\Schemas\Schema
     {
-        return $form
+        return $schema
             ->schema([
                 Section::make()
                     ->columns([

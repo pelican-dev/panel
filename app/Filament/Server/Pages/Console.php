@@ -16,18 +16,18 @@ use App\Models\Server;
 use Filament\Actions\Action;
 use Filament\Facades\Filament;
 use Filament\Pages\Page;
-use Filament\Support\Enums\ActionSize;
+use Filament\Support\Enums\Size;
 use Filament\Widgets\Widget;
 use Filament\Widgets\WidgetConfiguration;
 use Livewire\Attributes\On;
 
 class Console extends Page
 {
-    protected static ?string $navigationIcon = 'tabler-brand-tabler';
+    protected static string | \BackedEnum | null $navigationIcon = 'tabler-brand-tabler';
 
     protected static ?int $navigationSort = 1;
 
-    protected static string $view = 'filament.server.pages.console';
+    protected string $view = 'filament.server.pages.console';
 
     public ContainerStatus $status = ContainerStatus::Offline;
 
@@ -125,21 +125,21 @@ class Console extends Page
         return [
             Action::make('start')
                 ->color('primary')
-                ->size(ActionSize::ExtraLarge)
+                ->size(Size::ExtraLarge)
                 ->action(fn () => $this->dispatch('setServerState', state: 'start', uuid: $server->uuid))
                 ->authorize(fn () => auth()->user()->can(Permission::ACTION_CONTROL_START, $server))
                 ->disabled(fn () => $server->isInConflictState() || !$this->status->isStartable())
                 ->icon('tabler-player-play-filled'),
             Action::make('restart')
                 ->color('gray')
-                ->size(ActionSize::ExtraLarge)
+                ->size(Size::ExtraLarge)
                 ->action(fn () => $this->dispatch('setServerState', state: 'restart', uuid: $server->uuid))
                 ->authorize(fn () => auth()->user()->can(Permission::ACTION_CONTROL_RESTART, $server))
                 ->disabled(fn () => $server->isInConflictState() || !$this->status->isRestartable())
                 ->icon('tabler-reload'),
             Action::make('stop')
                 ->color('danger')
-                ->size(ActionSize::ExtraLarge)
+                ->size(Size::ExtraLarge)
                 ->action(fn () => $this->dispatch('setServerState', state: 'stop', uuid: $server->uuid))
                 ->authorize(fn () => auth()->user()->can(Permission::ACTION_CONTROL_STOP, $server))
                 ->hidden(fn () => $this->status->isStartingOrStopping() || $this->status->isKillable())
@@ -151,7 +151,7 @@ class Console extends Page
                 ->modalHeading('Do you wish to kill this server?')
                 ->modalDescription('This can result in data corruption and/or data loss!')
                 ->modalSubmitActionLabel('Kill Server')
-                ->size(ActionSize::ExtraLarge)
+                ->size(Size::ExtraLarge)
                 ->action(fn () => $this->dispatch('setServerState', state: 'kill', uuid: $server->uuid))
                 ->authorize(fn () => auth()->user()->can(Permission::ACTION_CONTROL_STOP, $server))
                 ->hidden(fn () => $server->isInConflictState() || !$this->status->isKillable())

@@ -31,7 +31,7 @@ final class DiscordProvider extends OAuthProvider
     public function getSetupSteps(): array
     {
         return array_merge([
-            Step::make('Register new Discord OAuth App')
+            \Filament\Schemas\Components\Wizard\Step::make('Register new Discord OAuth App')
                 ->schema([
                     Placeholder::make('')
                         ->content(new HtmlString(Blade::render('<p>Visit the <x-filament::link href="https://discord.com/developers/applications" target="_blank">Discord Developer Portal</x-filament::link> and click on <b>New Application</b>. Enter a <b>Name</b> (e.g. your panel name) and click on <b>Create</b>.</p><p>Copy the <b>Client ID</b> and the <b>Client Secret</b> from the OAuth2 tab, you will need them in the final step.</p>'))),

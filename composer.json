@@ -8,13 +8,13 @@
         "ext-mbstring": "*",
         "ext-pdo": "*",
         "ext-zip": "*",
-        "abdelhamiderrahmouni/filament-monaco-editor": "^0.2.5",
         "aws/aws-sdk-php": "^3.342",
         "calebporzio/sushi": "^2.5",
         "chillerlan/php-qrcode": "^5.0.2",
         "dedoc/scramble": "^0.12.10",
         "doctrine/dbal": "~3.6.0",
-        "filament/filament": "^3.3",
+        "filament/filament": "4.0",
+        "filament/upgrade": "^4.0@alpha",
         "guzzlehttp/guzzle": "^7.9",
         "laravel/framework": "^12.10",
         "laravel/helpers": "^1.7",
@@ -43,7 +43,6 @@
         "symfony/mailgun-mailer": "^7.2",
         "symfony/postmark-mailer": "^7.2",
         "symfony/yaml": "^7.2",
-        "webbingbrasil/filament-copyactions": "^3.0.1",
         "webmozart/assert": "~1.11.0"
     },
     "require-dev": {
@@ -99,6 +98,6 @@
             "php": "8.2"
         }
     },
-    "minimum-stability": "stable",
+    "minimum-stability": "alpha",
     "prefer-stable": true
 }

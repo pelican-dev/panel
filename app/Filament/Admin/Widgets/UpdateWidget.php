@@ -8,7 +8,7 @@ use Filament\Widgets\Widget;
 
 class UpdateWidget extends Widget
 {
-    protected static string $view = 'filament.admin.widgets.update-widget';
+    protected string $view = 'filament.admin.widgets.update-widget';
 
     protected static bool $isLazy = false;
 

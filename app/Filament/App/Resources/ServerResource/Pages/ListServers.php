@@ -7,8 +7,8 @@ use App\Filament\App\Resources\ServerResource;
 use App\Filament\Components\Tables\Columns\ServerEntryColumn;
 use App\Filament\Server\Pages\Console;
 use App\Models\Server;
-use Filament\Resources\Components\Tab;
 use Filament\Resources\Pages\ListRecords;
+use Filament\Schemas\Components\Tabs\Tab;
 use Filament\Tables\Columns\ColumnGroup;
 use Filament\Tables\Columns\Layout\Stack;
 use Filament\Tables\Columns\TextColumn;
@@ -45,7 +45,7 @@ class ListServers extends ListRecords
                 ->label('')
                 ->size('md')
                 ->searchable(),
-            TextColumn::make('')
+            TextColumn::make('iNeedAName')
                 ->label('')
                 ->badge()
                 ->copyable(request()->isSecure())

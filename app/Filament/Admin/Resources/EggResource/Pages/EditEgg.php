@@ -2,7 +2,6 @@
 
 namespace App\Filament\Admin\Resources\EggResource\Pages;
 
-use AbdelhamidErrahmouni\FilamentMonacoEditor\MonacoEditor;
 use App\Filament\Admin\Resources\EggResource;
 use App\Filament\Admin\Resources\EggResource\RelationManagers\ServersRelationManager;
 use App\Filament\Components\Actions\ExportEggAction;
@@ -12,30 +11,31 @@ use App\Models\Egg;
 use App\Models\EggVariable;
 use Filament\Actions\DeleteAction;
 use Filament\Forms\Components\Checkbox;
-use Filament\Forms\Components\Fieldset;
+use Filament\Schemas\Components\Fieldset;
 use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\KeyValue;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Select;
-use Filament\Forms\Components\Tabs;
-use Filament\Forms\Components\Tabs\Tab;
 use Filament\Forms\Components\TagsInput;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
-use Filament\Forms\Form;
-use Filament\Forms\Get;
-use Filament\Forms\Set;
+use Filament\Schemas\Components\Form;
+use Filament\Schemas\Components\Tabs;
+use Filament\Schemas\Components\Tabs\Tab;
+use Filament\Schemas\Components\Utilities\Get;
+use Filament\Schemas\Components\Utilities\Set;
 use Filament\Resources\Pages\EditRecord;
 use Illuminate\Validation\Rules\Unique;
+use Filament\Schemas\Schema;
 
 class EditEgg extends EditRecord
 {
     protected static string $resource = EggResource::class;
 
-    public function form(Form $form): Form
+    public function form(Form|Schema $schema): Schema
     {
-        return $form
+        return $schema
             ->schema([
                 Tabs::make()->tabs([
                     Tab::make(trans('admin/egg.tabs.configuration'))
@@ -169,7 +169,7 @@ class EditEgg extends EditRecord
                                         ->maxLength(255)
                                         ->columnSpanFull()
                                         ->afterStateUpdated(fn (Set $set, $state) => $set('env_variable', str($state)->trim()->snake()->upper()->toString()))
-                                        ->unique(modifyRuleUsing: fn (Unique $rule, Get $get) => $rule->where('egg_id', $get('../../id')), ignoreRecord: true)
+                                        ->unique(ignoreRecord: true, modifyRuleUsing: fn (Unique $rule, Get $get) => $rule->where('egg_id', $get('../../id')))
                                         ->validationMessages([
                                             'unique' => trans('admin/egg.error_unique'),
                                         ])
@@ -182,7 +182,7 @@ class EditEgg extends EditRecord
                                         ->suffix('}}')
                                         ->hintIcon('tabler-code')
                                         ->hintIconTooltip(fn ($state) => "{{{$state}}}")
-                                        ->unique(modifyRuleUsing: fn (Unique $rule, Get $get) => $rule->where('egg_id', $get('../../id')), ignoreRecord: true)
+                                        ->unique(ignoreRecord: true, modifyRuleUsing: fn (Unique $rule, Get $get) => $rule->where('egg_id', $get('../../id')))
                                         ->rules(EggVariable::getRulesForField('env_variable'))
                                         ->validationMessages([
                                             'unique' => trans('admin/egg.error_unique'),
@@ -239,13 +239,13 @@ class EditEgg extends EditRecord
                                 ->selectablePlaceholder(false)
                                 ->options(['bash', 'ash', '/bin/bash'])
                                 ->required(),
-                            MonacoEditor::make('script_install')
-                                ->label(trans('admin/egg.script_install'))
-                                ->placeholderText('')
-                                ->columnSpanFull()
-                                ->fontSize('16px')
-                                ->language('shell')
-                                ->view('filament.plugins.monaco-editor'),
+                            // TODO                           MonacoEditor::make('script_install')
+                            //                                ->label(trans('admin/egg.script_install'))
+                            //                                ->placeholderText('')
+                            //                                ->columnSpanFull()
+                            //                                ->fontSize('16px')
+                            //                                ->language('shell')
+                            //                                ->view('filament.plugins.monaco-editor'),
                         ]),
                 ])->columnSpanFull()->persistTabInQueryString(),
             ]);

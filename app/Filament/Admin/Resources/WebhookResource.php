@@ -4,23 +4,24 @@ namespace App\Filament\Admin\Resources;
 
 use App\Filament\Admin\Resources\WebhookResource\Pages;
 use App\Models\WebhookConfiguration;
+use Filament\Actions\CreateAction;
+use Filament\Actions\DeleteBulkAction;
 use Filament\Forms\Components\CheckboxList;
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Form;
+use Filament\Schemas\Components\Form;
 use Filament\Resources\Resource;
-use Filament\Tables\Actions\CreateAction;
-use Filament\Tables\Actions\DeleteAction;
-use Filament\Tables\Actions\DeleteBulkAction;
-use Filament\Tables\Actions\EditAction;
-use Filament\Tables\Actions\ViewAction;
+use Filament\Actions\DeleteAction;
+use Filament\Actions\EditAction;
+use Filament\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
+use Filament\Schemas\Schema;
 
 class WebhookResource extends Resource
 {
     protected static ?string $model = WebhookConfiguration::class;
 
-    protected static ?string $navigationIcon = 'tabler-webhook';
+    protected static string | \BackedEnum | null $navigationIcon = 'tabler-webhook';
 
     protected static ?string $recordTitleAttribute = 'description';
 
@@ -75,9 +76,9 @@ class WebhookResource extends Resource
             ]);
     }
 
-    public static function form(Form $form): Form
+    public static function form(Form|Schema $schema): Schema
     {
-        return $form
+        return $schema
             ->schema([
                 TextInput::make('endpoint')
                     ->label(trans('admin/webhook.endpoint'))

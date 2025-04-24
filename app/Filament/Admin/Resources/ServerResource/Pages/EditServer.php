@@ -29,28 +29,26 @@ use App\Services\Servers\ToggleInstallService;
 use App\Services\Servers\TransferServerService;
 use Closure;
 use Exception;
-use Filament\Actions;
-use Filament\Forms;
-use Filament\Forms\Components\Actions as FormActions;
-use Filament\Forms\Components\Actions\Action;
+use Filament\Actions\Action;
 use Filament\Forms\Components\CheckboxList;
-use Filament\Forms\Components\Component;
-use Filament\Forms\Components\Fieldset;
-use Filament\Forms\Components\Grid;
+use Filament\Schemas\Components\Actions;
+use Filament\Schemas\Components\Component;
+use Filament\Schemas\Components\Fieldset;
 use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\KeyValue;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Select;
-use Filament\Forms\Components\Tabs;
-use Filament\Forms\Components\Tabs\Tab;
+use Filament\Schemas\Components\Grid;
+use Filament\Schemas\Components\Tabs;
+use Filament\Schemas\Components\Tabs\Tab;
 use Filament\Forms\Components\TagsInput;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Components\ToggleButtons;
-use Filament\Forms\Form;
-use Filament\Forms\Get;
-use Filament\Forms\Set;
+use Filament\Schemas\Components\Form;
+use Filament\Schemas\Components\Utilities\Get;
+use Filament\Schemas\Components\Utilities\Set;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\EditRecord;
 use Illuminate\Database\Eloquent\Builder;
@@ -59,7 +57,7 @@ use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\HtmlString;
 use LogicException;
-use Webbingbrasil\FilamentCopyActions\Forms\Actions\CopyAction;
+use Filament\Schemas\Schema;
 
 class EditServer extends EditRecord
 {
@@ -72,9 +70,9 @@ class EditServer extends EditRecord
         $this->daemonServerRepository = $daemonServerRepository;
     }
 
-    public function form(Form $form): Form
+    public function form(Form|Schema $schema): Schema
     {
-        return $form
+        return $schema
             ->schema([
                 Tabs::make('Tabs')
                     ->persistTabInQueryString()
@@ -145,7 +143,7 @@ class EditServer extends EditRecord
 
                                 TextInput::make('uuid')
                                     ->label(trans('admin/server.uuid'))
-                                    ->suffixAction(fn () => request()->isSecure() ? CopyAction::make() : null)
+                                    //TODO ->suffixAction(fn () => request()->isSecure() ? CopyAction::make() : null)
                                     ->columnSpan([
                                         'default' => 2,
                                         'sm' => 1,
@@ -156,7 +154,7 @@ class EditServer extends EditRecord
                                     ->dehydrated(false),
                                 TextInput::make('uuid_short')
                                     ->label(trans('admin/server.short_uuid'))
-                                    ->suffixAction(fn () => request()->isSecure() ? CopyAction::make() : null)
+                                    //TODO ->suffixAction(fn () => request()->isSecure() ? CopyAction::make() : null)
                                     ->columnSpan([
                                         'default' => 2,
                                         'sm' => 1,
@@ -525,7 +523,7 @@ class EditServer extends EditRecord
                                                 // Use redirect instead of fillForm to prevent server variables from duplicating
                                                 $this->redirect($this->getUrl(['record' => $server, 'tab' => '-egg-tab']), true);
                                             })
-                                            ->form(fn (Server $server) => [
+                                            ->schema(fn (Server $server) => [
                                                 Select::make('egg_id')
                                                     ->label(trans('admin/server.new_egg'))
                                                     ->prefixIcon('tabler-egg')
@@ -570,7 +568,7 @@ class EditServer extends EditRecord
                                     ->hintAction(PreviewStartupAction::make('preview')),
 
                                 Textarea::make('defaultStartup')
-                                    ->hintAction(fn () => request()->isSecure() ? CopyAction::make() : null)
+                                    //TODO ->hintAction(fn () => request()->isSecure() ? CopyAction::make() : null)
                                     ->label(trans('admin/server.default_startup'))
                                     ->disabled()
                                     ->autosize()
@@ -675,13 +673,13 @@ class EditServer extends EditRecord
                                             ->label(trans('admin/databasehost.table.host'))
                                             ->disabled()
                                             ->formatStateUsing(fn ($record) => $record->address())
-                                            ->suffixAction(fn (string $state) => request()->isSecure() ? CopyAction::make()->copyable($state) : null)
+                                            //TODO ->suffixAction(fn (string $state) => request()->isSecure() ? CopyAction::make()->copyable($state) : null)
                                             ->columnSpan(1),
                                         TextInput::make('database')
                                             ->label(trans('admin/databasehost.table.database'))
                                             ->disabled()
                                             ->formatStateUsing(fn ($record) => $record->database)
-                                            ->suffixAction(fn (string $state) => request()->isSecure() ? CopyAction::make()->copyable($state) : null)
+                                            //TODO ->suffixAction(fn (string $state) => request()->isSecure() ? CopyAction::make()->copyable($state) : null)
                                             ->hintAction(
                                                 Action::make('Delete')
                                                     ->label(trans('filament-actions::delete.single.modal.actions.delete.label'))
@@ -702,7 +700,7 @@ class EditServer extends EditRecord
                                             ->label(trans('admin/databasehost.table.username'))
                                             ->disabled()
                                             ->formatStateUsing(fn ($record) => $record->username)
-                                            ->suffixAction(fn (string $state) => request()->isSecure() ? CopyAction::make()->copyable($state) : null)
+                                            //TODO ->suffixAction(fn (string $state) => request()->isSecure() ? CopyAction::make()->copyable($state) : null)
                                             ->columnSpan(1),
                                         TextInput::make('password')
                                             ->label(trans('admin/databasehost.table.password'))
@@ -711,7 +709,7 @@ class EditServer extends EditRecord
                                             ->revealable()
                                             ->columnSpan(1)
                                             ->hintAction(RotateDatabasePasswordAction::make())
-                                            ->suffixAction(fn (string $state) => request()->isSecure() ? CopyAction::make()->copyable($state) : null)
+                                            //TODO ->suffixAction(fn (string $state) => request()->isSecure() ? CopyAction::make()->copyable($state) : null)
                                             ->formatStateUsing(fn (Database $database) => $database->password),
                                         TextInput::make('remote')
                                             ->disabled()
@@ -729,14 +727,14 @@ class EditServer extends EditRecord
                                             ->revealable()
                                             ->label(trans('admin/databasehost.table.connection_string'))
                                             ->columnSpan(2)
-                                            ->formatStateUsing(fn (Database $record) => $record->jdbc)
-                                            ->suffixAction(fn (string $state) => request()->isSecure() ? CopyAction::make()->copyable($state) : null),
+                                            ->formatStateUsing(fn (Database $record) => $record->jdbc),
+                                        //TODO ->suffixAction(fn (string $state) => request()->isSecure() ? CopyAction::make()->copyable($state) : null),
                                     ])
                                     ->relationship('databases')
                                     ->deletable(false)
                                     ->addable(false)
                                     ->columnSpan(4),
-                                FormActions::make([
+                                Actions::make([
                                     Action::make('createDatabase')
                                         ->authorize(fn () => auth()->user()->can('create database'))
                                         ->disabled(fn () => DatabaseHost::query()->count() < 1)
@@ -764,7 +762,7 @@ class EditServer extends EditRecord
                                             }
                                             $this->fillForm();
                                         })
-                                        ->form([
+                                        ->schema([
                                             Select::make('database_host_id')
                                                 ->label(trans('admin/databasehost.table.name'))
                                                 ->required()
@@ -804,7 +802,7 @@ class EditServer extends EditRecord
                                         Grid::make()
                                             ->columnSpan(3)
                                             ->schema([
-                                                FormActions::make([
+                                                Actions::make([
                                                     Action::make('toggleInstall')
                                                         ->label(trans('admin/server.toggle_install'))
                                                         ->disabled(fn (Server $server) => $server->isSuspended())
@@ -856,7 +854,7 @@ class EditServer extends EditRecord
                                         Grid::make()
                                             ->columnSpan(3)
                                             ->schema([
-                                                FormActions::make([
+                                                Actions::make([
                                                     Action::make('toggleSuspend')
                                                         ->label(trans('admin/server.suspend'))
                                                         ->color('warning')
@@ -912,12 +910,12 @@ class EditServer extends EditRecord
                                         Grid::make()
                                             ->columnSpan(3)
                                             ->schema([
-                                                FormActions::make([
+                                                Actions::make([
                                                     Action::make('transfer')
                                                         ->label(trans('admin/server.transfer'))
                                                         ->disabled(fn (Server $server) => Node::count() <= 1 || $server->isInConflictState())
                                                         ->modalheading(trans('admin/server.transfer'))
-                                                        ->form($this->transferServer())
+                                                        ->schema($this->transferServer())
                                                         ->action(function (TransferServerService $transfer, Server $server, $data) {
                                                             try {
                                                                 $transfer->handle($server, Arr::get($data, 'node_id'), Arr::get($data, 'allocation_id'), Arr::get($data, 'allocation_additional', []));
@@ -941,7 +939,7 @@ class EditServer extends EditRecord
                                         Grid::make()
                                             ->columnSpan(3)
                                             ->schema([
-                                                FormActions::make([
+                                                Actions::make([
                                                     Action::make('reinstall')
                                                         ->label(trans('admin/server.reinstall'))
                                                         ->color('danger')
@@ -977,7 +975,9 @@ class EditServer extends EditRecord
             ]);
     }
 
-    /** @return Component[] */
+    /** @return Component[]
+     * @throws Exception
+     */
     protected function transferServer(): array
     {
         return [
@@ -1016,7 +1016,7 @@ class EditServer extends EditRecord
         $canForceDelete = cache()->get("servers.$server->uuid.canForceDelete", false);
 
         return [
-            Actions\Action::make('Delete')
+            Action::make('Delete')
                 ->color('danger')
                 ->label(trans('filament-actions::delete.single.label'))
                 ->modalHeading(trans('filament-actions::delete.single.modal.heading', ['label' => $this->getRecordTitle()]))
@@ -1030,7 +1030,7 @@ class EditServer extends EditRecord
                     } catch (ConnectionException) {
                         cache()->put("servers.$server->uuid.canForceDelete", true, now()->addMinutes(5));
 
-                        Notification::make()
+                        return Notification::make()
                             ->title(trans('admin/server.notifications.error_server_delete'))
                             ->body(trans('admin/server.notifications.error_server_delete_body'))
                             ->color('warning')
@@ -1041,7 +1041,7 @@ class EditServer extends EditRecord
                 })
                 ->hidden(fn () => $canForceDelete)
                 ->authorize(fn (Server $server) => auth()->user()->can('delete server', $server)),
-            Actions\Action::make('ForceDelete')
+            Action::make('ForceDelete')
                 ->color('danger')
                 ->label(trans('filament-actions::force-delete.single.label'))
                 ->modalHeading(trans('filament-actions::force-delete.single.modal.heading', ['label' => $this->getRecordTitle()]))
@@ -1053,12 +1053,12 @@ class EditServer extends EditRecord
 
                         return redirect(ListServers::getUrl(panel: 'admin'));
                     } catch (ConnectionException) {
-                        cache()->forget("servers.$server->uuid.canForceDelete");
+                        return cache()->forget("servers.$server->uuid.canForceDelete");
                     }
                 })
                 ->visible(fn () => $canForceDelete)
                 ->authorize(fn (Server $server) => auth()->user()->can('delete server', $server)),
-            Actions\Action::make('console')
+            Action::make('console')
                 ->label(trans('admin/server.console'))
                 ->icon('tabler-terminal')
                 ->url(fn (Server $server) => Console::getUrl(panel: 'server', tenant: $server)),
@@ -1118,7 +1118,7 @@ class EditServer extends EditRecord
         ];
     }
 
-    private function shouldHideComponent(ServerVariable $serverVariable, Forms\Components\Component $component): bool
+    private function shouldHideComponent(ServerVariable $serverVariable, Component $component): bool
     {
         $containsRuleIn = array_first($serverVariable->variable->rules, fn ($value) => str($value)->startsWith('in:'), false);
 

@@ -7,7 +7,7 @@ use Filament\Widgets\Widget;
 
 class CanaryWidget extends Widget
 {
-    protected static string $view = 'filament.admin.widgets.canary-widget';
+    protected string $view = 'filament.admin.widgets.canary-widget';
 
     protected static bool $isLazy = false;
 

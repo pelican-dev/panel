@@ -11,7 +11,7 @@ use App\Services\Allocations\FindAssignableAllocationService;
 use Filament\Actions;
 use Filament\Facades\Filament;
 use Filament\Resources\Pages\ListRecords;
-use Filament\Tables\Actions\DetachAction;
+use Filament\Actions\DetachAction;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Columns\TextInputColumn;

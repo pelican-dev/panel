@@ -23,7 +23,7 @@ class ActivityResource extends Resource
 
     protected static ?int $navigationSort = 8;
 
-    protected static ?string $navigationIcon = 'tabler-stack';
+    protected static string | \BackedEnum | null $navigationIcon = 'tabler-stack';
 
     public static function getEloquentQuery(): Builder
     {

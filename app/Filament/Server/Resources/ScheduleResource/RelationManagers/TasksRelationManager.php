@@ -6,16 +6,16 @@ use App\Facades\Activity;
 use App\Models\Schedule;
 use App\Models\Task;
 use Filament\Forms\Components\Field;
-use Filament\Tables\Actions\DeleteAction;
+use Filament\Actions\DeleteAction;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
-use Filament\Forms\Get;
-use Filament\Tables\Actions\EditAction;
+use Filament\Schemas\Components\Utilities\Get;
+use Filament\Actions\EditAction;
 use Filament\Tables\Table;
 use Filament\Resources\RelationManagers\RelationManager;
-use Filament\Tables\Actions\CreateAction;
+use Filament\Actions\CreateAction;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 
@@ -99,8 +99,8 @@ class TasksRelationManager extends RelationManager
             ])
             ->actions([
                 EditAction::make()
-                    ->form($this->getTaskForm($schedule))
-                    ->mutateFormDataUsing(function ($data) {
+                    ->schema($this->getTaskForm($schedule))
+                    ->mutateDataUsing(function ($data) {
                         $data['payload'] ??= '';
 
                         return $data;
@@ -132,7 +132,7 @@ class TasksRelationManager extends RelationManager
                     ->createAnother(false)
                     ->label(fn () => $schedule->tasks()->count() >= config('panel.client_features.schedules.per_schedule_task_limit', 10) ? 'Task Limit Reached' : 'Create Task')
                     ->disabled(fn () => $schedule->tasks()->count() >= config('panel.client_features.schedules.per_schedule_task_limit', 10))
-                    ->form($this->getTaskForm($schedule))
+                    ->schema($this->getTaskForm($schedule))
                     ->action(function ($data) use ($schedule) {
                         $sequenceId = ($schedule->tasks()->orderByDesc('sequence_id')->first()->sequence_id ?? 0) + 1;
 

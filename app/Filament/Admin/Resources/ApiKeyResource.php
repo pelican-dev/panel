@@ -6,14 +6,14 @@ use App\Filament\Admin\Resources\ApiKeyResource\Pages;
 use App\Filament\Admin\Resources\UserResource\Pages\EditUser;
 use App\Filament\Components\Tables\Columns\DateTimeColumn;
 use App\Models\ApiKey;
-use Filament\Forms\Components\Fieldset;
+use Filament\Actions\CreateAction;
+use Filament\Actions\DeleteAction;
 use Filament\Forms\Components\TagsInput;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\ToggleButtons;
-use Filament\Forms\Form;
 use Filament\Resources\Resource;
-use Filament\Tables\Actions\CreateAction;
-use Filament\Tables\Actions\DeleteAction;
+use Filament\Schemas\Components\Fieldset;
+use Filament\Schemas\Components\Form;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
@@ -22,7 +22,7 @@ class ApiKeyResource extends Resource
 {
     protected static ?string $model = ApiKey::class;
 
-    protected static ?string $navigationIcon = 'tabler-key';
+    protected static string | \BackedEnum | null $navigationIcon = 'tabler-key';
 
     public static function getNavigationLabel(): string
     {
@@ -92,9 +92,9 @@ class ApiKeyResource extends Resource
             ]);
     }
 
-    public static function form(Form $form): Form
+    public static function form(Form|\Filament\Schemas\Schema $schema): \Filament\Schemas\Schema
     {
-        return $form
+        return $schema
             ->schema([
                 Fieldset::make('Permissions')
                     ->columns([

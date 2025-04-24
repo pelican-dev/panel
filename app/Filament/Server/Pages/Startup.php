@@ -9,30 +9,30 @@ use App\Models\Server;
 use App\Models\ServerVariable;
 use Closure;
 use Filament\Facades\Filament;
-use Filament\Forms\Components\Component;
+use Filament\Schemas\Components\Component;
 use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\Repeater;
-use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Form;
+use Filament\Schemas\Components\Form;
 use Filament\Notifications\Notification;
+use Filament\Schemas\Schema;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Validator;
 
 class Startup extends ServerFormPage
 {
-    protected static ?string $navigationIcon = 'tabler-player-play';
+    protected static string | \BackedEnum | null $navigationIcon = 'tabler-player-play';
 
     protected static ?int $navigationSort = 9;
 
-    public function form(Form $form): Form
+    public function form(Form|Schema $schema): Schema
     {
         /** @var Server $server */
         $server = Filament::getTenant();
 
-        return $form
+        return $schema
             ->columns([
                 'default' => 1,
                 'sm' => 1,

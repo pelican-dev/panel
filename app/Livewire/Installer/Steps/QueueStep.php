@@ -7,7 +7,7 @@ use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Components\ToggleButtons;
 use Filament\Forms\Components\Wizard\Step;
-use Filament\Forms\Get;
+use Filament\Schemas\Components\Utilities\Get;
 use Illuminate\Support\HtmlString;
 use Webbingbrasil\FilamentCopyActions\Forms\Actions\CopyAction;
 
@@ -19,9 +19,9 @@ class QueueStep
         'sync' => 'Sync',
     ];
 
-    public static function make(PanelInstaller $installer): Step
+    public static function make(PanelInstaller $installer): \Filament\Schemas\Components\Wizard\Step
     {
-        return Step::make('queue')
+        return \Filament\Schemas\Components\Wizard\Step::make('queue')
             ->label('Queue')
             ->columns()
             ->schema([

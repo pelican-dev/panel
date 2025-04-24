@@ -8,7 +8,7 @@ use Illuminate\Contracts\View\View;
 
 class StatBlock extends Stat
 {
-    protected string|Htmlable $label;
+    protected string|\Closure|Htmlable|null $label;
 
     protected $value;
 
@@ -31,7 +31,7 @@ class StatBlock extends Stat
         return $this->label;
     }
 
-    public function getValue()
+    public function getValue(): mixed
     {
         return value($this->value);
     }

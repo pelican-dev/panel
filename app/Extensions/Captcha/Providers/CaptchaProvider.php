@@ -39,7 +39,7 @@ abstract class CaptchaProvider
 
     abstract public function getId(): string;
 
-    abstract public function getComponent(): Component;
+    abstract public function getComponent(): \Filament\Schemas\Components\Component;
 
     /**
      * @return array<string, string|string[]|bool|null>
@@ -55,7 +55,7 @@ abstract class CaptchaProvider
     }
 
     /**
-     * @return Component[]
+     * @return \Filament\Schemas\Components\Component[]
      */
     public function getSettingsForm(): array
     {

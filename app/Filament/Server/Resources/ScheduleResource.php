@@ -10,20 +10,21 @@ use App\Models\Schedule;
 use App\Models\Server;
 use Carbon\Carbon;
 use Exception;
+use Filament\Actions\Action;
 use Filament\Facades\Filament;
-use Filament\Forms\Components\Actions;
-use Filament\Forms\Components\Actions\Action;
-use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Components\ToggleButtons;
-use Filament\Forms\Form;
-use Filament\Forms\Set;
+use Filament\Schemas\Components\Actions;
+use Filament\Schemas\Components\Form;
+use Filament\Schemas\Components\Section;
+use Filament\Schemas\Components\Utilities\Set;
 use Filament\Notifications\Notification;
 use Filament\Resources\Resource;
 use Filament\Support\Exceptions\Halt;
 use Illuminate\Database\Eloquent\Model;
+use Filament\Schemas\Schema;
 
 class ScheduleResource extends Resource
 {
@@ -31,7 +32,7 @@ class ScheduleResource extends Resource
 
     protected static ?int $navigationSort = 4;
 
-    protected static ?string $navigationIcon = 'tabler-clock';
+    protected static string | \BackedEnum | null $navigationIcon = 'tabler-clock';
 
     // TODO: find better way handle server conflict state
     public static function canAccess(): bool
@@ -66,9 +67,9 @@ class ScheduleResource extends Resource
         return auth()->user()->can(Permission::ACTION_SCHEDULE_DELETE, Filament::getTenant());
     }
 
-    public static function form(Form $form): Form
+    public static function form(Form|Schema $schema): Schema
     {
-        return $form
+        return $schema
             ->columns([
                 'default' => 4,
                 'lg' => 5,
@@ -203,7 +204,7 @@ class ScheduleResource extends Resource
                                 }),
                             Action::make('every_x_minutes')
                                 ->disabled(fn (string $operation) => $operation === 'view')
-                                ->form([
+                                ->schema([
                                     TextInput::make('x')
                                         ->label('')
                                         ->numeric()
@@ -221,7 +222,7 @@ class ScheduleResource extends Resource
                                 }),
                             Action::make('every_x_hours')
                                 ->disabled(fn (string $operation) => $operation === 'view')
-                                ->form([
+                                ->schema([
                                     TextInput::make('x')
                                         ->label('')
                                         ->numeric()
@@ -239,7 +240,7 @@ class ScheduleResource extends Resource
                                 }),
                             Action::make('every_x_days')
                                 ->disabled(fn (string $operation) => $operation === 'view')
-                                ->form([
+                                ->schema([
                                     TextInput::make('x')
                                         ->label('')
                                         ->numeric()
@@ -257,7 +258,7 @@ class ScheduleResource extends Resource
                                 }),
                             Action::make('every_x_months')
                                 ->disabled(fn (string $operation) => $operation === 'view')
-                                ->form([
+                                ->schema([
                                     TextInput::make('x')
                                         ->label('')
                                         ->numeric()
@@ -275,7 +276,7 @@ class ScheduleResource extends Resource
                                 }),
                             Action::make('every_x_day_of_week')
                                 ->disabled(fn (string $operation) => $operation === 'view')
-                                ->form([
+                                ->schema([
                                     Select::make('x')
                                         ->label('')
                                         ->prefix('Every')

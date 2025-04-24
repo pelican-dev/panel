@@ -6,7 +6,7 @@ use App\Filament\Components\Forms\Actions\RotateDatabasePasswordAction;
 use App\Filament\Components\Tables\Columns\DateTimeColumn;
 use App\Models\Database;
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Form;
+use Filament\Schemas\Components\Form;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables\Actions\DeleteAction;
 use Filament\Tables\Actions\ViewAction;
@@ -17,9 +17,9 @@ class DatabasesRelationManager extends RelationManager
 {
     protected static string $relationship = 'databases';
 
-    public function form(Form $form): Form
+    public function form(Form|\Filament\Schemas\Schema $schema): \Filament\Schemas\Schema
     {
-        return $form
+        return $schema
             ->schema([
                 TextInput::make('database')
                     ->columnSpanFull(),
@@ -70,9 +70,9 @@ class DatabasesRelationManager extends RelationManager
                     ->label(trans('admin/databasehost.table.created_at')),
             ])
             ->actions([
-                DeleteAction::make()
+                \Filament\Actions\DeleteAction::make()
                     ->authorize(fn (Database $database) => auth()->user()->can('delete database', $database)),
-                ViewAction::make()
+                \Filament\Actions\ViewAction::make()
                     ->color('primary')
                     ->hidden(fn () => !auth()->user()->can('viewList database')),
             ]);

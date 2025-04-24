@@ -2,7 +2,6 @@
 
 namespace App\Filament\Server\Resources\FileResource\Pages;
 
-use AbdelhamidErrahmouni\FilamentMonacoEditor\MonacoEditor;
 use App\Enums\EditorLanguages;
 use App\Facades\Activity;
 use App\Filament\Server\Resources\FileResource;
@@ -19,21 +18,21 @@ use Filament\Forms\Components\CheckboxList;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\Select;
-use Filament\Forms\Components\Tabs;
-use Filament\Forms\Components\Tabs\Tab;
+use Filament\Schemas\Components\Tabs;
+use Filament\Schemas\Components\Tabs\Tab;
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Get;
+use Filament\Schemas\Components\Utilities\Get;
 use Filament\Notifications\Notification;
 use Filament\Panel;
 use Filament\Resources\Pages\ListRecords;
 use Filament\Resources\Pages\PageRegistration;
-use Filament\Tables\Actions\Action;
-use Filament\Tables\Actions\ActionGroup;
-use Filament\Tables\Actions\BulkAction;
-use Filament\Tables\Actions\BulkActionGroup;
-use Filament\Tables\Actions\DeleteAction;
-use Filament\Tables\Actions\DeleteBulkAction;
-use Filament\Tables\Actions\EditAction;
+use Filament\Actions\Action;
+use Filament\Actions\ActionGroup;
+use Filament\Actions\BulkAction;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteAction;
+use Filament\Actions\DeleteBulkAction;
+use Filament\Actions\EditAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Collection;
@@ -147,7 +146,7 @@ class ListFiles extends ListRecords
                         ->disabled($this->isDisabled)
                         ->label('Rename')
                         ->icon('tabler-forms')
-                        ->form([
+                        ->schema([
                             TextInput::make('name')
                                 ->label('File name')
                                 ->default(fn (File $file) => $file->name)
@@ -203,7 +202,7 @@ class ListFiles extends ListRecords
                         ->disabled($this->isDisabled)
                         ->label('Move')
                         ->icon('tabler-replace')
-                        ->form([
+                        ->schema([
                             TextInput::make('location')
                                 ->label('New location')
                                 ->hint('Enter the location of this file or folder, relative to the current directory.')
@@ -239,7 +238,7 @@ class ListFiles extends ListRecords
                         ->disabled($this->isDisabled)
                         ->label('Permissions')
                         ->icon('tabler-license')
-                        ->form([
+                        ->schema([
                             CheckboxList::make('owner')
                                 ->bulkToggleable()
                                 ->options([
@@ -296,7 +295,7 @@ class ListFiles extends ListRecords
                         ->disabled($this->isDisabled)
                         ->label('Archive')
                         ->icon('tabler-archive')
-                        ->form([
+                        ->schema([
                             TextInput::make('name')
                                 ->label('Archive name')
                                 ->placeholder(fn () => 'archive-' . str(Carbon::now()->toRfc3339String())->replace(':', '')->before('+0000') . 'Z')
@@ -363,7 +362,7 @@ class ListFiles extends ListRecords
                     BulkAction::make('move')
                         ->authorize(fn () => auth()->user()->can(Permission::ACTION_FILE_UPDATE, $server))
                         ->disabled($this->isDisabled)
-                        ->form([
+                        ->schema([
                             TextInput::make('location')
                                 ->label('Directory')
                                 ->hint('Enter the new directory, relative to the current directory.')
@@ -392,7 +391,7 @@ class ListFiles extends ListRecords
                     BulkAction::make('archive')
                         ->authorize(fn () => auth()->user()->can(Permission::ACTION_FILE_ARCHIVE, $server))
                         ->disabled($this->isDisabled)
-                        ->form([
+                        ->schema([
                             TextInput::make('name')
                                 ->label('Archive name')
                                 ->placeholder(fn () => 'archive-' . str(Carbon::now()->toRfc3339String())->replace(':', '')->before('+0000') . 'Z')
@@ -458,7 +457,7 @@ class ListFiles extends ListRecords
                         ->property('file', join_paths($this->path, $data['name']))
                         ->log();
                 })
-                ->form([
+                ->schema([
                     TextInput::make('name')
                         ->label('File Name')
                         ->required(),
@@ -488,7 +487,7 @@ class ListFiles extends ListRecords
                         ->property(['directory' => $this->path, 'name' => $data['name']])
                         ->log();
                 })
-                ->form([
+                ->schema([
                     TextInput::make('name')
                         ->label('Folder Name')
                         ->required(),
@@ -519,7 +518,7 @@ class ListFiles extends ListRecords
 
                     return redirect(ListFiles::getUrl(['path' => $this->path]));
                 })
-                ->form([
+                ->schema([
                     Tabs::make()
                         ->contained(false)
                         ->schema([
@@ -548,7 +547,7 @@ class ListFiles extends ListRecords
                 ->disabled($this->isDisabled)
                 ->label('Global Search')
                 ->modalSubmitActionLabel('Search')
-                ->form([
+                ->schema([
                     TextInput::make('searchTerm')
                         ->placeholder('Enter a search term, e.g. *.txt')
                         ->regex('/^[^*]*\*?[^*]*$/')

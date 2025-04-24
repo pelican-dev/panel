@@ -5,7 +5,7 @@ namespace App\Filament\Server\Pages;
 use App\Models\Server;
 use Filament\Facades\Filament;
 use Filament\Forms\Concerns\InteractsWithForms;
-use Filament\Forms\Form;
+use Filament\Schemas\Components\Form;
 use Filament\Pages\Concerns\InteractsWithFormActions;
 use Filament\Pages\Page;
 
@@ -17,9 +17,8 @@ abstract class ServerFormPage extends Page
     use InteractsWithFormActions;
     use InteractsWithForms;
 
-    protected static string $view = 'filament.server.pages.server-form-page';
+    protected string $view = 'filament.server.pages.server-form-page';
 
-    /** @var ?array<mixed> */
     public ?array $data = [];
 
     public function mount(): void

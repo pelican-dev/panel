@@ -4,7 +4,7 @@ namespace App\Filament\Components\Tables\Actions;
 
 use App\Models\Egg;
 use App\Services\Eggs\Sharing\EggExporterService;
-use Filament\Tables\Actions\Action;
+use Filament\Actions\Action;
 
 class ExportEggAction extends Action
 {

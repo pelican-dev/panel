@@ -4,24 +4,25 @@ namespace App\Filament\Admin\Resources\DatabaseHostResource\Pages;
 
 use App\Filament\Admin\Resources\DatabaseHostResource;
 use App\Services\Databases\Hosts\HostCreationService;
-use Filament\Forms\Components\Fieldset;
+use Exception;
+use Filament\Schemas\Components\Fieldset;
 use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
-use Filament\Forms\Components\Wizard\Step;
-use Filament\Forms\Get;
-use Filament\Forms\Set;
+use Filament\Schemas\Components\Utilities\Get;
+use Filament\Schemas\Components\Utilities\Set;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\CreateRecord;
 use Filament\Resources\Pages\CreateRecord\Concerns\HasWizard;
+use Filament\Schemas\Components\Wizard\Step;
 use Filament\Support\Exceptions\Halt;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\HtmlString;
 use Illuminate\Support\Str;
 use PDOException;
-use Webbingbrasil\FilamentCopyActions\Forms\Actions\CopyAction;
+use Throwable;
 
 class CreateDatabaseHost extends CreateRecord
 {
@@ -38,7 +39,9 @@ class CreateDatabaseHost extends CreateRecord
         $this->service = $service;
     }
 
-    /** @return Step[] */
+    /** @return Step[]
+     * @throws Exception
+     */
     public function getSteps(): array
     {
         return [
@@ -87,14 +90,14 @@ class CreateDatabaseHost extends CreateRecord
                                 ->default(fn (Get $get) => "CREATE USER '{$get('username')}'@'{$get('panel_ip')}' IDENTIFIED BY '{$get('password')}';")
                                 ->disabled()
                                 ->dehydrated(false)
-                                ->suffixAction(fn (string $state) => request()->isSecure() ? CopyAction::make()->copyable($state) : null)
+                                // TODO ->suffixAction(fn (string $state) => request()->isSecure() ? CopyAction::make()->copyable($state) : null)
                                 ->columnSpanFull(),
                             TextInput::make('assign_permissions')
                                 ->label(trans('admin/databasehost.setup.command_assign_permissions'))
                                 ->default(fn (Get $get) => "GRANT ALL PRIVILEGES ON *.* TO '{$get('username')}'@'{$get('panel_ip')}' WITH GRANT OPTION;")
                                 ->disabled()
                                 ->dehydrated(false)
-                                ->suffixAction(fn (string $state) => request()->isSecure() ? CopyAction::make()->copyable($state) : null)
+                                // TODO ->suffixAction(fn (string $state) => request()->isSecure() ? CopyAction::make()->copyable($state) : null)
                                 ->columnSpanFull(),
                             Placeholder::make('')
                                 ->content(new HtmlString(trans('admin/databasehost.setup.cli_exit')))
@@ -150,6 +153,10 @@ class CreateDatabaseHost extends CreateRecord
         ];
     }
 
+    /**
+     * @throws Halt
+     * @throws Throwable
+     */
     protected function handleRecordCreation(array $data): Model
     {
         try {

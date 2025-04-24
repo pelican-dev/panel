@@ -9,7 +9,7 @@ use Filament\Widgets\Widget;
 
 class NoNodesWidget extends Widget
 {
-    protected static string $view = 'filament.admin.widgets.no-nodes-widget';
+    protected string $view = 'filament.admin.widgets.no-nodes-widget';
 
     protected static bool $isLazy = false;
 

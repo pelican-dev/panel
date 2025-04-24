@@ -45,7 +45,7 @@ final class GitlabProvider extends OAuthProvider
     public function getSetupSteps(): array
     {
         return array_merge([
-            Step::make('Register new Gitlab OAuth App')
+            \Filament\Schemas\Components\Wizard\Step::make('Register new Gitlab OAuth App')
                 ->schema([
                     Placeholder::make('')
                         ->content(new HtmlString(Blade::render('Check out the <x-filament::link href="https://docs.gitlab.com/integration/oauth_provider/" target="_blank">Gitlab docs</x-filament::link> on how to create the oauth app.'))),

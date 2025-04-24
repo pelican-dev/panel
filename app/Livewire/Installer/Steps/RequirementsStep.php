@@ -3,7 +3,6 @@
 namespace App\Livewire\Installer\Steps;
 
 use Filament\Forms\Components\Placeholder;
-use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Wizard\Step;
 use Filament\Notifications\Notification;
 use Filament\Support\Exceptions\Halt;
@@ -12,7 +11,7 @@ class RequirementsStep
 {
     public const MIN_PHP_VERSION = '8.2';
 
-    public static function make(): Step
+    public static function make(): \Filament\Schemas\Components\Wizard\Step
     {
         $compare = version_compare(phpversion(), self::MIN_PHP_VERSION);
         $correctPhpVersion = $compare >= 0;
@@ -73,7 +72,7 @@ class RequirementsStep
                     ->visible(!$correctFolderPermissions),
             ]);
 
-        return Step::make('requirements')
+        return \Filament\Schemas\Components\Wizard\Step::make('requirements')
             ->label('Server Requirements')
             ->schema($fields)
             ->afterValidation(function () use ($correctPhpVersion, $allExtensionsInstalled, $correctFolderPermissions) {

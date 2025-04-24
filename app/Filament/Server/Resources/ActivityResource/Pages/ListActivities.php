@@ -9,13 +9,13 @@ use App\Filament\Components\Tables\Columns\DateTimeColumn;
 use App\Models\Server;
 use App\Models\User;
 use Filament\Facades\Filament;
-use Filament\Forms\Components\Actions\Action;
+use Filament\Actions\Action;
 use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\KeyValue;
 use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\Pages\ListRecords;
-use Filament\Tables\Actions\ViewAction;
+use Filament\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
@@ -67,7 +67,7 @@ class ListActivities extends ListRecords
             ->actions([
                 ViewAction::make()
                     //->visible(fn (ActivityLog $activityLog) => $activityLog->hasAdditionalMetadata())
-                    ->form([
+                    ->schema([
                         Placeholder::make('event')
                             ->content(fn (ActivityLog $activityLog) => new HtmlString($activityLog->getLabel())),
                         TextInput::make('user')

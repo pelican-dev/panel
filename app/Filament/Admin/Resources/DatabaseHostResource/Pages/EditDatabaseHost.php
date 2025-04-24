@@ -12,6 +12,7 @@ use Filament\Resources\Pages\EditRecord;
 use Filament\Support\Exceptions\Halt;
 use Illuminate\Database\Eloquent\Model;
 use PDOException;
+use Throwable;
 
 class EditDatabaseHost extends EditRecord
 {
@@ -50,6 +51,10 @@ class EditDatabaseHost extends EditRecord
         return [];
     }
 
+    /**
+     * @throws Halt
+     * @throws Throwable
+     */
     protected function handleRecordUpdate(Model $record, array $data): Model
     {
         if (!$record instanceof DatabaseHost) {

@@ -5,9 +5,8 @@ namespace App\Filament\Components\Tables\Actions;
 use App\Models\Egg;
 use App\Services\Eggs\Sharing\EggImporterService;
 use Exception;
-use Filament\Actions\StaticAction;
 use Filament\Notifications\Notification;
-use Filament\Tables\Actions\Action;
+use Filament\Actions\Action;
 
 class UpdateEggAction extends Action
 {
@@ -34,7 +33,7 @@ class UpdateEggAction extends Action
 
         $this->modalIconColor('danger');
 
-        $this->modalSubmitAction(fn (StaticAction $action) => $action->color('danger'));
+        $this->modalSubmitAction(fn (Action $action) => $action->color('danger'));
 
         $this->action(function (Egg $egg, EggImporterService $eggImporterService) {
             try {

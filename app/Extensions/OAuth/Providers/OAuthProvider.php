@@ -67,7 +67,7 @@ abstract class OAuthProvider
     }
 
     /**
-     * @return Component[]
+     * @return \Filament\Schemas\Components\Component[]
      */
     public function getSettingsForm(): array
     {
@@ -96,12 +96,12 @@ abstract class OAuthProvider
     }
 
     /**
-     * @return Step[]
+     * @return \Filament\Schemas\Components\Wizard\Step[]
      */
     public function getSetupSteps(): array
     {
         return [
-            Step::make('OAuth Config')
+            \Filament\Schemas\Components\Wizard\Step::make('OAuth Config')
                 ->columns(4)
                 ->schema($this->getSettingsForm()),
         ];

@@ -7,8 +7,8 @@ use App\Enums\SuspendAction;
 use App\Models\Server;
 use App\Models\User;
 use App\Services\Servers\SuspensionService;
+use Filament\Actions\Action;
 use Filament\Resources\RelationManagers\RelationManager;
-use Filament\Tables\Actions;
 use Filament\Tables\Columns\SelectColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
@@ -26,7 +26,7 @@ class ServersRelationManager extends RelationManager
             ->searchable(false)
             ->heading(trans('admin/user.servers'))
             ->headerActions([
-                Actions\Action::make('toggleSuspend')
+                Action::make('toggleSuspend')
                     ->hidden(fn () => $user->servers()
                         ->whereNot('status', ServerState::Suspended)
                         ->orWhereNull('status')
@@ -38,7 +38,7 @@ class ServersRelationManager extends RelationManager
                         collect($user->servers)->filter(fn ($server) => !$server->isSuspended())
                             ->each(fn ($server) => $suspensionService->handle($server, SuspendAction::Suspend));
                     }),
-                Actions\Action::make('toggleUnsuspend')
+                Action::make('toggleUnsuspend')
                     ->hidden(fn () => $user->servers()->where('status', ServerState::Suspended)->count() === 0)
                     ->label(trans('admin/server.unsuspend_all'))
                     ->color('primary')

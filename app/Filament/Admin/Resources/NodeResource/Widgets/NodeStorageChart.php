@@ -7,13 +7,13 @@ use Filament\Widgets\ChartWidget;
 
 class NodeStorageChart extends ChartWidget
 {
-    protected static ?string $pollingInterval = '360s';
+    protected ?string $pollingInterval = '360s';
 
-    protected static ?string $maxHeight = '200px';
+    protected ?string $maxHeight = '200px';
 
     public Node $node;
 
-    protected static ?array $options = [
+    protected ?array $options = [
         'scales' => [
             'x' => [
                 'grid' => [

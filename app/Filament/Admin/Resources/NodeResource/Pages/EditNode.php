@@ -9,27 +9,28 @@ use App\Services\Helpers\SoftwareVersionService;
 use App\Services\Nodes\NodeAutoDeployService;
 use App\Services\Nodes\NodeUpdateService;
 use Exception;
-use Filament\Actions;
-use Filament\Forms;
-use Filament\Forms\Components\Actions as FormActions;
-use Filament\Forms\Components\Fieldset;
-use Filament\Forms\Components\Grid;
+use Filament\Actions\Action;
+use Filament\Actions\DeleteAction;
+use Filament\Schemas\Components\Actions;
+use Filament\Schemas\Components\Fieldset;
 use Filament\Forms\Components\Placeholder;
-use Filament\Forms\Components\Tabs;
-use Filament\Forms\Components\Tabs\Tab;
 use Filament\Forms\Components\TagsInput;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\ToggleButtons;
-use Filament\Forms\Components\View;
-use Filament\Forms\Get;
-use Filament\Forms\Set;
+use Filament\Schemas\Components\Form;
+use Filament\Schemas\Components\Grid;
+use Filament\Schemas\Components\Tabs;
+use Filament\Schemas\Components\Tabs\Tab;
+use Filament\Schemas\Components\Utilities\Get;
+use Filament\Schemas\Components\Utilities\Set;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\EditRecord;
+use Filament\Schemas\Components\View;
+use Filament\Schemas\Schema;
 use Filament\Support\Enums\Alignment;
 use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Support\HtmlString;
-use Webbingbrasil\FilamentCopyActions\Forms\Actions\CopyAction;
 
 class EditNode extends EditRecord
 {
@@ -45,9 +46,9 @@ class EditNode extends EditRecord
         $this->nodeUpdateService = $nodeUpdateService;
     }
 
-    public function form(Forms\Form $form): Forms\Form
+    public function form(Form|Schema $schema): Schema
     {
-        return $form->schema([
+        return $schema->schema([
             Tabs::make('Tabs')
                 ->columns([
                     'default' => 2,
@@ -255,7 +256,7 @@ class EditNode extends EditRecord
                                     'lg' => 2,
                                 ])
                                 ->label(trans('admin/node.node_uuid'))
-                                ->hintAction(fn () => request()->isSecure() ? CopyAction::make() : null)
+                                // TODO ->hintAction(fn () => request()->isSecure() ? CopyAction::make() : null)
                                 ->disabled(),
                             TagsInput::make('tags')
                                 ->label(trans('admin/node.tags'))
@@ -508,13 +509,13 @@ class EditNode extends EditRecord
                                 ->label('/etc/pelican/config.yml')
                                 ->disabled()
                                 ->rows(19)
-                                ->hintAction(fn () => request()->isSecure() ? CopyAction::make() : null)
+                                //TODO ->hintAction(fn () => request()->isSecure() ? CopyAction::make() : null)
                                 ->columnSpanFull(),
                             Grid::make()
                                 ->columns()
                                 ->schema([
-                                    FormActions::make([
-                                        FormActions\Action::make('autoDeploy')
+                                    Actions::make([
+                                        Action::make('autoDeploy')
                                             ->label(trans('admin/node.auto_deploy'))
                                             ->color('primary')
                                             ->modalHeading(trans('admin/node.auto_deploy'))
@@ -522,7 +523,7 @@ class EditNode extends EditRecord
                                             ->modalSubmitAction(false)
                                             ->modalCancelAction(false)
                                             ->modalFooterActionsAlignment(Alignment::Center)
-                                            ->form([
+                                            ->schema([
                                                 ToggleButtons::make('docker')
                                                     ->label('Type')
                                                     ->live()
@@ -543,15 +544,15 @@ class EditNode extends EditRecord
                                                     ->label(trans('admin/node.auto_command'))
                                                     ->readOnly()
                                                     ->autosize()
-                                                    ->hintAction(fn (string $state) => request()->isSecure() ? CopyAction::make()->copyable($state) : null)
+                                                    //TODO ->hintAction(fn (string $state) => request()->isSecure() ? CopyAction::make()->copyable($state) : null)
                                                     ->formatStateUsing(fn (NodeAutoDeployService $service, Node $node, Set $set, Get $get) => $set('generatedToken', $service->handle(request(), $node, $get('docker')))),
                                             ])
-                                            ->mountUsing(function (Forms\Form $form) {
-                                                $form->fill();
+                                            ->mountUsing(function (Form|Schema $schema) {
+                                                $schema->fill();
                                             }),
                                     ])->fullWidth(),
-                                    FormActions::make([
-                                        FormActions\Action::make('resetKey')
+                                    Actions::make([
+                                        Action::make('resetKey')
                                             ->label(trans('admin/node.reset_token'))
                                             ->color('danger')
                                             ->requiresConfirmation()
@@ -607,7 +608,7 @@ class EditNode extends EditRecord
     protected function getHeaderActions(): array
     {
         return [
-            Actions\DeleteAction::make()
+            DeleteAction::make()
                 ->disabled(fn (Node $node) => $node->servers()->count() > 0)
                 ->label(fn (Node $node) => $node->servers()->count() > 0 ? trans('admin/node.node_has_servers') : trans('filament-actions::delete.single.label')),
             $this->getSaveFormAction()->formId('form'),

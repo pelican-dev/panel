@@ -4,18 +4,18 @@ namespace App\Filament\Admin\Resources;
 
 use App\Filament\Admin\Resources\MountResource\Pages;
 use App\Models\Mount;
-use Filament\Forms\Components\Group;
-use Filament\Forms\Components\Section;
+use Filament\Actions\CreateAction;
+use Filament\Actions\DeleteBulkAction;
+use Filament\Actions\EditAction;
+use Filament\Actions\ViewAction;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\ToggleButtons;
-use Filament\Forms\Form;
 use Filament\Resources\Resource;
-use Filament\Tables\Actions\CreateAction;
-use Filament\Tables\Actions\DeleteBulkAction;
-use Filament\Tables\Actions\EditAction;
-use Filament\Tables\Actions\ViewAction;
+use Filament\Schemas\Components\Form;
+use Filament\Schemas\Components\Group;
+use Filament\Schemas\Components\Section;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 
@@ -23,7 +23,7 @@ class MountResource extends Resource
 {
     protected static ?string $model = Mount::class;
 
-    protected static ?string $navigationIcon = 'tabler-layers-linked';
+    protected static string | \BackedEnum | null $navigationIcon = 'tabler-layers-linked';
 
     protected static ?string $recordTitleAttribute = 'name';
 
@@ -93,9 +93,9 @@ class MountResource extends Resource
             ]);
     }
 
-    public static function form(Form $form): Form
+    public static function form(Form|\Filament\Schemas\Schema $schema): \Filament\Schemas\Schema
     {
-        return $form
+        return $schema
             ->schema([
                 Section::make()->schema([
                     TextInput::make('name')

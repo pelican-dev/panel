@@ -9,11 +9,11 @@ use Filament\Widgets\ChartWidget;
 
 class ServerNetworkChart extends ChartWidget
 {
-    protected static ?string $heading = 'Network';
+    protected ?string $heading = 'Network';
 
-    protected static ?string $pollingInterval = '1s';
+    protected ?string $pollingInterval = '1s';
 
-    protected static ?string $maxHeight = '300px';
+    protected ?string $maxHeight = '300px';
 
     public ?Server $server = null;
 

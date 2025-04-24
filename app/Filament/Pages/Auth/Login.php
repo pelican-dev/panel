@@ -5,21 +5,20 @@ namespace App\Filament\Pages\Auth;
 use App\Extensions\Captcha\Providers\CaptchaProvider;
 use App\Extensions\OAuth\Providers\OAuthProvider;
 use App\Models\User;
+use Filament\Auth\Http\Responses\LoginResponse;
 use Filament\Facades\Filament;
-use Filament\Forms\Components\Actions;
-use Filament\Forms\Components\Actions\Action;
-use Filament\Forms\Components\Component;
+use Filament\Actions\Action;
 use Filament\Forms\Components\TextInput;
-use Filament\Http\Responses\Auth\Contracts\LoginResponse;
 use Filament\Notifications\Notification;
-use Filament\Pages\Auth\Login as BaseLogin;
+use Filament\Schemas\Components\Actions;
+use Filament\Schemas\Components\Component;
 use Filament\Support\Colors\Color;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Sleep;
 use Illuminate\Validation\ValidationException;
 use PragmaRX\Google2FA\Google2FA;
 
-class Login extends BaseLogin
+class Login extends \Filament\Auth\Pages\Login
 {
     private Google2FA $google2FA;
 
@@ -156,7 +155,7 @@ class Login extends BaseLogin
             $actions[] = Action::make("oauth_$id")
                 ->label($oauthProvider->getName())
                 ->icon($oauthProvider->getIcon())
-                ->color(Color::hex($oauthProvider->getHexColor()))
+                //TODO ->color(Color::hex($oauthProvider->getHexColor()))
                 ->url(route('auth.oauth.redirect', ['driver' => $id], false));
         }
 

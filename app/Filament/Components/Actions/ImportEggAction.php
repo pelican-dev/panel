@@ -9,10 +9,10 @@ use Exception;
 use Filament\Actions\Action;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Repeater;
-use Filament\Forms\Components\Tabs;
-use Filament\Forms\Components\Tabs\Tab;
 use Filament\Forms\Components\TextInput;
 use Filament\Notifications\Notification;
+use Filament\Schemas\Components\Tabs;
+use Filament\Schemas\Components\Tabs\Tab;
 use Illuminate\Support\Arr;
 use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 
@@ -78,7 +78,7 @@ class ImportEggAction extends Action
     public function multiple(bool|Closure $condition = true): static
     {
         $isMultiple = (bool) $this->evaluate($condition);
-        $this->form([
+        $this->schema([
             Tabs::make('Tabs')
                 ->contained(false)
                 ->tabs([

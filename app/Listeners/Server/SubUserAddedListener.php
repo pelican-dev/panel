@@ -19,7 +19,7 @@ class SubUserAddedListener
             ->title('Added to Server')
             ->body('You have been added as a subuser to ' . $event->subuser->server->name . '.')
             ->actions([
-                Action::make('view')
+                \Filament\Actions\Action::make('view')
                     ->button()
                     ->label('Open Server')
                     ->markAsRead()

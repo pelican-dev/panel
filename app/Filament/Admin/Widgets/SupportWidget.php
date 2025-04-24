@@ -7,7 +7,7 @@ use Filament\Widgets\Widget;
 
 class SupportWidget extends Widget
 {
-    protected static string $view = 'filament.admin.widgets.support-widget';
+    protected string $view = 'filament.admin.widgets.support-widget';
 
     protected static bool $isLazy = false;
 

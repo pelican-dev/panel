@@ -10,16 +10,15 @@ use App\Services\Subusers\SubuserCreationService;
 use Exception;
 use Filament\Actions;
 use Filament\Facades\Filament;
-use Filament\Forms\Components\Actions as assignAll;
-use Filament\Forms\Components\Actions\Action;
+use Filament\Actions\Action;
 use Filament\Forms\Components\CheckboxList;
-use Filament\Forms\Components\Grid;
-use Filament\Forms\Components\Section;
-use Filament\Forms\Components\Tabs;
-use Filament\Forms\Components\Tabs\Tab;
+use Filament\Schemas\Components\Grid;
+use Filament\Schemas\Components\Section;
+use Filament\Schemas\Components\Tabs;
+use Filament\Schemas\Components\Tabs\Tab;
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Get;
-use Filament\Forms\Set;
+use Filament\Schemas\Components\Utilities\Get;
+use Filament\Schemas\Components\Utilities\Set;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\ListRecords;
 
@@ -37,7 +36,7 @@ class ListUsers extends ListRecords
                 ->label('Invite User')
                 ->createAnother(false)
                 ->authorize(fn () => auth()->user()->can(Permission::ACTION_USER_CREATE, $server))
-                ->form([
+                ->schema([
                     Grid::make()
                         ->columnSpanFull()
                         ->columns([
@@ -57,7 +56,7 @@ class ListUsers extends ListRecords
                                     'lg' => 5,
                                 ])
                                 ->required(),
-                            assignAll::make([
+                            Actions::make([
                                 Action::make('assignAll')
                                     ->label('Assign All')
                                     ->action(function (Set $set, Get $get) {

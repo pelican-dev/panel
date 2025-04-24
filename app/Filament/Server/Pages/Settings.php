@@ -7,31 +7,31 @@ use App\Models\Permission;
 use App\Models\Server;
 use App\Services\Servers\ReinstallServerService;
 use Exception;
+use Filament\Actions\Action;
 use Filament\Facades\Filament;
-use Filament\Forms\Components\Actions\Action;
-use Filament\Forms\Components\Fieldset;
+use Filament\Schemas\Components\Fieldset;
 use Filament\Forms\Components\Placeholder;
-use Filament\Forms\Components\Section;
+use Filament\Schemas\Components\Section;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Form;
+use Filament\Schemas\Components\Form;
 use Filament\Notifications\Notification;
+use Filament\Schemas\Schema;
 use Filament\Support\Enums\Alignment;
 use Illuminate\Support\Number;
-use Webbingbrasil\FilamentCopyActions\Forms\Actions\CopyAction;
 
 class Settings extends ServerFormPage
 {
-    protected static ?string $navigationIcon = 'tabler-settings';
+    protected static string | \BackedEnum | null $navigationIcon = 'tabler-settings';
 
     protected static ?int $navigationSort = 10;
 
-    public function form(Form $form): Form
+    public function form(Form|Schema $schema): Schema
     {
         /** @var Server $server */
         $server = Filament::getTenant();
 
-        return $form
+        return $schema
             ->columns([
                 'default' => 1,
                 'sm' => 2,
@@ -162,7 +162,7 @@ class Settings extends ServerFormPage
                                     ->label('Connection')
                                     ->columnSpan(1)
                                     ->disabled()
-                                    ->suffixAction(fn () => request()->isSecure() ? CopyAction::make() : null)
+                                    //TODO ->suffixAction(fn () => request()->isSecure() ? CopyAction::make() : null)
                                     ->hintAction(
                                         Action::make('connect_sftp')
                                             ->label('Connect to SFTP')
@@ -182,7 +182,7 @@ class Settings extends ServerFormPage
                                 TextInput::make('username')
                                     ->label('Username')
                                     ->columnSpan(1)
-                                    ->suffixAction(fn () => request()->isSecure() ? CopyAction::make() : null)
+                                    //TODO ->suffixAction(fn () => request()->isSecure() ? CopyAction::make() : null)
                                     ->disabled()
                                     ->formatStateUsing(fn (Server $server) => auth()->user()->username . '.' . $server->uuid_short),
                                 Placeholder::make('password')

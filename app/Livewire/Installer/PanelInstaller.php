@@ -14,14 +14,14 @@ use App\Services\Users\UserCreationService;
 use App\Traits\CheckMigrationsTrait;
 use App\Traits\EnvironmentWriterTrait;
 use Exception;
-use Filament\Forms\Components\Actions\Action;
-use Filament\Forms\Components\Wizard;
+use Filament\Actions\Action;
+use Filament\Schemas\Components\Wizard;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
-use Filament\Forms\Form;
+use Filament\Schemas\Components\Form;
 use Filament\Notifications\Notification;
 use Filament\Pages\SimplePage;
-use Filament\Support\Enums\MaxWidth;
+use Filament\Support\Enums\Width;
 use Filament\Support\Exceptions\Halt;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Blade;
@@ -36,14 +36,13 @@ class PanelInstaller extends SimplePage implements HasForms
     use EnvironmentWriterTrait;
     use InteractsWithForms;
 
-    /** @var array<mixed> */
     public array $data = [];
 
-    protected static string $view = 'filament.pages.installer';
+    protected string $view = 'filament.pages.installer';
 
-    public function getMaxWidth(): MaxWidth|string
+    public function getMaxWidth(): Width|string
     {
-        return MaxWidth::SevenExtraLarge;
+        return Width::SevenExtraLarge;
     }
 
     public static function isInstalled(): bool

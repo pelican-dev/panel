@@ -10,28 +10,27 @@ use App\Notifications\MailTested;
 use App\Traits\EnvironmentWriterTrait;
 use Exception;
 use Filament\Actions\Action;
-use Filament\Forms\Components\Actions;
-use Filament\Forms\Components\Actions\Action as FormAction;
-use Filament\Forms\Components\Component;
-use Filament\Forms\Components\Group;
 use Filament\Forms\Components\Hidden;
-use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
-use Filament\Forms\Components\Tabs;
-use Filament\Forms\Components\Tabs\Tab;
 use Filament\Forms\Components\TagsInput;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Components\ToggleButtons;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
-use Filament\Forms\Form;
-use Filament\Forms\Get;
-use Filament\Forms\Set;
 use Filament\Notifications\Notification;
 use Filament\Pages\Concerns\InteractsWithHeaderActions;
 use Filament\Pages\Page;
-use Filament\Support\Enums\MaxWidth;
+use Filament\Schemas\Components\Actions;
+use Filament\Schemas\Components\Component;
+use Filament\Schemas\Components\Form;
+use Filament\Schemas\Components\Group;
+use Filament\Schemas\Components\Section;
+use Filament\Schemas\Components\Tabs;
+use Filament\Schemas\Components\Tabs\Tab;
+use Filament\Schemas\Components\Utilities\Get;
+use Filament\Schemas\Components\Utilities\Set;
+use Filament\Support\Enums\Width;
 use Illuminate\Http\Client\Factory;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Notification as MailNotification;
@@ -46,11 +45,10 @@ class Settings extends Page implements HasForms
     use InteractsWithForms;
     use InteractsWithHeaderActions;
 
-    protected static ?string $navigationIcon = 'tabler-settings';
+    protected static string | \BackedEnum | null $navigationIcon = 'tabler-settings';
 
-    protected static string $view = 'filament.pages.settings';
+    protected string $view = 'filament.pages.settings';
 
-    /** @var array<mixed>|null */
     public ?array $data = [];
 
     public function mount(): void
@@ -110,7 +108,9 @@ class Settings extends Page implements HasForms
         ];
     }
 
-    /** @return Component[] */
+    /** @return Component[]
+     * @throws Exception
+     */
     private function generalSettings(): array
     {
         return [
@@ -204,14 +204,14 @@ class Settings extends Page implements HasForms
                 ->placeholder(trans('admin/setting.general.trusted_proxies_help'))
                 ->default(env('TRUSTED_PROXIES', implode(',', config('trustedproxy.proxies'))))
                 ->hintActions([
-                    FormAction::make('clear')
+                    Action::make('clear')
                         ->label(trans('admin/setting.general.clear'))
                         ->color('danger')
                         ->icon('tabler-trash')
                         ->requiresConfirmation()
                         ->authorize(fn () => auth()->user()->can('update settings'))
                         ->action(fn (Set $set) => $set('TRUSTED_PROXIES', [])),
-                    FormAction::make('cloudflare')
+                    Action::make('cloudflare')
                         ->label(trans('admin/setting.general.set_to_cf'))
                         ->icon('tabler-brand-cloudflare')
                         ->authorize(fn () => auth()->user()->can('update settings'))
@@ -240,7 +240,7 @@ class Settings extends Page implements HasForms
             Select::make('FILAMENT_WIDTH')
                 ->label(trans('admin/setting.general.display_width'))
                 ->native(false)
-                ->options(MaxWidth::class)
+                ->options(Width::class)
                 ->selectablePlaceholder(false)
                 ->default(env('FILAMENT_WIDTH', config('panel.filament.display-width'))),
         ];
@@ -248,6 +248,8 @@ class Settings extends Page implements HasForms
 
     /**
      * @return Component[]
+     *
+     * @throws Exception
      */
     private function captchaSettings(): array
     {
@@ -268,14 +270,14 @@ class Settings extends Page implements HasForms
                         ->live()
                         ->default(env("CAPTCHA_{$id}_ENABLED")),
                     Actions::make([
-                        FormAction::make("disable_captcha_$id")
+                        Action::make("disable_captcha_$id")
                             ->visible(fn (Get $get) => $get("CAPTCHA_{$id}_ENABLED"))
                             ->label(trans('admin/setting.captcha.disable'))
                             ->color('danger')
                             ->action(function (Set $set) use ($id) {
                                 $set("CAPTCHA_{$id}_ENABLED", false);
                             }),
-                        FormAction::make("enable_captcha_$id")
+                        Action::make("enable_captcha_$id")
                             ->visible(fn (Get $get) => !$get("CAPTCHA_{$id}_ENABLED"))
                             ->label(trans('admin/setting.captcha.enable'))
                             ->color('success')
@@ -298,6 +300,8 @@ class Settings extends Page implements HasForms
 
     /**
      * @return Component[]
+     *
+     * @throws Exception
      */
     private function mailSettings(): array
     {
@@ -317,7 +321,7 @@ class Settings extends Page implements HasForms
                 ->live()
                 ->default(env('MAIL_MAILER', config('mail.default')))
                 ->hintAction(
-                    FormAction::make('test')
+                    Action::make('test')
                         ->label(trans('admin/setting.mail.test_mail'))
                         ->icon('tabler-send')
                         ->hidden(fn (Get $get) => $get('MAIL_MAILER') === 'log')
@@ -444,6 +448,8 @@ class Settings extends Page implements HasForms
 
     /**
      * @return Component[]
+     *
+     * @throws Exception
      */
     private function backupSettings(): array
     {
@@ -517,6 +523,8 @@ class Settings extends Page implements HasForms
 
     /**
      * @return Component[]
+     *
+     * @throws Exception
      */
     private function oauthSettings(): array
     {
@@ -537,14 +545,14 @@ class Settings extends Page implements HasForms
                         ->live()
                         ->default(env("OAUTH_{$id}_ENABLED")),
                     Actions::make([
-                        FormAction::make("disable_oauth_$id")
+                        Action::make("disable_oauth_$id")
                             ->visible(fn (Get $get) => $get("OAUTH_{$id}_ENABLED"))
                             ->label(trans('admin/setting.oauth.disable'))
                             ->color('danger')
                             ->action(function (Set $set) use ($id) {
                                 $set("OAUTH_{$id}_ENABLED", false);
                             }),
-                        FormAction::make("enable_oauth_$id")
+                        Action::make("enable_oauth_$id")
                             ->visible(fn (Get $get) => !$get("OAUTH_{$id}_ENABLED"))
                             ->label(trans('admin/setting.oauth.enable'))
                             ->color('success')
@@ -574,6 +582,8 @@ class Settings extends Page implements HasForms
 
     /**
      * @return Component[]
+     *
+     * @throws Exception
      */
     private function miscSettings(): array
     {

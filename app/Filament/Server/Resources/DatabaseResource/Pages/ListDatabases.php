@@ -13,35 +13,35 @@ use App\Models\Server;
 use App\Services\Databases\DatabaseManagementService;
 use Filament\Actions\CreateAction;
 use Filament\Facades\Filament;
-use Filament\Forms\Components\Grid;
+use Filament\Schemas\Components\Grid;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Form;
+use Filament\Schemas\Components\Form;
 use Filament\Resources\Pages\ListRecords;
-use Filament\Tables\Actions\DeleteAction;
-use Filament\Tables\Actions\ViewAction;
+use Filament\Actions\DeleteAction;
+use Filament\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
-use Webbingbrasil\FilamentCopyActions\Forms\Actions\CopyAction;
+use Filament\Schemas\Schema;
 
 class ListDatabases extends ListRecords
 {
     protected static string $resource = DatabaseResource::class;
 
-    public function form(Form $form): Form
+    public function form(Form|Schema $schema): Schema
     {
         /** @var Server $server */
         $server = Filament::getTenant();
 
-        return $form
+        return $schema
             ->schema([
                 TextInput::make('host')
-                    ->formatStateUsing(fn (Database $database) => $database->address())
-                    ->suffixAction(fn (string $state) => request()->isSecure() ? CopyAction::make()->copyable($state) : null),
-                TextInput::make('database')
-                    ->suffixAction(fn (string $state) => request()->isSecure() ? CopyAction::make()->copyable($state) : null),
-                TextInput::make('username')
-                    ->suffixAction(fn (string $state) => request()->isSecure() ? CopyAction::make()->copyable($state) : null),
+                    ->formatStateUsing(fn (Database $database) => $database->address()),
+                //TODO ->suffixAction(fn (string $state) => request()->isSecure() ? CopyAction::make()->copyable($state) : null),
+                TextInput::make('database'),
+                //TODO ->suffixAction(fn (string $state) => request()->isSecure() ? CopyAction::make()->copyable($state) : null),
+                TextInput::make('username'),
+                //TODO->suffixAction(fn (string $state) => request()->isSecure() ? CopyAction::make()->copyable($state) : null),
                 TextInput::make('password')
                     ->password()->revealable()
                     ->hidden(fn () => !auth()->user()->can(Permission::ACTION_DATABASE_VIEW_PASSWORD, $server))
@@ -49,7 +49,7 @@ class ListDatabases extends ListRecords
                         RotateDatabasePasswordAction::make()
                             ->authorize(fn () => auth()->user()->can(Permission::ACTION_DATABASE_UPDATE, $server))
                     )
-                    ->suffixAction(fn (string $state) => request()->isSecure() ? CopyAction::make()->copyable($state) : null)
+                    //TODO ->suffixAction(fn (string $state) => request()->isSecure() ? CopyAction::make()->copyable($state) : null)
                     ->formatStateUsing(fn (Database $database) => $database->password),
                 TextInput::make('remote')
                     ->label('Connections From'),
@@ -59,7 +59,7 @@ class ListDatabases extends ListRecords
                     ->label('JDBC Connection String')
                     ->password()->revealable()
                     ->hidden(!auth()->user()->can(Permission::ACTION_DATABASE_VIEW_PASSWORD, $server))
-                    ->suffixAction(fn (string $state) => request()->isSecure() ? CopyAction::make()->copyable($state) : null)
+                    //TODO ->suffixAction(fn (string $state) => request()->isSecure() ? CopyAction::make()->copyable($state) : null)
                     ->columnSpanFull()
                     ->formatStateUsing(fn (Database $database) => $database->jdbc),
             ]);
@@ -102,7 +102,7 @@ class ListDatabases extends ListRecords
                 ->disabled(fn () => $server->databases()->count() >= $server->database_limit)
                 ->color(fn () => $server->databases()->count() >= $server->database_limit ? 'danger' : 'primary')
                 ->createAnother(false)
-                ->form([
+                ->schema([
                     Grid::make()
                         ->columns(2)
                         ->schema([

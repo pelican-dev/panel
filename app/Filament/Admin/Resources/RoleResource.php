@@ -4,20 +4,19 @@ namespace App\Filament\Admin\Resources;
 
 use App\Filament\Admin\Resources\RoleResource\Pages;
 use App\Models\Role;
-use Filament\Forms\Components\Actions\Action;
+use Filament\Actions\CreateAction;
+use Filament\Actions\DeleteBulkAction;
+use Filament\Actions\EditAction;
+use Filament\Actions\ViewAction;
 use Filament\Forms\Components\CheckboxList;
-use Filament\Forms\Components\Component;
-use Filament\Forms\Components\Fieldset;
 use Filament\Forms\Components\Placeholder;
-use Filament\Forms\Components\Section;
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Form;
-use Filament\Forms\Get;
 use Filament\Resources\Resource;
-use Filament\Tables\Actions\CreateAction;
-use Filament\Tables\Actions\DeleteBulkAction;
-use Filament\Tables\Actions\EditAction;
-use Filament\Tables\Actions\ViewAction;
+use Filament\Schemas\Components\Component;
+use Filament\Schemas\Components\Fieldset;
+use Filament\Schemas\Components\Form;
+use Filament\Schemas\Components\Section;
+use Filament\Schemas\Components\Utilities\Get;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Support\Str;
@@ -27,7 +26,7 @@ class RoleResource extends Resource
 {
     protected static ?string $model = Role::class;
 
-    protected static ?string $navigationIcon = 'tabler-users-group';
+    protected static string | \BackedEnum | null $navigationIcon = 'tabler-users-group';
 
     protected static ?string $recordTitleAttribute = 'name';
 
@@ -91,7 +90,7 @@ class RoleResource extends Resource
             ]);
     }
 
-    public static function form(Form $form): Form
+    public static function form(Form|\Filament\Schemas\Schema $schema): \Filament\Schemas\Schema
     {
         $permissionSections = [];
 
@@ -105,7 +104,7 @@ class RoleResource extends Resource
             $permissionSections[] = self::makeSection($model, $options);
         }
 
-        return $form
+        return $schema
             ->columns(1)
             ->schema([
                 TextInput::make('name')

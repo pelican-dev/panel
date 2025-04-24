@@ -18,7 +18,7 @@ class TurnstileProvider extends CaptchaProvider
         return 'turnstile';
     }
 
-    public function getComponent(): Component
+    public function getComponent(): \Filament\Schemas\Components\Component
     {
         return TurnstileCaptcha::make('turnstile');
     }
@@ -34,7 +34,7 @@ class TurnstileProvider extends CaptchaProvider
     }
 
     /**
-     * @return Component[]
+     * @return \Filament\Schemas\Components\Component[]
      */
     public function getSettingsForm(): array
     {

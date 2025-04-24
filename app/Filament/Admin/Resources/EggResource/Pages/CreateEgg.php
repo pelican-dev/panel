@@ -2,29 +2,29 @@
 
 namespace App\Filament\Admin\Resources\EggResource\Pages;
 
-use AbdelhamidErrahmouni\FilamentMonacoEditor\MonacoEditor;
 use App\Filament\Admin\Resources\EggResource;
 use App\Filament\Components\Forms\Fields\CopyFrom;
 use App\Models\EggVariable;
 use Filament\Forms\Components\Checkbox;
-use Filament\Forms\Components\Fieldset;
 use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\KeyValue;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Select;
-use Filament\Forms\Components\Tabs;
-use Filament\Forms\Components\Tabs\Tab;
 use Filament\Forms\Components\TagsInput;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
-use Filament\Forms\Form;
-use Filament\Forms\Get;
-use Filament\Forms\Set;
 use Filament\Resources\Pages\CreateRecord;
+use Filament\Schemas\Components\Fieldset;
+use Filament\Schemas\Components\Form;
+use Filament\Schemas\Components\Tabs;
+use Filament\Schemas\Components\Tabs\Tab;
+use Filament\Schemas\Components\Utilities\Get;
+use Filament\Schemas\Components\Utilities\Set;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rules\Unique;
+use Filament\Schemas\Schema;
 
 class CreateEgg extends CreateRecord
 {
@@ -44,9 +44,9 @@ class CreateEgg extends CreateRecord
         return [];
     }
 
-    public function form(Form $form): Form
+    public function form(Form|Schema $schema): Schema
     {
-        return $form
+        return $schema
             ->schema([
                 Tabs::make()->tabs([
                     Tab::make(trans('admin/egg.tabs.configuration'))
@@ -248,13 +248,13 @@ class CreateEgg extends CreateRecord
                                 ->default('bash')
                                 ->options(['bash', 'ash', '/bin/bash'])
                                 ->required(),
-                            MonacoEditor::make('script_install')
-                                ->label(trans('admin/egg.script_install'))
-                                ->columnSpanFull()
-                                ->fontSize('16px')
-                                ->language('shell')
-                                ->lazy()
-                                ->view('filament.plugins.monaco-editor'),
+                            //                            MonacoEditor::make('script_install')
+                            //                                ->label(trans('admin/egg.script_install'))
+                            //                                ->columnSpanFull()
+                            //                                ->fontSize('16px')
+                            //                                ->language('shell')
+                            //                                ->lazy()
+                            //                                ->view('filament.plugins.monaco-editor'),
                         ]),
 
                 ])->columnSpanFull()->persistTabInQueryString(),

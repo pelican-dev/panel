@@ -19,7 +19,7 @@ class ServerInstalledListener
             ->title('Server ' . ($event->initialInstall ? 'Installation' : 'Reinstallation') . ' ' . ($event->successful ? 'completed' : 'failed'))
             ->body('Server Name: ' . $event->server->name)
             ->actions([
-                Action::make('view')
+                \Filament\Actions\Action::make('view')
                     ->button()
                     ->label('Open Server')
                     ->markAsRead()

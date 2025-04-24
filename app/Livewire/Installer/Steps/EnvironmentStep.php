@@ -3,15 +3,15 @@
 namespace App\Livewire\Installer\Steps;
 
 use App\Livewire\Installer\PanelInstaller;
-use Filament\Forms\Components\Fieldset;
+use Filament\Schemas\Components\Fieldset;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Wizard\Step;
 
 class EnvironmentStep
 {
-    public static function make(PanelInstaller $installer): Step
+    public static function make(PanelInstaller $installer): \Filament\Schemas\Components\Wizard\Step
     {
-        return Step::make('environment')
+        return \Filament\Schemas\Components\Wizard\Step::make('environment')
             ->label('Environment')
             ->columns()
             ->schema([

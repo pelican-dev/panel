@@ -4,9 +4,9 @@ namespace App\Filament\Components\Forms\Actions;
 
 use App\Models\Server;
 use App\Services\Servers\StartupCommandService;
-use Filament\Forms\Components\Actions\Action;
-use Filament\Forms\Get;
-use Filament\Forms\Set;
+use Filament\Actions\Action;
+use Filament\Schemas\Components\Utilities\Get;
+use Filament\Schemas\Components\Utilities\Set;
 
 class PreviewStartupAction extends Action
 {

@@ -6,15 +6,15 @@ use App\Filament\Admin\Resources\ServerResource\Pages\CreateServer;
 use App\Models\Allocation;
 use App\Models\Node;
 use App\Services\Allocations\AssignmentService;
+use Filament\Actions\Action;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TagsInput;
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Get;
-use Filament\Forms\Set;
+use Filament\Schemas\Components\Utilities\Get;
+use Filament\Schemas\Components\Utilities\Set;
 use Filament\Resources\RelationManagers\RelationManager;
-use Filament\Tables;
-use Filament\Tables\Actions\BulkActionGroup;
-use Filament\Tables\Actions\DeleteBulkAction;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteBulkAction;
 use Filament\Tables\Columns\SelectColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Columns\TextInputColumn;
@@ -27,7 +27,7 @@ class AllocationsRelationManager extends RelationManager
 {
     protected static string $relationship = 'allocations';
 
-    protected static ?string $icon = 'tabler-plug-connected';
+    protected static string | \BackedEnum | null $icon = 'tabler-plug-connected';
 
     public function setTitle(): string
     {
@@ -72,9 +72,9 @@ class AllocationsRelationManager extends RelationManager
                     ->label(trans('admin/node.table.ip')),
             ])
             ->headerActions([
-                Tables\Actions\Action::make('create new allocation')
+                Action::make('create new allocation')
                     ->label(trans('admin/node.create_allocation'))
-                    ->form(fn () => [
+                    ->schema(fn () => [
                         Select::make('allocation_ip')
                             ->options(collect($this->getOwnerRecord()->ipAddresses())->mapWithKeys(fn (string $ip) => [$ip => $ip]))
                             ->label(trans('admin/node.ip_address'))

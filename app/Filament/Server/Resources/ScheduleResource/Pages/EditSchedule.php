@@ -5,7 +5,7 @@ namespace App\Filament\Server\Resources\ScheduleResource\Pages;
 use App\Facades\Activity;
 use App\Filament\Server\Resources\ScheduleResource;
 use App\Models\Schedule;
-use Filament\Actions;
+use Filament\Actions\DeleteAction;
 use Filament\Resources\Pages\EditRecord;
 
 class EditSchedule extends EditRecord
@@ -38,7 +38,7 @@ class EditSchedule extends EditRecord
     protected function getHeaderActions(): array
     {
         return [
-            Actions\DeleteAction::make()
+            DeleteAction::make()
                 ->after(function ($record) {
                     Activity::event('server:schedule.delete')
                         ->property('name', $record->name)

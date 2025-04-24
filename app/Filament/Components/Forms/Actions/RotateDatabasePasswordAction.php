@@ -6,9 +6,8 @@ use App\Facades\Activity;
 use App\Models\Database;
 use App\Services\Databases\DatabasePasswordService;
 use Exception;
-use Filament\Actions\StaticAction;
-use Filament\Forms\Components\Actions\Action;
-use Filament\Forms\Set;
+use Filament\Actions\Action;
+use Filament\Schemas\Components\Utilities\Set;
 use Filament\Notifications\Notification;
 
 class RotateDatabasePasswordAction extends Action
@@ -32,7 +31,7 @@ class RotateDatabasePasswordAction extends Action
 
         $this->modalIconColor('warning');
 
-        $this->modalSubmitAction(fn (StaticAction $action) => $action->color('warning'));
+        $this->modalSubmitAction(fn (Action $action) => $action->color('warning'));
 
         $this->requiresConfirmation();
 

@@ -4,7 +4,7 @@ namespace App\Filament\Components\Forms\Fields;
 
 use App\Models\Egg;
 use Filament\Forms\Components\Select;
-use Filament\Forms\Set;
+use Filament\Schemas\Components\Utilities\Set;
 use Livewire\Component;
 
 class CopyFrom extends Select

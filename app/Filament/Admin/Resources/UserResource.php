@@ -9,22 +9,23 @@ use App\Models\User;
 use Filament\Facades\Filament;
 use Filament\Forms\Components\CheckboxList;
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Form;
+use Filament\Schemas\Components\Form;
 use Filament\Resources\Resource;
-use Filament\Tables\Actions\DeleteBulkAction;
-use Filament\Tables\Actions\EditAction;
-use Filament\Tables\Actions\ViewAction;
+use Filament\Actions\DeleteBulkAction;
+use Filament\Actions\EditAction;
+use Filament\Actions\ViewAction;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
+use Filament\Schemas\Schema;
 
 class UserResource extends Resource
 {
     protected static ?string $model = User::class;
 
-    protected static ?string $navigationIcon = 'tabler-users';
+    protected static string | \BackedEnum | null $navigationIcon = 'tabler-users';
 
     protected static ?string $recordTitleAttribute = 'username';
 
@@ -99,9 +100,9 @@ class UserResource extends Resource
             ]);
     }
 
-    public static function form(Form $form): Form
+    public static function form(Form|Schema $schema): Schema
     {
-        return $form
+        return $schema
             ->columns(['default' => 1, 'lg' => 3])
             ->schema([
                 TextInput::make('username')

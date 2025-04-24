@@ -9,14 +9,14 @@ use App\Services\Allocations\AssignmentService;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TagsInput;
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Get;
-use Filament\Forms\Set;
+use Filament\Schemas\Components\Utilities\Get;
+use Filament\Schemas\Components\Utilities\Set;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Support\Exceptions\Halt;
-use Filament\Tables\Actions\Action;
-use Filament\Tables\Actions\AssociateAction;
-use Filament\Tables\Actions\CreateAction;
-use Filament\Tables\Actions\DissociateBulkAction;
+use Filament\Actions\Action;
+use Filament\Actions\AssociateAction;
+use Filament\Actions\CreateAction;
+use Filament\Actions\DissociateBulkAction;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Columns\TextInputColumn;
@@ -64,7 +64,7 @@ class AllocationsRelationManager extends RelationManager
             ->headerActions([
                 CreateAction::make()->label(trans('admin/server.create_allocation'))
                     ->createAnother(false)
-                    ->form(fn () => [
+                    ->schema(fn () => [
                         Select::make('allocation_ip')
                             ->options(collect($this->getOwnerRecord()->node->ipAddresses())->mapWithKeys(fn (string $ip) => [$ip => $ip]))
                             ->label(trans('admin/server.ip_address'))
