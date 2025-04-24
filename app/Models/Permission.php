@@ -223,7 +223,8 @@ class Permission extends Model implements Validatable
         'settings' => [
             'description' => 'Permissions that control a user\'s access to the settings for this server.',
             'keys' => [
-                'rename' => 'Allows a user to rename this server and change the description of it.',
+                'rename' => 'Allows a user to rename this server.',
+                'description' => 'Allows a user to change the description of this server.',
                 'reinstall' => 'Allows a user to trigger a reinstall of this server.',
             ],
         ],
