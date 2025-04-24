@@ -103,7 +103,8 @@ class ListFiles extends ListRecords
             ->query(fn () => $files->orderByDesc('is_directory'))
             ->defaultSort('name')
             ->columns([
-                TextColumn::make('name')
+                TextColumn::make('display_name')
+                    ->label('Name')
                     ->searchable()
                     ->sortable()
                     ->icon(fn (File $file) => $file->getIcon()),
@@ -117,15 +118,16 @@ class ListFiles extends ListRecords
                     ->sortable(),
             ])
             ->recordUrl(function (File $file) use ($server) {
+                $decodedName = base64_decode($file->name);
                 if ($file->is_directory) {
-                    return self::getUrl(['path' => join_paths($this->path, $file->name)]);
+                    return self::getUrl(['path' => rawurlencode(join_paths($this->path, $decodedName))]);
                 }
 
                 if (!auth()->user()->can(Permission::ACTION_FILE_READ_CONTENT, $server)) {
                     return null;
                 }
 
-                return $file->canEdit() ? EditFiles::getUrl(['path' => join_paths($this->path, $file->name)]) : null;
+                return $file->canEdit() ? EditFiles::getUrl(['path' => rawurlencode(join_paths($this->path, $decodedName))]) : null;
             })
             ->actions([
                 Action::make('view')
@@ -134,13 +136,13 @@ class ListFiles extends ListRecords
                     ->label('Open')
                     ->icon('tabler-eye')
                     ->visible(fn (File $file) => $file->is_directory)
-                    ->url(fn (File $file) => self::getUrl(['path' => join_paths($this->path, $file->name)])),
+                    ->url(fn (File $file) => self::getUrl(['path' => rawurlencode(join_paths($this->path, base64_decode($file->name)))])),
                 EditAction::make('edit')
                     ->authorize(fn () => auth()->user()->can(Permission::ACTION_FILE_READ_CONTENT, $server))
                     ->disabled($this->isDisabled)
                     ->icon('tabler-edit')
                     ->visible(fn (File $file) => $file->canEdit())
-                    ->url(fn (File $file) => EditFiles::getUrl(['path' => join_paths($this->path, $file->name)])),
+                    ->url(fn (File $file) => EditFiles::getUrl(['path' => rawurlencode(join_paths($this->path, base64_decode($file->name)))])),
                 ActionGroup::make([
                     Action::make('rename')
                         ->authorize(fn () => auth()->user()->can(Permission::ACTION_FILE_UPDATE, $server))
@@ -150,24 +152,30 @@ class ListFiles extends ListRecords
                         ->form([
                             TextInput::make('name')
                                 ->label('File name')
-                                ->default(fn (File $file) => $file->name)
+                                ->default(fn (File $file) => base64_decode($file->name))
                                 ->required(),
                         ])
                         ->action(function ($data, File $file) {
-                            $files = [['to' => $data['name'], 'from' => $file->name]];
+                            $decodedName = base64_decode($file->name);
+                            $files = [['to' => $data['name'], 'from' => $decodedName]];
 
                             $this->getDaemonFileRepository()->renameFiles($this->path, $files);
 
                             Activity::event('server:file.rename')
                                 ->property('directory', $this->path)
-                                ->property('files', $files)
-                                ->property('to', $data['name'])
-                                ->property('from', $file->name)
+                                ->property('files', array_map(function($item) {
+                                    return [
+                                        'to' => htmlspecialchars($item['to'], ENT_QUOTES, 'UTF-8'),
+                                        'from' => htmlspecialchars($item['from'], ENT_QUOTES, 'UTF-8')
+                                    ];
+                                }, $files))
+                                ->property('to', htmlspecialchars($data['name'], ENT_QUOTES, 'UTF-8'))
+                                ->property('from', htmlspecialchars($decodedName, ENT_QUOTES, 'UTF-8'))
                                 ->log();
 
                             Notification::make()
                                 ->title('File Renamed')
-                                ->body(fn () => $file->name . ' -> ' . $data['name'])
+                                ->body(fn () => htmlspecialchars($decodedName, ENT_QUOTES, 'UTF-8') . ' -> ' . htmlspecialchars($data['name'], ENT_QUOTES, 'UTF-8'))
                                 ->success()
                                 ->send();
                         }),
@@ -178,10 +186,11 @@ class ListFiles extends ListRecords
                         ->icon('tabler-copy')
                         ->visible(fn (File $file) => $file->is_file)
                         ->action(function (File $file) {
-                            $this->getDaemonFileRepository()->copyFile(join_paths($this->path, $file->name));
+                            $decodedName = base64_decode($file->name);
+                            $this->getDaemonFileRepository()->copyFile(join_paths($this->path, $decodedName));
 
                             Activity::event('server:file.copy')
-                                ->property('file', join_paths($this->path, $file->name))
+                                ->property('file', htmlspecialchars(join_paths($this->path, $decodedName), ENT_QUOTES, 'UTF-8'))
                                 ->log();
 
                             Notification::make()
@@ -197,7 +206,7 @@ class ListFiles extends ListRecords
                         ->label('Download')
                         ->icon('tabler-download')
                         ->visible(fn (File $file) => $file->is_file)
-                        ->url(fn (File $file) => DownloadFiles::getUrl(['path' => join_paths($this->path, $file->name)]), true),
+                        ->url(fn (File $file) => DownloadFiles::getUrl(['path' => rawurlencode(join_paths($this->path, base64_decode($file->name)))]), true),
                     Action::make('move')
                         ->authorize(fn () => auth()->user()->can(Permission::ACTION_FILE_UPDATE, $server))
                         ->disabled($this->isDisabled)
@@ -210,27 +219,33 @@ class ListFiles extends ListRecords
                                 ->required()
                                 ->live(),
                             Placeholder::make('new_location')
-                                ->content(fn (Get $get, File $file) => resolve_path('./' . join_paths($this->path, $get('location') ?? '/', $file->name))),
+                                ->content(fn (Get $get, File $file) => resolve_path('./' . join_paths($this->path, $get('location') ?? '/', base64_decode($file->name)))),
                         ])
                         ->action(function ($data, File $file) {
+                            $decodedName = base64_decode($file->name);
                             $location = rtrim($data['location'], '/');
-                            $files = [['to' => join_paths($location, $file->name), 'from' => $file->name]];
+                            $files = [['to' => join_paths($location, $decodedName), 'from' => $decodedName]];
 
                             $this->getDaemonFileRepository()->renameFiles($this->path, $files);
 
-                            $oldLocation = join_paths($this->path, $file->name);
-                            $newLocation = resolve_path(join_paths($this->path, $location, $file->name));
+                            $oldLocation = join_paths($this->path, $decodedName);
+                            $newLocation = resolve_path(join_paths($this->path, $location, $decodedName));
 
                             Activity::event('server:file.rename')
                                 ->property('directory', $this->path)
-                                ->property('files', $files)
-                                ->property('to', $newLocation)
-                                ->property('from', $oldLocation)
+                                ->property('files', array_map(function($item) {
+                                    return [
+                                        'to' => htmlspecialchars($item['to'], ENT_QUOTES, 'UTF-8'),
+                                        'from' => htmlspecialchars($item['from'], ENT_QUOTES, 'UTF-8')
+                                    ];
+                                }, $files))
+                                ->property('to', htmlspecialchars($newLocation, ENT_QUOTES, 'UTF-8'))
+                                ->property('from', htmlspecialchars($oldLocation, ENT_QUOTES, 'UTF-8'))
                                 ->log();
 
                             Notification::make()
                                 ->title('File Moved')
-                                ->body($oldLocation . ' -> ' . $newLocation)
+                                ->body(htmlspecialchars($oldLocation, ENT_QUOTES, 'UTF-8') . ' -> ' . htmlspecialchars($newLocation, ENT_QUOTES, 'UTF-8'))
                                 ->success()
                                 ->send();
                         }),
@@ -278,13 +293,14 @@ class ListFiles extends ListRecords
                                 }),
                         ])
                         ->action(function ($data, File $file) {
+                            $decodedName = base64_decode($file->name);
                             $owner = (in_array('read', $data['owner']) ? 4 : 0) | (in_array('write', $data['owner']) ? 2 : 0) | (in_array('execute', $data['owner']) ? 1 : 0);
                             $group = (in_array('read', $data['group']) ? 4 : 0) | (in_array('write', $data['group']) ? 2 : 0) | (in_array('execute', $data['group']) ? 1 : 0);
                             $public = (in_array('read', $data['public']) ? 4 : 0) | (in_array('write', $data['public']) ? 2 : 0) | (in_array('execute', $data['public']) ? 1 : 0);
 
                             $mode = $owner . $group . $public;
 
-                            $this->getDaemonFileRepository()->chmodFiles($this->path, [['file' => $file->name, 'mode' => $mode]]);
+                            $this->getDaemonFileRepository()->chmodFiles($this->path, [['file' => $decodedName, 'mode' => $mode]]);
 
                             Notification::make()
                                 ->title('Permissions changed to ' . $mode)
@@ -303,12 +319,13 @@ class ListFiles extends ListRecords
                                 ->suffix('.tar.gz'),
                         ])
                         ->action(function ($data, File $file) {
-                            $archive = $this->getDaemonFileRepository()->compressFiles($this->path, [$file->name], $data['name']);
+                            $decodedName = base64_decode($file->name);
+                            $archive = $this->getDaemonFileRepository()->compressFiles($this->path, [$decodedName], $data['name']);
 
                             Activity::event('server:file.compress')
                                 ->property('name', $archive['name'])
                                 ->property('directory', $this->path)
-                                ->property('files', [$file->name])
+                                ->property('files', [$decodedName])
                                 ->log();
 
                             Notification::make()
@@ -326,11 +343,12 @@ class ListFiles extends ListRecords
                         ->icon('tabler-archive')
                         ->visible(fn (File $file) => $file->isArchive())
                         ->action(function (File $file) {
-                            $this->getDaemonFileRepository()->decompressFile($this->path, $file->name);
+                            $decodedName = base64_decode($file->name);
+                            $this->getDaemonFileRepository()->decompressFile($this->path, $decodedName);
 
                             Activity::event('server:file.decompress')
                                 ->property('directory', $this->path)
-                                ->property('file', $file->name)
+                                ->property('file', $decodedName)
                                 ->log();
 
                             Notification::make()
@@ -347,14 +365,15 @@ class ListFiles extends ListRecords
                     ->label('')
                     ->icon('tabler-trash')
                     ->requiresConfirmation()
-                    ->modalDescription(fn (File $file) => $file->name)
+                    ->modalDescription(fn (File $file) => base64_decode($file->name))
                     ->modalHeading('Delete file?')
                     ->action(function (File $file) {
-                        $this->getDaemonFileRepository()->deleteFiles($this->path, [$file->name]);
+                        $decodedName = base64_decode($file->name);
+                        $this->getDaemonFileRepository()->deleteFiles($this->path, [$decodedName]);
 
                         Activity::event('server:file.delete')
                             ->property('directory', $this->path)
-                            ->property('files', $file->name)
+                            ->property('files', $decodedName)
                             ->log();
                     }),
             ])
@@ -373,9 +392,10 @@ class ListFiles extends ListRecords
                                 ->content(fn (Get $get) => resolve_path('./' . join_paths($this->path, $get('location') ?? ''))),
                         ])
                         ->action(function (Collection $files, $data) {
+                            $decodedNames = $files->map(fn ($file) => base64_decode($file['name']))->toArray();
                             $location = rtrim($data['location'], '/');
 
-                            $files = $files->map(fn ($file) => ['to' => join_paths($location, $file['name']), 'from' => $file['name']])->toArray();
+                            $files = $files->map(fn ($file) => ['to' => join_paths($location, base64_decode($file['name'])), 'from' => base64_decode($file['name'])]);
                             $this->getDaemonFileRepository()
                                 ->renameFiles($this->path, $files);
 
@@ -399,14 +419,15 @@ class ListFiles extends ListRecords
                                 ->suffix('.tar.gz'),
                         ])
                         ->action(function ($data, Collection $files) {
-                            $files = $files->map(fn ($file) => $file['name'])->toArray();
+                            $decodedNames = $files->map(fn ($file) => base64_decode($file['name']))->toArray();
+                            $files = $files->map(fn ($file) => base64_decode($file['name']))->toArray();
 
                             $archive = $this->getDaemonFileRepository()->compressFiles($this->path, $files, $data['name']);
 
                             Activity::event('server:file.compress')
                                 ->property('name', $archive['name'])
                                 ->property('directory', $this->path)
-                                ->property('files', $files)
+                                ->property('files', $decodedNames)
                                 ->log();
 
                             Notification::make()
@@ -421,12 +442,13 @@ class ListFiles extends ListRecords
                         ->authorize(fn () => auth()->user()->can(Permission::ACTION_FILE_DELETE, $server))
                         ->disabled($this->isDisabled)
                         ->action(function (Collection $files) {
-                            $files = $files->map(fn ($file) => $file['name'])->toArray();
-                            $this->getDaemonFileRepository()->deleteFiles($this->path, $files);
+                            $decodedNames = $files->map(fn ($file) => base64_decode($file['name']))->toArray();
+                            $files = $files->map(fn ($file) => base64_decode($file['name']))->toArray();
+                            $this->getDaemonFileRepository()->deleteFiles($this->path, $decodedNames);
 
                             Activity::event('server:file.delete')
                                 ->property('directory', $this->path)
-                                ->property('files', $files)
+                                ->property('files', $decodedNames)
                                 ->log();
 
                             Notification::make()
@@ -504,16 +526,16 @@ class ListFiles extends ListRecords
                             $this->getDaemonFileRepository()->putContent(join_paths($this->path, $file->getClientOriginalName()), $file->getContent());
 
                             Activity::event('server:file.uploaded')
-                                ->property('directory', $this->path)
-                                ->property('file', $file->getClientOriginalName())
+                                ->property('directory', htmlspecialchars($this->path, ENT_QUOTES, 'UTF-8'))
+                                ->property('file', htmlspecialchars($file->getClientOriginalName(), ENT_QUOTES, 'UTF-8'))
                                 ->log();
                         }
                     } elseif ($data['url'] !== null) {
                         $this->getDaemonFileRepository()->pull($data['url'], $this->path);
 
                         Activity::event('server:file.pull')
-                            ->property('url', $data['url'])
-                            ->property('directory', $this->path)
+                            ->property('url', htmlspecialchars($data['url'], ENT_QUOTES, 'UTF-8'))
+                            ->property('directory', htmlspecialchars($this->path, ENT_QUOTES, 'UTF-8'))
                             ->log();
                     }
 
