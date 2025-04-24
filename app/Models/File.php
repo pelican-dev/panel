@@ -122,6 +122,7 @@ class File extends Model
     {
         return [
             'name' => 'string',
+            'display_name' => 'string',
             'created_at' => 'string',
             'modified_at' => 'string',
             'mode' => 'string',
@@ -137,6 +138,7 @@ class File extends Model
     /**
      * @return array<array{
      *     name: string,
+     *     display_name: string,
      *     created_at: string,
      *     modified_at: string,
      *     mode: string,
@@ -170,8 +172,12 @@ class File extends Model
             }
 
             $rows = array_map(function ($file) {
+                // Base64 encode the name to avoid any special character issues
+                $encodedName = base64_encode($file['name']);
+                
                 return [
-                    'name' => $file['name'],
+                    'name' => $encodedName,
+                    'display_name' => $file['name'], // Keep original for display
                     'created_at' => Carbon::parse($file['created'])->timezone('UTC'),
                     'modified_at' => Carbon::parse($file['modified'])->timezone('UTC'),
                     'mode' => $file['mode'],
