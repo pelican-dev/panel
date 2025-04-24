@@ -15,7 +15,7 @@ return new class extends Migration
         Schema::table('users', function (Blueprint $table) {
             $table->string('name_first')->after('email')->nullable();
             $table->string('name_last')->after('name_first')->nullable();
-            $table->string('username')->after('uuid');
+            $table->string('username')->after('uuid')->nullable();
             $table->boolean('gravatar')->after('totp_secret')->default(true);
         });
 

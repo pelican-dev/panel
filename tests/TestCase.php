@@ -42,6 +42,9 @@ abstract class TestCase extends BaseTestCase
      */
     protected function tearDown(): void
     {
+        restore_exception_handler();
+        restore_error_handler();
+
         parent::tearDown();
 
         Carbon::setTestNow();

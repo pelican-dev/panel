@@ -426,7 +426,7 @@ class CreateServer extends CreateRecord
 
                                     Repeater::make('server_variables')
                                         ->label('')
-                                        ->relationship('serverVariables')
+                                        ->relationship('serverVariables', fn (Builder $query) => $query->orderByPowerJoins('variable.sort'))
                                         ->saveRelationshipsBeforeChildrenUsing(null)
                                         ->saveRelationshipsUsing(null)
                                         ->grid(2)
@@ -792,6 +792,7 @@ class CreateServer extends CreateRecord
                                         ]),
 
                                     KeyValue::make('docker_labels')
+                                        ->live()
                                         ->label('Container Labels')
                                         ->keyLabel(trans('admin/server.title'))
                                         ->valueLabel(trans('admin/server.description'))

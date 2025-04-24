@@ -11,7 +11,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('servers', function (Blueprint $table) {
-            $table->mediumInteger('allocation')->unsigned()->after('oom_disabled');
+            $table->mediumInteger('allocation')->nullable()->unsigned()->after('oom_disabled');
         });
 
         // Parse All Servers

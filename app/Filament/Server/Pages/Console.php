@@ -2,6 +2,7 @@
 
 namespace App\Filament\Server\Pages;
 
+use App\Enums\ConsoleWidgetPosition;
 use App\Enums\ContainerStatus;
 use App\Exceptions\Http\Server\ServerStateConflictException;
 use App\Filament\Server\Widgets\ServerConsole;
@@ -38,10 +39,10 @@ class Console extends Page
         try {
             $server->validateCurrentState();
         } catch (ServerStateConflictException $exception) {
-            AlertBanner::make()
-                ->warning()
+            AlertBanner::make('server_conflict')
                 ->title('Warning')
                 ->body($exception->getMessage())
+                ->warning()
                 ->send();
         }
     }
@@ -54,18 +55,41 @@ class Console extends Page
         ];
     }
 
+    /** @var array<string, array<class-string<Widget>>> */
+    protected static array $customWidgets = [];
+
+    /** @param class-string<Widget>[] $customWidgets */
+    public static function registerCustomWidgets(ConsoleWidgetPosition $position, array $customWidgets): void
+    {
+        static::$customWidgets[$position->value] = array_unique(array_merge(static::$customWidgets[$position->value] ?? [], $customWidgets));
+    }
+
     /**
      * @return class-string<Widget>[]
      */
     public function getWidgets(): array
     {
-        return [
-            ServerOverview::class,
-            ServerConsole::class,
+        $allWidgets = [];
+
+        $allWidgets = array_merge($allWidgets, static::$customWidgets[ConsoleWidgetPosition::Top->value] ?? []);
+
+        $allWidgets[] = ServerOverview::class;
+
+        $allWidgets = array_merge($allWidgets, static::$customWidgets[ConsoleWidgetPosition::AboveConsole->value] ?? []);
+
+        $allWidgets[] = ServerConsole::class;
+
+        $allWidgets = array_merge($allWidgets, static::$customWidgets[ConsoleWidgetPosition::BelowConsole->value] ?? []);
+
+        $allWidgets = array_merge($allWidgets, [
             ServerCpuChart::class,
             ServerMemoryChart::class,
             //ServerNetworkChart::class, TODO: convert units.
-        ];
+        ]);
+
+        $allWidgets = array_merge($allWidgets, static::$customWidgets[ConsoleWidgetPosition::Bottom->value] ?? []);
+
+        return array_unique($allWidgets);
     }
 
     /**
@@ -104,20 +128,23 @@ class Console extends Page
                 ->size(ActionSize::ExtraLarge)
                 ->action(fn () => $this->dispatch('setServerState', state: 'start', uuid: $server->uuid))
                 ->authorize(fn () => auth()->user()->can(Permission::ACTION_CONTROL_START, $server))
-                ->disabled(fn () => $server->isInConflictState() || !$this->status->isStartable()),
+                ->disabled(fn () => $server->isInConflictState() || !$this->status->isStartable())
+                ->icon('tabler-player-play-filled'),
             Action::make('restart')
                 ->color('gray')
                 ->size(ActionSize::ExtraLarge)
                 ->action(fn () => $this->dispatch('setServerState', state: 'restart', uuid: $server->uuid))
                 ->authorize(fn () => auth()->user()->can(Permission::ACTION_CONTROL_RESTART, $server))
-                ->disabled(fn () => $server->isInConflictState() || !$this->status->isRestartable()),
+                ->disabled(fn () => $server->isInConflictState() || !$this->status->isRestartable())
+                ->icon('tabler-reload'),
             Action::make('stop')
                 ->color('danger')
                 ->size(ActionSize::ExtraLarge)
                 ->action(fn () => $this->dispatch('setServerState', state: 'stop', uuid: $server->uuid))
                 ->authorize(fn () => auth()->user()->can(Permission::ACTION_CONTROL_STOP, $server))
                 ->hidden(fn () => $this->status->isStartingOrStopping() || $this->status->isKillable())
-                ->disabled(fn () => $server->isInConflictState() || !$this->status->isStoppable()),
+                ->disabled(fn () => $server->isInConflictState() || !$this->status->isStoppable())
+                ->icon('tabler-player-stop-filled'),
             Action::make('kill')
                 ->color('danger')
                 ->requiresConfirmation()
@@ -127,7 +154,8 @@ class Console extends Page
                 ->size(ActionSize::ExtraLarge)
                 ->action(fn () => $this->dispatch('setServerState', state: 'kill', uuid: $server->uuid))
                 ->authorize(fn () => auth()->user()->can(Permission::ACTION_CONTROL_STOP, $server))
-                ->hidden(fn () => $server->isInConflictState() || !$this->status->isKillable()),
+                ->hidden(fn () => $server->isInConflictState() || !$this->status->isKillable())
+                ->icon('tabler-alert-square'),
         ];
     }
 }

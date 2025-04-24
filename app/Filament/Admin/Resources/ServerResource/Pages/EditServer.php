@@ -2,16 +2,19 @@
 
 namespace App\Filament\Admin\Resources\ServerResource\Pages;
 
+use App\Enums\ServerState;
 use App\Enums\SuspendAction;
 use App\Filament\Admin\Resources\ServerResource;
 use App\Filament\Admin\Resources\ServerResource\RelationManagers\AllocationsRelationManager;
 use App\Filament\Components\Forms\Actions\PreviewStartupAction;
 use App\Filament\Components\Forms\Actions\RotateDatabasePasswordAction;
 use App\Filament\Server\Pages\Console;
+use App\Models\Allocation;
 use App\Models\Database;
 use App\Models\DatabaseHost;
 use App\Models\Egg;
 use App\Models\Mount;
+use App\Models\Node;
 use App\Models\Server;
 use App\Models\ServerVariable;
 use App\Models\User;
@@ -28,8 +31,10 @@ use Closure;
 use Exception;
 use Filament\Actions;
 use Filament\Forms;
+use Filament\Forms\Components\Actions as FormActions;
 use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\CheckboxList;
+use Filament\Forms\Components\Component;
 use Filament\Forms\Components\Fieldset;
 use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\Hidden;
@@ -49,17 +54,16 @@ use Filament\Forms\Set;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\EditRecord;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Client\ConnectionException;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\HtmlString;
 use LogicException;
 use Webbingbrasil\FilamentCopyActions\Forms\Actions\CopyAction;
 
 class EditServer extends EditRecord
 {
     protected static string $resource = ServerResource::class;
-
-    private bool $errored = false;
 
     private DaemonServerRepository $daemonServerRepository;
 
@@ -482,6 +486,7 @@ class EditServer extends EditRecord
                                             ]),
 
                                         KeyValue::make('docker_labels')
+                                            ->live()
                                             ->label(trans('admin/server.container_labels'))
                                             ->keyLabel(trans('admin/server.title'))
                                             ->valueLabel(trans('admin/server.description'))
@@ -591,7 +596,7 @@ class EditServer extends EditRecord
                                             ]);
                                         }
 
-                                        return $query;
+                                        return $query->orderByPowerJoins('variable.sort');
                                     })
                                     ->grid()
                                     ->mutateRelationshipDataBeforeSaveUsing(function (array &$data): array {
@@ -731,7 +736,7 @@ class EditServer extends EditRecord
                                     ->deletable(false)
                                     ->addable(false)
                                     ->columnSpan(4),
-                                Forms\Components\Actions::make([
+                                FormActions::make([
                                     Action::make('createDatabase')
                                         ->authorize(fn () => auth()->user()->can('create database'))
                                         ->disabled(fn () => DatabaseHost::query()->count() < 1)
@@ -799,14 +804,50 @@ class EditServer extends EditRecord
                                         Grid::make()
                                             ->columnSpan(3)
                                             ->schema([
-                                                Forms\Components\Actions::make([
+                                                FormActions::make([
                                                     Action::make('toggleInstall')
                                                         ->label(trans('admin/server.toggle_install'))
                                                         ->disabled(fn (Server $server) => $server->isSuspended())
-                                                        ->action(function (ToggleInstallService $service, Server $server) {
-                                                            $service->handle($server);
+                                                        ->modal(fn (Server $server) => $server->status === ServerState::InstallFailed)
+                                                        ->modalHeading(trans('admin/server.toggle_install_failed_header'))
+                                                        ->modalDescription(trans('admin/server.toggle_install_failed_desc'))
+                                                        ->modalSubmitActionLabel(trans('admin/server.reinstall'))
+                                                        ->action(function (ToggleInstallService $toggleService, ReinstallServerService $reinstallService, Server $server) {
+                                                            if ($server->status === ServerState::InstallFailed) {
+                                                                try {
+                                                                    $reinstallService->handle($server);
 
-                                                            $this->refreshFormData(['status', 'docker']);
+                                                                    Notification::make()
+                                                                        ->title(trans('admin/server.notifications.reinstall_started'))
+                                                                        ->success()
+                                                                        ->send();
+
+                                                                    $this->refreshFormData(['status', 'docker']);
+                                                                } catch (Exception) {
+                                                                    Notification::make()
+                                                                        ->title(trans('admin/server.notifications.reinstall_failed'))
+                                                                        ->body(trans('admin/server.error_connecting', ['node' => $server->node->name]))
+                                                                        ->danger()
+                                                                        ->send();
+                                                                }
+                                                            } else {
+                                                                try {
+                                                                    $toggleService->handle($server);
+
+                                                                    Notification::make()
+                                                                        ->title(trans('admin/server.notifications.install_toggled'))
+                                                                        ->success()
+                                                                        ->send();
+
+                                                                    $this->refreshFormData(['status', 'docker']);
+                                                                } catch (Exception $exception) {
+                                                                    Notification::make()
+                                                                        ->title(trans('admin/server.notifications.install_toggle_failed'))
+                                                                        ->body($exception->getMessage())
+                                                                        ->danger()
+                                                                        ->send();
+                                                                }
+                                                            }
                                                         }),
                                                 ])->fullWidth(),
                                                 ToggleButtons::make('')
@@ -815,7 +856,7 @@ class EditServer extends EditRecord
                                         Grid::make()
                                             ->columnSpan(3)
                                             ->schema([
-                                                Forms\Components\Actions::make([
+                                                FormActions::make([
                                                     Action::make('toggleSuspend')
                                                         ->label(trans('admin/server.suspend'))
                                                         ->color('warning')
@@ -823,12 +864,20 @@ class EditServer extends EditRecord
                                                         ->action(function (SuspensionService $suspensionService, Server $server) {
                                                             try {
                                                                 $suspensionService->handle($server, SuspendAction::Suspend);
-                                                            } catch (\Exception $exception) {
-                                                                Notification::make()->warning()->title(trans('admin/server.notifications.server_suspension'))->body($exception->getMessage())->send();
-                                                            }
-                                                            Notification::make()->success()->title(trans('admin/server.notifications.server_suspended'))->send();
 
-                                                            $this->refreshFormData(['status', 'docker']);
+                                                                Notification::make()
+                                                                    ->success()
+                                                                    ->title(trans('admin/server.notifications.server_suspended'))
+                                                                    ->send();
+
+                                                                $this->refreshFormData(['status', 'docker']);
+                                                            } catch (Exception) {
+                                                                Notification::make()
+                                                                    ->warning()
+                                                                    ->title(trans('admin/server.notifications.server_suspension'))
+                                                                    ->body(trans('admin/server.error_connecting', ['node' => $server->node->name]))
+                                                                    ->send();
+                                                            }
                                                         }),
                                                     Action::make('toggleUnsuspend')
                                                         ->label(trans('admin/server.unsuspend'))
@@ -837,12 +886,20 @@ class EditServer extends EditRecord
                                                         ->action(function (SuspensionService $suspensionService, Server $server) {
                                                             try {
                                                                 $suspensionService->handle($server, SuspendAction::Unsuspend);
-                                                            } catch (\Exception $exception) {
-                                                                Notification::make()->warning()->title(trans('admin/server.notifications.server_suspension'))->body($exception->getMessage())->send();
-                                                            }
-                                                            Notification::make()->success()->title(trans('admin/server.notifications.server_unsuspended'))->send();
 
-                                                            $this->refreshFormData(['status', 'docker']);
+                                                                Notification::make()
+                                                                    ->success()
+                                                                    ->title(trans('admin/server.notifications.server_unsuspended'))
+                                                                    ->send();
+
+                                                                $this->refreshFormData(['status', 'docker']);
+                                                            } catch (Exception) {
+                                                                Notification::make()
+                                                                    ->warning()
+                                                                    ->title(trans('admin/server.notifications.server_suspension'))
+                                                                    ->body(trans('admin/server.error_connecting', ['node' => $server->node->name]))
+                                                                    ->send();
+                                                            }
                                                         }),
                                                 ])->fullWidth(),
                                                 ToggleButtons::make('')
@@ -855,42 +912,36 @@ class EditServer extends EditRecord
                                         Grid::make()
                                             ->columnSpan(3)
                                             ->schema([
-                                                Forms\Components\Actions::make([
+                                                FormActions::make([
                                                     Action::make('transfer')
                                                         ->label(trans('admin/server.transfer'))
-                                                        // ->action(fn (TransferServerService $transfer, Server $server) => $transfer->handle($server, []))
-                                                        ->disabled() //TODO!
-                                                        ->form([ //TODO!
-                                                            Select::make('newNode')
-                                                                ->label('New Node')
-                                                                ->required()
-                                                                ->options([
-                                                                    true => 'on',
-                                                                    false => 'off',
-                                                                ]),
-                                                            Select::make('newMainAllocation')
-                                                                ->label('New Main Allocation')
-                                                                ->required()
-                                                                ->options([
-                                                                    true => 'on',
-                                                                    false => 'off',
-                                                                ]),
-                                                            Select::make('newAdditionalAllocation')
-                                                                ->label('New Additional Allocations')
-                                                                ->options([
-                                                                    true => 'on',
-                                                                    false => 'off',
-                                                                ]),
-                                                        ])
-                                                        ->modalheading(trans('admin/server.transfer')),
+                                                        ->disabled(fn (Server $server) => Node::count() <= 1 || $server->isInConflictState())
+                                                        ->modalheading(trans('admin/server.transfer'))
+                                                        ->form($this->transferServer())
+                                                        ->action(function (TransferServerService $transfer, Server $server, $data) {
+                                                            try {
+                                                                $transfer->handle($server, Arr::get($data, 'node_id'), Arr::get($data, 'allocation_id'), Arr::get($data, 'allocation_additional', []));
+
+                                                                Notification::make()
+                                                                    ->title('Transfer started')
+                                                                    ->success()
+                                                                    ->send();
+                                                            } catch (Exception $exception) {
+                                                                Notification::make()
+                                                                    ->title('Transfer failed')
+                                                                    ->body($exception->getMessage())
+                                                                    ->danger()
+                                                                    ->send();
+                                                            }
+                                                        }),
                                                 ])->fullWidth(),
                                                 ToggleButtons::make('')
-                                                    ->hint(trans('admin/server.transfer_help')),
+                                                    ->hint(new HtmlString(trans('admin/server.transfer_help'))),
                                             ]),
                                         Grid::make()
                                             ->columnSpan(3)
                                             ->schema([
-                                                Forms\Components\Actions::make([
+                                                FormActions::make([
                                                     Action::make('reinstall')
                                                         ->label(trans('admin/server.reinstall'))
                                                         ->color('danger')
@@ -898,7 +949,24 @@ class EditServer extends EditRecord
                                                         ->modalHeading(trans('admin/server.reinstall_modal_heading'))
                                                         ->modalDescription(trans('admin/server.reinstall_modal_description'))
                                                         ->disabled(fn (Server $server) => $server->isSuspended())
-                                                        ->action(fn (ReinstallServerService $service, Server $server) => $service->handle($server)),
+                                                        ->action(function (ReinstallServerService $service, Server $server) {
+                                                            try {
+                                                                $service->handle($server);
+
+                                                                Notification::make()
+                                                                    ->title(trans('admin/server.notifications.reinstall_started'))
+                                                                    ->success()
+                                                                    ->send();
+
+                                                                $this->refreshFormData(['status', 'docker']);
+                                                            } catch (Exception) {
+                                                                Notification::make()
+                                                                    ->title(trans('admin/server.notifications.reinstall_failed'))
+                                                                    ->body(trans('admin/server.error_connecting', ['node' => $server->node->name]))
+                                                                    ->danger()
+                                                                    ->send();
+                                                            }
+                                                        }),
                                                 ])->fullWidth(),
                                                 ToggleButtons::make('')
                                                     ->hint(trans('admin/server.reinstall_help')),
@@ -909,32 +977,86 @@ class EditServer extends EditRecord
             ]);
     }
 
-    protected function transferServer(Form $form): Form
+    /** @return Component[] */
+    protected function transferServer(): array
     {
-        return $form
-            ->columns()
-            ->schema([
-                Select::make('toNode')
-                    ->label('New Node'),
-                TextInput::make('newAllocation')
-                    ->label('Allocation'),
-            ]);
-
+        return [
+            Select::make('node_id')
+                ->label(trans('admin/server.node'))
+                ->prefixIcon('tabler-server-2')
+                ->selectablePlaceholder(false)
+                ->default(fn (Server $server) => Node::whereNot('id', $server->node->id)->first()?->id)
+                ->required()
+                ->live()
+                ->options(fn (Server $server) => Node::whereNot('id', $server->node->id)->pluck('name', 'id')->all()),
+            Select::make('allocation_id')
+                ->label(trans('admin/server.primary_allocation'))
+                ->required()
+                ->prefixIcon('tabler-network')
+                ->disabled(fn (Get $get) => !$get('node_id'))
+                ->options(fn (Get $get) => Allocation::where('node_id', $get('node_id'))->whereNull('server_id')->get()->mapWithKeys(fn (Allocation $allocation) => [$allocation->id => $allocation->address]))
+                ->searchable(['ip', 'port', 'ip_alias'])
+                ->placeholder(trans('admin/server.select_allocation')),
+            Select::make('allocation_additional')
+                ->label(trans('admin/server.additional_allocations'))
+                ->multiple()
+                ->prefixIcon('tabler-network')
+                ->disabled(fn (Get $get) => !$get('node_id'))
+                ->options(fn (Get $get) => Allocation::where('node_id', $get('node_id'))->whereNull('server_id')->when($get('allocation_id'), fn ($query) => $query->whereNot('id', $get('allocation_id')))->get()->mapWithKeys(fn (Allocation $allocation) => [$allocation->id => $allocation->address]))
+                ->searchable(['ip', 'port', 'ip_alias'])
+                ->placeholder(trans('admin/server.select_additional')),
+        ];
     }
 
     protected function getHeaderActions(): array
     {
+        /** @var Server $server */
+        $server = $this->getRecord();
+
+        $canForceDelete = cache()->get("servers.$server->uuid.canForceDelete", false);
+
         return [
             Actions\Action::make('Delete')
-                ->successRedirectUrl(route('filament.admin.resources.servers.index'))
                 ->color('danger')
-                ->label(trans('filament-actions::delete.single.modal.actions.delete.label'))
+                ->label(trans('filament-actions::delete.single.label'))
+                ->modalHeading(trans('filament-actions::delete.single.modal.heading', ['label' => $this->getRecordTitle()]))
+                ->modalSubmitActionLabel(trans('filament-actions::delete.single.label'))
                 ->requiresConfirmation()
                 ->action(function (Server $server, ServerDeletionService $service) {
-                    $service->handle($server);
+                    try {
+                        $service->handle($server);
 
-                    return redirect(ListServers::getUrl(panel: 'admin'));
+                        return redirect(ListServers::getUrl(panel: 'admin'));
+                    } catch (ConnectionException) {
+                        cache()->put("servers.$server->uuid.canForceDelete", true, now()->addMinutes(5));
+
+                        Notification::make()
+                            ->title(trans('admin/server.notifications.error_server_delete'))
+                            ->body(trans('admin/server.notifications.error_server_delete_body'))
+                            ->color('warning')
+                            ->icon('tabler-database')
+                            ->warning()
+                            ->send();
+                    }
                 })
+                ->hidden(fn () => $canForceDelete)
+                ->authorize(fn (Server $server) => auth()->user()->can('delete server', $server)),
+            Actions\Action::make('ForceDelete')
+                ->color('danger')
+                ->label(trans('filament-actions::force-delete.single.label'))
+                ->modalHeading(trans('filament-actions::force-delete.single.modal.heading', ['label' => $this->getRecordTitle()]))
+                ->modalSubmitActionLabel(trans('filament-actions::force-delete.single.label'))
+                ->requiresConfirmation()
+                ->action(function (Server $server, ServerDeletionService $service) {
+                    try {
+                        $service->withForce()->handle($server);
+
+                        return redirect(ListServers::getUrl(panel: 'admin'));
+                    } catch (ConnectionException) {
+                        cache()->forget("servers.$server->uuid.canForceDelete");
+                    }
+                })
+                ->visible(fn () => $canForceDelete)
                 ->authorize(fn (Server $server) => auth()->user()->can('delete server', $server)),
             Actions\Action::make('console')
                 ->label(trans('admin/server.console'))
@@ -961,39 +1083,32 @@ class EditServer extends EditRecord
         return $data;
     }
 
-    protected function handleRecordUpdate(Model $record, array $data): Model
+    protected function afterSave(): void
     {
-        if (!$record instanceof Server) {
-            return $record;
-        }
+        /** @var Server $server */
+        $server = $this->record;
 
-        /** @var Server $record */
-        $record = parent::handleRecordUpdate($record, $data);
+        $changed = collect($server->getChanges())->except(['updated_at', 'name', 'owner_id', 'condition', 'description', 'external_id', 'tags', 'cpu_pinning', 'allocation_limit', 'database_limit', 'backup_limit', 'skip_scripts'])->all();
 
         try {
-            $this->daemonServerRepository->setServer($record)->sync();
+            if ($changed) {
+                $this->daemonServerRepository->setServer($server)->sync();
+            }
+            parent::getSavedNotification()?->send();
         } catch (ConnectionException) {
-            $this->errored = true;
-
             Notification::make()
-                ->title(trans('admin/server.notifications.error_connecting', ['node' => $record->node->name]))
+                ->title(trans('admin/server.notifications.error_connecting', ['node' => $server->node->name]))
                 ->body(trans('admin/server.notifications.error_connecting_description'))
                 ->color('warning')
                 ->icon('tabler-database')
                 ->warning()
                 ->send();
         }
-
-        return $record;
     }
 
     protected function getSavedNotification(): ?Notification
     {
-        if ($this->errored) {
-            return null;
-        }
-
-        return parent::getSavedNotification();
+        return null;
     }
 
     public function getRelationManagers(): array

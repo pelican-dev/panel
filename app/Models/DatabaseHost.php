@@ -4,10 +4,12 @@ namespace App\Models;
 
 use App\Contracts\Validatable;
 use App\Traits\HasValidation;
+use Illuminate\Database\Connection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Facades\DB;
 
 /**
  * @property int $id
@@ -81,5 +83,22 @@ class DatabaseHost extends Model implements Validatable
     public function databases(): HasMany
     {
         return $this->hasMany(Database::class);
+    }
+
+    public function buildConnection(string $database = 'mysql', string $charset = 'utf8', string $collation = 'utf8_unicode_ci'): Connection
+    {
+        /** @var Connection $connection */
+        $connection = DB::build([
+            'driver' => 'mysql',
+            'host' => $this->host,
+            'port' => $this->port,
+            'database' => $database,
+            'username' => $this->username,
+            'password' => $this->password,
+            'charset' => $charset,
+            'collation' => $collation,
+        ]);
+
+        return $connection;
     }
 }

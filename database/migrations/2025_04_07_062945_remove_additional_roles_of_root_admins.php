@@ -1,6 +1,7 @@
 <?php
 
-use Illuminate\Database\Schema\Blueprint;
+use App\Models\Role;
+use App\Models\User;
 use Illuminate\Database\Migrations\Migration;
 
 return new class extends Migration
@@ -10,9 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('permissions', function (Blueprint $table) {
-            $table->renameColumn('permissions', 'permission');
-        });
+        $rootAdmins = User::all()->filter(fn ($user) => $user->isRootAdmin());
+        foreach ($rootAdmins as $rootAdmin) {
+            $rootAdmin->syncRoles(Role::getRootAdmin());
+        }
     }
 
     /**
@@ -20,6 +22,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('permissions', function (Blueprint $table) {});
+        // No going back
     }
 };

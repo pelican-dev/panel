@@ -16,6 +16,12 @@ return new class extends Migration
             DB::table('egg_variables')->where('id', $eggVariable->id)->update(['rules' => explode('|', $eggVariable->rules)]);
         });
 
+        if (Schema::getConnection()->getDriverName() === 'pgsql') {
+            DB::statement('ALTER TABLE egg_variables ALTER COLUMN rules TYPE JSON USING rules::json');
+
+            return;
+        }
+
         Schema::table('egg_variables', function (Blueprint $table) {
             $table->json('rules')->change();
         });

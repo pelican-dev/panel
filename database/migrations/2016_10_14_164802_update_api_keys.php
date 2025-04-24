@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('api_keys', function (Blueprint $table) {
-            $table->unsignedInteger('user')->after('id');
+            $table->unsignedInteger('user')->nullable()->after('id');
             $table->text('memo')->after('allowed_ips')->nullable();
             $table->timestamp('expires_at')->after('memo')->nullable();
         });

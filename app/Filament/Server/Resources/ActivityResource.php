@@ -30,8 +30,7 @@ class ActivityResource extends Resource
         /** @var Server $server */
         $server = Filament::getTenant();
 
-        return $server->activity()
-            ->getQuery()
+        return ActivityLog::whereHas('subjects', fn (Builder $query) => $query->where('subject_id', $server->id))
             ->whereNotIn('activity_logs.event', ActivityLog::DISABLED_EVENTS)
             ->when(config('activity.hide_admin_activity'), function (Builder $builder) use ($server) {
                 // We could do this with a query and a lot of joins, but that gets pretty

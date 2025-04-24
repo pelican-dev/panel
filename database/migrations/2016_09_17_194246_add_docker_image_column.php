@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('servers', function (Blueprint $table) {
-            $table->string('image')->after('daemonSecret');
+            $table->string('image')->nullable()->after('daemonSecret');
         });
 
         // Populate the column

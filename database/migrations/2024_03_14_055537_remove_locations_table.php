@@ -10,7 +10,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('nodes', function (Blueprint $table) {
-            $table->text('tags');
+            $table->text('tags')->nullable();
         });
 
         DB::table('nodes')->update(['tags' => '[]']);
