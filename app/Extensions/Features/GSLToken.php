@@ -42,8 +42,8 @@ class GSLToken extends FeatureProvider
         /** @var Server $server */
         $server = Filament::getTenant();
 
-        /** @var ServerVariable */
-        $serverVariable = $server->serverVariables()->where('env_variable', 'STEAM_ACC');
+        /** @var ServerVariable $serverVariable */
+        $serverVariable = $server->serverVariables()->where('env_variable', 'STEAM_ACC')->first();
 
         return Action::make($this->getId())
             ->requiresConfirmation()
