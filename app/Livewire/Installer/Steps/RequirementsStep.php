@@ -3,7 +3,6 @@
 namespace App\Livewire\Installer\Steps;
 
 use Filament\Forms\Components\Placeholder;
-use Filament\Forms\Components\Wizard\Step;
 use Filament\Notifications\Notification;
 use Filament\Support\Exceptions\Halt;
 

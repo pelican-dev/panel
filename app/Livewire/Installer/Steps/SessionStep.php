@@ -4,7 +4,6 @@ namespace App\Livewire\Installer\Steps;
 
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\ToggleButtons;
-use Filament\Forms\Components\Wizard\Step;
 use Filament\Schemas\Components\Utilities\Get;
 
 class SessionStep

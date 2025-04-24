@@ -23,7 +23,7 @@ class MountResource extends Resource
 {
     protected static ?string $model = Mount::class;
 
-    protected static string | \BackedEnum | null $navigationIcon = 'tabler-layers-linked';
+    protected static string|\BackedEnum|null $navigationIcon = 'tabler-layers-linked';
 
     protected static ?string $recordTitleAttribute = 'name';
 

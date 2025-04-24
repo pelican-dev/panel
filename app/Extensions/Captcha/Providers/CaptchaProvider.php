@@ -2,7 +2,6 @@
 
 namespace App\Extensions\Captcha\Providers;
 
-use Filament\Forms\Components\Component;
 use Filament\Forms\Components\TextInput;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Str;

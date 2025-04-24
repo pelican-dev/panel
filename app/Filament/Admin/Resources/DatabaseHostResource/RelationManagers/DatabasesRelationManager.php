@@ -8,8 +8,6 @@ use App\Models\Database;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Components\Form;
 use Filament\Resources\RelationManagers\RelationManager;
-use Filament\Tables\Actions\DeleteAction;
-use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 

@@ -4,7 +4,6 @@ namespace App\Extensions\Captcha\Providers;
 
 use App\Filament\Components\Forms\Fields\TurnstileCaptcha;
 use Exception;
-use Filament\Forms\Components\Component;
 use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\Toggle;
 use Illuminate\Foundation\Application;
