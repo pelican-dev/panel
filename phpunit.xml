@@ -25,7 +25,6 @@
         <env name="QUEUE_CONNECTION" value="sync"/>
         <env name="SESSION_DRIVER" value="array"/>
         <env name="TELESCOPE_ENABLED" value="false"/>
-        <env name="XDEBUG_MODE" value="coverage"/>
     </php>
     <source>
         <include>
