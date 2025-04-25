@@ -6,11 +6,11 @@ use App\Filament\Pages\Auth\Login;
 use App\Filament\Pages\Auth\EditProfile;
 use App\Http\Middleware\LanguageMiddleware;
 use App\Http\Middleware\RequireTwoFactorAuthentication;
+use Filament\Actions\Action;
 use Filament\Facades\Filament;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
-use Filament\Navigation\MenuItem;
 use Filament\Panel;
 use Filament\PanelProvider;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
@@ -41,7 +41,7 @@ class AppPanelProvider extends PanelProvider
             //->login(Login::class)
             ->passwordReset()
             ->userMenuItems([
-                MenuItem::make()
+                Action::make('toAdmin')
                     ->label('Admin')
                     ->url('/admin')
                     ->icon('tabler-arrow-forward')

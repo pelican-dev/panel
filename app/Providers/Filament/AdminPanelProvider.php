@@ -9,7 +9,6 @@ use App\Http\Middleware\RequireTwoFactorAuthentication;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
-use Filament\Navigation\MenuItem;
 use Filament\Navigation\NavigationGroup;
 use Filament\Panel;
 use Filament\PanelProvider;
@@ -42,10 +41,10 @@ class AdminPanelProvider extends PanelProvider
             //->login(Login::class)
             ->passwordReset()
             ->userMenuItems([
-                'profile' => MenuItem::make()
+                'profile' => Action::make('toProfile')
                     ->label(fn () => trans('filament-panels::pages/auth/edit-profile.label'))
                     ->url(fn () => EditProfile::getUrl(panel: 'app')),
-                MenuItem::make()
+                Action::make('exitAdmin')
                     ->label(fn () => trans('profile.exit_admin'))
                     ->url('/')
                     ->icon('tabler-arrow-back')

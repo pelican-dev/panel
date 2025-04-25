@@ -10,11 +10,11 @@ use App\Http\Middleware\Activity\ServerSubject;
 use App\Http\Middleware\LanguageMiddleware;
 use App\Http\Middleware\RequireTwoFactorAuthentication;
 use App\Models\Server;
+use Filament\Actions\Action;
 use Filament\Facades\Filament;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
-use Filament\Navigation\MenuItem;
 use Filament\Navigation\NavigationItem;
 use Filament\Panel;
 use Filament\PanelProvider;
@@ -46,15 +46,15 @@ class ServerPanelProvider extends PanelProvider
             //->login(Login::class)
             ->passwordReset()
             ->userMenuItems([
-                'profile' => MenuItem::make()
+                'profile' => Action::make('toProfile')
                     ->label(fn () => trans('filament-panels::pages/auth/edit-profile.label'))
                     ->url(fn () => EditProfile::getUrl(panel: 'app')),
-                MenuItem::make()
+                Action::make('toServerList')
                     ->label('Server List')
                     ->icon('tabler-brand-docker')
                     ->url(fn () => ListServers::getUrl(panel: 'app'))
                     ->sort(6),
-                MenuItem::make()
+                Action::make('toAdmin')
                     ->label('Admin')
                     ->icon('tabler-arrow-forward')
                     ->url(fn () => Filament::getPanel('admin')->getUrl())
