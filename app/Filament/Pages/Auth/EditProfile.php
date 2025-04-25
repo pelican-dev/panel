@@ -17,6 +17,7 @@ use chillerlan\QRCode\Common\Version;
 use chillerlan\QRCode\QRCode;
 use chillerlan\QRCode\QROptions;
 use DateTimeZone;
+use Exception;
 use Filament\Actions;
 use Filament\Actions\Action;
 use Filament\Forms\Components\FileUpload;
@@ -60,6 +61,9 @@ class EditProfile extends \Filament\Auth\Pages\EditProfile
         return config('panel.filament.display-width', 'screen-2xl');
     }
 
+    /**
+     * @throws Exception
+     */
     protected function getForms(): array
     {
         $oauthProviders = collect(OAuthProvider::get())->filter(fn (OAuthProvider $provider) => $provider->isEnabled())->all();
@@ -243,7 +247,7 @@ class EditProfile extends \Filament\Auth\Pages\EditProfile
                                         return [
                                             TextEntry::make('qr')
                                                 ->label(trans('profile.scan_qr'))
-                                                ->state(fn () => new HtmlString("
+                                                ->content(fn () => new HtmlString("
                                                 <div style='width: 300px; background-color: rgb(24, 24, 27);'>$image</div>
                                             "))
                                                 ->helperText(trans('profile.setup_key') .': '. $secret),
@@ -341,7 +345,7 @@ class EditProfile extends \Filament\Auth\Pages\EditProfile
                                                 $query->orderBy('timestamp', 'desc');
                                             })
                                             ->schema([
-                                                TextEntry::make('activity!')->label('')->state(fn (ActivityLog $log) => new HtmlString($log->htmlable())),
+                                                TextEntry::make('activity!')->label('')->content(fn (ActivityLog $log) => new HtmlString($log->htmlable())),
                                             ]),
                                     ]),
 

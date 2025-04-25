@@ -3,6 +3,8 @@
 namespace App\Extensions\OAuth\Providers;
 
 use Filament\Forms\Components\TextInput;
+use Filament\Schemas\Components\Component;
+use Filament\Schemas\Components\Wizard\Step;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Str;
@@ -65,7 +67,7 @@ abstract class OAuthProvider
     }
 
     /**
-     * @return \Filament\Schemas\Components\Component[]
+     * @return Component[]
      */
     public function getSettingsForm(): array
     {
@@ -94,12 +96,12 @@ abstract class OAuthProvider
     }
 
     /**
-     * @return \Filament\Schemas\Components\Wizard\Step[]
+     * @return Step[]
      */
     public function getSetupSteps(): array
     {
         return [
-            \Filament\Schemas\Components\Wizard\Step::make('OAuth Config')
+            Step::make('OAuth Config')
                 ->columns(4)
                 ->schema($this->getSettingsForm()),
         ];
