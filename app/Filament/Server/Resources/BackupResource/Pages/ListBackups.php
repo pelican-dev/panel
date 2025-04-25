@@ -18,7 +18,7 @@ use App\Filament\Components\Tables\Columns\DateTimeColumn;
 use Filament\Actions;
 use Filament\Facades\Filament;
 use Filament\Forms\Components\Checkbox;
-use Filament\Forms\Components\Placeholder;
+use Filament\Infolists\Components\TextEntry;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
@@ -100,7 +100,7 @@ class ListBackups extends ListRecords
                         ->icon('tabler-folder-up')
                         ->authorize(fn () => auth()->user()->can(Permission::ACTION_BACKUP_RESTORE, $server))
                         ->schema([
-                            Placeholder::make('INeedAName')
+                            TextEntry::make('INeedAName')
                                 ->helperText('Your server will be stopped. You will not be able to control the power state, access the file manager, or create additional backups until this process is completed.'),
                             Checkbox::make('truncate')
                                 ->label('Delete all files before restoring backup?'),

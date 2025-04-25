@@ -12,7 +12,7 @@ use Filament\Facades\Filament;
 use Filament\Actions\Action;
 use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\KeyValue;
-use Filament\Forms\Components\Placeholder;
+use Filament\Infolists\Components\TextEntry;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\Pages\ListRecords;
 use Filament\Actions\ViewAction;
@@ -68,8 +68,8 @@ class ListActivities extends ListRecords
                 ViewAction::make()
                     //->visible(fn (ActivityLog $activityLog) => $activityLog->hasAdditionalMetadata())
                     ->schema([
-                        Placeholder::make('event')
-                            ->content(fn (ActivityLog $activityLog) => new HtmlString($activityLog->getLabel())),
+                        TextEntry::make('event')
+                            ->state(fn (ActivityLog $activityLog) => new HtmlString($activityLog->getLabel())),
                         TextInput::make('user')
                             ->formatStateUsing(function (ActivityLog $activityLog) use ($server) {
                                 if (!$activityLog->actor instanceof User) {

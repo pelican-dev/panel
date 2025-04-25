@@ -19,7 +19,7 @@ use Filament\Schemas\Components\Component;
 use Filament\Schemas\Components\Fieldset;
 use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\KeyValue;
-use Filament\Forms\Components\Placeholder;
+use Filament\Infolists\Components\TextEntry;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TagsInput;
@@ -416,10 +416,10 @@ class CreateServer extends CreateRecord
                                 ->collapsible()
                                 ->columnSpanFull()
                                 ->schema([
-                                    Placeholder::make(trans('admin/server.select_egg'))
+                                    TextEntry::make(trans('admin/server.select_egg'))
                                         ->hidden(fn (Get $get) => $get('egg_id')),
 
-                                    Placeholder::make(trans('admin/server.no_variables'))
+                                    TextEntry::make(trans('admin/server.no_variables'))
                                         ->hidden(fn (Get $get) => !$get('egg_id') ||
                                             Egg::query()->find($get('egg_id'))?->variables()?->count()
                                         ),

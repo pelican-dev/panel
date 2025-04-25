@@ -16,7 +16,7 @@ use Filament\Actions\Action as HeaderAction;
 use Filament\Facades\Filament;
 use Filament\Forms\Components\CheckboxList;
 use Filament\Forms\Components\FileUpload;
-use Filament\Forms\Components\Placeholder;
+use Filament\Infolists\Components\TextEntry;
 use Filament\Forms\Components\Select;
 use Filament\Schemas\Components\Tabs;
 use Filament\Schemas\Components\Tabs\Tab;
@@ -209,8 +209,8 @@ class ListFiles extends ListRecords
                                 ->hint('Enter the location of this file or folder, relative to the current directory.')
                                 ->required()
                                 ->live(),
-                            Placeholder::make('new_location')
-                                ->content(fn (Get $get, File $file) => resolve_path('./' . join_paths($this->path, $get('location') ?? '/', $file->name))),
+                            TextEntry::make('new_location')
+                                ->state(fn (Get $get, File $file) => resolve_path('./' . join_paths($this->path, $get('location') ?? '/', $file->name))),
                         ])
                         ->action(function ($data, File $file) {
                             $location = rtrim($data['location'], '/');
@@ -369,8 +369,8 @@ class ListFiles extends ListRecords
                                 ->hint('Enter the new directory, relative to the current directory.')
                                 ->required()
                                 ->live(),
-                            Placeholder::make('new_location')
-                                ->content(fn (Get $get) => resolve_path('./' . join_paths($this->path, $get('location') ?? ''))),
+                            TextEntry::make('new_location')
+                                ->state(fn (Get $get) => resolve_path('./' . join_paths($this->path, $get('location') ?? ''))),
                         ])
                         ->action(function (Collection $files, $data) {
                             $location = rtrim($data['location'], '/');

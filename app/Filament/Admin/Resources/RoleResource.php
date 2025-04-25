@@ -4,13 +4,16 @@ namespace App\Filament\Admin\Resources;
 
 use App\Filament\Admin\Resources\RoleResource\Pages;
 use App\Models\Role;
+use Exception;
+use Filament\Actions\Action;
 use Filament\Actions\CreateAction;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
 use Filament\Forms\Components\CheckboxList;
-use Filament\Forms\Components\Placeholder;
+use Filament\Schemas\Schema;
 use Filament\Forms\Components\TextInput;
+use Filament\Infolists\Components\TextEntry;
 use Filament\Resources\Resource;
 use Filament\Schemas\Components\Component;
 use Filament\Schemas\Components\Fieldset;
@@ -90,7 +93,10 @@ class RoleResource extends Resource
             ]);
     }
 
-    public static function form(Form|\Filament\Schemas\Schema $schema): \Filament\Schemas\Schema
+    /**
+     * @throws Exception
+     */
+    public static function form(Form|Schema $schema): Schema
     {
         $permissionSections = [];
 
@@ -120,15 +126,16 @@ class RoleResource extends Resource
                     ->columns(3)
                     ->schema($permissionSections)
                     ->hidden(fn (Get $get) => $get('name') === Role::ROOT_ADMIN),
-                Placeholder::make('permissions')
+                TextEntry::make('permissions')
                     ->label(trans('admin/role.permissions'))
-                    ->content(trans('admin/role.root_admin', ['role' => Role::ROOT_ADMIN]))
+                    ->state(trans('admin/role.root_admin', ['role' => Role::ROOT_ADMIN]))
                     ->visible(fn (Get $get) => $get('name') === Role::ROOT_ADMIN),
             ]);
     }
 
     /**
-     * @param  string[]|int[]|Permission[]|\BackedEnum[]  $options
+     * @param string[]|int[]|Permission[]|\BackedEnum[] $options
+     * @throws Exception
      */
     private static function makeSection(string $model, array $options): Section
     {

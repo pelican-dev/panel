@@ -2,7 +2,7 @@
 
 namespace App\Extensions\OAuth\Providers;
 
-use Filament\Forms\Components\Placeholder;
+use Filament\Infolists\Components\TextEntry;
 use Filament\Forms\Components\TextInput;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Blade;
@@ -32,10 +32,10 @@ final class DiscordProvider extends OAuthProvider
         return array_merge([
             \Filament\Schemas\Components\Wizard\Step::make('Register new Discord OAuth App')
                 ->schema([
-                    Placeholder::make('INeedAName')
-                        ->content(new HtmlString(Blade::render('<p>Visit the <x-filament::link href="https://discord.com/developers/applications" target="_blank">Discord Developer Portal</x-filament::link> and click on <b>New Application</b>. Enter a <b>Name</b> (e.g. your panel name) and click on <b>Create</b>.</p><p>Copy the <b>Client ID</b> and the <b>Client Secret</b> from the OAuth2 tab, you will need them in the final step.</p>'))),
-                    Placeholder::make('INeedAName2')
-                        ->content(new HtmlString('<p>Under <b>Redirects</b> add the below URL.</p>')),
+                    TextEntry::make('INeedAName')
+                        ->state(new HtmlString(Blade::render('<p>Visit the <x-filament::link href="https://discord.com/developers/applications" target="_blank">Discord Developer Portal</x-filament::link> and click on <b>New Application</b>. Enter a <b>Name</b> (e.g. your panel name) and click on <b>Create</b>.</p><p>Copy the <b>Client ID</b> and the <b>Client Secret</b> from the OAuth2 tab, you will need them in the final step.</p>'))),
+                    TextEntry::make('INeedAName2')
+                        ->state(new HtmlString('<p>Under <b>Redirects</b> add the below URL.</p>')),
                     TextInput::make('_noenv_callback')
                         ->label('Redirect URL')
                         ->dehydrated()

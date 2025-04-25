@@ -2,7 +2,7 @@
 
 namespace App\Livewire\Installer\Steps;
 
-use Filament\Forms\Components\Placeholder;
+use Filament\Infolists\Components\TextEntry;
 use Filament\Notifications\Notification;
 use Filament\Schemas\Components\Section;
 use Filament\Support\Exceptions\Halt;
@@ -22,8 +22,8 @@ class RequirementsStep
                 ->icon($correctPhpVersion ? 'tabler-check' : 'tabler-x')
                 ->iconColor($correctPhpVersion ? 'success' : 'danger')
                 ->schema([
-                    Placeholder::make('INeedAName')
-                        ->content('Your PHP Version is ' . PHP_VERSION . '.'),
+                    TextEntry::make('INeedAName')
+                        ->state('Your PHP Version is ' . PHP_VERSION . '.'),
                 ]),
         ];
 
@@ -45,11 +45,11 @@ class RequirementsStep
             ->icon($allExtensionsInstalled ? 'tabler-check' : 'tabler-x')
             ->iconColor($allExtensionsInstalled ? 'success' : 'danger')
             ->schema([
-                Placeholder::make('INeedAName')
-                    ->content('All needed PHP Extensions are installed.')
+                TextEntry::make('INeedAName')
+                    ->state('All needed PHP Extensions are installed.')
                     ->visible($allExtensionsInstalled),
-                Placeholder::make('INeedAName')
-                    ->content('The following PHP Extensions are missing: ' . implode(', ', array_keys($phpExtensions, false)))
+                TextEntry::make('INeedAName')
+                    ->state('The following PHP Extensions are missing: ' . implode(', ', array_keys($phpExtensions, false)))
                     ->visible(!$allExtensionsInstalled),
             ]);
 
@@ -64,11 +64,11 @@ class RequirementsStep
             ->icon($correctFolderPermissions ? 'tabler-check' : 'tabler-x')
             ->iconColor($correctFolderPermissions ? 'success' : 'danger')
             ->schema([
-                Placeholder::make('INeedAName')
-                    ->content('All Folders have the correct permissions.')
+                TextEntry::make('INeedAName')
+                    ->state('All Folders have the correct permissions.')
                     ->visible($correctFolderPermissions),
-                Placeholder::make('INeedAName2')
-                    ->content('The following Folders have wrong permissions: ' . implode(', ', array_keys($folderPermissions, false)))
+                TextEntry::make('INeedAName2')
+                    ->state('The following Folders have wrong permissions: ' . implode(', ', array_keys($folderPermissions, false)))
                     ->visible(!$correctFolderPermissions),
             ]);
 

@@ -7,7 +7,7 @@ use App\Services\Databases\Hosts\HostCreationService;
 use Exception;
 use Filament\Schemas\Components\Fieldset;
 use Filament\Forms\Components\Hidden;
-use Filament\Forms\Components\Placeholder;
+use Filament\Infolists\Components\TextEntry;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
@@ -48,8 +48,8 @@ class CreateDatabaseHost extends CreateRecord
             Step::make(trans('admin/databasehost.setup.preparations'))
                 ->columns()
                 ->schema([
-                    Placeholder::make('INeedAName')
-                        ->content(trans('admin/databasehost.setup.note')),
+                    TextEntry::make('INeedAName')
+                        ->state(trans('admin/databasehost.setup.note')),
                     Toggle::make('different_server')
                         ->label(new HtmlString(trans('admin/databasehost.setup.different_server')))
                         ->dehydrated(false)
@@ -82,8 +82,8 @@ class CreateDatabaseHost extends CreateRecord
                 ->schema([
                     Fieldset::make(trans('admin/databasehost.setup.database_user'))
                         ->schema([
-                            Placeholder::make('INeedAName')
-                                ->content(new HtmlString(trans('admin/databasehost.setup.cli_login')))
+                            TextEntry::make('INeedAName')
+                                ->state(new HtmlString(trans('admin/databasehost.setup.cli_login')))
                                 ->columnSpanFull(),
                             TextInput::make('create_user')
                                 ->label(trans('admin/databasehost.setup.command_create_user'))
@@ -99,14 +99,14 @@ class CreateDatabaseHost extends CreateRecord
                                 ->dehydrated(false)
                                 // TODO ->suffixAction(fn (string $state) => request()->isSecure() ? CopyAction::make()->copyable($state) : null)
                                 ->columnSpanFull(),
-                            Placeholder::make('INeedAName')
-                                ->content(new HtmlString(trans('admin/databasehost.setup.cli_exit')))
+                            TextEntry::make('INeedAName')
+                                ->state(new HtmlString(trans('admin/databasehost.setup.cli_exit')))
                                 ->columnSpanFull(),
                         ]),
                     Fieldset::make(trans('admin/databasehost.setup.external_access'))
                         ->schema([
-                            Placeholder::make('INeedAName2')
-                                ->content(new HtmlString(trans('admin/databasehost.setup.allow_external_access')))
+                            TextEntry::make('INeedAName2')
+                                ->state(new HtmlString(trans('admin/databasehost.setup.allow_external_access')))
                                 ->columnSpanFull(),
                         ]),
                 ]),

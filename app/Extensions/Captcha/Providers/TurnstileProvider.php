@@ -4,7 +4,7 @@ namespace App\Extensions\Captcha\Providers;
 
 use App\Filament\Components\Forms\Fields\TurnstileCaptcha;
 use Exception;
-use Filament\Forms\Components\Placeholder;
+use Filament\Infolists\Components\TextEntry;
 use Filament\Forms\Components\Toggle;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Http;
@@ -47,10 +47,10 @@ class TurnstileProvider extends CaptchaProvider
                 ->onColor('success')
                 ->offColor('danger')
                 ->default(env('CAPTCHA_TURNSTILE_VERIFY_DOMAIN', true)),
-            Placeholder::make('info')
+            TextEntry::make('info')
                 ->label(trans('admin/setting.captcha.info_label'))
                 ->columnSpan(2)
-                ->content(new HtmlString(trans('admin/setting.captcha.info'))),
+                ->state(new HtmlString(trans('admin/setting.captcha.info'))),
 
         ]);
     }

@@ -10,7 +10,7 @@ use Exception;
 use Filament\Actions\Action;
 use Filament\Facades\Filament;
 use Filament\Schemas\Components\Fieldset;
-use Filament\Forms\Components\Placeholder;
+use Filament\Infolists\Components\TextEntry;
 use Filament\Schemas\Components\Section;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
@@ -185,9 +185,9 @@ class Settings extends ServerFormPage
                                     //TODO ->suffixAction(fn () => request()->isSecure() ? CopyAction::make() : null)
                                     ->disabled()
                                     ->formatStateUsing(fn (Server $server) => auth()->user()->username . '.' . $server->uuid_short),
-                                Placeholder::make('password')
+                                TextEntry::make('password')
                                     ->columnSpan(1)
-                                    ->content('Your SFTP password is the same as the password you use to access this panel.'),
+                                    ->state('Your SFTP password is the same as the password you use to access this panel.'),
                             ]),
                     ]),
                 Section::make('Reinstall Server')
@@ -232,9 +232,9 @@ class Settings extends ServerFormPage
                     ])
                     ->footerActionsAlignment(Alignment::Right)
                     ->schema([
-                        Placeholder::make('INeedAName1')
+                        TextEntry::make('INeedAName1')
                             ->label('Reinstalling your server will stop it, and then re-run the installation script that initially set it up.'),
-                        Placeholder::make('INeedAName')
+                        TextEntry::make('INeedAName')
                             ->label('Some files may be deleted or modified during this process, please back up your data before continuing.'),
                     ]),
             ]);

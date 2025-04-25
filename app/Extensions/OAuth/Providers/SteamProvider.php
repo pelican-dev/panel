@@ -2,7 +2,7 @@
 
 namespace App\Extensions\OAuth\Providers;
 
-use Filament\Forms\Components\Placeholder;
+use Filament\Infolists\Components\TextEntry;
 use Filament\Forms\Components\TextInput;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Blade;
@@ -57,8 +57,8 @@ final class SteamProvider extends OAuthProvider
         return array_merge([
             \Filament\Schemas\Components\Wizard\Step::make('Create API Key')
                 ->schema([
-                    Placeholder::make('INeedAName')
-                        ->content(new HtmlString(Blade::render('Visit <x-filament::link href="https://steamcommunity.com/dev/apikey" target="_blank">https://steamcommunity.com/dev/apikey</x-filament::link> to generate an API key.'))),
+                    TextEntry::make('INeedAName')
+                        ->state(new HtmlString(Blade::render('Visit <x-filament::link href="https://steamcommunity.com/dev/apikey" target="_blank">https://steamcommunity.com/dev/apikey</x-filament::link> to generate an API key.'))),
                 ]),
         ], parent::getSetupSteps());
     }

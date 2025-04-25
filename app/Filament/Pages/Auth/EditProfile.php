@@ -21,7 +21,7 @@ use Filament\Actions;
 use Filament\Actions\Action;
 use Filament\Forms\Components\FileUpload;
 use Filament\Schemas\Components\Grid;
-use Filament\Forms\Components\Placeholder;
+use Filament\Infolists\Components\TextEntry;
 use Filament\Forms\Components\Repeater;
 use Filament\Schemas\Components\Section;
 use Filament\Forms\Components\Select;
@@ -187,7 +187,7 @@ class EditProfile extends \Filament\Auth\Pages\EditProfile
                                     ->schema(function (TwoFactorSetupService $setupService) {
                                         if ($this->getUser()->use_totp) {
                                             return [
-                                                Placeholder::make('2fa-already-enabled')
+                                                TextEntry::make('2fa-already-enabled')
                                                     ->label(trans('profile.2fa_enabled')),
                                                 Textarea::make('backup-tokens')
                                                     ->hidden(fn () => !cache()->get("users.{$this->getUser()->id}.2fa.tokens"))
@@ -241,9 +241,9 @@ class EditProfile extends \Filament\Auth\Pages\EditProfile
                                         $image = (new QRCode($options))->render($url);
 
                                         return [
-                                            Placeholder::make('qr')
+                                            TextEntry::make('qr')
                                                 ->label(trans('profile.scan_qr'))
-                                                ->content(fn () => new HtmlString("
+                                                ->state(fn () => new HtmlString("
                                                 <div style='width: 300px; background-color: rgb(24, 24, 27);'>$image</div>
                                             "))
                                                 ->helperText(trans('profile.setup_key') .': '. $secret),
@@ -320,7 +320,7 @@ class EditProfile extends \Filament\Auth\Pages\EditProfile
                                                         });
                                                     })
                                                     ->schema(fn () => [
-                                                        Placeholder::make('adf')->label(fn (ApiKey $key) => $key->memo),
+                                                        TextEntry::make('adf')->label(fn (ApiKey $key) => $key->memo),
                                                     ]),
                                             ]),
                                         ]),
@@ -341,7 +341,7 @@ class EditProfile extends \Filament\Auth\Pages\EditProfile
                                                 $query->orderBy('timestamp', 'desc');
                                             })
                                             ->schema([
-                                                Placeholder::make('activity!')->label('')->content(fn (ActivityLog $log) => new HtmlString($log->htmlable())),
+                                                TextEntry::make('activity!')->label('')->state(fn (ActivityLog $log) => new HtmlString($log->htmlable())),
                                             ]),
                                     ]),
 

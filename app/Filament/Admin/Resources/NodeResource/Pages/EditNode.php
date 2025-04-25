@@ -13,7 +13,7 @@ use Filament\Actions\Action;
 use Filament\Actions\DeleteAction;
 use Filament\Schemas\Components\Actions;
 use Filament\Schemas\Components\Fieldset;
-use Filament\Forms\Components\Placeholder;
+use Filament\Infolists\Components\TextEntry;
 use Filament\Forms\Components\TagsInput;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
@@ -73,18 +73,18 @@ class EditNode extends EditRecord
                                 ->label(trans('admin/node.node_info'))
                                 ->columns(4)
                                 ->schema([
-                                    Placeholder::make('INeedAName')
+                                    TextEntry::make('INeedAName')
                                         ->label(trans('admin/node.wings_version'))
-                                        ->content(fn (Node $node, SoftwareVersionService $versionService) => ($node->systemInformation()['version'] ?? trans('admin/node.unknown')) . ' (' . trans('admin/node.latest') . ': ' . $versionService->latestWingsVersion() . ')'),
-                                    Placeholder::make('INeedAName2')
+                                        ->state(fn (Node $node, SoftwareVersionService $versionService) => ($node->systemInformation()['version'] ?? trans('admin/node.unknown')) . ' (' . trans('admin/node.latest') . ': ' . $versionService->latestWingsVersion() . ')'),
+                                    TextEntry::make('INeedAName2')
                                         ->label(trans('admin/node.cpu_threads'))
-                                        ->content(fn (Node $node) => $node->systemInformation()['cpu_count'] ?? 0),
-                                    Placeholder::make('INeedAName3')
+                                        ->state(fn (Node $node) => $node->systemInformation()['cpu_count'] ?? 0),
+                                    TextEntry::make('INeedAName3')
                                         ->label(trans('admin/node.architecture'))
-                                        ->content(fn (Node $node) => $node->systemInformation()['architecture'] ?? trans('admin/node.unknown')),
-                                    Placeholder::make('INeedAName4')
+                                        ->state(fn (Node $node) => $node->systemInformation()['architecture'] ?? trans('admin/node.unknown')),
+                                    TextEntry::make('INeedAName4')
                                         ->label(trans('admin/node.kernel'))
-                                        ->content(fn (Node $node) => $node->systemInformation()['kernel_version'] ?? trans('admin/node.unknown')),
+                                        ->state(fn (Node $node) => $node->systemInformation()['kernel_version'] ?? trans('admin/node.unknown')),
                                 ]),
                             View::make('filament.components.node-cpu-chart')
                                 ->columnSpan([
@@ -501,10 +501,10 @@ class EditNode extends EditRecord
                         ->label(trans('admin/node.tabs.config_file'))
                         ->icon('tabler-code')
                         ->schema([
-                            Placeholder::make('instructions')
+                            TextEntry::make('instructions')
                                 ->label(trans('admin/node.instructions'))
                                 ->columnSpanFull()
-                                ->content(new HtmlString(trans('admin/node.instructions_help'))),
+                                ->state(new HtmlString(trans('admin/node.instructions_help'))),
                             Textarea::make('config')
                                 ->label('/etc/pelican/config.yml')
                                 ->disabled()

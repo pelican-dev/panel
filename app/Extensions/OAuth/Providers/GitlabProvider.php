@@ -2,7 +2,7 @@
 
 namespace App\Extensions\OAuth\Providers;
 
-use Filament\Forms\Components\Placeholder;
+use Filament\Infolists\Components\TextEntry;
 use Filament\Forms\Components\TextInput;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Blade;
@@ -46,8 +46,8 @@ final class GitlabProvider extends OAuthProvider
         return array_merge([
             \Filament\Schemas\Components\Wizard\Step::make('Register new Gitlab OAuth App')
                 ->schema([
-                    Placeholder::make('INeedAName')
-                        ->content(new HtmlString(Blade::render('Check out the <x-filament::link href="https://docs.gitlab.com/integration/oauth_provider/" target="_blank">Gitlab docs</x-filament::link> on how to create the oauth app.'))),
+                    TextEntry::make('INeedAName')
+                        ->state(new HtmlString(Blade::render('Check out the <x-filament::link href="https://docs.gitlab.com/integration/oauth_provider/" target="_blank">Gitlab docs</x-filament::link> on how to create the oauth app.'))),
                     TextInput::make('_noenv_callback')
                         ->label('Redirect URI')
                         ->dehydrated()
