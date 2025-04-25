@@ -94,6 +94,7 @@ class AppServiceProvider extends ServiceProvider
                 ->timeout(config('panel.guzzle.timeout'))
                 ->connectTimeout(config('panel.guzzle.connect_timeout'))
                 ->baseUrl($node->getConnectionAddress())
+
         );
 
         Sanctum::usePersonalAccessTokenModel(Models\ApiKey::class);

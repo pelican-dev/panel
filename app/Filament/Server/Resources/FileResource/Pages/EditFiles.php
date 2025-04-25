@@ -26,6 +26,7 @@ use Filament\Resources\Pages\Page;
 use Filament\Resources\Pages\PageRegistration;
 use Filament\Support\Enums\Alignment;
 use Illuminate\Contracts\Filesystem\FileNotFoundException;
+use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Routing\Route;
 use Illuminate\Support\Facades\Route as RouteFacade;
 use Livewire\Attributes\Locked;
@@ -176,6 +177,15 @@ class EditFiles extends Page
                 ->info()
                 ->closable()
                 ->send();
+
+            try {
+                $this->getDaemonFileRepository()->getDirectory('/');
+            } catch (ConnectionException) {
+                AlertBanner::make('node_connection_error')
+                    ->title('Could not connect to the node!')
+                    ->danger()
+                    ->send();
+            }
         }
     }
 
