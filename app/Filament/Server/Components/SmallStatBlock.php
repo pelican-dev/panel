@@ -2,48 +2,60 @@
 
 namespace App\Filament\Server\Components;
 
+use BackedEnum;
 use Closure;
-use Filament\Widgets\StatsOverviewWidget\Stat;
+use Filament\Schemas\Components\Component;
+use Filament\Schemas\Components\Concerns\CanOpenUrl;
+use Filament\Schemas\Components\Concerns\HasDescription;
 use Illuminate\Contracts\Support\Htmlable;
-use Illuminate\Contracts\View\View;
 
-class SmallStatBlock extends Stat
+class SmallStatBlock extends Component
 {
-    protected string|\Closure|Htmlable|null $label;
+    use CanOpenUrl;
+    use HasDescription;
 
-    protected $value;
+    protected string $view = 'filament.components.server-small-data-block';
 
-    public function label(string|Htmlable|Closure|null $label): static
+    protected string|BackedEnum|null $icon = null;
+
+    protected string $value;
+
+    final public function __construct(string $label, string $value)
     {
-        $this->label = $label;
+        $this->label($label);
+        $this->value($value);
+    }
+
+    /**
+     * @return SmallStatBlock
+     */
+    public static function make(string $label, string $value): static
+    {
+        return app(static::class, ['label' => $label, 'value' => $value]);
+    }
+
+    public function icon(string|BackedEnum|null $icon): static
+    {
+        $this->icon = $icon;
 
         return $this;
     }
 
-    public function value($value): static
+    /**
+     * @return SmallStatBlock
+     */
+    private function value(string $value): static
     {
         $this->value = $value;
 
         return $this;
     }
 
-    public function getLabel(): string|Htmlable
-    {
-        return $this->label;
-    }
-
+    /**
+     * @return scalar | Htmlable | Closure
+     */
     public function getValue(): mixed
     {
         return value($this->value);
-    }
-
-    public function toHtml(): string
-    {
-        return $this->render()->render();
-    }
-
-    public function render(): View
-    {
-        return view('filament.components.server-small-data-block');
     }
 }

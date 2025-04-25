@@ -4,15 +4,16 @@ namespace App\Filament\Server\Components;
 
 use Filament\Widgets\StatsOverviewWidget\Stat;
 use Illuminate\Contracts\Support\Htmlable;
-use Illuminate\Contracts\View\View;
 
 class StatBlock extends Stat
 {
     protected string|\Closure|Htmlable|null $label;
 
+    protected string $view = 'filament.components.server-data-block';
+
     protected $value;
 
-    public function label(string|Htmlable $label): static
+    public function label(string $label): static
     {
         $this->label = $label;
 
@@ -26,7 +27,7 @@ class StatBlock extends Stat
         return $this;
     }
 
-    public function getLabel(): string|Htmlable
+    public function getLabel(): string
     {
         return $this->label;
     }
@@ -39,10 +40,5 @@ class StatBlock extends Stat
     public function toHtml(): string
     {
         return $this->render()->render();
-    }
-
-    public function render(): View
-    {
-        return view('filament.components.server-data-block', $this->data());
     }
 }
