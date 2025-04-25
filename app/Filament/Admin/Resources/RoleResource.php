@@ -134,7 +134,8 @@ class RoleResource extends Resource
     }
 
     /**
-     * @param string[]|int[]|Permission[]|\BackedEnum[] $options
+     * @param  string[]|int[]|Permission[]|\BackedEnum[]  $options
+     *
      * @throws Exception
      */
     private static function makeSection(string $model, array $options): Section

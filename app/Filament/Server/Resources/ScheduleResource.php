@@ -89,21 +89,21 @@ class ScheduleResource extends Resource
                     ->placeholder('A human readable identifier for this schedule.')
                     ->autocomplete(false)
                     ->required(),
-// TODO conditional ->hiddenOn, ->visibleOn appear broken?
-//                ToggleButtons::make('Status')
-//                    ->hiddenOn(Operation::Create)
-//                    ->formatStateUsing(fn (Schedule $schedule) => !$schedule->is_active ? 'inactive' : ($schedule->is_processing ? 'processing' : 'active'))
-//                    ->options(fn (Schedule $schedule) => !$schedule->is_active ? ['inactive' => 'Inactive'] : ($schedule->is_processing ? ['processing' => 'Processing'] : ['active' => 'Active']))
-//                    ->colors([
-//                        'inactive' => 'danger',
-//                        'processing' => 'warning',
-//                        'active' => 'success',
-//                    ])
-//                    ->columnSpan([
-//                        'default' => 4,
-//                        'md' => 1,
-//                        'lg' => 1,
-//                    ]),
+                // TODO conditional ->hiddenOn, ->visibleOn appear broken?
+                //                ToggleButtons::make('Status')
+                //                    ->hiddenOn(Operation::Create)
+                //                    ->formatStateUsing(fn (Schedule $schedule) => !$schedule->is_active ? 'inactive' : ($schedule->is_processing ? 'processing' : 'active'))
+                //                    ->options(fn (Schedule $schedule) => !$schedule->is_active ? ['inactive' => 'Inactive'] : ($schedule->is_processing ? ['processing' => 'Processing'] : ['active' => 'Active']))
+                //                    ->colors([
+                //                        'inactive' => 'danger',
+                //                        'processing' => 'warning',
+                //                        'active' => 'success',
+                //                    ])
+                //                    ->columnSpan([
+                //                        'default' => 4,
+                //                        'md' => 1,
+                //                        'lg' => 1,
+                //                    ]),
                 Toggle::make('only_when_online')
                     ->label('Only when Server is Online?')
                     ->hintIconTooltip('Only execute this schedule when the server is in a running state.')
