@@ -12,6 +12,7 @@ use Filament\Forms\Components\TextInput;
 use Filament\Notifications\Notification;
 use Filament\Schemas\Components\Actions;
 use Filament\Schemas\Components\Component;
+use Filament\Schemas\Schema;
 use Filament\Support\Colors\Color;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Sleep;
@@ -80,9 +81,9 @@ class Login extends \Filament\Auth\Pages\Login
         return parent::authenticate();
     }
 
-    protected function getForms(): array
+    public function form(Schema $schema): Schema
     {
-        $schema = [
+        $components = [
             $this->getLoginFormComponent(),
             $this->getPasswordFormComponent(),
             $this->getRememberFormComponent(),
@@ -91,16 +92,11 @@ class Login extends \Filament\Auth\Pages\Login
         ];
 
         if ($captchaProvider = $this->getCaptchaComponent()) {
-            $schema = array_merge($schema, [$captchaProvider]);
+            $components = array_merge($components, [$captchaProvider]);
         }
 
-        return [
-            'form' => $this->form(
-                $this->makeForm()
-                    ->schema($schema)
-                    ->statePath('data'),
-            ),
-        ];
+        return $schema
+            ->components($components);
     }
 
     private function getTwoFactorAuthenticationComponent(): Component
@@ -164,10 +160,10 @@ class Login extends \Filament\Auth\Pages\Login
 
     protected function getCredentialsFromFormData(array $data): array
     {
-        $loginType = filter_var($data['email'], FILTER_VALIDATE_EMAIL) ? 'email' : 'username';
+        $loginType = filter_var($data['login'], FILTER_VALIDATE_EMAIL) ? 'email' : 'username';
 
         return [
-            $loginType => mb_strtolower($data['email']),
+            $loginType => mb_strtolower($data['login']),
             'password' => $data['password'],
         ];
     }

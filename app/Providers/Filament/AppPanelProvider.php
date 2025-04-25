@@ -38,7 +38,7 @@ class AppPanelProvider extends PanelProvider
             ->maxContentWidth(config('panel.filament.display-width', 'screen-2xl'))
             ->navigation(false)
             ->profile(EditProfile::class, false)
-            //->login(Login::class)
+            ->login(Login::class)
             ->passwordReset()
             ->userMenuItems([
                 Action::make('toAdmin')
