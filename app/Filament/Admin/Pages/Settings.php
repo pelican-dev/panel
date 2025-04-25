@@ -17,7 +17,6 @@ use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Components\ToggleButtons;
 use Filament\Forms\Concerns\InteractsWithForms;
-use Filament\Forms\Contracts\HasForms;
 use Filament\Notifications\Notification;
 use Filament\Pages\Concerns\InteractsWithHeaderActions;
 use Filament\Pages\Page;
@@ -35,11 +34,12 @@ use Illuminate\Http\Client\Factory;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Notification as MailNotification;
 use Illuminate\Support\Str;
+use Filament\Schemas\Contracts\HasSchemas;
 
 /**
  * @property Form $form
  */
-class Settings extends Page implements HasForms
+class Settings extends Page implements HasSchemas
 {
     use EnvironmentWriterTrait;
     use InteractsWithForms;

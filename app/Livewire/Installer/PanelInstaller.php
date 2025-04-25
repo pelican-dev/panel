@@ -17,10 +17,10 @@ use Exception;
 use Filament\Actions\Action;
 use Filament\Schemas\Components\Wizard;
 use Filament\Forms\Concerns\InteractsWithForms;
-use Filament\Forms\Contracts\HasForms;
 use Filament\Schemas\Components\Form;
 use Filament\Notifications\Notification;
 use Filament\Pages\SimplePage;
+use Filament\Schemas\Contracts\HasSchemas;
 use Filament\Support\Enums\Width;
 use Filament\Support\Exceptions\Halt;
 use Illuminate\Support\Facades\Artisan;
@@ -30,7 +30,7 @@ use Illuminate\Support\HtmlString;
 /**
  * @property Form $form
  */
-class PanelInstaller extends SimplePage implements HasForms
+class PanelInstaller extends SimplePage implements HasSchemas
 {
     use CheckMigrationsTrait;
     use EnvironmentWriterTrait;
