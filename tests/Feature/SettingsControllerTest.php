@@ -75,10 +75,6 @@ it('server name can be changed', function () {
         ->and($server->name)->not()->toBe($originalName);
 });
 
-//test('subuser cannot change server name without permission', function () {
-//
-//});
-
 test('unauthorized user cannot change docker image in use by server', function () {
     [$user, $server] = generateTestAccount([Permission::ACTION_WEBSOCKET_CONNECT]);
     $originalImage = $server->image;
