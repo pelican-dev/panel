@@ -100,7 +100,7 @@ class ListBackups extends ListRecords
                         ->icon('tabler-folder-up')
                         ->authorize(fn () => auth()->user()->can(Permission::ACTION_BACKUP_RESTORE, $server))
                         ->schema([
-                            Placeholder::make('')
+                            Placeholder::make('INeedAName')
                                 ->helperText('Your server will be stopped. You will not be able to control the power state, access the file manager, or create additional backups until this process is completed.'),
                             Checkbox::make('truncate')
                                 ->label('Delete all files before restoring backup?'),

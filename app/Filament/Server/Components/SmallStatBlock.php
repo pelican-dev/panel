@@ -2,6 +2,7 @@
 
 namespace App\Filament\Server\Components;
 
+use Closure;
 use Filament\Widgets\StatsOverviewWidget\Stat;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Contracts\View\View;
@@ -12,7 +13,7 @@ class SmallStatBlock extends Stat
 
     protected $value;
 
-    public function label(string|Htmlable $label): static
+    public function label(string|Htmlable|Closure|null $label): static
     {
         $this->label = $label;
 
@@ -43,6 +44,6 @@ class SmallStatBlock extends Stat
 
     public function render(): View
     {
-        return view('filament.components.server-small-data-block', $this->data());
+        return view('filament.components.server-small-data-block');
     }
 }

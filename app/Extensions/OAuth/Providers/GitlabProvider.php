@@ -46,13 +46,13 @@ final class GitlabProvider extends OAuthProvider
         return array_merge([
             \Filament\Schemas\Components\Wizard\Step::make('Register new Gitlab OAuth App')
                 ->schema([
-                    Placeholder::make('')
+                    Placeholder::make('INeedAName')
                         ->content(new HtmlString(Blade::render('Check out the <x-filament::link href="https://docs.gitlab.com/integration/oauth_provider/" target="_blank">Gitlab docs</x-filament::link> on how to create the oauth app.'))),
                     TextInput::make('_noenv_callback')
                         ->label('Redirect URI')
                         ->dehydrated()
                         ->disabled()
-                        ->hintAction(fn (string $state) => request()->isSecure() ? CopyAction::make()->copyable($state) : null)
+                        //TODO ->hintAction(fn (string $state) => request()->isSecure() ? CopyAction::make()->copyable($state) : null)
                         ->default(fn () => url('/auth/oauth/callback/gitlab')),
                 ]),
         ], parent::getSetupSteps());

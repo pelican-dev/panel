@@ -59,7 +59,7 @@ class EditNode extends EditRecord
                 ->persistTabInQueryString()
                 ->columnSpanFull()
                 ->tabs([
-                    Tab::make('')
+                    Tab::make('overview')
                         ->label(trans('admin/node.tabs.overview'))
                         ->icon('tabler-chart-area-line-filled')
                         ->columns([
@@ -73,16 +73,16 @@ class EditNode extends EditRecord
                                 ->label(trans('admin/node.node_info'))
                                 ->columns(4)
                                 ->schema([
-                                    Placeholder::make('')
+                                    Placeholder::make('INeedAName')
                                         ->label(trans('admin/node.wings_version'))
                                         ->content(fn (Node $node, SoftwareVersionService $versionService) => ($node->systemInformation()['version'] ?? trans('admin/node.unknown')) . ' (' . trans('admin/node.latest') . ': ' . $versionService->latestWingsVersion() . ')'),
-                                    Placeholder::make('')
+                                    Placeholder::make('INeedAName2')
                                         ->label(trans('admin/node.cpu_threads'))
                                         ->content(fn (Node $node) => $node->systemInformation()['cpu_count'] ?? 0),
-                                    Placeholder::make('')
+                                    Placeholder::make('INeedAName3')
                                         ->label(trans('admin/node.architecture'))
                                         ->content(fn (Node $node) => $node->systemInformation()['architecture'] ?? trans('admin/node.unknown')),
-                                    Placeholder::make('')
+                                    Placeholder::make('INeedAName4')
                                         ->label(trans('admin/node.kernel'))
                                         ->content(fn (Node $node) => $node->systemInformation()['kernel_version'] ?? trans('admin/node.unknown')),
                                 ]),

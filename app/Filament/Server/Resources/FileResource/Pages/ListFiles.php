@@ -42,6 +42,7 @@ use Illuminate\Routing\Route;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Route as RouteFacade;
 use Livewire\Attributes\Locked;
+use Filament\Forms\Components\RichEditor;
 
 class ListFiles extends ListRecords
 {
@@ -470,10 +471,10 @@ class ListFiles extends ListRecords
                         ->selectablePlaceholder(false)
                         ->afterStateUpdated(fn ($state) => $this->dispatch('setLanguage', lang: $state))
                         ->default(EditorLanguages::plaintext->value),
-                    MonacoEditor::make('editor')
-                        ->label('')
-                        ->view('filament.plugins.monaco-editor')
-                        ->language(fn (Get $get) => $get('lang') ?? 'plaintext'),
+                    RichEditor::make('editor')
+                        ->label(''),
+                    //->view('filament.plugins.monaco-editor')
+                    //->language(fn (Get $get) => $get('lang') ?? 'plaintext'),
                 ]),
             HeaderAction::make('new_folder')
                 ->authorize(fn () => auth()->user()->can(Permission::ACTION_FILE_CREATE, $server))

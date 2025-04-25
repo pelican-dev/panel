@@ -8,10 +8,11 @@ use App\Models\Permission;
 use App\Models\Server;
 use App\Services\Subusers\SubuserCreationService;
 use Exception;
-use Filament\Actions;
+use Filament\Actions\CreateAction;
 use Filament\Facades\Filament;
 use Filament\Actions\Action;
 use Filament\Forms\Components\CheckboxList;
+use Filament\Schemas\Components\Actions;
 use Filament\Schemas\Components\Grid;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Tabs;
@@ -32,7 +33,7 @@ class ListUsers extends ListRecords
         $server = Filament::getTenant();
 
         return [
-            Actions\CreateAction::make('invite')
+            CreateAction::make('invite')
                 ->label('Invite User')
                 ->createAnother(false)
                 ->authorize(fn () => auth()->user()->can(Permission::ACTION_USER_CREATE, $server))

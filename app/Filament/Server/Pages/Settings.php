@@ -232,9 +232,9 @@ class Settings extends ServerFormPage
                     ])
                     ->footerActionsAlignment(Alignment::Right)
                     ->schema([
-                        Placeholder::make('')
+                        Placeholder::make('INeedAName1')
                             ->label('Reinstalling your server will stop it, and then re-run the installation script that initially set it up.'),
-                        Placeholder::make('')
+                        Placeholder::make('INeedAName')
                             ->label('Some files may be deleted or modified during this process, please back up your data before continuing.'),
                     ]),
             ]);

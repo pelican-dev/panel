@@ -48,7 +48,7 @@ class CreateDatabaseHost extends CreateRecord
             Step::make(trans('admin/databasehost.setup.preparations'))
                 ->columns()
                 ->schema([
-                    Placeholder::make('')
+                    Placeholder::make('INeedAName')
                         ->content(trans('admin/databasehost.setup.note')),
                     Toggle::make('different_server')
                         ->label(new HtmlString(trans('admin/databasehost.setup.different_server')))
@@ -82,7 +82,7 @@ class CreateDatabaseHost extends CreateRecord
                 ->schema([
                     Fieldset::make(trans('admin/databasehost.setup.database_user'))
                         ->schema([
-                            Placeholder::make('')
+                            Placeholder::make('INeedAName')
                                 ->content(new HtmlString(trans('admin/databasehost.setup.cli_login')))
                                 ->columnSpanFull(),
                             TextInput::make('create_user')
@@ -99,13 +99,13 @@ class CreateDatabaseHost extends CreateRecord
                                 ->dehydrated(false)
                                 // TODO ->suffixAction(fn (string $state) => request()->isSecure() ? CopyAction::make()->copyable($state) : null)
                                 ->columnSpanFull(),
-                            Placeholder::make('')
+                            Placeholder::make('INeedAName')
                                 ->content(new HtmlString(trans('admin/databasehost.setup.cli_exit')))
                                 ->columnSpanFull(),
                         ]),
                     Fieldset::make(trans('admin/databasehost.setup.external_access'))
                         ->schema([
-                            Placeholder::make('')
+                            Placeholder::make('INeedAName2')
                                 ->content(new HtmlString(trans('admin/databasehost.setup.allow_external_access')))
                                 ->columnSpanFull(),
                         ]),

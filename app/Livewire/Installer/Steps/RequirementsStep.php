@@ -4,6 +4,7 @@ namespace App\Livewire\Installer\Steps;
 
 use Filament\Forms\Components\Placeholder;
 use Filament\Notifications\Notification;
+use Filament\Schemas\Components\Section;
 use Filament\Support\Exceptions\Halt;
 
 class RequirementsStep
@@ -21,7 +22,7 @@ class RequirementsStep
                 ->icon($correctPhpVersion ? 'tabler-check' : 'tabler-x')
                 ->iconColor($correctPhpVersion ? 'success' : 'danger')
                 ->schema([
-                    Placeholder::make('')
+                    Placeholder::make('INeedAName')
                         ->content('Your PHP Version is ' . PHP_VERSION . '.'),
                 ]),
         ];
@@ -44,10 +45,10 @@ class RequirementsStep
             ->icon($allExtensionsInstalled ? 'tabler-check' : 'tabler-x')
             ->iconColor($allExtensionsInstalled ? 'success' : 'danger')
             ->schema([
-                Placeholder::make('')
+                Placeholder::make('INeedAName')
                     ->content('All needed PHP Extensions are installed.')
                     ->visible($allExtensionsInstalled),
-                Placeholder::make('')
+                Placeholder::make('INeedAName')
                     ->content('The following PHP Extensions are missing: ' . implode(', ', array_keys($phpExtensions, false)))
                     ->visible(!$allExtensionsInstalled),
             ]);
@@ -63,10 +64,10 @@ class RequirementsStep
             ->icon($correctFolderPermissions ? 'tabler-check' : 'tabler-x')
             ->iconColor($correctFolderPermissions ? 'success' : 'danger')
             ->schema([
-                Placeholder::make('')
+                Placeholder::make('INeedAName')
                     ->content('All Folders have the correct permissions.')
                     ->visible($correctFolderPermissions),
-                Placeholder::make('')
+                Placeholder::make('INeedAName2')
                     ->content('The following Folders have wrong permissions: ' . implode(', ', array_keys($folderPermissions, false)))
                     ->visible(!$correctFolderPermissions),
             ]);

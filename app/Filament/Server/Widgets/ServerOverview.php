@@ -3,10 +3,10 @@
 namespace App\Filament\Server\Widgets;
 
 use App\Enums\ContainerStatus;
-use App\Filament\Server\Components\SmallStatBlock;
 use App\Models\Server;
 use Carbon\CarbonInterface;
 use Filament\Widgets\StatsOverviewWidget;
+use Filament\Widgets\StatsOverviewWidget\Stat;
 use Illuminate\Support\Number;
 
 class ServerOverview extends StatsOverviewWidget
@@ -18,18 +18,18 @@ class ServerOverview extends StatsOverviewWidget
     protected function getStats(): array
     {
         return [
-            SmallStatBlock::make('Name', $this->server->name)
+            Stat::make('Name', $this->server->name)
                 ->extraAttributes([
                     'class' => 'overflow-x-auto',
                 ]),
-            SmallStatBlock::make('Status', $this->status()),
-            SmallStatBlock::make('Address', $this->server->allocation->address)
+            Stat::make('Status', $this->status()),
+            Stat::make('Address', $this->server->allocation->address)
                 ->extraAttributes([
                     'class' => 'overflow-x-auto',
                 ]),
-            SmallStatBlock::make('CPU', $this->cpuUsage()),
-            SmallStatBlock::make('Memory', $this->memoryUsage()),
-            SmallStatBlock::make('Disk', $this->diskUsage()),
+            Stat::make('CPU', $this->cpuUsage()),
+            Stat::make('Memory', $this->memoryUsage()),
+            Stat::make('Disk', $this->diskUsage()),
         ];
     }
 

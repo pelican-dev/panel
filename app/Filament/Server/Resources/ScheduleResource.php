@@ -22,6 +22,7 @@ use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Utilities\Set;
 use Filament\Notifications\Notification;
 use Filament\Resources\Resource;
+use Filament\Support\Enums\Operation;
 use Filament\Support\Exceptions\Halt;
 use Illuminate\Database\Eloquent\Model;
 use Filament\Schemas\Schema;
@@ -67,6 +68,9 @@ class ScheduleResource extends Resource
         return auth()->user()->can(Permission::ACTION_SCHEDULE_DELETE, Filament::getTenant());
     }
 
+    /**
+     * @throws Exception
+     */
     public static function form(Form|Schema $schema): Schema
     {
         return $schema
@@ -86,6 +90,7 @@ class ScheduleResource extends Resource
                     ->autocomplete(false)
                     ->required(),
                 ToggleButtons::make('Status')
+                    ->visibleOn(Operation::Edit)
                     ->formatStateUsing(fn (Schedule $schedule) => !$schedule->is_active ? 'inactive' : ($schedule->is_processing ? 'processing' : 'active'))
                     ->options(fn (Schedule $schedule) => !$schedule->is_active ? ['inactive' => 'Inactive'] : ($schedule->is_processing ? ['processing' => 'Processing'] : ['active' => 'Active']))
                     ->colors([
@@ -93,7 +98,6 @@ class ScheduleResource extends Resource
                         'processing' => 'warning',
                         'active' => 'success',
                     ])
-                    ->visibleOn('view')
                     ->columnSpan([
                         'default' => 4,
                         'md' => 1,
