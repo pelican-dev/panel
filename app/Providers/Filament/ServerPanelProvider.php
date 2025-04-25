@@ -47,7 +47,7 @@ class ServerPanelProvider extends PanelProvider
             ->passwordReset()
             ->userMenuItems([
                 'profile' => Action::make('toProfile')
-                    ->label(fn () => trans('filament-panels::pages/auth/edit-profile.label'))
+                    ->label(fn () => trans('filament-panels::/auth/pages/edit-profile.label'))
                     ->url(fn () => EditProfile::getUrl(panel: 'app')),
                 Action::make('toServerList')
                     ->label('Server List')

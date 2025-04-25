@@ -6,6 +6,7 @@ use App\Filament\Pages\Auth\Login;
 use App\Filament\Pages\Auth\EditProfile;
 use App\Http\Middleware\LanguageMiddleware;
 use App\Http\Middleware\RequireTwoFactorAuthentication;
+use Filament\Actions\Action;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
@@ -42,7 +43,7 @@ class AdminPanelProvider extends PanelProvider
             ->passwordReset()
             ->userMenuItems([
                 'profile' => Action::make('toProfile')
-                    ->label(fn () => trans('filament-panels::pages/auth/edit-profile.label'))
+                    ->label(fn () => trans('filament-panels::/auth/pages/edit-profile.label'))
                     ->url(fn () => EditProfile::getUrl(panel: 'app')),
                 Action::make('exitAdmin')
                     ->label(fn () => trans('profile.exit_admin'))
