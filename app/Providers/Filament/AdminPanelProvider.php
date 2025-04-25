@@ -39,7 +39,7 @@ class AdminPanelProvider extends PanelProvider
             ->favicon(config('app.favicon', '/pelican.ico'))
             ->topNavigation(config('panel.filament.top-navigation', false))
             ->maxContentWidth(config('panel.filament.display-width', 'screen-2xl'))
-            //->login(Login::class)
+            ->login(Login::class)
             ->passwordReset()
             ->userMenuItems([
                 'profile' => Action::make('toProfile')
