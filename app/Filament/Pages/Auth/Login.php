@@ -164,10 +164,10 @@ class Login extends \Filament\Auth\Pages\Login
 
     protected function getCredentialsFromFormData(array $data): array
     {
-        $loginType = filter_var($data['login'], FILTER_VALIDATE_EMAIL) ? 'email' : 'username';
+        $loginType = filter_var($data['email'], FILTER_VALIDATE_EMAIL) ? 'email' : 'username';
 
         return [
-            $loginType => mb_strtolower($data['login']),
+            $loginType => mb_strtolower($data['email']),
             'password' => $data['password'],
         ];
     }
