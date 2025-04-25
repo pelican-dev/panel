@@ -41,7 +41,7 @@ abstract class FeatureProvider
     abstract public function getId(): string;
 
     /**
-     * A matching subset string (case-sensitive) from the console output
+     * A matching subset string (case-insensitive) from the console output
      *
      * @return array<string>
      */
