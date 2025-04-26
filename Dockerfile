@@ -97,6 +97,8 @@ RUN chown root:www-data ./ \
 # Configure Supervisor
 COPY docker/supervisord.conf /etc/supervisord.conf
 COPY docker/Caddyfile /etc/caddy/Caddyfile
+# Configure PHP for production
+RUN mv "$PHP_INI_DIR/php.ini-production" "$PHP_INI_DIR/php.ini"
 # Add Laravel scheduler to crontab
 COPY docker/crontab /etc/supercronic/crontab
 
