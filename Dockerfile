@@ -99,6 +99,7 @@ COPY docker/supervisord.conf /etc/supervisord.conf
 COPY docker/Caddyfile /etc/caddy/Caddyfile
 # Configure PHP for production
 RUN mv "$PHP_INI_DIR/php.ini-production" "$PHP_INI_DIR/php.ini"
+COPY docker/pelican-php.ini "$PHP_INI_DIR/conf.d/pelican-php.ini"
 # Add Laravel scheduler to crontab
 COPY docker/crontab /etc/supercronic/crontab
 
