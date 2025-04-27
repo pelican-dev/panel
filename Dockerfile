@@ -4,11 +4,11 @@
 
 # For those who want to build this Dockerfile themselves, uncomment lines 6-12 and replace "localhost:5000/base-php:$TARGETARCH" on lines 17 and 67 with "base".
 
-# FROM --platform=$TARGETOS/$TARGETARCH php:8.3-fpm-alpine as base
+# FROM --platform=$TARGETOS/$TARGETARCH php:8.4-fpm-alpine as base
 
 # ADD --chmod=0755 https://github.com/mlocati/docker-php-extension-installer/releases/latest/download/install-php-extensions /usr/local/bin/
 
-# RUN install-php-extensions bcmath gd intl zip opcache pcntl posix pdo_mysql
+# RUN install-php-extensions bcmath gd intl zip opcache pcntl posix pdo_mysql pdo_pgsql
 
 # RUN rm /usr/local/bin/install-php-extensions
 
@@ -85,10 +85,13 @@ RUN chown root:www-data ./ \
     # Symlink to env/database path, as www-data won't be able to write to webroot
     && ln -s /pelican-data/.env ./.env \
     && ln -s /pelican-data/database/database.sqlite ./database/database.sqlite \
+    && mkdir -p /pelican-data/storage \
+    && ln -sf /var/www/html/storage/app/public /var/www/html/public/storage \
+    && ln -s /pelican-data/storage /var/www/html/storage/app/public/avatars \
     # Create necessary directories
     && mkdir -p /pelican-data /var/run/supervisord /etc/supercronic \
-    # Finally allow www-data write permissions where necessary
-    && chown -R www-data:www-data /pelican-data ./storage ./bootstrap/cache /var/run/supervisord \
+    # Finally allow www-data write permissions where necessary 
+    && chown -R www-data:www-data /pelican-data ./storage ./bootstrap/cache /var/run/supervisord /var/www/html/public/storage \
     && chmod -R u+rwX,g+rwX,o-rwx /pelican-data ./storage ./bootstrap/cache /var/run/supervisord
 
 # Configure Supervisor

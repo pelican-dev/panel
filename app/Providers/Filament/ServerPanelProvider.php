@@ -2,12 +2,13 @@
 
 namespace App\Providers\Filament;
 
-use App\Extensions\Avatar\AvatarProvider;
 use App\Filament\App\Resources\ServerResource\Pages\ListServers;
 use App\Filament\Pages\Auth\Login;
 use App\Filament\Admin\Resources\ServerResource\Pages\EditServer;
 use App\Filament\Pages\Auth\EditProfile;
 use App\Http\Middleware\Activity\ServerSubject;
+use App\Http\Middleware\LanguageMiddleware;
+use App\Http\Middleware\RequireTwoFactorAuthentication;
 use App\Models\Server;
 use Filament\Facades\Filament;
 use Filament\Http\Middleware\Authenticate;
@@ -40,9 +41,8 @@ class ServerPanelProvider extends PanelProvider
             ->brandLogo(config('app.logo'))
             ->brandLogoHeight('2rem')
             ->favicon(config('app.favicon', '/pelican.ico'))
-            ->topNavigation(config('panel.filament.top-navigation', true))
+            ->topNavigation(config('panel.filament.top-navigation', false))
             ->maxContentWidth(config('panel.filament.display-width', 'screen-2xl'))
-            ->defaultAvatarProvider(fn () => get_class(AvatarProvider::getProvider(config('panel.filament.avatar-provider'))))
             ->login(Login::class)
             ->passwordReset()
             ->userMenuItems([
@@ -63,7 +63,7 @@ class ServerPanelProvider extends PanelProvider
             ])
             ->navigationItems([
                 NavigationItem::make('Open in Admin')
-                    ->url(fn () => EditServer::getUrl(['record' => Filament::getTenant()], panel: 'admin', tenant: null), true)
+                    ->url(fn () => EditServer::getUrl(['record' => Filament::getTenant()], panel: 'admin'))
                     ->visible(fn () => auth()->user()->can('view server', Filament::getTenant()))
                     ->icon('tabler-arrow-back')
                     ->sort(99),
@@ -81,6 +81,8 @@ class ServerPanelProvider extends PanelProvider
                 SubstituteBindings::class,
                 DisableBladeIconComponents::class,
                 DispatchServingFilamentEvent::class,
+                LanguageMiddleware::class,
+                RequireTwoFactorAuthentication::class,
                 ServerSubject::class,
             ])
             ->authMiddleware([

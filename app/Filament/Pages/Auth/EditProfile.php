@@ -128,7 +128,7 @@ class EditProfile extends BaseEditProfile
                                             ->options(fn (LanguageService $languageService) => $languageService->getAvailableLanguages())
                                             ->native(false),
                                         FileUpload::make('avatar')
-                                            ->visible(fn () => config('panel.filament.avatar-provider') === 'local')
+                                            ->visible(fn () => config('panel.filament.uploadable-avatars'))
                                             ->avatar()
                                             ->acceptedFileTypes(['image/png'])
                                             ->directory('avatars')

@@ -143,6 +143,9 @@
                 case 'install output':
                     handleConsoleOutput(args[0]);
                     break;
+                case 'feature match':
+                    Livewire.dispatch('mount-feature', { data: args[0] });
+                    break;
                 case 'status':
                     handlePowerChangeEvent(args[0]);
 
