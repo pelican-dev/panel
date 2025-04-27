@@ -321,7 +321,7 @@ class ListUsers extends ListRecords
                 $permissionsArray[$tab['checkboxList']['name']][] = $option['label'];
             }
 
-            if ($tab['name'] == 'control') {
+            if ($tab['checkboxList']['name'] == 'control') {
                 $tabs[] = Tab::make($tab['name'])
                     ->schema([
                         Section::make()
