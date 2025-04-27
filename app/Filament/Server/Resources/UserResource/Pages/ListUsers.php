@@ -32,6 +32,344 @@ class ListUsers extends ListRecords
         /** @var Server $server */
         $server = Filament::getTenant();
 
+        $tabs = array();
+
+        $tabArray = [
+            [
+                'name' => 'Console',
+                'description' => trans('server/users.permissions.control_desc'),
+                'icon' => 'tabler-terminal-2',
+                'checkboxList' => [
+                    'name' => 'control',
+                    'columns' => 2,
+                    'options' => [
+                        [
+                            'name' => 'Console',
+                            'label' => 'console',
+                            'description' => trans('server/users.permissions.control_console'),
+                        ],
+                        [
+                            'name' => 'Start',
+                            'label' => 'start',
+                            'description' => trans('server/users.permissions.control_start'),
+                        ],
+                        [
+                            'name' => 'Stop',
+                            'label' => 'stop',
+                            'description' => trans('server/users.permissions.control_stop'),
+                        ],
+                        [
+                            'name' => 'Restart',
+                            'label' => 'restart',
+                            'description' => trans('server/users.permissions.control_restart'),
+                        ],
+                    ],
+                ],
+            ],
+            [
+                'name' => 'File',
+                'description' => trans('server/users.permissions.file_desc'),
+                'icon' => 'tabler-folders',
+                'checkboxList' => [
+                    'name' => 'file',
+                    'columns' => 2,
+                    'options' => [
+                        [
+                            'name' => 'Read',
+                            'label' => 'read',
+                            'description' => trans('server/users.permissions.file_create'),
+                        ],
+                        [
+                            'name' => 'Read Content',
+                            'label' => 'read-content',
+                            'description' => trans('server/users.permissions.file_read_content'),
+                        ],
+                        [
+                            'name' => 'Create',
+                            'label' => 'create',
+                            'description' => trans('server/users.permissions.backup_create'),
+                        ],
+                        [
+                            'name' => 'Update',
+                            'label' => 'update',
+                            'description' => trans('server/users.permissions.file_update'),
+                        ],
+                        [
+                            'name' => 'Delete',
+                            'label' => 'delete',
+                            'description' => trans('server/users.permissions.file_delete'),
+                        ],
+                        [
+                            'name' => 'Archive',
+                            'label' => 'archive',
+                            'description' => trans('server/users.permissions.file_archive'),
+                        ],
+                        [
+                            'name' => 'SFTP',
+                            'label' => 'sftp',
+                            'description' => trans('server/users.permissions.file_sftp'),
+                        ],
+                    ],
+                ],
+            ],
+            [
+                'name' => 'Backup',
+                'description' => trans('server/users.permissions.backup_desc'),
+                'icon' => 'tabler-download',
+                'checkboxList' => [
+                    'name' => 'backup',
+                    'columns' => 2,
+                    'options' => [
+                        [
+                            'name' => 'Read',
+                            'label' => 'read',
+                            'description' => trans('server/users.permissions.backup_read'),
+                        ],
+                        [
+                            'name' => 'Create',
+                            'label' => 'create',
+                            'description' => trans('server/users.permissions.backup_create'),
+                        ],
+                        [
+                            'name' => 'Delete',
+                            'label' => 'delete',
+                            'description' => trans('server/users.permissions.backup_delete'),
+                        ],
+                        [
+                            'name' => 'Download',
+                            'label' => 'download',
+                            'description' => trans('server/users.permissions.backup_download'),
+                        ],
+                        [
+                            'name' => 'Restore',
+                            'label' => 'restore',
+                            'description' => trans('server/users.permissions.backup_restore'),
+                        ],
+                    ],
+                ],
+            ],
+            [
+                'name' => 'Allocation',
+                'description' => trans('server/users.permissions.allocation_desc'),
+                'icon' => 'tabler-network',
+                'checkboxList' => [
+                    'name' => 'allocation',
+                    'columns' => 2,
+                    'options' => [
+                        [
+                            'name' => 'Read',
+                            'label' => 'read',
+                            'description' => trans('server/users.permissions.allocation_read'),
+                        ],
+                        [
+                            'name' => 'Create',
+                            'label' => 'create',
+                            'description' => trans('server/users.permissions.allocation_create'),
+                        ],
+                        [
+                            'name' => 'Update',
+                            'label' => 'update',
+                            'description' => trans('server/users.permissions.allocation_update'),
+                        ],
+                        [
+                            'name' => 'Delete',
+                            'label' => 'delete',
+                            'description' => trans('server/users.permissions.allocation_delete'),
+                        ],
+                    ],
+                ],
+            ],
+            [
+                'name' => 'Startup',
+                'description' => trans('server/users.permissions.startup_desc'),
+                'icon' => 'tabler-question-mark',
+                'checkboxList' => [
+                    'name' => 'startup',
+                    'columns' => 2,
+                    'options' => [
+                        [
+                            'name' => 'Read',
+                            'label' => 'read',
+                            'description' => trans('server/users.permissions.startup_read'),
+                        ],
+                        [
+                            'name' => 'Update',
+                            'label' => 'update',
+                            'description' => trans('server/users.permissions.startup_update'),
+                        ],
+                        [
+                            'name' => 'Docker Image',
+                            'label' => 'docker-image',
+                            'description' => trans('server/users.permissions.startup_docker_image'),
+                        ],
+                    ],
+                ],
+            ],
+            [
+                'name' => 'Database',
+                'description' => trans('server/users.permissions.database_desc'),
+                'icon' => 'tabler-database',
+                'checkboxList' => [
+                    'name' => 'database',
+                    'columns' => 2,
+                    'options' => [
+                        [
+                            'name' => 'Read',
+                            'label' => 'read',
+                            'description' => trans('server/users.permissions.database_read'),
+                        ],
+                        [
+                            'name' => 'Create',
+                            'label' => 'create',
+                            'description' => trans('server/users.permissions.database_create'),
+                        ],
+                        [
+                            'name' => 'Update',
+                            'label' => 'update',
+                            'description' => trans('server/users.permissions.database_update'),
+                        ],
+                        [
+                            'name' => 'Delete',
+                            'label' => 'delete',
+                            'description' => trans('server/users.permissions.database_delete'),
+                        ],
+                        [
+                            'name' => 'View Password',
+                            'label' => 'view_password',
+                            'description' => trans('server/users.permissions.database_view_password'),
+                        ],
+                    ],
+                ],
+            ],
+            [
+                'name' => 'Schedule',
+                'description' => trans('server/users.permissions.schedule_desc'),
+                'icon' => 'tabler-clock',
+                'checkboxList' => [
+                    'name' => 'schedule',
+                    'columns' => 2,
+                    'options' => [
+                        [
+                            'name' => 'Read',
+                            'label' => 'read',
+                            'description' => trans('server/users.permissions.schedule_read'),
+                        ],
+                        [
+                            'name' => 'Create',
+                            'label' => 'create',
+                            'description' => trans('server/users.permissions.schedule_create'),
+                        ],
+                        [
+                            'name' => 'Update',
+                            'label' => 'update',
+                            'description' => trans('server/users.permissions.schedule_update'),
+                        ],
+                        [
+                            'name' => 'Delete',
+                            'label' => 'delete',
+                            'description' => trans('server/users.permissions.schedule_delete'),
+                        ],
+                    ],
+                ],
+            ],
+            [
+                'name' => 'Settings',
+                'description' => trans('server/users.permissions.settings_desc'),
+                'icon' => 'tabler-settings',
+                'checkboxList' => [
+                    'name' => 'settings',
+                    'columns' => 2,
+                    'options' => [
+                        [
+                            'name' => 'Rename',
+                            'label' => 'rename',
+                            'description' => trans('server/users.permissions.setting_rename'),
+                        ],
+                        [
+                            'name' => 'Reinstall',
+                            'label' => 'reinstall',
+                            'description' => trans('server/users.permissions.setting_reinstall'),
+                        ],
+                    ],
+                ],
+            ],
+            [
+                'name' => 'Activity',
+                'description' => trans('server/users.permissions.activity_desc'),
+                'icon' => 'tabler-stack',
+                'checkboxList' => [
+                    'name' => 'activity',
+                    'columns' => 2,
+                    'options' => [
+                        [
+                            'name' => 'Read',
+                            'label' => 'read',
+                            'description' => trans('server/users.permissions.activity_read'),
+                        ],
+                    ],
+                ],
+            ],
+        ];
+
+        $permissionsArray = [];
+        foreach ($tabArray as $tab) {
+            $options = [];
+            $descriptions = [];
+            foreach ($tab['checkboxList']['options'] as $option) {
+                $options[$option['label']] = $option['name'];
+                $descriptions[$option['label']] = $option['description'];
+                $permissionsArray[$tab['checkboxList']['name']][] = $option['label'];
+            }
+
+            if ($tab['name'] == 'control') {
+                $tabs[] = Tab::make($tab['name'])
+                    ->schema([
+                        Section::make()
+                            ->description($tab['description'])
+                            ->icon($tab['icon'])
+                            ->schema([
+                                CheckboxList::make($tab['checkboxList']['name'])
+                                    ->formatStateUsing(function (User $user, Set $set) use ($server) {
+                                        $permissionsArray = $server->subusers->where('user_id', $user->id)->first()->permissions;
+
+                                        $transformedPermissions = [];
+
+                                        foreach ($permissionsArray as $permission) {
+                                            [$group, $action] = explode('.', $permission, 2);
+                                            $transformedPermissions[$group][] = $action;
+                                        }
+
+                                        foreach ($transformedPermissions as $key => $value) {
+                                            $set($key, $value);
+                                        }
+
+                                        return $transformedPermissions['control'] ?? [];
+                                    })
+                                    ->bulkToggleable()
+                                    ->label('')
+                                    ->columns($tab['checkboxList']['columns'])
+                                    ->options($options)
+                                    ->descriptions($descriptions),
+                            ]),
+                    ]);
+                continue;
+            }
+            $tabs[] = Tab::make($tab['name'])
+                ->schema([
+                    Section::make()
+                        ->description($tab['description'])
+                        ->icon($tab['icon'])
+                        ->schema([
+                            CheckboxList::make($tab['checkboxList']['name'])
+                                ->bulkToggleable()
+                                ->label('')
+                                ->columns($tab['checkboxList']['columns'])
+                                ->options($options)
+                                ->descriptions($descriptions),
+                        ]),
+                ]);
+        }
+        
         return [
             Actions\CreateAction::make('invite')
                 ->label('Invite User')
@@ -60,69 +398,8 @@ class ListUsers extends ListRecords
                             assignAll::make([
                                 Action::make('assignAll')
                                     ->label('Assign All')
-                                    ->action(function (Set $set, Get $get) {
-                                        $permissions = [
-                                            'control' => [
-                                                'console',
-                                                'start',
-                                                'stop',
-                                                'restart',
-                                            ],
-                                            'user' => [
-                                                'read',
-                                                'create',
-                                                'update',
-                                                'delete',
-                                            ],
-                                            'file' => [
-                                                'read',
-                                                'read-content',
-                                                'create',
-                                                'update',
-                                                'delete',
-                                                'archive',
-                                                'sftp',
-                                            ],
-                                            'backup' => [
-                                                'read',
-                                                'create',
-                                                'delete',
-                                                'download',
-                                                'restore',
-                                            ],
-                                            'allocation' => [
-                                                'read',
-                                                'create',
-                                                'update',
-                                                'delete',
-                                            ],
-                                            'startup' => [
-                                                'read',
-                                                'update',
-                                                'docker-image',
-                                            ],
-                                            'database' => [
-                                                'read',
-                                                'create',
-                                                'update',
-                                                'delete',
-                                                'view_password',
-                                            ],
-                                            'schedule' => [
-                                                'read',
-                                                'create',
-                                                'update',
-                                                'delete',
-                                            ],
-                                            'settings' => [
-                                                'rename',
-                                                'reinstall',
-                                            ],
-                                            'activity' => [
-                                                'read',
-                                            ],
-                                        ];
-
+                                    ->action(function (Set $set, Get $get) use ($permissionsArray) {
+                                        $permissions = $permissionsArray;
                                         foreach ($permissions as $key => $value) {
                                             $currentValues = $get($key) ?? [];
                                             $allValues = array_unique(array_merge($currentValues, $value));
@@ -138,247 +415,7 @@ class ListUsers extends ListRecords
                                 ]),
                             Tabs::make()
                                 ->columnSpanFull()
-                                ->schema([
-                                    Tab::make('Console')
-                                        ->schema([
-                                            Section::make()
-                                                ->description(trans('server/users.permissions.control_desc'))
-                                                ->icon('tabler-terminal-2')
-                                                ->schema([
-                                                    CheckboxList::make('control')
-                                                        ->bulkToggleable()
-                                                        ->label('')
-                                                        ->columns(2)
-                                                        ->options([
-                                                            'console' => 'Console',
-                                                            'start' => 'Start',
-                                                            'stop' => 'Stop',
-                                                            'restart' => 'Restart',
-                                                        ])
-                                                        ->descriptions([
-                                                            'console' => trans('server/users.permissions.control_console'),
-                                                            'start' => trans('server/users.permissions.control_start'),
-                                                            'stop' => trans('server/users.permissions.control_stop'),
-                                                            'restart' => trans('server/users.permissions.control_restart'),
-                                                        ]),
-                                                ]),
-                                        ]),
-                                    Tab::make('User')
-                                        ->schema([
-                                            Section::make()
-                                                ->description(trans('server/users.permissions.user_desc'))
-                                                ->icon('tabler-users')
-                                                ->schema([
-                                                    CheckboxList::make('user')
-                                                        ->bulkToggleable()
-                                                        ->label('')
-                                                        ->columns(2)
-                                                        ->options([
-                                                            'read' => 'Read',
-                                                            'create' => 'Create',
-                                                            'update' => 'Update',
-                                                            'delete' => 'Delete',
-                                                        ])
-                                                        ->descriptions([
-                                                            'create' => trans('server/users.permissions.user_create'),
-                                                            'read' => trans('server/users.permissions.user_read'),
-                                                            'update' => trans('server/users.permissions.user_update'),
-                                                            'delete' => trans('server/users.permissions.user_delete'),
-                                                        ]),
-                                                ]),
-                                        ]),
-                                    Tab::make('File')
-                                        ->schema([
-                                            Section::make()
-                                                ->description(trans('server/users.permissions.file_desc'))
-                                                ->icon('tabler-folders')
-                                                ->schema([
-                                                    CheckboxList::make('file')
-                                                        ->bulkToggleable()
-                                                        ->label('')
-                                                        ->columns(2)
-                                                        ->options([
-                                                            'read' => 'Read',
-                                                            'read-content' => 'Read Content',
-                                                            'create' => 'Create',
-                                                            'update' => 'Update',
-                                                            'delete' => 'Delete',
-                                                            'archive' => 'Archive',
-                                                            'sftp' => 'SFTP',
-                                                        ])
-                                                        ->descriptions([
-                                                            'create' => trans('server/users.permissions.file_create'),
-                                                            'read' => trans('server/users.permissions.file_read'),
-                                                            'read-content' => trans('server/users.permissions.file_read_content'),
-                                                            'update' => trans('server/users.permissions.file_update'),
-                                                            'delete' => trans('server/users.permissions.file_delete'),
-                                                            'archive' => trans('server/users.permissions.file_archive'),
-                                                            'sftp' => trans('server/users.permissions.file_sftp'),
-                                                        ]),
-                                                ]),
-                                        ]),
-                                    Tab::make('Backup')
-                                        ->schema([
-                                            Section::make()
-                                                ->description(trans('server/users.permissions.backup_desc'))
-                                                ->icon('tabler-download')
-                                                ->schema([
-                                                    CheckboxList::make('backup')
-                                                        ->bulkToggleable()
-                                                        ->label('')
-                                                        ->columns(2)
-                                                        ->options([
-                                                            'read' => 'Read',
-                                                            'create' => 'Create',
-                                                            'delete' => 'Delete',
-                                                            'download' => 'Download',
-                                                            'restore' => 'Restore',
-                                                        ])
-                                                        ->descriptions([
-                                                            'create' => trans('server/users.permissions.backup_create'),
-                                                            'read' => trans('server/users.permissions.backup_read'),
-                                                            'delete' => trans('server/users.permissions.backup_delete'),
-                                                            'download' => trans('server/users.permissions.backup_download'),
-                                                            'restore' => trans('server/users.permissions.backup_restore'),
-                                                        ]),
-                                                ]),
-                                        ]),
-                                    Tab::make('Allocation')
-                                        ->schema([
-                                            Section::make()
-                                                ->description(trans('server/users.permissions.allocation_desc'))
-                                                ->icon('tabler-network')
-                                                ->schema([
-                                                    CheckboxList::make('allocation')
-                                                        ->bulkToggleable()
-                                                        ->label('')
-                                                        ->columns(2)
-                                                        ->options([
-                                                            'read' => 'Read',
-                                                            'create' => 'Create',
-                                                            'update' => 'Update',
-                                                            'delete' => 'Delete',
-                                                        ])
-                                                        ->descriptions([
-                                                            'read' => trans('server/users.permissions.allocation_read'),
-                                                            'create' => trans('server/users.permissions.allocation_create'),
-                                                            'update' => trans('server/users.permissions.allocation_update'),
-                                                            'delete' => trans('server/users.permissions.allocation_delete'),
-                                                        ]),
-                                                ]),
-                                        ]),
-                                    Tab::make('Startup')
-                                        ->schema([
-                                            Section::make()
-                                                ->description(trans('server/users.permissions.startup_desc'))
-                                                ->icon('tabler-question-mark')
-                                                ->schema([
-                                                    CheckboxList::make('startup')
-                                                        ->bulkToggleable()
-                                                        ->label('')
-                                                        ->columns(2)
-                                                        ->options([
-                                                            'read' => 'Read',
-                                                            'update' => 'Update',
-                                                            'docker-image' => 'Docker Image',
-                                                        ])
-                                                        ->descriptions([
-                                                            'read' => trans('server/users.permissions.startup_read'),
-                                                            'update' => trans('server/users.permissions.startup_update'),
-                                                            'docker-image' => trans('server/users.permissions.startup_docker_image'),
-                                                        ]),
-                                                ]),
-                                        ]),
-                                    Tab::make('Database')
-                                        ->schema([
-                                            Section::make()
-                                                ->description(trans('server/users.permissions.database_desc'))
-                                                ->icon('tabler-database')
-                                                ->schema([
-                                                    CheckboxList::make('database')
-                                                        ->bulkToggleable()
-                                                        ->label('')
-                                                        ->columns(2)
-                                                        ->options([
-                                                            'read' => 'Read',
-                                                            'create' => 'Create',
-                                                            'update' => 'Update',
-                                                            'delete' => 'Delete',
-                                                            'view_password' => 'View Password',
-                                                        ])
-                                                        ->descriptions([
-                                                            'read' => trans('server/users.permissions.database_read'),
-                                                            'create' => trans('server/users.permissions.database_create'),
-                                                            'update' => trans('server/users.permissions.database_update'),
-                                                            'delete' => trans('server/users.permissions.database_delete'),
-                                                            'view_password' => trans('server/users.permissions.database_view_password'),
-                                                        ]),
-                                                ]),
-                                        ]),
-                                    Tab::make('Schedule')
-                                        ->schema([
-                                            Section::make()
-                                                ->description(trans('server/users.permissions.schedule_desc'))
-                                                ->icon('tabler-clock')
-                                                ->schema([
-                                                    CheckboxList::make('schedule')
-                                                        ->bulkToggleable()
-                                                        ->label('')
-                                                        ->columns(2)
-                                                        ->options([
-                                                            'read' => 'Read',
-                                                            'create' => 'Create',
-                                                            'update' => 'Update',
-                                                            'delete' => 'Delete',
-                                                        ])
-                                                        ->descriptions([
-                                                            'read' => trans('server/users.permissions.schedule_read'),
-                                                            'create' => trans('server/users.permissions.schedule_create'),
-                                                            'update' => trans('server/users.permissions.schedule_update'),
-                                                            'delete' => trans('server/users.permissions.schedule_delete'),
-                                                        ]),
-                                                ]),
-                                        ]),
-                                    Tab::make('Settings')
-                                        ->schema([
-                                            Section::make()
-                                                ->description(trans('server/users.permissions.settings_desc'))
-                                                ->icon('tabler-settings')
-                                                ->schema([
-                                                    CheckboxList::make('settings')
-                                                        ->bulkToggleable()
-                                                        ->label('')
-                                                        ->columns(2)
-                                                        ->options([
-                                                            'rename' => 'Rename',
-                                                            'reinstall' => 'Reinstall',
-                                                        ])
-                                                        ->descriptions([
-                                                            'rename' => trans('server/users.permissions.setting_rename'),
-                                                            'reinstall' => trans('server/users.permissions.setting_reinstall'),
-                                                        ]),
-                                                ]),
-                                        ]),
-                                    Tab::make('Activity')
-                                        ->schema([
-                                            Section::make()
-                                                ->description(trans('server/users.permissions.activity_desc'))
-                                                ->icon('tabler-stack')
-                                                ->schema([
-                                                    CheckboxList::make('activity')
-                                                        ->bulkToggleable()
-                                                        ->label('')
-                                                        ->columns(2)
-                                                        ->options([
-                                                            'read' => 'Read',
-                                                        ])
-                                                        ->descriptions([
-                                                            'read' => trans('server/users.permissions.activity_read'),
-                                                        ]),
-                                                ]),
-                                        ]),
-                                ]),
-
+                                ->schema($tabs),
                         ]),
                 ])
                 ->modalHeading('Invite User')
