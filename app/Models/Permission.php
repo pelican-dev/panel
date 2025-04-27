@@ -114,8 +114,22 @@ class Permission extends Model implements Validatable
     ];
 
     /**
-     * All the permissions available on the system. You should use Permission::permissionTabs() or Permission::permissions()
-     * to retrieve them, and not directly access this array as it is subject to change.
+     * All the permissions available on the system. Use Permission::permissionTabs() or Permission::permissions()
+     *
+     * @return array<int, array{
+     *      name: string,
+     *      description: string,
+     *      icon: string,
+     *      checkboxList: array{
+     *          name: string,
+     *          columns: int,
+     *          options: array<int, array{
+     *              name: string,
+     *              label: string,
+     *              description: string,
+     *          }>
+     *      }
+     *  }>
      *
      * @see Permission::permissionTabs()
      */
@@ -399,6 +413,18 @@ class Permission extends Model implements Validatable
         ];
     }
 
+
+    /**
+     * Converts Permission::permissionTabs() to Permission::permissions()
+     * to retrieve them, and not directly access this array as it is subject to change.
+     *
+     * @return array<string, array{
+     *      description: string,
+     *      keys: array<string, string>
+     *  }>
+     *
+     * @see Permission::permissionTabs()
+     */
     protected function constructPermissions(): array
     {
         $return = [];
