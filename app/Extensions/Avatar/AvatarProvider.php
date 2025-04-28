@@ -2,11 +2,11 @@
 
 namespace App\Extensions\Avatar;
 
-use Filament\AvatarProviders\Contracts\AvatarProvider as AvatarProviderContract;
+use App\Models\User;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 
-abstract class AvatarProvider implements AvatarProviderContract
+abstract class AvatarProvider
 {
     /**
      * @var array<string, static>
@@ -32,6 +32,8 @@ abstract class AvatarProvider implements AvatarProviderContract
     }
 
     abstract public function getId(): string;
+
+    abstract public function get(User $user): ?string;
 
     public function getName(): string
     {

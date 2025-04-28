@@ -161,11 +161,20 @@ class Settings extends Page implements HasForms
                         ->default(env('FILAMENT_TOP_NAVIGATION', config('panel.filament.top-navigation'))),
                     Select::make('FILAMENT_AVATAR_PROVIDER')
                         ->label(trans('admin/setting.general.avatar_provider'))
-                        ->columnSpan(2)
                         ->native(false)
                         ->options(collect(AvatarProvider::getAll())->mapWithKeys(fn ($provider) => [$provider->getId() => $provider->getName()]))
                         ->selectablePlaceholder(false)
                         ->default(env('FILAMENT_AVATAR_PROVIDER', config('panel.filament.avatar-provider'))),
+                    Toggle::make('FILAMENT_UPLOADABLE_AVATARS')
+                        ->label(trans('admin/setting.general.uploadable_avatars'))
+                        ->inline(false)
+                        ->onIcon('tabler-check')
+                        ->offIcon('tabler-x')
+                        ->onColor('success')
+                        ->offColor('danger')
+                        ->formatStateUsing(fn ($state) => (bool) $state)
+                        ->afterStateUpdated(fn ($state, Set $set) => $set('FILAMENT_UPLOADABLE_AVATARS', (bool) $state))
+                        ->default(env('FILAMENT_UPLOADABLE_AVATARS', config('panel.filament.uploadable-avatars'))),
                 ]),
             ToggleButtons::make('PANEL_USE_BINARY_PREFIX')
                 ->label(trans('admin/setting.general.unit_prefix'))

@@ -48,7 +48,7 @@ class RoleResource extends Resource
 
     public static function getNavigationGroup(): ?string
     {
-        return trans('admin/dashboard.user');
+        return config('panel.filament.top-navigation', false) ? trans('admin/dashboard.advanced') : trans('admin/dashboard.user');
     }
 
     public static function getNavigationBadge(): ?string

@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Contracts\Validatable;
 use App\Exceptions\DisplayException;
+use App\Extensions\Avatar\AvatarProvider;
 use App\Rules\Username;
 use App\Facades\Activity;
 use App\Traits\HasValidation;
@@ -23,6 +24,7 @@ use Illuminate\Auth\Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\Builder;
 use App\Models\Traits\HasAccessTokens;
+use Filament\Models\Contracts\HasAvatar;
 use Illuminate\Auth\Passwords\CanResetPassword;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\Access\Authorizable;
@@ -30,6 +32,7 @@ use Illuminate\Database\Eloquent\Relations\MorphToMany;
 use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
 use Illuminate\Contracts\Auth\Access\Authorizable as AuthorizableContract;
 use Illuminate\Contracts\Auth\CanResetPassword as CanResetPasswordContract;
+use Illuminate\Support\Facades\Storage;
 use ResourceBundle;
 use Spatie\Permission\Traits\HasRoles;
 
@@ -87,7 +90,7 @@ use Spatie\Permission\Traits\HasRoles;
  * @method static Builder|User whereUsername($value)
  * @method static Builder|User whereUuid($value)
  */
-class User extends Model implements AuthenticatableContract, AuthorizableContract, CanResetPasswordContract, FilamentUser, HasName, HasTenants, Validatable
+class User extends Model implements AuthenticatableContract, AuthorizableContract, CanResetPasswordContract, FilamentUser, HasAvatar, HasName, HasTenants, Validatable
 {
     use Authenticatable;
     use Authorizable { can as protected canned; }
@@ -370,6 +373,21 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
     public function getFilamentName(): string
     {
         return $this->username;
+    }
+
+    public function getFilamentAvatarUrl(): ?string
+    {
+        if (config('panel.filament.uploadable-avatars')) {
+            $path = "avatars/$this->id.png";
+
+            if (Storage::disk('public')->exists($path)) {
+                return Storage::url($path);
+            }
+        }
+
+        $provider = AvatarProvider::getProvider(config('panel.filament.avatar-provider'));
+
+        return $provider?->get($this);
     }
 
     public function canTarget(Model $user): bool

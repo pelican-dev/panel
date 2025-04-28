@@ -2,3 +2,7 @@
 @tailwind components;
 @tailwind utilities;
 @tailwind variants;
+
+.fi-section-header-icon {
+    @apply !self-center;
+}
