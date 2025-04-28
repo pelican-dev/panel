@@ -413,7 +413,6 @@ class Permission extends Model implements Validatable
         ];
     }
 
-
     /**
      * Converts Permission::permissionTabs() to Permission::permissions()
      * to retrieve them, and not directly access this array as it is subject to change.
@@ -438,6 +437,7 @@ class Permission extends Model implements Validatable
                 'keys' => $keys,
             ];
         }
+
         return $return;
     }
 
@@ -481,6 +481,7 @@ class Permission extends Model implements Validatable
                 ],
             ],
         ];
+
         return Collection::make(array_merge($static_permissions, (new Permission)->constructPermissions()));
     }
 }

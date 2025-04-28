@@ -11,8 +11,8 @@ use App\Services\Subusers\SubuserCreationService;
 use Exception;
 use Filament\Actions;
 use Filament\Facades\Filament;
-use Filament\Forms\Components\Actions as assignAll;
 use Filament\Forms\Components\Actions\Action;
+use Filament\Forms\Components\Actions as assignAll;
 use Filament\Forms\Components\CheckboxList;
 use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\Section;
@@ -75,6 +75,7 @@ class ListUsers extends ListRecords
                                     ->descriptions($descriptions),
                             ]),
                     ]);
+
                 continue;
             }
             $tabs[] = Tab::make($tab['name'])

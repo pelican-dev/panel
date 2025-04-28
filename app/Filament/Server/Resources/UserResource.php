@@ -19,8 +19,8 @@ use Filament\Forms\Components\Tabs\Tab;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Set;
 use Filament\Notifications\Notification;
-use Filament\Tables\Actions\DeleteAction;
 use Filament\Resources\Resource;
+use Filament\Tables\Actions\DeleteAction;
 use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Columns\TextColumn;
@@ -125,6 +125,7 @@ class UserResource extends Resource
                                     ->descriptions($descriptions),
                             ]),
                     ]);
+
                 continue;
             }
             $tabs[] = Tab::make($tab['name'])
@@ -142,7 +143,6 @@ class UserResource extends Resource
                         ]),
                 ]);
         }
-
 
         return $table
             ->paginated(false)
@@ -177,7 +177,7 @@ class UserResource extends Resource
                     ->label('Edit User')
                     ->hidden(fn (User $user) => auth()->user()->id === $user->id)
                     ->authorize(fn () => auth()->user()->can(Permission::ACTION_USER_UPDATE, $server))
-                    ->modalHeading(fn (User $user) => 'Editing ' . $user->email)
+                    ->modalHeading(fn (User $user) => 'Editing '.$user->email)
                     ->action(function (array $data, SubuserUpdateService $subuserUpdateService, User $user) use ($server) {
                         $subuser = $server->subusers->where('user_id', $user->id)->first();
 
