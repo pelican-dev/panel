@@ -24,7 +24,6 @@ class NodeSystemInformation extends Component
             <x-filament::icon
                 :icon="'tabler-heart-question'"
                 @class(['fi-ta-icon-item', $sizeClasses, 'fi-color-custom text-custom-500 dark:text-custom-400', 'fi-color-warning'])
-                @style([\Filament\Support\get_color_css_variables('warning', shades: [400, 500], alias: 'tables::columns.icon-column.item')])
             />
         </div>
         HTML;

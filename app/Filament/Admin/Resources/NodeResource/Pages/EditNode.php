@@ -46,7 +46,7 @@ class EditNode extends EditRecord
         $this->nodeUpdateService = $nodeUpdateService;
     }
 
-    public function form(Form|Schema $schema): Schema
+    public function form(Schema $schema): Schema
     {
         return $schema->schema([
             Tabs::make('Tabs')
@@ -72,6 +72,7 @@ class EditNode extends EditRecord
                             Fieldset::make()
                                 ->label(trans('admin/node.node_info'))
                                 ->columns(4)
+                                ->columnSpanFull()
                                 ->schema([
                                     TextEntry::make('INeedAName')
                                         ->label(trans('admin/node.wings_version'))
@@ -398,6 +399,7 @@ class EditNode extends EditRecord
                                         ->suffix('%'),
                                 ]),
                             Grid::make()
+                                ->columnSpanFull()
                                 ->columns([
                                     'default' => 1,
                                     'sm' => 1,
@@ -513,6 +515,7 @@ class EditNode extends EditRecord
                                 ->columnSpanFull(),
                             Grid::make()
                                 ->columns()
+                                ->columnSpanFull()
                                 ->schema([
                                     Actions::make([
                                         Action::make('autoDeploy')

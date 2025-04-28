@@ -7,7 +7,6 @@
         $animated = $exception ? '' : 'animate-pulse';
         $condition = $exception ? 'danger' : 'success';
         $class = ['fi-ta-icon-item', $sizeClasses, 'fi-color-custom text-custom-500 dark:text-custom-400', 'fi-color-'.$condition, $animated];
-        $style = Filament\Support\Colors\Color::generatePalette($condition)
     @endphp
     <x-filament::icon
         x-tooltip="{
@@ -18,7 +17,6 @@
             }"
         :icon='$icon'
         @class($class)
-        @style($style)
     />
     @if($exception)
         @script
@@ -28,4 +26,4 @@
         @endscript
     @endif
 </div>
-</div>
+
