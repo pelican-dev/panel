@@ -19,18 +19,18 @@ spec:
       containers:
         - image: ghcr.io/stantabcorp/searcade-pelican-panel
           name: searcade-pelican-panel
-          imagePullPolicy: IfNotPresent
+          imagePullPolicy: Always
           ports:
             - containerPort: 80
               name: http
-          readinessProbe:
-            periodSeconds: 30
-            httpGet:
-              port: 80
-              path: /up
-              httpHeaders:
-                - name: Host
-                  value: panel.searcade.com
+#          readinessProbe:
+#            periodSeconds: 30
+#            httpGet:
+#              port: 80
+#              path: /up
+#              httpHeaders:
+#                - name: Host
+#                  value: panel.searcade.com
           envFrom:
             - configMapRef:
                 name: searcade-pelican-panel-config

@@ -6,9 +6,9 @@ metadata:
   name: searcade-pelican-panel-svc
 spec:
   ports:
-    - port: 8000
+    - port: 80
       name: http
       protocol: TCP
-      targetPort: 8000
+      targetPort: 80
   selector:
     app: searcade-pelican-panel
