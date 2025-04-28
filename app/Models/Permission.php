@@ -433,7 +433,7 @@ class Permission extends Model implements Validatable
             foreach ($permission['checkboxList']['options'] as $key) {
                 $keys[$key['label']] = $key['description'];
             }
-            $return[$permission['name']] = [
+            $return[$permission['checkboxList']['name']] = [
                 'description' => $permission['description'],
                 'keys' => $keys,
             ];
