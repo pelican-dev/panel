@@ -17,7 +17,6 @@ use Filament\Infolists\Components\TextEntry;
 use Filament\Resources\Resource;
 use Filament\Schemas\Components\Component;
 use Filament\Schemas\Components\Fieldset;
-use Filament\Schemas\Components\Form;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Tables\Columns\TextColumn;
@@ -64,8 +63,7 @@ class RoleResource extends Resource
             ->columns([
                 TextColumn::make('name')
                     ->label(trans('admin/role.name'))
-                    ->sortable()
-                    ->searchable(),
+                    ->sortable(),
                 TextColumn::make('permissions_count')
                     ->label(trans('admin/role.permissions'))
                     ->badge()
@@ -96,7 +94,7 @@ class RoleResource extends Resource
     /**
      * @throws Exception
      */
-    public static function form(Form|Schema $schema): Schema
+    public static function form(Schema $schema): Schema
     {
         $permissionSections = [];
 

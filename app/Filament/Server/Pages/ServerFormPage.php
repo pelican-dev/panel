@@ -39,10 +39,10 @@ abstract class ServerFormPage extends Page
     /**
      * @return array<int | string, string | Form>
      */
-    protected function getForms(): array
+    protected function getFormSchema(): array
     {
         return [
-            'form' => $this->form($this->makeForm()
+            'schema' => $this->form($this->makeSchema()
                 ->model($this->getRecord())
                 ->statePath($this->getFormStatePath())
                 ->columns($this->hasInlineLabels() ? 1 : 2)

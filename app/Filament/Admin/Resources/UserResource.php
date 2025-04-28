@@ -9,7 +9,6 @@ use App\Models\User;
 use Filament\Facades\Filament;
 use Filament\Forms\Components\CheckboxList;
 use Filament\Forms\Components\TextInput;
-use Filament\Schemas\Components\Form;
 use Filament\Resources\Resource;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
@@ -65,10 +64,12 @@ class UserResource extends Resource
                     ->alignCenter()
                     ->defaultImageUrl(fn (User $user) => Filament::getUserAvatarUrl($user)),
                 TextColumn::make('username')
-                    ->label(trans('admin/user.username')),
+                    ->label(trans('admin/user.username'))
+                    ->searchable(),
                 TextColumn::make('email')
                     ->label(trans('admin/user.email'))
-                    ->icon('tabler-mail'),
+                    ->icon('tabler-mail')
+                    ->searchable(),
                 IconColumn::make('use_totp')
                     ->label('2FA')
                     ->visibleFrom('lg')
@@ -100,7 +101,7 @@ class UserResource extends Resource
             ]);
     }
 
-    public static function form(Form|Schema $schema): Schema
+    public static function form(Schema $schema): Schema
     {
         return $schema
             ->columns(['default' => 1, 'lg' => 3])

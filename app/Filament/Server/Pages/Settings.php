@@ -14,7 +14,6 @@ use Filament\Infolists\Components\TextEntry;
 use Filament\Schemas\Components\Section;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
-use Filament\Schemas\Components\Form;
 use Filament\Notifications\Notification;
 use Filament\Schemas\Schema;
 use Filament\Support\Enums\Alignment;
@@ -26,7 +25,10 @@ class Settings extends ServerFormPage
 
     protected static ?int $navigationSort = 10;
 
-    public function form(Form|Schema $schema): Schema
+    /**
+     * @throws Exception
+     */
+    public function form(Schema $schema): Schema
     {
         /** @var Server $server */
         $server = Filament::getTenant();
@@ -49,6 +51,7 @@ class Settings extends ServerFormPage
                     ->schema([
                         Fieldset::make('Server')
                             ->label('Information')
+                            ->columnSpanFull()
                             ->schema([
                                 TextInput::make('name')
                                     ->label('Server Name')
@@ -91,6 +94,7 @@ class Settings extends ServerFormPage
                             ]),
                         Fieldset::make('Limits')
                             ->label('Limits')
+                            ->columnSpanFull()
                             ->columns([
                                 'default' => 1,
                                 'sm' => 1,
@@ -149,6 +153,7 @@ class Settings extends ServerFormPage
                             ->formatStateUsing(fn (Server $server) => $server->node->name)
                             ->disabled(),
                         Fieldset::make('SFTP Information')
+                            ->columnSpanFull()
                             ->hidden(fn () => !auth()->user()->can(Permission::ACTION_FILE_SFTP, $server))
                             ->label('SFTP Information')
                             ->columns([
@@ -191,6 +196,7 @@ class Settings extends ServerFormPage
                             ]),
                     ]),
                 Section::make('Reinstall Server')
+                    ->columnSpanFull()
                     ->hidden(fn () => !auth()->user()->can(Permission::ACTION_SETTINGS_REINSTALL, $server))
                     ->collapsible()
                     ->footerActions([

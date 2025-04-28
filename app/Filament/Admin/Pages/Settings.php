@@ -379,6 +379,7 @@ class Settings extends Page implements HasSchemas
             Section::make(trans('admin/setting.mail.from_settings'))
                 ->description(trans('admin/setting.mail.from_settings_help'))
                 ->columns()
+                ->columnSpanFull()
                 ->schema([
                     TextInput::make('MAIL_FROM_ADDRESS')
                         ->label(trans('admin/setting.mail.from_address'))
@@ -392,6 +393,7 @@ class Settings extends Page implements HasSchemas
                 ]),
             Section::make(trans('admin/setting.mail.smtp.smtp_title'))
                 ->columns()
+                ->columnSpanFull()
                 ->visible(fn (Get $get) => $get('MAIL_MAILER') === 'smtp')
                 ->schema([
                     TextInput::make('MAIL_HOST')
@@ -428,6 +430,7 @@ class Settings extends Page implements HasSchemas
                 ]),
             Section::make(trans('admin/setting.mail.mailgun.mailgun_title'))
                 ->columns()
+                ->columnSpanFull()
                 ->visible(fn (Get $get) => $get('MAIL_MAILER') === 'mailgun')
                 ->schema([
                     TextInput::make('MAILGUN_DOMAIN')
@@ -467,6 +470,7 @@ class Settings extends Page implements HasSchemas
             Section::make(trans('admin/setting.backup.throttle'))
                 ->description(trans('admin/setting.backup.throttle_help'))
                 ->columns()
+                ->columnSpanFull()
                 ->schema([
                     TextInput::make('BACKUP_THROTTLE_LIMIT')
                         ->label(trans('admin/setting.backup.limit'))

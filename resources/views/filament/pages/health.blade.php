@@ -1,10 +1,13 @@
-@php
-    use Illuminate\View\ComponentAttributeBag;
-@endphp
-
 <x-filament-panels::page>
+    @php
+        $getId = fn () => 'health-results-grid';
+    @endphp
     @if (count($checkResults?->storedCheckResults ?? []))
-        <div {{ $getExtraAttributeBag()->when(! $isInline, fn (ComponentAttributeBag $attributes) => $attributes->grid($getColumns(), $gridDirection)) }}>
+
+        <x-filament-schemas::grid
+            :getId="$getId"
+            :
+        >
             @foreach ($checkResults->storedCheckResults as $result)
                 <div
                     class="flex items-start px-4 py-5 space-x-2 md:space-x-3 overflow-hidden shadow-lg rounded-xl bg-white dark:bg-gray-900 ring-1 ring-gray-950/5 dark:ring-white/10 sm:p-6">
@@ -27,7 +30,7 @@
                     </div>
                 </div>
             @endforeach
-        </div>
+        </x-filament-schemas::grid>
     @endif
 
     @if ($lastRanAt)
