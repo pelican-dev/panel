@@ -1,6 +1,11 @@
 {
     admin off
     email {$ADMIN_EMAIL}
+
+    log {
+        output stdout
+        level info
+    }
 }
 
 {$APP_URL} {
