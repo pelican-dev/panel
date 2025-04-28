@@ -43,41 +43,6 @@ class ListUsers extends ListRecords
                 $descriptions[$option['label']] = $option['description'];
                 $permissionsArray[$tab['checkboxList']['name']][] = $option['label'];
             }
-
-            if ($tab['checkboxList']['name'] == 'control') {
-                $tabs[] = Tab::make($tab['name'])
-                    ->schema([
-                        Section::make()
-                            ->description($tab['description'])
-                            ->icon($tab['icon'])
-                            ->schema([
-                                CheckboxList::make($tab['checkboxList']['name'])
-                                    ->formatStateUsing(function (User $user, Set $set) use ($server) {
-                                        $permissionsArray = $server->subusers->where('user_id', $user->id)->first()->permissions;
-
-                                        $transformedPermissions = [];
-
-                                        foreach ($permissionsArray as $permission) {
-                                            [$group, $action] = explode('.', $permission, 2);
-                                            $transformedPermissions[$group][] = $action;
-                                        }
-
-                                        foreach ($transformedPermissions as $key => $value) {
-                                            $set($key, $value);
-                                        }
-
-                                        return $transformedPermissions['control'] ?? [];
-                                    })
-                                    ->bulkToggleable()
-                                    ->label('')
-                                    ->columns($tab['checkboxList']['columns'])
-                                    ->options($options)
-                                    ->descriptions($descriptions),
-                            ]),
-                    ]);
-
-                continue;
-            }
             $tabs[] = Tab::make($tab['name'])
                 ->schema([
                     Section::make()
