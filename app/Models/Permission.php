@@ -433,7 +433,7 @@ class Permission extends Model implements Validatable
             foreach ($permission['checkboxList']['options'] as $key) {
                 $keys[$key['label']] = $key['description'];
             }
-            $return[mb_strtolower($permission['name'])] = [
+            $return[mb_strtolower($permission['checkboxList']['name'])] = [
                 'description' => $permission['description'],
                 'keys' => $keys,
             ];
@@ -454,12 +454,14 @@ class Permission extends Model implements Validatable
     public static function permissions(): Collection
     {
         $permissions = (new Permission)->constructPermissions();
-        $permissions['websocket'] = [
+        $permissions = array_merge(['websocket' => [
             'description' => 'Allows the user to connect to the server websocket, giving them access to view console output and realtime server stats.',
             'keys' => [
                 'connect' => 'Allows a user to connect to the websocket instance for a server to stream the console.',
-            ],
-        ];
+            ]
+        ]
+        ], $permissions);
+
         return Collection::make($permissions);
     }
 }
