@@ -34,7 +34,7 @@ class ServerPanelProvider extends PanelProvider
             ->id('server')
             ->path('server')
             ->homeUrl('/')
-            //->spa()
+            ->spa()
             ->databaseNotifications()
             ->tenant(Server::class)
             ->brandName(config('app.name', 'Pelican'))

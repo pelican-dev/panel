@@ -30,7 +30,7 @@ class AdminPanelProvider extends PanelProvider
             ->id('admin')
             ->path('admin')
             ->homeUrl('/')
-            //->spa()
+            ->spa()
             ->databaseNotifications()
             ->breadcrumbs(false)
             ->brandName(config('app.name', 'Pelican'))
