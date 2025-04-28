@@ -69,17 +69,15 @@ if (!function_exists('resolve_path')) {
 }
 
 if (!function_exists('get_fonts')) {
+    /**
+     * @return array<string, string>
+     */
     function get_fonts(?string $directory = null): array
     {
         $directory ??= public_path('fonts');
-        $fonts = [];
-        $fontFiles = glob($directory . '/*.ttf', GLOB_BRACE);
 
-        foreach ($fontFiles as $file) {
-            $fileName = pathinfo($file, PATHINFO_FILENAME);
-            $fonts[$fileName] = $fileName; // or make key => path if needed
-        }
-
-        return $fonts;
+        return collect(glob($directory . '/*.ttf', GLOB_BRACE) ?: [])
+            ->mapWithKeys(fn ($file) => [$name = pathinfo($file, PATHINFO_FILENAME) => $name])
+            ->all();
     }
 }
