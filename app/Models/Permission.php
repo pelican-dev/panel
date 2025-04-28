@@ -480,6 +480,6 @@ class Permission extends Model implements Validatable
             ],
         ];
 
-        return Collection::make(array_merge($static_permissions, (new Permission)->constructPermissions()));
+        return Collection::make(array_merge($static_permissions, (new Permission())->constructPermissions()));
     }
 }
