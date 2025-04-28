@@ -450,8 +450,6 @@ class Permission extends Model implements Validatable
 
     /**
      * Returns all the permissions available on the system for a user to have when controlling a server.
-     *
-     * @return \Illuminate\Support\Collection
      */
     public static function permissions(): Collection
     {
