@@ -4,12 +4,13 @@ namespace App\Models;
 
 use App\Contracts\Validatable;
 use App\Traits\HasValidation;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
 
 class Permission extends Model implements Validatable
 {
-    use HasValidation;
+    use HasFactory, HasValidation;
 
     /**
      * The resource name for this model when it is transformed into an
