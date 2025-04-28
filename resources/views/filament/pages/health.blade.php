@@ -1,6 +1,10 @@
+@php
+    use Illuminate\View\ComponentAttributeBag;
+@endphp
+
 <x-filament-panels::page>
     @if (count($checkResults?->storedCheckResults ?? []))
-        <x-filament::grid default="1" sm="2" class="gap-6 mb-5">
+        <div {{ $getExtraAttributeBag()->when(! $isInline, fn (ComponentAttributeBag $attributes) => $attributes->grid($getColumns(), $gridDirection)) }}>
             @foreach ($checkResults->storedCheckResults as $result)
                 <div
                     class="flex items-start px-4 py-5 space-x-2 md:space-x-3 overflow-hidden shadow-lg rounded-xl bg-white dark:bg-gray-900 ring-1 ring-gray-950/5 dark:ring-white/10 sm:p-6">
@@ -23,7 +27,7 @@
                     </div>
                 </div>
             @endforeach
-        </x-filament::grid>
+        </div>
     @endif
 
     @if ($lastRanAt)

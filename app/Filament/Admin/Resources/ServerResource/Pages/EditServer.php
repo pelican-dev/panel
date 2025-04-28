@@ -46,7 +46,6 @@ use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Components\ToggleButtons;
-use Filament\Schemas\Components\Form;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Components\Utilities\Set;
 use Filament\Notifications\Notification;
@@ -58,6 +57,7 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\HtmlString;
 use LogicException;
 use Filament\Schemas\Schema;
+use Random\RandomException;
 
 class EditServer extends EditRecord
 {
@@ -70,7 +70,10 @@ class EditServer extends EditRecord
         $this->daemonServerRepository = $daemonServerRepository;
     }
 
-    public function form(Form|Schema $schema): Schema
+    /**
+     * @throws RandomException
+     */
+    public function form(Schema $schema): Schema
     {
         return $schema
             ->schema([
@@ -108,7 +111,6 @@ class EditServer extends EditRecord
                                     ])
                                     ->required()
                                     ->maxLength(255),
-
                                 Select::make('owner_id')
                                     ->prefixIcon('tabler-user')
                                     ->label(trans('admin/server.owner'))
@@ -188,6 +190,7 @@ class EditServer extends EditRecord
                             ->icon('tabler-brand-docker')
                             ->schema([
                                 Fieldset::make(trans('admin/server.resource_limits'))
+                                    ->columnSpanFull()
                                     ->columns([
                                         'default' => 1,
                                         'sm' => 2,
@@ -291,6 +294,7 @@ class EditServer extends EditRecord
                                     ]),
 
                                 Fieldset::make(trans('admin/server.advanced_limits'))
+                                    ->columnSpanFull()
                                     ->columns([
                                         'default' => 1,
                                         'sm' => 2,
@@ -403,6 +407,7 @@ class EditServer extends EditRecord
 
                                 Fieldset::make(trans('admin/server.feature_limits'))
                                     ->inlineLabel()
+                                    ->columnSpanFull()
                                     ->columns([
                                         'default' => 1,
                                         'sm' => 2,
@@ -430,6 +435,7 @@ class EditServer extends EditRecord
                                             ->numeric(),
                                     ]),
                                 Fieldset::make(trans('admin/server.docker_settings'))
+                                    ->columnSpanFull()
                                     ->columns([
                                         'default' => 1,
                                         'sm' => 2,
@@ -683,7 +689,7 @@ class EditServer extends EditRecord
                                             ->hintAction(
                                                 Action::make('Delete')
                                                     ->label(trans('filament-actions::delete.single.modal.actions.delete.label'))
-                                                    ->authorize(fn (Database $database) => auth()->user()->can('delete database', $database))
+                                                    //->authorize(fn (Database $database) => auth()->user()->can('delete database', $database))
                                                     ->color('danger')
                                                     ->icon('tabler-trash')
                                                     ->requiresConfirmation()
@@ -708,7 +714,7 @@ class EditServer extends EditRecord
                                             ->password()
                                             ->revealable()
                                             ->columnSpan(1)
-                                            ->hintAction(RotateDatabasePasswordAction::make())
+                                            //->hintAction(RotateDatabasePasswordAction::make())
                                             //TODO ->suffixAction(fn (string $state) => request()->isSecure() ? CopyAction::make()->copyable($state) : null)
                                             ->formatStateUsing(fn (Database $database) => $database->password),
                                         TextInput::make('remote')
@@ -792,6 +798,7 @@ class EditServer extends EditRecord
                             ->icon('tabler-settings')
                             ->schema([
                                 Fieldset::make(trans('admin/server.actions'))
+                                    ->columnSpanFull()
                                     ->columns([
                                         'default' => 1,
                                         'sm' => 2,
