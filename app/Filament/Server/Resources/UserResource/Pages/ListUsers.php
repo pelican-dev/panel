@@ -116,6 +116,7 @@ class ListUsers extends ListRecords
                                             ],
                                             'settings' => [
                                                 'rename',
+                                                'description',
                                                 'reinstall',
                                             ],
                                             'activity' => [
@@ -351,10 +352,12 @@ class ListUsers extends ListRecords
                                                         ->columns(2)
                                                         ->options([
                                                             'rename' => 'Rename',
+                                                            'description' => 'Description',
                                                             'reinstall' => 'Reinstall',
                                                         ])
                                                         ->descriptions([
                                                             'rename' => trans('server/users.permissions.setting_rename'),
+                                                            'description' => trans('server/users.permissions.setting_description'),
                                                             'reinstall' => trans('server/users.permissions.setting_reinstall'),
                                                         ]),
                                                 ]),

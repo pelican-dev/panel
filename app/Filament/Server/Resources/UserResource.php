@@ -214,6 +214,7 @@ class UserResource extends Resource
                                                 ],
                                                 'settings' => [
                                                     'rename',
+                                                    'description',
                                                     'reinstall',
                                                 ],
                                                 'activity' => [
@@ -464,10 +465,12 @@ class UserResource extends Resource
                                                             ->columns(2)
                                                             ->options([
                                                                 'rename' => 'Rename',
+                                                                'description' => 'Description',
                                                                 'reinstall' => 'Reinstall',
                                                             ])
                                                             ->descriptions([
                                                                 'rename' => trans('server/users.permissions.setting_rename'),
+                                                                'description' => trans('server/users.permissions.setting_description'),
                                                                 'reinstall' => trans('server/users.permissions.setting_reinstall'),
                                                             ]),
                                                     ]),
