@@ -85,7 +85,7 @@ RUN chown root:www-data ./ \
     && ln -s /pelican-data/.env ./.env \
     && ln -s /pelican-data/database/database.sqlite ./database/database.sqlite \
     && ln -sf /var/www/html/storage/app/public /var/www/html/public/storage \
-    && ln -s  /pelican-data/storage/ /var/www/html/storage/app/public/avatars \
+    && ln -s  /pelican-data/storage/avatars /var/www/html/storage/app/public/avatars \
     # Allow www-data write permissions where necessary 
     && chown -R www-data:www-data /pelican-data ./storage ./bootstrap/cache /var/run/supervisord /var/www/html/public/storage \
     && chmod -R u+rwX,g+rwX,o-rwx /pelican-data ./storage ./bootstrap/cache /var/run/supervisord
