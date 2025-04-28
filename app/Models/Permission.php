@@ -450,6 +450,8 @@ class Permission extends Model implements Validatable
 
     /**
      * Returns all the permissions available on the system for a user to have when controlling a server.
+     *
+     * @return \Illuminate\Support\Collection
      */
     public static function permissions(): Collection
     {
@@ -460,7 +462,6 @@ class Permission extends Model implements Validatable
                     'connect' => 'Allows a user to connect to the websocket instance for a server to stream the console.',
                 ],
             ],
-
             'control' => [
                 'description' => 'Permissions that control a user\'s ability to control the power state of a server, or send commands.',
                 'keys' => [
@@ -470,7 +471,6 @@ class Permission extends Model implements Validatable
                     'restart' => 'Allows a user to perform a server restart. This allows them to start the server if it is offline, but not put the server in a completely stopped state.',
                 ],
             ],
-
             'user' => [
                 'description' => 'Permissions that allow a user to manage other subusers on a server. They will never be able to edit their own account, or assign permissions they do not have themselves.',
                 'keys' => [
@@ -481,7 +481,6 @@ class Permission extends Model implements Validatable
                 ],
             ],
         ];
-
         return Collection::make(array_merge($static_permissions, (new Permission)->constructPermissions()));
     }
 }
