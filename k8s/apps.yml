@@ -1,0 +1,20 @@
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: searcade-pelican-panel
+  namespace: argocd
+spec:
+  project: searcade-pelican-panel
+  source:
+    repoURL: https://github.com/stantabcorp/searcade-pelican-panel.git
+    targetRevision: HEAD
+    path: k8s
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: searcade-pelican-panel
+  syncPolicy:
+    syncOptions:
+      - PruneLast=true
+    automated:
+      prune: true

@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: searcade-pelican-panel
+  name: searcade-pelican-panel
+spec:
+  #  replicas: 2
+  revisionHistoryLimit: 3
+  selector:
+    matchLabels:
+      app: searcade-pelican-panel
+  template:
+    metadata:
+      labels:
+        app: searcade-pelican-panel
+    spec:
+      automountServiceAccountToken: false
+      containers:
+        - image: ghcr.io/stantabcorp/searcade-pelican-panel
+          name: searcade-pelican-panel
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 80
+              name: http
+          readinessProbe:
+            periodSeconds: 30
+            httpGet:
+              port: 80
+              path: /up
+              httpHeaders:
+                - name: Host
+                  value: panel.searcade.com
+          envFrom:
+            - configMapRef:
+                name: searcade-pelican-panel-config
+            - secretRef:
+                name: searcade-pelican-panel-secret

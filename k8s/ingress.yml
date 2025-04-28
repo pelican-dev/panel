@@ -1,0 +1,23 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: searcade-pelican-panel
+  labels:
+    app: searcade-pelican-panel
+  annotations:
+    nginx.org/client-max-body-size: 0
+    nginx.ingress.kubernetes.io/client-max-body-size: 0
+    nginx.ingress.kubernetes.io/proxy-body-size: 0
+spec:
+  ingressClassName: nginx
+  rules:
+    - host: panel-k8s.searcade.com
+      http:
+        paths:
+          - backend:
+              service:
+                name: searcade-pelican-panel-svc
+                port:
+                  number: 80
+            pathType: Prefix
+            path: /

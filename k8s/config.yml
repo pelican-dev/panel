@@ -1,0 +1,18 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: searcade-pelican-panel-config
+data:
+  XDG_DATA_HOME: "/pelican-data"
+  APP_URL: "http://panel-k8s.searcade.com"
+  APP_ENV: "production"
+  APP_DEBUG: "false"
+  MAIL_DRIVER: "log"
+  APP_INSTALLED: "true"
+  APP_NAME: "searcade"
+  CACHE_STORE: "file"
+  QUEUE_CONNECTION: "database"
+  SESSION_DRIVER: "database"
+  SESSION_SECURE_COOKIE: "1"
+  TRUSTED_PROXIES: "*"
+  DB_CONNECTION: "pgsql"
