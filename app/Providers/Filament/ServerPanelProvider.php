@@ -3,9 +3,9 @@
 namespace App\Providers\Filament;
 
 use App\Filament\App\Resources\ServerResource\Pages\ListServers;
+use App\Filament\Pages\Auth\EditProfile;
 use App\Filament\Pages\Auth\Login;
 use App\Filament\Admin\Resources\ServerResource\Pages\EditServer;
-use App\Filament\Pages\Auth\EditProfile;
 use App\Http\Middleware\Activity\ServerSubject;
 use App\Http\Middleware\LanguageMiddleware;
 use App\Http\Middleware\RequireTwoFactorAuthentication;
@@ -34,7 +34,7 @@ class ServerPanelProvider extends PanelProvider
             ->id('server')
             ->path('server')
             ->homeUrl('/')
-            //->spa()
+            ->spa()
             ->databaseNotifications()
             ->tenant(Server::class)
             ->brandName(config('app.name', 'Pelican'))
@@ -44,11 +44,10 @@ class ServerPanelProvider extends PanelProvider
             ->topNavigation(config('panel.filament.top-navigation', false))
             ->maxContentWidth(config('panel.filament.display-width', 'screen-2xl'))
             ->login(Login::class)
+            ->profile(EditProfile::class, false)
             ->passwordReset()
             ->userMenuItems([
-                'profile' => Action::make('toProfile')
-                    ->label(fn () => trans('filament-panels::/auth/pages/edit-profile.label'))
-                    ->url(fn () => EditProfile::getUrl(panel: 'app')),
+                'profile' => fn (Action $action) => $action->label(auth()->user()->username),
                 Action::make('toServerList')
                     ->label('Server List')
                     ->icon('tabler-brand-docker')

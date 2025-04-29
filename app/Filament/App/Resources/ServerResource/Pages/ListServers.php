@@ -9,6 +9,7 @@ use App\Filament\Server\Pages\Console;
 use App\Models\Server;
 use Filament\Resources\Pages\ListRecords;
 use Filament\Schemas\Components\Tabs\Tab;
+use Filament\Support\Enums\TextSize;
 use Filament\Tables\Columns\ColumnGroup;
 use Filament\Tables\Columns\Layout\Stack;
 use Filament\Tables\Columns\TextColumn;
@@ -33,6 +34,7 @@ class ListServers extends ListRecords
                 ->label('')
                 ->default('unknown')
                 ->wrap()
+                ->size(TextSize::Medium)
                 ->badge()
                 ->alignCenter()
                 ->tooltip(fn (Server $server) => $server->formatResource('uptime', type: ServerResourceType::Time))
@@ -43,11 +45,12 @@ class ListServers extends ListRecords
         $viewTwo = [
             TextColumn::make('name')
                 ->label('')
-                ->size('md')
+                ->size(TextSize::Medium)
                 ->searchable(),
             TextColumn::make('iNeedAName')
                 ->label('')
                 ->badge()
+                ->size(TextSize::Medium)
                 ->copyable(request()->isSecure())
                 ->copyMessage(fn (Server $server, string $state) => 'Copied ' . $server->allocation->address)
                 ->state(fn (Server $server) => $server->allocation->address),
@@ -56,18 +59,21 @@ class ListServers extends ListRecords
         $viewThree = [
             TextColumn::make('cpuUsage')
                 ->label('')
+                ->size(TextSize::Medium)
                 ->icon('tabler-cpu')
                 ->tooltip(fn (Server $server) => 'Usage Limit: ' . $server->formatResource('cpu', limit: true, type: ServerResourceType::Percentage, precision: 0))
                 ->state(fn (Server $server) => $server->formatResource('cpu_absolute', type: ServerResourceType::Percentage))
                 ->color(fn (Server $server) => $this->getResourceColor($server, 'cpu')),
             TextColumn::make('memoryUsage')
                 ->label('')
+                ->size(TextSize::Medium)
                 ->icon('tabler-memory')
                 ->tooltip(fn (Server $server) => 'Usage Limit: ' . $server->formatResource('memory', limit: true))
                 ->state(fn (Server $server) => $server->formatResource('memory_bytes'))
                 ->color(fn (Server $server) => $this->getResourceColor($server, 'memory')),
             TextColumn::make('diskUsage')
                 ->label('')
+                ->size(TextSize::Medium)
                 ->icon('tabler-device-floppy')
                 ->tooltip(fn (Server $server) => 'Usage Limit: ' . $server->formatResource('disk', limit: true))
                 ->state(fn (Server $server) => $server->formatResource('disk_bytes'))

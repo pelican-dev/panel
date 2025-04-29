@@ -2,8 +2,8 @@
 
 namespace App\Providers\Filament;
 
-use App\Filament\Pages\Auth\Login;
 use App\Filament\Pages\Auth\EditProfile;
+use App\Filament\Pages\Auth\Login;
 use App\Http\Middleware\LanguageMiddleware;
 use App\Http\Middleware\RequireTwoFactorAuthentication;
 use Filament\Actions\Action;
@@ -30,7 +30,7 @@ class AdminPanelProvider extends PanelProvider
             ->id('admin')
             ->path('admin')
             ->homeUrl('/')
-            //->spa()
+            ->spa()
             ->databaseNotifications()
             ->breadcrumbs(false)
             ->brandName(config('app.name', 'Pelican'))
@@ -40,11 +40,10 @@ class AdminPanelProvider extends PanelProvider
             ->topNavigation(config('panel.filament.top-navigation', false))
             ->maxContentWidth(config('panel.filament.display-width', 'screen-2xl'))
             ->login(Login::class)
+            ->profile(EditProfile::class, false)
             ->passwordReset()
             ->userMenuItems([
-                'profile' => Action::make('toProfile')
-                    ->label(fn () => trans('filament-panels::/auth/pages/edit-profile.label'))
-                    ->url(fn () => EditProfile::getUrl(panel: 'app')),
+                'profile' => fn (Action $action) => $action->label(auth()->user()->username),
                 Action::make('exitAdmin')
                     ->label(fn () => trans('profile.exit_admin'))
                     ->url('/')

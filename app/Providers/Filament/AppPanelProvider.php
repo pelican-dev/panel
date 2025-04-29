@@ -27,7 +27,7 @@ class AppPanelProvider extends PanelProvider
     {
         return $panel
             ->id('app')
-            //->spa()
+            ->spa()
             ->databaseNotifications()
             ->breadcrumbs(false)
             ->brandName(config('app.name', 'Pelican'))
@@ -41,6 +41,7 @@ class AppPanelProvider extends PanelProvider
             ->login(Login::class)
             ->passwordReset()
             ->userMenuItems([
+                'profile' => fn (Action $action) => $action->label(auth()->user()->username),
                 Action::make('toAdmin')
                     ->label('Admin')
                     ->url('/admin')

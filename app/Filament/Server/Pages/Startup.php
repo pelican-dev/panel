@@ -15,8 +15,8 @@ use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
-use Filament\Schemas\Components\Form;
 use Filament\Notifications\Notification;
+use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Validator;
@@ -27,7 +27,10 @@ class Startup extends ServerFormPage
 
     protected static ?int $navigationSort = 9;
 
-    public function form(Form|Schema $schema): Schema
+    /**
+     * @throws \Exception
+     */
+    public function form(Schema $schema): Schema
     {
         /** @var Server $server */
         $server = Filament::getTenant();
