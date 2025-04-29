@@ -153,8 +153,6 @@ class File extends Model
         try {
             $fileRepository = (new DaemonFileRepository())->setServer(self::$server);
 
-            $contents = [];
-
             if (!is_null(self::$searchTerm)) {
                 $contents = cache()->remember('file_search_' . self::$path . '_' . self::$searchTerm, now()->addMinute(), fn () => $fileRepository->search(self::$searchTerm, self::$path));
             } else {

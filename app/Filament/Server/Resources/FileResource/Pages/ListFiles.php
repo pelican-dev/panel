@@ -348,8 +348,7 @@ class ListFiles extends ListRecords
                         $location = rtrim($data['location'], '/');
 
                         $files = $files->map(fn ($file) => ['to' => join_paths($location, $file['name']), 'from' => $file['name']])->toArray();
-                        $this->getDaemonFileRepository()
-                            ->renameFiles($this->path, $files);
+                        $this->getDaemonFileRepository()->renameFiles($this->path, $files);
 
                         Activity::event('server:file.rename')
                             ->property('directory', $this->path)
