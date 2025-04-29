@@ -125,7 +125,7 @@ class ServerConsole extends Widget
 
             // Network stats are sent over as "total" but we want to display them as "real time"
             if ($key === 'network') {
-                $previous = collect($data)->last();
+                $previous = collect($data)->sort()->last();
 
                 if ($previous) {
                     $value->rx_bytes = $previous->rx_bytes < 0 ? 0 : max(0, $value->rx_bytes - $previous->rx_bytes);
