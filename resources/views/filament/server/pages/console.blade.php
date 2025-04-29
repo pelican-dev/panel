@@ -4,4 +4,7 @@
         :data="$this->getWidgetData()"
         :widgets="$this->getVisibleWidgets()"
     />
+
+    <x-filament-actions::modals />
+
 </x-filament-panels::page>

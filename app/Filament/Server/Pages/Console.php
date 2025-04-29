@@ -5,6 +5,7 @@ namespace App\Filament\Server\Pages;
 use App\Enums\ConsoleWidgetPosition;
 use App\Enums\ContainerStatus;
 use App\Exceptions\Http\Server\ServerStateConflictException;
+use App\Extensions\Features\FeatureProvider;
 use App\Filament\Server\Widgets\ServerConsole;
 use App\Filament\Server\Widgets\ServerCpuChart;
 use App\Filament\Server\Widgets\ServerMemoryChart;
@@ -13,8 +14,9 @@ use App\Filament\Server\Widgets\ServerOverview;
 use App\Livewire\AlertBanner;
 use App\Models\Permission;
 use App\Models\Server;
-use Filament\Actions\Action;
+use Filament\Actions\Concerns\InteractsWithActions;
 use Filament\Facades\Filament;
+use Filament\Actions\Action;
 use Filament\Pages\Page;
 use Filament\Support\Enums\Size;
 use Filament\Widgets\Widget;
@@ -45,6 +47,30 @@ class Console extends Page
                 ->warning()
                 ->send();
         }
+    }
+
+    public function boot(): void
+    {
+        /** @var Server $server */
+        $server = Filament::getTenant();
+        /** @var FeatureProvider $feature */
+        foreach ($server->egg->features() as $feature) {
+            $this->cacheAction($feature->getAction());
+        }
+    }
+
+    #[On('mount-feature')]
+    public function mountFeature(string $data): void
+    {
+        $data = json_decode($data);
+        $feature = data_get($data, 'key');
+
+        $feature = FeatureProvider::getProviders($feature);
+        if ($this->getMountedAction()) {
+            return;
+        }
+        $this->mountAction($feature->getId());
+        sleep(2); // TODO find a better way
     }
 
     public function getWidgetData(): array

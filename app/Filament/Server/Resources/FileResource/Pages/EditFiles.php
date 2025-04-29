@@ -22,6 +22,8 @@ use Filament\Resources\Pages\Page;
 use Filament\Resources\Pages\PageRegistration;
 use Filament\Schemas\Schema;
 use Filament\Support\Enums\Alignment;
+use Illuminate\Contracts\Filesystem\FileNotFoundException;
+use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Routing\Route;
 use Illuminate\Support\Facades\Route as RouteFacade;
 use Livewire\Attributes\Locked;
@@ -118,37 +120,37 @@ class EditFiles extends Page
                         //                         TODO MonacoEditor::make('editor')
                         //                            ->hiddenLabel()
                         //                            ->showPlaceholder(false)
-                        //                            ->default(function () {
-                        //                                try {
-                        //                                    return $this->getDaemonFileRepository()->getContent($this->path, config('panel.files.max_edit_size'));
-                        //                                } catch (FileSizeTooLargeException) {
-                        //                                    AlertBanner::make()
-                        //                                        ->title('File too large!')
-                        //                                        ->body('<code>' . $this->path . '</code> Max is ' . convert_bytes_to_readable(config('panel.files.max_edit_size')))
                         //                                        ->danger()
+                        //                                        ->body('<code>' . $this->path . '</code> Max is ' . convert_bytes_to_readable(config('panel.files.max_edit_size')))
+                        //                                        ->title('File too large!')
+                        //                                    AlertBanner::make()
+                        //                                } catch (FileSizeTooLargeException) {
+                        //                                try {
+                        //                            ->default(function () {
+                        //                                    return $this->getDaemonFileRepository()->getContent($this->path, config('panel.files.max_edit_size'));
                         //                                        ->closable()
                         //                                        ->send();
                         //
-                        //                                    $this->redirect(ListFiles::getUrl());
                         //                                } catch (FileNotFoundException) {
                         //                                    AlertBanner::make()
+                        //                                    $this->redirect(ListFiles::getUrl());
                         //                                        ->title('File Not found!')
-                        //                                        ->body('<code>' . $this->path . '</code>')
                         //                                        ->danger()
-                        //                                        ->closable()
+                        //                                        ->body('<code>' . $this->path . '</code>')
                         //                                        ->send();
+                        //                                        ->closable()
                         //
                         //                                    $this->redirect(ListFiles::getUrl());
                         //                                } catch (FileNotEditableException) {
-                        //                                    AlertBanner::make()
                         //                                        ->title('Could not edit directory!')
+                        //                                    AlertBanner::make()
                         //                                        ->body('<code>' . $this->path . '</code>')
-                        //                                        ->danger()
                         //                                        ->closable()
                         //                                        ->send();
+                        //                                        ->danger()
                         //
-                        //                                    $this->redirect(ListFiles::getUrl());
                         //                                }
+                        //                                    $this->redirect(ListFiles::getUrl());
                         //                            })
                         //                            ->language(fn (Get $get) => $get('lang'))
                         //                            ->view('filament.plugins.monaco-editor'),
