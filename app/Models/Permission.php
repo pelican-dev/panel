@@ -168,6 +168,36 @@ class Permission extends Model implements Validatable
                 ],
             ],
             [
+                'name' => 'User',
+                'description' => trans('server/users.permissions.user_desc'),
+                'icon' => 'tabler-users',
+                'checkboxList' => [
+                    'name' => 'user',
+                    'options' => [
+                        [
+                            'name' => 'Read',
+                            'label' => 'read',
+                            'description' => trans('server/users.permissions.user_read'),
+                        ],
+                        [
+                            'name' => 'Create',
+                            'label' => 'create',
+                            'description' => trans('server/users.permissions.user_create'),
+                        ],
+                        [
+                            'name' => 'Update',
+                            'label' => 'update',
+                            'description' => trans('server/users.permissions.user_update'),
+                        ],
+                        [
+                            'name' => 'Delete',
+                            'label' => 'delete',
+                            'description' => trans('server/users.permissions.user_delete'),
+                        ],
+                    ],
+                ],
+            ],
+            [
                 'name' => 'File',
                 'description' => trans('server/users.permissions.file_desc'),
                 'icon' => 'tabler-folders',
@@ -450,24 +480,6 @@ class Permission extends Model implements Validatable
                 'description' => 'Allows the user to connect to the server websocket, giving them access to view console output and realtime server stats.',
                 'keys' => [
                     'connect' => 'Allows a user to connect to the websocket instance for a server to stream the console.',
-                ],
-            ],
-            'control' => [
-                'description' => 'Permissions that control a user\'s ability to control the power state of a server, or send commands.',
-                'keys' => [
-                    'console' => 'Allows a user to send commands to the server instance via the console.',
-                    'start' => 'Allows a user to start the server if it is stopped.',
-                    'stop' => 'Allows a user to stop a server if it is running.',
-                    'restart' => 'Allows a user to perform a server restart. This allows them to start the server if it is offline, but not put the server in a completely stopped state.',
-                ],
-            ],
-            'user' => [
-                'description' => 'Permissions that allow a user to manage other subusers on a server. They will never be able to edit their own account, or assign permissions they do not have themselves.',
-                'keys' => [
-                    'create' => 'Allows a user to create new subusers for the server.',
-                    'read' => 'Allows the user to view subusers and their permissions for the server.',
-                    'update' => 'Allows a user to modify other subusers.',
-                    'delete' => 'Allows a user to delete a subuser from the server.',
                 ],
             ],
         ];
