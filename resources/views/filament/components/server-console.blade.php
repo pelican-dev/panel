@@ -1,24 +1,23 @@
 <x-filament::widget>
     @assets
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xterm/xterm/css/xterm.min.css">
-    <script src="https://cdn.jsdelivr.net/npm/@xterm/xterm/lib/xterm.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@xterm/addon-fit/lib/addon-fit.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@xterm/addon-web-links/lib/addon-web-links.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@xterm/addon-search/lib/addon-search.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/xterm-addon-search-bar/lib/xterm-addon-search-bar.min.js"></script>
-    <link rel="stylesheet" href="{{ asset('/css/filament/server/console.css') }}">
-
     @php
         $userFont = auth()->user()->getCustomization()['console_font'] ?? 'ComicMono';
         $userFontSize = auth()->user()->getCustomization()['console_font_size'] ?? 14;
         $userRows =  auth()->user()->getCustomization()['console_rows'] ?? 30;
     @endphp
+    <script src="https://cdn.jsdelivr.net/npm/@xterm/xterm/lib/xterm.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@xterm/addon-fit/lib/addon-fit.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@xterm/addon-web-links/lib/addon-web-links.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@xterm/addon-search/lib/addon-search.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/xterm-addon-search-bar/lib/xterm-addon-search-bar.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xterm/xterm/css/xterm.min.css">
+    <link rel="stylesheet" href="{{ asset('/css/filament/server/console.css') }}">
+    <link rel="preload" href="{{ asset("storage/fonts/{$userFont}.ttf") }}" as="font" crossorigin>
+
     <style>
         @font-face {
             font-family: '{{ $userFont }}';
             src: url('{{ asset("storage/fonts/{$userFont}.ttf") }}');
-            font-weight: auto;
-            font-style: normal;
         }
     </style>
     @endassets
