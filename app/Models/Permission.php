@@ -123,7 +123,7 @@ class Permission extends Model implements Validatable
      *      icon: string,
      *      checkboxList: array{
      *          name: string,
-     *          columns: int,
+     *          columns?: int, // Optional
      *          options: array<int, array{
      *              name: string,
      *              label: string,
