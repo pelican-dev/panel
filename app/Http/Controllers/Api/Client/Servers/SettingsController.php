@@ -36,25 +36,21 @@ class SettingsController extends ClientApiController
         $name = $request->input('name');
         $description = $request->has('description') ? (string) $request->input('description') : $server->description;
 
-        $server->name = $name;
-
-        if (config('panel.editable_server_descriptions')) {
-            $server->description = $description;
-        }
-
-        $server->save();
-
         if ($server->name !== $name) {
             Activity::event('server:settings.rename')
                 ->property(['old' => $server->name, 'new' => $name])
                 ->log();
+            $server->name = $name;
         }
 
-        if ($server->description !== $description) {
+        if ($server->description !== $description && config('panel.editable_server_descriptions')) {
             Activity::event('server:settings.description')
                 ->property(['old' => $server->description, 'new' => $description])
                 ->log();
+            $server->description = $description;
         }
+
+        $server->save();
 
         return new JsonResponse([], Response::HTTP_NO_CONTENT);
     }
