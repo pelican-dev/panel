@@ -44,6 +44,20 @@ class OAuthController extends Controller
             return redirect()->route('auth.login');
         }
 
+        // Check for errors (https://www.oauth.com/oauth2-servers/server-side-apps/possible-errors/)
+        if ($request->get('error')) {
+            report($request->get('error_description') ?? $request->get('error'));
+
+            Notification::make()
+                ->title('Something went wrong')
+                ->body($request->get('error'))
+                ->danger()
+                ->persistent()
+                ->send();
+
+            return redirect()->route('auth.login');
+        }
+
         $oauthUser = Socialite::driver($driver)->user();
 
         // User is already logged in and wants to link a new OAuth Provider

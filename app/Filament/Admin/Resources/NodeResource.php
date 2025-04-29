@@ -30,6 +30,11 @@ class NodeResource extends Resource
         return trans('admin/node.model_label_plural');
     }
 
+    public static function getNavigationGroup(): ?string
+    {
+        return config('panel.filament.top-navigation', false) ? null : trans('admin/dashboard.server');
+    }
+
     public static function getNavigationBadge(): ?string
     {
         return static::getModel()::count() ?: null;

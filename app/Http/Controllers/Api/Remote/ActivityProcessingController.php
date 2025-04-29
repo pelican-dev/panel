@@ -14,8 +14,6 @@ class ActivityProcessingController extends Controller
 {
     public function __invoke(ActivityEventRequest $request): void
     {
-        $tz = Carbon::now()->getTimezone();
-
         /** @var \App\Models\Node $node */
         $node = $request->attributes->get('node');
 
@@ -49,11 +47,8 @@ class ActivityProcessingController extends Controller
             $log = [
                 'ip' => empty($datum['ip']) ? '127.0.0.1' : $datum['ip'],
                 'event' => $datum['event'],
-                'properties' => json_encode($datum['metadata'] ?? []),
-                // We have to change the time to the current timezone due to the way Laravel is handling
-                // the date casting internally. If we just leave it in UTC it ends up getting double-cast
-                // and the time is way off.
-                'timestamp' => $when->setTimezone($tz),
+                'properties' => $datum['metadata'] ?? [],
+                'timestamp' => $when,
             ];
 
             if ($user = $users->get($datum['user'])) {

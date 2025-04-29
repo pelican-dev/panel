@@ -4,11 +4,11 @@
         "version": "PLCN_v1",
         "update_url": "https:\/\/github.com\/pelican-dev\/panel\/raw\/main\/database\/Seeders\/eggs\/minecraft\/egg-sponge--sponge-vanilla.json"
     },
-    "exported_at": "2025-03-18T12:35:50+00:00",
-    "name": "Sponge (SpongeVanilla)",
+    "exported_at": "2025-04-25T06:05:10+00:00",
+    "name": "Sponge",
     "author": "panel@example.com",
     "uuid": "f0d2f88f-1ff3-42a0-b03f-ac44c5571e6d",
-    "description": "SpongeVanilla is the SpongeAPI implementation for Vanilla Minecraft.",
+    "description": "A community-driven open source Minecraft: Java Edition modding platform.",
     "tags": [
         "minecraft"
     ],
@@ -34,28 +34,42 @@
     },
     "scripts": {
         "installation": {
-            "script": "#!\/bin\/ash\r\n# Sponge Installation Script\r\n#\r\n# Server Files: \/mnt\/server\r\n\r\ncd \/mnt\/server\r\n\r\ncurl -sSL \"https:\/\/repo.spongepowered.org\/maven\/org\/spongepowered\/spongevanilla\/${SPONGE_VERSION}\/spongevanilla-${SPONGE_VERSION}.jar\" -o ${SERVER_JARFILE}",
+            "script": "#!\/bin\/ash\r\n# Sponge Installation Script\r\n#\r\n# Server Files: \/mnt\/server\r\n\r\ncd \/mnt\/server\r\n\r\nif [ $MINECRAFT_VERSION = 'latest' ] || [ -z $MINECRAFT_VERSION ]; then\r\n  TARGET_VERSION_JSON=$(curl -sSL https:\/\/dl-api.spongepowered.org\/v2\/groups\/org.spongepowered\/artifacts\/${SPONGE_TYPE}\/latest?recommended=true)\r\n  if [ -z \"${TARGET_VERSION_JSON}\" ]; then\r\n    echo -e \"Failed to find latest recommended version!\"\r\n    exit 1\r\n  fi\r\n  echo -e \"Found latest version for ${SPONGE_TYPE}\"\r\nelse\r\n  if [ $SPONGE_TYPE = 'spongevanilla' ]; then \r\n    VERSIONS_JSON=$(curl -sSL https:\/\/dl-api.spongepowered.org\/v2\/groups\/org.spongepowered\/artifacts\/${SPONGE_TYPE}\/versions?tags=,minecraft:${MINECRAFT_VERSION}&offset=0&limit=1)\r\n  else\r\n    FORGETAG='forge'\r\n    if [ $SPONGE_TYPE = 'spongeneo' ]; then\r\n      FORGETAG='neoforge'\r\n    fi\r\n    VERSIONS_JSON=$(curl -sSL https:\/\/dl-api.spongepowered.org\/v2\/groups\/org.spongepowered\/artifacts\/${SPONGE_TYPE}\/versions?tags=,minecraft:${MINECRAFT_VERSION},${FORGETAG}:${FORGE_VERSION}&offset=0&limit=1)\r\n  fi\r\n  \r\n  if [ -z \"${VERSIONS_JSON}\" ]; then\r\n    echo -e \"Failed to find recommended ${MINECRAFT_VERSION} version for ${SPONGE_TYPE} ${FORGE_VERSION}!\"\r\n    exit 1\r\n  fi\r\n  \r\n  VERSION_KEY=$(echo $VERSIONS_JSON | jq -r '.artifacts | to_entries[0].key')\r\n  TARGET_VERSION_JSON=$(curl -sSL https:\/\/dl-api.spongepowered.org\/v2\/groups\/org.spongepowered\/artifacts\/${SPONGE_TYPE}\/versions\/${VERSION_KEY})\r\n  \r\n  if [ -z \"${TARGET_VERSION_JSON}\" ]; then\r\n    echo -e \"Failed to find ${VERSION_KEY} for ${SPONGE_TYPE} ${FORGE_VERSION}!\"\r\n    exit 1\r\n  fi\r\n\r\n  echo -e \"Found ${MINECRAFT_VERSION} for ${SPONGE_TYPE}\"\r\nfi\r\n\r\nTARGET_VERSION=`echo $TARGET_VERSION_JSON | jq '.assets[] | select(.classifier == \"universal\")'`\r\nif [ -z \"${TARGET_VERSION}\" ]; then\r\n  TARGET_VERSION=`echo $TARGET_VERSION_JSON  | jq '.assets[] | select(.classifier == \"\" and .extension == \"jar\")'`\r\nfi\r\n\r\nif [ -z \"${TARGET_VERSION}\" ]; then\r\n  echo -e \"Failed to get download url data from the selected version\"\r\n  exit 1\r\nfi\r\n\r\nSPONGE_URL=$(echo $TARGET_VERSION | jq -r '.downloadUrl')\r\nCHECKSUM=$(echo $TARGET_VERSION | jq -r '.md5')\r\necho -e \"Found file at ${SPONGE_URL} with checksum ${CHECKSUM}\"\r\n\r\necho -e \"running: curl -o ${SERVER_JARFILE} ${SPONGE_URL}\"\r\ncurl -o ${SERVER_JARFILE} ${SPONGE_URL}\r\n\r\nif [ $(basename $(md5sum ${SERVER_JARFILE})) = ${CHECKSUM} ] ; then\r\n  echo \"Checksum passed\"\r\nelse\r\n  echo \"Checksum failed\"\r\nfi\r\n\r\necho -e \"Install Complete\"",
             "container": "ghcr.io\/parkervcp\/installers:alpine",
             "entrypoint": "ash"
         }
     },
     "variables": [
         {
-            "name": "Sponge Version",
-            "description": "The version of SpongeVanilla to download and use.",
-            "env_variable": "SPONGE_VERSION",
-            "default_value": "1.12.2-7.3.0",
+            "sort": 3,
+            "name": "Forge\/Neoforge Version",
+            "description": "The modding api target version if set to `spongeforge` or `spongeneo`. Leave blank if using `spongevanilla`",
+            "env_variable": "FORGE_VERSION",
+            "default_value": "",
+            "user_viewable": true,
+            "user_editable": true,
+            "rules": [
+                "string"
+            ]
+        },
+        {
+            "sort": 1,
+            "name": "Minecraft Version",
+            "description": "The version of Minecraft to target. Use \"latest\" to install the latest version. Go to Settings > Reinstall Server to apply.",
+            "env_variable": "MINECRAFT_VERSION",
+            "default_value": "latest",
             "user_viewable": true,
             "user_editable": true,
             "rules": [
                 "required",
-                "regex:\/^([a-zA-Z0-9.\\-_]+)$\/"
-            ],
-            "sort": 1
+                "string",
+                "between:3,15"
+            ]
         },
         {
+            "sort": 4,
             "name": "Server Jar File",
-            "description": "The name of the Jarfile to use when running SpongeVanilla.",
+            "description": "The name of the Jarfile to use when running Sponge.",
             "env_variable": "SERVER_JARFILE",
             "default_value": "server.jar",
             "user_viewable": true,
@@ -63,8 +77,20 @@
             "rules": [
                 "required",
                 "regex:\/^([\\w\\d._-]+)(\\.jar)$\/"
-            ],
-            "sort": 2
+            ]
+        },
+        {
+            "sort": 2,
+            "name": "Sponge Type",
+            "description": "SpongeVanilla if you are only using Sponge plugins.\nSpongeForge when using Forge mods and Sponge plugins.\nSpongeNeo when using NeoForge mods and Sponge plugins.",
+            "env_variable": "SPONGE_TYPE",
+            "default_value": "spongevanilla",
+            "user_viewable": true,
+            "user_editable": true,
+            "rules": [
+                "required",
+                "in:spongevanilla,spongeforge,spongeneo"
+            ]
         }
     ]
 }
