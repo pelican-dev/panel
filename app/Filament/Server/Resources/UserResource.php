@@ -120,7 +120,7 @@ class UserResource extends Resource
                                     })
                                     ->bulkToggleable()
                                     ->label('')
-                                    ->columns($tab['checkboxList']['columns'])
+                                    ->columns($tab['checkboxList']['columns'] ?? 2)
                                     ->options($options)
                                     ->descriptions($descriptions),
                             ]),
@@ -137,7 +137,7 @@ class UserResource extends Resource
                             CheckboxList::make($tab['checkboxList']['name'])
                                 ->bulkToggleable()
                                 ->label('')
-                                ->columns($tab['checkboxList']['columns'])
+                                ->columns($tab['checkboxList']['columns'] ?? 2)
                                 ->options($options)
                                 ->descriptions($descriptions),
                         ]),

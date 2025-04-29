@@ -143,7 +143,6 @@ class Permission extends Model implements Validatable
                 'icon' => 'tabler-terminal-2',
                 'checkboxList' => [
                     'name' => 'control',
-                    'columns' => 2,
                     'options' => [
                         [
                             'name' => 'Console',
@@ -174,7 +173,6 @@ class Permission extends Model implements Validatable
                 'icon' => 'tabler-folders',
                 'checkboxList' => [
                     'name' => 'file',
-                    'columns' => 2,
                     'options' => [
                         [
                             'name' => 'Read',
@@ -220,7 +218,6 @@ class Permission extends Model implements Validatable
                 'icon' => 'tabler-download',
                 'checkboxList' => [
                     'name' => 'backup',
-                    'columns' => 2,
                     'options' => [
                         [
                             'name' => 'Read',
@@ -256,7 +253,6 @@ class Permission extends Model implements Validatable
                 'icon' => 'tabler-network',
                 'checkboxList' => [
                     'name' => 'allocation',
-                    'columns' => 2,
                     'options' => [
                         [
                             'name' => 'Read',
@@ -287,7 +283,6 @@ class Permission extends Model implements Validatable
                 'icon' => 'tabler-question-mark',
                 'checkboxList' => [
                     'name' => 'startup',
-                    'columns' => 2,
                     'options' => [
                         [
                             'name' => 'Read',
@@ -313,7 +308,6 @@ class Permission extends Model implements Validatable
                 'icon' => 'tabler-database',
                 'checkboxList' => [
                     'name' => 'database',
-                    'columns' => 2,
                     'options' => [
                         [
                             'name' => 'Read',
@@ -349,7 +343,6 @@ class Permission extends Model implements Validatable
                 'icon' => 'tabler-clock',
                 'checkboxList' => [
                     'name' => 'schedule',
-                    'columns' => 2,
                     'options' => [
                         [
                             'name' => 'Read',
@@ -380,7 +373,6 @@ class Permission extends Model implements Validatable
                 'icon' => 'tabler-settings',
                 'checkboxList' => [
                     'name' => 'settings',
-                    'columns' => 2,
                     'options' => [
                         [
                             'name' => 'Rename',
@@ -401,7 +393,6 @@ class Permission extends Model implements Validatable
                 'icon' => 'tabler-stack',
                 'checkboxList' => [
                     'name' => 'activity',
-                    'columns' => 2,
                     'options' => [
                         [
                             'name' => 'Read',
