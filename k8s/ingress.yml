@@ -18,6 +18,6 @@ spec:
               service:
                 name: searcade-pelican-panel-svc
                 port:
-                  number: 80
+                  number: 8000
             pathType: Prefix
             path: /

@@ -21,12 +21,12 @@ spec:
           name: searcade-pelican-panel
           imagePullPolicy: Always
           ports:
-            - containerPort: 80
+            - containerPort: 8000
               name: http
 #          readinessProbe:
 #            periodSeconds: 30
 #            httpGet:
-#              port: 80
+#              port: 8000
 #              path: /up
 #              httpHeaders:
 #                - name: Host

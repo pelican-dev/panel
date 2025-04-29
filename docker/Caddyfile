@@ -1,6 +1,8 @@
 {
     admin off
     email {$ADMIN_EMAIL}
+    http_port 8000
+    https_port 4443
 }
 
 {$APP_URL} {
