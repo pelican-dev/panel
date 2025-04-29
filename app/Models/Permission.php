@@ -217,7 +217,7 @@ class Permission extends Model implements Validatable
                         [
                             'name' => 'Create',
                             'label' => 'create',
-                            'description' => trans('server/users.permissions.backup_create'),
+                            'description' => trans('server/users.permissions.file_create'),
                         ],
                         [
                             'name' => 'Update',

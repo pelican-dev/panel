@@ -6,7 +6,6 @@ use App\Facades\Activity;
 use App\Filament\Server\Resources\UserResource;
 use App\Models\Permission;
 use App\Models\Server;
-use App\Models\User;
 use App\Services\Subusers\SubuserCreationService;
 use Exception;
 use Filament\Actions;
