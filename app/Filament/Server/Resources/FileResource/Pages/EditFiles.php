@@ -153,7 +153,7 @@ class EditFiles extends Page
 
                                     $this->redirect(ListFiles::getUrl(['path' => dirname($this->path)]));
                                 } catch (ConnectionException) {
-                                    // Alert banner for this one will be handles by ListFiles
+                                    // Alert banner for this one will be handled by ListFiles
 
                                     $this->redirect(ListFiles::getUrl(['path' => dirname($this->path)]));
                                 }
