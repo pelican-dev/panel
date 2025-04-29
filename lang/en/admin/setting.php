@@ -138,6 +138,7 @@ return [
             'helper' => 'Settings for Servers',
             'edit_server_desc' => 'Allow Users to edit Descriptions?',
             'console_font_upload' => 'Console Font Upload',
+            'console_font_hint' => 'Only *.ttf fonts are supported. Mono fonts strongly recommended!',
         ],
         'webhook' => [
             'title' => 'Webhooks',

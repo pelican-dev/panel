@@ -730,7 +730,7 @@ class Settings extends Page implements HasForms
                         ->afterStateUpdated(fn ($state, Set $set) => $set('PANEL_EDITABLE_SERVER_DESCRIPTIONS', (bool) $state))
                         ->default(env('PANEL_EDITABLE_SERVER_DESCRIPTIONS', config('panel.editable_server_descriptions'))),
                     FileUpload::make('ConsoleFonts')
-                        ->hint('Only ttf fonts are currently supported.')
+                        ->hint(trans('admin/setting.misc.server.console_font_hint'))
                         ->label(trans('admin/setting.misc.server.console_font_upload'))
                         ->directory('fonts')
                         ->columnSpan(1)
@@ -764,6 +764,7 @@ class Settings extends Page implements HasForms
     {
         try {
             $data = $this->form->getState();
+            unset($data['ConsoleFonts']);
 
             // Convert bools to a string, so they are correctly written to the .env file
             $data = array_map(fn ($value) => is_bool($value) ? ($value ? 'true' : 'false') : $value, $data);
