@@ -155,14 +155,10 @@ class File extends Model
 
             $contents = [];
 
-            try {
-                if (!is_null(self::$searchTerm)) {
-                    $contents = cache()->remember('file_search_' . self::$path . '_' . self::$searchTerm, now()->addMinute(), fn () => $fileRepository->search(self::$searchTerm, self::$path));
-                } else {
-                    $contents = $fileRepository->getDirectory(self::$path ?? '/');
-                }
-            } catch (ConnectionException $exception) {
-                report($exception);
+            if (!is_null(self::$searchTerm)) {
+                $contents = cache()->remember('file_search_' . self::$path . '_' . self::$searchTerm, now()->addMinute(), fn () => $fileRepository->search(self::$searchTerm, self::$path));
+            } else {
+                $contents = $fileRepository->getDirectory(self::$path ?? '/');
             }
 
             if (isset($contents['error'])) {
@@ -199,8 +195,12 @@ class File extends Model
                 $message = $message->after('cURL error 7: ')->before(' after ');
             }
 
+            if ($exception instanceof ConnectionException) {
+                $message = str('Node connection failed');
+            }
+
             AlertBanner::make()
-                ->title('Could not load files')
+                ->title('Could not load files!')
                 ->body($message->toString())
                 ->danger()
                 ->send();
