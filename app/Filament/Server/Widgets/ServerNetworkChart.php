@@ -75,6 +75,7 @@ class ServerNetworkChart extends ChartWidget
                     display: false,
                 },
                 y: {
+                    min: 0,
                     ticks: {
                         display: true,
                         callback(value) {
