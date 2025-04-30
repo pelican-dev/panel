@@ -27,7 +27,7 @@ class AllocationsRelationManager extends RelationManager
 {
     protected static string $relationship = 'allocations';
 
-    protected static string | \BackedEnum | null $icon = 'tabler-plug-connected';
+    protected static string|\BackedEnum|null $icon = 'tabler-plug-connected';
 
     public function setTitle(): string
     {

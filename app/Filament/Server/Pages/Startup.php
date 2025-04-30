@@ -23,7 +23,7 @@ use Illuminate\Support\Facades\Validator;
 
 class Startup extends ServerFormPage
 {
-    protected static string | \BackedEnum | null $navigationIcon = 'tabler-player-play';
+    protected static string|\BackedEnum|null $navigationIcon = 'tabler-player-play';
 
     protected static ?int $navigationSort = 9;
 

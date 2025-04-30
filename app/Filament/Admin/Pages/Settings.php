@@ -45,7 +45,7 @@ class Settings extends Page implements HasSchemas
     use InteractsWithForms;
     use InteractsWithHeaderActions;
 
-    protected static string | \BackedEnum | null $navigationIcon = 'tabler-settings';
+    protected static string|\BackedEnum|null $navigationIcon = 'tabler-settings';
 
     protected string $view = 'filament.pages.settings';
 
@@ -237,12 +237,12 @@ class Settings extends Page implements HasSchemas
                             $set('TRUSTED_PROXIES', $ips->values()->all());
                         }),
                 ]),
-            Select::make('FILAMENT_WIDTH')
-                ->label(trans('admin/setting.general.display_width'))
-                ->native(false)
-                ->options(Width::class)
-                ->selectablePlaceholder(false)
-                ->default(env('FILAMENT_WIDTH', config('panel.filament.display-width'))),
+            //            Select::make('FILAMENT_WIDTH')
+            //                ->label(trans('admin/setting.general.display_width'))
+            //                ->native(false)
+            //                ->options(Width::class->value)
+            //                ->selectablePlaceholder(false)
+            //                ->default(env('FILAMENT_WIDTH', config('panel.filament.display-width'))),
         ];
     }
 

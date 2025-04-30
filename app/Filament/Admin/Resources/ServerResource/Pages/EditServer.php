@@ -125,19 +125,19 @@ class EditServer extends EditRecord
                                     ->getOptionLabelFromRecordUsing(fn (User $user) => "$user->username ($user->email)")
                                     ->preload()
                                     ->required(),
-
-                                ToggleButtons::make('condition')
-                                    ->label(trans('admin/server.server_status'))
-                                    ->formatStateUsing(fn (Server $server) => $server->condition)
-                                    ->options(fn ($state) => [$state->value => $state->getLabel()])
-                                    ->colors(fn ($state) => [$state->value => $state->getColor()])
-                                    ->icons(fn ($state) => [$state->value => $state->getIcon()])
-                                    ->columnSpan([
-                                        'default' => 2,
-                                        'sm' => 1,
-                                        'md' => 1,
-                                        'lg' => 1,
-                                    ]),
+                                //
+                                //                                ToggleButtons::make('condition')
+                                //                                    ->label(trans('admin/server.server_status'))
+                                //                                    ->formatStateUsing(fn (Server $server) => $server->condition)
+                                //                                    ->options(fn ($state) => [$state->value => $state->getLabel()])
+                                //                                    ->colors(fn ($state) => [$state->value => $state->getColor()])
+                                //                                    ->icons(fn ($state) => [$state->value => $state->getIcon()])
+                                //                                    ->columnSpan([
+                                //                                        'default' => 2,
+                                //                                        'sm' => 1,
+                                //                                        'md' => 1,
+                                //                                        'lg' => 1,
+                                //                                    ]),
 
                                 Textarea::make('description')
                                     ->label(trans('admin/server.description'))
@@ -392,6 +392,7 @@ class EditServer extends EditRecord
                                             ->columnSpanFull()
                                             ->schema([
                                                 ToggleButtons::make('oom_killer')
+                                                    ->dehydrated()
                                                     ->label(trans('admin/server.oom'))->inlineLabel()->inline()
                                                     ->columnSpan(2)
                                                     ->options([
@@ -827,7 +828,6 @@ class EditServer extends EditRecord
                                                                         ->success()
                                                                         ->send();
 
-                                                                    $this->refreshFormData(['status', 'docker']);
                                                                 } catch (Exception) {
                                                                     Notification::make()
                                                                         ->title(trans('admin/server.notifications.reinstall_failed'))
@@ -844,7 +844,6 @@ class EditServer extends EditRecord
                                                                         ->success()
                                                                         ->send();
 
-                                                                    $this->refreshFormData(['status', 'docker']);
                                                                 } catch (Exception $exception) {
                                                                     Notification::make()
                                                                         ->title(trans('admin/server.notifications.install_toggle_failed'))
@@ -875,7 +874,6 @@ class EditServer extends EditRecord
                                                                     ->title(trans('admin/server.notifications.server_suspended'))
                                                                     ->send();
 
-                                                                $this->refreshFormData(['status', 'docker']);
                                                             } catch (Exception) {
                                                                 Notification::make()
                                                                     ->warning()
@@ -897,7 +895,6 @@ class EditServer extends EditRecord
                                                                     ->title(trans('admin/server.notifications.server_unsuspended'))
                                                                     ->send();
 
-                                                                $this->refreshFormData(['status', 'docker']);
                                                             } catch (Exception) {
                                                                 Notification::make()
                                                                     ->warning()
@@ -962,8 +959,6 @@ class EditServer extends EditRecord
                                                                     ->title(trans('admin/server.notifications.reinstall_started'))
                                                                     ->success()
                                                                     ->send();
-
-                                                                $this->refreshFormData(['status', 'docker']);
                                                             } catch (Exception) {
                                                                 Notification::make()
                                                                     ->title(trans('admin/server.notifications.reinstall_failed'))
@@ -1085,7 +1080,7 @@ class EditServer extends EditRecord
             $data['description'] = '';
         }
 
-        unset($data['docker'], $data['status']);
+        unset($data['docker'], $data['condition']);
 
         return $data;
     }

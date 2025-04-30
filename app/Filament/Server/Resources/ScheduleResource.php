@@ -33,7 +33,7 @@ class ScheduleResource extends Resource
 
     protected static ?int $navigationSort = 4;
 
-    protected static string | \BackedEnum | null $navigationIcon = 'tabler-clock';
+    protected static string|\BackedEnum|null $navigationIcon = 'tabler-clock';
 
     // TODO: find better way handle server conflict state
     public static function canAccess(): bool

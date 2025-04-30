@@ -30,30 +30,10 @@ abstract class ServerFormPage extends Page
 
     protected function authorizeAccess(): void {}
 
-    protected function fillForm(): void
+    protected function fillform(): void
     {
         $data = $this->getRecord()->attributesToArray();
         $this->form->fill($data);
-    }
-
-    /**
-     * @return array<int | string, string | Form>
-     */
-    protected function getFormSchema(): array
-    {
-        return [
-            'schema' => $this->form($this->makeSchema()
-                ->model($this->getRecord())
-                ->statePath($this->getFormStatePath())
-                ->columns($this->hasInlineLabels() ? 1 : 2)
-                ->inlineLabel($this->hasInlineLabels()),
-            ),
-        ];
-    }
-
-    public function getFormStatePath(): ?string
-    {
-        return 'data';
     }
 
     public function getRecord(): Server

@@ -28,7 +28,7 @@ class RoleResource extends Resource
 {
     protected static ?string $model = Role::class;
 
-    protected static string | \BackedEnum | null $navigationIcon = 'tabler-users-group';
+    protected static string|\BackedEnum|null $navigationIcon = 'tabler-users-group';
 
     protected static ?string $recordTitleAttribute = 'name';
 

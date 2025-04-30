@@ -14,7 +14,6 @@ use App\Filament\Server\Widgets\ServerOverview;
 use App\Livewire\AlertBanner;
 use App\Models\Permission;
 use App\Models\Server;
-use Filament\Actions\Concerns\InteractsWithActions;
 use Filament\Facades\Filament;
 use Filament\Actions\Action;
 use Filament\Pages\Page;
@@ -25,7 +24,7 @@ use Livewire\Attributes\On;
 
 class Console extends Page
 {
-    protected static string | \BackedEnum | null $navigationIcon = 'tabler-brand-tabler';
+    protected static string|\BackedEnum|null $navigationIcon = 'tabler-brand-tabler';
 
     protected static ?int $navigationSort = 1;
 

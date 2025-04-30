@@ -16,7 +16,7 @@ class DatabaseResource extends Resource
 
     protected static ?int $navigationSort = 6;
 
-    protected static string | \BackedEnum | null $navigationIcon = 'tabler-database';
+    protected static string|\BackedEnum|null $navigationIcon = 'tabler-database';
 
     public const WARNING_THRESHOLD = 0.7;
 

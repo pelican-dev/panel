@@ -12,7 +12,7 @@ class NodesRelationManager extends RelationManager
 {
     protected static string $relationship = 'servers';
 
-    protected static string | \BackedEnum | null $icon = 'tabler-brand-docker';
+    protected static string|\BackedEnum|null $icon = 'tabler-brand-docker';
 
     public function setTitle(): string
     {
