@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "556cda6914cb34938f738f77ab4b6949",
+    "content-hash": "b1bd5923489f35e846cb208d660d758e",
     "packages": [
         {
             "name": "abdelhamiderrahmouni/filament-monaco-editor",
@@ -1020,16 +1020,16 @@
         },
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.342.33",
+            "version": "3.343.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "ddd3747bd08f04159aec5d102a60c7d29906ee0b"
+                "reference": "8750298282f7f6f3fc65e43ae37a64bfc055100a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/ddd3747bd08f04159aec5d102a60c7d29906ee0b",
-                "reference": "ddd3747bd08f04159aec5d102a60c7d29906ee0b",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/8750298282f7f6f3fc65e43ae37a64bfc055100a",
+                "reference": "8750298282f7f6f3fc65e43ae37a64bfc055100a",
                 "shasum": ""
             },
             "require": {
@@ -1111,9 +1111,9 @@
             "support": {
                 "forum": "https://github.com/aws/aws-sdk-php/discussions",
                 "issues": "https://github.com/aws/aws-sdk-php/issues",
-                "source": "https://github.com/aws/aws-sdk-php/tree/3.342.33"
+                "source": "https://github.com/aws/aws-sdk-php/tree/3.343.0"
             },
-            "time": "2025-04-23T18:07:32+00:00"
+            "time": "2025-04-29T18:04:08+00:00"
         },
         {
             "name": "blade-ui-kit/blade-heroicons",
@@ -3714,16 +3714,16 @@
         },
         {
             "name": "laravel/framework",
-            "version": "v12.10.2",
+            "version": "v12.11.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/laravel/framework.git",
-                "reference": "0f123cc857bc177abe4d417448d4f7164f71802a"
+                "reference": "050b2dfeaf6fff9e08e84b355822636492fb45f4"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/laravel/framework/zipball/0f123cc857bc177abe4d417448d4f7164f71802a",
-                "reference": "0f123cc857bc177abe4d417448d4f7164f71802a",
+                "url": "https://api.github.com/repos/laravel/framework/zipball/050b2dfeaf6fff9e08e84b355822636492fb45f4",
+                "reference": "050b2dfeaf6fff9e08e84b355822636492fb45f4",
                 "shasum": ""
             },
             "require": {
@@ -3925,7 +3925,7 @@
                 "issues": "https://github.com/laravel/framework/issues",
                 "source": "https://github.com/laravel/framework"
             },
-            "time": "2025-04-24T14:11:20+00:00"
+            "time": "2025-04-29T20:18:16+00:00"
         },
         {
             "name": "laravel/helpers",
@@ -4045,16 +4045,16 @@
         },
         {
             "name": "laravel/sanctum",
-            "version": "v4.1.0",
+            "version": "v4.1.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/laravel/sanctum.git",
-                "reference": "4e4ced5023e9d8949214e0fb43d9f4bde79c7166"
+                "reference": "a360a6a1fd2400ead4eb9b6a9c1bb272939194f5"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/laravel/sanctum/zipball/4e4ced5023e9d8949214e0fb43d9f4bde79c7166",
-                "reference": "4e4ced5023e9d8949214e0fb43d9f4bde79c7166",
+                "url": "https://api.github.com/repos/laravel/sanctum/zipball/a360a6a1fd2400ead4eb9b6a9c1bb272939194f5",
+                "reference": "a360a6a1fd2400ead4eb9b6a9c1bb272939194f5",
                 "shasum": ""
             },
             "require": {
@@ -4105,7 +4105,7 @@
                 "issues": "https://github.com/laravel/sanctum/issues",
                 "source": "https://github.com/laravel/sanctum"
             },
-            "time": "2025-04-22T13:53:47+00:00"
+            "time": "2025-04-23T13:03:38+00:00"
         },
         {
             "name": "laravel/serializable-closure",
@@ -5712,16 +5712,16 @@
         },
         {
             "name": "myclabs/deep-copy",
-            "version": "1.13.0",
+            "version": "1.13.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/myclabs/DeepCopy.git",
-                "reference": "024473a478be9df5fdaca2c793f2232fe788e414"
+                "reference": "1720ddd719e16cf0db4eb1c6eca108031636d46c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/myclabs/DeepCopy/zipball/024473a478be9df5fdaca2c793f2232fe788e414",
-                "reference": "024473a478be9df5fdaca2c793f2232fe788e414",
+                "url": "https://api.github.com/repos/myclabs/DeepCopy/zipball/1720ddd719e16cf0db4eb1c6eca108031636d46c",
+                "reference": "1720ddd719e16cf0db4eb1c6eca108031636d46c",
                 "shasum": ""
             },
             "require": {
@@ -5760,7 +5760,7 @@
             ],
             "support": {
                 "issues": "https://github.com/myclabs/DeepCopy/issues",
-                "source": "https://github.com/myclabs/DeepCopy/tree/1.13.0"
+                "source": "https://github.com/myclabs/DeepCopy/tree/1.13.1"
             },
             "funding": [
                 {
@@ -5768,7 +5768,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2025-02-12T12:17:51+00:00"
+            "time": "2025-04-29T12:36:36+00:00"
         },
         {
             "name": "nesbot/carbon",
@@ -12735,20 +12735,20 @@
         },
         {
             "name": "hamcrest/hamcrest-php",
-            "version": "v2.0.1",
+            "version": "v2.1.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/hamcrest/hamcrest-php.git",
-                "reference": "8c3d0a3f6af734494ad8f6fbbee0ba92422859f3"
+                "reference": "99ec86beb7da3604d57cd3ca3699d2853f53018d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/hamcrest/hamcrest-php/zipball/8c3d0a3f6af734494ad8f6fbbee0ba92422859f3",
-                "reference": "8c3d0a3f6af734494ad8f6fbbee0ba92422859f3",
+                "url": "https://api.github.com/repos/hamcrest/hamcrest-php/zipball/99ec86beb7da3604d57cd3ca3699d2853f53018d",
+                "reference": "99ec86beb7da3604d57cd3ca3699d2853f53018d",
                 "shasum": ""
             },
             "require": {
-                "php": "^5.3|^7.0|^8.0"
+                "php": "^7.4|^8.0"
             },
             "replace": {
                 "cordoval/hamcrest-php": "*",
@@ -12756,8 +12756,8 @@
                 "kodova/hamcrest-php": "*"
             },
             "require-dev": {
-                "phpunit/php-file-iterator": "^1.4 || ^2.0",
-                "phpunit/phpunit": "^4.8.36 || ^5.7 || ^6.5 || ^7.0"
+                "phpunit/php-file-iterator": "^1.4 || ^2.0 || ^3.0",
+                "phpunit/phpunit": "^4.8.36 || ^5.7 || ^6.5 || ^7.0 || ^8.0 || ^9.0"
             },
             "type": "library",
             "extra": {
@@ -12780,9 +12780,9 @@
             ],
             "support": {
                 "issues": "https://github.com/hamcrest/hamcrest-php/issues",
-                "source": "https://github.com/hamcrest/hamcrest-php/tree/v2.0.1"
+                "source": "https://github.com/hamcrest/hamcrest-php/tree/v2.1.0"
             },
-            "time": "2020-07-09T08:09:16+00:00"
+            "time": "2025-04-29T18:09:42+00:00"
         },
         {
             "name": "iamcal/sql-parser",
@@ -13121,16 +13121,16 @@
         },
         {
             "name": "laravel/sail",
-            "version": "v1.41.1",
+            "version": "v1.42.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/laravel/sail.git",
-                "reference": "e5692510f1ef8e0f5096cde2b885d558f8d86592"
+                "reference": "2edaaf77f3c07a4099965bb3d7dfee16e801c0f6"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/laravel/sail/zipball/e5692510f1ef8e0f5096cde2b885d558f8d86592",
-                "reference": "e5692510f1ef8e0f5096cde2b885d558f8d86592",
+                "url": "https://api.github.com/repos/laravel/sail/zipball/2edaaf77f3c07a4099965bb3d7dfee16e801c0f6",
+                "reference": "2edaaf77f3c07a4099965bb3d7dfee16e801c0f6",
                 "shasum": ""
             },
             "require": {
@@ -13180,7 +13180,7 @@
                 "issues": "https://github.com/laravel/sail/issues",
                 "source": "https://github.com/laravel/sail"
             },
-            "time": "2025-04-22T13:39:39+00:00"
+            "time": "2025-04-29T14:26:46+00:00"
         },
         {
             "name": "mockery/mockery",
@@ -13939,16 +13939,16 @@
         },
         {
             "name": "phpstan/phpstan",
-            "version": "2.1.12",
+            "version": "2.1.13",
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpstan/phpstan.git",
-                "reference": "96dde49e967c0c22812bcfa7bda4ff82c09f3b0c"
+                "reference": "e55e03e6d4ac49cd1240907e5b08e5cd378572a9"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpstan/phpstan/zipball/96dde49e967c0c22812bcfa7bda4ff82c09f3b0c",
-                "reference": "96dde49e967c0c22812bcfa7bda4ff82c09f3b0c",
+                "url": "https://api.github.com/repos/phpstan/phpstan/zipball/e55e03e6d4ac49cd1240907e5b08e5cd378572a9",
+                "reference": "e55e03e6d4ac49cd1240907e5b08e5cd378572a9",
                 "shasum": ""
             },
             "require": {
@@ -13993,7 +13993,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2025-04-16T13:19:18+00:00"
+            "time": "2025-04-27T12:28:25+00:00"
         },
         {
             "name": "phpunit/php-code-coverage",
@@ -15347,16 +15347,16 @@
         },
         {
             "name": "spatie/backtrace",
-            "version": "1.7.1",
+            "version": "1.7.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/spatie/backtrace.git",
-                "reference": "0f2477c520e3729de58e061b8192f161c99f770b"
+                "reference": "9807de6b8fecfaa5b3d10650985f0348b02862b2"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/spatie/backtrace/zipball/0f2477c520e3729de58e061b8192f161c99f770b",
-                "reference": "0f2477c520e3729de58e061b8192f161c99f770b",
+                "url": "https://api.github.com/repos/spatie/backtrace/zipball/9807de6b8fecfaa5b3d10650985f0348b02862b2",
+                "reference": "9807de6b8fecfaa5b3d10650985f0348b02862b2",
                 "shasum": ""
             },
             "require": {
@@ -15394,7 +15394,7 @@
                 "spatie"
             ],
             "support": {
-                "source": "https://github.com/spatie/backtrace/tree/1.7.1"
+                "source": "https://github.com/spatie/backtrace/tree/1.7.2"
             },
             "funding": [
                 {
@@ -15406,7 +15406,7 @@
                     "type": "other"
                 }
             ],
-            "time": "2024-12-02T13:28:15+00:00"
+            "time": "2025-04-28T14:55:53+00:00"
         },
         {
             "name": "spatie/error-solutions",
@@ -15906,5 +15906,5 @@
     "platform-overrides": {
         "php": "8.2"
     },
-    "plugin-api-version": "2.3.0"
+    "plugin-api-version": "2.6.0"
 }
