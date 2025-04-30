@@ -48,7 +48,7 @@ class JavaVersion extends FeatureProvider
             ->modalDescription('This server is currently running an unsupported version of Java and cannot be started.')
             ->modalSubmitActionLabel('Update Docker Image')
             ->disabledForm(fn () => !auth()->user()->can(Permission::ACTION_STARTUP_DOCKER_IMAGE, $server))
-            ->form([
+            ->schema([
                 Placeholder::make('java')
                     ->label('Please select a supported version from the list below to continue starting the server.'),
                 Select::make('image')

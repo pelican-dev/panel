@@ -13,7 +13,7 @@ use Spatie\Health\ResultStores\ResultStore;
 
 class Health extends Page
 {
-    protected static string|\BackedEnum|null $navigationIcon = 'tabler-heart';
+    protected static string | \BackedEnum | null $navigationIcon = 'tabler-heart';
 
     protected string $view = 'filament.pages.health';
 

@@ -24,7 +24,7 @@ class UserResource extends Resource
 {
     protected static ?string $model = User::class;
 
-    protected static string|\BackedEnum|null $navigationIcon = 'tabler-users';
+    protected static string | \BackedEnum | null $navigationIcon = 'tabler-users';
 
     protected static ?string $recordTitleAttribute = 'username';
 
@@ -105,7 +105,7 @@ class UserResource extends Resource
     {
         return $schema
             ->columns(['default' => 1, 'lg' => 3])
-            ->schema([
+            ->components([
                 TextInput::make('username')
                     ->label(trans('admin/user.username'))
                     ->alphaNum()

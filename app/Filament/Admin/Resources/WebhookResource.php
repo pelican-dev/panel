@@ -21,7 +21,7 @@ class WebhookResource extends Resource
 {
     protected static ?string $model = WebhookConfiguration::class;
 
-    protected static string|\BackedEnum|null $navigationIcon = 'tabler-webhook';
+    protected static string | \BackedEnum | null $navigationIcon = 'tabler-webhook';
 
     protected static ?string $recordTitleAttribute = 'description';
 

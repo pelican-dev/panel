@@ -10,7 +10,7 @@ class EggResource extends Resource
 {
     protected static ?string $model = Egg::class;
 
-    protected static string|\BackedEnum|null $navigationIcon = 'tabler-eggs';
+    protected static string | \BackedEnum | null $navigationIcon = 'tabler-eggs';
 
     protected static ?string $recordTitleAttribute = 'name';
 

@@ -76,7 +76,7 @@ class EditServer extends EditRecord
     public function form(Schema $schema): Schema
     {
         return $schema
-            ->schema([
+            ->components([
                 Tabs::make('Tabs')
                     ->persistTabInQueryString()
                     ->columns([

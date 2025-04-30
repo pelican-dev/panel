@@ -21,7 +21,7 @@ class DatabaseHostResource extends Resource
 {
     protected static ?string $model = DatabaseHost::class;
 
-    protected static string|\BackedEnum|null $navigationIcon = 'tabler-database';
+    protected static string | \BackedEnum | null $navigationIcon = 'tabler-database';
 
     protected static ?string $recordTitleAttribute = 'name';
 
@@ -91,7 +91,7 @@ class DatabaseHostResource extends Resource
     public static function form(Schema $schema): Schema
     {
         return $schema
-            ->schema([
+            ->components([
                 Section::make()
                     ->columnSpanFull()
                     ->columns([

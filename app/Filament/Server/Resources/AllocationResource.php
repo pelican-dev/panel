@@ -20,7 +20,7 @@ class AllocationResource extends Resource
 
     protected static ?int $navigationSort = 7;
 
-    protected static string|\BackedEnum|null $navigationIcon = 'tabler-network';
+    protected static string | \BackedEnum | null $navigationIcon = 'tabler-network';
 
     // TODO: find better way handle server conflict state
     public static function canAccess(): bool

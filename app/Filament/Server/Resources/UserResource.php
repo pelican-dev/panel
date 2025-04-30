@@ -33,7 +33,7 @@ class UserResource extends Resource
 
     protected static ?int $navigationSort = 5;
 
-    protected static string|\BackedEnum|null $navigationIcon = 'tabler-users';
+    protected static string | \BackedEnum | null $navigationIcon = 'tabler-users';
 
     protected static ?string $tenantOwnershipRelationshipName = 'subServers';
 

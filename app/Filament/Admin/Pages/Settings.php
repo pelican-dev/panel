@@ -45,7 +45,7 @@ class Settings extends Page implements HasSchemas
     use InteractsWithForms;
     use InteractsWithHeaderActions;
 
-    protected static string|\BackedEnum|null $navigationIcon = 'tabler-settings';
+    protected static string | \BackedEnum | null $navigationIcon = 'tabler-settings';
 
     protected string $view = 'filament.pages.settings';
 

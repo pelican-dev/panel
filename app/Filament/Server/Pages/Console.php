@@ -25,7 +25,7 @@ use Livewire\Attributes\On;
 
 class Console extends Page
 {
-    protected static string|\BackedEnum|null $navigationIcon = 'tabler-brand-tabler';
+    protected static string | \BackedEnum | null $navigationIcon = 'tabler-brand-tabler';
 
     protected static ?int $navigationSort = 1;
 

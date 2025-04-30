@@ -16,7 +16,7 @@ class BackupResource extends Resource
 
     protected static ?int $navigationSort = 3;
 
-    protected static string|\BackedEnum|null $navigationIcon = 'tabler-file-zip';
+    protected static string | \BackedEnum | null $navigationIcon = 'tabler-file-zip';
 
     protected static bool $canCreateAnother = false;
 

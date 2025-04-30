@@ -10,8 +10,8 @@ use App\Repositories\Daemon\DaemonPowerRepository;
 use Closure;
 use Filament\Actions\Action;
 use Filament\Facades\Filament;
-use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\TextInput;
+use Filament\Infolists\Components\TextEntry;
 use Filament\Notifications\Notification;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Validator;
@@ -37,6 +37,9 @@ class GSLToken extends FeatureProvider
         return 'gsltoken';
     }
 
+    /**
+     * @throws \Exception
+     */
     public function getAction(): Action
     {
         /** @var Server $server */
@@ -50,9 +53,9 @@ class GSLToken extends FeatureProvider
             ->modalHeading('Invalid GSL token')
             ->modalDescription('It seems like your Gameserver Login Token (GSL token) is invalid or has expired.')
             ->modalSubmitActionLabel('Update GSL Token')
-            ->disabledForm(fn () => !auth()->user()->can(Permission::ACTION_STARTUP_UPDATE, $server))
-            ->form([
-                Placeholder::make('java')
+            ->disabledSchema(fn () => !auth()->user()->can(Permission::ACTION_STARTUP_UPDATE, $server))
+            ->schema([
+                TextEntry::make('java')
                     ->label('You can either <x-filament::link href="https://steamcommunity.com/dev/managegameservers" target="_blank">generate a new one</x-filament::link> and enter it below or leave the field blank to remove it
                         completely.'),
                 TextInput::make('gsltoken')

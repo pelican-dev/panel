@@ -16,7 +16,7 @@ class FileResource extends Resource
 
     protected static ?int $navigationSort = 2;
 
-    protected static string|\BackedEnum|null $navigationIcon = 'tabler-files';
+    protected static string | \BackedEnum | null $navigationIcon = 'tabler-files';
 
     // TODO: find better way handle server conflict state
     public static function canAccess(): bool

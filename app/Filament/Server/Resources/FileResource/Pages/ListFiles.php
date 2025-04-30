@@ -2,6 +2,7 @@
 
 namespace App\Filament\Server\Resources\FileResource\Pages;
 
+//use AbdelhamidErrahmouni\FilamentMonacoEditor\MonacoEditor;
 use App\Enums\EditorLanguages;
 use App\Facades\Activity;
 use App\Filament\Server\Resources\FileResource;
@@ -11,27 +12,25 @@ use App\Models\Server;
 use App\Repositories\Daemon\DaemonFileRepository;
 use App\Filament\Components\Tables\Columns\BytesColumn;
 use App\Filament\Components\Tables\Columns\DateTimeColumn;
-use Filament\Actions\Action as HeaderAction;
+use Filament\Actions\Action;
+use Filament\Actions\ActionGroup;
+use Filament\Actions\BulkAction;
+use Filament\Actions\DeleteAction;
+use Filament\Actions\DeleteBulkAction;
+use Filament\Actions\EditAction;
 use Filament\Facades\Filament;
 use Filament\Forms\Components\CheckboxList;
 use Filament\Forms\Components\FileUpload;
-use Filament\Infolists\Components\TextEntry;
 use Filament\Forms\Components\Select;
-use Filament\Schemas\Components\Tabs;
-use Filament\Schemas\Components\Tabs\Tab;
 use Filament\Forms\Components\TextInput;
-use Filament\Schemas\Components\Utilities\Get;
+use Filament\Infolists\Components\TextEntry;
 use Filament\Notifications\Notification;
 use Filament\Panel;
 use Filament\Resources\Pages\ListRecords;
 use Filament\Resources\Pages\PageRegistration;
-use Filament\Actions\Action;
-use Filament\Actions\ActionGroup;
-use Filament\Actions\BulkAction;
-use Filament\Actions\BulkActionGroup;
-use Filament\Actions\DeleteAction;
-use Filament\Actions\DeleteBulkAction;
-use Filament\Actions\EditAction;
+use Filament\Schemas\Components\Tabs;
+use Filament\Schemas\Components\Tabs\Tab;
+use Filament\Schemas\Components\Utilities\Get;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Collection;
@@ -40,7 +39,6 @@ use Illuminate\Routing\Route;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Route as RouteFacade;
 use Livewire\Attributes\Locked;
-use Filament\Forms\Components\RichEditor;
 
 class ListFiles extends ListRecords
 {
@@ -75,6 +73,9 @@ class ListFiles extends ListRecords
         return $breadcrumbs;
     }
 
+    /**
+     * @throws \Exception
+     */
     public function table(Table $table): Table
     {
         /** @var Server $server */
@@ -333,20 +334,20 @@ class ListFiles extends ListRecords
                             ->log();
                     }),
             ])
-                        $location = rtrim($data['location'], '/');
-                    ])
-                    ->action(function (Collection $files, $data) {
-                            ->content(fn (Get $get) => resolve_path('./' . join_paths($this->path, $get('location') ?? ''))),
-                        Placeholder::make('new_location')
-                            ->live(),
-                            ->required()
-                            ->hint('Enter the new directory, relative to the current directory.')
-                            ->label('Directory')
-                    ->form([
-                        TextInput::make('location')
-                    ->authorize(fn () => auth()->user()->can(Permission::ACTION_FILE_UPDATE, $server))
             ->groupedBulkActions([
                 BulkAction::make('move')
+                    ->authorize(fn () => auth()->user()->can(Permission::ACTION_FILE_UPDATE, $server))
+                    ->schema([
+                        TextInput::make('location')
+                            ->label('Directory')
+                            ->hint('Enter the new directory, relative to the current directory.')
+                            ->required()
+                            ->live(),
+                        TextEntry::make('new_location')
+                            ->state(fn (Get $get) => resolve_path('./' . join_paths($this->path, $get('location') ?? ''))),
+                    ])
+                    ->action(function (Collection $files, $data) {
+                        $location = rtrim($data['location'], '/');
 
                         $files = $files->map(fn ($file) => ['to' => join_paths($location, $file['name']), 'from' => $file['name']])->toArray();
                         $this->getDaemonFileRepository()->renameFiles($this->path, $files);
@@ -356,21 +357,21 @@ class ListFiles extends ListRecords
                             ->property('files', $files)
                             ->log();
 
-                        $files = $files->map(fn ($file) => $file['name'])->toArray();
-                    ->action(function ($data, Collection $files) {
-                    ])
-                            ->suffix('.tar.gz'),
-                            ->placeholder(fn () => 'archive-' . str(Carbon::now()->toRfc3339String())->replace(':', '')->before('+0000') . 'Z')
-                            ->label('Archive name')
-                    ->form([
-                        TextInput::make('name')
-                    ->authorize(fn () => auth()->user()->can(Permission::ACTION_FILE_ARCHIVE, $server))
-                BulkAction::make('archive')
-                            ->success()
-                            ->title(count($files) . ' Files were moved to ' . resolve_path(join_paths($this->path, $location)))
                         Notification::make()
-                    }),
+                            ->title(count($files) . ' Files were moved to ' . resolve_path(join_paths($this->path, $location)))
+                            ->success()
                             ->send();
+                    }),
+                BulkAction::make('archive')
+                    ->authorize(fn () => auth()->user()->can(Permission::ACTION_FILE_ARCHIVE, $server))
+                    ->schema([
+                        TextInput::make('name')
+                            ->label('Archive name')
+                            ->placeholder(fn () => 'archive-' . str(Carbon::now()->toRfc3339String())->replace(':', '')->before('+0000') . 'Z')
+                            ->suffix('.tar.gz'),
+                    ])
+                    ->action(function ($data, Collection $files) {
+                        $files = $files->map(fn ($file) => $file['name'])->toArray();
 
                         $archive = $this->getDaemonFileRepository()->compressFiles($this->path, $files, $data['name']);
 
@@ -413,7 +414,7 @@ class ListFiles extends ListRecords
         $server = Filament::getTenant();
 
         return [
-            HeaderAction::make('new_file')
+            Action::make('new_file')
                 ->authorize(fn () => auth()->user()->can(Permission::ACTION_FILE_CREATE, $server))
                 ->label('New File')
                 ->color('gray')
@@ -439,12 +440,12 @@ class ListFiles extends ListRecords
                         ->selectablePlaceholder(false)
                         ->afterStateUpdated(fn ($state) => $this->dispatch('setLanguage', lang: $state))
                         ->default(EditorLanguages::plaintext->value),
-                    RichEditor::make('editor')
-                        ->label(''),
-                    //->view('filament.plugins.monaco-editor')
-                    //->language(fn (Get $get) => $get('lang') ?? 'plaintext'),
+                    //                    MonacoEditor::make('editor')
+                    //                        ->label('')
+                    //                        ->view('filament.plugins.monaco-editor')
+                    //                        ->language(fn (Get $get) => $get('lang') ?? 'plaintext'),
                 ]),
-            HeaderAction::make('new_folder')
+            Action::make('new_folder')
                 ->authorize(fn () => auth()->user()->can(Permission::ACTION_FILE_CREATE, $server))
                 ->label('New Folder')
                 ->color('gray')
@@ -460,7 +461,7 @@ class ListFiles extends ListRecords
                         ->label('Folder Name')
                         ->required(),
                 ]),
-            HeaderAction::make('upload')
+            Action::make('upload')
                 ->authorize(fn () => auth()->user()->can(Permission::ACTION_FILE_CREATE, $server))
                 ->label('Upload')
                 ->action(function ($data) {
@@ -509,7 +510,7 @@ class ListFiles extends ListRecords
                                 ]),
                         ]),
                 ]),
-            HeaderAction::make('search')
+            Action::make('search')
                 ->authorize(fn () => auth()->user()->can(Permission::ACTION_FILE_READ, $server))
                 ->label('Global Search')
                 ->modalSubmitActionLabel('Search')

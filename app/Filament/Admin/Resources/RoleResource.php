@@ -28,7 +28,7 @@ class RoleResource extends Resource
 {
     protected static ?string $model = Role::class;
 
-    protected static string|\BackedEnum|null $navigationIcon = 'tabler-users-group';
+    protected static string | \BackedEnum | null $navigationIcon = 'tabler-users-group';
 
     protected static ?string $recordTitleAttribute = 'name';
 
@@ -110,7 +110,7 @@ class RoleResource extends Resource
 
         return $schema
             ->columns(1)
-            ->schema([
+            ->components([
                 TextInput::make('name')
                     ->label(trans('admin/role.name'))
                     ->required()

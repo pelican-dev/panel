@@ -22,7 +22,7 @@ class ApiKeyResource extends Resource
 {
     protected static ?string $model = ApiKey::class;
 
-    protected static string|\BackedEnum|null $navigationIcon = 'tabler-key';
+    protected static string | \BackedEnum | null $navigationIcon = 'tabler-key';
 
     public static function getNavigationLabel(): string
     {

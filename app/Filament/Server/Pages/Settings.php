@@ -21,7 +21,7 @@ use Illuminate\Support\Number;
 
 class Settings extends ServerFormPage
 {
-    protected static string|\BackedEnum|null $navigationIcon = 'tabler-settings';
+    protected static string | \BackedEnum | null $navigationIcon = 'tabler-settings';
 
     protected static ?int $navigationSort = 10;
 
@@ -40,7 +40,7 @@ class Settings extends ServerFormPage
                 'md' => 4,
                 'lg' => 6,
             ])
-            ->schema([
+            ->components([
                 Section::make('Server Information')
                     ->columns([
                         'default' => 1,

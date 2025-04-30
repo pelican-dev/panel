@@ -48,7 +48,7 @@ class EditNode extends EditRecord
 
     public function form(Schema $schema): Schema
     {
-        return $schema->schema([
+        return $schema->components([
             Tabs::make('Tabs')
                 ->columns([
                     'default' => 2,
