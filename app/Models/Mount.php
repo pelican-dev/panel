@@ -104,7 +104,7 @@ class Mount extends Model implements Validatable
      */
     public function eggs(): MorphToMany
     {
-        return $this->morphedByMany(Egg::class, 'model', 'model_has_mounts');
+        return $this->morphedByMany(Egg::class, 'mountable');
     }
 
     /**
@@ -112,7 +112,7 @@ class Mount extends Model implements Validatable
      */
     public function nodes(): MorphToMany
     {
-        return $this->morphedByMany(Node::class, 'model', 'model_has_mounts');
+        return $this->morphedByMany(Node::class, 'mountable');
     }
 
     /**
@@ -120,6 +120,6 @@ class Mount extends Model implements Validatable
      */
     public function servers(): MorphToMany
     {
-        return $this->morphedByMany(Node::class, 'model', 'model_has_mounts');
+        return $this->morphedByMany(Server::class, 'mountable');
     }
 }

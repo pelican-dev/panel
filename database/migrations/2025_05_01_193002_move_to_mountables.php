@@ -12,20 +12,20 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('model_has_mounts', function (Blueprint $table) {
+        Schema::create('mountables', function (Blueprint $table) {
             $table->unsignedInteger('mount_id');
 
-            $table->string('model_type');
-            $table->unsignedBigInteger('model_id');
-            $table->index(['model_id', 'model_type'], 'model_has_mounts_model_id_model_type_index');
+            $table->string('mountable_type');
+            $table->unsignedBigInteger('mountable_id');
+            $table->index(['mountable_id', 'mountable_type'], 'mountables_mountable_id_mountable_type_index');
 
             $table->foreign('mount_id')
                 ->references('id') // mount id
                 ->on('mounts')
                 ->onDelete('cascade');
 
-            $table->primary(['mount_id', 'model_id', 'model_type'],
-                'model_has_mounts_mount_model_type_primary');
+            $table->primary(['mount_id', 'mountable_id', 'mountable_type'],
+                'mountables_mountable_type_primary');
         });
 
         Schema::table('mount_node', function (Blueprint $table) {
@@ -39,8 +39,8 @@ return new class extends Migration
         $nodeMounts->each(function ($mount) use (&$inserts) {
             $inserts[] = [
                 'mount_id' => $mount->mount_id,
-                'model_type' => 'node',
-                'model_id' => $mount->node_id,
+                'mountable_type' => 'node',
+                'mountable_id' => $mount->node_id,
             ];
         });
 
@@ -54,8 +54,8 @@ return new class extends Migration
         $serverMounts->each(function ($mount) use (&$inserts) {
             $inserts[] = [
                 'mount_id' => $mount->mount_id,
-                'model_type' => 'server',
-                'model_id' => $mount->server_id,
+                'mountable_type' => 'server',
+                'mountable_id' => $mount->server_id,
             ];
         });
 
@@ -69,13 +69,13 @@ return new class extends Migration
         $eggMounts->each(function ($mount) use (&$inserts) {
             $inserts[] = [
                 'mount_id' => $mount->mount_id,
-                'model_type' => 'egg',
-                'model_id' => $mount->egg_id,
+                'mountable_type' => 'egg',
+                'mountable_id' => $mount->egg_id,
             ];
         });
 
         DB::transaction(function () use ($inserts) {
-            DB::table('model_has_mounts')->insert($inserts);
+            DB::table('mountables')->insert($inserts);
         });
 
         Schema::drop('mount_node');

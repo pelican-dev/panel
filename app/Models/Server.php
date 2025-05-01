@@ -351,7 +351,7 @@ class Server extends Model implements Validatable
 
     public function mounts(): MorphToMany
     {
-        return $this->morphToMany(Mount::class, 'model', 'model_has_mounts');
+        return $this->morphToMany(Mount::class, 'mountable');
     }
 
     /**
