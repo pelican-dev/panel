@@ -10,7 +10,6 @@ use App\Models\Permission;
 use App\Models\Server;
 use App\Repositories\Daemon\DaemonPowerRepository;
 use AymanAlhattami\FilamentContextMenu\Columns\ContextMenuTextColumn;
-use AymanAlhattami\FilamentContextMenu\Traits\PageHasContextMenu;
 use Filament\Notifications\Notification;
 use Filament\Resources\Components\Tab;
 use Filament\Resources\Pages\ListRecords;
@@ -26,8 +25,6 @@ use Livewire\Attributes\On;
 
 class ListServers extends ListRecords
 {
-    use PageHasContextMenu;
-
     protected static string $resource = ServerResource::class;
 
     public const DANGER_THRESHOLD = 0.9;
@@ -45,34 +42,37 @@ class ListServers extends ListRecords
     {
         $baseQuery = auth()->user()->accessibleServers();
 
-        $menuOptions = fn (Server $record) => [
-            Action::make('start')
-                ->color('primary')
-                ->authorize(fn () => auth()->user()->can(Permission::ACTION_CONTROL_START, $record))
-                ->hidden(fn () => $record->isInConflictState() || !$record->condition->isStartable())
-                ->dispatch('powerAction', ['server' => $record, 'action' => 'start'])
-                ->icon('tabler-player-play-filled'),
-            Action::make('restart')
-                ->color('gray')
-                ->authorize(fn () => auth()->user()->can(Permission::ACTION_CONTROL_RESTART, $record))
-                ->hidden(fn () => $record->isInConflictState() || !$record->condition->isRestartable())
-                ->dispatch('powerAction', ['server' => $record, 'action' => 'restart'])
-                ->icon('tabler-refresh'),
-            Action::make('stop')
-                ->color('danger')
-                ->authorize(fn () => auth()->user()->can(Permission::ACTION_CONTROL_STOP, $record))
-                ->hidden(fn () => $record->condition->isStartingOrStopping() || $record->condition->isKillable())
-                ->disabled(fn () => $record->isInConflictState() || !$record->condition->isStoppable())
-                ->dispatch('powerAction', ['server' => $record, 'action' => 'stop'])
-                ->icon('tabler-player-stop-filled'),
-            Action::make('kill')
-                ->color('danger')
-                ->tooltip('This can result in data corruption and/or data loss!')
-                ->dispatch('powerAction', ['server' => $record, 'action' => 'kill'])
-                ->authorize(fn () => auth()->user()->can(Permission::ACTION_CONTROL_STOP, $record))
-                ->hidden(fn () => $record->isInConflictState() || !$record->condition->isKillable())
-                ->icon('tabler-alert-square'),
-        ];
+        $menuOptions = function (Server $server) {
+            $status = $server->retrieveStatus();
+
+            return [
+                Action::make('start')
+                    ->color('primary')
+                    ->authorize(fn () => auth()->user()->can(Permission::ACTION_CONTROL_START, $server))
+                    ->visible(fn () => $status->isStartable())
+                    ->dispatch('powerAction', ['server' => $server, 'action' => 'start'])
+                    ->icon('tabler-player-play-filled'),
+                Action::make('restart')
+                    ->color('gray')
+                    ->authorize(fn () => auth()->user()->can(Permission::ACTION_CONTROL_RESTART, $server))
+                    ->visible(fn () => $status->isRestartable())
+                    ->dispatch('powerAction', ['server' => $server, 'action' => 'restart'])
+                    ->icon('tabler-refresh'),
+                Action::make('stop')
+                    ->color('danger')
+                    ->authorize(fn () => auth()->user()->can(Permission::ACTION_CONTROL_STOP, $server))
+                    ->visible(fn () => $status->isStoppable())
+                    ->dispatch('powerAction', ['server' => $server, 'action' => 'stop'])
+                    ->icon('tabler-player-stop-filled'),
+                Action::make('kill')
+                    ->color('danger')
+                    ->tooltip('This can result in data corruption and/or data loss!')
+                    ->dispatch('powerAction', ['server' => $server, 'action' => 'kill'])
+                    ->authorize(fn () => auth()->user()->can(Permission::ACTION_CONTROL_STOP, $server))
+                    ->visible(fn () => $status->isKillable())
+                    ->icon('tabler-alert-square'),
+            ];
+        };
 
         $viewOne = [
             ContextMenuTextColumn::make('condition')
@@ -84,7 +84,8 @@ class ListServers extends ListRecords
                 ->tooltip(fn (Server $server) => $server->formatResource('uptime', type: ServerResourceType::Time))
                 ->icon(fn (Server $server) => $server->condition->getIcon())
                 ->color(fn (Server $server) => $server->condition->getColor())
-                ->contextMenuActions(fn (Server $record) => $menuOptions($record)),
+                ->contextMenuActions($menuOptions)
+                ->enableContextMenu(fn (Server $server) => !$server->isInConflictState()),
         ];
 
         $viewTwo = [
@@ -92,14 +93,13 @@ class ListServers extends ListRecords
                 ->label('')
                 ->size('md')
                 ->searchable()
-                ->contextMenuActions(fn (Server $record) => $menuOptions($record)),
-            ContextMenuTextColumn::make('')
+                ->contextMenuActions($menuOptions),
+            ContextMenuTextColumn::make('allocation.address')
                 ->label('')
                 ->badge()
                 ->copyable(request()->isSecure())
-                ->copyMessage(fn (Server $server, string $state) => 'Copied ' . $server->allocation->address)
-                ->state(fn (Server $server) => $server->allocation->address)
-                ->contextMenuActions(fn (Server $record) => $menuOptions($record)),
+                ->contextMenuActions($menuOptions)
+                ->enableContextMenu(fn (Server $server) => !$server->isInConflictState()),
         ];
 
         $viewThree = [
@@ -252,7 +252,7 @@ class ListServers extends ListRecords
                 ->success()
                 ->send();
 
-            $this->redirect(self::getUrl());
+            $this->redirect(self::getUrl(['activeTab' => $this->activeTab]));
         } catch (ConnectionException) {
             Notification::make()
                 ->title(trans('exceptions.node.error_connecting', ['node' => $server->node->name]))
