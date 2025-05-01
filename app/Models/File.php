@@ -12,6 +12,9 @@ use Illuminate\Http\Client\ConnectionException;
 use Sushi\Sushi;
 
 /**
+ * \App\Models\File.
+ *
+ * @property int $id
  * @property string $name
  * @property Carbon $created_at
  * @property Carbon $modified_at
@@ -26,12 +29,6 @@ use Sushi\Sushi;
 class File extends Model
 {
     use Sushi;
-
-    protected $primaryKey = 'name';
-
-    public $incrementing = false;
-
-    protected $keyType = 'string';
 
     protected int $sushiInsertChunkSize = 100;
 
