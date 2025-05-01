@@ -21,7 +21,7 @@ class DaemonConfigurationRepository extends DaemonRepository
             ->connectTimeout(3)
             ->get('/api/system')
             ->throwIf(function ($result) {
-                $this->throwIf($result);
+                $this->enforceValidNodeToken($result);
                 if (!$result->collect()->has(['architecture', 'cpu_count', 'kernel_version', 'os', 'version'])) {
                     throw new ConnectionException($result->effectiveUri()->__toString() . ' is not Pelican Wings !');
                 }

@@ -49,10 +49,10 @@ abstract class DaemonRepository
     {
         Assert::isInstanceOf($this->node, Node::class);
 
-        return Http::daemon($this->node, $headers)->throwIf(fn ($condition) => $this->throwIf($condition));
+        return Http::daemon($this->node, $headers)->throwIf(fn ($condition) => $this->enforceValidNodeToken($condition));
     }
 
-    protected function throwIf(Response|bool $condition): bool
+    protected function enforceValidNodeToken(Response|bool $condition): bool
     {
         if (is_bool($condition)) {
             return $condition;
