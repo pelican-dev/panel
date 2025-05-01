@@ -179,6 +179,15 @@ class EditFiles extends Page
                 ->info()
                 ->closable()
                 ->send();
+
+            try {
+                $this->getDaemonFileRepository()->getDirectory('/');
+            } catch (ConnectionException) {
+                AlertBanner::make('node_connection_error')
+                    ->title('Could not connect to the node!')
+                    ->danger()
+                    ->send();
+            }
         }
     }
 
