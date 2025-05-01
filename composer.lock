@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "b1bd5923489f35e846cb208d660d758e",
+    "content-hash": "5c5a89d4207dd9efb7a8c3a410aa838c",
     "packages": [
         {
             "name": "abdelhamiderrahmouni/filament-monaco-editor",
@@ -1020,16 +1020,16 @@
         },
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.343.0",
+            "version": "3.343.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "8750298282f7f6f3fc65e43ae37a64bfc055100a"
+                "reference": "95d43e71d3395622394b36079f2fb2289d3284b3"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/8750298282f7f6f3fc65e43ae37a64bfc055100a",
-                "reference": "8750298282f7f6f3fc65e43ae37a64bfc055100a",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/95d43e71d3395622394b36079f2fb2289d3284b3",
+                "reference": "95d43e71d3395622394b36079f2fb2289d3284b3",
                 "shasum": ""
             },
             "require": {
@@ -1111,9 +1111,9 @@
             "support": {
                 "forum": "https://github.com/aws/aws-sdk-php/discussions",
                 "issues": "https://github.com/aws/aws-sdk-php/issues",
-                "source": "https://github.com/aws/aws-sdk-php/tree/3.343.0"
+                "source": "https://github.com/aws/aws-sdk-php/tree/3.343.2"
             },
-            "time": "2025-04-29T18:04:08+00:00"
+            "time": "2025-05-01T18:05:02+00:00"
         },
         {
             "name": "blade-ui-kit/blade-heroicons",
@@ -3714,16 +3714,16 @@
         },
         {
             "name": "laravel/framework",
-            "version": "v12.11.1",
+            "version": "v12.12.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/laravel/framework.git",
-                "reference": "bd0d62bd9c5196728e428cd695d89ec8640daac1"
+                "reference": "8f6cd73696068c28f30f5964556ec9d14e5d90d7"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/laravel/framework/zipball/bd0d62bd9c5196728e428cd695d89ec8640daac1",
-                "reference": "bd0d62bd9c5196728e428cd695d89ec8640daac1",
+                "url": "https://api.github.com/repos/laravel/framework/zipball/8f6cd73696068c28f30f5964556ec9d14e5d90d7",
+                "reference": "8f6cd73696068c28f30f5964556ec9d14e5d90d7",
                 "shasum": ""
             },
             "require": {
@@ -3925,7 +3925,7 @@
                 "issues": "https://github.com/laravel/framework/issues",
                 "source": "https://github.com/laravel/framework"
             },
-            "time": "2025-04-30T13:48:39+00:00"
+            "time": "2025-05-01T16:13:12+00:00"
         },
         {
             "name": "laravel/helpers",
@@ -11878,16 +11878,16 @@
         },
         {
             "name": "vlucas/phpdotenv",
-            "version": "v5.6.1",
+            "version": "v5.6.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/vlucas/phpdotenv.git",
-                "reference": "a59a13791077fe3d44f90e7133eb68e7d22eaff2"
+                "reference": "24ac4c74f91ee2c193fa1aaa5c249cb0822809af"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/vlucas/phpdotenv/zipball/a59a13791077fe3d44f90e7133eb68e7d22eaff2",
-                "reference": "a59a13791077fe3d44f90e7133eb68e7d22eaff2",
+                "url": "https://api.github.com/repos/vlucas/phpdotenv/zipball/24ac4c74f91ee2c193fa1aaa5c249cb0822809af",
+                "reference": "24ac4c74f91ee2c193fa1aaa5c249cb0822809af",
                 "shasum": ""
             },
             "require": {
@@ -11946,7 +11946,7 @@
             ],
             "support": {
                 "issues": "https://github.com/vlucas/phpdotenv/issues",
-                "source": "https://github.com/vlucas/phpdotenv/tree/v5.6.1"
+                "source": "https://github.com/vlucas/phpdotenv/tree/v5.6.2"
             },
             "funding": [
                 {
@@ -11958,7 +11958,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2024-07-20T21:52:34+00:00"
+            "time": "2025-04-30T23:37:27+00:00"
         },
         {
             "name": "voku/portable-ascii",
