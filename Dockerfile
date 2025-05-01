@@ -75,14 +75,15 @@ RUN chown root:www-data ./ \
     && chmod 750 ./ \
     # Files should not have execute set, but directories need it
     && find ./ -type d -exec chmod 750 {} \; \
-    # Create necessary directories 
+    # Create necessary directories
     && mkdir -p /pelican-data/storage /var/www/html/storage/app/public /var/run/supervisord /etc/supercronic \
     # Symlinks for env, database, and avatars
     && ln -s /pelican-data/.env ./.env \
     && ln -s /pelican-data/database/database.sqlite ./database/database.sqlite \
     && ln -sf /var/www/html/storage/app/public /var/www/html/public/storage \
     && ln -s  /pelican-data/storage/avatars /var/www/html/storage/app/public/avatars \
-    # Allow www-data write permissions where necessary 
+    && ln -s  /pelican-data/storage/fonts /var/www/html/storage/app/public/fonts \
+    # Allow www-data write permissions where necessary
     && chown -R www-data:www-data /pelican-data ./storage ./bootstrap/cache /var/run/supervisord /var/www/html/public/storage \
     && chmod -R u+rwX,g+rwX,o-rwx /pelican-data ./storage ./bootstrap/cache /var/run/supervisord
 

@@ -67,3 +67,17 @@ if (!function_exists('resolve_path')) {
         return implode('/', $absolutes);
     }
 }
+
+if (!function_exists('get_fonts')) {
+    /**
+     * @return array<string, string>
+     */
+    function get_fonts(?string $directory = null): array
+    {
+        $directory ??= public_path('fonts');
+
+        return collect(glob($directory . '/*.ttf', GLOB_BRACE) ?: [])
+            ->mapWithKeys(fn ($file) => [$name = pathinfo($file, PATHINFO_FILENAME) => $name])
+            ->all();
+    }
+}
