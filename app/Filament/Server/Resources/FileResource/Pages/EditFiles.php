@@ -26,6 +26,7 @@ use Filament\Resources\Pages\Page;
 use Filament\Resources\Pages\PageRegistration;
 use Filament\Support\Enums\Alignment;
 use Illuminate\Contracts\Filesystem\FileNotFoundException;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Routing\Route;
 use Illuminate\Support\Facades\Route as RouteFacade;
@@ -240,6 +241,14 @@ class EditFiles extends Page
         $this->fileRepository ??= (new DaemonFileRepository())->setServer($server);
 
         return $this->fileRepository;
+    }
+
+    /**
+     * @param  array<string, mixed>  $parameters
+     */
+    public static function getUrl(array $parameters = [], bool $isAbsolute = true, ?string $panel = null, ?Model $tenant = null): string
+    {
+        return parent::getUrl($parameters, $isAbsolute, $panel, $tenant) . '/';
     }
 
     public static function route(string $path): PageRegistration
