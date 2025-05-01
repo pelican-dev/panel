@@ -255,7 +255,7 @@ class ListServers extends ListRecords
             $this->redirect(self::getUrl());
         } catch (ConnectionException) {
             Notification::make()
-                ->title(trans('exceptions.node.error_connecting'))
+                ->title(trans('exceptions.node.error_connecting', ['node' => $server->node->name]))
                 ->danger()
                 ->send();
         }
