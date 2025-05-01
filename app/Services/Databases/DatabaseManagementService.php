@@ -118,11 +118,18 @@ class DatabaseManagementService
      */
     public function delete(Database $database): ?bool
     {
-        $database->dropDatabase($database->database);
-        $database->dropUser($database->username, $database->remote);
-        $database->flush();
+        return $this->connection->transaction(function () use ($database) {
+            $database->dropDatabase($database->database);
+            $database->dropUser($database->username, $database->remote);
+            $database->flush();
 
-        return $database->delete();
+            Activity::event('server:database.delete')
+                ->subject($database)
+                ->property('name', $database->database)
+                ->log();
+
+            return $database->delete();
+        });
     }
 
     /**

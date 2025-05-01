@@ -70,6 +70,7 @@ class AllocationsRelationManager extends RelationManager
                             ->label(trans('admin/server.ip_address'))
                             ->inlineLabel()
                             ->ipv4()
+                            ->live()
                             ->afterStateUpdated(fn (Set $set) => $set('allocation_ports', []))
                             ->required(),
                         TextInput::make('allocation_alias')
@@ -83,6 +84,7 @@ class AllocationsRelationManager extends RelationManager
                             ->label(trans('admin/server.ports'))
                             ->inlineLabel()
                             ->live()
+                            ->disabled(fn (Get $get) => empty($get('allocation_ip')))
                             ->afterStateUpdated(fn ($state, Set $set, Get $get) => $set('allocation_ports',
                                 CreateServer::retrieveValidPorts($this->getOwnerRecord()->node, $state, $get('allocation_ip')))
                             )
