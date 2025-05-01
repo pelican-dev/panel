@@ -1,7 +1,5 @@
 <?php
 
-use Illuminate\Support\Facades\File;
-
 if (!function_exists('is_digit')) {
     /**
      * Deal with normal (and irritating) PHP behavior to determine if
@@ -68,25 +66,4 @@ if (!function_exists('resolve_path')) {
 
         return implode('/', $absolutes);
     }
-}
-
-if (!function_exists('get_fonts')) {
-    /**
-     * @return array<string, string>
-     */
-    function get_fonts(?string $directory = null): array
-    {
-        $directory ??= public_path('fonts');
-
-        $fonts = [];
-        foreach (File::allFiles($directory) as $file) {
-            if ($file->getExtension() === 'ttf') {
-                $name = pathinfo($file->getFilename(), PATHINFO_FILENAME);
-                $fonts[$name] = $name;
-            }
-        }
-
-        return $fonts;
-    }
-
 }
