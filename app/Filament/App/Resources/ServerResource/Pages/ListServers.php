@@ -93,7 +93,8 @@ class ListServers extends ListRecords
                 ->label('')
                 ->size('md')
                 ->searchable()
-                ->contextMenuActions($menuOptions),
+                ->contextMenuActions($menuOptions)
+                ->enableContextMenu(fn (Server $server) => !$server->isInConflictState()),
             ContextMenuTextColumn::make('allocation.address')
                 ->label('')
                 ->badge()
