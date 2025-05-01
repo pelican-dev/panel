@@ -3,7 +3,7 @@
 namespace App\Filament\Pages\Auth;
 
 use App\Extensions\Captcha\Providers\CaptchaProvider;
-use App\Extensions\OAuth\Providers\OAuthProvider;
+use App\Extensions\OAuth\OAuthProvider;
 use App\Models\User;
 use Filament\Facades\Filament;
 use Filament\Forms\Components\Actions;
@@ -25,9 +25,12 @@ class Login extends BaseLogin
 
     public bool $verifyTwoFactor = false;
 
-    public function boot(Google2FA $google2FA): void
+    protected OAuthProvider $oauthProvider;
+
+    public function boot(Google2FA $google2FA, OAuthProvider $oauthProvider): void
     {
         $this->google2FA = $google2FA;
+        $this->oauthProvider = $oauthProvider;
     }
 
     public function authenticate(): ?LoginResponse
@@ -147,7 +150,7 @@ class Login extends BaseLogin
     {
         $actions = [];
 
-        $oauthProviders = collect(OAuthProvider::get())->filter(fn (OAuthProvider $provider) => $provider->isEnabled())->all();
+        $oauthProviders = $this->oauthProvider->getEnabled();
 
         foreach ($oauthProviders as $oauthProvider) {
 

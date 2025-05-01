@@ -12,19 +12,20 @@ use App\Checks\ScheduleCheck;
 use App\Checks\UsedDiskSpaceCheck;
 use App\Extensions\Avatar\Providers\GravatarProvider;
 use App\Extensions\Avatar\Providers\UiAvatarsProvider;
-use App\Extensions\OAuth\Providers\GitlabProvider;
-use App\Models;
 use App\Extensions\Captcha\Providers\TurnstileProvider;
 use App\Extensions\Features\GSLToken;
 use App\Extensions\Features\JavaVersion;
 use App\Extensions\Features\MinecraftEula;
 use App\Extensions\Features\PIDLimit;
 use App\Extensions\Features\SteamDiskSpace;
-use App\Extensions\OAuth\Providers\AuthentikProvider;
-use App\Extensions\OAuth\Providers\CommonProvider;
-use App\Extensions\OAuth\Providers\DiscordProvider;
-use App\Extensions\OAuth\Providers\GithubProvider;
-use App\Extensions\OAuth\Providers\SteamProvider;
+use App\Extensions\OAuth\OAuthProvider;
+use App\Extensions\OAuth\Schemas\AuthentikSchema;
+use App\Extensions\OAuth\Schemas\CommonSchema;
+use App\Extensions\OAuth\Schemas\DiscordSchema;
+use App\Extensions\OAuth\Schemas\GithubSchema;
+use App\Extensions\OAuth\Schemas\GitlabSchema;
+use App\Extensions\OAuth\Schemas\SteamSchema;
+use App\Models;
 use App\Services\Helpers\SoftwareVersionService;
 use Dedoc\Scramble\Scramble;
 use Dedoc\Scramble\Support\Generator\OpenApi;
@@ -104,20 +105,25 @@ class AppServiceProvider extends ServiceProvider
         Scramble::registerApi('application', ['api_path' => 'api/application', 'info' => ['version' => '1.0']])->afterOpenApiGenerated($bearerTokens);
         Scramble::registerApi('client', ['api_path' => 'api/client', 'info' => ['version' => '1.0']])->afterOpenApiGenerated($bearerTokens);
 
-        // Default OAuth providers included with Socialite
-        CommonProvider::register($app, 'facebook', null, 'tabler-brand-facebook-f', '#1877f2');
-        CommonProvider::register($app, 'x', null, 'tabler-brand-x-f', '#1da1f2');
-        CommonProvider::register($app, 'linkedin', null, 'tabler-brand-linkedin-f', '#0a66c2');
-        CommonProvider::register($app, 'google', null, 'tabler-brand-google-f', '#4285f4');
-        GithubProvider::register($app);
-        GitlabProvider::register($app);
-        CommonProvider::register($app, 'bitbucket', null, 'tabler-brand-bitbucket-f', '#205081');
-        CommonProvider::register($app, 'slack', null, 'tabler-brand-slack', '#6ecadc');
+        $this->app->singleton(OAuthProvider::class, function ($app) {
+            $provider = new OAuthProvider();
+            // Default OAuth providers included with Socialite
+            $provider->register(new CommonSchema('facebook', null, 'tabler-brand-facebook-f', '#1877f2'));
+            $provider->register(new CommonSchema('x', null, 'tabler-brand-x-f', '#1da1f2'));
+            $provider->register(new CommonSchema('linkedin', null, 'tabler-brand-linkedin-f', '#0a66c2'));
+            $provider->register(new CommonSchema('google', null, 'tabler-brand-google-f', '#4285f4'));
+            $provider->register(new GithubSchema());
+            $provider->register(new GitlabSchema());
+            $provider->register(new CommonSchema('bitbucket', null, 'tabler-brand-bitbucket-f', '#205081'));
+            $provider->register(new CommonSchema('slack', null, 'tabler-brand-slack', '#6ecadc'));
 
-        // Additional OAuth providers from socialiteproviders.com
-        AuthentikProvider::register($app);
-        DiscordProvider::register($app);
-        SteamProvider::register($app);
+            // Additional OAuth providers from socialiteproviders.com
+            $provider->register(new AuthentikSchema());
+            $provider->register(new DiscordSchema());
+            $provider->register(new SteamSchema());
+
+            return $provider;
+        });
 
         // Default Captcha provider
         TurnstileProvider::register($app);
