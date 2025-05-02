@@ -39,6 +39,7 @@ use Filament\Support\Enums\MaxWidth;
 use Filament\Support\Exceptions\Halt;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\HtmlString;
 use Illuminate\Validation\Rules\Password;
@@ -373,10 +374,45 @@ class EditProfile extends BaseEditProfile
                                                     ->required()
                                                     ->columnSpan(1)
                                                     ->default(30),
-                                                //                                                Select::make('console_font')
-                                                //                                                    ->label(trans('profile.font'))
-                                                //                                                    ->hidden() //TODO
-                                                //                                                    ->columnSpan(1),
+                                                Select::make('console_font')
+                                                    ->label(trans('profile.font'))
+                                                    ->options(function () {
+                                                        $fonts = [];
+                                                        foreach (File::allFiles(public_path('storage/fonts')) as $file) {
+                                                            if ($file->getExtension() === 'ttf') {
+                                                                $name = pathinfo($file->getFilename(), PATHINFO_FILENAME);
+                                                                $fonts[$name] = $name;
+                                                            }
+                                                        }
+
+                                                        return $fonts;
+                                                    })
+                                                    ->reactive()
+                                                    ->afterStateUpdated(fn ($state, callable $set) => $set('font_preview', $state)),
+                                                Placeholder::make('font_preview')
+                                                    ->label('Preview')
+                                                    ->content(function (Get $get) {
+                                                        $fontName = $get('console_font') ?? 'No font selected.';
+
+                                                        $fontUrl = asset("storage/fonts/{$fontName}.ttf");
+                                                        $fontSize = $get('console_font_size') . 'px';
+
+                                                        return new HtmlString(<<<HTML
+                                                                    <style>
+                                                                        @font-face {
+                                                                            font-family: "CustomPreviewFont";
+                                                                            src: url("$fontUrl");
+                                                                        }
+                                                                        .preview-text {
+                                                                            font-family: "CustomPreviewFont";
+                                                                            font-size: $fontSize;
+                                                                            margin-top: 10px;
+                                                                            display: block;
+                                                                        }
+                                                                    </style>
+                                                                    <span class="preview-text">The quick blue pelican jumps over the lazy pterodactyl. :)</span>
+                                                                HTML);
+                                                    }),
                                                 TextInput::make('console_font_size')
                                                     ->label(trans('profile.font_size'))
                                                     ->columnSpan(1)
@@ -446,12 +482,13 @@ class EditProfile extends BaseEditProfile
     protected function mutateFormDataBeforeSave(array $data): array
     {
         $moarbetterdata = [
+            'console_font' => $data['console_font'],
             'console_font_size' => $data['console_font_size'],
             'console_rows' => $data['console_rows'],
             'dashboard_layout' => $data['dashboard_layout'],
         ];
 
-        unset($data['dashboard_layout'], $data['console_font_size'], $data['console_rows']);
+        unset($data['console_font'],$data['console_font_size'], $data['console_rows'], $data['dashboard_layout']);
         $data['customization'] = json_encode($moarbetterdata);
 
         return $data;
@@ -461,6 +498,7 @@ class EditProfile extends BaseEditProfile
     {
         $moarbetterdata = json_decode($data['customization'], true);
 
+        $data['console_font'] = $moarbetterdata['console_font'] ?? 'ComicMono';
         $data['console_font_size'] = $moarbetterdata['console_font_size'] ?? 14;
         $data['console_rows'] = $moarbetterdata['console_rows'] ?? 30;
         $data['dashboard_layout'] = $moarbetterdata['dashboard_layout'] ?? 'grid';
