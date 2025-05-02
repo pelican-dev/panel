@@ -396,9 +396,23 @@ class EditProfile extends BaseEditProfile
                                                     ->label('Preview')
                                                     ->content(function (Get $get) {
                                                         $fontName = $get('console_font') ?? 'No font selected.';
-
-                                                        $fontUrl = asset("storage/fonts/{$fontName}.ttf");
                                                         $fontSize = $get('console_font_size') . 'px';
+                                                        $fontUrl = asset("storage/fonts/{$fontName}.ttf");
+
+                                                        if ($fontName === 'ComicMono') {
+                                                            return new HtmlString(<<<HTML
+                                                                <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/comic-mono@0.0.1/index.css">
+                                                                    <style>
+                                                                        .preview-text {
+                                                                            font-family: Comic Mono;
+                                                                            font-size: $fontSize;
+                                                                            margin-top: 10px;
+                                                                            display: block;
+                                                                        }
+                                                                    </style>
+                                                                    <span class="preview-text">The quick blue pelican jumps over the lazy pterodactyl. :)</span>
+                                                                HTML);
+                                                        }
 
                                                         return new HtmlString(<<<HTML
                                                                     <style>
