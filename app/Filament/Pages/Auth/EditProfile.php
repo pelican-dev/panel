@@ -394,7 +394,7 @@ class EditProfile extends BaseEditProfile
                                                     ->content(function (Get $get) {
                                                         $fontName = $get('console_font') ?? 'No font selected.';
 
-                                                        $fontUrl = asset("fonts/{$fontName}.ttf");
+                                                        $fontUrl = asset("storage/fonts/{$fontName}.ttf");
                                                         $fontSize = $get('console_font_size') . 'px';
 
                                                         return new HtmlString(<<<HTML
