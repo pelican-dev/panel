@@ -377,7 +377,9 @@ class EditProfile extends BaseEditProfile
                                                 Select::make('console_font')
                                                     ->label(trans('profile.font'))
                                                     ->options(function () {
-                                                        $fonts = [];
+                                                        $fonts = [
+                                                            'ComicMono' => 'ComicMono ( Default )', //default
+                                                        ];
                                                         foreach (File::allFiles(public_path('storage/fonts')) as $file) {
                                                             if ($file->getExtension() === 'ttf') {
                                                                 $name = pathinfo($file->getFilename(), PATHINFO_FILENAME);
@@ -388,6 +390,7 @@ class EditProfile extends BaseEditProfile
                                                         return $fonts;
                                                     })
                                                     ->reactive()
+                                                    ->default('ComicMono')
                                                     ->afterStateUpdated(fn ($state, callable $set) => $set('font_preview', $state)),
                                                 Placeholder::make('font_preview')
                                                     ->label('Preview')
