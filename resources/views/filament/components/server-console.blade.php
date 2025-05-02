@@ -6,7 +6,7 @@
         $userRows =  auth()->user()->getCustomization()['console_rows'] ?? 30;
     @endphp
 
-    @if($userFont === 'ComicMono')
+    @if ($userFont === 'ComicMono')
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/comic-mono@0.0.1/index.css">
     @else
         <link rel="preload" href="{{ asset("storage/fonts/{$userFont}.ttf") }}" as="font" crossorigin>
