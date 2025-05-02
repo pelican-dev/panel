@@ -39,6 +39,7 @@ use Filament\Support\Enums\MaxWidth;
 use Filament\Support\Exceptions\Halt;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\HtmlString;
 use Illuminate\Validation\Rules\Password;
@@ -375,7 +376,17 @@ class EditProfile extends BaseEditProfile
                                                     ->default(30),
                                                 Select::make('console_font')
                                                     ->label(trans('profile.font'))
-                                                    ->options(fn () => get_fonts(storage_path('app\public\fonts')))
+                                                    ->options(function () {
+                                                        $fonts = [];
+                                                        foreach (File::allFiles(public_path('storage/fonts')) as $file) {
+                                                            if ($file->getExtension() === 'ttf') {
+                                                                $name = pathinfo($file->getFilename(), PATHINFO_FILENAME);
+                                                                $fonts[$name] = $name;
+                                                            }
+                                                        }
+
+                                                        return $fonts;
+                                                    })
                                                     ->reactive()
                                                     ->afterStateUpdated(fn ($state, callable $set) => $set('font_preview', $state)),
                                                 Placeholder::make('font_preview')
@@ -383,7 +394,7 @@ class EditProfile extends BaseEditProfile
                                                     ->content(function (Get $get) {
                                                         $fontName = $get('console_font') ?? 'No font selected.';
 
-                                                        $fontUrl = asset("fonts/{$fontName}.ttf");
+                                                        $fontUrl = asset("storage/fonts/{$fontName}.ttf");
                                                         $fontSize = $get('console_font_size') . 'px';
 
                                                         return new HtmlString(<<<HTML
