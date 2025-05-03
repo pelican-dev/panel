@@ -1116,6 +1116,82 @@
             "time": "2025-05-01T18:05:02+00:00"
         },
         {
+            "name": "aymanalhattami/filament-context-menu",
+            "version": "1.0.3",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/aymanalhattami/filament-context-menu.git",
+                "reference": "5118d36303e86891d3037e6e26882d548b880b9c"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/aymanalhattami/filament-context-menu/zipball/5118d36303e86891d3037e6e26882d548b880b9c",
+                "reference": "5118d36303e86891d3037e6e26882d548b880b9c",
+                "shasum": ""
+            },
+            "require": {
+                "filament/filament": "^3.0",
+                "php": "^8.2",
+                "spatie/laravel-package-tools": "^1.15.0"
+            },
+            "require-dev": {
+                "larastan/larastan": "^2.0",
+                "laravel/pint": "^1.0",
+                "nunomaduro/collision": "^8.0",
+                "orchestra/testbench": "^9.0",
+                "pestphp/pest": "^3.0",
+                "pestphp/pest-plugin-arch": "^3.0",
+                "pestphp/pest-plugin-laravel": "^3.0",
+                "phpstan/extension-installer": "^1.0",
+                "phpstan/phpstan-deprecation-rules": "^1.0",
+                "phpstan/phpstan-phpunit": "^1.0"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "aliases": {
+                        "Skeleton": "AymanAlhattami\\FilamentContextMenu\\Facades\\FilamentContextMenu"
+                    },
+                    "providers": [
+                        "AymanAlhattami\\FilamentContextMenu\\FilamentContextMenuServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "AymanAlhattami\\FilamentContextMenu\\": "src/",
+                    "AymanAlhattami\\FilamentContextMenu\\Database\\Factories\\": "database/factories/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Ayman Alhattami",
+                    "email": "ayman.m.alhattami@gmail.com",
+                    "role": "Developer"
+                }
+            ],
+            "description": "context menu (right click menu) for filament",
+            "homepage": "https://github.com/aymanalhattami/filament-context-menu",
+            "keywords": [
+                "ayman alhattami",
+                "context menu",
+                "filament",
+                "filament admin panel",
+                "filament context menu",
+                "filament_context_menu",
+                "laravel"
+            ],
+            "support": {
+                "issues": "https://github.com/aymanalhattami/filament-context-menu/issues",
+                "source": "https://github.com/aymanalhattami/filament-context-menu"
+            },
+            "time": "2024-09-22T10:47:31+00:00"
+        },
+        {
             "name": "blade-ui-kit/blade-heroicons",
             "version": "2.6.0",
             "source": {
@@ -15903,7 +15979,7 @@
         "ext-pdo": "*",
         "ext-zip": "*"
     },
-    "platform-dev": [],
+    "platform-dev": {},
     "platform-overrides": {
         "php": "8.2"
     },
