@@ -380,6 +380,12 @@ class EditProfile extends BaseEditProfile
                                                         $fonts = [
                                                             'ComicMono' => 'ComicMono ( Default )', //default
                                                         ];
+
+                                                        if (!File::exists(public_path('storage/fonts'))) {
+                                                            File::makeDirectory(public_path('storage/fonts'));
+                                                            $this->fillForm();
+                                                        }
+
                                                         foreach (File::allFiles(public_path('storage/fonts')) as $file) {
                                                             if ($file->getExtension() === 'ttf') {
                                                                 $name = pathinfo($file->getFilename(), PATHINFO_FILENAME);
