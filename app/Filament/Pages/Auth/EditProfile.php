@@ -377,7 +377,15 @@ class EditProfile extends BaseEditProfile
                                                 Select::make('console_font')
                                                     ->label(trans('profile.font'))
                                                     ->options(function () {
-                                                        $fonts = [];
+                                                        $fonts = [
+                                                            'ComicMono' => 'ComicMono ( Default )', //default
+                                                        ];
+
+                                                        if (!File::exists(public_path('storage/fonts'))) {
+                                                            File::makeDirectory(public_path('storage/fonts'));
+                                                            $this->fillForm();
+                                                        }
+
                                                         foreach (File::allFiles(public_path('storage/fonts')) as $file) {
                                                             if ($file->getExtension() === 'ttf') {
                                                                 $name = pathinfo($file->getFilename(), PATHINFO_FILENAME);
@@ -388,14 +396,29 @@ class EditProfile extends BaseEditProfile
                                                         return $fonts;
                                                     })
                                                     ->reactive()
+                                                    ->default('ComicMono')
                                                     ->afterStateUpdated(fn ($state, callable $set) => $set('font_preview', $state)),
                                                 Placeholder::make('font_preview')
                                                     ->label('Preview')
                                                     ->content(function (Get $get) {
                                                         $fontName = $get('console_font') ?? 'No font selected.';
-
-                                                        $fontUrl = asset("storage/fonts/{$fontName}.ttf");
                                                         $fontSize = $get('console_font_size') . 'px';
+                                                        $fontUrl = asset("storage/fonts/{$fontName}.ttf");
+
+                                                        if ($fontName === 'ComicMono') {
+                                                            return new HtmlString(<<<HTML
+                                                                <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/comic-mono@0.0.1/index.css">
+                                                                    <style>
+                                                                        .preview-text {
+                                                                            font-family: Comic Mono;
+                                                                            font-size: $fontSize;
+                                                                            margin-top: 10px;
+                                                                            display: block;
+                                                                        }
+                                                                    </style>
+                                                                    <span class="preview-text">The quick blue pelican jumps over the lazy pterodactyl. :)</span>
+                                                                HTML);
+                                                        }
 
                                                         return new HtmlString(<<<HTML
                                                                     <style>
