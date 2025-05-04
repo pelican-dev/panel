@@ -1,14 +1,11 @@
 <x-filament::widget>
     @assets
     @php
-        $userFont = auth()->user()->getCustomization()['console_font'] ?? 'ComicMono';
+        $userFont = auth()->user()->getCustomization()['console_font'];
         $userFontSize = auth()->user()->getCustomization()['console_font_size'] ?? 14;
         $userRows =  auth()->user()->getCustomization()['console_rows'] ?? 30;
     @endphp
-
-    @if ($userFont === 'ComicMono')
-        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/comic-mono@0.0.1/index.css">
-    @else
+    @if($userFont)
         <link rel="preload" href="{{ asset("storage/fonts/{$userFont}.ttf") }}" as="font" crossorigin>
         <style>
             @font-face {
@@ -75,7 +72,7 @@
 
         let options = {
             fontSize: {{ $userFontSize }},
-            fontFamily: '{{ $userFont }}',
+            fontFamily: '{{ $userFont }}, monospace',
             lineHeight: 1.2,
             disableStdin: true,
             cursorStyle: 'underline',
