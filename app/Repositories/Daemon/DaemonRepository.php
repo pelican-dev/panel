@@ -7,6 +7,8 @@ use Illuminate\Http\Client\PendingRequest;
 use Illuminate\Support\Facades\Http;
 use Webmozart\Assert\Assert;
 use App\Models\Server;
+use Illuminate\Http\Client\ConnectionException;
+use Illuminate\Http\Client\Response;
 
 abstract class DaemonRepository
 {
@@ -47,6 +49,24 @@ abstract class DaemonRepository
     {
         Assert::isInstanceOf($this->node, Node::class);
 
-        return Http::daemon($this->node, $headers);
+        return Http::daemon($this->node, $headers)->throwIf(fn ($condition) => $this->enforceValidNodeToken($condition));
+    }
+
+    protected function enforceValidNodeToken(Response|bool $condition): bool
+    {
+        if (is_bool($condition)) {
+            return $condition;
+        }
+
+        $header = $condition->header('User-Agent');
+        if (
+            empty($header) ||
+            preg_match('/^Pelican Wings\/v(?:\d+\.\d+\.\d+|develop) \(id:(\w*)\)$/', $header, $matches) &&
+            array_get($matches, 1, '') !== $this->node->daemon_token_id
+        ) {
+            throw new ConnectionException($condition->effectiveUri()->__toString() . ' does not match node token_id !');
+        }
+
+        return true;
     }
 }

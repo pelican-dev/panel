@@ -11,6 +11,7 @@ use App\Services\Nodes\NodeJWTService;
 use App\Services\Servers\GetUserPermissionsService;
 use Filament\Widgets\Widget;
 use Illuminate\Support\Arr;
+use Livewire\Attributes\Session;
 use Livewire\Attributes\On;
 
 class ServerConsole extends Widget
@@ -26,6 +27,7 @@ class ServerConsole extends Widget
     public ?User $user = null;
 
     /** @var string[] */
+    #[Session(key: 'server.{server.id}.history')]
     public array $history = [];
 
     public int $historyIndex = 0;

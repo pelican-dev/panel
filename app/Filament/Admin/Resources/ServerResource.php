@@ -30,6 +30,11 @@ class ServerResource extends Resource
         return trans('admin/server.model_label_plural');
     }
 
+    public static function getNavigationGroup(): ?string
+    {
+        return config('panel.filament.top-navigation', false) ? null : trans('admin/dashboard.server');
+    }
+
     public static function getNavigationBadge(): ?string
     {
         return (string) static::getEloquentQuery()->count() ?: null;

@@ -23,7 +23,7 @@ else
   echo -e "APP_INSTALLED=false" >> /pelican-data/.env
 fi
 
-mkdir /pelican-data/database /var/www/html/storage/logs/supervisord 2>/dev/null
+mkdir -p /pelican-data/database /pelican-data/storage/avatars /pelican-data/storage/fonts /var/www/html/storage/logs/supervisord 2>/dev/null
 
 if ! grep -q "APP_KEY=" .env || grep -q "APP_KEY=$" .env; then
   echo "Generating APP_KEY..."

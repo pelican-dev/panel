@@ -13,6 +13,7 @@ use Filament\Actions\Action;
 use Filament\Forms\Components\Actions;
 use Filament\Forms\Components\Actions\Action as FormAction;
 use Filament\Forms\Components\Component;
+use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Group;
 use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\Section;
@@ -161,11 +162,20 @@ class Settings extends Page implements HasForms
                         ->default(env('FILAMENT_TOP_NAVIGATION', config('panel.filament.top-navigation'))),
                     Select::make('FILAMENT_AVATAR_PROVIDER')
                         ->label(trans('admin/setting.general.avatar_provider'))
-                        ->columnSpan(2)
                         ->native(false)
                         ->options(collect(AvatarProvider::getAll())->mapWithKeys(fn ($provider) => [$provider->getId() => $provider->getName()]))
                         ->selectablePlaceholder(false)
                         ->default(env('FILAMENT_AVATAR_PROVIDER', config('panel.filament.avatar-provider'))),
+                    Toggle::make('FILAMENT_UPLOADABLE_AVATARS')
+                        ->label(trans('admin/setting.general.uploadable_avatars'))
+                        ->inline(false)
+                        ->onIcon('tabler-check')
+                        ->offIcon('tabler-x')
+                        ->onColor('success')
+                        ->offColor('danger')
+                        ->formatStateUsing(fn ($state) => (bool) $state)
+                        ->afterStateUpdated(fn ($state, Set $set) => $set('FILAMENT_UPLOADABLE_AVATARS', (bool) $state))
+                        ->default(env('FILAMENT_UPLOADABLE_AVATARS', config('panel.filament.uploadable-avatars'))),
                 ]),
             ToggleButtons::make('PANEL_USE_BINARY_PREFIX')
                 ->label(trans('admin/setting.general.unit_prefix'))
@@ -715,10 +725,17 @@ class Settings extends Page implements HasForms
                         ->onColor('success')
                         ->offColor('danger')
                         ->live()
-                        ->columnSpanFull()
+                        ->columnSpan(1)
                         ->formatStateUsing(fn ($state): bool => (bool) $state)
                         ->afterStateUpdated(fn ($state, Set $set) => $set('PANEL_EDITABLE_SERVER_DESCRIPTIONS', (bool) $state))
                         ->default(env('PANEL_EDITABLE_SERVER_DESCRIPTIONS', config('panel.editable_server_descriptions'))),
+                    FileUpload::make('ConsoleFonts')
+                        ->hint(trans('admin/setting.misc.server.console_font_hint'))
+                        ->label(trans('admin/setting.misc.server.console_font_upload'))
+                        ->directory('fonts')
+                        ->columnSpan(1)
+                        ->maxFiles(1)
+                        ->preserveFilenames(),
                 ]),
             Section::make(trans('admin/setting.misc.webhook.title'))
                 ->description(trans('admin/setting.misc.webhook.helper'))
@@ -747,6 +764,7 @@ class Settings extends Page implements HasForms
     {
         try {
             $data = $this->form->getState();
+            unset($data['ConsoleFonts']);
 
             // Convert bools to a string, so they are correctly written to the .env file
             $data = array_map(fn ($value) => is_bool($value) ? ($value ? 'true' : 'false') : $value, $data);

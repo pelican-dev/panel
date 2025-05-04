@@ -21,14 +21,7 @@ class DaemonConfigurationRepository extends DaemonRepository
             ->connectTimeout(3)
             ->get('/api/system')
             ->throwIf(function ($result) {
-                $header = $result->header('User-Agent');
-                if (
-                    filled($header) &&
-                    preg_match('/^Pelican Wings\/v(?:\d+\.\d+\.\d+|develop) \(id:(\w*)\)$/', $header, $matches) &&
-                    array_get($matches, 1, '') !== $this->node->daemon_token_id
-                ) {
-                    throw new ConnectionException($result->effectiveUri()->__toString() . ' does not match node token_id !');
-                }
+                $this->enforceValidNodeToken($result);
                 if (!$result->collect()->has(['architecture', 'cpu_count', 'kernel_version', 'os', 'version'])) {
                     throw new ConnectionException($result->effectiveUri()->__toString() . ' is not Pelican Wings !');
                 }

@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Enums\RolePermissionModels;
 use App\Enums\RolePermissionPrefixes;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Spatie\Permission\Models\Role as BaseRole;
 
@@ -20,6 +21,8 @@ use Spatie\Permission\Models\Role as BaseRole;
  */
 class Role extends BaseRole
 {
+    use HasFactory;
+
     public const RESOURCE_NAME = 'role';
 
     public const ROOT_ADMIN = 'Root Admin';
