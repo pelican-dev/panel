@@ -1,7 +1,7 @@
 <x-filament::widget>
     @assets
     @php
-        $userFont = auth()->user()->getCustomization()['console_font'];
+        $userFont = auth()->user()->getCustomization()['console_font'] ?? 'monospace';
         $userFontSize = auth()->user()->getCustomization()['console_font_size'] ?? 14;
         $userRows =  auth()->user()->getCustomization()['console_rows'] ?? 30;
     @endphp
