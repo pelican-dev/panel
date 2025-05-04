@@ -75,24 +75,26 @@ RUN chown root:www-data ./ \
     && chmod 750 ./ \
     # Files should not have execute set, but directories need it
     && find ./ -type d -exec chmod 750 {} \; \
-    # Create necessary directories 
+    # Create necessary directories
     && mkdir -p /pelican-data/storage /var/www/html/storage/app/public /var/run/supervisord /etc/supercronic \
     # Symlinks for env, database, and avatars
     && ln -s /pelican-data/.env ./.env \
     && ln -s /pelican-data/database/database.sqlite ./database/database.sqlite \
     && ln -sf /var/www/html/storage/app/public /var/www/html/public/storage \
     && ln -s  /pelican-data/storage/avatars /var/www/html/storage/app/public/avatars \
-    # Allow www-data write permissions where necessary 
+    # Allow www-data write permissions where necessary
     && chown -R www-data:www-data /pelican-data ./storage ./bootstrap/cache /var/run/supervisord /var/www/html/public/storage \
     && chmod -R u+rwX,g+rwX,o-rwx /pelican-data ./storage ./bootstrap/cache /var/run/supervisord
 
 # Configure Supervisor
 COPY docker/supervisord.conf /etc/supervisord.conf
 COPY docker/Caddyfile /etc/caddy/Caddyfile
-# Add Laravel scheduler to crontab
-COPY docker/crontab /etc/supercronic/crontab
 
 COPY docker/entrypoint.sh ./docker/entrypoint.sh
+COPY docker/schedule.sh schedule.sh
+COPY docker/queue.sh queue.sh
+
+RUN chmod +x queue.sh schedule.sh
 
 HEALTHCHECK --interval=5m --timeout=10s --start-period=5s --retries=3 \
   CMD curl -f http://localhost/up || exit 1
