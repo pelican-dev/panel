@@ -61,9 +61,9 @@ spec:
               imagePullPolicy: Always
               envFrom:
                 - configMapRef:
-                    name: searcade-config
+                    name: searcade-pelican-panel-config
                 - secretRef:
-                    name: site
+                    name: searcade-pelican-panel-secret
           restartPolicy: Never
 ---
 apiVersion: apps/v1
