@@ -17,29 +17,30 @@ class ServerNetworkChart extends ChartWidget
 
     protected function getData(): array
     {
-        $data = cache()->get("servers.{$this->server->id}.network");
+        $previous = null;
 
-        $rx = collect($data)
+        $net = collect(cache()->get("servers.{$this->server->id}.network"))
             ->slice(-10)
-            ->map(fn ($value, $key) => [
-                'rx' => $value->rx_bytes,
-                'timestamp' => Carbon::createFromTimestamp($key, (auth()->user()->timezone ?? 'UTC'))->format('H:i:s'),
-            ])
-            ->all();
+            ->map(function ($current, $timestamp) use (&$previous) {
+                $net = null;
+                if ($previous !== null) {
+                    $net = [
+                        'rx' => max(0, $current->rx_bytes - $previous->rx_bytes),
+                        'tx' => max(0, $current->tx_bytes - $previous->tx_bytes),
+                        'timestamp' => Carbon::createFromTimestamp($timestamp, auth()->user()->timezone ?? 'UTC')->format('H:i:s'),
+                    ];
+                }
+                $previous = $current;
 
-        $tx = collect($data)
-            ->slice(-10)
-            ->map(fn ($value, $key) => [
-                'tx' => $value->tx_bytes,
-                'timestamp' => Carbon::createFromTimestamp($key, (auth()->user()->timezone ?? 'UTC'))->format('H:i:s'),
-            ])
+                return $net;
+            })
             ->all();
 
         return [
             'datasets' => [
                 [
                     'label' => 'Inbound',
-                    'data' => array_column($rx, 'rx'),
+                    'data' => array_column($net, 'rx'),
                     'backgroundColor' => [
                         'rgba(96, 165, 250, 0.3)',
                     ],
@@ -48,7 +49,7 @@ class ServerNetworkChart extends ChartWidget
                 ],
                 [
                     'label' => 'Outbound',
-                    'data' => array_column($tx, 'tx'),
+                    'data' => array_column($net, 'tx'),
                     'backgroundColor' => [
                         'rgba(165, 96, 250, 0.3)',
                     ],
@@ -56,7 +57,7 @@ class ServerNetworkChart extends ChartWidget
                     'fill' => true,
                 ],
             ],
-            'labels' => array_column($rx, 'timestamp'),
+            'labels' => array_column($net, 'timestamp'),
         ];
     }
 
