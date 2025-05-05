@@ -21,7 +21,9 @@ use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Tabs;
 use Filament\Forms\Components\Tabs\Tab;
 use Filament\Forms\Components\TextInput;
+use Filament\Forms\Form;
 use Filament\Forms\Get;
+use Filament\Infolists\Concerns\InteractsWithInfolists;
 use Filament\Notifications\Notification;
 use Filament\Panel;
 use Filament\Resources\Pages\ListRecords;
@@ -53,6 +55,12 @@ class ListFiles extends ListRecords
     public function mount(?string $path = null): void
     {
         parent::mount();
+
+        // Inject the Blade view for drag-and-drop upload
+        Filament::registerRenderHook(
+            'panels::body.end',
+            fn (): string => view('filament.pages.upload-drop-zone')->render()
+        );
 
         $this->path = $path ?? '/';
     }
@@ -560,5 +568,27 @@ class ListFiles extends ListRecords
                 ->withoutMiddleware(static::getWithoutRouteMiddleware($panel))
                 ->where('path', '.*'),
         );
+    }
+
+    public function getFooter(): ?\Illuminate\Contracts\View\View
+    {
+        return view('filament.pages.upload-drop-zone');
+    }
+
+    public function form(Form $form): Form
+    {
+        /** @var Server $server */
+        $server = Filament::getTenant();
+
+        return $form
+            ->schema([
+                FileUpload::make('files')
+                    ->id('hidden-uploader')
+                    ->storeFiles(false)
+                    ->previewable(false)
+                    ->preserveFilenames()
+                    ->multiple()
+                    ->maxSize((int) round($server->node->upload_size * (config('panel.use_binary_prefix') ? 1.048576 * 1024 : 1000))),
+            ]);
     }
 }
