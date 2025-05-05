@@ -205,7 +205,23 @@ class UserResource extends Resource
                                     ->columnSpanFull()
                                     ->schema($tabs),
                             ]),
-                    ]),
+                    ])
+                    ->mutateRecordDataUsing(function ($data, User $user) use ($server) {
+                        $permissionsArray = $server->subusers->where('user_id', $user->id)->first()->permissions;
+
+                        $transformedPermissions = [];
+
+                        foreach ($permissionsArray as $permission) {
+                            [$group, $action] = explode('.', $permission, 2);
+                            $transformedPermissions[$group][] = $action;
+                        }
+
+                        foreach ($transformedPermissions as $key => $value) {
+                            $data[$key] = $value;
+                        }
+
+                        return $data;
+                    }),
             ]);
     }
 
