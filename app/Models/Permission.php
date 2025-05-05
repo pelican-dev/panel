@@ -145,12 +145,12 @@ class Permission extends Model implements Validatable
             ],
             [
                 'name' => 'file',
-                'icon' => 'tabler-folders',
+                'icon' => 'tabler-files',
                 'permissions' => ['read', 'read-content', 'create', 'update', 'delete', 'archive', 'sftp'],
             ],
             [
                 'name' => 'backup',
-                'icon' => 'tabler-download',
+                'icon' => 'tabler-file-zip',
                 'permissions' => ['read', 'create', 'delete', 'download', 'restore'],
             ],
             [
@@ -160,7 +160,7 @@ class Permission extends Model implements Validatable
             ],
             [
                 'name' => 'startup',
-                'icon' => 'tabler-question-mark',
+                'icon' => 'tabler-player-play',
                 'permissions' => ['read', 'update', 'docker-image'],
             ],
             [
