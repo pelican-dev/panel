@@ -6,15 +6,22 @@ use App\Enums\ServerResourceType;
 use App\Filament\App\Resources\ServerResource;
 use App\Filament\Components\Tables\Columns\ServerEntryColumn;
 use App\Filament\Server\Pages\Console;
+use App\Models\Permission;
 use App\Models\Server;
+use App\Repositories\Daemon\DaemonPowerRepository;
+use AymanAlhattami\FilamentContextMenu\Columns\ContextMenuTextColumn;
+use Filament\Notifications\Notification;
 use Filament\Resources\Components\Tab;
 use Filament\Resources\Pages\ListRecords;
+use Filament\Tables\Actions\Action;
 use Filament\Tables\Columns\ColumnGroup;
 use Filament\Tables\Columns\Layout\Stack;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Http\Client\ConnectionException;
+use Livewire\Attributes\On;
 
 class ListServers extends ListRecords
 {
@@ -24,12 +31,51 @@ class ListServers extends ListRecords
 
     public const WARNING_THRESHOLD = 0.7;
 
+    private DaemonPowerRepository $daemonPowerRepository;
+
+    public function boot(): void
+    {
+        $this->daemonPowerRepository = new DaemonPowerRepository();
+    }
+
     public function table(Table $table): Table
     {
         $baseQuery = auth()->user()->accessibleServers();
 
+        $menuOptions = function (Server $server) {
+            $status = $server->retrieveStatus();
+
+            return [
+                Action::make('start')
+                    ->color('primary')
+                    ->authorize(fn () => auth()->user()->can(Permission::ACTION_CONTROL_START, $server))
+                    ->visible(fn () => $status->isStartable())
+                    ->dispatch('powerAction', ['server' => $server, 'action' => 'start'])
+                    ->icon('tabler-player-play-filled'),
+                Action::make('restart')
+                    ->color('gray')
+                    ->authorize(fn () => auth()->user()->can(Permission::ACTION_CONTROL_RESTART, $server))
+                    ->visible(fn () => $status->isRestartable())
+                    ->dispatch('powerAction', ['server' => $server, 'action' => 'restart'])
+                    ->icon('tabler-refresh'),
+                Action::make('stop')
+                    ->color('danger')
+                    ->authorize(fn () => auth()->user()->can(Permission::ACTION_CONTROL_STOP, $server))
+                    ->visible(fn () => $status->isStoppable())
+                    ->dispatch('powerAction', ['server' => $server, 'action' => 'stop'])
+                    ->icon('tabler-player-stop-filled'),
+                Action::make('kill')
+                    ->color('danger')
+                    ->tooltip('This can result in data corruption and/or data loss!')
+                    ->dispatch('powerAction', ['server' => $server, 'action' => 'kill'])
+                    ->authorize(fn () => auth()->user()->can(Permission::ACTION_CONTROL_STOP, $server))
+                    ->visible(fn () => $status->isKillable())
+                    ->icon('tabler-alert-square'),
+            ];
+        };
+
         $viewOne = [
-            TextColumn::make('condition')
+            ContextMenuTextColumn::make('condition')
                 ->label('')
                 ->default('unknown')
                 ->wrap()
@@ -37,20 +83,24 @@ class ListServers extends ListRecords
                 ->alignCenter()
                 ->tooltip(fn (Server $server) => $server->formatResource('uptime', type: ServerResourceType::Time))
                 ->icon(fn (Server $server) => $server->condition->getIcon())
-                ->color(fn (Server $server) => $server->condition->getColor()),
+                ->color(fn (Server $server) => $server->condition->getColor())
+                ->contextMenuActions($menuOptions)
+                ->enableContextMenu(fn (Server $server) => !$server->isInConflictState()),
         ];
 
         $viewTwo = [
-            TextColumn::make('name')
+            ContextMenuTextColumn::make('name')
                 ->label('')
                 ->size('md')
-                ->searchable(),
-            TextColumn::make('')
+                ->searchable()
+                ->contextMenuActions($menuOptions)
+                ->enableContextMenu(fn (Server $server) => !$server->isInConflictState()),
+            ContextMenuTextColumn::make('allocation.address')
                 ->label('')
                 ->badge()
                 ->copyable(request()->isSecure())
-                ->copyMessage(fn (Server $server, string $state) => 'Copied ' . $server->allocation->address)
-                ->state(fn (Server $server) => $server->allocation->address),
+                ->contextMenuActions($menuOptions)
+                ->enableContextMenu(fn (Server $server) => !$server->isInConflictState()),
         ];
 
         $viewThree = [
@@ -189,5 +239,26 @@ class ListServers extends ListRecords
 
         return null;
 
+    }
+
+    #[On('powerAction')]
+    public function powerAction(Server $server, string $action): void
+    {
+        try {
+            $this->daemonPowerRepository->setServer($server)->send($action);
+
+            Notification::make()
+                ->title('Power Action')
+                ->body($action . ' sent to ' . $server->name)
+                ->success()
+                ->send();
+
+            $this->redirect(self::getUrl(['activeTab' => $this->activeTab]));
+        } catch (ConnectionException) {
+            Notification::make()
+                ->title(trans('exceptions.node.error_connecting', ['node' => $server->node->name]))
+                ->danger()
+                ->send();
+        }
     }
 }
