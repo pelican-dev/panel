@@ -31,8 +31,11 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule): void
     {
-        // https://laravel.com/docs/10.x/upgrade#redis-cache-tags
-        $schedule->command('cache:prune-stale-tags')->hourly();
+        if (config('cache.default') === 'redis') {
+            // https://laravel.com/docs/10.x/upgrade#redis-cache-tags
+            // This only needs to run when using redis. anything else throws an error.
+            $schedule->command('cache:prune-stale-tags')->hourly();
+        }
 
         // Execute scheduled commands for servers every minute, as if there was a normal cron running.
         $schedule->command(ProcessRunnableCommand::class)->everyMinute()->withoutOverlapping();
