@@ -18,6 +18,7 @@ use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
 
 class MountResource extends Resource
 {
@@ -44,7 +45,7 @@ class MountResource extends Resource
 
     public static function getNavigationBadge(): ?string
     {
-        return static::getModel()::count() ?: null;
+        return (string) static::getEloquentQuery()->count() ?: null;
     }
 
     public static function getNavigationGroup(): ?string
@@ -147,7 +148,7 @@ class MountResource extends Resource
                             ->preload(),
                         Select::make('nodes')->multiple()
                             ->label(trans('admin/mount.nodes'))
-                            ->relationship('nodes', 'name')
+                            ->relationship('nodes', 'name', fn (Builder $query) => $query->whereIn('nodes.id', auth()->user()->accessibleNodes()->pluck('id')))
                             ->searchable(['name', 'fqdn'])
                             ->preload(),
                     ]),
@@ -169,5 +170,14 @@ class MountResource extends Resource
             'view' => Pages\ViewMount::route('/{record}'),
             'edit' => Pages\EditMount::route('/{record}/edit'),
         ];
+    }
+
+    public static function getEloquentQuery(): Builder
+    {
+        $query = parent::getEloquentQuery();
+
+        return $query->whereHas('nodes', function (Builder $query) {
+            $query->whereIn('nodes.id', auth()->user()->accessibleNodes()->pluck('id'));
+        })->orDoesntHave('nodes');
     }
 }

@@ -49,6 +49,8 @@ use Symfony\Component\Yaml\Yaml;
  * @property int|null $servers_count
  * @property \App\Models\Allocation[]|\Illuminate\Database\Eloquent\Collection $allocations
  * @property int|null $allocations_count
+ * @property \App\Models\Role[]|\Illuminate\Database\Eloquent\Collection $roles
+ * @property int|null $roles_count
  */
 class Node extends Model implements Validatable
 {
@@ -266,6 +268,11 @@ class Node extends Model implements Validatable
     public function databaseHosts(): BelongsToMany
     {
         return $this->belongsToMany(DatabaseHost::class);
+    }
+
+    public function roles(): HasManyThrough
+    {
+        return $this->hasManyThrough(Role::class, NodeRole::class, 'node_id', 'id', 'id', 'role_id');
     }
 
     /**

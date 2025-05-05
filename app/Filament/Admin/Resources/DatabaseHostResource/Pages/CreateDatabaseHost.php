@@ -17,6 +17,7 @@ use Filament\Notifications\Notification;
 use Filament\Resources\Pages\CreateRecord;
 use Filament\Resources\Pages\CreateRecord\Concerns\HasWizard;
 use Filament\Support\Exceptions\Halt;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\HtmlString;
 use Illuminate\Support\Str;
@@ -145,7 +146,7 @@ class CreateDatabaseHost extends CreateRecord
                         ->preload()
                         ->helperText(trans('admin/databasehost.linked_nodes_help'))
                         ->label(trans('admin/databasehost.linked_nodes'))
-                        ->relationship('nodes', 'name'),
+                        ->relationship('nodes', 'name', fn (Builder $query) => $query->whereIn('nodes.id', auth()->user()->accessibleNodes()->pluck('id'))),
                 ]),
         ];
     }
