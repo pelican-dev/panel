@@ -145,7 +145,7 @@ class UserResource extends Resource
                     ->label('Edit User')
                     ->hidden(fn (User $user) => auth()->user()->id === $user->id)
                     ->authorize(fn () => auth()->user()->can(Permission::ACTION_USER_UPDATE, $server))
-                    ->modalHeading(fn (User $user) => 'Editing '.$user->email)
+                    ->modalHeading(fn (User $user) => 'Editing ' . $user->email)
                     ->action(function (array $data, SubuserUpdateService $subuserUpdateService, User $user) use ($server) {
                         $subuser = $server->subusers->where('user_id', $user->id)->first();
 
