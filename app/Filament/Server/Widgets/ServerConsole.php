@@ -122,17 +122,6 @@ class ServerConsole extends Widget
         foreach ($data as $key => $value) {
             $cacheKey = "servers.{$this->server->id}.$key";
             $data = cache()->get($cacheKey, []);
-
-            // Network stats are sent over as "total" but we want to display them as "real time"
-            if ($key === 'network') {
-                $previous = collect($data)->sort()->last();
-
-                if ($previous) {
-                    $value->rx_bytes = $previous->rx_bytes < 0 ? 0 : max(0, $value->rx_bytes - $previous->rx_bytes);
-                    $value->tx_bytes = $previous->tx_bytes < 0 ? 0 : max(0, $value->tx_bytes - $previous->tx_bytes);
-                }
-            }
-
             $data[$timestamp] = $value;
 
             cache()->put($cacheKey, $data, now()->addMinute());

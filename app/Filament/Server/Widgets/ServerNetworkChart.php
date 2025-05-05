@@ -18,9 +18,9 @@ class ServerNetworkChart extends ChartWidget
     protected function getData(): array
     {
         $previous = null;
-
+        $period = auth()->user()->getCustomization()['console_graph_period'] ?? 30;
         $net = collect(cache()->get("servers.{$this->server->id}.network"))
-            ->slice(-10)
+            ->slice(-$period)
             ->map(function ($current, $timestamp) use (&$previous) {
                 $net = null;
                 if ($previous !== null) {
@@ -42,7 +42,7 @@ class ServerNetworkChart extends ChartWidget
                     'label' => 'Inbound',
                     'data' => array_column($net, 'rx'),
                     'backgroundColor' => [
-                        'rgba(96, 165, 250, 0.3)',
+                        'rgba(100, 255, 105, 0.5)',
                     ],
                     'tension' => '0.3',
                     'fill' => true,
@@ -51,7 +51,7 @@ class ServerNetworkChart extends ChartWidget
                     'label' => 'Outbound',
                     'data' => array_column($net, 'tx'),
                     'backgroundColor' => [
-                        'rgba(165, 96, 250, 0.3)',
+                        'rgba(96, 165, 250, 0.3)',
                     ],
                     'tension' => '0.3',
                     'fill' => true,
@@ -98,6 +98,8 @@ class ServerNetworkChart extends ChartWidget
 
     public function getHeading(): string
     {
-        return 'Network';
+        $data = cache()->get("servers.{$this->server->id}.network");
+
+        return 'Network - ↓' . convert_bytes_to_readable(collect($data)->last()->rx_bytes ?? 0) . ' - ↑' . convert_bytes_to_readable(collect($data)->last()->tx_bytes ?? 0);
     }
 }
