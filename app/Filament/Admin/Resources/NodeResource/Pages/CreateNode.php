@@ -158,12 +158,7 @@ class CreateNode extends CreateRecord
 
                             ToggleButtons::make('connection')
                                 ->label(trans('admin/node.ssl'))
-                                ->columnSpan([
-                                    'default' => 1,
-                                    'sm' => 1,
-                                    'md' => 1,
-                                    'lg' => 2,
-                                ])
+                                ->columnSpan(1)
                                 ->inline()
                                 ->helperText(function (Get $get) {
                                     if (request()->isSecure()) {
