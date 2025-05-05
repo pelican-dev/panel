@@ -34,25 +34,27 @@ class ListUsers extends ListRecords
 
         $tabs = [];
         $permissionsArray = [];
-        foreach (Permission::permissionTabs() as $tab) {
+
+        foreach (Permission::permissionData() as $data) {
             $options = [];
             $descriptions = [];
-            foreach ($tab['checkboxList']['options'] as $option) {
-                $options[$option['label']] = $option['name'];
-                $descriptions[$option['label']] = $option['description'];
-                $permissionsArray[$tab['checkboxList']['name']][] = $option['label'];
+
+            foreach ($data['permissions'] as $permission) {
+                $options[$permission] = str($permission)->headline();
+                $descriptions[$permission] = trans('server/users.permissions.' . $data['name'] . '_' . str($permission)->replace('-', '_'));
+                $permissionsArray[$data['name']][] = $permission;
             }
-            $tabs[] = Tab::make($tab['name'])
+
+            $tabs[] = Tab::make(str($data['name'])->headline())
                 ->schema([
                     Section::make()
-                        ->description($tab['description'])
-                        ->icon($tab['icon'])
+                        ->description(trans('server/users.permissions.' . $data['name'] . '_desc'))
+                        ->icon($data['icon'])
                         ->schema([
-                            CheckboxList::make($tab['checkboxList']['name'])
-                                ->bulkToggleable()
+                            CheckboxList::make($data['name'])
                                 ->label('')
-                                // Extra () ensure correct precedence for null coalescing with array access
-                                ->columns(($tab['checkboxList']['columns'] ?? 2))
+                                ->bulkToggleable()
+                                ->columns(2)
                                 ->options($options)
                                 ->descriptions($descriptions),
                         ]),
@@ -90,8 +92,7 @@ class ListUsers extends ListRecords
                                     ->action(function (Set $set, Get $get) use ($permissionsArray) {
                                         $permissions = $permissionsArray;
                                         foreach ($permissions as $key => $value) {
-                                            $currentValues = $get($key) ?? [];
-                                            $allValues = array_unique(array_merge($currentValues, $value));
+                                            $allValues = array_unique($value);
                                             $set($key, $allValues);
                                         }
                                     }),

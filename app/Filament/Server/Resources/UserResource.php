@@ -85,61 +85,27 @@ class UserResource extends Resource
 
         $tabs = [];
         $permissionsArray = [];
-        foreach (Permission::permissionTabs() as $tab) {
+
+        foreach (Permission::permissionData() as $data) {
             $options = [];
             $descriptions = [];
-            foreach ($tab['checkboxList']['options'] as $option) {
-                $options[$option['label']] = $option['name'];
-                $descriptions[$option['label']] = $option['description'];
-                $permissionsArray[$tab['checkboxList']['name']][] = $option['label'];
+
+            foreach ($data['permissions'] as $permission) {
+                $options[$permission] = str($permission)->headline();
+                $descriptions[$permission] = trans('server/users.permissions.' . $data['name'] . '_' . str($permission)->replace('-', '_'));
+                $permissionsArray[$data['name']][] = $permission;
             }
 
-            if ($tab['checkboxList']['name'] == 'control') {
-                $tabs[] = Tab::make($tab['name'])
-                    ->schema([
-                        Section::make()
-                            ->description($tab['description'])
-                            ->icon($tab['icon'])
-                            ->schema([
-                                CheckboxList::make($tab['checkboxList']['name'])
-                                    ->formatStateUsing(function (User $user, Set $set) use ($server) {
-                                        $permissionsArray = $server->subusers->where('user_id', $user->id)->first()->permissions;
-
-                                        $transformedPermissions = [];
-
-                                        foreach ($permissionsArray as $permission) {
-                                            [$group, $action] = explode('.', $permission, 2);
-                                            $transformedPermissions[$group][] = $action;
-                                        }
-
-                                        foreach ($transformedPermissions as $key => $value) {
-                                            $set($key, $value);
-                                        }
-
-                                        return $transformedPermissions['control'] ?? [];
-                                    })
-                                    ->bulkToggleable()
-                                    ->label('')
-                                    // Extra () ensure correct precedence for null coalescing with array access
-                                    ->columns(($tab['checkboxList']['columns'] ?? 2))
-                                    ->options($options)
-                                    ->descriptions($descriptions),
-                            ]),
-                    ]);
-
-                continue;
-            }
-            $tabs[] = Tab::make($tab['name'])
+            $tabs[] = Tab::make(str($data['name'])->headline())
                 ->schema([
                     Section::make()
-                        ->description($tab['description'])
-                        ->icon($tab['icon'])
+                        ->description(trans('server/users.permissions.' . $data['name'] . '_desc'))
+                        ->icon($data['icon'])
                         ->schema([
-                            CheckboxList::make($tab['checkboxList']['name'])
-                                ->bulkToggleable()
+                            CheckboxList::make($data['name'])
                                 ->label('')
-                                // Extra () ensure correct precedence for null coalescing with array access
-                                ->columns(($tab['checkboxList']['columns'] ?? 2))
+                                ->bulkToggleable()
+                                ->columns(2)
                                 ->options($options)
                                 ->descriptions($descriptions),
                         ]),
