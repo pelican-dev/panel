@@ -216,7 +216,7 @@ class Node extends Model implements Validatable
                 ],
             ],
             'allowed_mounts' => $this->mounts->pluck('source')->toArray(),
-            'remote' => route('filament.app.resources...index'),
+            'remote' => config('app.url'),
         ];
     }
 

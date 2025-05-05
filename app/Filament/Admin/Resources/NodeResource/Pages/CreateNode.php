@@ -7,6 +7,7 @@ use App\Models\Node;
 use Filament\Forms;
 use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\Grid;
+use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\TagsInput;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\ToggleButtons;
@@ -149,14 +150,15 @@ class CreateNode extends CreateRecord
                                 ->required()
                                 ->maxLength(100),
 
-                            ToggleButtons::make('scheme')
+                            Hidden::make('scheme')
+                                ->default(fn () => request()->isSecure() ? 'https' : 'http'),
+
+                            Hidden::make('behind_proxy')
+                                ->default(false),
+
+                            ToggleButtons::make('connection')
                                 ->label(trans('admin/node.ssl'))
-                                ->columnSpan([
-                                    'default' => 1,
-                                    'sm' => 1,
-                                    'md' => 1,
-                                    'lg' => 1,
-                                ])
+                                ->columnSpan(1)
                                 ->inline()
                                 ->helperText(function (Get $get) {
                                     if (request()->isSecure()) {
@@ -169,20 +171,29 @@ class CreateNode extends CreateRecord
 
                                     return '';
                                 })
-                                ->disableOptionWhen(fn (string $value): bool => $value === 'http' && request()->isSecure())
+                                ->disableOptionWhen(fn (string $value) => $value === 'http' && request()->isSecure())
                                 ->options([
                                     'http' => 'HTTP',
                                     'https' => 'HTTPS (SSL)',
+                                    'https_proxy' => 'HTTPS with (reverse) proxy',
                                 ])
                                 ->colors([
                                     'http' => 'warning',
                                     'https' => 'success',
+                                    'https_proxy' => 'success',
                                 ])
                                 ->icons([
                                     'http' => 'tabler-lock-open-off',
                                     'https' => 'tabler-lock',
+                                    'https_proxy' => 'tabler-shield-lock',
                                 ])
-                                ->default(fn () => request()->isSecure() ? 'https' : 'http'),
+                                ->default(fn () => request()->isSecure() ? 'https' : 'http')
+                                ->live()
+                                ->dehydrated(false)
+                                ->afterStateUpdated(function ($state, Set $set) {
+                                    $set('scheme', $state === 'http' ? 'http' : 'https');
+                                    $set('behind_proxy', $state === 'https_proxy');
+                                }),
                         ]),
                     Step::make('advanced')
                         ->label(trans('admin/node.tabs.advanced_settings'))
