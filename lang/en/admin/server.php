@@ -64,6 +64,7 @@ return [
     'reinstall_modal_heading' => 'Are you sure you want to reinstall this server?',
     'reinstall_modal_description' => '!! This can result in unrecoverable data loss !!',
     'server_status' => 'Server Status',
+    'view_install_logs' => 'View install logs',
     'uuid' => 'UUID',
     'node' => 'Node',
     'short_uuid' => 'Short UUID',

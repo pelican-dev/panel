@@ -2,7 +2,7 @@
 
 namespace App\Filament\Admin\Resources\ServerResource\Pages;
 
-use App\Enums\ServerState;
+use AbdelhamidErrahmouni\FilamentMonacoEditor\MonacoEditor;
 use App\Enums\SuspendAction;
 use App\Filament\Admin\Resources\ServerResource;
 use App\Filament\Admin\Resources\ServerResource\RelationManagers\AllocationsRelationManager;
@@ -137,7 +137,32 @@ class EditServer extends EditRecord
                                         'sm' => 1,
                                         'md' => 1,
                                         'lg' => 1,
-                                    ]),
+                                    ])
+                                    ->hintAction(
+                                        Action::make('view_install_logs')
+                                            ->label(trans('admin/server.view_install_logs'))
+                                            ->visible(fn (Server $server) => $server->isFailedInstall())
+                                            ->modalSubmitAction(false)
+                                            ->disabledForm() // TODO: monaco editor not disabled
+                                            ->form([
+                                                MonacoEditor::make('logs')
+                                                    ->label('')
+                                                    ->placeholderText('No logs available')
+                                                    ->formatStateUsing(function (Server $server, DaemonServerRepository $serverRepository) {
+                                                        try {
+                                                            return $serverRepository->setServer($server)->getInstallLogs();
+                                                        } catch (ConnectionException) {
+                                                            // Could not connect to node
+                                                        } catch (Exception) {
+                                                            // No logs available
+                                                        }
+
+                                                        return '';
+                                                    })
+                                                    ->language('shell')
+                                                    ->view('filament.plugins.monaco-editor'),
+                                            ])
+                                    ),
 
                                 Textarea::make('description')
                                     ->label(trans('admin/server.description'))
@@ -808,12 +833,12 @@ class EditServer extends EditRecord
                                                     Action::make('toggleInstall')
                                                         ->label(trans('admin/server.toggle_install'))
                                                         ->disabled(fn (Server $server) => $server->isSuspended())
-                                                        ->modal(fn (Server $server) => $server->status === ServerState::InstallFailed)
+                                                        ->modal(fn (Server $server) => $server->isFailedInstall())
                                                         ->modalHeading(trans('admin/server.toggle_install_failed_header'))
                                                         ->modalDescription(trans('admin/server.toggle_install_failed_desc'))
                                                         ->modalSubmitActionLabel(trans('admin/server.reinstall'))
                                                         ->action(function (ToggleInstallService $toggleService, ReinstallServerService $reinstallService, Server $server) {
-                                                            if ($server->status === ServerState::InstallFailed) {
+                                                            if ($server->isFailedInstall()) {
                                                                 try {
                                                                     $reinstallService->handle($server);
 
