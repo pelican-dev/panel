@@ -27,7 +27,7 @@ class ListDatabases extends ListRecords
 {
     protected static string $resource = DatabaseResource::class;
 
-    public function form(Form|Schema $schema): Schema
+    public function form(Schema $schema): Schema
     {
         /** @var Server $server */
         $server = Filament::getTenant();

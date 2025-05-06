@@ -48,7 +48,7 @@ class EditFiles extends Page
 
     public ?array $data = [];
 
-    public function form(Form|Schema $schema): Schema
+    public function form(Schema $schema): Schema
     {
         /** @var Server $server */
         $server = Filament::getTenant();

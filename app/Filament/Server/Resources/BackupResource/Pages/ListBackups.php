@@ -41,7 +41,7 @@ class ListBackups extends ListRecords
 
     protected static bool $canCreateAnother = false;
 
-    public function form(Form|Schema $schema): Schema
+    public function form(Schema $schema): Schema
     {
         return $schema
             ->schema([

@@ -71,7 +71,7 @@ class ScheduleResource extends Resource
     /**
      * @throws Exception
      */
-    public static function form(Form|Schema $schema): Schema
+    public static function form(Schema $schema): Schema
     {
         return $schema
             ->columns([
