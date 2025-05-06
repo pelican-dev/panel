@@ -18,7 +18,9 @@ class ServerMemoryChart extends ChartWidget
 
     protected function getData(): array
     {
-        $memUsed = collect(cache()->get("servers.{$this->server->id}.memory_bytes"))->slice(-10)
+        $period = auth()->user()->getCustomization()['console_graph_period'] ?? 30;
+        $memUsed = collect(cache()->get("servers.{$this->server->id}.memory_bytes"))
+            ->slice(-$period)
             ->map(fn ($value, $key) => [
                 'memory' => Number::format(config('panel.use_binary_prefix') ? $value / 1024 / 1024 / 1024 : $value / 1000 / 1000 / 1000, maxPrecision: 2),
                 'timestamp' => Carbon::createFromTimestamp($key, auth()->user()->timezone ?? 'UTC')->format('H:i:s'),

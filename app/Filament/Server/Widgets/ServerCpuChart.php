@@ -18,8 +18,9 @@ class ServerCpuChart extends ChartWidget
 
     protected function getData(): array
     {
+        $period = auth()->user()->getCustomization()['console_graph_period'] ?? 30;
         $cpu = collect(cache()->get("servers.{$this->server->id}.cpu_absolute"))
-            ->slice(-10)
+            ->slice(-$period)
             ->map(fn ($value, $key) => [
                 'cpu' => Number::format($value, maxPrecision: 2),
                 'timestamp' => Carbon::createFromTimestamp($key, auth()->user()->timezone ?? 'UTC')->format('H:i:s'),
