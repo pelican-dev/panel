@@ -13,7 +13,7 @@
         "chillerlan/php-qrcode": "^5.0.2",
         "dedoc/scramble": "^0.12.10",
         "doctrine/dbal": "~3.6.0",
-        "filament/filament": "v4.0.0-alpha4",
+        "filament/filament": "4.x-dev",
         "guzzlehttp/guzzle": "^7.9",
         "laravel/framework": "^12.10",
         "laravel/helpers": "^1.7",
@@ -100,6 +100,6 @@
             "php": "8.2"
         }
     },
-    "minimum-stability": "alpha",
+    "minimum-stability": "dev",
     "prefer-stable": true
 }
