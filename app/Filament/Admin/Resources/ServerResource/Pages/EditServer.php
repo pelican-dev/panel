@@ -1078,7 +1078,7 @@ class EditServer extends EditRecord
             $data['description'] = '';
         }
 
-        unset($data['docker'], $data['status']);
+        unset($data['docker'], $data['status'], $data['allocation_id']);
 
         return $data;
     }
