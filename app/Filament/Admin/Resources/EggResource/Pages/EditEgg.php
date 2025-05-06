@@ -33,7 +33,7 @@ class EditEgg extends EditRecord
 {
     protected static string $resource = EggResource::class;
 
-    public function form(Form|Schema $schema): Schema
+    public function form(Schema $schema): Schema
     {
         return $schema
             ->schema([
