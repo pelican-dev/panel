@@ -18,11 +18,13 @@ class ServerNetworkChart extends ChartWidget
     protected function getData(): array
     {
         $previous = null;
+
         $period = auth()->user()->getCustomization()['console_graph_period'] ?? 30;
         $net = collect(cache()->get("servers.{$this->server->id}.network"))
             ->slice(-$period)
             ->map(function ($current, $timestamp) use (&$previous) {
                 $net = null;
+
                 if ($previous !== null) {
                     $net = [
                         'rx' => max(0, $current->rx_bytes - $previous->rx_bytes),
@@ -30,6 +32,7 @@ class ServerNetworkChart extends ChartWidget
                         'timestamp' => Carbon::createFromTimestamp($timestamp, auth()->user()->timezone ?? 'UTC')->format('H:i:s'),
                     ];
                 }
+
                 $previous = $current;
 
                 return $net;
@@ -98,8 +101,8 @@ class ServerNetworkChart extends ChartWidget
 
     public function getHeading(): string
     {
-        $data = cache()->get("servers.{$this->server->id}.network");
+        $lastData = collect(cache()->get("servers.{$this->server->id}.network"))->last();
 
-        return 'Network - ↓' . convert_bytes_to_readable(collect($data)->last()->rx_bytes ?? 0) . ' - ↑' . convert_bytes_to_readable(collect($data)->last()->tx_bytes ?? 0);
+        return 'Network - ↓' . convert_bytes_to_readable($lastData->rx_bytes ?? 0) . ' - ↑' . convert_bytes_to_readable($lastData->tx_bytes ?? 0);
     }
 }

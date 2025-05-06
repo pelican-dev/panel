@@ -122,6 +122,7 @@ class ServerConsole extends Widget
         foreach ($data as $key => $value) {
             $cacheKey = "servers.{$this->server->id}.$key";
             $data = cache()->get($cacheKey, []);
+
             $data[$timestamp] = $value;
 
             cache()->put($cacheKey, $data, now()->addMinute());

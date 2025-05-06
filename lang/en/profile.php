@@ -50,5 +50,5 @@ return [
     'font_preview' => 'Font Preview',
     'seconds' => 'Seconds',
     'graph_period' => 'Graph Period',
-    'graph_period_helper' => 'The amount of data points, seconds, shown on the console graphs. 10-120',
+    'graph_period_helper' => 'The amount of data points, seconds, shown on the console graphs.',
 ];

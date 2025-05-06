@@ -424,7 +424,6 @@ class EditProfile extends BaseEditProfile
                                                                     <span class="preview-text">The quick blue pelican jumps over the lazy pterodactyl. :)</span>
                                                                 HTML);
                                                     }),
-
                                                 TextInput::make('console_graph_period')
                                                     ->label(trans('profile.graph_period'))
                                                     ->suffix(trans('profile.seconds'))
