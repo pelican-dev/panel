@@ -1,7 +1,11 @@
+@import 'xterm/css/xterm.css';
+@import 'xterm-addon-search-bar/src/index.css';
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 @tailwind variants;
+
 
 .fi-section-header-icon {
     @apply !self-center;

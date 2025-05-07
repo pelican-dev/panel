@@ -4,23 +4,18 @@
         $userFont = auth()->user()->getCustomization()['console_font'] ?? 'monospace';
         $userFontSize = auth()->user()->getCustomization()['console_font_size'] ?? 14;
         $userRows =  auth()->user()->getCustomization()['console_rows'] ?? 30;
+        $socketUrl = $this->getSocket();  // Assuming this is the WebSocket URL
     @endphp
-    @if($userFont)
-        <link rel="preload" href="{{ asset("storage/fonts/{$userFont}.ttf") }}" as="font" crossorigin>
-        <style>
-            @font-face {
-                font-family: '{{ $userFont }}';
-                src: url('{{ asset("storage/fonts/{$userFont}.ttf") }}');
-            }
-        </style>
-    @endif
-    <script src="https://cdn.jsdelivr.net/npm/@xterm/xterm/lib/xterm.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@xterm/addon-fit/lib/addon-fit.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@xterm/addon-web-links/lib/addon-web-links.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@xterm/addon-search/lib/addon-search.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/xterm-addon-search-bar/lib/xterm-addon-search-bar.min.js"></script>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xterm/xterm/css/xterm.min.css">
-    <link rel="stylesheet" href="{{ asset('/css/filament/server/console.css') }}">
+
+    @vite(['resources/js/app.js', 'resources/css/app.css'])
+    <script>
+        window.phpData = {
+            userFont: '{{ $userFont }}',
+            userFontSize: {{ $userFontSize }},
+            userRows: {{ $userRows }},
+            socketUrl: '{{ $socketUrl }}',
+        };
+    </script>
     @endassets
 
     <div id="terminal" wire:ignore></div>
@@ -45,163 +40,4 @@
             >
         </div>
     @endif
-
-    @script
-    <script>
-        let theme = {
-            background: 'rgba(19,26,32,0.7)',
-            cursor: 'transparent',
-            black: '#000000',
-            red: '#E54B4B',
-            green: '#9ECE58',
-            yellow: '#FAED70',
-            blue: '#396FE2',
-            magenta: '#BB80B3',
-            cyan: '#2DDAFD',
-            white: '#d0d0d0',
-            brightBlack: 'rgba(255, 255, 255, 0.2)',
-            brightRed: '#FF5370',
-            brightGreen: '#C3E88D',
-            brightYellow: '#FFCB6B',
-            brightBlue: '#82AAFF',
-            brightMagenta: '#C792EA',
-            brightCyan: '#89DDFF',
-            brightWhite: '#ffffff',
-            selection: '#FAF089'
-        };
-
-        let options = {
-            fontSize: {{ $userFontSize }},
-            fontFamily: '{{ $userFont }}, monospace',
-            lineHeight: 1.2,
-            disableStdin: true,
-            cursorStyle: 'underline',
-            cursorInactiveStyle: 'underline',
-            allowTransparency: true,
-            rows: {{ $userRows }},
-            theme: theme
-        };
-
-        const terminal = new Terminal(options);
-        const fitAddon = new FitAddon.FitAddon();
-        const webLinksAddon = new WebLinksAddon.WebLinksAddon();
-        const searchAddon = new SearchAddon.SearchAddon();
-        const searchAddonBar = new SearchBarAddon.SearchBarAddon({ searchAddon });
-
-        terminal.loadAddon(fitAddon);
-        terminal.loadAddon(webLinksAddon);
-        terminal.loadAddon(searchAddon);
-        terminal.loadAddon(searchAddonBar);
-
-        terminal.open(document.getElementById('terminal'));
-
-        fitAddon.fit(); //Fit on first load
-
-        window.addEventListener('resize', () => {
-            fitAddon.fit();
-        });
-
-        terminal.attachCustomKeyEventHandler((event) => {
-            if ((event.ctrlKey || event.metaKey) && event.key === 'c') {
-                document.execCommand('copy'); // navigator.clipboard.writeText() only works on ssl..
-                return false;
-            } else if ((event.ctrlKey || event.metaKey) && event.key === 'f') {
-                event.preventDefault();
-                searchAddonBar.show();
-                return false;
-            } else if (event.key === 'Escape') {
-                searchAddonBar.hidden();
-            }
-            return true;
-        });
-
-        const TERMINAL_PRELUDE = '\u001b[1m\u001b[33mpelican@' + '{{ \Filament\Facades\Filament::getTenant()->name }}' + ' ~ \u001b[0m';
-
-        const handleConsoleOutput = (line, prelude = false) =>
-            terminal.writeln((prelude ? TERMINAL_PRELUDE : '') + line.replace(/(?:\r\n|\r|\n)$/im, '') + '\u001b[0m');
-
-        const handleTransferStatus = (status) =>
-            status === 'failure' && terminal.writeln(TERMINAL_PRELUDE + 'Transfer has failed.\u001b[0m');
-
-        const handleDaemonErrorOutput = (line) =>
-            terminal.writeln(TERMINAL_PRELUDE + '\u001b[1m\u001b[41m' + line.replace(/(?:\r\n|\r|\n)$/im, '') + '\u001b[0m');
-
-        const handlePowerChangeEvent = (state) =>
-            terminal.writeln(TERMINAL_PRELUDE + 'Server marked as ' + state + '...\u001b[0m');
-
-        const socket = new WebSocket("{{ $this->getSocket() }}");
-
-        socket.onerror = (event) => {
-            $wire.dispatchSelf('websocket-error');
-        };
-
-        socket.onmessage = function(websocketMessageEvent) {
-            let { event, args } = JSON.parse(websocketMessageEvent.data);
-
-            switch (event) {
-                case 'console output':
-                case 'install output':
-                    handleConsoleOutput(args[0]);
-                    break;
-                case 'feature match':
-                    Livewire.dispatch('mount-feature', { data: args[0] });
-                    break;
-                case 'status':
-                    handlePowerChangeEvent(args[0]);
-
-                    $wire.dispatch('console-status', { state: args[0] });
-                    break;
-                case 'transfer status':
-                    handleTransferStatus(args[0]);
-                    break;
-                case 'daemon error':
-                    handleDaemonErrorOutput(args[0]);
-                    break;
-                case 'stats':
-                    $wire.dispatchSelf('store-stats', { data: args[0] });
-                    break;
-                case 'auth success':
-                    socket.send(JSON.stringify({
-                        'event': 'send logs',
-                        'args': [null]
-                    }));
-                    break;
-                case 'token expiring':
-                case 'token expired':
-                    $wire.dispatchSelf('token-request');
-                    break;
-            }
-        };
-
-        socket.onopen = (event) => {
-            $wire.dispatchSelf('token-request');
-        };
-
-        Livewire.on('setServerState', ({ state, uuid }) => {
-            const serverUuid = "{{ $this->server->uuid }}";
-            if (uuid !== serverUuid) {
-                return;
-            }
-
-            socket.send(JSON.stringify({
-                'event': 'set state',
-                'args': [state]
-            }));
-        });
-
-        $wire.on('sendAuthRequest', ({ token }) => {
-            socket.send(JSON.stringify({
-                'event': 'auth',
-                'args': [token]
-            }));
-        });
-
-        $wire.on('sendServerCommand', ({ command }) => {
-            socket.send(JSON.stringify({
-                'event': 'send command',
-                'args': [command]
-            }));
-        });
-    </script>
-    @endscript
 </x-filament::widget>
