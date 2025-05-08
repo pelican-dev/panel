@@ -8,6 +8,7 @@ use App\Extensions\OAuth\Providers\OAuthProvider;
 use App\Models\Backup;
 use App\Notifications\MailTested;
 use App\Traits\EnvironmentWriterTrait;
+use BackedEnum;
 use Exception;
 use Filament\Actions\Action;
 use Filament\Forms\Components\Hidden;
@@ -234,12 +235,12 @@ class Settings extends Page implements HasSchemas
                             $set('TRUSTED_PROXIES', $ips->values()->all());
                         }),
                 ]),
-            //            Select::make('FILAMENT_WIDTH')
-            //                ->label(trans('admin/setting.general.display_width'))
-            //                ->native(false)
-            //                ->options(Width::class->value)
-            //                ->selectablePlaceholder(false)
-            //                ->default(env('FILAMENT_WIDTH', config('panel.filament.display-width'))),
+            Select::make('FILAMENT_WIDTH')
+                ->label(trans('admin/setting.general.display_width'))
+                ->native(false)
+                ->options(Width::class)
+                ->selectablePlaceholder(false)
+                ->default(env('FILAMENT_WIDTH', config('panel.filament.display-width'))),
         ];
     }
 
@@ -762,8 +763,19 @@ class Settings extends Page implements HasSchemas
         try {
             $data = $this->form->getState();
 
-            // Convert bools to a string, so they are correctly written to the .env file
-            $data = array_map(fn ($value) => is_bool($value) ? ($value ? 'true' : 'false') : $value, $data);
+            $data = array_map(function ($value) {
+                // Convert bools to a string, so they are correctly written to the .env file
+                if (is_bool($value)) {
+                    return $value ? 'true' : 'false';
+                }
+
+                // Convert enum to its value
+                if ($value instanceof BackedEnum) {
+                    return $value->value;
+                }
+
+                return $value;
+            }, $data);
 
             $this->writeToEnvironment($data);
 
